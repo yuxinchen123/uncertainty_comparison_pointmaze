@@ -1,0 +1,14 @@
+{
+  "command": [
+    "sacct",
+    "-j",
+    "6783295",
+    "--parsable2",
+    "--noheader",
+    "--format=JobIDRaw,JobName,User,State,ExitCode,NodeList,Elapsed,Start,AllocCPUS,ReqTRES,AllocTRES,End"
+  ],
+  "returncode": 0,
+  "captured_at_utc": "2026-11-02T04:12:09.587426+00:00",
+  "stdout_sha256": "52afecfafc34d337ea84d8e540aa54e1b49f6a9f1222367140407f200080a41f",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

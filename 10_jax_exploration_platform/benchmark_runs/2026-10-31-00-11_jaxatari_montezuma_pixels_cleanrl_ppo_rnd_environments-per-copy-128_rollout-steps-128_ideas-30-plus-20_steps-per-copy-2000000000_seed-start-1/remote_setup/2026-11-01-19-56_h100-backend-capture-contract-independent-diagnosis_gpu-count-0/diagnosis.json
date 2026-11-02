@@ -1,0 +1,107 @@
+{
+  "actual_failed_audit": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-19-13_fresh-original-h100-qualification-review_staged-historical-git-roots-8_source-6066d9ea_gpu-count-0/terminal_full_review/failure.json",
+    "sha256": "d508d5ad887b84685914767d99d22fff5b731f442eae91aab97b56da676f7ecc"
+  },
+  "actual_result": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-17-17_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/direct_qualification_result.json",
+    "sha256": "43a9bd5263874954990f93646db71b959ad9f9a5b5cdf3053ba5c14edd4e4b5e"
+  },
+  "admission_granted": false,
+  "alias_or_different_saved_image_hash_observed": false,
+  "at_utc": "2026-11-02T03:57:02.162794+00:00",
+  "captured_backend_record": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-17-17_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/direct_backend_capture.json",
+    "sha256": "b58f8ee25e3215e02ded9ac83ec08c013b456a86a671f26d099f139419add332"
+  },
+  "cpu_job_id": "6783003",
+  "cpu_step_id": "77",
+  "current_package_record_diagnosis_only": [
+    {
+      "current_distribution_name": "jax-cuda12-pjrt",
+      "current_distribution_version": "0.11.0",
+      "current_metadata": {
+        "path": "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/jax_cuda12_pjrt-0.11.0.dist-info/METADATA",
+        "sha256": "a4ab9346404e0cf42a00dd9e877218d1e19f7871a59c361a1d7fc934b4ed2ab3"
+      },
+      "current_record": {
+        "path": "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/jax_cuda12_pjrt-0.11.0.dist-info/RECORD",
+        "sha256": "9eda8d59208f7bd8e709472f28559ff1debcc39c8e40f45caa60cc72d72a39ee"
+      },
+      "decoded_file_sha256": "ced7988972611b25fbdc7df51453102656c209c05756b528602aa875c10d1f08",
+      "historically_frozen_in_H17_plan": false,
+      "matches_captured_bytes": true,
+      "record_entry": [
+        "jax_plugins/xla_cuda12/xla_cuda_plugin.so",
+        "sha256=zteYiXJhGyX73H31FFMQJlbCCcBXVrUoYCqodcENHwg",
+        "473181472"
+      ]
+    }
+  ],
+  "diagnosis_complete": true,
+  "exact_failing_conjuncts": {
+    "plugin_original_path_in_loaded_shared_libraries": false,
+    "plugin_original_sha_equals_verified_package_library_sha": false
+  },
+  "existing_capture_and_current_RECORD_suffice_for_historical_qualification": false,
+  "existing_result_will_not_be_rewritten_or_qualified_under_relaxed_checks": true,
+  "gpu_work_performed": false,
+  "installed_expected_library_count": 11,
+  "kind": "independent_h100_backend_capture_contract_failure_diagnosis",
+  "loaded_library_count": 9,
+  "mechanism": "Both generic producer receipts intentionally cover CUDA driver/cuDNN/runtime names, excluding xla_cuda_plugin.so. The direct reader incorrectly assumes that backend image is in those narrower receipt fields. The saved separate mapped capture does not add the missing installed-package-image membership to the original immutable expected software receipt.",
+  "new_qualification_or_scientific_credit": 0,
+  "plugin_in_current_result_installed_backend": false,
+  "plugin_in_frozen_qualification_software_backend": false,
+  "plugin_original": {
+    "path": "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/jax_plugins/xla_cuda12/xla_cuda_plugin.so",
+    "sha256": "ced7988972611b25fbdc7df51453102656c209c05756b528602aa875c10d1f08"
+  },
+  "producer_filter_source": {
+    "actual_gpu_library_receipt": "def actual_gpu_library_receipt(backend, expected):\n    \"\"\"Query already loaded libraries and verify their actual bytes against checkpoint identity.\"\"\"\n    specification = importlib.util.spec_from_file_location('optimized_training_gpu_libraries', SCRIPT_ROOT / 'diagnose_gpu_execution.py')\n    helper = importlib.util.module_from_spec(specification)\n    specification.loader.exec_module(helper)\n    receipt = helper.loaded_gpu_libraries(backend)\n    loaded = {str(Path(path).resolve(strict=True)) for path in receipt['loaded_shared_libraries'] if Path(path).name.startswith(('libcudnn', 'libcudart'))}\n    verified = {}\n    for path in loaded:\n        if path not in expected or file_sha256(Path(path)) != expected[path]['sha256']:\n            raise ValueError('the actually loaded GPU library differs from the installed immutable image: ' + path)\n        verified[path] = expected[path]\n    return {**receipt, 'verified_package_libraries': verified, 'pid': os.getpid(), 'time': utc_now()}",
+    "installed_gpu_library_receipts": "def installed_gpu_library_receipts():\n    \"\"\"Hash the installed cuDNN and CUDA runtime images before any training update.\"\"\"\n    files = {}\n    for name in ('nvidia-cudnn-cu12', 'nvidia-cuda-runtime-cu12'):\n        distribution = metadata.distribution(name)\n        for relative in distribution.files or []:\n            basename = Path(relative).name\n            if basename.startswith(('libcudnn', 'libcudart')) and '.so' in basename:\n                path = Path(distribution.locate_file(relative)).resolve(strict=True)\n                files[str(path)] = {'package': name, 'version': distribution.version, 'sha256': file_sha256(path)}\n    if not any((Path(path).name.startswith('libcudnn.so') for path in files)) or not any((Path(path).name.startswith('libcudart.so') for path in files)):\n        raise ValueError('the installed environment lacks its cuDNN/CUDA runtime images')\n    return files",
+    "loaded_gpu_libraries": "def loaded_gpu_libraries(backend):\n    \"\"\"Record the backend and query versions from the CUDA libraries actually loaded after compilation.\"\"\"\n    paths = sorted({line.rsplit(None, 1)[-1] for line in Path('/proc/self/maps').read_text().splitlines() if '/' in line and any((name in line for name in ('libcudnn', 'libcudart', 'libcuda.so')))})\n    cudnn_paths = [path for path in paths if re.fullmatch('libcudnn\\\\.so(?:\\\\.\\\\d+)*', Path(path).name)]\n    runtime_paths = [path for path in paths if re.fullmatch('libcudart\\\\.so(?:\\\\.\\\\d+)*', Path(path).name)]\n    if len(cudnn_paths) != 1 or len(runtime_paths) != 1:\n        raise ValueError('the compiled process must identify one loaded cuDNN library and CUDA runtime')\n    cudnn = ctypes.CDLL(cudnn_paths[0], mode=os.RTLD_NOLOAD | os.RTLD_LOCAL)\n    cudnn.cudnnGetVersion.argtypes = []\n    cudnn.cudnnGetVersion.restype = ctypes.c_size_t\n    runtime = ctypes.CDLL(runtime_paths[0], mode=os.RTLD_NOLOAD | os.RTLD_LOCAL)\n    runtime.cudaRuntimeGetVersion.argtypes = [ctypes.POINTER(ctypes.c_int)]\n    runtime.cudaRuntimeGetVersion.restype = ctypes.c_int\n    cuda_version = ctypes.c_int()\n    cuda_status = runtime.cudaRuntimeGetVersion(ctypes.byref(cuda_version))\n    if cuda_status != 0:\n        raise RuntimeError(f'cudaRuntimeGetVersion failed with status {cuda_status}')\n    return {'platform': backend.platform, 'platform_version': backend.platform_version, 'loaded_shared_libraries': paths, 'cudnn_library': cudnn_paths[0], 'cudnnGetVersion': cudnn.cudnnGetVersion(), 'cuda_runtime_library': runtime_paths[0], 'cudaRuntimeGetVersion': cuda_version.value}"
+  },
+  "qualification_approved": false,
+  "required_next_step": "Implement a strict direct-only backend package image proof in a new isolated source branch, pin expected installed image/distribution bytes before launch, retain same-process mapped bytes and captured copy joins, preserve all original numerical/source/driver/software/assets/full-reference gates, independently review, then run a fresh full GPU qualification.",
+  "same_process": {
+    "birth": "54683794",
+    "gpu_uuid": "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3",
+    "mapped_inode_fields": [
+      "4236833"
+    ],
+    "mapped_segment_count": 4,
+    "pid": 1321350
+  },
+  "saved_inputs_after": {
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-17-17_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/code/device_memory_limit.py": "3abcb3641cc799424d6585e9881befbbd3c06800e9dc4d19fed5a507fe5e06ff",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-17-17_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/code/diagnose_gpu_execution.py": "310bcb6b4b1a18cc9d7acac62a07dfb60874bb60aed127b50b9c07227593f9f8",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-17-17_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/code/direct_measurement.py": "beead126531ee254a7999adae2e2e0e7292f18154a2e697e8a22ce1e93a33294",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-17-17_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/code/train_optimized.py": "66771819cf75ea89e1b6f8fef4467aece2eecf864cd0ca434cbb5c698365f210",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-17-17_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/direct_backend_capture.json": "b58f8ee25e3215e02ded9ac83ec08c013b456a86a671f26d099f139419add332",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-17-17_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/direct_device_binding.json": "6ba187e60016d1c377ba68225649b10f2fd0d77d23d477e9ff745901ee656923",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-17-17_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/direct_qualification_result.json": "43a9bd5263874954990f93646db71b959ad9f9a5b5cdf3053ba5c14edd4e4b5e",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-17-17_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/installed_backend.json": "0abe0f6339fff971e5bf2b279f29915a22be69aaf8d512cc9306542a6ab5b620",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-17-17_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/measurement_plan.json": "515e4089bec5fa65931b5f08fc018d716209243fd8311cc0f4740f954769472e"
+  },
+  "saved_inputs_before": {
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-17-17_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/code/device_memory_limit.py": "3abcb3641cc799424d6585e9881befbbd3c06800e9dc4d19fed5a507fe5e06ff",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-17-17_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/code/diagnose_gpu_execution.py": "310bcb6b4b1a18cc9d7acac62a07dfb60874bb60aed127b50b9c07227593f9f8",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-17-17_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/code/direct_measurement.py": "beead126531ee254a7999adae2e2e0e7292f18154a2e697e8a22ce1e93a33294",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-17-17_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/code/train_optimized.py": "66771819cf75ea89e1b6f8fef4467aece2eecf864cd0ca434cbb5c698365f210",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-17-17_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/direct_backend_capture.json": "b58f8ee25e3215e02ded9ac83ec08c013b456a86a671f26d099f139419add332",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-17-17_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/direct_device_binding.json": "6ba187e60016d1c377ba68225649b10f2fd0d77d23d477e9ff745901ee656923",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-17-17_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/direct_qualification_result.json": "43a9bd5263874954990f93646db71b959ad9f9a5b5cdf3053ba5c14edd4e4b5e",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-17-17_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/installed_backend.json": "0abe0f6339fff971e5bf2b279f29915a22be69aaf8d512cc9306542a6ab5b620",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-17-17_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/measurement_plan.json": "515e4089bec5fa65931b5f08fc018d716209243fd8311cc0f4740f954769472e"
+  },
+  "schema_version": 1,
+  "shared_copy": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-17-17_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/direct_backend/xla_cuda_plugin.so",
+    "sha256": "ced7988972611b25fbdc7df51453102656c209c05756b528602aa875c10d1f08"
+  },
+  "shared_copy_bytes": 473181472,
+  "shared_copy_hash_verified": "ced7988972611b25fbdc7df51453102656c209c05756b528602aa875c10d1f08",
+  "unchanged_reader_can_accept_existing_result": false,
+  "verified_library_count": 8
+}

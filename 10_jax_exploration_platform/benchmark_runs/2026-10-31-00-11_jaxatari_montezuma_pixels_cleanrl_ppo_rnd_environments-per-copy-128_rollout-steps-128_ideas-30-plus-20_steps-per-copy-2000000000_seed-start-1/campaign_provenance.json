@@ -120,6 +120,16 @@
     "state": "FAILED"
   },
   "checkpoint_gpu_validation_job_id": "6780569",
+  "common_confirmation_actual_gpu_uuids": [
+    "GPU-3e69429a-68c3-2b5a-5835-cd9aa784f68b",
+    "GPU-598e6dda-6f62-4dc7-37bc-41e2a7b0d522"
+  ],
+  "common_confirmation_job_ids": [
+    "6783295",
+    "6783296"
+  ],
+  "common_confirmation_release_publication": "e02f72b93a6705853c5d35b72d81fbc3f5310679",
+  "common_confirmation_state": "copies_one_completed_pending_review_copies_two_running",
   "common_correctness_job_ids": [
     "6782946",
     "6782947"
@@ -128,9 +138,9 @@
   "configured_producer_helper_commit": "43eade68238a8d010ad1d1ea681e348022a00060",
   "configured_profile_actual_qualification": false,
   "correctness_cache_diagnosis_job_id": "6777949",
-  "cron_id": "b3e753f5-e082-44ce-b648-a19df6e1392c",
+  "cron_id": "917dd61c-927d-4f87-b3d8-b056e674ee59",
   "cron_verified_active": true,
-  "cron_verified_utc": "2026-11-02T02:26:45.655577+00:00",
+  "cron_verified_utc": "2026-11-02T04:18:01.270074+00:00",
   "current_branch_integrated_commit": "79a01e851ff92ddba7d0e12eaf8164cab2028878",
   "current_initial_verified_comparisons": 120,
   "device_memory_capture_diagnostic_job_id": "6781128",
@@ -143,11 +153,11 @@
   "direct_full_original_qualification_failed_unit": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-14-53_full-original-direct-qualification_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830",
   "direct_full_original_qualification_helper_commit": "6066d9ea35fbc9c045855144550971c2ac5895f9",
   "direct_full_original_qualification_pid": 1321350,
-  "direct_full_original_qualification_state": "fresh_numerical_child_running_qualification_pending",
+  "direct_full_original_qualification_state": "failed_backend_package_contract_no_admission",
   "direct_full_original_qualification_unit": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-17-17_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830",
   "draining_a4500_worker_job_ids": [],
-  "existing_remote_connections_last_verified": "2026-11-01T22:12:16+00:00",
-  "existing_remote_connections_receipt": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/existing_master_checks_2026-11-01-22-12-16.json",
+  "existing_remote_connections_last_verified": "2026-11-02T04:08:36.862829+00:00",
+  "existing_remote_connections_receipt": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/existing_master_checks_2026-11-02-04-08-36.json",
   "failed_qualification_job_id": "6782640",
   "final_training_started": 0,
   "formal_allocator_retry_job_id": "6778004",
@@ -234,7 +244,7 @@
   "isolated_capacity_helper_commit": "332bff2faf89df98d7f48fc2296555313c5be290",
   "job_ledgers": "slurm/submitted_jobids_*.txt",
   "last_active_persistent_monitor_job_id": "6782816",
-  "last_verified_full_monitor": "6783003.29",
+  "last_verified_full_monitor": "6783003.78",
   "latest_actual_target_qualification_release": {
     "actual_core_reader_passed": true,
     "at_utc": "2026-11-01T22:23:12.249529+00:00",
@@ -452,6 +462,6 @@
     "6777647"
   ],
   "superseded_monitor_job_id": "6781087",
-  "updated_utc": "2026-11-02T02:25:03.665633+00:00",
+  "updated_utc": "2026-11-02T04:07:19.760367+00:00",
   "uva_active_configuration_observation_job_id": "6781190"
 }

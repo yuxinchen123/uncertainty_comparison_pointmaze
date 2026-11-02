@@ -1,0 +1,51 @@
+{
+  "authentication_attempts": 0,
+  "automatic_retries": 0,
+  "checked_at_utc": "2026-11-02T04:08:36.862829+00:00",
+  "connections": [
+    {
+      "argv": [
+        "ssh",
+        "-o",
+        "ControlMaster=no",
+        "-o",
+        "ProxyCommand=false",
+        "-o",
+        "BatchMode=yes",
+        "-O",
+        "check",
+        "aces"
+      ],
+      "authentication_attempts": 0,
+      "cluster": "aces",
+      "retry_permitted": false,
+      "returncode": 0,
+      "stderr": "Master running (pid=3888482)\n",
+      "stdout": ""
+    },
+    {
+      "argv": [
+        "ssh",
+        "-o",
+        "ControlMaster=no",
+        "-o",
+        "ProxyCommand=false",
+        "-o",
+        "BatchMode=yes",
+        "-O",
+        "check",
+        "deltaai"
+      ],
+      "authentication_attempts": 0,
+      "cluster": "deltaai",
+      "retry_permitted": false,
+      "returncode": 0,
+      "stderr": "Master running (pid=3878537)\n",
+      "stdout": ""
+    }
+  ],
+  "explicit_check_not_before_utc": "2026-11-02T05:08:37.862829+00:00",
+  "kind": "existing_ssh_masters_hourly_check",
+  "mit_attempts_total": 0,
+  "previous_check": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/existing_master_checks_2026-11-02-02-32-40.json"
+}

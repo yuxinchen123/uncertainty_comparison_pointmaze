@@ -1,0 +1,34 @@
+{
+  "admission_granted": false,
+  "at_utc": "2026-11-02T03:47:04.992560+00:00",
+  "automatic_retry_permitted": false,
+  "case_credit": 0,
+  "cluster": "uva",
+  "command": [
+    "scontrol",
+    "release",
+    "6783296"
+  ],
+  "data_unit": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-18-54_common_cache-room-backgrounds-true_render-final-two-only-true_confirmation_paired-rounds-7_updates-per-arm-10_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3_jaguar03",
+  "frozen_inputs_sha256": "ae959ea98a6daba71b0c7a651a8342e4c959c05d6b269d3af7c31ed6ed540a9b",
+  "held_monitor_review": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-19-24_common-confirmation-release_jobs-6783295-6783296_paired-rounds-7_updates-per-arm-10_copies-1-2_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-2-3/held_monitor_proof_copies_2.json",
+    "sha256": "bfb9528d74e56ac39e4ecdca36ec7bcdbeec90819cfada41cd82fb63c39c16af"
+  },
+  "idea_credit": 0,
+  "job_id": "6783296",
+  "kind": "owned_uva_configured_isolation_release",
+  "packing_point_credit": 0,
+  "plan_sha256": "935a40dce6ce7eafbe0393a16776fe00ac179e742ccd44f597ba33a9769a064a",
+  "publication_commit": "e02f72b93a6705853c5d35b72d81fbc3f5310679",
+  "release_source_sha256": "d6529e5f852c425dbce27e04a496496b6de855cb727ce3092ccb858e28583ea3",
+  "returncode": 0,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "site_qualification_credit": 0,
+  "stderr": "",
+  "stdout": "",
+  "submission_receipt_sha256": "381c9922c5f270f758bc5de78211b0a07752e95eb21c3d87b47b597929c4e364",
+  "throughput_credit": 0,
+  "worker_admitted": false
+}

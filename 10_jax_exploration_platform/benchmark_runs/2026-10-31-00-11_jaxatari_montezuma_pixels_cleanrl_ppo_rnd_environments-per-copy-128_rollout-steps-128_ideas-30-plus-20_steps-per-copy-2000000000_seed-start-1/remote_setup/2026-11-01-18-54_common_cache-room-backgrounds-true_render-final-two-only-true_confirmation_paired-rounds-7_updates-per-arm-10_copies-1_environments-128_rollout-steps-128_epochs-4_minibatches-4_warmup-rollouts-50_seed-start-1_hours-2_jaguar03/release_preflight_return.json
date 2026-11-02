@@ -1,0 +1,11 @@
+{
+  "automatic_retry_permitted": false,
+  "command": [
+    "scontrol",
+    "show",
+    "job",
+    "-o",
+    "6783295"
+  ],
+  "returncode": 0
+}

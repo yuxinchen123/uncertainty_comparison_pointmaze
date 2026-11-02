@@ -499,3 +499,7 @@ Published reviewed packet 691e5aab and exact launch command a13047dd. One transp
 ### Common confirmation source publication
 
 Source and numerical reuse review passed. Merge9fcc43a4 matches independently tested treef22606f0 and preserves716 private source files. Preserve failed temporary-index stat check and corrected actual proof. New timing packets are being prepared; no submissions or performance credit yet. Current monitor reports progress; exact new staged consumer is required for scientific acceptance.
+
+### 2026-11-02T04:07:19.760367+00:00 Common timing starts; H100 backend proof requires a new producer
+
+Both A4500 jobs were released exactly once after published checks and now run on distinct assigned GPUs. Both startup and prior-correctness checks passed. H100 raw review rejected a missing pre-execution XLA plugin package proof; preserve both failed review attempts and all GPU outputs. Separate strict metadata source and a fresh full qualification are required, with no numerical changes or old-data acceptance. The older monitor unit labels are not scientific or execution evidence; use actual owned job rows until the isolated display correction is reviewed.

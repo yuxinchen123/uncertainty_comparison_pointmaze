@@ -1,0 +1,32 @@
+{
+  "publication_commit": "e02f72b93a6705853c5d35b72d81fbc3f5310679",
+  "checks": [
+    {
+      "validated": true,
+      "copies": 1,
+      "job_id": "6783295",
+      "command": [
+        "scontrol",
+        "release",
+        "6783295"
+      ],
+      "scheduler_queries": 0,
+      "release_calls": 0,
+      "final_inputs_written": false
+    },
+    {
+      "validated": true,
+      "copies": 2,
+      "job_id": "6783296",
+      "command": [
+        "scontrol",
+        "release",
+        "6783296"
+      ],
+      "scheduler_queries": 0,
+      "release_calls": 0,
+      "final_inputs_written": false
+    }
+  ],
+  "passed": true
+}
