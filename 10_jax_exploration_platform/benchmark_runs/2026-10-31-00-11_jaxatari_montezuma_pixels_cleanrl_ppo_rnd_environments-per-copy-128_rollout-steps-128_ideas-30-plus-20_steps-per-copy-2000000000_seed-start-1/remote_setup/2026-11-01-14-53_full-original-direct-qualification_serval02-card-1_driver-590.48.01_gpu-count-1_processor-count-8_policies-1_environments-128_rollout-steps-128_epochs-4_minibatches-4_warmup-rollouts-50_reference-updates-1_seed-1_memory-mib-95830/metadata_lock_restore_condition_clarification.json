@@ -1,0 +1,10 @@
+{
+  "kind": "metadata_lock_restore_condition_clarification",
+  "at_utc": "2026-11-02T00:28:52.757962+00:00",
+  "before": "wait for direct_process_metadata.json and direct_current_launch.json",
+  "after": "actual direct_controller_spawn.json and direct_current_launch.json with exact durable ledger row prove registration is complete; direct_process_metadata.json is a later device-observation stage",
+  "producer_pid": 1282807,
+  "producer_birth": "53934903",
+  "controller_pid": 1280844,
+  "gpu_standing_lock_affected": false
+}

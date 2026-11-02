@@ -1,0 +1,14 @@
+{
+  "command": [
+    "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+    "-I",
+    "-S",
+    "-B",
+    "-c",
+    "import json,sys;from pathlib import Path;p=Path(sys.argv[1]);m=json.loads(p.read_text());s=Path(m['source_root']);f=[s/n for n in m['files'] if n.endswith('.py')];[compile(q.read_bytes(),str(q),'exec') for q in f];assert not any(n.split('.')[0] in {'jax','jaxlib','numpy','torch','flax','optax','jaxtari'} for n in sys.modules);print(json.dumps({'python':sys.version,'python_files_compiled':len(f),'numerical_imports':False}))",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-16-33_pixel-study-monitor-recovery_source-commit-79a01e851ff92ddba7d0e12eaf8164cab2028878_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/source_snapshot.json"
+  ],
+  "returncode": 0,
+  "stdout": "{\"python\": \"3.12.13 | packaged by conda-forge | (main, Aug 11 2026, 10:27:28) [GCC 14.4.0]\", \"python_files_compiled\": 239, \"numerical_imports\": false}\n",
+  "stderr": ""
+}

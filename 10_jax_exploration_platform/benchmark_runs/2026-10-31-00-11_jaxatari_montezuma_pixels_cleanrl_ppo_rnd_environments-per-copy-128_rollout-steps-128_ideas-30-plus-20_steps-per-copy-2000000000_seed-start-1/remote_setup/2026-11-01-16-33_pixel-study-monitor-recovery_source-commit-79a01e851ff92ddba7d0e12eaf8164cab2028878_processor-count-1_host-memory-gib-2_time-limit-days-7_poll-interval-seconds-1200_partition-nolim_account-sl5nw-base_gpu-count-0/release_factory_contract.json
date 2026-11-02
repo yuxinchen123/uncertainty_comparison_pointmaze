@@ -1,0 +1,28 @@
+{
+  "admission_granted": false,
+  "first_actual_new_allocation_source_and_full_report_independent_review_required_after_start": true,
+  "future_work_blocked_until_first_full_report_review": true,
+  "held_submission": "one actual sbatch --parsable --hold --no-requeue from the exact plan, with exclusive durable intent, every raw return saved, then both owned ID ledgers and exact row fsynced before receipt/binding",
+  "kind": "recovery_monitor_one_shot_submission_and_release_factory_contract",
+  "new_job_id": null,
+  "no_actual_submission_or_release_by_preparation": true,
+  "no_scientific_full_report_on_login": true,
+  "old_failed_monitor_job_id": "6782816",
+  "old_monitor_running_required": false,
+  "packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-16-33_pixel-study-monitor-recovery_source-commit-79a01e851ff92ddba7d0e12eaf8164cab2028878_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0",
+  "prelaunch_full_candidate_available": false,
+  "release_actions": "one exclusive durable release intent, one exact-owned held query checking owner/account/normal/nolim/one requested CPU/2GiB/no GPU/seven days/no requeue/no restarts, one exact scontrol release, every raw return/receipt fsynced; no cancellation or retry",
+  "release_factory_inputs_required_after_submission": [
+    "actual immutable submission receipt and held binding",
+    "actual returned job identifier exactly once in both global/UVA ID files and exact four-column row",
+    "fresh exact-owned scontrol held query retaining raw stdout/stderr/return",
+    "root actual native Cron verification including the returned identifier",
+    "independent root review and publication of the concrete fixed-identifier release utility and all actual prerequisites"
+  ],
+  "release_factory_no_guessed_identifiers_or_future_hashes": true,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "source_commit": "79a01e851ff92ddba7d0e12eaf8164cab2028878",
+  "unreleased_previous_monitor_job_id": "6782952",
+  "worker_admitted": false
+}

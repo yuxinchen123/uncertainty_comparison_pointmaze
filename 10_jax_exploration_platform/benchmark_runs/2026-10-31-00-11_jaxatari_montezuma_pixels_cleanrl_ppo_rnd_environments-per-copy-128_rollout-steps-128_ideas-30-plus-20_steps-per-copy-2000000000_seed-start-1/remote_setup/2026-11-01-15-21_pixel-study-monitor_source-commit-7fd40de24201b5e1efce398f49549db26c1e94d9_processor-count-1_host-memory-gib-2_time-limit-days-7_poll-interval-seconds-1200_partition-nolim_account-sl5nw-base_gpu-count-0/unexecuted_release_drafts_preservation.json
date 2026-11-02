@@ -1,0 +1,19 @@
+{
+  "actual_proof_created": false,
+  "actual_release": false,
+  "at_utc": "2026-11-02T00:20:35.825468+00:00",
+  "draft_test_run": false,
+  "drafts": {
+    "release_monitor_6782952.py": "b546a5d969c9b5d6eda1cbcc0b83d288f3dad41ea19be47bfd6427f633038848",
+    "run_release_6782952_metadata_tests.py": "94dd3f9332263bc102d066705d280ea2e68c9dfdc7cf93558f37e2605663d704",
+    "test_release_monitor_6782952.py": "a1628be0268fd282d2f699c89dcfa06442604c072fc34e46e563f4af40fe2332"
+  },
+  "job_id": "6782952",
+  "kind": "unexecuted_monitor_release_drafts_preserved_after_actual_monitor_source_failure",
+  "reason": "Actual full monitoring failed before a proof could be created: unit_rows expected host but the immutable direct row records hostname. Root requires a fresh packet from separately reviewed corrected source.",
+  "release_intent_created": false,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "source_or_direct_row_changed": false,
+  "state": "held; no release permitted from this packet"
+}

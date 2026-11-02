@@ -1,0 +1,212 @@
+{
+  "admission_granted": false,
+  "after": {
+    "identity": {
+      "cpu_affinity": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "effective_uid": 2618919,
+      "hostname": "serval02",
+      "parent_pid": 1280844,
+      "pid": 1282807,
+      "process_group": 1280833,
+      "process_start_time": "53934903",
+      "uid": 2618919
+    },
+    "stat": "1282807 (python) R 1280844 1280833 1280833 0 -1 4194304 210526 445548 69 1 4022 4513 396 2952 20 0 1 0 53934903 109129728 14044 18446744073709551615 94856490098688 94856492526365 140736132287360 0 0 0 0 16781319 0 0 0 0 17 1 0 0 0 0 0 94856493951728 94856495933168 94856521433088 140736132295002 140736132296100 140736132296100 140736132296643 0\n",
+    "stat_sha256": "30f2bc3c5e2c3bc3b5ade8235eaefaaa6587776bcb55eaa5664abc82c9a550e3",
+    "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+    "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+  },
+  "before": {
+    "identity": {
+      "cpu_affinity": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "effective_uid": 2618919,
+      "hostname": "serval02",
+      "parent_pid": 1280844,
+      "pid": 1282807,
+      "process_group": 1280833,
+      "process_start_time": "53934903",
+      "uid": 2618919
+    },
+    "stat": "1282807 (python) R 1280844 1280833 1280833 0 -1 4194304 210526 445548 69 1 4009 4508 396 2952 20 0 1 0 53934903 109129728 14044 18446744073709551615 94856490098688 94856492526365 140736132287360 0 0 0 0 16781319 0 0 0 0 17 1 0 0 0 0 0 94856493951728 94856495933168 94856521433088 140736132295002 140736132296100 140736132296100 140736132296643 0\n",
+    "stat_sha256": "9e803fbc9a2bc1dd46a160c21ded0342801be0127fcae522965b4072747e4ccf",
+    "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+    "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+  },
+  "capability": "approved_direct_uuid_held_standing_lock_current_cuda_context_and_assigned_device_windows_v1",
+  "case_credit": 0,
+  "current_admission": {
+    "canonical_path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/SOURCE_AND_GATES_READY.json",
+    "frozen_admission": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-14-53_full-original-direct-qualification_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/direct_history/admission.json",
+      "sha256": "4a71ef2b245ae784933c55bb2b5159aa1bb7f8f626eb94b15390e2f9a304ee7c"
+    },
+    "kind": "current_direct_admission_matches_frozen_original",
+    "schema_version": 1,
+    "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+    "source_root": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673"
+  },
+  "current_launch": {
+    "kind": "serval02_card1_current_launch",
+    "plan": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-14-53_full-original-direct-qualification_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/measurement_plan.json",
+      "sha256": "4eb721904eb6f4372393662ef260812cc10b71866d4034f46d7f4d83bfbf5f04"
+    },
+    "process_ledger": {
+      "snapshot": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-14-53_full-original-direct-qualification_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/direct_current_process_ledger_snapshot.json",
+        "sha256": "0043557ba522366c13c0ceeef047bf9fed258ab652aac4a575c5cb90a6084668"
+      },
+      "source_path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/processes.json"
+    },
+    "process_row": {
+      "gpu_uuid": "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3",
+      "helper_commit": "44f7d99db22c01bfd8beefefc5f548f5517d5348",
+      "hostname": "serval02",
+      "kind": "selected_configuration_measurement",
+      "pid": 1282807,
+      "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+      "source_root": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "start_time": "53934903",
+      "unit": "2026-11-01-14-53_full-original-direct-qualification_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830"
+    },
+    "schema_version": 1
+  },
+  "environment": {
+    "CUDA_VISIBLE_DEVICES": "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3"
+  },
+  "history": {
+    "comparisons": 120,
+    "inputs": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-14-53_full-original-direct-qualification_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/direct_history/inputs.json",
+      "sha256": "8c58bbb21e39eddc158b9441beb24c66754376350f81beab61a8c83d86d14eb2"
+    },
+    "stop": {
+      "direct_processes": 62,
+      "jobs": 25,
+      "source": "immutable historical snapshots only"
+    }
+  },
+  "idea_credit": 0,
+  "kernel_device_enforcement_verified": false,
+  "kind": "serval02_card1_process_metadata",
+  "lock_after": {
+    "fd": 5,
+    "fd_stat": {
+      "device": 64512,
+      "inode": 23077017,
+      "mode": 420,
+      "regular_file": true,
+      "uid": 2618919
+    },
+    "fd_target": "/tmp/sl5nw_serval02_card1.lock",
+    "fdinfo": "pos:\t0\nflags:\t02100002\nmnt_id:\t31\nino:\t23077017\nlock:\t1: FLOCK  ADVISORY  WRITE 1282807 fc:00:23077017 0 EOF\n",
+    "fdinfo_sha256": "492b25451fa925528d1eebf6d9e4c4ef482f9e22e8df20815f24f4caa5e80989",
+    "path": "/tmp/sl5nw_serval02_card1.lock",
+    "path_stat": {
+      "device": 64512,
+      "inode": 23077017,
+      "mode": 420,
+      "regular_file": true,
+      "uid": 2618919
+    },
+    "path_symlink": false
+  },
+  "lock_before": {
+    "fd": 5,
+    "fd_stat": {
+      "device": 64512,
+      "inode": 23077017,
+      "mode": 420,
+      "regular_file": true,
+      "uid": 2618919
+    },
+    "fd_target": "/tmp/sl5nw_serval02_card1.lock",
+    "fdinfo": "pos:\t0\nflags:\t02100002\nmnt_id:\t31\nino:\t23077017\nlock:\t1: FLOCK  ADVISORY  WRITE 1282807 fc:00:23077017 0 EOF\n",
+    "fdinfo_sha256": "492b25451fa925528d1eebf6d9e4c4ef482f9e22e8df20815f24f4caa5e80989",
+    "path": "/tmp/sl5nw_serval02_card1.lock",
+    "path_stat": {
+      "device": 64512,
+      "inode": 23077017,
+      "mode": 420,
+      "regular_file": true,
+      "uid": 2618919
+    },
+    "path_symlink": false
+  },
+  "output_directory": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-14-53_full-original-direct-qualification_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830",
+  "packing_point_credit": 0,
+  "profile": {
+    "driver": "590.48.01",
+    "gpu_count": 1,
+    "gpu_uuid": "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3",
+    "hardware_class": "h100",
+    "hostname": "serval02",
+    "kernel_device_enforcement_verified": false,
+    "lock_device": 64512,
+    "lock_inode": 23077017,
+    "lock_mode": 420,
+    "memory_mib": 95830,
+    "model": "NVIDIA H100 NVL",
+    "name": "direct-serval02-card-1-current-process-and-standing-lock-version-1",
+    "schema_version": 1,
+    "standing_lock": "/tmp/sl5nw_serval02_card1.lock",
+    "uid": 2618919,
+    "username": "sl5nw"
+  },
+  "role": "owner",
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "site_qualification_credit": 0,
+  "source": {
+    "files": {
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/collect_worker_exit_receipts.py": "bcf3355b756a54251c1d03ed0494cd9e0ee2c6dba5398da1a94e168807ae058f",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py": "600b9744fecb8ac52e75f1008ef687aa5b7dc4c637babdb73ae35de07aa01497",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/controller.py": "1c06dbf51a135fea5b32bdf4fa6feadcd597dcdd269559fb3ecdc8b58414f12a",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/device_memory_limit.py": "3abcb3641cc799424d6585e9881befbbd3c06800e9dc4d19fed5a507fe5e06ff",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py": "310bcb6b4b1a18cc9d7acac62a07dfb60874bb60aed127b50b9c07227593f9f8",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py": "beead126531ee254a7999adae2e2e0e7292f18154a2e697e8a22ce1e93a33294",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_allocation_observation.py": "f614a3792f196605cd1fa4b76738ff3157f72ee6700058526c2598e45a63a50c",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_case.py": "5acd8a33b849e8805a6d51023d5c5661ac989b473a6135669b9ca243256e754f",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_evidence.py": "cc66813e5a31dd54f9c266f5a094c26c6a5753c17599b1badd97911f932c5824",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_qualification.py": "93a19a553a10daf894e4e573b7aacebecf0d5a1cfa0b0f13a471c19e4184eecb",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_queue.py": "cac5c612c641aad0bc814438f0e21c02544073632484dcba99047e2ac44aaa60",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py": "7b71221d25493ad5a5b07672e593a329f912ebf3ecd259f2aeede1e6da55acc6",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py": "df811a5d51a7ef2f747bc32d1545c8286552675dfc8b859e7d0600eef4c920c5",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry.py": "40c117d6fd1937dcdd465381d1469f0ad687103d7b551d604d8c6e03063f9107",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py": "3d6cd5b967836995c6d9c43e7883aeb1efd414673384c11249e1239b7e75fae4",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/passive_installed_slurm_observation.py": "97ce634c07cd7a2b045d4253938db21c844abd93f3bb7b9d4dbebfd5f33bf842",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/portable_evidence.py": "0ecae0ab2c21b0bbeadd47ddbd81026cb133e8f3d7f32c2148268dbfe575a4d1",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py": "2612e358f3e823289a92bdfe54856bdc8f0de5553db4bdcc5cd7617083cfd6aa",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/pregather_async_retry.py": "881c89b678782dc56568b9257a9753a78b4e06464d43e73a14f1927a5fc17695",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py": "80bbfb62cb64788050cb61be4e8efab996716ed04b839e6dcf204e8a2d38f48c",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/short_learning.py": "b17d70f4e49de9f766062beb0578729fcde9d68a29060f37d718deb644cb0999",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py": "66771819cf75ea89e1b6f8fef4467aece2eecf864cd0ca434cbb5c698365f210",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_active_configuration_observation.py": "8cc5a3544e426e3bd3e78707f6c77dc249a1d19165a593e157d2097daa07a648",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_slurm_configured_isolation.py": "d659dd1f21ddd2d7bb0474b4ded0ae4ea129c00365984c1fe7f84439b8eba694",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py": "e392dc6329cc8b5e902f3271d512cb9ee5bbc2f2fcdd6b0d85cefd981a1042b9"
+    },
+    "source_commit": "44f7d99db22c01bfd8beefefc5f548f5517d5348",
+    "source_root": "/p/rlprojects/RND_worktrees/2026-11-01-14-53_full-original-direct-qualification-source_commit-44f7d99db22c01bfd8beefefc5f548f5517d5348"
+  },
+  "throughput_credit": 0,
+  "uva_configuration_service_trust_used": false,
+  "worker_admitted": false
+}

@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "kind": "frozen_root_verified_native_cron_recovery_basis",
+  "root_reported_current_task": {
+    "id": "ca8af776-26dd-4ee8-8c00-45ddc8bbc0cd",
+    "cron": "*/20 * * * *",
+    "expires_at_utc": "2026-11-09T00:00:00Z",
+    "exact_prompt_and_schedule_verified": true,
+    "verified_at_utc": "2026-11-02T00:21:46.347499+00:00"
+  },
+  "captured_at_utc": "2026-11-02T00:34:32.965599+00:00",
+  "source_path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/next_actions.json",
+  "source_sha256_at_capture": "1f0c29cdeb6ebd527f9bbcc03c7aba8af91ae56668f230d91e322b1aa8be183b",
+  "actual_task_tool_queried_by_this_preparation": false,
+  "new_monitor_job_id": null
+}

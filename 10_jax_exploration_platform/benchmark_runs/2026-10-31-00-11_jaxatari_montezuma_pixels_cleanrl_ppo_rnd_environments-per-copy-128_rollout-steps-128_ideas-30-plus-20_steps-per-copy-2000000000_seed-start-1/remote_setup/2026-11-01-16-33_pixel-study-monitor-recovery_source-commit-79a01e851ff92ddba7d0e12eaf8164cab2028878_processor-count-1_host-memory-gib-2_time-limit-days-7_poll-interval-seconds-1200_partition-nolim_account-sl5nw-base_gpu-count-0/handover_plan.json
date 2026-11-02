@@ -1,0 +1,19 @@
+{
+  "failed_previous_job_id": "6782816",
+  "held_superseded_job_id": "6782952",
+  "jobs_released": 0,
+  "kind": "explicit_failed_monitor_recovery_handover",
+  "new_job_id": null,
+  "new_jobs_submitted": 0,
+  "prelaunch_full_candidate_available": false,
+  "requirements": [
+    "Review and publish the exact static packet and one-shot held utility.",
+    "Root submits held once and fsyncs actual ownership; native Cron remains required in that turn.",
+    "Review/publish a concrete actual-identifier release utility bound to actual held/Cron records, then root releases once.",
+    "Independently verify actual runtime/allocation/source modes and the first full report before canonical monitoring recovery or later work."
+  ],
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "source_commit": "79a01e851ff92ddba7d0e12eaf8164cab2028878",
+  "worker_admitted": false
+}

@@ -1,0 +1,26 @@
+{
+  "kind": "actual_monitor_process_hostname_failure_diagnosis",
+  "at_utc": "2026-11-02T00:23:13.654777+00:00",
+  "current_monitor_job_id": "6782816",
+  "failed_step": "6782816.45",
+  "source_commit": "31fd9fe7cd96343741e8b48a18019efee9b4ac5c",
+  "stderr_path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-14-02_pixel-study-monitor_source-commit-31fd9fe7cd96343741e8b48a18019efee9b4ac5c_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/scheduled_check_2026-11-02-00-19_stderr.raw",
+  "stderr_sha256": "3ea3c8e2b842d09495b9242a84bd7fd78ead995a6081c453a0c13d886b837648",
+  "actual_immutable_process_row": {
+    "gpu_uuid": "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3",
+    "helper_commit": "44f7d99db22c01bfd8beefefc5f548f5517d5348",
+    "hostname": "serval02",
+    "kind": "selected_configuration_measurement",
+    "pid": 1282807,
+    "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+    "source_root": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+    "start_time": "53934903",
+    "unit": "2026-11-01-14-53_full-original-direct-qualification_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830"
+  },
+  "failure": "monitor.unit_rows requires host but exact direct producer record uses hostname",
+  "new_held_monitor_6782952_also_affected": true,
+  "live_process_ledger_changed": false,
+  "direct_producer_stopped": false,
+  "held_cpu_shape_passed_but_full_proof_absent": true,
+  "held_correctness_releases_paused": true
+}

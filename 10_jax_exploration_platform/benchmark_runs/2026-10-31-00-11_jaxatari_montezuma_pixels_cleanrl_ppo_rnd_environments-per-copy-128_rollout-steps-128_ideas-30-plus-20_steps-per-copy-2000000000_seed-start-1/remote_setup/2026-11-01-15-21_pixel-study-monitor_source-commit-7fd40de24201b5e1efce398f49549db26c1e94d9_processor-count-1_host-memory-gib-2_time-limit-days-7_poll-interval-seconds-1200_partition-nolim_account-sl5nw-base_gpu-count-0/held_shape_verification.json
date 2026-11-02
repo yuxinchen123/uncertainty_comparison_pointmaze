@@ -1,0 +1,34 @@
+{
+  "kind": "owned_cpu_monitor_held_shape_verification",
+  "passed": true,
+  "job_id": "6782952",
+  "checked_at_utc": "2026-11-02T00:19:29.287177+00:00",
+  "shape_fields": {
+    "JobId": "6782952",
+    "UserId": "sl5nw(2618919)",
+    "JobState": "PENDING",
+    "Reason": "JobHeldUser",
+    "Account": "sl5nw_base",
+    "QOS": "normal",
+    "Partition": "nolim",
+    "Requeue": "0",
+    "Restarts": "0",
+    "NumCPUs": "1",
+    "NumTasks": "1",
+    "TimeLimit": "7-00:00:00",
+    "TresPerNode": "gres/gpu:0"
+  },
+  "requested_resources": {
+    "cpu": "1",
+    "mem": "2G",
+    "node": "1",
+    "billing": "309"
+  },
+  "actual_num_nodes_field": "1-1",
+  "unallocated_node": "",
+  "source": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-15-21_pixel-study-monitor_source-commit-7fd40de24201b5e1efce398f49549db26c1e94d9_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/held_scontrol_return.json",
+    "sha256": "00a0696bad05902479253a7ad36c133fdeb194a398a627788e0dbf637a2e1e84"
+  },
+  "zero_gpu": true
+}

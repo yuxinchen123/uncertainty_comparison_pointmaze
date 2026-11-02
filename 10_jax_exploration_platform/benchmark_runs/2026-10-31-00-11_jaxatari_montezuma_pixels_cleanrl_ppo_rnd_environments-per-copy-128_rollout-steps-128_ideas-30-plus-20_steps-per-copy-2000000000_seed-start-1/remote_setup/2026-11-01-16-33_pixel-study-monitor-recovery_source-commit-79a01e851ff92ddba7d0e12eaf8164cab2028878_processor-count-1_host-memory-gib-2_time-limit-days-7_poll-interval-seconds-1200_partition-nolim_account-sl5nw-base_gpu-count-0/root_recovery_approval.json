@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "kind": "root_approved_static_cpu_monitor_recovery",
+  "approved": true,
+  "at_utc": "2026-11-02T00:41:33.171884+00:00",
+  "source_commit": "79a01e851ff92ddba7d0e12eaf8164cab2028878",
+  "packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-16-33_pixel-study-monitor-recovery_source-commit-79a01e851ff92ddba7d0e12eaf8164cab2028878_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0",
+  "static_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-16-33_pixel-study-monitor-recovery_source-commit-79a01e851ff92ddba7d0e12eaf8164cab2028878_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/static_source_freeze.json",
+    "sha256": "c7aae037f1b73d424d8fd7f092480edc449ba12a3a581bd50ac2fb3123438ecd"
+  },
+  "independent_static_review": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-16-40-20_cpu-monitor-recovery-static-independent-review_gpu-count-0/review.json",
+    "sha256": "c81a37163ad74fda1dcf463f8e1400d6c1134bcf332516acb1e88bb495cba200"
+  },
+  "prelaunch_full_candidate_available": false,
+  "first_full_report_review_required_after_start": true,
+  "held_submission_independent_review_required_before_action": true,
+  "actual_runtime_allocation_source_full_report_review_required_before_canonical_monitoring_and_scientific_work": true,
+  "old_monitor_failed_and_unusable": true,
+  "source_files": 265,
+  "scientific_credit": 0,
+  "admission_granted": false
+}

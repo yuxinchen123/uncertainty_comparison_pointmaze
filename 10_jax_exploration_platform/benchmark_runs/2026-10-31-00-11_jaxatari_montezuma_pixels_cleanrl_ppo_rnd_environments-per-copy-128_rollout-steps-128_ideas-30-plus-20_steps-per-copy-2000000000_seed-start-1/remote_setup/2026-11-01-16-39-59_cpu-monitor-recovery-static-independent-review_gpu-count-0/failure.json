@@ -1,0 +1,7 @@
+{
+  "error": "AssertionError()",
+  "traceback": "Traceback (most recent call last):\n  File \"/p/rlprojects/RND_worktrees/2026-11-01-13-28_direct-serval02-card-one-selected-profile_assigned-device-observation_driver-590.48.01_memory-mib-95830/.review_metadata/review_recovery_monitor_static.py\", line 88, in <module>\n    try:main()\n  File \"/p/rlprojects/RND_worktrees/2026-11-01-13-28_direct-serval02-card-one-selected-profile_assigned-device-observation_driver-590.48.01_memory-mib-95830/.review_metadata/review_recovery_monitor_static.py\", line 72, in main\n    assert '6782816|FAILED|' in Path(failed['terminal_stdout']['path']).read_text()\nAssertionError\n",
+  "blocked": [],
+  "actual_job": null,
+  "full_tick_executed": false
+}

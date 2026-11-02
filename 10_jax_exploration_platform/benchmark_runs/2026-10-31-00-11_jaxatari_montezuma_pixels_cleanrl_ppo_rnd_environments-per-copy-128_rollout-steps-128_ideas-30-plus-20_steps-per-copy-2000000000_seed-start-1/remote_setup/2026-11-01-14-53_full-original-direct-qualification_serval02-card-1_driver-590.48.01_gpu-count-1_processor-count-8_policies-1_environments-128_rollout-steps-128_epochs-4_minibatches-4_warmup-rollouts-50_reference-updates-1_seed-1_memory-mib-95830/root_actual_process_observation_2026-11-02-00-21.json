@@ -1,0 +1,44 @@
+{
+  "kind": "actual_owned_direct_controller_and_child_observation",
+  "at_utc": "2026-11-02T00:21:46.251870+00:00",
+  "observations": [
+    {
+      "kind": "controller",
+      "pid": 1280844,
+      "birth": "53919672",
+      "uid": 2618919,
+      "parent_pid": 1,
+      "hostname": "serval02",
+      "affinity": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "kind": "observed_child",
+      "pid": 1282807,
+      "birth": "53934903",
+      "uid": 2618919,
+      "parent_pid": 1280844,
+      "hostname": "serval02",
+      "affinity": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    }
+  ],
+  "no_device_queries": true,
+  "no_process_signals": true
+}

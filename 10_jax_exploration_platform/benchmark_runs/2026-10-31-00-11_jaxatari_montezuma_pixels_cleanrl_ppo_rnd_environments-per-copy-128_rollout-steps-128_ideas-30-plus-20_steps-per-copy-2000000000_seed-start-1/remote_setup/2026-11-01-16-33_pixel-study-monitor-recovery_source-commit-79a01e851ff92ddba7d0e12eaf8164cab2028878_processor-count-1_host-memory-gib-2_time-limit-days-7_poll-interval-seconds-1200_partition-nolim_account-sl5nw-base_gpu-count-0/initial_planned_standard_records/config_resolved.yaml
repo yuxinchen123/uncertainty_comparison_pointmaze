@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "kind": "persistent_cpu_monitor_recovery_metadata_preparation",
+  "source_commit": "79a01e851ff92ddba7d0e12eaf8164cab2028878",
+  "old_failed_monitor_job_id": "6782816",
+  "unreleased_superseded_monitor_job_id": "6782952",
+  "new_job_id": null,
+  "prelaunch_full_candidate_available": false,
+  "reason": "The preceding monitor failed on the approved hostname-only direct process row. Recovery uses reviewed corrected source and metadata checks; the first actual full report is required after startup.",
+  "actual_full_report_on_login": false,
+  "numerical_imports": false,
+  "new_jobs_submitted": 0,
+  "scientific_credit": 0,
+  "worker_admission": false,
+  "requested_processors": 1,
+  "accepted_smt_logical_processors": [
+    1,
+    2
+  ],
+  "host_memory_gib": 2,
+  "gpu_count": 0,
+  "time_limit": "7-00:00:00",
+  "interval_seconds": 1200
+}

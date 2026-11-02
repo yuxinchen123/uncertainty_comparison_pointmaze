@@ -1,0 +1,389 @@
+{
+  "schema_version": 1,
+  "kind": "independent_monitor_hostname_incoming_private_index_review",
+  "approved": true,
+  "actual_metadata_host": "portal05",
+  "actual_job": null,
+  "old_allocation_6782816_not_used_after_end": true,
+  "integration_head": "bbab8d81830c19e47190ed1429ec16254cf7f9dc",
+  "base": "7fd40de24201b5e1efce398f49549db26c1e94d9",
+  "incoming": "8e69929f03d2e3e0fad0e13187b7303646b96771",
+  "incoming_tree": "3531056383c3e1f8f90c21a863ac6589bbfe8728",
+  "expected_merge_tree": "ad66299f3c97aefb5cf6a35a2cf567675571fd68",
+  "paths": {
+    ".review_metadata/actual_processes_fixture_provenance.json": "6238c72a180e8ee442f220034f17d97f1c8450bb7548d876dbd55011df5c612a",
+    ".review_metadata/author_harness_failure_6782816_47.json": "53f13cf91641781664321c8e835c4b382962e140741934f1790f6beb0f199d15",
+    ".review_metadata/monitor_host_hostname_author_6782816_48.json": "c6e6c2fbb8bc05a897a1b9612befa816e7674898cf174c9a63ec22d79b7970f2",
+    ".review_metadata/monitor_host_hostname_independent_6782816_49.json": "57d12465252f9373a16e56e2333d250078840f9a95fbe6401bb939563fa9c22b",
+    ".review_metadata/monitor_hostname_source_freeze.json": "34d76baddd9c9f4afd1d56250e5060c9b498ea021eab1f0d69721376dc499e80",
+    ".review_metadata/run_monitor_hostname_author.py": "d1651d51e01da8b309c519ba452ad9da5ff0b414ca79a4b5db3f091101dcea1c",
+    ".review_metadata/run_monitor_hostname_author_before_stdlib_import_correction.py": "5569917a7f28ff0f6e1c2771ac6c39a1358081a6e08aa6e453bb4642c6052020",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/monitor.py": "d351cddb11c9b427d9b6310b58b717e7670a511f4061c7d55017e3f3b607ca09",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/fixtures/actual_processes_host_and_hostname_2026_11_02.json": "0043557ba522366c13c0ceeef047bf9fed258ab652aac4a575c5cb90a6084668",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_monitor_process_hostname.py": "ca07a26d2658bee02c27a7c90ba658fc02e8d69b5acaf9efa199679788326183",
+    ".review_metadata/monitor_hostname_publication_roster.json": "879f735722c3914cd95017111c86012c3baad8f4024949529b46b88e4acf4993"
+  },
+  "path_count": 11,
+  "all11_author_Git_blob_mode_and_working_byte_checks_passed_in_retained_prior_run": true,
+  "retained_prior_check": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-16-27-47_monitor-hostname-incoming-source-8e69929f_private-index-review/failure.json",
+    "sha256": "dfe32f0104d4d9bec588cdde29685a397967b7198c4caee4d9f7f345d096c14a"
+  },
+  "prior_failure_was_only_empty_private_statcache": true,
+  "actual_private_index_copied_from_clean_real_HEAD": true,
+  "actual_private_checkout_dryrun_passed": true,
+  "actual_private_three_way_passed": true,
+  "conflicts": [],
+  "untracked_ignored_or_symlink_collisions": [],
+  "real_index_sha256_before": "38e0886a71db6116342022b60e18feabd98705306a00ebe6ce2896baf846f624",
+  "real_index_sha256_after": "38e0886a71db6116342022b60e18feabd98705306a00ebe6ce2896baf846f624",
+  "protected_before": {
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/settings.py": "17f20c6dd84c99eb435337b4446418cdcda3f426514d228996f40de4220c6f26",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/networks.py": "ee65436eda5fab6ae2f8c303eaf3c072b5cdfa1f6d86cfc310dfa4974c98a5bd",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/environment.py": "aa0ad31c8fbd04c67fb9742ea103e9262dfe9cc5b6e719889c50454537b1c8b7",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/__init__.py": "4692ca9941cece84d6cbea0c19b9344a0dfe5d32f3a1a9d93ad7cd93fe135de2",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/state.py": "9fcf0b6bb09bbf70dc88cd28952a6fa50969371f0d8aa66739c91ced1fe887f4",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/kernels.py": "dd895f5d95f6d39c79dce277254af9a19ac49112fcec0b16a5ba096a8082e8ff",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/pixel_preprocessing.py": "8a9f30f36ef7b07fa0ae513d1aee442a9964c2f8da179203b031c7aca8735188",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/config.py": "8b3643fba5e3382f612507416f2204500966592a6872bb286dea1935c5f32218",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/checkpointing.py": "f156b27e0c5d275db7e472f8659ca46d594624a8f573d43eee5383cdaf9f17fb",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/training.py": "5b868d95c8e0f5798330e38fcf7d9a6981838881333bafe73465c1af070a5100",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py": "df811a5d51a7ef2f747bc32d1545c8286552675dfc8b859e7d0600eef4c920c5",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/scripts/atari_pixel_campaign/paired_benchmark.py": "c3e39d8e5d2549c3e2682e196861095780b30740a49821b2077da620386f2916",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/scripts/atari_pixel_campaign/check_rendering.py": "79e21acb6d1166b8cad73a9e8eab6c360a9655fbaba628dbedd8307c511da81e",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/SOURCE_AND_GATES_READY.json": "4a71ef2b245ae784933c55bb2b5159aa1bb7f8f626eb94b15390e2f9a304ee7c",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/source_checks/d28e6735e79788f618acb0ebfde8609db1f776af/h100.json": "7d020f2a4436ed9f572d0009f4e6e4df8d935546ef8abc2afd1824ace1a59def",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/source_checks/d28e6735e79788f618acb0ebfde8609db1f776af/jaguar03_rtx_a4500.json": "2e43c7caf3549df23a4be4cadd338f9413c599e81e25728e26d0b472afbd44f7"
+  },
+  "protected_after": {
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/settings.py": "17f20c6dd84c99eb435337b4446418cdcda3f426514d228996f40de4220c6f26",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/networks.py": "ee65436eda5fab6ae2f8c303eaf3c072b5cdfa1f6d86cfc310dfa4974c98a5bd",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/environment.py": "aa0ad31c8fbd04c67fb9742ea103e9262dfe9cc5b6e719889c50454537b1c8b7",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/__init__.py": "4692ca9941cece84d6cbea0c19b9344a0dfe5d32f3a1a9d93ad7cd93fe135de2",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/state.py": "9fcf0b6bb09bbf70dc88cd28952a6fa50969371f0d8aa66739c91ced1fe887f4",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/kernels.py": "dd895f5d95f6d39c79dce277254af9a19ac49112fcec0b16a5ba096a8082e8ff",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/pixel_preprocessing.py": "8a9f30f36ef7b07fa0ae513d1aee442a9964c2f8da179203b031c7aca8735188",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/config.py": "8b3643fba5e3382f612507416f2204500966592a6872bb286dea1935c5f32218",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/checkpointing.py": "f156b27e0c5d275db7e472f8659ca46d594624a8f573d43eee5383cdaf9f17fb",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/training.py": "5b868d95c8e0f5798330e38fcf7d9a6981838881333bafe73465c1af070a5100",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py": "df811a5d51a7ef2f747bc32d1545c8286552675dfc8b859e7d0600eef4c920c5",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/scripts/atari_pixel_campaign/paired_benchmark.py": "c3e39d8e5d2549c3e2682e196861095780b30740a49821b2077da620386f2916",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/scripts/atari_pixel_campaign/check_rendering.py": "79e21acb6d1166b8cad73a9e8eab6c360a9655fbaba628dbedd8307c511da81e",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/SOURCE_AND_GATES_READY.json": "4a71ef2b245ae784933c55bb2b5159aa1bb7f8f626eb94b15390e2f9a304ee7c",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/source_checks/d28e6735e79788f618acb0ebfde8609db1f776af/h100.json": "7d020f2a4436ed9f572d0009f4e6e4df8d935546ef8abc2afd1824ace1a59def",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/source_checks/d28e6735e79788f618acb0ebfde8609db1f776af/jaguar03_rtx_a4500.json": "2e43c7caf3549df23a4be4cadd338f9413c599e81e25728e26d0b472afbd44f7"
+  },
+  "source_original_checkout_real_index_or_refs_changed": false,
+  "commands": [
+    {
+      "args": [
+        "rev-parse",
+        "HEAD"
+      ],
+      "private_index": null,
+      "returncode": 0,
+      "stdout": "bbab8d81830c19e47190ed1429ec16254cf7f9dc\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "rev-parse",
+        "--git-path",
+        "index"
+      ],
+      "private_index": null,
+      "returncode": 0,
+      "stdout": "/p/rlprojects/RND/.git/worktrees/merge-atari-cleanrl/index\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "diff",
+        "--cached",
+        "--name-only"
+      ],
+      "private_index": null,
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "show",
+        "-s",
+        "--format=%P",
+        "8e69929f03d2e3e0fad0e13187b7303646b96771"
+      ],
+      "private_index": null,
+      "returncode": 0,
+      "stdout": "7fd40de24201b5e1efce398f49549db26c1e94d9\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "show",
+        "-s",
+        "--format=%T",
+        "8e69929f03d2e3e0fad0e13187b7303646b96771"
+      ],
+      "private_index": null,
+      "returncode": 0,
+      "stdout": "3531056383c3e1f8f90c21a863ac6589bbfe8728\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "diff",
+        "--name-only",
+        "7fd40de24201b5e1efce398f49549db26c1e94d9",
+        "8e69929f03d2e3e0fad0e13187b7303646b96771"
+      ],
+      "private_index": null,
+      "returncode": 0,
+      "stdout": ".review_metadata/actual_processes_fixture_provenance.json\n.review_metadata/author_harness_failure_6782816_47.json\n.review_metadata/monitor_host_hostname_author_6782816_48.json\n.review_metadata/monitor_host_hostname_independent_6782816_49.json\n.review_metadata/monitor_hostname_publication_roster.json\n.review_metadata/monitor_hostname_source_freeze.json\n.review_metadata/run_monitor_hostname_author.py\n.review_metadata/run_monitor_hostname_author_before_stdlib_import_correction.py\n10_jax_exploration_platform/scripts/atari_pixel_campaign/monitor.py\n10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/fixtures/actual_processes_host_and_hostname_2026_11_02.json\n10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_monitor_process_hostname.py\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "diff",
+        "--name-only",
+        "--",
+        ".review_metadata/actual_processes_fixture_provenance.json",
+        ".review_metadata/author_harness_failure_6782816_47.json",
+        ".review_metadata/monitor_host_hostname_author_6782816_48.json",
+        ".review_metadata/monitor_host_hostname_independent_6782816_49.json",
+        ".review_metadata/monitor_hostname_source_freeze.json",
+        ".review_metadata/run_monitor_hostname_author.py",
+        ".review_metadata/run_monitor_hostname_author_before_stdlib_import_correction.py",
+        "10_jax_exploration_platform/scripts/atari_pixel_campaign/monitor.py",
+        "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/fixtures/actual_processes_host_and_hostname_2026_11_02.json",
+        "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_monitor_process_hostname.py",
+        ".review_metadata/monitor_hostname_publication_roster.json"
+      ],
+      "private_index": null,
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "ls-files",
+        "--error-unmatch",
+        "--",
+        ".review_metadata/actual_processes_fixture_provenance.json"
+      ],
+      "private_index": null,
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "error: pathspec '.review_metadata/actual_processes_fixture_provenance.json' did not match any file(s) known to git\nDid you forget to 'git add'?\n"
+    },
+    {
+      "args": [
+        "ls-files",
+        "--error-unmatch",
+        "--",
+        ".review_metadata/author_harness_failure_6782816_47.json"
+      ],
+      "private_index": null,
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "error: pathspec '.review_metadata/author_harness_failure_6782816_47.json' did not match any file(s) known to git\nDid you forget to 'git add'?\n"
+    },
+    {
+      "args": [
+        "ls-files",
+        "--error-unmatch",
+        "--",
+        ".review_metadata/monitor_host_hostname_author_6782816_48.json"
+      ],
+      "private_index": null,
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "error: pathspec '.review_metadata/monitor_host_hostname_author_6782816_48.json' did not match any file(s) known to git\nDid you forget to 'git add'?\n"
+    },
+    {
+      "args": [
+        "ls-files",
+        "--error-unmatch",
+        "--",
+        ".review_metadata/monitor_host_hostname_independent_6782816_49.json"
+      ],
+      "private_index": null,
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "error: pathspec '.review_metadata/monitor_host_hostname_independent_6782816_49.json' did not match any file(s) known to git\nDid you forget to 'git add'?\n"
+    },
+    {
+      "args": [
+        "ls-files",
+        "--error-unmatch",
+        "--",
+        ".review_metadata/monitor_hostname_source_freeze.json"
+      ],
+      "private_index": null,
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "error: pathspec '.review_metadata/monitor_hostname_source_freeze.json' did not match any file(s) known to git\nDid you forget to 'git add'?\n"
+    },
+    {
+      "args": [
+        "ls-files",
+        "--error-unmatch",
+        "--",
+        ".review_metadata/run_monitor_hostname_author.py"
+      ],
+      "private_index": null,
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "error: pathspec '.review_metadata/run_monitor_hostname_author.py' did not match any file(s) known to git\nDid you forget to 'git add'?\n"
+    },
+    {
+      "args": [
+        "ls-files",
+        "--error-unmatch",
+        "--",
+        ".review_metadata/run_monitor_hostname_author_before_stdlib_import_correction.py"
+      ],
+      "private_index": null,
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "error: pathspec '.review_metadata/run_monitor_hostname_author_before_stdlib_import_correction.py' did not match any file(s) known to git\nDid you forget to 'git add'?\n"
+    },
+    {
+      "args": [
+        "ls-files",
+        "--error-unmatch",
+        "--",
+        "10_jax_exploration_platform/scripts/atari_pixel_campaign/monitor.py"
+      ],
+      "private_index": null,
+      "returncode": 0,
+      "stdout": "10_jax_exploration_platform/scripts/atari_pixel_campaign/monitor.py\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "ls-files",
+        "--error-unmatch",
+        "--",
+        "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/fixtures/actual_processes_host_and_hostname_2026_11_02.json"
+      ],
+      "private_index": null,
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "error: pathspec '10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/fixtures/actual_processes_host_and_hostname_2026_11_02.json' did not match any file(s) known to git\nDid you forget to 'git add'?\n"
+    },
+    {
+      "args": [
+        "ls-files",
+        "--error-unmatch",
+        "--",
+        "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_monitor_process_hostname.py"
+      ],
+      "private_index": null,
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "error: pathspec '10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_monitor_process_hostname.py' did not match any file(s) known to git\nDid you forget to 'git add'?\n"
+    },
+    {
+      "args": [
+        "ls-files",
+        "--error-unmatch",
+        "--",
+        ".review_metadata/monitor_hostname_publication_roster.json"
+      ],
+      "private_index": null,
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "error: pathspec '.review_metadata/monitor_hostname_publication_roster.json' did not match any file(s) known to git\nDid you forget to 'git add'?\n"
+    },
+    {
+      "args": [
+        "write-tree"
+      ],
+      "private_index": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-16-27-47_monitor-hostname-incoming-source-8e69929f_private-index-review/copied_real_checkout.index",
+      "returncode": 0,
+      "stdout": "1d3887eb7cc9351b077fa9772ed04226f5bd21c9\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "rev-parse",
+        "bbab8d81830c19e47190ed1429ec16254cf7f9dc^{tree}"
+      ],
+      "private_index": null,
+      "returncode": 0,
+      "stdout": "1d3887eb7cc9351b077fa9772ed04226f5bd21c9\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "read-tree",
+        "-m",
+        "-u",
+        "--dry-run",
+        "7fd40de24201b5e1efce398f49549db26c1e94d9",
+        "bbab8d81830c19e47190ed1429ec16254cf7f9dc",
+        "8e69929f03d2e3e0fad0e13187b7303646b96771"
+      ],
+      "private_index": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-16-27-47_monitor-hostname-incoming-source-8e69929f_private-index-review/copied_real_checkout.index",
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "read-tree",
+        "-m",
+        "7fd40de24201b5e1efce398f49549db26c1e94d9",
+        "bbab8d81830c19e47190ed1429ec16254cf7f9dc",
+        "8e69929f03d2e3e0fad0e13187b7303646b96771"
+      ],
+      "private_index": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-16-27-47_monitor-hostname-incoming-source-8e69929f_private-index-review/copied_real_merge.index",
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "ls-files",
+        "--unmerged"
+      ],
+      "private_index": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-16-27-47_monitor-hostname-incoming-source-8e69929f_private-index-review/copied_real_merge.index",
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "write-tree"
+      ],
+      "private_index": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-16-27-47_monitor-hostname-incoming-source-8e69929f_private-index-review/copied_real_merge.index",
+      "returncode": 0,
+      "stdout": "ad66299f3c97aefb5cf6a35a2cf567675571fd68\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "diff",
+        "--name-only",
+        "bbab8d81830c19e47190ed1429ec16254cf7f9dc",
+        "ad66299f3c97aefb5cf6a35a2cf567675571fd68"
+      ],
+      "private_index": null,
+      "returncode": 0,
+      "stdout": ".review_metadata/actual_processes_fixture_provenance.json\n.review_metadata/author_harness_failure_6782816_47.json\n.review_metadata/monitor_host_hostname_author_6782816_48.json\n.review_metadata/monitor_host_hostname_independent_6782816_49.json\n.review_metadata/monitor_hostname_publication_roster.json\n.review_metadata/monitor_hostname_source_freeze.json\n.review_metadata/run_monitor_hostname_author.py\n.review_metadata/run_monitor_hostname_author_before_stdlib_import_correction.py\n10_jax_exploration_platform/scripts/atari_pixel_campaign/monitor.py\n10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/fixtures/actual_processes_host_and_hostname_2026_11_02.json\n10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_monitor_process_hostname.py\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "rev-parse",
+        "HEAD"
+      ],
+      "private_index": null,
+      "returncode": 0,
+      "stdout": "bbab8d81830c19e47190ed1429ec16254cf7f9dc\n",
+      "stderr": ""
+    }
+  ]
+}
