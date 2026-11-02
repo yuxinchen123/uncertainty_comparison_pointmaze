@@ -1,0 +1,27 @@
+test_absence_timeout_exact_180 (__main__.BarrierTests) ... ok
+test_boolean_schema_refused (__main__.BarrierTests) ... ok
+test_changed_actual_job (__main__.BarrierTests) ... ok
+test_changed_plan (__main__.BarrierTests) ... ok
+test_changed_pre_release_binding (__main__.BarrierTests) ... ok
+test_changed_staged_helper (__main__.BarrierTests) ... ok
+test_coherent_changed_accepted_confirmation_refused (__main__.BarrierTests) ... ok
+test_coherent_final_or_reduced_rounds_refused (__main__.BarrierTests) ... ok
+test_coherent_wrong_configuration_rejected (__main__.BarrierTests) ... ok
+test_coherent_wrong_qualification_reference_rejected (__main__.BarrierTests) ... ok
+test_default_requires_arguments_before_query_or_writes (__main__.BarrierTests) ... ok
+test_delayed_complete (__main__.BarrierTests) ... ok
+test_final_symlink_refused (__main__.BarrierTests) ... ok
+test_immediate_complete (__main__.BarrierTests) ... ok
+test_measurement_cannot_use_profile_startup (__main__.BarrierTests) ... ok
+test_missing_pre_release_is_not_retried (__main__.BarrierTests) ... ok
+test_present_partial_is_not_retried (__main__.BarrierTests) ... ok
+test_real_core_changed_release_receipt_refused (__main__.BarrierTests) ... ok
+test_real_core_cold_stdlib_startup (__main__.BarrierTests) ... ok
+test_real_core_failed_release_receipt_refused (__main__.BarrierTests) ... ok
+test_scheduler_attempt_blocked_before_process_execution (__main__.BarrierTests) ... ok
+test_standalone_qualification_cannot_use_ordinary_startup (__main__.BarrierTests) ... ok
+
+----------------------------------------------------------------------
+Ran 22 tests in 7.943s
+
+OK

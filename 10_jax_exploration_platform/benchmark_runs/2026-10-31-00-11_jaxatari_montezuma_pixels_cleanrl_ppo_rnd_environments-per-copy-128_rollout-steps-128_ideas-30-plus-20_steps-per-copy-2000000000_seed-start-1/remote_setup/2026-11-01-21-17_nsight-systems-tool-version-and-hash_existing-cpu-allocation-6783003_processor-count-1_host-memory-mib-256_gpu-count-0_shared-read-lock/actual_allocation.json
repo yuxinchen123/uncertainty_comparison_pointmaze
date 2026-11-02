@@ -1,0 +1,25 @@
+{
+  "cgroup": "0::/system.slice/slurmstepd.scope/job_6783003/step_127/user/task_0\n",
+  "cpu_affinity": [
+    9
+  ],
+  "hostname": "heartpiece",
+  "job_id": "6783003",
+  "parent_pid": 790857,
+  "pid": 790863,
+  "process_start_time": "55178635",
+  "requested_cpus": 1,
+  "requested_gpus": 0,
+  "requested_host_memory_mib": 256,
+  "requested_step_time_limit_minutes": 10,
+  "slurm_environment": {
+    "SLURM_CPUS_PER_TASK": "1",
+    "SLURM_JOB_GPUS": null,
+    "SLURM_JOB_ID": "6783003",
+    "SLURM_MEM_PER_NODE": "2048",
+    "SLURM_STEP_GPUS": null,
+    "SLURM_STEP_ID": "127"
+  },
+  "step_id": "127",
+  "uids": "Uid:\t2618919\t2618919\t2618919\t2618919"
+}

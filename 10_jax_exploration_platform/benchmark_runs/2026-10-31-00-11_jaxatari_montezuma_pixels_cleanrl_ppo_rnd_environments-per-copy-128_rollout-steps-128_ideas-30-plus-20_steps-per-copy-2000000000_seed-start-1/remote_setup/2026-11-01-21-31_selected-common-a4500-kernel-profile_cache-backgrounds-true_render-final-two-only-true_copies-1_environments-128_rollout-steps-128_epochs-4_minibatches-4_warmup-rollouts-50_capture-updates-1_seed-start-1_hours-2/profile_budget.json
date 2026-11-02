@@ -1,0 +1,37 @@
+{
+  "accepted_result": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-18-54_common_cache-room-backgrounds-true_render-final-two-only-true_confirmation_paired-rounds-7_updates-per-arm-10_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-2_jaguar03/result.json",
+    "sha256": "5684c7392166cb9e5fa627d521fb097a4da24216bcb0737028d636c837016a6a"
+  },
+  "accepted_review": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-20-35_common-a4500-confirmation-independent-raw-audit_copies-1_job-6783295_gpu-count-0_closed-historical-source-approvals_explicit-UTC-accounting/review.json",
+    "sha256": "c949d41603813be5344bd8d39a3a6ea357fb8cc45211e0e3cb9b5af80783794f"
+  },
+  "actual_prior_build_to_completion_seconds": 1110.2416500119725,
+  "actual_prior_candidate_seconds_per_update": [
+    2.523476001096424,
+    2.516055923292879,
+    2.5137840882991442,
+    2.511779039900284,
+    2.5132041747914626,
+    2.51190786609659,
+    2.5135195784037934
+  ],
+  "actual_prior_execution_seconds": 1121.2810089588165,
+  "actual_prior_reference_seconds_per_update": [
+    4.578243686398491,
+    4.565086382406298,
+    4.565134049602785,
+    4.567670046701096,
+    4.567564236593898,
+    4.567336287093349,
+    4.56820623499807
+  ],
+  "basis": "retain the earlier conservative whole-job limit; the prior confirmation contained both configurations and seven ten-update pairs",
+  "complete_capture_updates": 1,
+  "kind": "conservative_profile_preparation_walltime_basis",
+  "new_profile_duration_prediction": false,
+  "prior_requested_job_hours": 2,
+  "profile_active_seconds_limit": 3600,
+  "requested_job_hours": 2
+}

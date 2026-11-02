@@ -1,0 +1,45 @@
+{
+  "kind": "owned_controller_live_before_numerical_child",
+  "at_utc": "2026-11-02T05:36:58.238367+00:00",
+  "pid": 1402663,
+  "birth_counter": "55798230",
+  "hostname": "serval02",
+  "uids": [
+    2618919,
+    2618919,
+    2618919,
+    2618919
+  ],
+  "stat_before": "1402663 (python) S 1 1402663 1402663 0 -1 4194304 116366 245377 185 255 2498 3649 250 1631 20 0 1 0 55798230 68608000 10612 18446744073709551615 94713177804800 94713180232477 140731883418688 0 0 0 0 16781312 2 1 0 0 17 3 0 0 0 0 0 94713181657840 94713183639280 94713202614272 140731883424898 140731883425570 140731883425570 140731883425731 0\n",
+  "stat_after": "1402663 (python) S 1 1402663 1402663 0 -1 4194304 116366 245377 185 255 2498 3649 250 1631 20 0 1 0 55798230 68608000 10612 18446744073709551615 94713177804800 94713180232477 140731883418688 0 0 0 0 16781312 2 1 0 0 17 3 0 0 0 0 0 94713181657840 94713183639280 94713202614272 140731883424898 140731883425570 140731883425570 140731883425731 0\n",
+  "allowed_affinity": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "campaign_file_descriptors": [
+    {
+      "fd": "1",
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/direct_jobs/2026-11-01-20-53_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/controller.stdout.log"
+    },
+    {
+      "fd": "2",
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/direct_jobs/2026-11-01-20-53_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/controller.stderr.log"
+    },
+    {
+      "fd": "5",
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-20-53_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/direct_controller_stdout.raw"
+    },
+    {
+      "fd": "6",
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-20-53_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/direct_controller_stderr.raw"
+    }
+  ],
+  "controller_holds_standing_gpu_lock": false,
+  "numerical_gpu_operations": 0
+}

@@ -1,0 +1,45 @@
+{
+  "Python_numerical_import_attempts": [],
+  "Python_shared_library_calls_blocked": true,
+  "admission_granted": false,
+  "allocation": {
+    "cgroup": "0::/system.slice/slurmstepd.scope/job_6783003/step_124/user/task_0\n",
+    "cpu_affinity": [
+      9
+    ],
+    "hostname": "heartpiece",
+    "job_id": "6783003",
+    "parent_pid": 790360,
+    "pid": 790366,
+    "process_start_time": "55158069",
+    "requested_step": {
+      "cpus": 1,
+      "gpu_count": 0,
+      "host_memory_mib": 256,
+      "maximum_minutes": 5
+    },
+    "slurm_environment": {
+      "SLURM_CPUS_PER_TASK": "1",
+      "SLURM_JOB_GPUS": null,
+      "SLURM_JOB_ID": "6783003",
+      "SLURM_MEM_PER_NODE": "2048",
+      "SLURM_STEP_GPUS": null,
+      "SLURM_STEP_ID": "124"
+    },
+    "step_id": "124",
+    "uids": "Uid:\t2618919\t2618919\t2618919\t2618919"
+  },
+  "capture_or_profile_requested": false,
+  "case_credit": 0,
+  "discovery_failure_or_limit": {
+    "reason": "tool image exceeds the light-phase 32MiB hash bound; no heavy read or version call was made"
+  },
+  "external_tool_library_mapping_audit": "not performed; the only external argv, when found, was --version",
+  "idea_credit": 0,
+  "kind": "actual_nsight_tool_metadata_discovery",
+  "metadata_completed": true,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "tool_record": null,
+  "version_command_only": true
+}

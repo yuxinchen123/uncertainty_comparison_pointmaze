@@ -1,0 +1,22 @@
+{
+  "files": {
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-21-31_selected-common-a4500-profile-preparation_copies-1-2_capture-complete-updates-1_gpu-count-0/prepare_profiles.py": "a89bc8ca34ef5d0cd1bb6f654c20ac8225a09e9258883fe5e70ab2fffee787cf",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-21-31_selected-common-a4500-profile-preparation_copies-1-2_capture-complete-updates-1_gpu-count-0/guarded_prepare_child.py": "9bc426a4b033831b5d069d7fe3d0aba58a8293fd52702bd5c3ef823fccd17b27",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-21-31_selected-common-a4500-profile-preparation_copies-1-2_capture-complete-updates-1_gpu-count-0/run_preparation.py": "7d12a8dc697fec2e8b051f02c34de7a9ed0d5f5924f5a83cffadaaa310c05772"
+  },
+  "command": [
+    "srun",
+    "--jobid=6783003",
+    "--nodes=1",
+    "--ntasks=1",
+    "--cpus-per-task=1",
+    "--mem=1G",
+    "--gres=none",
+    "--time=00:25:00",
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-21-31_selected-common-a4500-profile-preparation_copies-1-2_capture-complete-updates-1_gpu-count-0/run_preparation.py"
+  ]
+}

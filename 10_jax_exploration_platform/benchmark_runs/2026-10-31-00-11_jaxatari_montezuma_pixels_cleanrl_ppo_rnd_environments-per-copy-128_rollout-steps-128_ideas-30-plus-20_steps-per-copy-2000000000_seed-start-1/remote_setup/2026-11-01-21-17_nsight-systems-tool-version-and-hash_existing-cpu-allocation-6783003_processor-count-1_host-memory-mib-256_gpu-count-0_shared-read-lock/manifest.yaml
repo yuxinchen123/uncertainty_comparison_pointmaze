@@ -1,0 +1,26 @@
+{
+  "admission_granted": false,
+  "command": [
+    "srun",
+    "--jobid=6783003",
+    "--overlap",
+    "--nodes=1",
+    "--ntasks=1",
+    "--cpus-per-task=1",
+    "--mem=256M",
+    "--gres=none",
+    "--time=00:10:00",
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-21-17_nsight-systems-tool-version-and-hash_existing-cpu-allocation-6783003_processor-count-1_host-memory-mib-256_gpu-count-0_shared-read-lock/inspect_discovered_nsight.py"
+  ],
+  "existing_cpu_job": "6783003",
+  "gpu_count": 0,
+  "kind": "actual_discovered_tool_metadata_under_shared_read_lock",
+  "new_jobs": 0,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "source_commit": "9fcc43a478b93d731df780805fd7c3c514cdf67f"
+}

@@ -1,0 +1,54 @@
+{
+  "actual_candidate_paths": [
+    "/sw/ubuntu2204/ebu082025/software/common/core/nsight-systems/2024.7.1/target-linux-x64/nsys"
+  ],
+  "module_metadata": [
+    {
+      "literal_candidate_roots": [],
+      "path": "/sw/ubuntu/modulefiles/core/cuda/11.8.0.lua",
+      "sha256": "d12fcca5e21baba533de8dcfd3e90b6e327d1df8fb22d501dab7fc1f42d5bd86"
+    },
+    {
+      "literal_candidate_roots": [],
+      "path": "/sw/ubuntu/modulefiles/core/cuda/12.8.1.lua",
+      "sha256": "65cff68349b62571ffe288cd0d13da9cbda184380285b676940ce2b9ebea9f82"
+    },
+    {
+      "literal_candidate_roots": [],
+      "path": "/sw/ubuntu/modulefiles/core/cuda/13.0.0.lua",
+      "sha256": "14db246f15f7aa6b722d2220623476325a8f7a8a53e361c09e2a61e68d1f22b8"
+    },
+    {
+      "literal_candidate_roots": [],
+      "path": "/sw/ubuntu/modulefiles/core/cuda/13.1.0.lua",
+      "sha256": "c23fe4b9355ed552f1a91fafcd74b74ad936e9d1c7aa1f8e1c41af1194b4812c"
+    },
+    {
+      "literal_candidate_roots": [],
+      "path": "/sw/ubuntu/modulefiles/core/cuda/default",
+      "sha256": "14db246f15f7aa6b722d2220623476325a8f7a8a53e361c09e2a61e68d1f22b8"
+    },
+    {
+      "literal_candidate_roots": [
+        "//developer.nvidia.com/nsight-compute",
+        "//developer.nvidia.com/nsight-compute",
+        "//developer.nvidia.com/nsight-compute",
+        "/sw/ubuntu2204/ebu082025/software/common/core/nsight-compute/2026.3.1.2"
+      ],
+      "path": "/sw/ubuntu/modulefiles/core/nsight-compute/2026.3.1.2.lua",
+      "sha256": "17910002aa435d9d8ffad0bd9d62684755e5732fa10b6b54ddb847d1d755d4cc"
+    },
+    {
+      "literal_candidate_roots": [
+        "//developer.nvidia.com/nsight-compute",
+        "//developer.nvidia.com/nsight-compute",
+        "//developer.nvidia.com/nsight-compute",
+        "/sw/ubuntu2204/ebu082025/software/common/core/nsight-systems/2024.7.1"
+      ],
+      "path": "/sw/ubuntu/modulefiles/core/nsight-systems/2024.7.1.lua",
+      "sha256": "d1a2a617c6bf9d0b185363c6532ae97782981faa80965aaf631cefcf4de3b6bc"
+    }
+  ],
+  "selection_policy": "Use the actual PATH result, otherwise only a unique bounded discovered executable; no version preference is guessed.",
+  "which_nsys": null
+}

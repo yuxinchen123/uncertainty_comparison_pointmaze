@@ -1,0 +1,44 @@
+{
+  "kind": "actual_owned_metadata_lock_permission_restore_after_exact_child_registration",
+  "at_utc": "2026-11-02T05:37:57.540952+00:00",
+  "controller_pid": 1402663,
+  "actual_child_pid": 1405247,
+  "actual_child_birth_counter": "55826101",
+  "spawn": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-20-53_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/direct_controller_spawn.json",
+    "sha256": "bda87445567cbd15f63faedbffc7411a5334b9a6a8cb1fd71deb4614bdb2b9d6"
+  },
+  "current_launch": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-20-53_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/direct_current_launch.json",
+    "sha256": "aff86d7cc4087966326731a3a2210e4cf14d9591d91a565601b3c19dae5de946"
+  },
+  "live_ledger_exact_row_count": 1,
+  "files": [
+    {
+      "device": 76,
+      "inode": 4329110,
+      "old_mode": 432,
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/queue/metadata.lock",
+      "protected_mode": 416,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "uid": 2618919,
+      "restored_mode": 432,
+      "same_inode_and_bytes": true
+    },
+    {
+      "device": 76,
+      "inode": 4304699,
+      "old_mode": 432,
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/processes.lock",
+      "protected_mode": 416,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "uid": 2618919,
+      "restored_mode": 432,
+      "same_inode_and_bytes": true
+    }
+  ],
+  "standing_gpu_lock_touched": false,
+  "restored": true
+}

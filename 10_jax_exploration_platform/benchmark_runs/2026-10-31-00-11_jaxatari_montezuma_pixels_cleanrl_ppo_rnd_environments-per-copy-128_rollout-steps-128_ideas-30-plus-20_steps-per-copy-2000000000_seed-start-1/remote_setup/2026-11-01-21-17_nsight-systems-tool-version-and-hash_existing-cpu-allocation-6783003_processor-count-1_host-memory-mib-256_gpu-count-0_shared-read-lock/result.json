@@ -1,0 +1,51 @@
+{
+  "Python_numerical_import_attempts": [],
+  "Python_shared_library_calls_blocked": true,
+  "actual_allocation": {
+    "cgroup": "0::/system.slice/slurmstepd.scope/job_6783003/step_127/user/task_0\n",
+    "cpu_affinity": [
+      9
+    ],
+    "hostname": "heartpiece",
+    "job_id": "6783003",
+    "parent_pid": 790857,
+    "pid": 790863,
+    "process_start_time": "55178635",
+    "requested_cpus": 1,
+    "requested_gpus": 0,
+    "requested_host_memory_mib": 256,
+    "requested_step_time_limit_minutes": 10,
+    "slurm_environment": {
+      "SLURM_CPUS_PER_TASK": "1",
+      "SLURM_JOB_GPUS": null,
+      "SLURM_JOB_ID": "6783003",
+      "SLURM_MEM_PER_NODE": "2048",
+      "SLURM_STEP_GPUS": null,
+      "SLURM_STEP_ID": "127"
+    },
+    "step_id": "127",
+    "uids": "Uid:\t2618919\t2618919\t2618919\t2618919"
+  },
+  "admission_granted": false,
+  "capture_or_profile_requested": false,
+  "case_credit": 0,
+  "external_tool_library_mapping_audit": "not performed; only the authorized --version argv was executed",
+  "kind": "actual_nsight_version_and_executable_hash_metadata",
+  "only_external_command": [
+    "/sw/ubuntu2204/ebu082025/software/common/core/nsight-systems/2024.7.1/target-linux-x64/nsys",
+    "--version"
+  ],
+  "passed": true,
+  "published_helper_commit": "9fcc43a478b93d731df780805fd7c3c514cdf67f",
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "tool_record": {
+    "path": "/sw/ubuntu2204/ebu082025/software/common/core/nsight-systems/2024.7.1/target-linux-x64/nsys",
+    "sha256": "48e4c308f538c8971b8f62c389834372d986f00f200743f1eae90918f2f04e1d",
+    "version": "NVIDIA Nsight Systems version 2024.7.1.84-247135125610v0"
+  },
+  "tool_record_receipt": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-21-17_nsight-systems-tool-version-and-hash_existing-cpu-allocation-6783003_processor-count-1_host-memory-mib-256_gpu-count-0_shared-read-lock/tool_record.json",
+    "sha256": "bacba88c05986571f8f7f6322a47f11cf0d18b5982382dc8596e86c34ee909f6"
+  }
+}
