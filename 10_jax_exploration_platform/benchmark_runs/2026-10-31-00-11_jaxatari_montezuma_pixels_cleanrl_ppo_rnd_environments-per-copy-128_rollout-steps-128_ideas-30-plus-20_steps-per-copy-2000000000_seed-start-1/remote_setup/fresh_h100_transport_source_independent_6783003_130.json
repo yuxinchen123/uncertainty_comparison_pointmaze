@@ -1,0 +1,35 @@
+{
+  "actual_SSH_or_Popen_or_socket_or_GPU_or_lock_actions": 0,
+  "actual_launch_command_record": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-20-53_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/actual_launch_command_preparation.json",
+    "sha256": "f3c739fa163ba75126b0613c688c90f3485f42564bb51f1bc0d81fb9d4cbedbc"
+  },
+  "actual_output_parents_are_ordinary_and_actual_logs_absent": true,
+  "admission_granted": false,
+  "after": {
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-20-53_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/actual_launch_command_preparation.json": "f3c739fa163ba75126b0613c688c90f3485f42564bb51f1bc0d81fb9d4cbedbc",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-20-53_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/root_start_controller_once.py": "bec5993bec977c21e8fbc12f4e0119b2971da76c44e83227cd5fbf6051f46df2"
+  },
+  "all_process_and_host_observation_in_tests_mocked": true,
+  "approved": true,
+  "at_utc": "2026-11-02T05:27:36.415322+00:00",
+  "before": {
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-20-53_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/actual_launch_command_preparation.json": "f3c739fa163ba75126b0613c688c90f3485f42564bb51f1bc0d81fb9d4cbedbc",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-20-53_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/root_start_controller_once.py": "bec5993bec977c21e8fbc12f4e0119b2971da76c44e83227cd5fbf6051f46df2"
+  },
+  "controller_publication": "ce9f69192e3dc0a50ce03ab6cb355649cb8835ad",
+  "controls": 8,
+  "errors": [],
+  "failures": [],
+  "job_id": "6783003",
+  "kind": "independent_fresh_h100_transport_source_review",
+  "output": "test_changed_command_refuses (__main__.Controls) ... ok\ntest_changed_publication_refuses (__main__.Controls) ... ok\ntest_dangling_prior_spawn_journal_refuses (__main__.Controls) ... ok\ntest_exact_argv_creates_one_fake_process_journal_and_no_numerical_claim (__main__.Controls) ... ok\ntest_existing_stdout_refuses_before_spawn (__main__.Controls) ... ok\ntest_missing_intent_refuses (__main__.Controls) ... ok\ntest_prior_spawn_journal_refuses (__main__.Controls) ... ok\ntest_wrong_host_refuses (__main__.Controls) ... ok\n\n----------------------------------------------------------------------\nRan 8 tests in 0.021s\n\nOK\n",
+  "passed": true,
+  "qualification_approval": false,
+  "review_scope": "Exact transport source and command metadata only; root alone creates intent, publishes transport and executes one connection. Controller publication/owner/UUID/registration/timeout checks remain mandatory.",
+  "source": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-20-53_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/root_start_controller_once.py",
+    "sha256": "bec5993bec977c21e8fbc12f4e0119b2971da76c44e83227cd5fbf6051f46df2"
+  },
+  "step_id": "130"
+}

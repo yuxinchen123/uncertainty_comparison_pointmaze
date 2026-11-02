@@ -1,0 +1,26 @@
+{
+  "command": [
+    "srun",
+    "--jobid=6783003",
+    "--overlap",
+    "--exact",
+    "--ntasks=1",
+    "--cpus-per-task=1",
+    "--mem=256M",
+    "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+    "-I",
+    "-B",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-20-53_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/direct_qualification_controller.py",
+    "--publication-commit",
+    "ce9f69192e3dc0a50ce03ab6cb355649cb8835ad"
+  ],
+  "returncode": 0,
+  "started_at_utc": "2026-11-02T05:22:56.049474+00:00",
+  "finished_at_utc": "2026-11-02T05:22:57.614668+00:00",
+  "stdout_sha256": "3489ee19bd2e8c03d5d841ebafe36497fdd972580231416d2a3fb60160ad3f17",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "publication": "ce9f69192e3dc0a50ce03ab6cb355649cb8835ad",
+  "host_contact": false,
+  "gpu_action": false,
+  "publication_aware_default_passed": true
+}
