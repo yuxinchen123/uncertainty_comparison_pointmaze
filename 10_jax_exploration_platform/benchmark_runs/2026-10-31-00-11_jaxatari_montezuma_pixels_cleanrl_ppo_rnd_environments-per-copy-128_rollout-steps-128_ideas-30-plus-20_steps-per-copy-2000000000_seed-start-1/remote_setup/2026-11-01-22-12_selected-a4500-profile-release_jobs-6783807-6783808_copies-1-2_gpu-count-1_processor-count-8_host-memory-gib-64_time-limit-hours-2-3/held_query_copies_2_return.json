@@ -1,0 +1,23 @@
+{
+  "at_utc": "2026-11-02T06:17:27.776483+00:00",
+  "command": [
+    "scontrol",
+    "show",
+    "job",
+    "-o",
+    "6783808"
+  ],
+  "job_action_performed": false,
+  "job_id": "6783808",
+  "kind": "actual_exact_owned_held_release_query",
+  "returncode": 0,
+  "started_at_utc": "2026-11-02T06:17:27.699753+00:00",
+  "stderr": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-22-12_selected-a4500-profile-release_jobs-6783807-6783808_copies-1-2_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-2-3/held_query_copies_2_stderr.raw",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-22-12_selected-a4500-profile-release_jobs-6783807-6783808_copies-1-2_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-2-3/held_query_copies_2_stdout.raw",
+    "sha256": "67bad94d31c83a1f50f8d1c589ae2f9c36b68c3007e5d027cae815955869f390"
+  }
+}

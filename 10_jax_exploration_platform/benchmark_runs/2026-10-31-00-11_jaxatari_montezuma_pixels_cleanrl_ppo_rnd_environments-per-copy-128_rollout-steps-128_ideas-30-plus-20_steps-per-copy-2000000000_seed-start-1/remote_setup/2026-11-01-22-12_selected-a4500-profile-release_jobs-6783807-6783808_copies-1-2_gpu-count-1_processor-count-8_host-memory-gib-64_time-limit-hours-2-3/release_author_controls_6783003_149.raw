@@ -1,0 +1,28 @@
+test_atomic_pending_file_and_symlink_conflicts_are_preserved (test_release_selected_profiles.QualificationReleaseTests) ... ok
+test_atomic_publication_never_overwrites_existing_bytes (test_release_selected_profiles.QualificationReleaseTests) ... ok
+test_bad_preflight_keeps_raw_and_never_releases (test_release_selected_profiles.QualificationReleaseTests) ... ok
+test_both_actual_staged_readers_accept_only_synthetic_successful_release_chains (test_release_selected_profiles.QualificationReleaseTests) ... ok
+test_both_request_durations_and_unallocated_resources_are_exact (test_release_selected_profiles.QualificationReleaseTests) ... ok
+test_changed_pre_release_envelope_after_actual_release_refuses_final_inputs (test_release_selected_profiles.QualificationReleaseTests) ... ok
+test_dangling_pending_link_refuses_preflight_before_any_scheduler_call (test_release_selected_profiles.QualificationReleaseTests) ... ok
+test_default_main_does_not_release_or_call_scheduler (test_release_selected_profiles.QualificationReleaseTests) ... ok
+test_exact_single_card_held_shape_and_changed_fields (test_release_selected_profiles.QualificationReleaseTests) ... ok
+test_explicit_release_without_publication_refuses_before_checks (test_release_selected_profiles.QualificationReleaseTests) ... ok
+test_foreign_selector_and_intent_refuse_before_scheduler (test_release_selected_profiles.QualificationReleaseTests) ... ok
+test_missing_publication_never_creates_intent_or_calls_a_command (test_release_selected_profiles.QualificationReleaseTests) ... ok
+test_nonzero_release_retains_return_without_receipt_or_final_inputs (test_release_selected_profiles.QualificationReleaseTests) ... ok
+test_one_intent_raw_before_parse_real_receipt_before_atomic_inputs (test_release_selected_profiles.QualificationReleaseTests) ... ok
+test_other_target_progress_and_launch_state_do_not_block_selected_target (test_release_selected_profiles.QualificationReleaseTests) ... ok
+test_query_and_full_monitor_observations_each_require_recent_utc (test_release_selected_profiles.QualificationReleaseTests) ... ok
+test_second_literal_job_has_separate_intent_and_final_receipt (test_release_selected_profiles.QualificationReleaseTests) ... ok
+test_shared_source_change_refuses_even_when_other_target_is_running (test_release_selected_profiles.QualificationReleaseTests) ... ok
+test_stale_foreign_and_boolean_full_monitor_proofs_refuse (test_release_selected_profiles.QualificationReleaseTests) ... ok
+test_timeout_keeps_partial_raw_and_prevents_a_second_attempt (test_release_selected_profiles.QualificationReleaseTests) ... ok
+test_actual_initial_publication_refuses_missing_release_objects (__main__.ActualBindingPublicationTests) ... ok
+test_both_actual_defaults_and_core_binding_pass_without_queries (__main__.ActualBindingPublicationTests) ... ok
+test_exact_mock_publication_and_changed_object_refusal (__main__.ActualBindingPublicationTests) ... ok
+
+----------------------------------------------------------------------
+Ran 23 tests in 6.345s
+
+OK

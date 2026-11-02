@@ -1,0 +1,42 @@
+{
+  "actual_query_source": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/jobs/6783807/root_post_full145_held_query.json",
+    "sha256": "130deeaea895428937778591db1cfde8518ed22750b3311d812cd8cd31d2d477"
+  },
+  "actual_raw_query_return": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-22-12_selected-a4500-profile-release_jobs-6783807-6783808_copies-1-2_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-2-3/held_query_copies_1_return.json",
+    "sha256": "16bf09f3d98da491b9c4c61b3c01bcab891f862c7d5b82246cac48ab6351093e"
+  },
+  "admission_granted": false,
+  "fields": {
+    "Account": "sl5nw_base",
+    "AllocTRES": "(null)",
+    "CPUs/Task": "8",
+    "Command": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-21-31_selected-common-a4500-kernel-profile_cache-backgrounds-true_render-final-two-only-true_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_capture-updates-1_seed-start-1_hours-2/job.sbatch",
+    "JobId": "6783807",
+    "JobState": "PENDING",
+    "MinMemoryNode": "64G",
+    "NodeList": "",
+    "NumCPUs": "8",
+    "NumNodes": "1-1",
+    "NumTasks": "1",
+    "Partition": "gpu",
+    "QOS": "csresnolim",
+    "Reason": "JobHeldUser",
+    "ReqNodeList": "jaguar03",
+    "ReqTRES": "cpu=8,mem=64G,node=1,billing=9840,gres/gpu=1",
+    "Requeue": "0",
+    "Reservation": "sl5nw_168",
+    "Restarts": "0",
+    "TimeLimit": "02:00:00",
+    "TresPerNode": "gres/gpu:nvidia_rtx_a4500:1",
+    "UserId": "sl5nw(2618919)"
+  },
+  "job_id": "6783807",
+  "kind": "exact_owned_held_profile_resource_review",
+  "no_job_action": true,
+  "passed": true,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "unallocated_physical_identity_unresolved": true
+}

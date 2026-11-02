@@ -1,0 +1,45 @@
+{
+  "GPU_operations": 0,
+  "actual_local_defaults_and_real_staged_core_passed": true,
+  "actual_releases": 0,
+  "actual_scheduler_queries": 0,
+  "admission_granted": false,
+  "at_utc": "2026-11-02T06:24:23.681919+00:00",
+  "birth": "55578192",
+  "cgroup": "0::/system.slice/slurmstepd.scope/job_6783003/step_149/user/task_0\n",
+  "error_details": [],
+  "errors": 0,
+  "expiry_utc": "2026-11-02T06:33:08.326180+00:00",
+  "failure_details": [],
+  "failures": 0,
+  "job_id": "6783003",
+  "kind": "actual_held_selected_profile_release_metadata_controls",
+  "mock_publication_source_identity_stub_scope": "publication-only loop; actual source identity separately passed both real defaults",
+  "numerical_import_attempts": [],
+  "passed": true,
+  "pid": 799884,
+  "protected_bytes_unchanged": true,
+  "protected_files": 213,
+  "raw": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-22-12_selected-a4500-profile-release_jobs-6783807-6783808_copies-1-2_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-2-3/release_author_controls_6783003_149.raw",
+    "sha256": "36cc311d978e101502f4022dcc1f1d6a34e27be6a3f186a631110acc1b2c7da4"
+  },
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "source_after": {
+    "release_author_review.json": "59571dc46952da2930b35038f7e013b282fae8848481cc370ef1fc0fb2b54d9c",
+    "release_frozen_inputs.json": "61e4c81ab5d21e14817bf4588d15dc2646a8f00305e210e873681121775e80e1",
+    "release_selected_profiles.py": "085e42c540a1ac126bd3d6266e1186b26a5e1ac44271ca034cb49f572cfe7e9f",
+    "run_author_controls.py": "3b266e7a01e66a827e2cd74dbfbf4a56debaef06f55209a2a0a5a0fde25b8030",
+    "test_release_selected_profiles.py": "c1004cf7ccfa66b6f8c8be6128918e5801154fb74d0c2e8bb51cd219809c7518"
+  },
+  "source_before": {
+    "release_author_review.json": "59571dc46952da2930b35038f7e013b282fae8848481cc370ef1fc0fb2b54d9c",
+    "release_frozen_inputs.json": "61e4c81ab5d21e14817bf4588d15dc2646a8f00305e210e873681121775e80e1",
+    "release_selected_profiles.py": "085e42c540a1ac126bd3d6266e1186b26a5e1ac44271ca034cb49f572cfe7e9f",
+    "run_author_controls.py": "3b266e7a01e66a827e2cd74dbfbf4a56debaef06f55209a2a0a5a0fde25b8030",
+    "test_release_selected_profiles.py": "c1004cf7ccfa66b6f8c8be6128918e5801154fb74d0c2e8bb51cd219809c7518"
+  },
+  "step_id": "149",
+  "tests": 23
+}

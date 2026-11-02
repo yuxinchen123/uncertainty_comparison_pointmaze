@@ -1,0 +1,29 @@
+{
+  "NUM_work": false,
+  "admission_granted": false,
+  "frozen_inputs": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-22-12_selected-a4500-profile-release_jobs-6783807-6783808_copies-1-2_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-2-3/release_frozen_inputs.json",
+    "sha256": "61e4c81ab5d21e14817bf4588d15dc2646a8f00305e210e873681121775e80e1"
+  },
+  "jobs": {
+    "1": "6783807",
+    "2": "6783808"
+  },
+  "kind": "fixed_selected_profile_actual_release_implementation_review",
+  "maximum_startup_wait_seconds": 180,
+  "real_monitor_proofs": {
+    "1": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-22-12_selected-a4500-profile-release_jobs-6783807-6783808_copies-1-2_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-2-3/held_monitor_proof_copies_1.json",
+      "sha256": "c5ffb45cf3c60d27a3cf5013f68d8d5174d1f43f0576d280ccf17ad6a917ffe2"
+    },
+    "2": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-22-12_selected-a4500-profile-release_jobs-6783807-6783808_copies-1-2_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-2-3/held_monitor_proof_copies_2.json",
+      "sha256": "5562982796a2d07cefe6a899b20434a4eb11a41bba67f97e5ff96f99907b58e7"
+    }
+  },
+  "release_executed": false,
+  "schema_version": 1,
+  "selected_target_only_mutable_state": true,
+  "shared_static_file_count": 177,
+  "source_sha256": "085e42c540a1ac126bd3d6266e1186b26a5e1ac44271ca034cb49f572cfe7e9f"
+}

@@ -1,0 +1,31 @@
+{
+  "actual_releases": 0,
+  "actual_scheduler_actions": 0,
+  "actual_step_id": null,
+  "command": [
+    "srun",
+    "--jobid=6783003",
+    "--nodes=1",
+    "--ntasks=1",
+    "--cpus-per-task=1",
+    "--mem=512M",
+    "--gres=none",
+    "--time=00:10:00",
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-22-12_selected-a4500-profile-release_jobs-6783807-6783808_copies-1-2_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-2-3/bind_actual_release.py"
+  ],
+  "error_field": "ledger_path",
+  "error_type": "KeyError",
+  "kind": "preserved_metadata_binding_schema_failure",
+  "observed_returncode": 1,
+  "proof_outputs_created_before_failure": false,
+  "schema_version": 1,
+  "source_before": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-22-12_selected-a4500-profile-release_jobs-6783807-6783808_copies-1-2_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-2-3/source_versions/before_post_full_query_schema_correction/bind_actual_release.py",
+    "sha256": "d2fcb723bb60a2f6d50f0730295a78f81cbea65fe1f6376f3ff23313f7fa69f5"
+  },
+  "step_attribution_limit": "the original wrapper did not save its actual numeric step before exiting"
+}
