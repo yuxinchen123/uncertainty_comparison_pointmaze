@@ -1,0 +1,52 @@
+{
+  "actual_plan": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-20-53_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/measurement_plan.json",
+    "sha256": "1d2d93a2277669b54cc4641753b112a487757f620d96b5d5fdfa38cc6f6e451b"
+  },
+  "changed_existing_functions": [
+    "checked_inputs"
+  ],
+  "existing_functions": 26,
+  "gpu_actions": 0,
+  "helper_commit": "0a880984b4a03a2ff7335337cc18576628bc9fc1",
+  "kind": "fresh_controller_existing_function_ast_equality",
+  "new_functions": [
+    "check_backend_inputs"
+  ],
+  "new_source": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-20-53_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/direct_qualification_controller.py",
+    "sha256": "ed824dc0115064439ecfbda3aca9d0dfb378d042add1bec50314dcafd7f62710"
+  },
+  "old_source": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-17-17_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/direct_qualification_controller.py",
+    "sha256": "8596beef9d5be09e88fff0d0c0f2f85717f2695b4442bce751c2a7b2858c25e5"
+  },
+  "purpose": "actual source/plan/preparation/software/packet pins plus mandatory new backend26 metadata joins; all process/registration/wait/timeout/custody/publication functions unchanged",
+  "unchanged_existing_functions": [
+    "require",
+    "now",
+    "encoded",
+    "digest",
+    "fsync_directory",
+    "ordinary_bytes",
+    "document",
+    "stable_stat",
+    "receipt",
+    "log_receipt",
+    "publish",
+    "metadata_lock",
+    "no_numerical_modules",
+    "check_unattempted",
+    "check_publication",
+    "load_core",
+    "read_process",
+    "owner_record",
+    "chosen_affinity",
+    "child_environment",
+    "append_registration",
+    "wait_exact",
+    "supervise",
+    "actual_launch",
+    "main"
+  ]
+}

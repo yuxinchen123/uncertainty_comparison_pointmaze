@@ -1,0 +1,27 @@
+{
+  "kind": "failed_root_incoming_metadata_wrapper",
+  "job_id": "6783003",
+  "step_id": "122",
+  "failure": "A one-element write-tree tuple was accidentally a string; it expanded into individual git arguments.",
+  "actual_failed_command": [
+    "git",
+    "-C",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+    "w",
+    "r",
+    "i",
+    "t",
+    "e",
+    "-",
+    "t",
+    "r",
+    "e",
+    "e"
+  ],
+  "returncode": 1,
+  "actual_stderr": "git: 'w' is not a git command. See 'git --help'.",
+  "real_index_changed": false,
+  "temporary_index_only": true,
+  "source_or_experiment_failure": false,
+  "corrected_success_receipt": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/profile_common_incoming_root_independent_6783003.json"
+}

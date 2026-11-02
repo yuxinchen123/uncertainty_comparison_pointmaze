@@ -1,0 +1,41 @@
+{
+  "GPU_or_host_or_job_actions": 0,
+  "actual_cold_baseline_validation_passed": true,
+  "actual_cold_reviewed_confirmation": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-18-54_common_cache-room-backgrounds-true_render-final-two-only-true_confirmation_paired-rounds-7_updates-per-arm-10_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-2_jaguar03/result.json",
+    "sha256": "5684c7392166cb9e5fa627d521fb097a4da24216bcb0737028d636c837016a6a"
+  },
+  "admission_granted": false,
+  "approved": true,
+  "at_utc": "2026-11-02T05:09:55.946483+00:00",
+  "case_credit": 0,
+  "common_inputs_are_not_added_to_profiles_own_numerical_protocol": true,
+  "full_publication_or_formal_profile_preparation_not_performed": true,
+  "idea_credit": 0,
+  "independent_98_controls": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/profile_common_helpers_independent_6783003_116.json",
+    "sha256": "57047d51131a709f48eb76fb85959ae83fc056f79c56c38a1b329902d13a0916"
+  },
+  "independent_actual_cold22_consumer_and_source_gate": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/profile_common_independent_cold_6783003_118_return.json",
+    "sha256": "265b06a830bae10b034824734bd9e7193ca8e3bbdf87fc7717f78ff414ee387a"
+  },
+  "job_id": "6783003",
+  "kind": "independent_profile_common_confirmation_conditional_helper_source_review_complete",
+  "legacy_default17_configured21_direct26_helper_rosters_preserved": true,
+  "new_configured_common22_helpers": true,
+  "numerical_work": false,
+  "passed": true,
+  "profile_source_diff_independently_read": true,
+  "scientific_credit": 0,
+  "source_before_after": {
+    "/p/rlprojects/RND_worktrees/2026-11-01-20-39_profile-common-confirmation-helper-closure_configured-a4500_accepted-input-required/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py": "a9101ab39006959ee5c8529445faa072e9a24dc535d9406939c5cde3da297de3",
+    "/p/rlprojects/RND_worktrees/2026-11-01-20-39_profile-common-confirmation-helper-closure_configured-a4500_accepted-input-required/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_common_confirmation_helpers.py": "1518714fbe7920d01b2b499947510176c6ac126b849b65c10a0fce55bad2cf54"
+  },
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-20-39_profile-common-confirmation-helper-closure_configured-a4500_accepted-input-required/.review_metadata/profile_common_helpers_source_freeze.json",
+    "sha256": "1f960d96199f265c65b3cd507ddce7ecf91990dd56ebd182ecfc401d58c79122"
+  },
+  "step_id": "120",
+  "unchanged_capture_core_reached_actual_D28_sources_then_synthetic_first_JAX_setting": true
+}
