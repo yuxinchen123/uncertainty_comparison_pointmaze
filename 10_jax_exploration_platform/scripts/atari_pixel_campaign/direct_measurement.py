@@ -61,7 +61,26 @@ def helper_names():
     return tuple(dict.fromkeys(("direct_measurement.py", "configured_measurement.py", *core().HELPERS)))
 
 
-def configure_plan(plan, profile, history_inputs, consumer):
+
+def backend_support(plan):
+    """Load only the exact new staged metadata helper; no legacy operational fallback."""
+    require("direct_backend_image" in plan, "current direct execution requires backend package-image schema two")
+    name = "direct_backend_image.py"
+    path = Path(__file__).with_name(name)
+    expected = plan["helpers"]["files"].get("10_jax_exploration_platform/scripts/atari_pixel_campaign/" + name)
+    require(path.is_file() and core().receipt(path)["sha256"] == expected,
+        "the exact new backend helper is missing from this direct source closure")
+    module = adjacent("direct_backend_image")
+    module.expected_for_plan(plan)
+    return module
+
+
+def capture_backend_completion(directory, plan, result):
+    """Join post-numerical actual maps to the new immutable initial backend capture."""
+    return backend_support(plan).capture_complete(directory, plan, result)
+
+def configure_plan(plan, profile, history_inputs, consumer, *, backend_image_record=None):
+    require(backend_image_record is not None, "every new direct preparation requires a pre-GPU backend package-image record")
     identity = core(); identity.require_profile(profile)
     unit = Path(plan["campaign_run_dir"]) / "data" / plan["unit_id"]
     require(Path(history_inputs) == unit / "direct_history/inputs.json",
@@ -71,11 +90,13 @@ def configure_plan(plan, profile, history_inputs, consumer):
         "frozen_inputs": identity.receipt(history_inputs), "current_launch_inputs_path": str(unit / "direct_current_launch.json")}
     identity.validate_plan(plan, consumer)
     identity.validate_history(plan)
+    adjacent("direct_backend_image").configure_plan(plan, backend_image_record)
     return plan
 
 
 def support(plan):
     identity = core(); identity.validate_plan(plan)
+    backend_support(plan).validate_prepared(plan)
     require("configured_isolation" not in plan and "target_qualification" not in plan
         and "target_qualification_inputs" not in plan, "direct and UVA producer policies cannot be mixed")
     if "direct_qualification" in plan:
@@ -273,21 +294,12 @@ def post_binding_checks(plan, metadata, binding, directory):
 
 
 def capture_backend(directory, binding):
-    """Copy only this process's actually mapped backend; no capacity probe is run."""
+    """Capture only the new separately prepared actual backend package image."""
     identity = core()
-    with Path("/proc/self/maps").open() as stream:
-        raw = stream.read(1024 * 1024 + 1)
-    require(len(raw.encode()) <= 1024 * 1024, "own backend-map evidence exceeds its bound")
-    selected = "".join(line + "\n" for line in raw.splitlines() if line.split() and Path(line.split()[-1]).name == "xla_cuda_plugin.so")
-    paths = {line.split()[-1] for line in selected.splitlines()}
-    require(len(paths) == 1, "one actually mapped CUDA backend image is required")
-    path, = paths
-    capture = adjacent("device_memory_limit").capture_backend_image(identity.receipt(path), Path(directory) / "direct_backend")
-    record = {"schema_version": 1, "kind": "direct_current_process_captured_backend", "pid": os.getpid(),
-        "process_start_time": binding["process"]["process_start_time"], "mapped_bytes": selected,
-        "mapped_sha256": identity.digest(selected.encode()), "capture": capture}
-    identity.publish(Path(directory) / "direct_backend_capture.json", record)
-    return record
+    directory = Path(directory)
+    plan = identity.read_receipt(identity.receipt(directory / "measurement_plan.json"))
+    return backend_support(plan).capture_begin(directory, plan, binding)
+
 
 
 def qualification_sources(plan, cleanrl_root, software_result):
@@ -305,6 +317,7 @@ def run_qualification(directory, plan, paired, jax, Config, Trainer, Environment
 
 def verify_saved_sources(directory, plan):
     identity = core(); identity.validate_plan(plan)
+    backend_support(plan)
     directory = Path(directory)
     require(directory == identity.unit_directory(plan) and identity.read_receipt(identity.receipt(directory / "measurement_prepared.json")) == {
         "plan_sha256": identity.receipt(directory / "measurement_plan.json")["sha256"]}, "direct saved unit or frozen plan changed")
@@ -615,11 +628,16 @@ def validate_test_collection(plan, tests, stdout):
 def verify_qualification_inputs(plan):
     """Refuse a missing, changed, unrelated or unreviewed actual full-original qualification."""
     identity = core()
+    expected_backend = backend_support(plan).expected_for_plan(plan)
     inputs = plan["direct_qualification_inputs"]
     result = identity.read_receipt(inputs["result"])
     review = identity.read_receipt(inputs["review"])
     directory = Path(inputs["result"]["path"]).parent
     qualified_plan = identity.read_receipt(identity.receipt(directory / "measurement_plan.json"))
+    qualified_backend = backend_support(qualified_plan).expected_for_plan(qualified_plan)
+    require(all(identity.exact(expected_backend[key], qualified_backend[key])
+        for key in ("selected_python", "site_packages", "image", "distribution")),
+        "this direct consumer changed the separately qualified backend package image or owning records")
     require(Path(inputs["result"]["path"]).name == "direct_qualification_result.json"
         and identity.exact(qualified_plan.get("direct_qualification"), QUALIFICATION),
         "a generic successful measurement cannot substitute for target qualification")
@@ -813,26 +831,15 @@ def validate_startup_checks(directory, binding):
 
 
 def validate_backend_capture(directory, binding, loaded):
-    identity = core(); directory = Path(directory)
-    value = identity.read_receipt(identity.receipt(directory / "direct_backend_capture.json"))
-    capture = value["capture"]; target = directory / "direct_backend/xla_cuda_plugin.so"
-    paths = {line.split()[-1] for line in value["mapped_bytes"].splitlines() if line.split()}
-    require(type(value.get("schema_version")) is int and value["schema_version"] == 1
-        and value.get("kind") == "direct_current_process_captured_backend" and type(value.get("pid")) is int
-        and value["pid"] == binding["process"]["pid"] and value["process_start_time"] == binding["process"]["process_start_time"]
-        and value["mapped_sha256"] == identity.digest(value["mapped_bytes"].encode())
-        and paths == {capture["original"]["path"]} and Path(capture["original"]["path"]).name == "xla_cuda_plugin.so",
-        "the captured backend is not this actual process's mapped image")
-    require(type(capture.get("schema_version")) is int and capture["schema_version"] == 1
-        and capture.get("kind") == "captured_mapped_cuda_backend_image" and type(capture.get("pid")) is int
-        and capture["pid"] == value["pid"] and capture["captured"] == identity.receipt(target)
-        and capture["captured"]["sha256"] == capture["original"]["sha256"]
-        and type(capture["bytes"]) is int and capture["bytes"] > 0 and target.stat().st_size == capture["bytes"],
-        "the immutable mapped backend copy changed")
-    require(capture["original"]["path"] in loaded.get("loaded_shared_libraries", [])
-        and loaded.get("verified_package_libraries", {}).get(capture["original"]["path"], {}).get("sha256") == capture["original"]["sha256"],
-        "the captured backend is not the actual verified installed package image")
-    return value
+    """Require new schema-two planned/actual backend proof and refuse legacy data."""
+    identity = core()
+    directory = Path(directory)
+    plan = identity.read_receipt(identity.receipt(directory / "measurement_plan.json"))
+    filename = "direct_qualification_result.json" if "direct_qualification" in plan else "result.json"
+    result = identity.read_receipt(identity.receipt(directory / filename))
+    require(result.get("loaded_gpu_libraries") == loaded, "actual backend validation changed its separate CUDA receipt")
+    return backend_support(plan).validate_capture(directory, plan, binding, loaded, result)
+
 
 
 def validate_profile_terminal(directory, metadata, result):
