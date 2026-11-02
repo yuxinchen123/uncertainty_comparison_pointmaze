@@ -1,0 +1,19 @@
+{
+  "absent_only_barrier_unchanged": true,
+  "actual_monitor_job_id": "6783003",
+  "actual_monitor_source_commit": "79a01e851ff92ddba7d0e12eaf8164cab2028878",
+  "credits": 0,
+  "default_no_scheduler_query_or_action": true,
+  "jobs": {
+    "1": "6782946",
+    "2": "6782947"
+  },
+  "kind": "common_correctness_fixed_release_implementation_author_review",
+  "maximum_startup_wait_seconds": 180,
+  "no_frozen_plan_change": true,
+  "one_exact_owned_preflight_then_one_release": true,
+  "real_release_receipt_fsynced_before_atomic_final_inputs": true,
+  "release_executed": false,
+  "schema_version": 1,
+  "source_sha256": "3806a02a349fd3b2fd189a76b96deef5f3a0ece5b4c72c13efb7080a5f47400d"
+}

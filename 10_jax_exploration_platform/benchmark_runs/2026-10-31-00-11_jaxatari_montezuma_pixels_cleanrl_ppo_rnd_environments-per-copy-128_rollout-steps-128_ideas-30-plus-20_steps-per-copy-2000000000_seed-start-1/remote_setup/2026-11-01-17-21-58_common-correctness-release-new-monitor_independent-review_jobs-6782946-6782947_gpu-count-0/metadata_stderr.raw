@@ -1,0 +1,21 @@
+test_atomic_pending_file_and_symlink_conflicts_are_preserved (test_release_common_correctness.QualificationReleaseTests) ... ok
+test_atomic_publication_never_overwrites_existing_bytes (test_release_common_correctness.QualificationReleaseTests) ... ok
+test_bad_preflight_keeps_raw_and_never_releases (test_release_common_correctness.QualificationReleaseTests) ... ok
+test_changed_pre_release_envelope_after_actual_release_refuses_final_inputs (test_release_common_correctness.QualificationReleaseTests) ... ok
+test_default_main_does_not_release_or_call_scheduler (test_release_common_correctness.QualificationReleaseTests) ... ok
+test_exact_single_card_held_shape_and_changed_fields (test_release_common_correctness.QualificationReleaseTests) ... ok
+test_explicit_release_without_publication_refuses_before_checks (test_release_common_correctness.QualificationReleaseTests) ... ok
+test_foreign_selector_and_intent_refuse_before_scheduler (test_release_common_correctness.QualificationReleaseTests) ... ok
+test_independent_copy_two_final_release_chain_passes_actual_unchanged_core (test_release_common_correctness.QualificationReleaseTests) ... ok
+test_independent_current_runtime_identity_and_boolean_refusals (test_release_common_correctness.QualificationReleaseTests) ... ok
+test_missing_publication_never_creates_intent_or_calls_a_command (test_release_common_correctness.QualificationReleaseTests) ... ok
+test_nonzero_release_retains_return_without_receipt_or_final_inputs (test_release_common_correctness.QualificationReleaseTests) ... ok
+test_one_intent_raw_before_parse_real_receipt_before_atomic_inputs (test_release_common_correctness.QualificationReleaseTests) ... ok
+test_second_literal_job_has_separate_intent_and_final_receipt (test_release_common_correctness.QualificationReleaseTests) ... ok
+test_stale_foreign_and_boolean_full_monitor_proofs_refuse (test_release_common_correctness.QualificationReleaseTests) ... ok
+test_timeout_keeps_partial_raw_and_prevents_a_second_attempt (test_release_common_correctness.QualificationReleaseTests) ... ok
+
+----------------------------------------------------------------------
+Ran 16 tests in 0.528s
+
+OK

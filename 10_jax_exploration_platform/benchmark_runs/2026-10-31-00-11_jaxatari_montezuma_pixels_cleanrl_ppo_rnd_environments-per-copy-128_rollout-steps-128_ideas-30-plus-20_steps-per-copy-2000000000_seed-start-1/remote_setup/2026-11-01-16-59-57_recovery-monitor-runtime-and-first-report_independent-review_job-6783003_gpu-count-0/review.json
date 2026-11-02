@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "kind": "independent_new_persistent_cpu_monitor_runtime_and_first_full_report_approval",
+  "passed": true,
+  "job_id": "6783003",
+  "source_commit": "79a01e851ff92ddba7d0e12eaf8164cab2028878",
+  "packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-16-33_pixel-study-monitor-recovery_source-commit-79a01e851ff92ddba7d0e12eaf8164cab2028878_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0",
+  "checked_at_utc": "2026-11-02T01:03:02.231336+00:00",
+  "metadata_step": "6783003.1",
+  "actual_running_node": "heartpiece",
+  "requested_cpus": 1,
+  "allocated_logical_cpus": 2,
+  "actual_node_threads_per_core": 2,
+  "host_memory_gib": 2,
+  "gpu_count": 0,
+  "requeue": 0,
+  "restarts": 0,
+  "source_git_archive_sha_and_executable_files_verified": 265,
+  "static_and_release_frozen_files_preserved": 312,
+  "source_report_runtime_receipt": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-16-59-57_recovery-monitor-runtime-and-first-report_independent-review_job-6783003_gpu-count-0/runtime_and_first_report.json",
+    "sha256": "58b60be6e26474b6af16b61752e99f71188a25f1da7fe896557ccf20fdd989fc"
+  },
+  "release_chain_and_preservation_receipt": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-16-59-57_recovery-monitor-runtime-and-first-report_independent-review_job-6783003_gpu-count-0/release_chain_and_preservation.json",
+    "sha256": "a3ec3e1e5cbc6a83188f13a5441125a9792f30b32e7839f7d2725ad84c3dc1e4"
+  },
+  "actual_first_full_report": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-16-59-57_recovery-monitor-runtime-and-first-report_independent-review_job-6783003_gpu-count-0/first_report.md",
+    "sha256": "9e3baf50a2a32e13a9602f4575f75ab162b803d4af709d712f87216a204f5c4f",
+    "bytes": 35288
+  },
+  "actual_first_status_snapshot": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-16-59-57_recovery-monitor-runtime-and-first-report_independent-review_job-6783003_gpu-count-0/first_status.json",
+    "sha256": "b6e3e2243228812fb247a2575e7d4a625e693e275f4ac388202eea51f1b73688",
+    "bytes": 73726
+  },
+  "actual_monitor_log": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-16-59-57_recovery-monitor-runtime-and-first-report_independent-review_job-6783003_gpu-count-0/monitor_6783003.log",
+    "sha256": "a8e3132ea60f47c80a739f035b2795ffa3368e9dd088860ade558cec826b8a80",
+    "bytes": 35363
+  },
+  "live_monitor_process_pid": 712119,
+  "live_monitor_process_birth": 53623412,
+  "report_attribution": "The exact batch cgroup member has the frozen monitor argv and stdout/stderr descriptors to this job log. That log contains the exact complete table in the copied report. The status timestamp follows this allocation and release, identifies this monitor as running and has the same current counts.",
+  "five_report_sections": [
+    "TRAINING",
+    "WAITING",
+    "HELD",
+    "FINISHED",
+    "PLANNED"
+  ],
+  "initial_comparison_counts": {
+    "pending": 0,
+    "running": 0,
+    "completed": 120,
+    "failed": 0
+  },
+  "actual_direct_qualification_state": "failed before numerical helper provenance verification completed; no target qualification credit",
+  "held_a4500_job_ids": [
+    "6782946",
+    "6782947"
+  ],
+  "final_training_state": "disabled",
+  "limitations": [
+    "The monitor retains a stale auxiliary progress row from an older monitor. It says no record for465 minutes; the exact current scheduler job list shows6783003 running. This row is not new allocation evidence.",
+    "Metadata fixtures and this monitor review establish no numerical target qualification or final-training admission."
+  ],
+  "reviewer_attempts": [
+    {
+      "step": "6783003.0",
+      "state": "failed",
+      "cause": "The review script omitted the exact immutable commit-directory prefix in archive entries. Source, raw output and failure are preserved."
+    },
+    {
+      "step": "6783003.1",
+      "state": "completed",
+      "exit_code": "0:0",
+      "passed": true
+    }
+  ],
+  "blocking_findings": [],
+  "full_monitor_tick_executed_by_reviewer": false,
+  "numerical_or_gpu_operations": 0,
+  "submission_release_or_cancel_performed_by_reviewer": false,
+  "active_reviewer_step": false,
+  "scientific_credit": 0,
+  "worker_admission": false,
+  "approval_scope": "Current persistent zero-GPU monitor runtime, exact source and first complete report. Root owns canonical handover and any future job actions."
+}

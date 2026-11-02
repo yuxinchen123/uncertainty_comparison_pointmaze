@@ -1,0 +1,35 @@
+{
+  "passed": true,
+  "job_id": "6782946",
+  "at_utc": "2026-11-02T01:08:50.195467+00:00",
+  "fields": {
+    "JobId": "6782946",
+    "UserId": "sl5nw(2618919)",
+    "JobState": "PENDING",
+    "Reason": "JobHeldUser",
+    "Account": "sl5nw_base",
+    "QOS": "csresnolim",
+    "Partition": "gpu",
+    "Requeue": "0",
+    "Restarts": "0",
+    "NumCPUs": "8",
+    "NumTasks": "1",
+    "TimeLimit": "03:00:00",
+    "ReqNodeList": "jaguar03",
+    "Reservation": "sl5nw_168",
+    "TresPerNode": "gres/gpu:nvidia_rtx_a4500:1",
+    "Command": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-15-09_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_jaguar03_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1/job.sbatch"
+  },
+  "requested_resources": {
+    "cpu": "8",
+    "mem": "64G",
+    "node": "1",
+    "billing": "9840",
+    "gres/gpu": "1"
+  },
+  "actual_num_nodes_field": "1-1",
+  "source": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-15-09_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_jaguar03_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1/held_refresh_new_monitor_6783003_return.json",
+    "sha256": "836fbb3a3e3ac37d6033fdb3e07380ce13981fea256de911fa59b74464bd8046"
+  }
+}

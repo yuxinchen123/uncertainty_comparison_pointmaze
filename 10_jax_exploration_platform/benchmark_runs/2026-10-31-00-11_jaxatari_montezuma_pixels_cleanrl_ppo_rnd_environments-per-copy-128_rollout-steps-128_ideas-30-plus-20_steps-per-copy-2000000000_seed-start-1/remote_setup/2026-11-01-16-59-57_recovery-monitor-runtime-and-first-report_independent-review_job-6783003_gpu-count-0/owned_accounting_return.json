@@ -1,0 +1,11 @@
+{
+  "command": [
+    "sacct",
+    "--noheader",
+    "--parsable2",
+    "--jobs=6783003",
+    "--format=JobIDRaw,JobName,State,ExitCode,NodeList,Start,End,AllocCPUS,ReqMem,AllocTRES"
+  ],
+  "returncode": 0,
+  "at_utc": "2026-11-02T01:02:39.876423+00:00"
+}

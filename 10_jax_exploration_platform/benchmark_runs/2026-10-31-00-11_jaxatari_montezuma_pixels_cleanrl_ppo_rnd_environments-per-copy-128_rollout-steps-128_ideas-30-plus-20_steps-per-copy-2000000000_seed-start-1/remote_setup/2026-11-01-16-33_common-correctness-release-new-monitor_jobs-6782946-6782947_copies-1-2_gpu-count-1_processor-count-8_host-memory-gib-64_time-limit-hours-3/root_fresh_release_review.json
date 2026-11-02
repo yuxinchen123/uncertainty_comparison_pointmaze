@@ -1,0 +1,17 @@
+{
+  "kind": "root_fresh_common_correctness_fixed_release_review",
+  "at_utc": "2026-11-02T01:23:11.406782+00:00",
+  "source_sha256": "3806a02a349fd3b2fd189a76b96deef5f3a0ece5b4c72c13efb7080a5f47400d",
+  "read_complete_unchanged_prior_mechanism_and_exact_new_diff": true,
+  "new_diff_changes_only_frozen_proof_monitor_identity_and_typed_actual_runtime_review_check": true,
+  "independent_cases": 16,
+  "independent_receipt": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-17-21-58_common-correctness-release-new-monitor_independent-review_jobs-6782946-6782947_gpu-count-0/independent_controls_6783003_9.json",
+  "independent_receipt_sha256": "3f954a1e6c3bfa16eb02c6d94fd81a484e9b804337884b57c6e62593ec200cff",
+  "all219_exact_publication_bytes_rehashed": true,
+  "same_actual_held_jobs": [
+    "6782946",
+    "6782947"
+  ],
+  "one_release_per_job_after_publication_default_permitted": true,
+  "no_job_resubmission_or_frozen_plan_change": true
+}

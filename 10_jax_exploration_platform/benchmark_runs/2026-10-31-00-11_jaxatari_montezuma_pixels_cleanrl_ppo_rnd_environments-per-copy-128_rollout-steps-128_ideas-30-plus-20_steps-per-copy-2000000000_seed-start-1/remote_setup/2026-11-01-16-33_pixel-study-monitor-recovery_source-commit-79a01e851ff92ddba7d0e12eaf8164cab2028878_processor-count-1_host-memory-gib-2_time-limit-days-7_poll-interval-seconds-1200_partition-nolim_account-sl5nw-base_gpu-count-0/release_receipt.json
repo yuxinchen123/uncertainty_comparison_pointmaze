@@ -1,0 +1,28 @@
+{
+  "kind": "owned_uva_persistent_monitor_release",
+  "cluster": "uva",
+  "schema_version": 1,
+  "job_id": "6783003",
+  "command": [
+    "scontrol",
+    "release",
+    "6783003"
+  ],
+  "returncode": 0,
+  "stdout": "",
+  "stderr": "",
+  "at_utc": "2026-11-02T00:58:23.947289+00:00",
+  "submission_receipt_sha256": "383c73f20155bba4f4b645affffb0c37740a8675e807e666a6f9f8904674cc28",
+  "release_review_sha256": "a797f62e771e890c608886215f9671ff51a5e017c855ef621e7221da20537e25",
+  "held_monitor_review_sha256": "240b36b5d674ae3785f2d89215b1055e684c52d50392b993d1d8c00f7b05d427",
+  "published_release_commit": "4fe1e4d5d6f8bbc2e591204a4b901a07b8dcdfad",
+  "release_source_sha256": "8505d609a53f2f1dcc4b76a97d7fbd571ae6298e0d8f00c44084af8e463b476e",
+  "automatic_retry_permitted": false,
+  "old_monitor_job_id": "6782816",
+  "old_monitor_stopped": false,
+  "old_monitor_already_failed": true,
+  "prelaunch_full_candidate_available": false,
+  "first_full_report_independent_review_required_after_start": true,
+  "scientific_hypothesis_credit": 0,
+  "worker_admission": false
+}
