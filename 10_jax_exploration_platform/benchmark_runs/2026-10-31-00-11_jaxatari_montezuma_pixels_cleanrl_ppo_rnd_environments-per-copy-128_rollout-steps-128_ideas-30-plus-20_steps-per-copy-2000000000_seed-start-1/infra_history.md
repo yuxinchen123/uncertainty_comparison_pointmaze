@@ -495,3 +495,7 @@ Qualification 6782640 ended FAILED with exit 1:0 after four minutes two seconds.
 ### 2026-11-02T02:25:03.709504+00:00 Fresh original H100 controller started once
 
 Published reviewed packet 691e5aab and exact launch command a13047dd. One transport returned zero; actual serval02 controller 1319515, birth counter 54671452, entered source/history preflight. Numerical child and physical binding are not yet observed. Preserve failed earlier qualification. Two owned metadata lock permissions await restoration after durable registration; standing GPU lock unchanged. No scientific or admission credit.
+
+### Common confirmation source publication
+
+Source and numerical reuse review passed. Merge9fcc43a4 matches independently tested treef22606f0 and preserves716 private source files. Preserve failed temporary-index stat check and corrected actual proof. New timing packets are being prepared; no submissions or performance credit yet. Current monitor reports progress; exact new staged consumer is required for scientific acceptance.

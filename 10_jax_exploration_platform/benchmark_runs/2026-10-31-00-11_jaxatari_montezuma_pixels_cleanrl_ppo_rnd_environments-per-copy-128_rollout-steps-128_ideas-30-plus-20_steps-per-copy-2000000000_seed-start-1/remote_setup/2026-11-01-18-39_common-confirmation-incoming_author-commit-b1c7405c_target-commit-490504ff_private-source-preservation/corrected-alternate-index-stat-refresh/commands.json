@@ -1,0 +1,3168 @@
+[
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "rev-parse",
+      "HEAD"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "490504ffcd3ff0b6a8dd7b2e98e96f9d0bb5c313\n",
+    "stdout_sha256": "10975a69fd346b864301538dff67e04c63998c640f1b58ed5bc372270b66e93b"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-17-55_a4500-common-confirmation_prior-correctness-required_rounds-7_complete-updates-per-arm-10_copies-1-2",
+      "rev-parse",
+      "HEAD"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "b1c7405c2dce76270554973bdf81c87271216cd4\n",
+    "stdout_sha256": "b1ce2bfb478e9fe2cad24d12c9911126f45a9172708bf27cd848fc874f184e64"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "rev-parse",
+      "b1c7405c2dce76270554973bdf81c87271216cd4^"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "6066d9ea35fbc9c045855144550971c2ac5895f9\n",
+    "stdout_sha256": "8e8ef60b334cca529155d1293c94c7a60e7036c656c9f26f59fd6394dacf694d"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "rev-parse",
+      "b1c7405c2dce76270554973bdf81c87271216cd4^{tree}"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "43d0735710649a3b0a019dfbb69c0e01dfbb519a\n",
+    "stdout_sha256": "c161b2d280a847f242678fc58dabd7e61a3d348e0df4ff22e69f4f1a95e9b83c"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "rev-parse",
+      "--git-path",
+      "index"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "/p/rlprojects/RND/.git/worktrees/merge-atari-cleanrl/index\n",
+    "stdout_sha256": "92189bdc15521b309d8363ffccf908b0b811a6724f0078a9cfeff93f9ed9775b"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND",
+      "rev-parse",
+      "HEAD"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "cef3073939e09ab4b2d3864a0bce8c1bb6cd7020\n",
+    "stdout_sha256": "bd3a82cf46dffc2251779e9ffa717f241597683d71296aa4e9c9ef3039cc63b6"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND",
+      "rev-parse",
+      "--git-path",
+      "index"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": ".git/index\n",
+    "stdout_sha256": "742e1586a644af64934a892663d03c75415bfb01edafdfdd924a8627573bfb9c"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "diff-tree",
+      "--no-commit-id",
+      "--name-only",
+      "-r",
+      "6066d9ea35fbc9c045855144550971c2ac5895f9",
+      "b1c7405c2dce76270554973bdf81c87271216cd4"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": ".review_metadata/check_qualification_reuse_scope.py\n.review_metadata/common_confirmation_affected_author_6783003_30.json\n.review_metadata/common_confirmation_affected_independent_6783003_32.json\n.review_metadata/common_confirmation_cold_actual_probes/cold_actual_probes.json\n.review_metadata/common_confirmation_cold_actual_probes/copies_1_command.json\n.review_metadata/common_confirmation_cold_actual_probes/copies_1_return.json\n.review_metadata/common_confirmation_cold_actual_probes/copies_1_stderr.raw\n.review_metadata/common_confirmation_cold_actual_probes/copies_1_stdout.raw\n.review_metadata/common_confirmation_cold_actual_probes/copies_2_command.json\n.review_metadata/common_confirmation_cold_actual_probes/copies_2_return.json\n.review_metadata/common_confirmation_cold_actual_probes/copies_2_stderr.raw\n.review_metadata/common_confirmation_cold_actual_probes/copies_2_stdout.raw\n.review_metadata/common_confirmation_complete_source_freeze.json\n.review_metadata/common_confirmation_first_author/author_6783003_24.json\n.review_metadata/common_confirmation_first_author/run_first_author.py\n.review_metadata/common_confirmation_frozen_source/common_confirmation.py\n.review_metadata/common_confirmation_frozen_source/configured_measurement.py\n.review_metadata/common_confirmation_frozen_source/measure_selected.py\n.review_metadata/common_confirmation_frozen_source/tests/common_confirmation_import_order_probe.py\n.review_metadata/common_confirmation_frozen_source/tests/test_common_confirmation.py\n.review_metadata/common_confirmation_independent_cold_copies1.stderr.raw\n.review_metadata/common_confirmation_independent_cold_copies1.stdout.raw\n.review_metadata/common_confirmation_independent_cold_return.json\n.review_metadata/common_confirmation_independent_source_review.json\n.review_metadata/common_confirmation_publication_roster.json\n.review_metadata/common_confirmation_second_author/author_6783003_25.json\n.review_metadata/common_confirmation_second_author/run_second_author.py\n.review_metadata/common_confirmation_source_freeze.json\n.review_metadata/common_confirmation_walltime_budget_6783003_35.json\n.review_metadata/derive_common_confirmation_budget.py\n.review_metadata/finalize_independent_common_review.py\n.review_metadata/first_source_13_case_pass/common_confirmation.py\n.review_metadata/first_source_13_case_pass/configured_measurement.py\n.review_metadata/first_source_13_case_pass/measure_selected.py\n.review_metadata/first_source_13_case_pass/source_hashes.json\n.review_metadata/first_source_13_case_pass/tests/test_common_confirmation.py\n.review_metadata/independent_common_confirmation_controls.py\n.review_metadata/independent_qualification_reuse_scope_6783003_34.json\n.review_metadata/independent_qualification_scope.py\n.review_metadata/qualification_reuse_scope_6783003_26.json\n.review_metadata/run_common_confirmation_affected.py\n.review_metadata/run_common_confirmation_independent.py\n10_jax_exploration_platform/scripts/atari_pixel_campaign/common_confirmation.py\n10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py\n10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py\n10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/common_confirmation_import_order_probe.py\n10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_common_confirmation.py\n10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_common_confirmation_preparation.py\n",
+    "stdout_sha256": "04a9f3596ecde39f1348e69e3091d9f937fa32be86fa6da92d7f4a00db5d9e34"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "ls-tree",
+      "-r",
+      "-z",
+      "490504ffcd3ff0b6a8dd7b2e98e96f9d0bb5c313"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "9e3288c3877423db34062f82939773582f0344288f2d1d8dcf03ecb13a774140"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "ls-tree",
+      "-r",
+      "-z",
+      "b1c7405c2dce76270554973bdf81c87271216cd4"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "678ab74a857c5a7603ad5b865829dae39d4cb540f1f69c651b37b7b6ee6ae5a3"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "b1c7405c2dce76270554973bdf81c87271216cd4:.review_metadata/check_qualification_reuse_scope.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "dc595f5f15d8779aea70c4e9442f28032f7e322bb9fb594986d5c89781539fa4"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "b1c7405c2dce76270554973bdf81c87271216cd4:.review_metadata/common_confirmation_affected_author_6783003_30.json"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "e638a09e028372ba3c9a52b098d5feef92a834a6be2ac6f3e9a5fe8d07873c54"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "b1c7405c2dce76270554973bdf81c87271216cd4:.review_metadata/common_confirmation_affected_independent_6783003_32.json"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "f34534dc7d6ab2fd50aba24c3f7b2a7102fd83236312bc7663f836d929f786aa"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "b1c7405c2dce76270554973bdf81c87271216cd4:.review_metadata/common_confirmation_cold_actual_probes/cold_actual_probes.json"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "28db39c8bbb49ed9d10796e165a8405e5511fa9cfda07d61da017f2456cb6280"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "b1c7405c2dce76270554973bdf81c87271216cd4:.review_metadata/common_confirmation_cold_actual_probes/copies_1_command.json"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "[\n  \"srun\",\n  \"--jobid=6783003\",\n  \"--overlap\",\n  \"--nodes=1\",\n  \"--ntasks=1\",\n  \"--cpus-per-task=1\",\n  \"--mem=1G\",\n  \"--time=00:05:00\",\n  \"/usr/bin/python3\",\n  \"-I\",\n  \"-S\",\n  \"-B\",\n  \"/p/rlprojects/RND_worktrees/2026-11-01-17-55_a4500-common-confirmation_prior-correctness-required_rounds-7_complete-updates-per-arm-10_copies-1-2/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/common_confirmation_import_order_probe.py\",\n  \"--scripts\",\n  \"/p/rlprojects/RND_worktrees/2026-11-01-17-55_a4500-common-confirmation_prior-correctness-required_rounds-7_complete-updates-per-arm-10_copies-1-2/10_jax_exploration_platform/scripts/atari_pixel_campaign\",\n  \"--run-dir\",\n  \"/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1\",\n  \"--copies\",\n  \"1\"\n]\n",
+    "stdout_sha256": "02f17474a1e735c27220b569fd5f99f3870fa3e4df107eebf6a4ec03be388869"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "b1c7405c2dce76270554973bdf81c87271216cd4:.review_metadata/common_confirmation_cold_actual_probes/copies_1_return.json"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "{\n  \"command\": [\n    \"srun\",\n    \"--jobid=6783003\",\n    \"--overlap\",\n    \"--nodes=1\",\n    \"--ntasks=1\",\n    \"--cpus-per-task=1\",\n    \"--mem=1G\",\n    \"--time=00:05:00\",\n    \"/usr/bin/python3\",\n    \"-I\",\n    \"-S\",\n    \"-B\",\n    \"/p/rlprojects/RND_worktrees/2026-11-01-17-55_a4500-common-confirmation_prior-correctness-required_rounds-7_complete-updates-per-arm-10_copies-1-2/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/common_confirmation_import_order_probe.py\",\n    \"--scripts\",\n    \"/p/rlprojects/RND_worktrees/2026-11-01-17-55_a4500-common-confirmation_prior-correctness-required_rounds-7_complete-updates-per-arm-10_copies-1-2/10_jax_exploration_platform/scripts/atari_pixel_campaign\",\n    \"--run-dir\",\n    \"/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1\",\n    \"--copies\",\n    \"1\"\n  ],\n  \"returncode\": 0,\n  \"at_utc\": \"2026-11-02T02:18:56.698315+00:00\"\n}\n",
+    "stdout_sha256": "149f4a501d91345910407549ebffa9be3cae6394a065208b5b32f6de78cfef9d"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "b1c7405c2dce76270554973bdf81c87271216cd4:.review_metadata/common_confirmation_cold_actual_probes/copies_1_stderr.raw"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "b1c7405c2dce76270554973bdf81c87271216cd4:.review_metadata/common_confirmation_cold_actual_probes/copies_1_stdout.raw"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "{\"kind\": \"cold_actual_common_correctness_child_then_unchanged_numerical_source_gate\", \"passed\": true, \"copies\": 1, \"review_job_id\": \"6783003\", \"review_step\": \"27\", \"synthetic_outer_plan_not_a_prepared_or_admitted_unit\": true, \"actual_prior_correctness_consumer_passed\": true, \"actual_prior_inputs\": {\"result\": {\"path\": \"/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-15-09_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_jaguar03_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1/result.json\", \"sha256\": \"cb3a0b564a781aef466e243d839b2aaa108c95f30eef156c36bf686d62bdb267\"}, \"review\": {\"path\": \"/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-17-44-40_common-a4500-actual-correctness_independent-audit_jobs-6782946-6782947_copies-1-2_gpu-count-0/copies_1_independent_review.json\", \"sha256\": \"39f9f4c24b4ab111e4db31e12186a2a1ab40f269f178b99e718210e4fd202e55\"}}, \"actual_prerequisite_child_proof\": {\"schema_version\": 1, \"kind\": \"isolated_common_correctness_validation\", \"passed\": true, \"plan_sha256\": \"f019f261193469790dc1caf56ac8492c706dcf7637e64e7eba19d3d2c2c85899\", \"common_correctness_inputs\": {\"result\": {\"path\": \"/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-15-09_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_jaguar03_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1/result.json\", \"sha256\": \"cb3a0b564a781aef466e243d839b2aaa108c95f30eef156c36bf686d62bdb267\"}, \"review\": {\"path\": \"/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-17-44-40_common-a4500-actual-correctness_independent-audit_jobs-6782946-6782947_copies-1-2_gpu-count-0/copies_1_independent_review.json\", \"sha256\": \"39f9f4c24b4ab111e4db31e12186a2a1ab40f269f178b99e718210e4fd202e55\"}}, \"correctness_plan\": {\"path\": \"/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-15-09_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_jaguar03_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1/measurement_plan.json\", \"sha256\": \"4acda94f98d53f2a907505cc788da2f8251acf452e0b4c48971a68bfada67354\"}, \"correctness_job_id\": \"6782946\", \"correctness_numeric_step\": \"6782946.0\", \"gpu_uuid_of_prior_correctness\": \"GPU-3e69429a-68c3-2b5a-5835-cd9aa784f68b\", \"source_commit\": \"d28e6735e79788f618acb0ebfde8609db1f776af\", \"helper_commit\": \"6066d9ea35fbc9c045855144550971c2ac5895f9\", \"parent_pid\": 728875, \"validation_pid\": 728876, \"finished_at_seconds\": 1793585936.595795, \"numerical_imports\": [], \"gpu_operations\": 0, \"scientific_credit\": 0, \"admission_granted\": false}, \"parent_import_paths_unchanged_by_metadata_child\": true, \"parent_ideas_and_controller_absent_after_metadata_child\": true, \"staged_helper_count\": 21, \"actual_paired_path\": \"/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/scripts/atari_pixel_campaign/paired_benchmark.py\", \"actual_ideas_path\": \"/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py\", \"synthetic_numerical_imports\": [\"jax\", \"jaxtari\", \"exploration_platform.atari_pixels.config\", \"exploration_platform.atari_pixels.environment\", \"exploration_platform.atari_pixels.training\"], \"real_numerical_import_attempts\": [], \"actual_gpu_operations\": 0, \"actual_job_actions\": 0, \"scientific_credit\": 0, \"admission_granted\": false}\n",
+    "stdout_sha256": "d5ddde548d32a9b7fb23588b62602bef2b45833d40138fd4ad562f6b9471b9f2"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "b1c7405c2dce76270554973bdf81c87271216cd4:.review_metadata/common_confirmation_cold_actual_probes/copies_2_command.json"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "[\n  \"srun\",\n  \"--jobid=6783003\",\n  \"--overlap\",\n  \"--nodes=1\",\n  \"--ntasks=1\",\n  \"--cpus-per-task=1\",\n  \"--mem=1G\",\n  \"--time=00:05:00\",\n  \"/usr/bin/python3\",\n  \"-I\",\n  \"-S\",\n  \"-B\",\n  \"/p/rlprojects/RND_worktrees/2026-11-01-17-55_a4500-common-confirmation_prior-correctness-required_rounds-7_complete-updates-per-arm-10_copies-1-2/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/common_confirmation_import_order_probe.py\",\n  \"--scripts\",\n  \"/p/rlprojects/RND_worktrees/2026-11-01-17-55_a4500-common-confirmation_prior-correctness-required_rounds-7_complete-updates-per-arm-10_copies-1-2/10_jax_exploration_platform/scripts/atari_pixel_campaign\",\n  \"--run-dir\",\n  \"/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1\",\n  \"--copies\",\n  \"2\"\n]\n",
+    "stdout_sha256": "1e6dc5831a4be31ac05797b04c61dd17096c025a3da636241c636564de90fa7f"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "b1c7405c2dce76270554973bdf81c87271216cd4:.review_metadata/common_confirmation_cold_actual_probes/copies_2_return.json"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "{\n  \"command\": [\n    \"srun\",\n    \"--jobid=6783003\",\n    \"--overlap\",\n    \"--nodes=1\",\n    \"--ntasks=1\",\n    \"--cpus-per-task=1\",\n    \"--mem=1G\",\n    \"--time=00:05:00\",\n    \"/usr/bin/python3\",\n    \"-I\",\n    \"-S\",\n    \"-B\",\n    \"/p/rlprojects/RND_worktrees/2026-11-01-17-55_a4500-common-confirmation_prior-correctness-required_rounds-7_complete-updates-per-arm-10_copies-1-2/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/common_confirmation_import_order_probe.py\",\n    \"--scripts\",\n    \"/p/rlprojects/RND_worktrees/2026-11-01-17-55_a4500-common-confirmation_prior-correctness-required_rounds-7_complete-updates-per-arm-10_copies-1-2/10_jax_exploration_platform/scripts/atari_pixel_campaign\",\n    \"--run-dir\",\n    \"/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1\",\n    \"--copies\",\n    \"2\"\n  ],\n  \"returncode\": 0,\n  \"at_utc\": \"2026-11-02T02:19:06.109492+00:00\"\n}\n",
+    "stdout_sha256": "1270a502d66aec0b7924350914f678b1b5ad5543cdc9893d3ea9b8cb8ba04631"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "b1c7405c2dce76270554973bdf81c87271216cd4:.review_metadata/common_confirmation_cold_actual_probes/copies_2_stderr.raw"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "b1c7405c2dce76270554973bdf81c87271216cd4:.review_metadata/common_confirmation_cold_actual_probes/copies_2_stdout.raw"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "{\"kind\": \"cold_actual_common_correctness_child_then_unchanged_numerical_source_gate\", \"passed\": true, \"copies\": 2, \"review_job_id\": \"6783003\", \"review_step\": \"28\", \"synthetic_outer_plan_not_a_prepared_or_admitted_unit\": true, \"actual_prior_correctness_consumer_passed\": true, \"actual_prior_inputs\": {\"result\": {\"path\": \"/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-15-09_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_jaguar03_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1/result.json\", \"sha256\": \"3494776861642b04b6c6e6c2bf8253f49298185bf531f38ff69aa9289632a3b9\"}, \"review\": {\"path\": \"/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-17-44-40_common-a4500-actual-correctness_independent-audit_jobs-6782946-6782947_copies-1-2_gpu-count-0/copies_2_independent_review.json\", \"sha256\": \"a96d6c73320b2fc687dd24d4fbf13717e13e6cdf428d1c7c2aedf50832366e65\"}}, \"actual_prerequisite_child_proof\": {\"schema_version\": 1, \"kind\": \"isolated_common_correctness_validation\", \"passed\": true, \"plan_sha256\": \"6c71eecbd767e3c91ef0a3a3289dd55cdd1e7e34f687e3f4c0175f99bbee608f\", \"common_correctness_inputs\": {\"result\": {\"path\": \"/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-15-09_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_jaguar03_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1/result.json\", \"sha256\": \"3494776861642b04b6c6e6c2bf8253f49298185bf531f38ff69aa9289632a3b9\"}, \"review\": {\"path\": \"/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-17-44-40_common-a4500-actual-correctness_independent-audit_jobs-6782946-6782947_copies-1-2_gpu-count-0/copies_2_independent_review.json\", \"sha256\": \"a96d6c73320b2fc687dd24d4fbf13717e13e6cdf428d1c7c2aedf50832366e65\"}}, \"correctness_plan\": {\"path\": \"/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-15-09_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_jaguar03_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1/measurement_plan.json\", \"sha256\": \"2451cc7546f1fb5e1ab08c9479ee9e82a4f797d06c4d31beaa4f04570bd21796\"}, \"correctness_job_id\": \"6782947\", \"correctness_numeric_step\": \"6782947.0\", \"gpu_uuid_of_prior_correctness\": \"GPU-598e6dda-6f62-4dc7-37bc-41e2a7b0d522\", \"source_commit\": \"d28e6735e79788f618acb0ebfde8609db1f776af\", \"helper_commit\": \"6066d9ea35fbc9c045855144550971c2ac5895f9\", \"parent_pid\": 729168, \"validation_pid\": 729171, \"finished_at_seconds\": 1793585946.0247753, \"numerical_imports\": [], \"gpu_operations\": 0, \"scientific_credit\": 0, \"admission_granted\": false}, \"parent_import_paths_unchanged_by_metadata_child\": true, \"parent_ideas_and_controller_absent_after_metadata_child\": true, \"staged_helper_count\": 21, \"actual_paired_path\": \"/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/scripts/atari_pixel_campaign/paired_benchmark.py\", \"actual_ideas_path\": \"/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py\", \"synthetic_numerical_imports\": [\"jax\", \"jaxtari\", \"exploration_platform.atari_pixels.config\", \"exploration_platform.atari_pixels.environment\", \"exploration_platform.atari_pixels.training\"], \"real_numerical_import_attempts\": [], \"actual_gpu_operations\": 0, \"actual_job_actions\": 0, \"scientific_credit\": 0, \"admission_granted\": false}\n",
+    "stdout_sha256": "a32a1179139782981b0827c411b67a6e9e144af012dc90c381e4a85a9d945ccd"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "b1c7405c2dce76270554973bdf81c87271216cd4:.review_metadata/common_confirmation_complete_source_freeze.json"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "{\n  \"schema_version\": 1,\n  \"kind\": \"common_confirmation_complete_source_and_preparation_tests_freeze\",\n  \"base_commit\": \"6066d9ea35fbc9c045855144550971c2ac5895f9\",\n  \"files\": {\n    \"/p/rlprojects/RND_worktrees/2026-11-01-17-55_a4500-common-confirmation_prior-correctness-required_rounds-7_complete-updates-per-arm-10_copies-1-2/10_jax_exploration_platform/scripts/atari_pixel_campaign/common_confirmation.py\": \"80c4ef75d73ad2ba1cff6dad3aba6a64694cd0882c4ac570e9e41f8dea6a54dd\",\n    \"/p/rlprojects/RND_worktrees/2026-11-01-17-55_a4500-common-confirmation_prior-correctness-required_rounds-7_complete-updates-per-arm-10_copies-1-2/10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py\": \"09252a304fa451e061bfac3d547cd248bbf955db5f197191cf214c21b2c00522\",\n    \"/p/rlprojects/RND_worktrees/2026-11-01-17-55_a4500-common-confirmation_prior-correctness-required_rounds-7_complete-updates-per-arm-10_copies-1-2/10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py\": \"2fc25c271ec55c0aeb2523873eda71543e5f46341706f18e6bc9f2cc924a33a0\",\n    \"/p/rlprojects/RND_worktrees/2026-11-01-17-55_a4500-common-confirmation_prior-correctness-required_rounds-7_complete-updates-per-arm-10_copies-1-2/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_common_confirmation.py\": \"5be3542e40e55aa1d3cc6d165bd82e75e811dc0dc86cd81e7c89bd3bbe1cb89a\",\n    \"/p/rlprojects/RND_worktrees/2026-11-01-17-55_a4500-common-confirmation_prior-correctness-required_rounds-7_complete-updates-per-arm-10_copies-1-2/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/common_confirmation_import_order_probe.py\": \"78ea56157143ed437dd1bd3eac5e96f89992cb3034e9f8d44df42af2166396cd\",\n    \"/p/rlprojects/RND_worktrees/2026-11-01-17-55_a4500-common-confirmation_prior-correctness-required_rounds-7_complete-updates-per-arm-10_copies-1-2/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_common_confirmation_preparation.py\": \"2beb0b1b64bf208fcbce7e183ffd96124696b24b44753752c67abec08eb35482\"\n  },\n  \"numerical_compute_function_changed\": false,\n  \"numerical_source_changed\": false,\n  \"qualification_reuse_scope_receipt\": {\n    \"path\": \"/p/rlprojects/RND_worktrees/2026-11-01-17-55_a4500-common-confirmation_prior-correctness-required_rounds-7_complete-updates-per-arm-10_copies-1-2/.review_metadata/qualification_reuse_scope_6783003_26.json\",\n    \"sha256\": \"f5ba0a3023319f11408da0eca9c7b1d2d05f244e60c321b2e7be4c061c456910\"\n  },\n  \"actual_gpu_operations\": 0,\n  \"formal_packets_prepared\": 0,\n  \"scientific_credit\": 0,\n  \"admission_granted\": false,\n  \"prior_five_path_freeze_sha256\": \"98c95222d46d9258066d73425676da3dee8171b150d8117146a315f2a8c78692\"\n}\n",
+    "stdout_sha256": "27281757454d61f4717e8d335a30f770829907c2f1d6a6a4d698c723c709cb6c"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "b1c7405c2dce76270554973bdf81c87271216cd4:.review_metadata/common_confirmation_first_author/author_6783003_24.json"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "7468095d382ea3748804f724d26f12ead7ff9458b5f3a3dd1781bae15eb56c13"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "b1c7405c2dce76270554973bdf81c87271216cd4:.review_metadata/common_confirmation_first_author/run_first_author.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "import ctypes,datetime,hashlib,importlib.util,io,json,os,socket,sys,unittest\nfrom pathlib import Path\nW=Path('/p/rlprojects/RND_worktrees/2026-11-01-17-55_a4500-common-confirmation_prior-correctness-required_rounds-7_complete-updates-per-arm-10_copies-1-2');S=W/'10_jax_exploration_platform/scripts/atari_pixel_campaign';OUT=Path(__file__).parent\nassert os.environ.get('SLURM_JOB_ID')=='6783003' and os.environ.get('SLURM_STEP_ID','').isdigit()\nNUM={'jax','jaxlib','numpy','torch','flax','optax','scipy','cupy','jaxtari','exploration_platform'}\ndef guard(event,args):\n if event=='import' and args[0].split('.')[0] in NUM:raise RuntimeError('numerical import forbidden')\n if event in {'socket.connect','socket.bind','ctypes.dlopen','subprocess.Popen','os.system'}:raise RuntimeError('live operation forbidden: '+event)\nsys.addaudithook(guard)\nfiles=[S/'common_confirmation.py',S/'measure_selected.py',S/'configured_measurement.py',S/'tests/test_common_confirmation.py']\nhashes=lambda:{str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in files}\nbefore=hashes();sys.path.insert(0,str(S));spec=importlib.util.spec_from_file_location('common_confirmation_tests',files[-1]);module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module);output=io.StringIO();result=unittest.TextTestRunner(stream=output,verbosity=2).run(unittest.defaultTestLoader.loadTestsFromModule(module));after=hashes();assert before==after\nvalue={'schema_version':1,'kind':'common_confirmation_first_author_metadata_tests','allocation':'6783003','step':os.environ['SLURM_STEP_ID'],'pid':os.getpid(),'cgroup':Path('/proc/self/cgroup').read_text(),'at_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'tests':result.testsRun,'passed':result.wasSuccessful(),'source_before':before,'source_after':after,'output':output.getvalue(),'real_numerical_imports':sorted(NUM.intersection(sys.modules)),'actual_gpu_library_network_or_job_operations':0}\nraw=(json.dumps(value,indent=2)+'\\n').encode();p=OUT/('author_6783003_'+os.environ['SLURM_STEP_ID']+'.json')\nwith p.open('xb') as f:f.write(raw);f.flush();os.fsync(f.fileno())\nprint(json.dumps({'receipt':str(p),'sha256':hashlib.sha256(raw).hexdigest(),'tests':result.testsRun,'passed':result.wasSuccessful(),'output':output.getvalue()}));raise SystemExit(0 if result.wasSuccessful() else 1)\n",
+    "stdout_sha256": "2ecc28df0e8cd14ff2300a373b0156938245feccd5db9ead92720a8b4e1101c3"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "b1c7405c2dce76270554973bdf81c87271216cd4:.review_metadata/common_confirmation_frozen_source/common_confirmation.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "80c4ef75d73ad2ba1cff6dad3aba6a64694cd0882c4ac570e9e41f8dea6a54dd"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "b1c7405c2dce76270554973bdf81c87271216cd4:.review_metadata/common_confirmation_frozen_source/configured_measurement.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "2fc25c271ec55c0aeb2523873eda71543e5f46341706f18e6bc9f2cc924a33a0"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "b1c7405c2dce76270554973bdf81c87271216cd4:.review_metadata/common_confirmation_frozen_source/measure_selected.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "09252a304fa451e061bfac3d547cd248bbf955db5f197191cf214c21b2c00522"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "b1c7405c2dce76270554973bdf81c87271216cd4:.review_metadata/common_confirmation_frozen_source/tests/common_confirmation_import_order_probe.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "78ea56157143ed437dd1bd3eac5e96f89992cb3034e9f8d44df42af2166396cd"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "b1c7405c2dce76270554973bdf81c87271216cd4:.review_metadata/common_confirmation_frozen_source/tests/test_common_confirmation.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "5be3542e40e55aa1d3cc6d165bd82e75e811dc0dc86cd81e7c89bd3bbe1cb89a"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "b1c7405c2dce76270554973bdf81c87271216cd4:.review_metadata/common_confirmation_independent_cold_copies1.stderr.raw"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "b1c7405c2dce76270554973bdf81c87271216cd4:.review_metadata/common_confirmation_independent_cold_copies1.stdout.raw"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "{\"kind\": \"cold_actual_common_correctness_child_then_unchanged_numerical_source_gate\", \"passed\": true, \"copies\": 1, \"review_job_id\": \"6783003\", \"review_step\": \"36\", \"synthetic_outer_plan_not_a_prepared_or_admitted_unit\": true, \"actual_prior_correctness_consumer_passed\": true, \"actual_prior_inputs\": {\"result\": {\"path\": \"/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-15-09_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_jaguar03_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1/result.json\", \"sha256\": \"cb3a0b564a781aef466e243d839b2aaa108c95f30eef156c36bf686d62bdb267\"}, \"review\": {\"path\": \"/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-17-44-40_common-a4500-actual-correctness_independent-audit_jobs-6782946-6782947_copies-1-2_gpu-count-0/copies_1_independent_review.json\", \"sha256\": \"39f9f4c24b4ab111e4db31e12186a2a1ab40f269f178b99e718210e4fd202e55\"}}, \"actual_prerequisite_child_proof\": {\"schema_version\": 1, \"kind\": \"isolated_common_correctness_validation\", \"passed\": true, \"plan_sha256\": \"f019f261193469790dc1caf56ac8492c706dcf7637e64e7eba19d3d2c2c85899\", \"common_correctness_inputs\": {\"result\": {\"path\": \"/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-15-09_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_jaguar03_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1/result.json\", \"sha256\": \"cb3a0b564a781aef466e243d839b2aaa108c95f30eef156c36bf686d62bdb267\"}, \"review\": {\"path\": \"/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-17-44-40_common-a4500-actual-correctness_independent-audit_jobs-6782946-6782947_copies-1-2_gpu-count-0/copies_1_independent_review.json\", \"sha256\": \"39f9f4c24b4ab111e4db31e12186a2a1ab40f269f178b99e718210e4fd202e55\"}}, \"correctness_plan\": {\"path\": \"/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-15-09_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_jaguar03_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1/measurement_plan.json\", \"sha256\": \"4acda94f98d53f2a907505cc788da2f8251acf452e0b4c48971a68bfada67354\"}, \"correctness_job_id\": \"6782946\", \"correctness_numeric_step\": \"6782946.0\", \"gpu_uuid_of_prior_correctness\": \"GPU-3e69429a-68c3-2b5a-5835-cd9aa784f68b\", \"source_commit\": \"d28e6735e79788f618acb0ebfde8609db1f776af\", \"helper_commit\": \"6066d9ea35fbc9c045855144550971c2ac5895f9\", \"parent_pid\": 755253, \"validation_pid\": 755254, \"finished_at_seconds\": 1793586722.0937026, \"numerical_imports\": [], \"gpu_operations\": 0, \"scientific_credit\": 0, \"admission_granted\": false}, \"parent_import_paths_unchanged_by_metadata_child\": true, \"parent_ideas_and_controller_absent_after_metadata_child\": true, \"staged_helper_count\": 21, \"actual_paired_path\": \"/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/scripts/atari_pixel_campaign/paired_benchmark.py\", \"actual_ideas_path\": \"/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py\", \"synthetic_numerical_imports\": [\"jax\", \"jaxtari\", \"exploration_platform.atari_pixels.config\", \"exploration_platform.atari_pixels.environment\", \"exploration_platform.atari_pixels.training\"], \"real_numerical_import_attempts\": [], \"actual_gpu_operations\": 0, \"actual_job_actions\": 0, \"scientific_credit\": 0, \"admission_granted\": false}\n",
+    "stdout_sha256": "9b2535b75a815cfb0ef013cf6e3566dcfdc167b992ad4a5710b4160d6976e898"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "b1c7405c2dce76270554973bdf81c87271216cd4:.review_metadata/common_confirmation_independent_cold_return.json"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "{\n  \"kind\": \"independent_actual_cold_common_correctness_child_and_import_order_review_return\",\n  \"actual_srun_return_code\": 0,\n  \"actual_tool_session\": \"12730\",\n  \"stdout\": {\n    \"path\": \"/p/rlprojects/RND_worktrees/2026-11-01-17-55_a4500-common-confirmation_prior-correctness-required_rounds-7_complete-updates-per-arm-10_copies-1-2/.review_metadata/common_confirmation_independent_cold_copies1.stdout.raw\",\n    \"sha256\": \"9b2535b75a815cfb0ef013cf6e3566dcfdc167b992ad4a5710b4160d6976e898\"\n  },\n  \"stderr\": {\n    \"path\": \"/p/rlprojects/RND_worktrees/2026-11-01-17-55_a4500-common-confirmation_prior-correctness-required_rounds-7_complete-updates-per-arm-10_copies-1-2/.review_metadata/common_confirmation_independent_cold_copies1.stderr.raw\",\n    \"sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"\n  },\n  \"actual_step\": \"36\",\n  \"passed\": true,\n  \"numerical_work\": false,\n  \"gpu_or_job_actions\": 0\n}\n",
+    "stdout_sha256": "f620403b65c4fcf06bdd3ac637fc6609f13f7395146234d3c72aeeb70e958b34"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "b1c7405c2dce76270554973bdf81c87271216cd4:.review_metadata/common_confirmation_independent_source_review.json"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "bf2c6eebff276c834495f01e122ecd946d45f11b44b9a175023a778ee224a4c9"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "b1c7405c2dce76270554973bdf81c87271216cd4:.review_metadata/common_confirmation_second_author/author_6783003_25.json"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "81825ec5d4e4ed7927cd9ccb817a70c574c5d1ff9a7948098d51db522b04f7da"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "b1c7405c2dce76270554973bdf81c87271216cd4:.review_metadata/common_confirmation_second_author/run_second_author.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "import ctypes,datetime,hashlib,importlib.util,io,json,os,socket,sys,unittest\nfrom pathlib import Path\nW=Path('/p/rlprojects/RND_worktrees/2026-11-01-17-55_a4500-common-confirmation_prior-correctness-required_rounds-7_complete-updates-per-arm-10_copies-1-2');S=W/'10_jax_exploration_platform/scripts/atari_pixel_campaign';OUT=Path(__file__).parent\nassert os.environ.get('SLURM_JOB_ID')=='6783003' and os.environ.get('SLURM_STEP_ID','').isdigit()\nNUM={'jax','jaxlib','numpy','torch','flax','optax','scipy','cupy','jaxtari','exploration_platform'}\ndef guard(event,args):\n if event=='import' and args[0].split('.')[0] in NUM:raise RuntimeError('numerical import forbidden')\n if event in {'socket.connect','socket.bind','ctypes.dlopen','subprocess.Popen','os.system'}:raise RuntimeError('live operation forbidden: '+event)\nsys.addaudithook(guard)\nfiles=[S/'common_confirmation.py',S/'measure_selected.py',S/'configured_measurement.py',S/'tests/test_common_confirmation.py']\nhashes=lambda:{str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in files}\nbefore=hashes();sys.path.insert(0,str(S));spec=importlib.util.spec_from_file_location('common_confirmation_tests',files[-1]);module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module);output=io.StringIO();result=unittest.TextTestRunner(stream=output,verbosity=2).run(unittest.defaultTestLoader.loadTestsFromModule(module));after=hashes();assert before==after\nvalue={'schema_version':1,'kind':'common_confirmation_second_author_metadata_tests','allocation':'6783003','step':os.environ['SLURM_STEP_ID'],'pid':os.getpid(),'cgroup':Path('/proc/self/cgroup').read_text(),'at_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'tests':result.testsRun,'passed':result.wasSuccessful(),'source_before':before,'source_after':after,'output':output.getvalue(),'real_numerical_imports':sorted(NUM.intersection(sys.modules)),'actual_gpu_library_network_or_job_operations':0}\nraw=(json.dumps(value,indent=2)+'\\n').encode();p=OUT/('author_6783003_'+os.environ['SLURM_STEP_ID']+'.json')\nwith p.open('xb') as f:f.write(raw);f.flush();os.fsync(f.fileno())\nprint(json.dumps({'receipt':str(p),'sha256':hashlib.sha256(raw).hexdigest(),'tests':result.testsRun,'passed':result.wasSuccessful(),'output':output.getvalue()}));raise SystemExit(0 if result.wasSuccessful() else 1)\n",
+    "stdout_sha256": "8d3e9b0101df37fd9bdba76d23b96ee608528c1de74d5ab55d3a8e311cada91c"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "b1c7405c2dce76270554973bdf81c87271216cd4:.review_metadata/common_confirmation_source_freeze.json"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "{\n  \"schema_version\": 1,\n  \"kind\": \"common_confirmation_metadata_prerequisite_source_freeze\",\n  \"base_commit\": \"6066d9ea35fbc9c045855144550971c2ac5895f9\",\n  \"files\": {\n    \"/p/rlprojects/RND_worktrees/2026-11-01-17-55_a4500-common-confirmation_prior-correctness-required_rounds-7_complete-updates-per-arm-10_copies-1-2/10_jax_exploration_platform/scripts/atari_pixel_campaign/common_confirmation.py\": \"80c4ef75d73ad2ba1cff6dad3aba6a64694cd0882c4ac570e9e41f8dea6a54dd\",\n    \"/p/rlprojects/RND_worktrees/2026-11-01-17-55_a4500-common-confirmation_prior-correctness-required_rounds-7_complete-updates-per-arm-10_copies-1-2/10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py\": \"09252a304fa451e061bfac3d547cd248bbf955db5f197191cf214c21b2c00522\",\n    \"/p/rlprojects/RND_worktrees/2026-11-01-17-55_a4500-common-confirmation_prior-correctness-required_rounds-7_complete-updates-per-arm-10_copies-1-2/10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py\": \"2fc25c271ec55c0aeb2523873eda71543e5f46341706f18e6bc9f2cc924a33a0\",\n    \"/p/rlprojects/RND_worktrees/2026-11-01-17-55_a4500-common-confirmation_prior-correctness-required_rounds-7_complete-updates-per-arm-10_copies-1-2/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_common_confirmation.py\": \"5be3542e40e55aa1d3cc6d165bd82e75e811dc0dc86cd81e7c89bd3bbe1cb89a\",\n    \"/p/rlprojects/RND_worktrees/2026-11-01-17-55_a4500-common-confirmation_prior-correctness-required_rounds-7_complete-updates-per-arm-10_copies-1-2/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/common_confirmation_import_order_probe.py\": \"78ea56157143ed437dd1bd3eac5e96f89992cb3034e9f8d44df42af2166396cd\"\n  },\n  \"numerical_compute_function_changed\": false,\n  \"numerical_source_changed\": false,\n  \"qualification_reuse_scope_receipt\": {\n    \"path\": \"/p/rlprojects/RND_worktrees/2026-11-01-17-55_a4500-common-confirmation_prior-correctness-required_rounds-7_complete-updates-per-arm-10_copies-1-2/.review_metadata/qualification_reuse_scope_6783003_26.json\",\n    \"sha256\": \"f5ba0a3023319f11408da0eca9c7b1d2d05f244e60c321b2e7be4c061c456910\"\n  },\n  \"actual_gpu_operations\": 0,\n  \"formal_packets_prepared\": 0,\n  \"scientific_credit\": 0,\n  \"admission_granted\": false\n}\n",
+    "stdout_sha256": "98c95222d46d9258066d73425676da3dee8171b150d8117146a315f2a8c78692"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "b1c7405c2dce76270554973bdf81c87271216cd4:.review_metadata/common_confirmation_walltime_budget_6783003_35.json"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "316f6e02afba386b104217283c7fe9ad6ea1461f4d8a45980433a240f8d63874"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "b1c7405c2dce76270554973bdf81c87271216cd4:.review_metadata/derive_common_confirmation_budget.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "c7eec06697c81f79e528674105b164329f03bfbe9081dc5591f1d0cd6499ecfb"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "b1c7405c2dce76270554973bdf81c87271216cd4:.review_metadata/finalize_independent_common_review.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "e42c080eb746c9a6c2bc5ff321e62e25e7e74e0ad3f661ee713234d88dadfa54"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "b1c7405c2dce76270554973bdf81c87271216cd4:.review_metadata/first_source_13_case_pass/common_confirmation.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "702c2abd0f4c7d121985d9e013c0c4d013ac87ec783bcea89e0186db7903d368"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "b1c7405c2dce76270554973bdf81c87271216cd4:.review_metadata/first_source_13_case_pass/configured_measurement.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "2fc25c271ec55c0aeb2523873eda71543e5f46341706f18e6bc9f2cc924a33a0"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "b1c7405c2dce76270554973bdf81c87271216cd4:.review_metadata/first_source_13_case_pass/measure_selected.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "09252a304fa451e061bfac3d547cd248bbf955db5f197191cf214c21b2c00522"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "b1c7405c2dce76270554973bdf81c87271216cd4:.review_metadata/first_source_13_case_pass/source_hashes.json"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "{\n  \"common_confirmation.py\": \"702c2abd0f4c7d121985d9e013c0c4d013ac87ec783bcea89e0186db7903d368\",\n  \"measure_selected.py\": \"09252a304fa451e061bfac3d547cd248bbf955db5f197191cf214c21b2c00522\",\n  \"configured_measurement.py\": \"2fc25c271ec55c0aeb2523873eda71543e5f46341706f18e6bc9f2cc924a33a0\",\n  \"tests/test_common_confirmation.py\": \"03b4021603aac07c2ba93bccfe13cd55a1398631689e6d539d998b3b04d76060\"\n}\n",
+    "stdout_sha256": "dcffe0052026df72d377c5f23d9c4c3af555811ee0b62b7651754d7f9d71a683"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "b1c7405c2dce76270554973bdf81c87271216cd4:.review_metadata/first_source_13_case_pass/tests/test_common_confirmation.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "03b4021603aac07c2ba93bccfe13cd55a1398631689e6d539d998b3b04d76060"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "b1c7405c2dce76270554973bdf81c87271216cd4:.review_metadata/independent_common_confirmation_controls.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "\"\"\"Independent negative controls for the optional common confirmation prerequisite.\"\"\"\nimport copy, hashlib, json, pathlib, tempfile, unittest\nimport common_confirmation as common\nimport test_common_confirmation as fixtures\nclass IndependentCommonControls(unittest.TestCase):\n    \"\"\"Exercise changed labels, raw joins, and ordinary exact artifact requirements.\"\"\"\n    def fixture(self):\n        item=fixtures.CommonSavedReaderTests();item.setUp();self.addCleanup(item.doCleanups);return item\n    def test_coherent_review_configuration_changes_are_rejected(self):\n        item=self.fixture()\n        for key in ('configuration','reference_configuration'):\n            with self.subTest(key=key):\n                old=copy.deepcopy(item.review[key])\n                item.review[key]['learner']['n_copies']=2\n                item.refresh()\n                with self.assertRaises(ValueError):item.validate()\n                item.review[key]=old\n    def test_coherent_review_resolved_binding_change_is_rejected(self):\n        item=self.fixture();item.review['resolved_binding']={'path':str(item.prior/'resolved_device_binding.json'),'sha256':'a'*64};item.refresh()\n        with self.assertRaises(ValueError):item.validate()\n    def test_coherent_raw_execution_identity_change_is_rejected(self):\n        item=self.fixture();item.raw['execution_identity']={**item.raw['execution_identity'],'pid':13};item.refresh()\n        with self.assertRaises(ValueError):item.validate()\n    def test_coherent_raw_seed_and_gpu_changes_are_rejected(self):\n        item=self.fixture()\n        for key,value in [('copy_seeds',[2]),('gpu_uuid','other')]:\n            old=item.raw[key];item.raw[key]=value;item.refresh()\n            with self.subTest(key=key),self.assertRaises(ValueError):item.validate()\n            item.raw[key]=old\n    def test_coherent_failed_numeric_step_is_rejected(self):\n        item=self.fixture()\n        raw=pathlib.Path(item.raw['terminal_accounting']['path'])\n        item.raw['terminal_accounting_rows']['900001.0'][3]='FAILED'\n        raw.write_text(''.join('|'.join(row)+'\\n' for row in item.raw['terminal_accounting_rows'].values()))\n        item.raw['terminal_accounting']['sha256']=common.digest(raw.read_bytes());item.refresh()\n        with self.assertRaises(ValueError):item.validate()\n    def test_current_full_config_change_is_not_covered(self):\n        item=self.fixture()\n        item.plan['configuration']['environment']['render_final_two_only']=False\n        with self.assertRaises(ValueError):item.validate()\n    def test_review_alias_and_duplicate_metadata_are_rejected(self):\n        with tempfile.TemporaryDirectory() as tmp:\n            root=pathlib.Path(tmp);target=root/'target.json';target.write_text('{}');alias=root/'alias.json';alias.symlink_to(target)\n            with self.assertRaises(ValueError):common.reference(alias)\n            target.write_text('{\"a\":1,\"a\":2}')\n            with self.assertRaises(ValueError):common.reference(target)\n    def test_final_and_timing_scope_cannot_be_added(self):\n        item=fixtures.CommonConfirmationTests();item.setUp();self.addCleanup(item.doCleanups)\n        for key,value in [('final_protocol',{}),('completed_study_manifest',{}),('rounds',11),('iterations',20),('minimum_updates_per_round',20)]:\n            with self.subTest(key=key),self.assertRaises(ValueError):common.contract({**item.plan,key:value})\n",
+    "stdout_sha256": "dc8868c97fcdfee6aa32caadbc7e9b3e8ced15c44df073d13c3221534e640f42"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "b1c7405c2dce76270554973bdf81c87271216cd4:.review_metadata/independent_qualification_reuse_scope_6783003_34.json"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "f2823d14917f15093db66086d8d9fab2129aa3cdc7af7edea5fef56ce1fe1b4c"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "b1c7405c2dce76270554973bdf81c87271216cd4:.review_metadata/independent_qualification_scope.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "72f32ec9bc13228755900fa4905a1d751b7492f41085448a5091c2f61ac0653f"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "b1c7405c2dce76270554973bdf81c87271216cd4:.review_metadata/qualification_reuse_scope_6783003_26.json"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "f5ba0a3023319f11408da0eca9c7b1d2d05f244e60c321b2e7be4c061c456910"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "b1c7405c2dce76270554973bdf81c87271216cd4:.review_metadata/run_common_confirmation_affected.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "2bb41053262240bc1f453dfcee4384ef2595d179105f43f6dce4e4f1535945d1"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "b1c7405c2dce76270554973bdf81c87271216cd4:.review_metadata/run_common_confirmation_independent.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "ca9b9879b1ab74e9b4ec27ba8e1c56b240b823f578919a93f3e97bd492e62744"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "b1c7405c2dce76270554973bdf81c87271216cd4:10_jax_exploration_platform/scripts/atari_pixel_campaign/common_confirmation.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "80c4ef75d73ad2ba1cff6dad3aba6a64694cd0882c4ac570e9e41f8dea6a54dd"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "b1c7405c2dce76270554973bdf81c87271216cd4:10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "2fc25c271ec55c0aeb2523873eda71543e5f46341706f18e6bc9f2cc924a33a0"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "b1c7405c2dce76270554973bdf81c87271216cd4:10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "09252a304fa451e061bfac3d547cd248bbf955db5f197191cf214c21b2c00522"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "b1c7405c2dce76270554973bdf81c87271216cd4:10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/common_confirmation_import_order_probe.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "78ea56157143ed437dd1bd3eac5e96f89992cb3034e9f8d44df42af2166396cd"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "b1c7405c2dce76270554973bdf81c87271216cd4:10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_common_confirmation.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "5be3542e40e55aa1d3cc6d165bd82e75e811dc0dc86cd81e7c89bd3bbe1cb89a"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "b1c7405c2dce76270554973bdf81c87271216cd4:10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_common_confirmation_preparation.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "\"\"\"Exercise the real opt-in preparation and worker ordering without numerical work.\"\"\"\nimport hashlib\nimport json\nimport os\nfrom pathlib import Path\nimport sys\nfrom types import SimpleNamespace\nimport unittest\nfrom unittest.mock import patch\n\nSCRIPTS = Path(__file__).resolve().parents[1]\nsys.path[:0] = [str(SCRIPTS), str(SCRIPTS/'tests')]\nimport common_confirmation as common\nimport test_configured_measurement as configured_tests\n\n\nclass CommonPreparationTests(unittest.TestCase):\n    \"\"\"Reuse the complete existing metadata fixture and retain actual producer entry points.\"\"\"\n\n    def setUp(self):\n        \"\"\"Prepare only synthetic prior references while staging all real helper bytes.\"\"\"\n        self.context = configured_tests.ConfiguredPreparationTests()\n        self.context.setUp(); self.addCleanup(self.context.doCleanups)\n        self.fixture = self.context.fixture\n        self.selected = configured_tests.selected\n        self.fixture.selected['learner']['rollout_unroll'] = self.fixture.reference['learner']['rollout_unroll']\n        self.fixture.selected['environment'].update(cache_room_backgrounds=True, render_final_two_only=True)\n        self.fixture.files['selected'].write_text(json.dumps(self.fixture.selected))\n        self.fixture.helpers['files'][common.PREFIX+common.NAME] = hashlib.sha256((SCRIPTS/common.NAME).read_bytes()).hexdigest()\n        self.arguments = self.context.arguments()\n        self.arguments.python = Path(sys.executable)\n        for key in ('common_correctness_record','common_correctness_review'):\n            path = self.fixture.run_dir/(key+'.json');path.write_text('{\"synthetic_metadata_fixture\":true}')\n            setattr(self.arguments,key,path)\n\n    def prepare(self):\n        \"\"\"Use actual preparation, replacing only the independently exercised prior-proof child.\"\"\"\n        with patch.object(common,'request',return_value={'synthetic_metadata_fixture':True}) as child:\n            directory=self.context.prepare(self.arguments)\n        child.assert_called_once()\n        return directory\n\n    def test_actual_prepare_freezes_real_refs_and_complete_opt_in_staging(self):\n        \"\"\"The prepared plan must bind both inputs before its immutable hash is written.\"\"\"\n        directory=self.prepare();raw=(directory/'measurement_plan.json').read_bytes();plan=json.loads(raw)\n        self.assertEqual(plan['common_correctness_inputs'],{'result':common.reference(self.arguments.common_correctness_record),\n            'review':common.reference(self.arguments.common_correctness_review)})\n        self.assertEqual((plan['rounds'],plan['iterations'],plan['minimum_updates_per_round']),(7,10,10))\n        self.assertEqual(json.loads((directory/'measurement_prepared.json').read_bytes()),{'plan_sha256':hashlib.sha256(raw).hexdigest()})\n        self.assertEqual(len(list((directory/'code').iterdir())),len(self.selected.required_helpers(True,False,True)))\n        self.assertEqual((directory/'code'/common.NAME).read_bytes(),(SCRIPTS/common.NAME).read_bytes())\n        self.assertFalse((directory/'owned_allocation_inputs.json').exists())\n\n    def test_actual_worker_gate_precedes_card_metadata_and_numerical_boundary(self):\n        \"\"\"A failed prerequisite cannot start device admission, and success preserves the selector.\"\"\"\n        directory=self.prepare();support=configured_tests.support;identity=support.core();order=[]\n        identity.collect_metadata=lambda *args:order.append('metadata') or {'synthetic':True}\n        gate=SimpleNamespace(before_compute=lambda *args:order.append('common'))\n        def compute(*args):\n            \"\"\"Observe the existing numerical boundary without importing numerical packages.\"\"\"\n            order.append('compute');self.assertEqual(os.environ['CUDA_VISIBLE_DEVICES'],'0')\n        with patch.object(self.selected,'__file__',str(directory/'code/measure_selected.py')),patch.object(self.selected,'verify_prepared'),\\\n                patch.object(self.selected,'common_confirmation_support',return_value=gate),\\\n                patch.object(self.selected,'card_admission',side_effect=lambda *args:order.append('card') or self.selected.nullcontext()),\\\n                patch.object(support,'core',return_value=identity),patch.object(support,'verify_qualification_inputs'),\\\n                patch.object(self.selected.training,'verify_assets',return_value={}),patch.object(self.selected.training,'jaxtari_python_receipt',return_value={}),\\\n                patch.object(self.selected.training,'installed_gpu_library_receipts',return_value={}),patch.object(self.selected,'installed_backend_receipt',return_value={}),\\\n                patch.object(self.selected,'_compute',side_effect=compute),patch.dict(os.environ,{'CUDA_VISIBLE_DEVICES':'0'},clear=True):\n            self.selected.run_prepared(directory)\n        self.assertEqual(order,['common','card','metadata','compute'])\n\n\nif __name__=='__main__':\n    unittest.main()\n",
+    "stdout_sha256": "2beb0b1b64bf208fcbce7e183ffd96124696b24b44753752c67abec08eb35482"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "b1c7405c2dce76270554973bdf81c87271216cd4:.review_metadata/common_confirmation_publication_roster.json"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "c20a6835b33d6b3eedfb8d78a412c04f3fdf742a3f531a3dc5a69bc1c8e79bc8"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "b1c7405c2dce76270554973bdf81c87271216cd4:10_jax_exploration_platform/scripts/atari_pixel_campaign/common_confirmation.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "80c4ef75d73ad2ba1cff6dad3aba6a64694cd0882c4ac570e9e41f8dea6a54dd"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "b1c7405c2dce76270554973bdf81c87271216cd4:10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "09252a304fa451e061bfac3d547cd248bbf955db5f197191cf214c21b2c00522"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "b1c7405c2dce76270554973bdf81c87271216cd4:10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "2fc25c271ec55c0aeb2523873eda71543e5f46341706f18e6bc9f2cc924a33a0"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "b1c7405c2dce76270554973bdf81c87271216cd4:10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_common_confirmation.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "5be3542e40e55aa1d3cc6d165bd82e75e811dc0dc86cd81e7c89bd3bbe1cb89a"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "b1c7405c2dce76270554973bdf81c87271216cd4:10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/common_confirmation_import_order_probe.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "78ea56157143ed437dd1bd3eac5e96f89992cb3034e9f8d44df42af2166396cd"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "b1c7405c2dce76270554973bdf81c87271216cd4:10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_common_confirmation_preparation.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "\"\"\"Exercise the real opt-in preparation and worker ordering without numerical work.\"\"\"\nimport hashlib\nimport json\nimport os\nfrom pathlib import Path\nimport sys\nfrom types import SimpleNamespace\nimport unittest\nfrom unittest.mock import patch\n\nSCRIPTS = Path(__file__).resolve().parents[1]\nsys.path[:0] = [str(SCRIPTS), str(SCRIPTS/'tests')]\nimport common_confirmation as common\nimport test_configured_measurement as configured_tests\n\n\nclass CommonPreparationTests(unittest.TestCase):\n    \"\"\"Reuse the complete existing metadata fixture and retain actual producer entry points.\"\"\"\n\n    def setUp(self):\n        \"\"\"Prepare only synthetic prior references while staging all real helper bytes.\"\"\"\n        self.context = configured_tests.ConfiguredPreparationTests()\n        self.context.setUp(); self.addCleanup(self.context.doCleanups)\n        self.fixture = self.context.fixture\n        self.selected = configured_tests.selected\n        self.fixture.selected['learner']['rollout_unroll'] = self.fixture.reference['learner']['rollout_unroll']\n        self.fixture.selected['environment'].update(cache_room_backgrounds=True, render_final_two_only=True)\n        self.fixture.files['selected'].write_text(json.dumps(self.fixture.selected))\n        self.fixture.helpers['files'][common.PREFIX+common.NAME] = hashlib.sha256((SCRIPTS/common.NAME).read_bytes()).hexdigest()\n        self.arguments = self.context.arguments()\n        self.arguments.python = Path(sys.executable)\n        for key in ('common_correctness_record','common_correctness_review'):\n            path = self.fixture.run_dir/(key+'.json');path.write_text('{\"synthetic_metadata_fixture\":true}')\n            setattr(self.arguments,key,path)\n\n    def prepare(self):\n        \"\"\"Use actual preparation, replacing only the independently exercised prior-proof child.\"\"\"\n        with patch.object(common,'request',return_value={'synthetic_metadata_fixture':True}) as child:\n            directory=self.context.prepare(self.arguments)\n        child.assert_called_once()\n        return directory\n\n    def test_actual_prepare_freezes_real_refs_and_complete_opt_in_staging(self):\n        \"\"\"The prepared plan must bind both inputs before its immutable hash is written.\"\"\"\n        directory=self.prepare();raw=(directory/'measurement_plan.json').read_bytes();plan=json.loads(raw)\n        self.assertEqual(plan['common_correctness_inputs'],{'result':common.reference(self.arguments.common_correctness_record),\n            'review':common.reference(self.arguments.common_correctness_review)})\n        self.assertEqual((plan['rounds'],plan['iterations'],plan['minimum_updates_per_round']),(7,10,10))\n        self.assertEqual(json.loads((directory/'measurement_prepared.json').read_bytes()),{'plan_sha256':hashlib.sha256(raw).hexdigest()})\n        self.assertEqual(len(list((directory/'code').iterdir())),len(self.selected.required_helpers(True,False,True)))\n        self.assertEqual((directory/'code'/common.NAME).read_bytes(),(SCRIPTS/common.NAME).read_bytes())\n        self.assertFalse((directory/'owned_allocation_inputs.json').exists())\n\n    def test_actual_worker_gate_precedes_card_metadata_and_numerical_boundary(self):\n        \"\"\"A failed prerequisite cannot start device admission, and success preserves the selector.\"\"\"\n        directory=self.prepare();support=configured_tests.support;identity=support.core();order=[]\n        identity.collect_metadata=lambda *args:order.append('metadata') or {'synthetic':True}\n        gate=SimpleNamespace(before_compute=lambda *args:order.append('common'))\n        def compute(*args):\n            \"\"\"Observe the existing numerical boundary without importing numerical packages.\"\"\"\n            order.append('compute');self.assertEqual(os.environ['CUDA_VISIBLE_DEVICES'],'0')\n        with patch.object(self.selected,'__file__',str(directory/'code/measure_selected.py')),patch.object(self.selected,'verify_prepared'),\\\n                patch.object(self.selected,'common_confirmation_support',return_value=gate),\\\n                patch.object(self.selected,'card_admission',side_effect=lambda *args:order.append('card') or self.selected.nullcontext()),\\\n                patch.object(support,'core',return_value=identity),patch.object(support,'verify_qualification_inputs'),\\\n                patch.object(self.selected.training,'verify_assets',return_value={}),patch.object(self.selected.training,'jaxtari_python_receipt',return_value={}),\\\n                patch.object(self.selected.training,'installed_gpu_library_receipts',return_value={}),patch.object(self.selected,'installed_backend_receipt',return_value={}),\\\n                patch.object(self.selected,'_compute',side_effect=compute),patch.dict(os.environ,{'CUDA_VISIBLE_DEVICES':'0'},clear=True):\n            self.selected.run_prepared(directory)\n        self.assertEqual(order,['common','card','metadata','compute'])\n\n\nif __name__=='__main__':\n    unittest.main()\n",
+    "stdout_sha256": "2beb0b1b64bf208fcbce7e183ffd96124696b24b44753752c67abec08eb35482"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "diff-tree",
+      "--no-commit-id",
+      "--name-only",
+      "-r",
+      "6066d9ea35fbc9c045855144550971c2ac5895f9",
+      "490504ffcd3ff0b6a8dd7b2e98e96f9d0bb5c313"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "3de30e984cef8cf8588166a99bcd67771cef5f8bf2b382a4b7408c40f9e446cc"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "ls-files",
+      "--others",
+      "--ignored",
+      "--exclude-standard",
+      "-z"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "199c8d023c49679ce7cab51da175a7c071016c0f7c8f1fe0de968362d101bbef"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "ls-files",
+      "--others",
+      "--exclude-standard",
+      "-z"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "e8de1c66f3861618e6bbc9a20568161904328ebe86b63f9c581fab032547b71a"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "490504ffcd3ff0b6a8dd7b2e98e96f9d0bb5c313:10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "600b9744fecb8ac52e75f1008ef687aa5b7dc4c637babdb73ae35de07aa01497"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "490504ffcd3ff0b6a8dd7b2e98e96f9d0bb5c313:10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "3d6cd5b967836995c6d9c43e7883aeb1efd414673384c11249e1239b7e75fae4"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "cat-file",
+      "blob",
+      "d28e6735e79788f618acb0ebfde8609db1f776af:10_jax_exploration_platform/scripts/atari_pixel_campaign/worker_environment.sh"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "#!/bin/bash\n# Keep the pixel study's precision, assets and dependencies explicit.\nset -euo pipefail\nexport PYTHONNOUSERSITE=1\nexport PYTHONUNBUFFERED=1\nexport JAX_ENABLE_X64=true\nexport JAX_DEFAULT_MATMUL_PRECISION=highest\n# Original CleanRL requests deterministic operations; apply that choice to XLA too.\nexport XLA_FLAGS=\"${XLA_FLAGS:-} --xla_gpu_exclude_nondeterministic_ops=true\"\nexport JAXTARI_SKIP_SPRITE_UPDATE=1\nexport XDG_DATA_HOME=\"${ATARI_PIXEL_ASSETS:-/p/rlprojects/RND/reference_repos/jaxtari_pixel_study_assets}\"\nexport XLA_PYTHON_CLIENT_PREALLOCATE=false\nexport XLA_PYTHON_CLIENT_MEM_FRACTION=0.85\nexport OMP_NUM_THREADS=\"${SLURM_CPUS_PER_TASK:-8}\"\nexport OPENBLAS_NUM_THREADS=1\nexport MKL_NUM_THREADS=1\nexport LD_LIBRARY_PATH=\"/usr/lib/nvidia:${LD_LIBRARY_PATH:-}\"\n",
+    "stdout_sha256": "61de3a987d6494fba948083e32ba13e97f30f53e980797c72c1508e726818955"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "cat-file",
+      "blob",
+      "d28e6735e79788f618acb0ebfde8609db1f776af:10_jax_exploration_platform/src/exploration_platform/atari_pixels/__init__.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "\"\"\"Pixel PPO plus random network distillation with the original CleanRL settings.\"\"\"\n\nfrom .config import PixelPPOConfig\n\n__all__ = [\"PixelPPOConfig\"]\n",
+    "stdout_sha256": "4692ca9941cece84d6cbea0c19b9344a0dfe5d32f3a1a9d93ad7cd93fe135de2"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "cat-file",
+      "blob",
+      "d28e6735e79788f618acb0ebfde8609db1f776af:10_jax_exploration_platform/src/exploration_platform/atari_pixels/checkpointing.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "\"\"\"Restore the complete learner only when its policy seeds and environment settings agree.\"\"\"\n\nfrom dataclasses import asdict\nfrom pathlib import Path\nimport pickle\n\n\ndef load_checkpoint(path, configuration, copy_seeds, environment_configuration=None):\n    \"\"\"Validate recorded run identity before restoring every array onto the selected device.\"\"\"\n    with Path(path).open(\"rb\") as stream:\n        payload = pickle.load(stream)\n    if payload[\"configuration\"] != asdict(configuration):\n        raise ValueError(\"checkpoint learner configuration does not match this unit\")\n    if tuple(payload[\"copy_seeds\"]) != tuple(copy_seeds):\n        raise ValueError(\"checkpoint policy seeds do not match this unit\")\n    if \"environment_configuration\" not in payload:\n        raise ValueError(\"checkpoint has no recorded environment configuration\")\n    if payload[\"environment_configuration\"] != dict(environment_configuration or {}):\n        raise ValueError(\"checkpoint environment settings do not match this unit\")\n\n    # Random keys, environment state and optimizer moments resume together; no priming is repeated.\n    import jax\n    return jax.tree.map(jax.device_put, payload[\"state\"])\n",
+    "stdout_sha256": "f156b27e0c5d275db7e472f8659ca46d594624a8f573d43eee5383cdaf9f17fb"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "cat-file",
+      "blob",
+      "d28e6735e79788f618acb0ebfde8609db1f776af:10_jax_exploration_platform/src/exploration_platform/atari_pixels/config.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "8b3643fba5e3382f612507416f2204500966592a6872bb286dea1935c5f32218"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "cat-file",
+      "blob",
+      "d28e6735e79788f618acb0ebfde8609db1f776af:10_jax_exploration_platform/src/exploration_platform/atari_pixels/environment.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "aa0ad31c8fbd04c67fb9742ea103e9262dfe9cc5b6e719889c50454537b1c8b7"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "cat-file",
+      "blob",
+      "d28e6735e79788f618acb0ebfde8609db1f776af:10_jax_exploration_platform/src/exploration_platform/atari_pixels/kernels.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "\"\"\"Small float32 kernels that work on both Ampere and Hopper graphics cards.\"\"\"\n\nfrom functools import cache, partial\n\nimport jax\nimport jax.numpy as jnp\nfrom jax.experimental import pallas as pl\nfrom jax.experimental.pallas import triton as pltriton\n\n\ndef ampere_target_description(device_kind, compute_capability):\n    \"\"\"Describe the RTX A4500's verified sm86 target without changing its hardware name.\"\"\"\n    if device_kind != \"NVIDIA RTX A4500\" or compute_capability not in (86, \"8.6\", (8, 6)):\n        raise ValueError(f\"unexpected device for the RTX A4500 target: {device_kind}/{compute_capability}\")\n    return pltriton.GpuInfo(gpu_version=None, arch_name=\"8.6\", compute_capability=86)\n\n\n@cache\ndef register_gpu_targets():\n    \"\"\"Fill JAX 0.11's missing RTX A4500 metadata using its intended target registry.\"\"\"\n    # The installed pinned library omits this marketing name while already supporting sm86.\n    # Register the real name and capability; leave recognized devices such as H100 untouched.\n    from jax._src.pallas.triton import gpu_info\n\n    for device in jax.local_devices():\n        if device.platform == \"gpu\" and device.device_kind == \"NVIDIA RTX A4500\":\n            description = ampere_target_description(device.device_kind, device.compute_capability)\n            gpu_info.registry[device.device_kind] = lambda description=description: description\n\n\n@partial(jax.custom_vjp, nondiff_argnums=(2,))\ndef bias_activation(values, biases, leaky):\n    \"\"\"Add a per-policy channel bias and apply an activation in one Pallas kernel.\"\"\"\n    register_gpu_targets()\n    # Flattening retains the leading policy axis; each pixel reads only its own bias row.\n    total = values.size\n    per_policy = total // values.shape[0]\n    channels = values.shape[-1]\n    block_size = 256\n    index_dtype = jnp.int64 if total > 2 ** 31 - 1 else jnp.int32\n\n    def kernel(input_ref, bias_ref, output_ref):\n        \"\"\"Compute a block of independent float32 additions and activation values.\"\"\"\n        indices = pl.program_id(0).astype(index_dtype) * block_size + jnp.arange(block_size, dtype=index_dtype)\n        valid = indices < total\n        pixels = pltriton.load(input_ref.at[indices], mask=valid, other=0.)\n        bias_indices = (indices // per_policy) * channels + indices % channels\n        bias = pltriton.load(bias_ref.at[bias_indices], mask=valid, other=0.)\n        summed = pixels + bias\n        activated = jnp.where(summed > 0., summed, summed * (0.01 if leaky else 0.))\n        pltriton.store(output_ref.at[indices], activated, mask=valid)\n\n    result = pl.pallas_call(kernel, out_shape=jax.ShapeDtypeStruct((total,), jnp.float32),\n        grid=((total + block_size - 1) // block_size,),\n        compiler_params=pltriton.CompilerParams(),\n        interpret=jax.default_backend() == \"cpu\")(values.reshape(-1), biases.reshape(-1))\n    return result.reshape(values.shape)\n\n\ndef _bias_activation_forward(values, biases, leaky):\n    \"\"\"Save the preactivation needed by the original ReLU or LeakyReLU derivative.\"\"\"\n    broadcast_shape = (biases.shape[0],) + (1,) * (values.ndim - 2) + (biases.shape[-1],)\n    before_activation = values + biases.reshape(broadcast_shape)\n    return bias_activation(values, biases, leaky), before_activation\n\n\ndef _bias_activation_backward(leaky, before_activation, gradient):\n    \"\"\"Differentiate activation and reduce bias gradients within each policy only.\"\"\"\n    slope = jnp.where(before_activation > 0., 1., 0.01 if leaky else 0.).astype(jnp.float32)\n    input_gradient = gradient * slope\n    bias_gradient = input_gradient.sum(axis=tuple(range(1, input_gradient.ndim - 1)))\n    return input_gradient, bias_gradient\n\n\nbias_activation.defvjp(_bias_activation_forward, _bias_activation_backward)\n",
+    "stdout_sha256": "dd895f5d95f6d39c79dce277254af9a19ac49112fcec0b16a5ba096a8082e8ff"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "cat-file",
+      "blob",
+      "d28e6735e79788f618acb0ebfde8609db1f776af:10_jax_exploration_platform/src/exploration_platform/atari_pixels/networks.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "ee65436eda5fab6ae2f8c303eaf3c072b5cdfa1f6d86cfc310dfa4974c98a5bd"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "cat-file",
+      "blob",
+      "d28e6735e79788f618acb0ebfde8609db1f776af:10_jax_exploration_platform/src/exploration_platform/atari_pixels/pixel_preprocessing.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "8a9f30f36ef7b07fa0ae513d1aee442a9964c2f8da179203b031c7aca8735188"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "cat-file",
+      "blob",
+      "d28e6735e79788f618acb0ebfde8609db1f776af:10_jax_exploration_platform/src/exploration_platform/atari_pixels/settings.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "\"\"\"Resolve explicit per-policy scalars without changing the default CleanRL arithmetic.\"\"\"\n\nimport math\n\nimport jax.numpy as jnp\n\n\ndef scalar_setting(configuration, name, shape=None):\n    \"\"\"Keep an unspecified scalar as a Python constant; broadcast only explicit policy vectors.\"\"\"\n    values = configuration.per_copy_values(name)\n    if values is None:\n        return getattr(configuration, name)\n    result = jnp.asarray(values, jnp.float32)\n    return result.reshape(shape) if shape is not None else result\n\n\ndef scalar_product(configuration, names, shape=None):\n    \"\"\"Round a product of configured scalar constants once, as the original expression does.\"\"\"\n    explicit = [configuration.per_copy_values(name) for name in names]\n    if all(values is None for values in explicit):\n        return math.prod(getattr(configuration, name) for name in names)\n    # Multiplying the Python constants before creating a float32 vector preserves scalar rounding.\n    values = tuple(math.prod(values[index] if values is not None else getattr(configuration, name)\n                             for name, values in zip(names, explicit))\n                   for index in range(configuration.n_copies))\n    result = jnp.asarray(values, jnp.float32)\n    return result.reshape(shape) if shape is not None else result\n",
+    "stdout_sha256": "17f20c6dd84c99eb435337b4446418cdcda3f426514d228996f40de4220c6f26"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "cat-file",
+      "blob",
+      "d28e6735e79788f618acb0ebfde8609db1f776af:10_jax_exploration_platform/src/exploration_platform/atari_pixels/state.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "9fcf0b6bb09bbf70dc88cd28952a6fa50969371f0d8aa66739c91ced1fe887f4"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "cat-file",
+      "blob",
+      "d28e6735e79788f618acb0ebfde8609db1f776af:10_jax_exploration_platform/src/exploration_platform/atari_pixels/training.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "5b868d95c8e0f5798330e38fcf7d9a6981838881333bafe73465c1af070a5100"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "cat-file",
+      "blob",
+      "d28e6735e79788f618acb0ebfde8609db1f776af:10_jax_exploration_platform/scripts/atari_pixel_campaign/paired_benchmark.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "c3e39d8e5d2549c3e2682e196861095780b30740a49821b2077da620386f2916"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "cat-file",
+      "blob",
+      "d28e6735e79788f618acb0ebfde8609db1f776af:10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "df811a5d51a7ef2f747bc32d1545c8286552675dfc8b859e7d0600eef4c920c5"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-17-17_original-qualification-helper_source-commit-6066d9ea35fbc9c045855144550971c2ac5895f9",
+      "cat-file",
+      "blob",
+      "6066d9ea35fbc9c045855144550971c2ac5895f9:10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "3d6cd5b967836995c6d9c43e7883aeb1efd414673384c11249e1239b7e75fae4"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-17-17_original-qualification-helper_source-commit-6066d9ea35fbc9c045855144550971c2ac5895f9",
+      "cat-file",
+      "blob",
+      "6066d9ea35fbc9c045855144550971c2ac5895f9:10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "310bcb6b4b1a18cc9d7acac62a07dfb60874bb60aed127b50b9c07227593f9f8"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-17-17_original-qualification-helper_source-commit-6066d9ea35fbc9c045855144550971c2ac5895f9",
+      "cat-file",
+      "blob",
+      "6066d9ea35fbc9c045855144550971c2ac5895f9:10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "2612e358f3e823289a92bdfe54856bdc8f0de5553db4bdcc5cd7617083cfd6aa"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-17-17_original-qualification-helper_source-commit-6066d9ea35fbc9c045855144550971c2ac5895f9",
+      "cat-file",
+      "blob",
+      "6066d9ea35fbc9c045855144550971c2ac5895f9:10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "40c117d6fd1937dcdd465381d1469f0ad687103d7b551d604d8c6e03063f9107"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-17-17_original-qualification-helper_source-commit-6066d9ea35fbc9c045855144550971c2ac5895f9",
+      "cat-file",
+      "blob",
+      "6066d9ea35fbc9c045855144550971c2ac5895f9:10_jax_exploration_platform/scripts/atari_pixel_campaign/pregather_async_retry.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "881c89b678782dc56568b9257a9753a78b4e06464d43e73a14f1927a5fc17695"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-17-17_original-qualification-helper_source-commit-6066d9ea35fbc9c045855144550971c2ac5895f9",
+      "cat-file",
+      "blob",
+      "6066d9ea35fbc9c045855144550971c2ac5895f9:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_queue.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "cac5c612c641aad0bc814438f0e21c02544073632484dcba99047e2ac44aaa60"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-17-17_original-qualification-helper_source-commit-6066d9ea35fbc9c045855144550971c2ac5895f9",
+      "cat-file",
+      "blob",
+      "6066d9ea35fbc9c045855144550971c2ac5895f9:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_case.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "5acd8a33b849e8805a6d51023d5c5661ac989b473a6135669b9ca243256e754f"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-17-17_original-qualification-helper_source-commit-6066d9ea35fbc9c045855144550971c2ac5895f9",
+      "cat-file",
+      "blob",
+      "6066d9ea35fbc9c045855144550971c2ac5895f9:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_evidence.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "cc66813e5a31dd54f9c266f5a094c26c6a5753c17599b1badd97911f932c5824"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-17-17_original-qualification-helper_source-commit-6066d9ea35fbc9c045855144550971c2ac5895f9",
+      "cat-file",
+      "blob",
+      "6066d9ea35fbc9c045855144550971c2ac5895f9:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "7b71221d25493ad5a5b07672e593a329f912ebf3ecd259f2aeede1e6da55acc6"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-17-17_original-qualification-helper_source-commit-6066d9ea35fbc9c045855144550971c2ac5895f9",
+      "cat-file",
+      "blob",
+      "6066d9ea35fbc9c045855144550971c2ac5895f9:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_qualification.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "93a19a553a10daf894e4e573b7aacebecf0d5a1cfa0b0f13a471c19e4184eecb"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-17-17_original-qualification-helper_source-commit-6066d9ea35fbc9c045855144550971c2ac5895f9",
+      "cat-file",
+      "blob",
+      "6066d9ea35fbc9c045855144550971c2ac5895f9:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_allocation_observation.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "f614a3792f196605cd1fa4b76738ff3157f72ee6700058526c2598e45a63a50c"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-17-17_original-qualification-helper_source-commit-6066d9ea35fbc9c045855144550971c2ac5895f9",
+      "cat-file",
+      "blob",
+      "6066d9ea35fbc9c045855144550971c2ac5895f9:10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "66771819cf75ea89e1b6f8fef4467aece2eecf864cd0ca434cbb5c698365f210"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-17-17_original-qualification-helper_source-commit-6066d9ea35fbc9c045855144550971c2ac5895f9",
+      "cat-file",
+      "blob",
+      "6066d9ea35fbc9c045855144550971c2ac5895f9:10_jax_exploration_platform/scripts/atari_pixel_campaign/short_learning.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "b17d70f4e49de9f766062beb0578729fcde9d68a29060f37d718deb644cb0999"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-17-17_original-qualification-helper_source-commit-6066d9ea35fbc9c045855144550971c2ac5895f9",
+      "cat-file",
+      "blob",
+      "6066d9ea35fbc9c045855144550971c2ac5895f9:10_jax_exploration_platform/scripts/atari_pixel_campaign/device_memory_limit.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "3abcb3641cc799424d6585e9881befbbd3c06800e9dc4d19fed5a507fe5e06ff"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-17-17_original-qualification-helper_source-commit-6066d9ea35fbc9c045855144550971c2ac5895f9",
+      "cat-file",
+      "blob",
+      "6066d9ea35fbc9c045855144550971c2ac5895f9:10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "e392dc6329cc8b5e902f3271d512cb9ee5bbc2f2fcdd6b0d85cefd981a1042b9"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-17-17_original-qualification-helper_source-commit-6066d9ea35fbc9c045855144550971c2ac5895f9",
+      "cat-file",
+      "blob",
+      "6066d9ea35fbc9c045855144550971c2ac5895f9:10_jax_exploration_platform/scripts/atari_pixel_campaign/portable_evidence.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "0ecae0ab2c21b0bbeadd47ddbd81026cb133e8f3d7f32c2148268dbfe575a4d1"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-17-17_original-qualification-helper_source-commit-6066d9ea35fbc9c045855144550971c2ac5895f9",
+      "cat-file",
+      "blob",
+      "6066d9ea35fbc9c045855144550971c2ac5895f9:10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "beead126531ee254a7999adae2e2e0e7292f18154a2e697e8a22ce1e93a33294"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-17-17_original-qualification-helper_source-commit-6066d9ea35fbc9c045855144550971c2ac5895f9",
+      "cat-file",
+      "blob",
+      "6066d9ea35fbc9c045855144550971c2ac5895f9:10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "600b9744fecb8ac52e75f1008ef687aa5b7dc4c637babdb73ae35de07aa01497"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-17-17_original-qualification-helper_source-commit-6066d9ea35fbc9c045855144550971c2ac5895f9",
+      "cat-file",
+      "blob",
+      "6066d9ea35fbc9c045855144550971c2ac5895f9:10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "e0d7c640086480bc6c5e6a5d867db5544a1a5fb111e63e20fe3aba50e1b5afa7"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-17-17_original-qualification-helper_source-commit-6066d9ea35fbc9c045855144550971c2ac5895f9",
+      "cat-file",
+      "blob",
+      "6066d9ea35fbc9c045855144550971c2ac5895f9:10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_slurm_configured_isolation.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "d659dd1f21ddd2d7bb0474b4ded0ae4ea129c00365984c1fe7f84439b8eba694"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-17-17_original-qualification-helper_source-commit-6066d9ea35fbc9c045855144550971c2ac5895f9",
+      "cat-file",
+      "blob",
+      "6066d9ea35fbc9c045855144550971c2ac5895f9:10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_active_configuration_observation.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "8cc5a3544e426e3bd3e78707f6c77dc249a1d19165a593e157d2097daa07a648"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-17-17_original-qualification-helper_source-commit-6066d9ea35fbc9c045855144550971c2ac5895f9",
+      "cat-file",
+      "blob",
+      "6066d9ea35fbc9c045855144550971c2ac5895f9:10_jax_exploration_platform/scripts/atari_pixel_campaign/passive_installed_slurm_observation.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "97ce634c07cd7a2b045d4253938db21c844abd93f3bb7b9d4dbebfd5f33bf842"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-17-17_original-qualification-helper_source-commit-6066d9ea35fbc9c045855144550971c2ac5895f9",
+      "cat-file",
+      "blob",
+      "6066d9ea35fbc9c045855144550971c2ac5895f9:10_jax_exploration_platform/scripts/atari_pixel_campaign/collect_worker_exit_receipts.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "bcf3355b756a54251c1d03ed0494cd9e0ee2c6dba5398da1a94e168807ae058f"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-17-17_original-qualification-helper_source-commit-6066d9ea35fbc9c045855144550971c2ac5895f9",
+      "cat-file",
+      "blob",
+      "6066d9ea35fbc9c045855144550971c2ac5895f9:10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "df811a5d51a7ef2f747bc32d1545c8286552675dfc8b859e7d0600eef4c920c5"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-17-17_original-qualification-helper_source-commit-6066d9ea35fbc9c045855144550971c2ac5895f9",
+      "cat-file",
+      "blob",
+      "6066d9ea35fbc9c045855144550971c2ac5895f9:10_jax_exploration_platform/scripts/atari_pixel_campaign/controller.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "1c06dbf51a135fea5b32bdf4fa6feadcd597dcdd269559fb3ecdc8b58414f12a"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "cat-file",
+      "blob",
+      "d28e6735e79788f618acb0ebfde8609db1f776af:10_jax_exploration_platform/scripts/atari_pixel_campaign/check_rendering.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "79e21acb6d1166b8cad73a9e8eab6c360a9655fbaba628dbedd8307c511da81e"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "cat-file",
+      "blob",
+      "d28e6735e79788f618acb0ebfde8609db1f776af:10_jax_exploration_platform/tests/atari_pixels/test_equations.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "51f179041971e3e6ff1f6a3a5f58e9100dafe1d9975d9d5d5a6698828dda7dd5"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "cat-file",
+      "blob",
+      "d28e6735e79788f618acb0ebfde8609db1f776af:10_jax_exploration_platform/tests/atari_pixels/test_indexed_frames.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "\"\"\"Check frame-bank reconstruction across warmup and same-step episode boundaries.\"\"\"\n\nfrom dataclasses import replace\nfrom typing import NamedTuple\n\nimport jax\nimport jax.numpy as jnp\nimport numpy as np\n\nfrom exploration_platform.atari_pixels.config import PixelPPOConfig\nfrom exploration_platform.atari_pixels.training import (PixelPPORND, flatten_rollout,\n                                                        gather_indexed_frames)\n\n\nclass FrameState(NamedTuple):\n    \"\"\"Small deterministic frame stack with a known terminal/reset image distinction.\"\"\"\n    count: object\n    frames: object\n\n\nclass FrameEnvironment:\n    \"\"\"Append integer frames and replace every third terminal stack by reset image seven.\"\"\"\n\n    action_count = 18\n\n    def reset(self, seeds):\n        \"\"\"Start all lanes with the policy seed repeated across the full initial stack.\"\"\"\n        count = jnp.zeros((len(seeds), 2), jnp.int32)\n        frames = jnp.broadcast_to(seeds[:, None, None, None, None], (len(seeds), 2, 4, 84, 84)).astype(jnp.uint8)\n        return FrameState(count, frames), frames\n\n    def observe(self, state):\n        \"\"\"Expose the real post-warmup frame history without advancing it.\"\"\"\n        return state.frames\n\n    def step(self, state, actions):\n        \"\"\"Report pre-reset terminal images while returning the reset stack for the next action.\"\"\"\n        count = state.count + 1\n        frame = jnp.broadcast_to(count[..., None, None, None].astype(jnp.uint8), (count.shape[0], 2, 1, 84, 84))\n        final = jnp.concatenate((state.frames[..., 1:, :, :], frame), axis=2)\n        done = count % 3 == 0\n        frames = jnp.where(done[..., None, None, None], jnp.uint8(7), final)\n        return FrameState(count, frames), frames, jnp.zeros(count.shape, jnp.float32), done, {\n            \"episode_return\": count.astype(jnp.float32), \"episode_done\": done,\n            \"final_observation\": final, \"full_game_reset\": done}\n\n\ndef test_indexed_storage_preserves_stale_first_pixels_and_reset_stacks():\n    \"\"\"Reconstruct all four current frames exactly despite warmup and repeated full resets.\"\"\"\n    configuration = PixelPPOConfig(n_envs=2, num_steps=4, num_minibatches=1,\n                                    update_epochs=1, observation_warmup_iterations=1,\n                                    total_timesteps=64)\n    reference = PixelPPORND(configuration, FrameEnvironment())\n    state = reference.warmup(reference.initialize((17,)))\n    _, expected = reference.collect(state)\n    indexed = PixelPPORND(replace(configuration, rollout_frame_storage=\"indexed_frames\"), FrameEnvironment())\n    after, actual = indexed.collect(state)\n    lanes = jnp.broadcast_to(jnp.tile(jnp.arange(2, dtype=jnp.int32), 4), (1, 8))\n    reconstructed = gather_indexed_frames(actual.frame_bank, lanes, flatten_rollout(actual.observations))\n    np.testing.assert_array_equal(reconstructed, flatten_rollout(expected.observations).astype(jnp.uint8))\n    # The upstream first observation is seed 17, while the actual warmed game has already advanced.\n    assert int(reconstructed[0, 0, 0, 0, 0]) == 17\n    assert np.any(np.asarray(actual.next_frames) == 6)\n    _, expected_batch = reference.prepare_batch(after, expected)\n    _, actual_batch = indexed.prepare_batch(after, actual)\n    np.testing.assert_array_equal(expected_batch[\"normalized_frames\"], actual_batch[\"normalized_frames\"])\n",
+    "stdout_sha256": "e55375717fbd61ba1dc3eac925c835af7b1578816e2a89d7a7fb927b176119a1"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "cat-file",
+      "blob",
+      "d28e6735e79788f618acb0ebfde8609db1f776af:10_jax_exploration_platform/tests/atari_pixels/test_optimizations.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "1dafd378e1c45955fb24945f8c2978eb7b30747930bd2050dcd5aa16c3fed962"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "cat-file",
+      "blob",
+      "d28e6735e79788f618acb0ebfde8609db1f776af:10_jax_exploration_platform/tests/atari_pixels/test_scalar_settings.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "20b498b70216646105ef901273c200b2f403a7994bc2924735cc3937d7317a3e"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "cat-file",
+      "blob",
+      "d28e6735e79788f618acb0ebfde8609db1f776af:10_jax_exploration_platform/tests/atari_pixels/test_training.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "a32983ea48bf3510ad9dcfe518fac2a3d7827366ef565592a8c0ce51645df1b9"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "cat-file",
+      "blob",
+      "d28e6735e79788f618acb0ebfde8609db1f776af:10_jax_exploration_platform/tests/test_atari_pixel_environment.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "5df05885a4301e1a22416852e754f037e3abf35f5bc366ef78cc8fbe188651df"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "cat-file",
+      "blob",
+      "d28e6735e79788f618acb0ebfde8609db1f776af:10_jax_exploration_platform/scripts/atari_pixel_campaign/worker_environment.sh"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "#!/bin/bash\n# Keep the pixel study's precision, assets and dependencies explicit.\nset -euo pipefail\nexport PYTHONNOUSERSITE=1\nexport PYTHONUNBUFFERED=1\nexport JAX_ENABLE_X64=true\nexport JAX_DEFAULT_MATMUL_PRECISION=highest\n# Original CleanRL requests deterministic operations; apply that choice to XLA too.\nexport XLA_FLAGS=\"${XLA_FLAGS:-} --xla_gpu_exclude_nondeterministic_ops=true\"\nexport JAXTARI_SKIP_SPRITE_UPDATE=1\nexport XDG_DATA_HOME=\"${ATARI_PIXEL_ASSETS:-/p/rlprojects/RND/reference_repos/jaxtari_pixel_study_assets}\"\nexport XLA_PYTHON_CLIENT_PREALLOCATE=false\nexport XLA_PYTHON_CLIENT_MEM_FRACTION=0.85\nexport OMP_NUM_THREADS=\"${SLURM_CPUS_PER_TASK:-8}\"\nexport OPENBLAS_NUM_THREADS=1\nexport MKL_NUM_THREADS=1\nexport LD_LIBRARY_PATH=\"/usr/lib/nvidia:${LD_LIBRARY_PATH:-}\"\n",
+    "stdout_sha256": "61de3a987d6494fba948083e32ba13e97f30f53e980797c72c1508e726818955"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "cat-file",
+      "blob",
+      "d28e6735e79788f618acb0ebfde8609db1f776af:10_jax_exploration_platform/src/exploration_platform/atari_pixels/__init__.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "\"\"\"Pixel PPO plus random network distillation with the original CleanRL settings.\"\"\"\n\nfrom .config import PixelPPOConfig\n\n__all__ = [\"PixelPPOConfig\"]\n",
+    "stdout_sha256": "4692ca9941cece84d6cbea0c19b9344a0dfe5d32f3a1a9d93ad7cd93fe135de2"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "cat-file",
+      "blob",
+      "d28e6735e79788f618acb0ebfde8609db1f776af:10_jax_exploration_platform/src/exploration_platform/atari_pixels/checkpointing.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "\"\"\"Restore the complete learner only when its policy seeds and environment settings agree.\"\"\"\n\nfrom dataclasses import asdict\nfrom pathlib import Path\nimport pickle\n\n\ndef load_checkpoint(path, configuration, copy_seeds, environment_configuration=None):\n    \"\"\"Validate recorded run identity before restoring every array onto the selected device.\"\"\"\n    with Path(path).open(\"rb\") as stream:\n        payload = pickle.load(stream)\n    if payload[\"configuration\"] != asdict(configuration):\n        raise ValueError(\"checkpoint learner configuration does not match this unit\")\n    if tuple(payload[\"copy_seeds\"]) != tuple(copy_seeds):\n        raise ValueError(\"checkpoint policy seeds do not match this unit\")\n    if \"environment_configuration\" not in payload:\n        raise ValueError(\"checkpoint has no recorded environment configuration\")\n    if payload[\"environment_configuration\"] != dict(environment_configuration or {}):\n        raise ValueError(\"checkpoint environment settings do not match this unit\")\n\n    # Random keys, environment state and optimizer moments resume together; no priming is repeated.\n    import jax\n    return jax.tree.map(jax.device_put, payload[\"state\"])\n",
+    "stdout_sha256": "f156b27e0c5d275db7e472f8659ca46d594624a8f573d43eee5383cdaf9f17fb"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "cat-file",
+      "blob",
+      "d28e6735e79788f618acb0ebfde8609db1f776af:10_jax_exploration_platform/src/exploration_platform/atari_pixels/config.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "8b3643fba5e3382f612507416f2204500966592a6872bb286dea1935c5f32218"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "cat-file",
+      "blob",
+      "d28e6735e79788f618acb0ebfde8609db1f776af:10_jax_exploration_platform/src/exploration_platform/atari_pixels/environment.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "aa0ad31c8fbd04c67fb9742ea103e9262dfe9cc5b6e719889c50454537b1c8b7"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "cat-file",
+      "blob",
+      "d28e6735e79788f618acb0ebfde8609db1f776af:10_jax_exploration_platform/src/exploration_platform/atari_pixels/kernels.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "\"\"\"Small float32 kernels that work on both Ampere and Hopper graphics cards.\"\"\"\n\nfrom functools import cache, partial\n\nimport jax\nimport jax.numpy as jnp\nfrom jax.experimental import pallas as pl\nfrom jax.experimental.pallas import triton as pltriton\n\n\ndef ampere_target_description(device_kind, compute_capability):\n    \"\"\"Describe the RTX A4500's verified sm86 target without changing its hardware name.\"\"\"\n    if device_kind != \"NVIDIA RTX A4500\" or compute_capability not in (86, \"8.6\", (8, 6)):\n        raise ValueError(f\"unexpected device for the RTX A4500 target: {device_kind}/{compute_capability}\")\n    return pltriton.GpuInfo(gpu_version=None, arch_name=\"8.6\", compute_capability=86)\n\n\n@cache\ndef register_gpu_targets():\n    \"\"\"Fill JAX 0.11's missing RTX A4500 metadata using its intended target registry.\"\"\"\n    # The installed pinned library omits this marketing name while already supporting sm86.\n    # Register the real name and capability; leave recognized devices such as H100 untouched.\n    from jax._src.pallas.triton import gpu_info\n\n    for device in jax.local_devices():\n        if device.platform == \"gpu\" and device.device_kind == \"NVIDIA RTX A4500\":\n            description = ampere_target_description(device.device_kind, device.compute_capability)\n            gpu_info.registry[device.device_kind] = lambda description=description: description\n\n\n@partial(jax.custom_vjp, nondiff_argnums=(2,))\ndef bias_activation(values, biases, leaky):\n    \"\"\"Add a per-policy channel bias and apply an activation in one Pallas kernel.\"\"\"\n    register_gpu_targets()\n    # Flattening retains the leading policy axis; each pixel reads only its own bias row.\n    total = values.size\n    per_policy = total // values.shape[0]\n    channels = values.shape[-1]\n    block_size = 256\n    index_dtype = jnp.int64 if total > 2 ** 31 - 1 else jnp.int32\n\n    def kernel(input_ref, bias_ref, output_ref):\n        \"\"\"Compute a block of independent float32 additions and activation values.\"\"\"\n        indices = pl.program_id(0).astype(index_dtype) * block_size + jnp.arange(block_size, dtype=index_dtype)\n        valid = indices < total\n        pixels = pltriton.load(input_ref.at[indices], mask=valid, other=0.)\n        bias_indices = (indices // per_policy) * channels + indices % channels\n        bias = pltriton.load(bias_ref.at[bias_indices], mask=valid, other=0.)\n        summed = pixels + bias\n        activated = jnp.where(summed > 0., summed, summed * (0.01 if leaky else 0.))\n        pltriton.store(output_ref.at[indices], activated, mask=valid)\n\n    result = pl.pallas_call(kernel, out_shape=jax.ShapeDtypeStruct((total,), jnp.float32),\n        grid=((total + block_size - 1) // block_size,),\n        compiler_params=pltriton.CompilerParams(),\n        interpret=jax.default_backend() == \"cpu\")(values.reshape(-1), biases.reshape(-1))\n    return result.reshape(values.shape)\n\n\ndef _bias_activation_forward(values, biases, leaky):\n    \"\"\"Save the preactivation needed by the original ReLU or LeakyReLU derivative.\"\"\"\n    broadcast_shape = (biases.shape[0],) + (1,) * (values.ndim - 2) + (biases.shape[-1],)\n    before_activation = values + biases.reshape(broadcast_shape)\n    return bias_activation(values, biases, leaky), before_activation\n\n\ndef _bias_activation_backward(leaky, before_activation, gradient):\n    \"\"\"Differentiate activation and reduce bias gradients within each policy only.\"\"\"\n    slope = jnp.where(before_activation > 0., 1., 0.01 if leaky else 0.).astype(jnp.float32)\n    input_gradient = gradient * slope\n    bias_gradient = input_gradient.sum(axis=tuple(range(1, input_gradient.ndim - 1)))\n    return input_gradient, bias_gradient\n\n\nbias_activation.defvjp(_bias_activation_forward, _bias_activation_backward)\n",
+    "stdout_sha256": "dd895f5d95f6d39c79dce277254af9a19ac49112fcec0b16a5ba096a8082e8ff"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "cat-file",
+      "blob",
+      "d28e6735e79788f618acb0ebfde8609db1f776af:10_jax_exploration_platform/src/exploration_platform/atari_pixels/networks.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "ee65436eda5fab6ae2f8c303eaf3c072b5cdfa1f6d86cfc310dfa4974c98a5bd"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "cat-file",
+      "blob",
+      "d28e6735e79788f618acb0ebfde8609db1f776af:10_jax_exploration_platform/src/exploration_platform/atari_pixels/pixel_preprocessing.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "8a9f30f36ef7b07fa0ae513d1aee442a9964c2f8da179203b031c7aca8735188"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "cat-file",
+      "blob",
+      "d28e6735e79788f618acb0ebfde8609db1f776af:10_jax_exploration_platform/src/exploration_platform/atari_pixels/settings.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "\"\"\"Resolve explicit per-policy scalars without changing the default CleanRL arithmetic.\"\"\"\n\nimport math\n\nimport jax.numpy as jnp\n\n\ndef scalar_setting(configuration, name, shape=None):\n    \"\"\"Keep an unspecified scalar as a Python constant; broadcast only explicit policy vectors.\"\"\"\n    values = configuration.per_copy_values(name)\n    if values is None:\n        return getattr(configuration, name)\n    result = jnp.asarray(values, jnp.float32)\n    return result.reshape(shape) if shape is not None else result\n\n\ndef scalar_product(configuration, names, shape=None):\n    \"\"\"Round a product of configured scalar constants once, as the original expression does.\"\"\"\n    explicit = [configuration.per_copy_values(name) for name in names]\n    if all(values is None for values in explicit):\n        return math.prod(getattr(configuration, name) for name in names)\n    # Multiplying the Python constants before creating a float32 vector preserves scalar rounding.\n    values = tuple(math.prod(values[index] if values is not None else getattr(configuration, name)\n                             for name, values in zip(names, explicit))\n                   for index in range(configuration.n_copies))\n    result = jnp.asarray(values, jnp.float32)\n    return result.reshape(shape) if shape is not None else result\n",
+    "stdout_sha256": "17f20c6dd84c99eb435337b4446418cdcda3f426514d228996f40de4220c6f26"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "cat-file",
+      "blob",
+      "d28e6735e79788f618acb0ebfde8609db1f776af:10_jax_exploration_platform/src/exploration_platform/atari_pixels/state.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "9fcf0b6bb09bbf70dc88cd28952a6fa50969371f0d8aa66739c91ced1fe887f4"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "cat-file",
+      "blob",
+      "d28e6735e79788f618acb0ebfde8609db1f776af:10_jax_exploration_platform/src/exploration_platform/atari_pixels/training.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "5b868d95c8e0f5798330e38fcf7d9a6981838881333bafe73465c1af070a5100"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "cat-file",
+      "blob",
+      "d28e6735e79788f618acb0ebfde8609db1f776af:10_jax_exploration_platform/scripts/atari_pixel_campaign/paired_benchmark.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "c3e39d8e5d2549c3e2682e196861095780b30740a49821b2077da620386f2916"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "cat-file",
+      "blob",
+      "d28e6735e79788f618acb0ebfde8609db1f776af:10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "df811a5d51a7ef2f747bc32d1545c8286552675dfc8b859e7d0600eef4c920c5"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-13-50_full-original-qualification-explicit-pytest-root_source-commit-e5afbf6b51a3d1666b46e71c0631a45d47080cd8",
+      "cat-file",
+      "blob",
+      "e5afbf6b51a3d1666b46e71c0631a45d47080cd8:10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "6bbb711c79a5f553a9d97aa8492e20871ab618fdf93b03235d3fb7c3cecdc46f"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-13-50_full-original-qualification-explicit-pytest-root_source-commit-e5afbf6b51a3d1666b46e71c0631a45d47080cd8",
+      "cat-file",
+      "blob",
+      "e5afbf6b51a3d1666b46e71c0631a45d47080cd8:10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "310bcb6b4b1a18cc9d7acac62a07dfb60874bb60aed127b50b9c07227593f9f8"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-13-50_full-original-qualification-explicit-pytest-root_source-commit-e5afbf6b51a3d1666b46e71c0631a45d47080cd8",
+      "cat-file",
+      "blob",
+      "e5afbf6b51a3d1666b46e71c0631a45d47080cd8:10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "e571bbdbb49f911d914044f19e8bdd35322086624498f6bef458e98f7763b888"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-13-50_full-original-qualification-explicit-pytest-root_source-commit-e5afbf6b51a3d1666b46e71c0631a45d47080cd8",
+      "cat-file",
+      "blob",
+      "e5afbf6b51a3d1666b46e71c0631a45d47080cd8:10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "40c117d6fd1937dcdd465381d1469f0ad687103d7b551d604d8c6e03063f9107"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-13-50_full-original-qualification-explicit-pytest-root_source-commit-e5afbf6b51a3d1666b46e71c0631a45d47080cd8",
+      "cat-file",
+      "blob",
+      "e5afbf6b51a3d1666b46e71c0631a45d47080cd8:10_jax_exploration_platform/scripts/atari_pixel_campaign/pregather_async_retry.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "881c89b678782dc56568b9257a9753a78b4e06464d43e73a14f1927a5fc17695"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-13-50_full-original-qualification-explicit-pytest-root_source-commit-e5afbf6b51a3d1666b46e71c0631a45d47080cd8",
+      "cat-file",
+      "blob",
+      "e5afbf6b51a3d1666b46e71c0631a45d47080cd8:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_queue.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "cac5c612c641aad0bc814438f0e21c02544073632484dcba99047e2ac44aaa60"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-13-50_full-original-qualification-explicit-pytest-root_source-commit-e5afbf6b51a3d1666b46e71c0631a45d47080cd8",
+      "cat-file",
+      "blob",
+      "e5afbf6b51a3d1666b46e71c0631a45d47080cd8:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_case.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "5acd8a33b849e8805a6d51023d5c5661ac989b473a6135669b9ca243256e754f"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-13-50_full-original-qualification-explicit-pytest-root_source-commit-e5afbf6b51a3d1666b46e71c0631a45d47080cd8",
+      "cat-file",
+      "blob",
+      "e5afbf6b51a3d1666b46e71c0631a45d47080cd8:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_evidence.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "cc66813e5a31dd54f9c266f5a094c26c6a5753c17599b1badd97911f932c5824"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-13-50_full-original-qualification-explicit-pytest-root_source-commit-e5afbf6b51a3d1666b46e71c0631a45d47080cd8",
+      "cat-file",
+      "blob",
+      "e5afbf6b51a3d1666b46e71c0631a45d47080cd8:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "7b71221d25493ad5a5b07672e593a329f912ebf3ecd259f2aeede1e6da55acc6"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-13-50_full-original-qualification-explicit-pytest-root_source-commit-e5afbf6b51a3d1666b46e71c0631a45d47080cd8",
+      "cat-file",
+      "blob",
+      "e5afbf6b51a3d1666b46e71c0631a45d47080cd8:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_qualification.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "93a19a553a10daf894e4e573b7aacebecf0d5a1cfa0b0f13a471c19e4184eecb"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-13-50_full-original-qualification-explicit-pytest-root_source-commit-e5afbf6b51a3d1666b46e71c0631a45d47080cd8",
+      "cat-file",
+      "blob",
+      "e5afbf6b51a3d1666b46e71c0631a45d47080cd8:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_allocation_observation.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "f614a3792f196605cd1fa4b76738ff3157f72ee6700058526c2598e45a63a50c"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-13-50_full-original-qualification-explicit-pytest-root_source-commit-e5afbf6b51a3d1666b46e71c0631a45d47080cd8",
+      "cat-file",
+      "blob",
+      "e5afbf6b51a3d1666b46e71c0631a45d47080cd8:10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "66771819cf75ea89e1b6f8fef4467aece2eecf864cd0ca434cbb5c698365f210"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-13-50_full-original-qualification-explicit-pytest-root_source-commit-e5afbf6b51a3d1666b46e71c0631a45d47080cd8",
+      "cat-file",
+      "blob",
+      "e5afbf6b51a3d1666b46e71c0631a45d47080cd8:10_jax_exploration_platform/scripts/atari_pixel_campaign/short_learning.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "b17d70f4e49de9f766062beb0578729fcde9d68a29060f37d718deb644cb0999"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-13-50_full-original-qualification-explicit-pytest-root_source-commit-e5afbf6b51a3d1666b46e71c0631a45d47080cd8",
+      "cat-file",
+      "blob",
+      "e5afbf6b51a3d1666b46e71c0631a45d47080cd8:10_jax_exploration_platform/scripts/atari_pixel_campaign/device_memory_limit.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "3abcb3641cc799424d6585e9881befbbd3c06800e9dc4d19fed5a507fe5e06ff"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-13-50_full-original-qualification-explicit-pytest-root_source-commit-e5afbf6b51a3d1666b46e71c0631a45d47080cd8",
+      "cat-file",
+      "blob",
+      "e5afbf6b51a3d1666b46e71c0631a45d47080cd8:10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "e8f18125ed7f7051971fd5db344188647f41e91a770e3a9bbd656ee4a74a6be1"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-13-50_full-original-qualification-explicit-pytest-root_source-commit-e5afbf6b51a3d1666b46e71c0631a45d47080cd8",
+      "cat-file",
+      "blob",
+      "e5afbf6b51a3d1666b46e71c0631a45d47080cd8:10_jax_exploration_platform/scripts/atari_pixel_campaign/portable_evidence.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "0ecae0ab2c21b0bbeadd47ddbd81026cb133e8f3d7f32c2148268dbfe575a4d1"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-13-50_full-original-qualification-explicit-pytest-root_source-commit-e5afbf6b51a3d1666b46e71c0631a45d47080cd8",
+      "cat-file",
+      "blob",
+      "e5afbf6b51a3d1666b46e71c0631a45d47080cd8:10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "0182089a73d504565f16b51891848000c1297a098b220374af9b74d89172d50c"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-13-50_full-original-qualification-explicit-pytest-root_source-commit-e5afbf6b51a3d1666b46e71c0631a45d47080cd8",
+      "cat-file",
+      "blob",
+      "e5afbf6b51a3d1666b46e71c0631a45d47080cd8:10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_slurm_configured_isolation.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "d659dd1f21ddd2d7bb0474b4ded0ae4ea129c00365984c1fe7f84439b8eba694"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-13-50_full-original-qualification-explicit-pytest-root_source-commit-e5afbf6b51a3d1666b46e71c0631a45d47080cd8",
+      "cat-file",
+      "blob",
+      "e5afbf6b51a3d1666b46e71c0631a45d47080cd8:10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_active_configuration_observation.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "8cc5a3544e426e3bd3e78707f6c77dc249a1d19165a593e157d2097daa07a648"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-13-50_full-original-qualification-explicit-pytest-root_source-commit-e5afbf6b51a3d1666b46e71c0631a45d47080cd8",
+      "cat-file",
+      "blob",
+      "e5afbf6b51a3d1666b46e71c0631a45d47080cd8:10_jax_exploration_platform/scripts/atari_pixel_campaign/passive_installed_slurm_observation.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "97ce634c07cd7a2b045d4253938db21c844abd93f3bb7b9d4dbebfd5f33bf842"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "cat-file",
+      "blob",
+      "d28e6735e79788f618acb0ebfde8609db1f776af:10_jax_exploration_platform/scripts/atari_pixel_campaign/worker_environment.sh"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "#!/bin/bash\n# Keep the pixel study's precision, assets and dependencies explicit.\nset -euo pipefail\nexport PYTHONNOUSERSITE=1\nexport PYTHONUNBUFFERED=1\nexport JAX_ENABLE_X64=true\nexport JAX_DEFAULT_MATMUL_PRECISION=highest\n# Original CleanRL requests deterministic operations; apply that choice to XLA too.\nexport XLA_FLAGS=\"${XLA_FLAGS:-} --xla_gpu_exclude_nondeterministic_ops=true\"\nexport JAXTARI_SKIP_SPRITE_UPDATE=1\nexport XDG_DATA_HOME=\"${ATARI_PIXEL_ASSETS:-/p/rlprojects/RND/reference_repos/jaxtari_pixel_study_assets}\"\nexport XLA_PYTHON_CLIENT_PREALLOCATE=false\nexport XLA_PYTHON_CLIENT_MEM_FRACTION=0.85\nexport OMP_NUM_THREADS=\"${SLURM_CPUS_PER_TASK:-8}\"\nexport OPENBLAS_NUM_THREADS=1\nexport MKL_NUM_THREADS=1\nexport LD_LIBRARY_PATH=\"/usr/lib/nvidia:${LD_LIBRARY_PATH:-}\"\n",
+    "stdout_sha256": "61de3a987d6494fba948083e32ba13e97f30f53e980797c72c1508e726818955"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "cat-file",
+      "blob",
+      "d28e6735e79788f618acb0ebfde8609db1f776af:10_jax_exploration_platform/src/exploration_platform/atari_pixels/__init__.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "\"\"\"Pixel PPO plus random network distillation with the original CleanRL settings.\"\"\"\n\nfrom .config import PixelPPOConfig\n\n__all__ = [\"PixelPPOConfig\"]\n",
+    "stdout_sha256": "4692ca9941cece84d6cbea0c19b9344a0dfe5d32f3a1a9d93ad7cd93fe135de2"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "cat-file",
+      "blob",
+      "d28e6735e79788f618acb0ebfde8609db1f776af:10_jax_exploration_platform/src/exploration_platform/atari_pixels/checkpointing.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "\"\"\"Restore the complete learner only when its policy seeds and environment settings agree.\"\"\"\n\nfrom dataclasses import asdict\nfrom pathlib import Path\nimport pickle\n\n\ndef load_checkpoint(path, configuration, copy_seeds, environment_configuration=None):\n    \"\"\"Validate recorded run identity before restoring every array onto the selected device.\"\"\"\n    with Path(path).open(\"rb\") as stream:\n        payload = pickle.load(stream)\n    if payload[\"configuration\"] != asdict(configuration):\n        raise ValueError(\"checkpoint learner configuration does not match this unit\")\n    if tuple(payload[\"copy_seeds\"]) != tuple(copy_seeds):\n        raise ValueError(\"checkpoint policy seeds do not match this unit\")\n    if \"environment_configuration\" not in payload:\n        raise ValueError(\"checkpoint has no recorded environment configuration\")\n    if payload[\"environment_configuration\"] != dict(environment_configuration or {}):\n        raise ValueError(\"checkpoint environment settings do not match this unit\")\n\n    # Random keys, environment state and optimizer moments resume together; no priming is repeated.\n    import jax\n    return jax.tree.map(jax.device_put, payload[\"state\"])\n",
+    "stdout_sha256": "f156b27e0c5d275db7e472f8659ca46d594624a8f573d43eee5383cdaf9f17fb"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "cat-file",
+      "blob",
+      "d28e6735e79788f618acb0ebfde8609db1f776af:10_jax_exploration_platform/src/exploration_platform/atari_pixels/config.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "8b3643fba5e3382f612507416f2204500966592a6872bb286dea1935c5f32218"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "cat-file",
+      "blob",
+      "d28e6735e79788f618acb0ebfde8609db1f776af:10_jax_exploration_platform/src/exploration_platform/atari_pixels/environment.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "aa0ad31c8fbd04c67fb9742ea103e9262dfe9cc5b6e719889c50454537b1c8b7"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "cat-file",
+      "blob",
+      "d28e6735e79788f618acb0ebfde8609db1f776af:10_jax_exploration_platform/src/exploration_platform/atari_pixels/kernels.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "\"\"\"Small float32 kernels that work on both Ampere and Hopper graphics cards.\"\"\"\n\nfrom functools import cache, partial\n\nimport jax\nimport jax.numpy as jnp\nfrom jax.experimental import pallas as pl\nfrom jax.experimental.pallas import triton as pltriton\n\n\ndef ampere_target_description(device_kind, compute_capability):\n    \"\"\"Describe the RTX A4500's verified sm86 target without changing its hardware name.\"\"\"\n    if device_kind != \"NVIDIA RTX A4500\" or compute_capability not in (86, \"8.6\", (8, 6)):\n        raise ValueError(f\"unexpected device for the RTX A4500 target: {device_kind}/{compute_capability}\")\n    return pltriton.GpuInfo(gpu_version=None, arch_name=\"8.6\", compute_capability=86)\n\n\n@cache\ndef register_gpu_targets():\n    \"\"\"Fill JAX 0.11's missing RTX A4500 metadata using its intended target registry.\"\"\"\n    # The installed pinned library omits this marketing name while already supporting sm86.\n    # Register the real name and capability; leave recognized devices such as H100 untouched.\n    from jax._src.pallas.triton import gpu_info\n\n    for device in jax.local_devices():\n        if device.platform == \"gpu\" and device.device_kind == \"NVIDIA RTX A4500\":\n            description = ampere_target_description(device.device_kind, device.compute_capability)\n            gpu_info.registry[device.device_kind] = lambda description=description: description\n\n\n@partial(jax.custom_vjp, nondiff_argnums=(2,))\ndef bias_activation(values, biases, leaky):\n    \"\"\"Add a per-policy channel bias and apply an activation in one Pallas kernel.\"\"\"\n    register_gpu_targets()\n    # Flattening retains the leading policy axis; each pixel reads only its own bias row.\n    total = values.size\n    per_policy = total // values.shape[0]\n    channels = values.shape[-1]\n    block_size = 256\n    index_dtype = jnp.int64 if total > 2 ** 31 - 1 else jnp.int32\n\n    def kernel(input_ref, bias_ref, output_ref):\n        \"\"\"Compute a block of independent float32 additions and activation values.\"\"\"\n        indices = pl.program_id(0).astype(index_dtype) * block_size + jnp.arange(block_size, dtype=index_dtype)\n        valid = indices < total\n        pixels = pltriton.load(input_ref.at[indices], mask=valid, other=0.)\n        bias_indices = (indices // per_policy) * channels + indices % channels\n        bias = pltriton.load(bias_ref.at[bias_indices], mask=valid, other=0.)\n        summed = pixels + bias\n        activated = jnp.where(summed > 0., summed, summed * (0.01 if leaky else 0.))\n        pltriton.store(output_ref.at[indices], activated, mask=valid)\n\n    result = pl.pallas_call(kernel, out_shape=jax.ShapeDtypeStruct((total,), jnp.float32),\n        grid=((total + block_size - 1) // block_size,),\n        compiler_params=pltriton.CompilerParams(),\n        interpret=jax.default_backend() == \"cpu\")(values.reshape(-1), biases.reshape(-1))\n    return result.reshape(values.shape)\n\n\ndef _bias_activation_forward(values, biases, leaky):\n    \"\"\"Save the preactivation needed by the original ReLU or LeakyReLU derivative.\"\"\"\n    broadcast_shape = (biases.shape[0],) + (1,) * (values.ndim - 2) + (biases.shape[-1],)\n    before_activation = values + biases.reshape(broadcast_shape)\n    return bias_activation(values, biases, leaky), before_activation\n\n\ndef _bias_activation_backward(leaky, before_activation, gradient):\n    \"\"\"Differentiate activation and reduce bias gradients within each policy only.\"\"\"\n    slope = jnp.where(before_activation > 0., 1., 0.01 if leaky else 0.).astype(jnp.float32)\n    input_gradient = gradient * slope\n    bias_gradient = input_gradient.sum(axis=tuple(range(1, input_gradient.ndim - 1)))\n    return input_gradient, bias_gradient\n\n\nbias_activation.defvjp(_bias_activation_forward, _bias_activation_backward)\n",
+    "stdout_sha256": "dd895f5d95f6d39c79dce277254af9a19ac49112fcec0b16a5ba096a8082e8ff"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "cat-file",
+      "blob",
+      "d28e6735e79788f618acb0ebfde8609db1f776af:10_jax_exploration_platform/src/exploration_platform/atari_pixels/networks.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "ee65436eda5fab6ae2f8c303eaf3c072b5cdfa1f6d86cfc310dfa4974c98a5bd"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "cat-file",
+      "blob",
+      "d28e6735e79788f618acb0ebfde8609db1f776af:10_jax_exploration_platform/src/exploration_platform/atari_pixels/pixel_preprocessing.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "8a9f30f36ef7b07fa0ae513d1aee442a9964c2f8da179203b031c7aca8735188"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "cat-file",
+      "blob",
+      "d28e6735e79788f618acb0ebfde8609db1f776af:10_jax_exploration_platform/src/exploration_platform/atari_pixels/settings.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "\"\"\"Resolve explicit per-policy scalars without changing the default CleanRL arithmetic.\"\"\"\n\nimport math\n\nimport jax.numpy as jnp\n\n\ndef scalar_setting(configuration, name, shape=None):\n    \"\"\"Keep an unspecified scalar as a Python constant; broadcast only explicit policy vectors.\"\"\"\n    values = configuration.per_copy_values(name)\n    if values is None:\n        return getattr(configuration, name)\n    result = jnp.asarray(values, jnp.float32)\n    return result.reshape(shape) if shape is not None else result\n\n\ndef scalar_product(configuration, names, shape=None):\n    \"\"\"Round a product of configured scalar constants once, as the original expression does.\"\"\"\n    explicit = [configuration.per_copy_values(name) for name in names]\n    if all(values is None for values in explicit):\n        return math.prod(getattr(configuration, name) for name in names)\n    # Multiplying the Python constants before creating a float32 vector preserves scalar rounding.\n    values = tuple(math.prod(values[index] if values is not None else getattr(configuration, name)\n                             for name, values in zip(names, explicit))\n                   for index in range(configuration.n_copies))\n    result = jnp.asarray(values, jnp.float32)\n    return result.reshape(shape) if shape is not None else result\n",
+    "stdout_sha256": "17f20c6dd84c99eb435337b4446418cdcda3f426514d228996f40de4220c6f26"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "cat-file",
+      "blob",
+      "d28e6735e79788f618acb0ebfde8609db1f776af:10_jax_exploration_platform/src/exploration_platform/atari_pixels/state.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "9fcf0b6bb09bbf70dc88cd28952a6fa50969371f0d8aa66739c91ced1fe887f4"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "cat-file",
+      "blob",
+      "d28e6735e79788f618acb0ebfde8609db1f776af:10_jax_exploration_platform/src/exploration_platform/atari_pixels/training.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "5b868d95c8e0f5798330e38fcf7d9a6981838881333bafe73465c1af070a5100"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "cat-file",
+      "blob",
+      "d28e6735e79788f618acb0ebfde8609db1f776af:10_jax_exploration_platform/scripts/atari_pixel_campaign/paired_benchmark.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "c3e39d8e5d2549c3e2682e196861095780b30740a49821b2077da620386f2916"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "cat-file",
+      "blob",
+      "d28e6735e79788f618acb0ebfde8609db1f776af:10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "df811a5d51a7ef2f747bc32d1545c8286552675dfc8b859e7d0600eef4c920c5"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-13-50_full-original-qualification-explicit-pytest-root_source-commit-e5afbf6b51a3d1666b46e71c0631a45d47080cd8",
+      "cat-file",
+      "blob",
+      "e5afbf6b51a3d1666b46e71c0631a45d47080cd8:10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "6bbb711c79a5f553a9d97aa8492e20871ab618fdf93b03235d3fb7c3cecdc46f"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-13-50_full-original-qualification-explicit-pytest-root_source-commit-e5afbf6b51a3d1666b46e71c0631a45d47080cd8",
+      "cat-file",
+      "blob",
+      "e5afbf6b51a3d1666b46e71c0631a45d47080cd8:10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "310bcb6b4b1a18cc9d7acac62a07dfb60874bb60aed127b50b9c07227593f9f8"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-13-50_full-original-qualification-explicit-pytest-root_source-commit-e5afbf6b51a3d1666b46e71c0631a45d47080cd8",
+      "cat-file",
+      "blob",
+      "e5afbf6b51a3d1666b46e71c0631a45d47080cd8:10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "e571bbdbb49f911d914044f19e8bdd35322086624498f6bef458e98f7763b888"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-13-50_full-original-qualification-explicit-pytest-root_source-commit-e5afbf6b51a3d1666b46e71c0631a45d47080cd8",
+      "cat-file",
+      "blob",
+      "e5afbf6b51a3d1666b46e71c0631a45d47080cd8:10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "40c117d6fd1937dcdd465381d1469f0ad687103d7b551d604d8c6e03063f9107"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-13-50_full-original-qualification-explicit-pytest-root_source-commit-e5afbf6b51a3d1666b46e71c0631a45d47080cd8",
+      "cat-file",
+      "blob",
+      "e5afbf6b51a3d1666b46e71c0631a45d47080cd8:10_jax_exploration_platform/scripts/atari_pixel_campaign/pregather_async_retry.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "881c89b678782dc56568b9257a9753a78b4e06464d43e73a14f1927a5fc17695"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-13-50_full-original-qualification-explicit-pytest-root_source-commit-e5afbf6b51a3d1666b46e71c0631a45d47080cd8",
+      "cat-file",
+      "blob",
+      "e5afbf6b51a3d1666b46e71c0631a45d47080cd8:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_queue.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "cac5c612c641aad0bc814438f0e21c02544073632484dcba99047e2ac44aaa60"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-13-50_full-original-qualification-explicit-pytest-root_source-commit-e5afbf6b51a3d1666b46e71c0631a45d47080cd8",
+      "cat-file",
+      "blob",
+      "e5afbf6b51a3d1666b46e71c0631a45d47080cd8:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_case.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "5acd8a33b849e8805a6d51023d5c5661ac989b473a6135669b9ca243256e754f"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-13-50_full-original-qualification-explicit-pytest-root_source-commit-e5afbf6b51a3d1666b46e71c0631a45d47080cd8",
+      "cat-file",
+      "blob",
+      "e5afbf6b51a3d1666b46e71c0631a45d47080cd8:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_evidence.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "cc66813e5a31dd54f9c266f5a094c26c6a5753c17599b1badd97911f932c5824"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-13-50_full-original-qualification-explicit-pytest-root_source-commit-e5afbf6b51a3d1666b46e71c0631a45d47080cd8",
+      "cat-file",
+      "blob",
+      "e5afbf6b51a3d1666b46e71c0631a45d47080cd8:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "7b71221d25493ad5a5b07672e593a329f912ebf3ecd259f2aeede1e6da55acc6"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-13-50_full-original-qualification-explicit-pytest-root_source-commit-e5afbf6b51a3d1666b46e71c0631a45d47080cd8",
+      "cat-file",
+      "blob",
+      "e5afbf6b51a3d1666b46e71c0631a45d47080cd8:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_qualification.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "93a19a553a10daf894e4e573b7aacebecf0d5a1cfa0b0f13a471c19e4184eecb"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-13-50_full-original-qualification-explicit-pytest-root_source-commit-e5afbf6b51a3d1666b46e71c0631a45d47080cd8",
+      "cat-file",
+      "blob",
+      "e5afbf6b51a3d1666b46e71c0631a45d47080cd8:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_allocation_observation.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "f614a3792f196605cd1fa4b76738ff3157f72ee6700058526c2598e45a63a50c"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-13-50_full-original-qualification-explicit-pytest-root_source-commit-e5afbf6b51a3d1666b46e71c0631a45d47080cd8",
+      "cat-file",
+      "blob",
+      "e5afbf6b51a3d1666b46e71c0631a45d47080cd8:10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "66771819cf75ea89e1b6f8fef4467aece2eecf864cd0ca434cbb5c698365f210"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-13-50_full-original-qualification-explicit-pytest-root_source-commit-e5afbf6b51a3d1666b46e71c0631a45d47080cd8",
+      "cat-file",
+      "blob",
+      "e5afbf6b51a3d1666b46e71c0631a45d47080cd8:10_jax_exploration_platform/scripts/atari_pixel_campaign/short_learning.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "b17d70f4e49de9f766062beb0578729fcde9d68a29060f37d718deb644cb0999"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-13-50_full-original-qualification-explicit-pytest-root_source-commit-e5afbf6b51a3d1666b46e71c0631a45d47080cd8",
+      "cat-file",
+      "blob",
+      "e5afbf6b51a3d1666b46e71c0631a45d47080cd8:10_jax_exploration_platform/scripts/atari_pixel_campaign/device_memory_limit.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "3abcb3641cc799424d6585e9881befbbd3c06800e9dc4d19fed5a507fe5e06ff"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-13-50_full-original-qualification-explicit-pytest-root_source-commit-e5afbf6b51a3d1666b46e71c0631a45d47080cd8",
+      "cat-file",
+      "blob",
+      "e5afbf6b51a3d1666b46e71c0631a45d47080cd8:10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "e8f18125ed7f7051971fd5db344188647f41e91a770e3a9bbd656ee4a74a6be1"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-13-50_full-original-qualification-explicit-pytest-root_source-commit-e5afbf6b51a3d1666b46e71c0631a45d47080cd8",
+      "cat-file",
+      "blob",
+      "e5afbf6b51a3d1666b46e71c0631a45d47080cd8:10_jax_exploration_platform/scripts/atari_pixel_campaign/portable_evidence.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "0ecae0ab2c21b0bbeadd47ddbd81026cb133e8f3d7f32c2148268dbfe575a4d1"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-13-50_full-original-qualification-explicit-pytest-root_source-commit-e5afbf6b51a3d1666b46e71c0631a45d47080cd8",
+      "cat-file",
+      "blob",
+      "e5afbf6b51a3d1666b46e71c0631a45d47080cd8:10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "0182089a73d504565f16b51891848000c1297a098b220374af9b74d89172d50c"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-13-50_full-original-qualification-explicit-pytest-root_source-commit-e5afbf6b51a3d1666b46e71c0631a45d47080cd8",
+      "cat-file",
+      "blob",
+      "e5afbf6b51a3d1666b46e71c0631a45d47080cd8:10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_slurm_configured_isolation.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "d659dd1f21ddd2d7bb0474b4ded0ae4ea129c00365984c1fe7f84439b8eba694"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-13-50_full-original-qualification-explicit-pytest-root_source-commit-e5afbf6b51a3d1666b46e71c0631a45d47080cd8",
+      "cat-file",
+      "blob",
+      "e5afbf6b51a3d1666b46e71c0631a45d47080cd8:10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_active_configuration_observation.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "8cc5a3544e426e3bd3e78707f6c77dc249a1d19165a593e157d2097daa07a648"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-01-13-50_full-original-qualification-explicit-pytest-root_source-commit-e5afbf6b51a3d1666b46e71c0631a45d47080cd8",
+      "cat-file",
+      "blob",
+      "e5afbf6b51a3d1666b46e71c0631a45d47080cd8:10_jax_exploration_platform/scripts/atari_pixel_campaign/passive_installed_slurm_observation.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "97ce634c07cd7a2b045d4253938db21c844abd93f3bb7b9d4dbebfd5f33bf842"
+  },
+  {
+    "alternate_index": "/tmp/common-confirmation-incoming-b2hsh0s5/dry.index",
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "write-tree"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "7e620f1d83af1bb8b583c592798dbb3c2513e68a\n",
+    "stdout_sha256": "211c6e27d0a2f372c5d14dcccecc2b3e271beb2d1b94a918231bc2d2a389ed93"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "rev-parse",
+      "490504ffcd3ff0b6a8dd7b2e98e96f9d0bb5c313^{tree}"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "7e620f1d83af1bb8b583c592798dbb3c2513e68a\n",
+    "stdout_sha256": "211c6e27d0a2f372c5d14dcccecc2b3e271beb2d1b94a918231bc2d2a389ed93"
+  },
+  {
+    "alternate_index": "/tmp/common-confirmation-incoming-b2hsh0s5/dry.index",
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "update-index",
+      "--refresh",
+      "--",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "alternate_index": "/tmp/common-confirmation-incoming-b2hsh0s5/dry.index",
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "read-tree",
+      "--dry-run",
+      "-m",
+      "-u",
+      "6066d9ea35fbc9c045855144550971c2ac5895f9",
+      "490504ffcd3ff0b6a8dd7b2e98e96f9d0bb5c313",
+      "b1c7405c2dce76270554973bdf81c87271216cd4"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "alternate_index": "/tmp/common-confirmation-incoming-b2hsh0s5/merge.index",
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "read-tree",
+      "-m",
+      "6066d9ea35fbc9c045855144550971c2ac5895f9",
+      "490504ffcd3ff0b6a8dd7b2e98e96f9d0bb5c313",
+      "b1c7405c2dce76270554973bdf81c87271216cd4"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "alternate_index": "/tmp/common-confirmation-incoming-b2hsh0s5/merge.index",
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "ls-files",
+      "--unmerged",
+      "-z"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "alternate_index": "/tmp/common-confirmation-incoming-b2hsh0s5/merge.index",
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "write-tree"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "f22606f08dc3dad35d9c11b8bd943fb4d73c4d60\n",
+    "stdout_sha256": "7c4c931bdc9cc50b9afd45ceafc5c6cddcebf3abaf721f2ac020435432140d85"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "ls-tree",
+      "-r",
+      "-z",
+      "f22606f08dc3dad35d9c11b8bd943fb4d73c4d60"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "6b38159e54ab903b852bfc4e9d3cca82be2fe3d19e47fd38ff807f8b1374875c"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "diff-tree",
+      "--no-commit-id",
+      "--name-only",
+      "-r",
+      "490504ffcd3ff0b6a8dd7b2e98e96f9d0bb5c313",
+      "f22606f08dc3dad35d9c11b8bd943fb4d73c4d60"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": ".review_metadata/check_qualification_reuse_scope.py\n.review_metadata/common_confirmation_affected_author_6783003_30.json\n.review_metadata/common_confirmation_affected_independent_6783003_32.json\n.review_metadata/common_confirmation_cold_actual_probes/cold_actual_probes.json\n.review_metadata/common_confirmation_cold_actual_probes/copies_1_command.json\n.review_metadata/common_confirmation_cold_actual_probes/copies_1_return.json\n.review_metadata/common_confirmation_cold_actual_probes/copies_1_stderr.raw\n.review_metadata/common_confirmation_cold_actual_probes/copies_1_stdout.raw\n.review_metadata/common_confirmation_cold_actual_probes/copies_2_command.json\n.review_metadata/common_confirmation_cold_actual_probes/copies_2_return.json\n.review_metadata/common_confirmation_cold_actual_probes/copies_2_stderr.raw\n.review_metadata/common_confirmation_cold_actual_probes/copies_2_stdout.raw\n.review_metadata/common_confirmation_complete_source_freeze.json\n.review_metadata/common_confirmation_first_author/author_6783003_24.json\n.review_metadata/common_confirmation_first_author/run_first_author.py\n.review_metadata/common_confirmation_frozen_source/common_confirmation.py\n.review_metadata/common_confirmation_frozen_source/configured_measurement.py\n.review_metadata/common_confirmation_frozen_source/measure_selected.py\n.review_metadata/common_confirmation_frozen_source/tests/common_confirmation_import_order_probe.py\n.review_metadata/common_confirmation_frozen_source/tests/test_common_confirmation.py\n.review_metadata/common_confirmation_independent_cold_copies1.stderr.raw\n.review_metadata/common_confirmation_independent_cold_copies1.stdout.raw\n.review_metadata/common_confirmation_independent_cold_return.json\n.review_metadata/common_confirmation_independent_source_review.json\n.review_metadata/common_confirmation_publication_roster.json\n.review_metadata/common_confirmation_second_author/author_6783003_25.json\n.review_metadata/common_confirmation_second_author/run_second_author.py\n.review_metadata/common_confirmation_source_freeze.json\n.review_metadata/common_confirmation_walltime_budget_6783003_35.json\n.review_metadata/derive_common_confirmation_budget.py\n.review_metadata/finalize_independent_common_review.py\n.review_metadata/first_source_13_case_pass/common_confirmation.py\n.review_metadata/first_source_13_case_pass/configured_measurement.py\n.review_metadata/first_source_13_case_pass/measure_selected.py\n.review_metadata/first_source_13_case_pass/source_hashes.json\n.review_metadata/first_source_13_case_pass/tests/test_common_confirmation.py\n.review_metadata/independent_common_confirmation_controls.py\n.review_metadata/independent_qualification_reuse_scope_6783003_34.json\n.review_metadata/independent_qualification_scope.py\n.review_metadata/qualification_reuse_scope_6783003_26.json\n.review_metadata/run_common_confirmation_affected.py\n.review_metadata/run_common_confirmation_independent.py\n10_jax_exploration_platform/scripts/atari_pixel_campaign/common_confirmation.py\n10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py\n10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py\n10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/common_confirmation_import_order_probe.py\n10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_common_confirmation.py\n10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_common_confirmation_preparation.py\n",
+    "stdout_sha256": "04a9f3596ecde39f1348e69e3091d9f937fa32be86fa6da92d7f4a00db5d9e34"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "ls-files",
+      "--others",
+      "--ignored",
+      "--exclude-standard",
+      "-z"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "2112bfac4188f454064b5393fc214dd9cd8c5e696254cbbb1576ceef6826ceef"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "ls-files",
+      "--others",
+      "--exclude-standard",
+      "-z"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "e8de1c66f3861618e6bbc9a20568161904328ebe86b63f9c581fab032547b71a"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "490504ffcd3ff0b6a8dd7b2e98e96f9d0bb5c313:10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "600b9744fecb8ac52e75f1008ef687aa5b7dc4c637babdb73ae35de07aa01497"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "cat-file",
+      "blob",
+      "490504ffcd3ff0b6a8dd7b2e98e96f9d0bb5c313:10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": null,
+    "stdout_sha256": "3d6cd5b967836995c6d9c43e7883aeb1efd414673384c11249e1239b7e75fae4"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "rev-parse",
+      "HEAD"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "490504ffcd3ff0b6a8dd7b2e98e96f9d0bb5c313\n",
+    "stdout_sha256": "10975a69fd346b864301538dff67e04c63998c640f1b58ed5bc372270b66e93b"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+      "rev-parse",
+      "--git-path",
+      "index"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "/p/rlprojects/RND/.git/worktrees/merge-atari-cleanrl/index\n",
+    "stdout_sha256": "92189bdc15521b309d8363ffccf908b0b811a6724f0078a9cfeff93f9ed9775b"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND",
+      "rev-parse",
+      "HEAD"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "cef3073939e09ab4b2d3864a0bce8c1bb6cd7020\n",
+    "stdout_sha256": "bd3a82cf46dffc2251779e9ffa717f241597683d71296aa4e9c9ef3039cc63b6"
+  },
+  {
+    "alternate_index": null,
+    "argv": [
+      "git",
+      "-C",
+      "/p/rlprojects/RND",
+      "rev-parse",
+      "--git-path",
+      "index"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": ".git/index\n",
+    "stdout_sha256": "742e1586a644af64934a892663d03c75415bfb01edafdfdd924a8627573bfb9c"
+  }
+]

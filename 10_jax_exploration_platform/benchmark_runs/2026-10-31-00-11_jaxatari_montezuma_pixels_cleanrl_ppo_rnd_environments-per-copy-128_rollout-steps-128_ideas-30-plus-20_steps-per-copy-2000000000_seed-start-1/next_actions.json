@@ -260,14 +260,24 @@
     "worker_admission": false
   },
   "common_a4500_confirmation_preparation": {
-    "author": "next_phase_review",
-    "base_commit": "6066d9ea35fbc9c045855144550971c2ac5895f9",
-    "final_evidence_protocol_unchanged": true,
-    "no_actual_confirmation_submitted": true,
-    "protocol": "seven alternating paired rounds of ten complete updates per arm and round",
-    "qualification_reuse_requires_explicit_unchanged_numerical_scope_review_otherwise_new_full_qualification": true,
-    "reason": "E5 confirmation producer has no field to enforce actual earlier common correctness result and independent review",
-    "state": "metadata_guard_addition_required_before_formal_plan"
+    "author_commit": "b1c7405c2dce76270554973bdf81c87271216cd4",
+    "complete_updates_per_arm_per_round": 10,
+    "copies": [
+      1,
+      2
+    ],
+    "current_79a_monitor_progress_only": true,
+    "formal_timing_evidence_obtained": false,
+    "gpu_action": false,
+    "helper_commit": "9fcc43a478b93d731df780805fd7c3c514cdf67f",
+    "incoming_review_sha256": "0aaeaa6ae4ad2bdb150ef3c408aecd2687a4860cb925731102d3a58b75017126",
+    "independent_source_review_sha256": "bf2c6eebff276c834495f01e122ecd946d45f11b44b9a175023a778ee224a4c9",
+    "merged_tree": "f22606f08dc3dad35d9c11b8bd943fb4d73c4d60",
+    "rounds": 7,
+    "scientific_acceptance_requires_exact_new_staged_consumer_on_owned_compute": true,
+    "source_freeze_sha256": "27281757454d61f4717e8d335a30f770829907c2f1d6a6a4d698c723c709cb6c",
+    "state": "source_reviewed_merged_published_fresh_formal_packets_being_prepared",
+    "submitted_jobs": []
   },
   "common_a4500_correctness_preparation": {
     "confirmation_credit": 0,
