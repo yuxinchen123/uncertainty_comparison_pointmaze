@@ -1,0 +1,22 @@
+{
+  "command": [
+    "srun",
+    "--jobid=6783003",
+    "--overlap",
+    "--exact",
+    "--ntasks=1",
+    "--cpus-per-task=1",
+    "--mem=512M",
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "/p/rlprojects/RND_worktrees/2026-11-01-21-42_direct-common-confirmation_backend-schema-2_helpers-27_serval02-card-1_environments-128_rollout-steps-128_paired-rounds-7_updates-per-round-10_before-numerical-import/.review_metadata/direct_common_with_backend_preparation/run_metadata_tests.py"
+  ],
+  "returncode": 0,
+  "started_at_utc": "2026-11-02T06:22:25.489675+00:00",
+  "finished_at_utc": "2026-11-02T06:22:43.005787+00:00",
+  "stdout_sha256": "cc160bbc25153a12e5612c6bf68d77d273ee4ff18baa76566a6faefa4d8274bb",
+  "stderr_sha256": "40851790ac8f84b98ad99d973716be9a1176b2df47b96546b281cdc4bbde86b5",
+  "scope": "source-only corrected metadata tests"
+}

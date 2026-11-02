@@ -1,0 +1,34 @@
+{
+  "admission_granted": false,
+  "at_utc": "2026-11-02T06:31:11.471908+00:00",
+  "automatic_retry_permitted": false,
+  "case_credit": 0,
+  "cluster": "uva",
+  "command": [
+    "scontrol",
+    "release",
+    "6783808"
+  ],
+  "data_unit": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-21-31_selected-common-a4500-kernel-profile_cache-backgrounds-true_render-final-two-only-true_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_capture-updates-1_seed-start-1_hours-3",
+  "frozen_inputs_sha256": "61e4c81ab5d21e14817bf4588d15dc2646a8f00305e210e873681121775e80e1",
+  "held_monitor_review": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-22-12_selected-a4500-profile-release_jobs-6783807-6783808_copies-1-2_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-2-3/held_monitor_proof_copies_2.json",
+    "sha256": "5562982796a2d07cefe6a899b20434a4eb11a41bba67f97e5ff96f99907b58e7"
+  },
+  "idea_credit": 0,
+  "job_id": "6783808",
+  "kind": "owned_uva_configured_isolation_release",
+  "packing_point_credit": 0,
+  "plan_sha256": "a32a36013893fd489b380877f73c3dbf4fa87ee3f5389f5b76a7c28d512d0890",
+  "publication_commit": "10604537c43da99c7f9ad48757491196ec222504",
+  "release_source_sha256": "085e42c540a1ac126bd3d6266e1186b26a5e1ac44271ca034cb49f572cfe7e9f",
+  "returncode": 0,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "site_qualification_credit": 0,
+  "stderr": "",
+  "stdout": "",
+  "submission_receipt_sha256": "dd555737859840cedbc620f5a18811260fcf1f3428fbbf3b1a6d7112f92ad501",
+  "throughput_credit": 0,
+  "worker_admitted": false
+}

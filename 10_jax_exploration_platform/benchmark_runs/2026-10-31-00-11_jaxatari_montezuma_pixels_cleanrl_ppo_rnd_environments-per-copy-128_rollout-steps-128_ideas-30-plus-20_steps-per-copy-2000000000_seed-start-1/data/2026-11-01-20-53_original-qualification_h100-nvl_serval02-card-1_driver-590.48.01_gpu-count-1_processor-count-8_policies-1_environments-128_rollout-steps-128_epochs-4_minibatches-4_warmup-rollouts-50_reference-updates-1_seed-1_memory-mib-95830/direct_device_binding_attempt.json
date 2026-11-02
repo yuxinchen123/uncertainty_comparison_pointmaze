@@ -1,0 +1,194 @@
+{
+  "admission_granted": false,
+  "binding": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-20-53_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/direct_device_binding.json",
+    "sha256": "5a25c45be0216459763aed69354514d61692cea3bc988c89d6c9d669577dfcd5"
+  },
+  "capability": "approved_direct_uuid_held_standing_lock_current_cuda_context_and_assigned_device_windows_v1",
+  "case_credit": 0,
+  "custody_after": {
+    "lock": {
+      "fd": 5,
+      "fd_stat": {
+        "device": 64512,
+        "inode": 23077017,
+        "mode": 420,
+        "regular_file": true,
+        "uid": 2618919
+      },
+      "fd_target": "/tmp/sl5nw_serval02_card1.lock",
+      "fdinfo": "pos:\t0\nflags:\t02100002\nmnt_id:\t31\nino:\t23077017\nlock:\t1: FLOCK  ADVISORY  WRITE 1405247 fc:00:23077017 0 EOF\n",
+      "fdinfo_sha256": "5f2a27bb6af1175840e418ef22cc5e9088cb2f88f2bdccebe806e3cc223f4fc7",
+      "path": "/tmp/sl5nw_serval02_card1.lock",
+      "path_stat": {
+        "device": 64512,
+        "inode": 23077017,
+        "mode": 420,
+        "regular_file": true,
+        "uid": 2618919
+      },
+      "path_symlink": false
+    },
+    "process": {
+      "cpu_affinity": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "effective_uid": 2618919,
+      "hostname": "serval02",
+      "parent_pid": 1402663,
+      "pid": 1405247,
+      "process_group": 1402663,
+      "process_start_time": "55826101",
+      "uid": 2618919
+    }
+  },
+  "custody_before": {
+    "lock": {
+      "fd": 5,
+      "fd_stat": {
+        "device": 64512,
+        "inode": 23077017,
+        "mode": 420,
+        "regular_file": true,
+        "uid": 2618919
+      },
+      "fd_target": "/tmp/sl5nw_serval02_card1.lock",
+      "fdinfo": "pos:\t0\nflags:\t02100002\nmnt_id:\t31\nino:\t23077017\nlock:\t1: FLOCK  ADVISORY  WRITE 1405247 fc:00:23077017 0 EOF\n",
+      "fdinfo_sha256": "5f2a27bb6af1175840e418ef22cc5e9088cb2f88f2bdccebe806e3cc223f4fc7",
+      "path": "/tmp/sl5nw_serval02_card1.lock",
+      "path_stat": {
+        "device": 64512,
+        "inode": 23077017,
+        "mode": 420,
+        "regular_file": true,
+        "uid": 2618919
+      },
+      "path_symlink": false
+    },
+    "process": {
+      "cpu_affinity": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "effective_uid": 2618919,
+      "hostname": "serval02",
+      "parent_pid": 1402663,
+      "pid": 1405247,
+      "process_group": 1402663,
+      "process_start_time": "55826101",
+      "uid": 2618919
+    }
+  },
+  "device": {
+    "character_device": true,
+    "major": 195,
+    "minor": 1,
+    "path": "/dev/nvidia1",
+    "symlink": false
+  },
+  "driver_capture": {
+    "bytes": 98760392,
+    "captured": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-20-53_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/captured_driver/libcuda.so.590.48.01",
+      "sha256": "e24ade728a7b2280b60f5603855db23ca137d87d342ecac4219157d2cc5c3694"
+    },
+    "kind": "captured_mapped_cuda_driver_image",
+    "original": {
+      "path": "/usr/lib/x86_64-linux-gnu/libcuda.so.590.48.01",
+      "sha256": "e24ade728a7b2280b60f5603855db23ca137d87d342ecac4219157d2cc5c3694"
+    },
+    "pid": 1405247,
+    "schema_version": 1
+  },
+  "driver_capture_expected_path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-20-53_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/captured_driver/libcuda.so.590.48.01",
+  "hardware": {
+    "byte_limit": 32768,
+    "capture_status": "completed",
+    "command": [
+      "nvidia-smi",
+      "-i",
+      "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3",
+      "--query-gpu=uuid,name,pci.bus_id,memory.total,driver_version",
+      "--format=csv,noheader,nounits"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stderr_captured_bytes": 0,
+    "stderr_full_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3, NVIDIA H100 NVL, 00000000:D8:00.0, 95830, 590.48.01\n",
+    "stdout_captured_bytes": 94,
+    "stdout_full_sha256": "d752bf6ada0022f88236d684e0dc42fc848bba40e66769cc99ac3bfe9e33b188",
+    "stdout_scope": "complete_raw_utf8"
+  },
+  "idea_credit": 0,
+  "kernel_device_enforcement_verified": false,
+  "kind": "serval02_card1_device_binding_attempt",
+  "native": {
+    "api_return_codes": {
+      "cuCtxGetCurrent": 0,
+      "cuCtxGetDevice": 0,
+      "cuDeviceGet": 0,
+      "cuDeviceGetCount": 0,
+      "cuDeviceGetPCIBusId": 0,
+      "cuDeviceGetUuid_v2": 0
+    },
+    "cuda_device_count": 1,
+    "cuda_device_handle": 0,
+    "current_context": 94805700992752,
+    "current_context_device": 0,
+    "driver_library": "/usr/lib/x86_64-linux-gnu/libcuda.so.590.48.01",
+    "driver_library_sha256": "e24ade728a7b2280b60f5603855db23ca137d87d342ecac4219157d2cc5c3694",
+    "gpu_uuid": "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3",
+    "jax_device_kind": "NVIDIA H100 NVL",
+    "jax_identity_basis": "sole local JAX GPU, sole CUDA-visible ordinal, and that device's current CUDA context",
+    "jax_local_hardware_id": 0,
+    "mapped_driver_bytes": "7f0f8e000000-7f0f8e167000 r--p 00000000 fc:00 9700316                    /usr/lib/x86_64-linux-gnu/libcuda.so.590.48.01\n7f0f8e167000-7f0f8f1f3000 r-xp 00167000 fc:00 9700316                    /usr/lib/x86_64-linux-gnu/libcuda.so.590.48.01\n7f0f8f1f3000-7f0f93cf1000 r--p 011f3000 fc:00 9700316                    /usr/lib/x86_64-linux-gnu/libcuda.so.590.48.01\n7f0f93cf1000-7f0f93cf2000 ---p 05cf1000 fc:00 9700316                    /usr/lib/x86_64-linux-gnu/libcuda.so.590.48.01\n7f0f93cf2000-7f0f93e2b000 r--p 05cf1000 fc:00 9700316                    /usr/lib/x86_64-linux-gnu/libcuda.so.590.48.01\n7f0f93e2b000-7f0f93e30000 rw-p 05e2a000 fc:00 9700316                    /usr/lib/x86_64-linux-gnu/libcuda.so.590.48.01\n",
+    "mapped_driver_sha256": "3de2775304c7046307bedc8cabe0e628d75cafc030cdabced49835a94f030739",
+    "pci_address": "0000:d8:00.0",
+    "pid": 1405247
+  },
+  "packing_point_credit": 0,
+  "passed": true,
+  "proc": {
+    "path": "/proc/driver/nvidia/gpus/0000:d8:00.0/information",
+    "raw": "Model: \t\t NVIDIA H100 NVL\nIRQ:   \t\t 16\nGPU UUID: \t GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3\nVideo BIOS: \t 96.00.74.00.11\nBus Type: \t PCIe\nDMA Size: \t 52 bits\nDMA Mask: \t 0xfffffffffffff\nBus Location: \t 0000:d8:00.0\nDevice Minor: \t 1\nGPU Firmware: \t 590.48.01\nGPU Excluded:\t No\n",
+    "sha256": "6a3491fe87dc074ece639e66a7b05dafc6c9878238fd4c73eaab4941d4551e24"
+  },
+  "profile": {
+    "driver": "590.48.01",
+    "gpu_count": 1,
+    "gpu_uuid": "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3",
+    "hardware_class": "h100",
+    "hostname": "serval02",
+    "kernel_device_enforcement_verified": false,
+    "lock_device": 64512,
+    "lock_inode": 23077017,
+    "lock_mode": 420,
+    "memory_mib": 95830,
+    "model": "NVIDIA H100 NVL",
+    "name": "direct-serval02-card-1-current-process-and-standing-lock-version-1",
+    "schema_version": 1,
+    "standing_lock": "/tmp/sl5nw_serval02_card1.lock",
+    "uid": 2618919,
+    "username": "sl5nw"
+  },
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "site_qualification_credit": 0,
+  "throughput_credit": 0,
+  "uva_configuration_service_trust_used": false,
+  "worker_admitted": false
+}

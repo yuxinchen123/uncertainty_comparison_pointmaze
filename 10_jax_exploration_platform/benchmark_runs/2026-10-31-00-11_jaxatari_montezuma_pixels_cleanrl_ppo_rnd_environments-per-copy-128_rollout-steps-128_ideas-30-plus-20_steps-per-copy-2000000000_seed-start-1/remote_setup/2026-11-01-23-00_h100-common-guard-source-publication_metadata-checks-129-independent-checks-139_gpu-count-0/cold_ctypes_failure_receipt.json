@@ -1,0 +1,10 @@
+{
+  "actual_h100_result_read": false,
+  "actual_job": "6783003",
+  "actual_step": "151",
+  "qualification_established": false,
+  "reason": "stdlib ctypes own-process Python API initialization occurred after rejecting all ctypes load events",
+  "receipt_path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/direct_common_cold_stdlib_import_6783003_151.json",
+  "receipt_sha256": "0fc95736865fdf0495fbf1d0009273ee41383efef010b89119d8e827fd6605ed",
+  "source_freeze_sha256": "031963d3150d9bfee8744de95b1d2b5c5559b71cff0b9d62dcd2183052bb59f1"
+}

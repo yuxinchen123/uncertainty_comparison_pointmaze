@@ -1,0 +1,25 @@
+{
+  "admission_granted": false,
+  "case_credit": 0,
+  "controller_owns_gpu_standing_descriptor": false,
+  "idea_credit": 0,
+  "kind": "actual_direct_child_output_hashes_after_wait",
+  "producer_owns_gpu_standing_descriptor": true,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "stderr": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-20-53_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/direct_controller_stderr.raw",
+    "sha256": "91b57e4a502925aa23889dcc2240f9b52edb9c20c5a92b77e58ce5bd6e54b50c",
+    "size_bytes": 908
+  },
+  "stdout": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-20-53_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/direct_controller_stdout.raw",
+    "sha256": "f01d9b0ee8f2ed464aa6e390f2990a776d5e9b9c285e241578fb646c962db105",
+    "size_bytes": 161
+  },
+  "wait": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-20-53_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/direct_process_wait_return.json",
+    "sha256": "3776fc4869590e7182ac14178860733d5d8711bb93dd4361cbbfedba05a28963"
+  },
+  "worker_admitted": false
+}

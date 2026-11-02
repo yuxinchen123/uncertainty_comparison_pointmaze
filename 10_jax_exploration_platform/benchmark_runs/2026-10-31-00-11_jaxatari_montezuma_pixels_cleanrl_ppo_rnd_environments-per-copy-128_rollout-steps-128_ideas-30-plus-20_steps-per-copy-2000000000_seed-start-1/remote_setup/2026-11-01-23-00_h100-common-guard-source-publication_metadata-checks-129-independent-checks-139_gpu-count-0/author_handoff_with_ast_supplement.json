@@ -1,0 +1,61 @@
+{
+  "actual_cold_probe_with_genuine_h100_correctness": "pending real results and reviews",
+  "actual_h100_correctness_references_created": false,
+  "admission_granted": false,
+  "author_corrected_tests": {
+    "passed": 129,
+    "step": "152"
+  },
+  "author_previous_tests": [
+    {
+      "passed": 119,
+      "step": "143"
+    },
+    {
+      "passed": 127,
+      "step": "148"
+    }
+  ],
+  "base_commit": "fdb35f886ad01c6d4ed387dc55b172d0221a9853",
+  "cold_correction": "verified own-process stdlib bootstrap before audit; every later ctypes load/symbol denied; fresh actual main/import-order regression passed",
+  "cold_failure_preserved": {
+    "reason": "stdlib ctypes own-process initialization occurred after audit installation",
+    "receipt_sha256": "0fc95736865fdf0495fbf1d0009273ee41383efef010b89119d8e827fd6605ed",
+    "step": "151"
+  },
+  "independent_remaining_execution_function_syntax_supplement": {
+    "actual_job": "6783003",
+    "actual_step": "155",
+    "functions": [
+      "producer_support",
+      "card_admission"
+    ],
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/direct_common_guard_remaining_ast_6783003_155.json",
+    "primary_execution_functions_checked": 11,
+    "runner": "check_direct_common_remaining_ast_2026-11-02.py",
+    "sha256": "cef8a8e649679fa3c7077bdc71565738bd2f72f162dc6c5b6c4a42c3b01a103e",
+    "total_protected_execution_functions_checked": 13
+  },
+  "independent_review": {
+    "actual_job": "6783003",
+    "actual_step": "154",
+    "controls_passed": 139,
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/direct_common_guard_independent_6783003_154.json",
+    "sha256": "008f3c53cefbcc40eab2036d433c134577dfefe987f77f5e048ba50ff2f1504c"
+  },
+  "kind": "reviewed_direct_common_guard_author_handoff",
+  "numerical_or_gpu_tests_performed": false,
+  "older_saved_group_api": "33faf remains unchanged and separately unqualified",
+  "qualification_reused_or_established": false,
+  "remaining_before_actual_use": [
+    "publish reviewed source and standard records",
+    "complete actual current H qualification and genuine raw53 review",
+    "obtain actual one-copy and two-copy common correctness results plus genuine independent raw reviews",
+    "run actual cold import-order/source-reuse checks with those real bytes before H timing admission"
+  ],
+  "scientific_credit": 0,
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-21-42_direct-common-confirmation_backend-schema-2_helpers-27_serval02-card-1_environments-128_rollout-steps-128_paired-rounds-7_updates-per-round-10_before-numerical-import/.review_metadata/direct_common_with_backend_preparation/source_freeze_stdlib_bootstrap_before_audit.json",
+    "sha256": "8b35080816df709ed3402006f272af157862c7b4646bed970d80f96ac67eeec6"
+  }
+}

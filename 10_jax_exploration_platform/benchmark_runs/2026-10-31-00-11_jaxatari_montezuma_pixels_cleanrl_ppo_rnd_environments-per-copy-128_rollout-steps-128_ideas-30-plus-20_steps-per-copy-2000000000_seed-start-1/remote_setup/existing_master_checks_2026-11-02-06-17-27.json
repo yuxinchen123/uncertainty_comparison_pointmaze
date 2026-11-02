@@ -1,0 +1,51 @@
+{
+  "kind": "existing_ssh_masters_hourly_check",
+  "checked_at_utc": "2026-11-02T06:17:27.798153+00:00",
+  "explicit_check_not_before_utc": "2026-11-02T07:17:28.798153+00:00",
+  "previous_check": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/existing_master_checks_2026-11-02-05-08-50.json",
+  "connections": [
+    {
+      "cluster": "aces",
+      "argv": [
+        "ssh",
+        "-o",
+        "ControlMaster=no",
+        "-o",
+        "ProxyCommand=false",
+        "-o",
+        "BatchMode=yes",
+        "-O",
+        "check",
+        "aces"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "Master running (pid=3888482)\n",
+      "authentication_attempts": 0,
+      "retry_permitted": false
+    },
+    {
+      "cluster": "deltaai",
+      "argv": [
+        "ssh",
+        "-o",
+        "ControlMaster=no",
+        "-o",
+        "ProxyCommand=false",
+        "-o",
+        "BatchMode=yes",
+        "-O",
+        "check",
+        "deltaai"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "Master running (pid=3878537)\n",
+      "authentication_attempts": 0,
+      "retry_permitted": false
+    }
+  ],
+  "authentication_attempts": 0,
+  "automatic_retries": 0,
+  "mit_attempts_total": 0
+}

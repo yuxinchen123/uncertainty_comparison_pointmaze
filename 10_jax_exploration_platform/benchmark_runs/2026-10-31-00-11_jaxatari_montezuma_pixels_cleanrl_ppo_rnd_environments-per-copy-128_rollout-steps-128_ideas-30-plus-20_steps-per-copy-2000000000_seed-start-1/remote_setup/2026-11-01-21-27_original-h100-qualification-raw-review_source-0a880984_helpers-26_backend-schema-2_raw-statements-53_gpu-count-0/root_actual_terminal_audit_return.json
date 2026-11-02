@@ -1,0 +1,30 @@
+{
+  "command": [
+    "srun",
+    "--jobid=6783003",
+    "--overlap",
+    "--exact",
+    "--ntasks=1",
+    "--cpus-per-task=1",
+    "--mem=1G",
+    "flock",
+    "-x",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/queue/cpu_monitor_large_artifact_read.lock",
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-21-27_original-h100-qualification-raw-review_source-0a880984_helpers-26_backend-schema-2_raw-statements-53_gpu-count-0/review_direct_raw_then_consumer.py",
+    "--execute-terminal-review",
+    "--audit-job-id",
+    "6783003"
+  ],
+  "returncode": 0,
+  "started_at_utc": "2026-11-02T06:48:43.592254+00:00",
+  "finished_at_utc": "2026-11-02T06:54:16.617096+00:00",
+  "source_publication": "fe2429d5e02e8f418cf64a21893cc3ed9fdb14eb",
+  "stdout_sha256": "2466d717ea0e728d050b96592f079f0e6cbdae8ff94e63df01737620bdb750d3",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "actual_normal_wait_confirmed_before_audit": true,
+  "automatic_retry_permitted": false
+}

@@ -1,0 +1,90 @@
+{
+  "actual_H100_correctness_or_qualification_raw_inputs_read": false,
+  "actual_NUM_GPU_network_host_scheduler_actions": 0,
+  "actual_cold_main_import_order_test_included": true,
+  "admission_granted": false,
+  "all_later_ctypes_load_and_symbol_calls_refused": true,
+  "all_thirteen_numerical_files_unchanged": true,
+  "approved": true,
+  "at_utc": "2026-11-02T06:45:30.893546+00:00",
+  "birth": "55703821",
+  "cgroup": "0::/system.slice/slurmstepd.scope/job_6783003/step_154/user/task_0\n",
+  "error_details": [],
+  "errors": 0,
+  "execution_function_ASTs_unchanged": {
+    "direct_measurement.py": [
+      "verify_qualification_inputs",
+      "run_qualification",
+      "support",
+      "capture_backend",
+      "capture_backend_completion",
+      "post_binding_checks",
+      "process_sample",
+      "validate_window"
+    ],
+    "measure_selected.py": [
+      "_compute",
+      "run_prepared",
+      "save_measurement_result"
+    ]
+  },
+  "failure_details": [],
+  "failures": 0,
+  "frozen_source_after": {
+    ".review_metadata/direct_common_with_backend_preparation/run_metadata_tests.py": "d98b003de1f99fbfbbd377788101d20a8e0fec27f835beb54095024e6a545f10",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_confirmation.py": "e2be3083b7d312d0441318dfff135bd18d2c89b03bc067f55a83f6d49486747e",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py": "7a2125536624ed5b31b3277aeb740cf4233b7001456447a8b3756e2423a2f3a6",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py": "39a6376ba5e2d42848cc04d6d84131a7670debaf4fe147b50f50a706b6823a76",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_common_confirmation.py": "f22eefefb281d78566ab2eec9556e8d941ba6a3723baf87884d1da127a05881e",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_backend_image.py": "e594005d2c892399aac1bde69df901a4e44262f76c3c80ffc0ded4c6da348b5e",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_common_confirmation.py": "5562cd191260005b2b5d8eadb03414169319980c8773dcf666b3941e65312b4d"
+  },
+  "frozen_source_before": {
+    ".review_metadata/direct_common_with_backend_preparation/run_metadata_tests.py": "d98b003de1f99fbfbbd377788101d20a8e0fec27f835beb54095024e6a545f10",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_confirmation.py": "e2be3083b7d312d0441318dfff135bd18d2c89b03bc067f55a83f6d49486747e",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py": "7a2125536624ed5b31b3277aeb740cf4233b7001456447a8b3756e2423a2f3a6",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py": "39a6376ba5e2d42848cc04d6d84131a7670debaf4fe147b50f50a706b6823a76",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_common_confirmation.py": "f22eefefb281d78566ab2eec9556e8d941ba6a3723baf87884d1da127a05881e",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_backend_image.py": "e594005d2c892399aac1bde69df901a4e44262f76c3c80ffc0ded4c6da348b5e",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_common_confirmation.py": "5562cd191260005b2b5d8eadb03414169319980c8773dcf666b3941e65312b4d"
+  },
+  "full_source_and_hook_contract_independently_read": true,
+  "job_id": "6783003",
+  "kind": "independent_direct_common_confirmation_with_backend_source_review",
+  "numerical_files_equal_published_base": "fdb35f886ad01c6d4ed387dc55b172d0221a9853",
+  "passed": true,
+  "pid": 803108,
+  "prior_failed_cold_import_receipt": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/direct_common_cold_stdlib_import_6783003_151.json",
+    "sha256": "0fc95736865fdf0495fbf1d0009273ee41383efef010b89119d8e827fd6605ed"
+  },
+  "protected_numerical_files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py": "df811a5d51a7ef2f747bc32d1545c8286552675dfc8b859e7d0600eef4c920c5",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/paired_benchmark.py": "c3e39d8e5d2549c3e2682e196861095780b30740a49821b2077da620386f2916",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/worker_environment.sh": "61de3a987d6494fba948083e32ba13e97f30f53e980797c72c1508e726818955",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/__init__.py": "4692ca9941cece84d6cbea0c19b9344a0dfe5d32f3a1a9d93ad7cd93fe135de2",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/checkpointing.py": "f156b27e0c5d275db7e472f8659ca46d594624a8f573d43eee5383cdaf9f17fb",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/config.py": "8b3643fba5e3382f612507416f2204500966592a6872bb286dea1935c5f32218",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/environment.py": "aa0ad31c8fbd04c67fb9742ea103e9262dfe9cc5b6e719889c50454537b1c8b7",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/kernels.py": "dd895f5d95f6d39c79dce277254af9a19ac49112fcec0b16a5ba096a8082e8ff",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/networks.py": "ee65436eda5fab6ae2f8c303eaf3c072b5cdfa1f6d86cfc310dfa4974c98a5bd",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/pixel_preprocessing.py": "8a9f30f36ef7b07fa0ae513d1aee442a9964c2f8da179203b031c7aca8735188",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/settings.py": "17f20c6dd84c99eb435337b4446418cdcda3f426514d228996f40de4220c6f26",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/state.py": "9fcf0b6bb09bbf70dc88cd28952a6fa50969371f0d8aa66739c91ced1fe887f4",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/training.py": "5b868d95c8e0f5798330e38fcf7d9a6981838881333bafe73465c1af070a5100"
+  },
+  "qualification_reused_or_established": false,
+  "raw": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/direct_common_guard_independent_6783003_154.raw",
+    "sha256": "e93e4c3a292727a4754a270086317aeada8fce3baf30a0a8dcf8de16c2349115"
+  },
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-21-42_direct-common-confirmation_backend-schema-2_helpers-27_serval02-card-1_environments-128_rollout-steps-128_paired-rounds-7_updates-per-round-10_before-numerical-import/.review_metadata/direct_common_with_backend_preparation/source_freeze_stdlib_bootstrap_before_audit.json",
+    "sha256": "8b35080816df709ed3402006f272af157862c7b4646bed970d80f96ac67eeec6"
+  },
+  "stdlib_own_process_python_api_bootstrap_before_validation_audit": true,
+  "step_id": "154",
+  "tests": 139
+}

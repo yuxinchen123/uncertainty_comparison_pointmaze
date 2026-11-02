@@ -1,0 +1,18 @@
+{
+  "actual_H_correctness_or_qualification_result_read": false,
+  "actual_NUM_GPU_or_host_or_job_actions": 0,
+  "approved": false,
+  "ctypes_absent_before_production_guard": true,
+  "error": "Traceback (most recent call last):\n  File \"/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/probe_direct_common_cold_stdlib_import_2026-11-02.py\", line 17, in <module>\n    import diagnose_gpu_execution\n  File \"/p/rlprojects/RND_worktrees/2026-11-01-21-42_direct-common-confirmation_backend-schema-2_helpers-27_serval02-card-1_environments-128_rollout-steps-128_paired-rounds-7_updates-per-round-10_before-numerical-import/10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py\", line 10, in <module>\n    import ctypes\n  File \"/usr/lib/python3.10/ctypes/__init__.py\", line 464, in <module>\n    pythonapi = PyDLL(None)\n  File \"/usr/lib/python3.10/ctypes/__init__.py\", line 374, in __init__\n    self._handle = _dlopen(self._name, mode)\n  File \"/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/probe_direct_common_cold_stdlib_import_2026-11-02.py\", line 12, in guard\n    common.metadata_event_guard(event,values,set())\n  File \"/p/rlprojects/RND_worktrees/2026-11-01-21-42_direct-common-confirmation_backend-schema-2_helpers-27_serval02-card-1_environments-128_rollout-steps-128_paired-rounds-7_updates-per-round-10_before-numerical-import/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_confirmation.py\", line 618, in metadata_event_guard\n    raise RuntimeError(\"network or library operation forbidden in direct correctness child\")\nRuntimeError: network or library operation forbidden in direct correctness child\n",
+  "import_succeeded": false,
+  "job_id": "6783003",
+  "kind": "independent_cold_direct_common_stdlib_import_probe",
+  "observed_audit_events": [
+    {
+      "argument": "None",
+      "event": "ctypes.dlopen"
+    }
+  ],
+  "source_sha256": "07759155821a14d2b517553b431de064f709b0de52061b1cc174703ab50e4520",
+  "step_id": "151"
+}

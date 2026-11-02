@@ -172,6 +172,27 @@
   "device_memory_capture_diagnostic_qualified": false,
   "device_memory_capture_diagnostic_state": "failed_before_jax",
   "direct_adapter_original_content_preservation_sha256": "b5a515cdcfbbb04e935dff9f3a33f147d76b746bd218f35bd832db2c88b366d5",
+  "direct_backend_package_qualification_current": {
+    "admission_granted": false,
+    "case_credit": 0,
+    "full_consumer_verification": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-21-27_original-h100-qualification-raw-review_source-0a880984_helpers-26_backend-schema-2_raw-statements-53_gpu-count-0/terminal_full_review/verification.json",
+      "sha256": "202b3f20943fc16d55bdb3f72c089c111e0886dd65ad2ec4ef8cb63c37a5a716"
+    },
+    "helper_commit": "0a880984b4a03a2ff7335337cc18576628bc9fc1",
+    "idea_credit": 0,
+    "independent_review": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-21-27_original-h100-qualification-raw-review_source-0a880984_helpers-26_backend-schema-2_raw-statements-53_gpu-count-0/terminal_full_review/independent_actual_review.json",
+      "sha256": "8c61ec70059475a479a2e0b395bdc6cd2d5cb2a0e062ae05ef51e066c4a4d01a"
+    },
+    "numerical_source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+    "original_full_qualification_passed": true,
+    "result": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-20-53_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/direct_qualification_result.json",
+      "sha256": "76eef4e18c06fef8d86fa704d3f9f00b8ebd78b34ab50e5083fcb0d4ee9bb318"
+    },
+    "worker_admitted": false
+  },
   "direct_full_original_qualification_birth_counter": "54683794",
   "direct_full_original_qualification_controller_birth_counter": "54671452",
   "direct_full_original_qualification_controller_pid": 1319515,
