@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "kind": "independent_fixed_cpu_monitor_6783003_release_approval",
+  "passed": true,
+  "job_id": "6783003",
+  "packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-16-33_pixel-study-monitor-recovery_source-commit-79a01e851ff92ddba7d0e12eaf8164cab2028878_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0",
+  "checked_at_utc": "2026-11-02T00:57:47.834390+00:00",
+  "source_sha256": "8505d609a53f2f1dcc4b76a97d7fbd571ae6298e0d8f00c44084af8e463b476e",
+  "tests_sha256": "a5384ef5f0db18b91af7b0e254b5039c1ec64f43229f13a242eff5c42b64c28d",
+  "freeze_sha256": "38b0eef4895f6d688e0837581105f07aad868406573e055d4c69887d1abff955",
+  "independent_metadata_receipt": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-16-57-17_recovery-monitor-fixed-release_independent-review_job-6783003_gpu-count-0/independent_controls.json",
+    "sha256": "b18861c8780f0440785db34889cc3eb7b576e1079e72a3f7e766b531db72f476"
+  },
+  "independent_runner": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-16-57-17_recovery-monitor-fixed-release_independent-review_job-6783003_gpu-count-0/run_independent_controls.py",
+    "sha256": "bd58a700d6cb2f04461d8ec9ae32f67567573eb445766b8c7d792c8d43342822"
+  },
+  "tests_passed": 11,
+  "frozen_files_preserved": 312,
+  "source_review": [
+    "Exact fixed held job, owner, requested zero-GPU CPU resources, seven-day duration and immutable published preparation are required.",
+    "Actual proof, submitted IDs, TSV row and held binding agree; stale proof and changed schedule refuse.",
+    "Default performs metadata checks only; action requires exact published release prerequisites.",
+    "An exclusive fsynced intent precedes one exact owned held query and one release command; raw output and returns are saved before parsing.",
+    "Any prior attempt, failed query, timeout, changed held request or unpublished object refuses without retry.",
+    "The old monitor is recorded as failed; no prelaunch full candidate or old-running proof is claimed."
+  ],
+  "blocking_findings": [],
+  "held_proof": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-16-33_pixel-study-monitor-recovery_source-commit-79a01e851ff92ddba7d0e12eaf8164cab2028878_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/actual_held_monitor_proof.json",
+    "sha256": "240b36b5d674ae3785f2d89215b1055e684c52d50392b993d1d8c00f7b05d427",
+    "expires_at_utc": "2026-11-02T01:08:46.953466+00:00"
+  },
+  "actual_release_executed_by_reviewer": false,
+  "actual_scheduler_network_device_library_or_numerical_operations": 0,
+  "first_actual_runtime_source_full_report_independent_review_required_after_start": true,
+  "prelaunch_full_candidate_available": false,
+  "scientific_credit": 0,
+  "worker_admission": false,
+  "approval_scope": "Exact frozen release utility metadata and source only; root publishes and performs any one release."
+}
