@@ -1,0 +1,94 @@
+{
+  "kind": "explicit_e5_qualification_reuse_scope_for_metadata_only_common_confirmation",
+  "passed": true,
+  "allocation": "6783003",
+  "step": "26",
+  "base_commit": "6066d9ea35fbc9c045855144550971c2ac5895f9",
+  "qualified_helper_commit": "e5afbf6b51a3d1666b46e71c0631a45d47080cd8",
+  "qualified_result_sha256": "0c4f94c2d58fdd7277a261481d7a52c4bb5b19e42612a8eae67dff6890c62cd1",
+  "new_compute_ast_equals_base": true,
+  "uva_specialized_compute_ast_equals_qualified_e5": true,
+  "qualified_e5_full_compute_ast_equals_current": false,
+  "specialization_scope": "Only absent direct_binding/direct_qualification, false direct flag, reviewed producer_support to configured_support dispatch and direct-only null contexts; every remaining function statement is compared exactly.",
+  "protected_numerical_and_executor_files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/worker_environment.sh": {
+      "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+      "sha256": "61de3a987d6494fba948083e32ba13e97f30f53e980797c72c1508e726818955",
+      "python_ast_sha256": null
+    },
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/__init__.py": {
+      "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+      "sha256": "4692ca9941cece84d6cbea0c19b9344a0dfe5d32f3a1a9d93ad7cd93fe135de2",
+      "python_ast_sha256": "020d9d8f0ac837371b1e33e0421a2a0af4e509ca085dda64fcda0c70d2ada28b"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/checkpointing.py": {
+      "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+      "sha256": "f156b27e0c5d275db7e472f8659ca46d594624a8f573d43eee5383cdaf9f17fb",
+      "python_ast_sha256": "27d6ac3e01fe460cf1cc8a7cacf8ebde10ddeaa719a770732763f53a01a5dd75"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/config.py": {
+      "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+      "sha256": "8b3643fba5e3382f612507416f2204500966592a6872bb286dea1935c5f32218",
+      "python_ast_sha256": "1f9054fb52b90e2c684893c24b91301009dabd763dbb51c2e76894bdd7242d85"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/environment.py": {
+      "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+      "sha256": "aa0ad31c8fbd04c67fb9742ea103e9262dfe9cc5b6e719889c50454537b1c8b7",
+      "python_ast_sha256": "896c9822336f45a8e7824752f8ca0289c21a15b99bda9cbf80c56913ca43a264"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/kernels.py": {
+      "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+      "sha256": "dd895f5d95f6d39c79dce277254af9a19ac49112fcec0b16a5ba096a8082e8ff",
+      "python_ast_sha256": "ed491bba21eef0a2ac79369db423ad41da1789f2ed5f93753085b549e9decc6e"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/networks.py": {
+      "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+      "sha256": "ee65436eda5fab6ae2f8c303eaf3c072b5cdfa1f6d86cfc310dfa4974c98a5bd",
+      "python_ast_sha256": "4028bb32c1de993789716591dc20a48c0fa3b518aa46379b167cd14eb2167c54"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/pixel_preprocessing.py": {
+      "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+      "sha256": "8a9f30f36ef7b07fa0ae513d1aee442a9964c2f8da179203b031c7aca8735188",
+      "python_ast_sha256": "cda5a6ab85a50fa2f1505e41853feb097fbb957d0d76efbf11349387bfc7fe7e"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/settings.py": {
+      "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+      "sha256": "17f20c6dd84c99eb435337b4446418cdcda3f426514d228996f40de4220c6f26",
+      "python_ast_sha256": "5fcaf018c78564f9d69a79eeecda9524c5cbb4cd0296d9bf6a0632afb02227d7"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/state.py": {
+      "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+      "sha256": "9fcf0b6bb09bbf70dc88cd28952a6fa50969371f0d8aa66739c91ced1fe887f4",
+      "python_ast_sha256": "c151e1c8a5cd1f6526d843a36ed5973caa4ab42b1e5321bb5fd7ccb1bd3c3973"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/training.py": {
+      "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+      "sha256": "5b868d95c8e0f5798330e38fcf7d9a6981838881333bafe73465c1af070a5100",
+      "python_ast_sha256": "e6bff5270bfe19d06341e0fd3e53c9346df9a2e4cbf65dc681e3ca10d9e47802"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/paired_benchmark.py": {
+      "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+      "sha256": "c3e39d8e5d2549c3e2682e196861095780b30740a49821b2077da620386f2916",
+      "python_ast_sha256": "311168676e2345ad97c625252e2f678d4c2dae984e87f8849e60b821b71568b5"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py": {
+      "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+      "sha256": "df811a5d51a7ef2f747bc32d1545c8286552675dfc8b859e7d0600eef4c920c5",
+      "python_ast_sha256": "f49086680c4aa611c276b449bebc5f803687bd469b24500809acc451a1f5048b"
+    }
+  },
+  "runtime_environment": {
+    "JAX_ENABLE_X64": "true",
+    "JAX_DEFAULT_MATMUL_PRECISION": "highest",
+    "XLA_FLAGS": "--xla_gpu_exclude_nondeterministic_ops=true"
+  },
+  "asset_record": {
+    "root": "/p/rlprojects/RND/reference_repos/jaxtari_pixel_study_assets",
+    "manifest": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/isolated_capacity_diagnoses_helpers-332bff2faf89/assets_manifest.json",
+    "sha256": "049004b3b7e2eb3b12f72579a175ac41afad3b5f91a088d7ba1b5065aed31bb6"
+  },
+  "numerical_equations_or_config_changes": false,
+  "gpu_or_numerical_operations": 0,
+  "scientific_credit": 0,
+  "admission_granted": false
+}

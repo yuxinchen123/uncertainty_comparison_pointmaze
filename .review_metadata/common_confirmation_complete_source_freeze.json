@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "kind": "common_confirmation_complete_source_and_preparation_tests_freeze",
+  "base_commit": "6066d9ea35fbc9c045855144550971c2ac5895f9",
+  "files": {
+    "/p/rlprojects/RND_worktrees/2026-11-01-17-55_a4500-common-confirmation_prior-correctness-required_rounds-7_complete-updates-per-arm-10_copies-1-2/10_jax_exploration_platform/scripts/atari_pixel_campaign/common_confirmation.py": "80c4ef75d73ad2ba1cff6dad3aba6a64694cd0882c4ac570e9e41f8dea6a54dd",
+    "/p/rlprojects/RND_worktrees/2026-11-01-17-55_a4500-common-confirmation_prior-correctness-required_rounds-7_complete-updates-per-arm-10_copies-1-2/10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py": "09252a304fa451e061bfac3d547cd248bbf955db5f197191cf214c21b2c00522",
+    "/p/rlprojects/RND_worktrees/2026-11-01-17-55_a4500-common-confirmation_prior-correctness-required_rounds-7_complete-updates-per-arm-10_copies-1-2/10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py": "2fc25c271ec55c0aeb2523873eda71543e5f46341706f18e6bc9f2cc924a33a0",
+    "/p/rlprojects/RND_worktrees/2026-11-01-17-55_a4500-common-confirmation_prior-correctness-required_rounds-7_complete-updates-per-arm-10_copies-1-2/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_common_confirmation.py": "5be3542e40e55aa1d3cc6d165bd82e75e811dc0dc86cd81e7c89bd3bbe1cb89a",
+    "/p/rlprojects/RND_worktrees/2026-11-01-17-55_a4500-common-confirmation_prior-correctness-required_rounds-7_complete-updates-per-arm-10_copies-1-2/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/common_confirmation_import_order_probe.py": "78ea56157143ed437dd1bd3eac5e96f89992cb3034e9f8d44df42af2166396cd",
+    "/p/rlprojects/RND_worktrees/2026-11-01-17-55_a4500-common-confirmation_prior-correctness-required_rounds-7_complete-updates-per-arm-10_copies-1-2/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_common_confirmation_preparation.py": "2beb0b1b64bf208fcbce7e183ffd96124696b24b44753752c67abec08eb35482"
+  },
+  "numerical_compute_function_changed": false,
+  "numerical_source_changed": false,
+  "qualification_reuse_scope_receipt": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-17-55_a4500-common-confirmation_prior-correctness-required_rounds-7_complete-updates-per-arm-10_copies-1-2/.review_metadata/qualification_reuse_scope_6783003_26.json",
+    "sha256": "f5ba0a3023319f11408da0eca9c7b1d2d05f244e60c321b2e7be4c061c456910"
+  },
+  "actual_gpu_operations": 0,
+  "formal_packets_prepared": 0,
+  "scientific_credit": 0,
+  "admission_granted": false,
+  "prior_five_path_freeze_sha256": "98c95222d46d9258066d73425676da3dee8171b150d8117146a315f2a8c78692"
+}

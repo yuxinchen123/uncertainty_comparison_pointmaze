@@ -173,17 +173,19 @@ def validate_correctness_protocol(configurations):
                          "use supported groups or a separately reviewed numerical harness")
 
 
-def helper_receipt(configured=False, direct=False):
+def helper_receipt(configured=False, direct=False, common=False):
     """Freeze only committed producer/helper bytes, separately from the unchanged numerical core."""
     root = SCRIPTS.parents[2]
     commit = subprocess.check_output(["git", "-C", str(root), "rev-parse", "HEAD"], text=True).strip()
-    paths = [str((SCRIPTS / name).relative_to(root)) for name in required_helpers(configured, direct)]
+    paths = [str((SCRIPTS / name).relative_to(root)) for name in required_helpers(configured, direct, common)]
     receipt = training.source_receipt(root, commit, paths)
     return receipt
 
 
-def required_helpers(configured=False, direct=False):
+def required_helpers(configured=False, direct=False, common=False):
     """Keep historical helper closure unchanged and explicitly add the opt-in dependency union."""
+    if common and (not configured or direct):
+        raise ValueError("common confirmation requires only the configured A4500 helper closure")
     if configured and direct:
         raise ValueError("direct and UVA helper policies cannot be mixed")
     if direct:
@@ -192,7 +194,22 @@ def required_helpers(configured=False, direct=False):
     if not configured:
         return HELPERS
     import configured_measurement as support
-    return tuple(dict.fromkeys((*HELPERS, *support.helper_names())))
+    return tuple(dict.fromkeys((*HELPERS, *support.helper_names(), *(("common_confirmation.py",) if common else ()))))
+
+
+def common_confirmation_support(plan):
+    """Load only the hash-bound optional prerequisite helper without numerical imports."""
+    if "common_correctness_inputs" not in plan:
+        return None
+    path = SCRIPTS / "common_confirmation.py"
+    expected = plan["helpers"]["files"].get("10_jax_exploration_platform/scripts/atari_pixel_campaign/common_confirmation.py")
+    if hashlib.sha256(path.read_bytes()).hexdigest() != expected:
+        raise ValueError("the committed common-confirmation prerequisite helper changed")
+    specification = importlib.util.spec_from_file_location("common_confirmation_prerequisite", path)
+    module = importlib.util.module_from_spec(specification)
+    specification.loader.exec_module(module)
+    module.contract(plan)
+    return module
 
 
 def configured_support(plan):
@@ -239,6 +256,12 @@ def prepare(args):
     direct = getattr(args, "direct_binding_profile", None) is not None
     qualification = getattr(args, "target_qualification", False)
     direct_qualification = getattr(args, "direct_target_qualification", False)
+    correctness_record = getattr(args, "common_correctness_record", None)
+    correctness_review = getattr(args, "common_correctness_review", None)
+    common = correctness_record is not None or correctness_review is not None
+    if common and (correctness_record is None or correctness_review is None or not configured or direct
+            or args.mode != "confirmation" or qualification or direct_qualification or getattr(args, "final_confirmation", False)):
+        raise ValueError("common confirmation requires both actual correctness records and only intermediate A4500 confirmation")
     if direct and (configured or qualification or args.hardware_class != "h100" or args.gpu_uuid != CARD1
             or args.mode not in {"correctness", "confirmation"} or getattr(args, "record_device_memory_limit", False)
             or getattr(args, "final_confirmation", False)):
@@ -289,7 +312,7 @@ def prepare(args):
     copies = selected["learner"]["n_copies"]
     if args.seed_start + copies > 2 ** 32:
         raise ValueError("the independent policy seed range exceeds unsigned 32-bit values")
-    helpers = helper_receipt(configured, True) if direct else helper_receipt(configured)
+    helpers = helper_receipt(configured, False, True) if common else (helper_receipt(configured, True) if direct else helper_receipt(configured))
     if final or args.mode == "learning-check":
         validation.committed_measurement_sources(helpers, validation.Evidence())
     configurations = [selected] + ([reference] if reference is not None else [])
@@ -322,6 +345,11 @@ def prepare(args):
             support.qualification_sources(plan, args.cleanrl_source_root, args.qualification_software_result)
         else:
             support.prepare_qualification_inputs(plan, args.target_qualification_record, args.target_qualification_review)
+    if common:
+        import common_confirmation as prerequisite
+        plan["common_correctness_inputs"] = {"result": prerequisite.reference(correctness_record),
+            "review": prerequisite.reference(correctness_review)}
+        prerequisite.request(plan)
     if direct:
         import direct_measurement as support
         profile, profile_input = read_document(args.direct_binding_profile)
@@ -382,7 +410,7 @@ def prepare(args):
             "reference": reference, "candidate": selected, "runtime_environment": runtime}),
         directory / "command.txt": (shlex.join([str(args.python), str(directory / "code/measure_selected.py"),
                                               "--prepared-unit", str(directory)]) + "\n").encode()}
-    for name in required_helpers(configured, direct):
+    for name in required_helpers(configured, direct, common):
         artifacts[directory / "code" / name] = (SCRIPTS / name).read_bytes()
     if 'device_memory_limit_protocol' in plan:
         artifacts[directory / 'capacity_owned_job_ledger.txt'] = ledger_bytes
@@ -602,7 +630,7 @@ class MemoryObservation:
 
 def verify_prepared(directory, plan):
     """Check staged helper bytes and unchanged numerical source before any device import."""
-    for name in required_helpers("configured_isolation" in plan, "direct_binding" in plan):
+    for name in required_helpers("configured_isolation" in plan, "direct_binding" in plan, "common_correctness_inputs" in plan):
         relative = "10_jax_exploration_platform/scripts/atari_pixel_campaign/" + name
         expected = plan["helpers"]["files"][relative]
         if training.file_sha256(directory / "code" / name) != expected:
@@ -654,6 +682,9 @@ def run_prepared(directory):
             os.environ[name] = expected
         runtime = training.enforce_runtime(plan["runtime_environment"], os.environ)
         try:
+            common = common_confirmation_support(plan)
+            if common is not None:
+                common.before_compute(directory, plan)
             with card_admission(directory, plan) as held:
                 support = producer_support(plan)
                 direct = "direct_binding" in plan
@@ -866,6 +897,9 @@ def _compute(directory, plan, hardware, installed_backend, failure_capture=None)
 
 def save_measurement_result(directory, plan, result):
     """Keep a completed instrumented attempt outside ordinary packing and throughput evidence."""
+    common = common_confirmation_support(plan)
+    if common is not None:
+        result.update(common.result_binding(directory, plan))
     instrumented = 'device_memory_limit_protocol' in plan
     if instrumented:
         # The extra lifetime sampler changes the workload; retain raw observations and remeasure normally.
@@ -904,6 +938,8 @@ def parse_arguments(argv=None):
     parser.add_argument("--target-qualification", action="store_true")
     parser.add_argument("--target-qualification-record", type=Path)
     parser.add_argument("--target-qualification-review", type=Path)
+    parser.add_argument("--common-correctness-record", type=Path)
+    parser.add_argument("--common-correctness-review", type=Path)
     parser.add_argument("--direct-binding-profile", type=Path)
     parser.add_argument("--direct-history-inputs", type=Path)
     parser.add_argument("--direct-target-qualification", action="store_true")
@@ -940,7 +976,8 @@ def parse_arguments(argv=None):
                 "runtime_environment", "asset_record", "jaxtari_source_root", "run_dir", "unit_id", "gpu_uuid", "hardware_class", "copies",
                 "completed_study_proof", "completed_study_review", "completed_study_manifest", "completed_study_manifest_sha256",
                 "configured_isolation_profile", "target_qualification_record", "target_qualification_review", "cleanrl_source_root", "qualification_software_result",
-                "direct_binding_profile", "direct_history_inputs", "direct_qualification_record", "direct_qualification_review", *memory_options)):
+                "direct_binding_profile", "direct_history_inputs", "direct_qualification_record", "direct_qualification_review",
+                "common_correctness_record", "common_correctness_review", *memory_options)):
             parser.error("--prepared-unit executes its recorded plan and cannot take preparation overrides")
         if args.instrumented_child:
             # The private child entry is meaningful only inside this exact declared prepared protocol.
@@ -958,6 +995,11 @@ def parse_arguments(argv=None):
         return args
     if args.instrumented_child:
         parser.error('--instrumented-child requires --prepared-unit and its declared instrumented protocol')
+    common_options = (args.common_correctness_record, args.common_correctness_review)
+    if any(value is not None for value in common_options) and (any(value is None for value in common_options)
+            or args.configured_isolation_profile is None or args.direct_binding_profile is not None
+            or args.mode != "confirmation" or args.final_confirmation or args.target_qualification):
+        parser.error("reviewed common correctness requires only an intermediate configured confirmation")
     if not args.record_device_memory_limit and any(getattr(args, name) is not None for name in memory_options):
         parser.error('memory-limit preparation options require --record-device-memory-limit')
     if (args.cleanrl_source_root is not None or args.qualification_software_result is not None) and not (args.target_qualification or args.direct_target_qualification):

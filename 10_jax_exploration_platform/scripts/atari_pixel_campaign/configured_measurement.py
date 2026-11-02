@@ -891,6 +891,14 @@ def verify_saved_measurement(directory, result):
             and result.get("measurement_mode") == plan["mode"] and result.get("protocol") == {
                 "rounds": plan["rounds"], "requested_minimum_updates_per_round": plan["minimum_updates_per_round"],
                 "actual_updates_per_round": plan["iterations"]}, "selected configurations or prepared windows changed")
+    if "common_correctness_inputs" in plan:
+        path = Path(__file__).with_name("common_confirmation.py")
+        require(sha(path.read_bytes()) == plan["helpers"]["files"].get(
+            "10_jax_exploration_platform/scripts/atari_pixel_campaign/common_confirmation.py"), "saved common-confirmation helper changed")
+        specification = importlib.util.spec_from_file_location("saved_common_confirmation", path)
+        common_confirmation = importlib.util.module_from_spec(specification)
+        specification.loader.exec_module(common_confirmation)
+        common_confirmation.verify_saved(directory, plan, result)
     if plan.get("mode") == "confirmation":
         require(type(plan["rounds"]) is int and plan["rounds"] == 7 and len(result.get("rounds", [])) == 7,
             "intermediate confirmation must retain all seven paired rounds")

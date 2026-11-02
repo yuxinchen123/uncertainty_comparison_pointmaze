@@ -1,0 +1,95 @@
+{
+  "kind": "independent_common_confirmation_numerical_qualification_reuse_scope",
+  "passed": true,
+  "job_id": "6783003",
+  "step_id": "34",
+  "at_utc": "2026-11-02T02:31:41.235518+00:00",
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-17-55_a4500-common-confirmation_prior-correctness-required_rounds-7_complete-updates-per-arm-10_copies-1-2/.review_metadata/common_confirmation_complete_source_freeze.json",
+    "sha256": "27281757454d61f4717e8d335a30f770829907c2f1d6a6a4d698c723c709cb6c"
+  },
+  "base_commit": "6066d9ea35fbc9c045855144550971c2ac5895f9",
+  "qualified_helper_commit": "e5afbf6b51a3d1666b46e71c0631a45d47080cd8",
+  "qualified_result_sha256": "0c4f94c2d58fdd7277a261481d7a52c4bb5b19e42612a8eae67dff6890c62cd1",
+  "new_compute_AST_identical_to_base": true,
+  "UVA_specialized_compute_AST_identical_to_qualified": true,
+  "whole_qualified_compute_AST_identical": false,
+  "reviewed_specializer_sha256": "dc595f5f15d8779aea70c4e9442f28032f7e322bb9fb594986d5c89781539fa4",
+  "all13_numerical_and_Executor_files": [
+    {
+      "path": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/scripts/atari_pixel_campaign/worker_environment.sh",
+      "sha256": "61de3a987d6494fba948083e32ba13e97f30f53e980797c72c1508e726818955"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/__init__.py",
+      "sha256": "4692ca9941cece84d6cbea0c19b9344a0dfe5d32f3a1a9d93ad7cd93fe135de2"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/checkpointing.py",
+      "sha256": "f156b27e0c5d275db7e472f8659ca46d594624a8f573d43eee5383cdaf9f17fb"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/config.py",
+      "sha256": "8b3643fba5e3382f612507416f2204500966592a6872bb286dea1935c5f32218"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/environment.py",
+      "sha256": "aa0ad31c8fbd04c67fb9742ea103e9262dfe9cc5b6e719889c50454537b1c8b7"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/kernels.py",
+      "sha256": "dd895f5d95f6d39c79dce277254af9a19ac49112fcec0b16a5ba096a8082e8ff"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/networks.py",
+      "sha256": "ee65436eda5fab6ae2f8c303eaf3c072b5cdfa1f6d86cfc310dfa4974c98a5bd"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/pixel_preprocessing.py",
+      "sha256": "8a9f30f36ef7b07fa0ae513d1aee442a9964c2f8da179203b031c7aca8735188"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/settings.py",
+      "sha256": "17f20c6dd84c99eb435337b4446418cdcda3f426514d228996f40de4220c6f26"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/state.py",
+      "sha256": "9fcf0b6bb09bbf70dc88cd28952a6fa50969371f0d8aa66739c91ced1fe887f4"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/training.py",
+      "sha256": "5b868d95c8e0f5798330e38fcf7d9a6981838881333bafe73465c1af070a5100"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/scripts/atari_pixel_campaign/paired_benchmark.py",
+      "sha256": "c3e39d8e5d2549c3e2682e196861095780b30740a49821b2077da620386f2916"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py",
+      "sha256": "df811a5d51a7ef2f747bc32d1545c8286552675dfc8b859e7d0600eef4c920c5"
+    }
+  ],
+  "three_unchanged_support_files": [
+    "train_optimized.py",
+    "short_learning.py",
+    "uva_slurm_configured_isolation.py"
+  ],
+  "configured_support_changes_manually_reviewed": [
+    "MemoryObservation",
+    "qualification_sources",
+    "renderer_contract",
+    "run_qualification",
+    "validate_window",
+    "verify_qualification_backend",
+    "verify_qualification_source_receipts",
+    "verify_qualification_sources",
+    "verify_saved_measurement"
+  ],
+  "scope": "UVA single-card intermediate common confirmation only; absent direct binding/qualification, existing original configuration and runtime, unchanged D28 numerical files. New common metadata runs before admission and results bind its proof.",
+  "monitor79a_is_progress_only_for_this_new_feature": true,
+  "scientific_acceptance_requires_exact_new_staged_consumer_on_owned_compute": true,
+  "numerical_work": false,
+  "gpu_or_job_actions": 0,
+  "scientific_credit": 0,
+  "admission_granted": false
+}
