@@ -1,15 +1,15 @@
 ## Purpose
 
-Prepare one new full original H100 qualification with a package-image record made before GPU work. This unit uses the original immutable comparison and exit evidence, copied directly from its original capture. No failed qualification unit supplies its history, result or approval.
+Measure an explicitly supplied combined configuration or one isolated policy-copy count. The producer chooses no hypotheses or configurations and submits no jobs.
 
 ## Key hyperparameters
 
-One independent policy with 128 environments, 128 rollout steps, four epochs, four minibatches, fifty normalization warmup rollouts, one full reference update and seed 1. Networks and Adam use float32; statistics use float64; matrix precision is highest and operations are deterministic. The intended target is the approved serval02 physical card 1 H100 NVL, driver 590.48.01 and 95830 MiB, with eight nonexclusive CPU affinity entries and a three-hour maximum. These declared values require actual future evidence.
+Original CleanRL policy optimization with Random Network Distillation: 128 pixel environments per policy, 128 rollout steps, four epochs, four minibatches, fifty random warmup rollouts. 7 timing rounds contain 10 complete updates each (requested minimum 10). The correctness-only mode performs the supplied-input and complete-iteration gates without timing rounds. Neural and optimizer arithmetic uses float32; running statistics use float64; matrix precision is highest.
 
 ## Code and config changes
 
-The new direct backend protocol requires a prepared unique owning distribution, exact image/METADATA/RECORD hashes, and actual same-process mapped file evidence before and after the original work. The existing CUDA and cuDNN receipts retain their separate meanings. This metadata stage copies 646 original payloads, 693 logical mappings and eight historical Git roots. It starts no GPU process, contacts no GPU host and never opens the standing GPU lock. No qualification, scientific credit or admission is established here.
+The exact frozen numerical core and Executor are imported after source/runtime/assets validation and card admission. Packing holds only one variant in a fresh process and samples actual device used/free/total memory as well as process memory. No checkpoint is saved.
 
 ## Git state
 
-Published helper source: 0a880984b4a03a2ff7335337cc18576628bc9fc1. Numerical source: d28e6735e79788f618acb0ebfde8609db1f776af. The future private detached helper must be checked clean during owned CPU preparation. No formal measurement plan or producer command has been created at this stage.
+Numerical source: `d28e6735e79788f618acb0ebfde8609db1f776af`. Helper source: `0a880984b4a03a2ff7335337cc18576628bc9fc1`. Original source/helper hashes, full configurations and input receipts are recorded in measurement_plan.json.

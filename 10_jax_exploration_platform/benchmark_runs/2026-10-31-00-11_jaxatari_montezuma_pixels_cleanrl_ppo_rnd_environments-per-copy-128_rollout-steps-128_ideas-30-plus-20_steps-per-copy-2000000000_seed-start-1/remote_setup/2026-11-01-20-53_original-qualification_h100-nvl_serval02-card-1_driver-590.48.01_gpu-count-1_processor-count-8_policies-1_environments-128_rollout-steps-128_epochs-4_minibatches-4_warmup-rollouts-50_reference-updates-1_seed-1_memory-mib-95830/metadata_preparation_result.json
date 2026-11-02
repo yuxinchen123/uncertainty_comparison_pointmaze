@@ -1,0 +1,208 @@
+{
+  "actual_direct_process": null,
+  "actual_package_pin_verified_during_metadata_preparation": true,
+  "actual_prepared_package_record": {
+    "capability": "prepared_owning_package_image_and_same_process_mapping_version_2",
+    "created_at_seconds": 1793594829.407897,
+    "distribution": {
+      "metadata": {
+        "path": "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/jax_cuda12_pjrt-0.11.0.dist-info/METADATA",
+        "sha256": "a4ab9346404e0cf42a00dd9e877218d1e19f7871a59c361a1d7fc934b4ed2ab3"
+      },
+      "name": "jax-cuda12-pjrt",
+      "record": {
+        "path": "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/jax_cuda12_pjrt-0.11.0.dist-info/RECORD",
+        "sha256": "9eda8d59208f7bd8e709472f28559ff1debcc39c8e40f45caa60cc72d72a39ee"
+      },
+      "record_entry": {
+        "hash": "sha256=zteYiXJhGyX73H31FFMQJlbCCcBXVrUoYCqodcENHwg",
+        "relative_path": "jax_plugins/xla_cuda12/xla_cuda_plugin.so",
+        "size_bytes": 473181472
+      },
+      "version": "0.11.0"
+    },
+    "gpu_operations": 0,
+    "image": {
+      "path": "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/jax_plugins/xla_cuda12/xla_cuda_plugin.so",
+      "sha256": "ced7988972611b25fbdc7df51453102656c209c05756b528602aa875c10d1f08",
+      "size_bytes": 473181472
+    },
+    "kind": "prepared_direct_backend_package_image",
+    "numerical_imports": [],
+    "observed_file_identity": {
+      "device_major": 0,
+      "device_minor": 55,
+      "inode": 4236833
+    },
+    "observer": {
+      "hostname": "heartpiece",
+      "pid": 780006,
+      "process_start_time": "54994302",
+      "uid": 2618919,
+      "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+      "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+    },
+    "observing_python": "/usr/bin/python3",
+    "producer_source_sha256": "82898100d64f540c42c0a236acb6c20ca2808deb247b83da65927c6cb497a8e4",
+    "schema_version": 2,
+    "selected_python": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+    "site_packages": "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages"
+  },
+  "admission_granted": false,
+  "at_utc": "2026-11-02T05:05:47.605716+00:00",
+  "backend_expected": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-20-53_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/direct_backend_image_expected.json",
+    "sha256": "7d50f9ef96fbe5afa9e892905b0e3e76dde43e9f54835630c69aabf7489d35e4"
+  },
+  "backend_preparation": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-20-46_direct-backend-package-image-preparation_python-atari-pixels-jax_unique-record-owner_gpu-count-0/direct_backend_image_expected.json",
+    "sha256": "7d50f9ef96fbe5afa9e892905b0e3e76dde43e9f54835630c69aabf7489d35e4"
+  },
+  "case_credit": 0,
+  "compute": {
+    "birth": "55089978",
+    "cgroup": "0::/system.slice/slurmstepd.scope/job_6783003/step_115/user/task_0\n",
+    "job_id": "6783003",
+    "pid": 784680,
+    "step_id": "115"
+  },
+  "device_opened": false,
+  "helper_count": 26,
+  "helper_source": {
+    "clean": true,
+    "commit": "0a880984b4a03a2ff7335337cc18576628bc9fc1",
+    "root": "/p/rlprojects/RND_worktrees/atari-direct-backend-package-helpers-0a880984b4a0"
+  },
+  "historical_git_roots": [
+    {
+      "commit": "04ab9aec318c72162e2e53503a594a489d7e162b",
+      "original_root": "/p/rlprojects/RND/reference_repos/jaxtari_pixel_study",
+      "relative_path": "git_sources/original-source-commit-04ab9aec318c72162e2e53503a594a489d7e162b"
+    },
+    {
+      "commit": "44eb38d01669c03f610b99594354e1b76fdafa34",
+      "original_root": "/p/rlprojects/RND_worktrees/atari-allocator-region-diagnostic-helpers-44eb38d",
+      "relative_path": "git_sources/original-source-commit-44eb38d01669c03f610b99594354e1b76fdafa34"
+    },
+    {
+      "commit": "03b0f62b7756809c312011f8d7a9f3311ee0aac3",
+      "original_root": "/p/rlprojects/RND_worktrees/atari-allocator-retry-helpers-03b0f62",
+      "relative_path": "git_sources/original-source-commit-03b0f62b7756809c312011f8d7a9f3311ee0aac3"
+    },
+    {
+      "commit": "cd7d4161f7cc079c0124c919c995eb79315b14f6",
+      "original_root": "/p/rlprojects/RND_worktrees/atari-allocator-retry-helpers-cd7d416",
+      "relative_path": "git_sources/original-source-commit-cd7d4161f7cc079c0124c919c995eb79315b14f6"
+    },
+    {
+      "commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+      "original_root": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "relative_path": "git_sources/original-source-commit-d28e6735e79788f618acb0ebfde8609db1f776af"
+    },
+    {
+      "commit": "5b055815757e8219747bedf87423ae791af054fe",
+      "original_root": "/p/rlprojects/RND_worktrees/atari-pregather-allocator-helpers-5b05581",
+      "relative_path": "git_sources/original-source-commit-5b055815757e8219747bedf87423ae791af054fe"
+    },
+    {
+      "commit": "b9a8a366d6efad3b305caf71366efd8414d0d26a",
+      "original_root": "/p/rlprojects/RND_worktrees/atari-pregather-async-retry-helpers-b9a8a36",
+      "relative_path": "git_sources/original-source-commit-b9a8a366d6efad3b305caf71366efd8414d0d26a"
+    },
+    {
+      "commit": "1d488ab23e11b9c2900a558e6cd3782786075ae9",
+      "original_root": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/code_snapshots/1d488ab23e11b9c2900a558e6cd3782786075ae9",
+      "relative_path": "git_sources/original-source-commit-1d488ab23e11b9c2900a558e6cd3782786075ae9"
+    }
+  ],
+  "history": {
+    "comparisons": 120,
+    "inputs": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-20-53_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/direct_history/inputs.json",
+      "sha256": "e519d59e1ed5b099ffb39fd6aec56bacc1cf83c16001d7139728273c3473c24e"
+    },
+    "stop": {
+      "direct_processes": 62,
+      "jobs": 25,
+      "source": "immutable historical snapshots only"
+    }
+  },
+  "idea_credit": 0,
+  "kind": "full_original_direct_qualification_metadata_preparation_result",
+  "lock_probed": false,
+  "logical_file_mappings": 693,
+  "numerical_imports": false,
+  "original_payload_bytes": 1309199145,
+  "original_payloads": 646,
+  "original_test_cases": 48,
+  "original_test_contract": {
+    "tests/atari_pixels/test_equations.py::test_configuration_separates_original_atari_defaults": 1,
+    "tests/atari_pixels/test_equations.py::test_empty_predictor_mask": 1,
+    "tests/atari_pixels/test_equations.py::test_forward_against_original_cleanrl": 1,
+    "tests/atari_pixels/test_equations.py::test_independent_clipping_and_key_stability": 1,
+    "tests/atari_pixels/test_equations.py::test_loss_gradients_and_adam_against_original": 2,
+    "tests/atari_pixels/test_equations.py::test_statistics_and_original_reward_filter": 1,
+    "tests/atari_pixels/test_indexed_frames.py::test_indexed_storage_preserves_stale_first_pixels_and_reset_stacks": 1,
+    "tests/atari_pixels/test_optimizations.py::test_associative_advantages_and_reward_filter": 1,
+    "tests/atari_pixels/test_optimizations.py::test_convolution_layouts_and_copy_isolation": 4,
+    "tests/atari_pixels/test_optimizations.py::test_dense_forms_and_flat_parameter_layout": 1,
+    "tests/atari_pixels/test_optimizations.py::test_float64_raw_moments_match_two_pass_on_pixel_values": 1,
+    "tests/atari_pixels/test_optimizations.py::test_fused_bias_activation_and_backward": 2,
+    "tests/atari_pixels/test_optimizations.py::test_rtx_a4500_target_metadata_rejects_another_architecture": 1,
+    "tests/atari_pixels/test_scalar_settings.py::test_discount_vectors_agree_with_separate_scalar_recurrences": 1,
+    "tests/atari_pixels/test_scalar_settings.py::test_gradient_caps_and_adam_epsilon_broadcast_only_within_each_policy": 1,
+    "tests/atari_pixels/test_scalar_settings.py::test_scalar_mapping_roundtrip_and_structural_rejection": 1,
+    "tests/atari_pixels/test_training.py::test_checkpoint_restores_exact_next_update_and_rejects_changed_environment": 1,
+    "tests/atari_pixels/test_training.py::test_complete_iteration_hyperparameter_copy_isolation": 2,
+    "tests/atari_pixels/test_training.py::test_donation_and_zero_warmup": 1,
+    "tests/atari_pixels/test_training.py::test_each_vector_loss_setting_matches_separate_scalar_policies": 5,
+    "tests/atari_pixels/test_training.py::test_generic_scalar_vectors_keep_other_policy_unchanged": 1,
+    "tests/atari_pixels/test_training.py::test_predictor_fraction_zero_and_one_control_only_the_requested_predictor": 1,
+    "tests/atari_pixels/test_training.py::test_same_compiled_update_repeats_exactly": 1,
+    "tests/atari_pixels/test_training.py::test_warmup_complete_iteration_and_optimized_equivalence": 1,
+    "tests/test_atari_pixel_environment.py::test_area_ratio_byte_rounding_keeps_even_ties_and_adjacent_values": 1,
+    "tests/test_atari_pixel_environment.py::test_area_resize_preserves_constants_and_averages_regions": 1,
+    "tests/test_atari_pixel_environment.py::test_circular_storage_preserves_multiple_steps_and_life_reset": 1,
+    "tests/test_atari_pixel_environment.py::test_environment_optimization_options_preserve_every_output": 1,
+    "tests/test_atari_pixel_environment.py::test_fused_area_kernel_matches_reference_after_rounding_correction": 1,
+    "tests/test_atari_pixel_environment.py::test_game_end_during_life_reset_reports_the_actual_full_stack_reset": 1,
+    "tests/test_atari_pixel_environment.py::test_game_over_stops_held_frames_and_immediately_resets_the_full_stack": 1,
+    "tests/test_atari_pixel_environment.py::test_grayscale_matches_recorded_ale_coefficients": 1,
+    "tests/test_atari_pixel_environment.py::test_grayscale_rounds_exact_half_values_up_before_area_reduction": 1,
+    "tests/test_atari_pixel_environment.py::test_hold_four_frames_and_continue_game_after_life_loss": 1,
+    "tests/test_atari_pixel_environment.py::test_nonterminal_life_loss_from_one_to_zero_still_masks_ppo_returns": 1,
+    "tests/test_atari_pixel_environment.py::test_policy_seed_pairing_preserves_distinct_environment_keys": 1,
+    "tests/test_atari_pixel_environment.py::test_room_background_cache_uses_complete_state_and_each_room_geometry": 1,
+    "tests/test_atari_pixel_environment.py::test_time_limit_resets_full_game_and_retains_terminal_return": 1
+  },
+  "passed": true,
+  "plan": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-20-53_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/measurement_plan.json",
+    "sha256": "1d2d93a2277669b54cc4641753b112a487757f620d96b5d5fdfa38cc6f6e451b"
+  },
+  "prepared": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-20-53_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/measurement_prepared.json",
+    "sha256": "26a15f04bc3eda705af1a88d49dce14cc017913686602840759e148d0f6424ab"
+  },
+  "renderer_contract": {
+    "cases": 132,
+    "jaxtari_constants_source": {
+      "path": "/p/rlprojects/RND/reference_repos/jaxtari_pixel_study/src/jaxtari/games/montezuma_revenge/core.py",
+      "sha256": "20cd004ffe6c3c0ce3de9cceec271d7920a8069252c1fcf0032d8e4a69abc4c9"
+    },
+    "jaxtari_source_commit": "04ab9aec318c72162e2e53503a594a489d7e162b",
+    "kind": "pinned_original_full_renderer_matrix",
+    "renderer_source": {
+      "path": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/scripts/atari_pixel_campaign/check_rendering.py",
+      "sha256": "79e21acb6d1166b8cad73a9e8eab6c360a9655fbaba628dbedd8307c511da81e"
+    },
+    "rooms": 33,
+    "schema_version": 1,
+    "synthetic_pixel_cases": 11,
+    "variants_per_room": 4
+  },
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "server_contact": false,
+  "worker_admitted": false
+}

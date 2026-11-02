@@ -1014,10 +1014,10 @@
   "latest_existing_master_check": {
     "authentication_attempts": 0,
     "both_existing_masters_passed": true,
-    "checked_at_utc": "2026-11-02T01:31:19.560111+00:00",
-    "explicit_check_not_before_utc": "2026-11-02T02:31:20.560111+00:00",
+    "checked_at_utc": "2026-11-02T05:08:50.585309+00:00",
+    "explicit_check_not_before_utc": "2026-11-02T06:08:51.585309+00:00",
     "mit_attempts_total": 0,
-    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/existing_master_checks_2026-11-02-01-31-19.json"
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/existing_master_checks_2026-11-02-05-08-50.json"
   },
   "latest_merged_monitor_source_correction": {
     "author_source_commit": "8e69929f03d2e3e0fad0e13187b7303646b96771",
@@ -1041,10 +1041,19 @@
     "state": "published_independently_reviewed"
   },
   "monitoring_session_cron": {
+    "cadence_seconds": 1200,
     "cron": "*/20 * * * *",
-    "exact_prompt_and_schedule_verified": true,
-    "expires_at_utc": "2026-11-09T02:00:00Z",
-    "id": "fc63f9f4-2f87-4054-80a9-7814293cf382"
+    "expires_at": "2026-11-09T05:00:00Z",
+    "id": "afa727a0-babb-4ef1-bd59-c0b535df6fd3",
+    "list_verified": true,
+    "next_run_at_at_verification": "2026-11-02T05:20:00Z",
+    "old_id_deleted": "917dd61c-927d-4f87-b3d8-b056e674ee59",
+    "persistent_job_id": "6783003",
+    "prompt_bytes": 15950,
+    "prompt_sha256": "7c6924a52a70cc865c071f797d29499155fa24b96a2d53a364674be1a370b3fa",
+    "record": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/monitoring_task_2026-11-02-05-02.json",
+    "record_sha256": "22843c04ea2a9e22ce39364a45bd45a7028019500cc3ce88e6da93ee58bb326d",
+    "timezone": "America/Los_Angeles"
   },
   "monitoring_session_cron_previous_records": [
     {
@@ -1106,6 +1115,12 @@
       "replacement_verified_before_old_deleted": true,
       "timezone": "America/Los_Angeles",
       "verified_at_utc": "2026-11-01T22:00:13.130041+00:00"
+    },
+    {
+      "cron": "*/20 * * * *",
+      "exact_prompt_and_schedule_verified": true,
+      "expires_at_utc": "2026-11-09T02:00:00Z",
+      "id": "fc63f9f4-2f87-4054-80a9-7814293cf382"
     }
   ],
   "new_common_correctness_submissions": {

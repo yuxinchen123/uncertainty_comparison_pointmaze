@@ -1,6 +1,5 @@
 {
-  "actual_gpu_runtime_verified": false,
-  "candidate": {
+  "reference": {
     "environment": {
       "batch_layout": "flat",
       "cache_room_backgrounds": false,
@@ -75,28 +74,7 @@
       "warmup_keeps_initial_observation": true
     }
   },
-  "declared_qualification_shape": {
-    "driver": "590.48.01",
-    "environments_per_policy": 128,
-    "epochs": 4,
-    "gpu_model": "NVIDIA H100 NVL",
-    "minibatches": 4,
-    "network_dtype": "float32",
-    "normalization_warmup_rollouts": 50,
-    "physical_memory_mib": 95830,
-    "policy_copies": 1,
-    "processor_count": 8,
-    "reference_updates": 1,
-    "rollout_steps": 128,
-    "seed_start": 1,
-    "statistics_dtype": "float64",
-    "time_limit_seconds": 10800
-  },
-  "direct_backend_image_record": {
-    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-20-46_direct-backend-package-image-preparation_python-atari-pixels-jax_unique-record-owner_gpu-count-0/direct_backend_image_expected.json",
-    "sha256": "7d50f9ef96fbe5afa9e892905b0e3e76dde43e9f54835630c69aabf7489d35e4"
-  },
-  "reference": {
+  "candidate": {
     "environment": {
       "batch_layout": "flat",
       "cache_room_backgrounds": false,
