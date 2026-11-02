@@ -1,0 +1,9 @@
+{
+  "kind": "cold_fixture_must_reproduce_existing_staged_path_depth",
+  "actual_step": "6783003.57",
+  "methods": 16,
+  "failures": 1,
+  "production_source_changed": false,
+  "reason": "Existing train_optimized metadata computes a grandparent path at import. The shallow temporary staging fixture had insufficient parents; use the real campaign/data/unit/code directory depth.",
+  "source_bytes_preserved": "/p/rlprojects/RND_worktrees/2026-11-01-18-34_a4500-group-scaling_gpu-counts-1-8_gpus-per-step-1_rounds-7_minimum-updates-per-round-10_preserve-selected-configuration-and-global-seeds/.review_metadata/a4500_group_scaling_preparation/fourth_source_bytes"
+}

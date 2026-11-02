@@ -1,0 +1,20 @@
+{
+  "at_utc": "2026-11-02T02:39:01.489016+00:00",
+  "command": [
+    "/sw/ubuntu/custom/slurm/current/bin/srun",
+    "--help"
+  ],
+  "returncode": 0,
+  "binary_path": "/sw/ubuntu/custom/slurm/current/bin/srun",
+  "resolved_binary_path": "/sw/ubuntu2204/custom/slurm/23.11.6/bin/srun",
+  "help_sha256": "cd6206b19bda3631a91350da27c7832da3bed63d00d882f288befa15304e0dbc",
+  "manual_path": "/sw/ubuntu2204/custom/slurm/23.11.6/share/man/man1/srun.1",
+  "manual_sha256": "e324a7d0a0efb333cbbe3bb9909ec8ccd3b9e981716e2929e215ca95ae79bc77",
+  "manual_excerpt": "To change the behavior so that each job step is allocated no generic resources,\nexplicitly set the value of \\-\\-gres to specify zero counts for each generic\nresource OR set \"\\-\\-gres=none\" OR set the SLURM_STEP_GRES environment variable\nto \"none\".\n",
+  "planned_zero_gres_argument": "--gres=none",
+  "actual_step_TRES_must_independently_prove_zero_gpus": true,
+  "binary_manual_build_equivalence_verified": false,
+  "job_started": false,
+  "gpu_operation_requested": false,
+  "prior_metadata_directory_mkdir_failure_preserved": "Existing inherited .review_metadata directory; no file overwritten, corrected by creating this separate child directory."
+}
