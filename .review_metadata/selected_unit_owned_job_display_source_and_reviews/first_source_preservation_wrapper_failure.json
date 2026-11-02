@@ -1,0 +1,9 @@
+{
+  "kind": "preserved_author_metadata_wrapper_failure",
+  "job_id": "6783003",
+  "step_id": "not_captured_before_assertion",
+  "failed_assertion": "source digest compared to whole core receipt object rather than its sha256 member",
+  "production_source_changed": false,
+  "repair": "read core.files[name].sha256 and paired_source.files[name] according to their distinct actual schemas",
+  "NUM_or_GPU_work": false
+}

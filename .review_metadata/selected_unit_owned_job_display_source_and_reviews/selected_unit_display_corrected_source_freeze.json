@@ -1,0 +1,29 @@
+{
+  "NUM_or_GPU_work": false,
+  "active_cpu_job": "6783003",
+  "actual_metadata_and_source_preservation": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-20-03_monitor-selected-unit-owned-job-display_prepared-held-running_campaign-ledger-and-receipt/.review_metadata/selected_unit_display_actual_metadata_and_protected_sources_6783003_88.json",
+    "sha256": "31c6c14c0027811374bb040927b78b10e8b16ea3fd67b900af757f245e1f14e6"
+  },
+  "author_controls": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-20-03_monitor-selected-unit-owned-job-display_prepared-held-running_campaign-ledger-and-receipt/.review_metadata/selected_unit_display_author_6783003_87.json",
+    "sha256": "a6061d5631c877b49145e2986f76137931b70ebcdf55464360903503406634ac"
+  },
+  "base_commit": "e02f72b93a6705853c5d35b72d81fbc3f5310679",
+  "current_monitor_source_changed": false,
+  "files": {
+    "/p/rlprojects/RND_worktrees/2026-11-01-20-03_monitor-selected-unit-owned-job-display_prepared-held-running_campaign-ledger-and-receipt/10_jax_exploration_platform/scripts/atari_pixel_campaign/monitor.py": "dea8682097e23b4c6ecaff4801914017a7fb7e04672d4ece1cfb3f46de62ea84",
+    "/p/rlprojects/RND_worktrees/2026-11-01-20-03_monitor-selected-unit-owned-job-display_prepared-held-running_campaign-ledger-and-receipt/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_monitor_selected_unit_jobs.py": "01544a6f71434636c18a9f30abebe7f931f8a551815ba7a764eb1b8a186848ba"
+  },
+  "job_actions": 0,
+  "kind": "selected_unit_display_source_and_tests_freeze",
+  "numerical_or_live_helper_source_changed": false,
+  "old_fixture_failure": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-20-03_monitor-selected-unit-owned-job-display_prepared-held-running_campaign-ledger-and-receipt/.review_metadata/selected_unit_display_author_6783003_79.json",
+    "sha256": "fe7c51c4ef287f8734f7348fa1c3f1557b78ae1c16068ff337b0aa3d128ecccb"
+  },
+  "schema_version": 1,
+  "scientific_approval_granted": false,
+  "source_scope": "configured A4500 selected measurement/profile metadata display only; direct and legacy unchanged",
+  "tests": 42
+}
