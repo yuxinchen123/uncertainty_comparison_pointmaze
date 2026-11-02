@@ -1,0 +1,17 @@
+{
+  "kind": "independent_formal_metadata_review_invocation_corrections",
+  "at_utc": "2026-11-02T02:02:47.160673+00:00",
+  "first_failed_step": "6783003.18",
+  "first_cause": "-S omitted the private environment package metadata",
+  "second_failed_step": "6783003.19",
+  "second_cause": "exclusive reviewer guard output name was reused; no validation or large lock acquisition occurred",
+  "corrected_invocation_flags": [
+    "-I",
+    "-B"
+  ],
+  "corrected_guard_output_uses_actual_job_and_step": true,
+  "original_script_sha256": "adfc21fc7b82498a96f0ff65b98be999fff862f62b8637ad2ddce1f7280e6846",
+  "corrected_script_sha256": "a902de1f1163707b2d43eb2086bf16ac76bb1c744374a1781bff02159b6c8542",
+  "production_or_packet_bytes_changed": false,
+  "numerical_or_gpu_work": false
+}

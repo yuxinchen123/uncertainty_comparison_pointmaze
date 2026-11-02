@@ -1,0 +1,90 @@
+test_actual_fixed_packet_default_is_read_only_without_commands (independent_direct_controller_tests.ControllerTests.test_actual_fixed_packet_default_is_read_only_without_commands) ... ok
+test_any_previous_intent_prevents_another_popen (independent_direct_controller_tests.ControllerTests.test_any_previous_intent_prevents_another_popen) ... ok
+test_changed_observed_child_argv_never_publishes_launch (independent_direct_controller_tests.ControllerTests.test_changed_observed_child_argv_never_publishes_launch) ... ok
+test_exact_safe_environment_removes_slurm_cache_and_python_injection (independent_direct_controller_tests.ControllerTests.test_exact_safe_environment_removes_slurm_cache_and_python_injection) ... ok
+test_frozen_source_order_proves_guard_before_numerical_compute_and_producer_lock_scope (independent_direct_controller_tests.ControllerTests.test_frozen_source_order_proves_guard_before_numerical_compute_and_producer_lock_scope) ... ok
+test_incomplete_actual_child_identity_still_gets_true_wait_without_terminal (independent_direct_controller_tests.ControllerTests.test_incomplete_actual_child_identity_still_gets_true_wait_without_terminal) ... ok
+test_late_launch_collision_preserves_existing_bytes_and_no_terminal (independent_direct_controller_tests.ControllerTests.test_late_launch_collision_preserves_existing_bytes_and_no_terminal) ... ok
+test_missing_launch_record_is_rejected_before_synthetic_compute_marker (independent_direct_controller_tests.ControllerTests.test_missing_launch_record_is_rejected_before_synthetic_compute_marker) ... ok
+test_nonzero_ordinary_child_exit_retains_wait_and_never_terminal_success (independent_direct_controller_tests.ControllerTests.test_nonzero_ordinary_child_exit_retains_wait_and_never_terminal_success) ... ok
+test_observed_cpu_selection_has_no_guessed_or_boolean_indices (independent_direct_controller_tests.ControllerTests.test_observed_cpu_selection_has_no_guessed_or_boolean_indices) ... ok
+test_ordinary_reader_rejects_symlink_and_fifo_before_opening_for_read (independent_direct_controller_tests.ControllerTests.test_ordinary_reader_rejects_symlink_and_fifo_before_opening_for_read) ... ok
+test_output_hashing_streams_a_log_larger_than_metadata_bound (independent_direct_controller_tests.ControllerTests.test_output_hashing_streams_a_log_larger_than_metadata_bound) ... ok
+test_own_timeout_signals_only_observed_child_and_retains_signal_exit (independent_direct_controller_tests.ControllerTests.test_own_timeout_signals_only_observed_child_and_retains_signal_exit) ... ok
+test_partial_launch_prepared_file_prevents_any_spawn (independent_direct_controller_tests.ControllerTests.test_partial_launch_prepared_file_prevents_any_spawn) ... ok
+test_popen_failure_keeps_attempt_failure_and_restores_affinity (independent_direct_controller_tests.ControllerTests.test_popen_failure_keeps_attempt_failure_and_restores_affinity) ... ok
+test_prepublication_metadata_launch_refuses_without_any_popen (independent_direct_controller_tests.ControllerTests.test_prepublication_metadata_launch_refuses_without_any_popen) ... ok
+test_publication_freeze_must_include_the_running_controller_and_test (independent_direct_controller_tests.ControllerTests.test_publication_freeze_must_include_the_running_controller_and_test) ... ok
+test_real_spawn_exact_pid_argv_affinity_actual_wait_and_launch_guard (independent_direct_controller_tests.ControllerTests.test_real_spawn_exact_pid_argv_affinity_actual_wait_and_launch_guard) ... FAIL
+test_timed_out_wait_is_rejected_by_the_unchanged_terminal_reader (independent_direct_controller_tests.ControllerTests.test_timed_out_wait_is_rejected_by_the_unchanged_terminal_reader) ... FAIL
+test_timeout_with_handler_returning_zero_keeps_true_zero_and_refuses_terminal_success (independent_direct_controller_tests.ControllerTests.test_timeout_with_handler_returning_zero_keeps_true_zero_and_refuses_terminal_success) ... ok
+
+======================================================================
+FAIL: test_real_spawn_exact_pid_argv_affinity_actual_wait_and_launch_guard (independent_direct_controller_tests.ControllerTests.test_real_spawn_exact_pid_argv_affinity_actual_wait_and_launch_guard)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-17-17_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/test_direct_qualification_controller.py", line 165, in test_real_spawn_exact_pid_argv_affinity_actual_wait_and_launch_guard
+    self.assertEqual(direct.terminal_process(self.unit, metadata), terminal)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/p/rlprojects/RND_worktrees/2026-11-01-17-17_original-qualification-helper_source-commit-6066d9ea35fbc9c045855144550971c2ac5895f9/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py", line 330, in terminal_process
+    identity = core(); directory = Path(directory); process = metadata["after"]["identity"]
+               ^^^^^^
+  File "/p/rlprojects/RND_worktrees/2026-11-01-17-17_original-qualification-helper_source-commit-6066d9ea35fbc9c045855144550971c2ac5895f9/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py", line 53, in core
+    return adjacent("serval02_card1_binding")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/p/rlprojects/RND_worktrees/2026-11-01-17-17_original-qualification-helper_source-commit-6066d9ea35fbc9c045855144550971c2ac5895f9/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py", line 44, in adjacent
+    specification.loader.exec_module(module)
+  File "<frozen importlib._bootstrap_external>", line 999, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/p/rlprojects/RND_worktrees/2026-11-01-17-17_original-qualification-helper_source-commit-6066d9ea35fbc9c045855144550971c2ac5895f9/10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py", line 9, in <module>
+    import ctypes
+  File "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/ctypes/__init__.py", line 472, in <module>
+    pythonapi = PyDLL(None)
+                ^^^^^^^^^^^
+  File "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/ctypes/__init__.py", line 379, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-17-54-39_fresh-original-h100-qualification-independent-review_gpu-count-0/review_frozen_controller_independently.py", line 96, in audit
+    raise AssertionError("dynamic-library access forbidden")
+AssertionError: dynamic-library access forbidden
+
+======================================================================
+FAIL: test_timed_out_wait_is_rejected_by_the_unchanged_terminal_reader (independent_direct_controller_tests.ControllerTests.test_timed_out_wait_is_rejected_by_the_unchanged_terminal_reader)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-17-17_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/test_direct_qualification_controller.py", line 401, in test_timed_out_wait_is_rejected_by_the_unchanged_terminal_reader
+    direct.terminal_process(self.unit, metadata)
+  File "/p/rlprojects/RND_worktrees/2026-11-01-17-17_original-qualification-helper_source-commit-6066d9ea35fbc9c045855144550971c2ac5895f9/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py", line 330, in terminal_process
+    identity = core(); directory = Path(directory); process = metadata["after"]["identity"]
+               ^^^^^^
+  File "/p/rlprojects/RND_worktrees/2026-11-01-17-17_original-qualification-helper_source-commit-6066d9ea35fbc9c045855144550971c2ac5895f9/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py", line 53, in core
+    return adjacent("serval02_card1_binding")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/p/rlprojects/RND_worktrees/2026-11-01-17-17_original-qualification-helper_source-commit-6066d9ea35fbc9c045855144550971c2ac5895f9/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py", line 44, in adjacent
+    specification.loader.exec_module(module)
+  File "<frozen importlib._bootstrap_external>", line 999, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/p/rlprojects/RND_worktrees/2026-11-01-17-17_original-qualification-helper_source-commit-6066d9ea35fbc9c045855144550971c2ac5895f9/10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py", line 9, in <module>
+    import ctypes
+  File "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/ctypes/__init__.py", line 472, in <module>
+    pythonapi = PyDLL(None)
+                ^^^^^^^^^^^
+  File "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/ctypes/__init__.py", line 379, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-17-54-39_fresh-original-h100-qualification-independent-review_gpu-count-0/review_frozen_controller_independently.py", line 96, in audit
+    raise AssertionError("dynamic-library access forbidden")
+AssertionError: dynamic-library access forbidden
+
+----------------------------------------------------------------------
+Ran 20 tests in 3.836s
+
+FAILED (failures=2)
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-17-54-39_fresh-original-h100-qualification-independent-review_gpu-count-0/review_frozen_controller_independently.py", line 176, in <module>
+    main()
+  File "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-17-54-39_fresh-original-h100-qualification-independent-review_gpu-count-0/review_frozen_controller_independently.py", line 120, in main
+    assert result.testsRun == 20 and result.wasSuccessful()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
+srun: error: heartpiece: task 0: Exited with exit code 1

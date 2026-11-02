@@ -1,0 +1,15 @@
+{
+  "command": [
+    "sacct",
+    "--noheader",
+    "--parsable2",
+    "--jobs=6782946",
+    "--format=JobIDRaw,JobName,User,State,ExitCode,NodeList,Start,End,AllocCPUS,ReqMem,ReqTRES,AllocTRES"
+  ],
+  "environment_override": {
+    "TZ": "UTC"
+  },
+  "returncode": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "at_utc": "2026-11-02T01:48:30.191975+00:00"
+}

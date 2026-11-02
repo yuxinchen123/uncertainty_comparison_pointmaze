@@ -1,0 +1,10 @@
+{
+  "kind": "independent_reader_command_allowlist_correction",
+  "preserved_first_source_sha256": "0731535881a7016ca5b0307686c675b7ce969a2f1e0b2281cc93ef5f91b9d797",
+  "first_step": "6783003.13",
+  "failure": "The saved qualification dependency reaches one earlier diagnosis helper Git root that was absent from the review command allowlist. No production reader or run evidence changed.",
+  "added_exact_git_root": "/p/rlprojects/RND_worktrees/atari-allocator-region-diagnostic-helpers-44eb38d",
+  "actual_diagnosis_result_sha256": "0a5619b813dd3355357e2a3afdeb39b315a78d5413a5746a7d9bed1d8c3d7005",
+  "actual_diagnosis_helper_commit": "44eb38d01669c03f610b99594354e1b76fdafa34",
+  "corrected_source_sha256": "9274b472dcde4ab2a4bc858e10fbada776dcfb965552df6e52ae3ebab11c2a85"
+}

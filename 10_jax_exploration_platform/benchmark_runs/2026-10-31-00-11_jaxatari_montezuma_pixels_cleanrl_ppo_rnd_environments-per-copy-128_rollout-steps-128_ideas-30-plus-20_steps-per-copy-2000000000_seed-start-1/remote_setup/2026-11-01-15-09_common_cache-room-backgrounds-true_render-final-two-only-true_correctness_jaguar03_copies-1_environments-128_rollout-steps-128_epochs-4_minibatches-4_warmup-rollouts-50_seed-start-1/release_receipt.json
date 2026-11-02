@@ -1,0 +1,34 @@
+{
+  "admission_granted": false,
+  "at_utc": "2026-11-02T01:24:04.073669+00:00",
+  "automatic_retry_permitted": false,
+  "case_credit": 0,
+  "cluster": "uva",
+  "command": [
+    "scontrol",
+    "release",
+    "6782946"
+  ],
+  "data_unit": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-15-09_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_jaguar03_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1",
+  "frozen_inputs_sha256": "e63805d76d005d74f41be82b9a263b0deeb4ccd171db72bcd4e7c9015815762e",
+  "held_monitor_review": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-15-09_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_jaguar03_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1/actual_held_monitor_proof_new_monitor_6783003.json",
+    "sha256": "5e06f3354083793dfe7bab3e054edb772bddc1d11bc54f8da521b62a26e777ec"
+  },
+  "idea_credit": 0,
+  "job_id": "6782946",
+  "kind": "owned_uva_configured_isolation_release",
+  "packing_point_credit": 0,
+  "plan_sha256": "4acda94f98d53f2a907505cc788da2f8251acf452e0b4c48971a68bfada67354",
+  "publication_commit": "5f059abe1736680bbb4692ab65928b80841e062f",
+  "release_source_sha256": "3806a02a349fd3b2fd189a76b96deef5f3a0ece5b4c72c13efb7080a5f47400d",
+  "returncode": 0,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "site_qualification_credit": 0,
+  "stderr": "",
+  "stdout": "",
+  "submission_receipt_sha256": "9ea4af3454a303094e4e23a77ad5cfe9289715ca517bbb2f63603b6f8e33787e",
+  "throughput_credit": 0,
+  "worker_admitted": false
+}

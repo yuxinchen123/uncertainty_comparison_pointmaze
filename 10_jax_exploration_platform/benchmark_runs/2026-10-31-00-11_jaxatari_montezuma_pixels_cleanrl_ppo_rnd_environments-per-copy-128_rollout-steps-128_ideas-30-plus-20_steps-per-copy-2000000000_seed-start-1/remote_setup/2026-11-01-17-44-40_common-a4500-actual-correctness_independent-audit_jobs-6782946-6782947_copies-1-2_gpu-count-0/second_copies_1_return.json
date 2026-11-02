@@ -1,0 +1,21 @@
+{
+  "command": [
+    "srun",
+    "--jobid=6783003",
+    "--overlap",
+    "--nodes=1",
+    "--ntasks=1",
+    "--cpus-per-task=1",
+    "--mem=1G",
+    "--time=00:05:00",
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-17-44-40_common-a4500-actual-correctness_independent-audit_jobs-6782946-6782947_copies-1-2_gpu-count-0/audit_unit_explicit_history_root.py",
+    "--copies",
+    "1"
+  ],
+  "returncode": 1,
+  "at_utc": "2026-11-02T01:48:33.933647+00:00"
+}

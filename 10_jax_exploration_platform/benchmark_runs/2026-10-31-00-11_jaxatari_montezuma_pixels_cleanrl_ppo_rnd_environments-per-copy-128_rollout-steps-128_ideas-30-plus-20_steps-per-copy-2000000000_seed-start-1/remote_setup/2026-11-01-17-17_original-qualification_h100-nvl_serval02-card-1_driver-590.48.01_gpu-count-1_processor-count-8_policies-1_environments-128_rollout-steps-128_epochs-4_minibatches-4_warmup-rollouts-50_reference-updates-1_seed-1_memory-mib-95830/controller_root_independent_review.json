@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "kind": "direct_qualification_controller_root_independent_review",
+  "passed": true,
+  "launch_approved": true,
+  "at_utc": "2026-11-02T02:14:46.956414+00:00",
+  "controller_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-17-17_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/controller_source_freeze.json",
+    "sha256": "fcd15589d215e4730d42bca66c84ab5d389a202bede040ee06a79ee9eb07ee3d"
+  },
+  "packet_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-17-17_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/packet_metadata_freeze.json",
+    "sha256": "f7b544a5f5fcf8fb2ad6b1c974d8eb553042c92291a74580921a223047c08d87"
+  },
+  "plan": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-17-17_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/measurement_plan.json",
+    "sha256": "515e4089bec5fa65931b5f08fc018d716209243fd8311cc0f4740f954769472e"
+  },
+  "actual_independent_static_review": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-17-54-39_fresh-original-h100-qualification-independent-review_gpu-count-0/final_static_review.json",
+    "sha256": "74f39fd5f23df3aa939369b4203a679279d13738f8f34e008785db454bbbc33c"
+  },
+  "root_reviewed_actual_source_pin_change_and_proven_generic_function_AST_identity": true,
+  "all83_publication_bytes_rehashed": true,
+  "controller_owns_gpu_standing_descriptor": false,
+  "producer_owns_gpu_standing_descriptor": true,
+  "one_full_original_qualification_only": true,
+  "actual_gpu_qualification_established": false,
+  "worker_admitted": false,
+  "scientific_credit": 0,
+  "native_cron_id": "fc63f9f4-2f87-4054-80a9-7814293cf382",
+  "persistent_monitor_job_id": "6783003"
+}

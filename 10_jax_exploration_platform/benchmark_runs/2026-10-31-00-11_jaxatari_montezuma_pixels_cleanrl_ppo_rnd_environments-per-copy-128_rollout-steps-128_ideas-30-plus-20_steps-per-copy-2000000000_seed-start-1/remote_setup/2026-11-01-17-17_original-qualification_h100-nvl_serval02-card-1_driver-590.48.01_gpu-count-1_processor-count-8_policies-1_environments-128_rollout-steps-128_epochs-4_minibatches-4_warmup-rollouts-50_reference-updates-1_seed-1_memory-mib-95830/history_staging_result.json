@@ -1,0 +1,81 @@
+{
+  "actual_job_id": "6783003",
+  "actual_step_id": "8",
+  "admission_granted": false,
+  "at_utc": "2026-11-02T01:23:05.893303+00:00",
+  "case_credit": 0,
+  "current_qualification_helper_selected": false,
+  "direct_host_contact": false,
+  "distinct_payloads": 646,
+  "formal_plan_created": false,
+  "formal_qualification_plan": null,
+  "fresh_running_guard": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-17-17_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/fresh_owned_running_guard.json",
+    "sha256": "048f7b2bf86200d3d932fc09cc1169c3afce5997676d923756405c4c74a949ff"
+  },
+  "full_history_semantic_validation_by_future_reviewed_helper_pending": true,
+  "gpu_work": false,
+  "helper_source_commit": null,
+  "historical_git_roots": [
+    {
+      "commit": "04ab9aec318c72162e2e53503a594a489d7e162b",
+      "original_root": "/p/rlprojects/RND/reference_repos/jaxtari_pixel_study",
+      "relative_path": "git_sources/original-source-commit-04ab9aec318c72162e2e53503a594a489d7e162b"
+    },
+    {
+      "commit": "44eb38d01669c03f610b99594354e1b76fdafa34",
+      "original_root": "/p/rlprojects/RND_worktrees/atari-allocator-region-diagnostic-helpers-44eb38d",
+      "relative_path": "git_sources/original-source-commit-44eb38d01669c03f610b99594354e1b76fdafa34"
+    },
+    {
+      "commit": "03b0f62b7756809c312011f8d7a9f3311ee0aac3",
+      "original_root": "/p/rlprojects/RND_worktrees/atari-allocator-retry-helpers-03b0f62",
+      "relative_path": "git_sources/original-source-commit-03b0f62b7756809c312011f8d7a9f3311ee0aac3"
+    },
+    {
+      "commit": "cd7d4161f7cc079c0124c919c995eb79315b14f6",
+      "original_root": "/p/rlprojects/RND_worktrees/atari-allocator-retry-helpers-cd7d416",
+      "relative_path": "git_sources/original-source-commit-cd7d4161f7cc079c0124c919c995eb79315b14f6"
+    },
+    {
+      "commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+      "original_root": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "relative_path": "git_sources/original-source-commit-d28e6735e79788f618acb0ebfde8609db1f776af"
+    },
+    {
+      "commit": "5b055815757e8219747bedf87423ae791af054fe",
+      "original_root": "/p/rlprojects/RND_worktrees/atari-pregather-allocator-helpers-5b05581",
+      "relative_path": "git_sources/original-source-commit-5b055815757e8219747bedf87423ae791af054fe"
+    },
+    {
+      "commit": "b9a8a366d6efad3b305caf71366efd8414d0d26a",
+      "original_root": "/p/rlprojects/RND_worktrees/atari-pregather-async-retry-helpers-b9a8a36",
+      "relative_path": "git_sources/original-source-commit-b9a8a366d6efad3b305caf71366efd8414d0d26a"
+    },
+    {
+      "commit": "1d488ab23e11b9c2900a558e6cd3782786075ae9",
+      "original_root": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/code_snapshots/1d488ab23e11b9c2900a558e6cd3782786075ae9",
+      "relative_path": "git_sources/original-source-commit-1d488ab23e11b9c2900a558e6cd3782786075ae9"
+    }
+  ],
+  "history_inputs": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-17-17_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/direct_history/inputs.json",
+    "sha256": "5c547ac13078540f5a1ce2abce76bf38a70a4d5c92192af868c5e2ec594c8800"
+  },
+  "idea_credit": 0,
+  "kind": "unbound_helper_original_history_staging_completed",
+  "lock_probed": false,
+  "logical_mappings": 693,
+  "metadata_hostname": "heartpiece",
+  "metadata_pid": 715921,
+  "new_qualification_process_started": false,
+  "numerical_modules_loaded": [],
+  "passed": true,
+  "payload_bytes": 1309199145,
+  "producer_command_created": false,
+  "producer_launch_command": null,
+  "qualification_performed": false,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "worker_admitted": false
+}

@@ -1,0 +1,13 @@
+{
+  "actual_step": "6783003.22",
+  "after": "Initialize standard-library ctypes before installing the audit hook, as the frozen author runner does. All later ctypes dynamic-library and symbol events remain forbidden.",
+  "before": "Audit hook was installed before ctypes import; its standard-library PyDLL(None) initialization was rejected in two terminal-reader checks.",
+  "corrected_script_sha256": "530449a92a23d3d1c03e2c17db3381fda49d62c410450287206bb2851730480c",
+  "failures_preserved": [
+    "controller_independent_stdout.raw",
+    "controller_independent_stderr.raw"
+  ],
+  "kind": "independent_controller_wrapper_ctypes_initialization_correction",
+  "original_script_sha256": "d5944ffcea0538f45139923754273ade73803b286fad4e363d398aabbcfd164f",
+  "source_or_packet_changes": false
+}

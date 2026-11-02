@@ -1,0 +1,58 @@
+{
+  "actual_child_identity_before_possible_numerical_guard_success": "actual spawn journal, live row, immutable ledger snapshot and complete launch document are fsynced in order; absent or malformed data refuses before CUDA",
+  "actual_cpu_affinity": "controller chooses eight entries only from its actual available mask; no Slurm or exclusive CPU claim",
+  "actual_gpu_or_host_action_performed": false,
+  "actual_root_review_not_created_by_author": true,
+  "controller_source": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-17-17_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/direct_qualification_controller.py",
+    "sha256": "8596beef9d5be09e88fff0d0c0f2f85717f2695b4442bce751c2a7b2858c25e5"
+  },
+  "data_unit": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-17-17_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830",
+  "expected_actual_root_review_path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-17-17_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/controller_root_independent_review.json",
+  "formal_plan": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-17-17_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/measurement_plan.json",
+    "sha256": "515e4089bec5fa65931b5f08fc018d716209243fd8311cc0f4740f954769472e"
+  },
+  "future_actual_root_entry_argv": [
+    "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+    "-I",
+    "-B",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-17-17_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/direct_qualification_controller.py",
+    "--launch",
+    "--publication-commit",
+    "<actual-full-reviewed-published-commit>"
+  ],
+  "helper_commit": "6066d9ea35fbc9c045855144550971c2ac5895f9",
+  "kind": "actual_bound_original_qualification_controller_review_and_publication_contract",
+  "no_automatic_retry_or_successor_before_actual_wait": true,
+  "packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-17-17_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830",
+  "packet_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-17-17_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/packet_metadata_freeze.json",
+    "sha256": "f7b544a5f5fcf8fb2ad6b1c974d8eb553042c92291a74580921a223047c08d87"
+  },
+  "root_future_entry_environment": {
+    "CUDA_VISIBLE_DEVICES": "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3",
+    "SLURM_variables": "must be absent"
+  },
+  "root_prelaunch_own_campaign_metadata_lock_mode_work": "Root owns recording/protecting the two own metadata locks for the unchanged controller check; no GPU lock mode/path is changed.",
+  "root_review_required_fields": {
+    "controller_freeze": "must bind the actual completed controller_source_freeze.json bytes",
+    "controller_owns_gpu_standing_descriptor": false,
+    "kind": "direct_qualification_controller_root_independent_review",
+    "launch_approved": true,
+    "packet_freeze": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-17-17_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/packet_metadata_freeze.json",
+      "sha256": "f7b544a5f5fcf8fb2ad6b1c974d8eb553042c92291a74580921a223047c08d87"
+    },
+    "passed": true,
+    "plan": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-17-17_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/measurement_plan.json",
+      "sha256": "515e4089bec5fa65931b5f08fc018d716209243fd8311cc0f4740f954769472e"
+    },
+    "schema_version": 1
+  },
+  "schema_version": 1,
+  "selected_descriptor_custody": "the producer alone owns its standing descriptor; external controller records actual PID/birth/argv after Popen and waits exactly",
+  "source_root": "/p/rlprojects/RND_worktrees/2026-11-01-17-17_original-qualification-helper_source-commit-6066d9ea35fbc9c045855144550971c2ac5895f9",
+  "timeout_never_authorizes_terminal_success": true
+}
