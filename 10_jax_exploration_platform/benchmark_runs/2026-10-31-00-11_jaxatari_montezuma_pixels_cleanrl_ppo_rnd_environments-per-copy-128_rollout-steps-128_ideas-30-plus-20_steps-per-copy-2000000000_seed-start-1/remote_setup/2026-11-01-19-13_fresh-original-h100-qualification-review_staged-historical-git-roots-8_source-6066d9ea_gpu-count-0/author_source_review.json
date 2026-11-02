@@ -1,0 +1,26 @@
+{
+  "actual_gpu_or_host_actions": 0,
+  "actual_job": "6783003",
+  "actual_result_read": false,
+  "actual_step": "62",
+  "actual_terminal_review_attempted": false,
+  "admission_granted": false,
+  "at_utc": "2026-11-02T03:18:24.610531+00:00",
+  "consumer_sha256": "beead126531ee254a7999adae2e2e0e7292f18154a2e697e8a22ce1e93a33294",
+  "kind": "exact_mapped_git_root_correction_author_source_check",
+  "mapped_roots": 8,
+  "old_failed_packet_unchanged": true,
+  "only_original_review_statements_removed": 2,
+  "passed": true,
+  "prior_source_controls": 23,
+  "raw_reader_sha256": "96c8f15609dba406300f57b8dadaee47789a56acf72c1e4fa96b8ef35156a32d",
+  "raw_statements_retained": 50,
+  "scheduler_queries": 0,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-19-13_fresh-original-h100-qualification-review_staged-historical-git-roots-8_source-6066d9ea_gpu-count-0/source_freeze.json",
+    "sha256": "ef2d27f59ecb6231a8b8e8fc379b45dceca846c192ac82814259e71cb03514f5"
+  },
+  "source_methods": 14
+}

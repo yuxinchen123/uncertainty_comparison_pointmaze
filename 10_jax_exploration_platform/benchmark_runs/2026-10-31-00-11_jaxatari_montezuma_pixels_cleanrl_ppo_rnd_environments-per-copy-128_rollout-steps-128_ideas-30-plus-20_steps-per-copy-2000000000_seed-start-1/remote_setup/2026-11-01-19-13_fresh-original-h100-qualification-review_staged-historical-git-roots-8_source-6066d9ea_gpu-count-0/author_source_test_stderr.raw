@@ -1,0 +1,33 @@
+test_complete_synthetic_chain (test_fresh_direct_raw_review.ActualJoinTests)
+The synthetic chain passes and labels fixture work unknown. ... ok
+test_invalid_synthetic_fields (test_fresh_direct_raw_review.ActualJoinTests)
+Changed identity, protocol or controller fields are refused. ... ok
+test_actual_pinned_eight_directories_and_read_only_commands (test_fresh_direct_raw_review.MappedHistoricalGitRootTests)
+Actual frozen source metadata admits all eight mapped roots and nothing else. ... ok
+test_changed_manifest_hash_is_refused (test_fresh_direct_raw_review.MappedHistoricalGitRootTests)
+Unpinned manifest edits fail before any mapped path or command is admitted. ... ok
+test_complete_eight_ordinary_mappings (test_fresh_direct_raw_review.MappedHistoricalGitRootTests)
+Exactly the eight declared ordinary directories are admitted. ... ok
+test_missing_duplicate_unlisted_and_changed_commit_mappings_are_refused (test_fresh_direct_raw_review.MappedHistoricalGitRootTests)
+Only the exact eight original-root/commit declarations can select mapped paths. ... ok
+test_symlink_and_regular_file_targets_are_refused (test_fresh_direct_raw_review.MappedHistoricalGitRootTests)
+Even an internal symlink cannot broaden the ordinary directory namespace. ... ok
+test_traversal_absolute_redundant_and_empty_paths_are_refused (test_fresh_direct_raw_review.MappedHistoricalGitRootTests)
+Canonical path checks reject unsafe or ambiguous target spellings. ... ok
+test_changed_plan_pin (test_fresh_direct_raw_review.SourceContractTests)
+A different prepared plan is refused. ... ok
+test_changed_raw_pin (test_fresh_direct_raw_review.SourceContractTests)
+A changed raw reader hash is refused. ... ok
+test_changed_source_pin (test_fresh_direct_raw_review.SourceContractTests)
+A changed staged direct consumer hash is refused. ... ok
+test_extra_omitted_statement (test_fresh_direct_raw_review.SourceContractTests)
+Removing a third raw gate is refused before raw execution. ... ok
+test_source_only (test_fresh_direct_raw_review.SourceContractTests)
+Current source passes without actual result reads. ... ok
+test_terminal_gate_changed (test_fresh_direct_raw_review.SourceContractTests)
+A changed final direct terminal call fails the AST contract. ... ok
+
+----------------------------------------------------------------------
+Ran 14 tests in 0.178s
+
+OK

@@ -1,0 +1,31 @@
+{
+  "admission_granted": false,
+  "kind": "exact_fresh_direct_qualification_raw_reader_two_review_statement_difference",
+  "new_raw_reader": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-19-13_fresh-original-h100-qualification-review_staged-historical-git-roots-8_source-6066d9ea_gpu-count-0/raw_direct_qualification_checks.py",
+    "sha256": "96c8f15609dba406300f57b8dadaee47789a56acf72c1e4fa96b8ef35156a32d"
+  },
+  "no_actual_result_read": true,
+  "original_body_statement_count": 52,
+  "removed_statement_indices": [
+    4,
+    47
+  ],
+  "removed_statements": [
+    "review = identity.read_receipt(inputs['review'])",
+    "require(type(review.get('schema_version')) is int and review['schema_version'] == 1 and (review.get('kind') == 'independent_full_original_direct_qualification_review') and (review.get('result') == inputs['result']) and (review.get('approved') is True) and (review.get('admission_granted') is False) and (type(review.get('scientific_credit')) is int) and (review['scientific_credit'] == 0) and (review.get('independent_of_producer') is True) and (review.get('terminal_process') == identity.receipt(directory / 'direct_terminal_process.json')) and all((review.get(key) == metadata['after']['identity'][key] for key in ('hostname', 'pid', 'process_start_time'))) and (type(review.get('actual_returncode')) is int) and (review['actual_returncode'] == 0), 'an exact independent actual qualification review is required')"
+  ],
+  "retained_body_ast_sha256": "7ef1c33e7ec83bf72009bd45a21b9659e94fd9e0a60b8a87ddd90add15ce643b",
+  "retained_body_statement_count": 50,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "staged_source": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-17-17_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/code/direct_measurement.py",
+    "sha256": "beead126531ee254a7999adae2e2e0e7292f18154a2e697e8a22ce1e93a33294"
+  },
+  "terminal_gates_retained": [
+    "validate_startup_checks",
+    "validate_backend_capture",
+    "terminal_process"
+  ]
+}
