@@ -70,16 +70,34 @@ def tool_record(path):
     return {"path": str(actual), "version": version, "sha256": training.file_sha256(actual)}
 
 
-def helper_receipt(configured=False, direct=False):
+def helper_receipt(configured=False, direct=False, common=False):
     """Bind every staged helper to its exact committed bytes."""
     root = SCRIPTS.parents[2]
     commit = subprocess.check_output(["git", "-C", str(root), "rev-parse", "HEAD"], text=True).strip()
-    return training.source_receipt(root, commit, [str((SCRIPTS / name).relative_to(root)) for name in required_helpers(configured, direct)])
+    return training.source_receipt(root, commit, [str((SCRIPTS / name).relative_to(root)) for name in required_helpers(configured, direct, common)])
 
 
-def required_helpers(configured=False, direct=False):
+def required_helpers(configured=False, direct=False, common=False):
     """Include the exact optional identity closure while preserving the default profile roster."""
-    return tuple(dict.fromkeys(("profile_selected.py", *measurement.required_helpers(configured, direct))))
+    return tuple(dict.fromkeys(("profile_selected.py", *measurement.required_helpers(configured, direct, common))))
+
+
+def accepted_confirmation_common_reader(plan):
+    """Recheck the exact accepted record and its profile-only optional reader declaration."""
+    record = plan["inputs"]["accepted_confirmation"]
+    confirmation, actual = measurement.read_document(Path(record["path"]))
+    if actual != record:
+        raise ValueError("the accepted confirmation changed after profile preparation")
+    common = "common_correctness_inputs" in confirmation
+    declared = plan.get("accepted_confirmation_requires_common_reader", False)
+    if (("accepted_confirmation_requires_common_reader" in plan and declared is not True)
+            or declared != common):
+        raise ValueError("the accepted confirmation and profile helper declaration differ")
+    required_helpers("configured_isolation" in plan, "direct_binding" in plan, common)
+    relative = "10_jax_exploration_platform/scripts/atari_pixel_campaign/common_confirmation.py"
+    if (relative in plan["helpers"]["files"]) != common:
+        raise ValueError("the profile omitted or added the accepted confirmation's optional reader")
+    return common
 
 
 @contextmanager
@@ -156,6 +174,9 @@ def prepare(args):
         raise ValueError("default profiling cannot consume a configured-isolation measurement")
     if "direct_binding" in confirmation and not direct:
         raise ValueError("default profiling cannot consume an explicit direct-binding measurement")
+    common_reader = "common_correctness_inputs" in confirmation
+    if common_reader and (not configured or direct):
+        raise ValueError("a common-confirmation reader requires only configured A4500 profiling")
     if direct:
         import direct_measurement as support
         profile, unused_profile_input = measurement.read_document(args.direct_binding_profile)
@@ -184,7 +205,7 @@ def prepare(args):
         raise ValueError("the profile policy seeds exceed unsigned 32-bit values")
     directory = run / "data" / args.unit_id
     plan = {"schema_version": 1, "kind": KIND, "source_root": str(root), "source_commit": args.source_commit,
-        "core": core, "paired_source": paired_source, "helpers": helper_receipt(configured, True) if direct else helper_receipt(configured),
+        "core": core, "paired_source": paired_source, "helpers": helper_receipt(configured, direct, common_reader),
         "configuration": configuration, "runtime_environment": runtime, "asset_record": assets,
         "hardware_class": args.hardware_class, "gpu_uuid": args.gpu_uuid,
         "campaign_run_dir": str(run), "unit_id": args.unit_id, "compilation_cache_policy": "disabled",
@@ -199,6 +220,8 @@ def prepare(args):
         "inputs": {"configuration": config_input, "runtime_environment": runtime_input, "asset_record": asset_input,
                    "study_registry": registry_input, "accepted_baseline_specification": baseline_input,
                    "accepted_confirmation": confirmation_input, "profile_tool_record": tool_input}}
+    if common_reader:
+        plan["accepted_confirmation_requires_common_reader"] = True
     if configured:
         import configured_measurement as support
         profile, profile_input = measurement.read_document(args.configured_isolation_profile)
@@ -212,13 +235,14 @@ def prepare(args):
         plan["inputs"]["direct_binding_profile"] = profile_input
         plan["inputs"]["direct_history_inputs"] = plan["direct_binding"]["frozen_inputs"]
         support.prepare_qualification_inputs(plan, args.direct_qualification_record, args.direct_qualification_review)
+    accepted_confirmation_common_reader(plan)
     artifacts = {directory / "measurement_plan.json": measurement.json_bytes(plan),
         directory / "manifest.yaml": measurement.json_bytes(plan),
         directory / "config_resolved.yaml": measurement.json_bytes(configuration),
         directory / "inputs/study_registry.json": args.study_registry.read_bytes(),
         directory / "command.txt": (shlex.join([str(args.python), str(directory / "code/profile_selected.py"),
                                                "--prepared-unit", str(directory)]) + "\n").encode()}
-    for name in required_helpers(configured, direct):
+    for name in required_helpers(configured, direct, common_reader):
         artifacts[directory / "code" / name] = (SCRIPTS / name).read_bytes()
     artifacts[directory / "experiment_background.md"] = (
         "## Purpose\n\nProfile the explicitly supplied accepted baseline after all thirty initial mechanisms. "
@@ -250,7 +274,8 @@ def verify_prepared(directory, plan):
         raise ValueError("the immutable profile plan changed")
     if Path(__file__).resolve() != directory / "code/profile_selected.py" or str(Path(sys.executable).absolute()) != plan["python"]:
         raise ValueError("execute the staged profile entrypoint with its exact recorded Python")
-    for name in required_helpers("configured_isolation" in plan, "direct_binding" in plan):
+    common_reader = accepted_confirmation_common_reader(plan)
+    for name in required_helpers("configured_isolation" in plan, "direct_binding" in plan, common_reader):
         expected = plan["helpers"]["files"]["10_jax_exploration_platform/scripts/atari_pixel_campaign/" + name]
         if training.file_sha256(directory / "code" / name) != expected:
             raise ValueError("a staged profile helper changed: " + name)
@@ -278,6 +303,7 @@ def validate_measured_baseline(directory, plan):
     confirmation = plan["inputs"]["accepted_confirmation"]
     if hashlib.sha256(evidence.file(confirmation["path"])).hexdigest() != confirmation["sha256"]:
         raise ValueError("the accepted confirmation changed after profile preparation")
+    accepted_confirmation_common_reader(plan)
     proofs = []
     for entry in registry["initial_ideas"]:
         for context in validation.CONTEXTS:
