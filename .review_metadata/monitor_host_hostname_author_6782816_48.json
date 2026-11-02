@@ -1,0 +1,43 @@
+{
+  "at_utc": "2026-11-02T00:22:51.712178+00:00",
+  "cgroup": "0::/system.slice/slurmstepd.scope/job_6782816/step_48/user/task_0\n",
+  "error_details": [],
+  "errors": 0,
+  "failure_details": [],
+  "failures": 0,
+  "gpu_library_calls": 0,
+  "job_id": "6782816",
+  "kind": "monitor_process_host_hostname_author_metadata_validation",
+  "live_scheduler_commands": 0,
+  "modules": [
+    "test_monitor_process_hostname",
+    "test_monitor"
+  ],
+  "network_actions": 0,
+  "numerical_import_attempts": [],
+  "original_checkout_writes": 0,
+  "passed": true,
+  "pid": 709519,
+  "protected_after": {
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/processes.json": "0043557ba522366c13c0ceeef047bf9fed258ab652aac4a575c5cb90a6084668",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/monitor.py": "2a25c3a2d7300d6827ed3b7566edf744a3be11ad2c4dda0a227adaf8093cc94b"
+  },
+  "protected_before": {
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/processes.json": "0043557ba522366c13c0ceeef047bf9fed258ab652aac4a575c5cb90a6084668",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/monitor.py": "2a25c3a2d7300d6827ed3b7566edf744a3be11ad2c4dda0a227adaf8093cc94b"
+  },
+  "schema_version": 1,
+  "source_admission_changed": false,
+  "source_after": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/monitor.py": "d351cddb11c9b427d9b6310b58b717e7670a511f4061c7d55017e3f3b607ca09",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/fixtures/actual_processes_host_and_hostname_2026_11_02.json": "0043557ba522366c13c0ceeef047bf9fed258ab652aac4a575c5cb90a6084668",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_monitor_process_hostname.py": "ca07a26d2658bee02c27a7c90ba658fc02e8d69b5acaf9efa199679788326183"
+  },
+  "source_before": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/monitor.py": "d351cddb11c9b427d9b6310b58b717e7670a511f4061c7d55017e3f3b607ca09",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/fixtures/actual_processes_host_and_hostname_2026_11_02.json": "0043557ba522366c13c0ceeef047bf9fed258ab652aac4a575c5cb90a6084668",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_monitor_process_hostname.py": "ca07a26d2658bee02c27a7c90ba658fc02e8d69b5acaf9efa199679788326183"
+  },
+  "step_id": "48",
+  "tests": 23
+}

@@ -1,0 +1,60 @@
+{
+  "base_commit": "7fd40de24201b5e1efce398f49549db26c1e94d9",
+  "file_count": 10,
+  "files": [
+    {
+      "bytes": 1081,
+      "path": ".review_metadata/actual_processes_fixture_provenance.json",
+      "sha256": "6238c72a180e8ee442f220034f17d97f1c8450bb7548d876dbd55011df5c612a"
+    },
+    {
+      "bytes": 673,
+      "path": ".review_metadata/author_harness_failure_6782816_47.json",
+      "sha256": "53f13cf91641781664321c8e835c4b382962e140741934f1790f6beb0f199d15"
+    },
+    {
+      "bytes": 2852,
+      "path": ".review_metadata/monitor_host_hostname_author_6782816_48.json",
+      "sha256": "c6e6c2fbb8bc05a897a1b9612befa816e7674898cf174c9a63ec22d79b7970f2"
+    },
+    {
+      "bytes": 2857,
+      "path": ".review_metadata/monitor_host_hostname_independent_6782816_49.json",
+      "sha256": "57d12465252f9373a16e56e2333d250078840f9a95fbe6401bb939563fa9c22b"
+    },
+    {
+      "bytes": 835,
+      "path": ".review_metadata/monitor_hostname_source_freeze.json",
+      "sha256": "34d76baddd9c9f4afd1d56250e5060c9b498ea021eab1f0d69721376dc499e80"
+    },
+    {
+      "bytes": 3368,
+      "path": ".review_metadata/run_monitor_hostname_author.py",
+      "sha256": "d1651d51e01da8b309c519ba452ad9da5ff0b414ca79a4b5db3f091101dcea1c"
+    },
+    {
+      "bytes": 3336,
+      "path": ".review_metadata/run_monitor_hostname_author_before_stdlib_import_correction.py",
+      "sha256": "5569917a7f28ff0f6e1c2771ac6c39a1358081a6e08aa6e453bb4642c6052020"
+    },
+    {
+      "bytes": 63831,
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/monitor.py",
+      "sha256": "d351cddb11c9b427d9b6310b58b717e7670a511f4061c7d55017e3f3b607ca09"
+    },
+    {
+      "bytes": 18292,
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/fixtures/actual_processes_host_and_hostname_2026_11_02.json",
+      "sha256": "0043557ba522366c13c0ceeef047bf9fed258ab652aac4a575c5cb90a6084668"
+    },
+    {
+      "bytes": 5154,
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_monitor_process_hostname.py",
+      "sha256": "ca07a26d2658bee02c27a7c90ba658fc02e8d69b5acaf9efa199679788326183"
+    }
+  ],
+  "independent_review_sha256": "57d12465252f9373a16e56e2333d250078840f9a95fbe6401bb939563fa9c22b",
+  "kind": "monitor_process_host_hostname_publication_roster",
+  "no_source_admission_change": true,
+  "schema_version": 1
+}

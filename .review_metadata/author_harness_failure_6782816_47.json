@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "kind": "monitor_hostname_author_harness_import_failure",
+  "job_id": "6782816",
+  "step_id": "47",
+  "failure": "socket.socket replaced before unittest.mock imported asyncio/ssl; ssl could not define its ordinary socket subclass",
+  "tests_started": false,
+  "production_source_changed": false,
+  "live_commands": 0,
+  "runner_sha256": "5569917a7f28ff0f6e1c2771ac6c39a1358081a6e08aa6e453bb4642c6052020",
+  "retained_runner": "/p/rlprojects/RND_worktrees/2026-11-01-16-20_monitor-process-hostname-compatibility_preserve-host-aliases_reject-conflicting-identities/.review_metadata/run_monitor_hostname_author_before_stdlib_import_correction.py"
+}
