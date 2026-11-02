@@ -1,0 +1,43 @@
+test_controller_alias_refuses_without_following_target (test_direct_metadata_import_provenance.MetadataImportProvenanceTests)
+The metadata declaration stays in the exact adjacent ordinary file. ... ok
+test_exact_original_scope_does_not_execute_controller (test_direct_metadata_import_provenance.MetadataImportProvenanceTests)
+A dangerous top-level marker is not executed when its literal scope is read. ... ok
+test_existing_public_modules_are_preserved (test_direct_metadata_import_provenance.MetadataImportProvenanceTests)
+Reading metadata never replaces or deletes an already loaded public helper. ... ok
+test_live_check_uses_no_controller_import_or_module_deletion (test_direct_metadata_import_provenance.MetadataImportProvenanceTests)
+The production correction only changes the metadata constant lookup. ... ok
+test_missing_duplicate_dynamic_nested_and_expanded_scopes_refuse (test_direct_metadata_import_provenance.MetadataImportProvenanceTests)
+No dynamic declaration or second assignment can replace the original two paths. ... ok
+test_actual_temporary_lock_descriptor_proves_own_flock_without_reacquiring (test_serval02_card1_binding.DirectBindingTests) ... ok
+test_changed_lock_path_inode_alias_or_owner_refuses (test_serval02_card1_binding.DirectBindingTests) ... ok
+test_context_device_driver_total_and_claim_changes_refuse (test_serval02_card1_binding.DirectBindingTests) ... ok
+test_current_original_source_must_exist_be_detached_and_match_every_blob (test_serval02_card1_binding.DirectBindingTests) ... ok
+test_current_own_process_and_original_selector_are_mandatory (test_serval02_card1_binding.DirectBindingTests) ... ok
+test_exact_output_paths_are_required_before_collection_or_binding (test_serval02_card1_binding.DirectBindingTests) ... ok
+test_exact_source_closure_and_plan_bytes_are_bound (test_serval02_card1_binding.DirectBindingTests) ... ok
+test_global_or_foreign_device_queries_and_image_substitution_refuse (test_serval02_card1_binding.DirectBindingTests) ... ok
+test_historical_receipt_cannot_omit_a_child_or_change_frozen_bytes (test_serval02_card1_binding.DirectBindingTests) ... ok
+test_historical_snapshot_and_current_registration_are_separate (test_serval02_card1_binding.DirectBindingTests) ... ok
+test_inherited_profile_metadata_proves_holder_not_child_ownership (test_serval02_card1_binding.DirectBindingTests) ... ok
+test_known_authorization_and_current_binding_are_distinct (test_serval02_card1_binding.DirectBindingTests) ... ok
+test_live_admission_changes_refuse_execution_but_not_frozen_replay (test_serval02_card1_binding.DirectBindingTests) ... ok
+test_missing_inherited_descriptor_fails_after_history_and_before_cuda (test_serval02_card1_binding.DirectBindingTests) ... ok
+test_missing_or_duplicate_current_launch_refuses (test_serval02_card1_binding.DirectBindingTests) ... ok
+test_native_failure_retains_attempt_and_never_guesses_a_hardware_query (test_serval02_card1_binding.DirectBindingTests) ... ok
+test_profile_owner_cannot_replace_the_actual_inherited_gpu_child (test_serval02_card1_binding.DirectBindingTests) ... ok
+test_real_existing_reader_rederives_frozen_synthetic_120_case_history (test_serval02_card1_binding.DirectBindingTests)
+Use the unchanged raw cohort reader, never a supplied completion Boolean. ... ok
+test_real_inherited_descriptor_retains_original_holder_pid (test_serval02_card1_binding.DirectBindingTests) ... ok
+test_requeued_live_foreign_missing_or_stale_original_workers_refuse (test_serval02_card1_binding.DirectBindingTests) ... ok
+test_saved_exit_raw_evidence_replays_exactly_without_live_ledgers (test_serval02_card1_binding.DirectBindingTests) ... ok
+test_shared_portable_class_identity_rejects_ambient_module_substitution (test_serval02_card1_binding.DirectBindingTests) ... ok
+test_wrong_profiles_devices_modes_and_consumers_refuse (test_serval02_card1_binding.DirectBindingTests) ... ok
+test_added_and_nested_assignment_operations_refuse (__main__.IndependentAdditionalChecks)
+Reject repeated declarations using annotations or augmented assignment. ... ok
+test_every_existing_function_and_remaining_admission_statement_is_unchanged (__main__.IndependentAdditionalChecks)
+Compare every old function while allowing only the intended metadata lookup. ... ok
+
+----------------------------------------------------------------------
+Ran 30 tests in 19.655s
+
+OK

@@ -5,6 +5,7 @@ configuration trust applies here. This module never contacts a host, launches
 work, acquires a lock, or grants worker/scientific admission.
 """
 
+import ast
 import ctypes
 from datetime import datetime
 import hashlib
@@ -297,6 +298,27 @@ def current_admission_claim(plan):
         "frozen_admission": frozen, "source_root": plan["source_root"], "source_commit": SOURCE_COMMIT}
 
 
+def original_source_scopes():
+    """Read the exact controller source scopes without importing its numerical helper names."""
+    # Before: executing controller registered staged ideas globally; after: only its two literal paths are read.
+    path = Path(__file__).absolute().with_name("controller.py")
+    require(path.resolve(strict=True) == path and not path.is_symlink() and path.is_file(),
+        "the original source-scope declaration must be the exact adjacent controller file")
+    tree = ast.parse(path.read_bytes())
+    declarations = [node for node in ast.walk(tree) if isinstance(node, (ast.Assign, ast.AnnAssign, ast.AugAssign))
+        and any(isinstance(target, ast.Name) and target.id == "SOURCE_SCOPES"
+            for target in (node.targets if isinstance(node, ast.Assign) else (node.target,)))]
+    require(len(declarations) == 1 and declarations[0] in tree.body
+        and isinstance(declarations[0], ast.Assign) and len(declarations[0].targets) == 1,
+        "the controller must declare exactly one top-level literal source-scope tuple")
+    scopes = ast.literal_eval(declarations[0].value)
+    require(type(scopes) is tuple and scopes == (
+        "10_jax_exploration_platform/src/exploration_platform/atari_pixels",
+        "10_jax_exploration_platform/scripts/atari_pixel_campaign"),
+        "the original admitted numerical and worker source scopes changed")
+    return scopes
+
+
 def check_live_admission(claim):
     """Check live authority at execution/window boundaries, never during historical replay."""
     require(type(claim.get("schema_version")) is int and claim["schema_version"] == 1
@@ -315,7 +337,7 @@ def check_live_admission(claim):
         and subprocess.check_output(command + ["rev-parse", "HEAD"], text=True).strip() == SOURCE_COMMIT
         and subprocess.run(command + ["symbolic-ref", "--quiet", "HEAD"], capture_output=True).returncode == 1,
         "the current numerical source must remain detached at the exact original commit")
-    scopes = adjacent("controller").SOURCE_SCOPES
+    scopes = original_source_scopes()
     require(not subprocess.check_output(command + ["status", "--porcelain", "--untracked-files=all", "--", *scopes], text=True).strip(),
         "the current admitted numerical or original worker source has changes")
     roster = subprocess.check_output(command + ["ls-tree", "-rz", SOURCE_COMMIT, "--", *scopes])

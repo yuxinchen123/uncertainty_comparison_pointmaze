@@ -1,0 +1,23 @@
+{
+  "actual_raw_or_gpu_work": 0,
+  "actual_tests_run": false,
+  "base_commit": "79a01e851ff92ddba7d0e12eaf8164cab2028878",
+  "branch": "direct-qualification-metadata-import-provenance-2026-11-01",
+  "cold_probes_drafted": [
+    "actual old core/check_live_admission -> exact failed staged producer _compute -> strict ideas path refusal",
+    "corrected core/check_live_admission -> same exact staged producer _compute -> actual F paired/ideas -> stop after unchanged source gate"
+  ],
+  "files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py": "e0d7c640086480bc6c5e6a5d867db5544a1a5fb111e63e20fe3aba50e1b5afa7",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/direct_metadata_import_order_probe.py": "1c89cbef8a1ca9febc1971c461f06a55b75ac07d0b8f899eb75477f944d18cb0",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_metadata_import_provenance.py": "0a5ef0a41380a11549d16e7e11b86d4105a4a191a433f2963e0a68ff165cd9ce"
+  },
+  "kind": "direct_metadata_import_provenance_draft_status",
+  "no_sys_modules_deletion": true,
+  "numerical_import_replacements_declared": true,
+  "reason_tests_not_run": "old CPU6782816 has ended; await newly verified owned CPU",
+  "schema_version": 1,
+  "source_admission_changed": false,
+  "source_change": "replace execution of adjacent controller to read SOURCE_SCOPES with strict literal AST lookup of the unchanged exact two paths",
+  "worktree": "/p/rlprojects/RND_worktrees/2026-11-01-16-36_direct-qualification-metadata-import-provenance_preserve-frozen-numerical-helper-paths"
+}
