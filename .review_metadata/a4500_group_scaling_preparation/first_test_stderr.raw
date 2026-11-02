@@ -1,0 +1,87 @@
+test_default_entrypoint_refuses_unqualified_execution (test_configured_a4500_group.CommonWallTests)
+New source does not silently enable existing/default/final workers. ... ok
+test_no_existing_numerical_or_single_card_source_edits (test_configured_a4500_group.CommonWallTests)
+This feature owns only its three new modules and new tests. ... ok
+test_nonoverlap_incomplete_or_nonfinite_group (test_configured_a4500_group.CommonWallTests)
+Missing workers, reversed/future windows and no concurrency are refused. ... ok
+test_one_deadline_for_entire_multiworker_barrier (test_configured_a4500_group.CommonWallTests)
+The second worker receives only the remaining common timeout. ... ok
+test_total_work_over_one_interval_not_sum_of_rates (test_configured_a4500_group.CommonWallTests)
+Different worker durations still use the coordinator's common wall denominator. ... ok
+test_coordinator_never_has_native_device_binding (test_configured_a4500_group.GroupMetadataTests)
+The physical binder refuses a zero-GPU coordinator even with a synthetic device. ... ok
+test_eight_job_one_worker_and_current_context (test_configured_a4500_group.GroupMetadataTests)
+Eight logical job devices and one step selector bind physical minor three. ... ERROR
+test_explicit_step_commands_do_not_launch (test_configured_a4500_group.GroupMetadataTests)
+Coordinator uses documented --gres=none; worker requests one typed GPU. ... ERROR
+test_global_seed_protocol_and_exact_eight_gate (test_configured_a4500_group.GroupMetadataTests)
+Fixed total retains eight seeds; a smaller-count eligibility claim is refused. ... FAIL
+test_live_ledger_required_before_any_query (test_configured_a4500_group.GroupMetadataTests)
+Removing the actual own row fails without issuing a scheduler or GPU command. ... ok
+test_missing_context_mapping_and_driver_capture_negatives (test_configured_a4500_group.GroupMetadataTests)
+No context fallback, invented mapping or changed actual driver bytes are accepted. ... ok
+test_ownership_resources_and_selector_negatives (test_configured_a4500_group.GroupMetadataTests)
+Foreign ownership, changed counts and unproved selectors are refused. ... ok
+test_zero_gpu_numeric_coordinator (test_configured_a4500_group.GroupMetadataTests)
+Actual coordinator step TRES proves zero GPUs independently of the eight-GPU job. ... ERROR
+
+======================================================================
+ERROR: test_eight_job_one_worker_and_current_context (test_configured_a4500_group.GroupMetadataTests)
+Eight logical job devices and one step selector bind physical minor three.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-01-18-34_a4500-group-scaling_gpu-counts-1-8_gpus-per-step-1_rounds-7_minimum-updates-per-round-10_preserve-selected-configuration-and-global-seeds/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_configured_a4500_group.py", line 127, in test_eight_job_one_worker_and_current_context
+    self.assertEqual(group.validate_metadata(self.plan, self.metadata), self.metadata)
+  File "/p/rlprojects/RND_worktrees/2026-11-01-18-34_a4500-group-scaling_gpu-counts-1-8_gpus-per-step-1_rounds-7_minimum-updates-per-round-10_preserve-selected-configuration-and-global-seeds/10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_group_binding.py", line 252, in validate_metadata
+    and value["inputs"] == owned_inputs(plan)
+  File "/p/rlprojects/RND_worktrees/2026-11-01-18-34_a4500-group-scaling_gpu-counts-1-8_gpus-per-step-1_rounds-7_minimum-updates-per-round-10_preserve-selected-configuration-and-global-seeds/10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_group_binding.py", line 161, in owned_inputs
+    require(type(job) is str and re.fullmatch(r"[1-9][0-9]*", job)
+  File "/p/rlprojects/RND_worktrees/2026-11-01-18-34_a4500-group-scaling_gpu-counts-1-8_gpus-per-step-1_rounds-7_minimum-updates-per-round-10_preserve-selected-configuration-and-global-seeds/10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_group_binding.py", line 45, in require
+    raise ValueError(message)
+ValueError: owned job or frozen group plan changed
+
+======================================================================
+ERROR: test_explicit_step_commands_do_not_launch (test_configured_a4500_group.GroupMetadataTests)
+Coordinator uses documented --gres=none; worker requests one typed GPU.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-01-18-34_a4500-group-scaling_gpu-counts-1-8_gpus-per-step-1_rounds-7_minimum-updates-per-round-10_preserve-selected-configuration-and-global-seeds/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_configured_a4500_group.py", line 194, in test_explicit_step_commands_do_not_launch
+    coordinator = producer.step_command(self.plan, self.old.job, "coordinator", ["/private/program"])
+  File "/p/rlprojects/RND_worktrees/2026-11-01-18-34_a4500-group-scaling_gpu-counts-1-8_gpus-per-step-1_rounds-7_minimum-updates-per-round-10_preserve-selected-configuration-and-global-seeds/10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_gpu_scaling.py", line 36, in step_command
+    owned = group.owned_inputs(plan)
+  File "/p/rlprojects/RND_worktrees/2026-11-01-18-34_a4500-group-scaling_gpu-counts-1-8_gpus-per-step-1_rounds-7_minimum-updates-per-round-10_preserve-selected-configuration-and-global-seeds/10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_group_binding.py", line 161, in owned_inputs
+    require(type(job) is str and re.fullmatch(r"[1-9][0-9]*", job)
+  File "/p/rlprojects/RND_worktrees/2026-11-01-18-34_a4500-group-scaling_gpu-counts-1-8_gpus-per-step-1_rounds-7_minimum-updates-per-round-10_preserve-selected-configuration-and-global-seeds/10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_group_binding.py", line 45, in require
+    raise ValueError(message)
+ValueError: owned job or frozen group plan changed
+
+======================================================================
+ERROR: test_zero_gpu_numeric_coordinator (test_configured_a4500_group.GroupMetadataTests)
+Actual coordinator step TRES proves zero GPUs independently of the eight-GPU job.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-01-18-34_a4500-group-scaling_gpu-counts-1-8_gpus-per-step-1_rounds-7_minimum-updates-per-round-10_preserve-selected-configuration-and-global-seeds/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_configured_a4500_group.py", line 142, in test_zero_gpu_numeric_coordinator
+    self.assertEqual(group.validate_metadata(self.plan, value), value)
+  File "/p/rlprojects/RND_worktrees/2026-11-01-18-34_a4500-group-scaling_gpu-counts-1-8_gpus-per-step-1_rounds-7_minimum-updates-per-round-10_preserve-selected-configuration-and-global-seeds/10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_group_binding.py", line 252, in validate_metadata
+    and value["inputs"] == owned_inputs(plan)
+  File "/p/rlprojects/RND_worktrees/2026-11-01-18-34_a4500-group-scaling_gpu-counts-1-8_gpus-per-step-1_rounds-7_minimum-updates-per-round-10_preserve-selected-configuration-and-global-seeds/10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_group_binding.py", line 161, in owned_inputs
+    require(type(job) is str and re.fullmatch(r"[1-9][0-9]*", job)
+  File "/p/rlprojects/RND_worktrees/2026-11-01-18-34_a4500-group-scaling_gpu-counts-1-8_gpus-per-step-1_rounds-7_minimum-updates-per-round-10_preserve-selected-configuration-and-global-seeds/10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_group_binding.py", line 45, in require
+    raise ValueError(message)
+ValueError: owned job or frozen group plan changed
+
+======================================================================
+FAIL: test_global_seed_protocol_and_exact_eight_gate (test_configured_a4500_group.GroupMetadataTests)
+Fixed total retains eight seeds; a smaller-count eligibility claim is refused.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-01-18-34_a4500-group-scaling_gpu-counts-1-8_gpus-per-step-1_rounds-7_minimum-updates-per-round-10_preserve-selected-configuration-and-global-seeds/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_configured_a4500_group.py", line 203, in test_global_seed_protocol_and_exact_eight_gate
+    self.assertEqual(evidence.validate_protocol(self.plan), self.plan["configuration"])
+AssertionError: {'lea[549 chars]es': [], 'per_copy_intrinsic_coefficients': [][1400 chars] 10}} != {'lea[549 chars]es': (), 'per_copy_intrinsic_coefficients': ()[1400 chars] 10}}
+Diff is 3473 characters long. Set self.maxDiff to None to see it.
+
+----------------------------------------------------------------------
+Ran 13 tests in 1.219s
+
+FAILED (failures=1, errors=3)
+srun: error: heartpiece: task 0: Exited with exit code 1
