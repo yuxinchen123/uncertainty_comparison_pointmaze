@@ -149,6 +149,7 @@ class CommonConfirmationTests(unittest.TestCase):
         self.assertNotIn(common.NAME, measurement.required_helpers())
         self.assertNotIn(common.NAME, measurement.required_helpers(False, True))
         with self.assertRaises(ValueError):measurement.required_helpers(False, True, True)
+        self.assertEqual(len(measurement.required_helpers(False, True, True, True)), 27)
 
     def test_cli_requires_both_actual_records_and_refuses_final_or_prepared_overrides(self):
         """Preparation options cannot silently change the frozen protocol."""

@@ -184,8 +184,8 @@ def helper_receipt(configured=False, direct=False, common=False, backend_image=F
 
 def required_helpers(configured=False, direct=False, common=False, backend_image=False):
     """Keep historical helper closure unchanged and explicitly add the opt-in dependency union."""
-    if common and (not configured or direct):
-        raise ValueError("common confirmation requires only the configured A4500 helper closure")
+    if common and (configured == direct or direct and not backend_image):
+        raise ValueError("common confirmation requires exactly one target and the complete direct backend helper set")
     if backend_image and not direct:
         raise ValueError("backend package-image metadata is only for the separate direct target")
     if configured and direct:
@@ -193,6 +193,8 @@ def required_helpers(configured=False, direct=False, common=False, backend_image
     if direct:
         import direct_measurement as support
         names = (*HELPERS, *support.helper_names())
+        if common:
+            names += ("direct_common_confirmation.py",)
         if backend_image:
             names += ("direct_backend_image.py",)
         return tuple(dict.fromkeys(names))
@@ -206,8 +208,9 @@ def common_confirmation_support(plan):
     """Load only the hash-bound optional prerequisite helper without numerical imports."""
     if "common_correctness_inputs" not in plan:
         return None
-    path = SCRIPTS / "common_confirmation.py"
-    expected = plan["helpers"]["files"].get("10_jax_exploration_platform/scripts/atari_pixel_campaign/common_confirmation.py")
+    name = "direct_common_confirmation.py" if "direct_binding" in plan else "common_confirmation.py"
+    path = SCRIPTS / name
+    expected = plan["helpers"]["files"].get("10_jax_exploration_platform/scripts/atari_pixel_campaign/" + name)
     if hashlib.sha256(path.read_bytes()).hexdigest() != expected:
         raise ValueError("the committed common-confirmation prerequisite helper changed")
     specification = importlib.util.spec_from_file_location("common_confirmation_prerequisite", path)
@@ -267,9 +270,9 @@ def prepare(args):
     correctness_record = getattr(args, "common_correctness_record", None)
     correctness_review = getattr(args, "common_correctness_review", None)
     common = correctness_record is not None or correctness_review is not None
-    if common and (correctness_record is None or correctness_review is None or not configured or direct
+    if common and (correctness_record is None or correctness_review is None or configured == direct
             or args.mode != "confirmation" or qualification or direct_qualification or getattr(args, "final_confirmation", False)):
-        raise ValueError("common confirmation requires both actual correctness records and only intermediate A4500 confirmation")
+        raise ValueError("common confirmation requires both actual correctness records and one explicit intermediate target")
     if direct and (configured or qualification or args.hardware_class != "h100" or args.gpu_uuid != CARD1
             or args.mode not in {"correctness", "confirmation"} or getattr(args, "record_device_memory_limit", False)
             or getattr(args, "final_confirmation", False)):
@@ -354,11 +357,6 @@ def prepare(args):
             support.qualification_sources(plan, args.cleanrl_source_root, args.qualification_software_result)
         else:
             support.prepare_qualification_inputs(plan, args.target_qualification_record, args.target_qualification_review)
-    if common:
-        import common_confirmation as prerequisite
-        plan["common_correctness_inputs"] = {"result": prerequisite.reference(correctness_record),
-            "review": prerequisite.reference(correctness_review)}
-        prerequisite.request(plan)
     if direct:
         import direct_measurement as support
         profile, profile_input = read_document(args.direct_binding_profile)
@@ -372,6 +370,14 @@ def prepare(args):
             support.qualification_sources(plan, args.cleanrl_source_root, args.qualification_software_result)
         else:
             support.prepare_qualification_inputs(plan, args.direct_qualification_record, args.direct_qualification_review)
+    if common:
+        if direct:
+            import direct_common_confirmation as prerequisite
+        else:
+            import common_confirmation as prerequisite
+        plan["common_correctness_inputs"] = {"result": prerequisite.reference(correctness_record),
+            "review": prerequisite.reference(correctness_review)}
+        prerequisite.request(plan)
     if getattr(args, 'record_device_memory_limit', False):
         # This diagnostic capability is explicitly separate from ordinary completed packing evidence.
         import device_memory_limit as capacity
@@ -1014,9 +1020,9 @@ def parse_arguments(argv=None):
         parser.error("new direct preparation requires both the explicit direct profile and prepared backend-image record")
     common_options = (args.common_correctness_record, args.common_correctness_review)
     if any(value is not None for value in common_options) and (any(value is None for value in common_options)
-            or args.configured_isolation_profile is None or args.direct_binding_profile is not None
-            or args.mode != "confirmation" or args.final_confirmation or args.target_qualification):
-        parser.error("reviewed common correctness requires only an intermediate configured confirmation")
+            or (args.configured_isolation_profile is None) == (args.direct_binding_profile is None)
+            or args.mode != "confirmation" or args.final_confirmation or args.target_qualification or args.direct_target_qualification):
+        parser.error("reviewed common correctness requires exactly one intermediate configured or direct confirmation")
     if not args.record_device_memory_limit and any(getattr(args, name) is not None for name in memory_options):
         parser.error('memory-limit preparation options require --record-device-memory-limit')
     if (args.cleanrl_source_root is not None or args.qualification_software_result is not None) and not (args.target_qualification or args.direct_target_qualification):
