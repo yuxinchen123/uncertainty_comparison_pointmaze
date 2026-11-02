@@ -1,0 +1,22 @@
+{
+  "actual_launch_performed": false,
+  "at_utc": "2026-11-02T08:07:07.118109+00:00",
+  "command": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/actual_launch_command_preparation.json",
+    "sha256": "cee5444c52821c2d9a2f04b997b257daa064c0efb69bc3556da76ef68b7baec8"
+  },
+  "controller_publication": "677309d261c223e8b3ed8c9b3eb61edc737a8d82",
+  "host_contact": false,
+  "independent_writer_review": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/h100_correctness_transport_writer_independent_6783003_184.json",
+    "sha256": "2e4868626adcd333f2036bf0565e89d964f46ab27e81d5a7e47832b7aead6eaa"
+  },
+  "kind": "root_actual_correctness_once_transport_literal_review",
+  "only_prior_publication_literal_changed": true,
+  "passed": true,
+  "scientific_credit": 0,
+  "source": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/root_start_controller_once.py",
+    "sha256": "03e76059ece4b85b16af12c9f0086a20bf934a8cd0add2f5f3cb4704d3379958"
+  }
+}
