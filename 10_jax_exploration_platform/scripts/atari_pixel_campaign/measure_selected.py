@@ -173,24 +173,29 @@ def validate_correctness_protocol(configurations):
                          "use supported groups or a separately reviewed numerical harness")
 
 
-def helper_receipt(configured=False, direct=False, common=False):
+def helper_receipt(configured=False, direct=False, common=False, backend_image=False):
     """Freeze only committed producer/helper bytes, separately from the unchanged numerical core."""
     root = SCRIPTS.parents[2]
     commit = subprocess.check_output(["git", "-C", str(root), "rev-parse", "HEAD"], text=True).strip()
-    paths = [str((SCRIPTS / name).relative_to(root)) for name in required_helpers(configured, direct, common)]
+    paths = [str((SCRIPTS / name).relative_to(root)) for name in required_helpers(configured, direct, common, backend_image)]
     receipt = training.source_receipt(root, commit, paths)
     return receipt
 
 
-def required_helpers(configured=False, direct=False, common=False):
+def required_helpers(configured=False, direct=False, common=False, backend_image=False):
     """Keep historical helper closure unchanged and explicitly add the opt-in dependency union."""
     if common and (not configured or direct):
         raise ValueError("common confirmation requires only the configured A4500 helper closure")
+    if backend_image and not direct:
+        raise ValueError("backend package-image metadata is only for the separate direct target")
     if configured and direct:
         raise ValueError("direct and UVA helper policies cannot be mixed")
     if direct:
         import direct_measurement as support
-        return tuple(dict.fromkeys((*HELPERS, *support.helper_names())))
+        names = (*HELPERS, *support.helper_names())
+        if backend_image:
+            names += ("direct_backend_image.py",)
+        return tuple(dict.fromkeys(names))
     if not configured:
         return HELPERS
     import configured_measurement as support
@@ -256,6 +261,9 @@ def prepare(args):
     direct = getattr(args, "direct_binding_profile", None) is not None
     qualification = getattr(args, "target_qualification", False)
     direct_qualification = getattr(args, "direct_target_qualification", False)
+    backend_record = getattr(args, "direct_backend_image_record", None)
+    if direct and backend_record is None or backend_record is not None and not direct:
+        raise ValueError("every new direct operational preparation needs its separate backend package-image record")
     correctness_record = getattr(args, "common_correctness_record", None)
     correctness_review = getattr(args, "common_correctness_review", None)
     common = correctness_record is not None or correctness_review is not None
@@ -312,7 +320,8 @@ def prepare(args):
     copies = selected["learner"]["n_copies"]
     if args.seed_start + copies > 2 ** 32:
         raise ValueError("the independent policy seed range exceeds unsigned 32-bit values")
-    helpers = helper_receipt(configured, False, True) if common else (helper_receipt(configured, True) if direct else helper_receipt(configured))
+    helpers = helper_receipt(configured, direct, common, True) if backend_record is not None else (
+        helper_receipt(configured, False, True) if common else (helper_receipt(configured, True) if direct else helper_receipt(configured)))
     if final or args.mode == "learning-check":
         validation.committed_measurement_sources(helpers, validation.Evidence())
     configurations = [selected] + ([reference] if reference is not None else [])
@@ -353,7 +362,8 @@ def prepare(args):
     if direct:
         import direct_measurement as support
         profile, profile_input = read_document(args.direct_binding_profile)
-        support.configure_plan(plan, profile, args.direct_history_inputs, "selected_measurement")
+        support.configure_plan(plan, profile, args.direct_history_inputs, "selected_measurement",
+            backend_image_record=backend_record)
         plan["inputs"]["direct_binding_profile"] = profile_input
         plan["inputs"]["direct_history_inputs"] = plan["direct_binding"]["frozen_inputs"]
         if direct_qualification:
@@ -410,7 +420,7 @@ def prepare(args):
             "reference": reference, "candidate": selected, "runtime_environment": runtime}),
         directory / "command.txt": (shlex.join([str(args.python), str(directory / "code/measure_selected.py"),
                                               "--prepared-unit", str(directory)]) + "\n").encode()}
-    for name in required_helpers(configured, direct, common):
+    for name in required_helpers(configured, direct, common, backend_record is not None):
         artifacts[directory / "code" / name] = (SCRIPTS / name).read_bytes()
     if 'device_memory_limit_protocol' in plan:
         artifacts[directory / 'capacity_owned_job_ledger.txt'] = ledger_bytes
@@ -630,7 +640,8 @@ class MemoryObservation:
 
 def verify_prepared(directory, plan):
     """Check staged helper bytes and unchanged numerical source before any device import."""
-    for name in required_helpers("configured_isolation" in plan, "direct_binding" in plan, "common_correctness_inputs" in plan):
+    for name in required_helpers("configured_isolation" in plan, "direct_binding" in plan,
+            "common_correctness_inputs" in plan, "direct_backend_image" in plan):
         relative = "10_jax_exploration_platform/scripts/atari_pixel_campaign/" + name
         expected = plan["helpers"]["files"][relative]
         if training.file_sha256(directory / "code" / name) != expected:
@@ -900,6 +911,9 @@ def save_measurement_result(directory, plan, result):
     common = common_confirmation_support(plan)
     if common is not None:
         result.update(common.result_binding(directory, plan))
+    if "direct_binding" in plan:
+        import direct_measurement as support
+        support.capture_backend_completion(directory, plan, result)
     instrumented = 'device_memory_limit_protocol' in plan
     if instrumented:
         # The extra lifetime sampler changes the workload; retain raw observations and remeasure normally.
@@ -941,6 +955,7 @@ def parse_arguments(argv=None):
     parser.add_argument("--common-correctness-record", type=Path)
     parser.add_argument("--common-correctness-review", type=Path)
     parser.add_argument("--direct-binding-profile", type=Path)
+    parser.add_argument("--direct-backend-image-record", type=Path)
     parser.add_argument("--direct-history-inputs", type=Path)
     parser.add_argument("--direct-target-qualification", action="store_true")
     parser.add_argument("--direct-qualification-record", type=Path)
@@ -976,7 +991,7 @@ def parse_arguments(argv=None):
                 "runtime_environment", "asset_record", "jaxtari_source_root", "run_dir", "unit_id", "gpu_uuid", "hardware_class", "copies",
                 "completed_study_proof", "completed_study_review", "completed_study_manifest", "completed_study_manifest_sha256",
                 "configured_isolation_profile", "target_qualification_record", "target_qualification_review", "cleanrl_source_root", "qualification_software_result",
-                "direct_binding_profile", "direct_history_inputs", "direct_qualification_record", "direct_qualification_review",
+                "direct_binding_profile", "direct_backend_image_record", "direct_history_inputs", "direct_qualification_record", "direct_qualification_review",
                 "common_correctness_record", "common_correctness_review", *memory_options)):
             parser.error("--prepared-unit executes its recorded plan and cannot take preparation overrides")
         if args.instrumented_child:
@@ -995,6 +1010,8 @@ def parse_arguments(argv=None):
         return args
     if args.instrumented_child:
         parser.error('--instrumented-child requires --prepared-unit and its declared instrumented protocol')
+    if (args.direct_binding_profile is None) != (args.direct_backend_image_record is None):
+        parser.error("new direct preparation requires both the explicit direct profile and prepared backend-image record")
     common_options = (args.common_correctness_record, args.common_correctness_review)
     if any(value is not None for value in common_options) and (any(value is None for value in common_options)
             or args.configured_isolation_profile is None or args.direct_binding_profile is not None
