@@ -1,0 +1,35 @@
+test_both_eight_root_namespaces_are_present (raw_review_metadata_tests.NamespaceTests) ... ok
+test_changed_original_commit_refuses (raw_review_metadata_tests.NamespaceTests) ... ok
+test_duplicate_original_name_refuses (raw_review_metadata_tests.NamespaceTests) ... ok
+test_duplicate_target_refuses (raw_review_metadata_tests.NamespaceTests) ... ok
+test_missing_eighth_root_refuses (raw_review_metadata_tests.NamespaceTests) ... ok
+test_parent_directory_target_refuses (raw_review_metadata_tests.NamespaceTests) ... ok
+test_symlinked_target_refuses (raw_review_metadata_tests.NamespaceTests) ... ok
+test_unlisted_original_name_refuses (raw_review_metadata_tests.NamespaceTests) ... ok
+test_exact_raw_field_contract_follows_complete_consumer (raw_review_metadata_tests.RawFieldContractTests) ... ok
+test_failed_complete_consumer_cannot_construct_a_raw_pass (raw_review_metadata_tests.RawFieldContractTests) ... ok
+test_actual_review_context_refuses_a_login_or_other_job (raw_review_metadata_tests.SourceOnlyTests) ... ok
+test_prepared_inputs_and_both_namespaces_need_no_correctness_result (raw_review_metadata_tests.SourceOnlyTests) ... ok
+test_source_guard_retains_exact_published_raw_and_review_fields (raw_review_metadata_tests.SourceOnlyTests) ... ok
+test_aliased_saved_child_pid_refuses (raw_review_metadata_tests.TerminalTests) ... ok
+test_boolean_gpu_operation_count_refuses (raw_review_metadata_tests.TerminalTests) ... ok
+test_changed_actual_source_bytes_refuse_unchanged_approved_freeze (raw_review_metadata_tests.TerminalTests) ... ok
+test_changed_source_freeze_refuses (raw_review_metadata_tests.TerminalTests) ... ok
+test_duplicate_role_refuses (raw_review_metadata_tests.TerminalTests) ... ok
+test_exact_two_exits_and_reviewed_source_pass_without_scientific_work (raw_review_metadata_tests.TerminalTests) ... ok
+test_exit_before_wait_refuses (raw_review_metadata_tests.TerminalTests) ... ok
+test_floating_point_exit_pid_refuses_for_both_roles (raw_review_metadata_tests.TerminalTests) ... ok
+test_foreign_observer_uid_refuses (raw_review_metadata_tests.TerminalTests) ... ok
+test_mismatched_result_receipt_refuses (raw_review_metadata_tests.TerminalTests) ... ok
+test_noncanonical_expected_birth_refuses (raw_review_metadata_tests.TerminalTests) ... ok
+test_numeric_uid_alias_refuses (raw_review_metadata_tests.TerminalTests) ... ok
+test_root_readiness_missing_refuses (raw_review_metadata_tests.TerminalTests) ... ok
+test_running_original_process_refuses (raw_review_metadata_tests.TerminalTests) ... ok
+test_source_freeze_omission_refuses_even_with_refreshed_approval (raw_review_metadata_tests.TerminalTests) ... ok
+test_source_not_independently_approved_refuses (raw_review_metadata_tests.TerminalTests) ... ok
+test_wrong_numerical_birth_refuses (raw_review_metadata_tests.TerminalTests) ... ok
+
+----------------------------------------------------------------------
+Ran 30 tests in 0.287s
+
+OK

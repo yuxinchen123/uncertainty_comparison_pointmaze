@@ -1,0 +1,16 @@
+{
+  "actual_correctness_result_opened": false,
+  "actual_terminal_audit": false,
+  "command": [
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-02-00-06_h100-common-correctness_raw-review_copies-1-2_source-0a880984_helpers-26_before-seven-paired-rounds-ten-updates_gpu-count-0/review_actual_common_correctness.py",
+    "--copies",
+    "1"
+  ],
+  "returncode": 0,
+  "stderr": "",
+  "stdout": "{\"actual_correctness_result_opened\": false, \"actual_review_written\": false, \"declared_git_roots\": 27, \"host_or_gpu_actions\": 0, \"kind\": \"h100_common_correctness_source_only_review_preparation\", \"passed\": true, \"plan\": {\"path\": \"/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/measurement_plan.json\", \"sha256\": \"503d308d2401ab713e0cf50dd3665b2e001ef5f07305fd76053f0439b6938060\"}, \"stdlib_bootstrap\": {\"bootstrap_scope\": \"stdlib ctypes own-process Python API handle only\", \"later_library_loads_and_symbol_calls_refused\": true, \"module_path\": \"/usr/lib/python3.10/ctypes/__init__.py\", \"own_process_python_api_initialized_before_validation_audit\": true, \"python_api_target\": null}}\n"
+}
