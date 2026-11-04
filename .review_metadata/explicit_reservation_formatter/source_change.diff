@@ -1,0 +1,234 @@
+diff --git a/.review_metadata/prepare_nsight_process_diagnostic.py b/.review_metadata/prepare_nsight_process_diagnostic.py
+index ae00e305..9b46e82a 100644
+--- a/.review_metadata/prepare_nsight_process_diagnostic.py
++++ b/.review_metadata/prepare_nsight_process_diagnostic.py
+@@ -34,8 +34,19 @@ def put(path, raw):
+     return {"path": str(path), "sha256": hashlib.sha256(raw).hexdigest(), "bytes": len(raw)}
+ 
+ 
+-def prepare(root, commit, run, name, tool_path):
++def prepare(root, commit, run, name, tool_path, *, reservation=None, unreserved=False):
+     """Stage only two committed standard-library modules and five ordinary unit records."""
++    # Before: an omitted choice silently used an old reservation; after: one explicit choice is required.
++    checked(type(unreserved) is bool, "the explicit unreserved selection must be Boolean")
++    if unreserved:
++        checked(reservation is None, "choose an explicit reservation or an explicitly unreserved job, never both")
++    else:
++        checked(type(reservation) is str and re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]*", reservation),
++                "choose an explicit reservation name or an explicitly unreserved job")
++    placement_description = ("An unreserved job was explicitly selected." if unreserved
++                             else "The caller explicitly selected reservation " + reservation + ".")
++    reservation_arguments = [] if unreserved else ["--reservation=" + reservation]
++    reservation_directive = "" if unreserved else "#SBATCH --reservation=" + reservation + "\n"
+     checked(re.fullmatch(r"[0-9a-f]{40}", commit) and root.is_absolute() and root.resolve(strict=True) == root,
+             "an exact published helper root and full commit are required")
+     checked(git(root, "rev-parse", "HEAD").decode().strip() == commit
+@@ -61,7 +72,7 @@ def prepare(root, commit, run, name, tool_path):
+         "files": {RELATIVE + filename: hashlib.sha256(raw).hexdigest() for filename, raw in raw_files.items()}}
+     plan = {"schema_version": 1, "kind": KIND, "unit_id": name, "campaign_run_dir": str(run), "packet": str(packet),
+         "python": PYTHON, "helpers": helpers, "profile_tool": tool, "gpu_uuid": None, "job_id": None,
+-        "resources": {"partition": "gpu", "account": "sl5nw_base", "qos": "csresnolim", "reservation": "sl5nw_168",
++        "resources": {"partition": "gpu", "account": "sl5nw_base", "qos": "csresnolim", "reservation": reservation,
+             "node": "jaguar03", "nodes": 1, "tasks": 1, "requested_cpus": 1, "host_memory_gib": 2,
+             "gres": "gpu:nvidia_rtx_a4500:1", "wall_seconds": 300, "requeue": False},
+         "work": {"learner_updates": 0, "warmup_rollouts": 0, "cuda_profiler_api_calls_by_payload": 0,
+@@ -78,6 +89,7 @@ def prepare(root, commit, run, name, tool_path):
+         "## Code and config changes\n\nThe exact existing Nsight launch options run a metadata waiter and one metadata child. "
+         "The parent saves positive kernel-reported process links, user IDs, births, commands and the numeric step. "
+         "Different process groups are recorded. There is no scientific, profile, case or idea credit.\n\n"
++        f"## Placement\n\n{placement_description}\n\n"
+         f"## Git state\n\nClean detached helper commit: `{commit}`. Two exact committed source files are staged.\n").encode()
+     for directory in (packet, unit):
+         put(directory / "manifest.yaml", plan); put(directory / "config_resolved.yaml", plan)
+@@ -88,8 +100,10 @@ def prepare(root, commit, run, name, tool_path):
+     launch = ["srun", "--nodes=1", "--ntasks=1", "--cpus-per-task=1", "--cpu-bind=cores",
+               "--gres=gpu:nvidia_rtx_a4500:1", "--kill-on-bad-exit=1", *command]
+     shell = ("#!/bin/bash\n#SBATCH --job-name=pixel-nsight-process-observation\n"
++        f"{reservation_directive}"
+         f"#SBATCH --output={run}/slurm/jobs/nsight-process-observation-%j.out\n"
+         f"#SBATCH --error={run}/slurm/jobs/nsight-process-observation-%j.err\n"
++        f"# Placement: {placement_description}\n"
+         "set -euo pipefail\numask 077\nunset PYTHONPATH PYTHONHOME\n"
+         "export PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 OMP_NUM_THREADS=1\n"
+         "export LD_LIBRARY_PATH=\"/usr/lib/nvidia:${LD_LIBRARY_PATH:-}\"\n"
+@@ -98,7 +112,7 @@ def prepare(root, commit, run, name, tool_path):
+         "exec " + shlex.join(launch) + "\n").encode()
+     script = put(packet / "job.sbatch", shell)
+     held = ["sbatch", "--hold", "--parsable", "--no-requeue", "--partition=gpu", "--account=sl5nw_base",
+-        "--qos=csresnolim", "--reservation=sl5nw_168", "--nodelist=jaguar03", "--nodes=1", "--ntasks=1",
++        "--qos=csresnolim", *reservation_arguments, "--nodelist=jaguar03", "--nodes=1", "--ntasks=1",
+         "--cpus-per-task=1", "--mem=2G", "--gres=gpu:nvidia_rtx_a4500:1", "--time=00:05:00", str(packet / "job.sbatch")]
+     put(packet / "held_submission_command.json", held)
+     checked_files = [*sorted((unit / "code").iterdir()), unit / "measurement_plan.json", unit / "measurement_prepared.json"]
+@@ -111,13 +125,17 @@ def prepare(root, commit, run, name, tool_path):
+             "files": len(freeze), "actual_jobs_submitted": 0, "actual_tool_executions": 0, **ZERO}
+ 
+ 
+-def main():
++def main(argv=None):
+     """Require an explicit published source and a new unit, with no submission operation."""
+     parser = argparse.ArgumentParser(description=__doc__)
+     for name in ("helper-root", "campaign-run", "tool-record"): parser.add_argument("--" + name, type=Path, required=True)
+     for name in ("helper-commit", "unit-id"): parser.add_argument("--" + name, required=True)
+-    args = parser.parse_args()
+-    print(json.dumps(prepare(args.helper_root, args.helper_commit, args.campaign_run, args.unit_id, args.tool_record), indent=2))
++    placement = parser.add_mutually_exclusive_group(required=True)
++    placement.add_argument("--reservation", help="Explicit reservation name; availability is checked before submission.")
++    placement.add_argument("--unreserved", action="store_true", help="Explicitly request no reservation.")
++    args = parser.parse_args(argv)
++    print(json.dumps(prepare(args.helper_root, args.helper_commit, args.campaign_run, args.unit_id, args.tool_record,
++                             reservation=args.reservation, unreserved=args.unreserved), indent=2))
+ 
+ 
+ if __name__ == "__main__": main()
+diff --git a/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_nsight_diagnostic_preparation.py b/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_nsight_diagnostic_preparation.py
+index e2f72b99..b83f7cc6 100644
+--- a/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_nsight_diagnostic_preparation.py
++++ b/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_nsight_diagnostic_preparation.py
+@@ -1,10 +1,13 @@
+ """Prepare private diagnostic packets from real local Git fixtures without invoking Nsight or Slurm."""
+ import importlib.util
++import contextlib
++import io
+ import json
+ from pathlib import Path
+ import subprocess
+ import tempfile
+ import unittest
++from unittest import mock
+ 
+ W = Path(__file__).resolve().parents[4]
+ SCRIPTS = Path(__file__).resolve().parents[1]
+@@ -39,7 +42,7 @@ class PreparationTests(unittest.TestCase):
+ 
+     def test_real_preparation_has_all_standards_null_ids_and_one_bounded_held_command(self):
+         """A fresh private packet binds exact Git bytes and contains no future launch identity."""
+-        result = P.prepare(self.root, self.commit, self.run, self.name, self.tool)
++        result = P.prepare(self.root, self.commit, self.run, self.name, self.tool, unreserved=True)
+         packet, unit = Path(result["packet"]), Path(result["unit"])
+         for directory in (packet, unit):
+             for name in ("manifest.yaml", "config_resolved.yaml", "command.txt", "experiment_background.md", "progress.json"):
+@@ -47,28 +50,120 @@ class PreparationTests(unittest.TestCase):
+         plan = json.loads((unit / "measurement_plan.json").read_text())
+         self.assertIsNone(plan["job_id"]); self.assertIsNone(plan["gpu_uuid"])
+         self.assertEqual(plan["work"]["learner_updates"], 0)
++        self.assertIsNone(plan["resources"]["reservation"])
+         command = json.loads((packet / "held_submission_command.json").read_text())
+         for argument in ("--hold", "--no-requeue", "--cpus-per-task=1", "--mem=2G", "--time=00:05:00",
+                          "--gres=gpu:nvidia_rtx_a4500:1", "--nodelist=jaguar03"):
+             self.assertIn(argument, command)
+         script = (packet / "job.sbatch").read_text()
+         self.assertEqual(script.count("exec srun "), 1); self.assertIn(" -I -S -B ", script)
++        self.assertFalse(any(argument.startswith("--reservation") for argument in command))
++        self.assertNotIn("#SBATCH --reservation", script)
++        self.assertIn("An unreserved job was explicitly selected.", script)
++        self.assertNotIn("sl5nw_168", script)
+         self.assertNotIn("CUDA_VISIBLE_DEVICES=", script)
+         self.assertFalse((unit / "owned_launch_inputs.json").exists())
+         self.assertFalse((unit / "profile_process_intent.json").exists())
+ 
+     def test_partial_or_previously_prepared_unit_is_never_reused(self):
+         """A second preparation refuses rather than replacing any old artifact."""
+-        P.prepare(self.root, self.commit, self.run, self.name, self.tool)
++        P.prepare(self.root, self.commit, self.run, self.name, self.tool, unreserved=True)
+         with self.assertRaisesRegex(ValueError, "never reuse"):
+-            P.prepare(self.root, self.commit, self.run, self.name, self.tool)
++            P.prepare(self.root, self.commit, self.run, self.name, self.tool, unreserved=True)
+ 
+     def test_dirty_source_refuses_before_any_packet_creation(self):
+         """An uncommitted source change cannot enter the executable staging closure."""
+         (self.root / (P.RELATIVE + P.FILES[0])).write_text("# changed private source\n")
+         with self.assertRaisesRegex(ValueError, "detached and clean"):
+-            P.prepare(self.root, self.commit, self.run, self.name, self.tool)
++            P.prepare(self.root, self.commit, self.run, self.name, self.tool, unreserved=True)
+         self.assertEqual(list((self.run / "data").iterdir()), [])
+ 
++    def test_explicit_reservation_matches_plan_script_and_held_command(self):
++        """An explicitly supplied name is retained everywhere without using an old default."""
++        reservation = "synthetic_selected_reservation"
++        result = P.prepare(self.root, self.commit, self.run, self.name, self.tool, reservation=reservation)
++        packet, unit = Path(result["packet"]), Path(result["unit"])
++        plan = json.loads((unit / "measurement_plan.json").read_text())
++        self.assertEqual(plan["resources"]["reservation"], reservation)
++        for directory in (packet, unit):
++            for name in ("manifest.yaml", "config_resolved.yaml"):
++                self.assertEqual(json.loads((directory / name).read_text()), plan)
++            self.assertIn("explicitly selected reservation " + reservation,
++                          (directory / "experiment_background.md").read_text())
++        command = json.loads((packet / "held_submission_command.json").read_text())
++        self.assertEqual([argument for argument in command if argument.startswith("--reservation")],
++                         ["--reservation=" + reservation])
++        script = (packet / "job.sbatch").read_text()
++        self.assertEqual(script.count("#SBATCH --reservation=" + reservation + "\n"), 1)
++        self.assertNotIn("sl5nw_168", json.dumps(plan) + script + json.dumps(command))
++
++    def test_missing_selection_refuses_before_source_reads_or_output(self):
++        """No API default can silently restore an expired reservation."""
++        with mock.patch.object(P, "git", side_effect=AssertionError("source must not be read")):
++            with self.assertRaisesRegex(ValueError, "explicit reservation"):
++                P.prepare(self.root, self.commit, self.run, self.name, self.tool)
++        self.assertEqual(list((self.run / "data").iterdir()), [])
++
++    def test_conflicting_selection_refuses_before_source_reads_or_output(self):
++        """A caller cannot ask for both a reservation and an unreserved job."""
++        with mock.patch.object(P, "git", side_effect=AssertionError("source must not be read")):
++            with self.assertRaisesRegex(ValueError, "never both"):
++                P.prepare(self.root, self.commit, self.run, self.name, self.tool,
++                          reservation="synthetic_selected_reservation", unreserved=True)
++        self.assertEqual(list((self.run / "data").iterdir()), [])
++
++    def test_invalid_reservation_names_refuse_before_source_reads_or_output(self):
++        """Reservation text cannot inject another argument or a batch directive."""
++        for reservation in ("", " spaced ", "../name", "name\n#SBATCH --nodes=2", "--unreserved", True):
++            with self.subTest(reservation=reservation):
++                with mock.patch.object(P, "git", side_effect=AssertionError("source must not be read")):
++                    with self.assertRaisesRegex(ValueError, "explicit reservation"):
++                        P.prepare(self.root, self.commit, self.run, self.name, self.tool, reservation=reservation)
++        self.assertEqual(list((self.run / "data").iterdir()), [])
++
++    def test_unreserved_selection_requires_an_exact_boolean(self):
++        """Integer or string values cannot stand in for an explicit Boolean selection."""
++        for value in (1, 0, "true"):
++            with self.subTest(value=value):
++                with self.assertRaisesRegex(ValueError, "must be Boolean"):
++                    P.prepare(self.root, self.commit, self.run, self.name, self.tool, unreserved=value)
++        self.assertEqual(list((self.run / "data").iterdir()), [])
++
++
++class CommandPlacementTests(unittest.TestCase):
++    """Check the required CLI choice without reading a source tree or preparing a packet."""
++    def arguments(self):
++        """Return labelled synthetic values; the preparation call is replaced in these CLI fixtures."""
++        return ["--helper-root", "/synthetic/source", "--helper-commit", "1" * 40,
++                "--campaign-run", "/synthetic/campaign", "--unit-id", "2026-synthetic-diagnostic",
++                "--tool-record", "/synthetic/tool.json"]
++
++    def test_cli_requires_one_explicit_choice(self):
++        """No-choice CLI calls stop before preparing output."""
++        with mock.patch.object(P, "prepare") as prepare, contextlib.redirect_stderr(io.StringIO()):
++            with self.assertRaises(SystemExit) as error:
++                P.main(self.arguments())
++        self.assertEqual(error.exception.code, 2); prepare.assert_not_called()
++
++    def test_cli_rejects_both_choices(self):
++        """Mutually exclusive CLI flags cannot produce an ambiguous packet."""
++        with mock.patch.object(P, "prepare") as prepare, contextlib.redirect_stderr(io.StringIO()):
++            with self.assertRaises(SystemExit) as error:
++                P.main([*self.arguments(), "--reservation", "synthetic_reservation", "--unreserved"])
++        self.assertEqual(error.exception.code, 2); prepare.assert_not_called()
++
++    def test_cli_passes_an_explicit_unreserved_choice(self):
++        """The unreserved CLI branch passes None plus the explicit true selection."""
++        with mock.patch.object(P, "prepare", return_value={}) as prepare, contextlib.redirect_stdout(io.StringIO()):
++            P.main([*self.arguments(), "--unreserved"])
++        self.assertEqual(prepare.call_args.kwargs, {"reservation": None, "unreserved": True})
++
++    def test_cli_passes_the_explicit_reservation_name(self):
++        """The reserved CLI branch retains the exact caller-supplied name."""
++        with mock.patch.object(P, "prepare", return_value={}) as prepare, contextlib.redirect_stdout(io.StringIO()):
++            P.main([*self.arguments(), "--reservation", "synthetic_reservation"])
++        self.assertEqual(prepare.call_args.kwargs,
++                         {"reservation": "synthetic_reservation", "unreserved": False})
++
+ 
+ if __name__ == "__main__": unittest.main()
