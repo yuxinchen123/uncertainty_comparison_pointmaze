@@ -34,8 +34,19 @@ def put(path, raw):
     return {"path": str(path), "sha256": hashlib.sha256(raw).hexdigest(), "bytes": len(raw)}
 
 
-def prepare(root, commit, run, name, tool_path):
+def prepare(root, commit, run, name, tool_path, *, reservation=None, unreserved=False):
     """Stage only two committed standard-library modules and five ordinary unit records."""
+    # Before: an omitted choice silently used an old reservation; after: one explicit choice is required.
+    checked(type(unreserved) is bool, "the explicit unreserved selection must be Boolean")
+    if unreserved:
+        checked(reservation is None, "choose an explicit reservation or an explicitly unreserved job, never both")
+    else:
+        checked(type(reservation) is str and re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]*", reservation),
+                "choose an explicit reservation name or an explicitly unreserved job")
+    placement_description = ("An unreserved job was explicitly selected." if unreserved
+                             else "The caller explicitly selected reservation " + reservation + ".")
+    reservation_arguments = [] if unreserved else ["--reservation=" + reservation]
+    reservation_directive = "" if unreserved else "#SBATCH --reservation=" + reservation + "\n"
     checked(re.fullmatch(r"[0-9a-f]{40}", commit) and root.is_absolute() and root.resolve(strict=True) == root,
             "an exact published helper root and full commit are required")
     checked(git(root, "rev-parse", "HEAD").decode().strip() == commit
@@ -61,7 +72,7 @@ def prepare(root, commit, run, name, tool_path):
         "files": {RELATIVE + filename: hashlib.sha256(raw).hexdigest() for filename, raw in raw_files.items()}}
     plan = {"schema_version": 1, "kind": KIND, "unit_id": name, "campaign_run_dir": str(run), "packet": str(packet),
         "python": PYTHON, "helpers": helpers, "profile_tool": tool, "gpu_uuid": None, "job_id": None,
-        "resources": {"partition": "gpu", "account": "sl5nw_base", "qos": "csresnolim", "reservation": "sl5nw_168",
+        "resources": {"partition": "gpu", "account": "sl5nw_base", "qos": "csresnolim", "reservation": reservation,
             "node": "jaguar03", "nodes": 1, "tasks": 1, "requested_cpus": 1, "host_memory_gib": 2,
             "gres": "gpu:nvidia_rtx_a4500:1", "wall_seconds": 300, "requeue": False},
         "work": {"learner_updates": 0, "warmup_rollouts": 0, "cuda_profiler_api_calls_by_payload": 0,
@@ -78,6 +89,7 @@ def prepare(root, commit, run, name, tool_path):
         "## Code and config changes\n\nThe exact existing Nsight launch options run a metadata waiter and one metadata child. "
         "The parent saves positive kernel-reported process links, user IDs, births, commands and the numeric step. "
         "Different process groups are recorded. There is no scientific, profile, case or idea credit.\n\n"
+        f"## Placement\n\n{placement_description}\n\n"
         f"## Git state\n\nClean detached helper commit: `{commit}`. Two exact committed source files are staged.\n").encode()
     for directory in (packet, unit):
         put(directory / "manifest.yaml", plan); put(directory / "config_resolved.yaml", plan)
@@ -88,8 +100,10 @@ def prepare(root, commit, run, name, tool_path):
     launch = ["srun", "--nodes=1", "--ntasks=1", "--cpus-per-task=1", "--cpu-bind=cores",
               "--gres=gpu:nvidia_rtx_a4500:1", "--kill-on-bad-exit=1", *command]
     shell = ("#!/bin/bash\n#SBATCH --job-name=pixel-nsight-process-observation\n"
+        f"{reservation_directive}"
         f"#SBATCH --output={run}/slurm/jobs/nsight-process-observation-%j.out\n"
         f"#SBATCH --error={run}/slurm/jobs/nsight-process-observation-%j.err\n"
+        f"# Placement: {placement_description}\n"
         "set -euo pipefail\numask 077\nunset PYTHONPATH PYTHONHOME\n"
         "export PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 OMP_NUM_THREADS=1\n"
         "export LD_LIBRARY_PATH=\"/usr/lib/nvidia:${LD_LIBRARY_PATH:-}\"\n"
@@ -98,7 +112,7 @@ def prepare(root, commit, run, name, tool_path):
         "exec " + shlex.join(launch) + "\n").encode()
     script = put(packet / "job.sbatch", shell)
     held = ["sbatch", "--hold", "--parsable", "--no-requeue", "--partition=gpu", "--account=sl5nw_base",
-        "--qos=csresnolim", "--reservation=sl5nw_168", "--nodelist=jaguar03", "--nodes=1", "--ntasks=1",
+        "--qos=csresnolim", *reservation_arguments, "--nodelist=jaguar03", "--nodes=1", "--ntasks=1",
         "--cpus-per-task=1", "--mem=2G", "--gres=gpu:nvidia_rtx_a4500:1", "--time=00:05:00", str(packet / "job.sbatch")]
     put(packet / "held_submission_command.json", held)
     checked_files = [*sorted((unit / "code").iterdir()), unit / "measurement_plan.json", unit / "measurement_prepared.json"]
@@ -111,13 +125,17 @@ def prepare(root, commit, run, name, tool_path):
             "files": len(freeze), "actual_jobs_submitted": 0, "actual_tool_executions": 0, **ZERO}
 
 
-def main():
+def main(argv=None):
     """Require an explicit published source and a new unit, with no submission operation."""
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ("helper-root", "campaign-run", "tool-record"): parser.add_argument("--" + name, type=Path, required=True)
     for name in ("helper-commit", "unit-id"): parser.add_argument("--" + name, required=True)
-    args = parser.parse_args()
-    print(json.dumps(prepare(args.helper_root, args.helper_commit, args.campaign_run, args.unit_id, args.tool_record), indent=2))
+    placement = parser.add_mutually_exclusive_group(required=True)
+    placement.add_argument("--reservation", help="Explicit reservation name; availability is checked before submission.")
+    placement.add_argument("--unreserved", action="store_true", help="Explicitly request no reservation.")
+    args = parser.parse_args(argv)
+    print(json.dumps(prepare(args.helper_root, args.helper_commit, args.campaign_run, args.unit_id, args.tool_record,
+                             reservation=args.reservation, unreserved=args.unreserved), indent=2))
 
 
 if __name__ == "__main__": main()

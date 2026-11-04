@@ -1,0 +1,60 @@
+{
+  "actual_submissions": 0,
+  "base_commit": "6c955a7c4b26452b2d14ab04c3ffd00726ac63fb",
+  "files": {
+    ".review_metadata/explicit_reservation_formatter/author_6783003_216.json": {
+      "bytes": 15136,
+      "git_mode": "100644",
+      "sha256": "5085475c8a3004935dc4fe7f3bdbf9f1bb01a38376e1a4f0ea9cae03cfe32c4e"
+    },
+    ".review_metadata/explicit_reservation_formatter/author_handoff.json": {
+      "bytes": 3820,
+      "git_mode": "100644",
+      "sha256": "d29d3e81ea2fccdea3831f801472c66a37a417e4d265efc1d400121807ed90c0"
+    },
+    ".review_metadata/explicit_reservation_formatter/author_run_return.json": {
+      "bytes": 784,
+      "git_mode": "100644",
+      "sha256": "f820376a3fa6c0c5ca6f876b6e9591f0842ade509c6378b6d5f536f3adf50bcc"
+    },
+    ".review_metadata/explicit_reservation_formatter/author_run_stderr.raw": {
+      "bytes": 2328,
+      "git_mode": "100644",
+      "sha256": "03359b20f6f1225c5114f706a7e5644de5dffd81066c26ac0695ee29e6dea3f3"
+    },
+    ".review_metadata/explicit_reservation_formatter/author_run_stdout.raw": {
+      "bytes": 383,
+      "git_mode": "100644",
+      "sha256": "2712cb2e99bda8e9be350f3049a0b4b2212ceb9521fb873949ffa94a2a840106"
+    },
+    ".review_metadata/explicit_reservation_formatter/run_metadata_tests.py": {
+      "bytes": 5591,
+      "git_mode": "100644",
+      "sha256": "de854d99ff7243ba0a18bee8fb5ca3d834f534f5cd96f70b75cbb7e3b33ed163"
+    },
+    ".review_metadata/explicit_reservation_formatter/source_change.diff": {
+      "bytes": 16363,
+      "git_mode": "100644",
+      "sha256": "4ed371cb082310e055a12f4edaa795206078cf2620d15758ba35fcb46f1f4f65"
+    },
+    ".review_metadata/explicit_reservation_formatter/source_freeze.json": {
+      "bytes": 992,
+      "git_mode": "100644",
+      "sha256": "cb01d5c0cffd73f1b02511704dc40d25eb464f79081ad279e46eb30f7f101fd7"
+    },
+    ".review_metadata/prepare_nsight_process_diagnostic.py": {
+      "bytes": 10314,
+      "git_mode": "100644",
+      "sha256": "376ff9be1a4f50fb7743f342f4f253f9a3593fdb45291566431922ae76bb60b4"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_nsight_diagnostic_preparation.py": {
+      "bytes": 11175,
+      "git_mode": "100644",
+      "sha256": "a904800fb00b8ec4902ad4ffdc1de5cd48e60a519e0390e1d98e60b446c50245"
+    }
+  },
+  "include_this_roster_by_path": true,
+  "independent_review_still_required": true,
+  "kind": "explicit_nsight_reservation_formatter_candidate_publication_allowlist",
+  "schema_version": 1
+}

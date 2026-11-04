@@ -1,0 +1,23 @@
+{
+  "command": [
+    "srun",
+    "--jobid=6783003",
+    "--overlap",
+    "--exact",
+    "--ntasks=1",
+    "--cpus-per-task=1",
+    "--mem=512M",
+    "--time=00:10:00",
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "/p/rlprojects/RND_worktrees/2026-11-04-15-06_nsight-process-diagnostic-placement_gpu-count-1_processor-count-1_host-memory-gib-2_time-limit-minutes-5_explicit-reservation-or-unreserved/.review_metadata/explicit_reservation_formatter/run_metadata_tests.py"
+  ],
+  "started_at_utc": "2026-11-04T23:10:46.124325+00:00",
+  "finished_at_utc": "2026-11-04T23:10:47.209302+00:00",
+  "returncode": 0,
+  "source_freeze_sha256": "cb01d5c0cffd73f1b02511704dc40d25eb464f79081ad279e46eb30f7f101fd7",
+  "new_job_submitted": false,
+  "actual_diagnostic_prepared": false
+}

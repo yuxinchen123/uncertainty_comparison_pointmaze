@@ -1,0 +1,65 @@
+{
+  "actual_Nsight_or_library_or_device_operations": 0,
+  "actual_packets_prepared": 0,
+  "actual_submissions": 0,
+  "after": "The caller must explicitly select --reservation NAME or --unreserved. The plan, script, held command and standard records use the same selection.",
+  "at_utc": "2026-11-04T23:12:34.063830+00:00",
+  "base_commit": "6c955a7c4b26452b2d14ab04c3ffd00726ac63fb",
+  "before": "The formatter selected expired reservation sl5nw_168 without a caller choice.",
+  "branch": "nsight-diagnostic-explicit-placement-2026-11-04-15-06",
+  "changed_existing_files": [
+    ".review_metadata/prepare_nsight_process_diagnostic.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_nsight_diagnostic_preparation.py"
+  ],
+  "current_reservation_availability_or_scheduler_admission_claimed": false,
+  "existing_source_commit_verified": {
+    "all_paths_match_explicit_allowlist": true,
+    "commit": "6c955a7c4b26452b2d14ab04c3ffd00726ac63fb",
+    "parent": "10604537c43da99c7f9ad48757491196ec222504",
+    "path_count": 126,
+    "tree": "409dbc8778466a1428173f55bf2a0c061ffea3b6"
+  },
+  "independent_approval_received": false,
+  "independent_review_required": true,
+  "kind": "explicit_nsight_diagnostic_reservation_formatter_author_handoff",
+  "metadata_tests": {
+    "bytes": 15136,
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-06_nsight-process-diagnostic-placement_gpu-count-1_processor-count-1_host-memory-gib-2_time-limit-minutes-5_explicit-reservation-or-unreserved/.review_metadata/explicit_reservation_formatter/author_6783003_216.json",
+    "sha256": "5085475c8a3004935dc4fe7f3bdbf9f1bb01a38376e1a4f0ea9cae03cfe32c4e"
+  },
+  "method_executions": 12,
+  "original_approved_worktree_tracked_clean": true,
+  "protected_protocol_files_unchanged": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py": "bde06959eb37322f3d9f8a82ab7457b24c7082a1176f06ff89f4e44f8dbdce0f",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_nsight_process_tree.py": "1f1e45268e2f9779fe9974dfaae367efb38d17b2408963210af6235792242c1f",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py": "f9c6ec46592677203a08053f1ccfd9d4b191cf7b3c06d6acab41e39203968092",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py": "7a4685106e6e1837aa65df32ab59e623fc946e0619a9a4e75d76cead8e26e5d5"
+  },
+  "resource_shape": {
+    "account": "sl5nw_base",
+    "cpus": 1,
+    "host_memory_gib": 2,
+    "node": "jaguar03",
+    "partition": "gpu",
+    "qos": "csresnolim",
+    "typed_gpus": "gpu:nvidia_rtx_a4500:1",
+    "wall_seconds": 300
+  },
+  "resource_shape_changed": false,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "source_change": {
+    "bytes": 16363,
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-06_nsight-process-diagnostic-placement_gpu-count-1_processor-count-1_host-memory-gib-2_time-limit-minutes-5_explicit-reservation-or-unreserved/.review_metadata/explicit_reservation_formatter/source_change.diff",
+    "sha256": "4ed371cb082310e055a12f4edaa795206078cf2620d15758ba35fcb46f1f4f65"
+  },
+  "source_committed": false,
+  "source_freeze": {
+    "bytes": 992,
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-06_nsight-process-diagnostic-placement_gpu-count-1_processor-count-1_host-memory-gib-2_time-limit-minutes-5_explicit-reservation-or-unreserved/.review_metadata/explicit_reservation_formatter/source_freeze.json",
+    "sha256": "cb01d5c0cffd73f1b02511704dc40d25eb464f79081ad279e46eb30f7f101fd7"
+  },
+  "unique_test_IDs": 12,
+  "worker_admitted": false,
+  "worktree": "/p/rlprojects/RND_worktrees/2026-11-04-15-06_nsight-process-diagnostic-placement_gpu-count-1_processor-count-1_host-memory-gib-2_time-limit-minutes-5_explicit-reservation-or-unreserved"
+}

@@ -1,0 +1,23 @@
+{
+  "actual_packets_prepared": 0,
+  "actual_submissions": 0,
+  "base_commit": "6c955a7c4b26452b2d14ab04c3ffd00726ac63fb",
+  "files": {
+    ".review_metadata/prepare_nsight_process_diagnostic.py": {
+      "bytes": 10314,
+      "mode": "0o660",
+      "sha256": "376ff9be1a4f50fb7743f342f4f253f9a3593fdb45291566431922ae76bb60b4"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_nsight_diagnostic_preparation.py": {
+      "bytes": 11175,
+      "mode": "0o660",
+      "sha256": "a904800fb00b8ec4902ad4ffdc1de5cd48e60a519e0390e1d98e60b446c50245"
+    }
+  },
+  "kind": "explicit_nsight_diagnostic_reservation_formatter_source_freeze",
+  "observation_protocol_bytes_changed": false,
+  "resource_shape_changed": false,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "worktree": "/p/rlprojects/RND_worktrees/2026-11-04-15-06_nsight-process-diagnostic-placement_gpu-count-1_processor-count-1_host-memory-gib-2_time-limit-minutes-5_explicit-reservation-or-unreserved"
+}

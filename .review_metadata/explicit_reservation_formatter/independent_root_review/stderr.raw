@@ -1,0 +1,29 @@
+test_cli_passes_an_explicit_unreserved_choice (independent_explicit_placement_tests.CommandPlacementTests)
+The unreserved CLI branch passes None plus the explicit true selection. ... ok
+test_cli_passes_the_explicit_reservation_name (independent_explicit_placement_tests.CommandPlacementTests)
+The reserved CLI branch retains the exact caller-supplied name. ... ok
+test_cli_rejects_both_choices (independent_explicit_placement_tests.CommandPlacementTests)
+Mutually exclusive CLI flags cannot produce an ambiguous packet. ... ok
+test_cli_requires_one_explicit_choice (independent_explicit_placement_tests.CommandPlacementTests)
+No-choice CLI calls stop before preparing output. ... ok
+test_conflicting_selection_refuses_before_source_reads_or_output (independent_explicit_placement_tests.PreparationTests)
+A caller cannot ask for both a reservation and an unreserved job. ... ok
+test_dirty_source_refuses_before_any_packet_creation (independent_explicit_placement_tests.PreparationTests)
+An uncommitted source change cannot enter the executable staging closure. ... ok
+test_explicit_reservation_matches_plan_script_and_held_command (independent_explicit_placement_tests.PreparationTests)
+An explicitly supplied name is retained everywhere without using an old default. ... ok
+test_invalid_reservation_names_refuse_before_source_reads_or_output (independent_explicit_placement_tests.PreparationTests)
+Reservation text cannot inject another argument or a batch directive. ... ok
+test_missing_selection_refuses_before_source_reads_or_output (independent_explicit_placement_tests.PreparationTests)
+No API default can silently restore an expired reservation. ... ok
+test_partial_or_previously_prepared_unit_is_never_reused (independent_explicit_placement_tests.PreparationTests)
+A second preparation refuses rather than replacing any old artifact. ... ok
+test_real_preparation_has_all_standards_null_ids_and_one_bounded_held_command (independent_explicit_placement_tests.PreparationTests)
+A fresh private packet binds exact Git bytes and contains no future launch identity. ... ok
+test_unreserved_selection_requires_an_exact_boolean (independent_explicit_placement_tests.PreparationTests)
+Integer or string values cannot stand in for an explicit Boolean selection. ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.516s
+
+OK
