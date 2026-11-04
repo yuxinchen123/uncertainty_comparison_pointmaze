@@ -1,0 +1,330 @@
+{
+  "actual_GPU_or_job_or_network_actions": 0,
+  "actual_Nsight_or_profile_experiment": false,
+  "admission_granted": false,
+  "allowed_cold_import_children": [],
+  "error_details": [],
+  "errors": 0,
+  "failure_details": [],
+  "failures": 0,
+  "job_id": "6783003",
+  "local_private_fixture_git_commands": [
+    [
+      "git",
+      "-C",
+      "/tmp/tmpd9oytubp/source",
+      "init",
+      "-q"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpd9oytubp/source",
+      "-c",
+      "user.name=Synthetic metadata fixture",
+      "-c",
+      "user.email=synthetic@example.invalid",
+      "-c",
+      "core.hooksPath=/dev/null",
+      "add",
+      "--",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_nsight_process_tree.py",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpd9oytubp/source",
+      "-c",
+      "user.name=Synthetic metadata fixture",
+      "-c",
+      "user.email=synthetic@example.invalid",
+      "-c",
+      "core.hooksPath=/dev/null",
+      "commit",
+      "-q",
+      "-m",
+      "Synthetic process diagnostic source fixture"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpd9oytubp/source",
+      "rev-parse",
+      "HEAD"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpd9oytubp/source",
+      "checkout",
+      "-q",
+      "--detach",
+      "5122ca71511520ffe1dda8079766d7ed03fe120c"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpd9oytubp/source",
+      "rev-parse",
+      "HEAD"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpd9oytubp/source",
+      "symbolic-ref",
+      "-q",
+      "HEAD"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpd9oytubp/source",
+      "status",
+      "--porcelain=v1",
+      "--untracked-files=all"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpl41tn78v/source",
+      "init",
+      "-q"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpl41tn78v/source",
+      "-c",
+      "user.name=Synthetic metadata fixture",
+      "-c",
+      "user.email=synthetic@example.invalid",
+      "-c",
+      "core.hooksPath=/dev/null",
+      "add",
+      "--",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_nsight_process_tree.py",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpl41tn78v/source",
+      "-c",
+      "user.name=Synthetic metadata fixture",
+      "-c",
+      "user.email=synthetic@example.invalid",
+      "-c",
+      "core.hooksPath=/dev/null",
+      "commit",
+      "-q",
+      "-m",
+      "Synthetic process diagnostic source fixture"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpl41tn78v/source",
+      "rev-parse",
+      "HEAD"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpl41tn78v/source",
+      "checkout",
+      "-q",
+      "--detach",
+      "5122ca71511520ffe1dda8079766d7ed03fe120c"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpl41tn78v/source",
+      "rev-parse",
+      "HEAD"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpl41tn78v/source",
+      "symbolic-ref",
+      "-q",
+      "HEAD"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpl41tn78v/source",
+      "status",
+      "--porcelain=v1",
+      "--untracked-files=all"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpl41tn78v/source",
+      "show",
+      "5122ca71511520ffe1dda8079766d7ed03fe120c:10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_nsight_process_tree.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpl41tn78v/source",
+      "show",
+      "5122ca71511520ffe1dda8079766d7ed03fe120c:10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpl41tn78v/source",
+      "rev-parse",
+      "HEAD"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpl41tn78v/source",
+      "symbolic-ref",
+      "-q",
+      "HEAD"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpl41tn78v/source",
+      "status",
+      "--porcelain=v1",
+      "--untracked-files=all"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpgmwgn1rw/source",
+      "init",
+      "-q"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpgmwgn1rw/source",
+      "-c",
+      "user.name=Synthetic metadata fixture",
+      "-c",
+      "user.email=synthetic@example.invalid",
+      "-c",
+      "core.hooksPath=/dev/null",
+      "add",
+      "--",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_nsight_process_tree.py",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpgmwgn1rw/source",
+      "-c",
+      "user.name=Synthetic metadata fixture",
+      "-c",
+      "user.email=synthetic@example.invalid",
+      "-c",
+      "core.hooksPath=/dev/null",
+      "commit",
+      "-q",
+      "-m",
+      "Synthetic process diagnostic source fixture"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpgmwgn1rw/source",
+      "rev-parse",
+      "HEAD"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpgmwgn1rw/source",
+      "checkout",
+      "-q",
+      "--detach",
+      "5122ca71511520ffe1dda8079766d7ed03fe120c"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpgmwgn1rw/source",
+      "rev-parse",
+      "HEAD"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpgmwgn1rw/source",
+      "symbolic-ref",
+      "-q",
+      "HEAD"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpgmwgn1rw/source",
+      "status",
+      "--porcelain=v1",
+      "--untracked-files=all"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpgmwgn1rw/source",
+      "show",
+      "5122ca71511520ffe1dda8079766d7ed03fe120c:10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_nsight_process_tree.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/tmp/tmpgmwgn1rw/source",
+      "show",
+      "5122ca71511520ffe1dda8079766d7ed03fe120c:10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py"
+    ]
+  ],
+  "passed": true,
+  "raw": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/.review_metadata/nsight_process_tool_precheck_author_6783003_192.raw",
+    "sha256": "d3f670ab87f906307fe3e896b8e42361cacab8e2fbd7dd01424c2458ab837f1a"
+  },
+  "real_processes_launched": 0,
+  "scientific_credit": 0,
+  "source_after": {
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/.review_metadata/prepare_nsight_process_diagnostic.py": "cbda1d884478bc4d32ed900a364e61c74af5b195ab034f74c5796f92c8a6a7e3",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py": "bde06959eb37322f3d9f8a82ab7457b24c7082a1176f06ff89f4e44f8dbdce0f",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_nsight_process_tree.py": "1f1e45268e2f9779fe9974dfaae367efb38d17b2408963210af6235792242c1f",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py": "f9c6ec46592677203a08053f1ccfd9d4b191cf7b3c06d6acab41e39203968092",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py": "7a4685106e6e1837aa65df32ab59e623fc946e0619a9a4e75d76cead8e26e5d5",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_configured_measurement.py": "23b96c13ed832b399e065ba76c8254acd73e345f3032785e37df8b5cc941cde0",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_nsight_diagnostic_preparation.py": "638a4f203d50afb89ab69c47d971ca5591fcb00e087de2bac7e78968465b71c7",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_nsight_process_diagnostic.py": "5b008b7f5abdec024f371e87559d81676aa9c839cde948b65a822e7fcbbb2c0e",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_nsight_process_identity.py": "f0d7784770fab215b30bead3ba4d67f3d8f98a42758065a2ba93c48a04d52797",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_common_confirmation_helpers.py": "139816aba5b3ad33c60a5ecd5318368456538d2282d8dcfe301a5280b3a84006",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_owned_processes.py": "f0a15a086622703ade3340de87eb0798c52b002f5985cf75aeb39cae89239246",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_selected.py": "3f762def603521897e10114a89c3a414fffc9e22286245db8f15eff708816aab"
+  },
+  "source_before": {
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/.review_metadata/prepare_nsight_process_diagnostic.py": "cbda1d884478bc4d32ed900a364e61c74af5b195ab034f74c5796f92c8a6a7e3",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py": "bde06959eb37322f3d9f8a82ab7457b24c7082a1176f06ff89f4e44f8dbdce0f",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_nsight_process_tree.py": "1f1e45268e2f9779fe9974dfaae367efb38d17b2408963210af6235792242c1f",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py": "f9c6ec46592677203a08053f1ccfd9d4b191cf7b3c06d6acab41e39203968092",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py": "7a4685106e6e1837aa65df32ab59e623fc946e0619a9a4e75d76cead8e26e5d5",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_configured_measurement.py": "23b96c13ed832b399e065ba76c8254acd73e345f3032785e37df8b5cc941cde0",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_nsight_diagnostic_preparation.py": "638a4f203d50afb89ab69c47d971ca5591fcb00e087de2bac7e78968465b71c7",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_nsight_process_diagnostic.py": "5b008b7f5abdec024f371e87559d81676aa9c839cde948b65a822e7fcbbb2c0e",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_nsight_process_identity.py": "f0d7784770fab215b30bead3ba4d67f3d8f98a42758065a2ba93c48a04d52797",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_common_confirmation_helpers.py": "139816aba5b3ad33c60a5ecd5318368456538d2282d8dcfe301a5280b3a84006",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_owned_processes.py": "f0a15a086622703ade3340de87eb0798c52b002f5985cf75aeb39cae89239246",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_selected.py": "3f762def603521897e10114a89c3a414fffc9e22286245db8f15eff708816aab"
+  },
+  "step_id": "192",
+  "synthetic_proc_files_and_mocked_pidfds_only": true,
+  "tests": 12
+}

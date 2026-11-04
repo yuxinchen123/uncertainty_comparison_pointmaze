@@ -10,6 +10,7 @@ from contextlib import contextmanager
 import fcntl
 import hashlib
 import importlib
+import importlib.util
 import json
 import math
 import os
@@ -33,6 +34,7 @@ import train_optimized as training
 
 HELPERS = ("profile_selected.py", *measurement.HELPERS)
 KIND = "selected_configuration_profile"
+OWNED_PROCESS_PROTOCOL = "nsight-owned-descendant-observation-version-1"
 
 
 def process_birth(pid):
@@ -70,16 +72,52 @@ def tool_record(path):
     return {"path": str(actual), "version": version, "sha256": training.file_sha256(actual)}
 
 
-def helper_receipt(configured=False, direct=False, common=False):
+def helper_receipt(configured=False, direct=False, common=False, owned_processes=False):
     """Bind every staged helper to its exact committed bytes."""
     root = SCRIPTS.parents[2]
     commit = subprocess.check_output(["git", "-C", str(root), "rev-parse", "HEAD"], text=True).strip()
-    return training.source_receipt(root, commit, [str((SCRIPTS / name).relative_to(root)) for name in required_helpers(configured, direct, common)])
+    return training.source_receipt(root, commit, [str((SCRIPTS / name).relative_to(root)) for name in required_helpers(configured, direct, common, owned_processes)])
 
 
-def required_helpers(configured=False, direct=False, common=False):
+def required_helpers(configured=False, direct=False, common=False, owned_processes=False):
     """Include the exact optional identity closure while preserving the default profile roster."""
-    return tuple(dict.fromkeys(("profile_selected.py", *measurement.required_helpers(configured, direct, common))))
+    if owned_processes and (not configured or direct):
+        raise ValueError("owned Nsight observation is supported only by its configured A4500 profile")
+    optional = ("nsight_process_identity.py",) if owned_processes else ()
+    return tuple(dict.fromkeys(("profile_selected.py", *measurement.required_helpers(configured, direct, common), *optional)))
+
+
+def owned_processes(plan):
+    """Select only the explicit new A4500 process protocol, preserving other profiles."""
+    value = plan.get("capture_process_protocol")
+    declared = "10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py" in plan.get("helpers", {}).get("files", {})
+    if value is None:
+        if declared:
+            raise ValueError("the staged process observer lacks its explicit profile protocol")
+        return False
+    if (value != OWNED_PROCESS_PROTOCOL or "configured_isolation" not in plan or "direct_binding" in plan
+            or plan.get("hardware_class") != "jaguar03_rtx_a4500" or not declared):
+        raise ValueError("unsupported Nsight process observation protocol")
+    return True
+
+
+def require_reviewed_profile_process_admission():
+    """Keep new configured profiles disabled until the real diagnostic receives an independent review."""
+    raise ValueError("new configured profiles remain disabled pending the real Nsight process diagnostic and independent review")
+
+
+def process_reader(plan):
+    """Load only the exact staged pure-metadata process helper recorded in this plan."""
+    if not owned_processes(plan):
+        raise ValueError("the profile has no owned-process observation protocol")
+    path = SCRIPTS / "nsight_process_identity.py"
+    relative = "10_jax_exploration_platform/scripts/atari_pixel_campaign/" + path.name
+    if (path.resolve(strict=True) != path or path.is_symlink()
+            or training.file_sha256(path) != plan["helpers"]["files"].get(relative)):
+        raise ValueError("the staged Nsight process observation helper changed")
+    specification = importlib.util.spec_from_file_location("selected_profile_owned_process_reader", path)
+    module = importlib.util.module_from_spec(specification); specification.loader.exec_module(module)
+    return module
 
 
 def accepted_confirmation_common_reader(plan):
@@ -138,6 +176,8 @@ def prepare(args):
     """Stage immutable profile inputs without loading an array library or touching a GPU."""
     configured = getattr(args, "configured_isolation_profile", None) is not None
     direct = getattr(args, "direct_binding_profile", None) is not None
+    if configured:
+        require_reviewed_profile_process_admission()
     if direct and (configured or args.hardware_class != "h100" or args.gpu_uuid != measurement.CARD1):
         raise ValueError("direct profiling requires only its separately approved card-one profile")
     if configured and (args.gpu_uuid is not None or args.hardware_class != "jaguar03_rtx_a4500"):
@@ -205,7 +245,7 @@ def prepare(args):
         raise ValueError("the profile policy seeds exceed unsigned 32-bit values")
     directory = run / "data" / args.unit_id
     plan = {"schema_version": 1, "kind": KIND, "source_root": str(root), "source_commit": args.source_commit,
-        "core": core, "paired_source": paired_source, "helpers": helper_receipt(configured, direct, common_reader),
+        "core": core, "paired_source": paired_source, "helpers": helper_receipt(configured, direct, common_reader, configured),
         "configuration": configuration, "runtime_environment": runtime, "asset_record": assets,
         "hardware_class": args.hardware_class, "gpu_uuid": args.gpu_uuid,
         "campaign_run_dir": str(run), "unit_id": args.unit_id, "compilation_cache_policy": "disabled",
@@ -223,6 +263,7 @@ def prepare(args):
     if common_reader:
         plan["accepted_confirmation_requires_common_reader"] = True
     if configured:
+        plan["capture_process_protocol"] = OWNED_PROCESS_PROTOCOL
         import configured_measurement as support
         profile, profile_input = measurement.read_document(args.configured_isolation_profile)
         support.configure_plan(plan, profile, "component_profile")
@@ -242,7 +283,7 @@ def prepare(args):
         directory / "inputs/study_registry.json": args.study_registry.read_bytes(),
         directory / "command.txt": (shlex.join([str(args.python), str(directory / "code/profile_selected.py"),
                                                "--prepared-unit", str(directory)]) + "\n").encode()}
-    for name in required_helpers(configured, direct, common_reader):
+    for name in required_helpers(configured, direct, common_reader, configured):
         artifacts[directory / "code" / name] = (SCRIPTS / name).read_bytes()
     artifacts[directory / "experiment_background.md"] = (
         "## Purpose\n\nProfile the explicitly supplied accepted baseline after all thirty initial mechanisms. "
@@ -275,7 +316,9 @@ def verify_prepared(directory, plan):
     if Path(__file__).resolve() != directory / "code/profile_selected.py" or str(Path(sys.executable).absolute()) != plan["python"]:
         raise ValueError("execute the staged profile entrypoint with its exact recorded Python")
     common_reader = accepted_confirmation_common_reader(plan)
-    for name in required_helpers("configured_isolation" in plan, "direct_binding" in plan, common_reader):
+    if owned_processes(plan):
+        require_reviewed_profile_process_admission()
+    for name in required_helpers("configured_isolation" in plan, "direct_binding" in plan, common_reader, owned_processes(plan)):
         expected = plan["helpers"]["files"]["10_jax_exploration_platform/scripts/atari_pixel_campaign/" + name]
         if training.file_sha256(directory / "code" / name) != expected:
             raise ValueError("a staged profile helper changed: " + name)
@@ -324,6 +367,10 @@ def validate_measured_baseline(directory, plan):
 
 def child_command(directory, plan, held_descriptor=None):
     """Record a CUDA-profiler-range capture that cannot silently run without Nsight."""
+    if owned_processes(plan):
+        if held_descriptor is not None:
+            raise ValueError("the configured process protocol cannot borrow a direct-card descriptor")
+        return process_reader(plan).nsight_command(directory, plan)
     command = [plan["profile_tool"]["path"], "profile", "--trace=cuda,cudnn", "--sample=none", "--cpuctxsw=none",
             "--cuda-graph-trace=node", "--capture-range=cudaProfilerApi", "--capture-range-end=stop",
             "--stop-on-exit=true", "--force-overwrite=false", "--output=" + str(directory / "trace/capture"),
@@ -353,6 +400,8 @@ def stop_own_child(child):
 
 def capture_and_summarize(directory, plan, held_descriptor=None):
     """Retain the card lock in the caller while recording/releasing one new profiler child."""
+    if owned_processes(plan):
+        return capture_owned_processes(directory, plan)
     trace = directory / "trace"
     trace.mkdir()
     direct = "direct_binding" in plan
@@ -437,7 +486,9 @@ def run_prepared(directory):
         fcntl.flock(lock.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
         if any((directory / name).exists() for name in ("result.json", "failure.json", "profiler_process.json",
                 "capture_identity.json", "capture_release.json", "capture_result.json", "trace", "hardware.json",
-                "supervisor_metadata.json", "installed_backend.json", "baseline_validation.json", "asset_receipt.json")):
+                "supervisor_metadata.json", "installed_backend.json", "baseline_validation.json", "asset_receipt.json",
+                "profile_process_intent.json", "capture_process_observation.json", "capture_actual_launch.json",
+                "capture_actual_wait.json", "profiler_actual_wait.json", "profile_process_failure.json")):
             raise ValueError("retain the previous profile attempt and use a new immutable unit")
         verify_prepared(directory, plan)
         if "jax" in sys.modules or "numpy" in sys.modules or "torch" in sys.modules:
@@ -489,6 +540,10 @@ def capture(directory, direct_held_lock_fd=None):
     directory = Path(directory).resolve(strict=True)
     plan = json.loads((directory / "measurement_plan.json").read_text())
     verify_prepared(directory, plan)
+    if owned_processes(plan):
+        if direct_held_lock_fd is not None:
+            raise ValueError("the configured capture cannot borrow a direct-card descriptor")
+        return capture_owned_child(directory, plan)
     direct = "direct_binding" in plan
     if direct:
         support = measurement.producer_support(plan); identity_reader = support.core()
@@ -615,12 +670,191 @@ def _capture_core(directory, plan, hardware, installed):
     diagnostic.atomic_json(directory / "capture_result.json", result)
 
 
+def capture_owned_processes(directory, plan):
+    """Release the real waited capture only after observing its owned Nsight ancestry."""
+    reader = process_reader(plan)
+    trace = directory / "trace"; trace.mkdir()
+    command = child_command(directory, plan)
+    reader.publish(directory / "executed_command.json", command)
+    intent = reader.make_intent(directory, plan, command)
+    started, processes, child = time.monotonic(), None, None
+    with (directory / "capture.log").open("x") as log:
+        child = subprocess.Popen(command, stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
+        try:
+            owner = {"pid": child.pid, "process_start_time": process_birth(child.pid), "parent_pid": os.getpid(),
+                     "parent_start_time": process_birth(os.getpid()), "command": command}
+            reader.publish(directory / "profiler_process.json", owner)
+            processes = reader.OwnedProcesses(child.pid, owner["process_start_time"], intent["parent"])
+            while not all((directory / name).exists() for name in ("capture_identity.json", "capture_actual_launch.json")):
+                if child.poll() is not None:
+                    raise RuntimeError("Nsight ended before its actual capture launch was recorded")
+                if time.monotonic() - started > min(180, plan["maximum_active_seconds"]):
+                    raise TimeoutError("the actual capture identity or owned-parent record was absent")
+                time.sleep(.1)
+            claim = reader.validate_claim(directory, plan, intent, reader.read_json(directory / "capture_identity.json"))
+            launch = reader.read_json(directory / "capture_actual_launch.json")
+            if (launch["claim"] != reader.receipt(directory / "capture_identity.json")
+                    or launch["challenge"] != intent["challenge"] or launch["command"] != intent["capture_command"]
+                    or reader.stable(launch["child"]) != reader.stable(claim["process"])
+                    or claim["process"]["parent_pid"] != launch["waiter"]["pid"]):
+                raise ValueError("the actual Popen capture launch differs from its blocked child")
+            observation = processes.observe(claim["pid"], claim["process_start_time"], intent["capture_command"])
+            reader.publish(directory / "capture_process_observation.json", observation)
+            reader.validate_observation(reader.read_json(directory / "capture_process_observation.json"),
+                                        claim, intent["capture_command"], intent["parent"])
+            reader.publish(directory / "capture_release.json",
+                           {**owner, "capture_identity": claim,
+                            "process_observation": reader.receipt(directory / "capture_process_observation.json")})
+            remaining = max(.001, plan["maximum_active_seconds"] - (time.monotonic() - started))
+            returncode = child.wait(timeout=remaining)
+            reader.record_root_wait(directory, intent, owner, returncode)
+            if returncode != 0:
+                raise RuntimeError("Nsight ended unsuccessfully; retain its actual return and child wait")
+            waited = reader.read_json(directory / "capture_actual_wait.json")
+            if type(waited["returncode"]) is not int or waited["returncode"] != 0 or waited["interventions"]:
+                raise RuntimeError("the actual capture Python did not exit normally without intervention")
+        except BaseException as error:
+            failure = {"error_type": type(error).__name__, "error": str(error), "traceback": traceback.format_exc()}
+            try:
+                if processes is not None:
+                    failure["cleanup"] = processes.stop(child)
+                elif child.poll() is None:
+                    # Popen owns this exact unreaped root; no process-group assumption is used.
+                    child.terminate()
+                    try:
+                        failure["popen_returncode"] = child.wait(timeout=120)
+                    except subprocess.TimeoutExpired:
+                        child.kill(); failure["popen_returncode"] = child.wait()
+            except BaseException as cleanup_error:
+                failure["cleanup_error"] = repr(cleanup_error)
+                reader.publish(directory / "profile_process_failure.json", failure)
+                raise RuntimeError("owned capture cleanup failed; retain both errors") from cleanup_error
+            reader.publish(directory / "profile_process_failure.json", failure)
+            raise
+        finally:
+            if processes is not None:
+                processes.close()
+    if tool_record(plan["profile_tool"]["path"]) != plan["profile_tool"]:
+        raise ValueError("the profiling executable changed during capture")
+    captured = reader.read_json(directory / "capture_result.json")
+    analysis = diagnostic.summarize_trace(directory, plan["profile_tool"]["path"])
+    for name, column in (("cuda_gpu_kern_sum", "Instances"), ("cuda_api_sum", "Num Calls")):
+        summary = analysis["summaries"][name]
+        if diagnostic.summary_csv_evidence(summary["path"], column) != {key: summary[key] for key in ("rows", "columns", "sha256")}:
+            raise ValueError("the selected-baseline profile has no positive raw CUDA events")
+    result = {**captured, "completed": True, "trace_analysis_record": str(directory / "trace/analysis.json"),
+              "trace_report_sha256": training.file_sha256(directory / "trace/capture.nsys-rep"),
+              "capture_process_protocol": OWNED_PROCESS_PROTOCOL,
+              "capture_process_observation": reader.receipt(directory / "capture_process_observation.json"),
+              "profiler_actual_wait": reader.receipt(directory / "profiler_actual_wait.json"),
+              "capture_actual_wait": reader.receipt(directory / "capture_actual_wait.json")}
+    reader.validate_saved(directory, plan, result)
+    diagnostic.atomic_json(directory / "result.json", result)
+    diagnostic.record_progress(directory, "completed", completed=True, profile_updates=result["profile_updates"])
+
+
+def run_owned_waiter(directory):
+    """Launch and wait on exactly one real Python child without initializing an array runtime."""
+    directory = Path(directory).resolve(strict=True)
+    plan = json.loads((directory / "measurement_plan.json").read_text())
+    verify_prepared(directory, plan)
+    reader = process_reader(plan)
+    if any(name.split(".")[0] in {"jax", "jaxlib", "numpy", "torch"} for name in sys.modules):
+        raise RuntimeError("the profile waiter initialized a numerical runtime")
+    intent = reader.validate_intent(directory, plan, reader.read_json(directory / "profile_process_intent.json"))
+    current = reader.ProcReader().snapshot(os.getpid(), os.getuid(), intent["parent"]["cgroup"])
+    if current["command"] != intent["waiter_command"]:
+        raise ValueError("the actual metadata waiter command differs from the frozen source")
+    parent = reader.parent_handle(intent)
+    command, child, launched, interventions = intent["capture_command"], None, None, []
+    try:
+        child = subprocess.Popen(command)
+        started = time.monotonic()
+        while not (directory / "capture_identity.json").exists():
+            if child.poll() is not None:
+                raise RuntimeError("the actual Python child ended before recording its identity")
+            if reader.handle_exited(parent) or time.monotonic() - started > 180:
+                raise TimeoutError("the supervisor disappeared or the actual capture identity was absent")
+            time.sleep(.1)
+        claim = reader.validate_claim(directory, plan, intent, reader.read_json(directory / "capture_identity.json"))
+        observed = reader.ProcReader().snapshot(child.pid, os.getuid(), current["cgroup"])
+        if child.pid != claim["pid"] or observed["parent_pid"] != current["pid"] or reader.stable(observed) != reader.stable(claim["process"]):
+            raise ValueError("the actual Popen child differs from its pre-numerical self-record")
+        launched = {"schema_version": 1, "challenge": intent["challenge"], "waiter": current, "child": observed,
+                    "command": command, "claim": reader.receipt(directory / "capture_identity.json")}
+        reader.publish(directory / "capture_actual_launch.json", launched)
+        while child.poll() is None:
+            if reader.handle_exited(parent):
+                interventions.append("the original supervisor exited")
+                child.terminate()
+                try:
+                    child.wait(timeout=120)
+                except subprocess.TimeoutExpired:
+                    interventions.append("the owned capture required SIGKILL")
+                    child.kill(); child.wait()
+                break
+            time.sleep(.1)
+        returncode = child.wait()
+        reader.publish(directory / "capture_actual_wait.json", {
+            "schema_version": 1, "challenge": intent["challenge"], "command": command,
+            "waited_pid": child.pid, "returncode": returncode, "exited_normally": returncode >= 0,
+            "interventions": interventions, "launch": reader.receipt(directory / "capture_actual_launch.json"),
+            "wait_semantics": "Popen.wait on this exact spawned capture Python"})
+        return returncode if returncode >= 0 else 128 - returncode
+    except BaseException as error:
+        cleanup = None
+        if child is not None and child.poll() is None:
+            child.terminate()
+            try:
+                cleanup = child.wait(timeout=120)
+            except subprocess.TimeoutExpired:
+                child.kill(); cleanup = child.wait()
+        reader.publish(directory / "capture_waiter_failure.json", {
+            "error": repr(error), "launched": launched, "known_actual_child_pid": child.pid if child else None,
+            "actual_cleanup_returncode": cleanup, "challenge": intent["challenge"],
+            "numerical_release_file_observed": os.path.lexists(directory / "capture_release.json"),
+            "numerical_work_started": None})
+        raise
+    finally:
+        os.close(parent)
+
+
+def capture_owned_child(directory, plan):
+    """Remain blocked until the actual source child and its ancestry have been checked."""
+    reader = process_reader(plan)
+    claim = reader.claim_self(directory, plan)
+    intent = reader.read_json(directory / "profile_process_intent.json")
+    parent = reader.parent_handle(intent)
+    try:
+        started = time.monotonic()
+        while not (directory / "capture_release.json").exists():
+            if reader.handle_exited(parent) or time.monotonic() - started > 180:
+                raise TimeoutError("the actual supervisor disappeared or did not release this child")
+            time.sleep(.1)
+        owner = reader.read_json(directory / "profiler_process.json")
+        release = reader.read_json(directory / "capture_release.json")
+        if release != {**owner, "capture_identity": claim,
+                       "process_observation": reader.receipt(directory / "capture_process_observation.json")}:
+            raise ValueError("the numerical release differs from this exact observed child")
+        reader.validate_live_observation(directory, plan, claim)
+        support = measurement.producer_support(plan)
+        metadata_record = support.core().collect_metadata(plan, directory)
+        hardware = {"configured_isolation_metadata": metadata_record}
+        runtime = training.enforce_runtime(plan["runtime_environment"], os.environ)
+        hardware["runtime_environment"] = runtime
+        installed = reader.read_json(directory / "installed_backend.json")
+        _capture_core(directory, plan, hardware, installed)
+    finally:
+        os.close(parent)
+
+
 def parse_arguments(argv=None):
     """Separate metadata/tool inspection, preparation, parent execution, and its private capture child."""
     parser = argparse.ArgumentParser(description=__doc__)
     operation = parser.add_mutually_exclusive_group()
     operation.add_argument("--prepared-unit", type=Path)
     operation.add_argument("--capture-unit", type=Path)
+    operation.add_argument("--owned-waiter-unit", type=Path)
     operation.add_argument("--direct-waiter-unit", type=Path, help=argparse.SUPPRESS)
     operation.add_argument("--inspect-profile-tool", type=Path)
     parser.add_argument("--prepare-only", action="store_true")
@@ -644,7 +878,7 @@ def parse_arguments(argv=None):
     args = parser.parse_args(argv)
     fields = ("source_root", "source_commit", "configuration", "runtime_environment", "asset_record", "study_registry",
               "accepted_baseline_specification", "profile_tool_record", "run_dir", "unit_id", "gpu_uuid", "hardware_class")
-    if args.prepared_unit or args.capture_unit or args.direct_waiter_unit or args.inspect_profile_tool:
+    if args.prepared_unit or args.capture_unit or args.owned_waiter_unit or args.direct_waiter_unit or args.inspect_profile_tool:
         if args.prepare_only or any(getattr(args, name) is not None for name in (*fields, "jaxtari_source_root", "seed_start",
                                                                               "minimum_updates", "maximum_active_seconds", "python", "configured_isolation_profile", "target_qualification_record", "target_qualification_review",
                                                                               "direct_binding_profile", "direct_history_inputs", "direct_qualification_record", "direct_qualification_review")):
@@ -688,6 +922,8 @@ if __name__ == "__main__":
         print(json.dumps(tool_record(arguments.inspect_profile_tool), indent=2), flush=True)
     elif arguments.prepared_unit:
         run_prepared(arguments.prepared_unit)
+    elif arguments.owned_waiter_unit:
+        raise SystemExit(run_owned_waiter(arguments.owned_waiter_unit))
     elif arguments.capture_unit:
         if arguments.direct_held_lock_fd is not None:
             capture(arguments.capture_unit, arguments.direct_held_lock_fd)

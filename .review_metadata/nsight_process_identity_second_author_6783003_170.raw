@@ -1,0 +1,129 @@
+test_both_raw_user_snapshots_and_exact_types_are_required (test_nsight_process_identity.ProcessObservationTests)
+A later user change or Boolean user identifier cannot authorize release. ... ok
+test_cleanup_uses_only_pinned_handles_and_actual_popen_wait (test_nsight_process_identity.ProcessObservationTests)
+Never select a signal target from a process group or an unproved PID. ... ok
+test_different_process_groups_and_sessions_pass_with_real_edges (test_nsight_process_identity.ProcessObservationTests)
+A new session is valid only with an independently proved positive ancestry path. ... ok
+test_exit_or_reuse_during_recheck_refuses (test_nsight_process_identity.ProcessObservationTests)
+Even an initially valid edge cannot outlive its pinned identity. ... ok
+test_foreign_user_refuses_before_command_inspection (test_nsight_process_identity.ProcessObservationTests)
+Do not retain a foreign descendant command even if a child list names its PID. ... ok
+test_launcher_image_transition_preserves_the_pinned_identity (test_nsight_process_identity.ProcessObservationTests)
+Allow an observed executable transition without inventing the installed Nsight tree. ... ok
+test_launcher_transition_cannot_change_its_birth_or_user (test_nsight_process_identity.ProcessObservationTests)
+A permitted executable change never permits another process or user. ... ok
+test_mismatched_parent_edge_refuses (test_nsight_process_identity.ProcessObservationTests)
+A child-list candidate must independently report the same actual parent. ... ok
+test_missing_claimed_pid_never_causes_arbitrary_proc_inspection (test_nsight_process_identity.ProcessObservationTests)
+Search only observed owned descendants, rather than walking up a claimed foreign PID. ... ok
+test_other_allocation_refuses_before_command_inspection (test_nsight_process_identity.ProcessObservationTests)
+An actual PID from another cgroup cannot authorize a capture. ... ok
+test_saved_command_and_user_raw_bytes_are_checked (test_nsight_process_identity.ProcessObservationTests)
+Reject changed summaries under unchanged raw process observations. ... ok
+test_saved_edge_requires_original_raw_child_list (test_nsight_process_identity.ProcessObservationTests)
+Coherent summary fields cannot replace actual positive kernel child-list evidence. ... ok
+test_saved_pid_alias_or_boolean_identity_refuses (test_nsight_process_identity.ProcessObservationTests)
+Keep canonical PID strings and exact integer identity types. ... ok
+test_wrong_capture_birth_or_source_command_refuses (test_nsight_process_identity.ProcessObservationTests)
+A reused PID or another Python entry cannot receive release. ... ok
+test_both_raw_user_snapshots_and_exact_types_are_required (test_nsight_process_identity.ProcessObservationTests)
+A later user change or Boolean user identifier cannot authorize release. ... ok
+test_cleanup_uses_only_pinned_handles_and_actual_popen_wait (test_nsight_process_identity.ProcessObservationTests)
+Never select a signal target from a process group or an unproved PID. ... ok
+test_different_process_groups_and_sessions_pass_with_real_edges (test_nsight_process_identity.ProcessObservationTests)
+A new session is valid only with an independently proved positive ancestry path. ... ok
+test_exit_or_reuse_during_recheck_refuses (test_nsight_process_identity.ProcessObservationTests)
+Even an initially valid edge cannot outlive its pinned identity. ... ok
+test_foreign_user_refuses_before_command_inspection (test_nsight_process_identity.ProcessObservationTests)
+Do not retain a foreign descendant command even if a child list names its PID. ... ok
+test_launcher_image_transition_preserves_the_pinned_identity (test_nsight_process_identity.ProcessObservationTests)
+Allow an observed executable transition without inventing the installed Nsight tree. ... ok
+test_launcher_transition_cannot_change_its_birth_or_user (test_nsight_process_identity.ProcessObservationTests)
+A permitted executable change never permits another process or user. ... ok
+test_mismatched_parent_edge_refuses (test_nsight_process_identity.ProcessObservationTests)
+A child-list candidate must independently report the same actual parent. ... ok
+test_missing_claimed_pid_never_causes_arbitrary_proc_inspection (test_nsight_process_identity.ProcessObservationTests)
+Search only observed owned descendants, rather than walking up a claimed foreign PID. ... ok
+test_other_allocation_refuses_before_command_inspection (test_nsight_process_identity.ProcessObservationTests)
+An actual PID from another cgroup cannot authorize a capture. ... ok
+test_saved_command_and_user_raw_bytes_are_checked (test_nsight_process_identity.ProcessObservationTests)
+Reject changed summaries under unchanged raw process observations. ... ok
+test_saved_edge_requires_original_raw_child_list (test_nsight_process_identity.ProcessObservationTests)
+Coherent summary fields cannot replace actual positive kernel child-list evidence. ... ok
+test_saved_pid_alias_or_boolean_identity_refuses (test_nsight_process_identity.ProcessObservationTests)
+Keep canonical PID strings and exact integer identity types. ... ok
+test_wrong_capture_birth_or_source_command_refuses (test_nsight_process_identity.ProcessObservationTests)
+A reused PID or another Python entry cannot receive release. ... ok
+test_capture_core_matches_preserved_original_ast (test_profile_owned_processes.ProfileProtocolTests)
+The observer does not change numerical configuration, warmup, kernels or capture contents. ... ok
+test_child_observation_precedes_every_numerical_operation (test_profile_owned_processes.ProfileProtocolTests)
+A denied release must not reach metadata-dependent CUDA/JAX initialization or the learner. ... ok
+test_cold_new_helper_union_imports_without_site_or_numerical_modules (test_profile_owned_processes.ProfileProtocolTests)
+Use an actual isolated metadata child from only the complete staged helper roster. ... FAIL
+test_new_helper_is_conditional_and_rejects_unsupported_paths (test_profile_owned_processes.ProfileProtocolTests)
+Only explicitly new configured profiles receive the observation dependency. ... ok
+test_protocol_marker_refuses_wrong_hardware_or_direct_plan (test_profile_owned_processes.ProfileProtocolTests)
+An unchanged direct/default plan cannot select the A4500 process protocol. ... ok
+test_both_raw_user_snapshots_and_exact_types_are_required (test_profile_owned_processes.SavedProcessTests)
+A later user change or Boolean user identifier cannot authorize release. ... ok
+test_cleanup_uses_only_pinned_handles_and_actual_popen_wait (test_profile_owned_processes.SavedProcessTests)
+Never select a signal target from a process group or an unproved PID. ... ok
+test_different_process_groups_and_sessions_pass_with_real_edges (test_profile_owned_processes.SavedProcessTests)
+A new session is valid only with an independently proved positive ancestry path. ... ok
+test_exit_or_reuse_during_recheck_refuses (test_profile_owned_processes.SavedProcessTests)
+Even an initially valid edge cannot outlive its pinned identity. ... ok
+test_foreign_user_refuses_before_command_inspection (test_profile_owned_processes.SavedProcessTests)
+Do not retain a foreign descendant command even if a child list names its PID. ... ok
+test_full_saved_history_never_reads_historical_pids (test_profile_owned_processes.SavedProcessTests)
+A valid actual-parent wait can be replayed after its process has ended. ... ok
+test_launcher_image_transition_preserves_the_pinned_identity (test_profile_owned_processes.SavedProcessTests)
+Allow an observed executable transition without inventing the installed Nsight tree. ... ok
+test_launcher_transition_cannot_change_its_birth_or_user (test_profile_owned_processes.SavedProcessTests)
+A permitted executable change never permits another process or user. ... ok
+test_mismatched_parent_edge_refuses (test_profile_owned_processes.SavedProcessTests)
+A child-list candidate must independently report the same actual parent. ... ok
+test_missing_claimed_pid_never_causes_arbitrary_proc_inspection (test_profile_owned_processes.SavedProcessTests)
+Search only observed owned descendants, rather than walking up a claimed foreign PID. ... ok
+test_nsight_exit_does_not_replace_actual_child_wait (test_profile_owned_processes.SavedProcessTests)
+A failed, signalled, intervened or different Python child never passes as a successful capture. ... ok
+test_other_allocation_refuses_before_command_inspection (test_profile_owned_processes.SavedProcessTests)
+An actual PID from another cgroup cannot authorize a capture. ... ok
+test_saved_command_and_user_raw_bytes_are_checked (test_profile_owned_processes.SavedProcessTests)
+Reject changed summaries under unchanged raw process observations. ... ok
+test_saved_edge_requires_original_raw_child_list (test_profile_owned_processes.SavedProcessTests)
+Coherent summary fields cannot replace actual positive kernel child-list evidence. ... ok
+test_saved_intent_schema_challenge_and_step_are_strict (test_profile_owned_processes.SavedProcessTests)
+A source hash alone cannot replace the predeclared one-attempt and numeric-step protocol. ... ok
+test_saved_numerical_result_must_match_the_actual_child (test_profile_owned_processes.SavedProcessTests)
+Another result PID or an omitted observation cannot receive profile credit. ... ok
+test_saved_pid_alias_or_boolean_identity_refuses (test_profile_owned_processes.SavedProcessTests)
+Keep canonical PID strings and exact integer identity types. ... ok
+test_wrong_capture_birth_or_source_command_refuses (test_profile_owned_processes.SavedProcessTests)
+A reused PID or another Python entry cannot receive release. ... ok
+
+======================================================================
+FAIL: test_cold_new_helper_union_imports_without_site_or_numerical_modules (test_profile_owned_processes.ProfileProtocolTests)
+Use an actual isolated metadata child from only the complete staged helper roster.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_owned_processes.py", line 157, in test_cold_new_helper_union_imports_without_site_or_numerical_modules
+    self.assertEqual(returned.returncode, 0, returned.stderr)
+AssertionError: 1 != 0 : Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/tmp/tmp7v9ufak0/profile_selected.py", line 30, in <module>
+    import measure_selected as measurement
+  File "/tmp/tmp7v9ufak0/measure_selected.py", line 36, in <module>
+    import train_optimized as training
+  File "/tmp/tmp7v9ufak0/train_optimized.py", line 40, in <module>
+    PROJECT_ROOT = SCRIPT_ROOT.parents[2]
+  File "/usr/lib/python3.10/pathlib.py", line 530, in __getitem__
+    raise IndexError(idx)
+IndexError: 2
+
+
+----------------------------------------------------------------------
+Ran 51 tests in 1.616s
+
+FAILED (failures=1)

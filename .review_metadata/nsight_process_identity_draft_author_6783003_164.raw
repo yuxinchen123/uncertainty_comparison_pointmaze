@@ -1,0 +1,27 @@
+test_cleanup_uses_only_pinned_handles_and_actual_popen_wait (test_nsight_process_identity.ProcessObservationTests)
+Never select a signal target from a process group or an unproved PID. ... ok
+test_different_process_groups_and_sessions_pass_with_real_edges (test_nsight_process_identity.ProcessObservationTests)
+A new session is valid only with an independently proved positive ancestry path. ... ok
+test_exit_or_reuse_during_recheck_refuses (test_nsight_process_identity.ProcessObservationTests)
+Even an initially valid edge cannot outlive its pinned identity. ... ok
+test_foreign_user_refuses_before_command_inspection (test_nsight_process_identity.ProcessObservationTests)
+Do not retain a foreign descendant command even if a child list names its PID. ... ok
+test_mismatched_parent_edge_refuses (test_nsight_process_identity.ProcessObservationTests)
+A child-list candidate must independently report the same actual parent. ... ok
+test_missing_claimed_pid_never_causes_arbitrary_proc_inspection (test_nsight_process_identity.ProcessObservationTests)
+Search only observed owned descendants, rather than walking up a claimed foreign PID. ... ok
+test_other_allocation_refuses_before_command_inspection (test_nsight_process_identity.ProcessObservationTests)
+An actual PID from another cgroup cannot authorize a capture. ... ok
+test_saved_command_and_user_raw_bytes_are_checked (test_nsight_process_identity.ProcessObservationTests)
+Reject changed summaries under unchanged raw process observations. ... ok
+test_saved_edge_requires_original_raw_child_list (test_nsight_process_identity.ProcessObservationTests)
+Coherent summary fields cannot replace actual positive kernel child-list evidence. ... ok
+test_saved_pid_alias_or_boolean_identity_refuses (test_nsight_process_identity.ProcessObservationTests)
+Keep canonical PID strings and exact integer identity types. ... ok
+test_wrong_capture_birth_or_source_command_refuses (test_nsight_process_identity.ProcessObservationTests)
+A reused PID or another Python entry cannot receive release. ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.118s
+
+OK

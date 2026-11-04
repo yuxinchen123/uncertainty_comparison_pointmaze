@@ -29,7 +29,8 @@ class ProfileCommonConfirmationHelpersTests(unittest.TestCase):
         self.fixture.files['confirmation'].write_text(json.dumps(self.fixture.confirmation))
         self.fixture.documents['baseline']['configured_isolation_profile']=support.core().PROFILE
         self.fixture.files['baseline'].write_text(json.dumps(self.fixture.documents['baseline']))
-        self.names=profile.required_helpers(True,False,True)
+        self.legacy_names=profile.required_helpers(True,False,True)
+        self.names=profile.required_helpers(True,False,True,True)
         self.helpers={'source_root':str(profile.SCRIPTS.parents[2]),'source_commit':'b'*40,
             'files':{PREFIX+name:hashlib.sha256((profile.SCRIPTS/name).read_bytes()).hexdigest() for name in self.names}}
 
@@ -47,6 +48,7 @@ class ProfileCommonConfirmationHelpersTests(unittest.TestCase):
             return {'source_root':str(root),'source_commit':commit,'files':{name:'c'*64 for name in paths},
                 'synthetic_metadata_fixture':True}
         with patch.object(profile.diagnostic,'core_identity',return_value={'synthetic_metadata_fixture':True}), \
+                patch.object(profile,'require_reviewed_profile_process_admission'), \
                 patch.object(profile.training,'source_receipt',side_effect=source_receipt), \
                 patch.object(profile,'helper_receipt',return_value=self.helpers), \
                 patch.object(support,'prepare_qualification_inputs',side_effect=previous), \
@@ -58,6 +60,7 @@ class ProfileCommonConfirmationHelpersTests(unittest.TestCase):
     def verify(self,directory,plan):
         """Exercise actual staged-byte checks while explicitly substituting unrelated stable source gates."""
         with ExitStack() as stack:
+            stack.enter_context(patch.object(profile,'require_reviewed_profile_process_admission'))
             stack.enter_context(patch.object(profile,'__file__',str(directory/'code/profile_selected.py')))
             for name,module in (('measure_selected.py',profile.measurement),('diagnose_gpu_execution.py',profile.diagnostic),
                     ('post_comparison_validation.py',profile.validation),('train_optimized.py',profile.training)):
@@ -72,8 +75,9 @@ class ProfileCommonConfirmationHelpersTests(unittest.TestCase):
         for configured,direct in ((False,False),(True,False),(False,True)):
             old=tuple(dict.fromkeys(('profile_selected.py',*profile.measurement.required_helpers(configured,direct))))
             self.assertEqual(profile.required_helpers(configured,direct),old)
-        self.assertEqual(set(self.names)-set(profile.required_helpers(True)),{'common_confirmation.py'})
-        self.assertEqual(len(self.names),len(profile.required_helpers(True))+1)
+        self.assertEqual(set(self.legacy_names)-set(profile.required_helpers(True)),{'common_confirmation.py'})
+        self.assertEqual(len(self.legacy_names),len(profile.required_helpers(True))+1)
+        self.assertEqual(set(self.names)-set(self.legacy_names),{'nsight_process_identity.py'})
 
     def test_default_and_direct_cannot_request_the_common_reader(self):
         """The extra A4500 reader never opts another consumer into common-confirmation support."""
@@ -101,7 +105,7 @@ class ProfileCommonConfirmationHelpersTests(unittest.TestCase):
         """The committed receipt and staged bytes use one complete helper list."""
         with patch.object(profile.subprocess,'check_output',return_value='c'*40+'\n'), \
                 patch.object(profile.training,'source_receipt',return_value={'synthetic_receipt':True}) as receipt:
-            value=profile.helper_receipt(True,False,True)
+            value=profile.helper_receipt(True,False,True,True)
         self.assertEqual(value,{'synthetic_receipt':True})
         self.assertEqual(receipt.call_args.args[2],[PREFIX+name for name in self.names])
 

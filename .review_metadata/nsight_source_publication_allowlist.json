@@ -1,0 +1,758 @@
+{
+  "base_commit": "10604537c43da99c7f9ad48757491196ec222504",
+  "files": {
+    ".review_metadata/actual_failed_profile_process_identity_diagnosis.json": {
+      "bytes": 137936,
+      "git_mode": "100644",
+      "sha256": "1ea7d03a5a2465194026768dbde6768a551e895cc1fdd25129493956afd38383",
+      "working_mode": "0o660"
+    },
+    ".review_metadata/corrected_final_source_before_three_fixture_replay/.review_metadata/prepare_nsight_process_diagnostic.py": {
+      "bytes": 8843,
+      "git_mode": "100644",
+      "sha256": "cbda1d884478bc4d32ed900a364e61c74af5b195ab034f74c5796f92c8a6a7e3",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/corrected_final_source_before_three_fixture_replay/10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py": {
+      "bytes": 67765,
+      "git_mode": "100644",
+      "sha256": "bde06959eb37322f3d9f8a82ab7457b24c7082a1176f06ff89f4e44f8dbdce0f",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/corrected_final_source_before_three_fixture_replay/10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_nsight_process_tree.py": {
+      "bytes": 16117,
+      "git_mode": "100644",
+      "sha256": "8d2e83caf88cf02f836b846e1a60be767b10df355e30c31c0927da5cd9be29b3",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/corrected_final_source_before_three_fixture_replay/10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py": {
+      "bytes": 37441,
+      "git_mode": "100644",
+      "sha256": "f9c6ec46592677203a08053f1ccfd9d4b191cf7b3c06d6acab41e39203968092",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/corrected_final_source_before_three_fixture_replay/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py": {
+      "bytes": 63274,
+      "git_mode": "100644",
+      "sha256": "7a4685106e6e1837aa65df32ab59e623fc946e0619a9a4e75d76cead8e26e5d5",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/corrected_final_source_before_three_fixture_replay/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_configured_measurement.py": {
+      "bytes": 60158,
+      "git_mode": "100644",
+      "sha256": "23b96c13ed832b399e065ba76c8254acd73e345f3032785e37df8b5cc941cde0",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/corrected_final_source_before_three_fixture_replay/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_nsight_diagnostic_preparation.py": {
+      "bytes": 4870,
+      "git_mode": "100644",
+      "sha256": "638a4f203d50afb89ab69c47d971ca5591fcb00e087de2bac7e78968465b71c7",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/corrected_final_source_before_three_fixture_replay/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_nsight_process_diagnostic.py": {
+      "bytes": 5872,
+      "git_mode": "100644",
+      "sha256": "c2dbb8e926ba4b37eedb834d58ffa7ace11f25778e72107971b21cb972a3bc12",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/corrected_final_source_before_three_fixture_replay/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_nsight_process_identity.py": {
+      "bytes": 13674,
+      "git_mode": "100644",
+      "sha256": "f0d7784770fab215b30bead3ba4d67f3d8f98a42758065a2ba93c48a04d52797",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/corrected_final_source_before_three_fixture_replay/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_common_confirmation_helpers.py": {
+      "bytes": 11371,
+      "git_mode": "100644",
+      "sha256": "139816aba5b3ad33c60a5ecd5318368456538d2282d8dcfe301a5280b3a84006",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/corrected_final_source_before_three_fixture_replay/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_owned_processes.py": {
+      "bytes": 19163,
+      "git_mode": "100644",
+      "sha256": "f0a15a086622703ade3340de87eb0798c52b002f5985cf75aeb39cae89239246",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/corrected_source_before_focused_replay/.review_metadata/prepare_nsight_process_diagnostic.py": {
+      "bytes": 8843,
+      "git_mode": "100644",
+      "sha256": "cbda1d884478bc4d32ed900a364e61c74af5b195ab034f74c5796f92c8a6a7e3",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/corrected_source_before_focused_replay/10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py": {
+      "bytes": 67765,
+      "git_mode": "100644",
+      "sha256": "bde06959eb37322f3d9f8a82ab7457b24c7082a1176f06ff89f4e44f8dbdce0f",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/corrected_source_before_focused_replay/10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_nsight_process_tree.py": {
+      "bytes": 16117,
+      "git_mode": "100644",
+      "sha256": "8d2e83caf88cf02f836b846e1a60be767b10df355e30c31c0927da5cd9be29b3",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/corrected_source_before_focused_replay/10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py": {
+      "bytes": 37441,
+      "git_mode": "100644",
+      "sha256": "f9c6ec46592677203a08053f1ccfd9d4b191cf7b3c06d6acab41e39203968092",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/corrected_source_before_focused_replay/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py": {
+      "bytes": 63274,
+      "git_mode": "100644",
+      "sha256": "7a4685106e6e1837aa65df32ab59e623fc946e0619a9a4e75d76cead8e26e5d5",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/corrected_source_before_focused_replay/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_configured_measurement.py": {
+      "bytes": 59984,
+      "git_mode": "100644",
+      "sha256": "65d6960806d3dced03f191711a6823d5ad2389d4a6b5617c44f18499d103d073",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/corrected_source_before_focused_replay/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_nsight_diagnostic_preparation.py": {
+      "bytes": 4870,
+      "git_mode": "100644",
+      "sha256": "638a4f203d50afb89ab69c47d971ca5591fcb00e087de2bac7e78968465b71c7",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/corrected_source_before_focused_replay/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_nsight_process_diagnostic.py": {
+      "bytes": 5872,
+      "git_mode": "100644",
+      "sha256": "c2dbb8e926ba4b37eedb834d58ffa7ace11f25778e72107971b21cb972a3bc12",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/corrected_source_before_focused_replay/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_nsight_process_identity.py": {
+      "bytes": 13674,
+      "git_mode": "100644",
+      "sha256": "f0d7784770fab215b30bead3ba4d67f3d8f98a42758065a2ba93c48a04d52797",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/corrected_source_before_focused_replay/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_common_confirmation_helpers.py": {
+      "bytes": 11371,
+      "git_mode": "100644",
+      "sha256": "139816aba5b3ad33c60a5ecd5318368456538d2282d8dcfe301a5280b3a84006",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/corrected_source_before_focused_replay/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_owned_processes.py": {
+      "bytes": 19163,
+      "git_mode": "100644",
+      "sha256": "f0a15a086622703ade3340de87eb0798c52b002f5985cf75aeb39cae89239246",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/final_source_before_affected_replay/.review_metadata/prepare_nsight_process_diagnostic.py": {
+      "bytes": 8843,
+      "git_mode": "100644",
+      "sha256": "cbda1d884478bc4d32ed900a364e61c74af5b195ab034f74c5796f92c8a6a7e3",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/final_source_before_affected_replay/10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py": {
+      "bytes": 67362,
+      "git_mode": "100644",
+      "sha256": "69cbe39b3db9817e24df1b88e9beb4de1509e4e51e4e9e04cc83e510a3ad8c6e",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/final_source_before_affected_replay/10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_nsight_process_tree.py": {
+      "bytes": 15920,
+      "git_mode": "100644",
+      "sha256": "70c14e89e001226f1a8dcd55c5579a3f7a551eb83dcd410b75233331cf155966",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/final_source_before_affected_replay/10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py": {
+      "bytes": 34200,
+      "git_mode": "100644",
+      "sha256": "f72154383196ef3b2146b72c55b41b0b1e447201b7b8b7fea093eca6ec5909ab",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/final_source_before_affected_replay/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py": {
+      "bytes": 62633,
+      "git_mode": "100644",
+      "sha256": "c3274c3a80964c1cd12057c440c37b80fb638872ea6789cb9afca6e3ecbf3dd4",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/final_source_before_affected_replay/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_configured_measurement.py": {
+      "bytes": 59897,
+      "git_mode": "100644",
+      "sha256": "5d1d10cc9b5412e8cf89198eda0c04189c875299f6af40dc0c42a0e4f07e292a",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/final_source_before_affected_replay/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_nsight_diagnostic_preparation.py": {
+      "bytes": 4870,
+      "git_mode": "100644",
+      "sha256": "638a4f203d50afb89ab69c47d971ca5591fcb00e087de2bac7e78968465b71c7",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/final_source_before_affected_replay/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_nsight_process_diagnostic.py": {
+      "bytes": 5872,
+      "git_mode": "100644",
+      "sha256": "c2dbb8e926ba4b37eedb834d58ffa7ace11f25778e72107971b21cb972a3bc12",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/final_source_before_affected_replay/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_nsight_process_identity.py": {
+      "bytes": 10939,
+      "git_mode": "100644",
+      "sha256": "cb40ce9c4b1fb87901de39b25a08699273e25d85f2928bc5284932d65abb11ec",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/final_source_before_affected_replay/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_common_confirmation_helpers.py": {
+      "bytes": 11185,
+      "git_mode": "100644",
+      "sha256": "b9a56defb7da57b976834d9fb766e0c955824721d8320c5217faa42ea1038570",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/final_source_before_affected_replay/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_owned_processes.py": {
+      "bytes": 15347,
+      "git_mode": "100644",
+      "sha256": "953717fbbcf0333aca5ec9a1a3f8e78b6018921ab4abce0f5b7563269543ab79",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/independent_nsight_source_review/copied_exact_original_paths.json": {
+      "bytes": 4595,
+      "git_mode": "100644",
+      "sha256": "447fc34798b20d78f9c6016bd3a2c5d818d199971bf6dcd0854c3f6e8746fdce",
+      "working_mode": "0o660"
+    },
+    ".review_metadata/independent_nsight_source_review/nsight_process_source_independent_6783003_193.json": {
+      "bytes": 157314,
+      "git_mode": "100644",
+      "sha256": "cdbb38042d24eb6d2ae9f9f399ceadfe0953925d4c5f027471f84f56f9047401",
+      "working_mode": "0o660"
+    },
+    ".review_metadata/independent_nsight_source_review/nsight_process_source_independent_6783003_193.raw": {
+      "bytes": 32272,
+      "git_mode": "100644",
+      "sha256": "bf7fb6012c9d45a7dd125cbc806895b0d583a73c226bffc068df66733d28f69b",
+      "working_mode": "0o660"
+    },
+    ".review_metadata/independent_nsight_source_review/nsight_process_source_independent_6783003_194.json": {
+      "bytes": 156066,
+      "git_mode": "100644",
+      "sha256": "c213e20bc49baae0a01517f14f85351d171bda140607d7c90af71cebbaa6d789",
+      "working_mode": "0o660"
+    },
+    ".review_metadata/independent_nsight_source_review/nsight_process_source_independent_6783003_194.raw": {
+      "bytes": 30945,
+      "git_mode": "100644",
+      "sha256": "e886f74002a58129403e9b49bd422fad5f0825d9916e5088590926becee9193d",
+      "working_mode": "0o660"
+    },
+    ".review_metadata/independent_nsight_source_review/review_nsight_owned_process_source_2026-11-02.py": {
+      "bytes": 10682,
+      "git_mode": "100644",
+      "sha256": "47d7bac9a8f35f174225d67efb83f894282b52d827055524a98ce3f558209532",
+      "working_mode": "0o660"
+    },
+    ".review_metadata/independent_nsight_source_review/review_nsight_owned_process_source_before_tuple_correction_2026-11-02.py": {
+      "bytes": 10666,
+      "git_mode": "100644",
+      "sha256": "8227b25a37cbe9747b35bb02565d6af05ef7c633a4daf9a9b1788887822c4b70",
+      "working_mode": "0o660"
+    },
+    ".review_metadata/nsight_process_corrected_author_review.json": {
+      "bytes": 3661,
+      "git_mode": "100644",
+      "sha256": "da979c46c8c50fb235ec8d2ff137ddaba8943ed352fd33bc59ad6896049d0056",
+      "working_mode": "0o660"
+    },
+    ".review_metadata/nsight_process_corrected_final_source_freeze.json": {
+      "bytes": 3957,
+      "git_mode": "100644",
+      "sha256": "c55e113e3652627a10f08058dab859e27f42c333b210b2ea8edc45744a7af220",
+      "working_mode": "0o660"
+    },
+    ".review_metadata/nsight_process_corrected_source_freeze.json": {
+      "bytes": 3738,
+      "git_mode": "100644",
+      "sha256": "695f381bb99f181681405e9eb8a72eb590d3af8f8748b01ddc1415a7984262c2",
+      "working_mode": "0o660"
+    },
+    ".review_metadata/nsight_process_diagnostic_corrected_design.json": {
+      "bytes": 4796,
+      "git_mode": "100644",
+      "sha256": "42f9540179d56a6bde4795597e40ab60fe3fa26b242cf5624a359aaf6a5aa404",
+      "working_mode": "0o660"
+    },
+    ".review_metadata/nsight_process_diagnostic_design.json": {
+      "bytes": 3924,
+      "git_mode": "100644",
+      "sha256": "3e87e0f5e3c1419510854b74cbb1fb7cc946be224efa943e3c9773e34e66a866",
+      "working_mode": "0o660"
+    },
+    ".review_metadata/nsight_process_fix_author_review.json": {
+      "bytes": 132856,
+      "git_mode": "100644",
+      "sha256": "2f4ac096daca757277f5153c85d2f4abe2f706a2212446e7fd76fc627c722601",
+      "working_mode": "0o660"
+    },
+    ".review_metadata/nsight_process_identity_affected_author_6783003_176.json": {
+      "bytes": 29262,
+      "git_mode": "100644",
+      "sha256": "08ad4b8c6ca84c3593848c0d19718ec2aaa97cb0d64568e4906e531d391fd9ee",
+      "working_mode": "0o660"
+    },
+    ".review_metadata/nsight_process_identity_affected_author_6783003_176.raw": {
+      "bytes": 28583,
+      "git_mode": "100644",
+      "sha256": "8dcaa2f289c5e852339642b2db63f1175708882c71c7af1944541704e76a3664",
+      "working_mode": "0o660"
+    },
+    ".review_metadata/nsight_process_identity_corrected_focus_author_6783003_183.json": {
+      "bytes": 20845,
+      "git_mode": "100644",
+      "sha256": "5298791524cd50e600315a94dc73c0a759a190a13d66c015b69727a29186fe87",
+      "working_mode": "0o660"
+    },
+    ".review_metadata/nsight_process_identity_corrected_focus_author_6783003_183.raw": {
+      "bytes": 24850,
+      "git_mode": "100644",
+      "sha256": "6be322292df8c218b7b5d86e4fb0cc1540fc806da89d1e353aa31d335db61b2a",
+      "working_mode": "0o660"
+    },
+    ".review_metadata/nsight_process_identity_draft_author_6783003_164.json": {
+      "bytes": 3805,
+      "git_mode": "100644",
+      "sha256": "18e099165e159a393708b3c4c19d36525083b0e4203e2a9edbbe2ddb81046d9e",
+      "working_mode": "0o660"
+    },
+    ".review_metadata/nsight_process_identity_draft_author_6783003_164.raw": {
+      "bytes": 2142,
+      "git_mode": "100644",
+      "sha256": "9ed94f38d86cf1afdfdbf77414380b864bfc916f0b0dce3c6812dc4e1e983710",
+      "working_mode": "0o660"
+    },
+    ".review_metadata/nsight_process_identity_final_affected_author_6783003_178.json": {
+      "bytes": 27996,
+      "git_mode": "100644",
+      "sha256": "e4e7c0b4fac7ec332f91c7fb14c2b32247f5f77266f207c901ec20b9434b7012",
+      "working_mode": "0o660"
+    },
+    ".review_metadata/nsight_process_identity_final_affected_author_6783003_178.raw": {
+      "bytes": 27346,
+      "git_mode": "100644",
+      "sha256": "d936689231c64452540b0db4ab95eb71722724bf08841f60f39794f09cba9e18",
+      "working_mode": "0o660"
+    },
+    ".review_metadata/nsight_process_identity_second_author_6783003_170.json": {
+      "bytes": 6357,
+      "git_mode": "100644",
+      "sha256": "a460e666137217ffa3204b87ad89e72dbb203fca091da0e45b8d1717d1c2265d",
+      "working_mode": "0o660"
+    },
+    ".review_metadata/nsight_process_identity_second_author_6783003_170.raw": {
+      "bytes": 11176,
+      "git_mode": "100644",
+      "sha256": "649b85c9d653b458c9e1531a3a866def766d345c813182f72eb6dbbbfec9b1d0",
+      "working_mode": "0o660"
+    },
+    ".review_metadata/nsight_process_identity_third_author_6783003_173.json": {
+      "bytes": 5730,
+      "git_mode": "100644",
+      "sha256": "e460a40974692aadd214d382ee9e7dedb1e19d64c457ffc712baf8d2d09e2be8",
+      "working_mode": "0o660"
+    },
+    ".review_metadata/nsight_process_identity_third_author_6783003_173.raw": {
+      "bytes": 11200,
+      "git_mode": "100644",
+      "sha256": "ffae42bd483b250e9e6edf75a7a936e97472c1fba88e6bd73e4370c04164b4a6",
+      "working_mode": "0o660"
+    },
+    ".review_metadata/nsight_process_identity_three_profile_fixture_author_6783003_185.json": {
+      "bytes": 8226,
+      "git_mode": "100644",
+      "sha256": "fb4480c857f7234f60dc0058f24ed1c62eb9c5e8d2f99f88576c63b16fa7f826",
+      "working_mode": "0o660"
+    },
+    ".review_metadata/nsight_process_identity_three_profile_fixture_author_6783003_185.raw": {
+      "bytes": 810,
+      "git_mode": "100644",
+      "sha256": "0cdffbd2fe543be31d46c13343212c129e96a3b3a7674baba837653905153535",
+      "working_mode": "0o660"
+    },
+    ".review_metadata/nsight_process_source_freeze.json": {
+      "bytes": 3280,
+      "git_mode": "100644",
+      "sha256": "bb6cfe0e983dd9174eb3c1abf3e2b014b67fbc7db8e5c3b35cb8233bb8502016",
+      "working_mode": "0o660"
+    },
+    ".review_metadata/nsight_process_test_execution_counts.json": {
+      "bytes": 29920,
+      "git_mode": "100644",
+      "sha256": "4765d1278cb40cf805f6bf347ad4d52e81d66210896567ba824bf3cfd57d535a",
+      "working_mode": "0o660"
+    },
+    ".review_metadata/nsight_process_tool_precheck_author_6783003_192.json": {
+      "bytes": 13962,
+      "git_mode": "100644",
+      "sha256": "6ac37988615730b97373260a7214f93deeda5803c67dca7f8f584b07d4c656c8",
+      "working_mode": "0o660"
+    },
+    ".review_metadata/nsight_process_tool_precheck_author_6783003_192.raw": {
+      "bytes": 2439,
+      "git_mode": "100644",
+      "sha256": "d3f670ab87f906307fe3e896b8e42361cacab8e2fbd7dd01424c2458ab837f1a",
+      "working_mode": "0o660"
+    },
+    ".review_metadata/nsight_process_tool_precheck_source_freeze.json": {
+      "bytes": 3962,
+      "git_mode": "100644",
+      "sha256": "4ae2b838be50d725ce827a2ad50edbd7e60618bb0d0a1473748ed676b9ad1bda",
+      "working_mode": "0o660"
+    },
+    ".review_metadata/nsight_source_isolated_commit_scope.json": {
+      "bytes": 1919,
+      "git_mode": "100644",
+      "sha256": "4a2bb4e293faf3eb4e9e78b888bc70f81ecaa4e626d959dd61999f44e85e3958",
+      "working_mode": "0o660"
+    },
+    ".review_metadata/numerical_source_protection_before_final_tests.json": {
+      "bytes": 3331,
+      "git_mode": "100644",
+      "sha256": "4e0abfd8891e0fe26eba07498286576f26112f29864679b9138634919200b6f4",
+      "working_mode": "0o660"
+    },
+    ".review_metadata/numerical_source_protection_thirteen_files.json": {
+      "bytes": 3586,
+      "git_mode": "100644",
+      "sha256": "3820a14844b4cfec7f38342f88ad3f363196135fce533c650827f5c7d2d9e043",
+      "working_mode": "0o660"
+    },
+    ".review_metadata/prepare_nsight_process_diagnostic.py": {
+      "bytes": 8843,
+      "git_mode": "100644",
+      "sha256": "cbda1d884478bc4d32ed900a364e61c74af5b195ab034f74c5796f92c8a6a7e3",
+      "working_mode": "0o660"
+    },
+    ".review_metadata/run_nsight_process_identity_affected_tests.py": {
+      "bytes": 5538,
+      "git_mode": "100644",
+      "sha256": "f231367421a9ace991a4abb26082db7ffd15f15180a894ebe7b1b2d4b9d0bee4",
+      "working_mode": "0o660"
+    },
+    ".review_metadata/run_nsight_process_identity_corrected_focus_tests.py": {
+      "bytes": 5511,
+      "git_mode": "100644",
+      "sha256": "caa3efbd53d85a1de8d334f92c5e477df0ee0bdacfb644d5d6bf7b0ea2896697",
+      "working_mode": "0o660"
+    },
+    ".review_metadata/run_nsight_process_identity_final_affected_tests.py": {
+      "bytes": 5544,
+      "git_mode": "100644",
+      "sha256": "6aee9b6833bb1d5323081388c2b6378c0b063c988c50e76490519de43b38513e",
+      "working_mode": "0o660"
+    },
+    ".review_metadata/run_nsight_process_identity_second_tests.py": {
+      "bytes": 3803,
+      "git_mode": "100644",
+      "sha256": "60ef10f77eff46b39f2b2b726f330976045edf4562ccf400d41b81cd733c4c8b",
+      "working_mode": "0o660"
+    },
+    ".review_metadata/run_nsight_process_identity_tests.py": {
+      "bytes": 2900,
+      "git_mode": "100644",
+      "sha256": "626b984ba208ad054e3047fcaaa838b4c9cc701050fffe5952fc309386e3c070",
+      "working_mode": "0o660"
+    },
+    ".review_metadata/run_nsight_process_identity_third_tests.py": {
+      "bytes": 3955,
+      "git_mode": "100644",
+      "sha256": "a0caada286d3c04b8c89f55fceb61b9f8def4027a703c41bec4aa8aa8c6b49c8",
+      "working_mode": "0o660"
+    },
+    ".review_metadata/run_nsight_process_identity_three_profile_fixture_tests.py": {
+      "bytes": 5210,
+      "git_mode": "100644",
+      "sha256": "41e8933ac2504b3cbb28a3b8a5445faec41023b7a04d3b07ff6c766e0630ef00",
+      "working_mode": "0o660"
+    },
+    ".review_metadata/run_nsight_process_tool_precheck_tests.py": {
+      "bytes": 5250,
+      "git_mode": "100644",
+      "sha256": "bdf4dbbe261d42f9e078679769b838598e757577403ce4898d90799f6041366f",
+      "working_mode": "0o660"
+    },
+    ".review_metadata/source_after_133_of_134_affected_tests/configured_measurement.py": {
+      "bytes": 67362,
+      "git_mode": "100644",
+      "sha256": "69cbe39b3db9817e24df1b88e9beb4de1509e4e51e4e9e04cc83e510a3ad8c6e",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/source_after_133_of_134_affected_tests/diagnose_nsight_process_tree.py": {
+      "bytes": 15803,
+      "git_mode": "100644",
+      "sha256": "7a817fc2b8ac65fb0eeec990d3a8e8263a08d2e2ed993003be54b18626418347",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/source_after_133_of_134_affected_tests/files.json": {
+      "bytes": 1483,
+      "git_mode": "100644",
+      "sha256": "e2f09dc0b6181ae74a357c48837e9bcf176c7a7b2dcf7003dc1e155c9335b53b",
+      "working_mode": "0o660"
+    },
+    ".review_metadata/source_after_133_of_134_affected_tests/nsight_process_identity.py": {
+      "bytes": 34124,
+      "git_mode": "100644",
+      "sha256": "8697d599be742983f4f1303b341a0fe9a0c4c89c9d98e9c5f12e69a131029284",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/source_after_133_of_134_affected_tests/profile_selected.py": {
+      "bytes": 62633,
+      "git_mode": "100644",
+      "sha256": "c3274c3a80964c1cd12057c440c37b80fb638872ea6789cb9afca6e3ecbf3dd4",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/source_after_133_of_134_affected_tests/tests/test_configured_measurement.py": {
+      "bytes": 59621,
+      "git_mode": "100644",
+      "sha256": "1038701a748c2a012ee7c97265870d19c297e4c213edaaab3b4fee8bb8513e43",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/source_after_133_of_134_affected_tests/tests/test_nsight_diagnostic_preparation.py": {
+      "bytes": 4870,
+      "git_mode": "100644",
+      "sha256": "638a4f203d50afb89ab69c47d971ca5591fcb00e087de2bac7e78968465b71c7",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/source_after_133_of_134_affected_tests/tests/test_nsight_process_diagnostic.py": {
+      "bytes": 5872,
+      "git_mode": "100644",
+      "sha256": "c2dbb8e926ba4b37eedb834d58ffa7ace11f25778e72107971b21cb972a3bc12",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/source_after_133_of_134_affected_tests/tests/test_nsight_process_identity.py": {
+      "bytes": 10939,
+      "git_mode": "100644",
+      "sha256": "cb40ce9c4b1fb87901de39b25a08699273e25d85f2928bc5284932d65abb11ec",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/source_after_133_of_134_affected_tests/tests/test_profile_common_confirmation_helpers.py": {
+      "bytes": 11185,
+      "git_mode": "100644",
+      "sha256": "b9a56defb7da57b976834d9fb766e0c955824721d8320c5217faa42ea1038570",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/source_after_133_of_134_affected_tests/tests/test_profile_owned_processes.py": {
+      "bytes": 13281,
+      "git_mode": "100644",
+      "sha256": "9f2d6f69750cbb2fcb3ebf1000eecc67ec07f340f928d6bc748e71b55a9ece3f",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/source_after_50_of_51_second_tests/configured_measurement.py": {
+      "bytes": 67362,
+      "git_mode": "100644",
+      "sha256": "69cbe39b3db9817e24df1b88e9beb4de1509e4e51e4e9e04cc83e510a3ad8c6e",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/source_after_50_of_51_second_tests/diagnose_nsight_process_tree.py": {
+      "bytes": 15797,
+      "git_mode": "100644",
+      "sha256": "ec24fcfcea10d5edacc440babd49a91bcc839f7612fb31d22ab153db5552a604",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/source_after_50_of_51_second_tests/files.json": {
+      "bytes": 862,
+      "git_mode": "100644",
+      "sha256": "a29fa39f9ce7de1d39e969785ec2be5a4c0caac1d7081e2589e50a1cf700bd2e",
+      "working_mode": "0o660"
+    },
+    ".review_metadata/source_after_50_of_51_second_tests/nsight_process_identity.py": {
+      "bytes": 33393,
+      "git_mode": "100644",
+      "sha256": "b1f60351c6f5745e65a669795c57e8f93baeb1e6a52e2c6563a2852f071a7f86",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/source_after_50_of_51_second_tests/profile_selected.py": {
+      "bytes": 62245,
+      "git_mode": "100644",
+      "sha256": "f99cd541c4e1fc6befef8b4899ca1a96a7fb444b9473c477ee37fe6cc8a1c2fc",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/source_after_50_of_51_second_tests/tests/test_nsight_process_identity.py": {
+      "bytes": 10939,
+      "git_mode": "100644",
+      "sha256": "cb40ce9c4b1fb87901de39b25a08699273e25d85f2928bc5284932d65abb11ec",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/source_after_50_of_51_second_tests/tests/test_profile_owned_processes.py": {
+      "bytes": 10636,
+      "git_mode": "100644",
+      "sha256": "b4b0e8b3c02cb4387578c887b9543859e71d5189d589b9b16ee472682e811180",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/source_after_first_11_process_tests/configured_measurement.py": {
+      "bytes": 67362,
+      "git_mode": "100644",
+      "sha256": "69cbe39b3db9817e24df1b88e9beb4de1509e4e51e4e9e04cc83e510a3ad8c6e",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/source_after_first_11_process_tests/diagnose_nsight_process_tree.py": {
+      "bytes": 14746,
+      "git_mode": "100644",
+      "sha256": "098c2db29b055508729c1889aa6287d6b5fbfa5d651c2587a872ccb05a14b56b",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/source_after_first_11_process_tests/files.json": {
+      "bytes": 710,
+      "git_mode": "100644",
+      "sha256": "438f9c7de62f085e9e9b131820b67ffe944c697e6a782dcf5a0b82103d01a982",
+      "working_mode": "0o660"
+    },
+    ".review_metadata/source_after_first_11_process_tests/nsight_process_identity.py": {
+      "bytes": 31046,
+      "git_mode": "100644",
+      "sha256": "5b6a214e82c3f9f92ed22aab9b0b59f54ae21150a2e44b0ca81539fc86491cb2",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/source_after_first_11_process_tests/profile_selected.py": {
+      "bytes": 62245,
+      "git_mode": "100644",
+      "sha256": "f99cd541c4e1fc6befef8b4899ca1a96a7fb444b9473c477ee37fe6cc8a1c2fc",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/source_after_first_11_process_tests/tests/test_nsight_process_identity.py": {
+      "bytes": 9052,
+      "git_mode": "100644",
+      "sha256": "4a9fc4d4d7126a9871a7bb1a39c7b56db986ffdfba8a8199586ef402bcef6afb",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/source_with_tool_precheck_before_focused_tests/.review_metadata/prepare_nsight_process_diagnostic.py": {
+      "bytes": 8843,
+      "git_mode": "100644",
+      "sha256": "cbda1d884478bc4d32ed900a364e61c74af5b195ab034f74c5796f92c8a6a7e3",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/source_with_tool_precheck_before_focused_tests/10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py": {
+      "bytes": 67765,
+      "git_mode": "100644",
+      "sha256": "bde06959eb37322f3d9f8a82ab7457b24c7082a1176f06ff89f4e44f8dbdce0f",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/source_with_tool_precheck_before_focused_tests/10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_nsight_process_tree.py": {
+      "bytes": 16294,
+      "git_mode": "100644",
+      "sha256": "1f1e45268e2f9779fe9974dfaae367efb38d17b2408963210af6235792242c1f",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/source_with_tool_precheck_before_focused_tests/10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py": {
+      "bytes": 37441,
+      "git_mode": "100644",
+      "sha256": "f9c6ec46592677203a08053f1ccfd9d4b191cf7b3c06d6acab41e39203968092",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/source_with_tool_precheck_before_focused_tests/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py": {
+      "bytes": 63274,
+      "git_mode": "100644",
+      "sha256": "7a4685106e6e1837aa65df32ab59e623fc946e0619a9a4e75d76cead8e26e5d5",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/source_with_tool_precheck_before_focused_tests/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_configured_measurement.py": {
+      "bytes": 60158,
+      "git_mode": "100644",
+      "sha256": "23b96c13ed832b399e065ba76c8254acd73e345f3032785e37df8b5cc941cde0",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/source_with_tool_precheck_before_focused_tests/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_nsight_diagnostic_preparation.py": {
+      "bytes": 4870,
+      "git_mode": "100644",
+      "sha256": "638a4f203d50afb89ab69c47d971ca5591fcb00e087de2bac7e78968465b71c7",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/source_with_tool_precheck_before_focused_tests/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_nsight_process_diagnostic.py": {
+      "bytes": 8363,
+      "git_mode": "100644",
+      "sha256": "5b008b7f5abdec024f371e87559d81676aa9c839cde948b65a822e7fcbbb2c0e",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/source_with_tool_precheck_before_focused_tests/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_nsight_process_identity.py": {
+      "bytes": 13674,
+      "git_mode": "100644",
+      "sha256": "f0d7784770fab215b30bead3ba4d67f3d8f98a42758065a2ba93c48a04d52797",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/source_with_tool_precheck_before_focused_tests/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_common_confirmation_helpers.py": {
+      "bytes": 11371,
+      "git_mode": "100644",
+      "sha256": "139816aba5b3ad33c60a5ecd5318368456538d2282d8dcfe301a5280b3a84006",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/source_with_tool_precheck_before_focused_tests/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_owned_processes.py": {
+      "bytes": 19163,
+      "git_mode": "100644",
+      "sha256": "f0a15a086622703ade3340de87eb0798c52b002f5985cf75aeb39cae89239246",
+      "working_mode": "0o444"
+    },
+    ".review_metadata/third_runner_before_tests_tuple_error/failure.json": {
+      "bytes": 192,
+      "git_mode": "100644",
+      "sha256": "4f0bd4bb4f7cf184e6fb77101d721d1fe74e0e495392da2509f76b361e8cd17a",
+      "working_mode": "0o660"
+    },
+    ".review_metadata/third_runner_before_tests_tuple_error/run_nsight_process_identity_third_tests.py": {
+      "bytes": 3997,
+      "git_mode": "100644",
+      "sha256": "260631061a262d1204876d59e41e0fd33d4d216bf8079326d7a53f55d2b9337f",
+      "working_mode": "0o660"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py": {
+      "bytes": 67765,
+      "git_mode": "100644",
+      "sha256": "bde06959eb37322f3d9f8a82ab7457b24c7082a1176f06ff89f4e44f8dbdce0f",
+      "working_mode": "0o660"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_nsight_process_tree.py": {
+      "bytes": 16294,
+      "git_mode": "100644",
+      "sha256": "1f1e45268e2f9779fe9974dfaae367efb38d17b2408963210af6235792242c1f",
+      "working_mode": "0o660"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py": {
+      "bytes": 37441,
+      "git_mode": "100644",
+      "sha256": "f9c6ec46592677203a08053f1ccfd9d4b191cf7b3c06d6acab41e39203968092",
+      "working_mode": "0o660"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py": {
+      "bytes": 63274,
+      "git_mode": "100644",
+      "sha256": "7a4685106e6e1837aa65df32ab59e623fc946e0619a9a4e75d76cead8e26e5d5",
+      "working_mode": "0o660"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_configured_measurement.py": {
+      "bytes": 60158,
+      "git_mode": "100644",
+      "sha256": "23b96c13ed832b399e065ba76c8254acd73e345f3032785e37df8b5cc941cde0",
+      "working_mode": "0o660"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_nsight_diagnostic_preparation.py": {
+      "bytes": 4870,
+      "git_mode": "100644",
+      "sha256": "638a4f203d50afb89ab69c47d971ca5591fcb00e087de2bac7e78968465b71c7",
+      "working_mode": "0o660"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_nsight_process_diagnostic.py": {
+      "bytes": 8363,
+      "git_mode": "100644",
+      "sha256": "5b008b7f5abdec024f371e87559d81676aa9c839cde948b65a822e7fcbbb2c0e",
+      "working_mode": "0o660"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_nsight_process_identity.py": {
+      "bytes": 13674,
+      "git_mode": "100644",
+      "sha256": "f0d7784770fab215b30bead3ba4d67f3d8f98a42758065a2ba93c48a04d52797",
+      "working_mode": "0o660"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_common_confirmation_helpers.py": {
+      "bytes": 11371,
+      "git_mode": "100644",
+      "sha256": "139816aba5b3ad33c60a5ecd5318368456538d2282d8dcfe301a5280b3a84006",
+      "working_mode": "0o660"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_owned_processes.py": {
+      "bytes": 19163,
+      "git_mode": "100644",
+      "sha256": "f0a15a086622703ade3340de87eb0798c52b002f5985cf75aeb39cae89239246",
+      "working_mode": "0o660"
+    }
+  },
+  "kind": "exact_nsight_source_isolated_publication_allowlist",
+  "roster_includes_itself_by_path": true,
+  "source_freeze_sha256": "4ae2b838be50d725ce827a2ad50edbd7e60618bb0d0a1473748ed676b9ad1bda"
+}

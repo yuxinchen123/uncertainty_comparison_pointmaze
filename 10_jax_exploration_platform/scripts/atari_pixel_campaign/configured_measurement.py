@@ -865,6 +865,10 @@ def verify_saved_measurement(directory, result):
     identity = core()
     directory = Path(directory)
     plan = identity.read_receipt(identity.receipt(directory / "measurement_plan.json"))
+    if plan.get("kind") == "selected_configuration_profile" and (
+            "capture_process_protocol" in plan or
+            "10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py" in plan.get("helpers", {}).get("files", {})):
+        raise ValueError("new configured profile evidence remains disabled pending the real Nsight process diagnostic and independent review")
     identity.validate_plan(plan)
     require(directory == Path(plan["campaign_run_dir"]) / "data" / plan["unit_id"]
         and identity.read_receipt(identity.receipt(directory / "measurement_prepared.json")) == {
@@ -920,6 +924,17 @@ def verify_saved_measurement(directory, result):
             and result.get("gpu_uuid") == binding["gpu_uuid"] and memory["gpu_uuid"] == binding["gpu_uuid"]
             and memory["assigned_gpu_process_observation"]["pid"] == metadata["process"]["pid"],
             "the complete profile memory window changed its actual child")
+        process_relative = "10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py"
+        if "capture_process_protocol" in plan or process_relative in plan["helpers"]["files"]:
+            require(plan.get("capture_process_protocol") == "nsight-owned-descendant-observation-version-1",
+                    "the selected profile omitted its committed owned-process protocol")
+            process_path = directory / "code/nsight_process_identity.py"
+            require(process_path.resolve(strict=True) == process_path and not process_path.is_symlink()
+                    and core().receipt(process_path)["sha256"] == plan["helpers"]["files"].get(process_relative),
+                    "the selected profile's committed process reader changed")
+            specification = importlib.util.spec_from_file_location("configured_profile_process_reader", process_path)
+            process_reader = importlib.util.module_from_spec(specification); specification.loader.exec_module(process_reader)
+            process_reader.validate_saved(directory, plan, result)
     return plan, binding
 
 

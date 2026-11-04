@@ -1,0 +1,75 @@
+{
+  "actual_GPU_actions": 0,
+  "actual_diagnostic_execution": false,
+  "actual_jobs_submitted": 0,
+  "admission_granted": false,
+  "base_commit": "10604537c43da99c7f9ad48757491196ec222504",
+  "cleanup": "Signals use verified pidfds only, never process group numbers. The original Popen process is actually waited. Unobserved descendants are never reported as exited. The blocked probe exits on its bounded wait or parent disappearance.",
+  "completion": "The actual waiter directly Popen-spawns and waits for one exact Python probe. Its real wait status is retained separately from the Nsight root exit. No profiling credit follows from this diagnostic, even if process observation succeeds.",
+  "formal_packet_prepared": false,
+  "kind": "nsight_process_diagnostic_preparation_design",
+  "launch_shape": [
+    "nsys",
+    "profile",
+    "--trace=cuda,cudnn",
+    "--sample=none",
+    "--cpuctxsw=none",
+    "--cuda-graph-trace=node",
+    "--capture-range=cudaProfilerApi",
+    "--capture-range-end=stop",
+    "--stop-on-exit=true",
+    "--force-overwrite=false",
+    "--output=<new unit>/trace/capture",
+    "<canonical Python>",
+    "-I",
+    "-S",
+    "-B",
+    "<new staged diagnostic>",
+    "--waiter-unit",
+    "<new unit>"
+  ],
+  "learner_updates": 0,
+  "native_work_scope": "Exactly one actual Nsight profile command with the previously used options. Nsight may load native tracing libraries on its assigned GPU. The Python payload never imports numerical packages, loads CUDA libraries or opens device files, and never calls a profiler API.",
+  "preparer": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/.review_metadata/prepare_nsight_process_diagnostic.py",
+    "sha256": "693bd71a67f8b5e45f8245b1eea8b0962ee9bfec4f011bdcc4855bdf35d02626"
+  },
+  "published_helper_commit": null,
+  "required_before_submission": [
+    "Independent review of exact source/tests and this formatter",
+    "Actual publication and clean detached source",
+    "Actual frozen new packet and five data records",
+    "Independent static packet review",
+    "Fresh owned resource/reservation and both monitoring proofs",
+    "Root-only held submission with exact IDs/row fsynced",
+    "Root-only fresh fixed-ID release and atomic final real ownership sidecar"
+  ],
+  "resources": {
+    "account": "sl5nw_base",
+    "cpus": 1,
+    "gres": "gpu:nvidia_rtx_a4500:1",
+    "memory_gib": 2,
+    "node": "jaguar03",
+    "partition": "gpu",
+    "qos": "csresnolim",
+    "requeue": false,
+    "reservation": "sl5nw_168",
+    "wall_seconds": 300
+  },
+  "runtime_entry": "Canonical existing profile Python with -I -S -B for the observer, waiter and probe.",
+  "scientific_and_profile_credit": 0,
+  "source_and_relationship": "The attempt challenge binds the exact plan and staged source. The parent starts from its actual Popen PID, opens a pidfd, then reads only positive descendant links through that owned process tree. Each PID has all four UIDs, exact numeric-step cgroup, birth, parent, command, executable and groups. The kernel children lists establish positive edges only; absence or process changes refuse release. No complete-tree claim is made.",
+  "source_functions_unchanged": {
+    "_capture_core": {
+      "10604537c43da99c7f9ad48757491196ec222504": true,
+      "fdb35f886ad01c6d4ed387dc55b172d0221a9853": true
+    }
+  },
+  "source_is_uncommitted_draft": true,
+  "source_modules": [
+    "diagnose_nsight_process_tree.py",
+    "nsight_process_identity.py"
+  ],
+  "standards": "Both packet and data unit receive all five ordinary standard records. Source stays uncommitted until reviewed and published; formatter then requires a new detached clean committed root.",
+  "worktree": "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work"
+}

@@ -1,0 +1,52 @@
+{
+  "actual_GPU_or_job_or_network_actions": 0,
+  "actual_Nsight_or_profile_experiment": false,
+  "admission_granted": false,
+  "allowed_cold_import_children": [
+    [
+      "/usr/bin/python3",
+      "-I",
+      "-S",
+      "-B",
+      "-c",
+      "import importlib.util,pathlib,sys; p=pathlib.Path(sys.argv[1]);sys.path.insert(0,str(p));s=importlib.util.spec_from_file_location('cold_profile',p/'profile_selected.py');m=importlib.util.module_from_spec(s);s.loader.exec_module(m);assert not any(k.split('.')[0] in {'jax','jaxlib','numpy','torch','flax','optax'} for k in sys.modules);assert len(m.required_helpers(True,False,True,True))==23;print('metadata-only staged profile import passed')",
+      "/tmp/tmp7v9ufak0"
+    ]
+  ],
+  "error_details": [],
+  "errors": 0,
+  "failure_details": [
+    {
+      "test": "test_profile_owned_processes.ProfileProtocolTests.test_cold_new_helper_union_imports_without_site_or_numerical_modules",
+      "traceback": "Traceback (most recent call last):\n  File \"/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_owned_processes.py\", line 157, in test_cold_new_helper_union_imports_without_site_or_numerical_modules\n    self.assertEqual(returned.returncode, 0, returned.stderr)\nAssertionError: 1 != 0 : Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"<frozen importlib._bootstrap_external>\", line 883, in exec_module\n  File \"<frozen importlib._bootstrap>\", line 241, in _call_with_frames_removed\n  File \"/tmp/tmp7v9ufak0/profile_selected.py\", line 30, in <module>\n    import measure_selected as measurement\n  File \"/tmp/tmp7v9ufak0/measure_selected.py\", line 36, in <module>\n    import train_optimized as training\n  File \"/tmp/tmp7v9ufak0/train_optimized.py\", line 40, in <module>\n    PROJECT_ROOT = SCRIPT_ROOT.parents[2]\n  File \"/usr/lib/python3.10/pathlib.py\", line 530, in __getitem__\n    raise IndexError(idx)\nIndexError: 2\n\n"
+    }
+  ],
+  "failures": 1,
+  "job_id": "6783003",
+  "passed": false,
+  "raw": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/.review_metadata/nsight_process_identity_second_author_6783003_170.raw",
+    "sha256": "649b85c9d653b458c9e1531a3a866def766d345c813182f72eb6dbbbfec9b1d0"
+  },
+  "real_processes_launched": 1,
+  "scientific_credit": 0,
+  "source_after": {
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py": "69cbe39b3db9817e24df1b88e9beb4de1509e4e51e4e9e04cc83e510a3ad8c6e",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_nsight_process_tree.py": "ec24fcfcea10d5edacc440babd49a91bcc839f7612fb31d22ab153db5552a604",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py": "b1f60351c6f5745e65a669795c57e8f93baeb1e6a52e2c6563a2852f071a7f86",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py": "f99cd541c4e1fc6befef8b4899ca1a96a7fb444b9473c477ee37fe6cc8a1c2fc",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_nsight_process_identity.py": "cb40ce9c4b1fb87901de39b25a08699273e25d85f2928bc5284932d65abb11ec",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_owned_processes.py": "b4b0e8b3c02cb4387578c887b9543859e71d5189d589b9b16ee472682e811180"
+  },
+  "source_before": {
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py": "69cbe39b3db9817e24df1b88e9beb4de1509e4e51e4e9e04cc83e510a3ad8c6e",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_nsight_process_tree.py": "ec24fcfcea10d5edacc440babd49a91bcc839f7612fb31d22ab153db5552a604",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py": "b1f60351c6f5745e65a669795c57e8f93baeb1e6a52e2c6563a2852f071a7f86",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py": "f99cd541c4e1fc6befef8b4899ca1a96a7fb444b9473c477ee37fe6cc8a1c2fc",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_nsight_process_identity.py": "cb40ce9c4b1fb87901de39b25a08699273e25d85f2928bc5284932d65abb11ec",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_owned_processes.py": "b4b0e8b3c02cb4387578c887b9543859e71d5189d589b9b16ee472682e811180"
+  },
+  "step_id": "170",
+  "synthetic_proc_files_and_mocked_pidfds_only": true,
+  "tests": 51
+}

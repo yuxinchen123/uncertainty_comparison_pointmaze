@@ -1,0 +1,76 @@
+{
+  "actual_Nsight_or_GPU_work": false,
+  "base_commit": "10604537c43da99c7f9ad48757491196ec222504",
+  "capture_core_ast_unchanged": true,
+  "diagnostic_independent_of_temporary_profile_refusal": true,
+  "files": {
+    ".review_metadata/prepare_nsight_process_diagnostic.py": {
+      "bytes": 8843,
+      "mode": "0o660",
+      "sha256": "cbda1d884478bc4d32ed900a364e61c74af5b195ab034f74c5796f92c8a6a7e3"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py": {
+      "bytes": 67765,
+      "mode": "0o660",
+      "sha256": "bde06959eb37322f3d9f8a82ab7457b24c7082a1176f06ff89f4e44f8dbdce0f"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_nsight_process_tree.py": {
+      "bytes": 16294,
+      "mode": "0o660",
+      "sha256": "1f1e45268e2f9779fe9974dfaae367efb38d17b2408963210af6235792242c1f"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py": {
+      "bytes": 37441,
+      "mode": "0o660",
+      "sha256": "f9c6ec46592677203a08053f1ccfd9d4b191cf7b3c06d6acab41e39203968092"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py": {
+      "bytes": 63274,
+      "mode": "0o660",
+      "sha256": "7a4685106e6e1837aa65df32ab59e623fc946e0619a9a4e75d76cead8e26e5d5"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_configured_measurement.py": {
+      "bytes": 60158,
+      "mode": "0o660",
+      "sha256": "23b96c13ed832b399e065ba76c8254acd73e345f3032785e37df8b5cc941cde0"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_nsight_diagnostic_preparation.py": {
+      "bytes": 4870,
+      "mode": "0o660",
+      "sha256": "638a4f203d50afb89ab69c47d971ca5591fcb00e087de2bac7e78968465b71c7"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_nsight_process_diagnostic.py": {
+      "bytes": 8363,
+      "mode": "0o660",
+      "sha256": "5b008b7f5abdec024f371e87559d81676aa9c839cde948b65a822e7fcbbb2c0e"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_nsight_process_identity.py": {
+      "bytes": 13674,
+      "mode": "0o660",
+      "sha256": "f0d7784770fab215b30bead3ba4d67f3d8f98a42758065a2ba93c48a04d52797"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_common_confirmation_helpers.py": {
+      "bytes": 11371,
+      "mode": "0o660",
+      "sha256": "139816aba5b3ad33c60a5ecd5318368456538d2282d8dcfe301a5280b3a84006"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_owned_processes.py": {
+      "bytes": 19163,
+      "mode": "0o660",
+      "sha256": "f0a15a086622703ade3340de87eb0798c52b002f5985cf75aeb39cae89239246"
+    }
+  },
+  "formal_profile_enablement": false,
+  "kind": "nsight_owned_process_source_and_diagnostic_freeze",
+  "only_change_since_previous": "Hash the exact ordinary Nsight executable before its version subprocess, retain its post-version hash, and test both refusal boundaries without real tool execution.",
+  "ordinary_configured_profile_preparation_and_admission_disabled": true,
+  "previous_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/.review_metadata/nsight_process_corrected_final_source_freeze.json",
+    "sha256": "c55e113e3652627a10f08058dab859e27f42c333b210b2ea8edc45744a7af220"
+  },
+  "real_diagnostic_review_required": true,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "snapshot": "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work/.review_metadata/source_with_tool_precheck_before_focused_tests",
+  "worktree": "/p/rlprojects/RND_worktrees/2026-11-01-22-45_profile-nsight-owned-process-observation_actual-child-source-and-slurm-step-before-numerical-work"
+}

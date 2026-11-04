@@ -1,0 +1,308 @@
+test_both_raw_user_snapshots_and_exact_types_are_required (test_nsight_process_identity.ProcessObservationTests)
+A later user change or Boolean user identifier cannot authorize release. ... ok
+test_cleanup_uses_only_pinned_handles_and_actual_popen_wait (test_nsight_process_identity.ProcessObservationTests)
+Never select a signal target from a process group or an unproved PID. ... ok
+test_different_process_groups_and_sessions_pass_with_real_edges (test_nsight_process_identity.ProcessObservationTests)
+A new session is valid only with an independently proved positive ancestry path. ... ok
+test_existing_or_dangling_temporary_and_final_artifacts_refuse (test_nsight_process_identity.ProcessObservationTests)
+Retain every final or partial attempt, including a dangling temporary alias. ... ok
+test_exit_or_reuse_during_recheck_refuses (test_nsight_process_identity.ProcessObservationTests)
+Even an initially valid edge cannot outlive its pinned identity. ... ok
+test_foreign_user_refuses_before_command_inspection (test_nsight_process_identity.ProcessObservationTests)
+Do not retain a foreign descendant command even if a child list names its PID. ... ok
+test_launcher_image_transition_preserves_the_pinned_identity (test_nsight_process_identity.ProcessObservationTests)
+Allow an observed executable transition without inventing the installed Nsight tree. ... ok
+test_launcher_transition_cannot_change_its_birth_or_user (test_nsight_process_identity.ProcessObservationTests)
+A permitted executable change never permits another process or user. ... ok
+test_mismatched_parent_edge_refuses (test_nsight_process_identity.ProcessObservationTests)
+A child-list candidate must independently report the same actual parent. ... ok
+test_missing_claimed_pid_never_causes_arbitrary_proc_inspection (test_nsight_process_identity.ProcessObservationTests)
+Search only observed owned descendants, rather than walking up a claimed foreign PID. ... ok
+test_other_allocation_refuses_before_command_inspection (test_nsight_process_identity.ProcessObservationTests)
+An actual PID from another cgroup cannot authorize a capture. ... ok
+test_publication_is_invisible_until_complete_bytes_are_fsynced (test_nsight_process_identity.ProcessObservationTests)
+A polling peer can never read an empty or partial final JSON file. ... ok
+test_saved_command_and_user_raw_bytes_are_checked (test_nsight_process_identity.ProcessObservationTests)
+Reject changed summaries under unchanged raw process observations. ... ok
+test_saved_edge_requires_original_raw_child_list (test_nsight_process_identity.ProcessObservationTests)
+Coherent summary fields cannot replace actual positive kernel child-list evidence. ... ok
+test_saved_edges_threads_and_births_require_exact_identity_types (test_nsight_process_identity.ProcessObservationTests)
+Floating PIDs and noncanonical birth strings cannot compare equal to real integer identities. ... ok
+test_saved_pid_alias_or_boolean_identity_refuses (test_nsight_process_identity.ProcessObservationTests)
+Keep canonical PID strings and exact integer identity types. ... ok
+test_wrong_capture_birth_or_source_command_refuses (test_nsight_process_identity.ProcessObservationTests)
+A reused PID or another Python entry cannot receive release. ... ok
+test_capture_core_matches_preserved_original_ast (test_profile_owned_processes.ProfileProtocolTests)
+The observer does not change numerical configuration, warmup, kernels or capture contents. ... ok
+test_child_observation_precedes_every_numerical_operation (test_profile_owned_processes.ProfileProtocolTests)
+A denied release must not reach metadata-dependent CUDA/JAX initialization or the learner. ... ok
+test_cold_new_helper_union_imports_without_site_or_numerical_modules (test_profile_owned_processes.ProfileProtocolTests)
+Use an actual isolated metadata child from only the complete staged helper roster. ... ok
+test_current_scientific_reader_refuses_new_profile_evidence_without_real_diagnostic_review (test_profile_owned_processes.ProfileProtocolTests)
+A saved source-only record cannot enable a new formal profile either. ... ok
+test_new_child_rechecks_ancestry_then_collects_its_own_metadata (test_profile_owned_processes.ProfileProtocolTests)
+The new release protocol keeps the real child metadata boundary ahead of the unchanged learner. ... ok
+test_new_configured_preparation_is_disabled_before_any_evidence_or_output_work (test_profile_owned_processes.ProfileProtocolTests)
+Metadata fixture success cannot authorize an ordinary profile without the real diagnostic review. ... ok
+test_new_helper_is_conditional_and_rejects_unsupported_paths (test_profile_owned_processes.ProfileProtocolTests)
+Only explicitly new configured profiles receive the observation dependency. ... ok
+test_new_prepared_plan_admission_is_disabled_before_numerical_or_source_work (test_profile_owned_processes.ProfileProtocolTests)
+A manually supplied marker and exact prepared hash cannot bypass the temporary admission refusal. ... ok
+test_protocol_marker_refuses_wrong_hardware_or_direct_plan (test_profile_owned_processes.ProfileProtocolTests)
+An unchanged direct/default plan cannot select the A4500 process protocol. ... ok
+test_waiter_records_the_actual_python_wait_status (test_profile_owned_processes.ProfileProtocolTests)
+A successful Nsight process cannot change a failing actual Python return to zero. ... ok
+test_both_raw_user_snapshots_and_exact_types_are_required (test_profile_owned_processes.SavedProcessTests)
+A later user change or Boolean user identifier cannot authorize release. ... ok
+test_cleanup_uses_only_pinned_handles_and_actual_popen_wait (test_profile_owned_processes.SavedProcessTests)
+Never select a signal target from a process group or an unproved PID. ... ok
+test_different_process_groups_and_sessions_pass_with_real_edges (test_profile_owned_processes.SavedProcessTests)
+A new session is valid only with an independently proved positive ancestry path. ... ok
+test_existing_or_dangling_temporary_and_final_artifacts_refuse (test_profile_owned_processes.SavedProcessTests)
+Retain every final or partial attempt, including a dangling temporary alias. ... ok
+test_exit_or_reuse_during_recheck_refuses (test_profile_owned_processes.SavedProcessTests)
+Even an initially valid edge cannot outlive its pinned identity. ... ok
+test_foreign_user_refuses_before_command_inspection (test_profile_owned_processes.SavedProcessTests)
+Do not retain a foreign descendant command even if a child list names its PID. ... ok
+test_full_saved_history_never_reads_historical_pids (test_profile_owned_processes.SavedProcessTests)
+A valid actual-parent wait can be replayed after its process has ended. ... ok
+test_launcher_image_transition_preserves_the_pinned_identity (test_profile_owned_processes.SavedProcessTests)
+Allow an observed executable transition without inventing the installed Nsight tree. ... ok
+test_launcher_transition_cannot_change_its_birth_or_user (test_profile_owned_processes.SavedProcessTests)
+A permitted executable change never permits another process or user. ... ok
+test_mismatched_parent_edge_refuses (test_profile_owned_processes.SavedProcessTests)
+A child-list candidate must independently report the same actual parent. ... ok
+test_missing_claimed_pid_never_causes_arbitrary_proc_inspection (test_profile_owned_processes.SavedProcessTests)
+Search only observed owned descendants, rather than walking up a claimed foreign PID. ... ok
+test_nsight_exit_does_not_replace_actual_child_wait (test_profile_owned_processes.SavedProcessTests)
+A failed, signalled, intervened or different Python child never passes as a successful capture. ... ok
+test_other_allocation_refuses_before_command_inspection (test_profile_owned_processes.SavedProcessTests)
+An actual PID from another cgroup cannot authorize a capture. ... ok
+test_publication_is_invisible_until_complete_bytes_are_fsynced (test_profile_owned_processes.SavedProcessTests)
+A polling peer can never read an empty or partial final JSON file. ... ok
+test_saved_command_and_user_raw_bytes_are_checked (test_profile_owned_processes.SavedProcessTests)
+Reject changed summaries under unchanged raw process observations. ... ok
+test_saved_edge_requires_original_raw_child_list (test_profile_owned_processes.SavedProcessTests)
+Coherent summary fields cannot replace actual positive kernel child-list evidence. ... ok
+test_saved_edges_threads_and_births_require_exact_identity_types (test_profile_owned_processes.SavedProcessTests)
+Floating PIDs and noncanonical birth strings cannot compare equal to real integer identities. ... ok
+test_saved_intent_schema_challenge_and_step_are_strict (test_profile_owned_processes.SavedProcessTests)
+A source hash alone cannot replace the predeclared one-attempt and numeric-step protocol. ... ok
+test_saved_numerical_result_must_match_the_actual_child (test_profile_owned_processes.SavedProcessTests)
+Another result PID or an omitted observation cannot receive profile credit. ... ok
+test_saved_pid_alias_or_boolean_identity_refuses (test_profile_owned_processes.SavedProcessTests)
+Keep canonical PID strings and exact integer identity types. ... ok
+test_successful_payload_cannot_replace_the_actual_original_nsight_wait (test_profile_owned_processes.SavedProcessTests)
+The separately observed payload status cannot stand in for the original root Popen status. ... ok
+test_wrong_capture_birth_or_source_command_refuses (test_profile_owned_processes.SavedProcessTests)
+A reused PID or another Python entry cannot receive release. ... ok
+test_absent_final_sidecar_expires_without_any_tool_action (test_nsight_process_diagnostic.DiagnosticTests)
+An unreleased job never starts the actual tool experiment. ... ok
+test_changed_tool_bytes_refuse_before_even_the_version_subprocess (test_nsight_process_diagnostic.DiagnosticTests)
+Never execute an unverified binary to learn whether its recorded identity changed. ... ok
+test_cpu_monitor_or_multiple_devices_or_wrong_resources_refuse (test_nsight_process_diagnostic.DiagnosticTests)
+The diagnostic cannot run inside the CPU monitor or a different resource shape. ... ok
+test_default_command_requires_explicit_role (test_nsight_process_diagnostic.DiagnosticTests)
+The no-argument diagnostic cannot create an attempt or query a tool. ... usage: review_nsight_owned_process_source_2026-11-02.py [-h]
+                                                        (--prepared-unit PREPARED_UNIT | --waiter-unit WAITER_UNIT | --probe-unit PROBE_UNIT)
+review_nsight_owned_process_source_2026-11-02.py: error: one of the arguments --prepared-unit --waiter-unit --probe-unit is required
+ok
+test_duplicate_or_conflicting_owned_ledger_row_refuses (test_nsight_process_diagnostic.DiagnosticTests)
+A matching row cannot hide another recorded command for the same job. ... ok
+test_exact_released_owned_gpu_job_passes_without_query (test_nsight_process_diagnostic.DiagnosticTests)
+Reading exact own ledgers and receipts never initializes Nsight, CUDA or a scheduler query. ... ok
+test_present_invalid_final_sidecar_does_not_wait_or_retry (test_nsight_process_diagnostic.DiagnosticTests)
+Only an absent real-release file can trigger the bounded startup wait. ... ok
+test_tool_hash_is_rechecked_after_the_recorded_version_return (test_nsight_process_diagnostic.DiagnosticTests)
+A successful simulated version return cannot hide a binary change before the actual profile launch. ... ok
+test_wrong_node_refuses_without_physical_index_inference (test_nsight_process_diagnostic.DiagnosticTests)
+Logical selectors are preserved as opaque strings and never used to infer a physical identity. ... ok
+test_dirty_source_refuses_before_any_packet_creation (test_nsight_diagnostic_preparation.PreparationTests)
+An uncommitted source change cannot enter the executable staging closure. ... ok
+test_partial_or_previously_prepared_unit_is_never_reused (test_nsight_diagnostic_preparation.PreparationTests)
+A second preparation refuses rather than replacing any old artifact. ... ok
+test_real_preparation_has_all_standards_null_ids_and_one_bounded_held_command (test_nsight_diagnostic_preparation.PreparationTests)
+A fresh private packet binds exact Git bytes and contains no future launch identity. ... ok
+test_accepted_confirmation_cannot_change_after_preparation (test_profile_selected.SelectedProfileTests)
+The accepted timing record is bound to its prepared bytes before raw cohort checks. ... ok
+test_capture_child_passes_actual_runtime_and_cache_settings_to_core (test_profile_selected.SelectedProfileTests)
+The capture child's runtime evidence comes from enforced process settings before JAX. ... ok
+test_foreign_capture_process_is_not_released (test_profile_selected.SelectedProfileTests)
+A PID with the right birth counter must still belong to this newly created profiler. ... ok
+test_initial_cohort_requires_every_hardware_and_copy_count (test_profile_selected.SelectedProfileTests)
+One missing hardware result blocks profiling even when other counts completed. ... ok
+test_partial_capture_requires_a_new_unit_before_card_admission (test_profile_selected.SelectedProfileTests)
+An incomplete prior capture cannot be reused or mixed with a later execution. ... ok
+test_positive_trace_rows_are_required_before_publication (test_profile_selected.SelectedProfileTests)
+Header-only Nsight output cannot produce a completed selected-baseline result. ... ok
+test_preparation_records_metadata_and_complete_helper_closure (test_profile_selected.SelectedProfileTests)
+The prepared unit contains standard records and no claimed measured evidence. ... ok
+test_prepared_plan_and_staged_helper_changes_fail_closed (test_profile_selected.SelectedProfileTests)
+Changing the manifest or a transitive staged dependency prevents execution. ... ok
+test_private_execution_mode_cannot_override_configuration (test_profile_selected.SelectedProfileTests)
+A staged command cannot select a new runtime, GPU, or update window. ... usage: review_nsight_owned_process_source_2026-11-02.py [-h]
+                                                        [--prepared-unit PREPARED_UNIT | --capture-unit CAPTURE_UNIT | --owned-waiter-unit OWNED_WAITER_UNIT | --inspect-profile-tool INSPECT_PROFILE_TOOL]
+                                                        [--prepare-only]
+                                                        [--configured-isolation-profile CONFIGURED_ISOLATION_PROFILE]
+                                                        [--target-qualification-record TARGET_QUALIFICATION_RECORD]
+                                                        [--target-qualification-review TARGET_QUALIFICATION_REVIEW]
+                                                        [--direct-binding-profile DIRECT_BINDING_PROFILE]
+                                                        [--direct-history-inputs DIRECT_HISTORY_INPUTS]
+                                                        [--direct-qualification-record DIRECT_QUALIFICATION_RECORD]
+                                                        [--direct-qualification-review DIRECT_QUALIFICATION_REVIEW]
+                                                        [--source-root SOURCE_ROOT]
+                                                        [--configuration CONFIGURATION]
+                                                        [--runtime-environment RUNTIME_ENVIRONMENT]
+                                                        [--asset-record ASSET_RECORD]
+                                                        [--study-registry STUDY_REGISTRY]
+                                                        [--accepted-baseline-specification ACCEPTED_BASELINE_SPECIFICATION]
+                                                        [--profile-tool-record PROFILE_TOOL_RECORD]
+                                                        [--jaxtari-source-root JAXTARI_SOURCE_ROOT]
+                                                        [--run-dir RUN_DIR]
+                                                        [--source-commit SOURCE_COMMIT]
+                                                        [--unit-id UNIT_ID]
+                                                        [--gpu-uuid GPU_UUID]
+                                                        [--hardware-class HARDWARE_CLASS]
+                                                        [--seed-start SEED_START]
+                                                        [--minimum-updates MINIMUM_UPDATES]
+                                                        [--maximum-active-seconds MAXIMUM_ACTIVE_SECONDS]
+                                                        [--python PYTHON]
+review_nsight_owned_process_source_2026-11-02.py: error: execution/tool inspection cannot override a prepared configuration
+ok
+test_profiler_receipt_failure_stops_child_before_card_lock_release (test_profile_selected.SelectedProfileTests)
+A failed PID receipt cannot leave the newly started profiler outside owned-child cleanup. ... ok
+test_smallest_capture_covers_execution_group_or_report_window (test_profile_selected.SelectedProfileTests)
+Grouping and scheduled reporting retain every complete original update. ... ok
+test_staged_initial_registry_is_rehashed_before_compute_validation (test_profile_selected.SelectedProfileTests)
+A changed registry copy cannot claim completion of the original thirty mechanisms. ... ok
+test_termination_uses_exception_cleanup_and_restores_handlers (test_profile_selected.SelectedProfileTests)
+SIGTERM reaches the owned-child cleanup before the standing card lock is released. ... ok
+test_tool_receipt_and_immutable_unit_cannot_be_changed (test_profile_selected.SelectedProfileTests)
+The actual target tool receipt is bound before an immutable unit is published. ... ok
+test_unaccepted_or_different_baseline_is_rejected_before_staging (test_profile_selected.SelectedProfileTests)
+A valid profile cannot relabel another configuration or a rejected comparison. ... ok
+test_baseline_replay_checks_the_declaration_before_cohort_readers (test_profile_common_confirmation_helpers.ProfileCommonConfirmationHelpersTests)
+A dropped declaration fails before any original-case or combination validator is invoked. ... ok
+test_changed_or_coherently_rehashed_accepted_field_cannot_change_the_declaration (test_profile_common_confirmation_helpers.ProfileCommonConfirmationHelpersTests)
+Input bytes and the declared helper requirement both remain bound. ... ok
+test_conditional_union_adds_only_the_common_reader (test_profile_common_confirmation_helpers.ProfileCommonConfirmationHelpersTests)
+The new configured closure differs by exactly one file; historical default/direct rosters stay fixed. ... ok
+test_default_and_direct_cannot_request_the_common_reader (test_profile_common_confirmation_helpers.ProfileCommonConfirmationHelpersTests)
+The extra A4500 reader never opts another consumer into common-confirmation support. ... ok
+test_direct_or_default_readback_cannot_borrow_the_common_declaration (test_profile_common_confirmation_helpers.ProfileCommonConfirmationHelpersTests)
+Changing only a consumer's metadata cannot widen its accepted evidence support. ... ok
+test_helper_receipt_requests_the_same_conditional_roster (test_profile_common_confirmation_helpers.ProfileCommonConfirmationHelpersTests)
+The committed receipt and staged bytes use one complete helper list. ... ok
+test_missing_false_or_non_boolean_declaration_refuses (test_profile_common_confirmation_helpers.ProfileCommonConfirmationHelpersTests)
+A common record cannot silently use an old or ambiguous helper declaration. ... ok
+test_missing_or_changed_staged_reader_refuses_before_numerical_work (test_profile_common_confirmation_helpers.ProfileCommonConfirmationHelpersTests)
+A declared file cannot be dropped or changed after the profile is staged. ... ok
+test_preparation_records_the_reader_without_claiming_own_correctness_inputs (test_profile_common_confirmation_helpers.ProfileCommonConfirmationHelpersTests)
+The declaration belongs only to the accepted input, not the profile's numerical protocol. ... ok
+test_removed_helper_map_entry_refuses_even_if_the_file_remains (test_profile_common_confirmation_helpers.ProfileCommonConfirmationHelpersTests)
+The plan must declare the file instead of relying on a nearby source checkout. ... ok
+test_unreviewed_backend_refusal_is_not_changed_by_the_extra_file (test_profile_common_confirmation_helpers.ProfileCommonConfirmationHelpersTests)
+A valid closure still propagates a scientific backend refusal without a baseline-validation record. ... ok
+test_failed_or_partial_query_cannot_keep_an_early_positive_row (test_configured_measurement.AssignedProcessTests)
+Return code, stderr, timeout and truncated capture invalidate otherwise valid own rows. ... ok
+test_invalid_rows_and_duplicate_rows_refuse (test_configured_measurement.AssignedProcessTests)
+Wrong UUID, repeated PID, unavailable/negative memory and malformed CSV cannot receive credit. ... ok
+test_missing_own_process_never_becomes_empty_success (test_configured_measurement.AssignedProcessTests)
+An empty query has unknown occupancy/memory and cannot supply an observed empty list. ... ok
+test_no_query_before_actual_current_binding (test_configured_measurement.AssignedProcessTests)
+An unresolved, remembered or another-process binding refuses before any subprocess. ... ok
+test_observer_requires_the_exact_saved_binding_before_any_query (test_configured_measurement.AssignedProcessTests)
+An isolated ordinary-file fixture checks immutable binding substitution separately from physical validation. ... ok
+test_other_process_is_anonymous_even_at_zero_memory (test_configured_measurement.AssignedProcessTests)
+A foreign row invalidates the sample and saves only a count and byte hashes. ... ok
+test_saved_proof_changes_are_rejected (test_configured_measurement.AssignedProcessTests)
+Changing the command, raw row/hash, PID, UUID, typed memory or timestamp breaks the reader. ... ok
+test_success_preserves_exact_command_bytes_and_positive_peak (test_configured_measurement.AssignedProcessTests)
+Rebuild the exact assigned-UUID command and own process bytes from saved raw CSV. ... ok
+test_allocator_failure_does_not_replace_an_original_update_error (test_configured_measurement.CompleteWindowTests)
+The frozen round's finally block retains its original numerical failure and explicit unknown memory. ... ok
+test_allocator_failure_saves_raw_lifecycle_before_raising (test_configured_measurement.CompleteWindowTests)
+Missing allocator statistics cannot discard already captured raw boundaries and shutdown facts. ... ok
+test_complete_window_rebuilds_actual_peak_and_empty_observed_list (test_configured_measurement.CompleteWindowTests)
+Only complete successful own-only samples produce the original round's required empty list. ... ok
+test_device_counters_do_not_invent_a_reserved_memory_equality (test_configured_measurement.CompleteWindowTests)
+Keep bounded actual total/used/free values without pretending separately reserved bytes are measured. ... ok
+test_every_invalid_successful_device_capture_is_retained_anonymously (test_configured_measurement.CompleteWindowTests)
+Wrong UUID, shape, UTF8 and unavailable counters preserve hashes but no identifying raw output. ... ok
+test_formal_old_round_gate_stays_strict (test_configured_measurement.CompleteWindowTests)
+Neither unknown occupancy nor an invented zero process peak becomes a measured round. ... ok
+test_late_sampler_failure_and_abnormal_shutdown_refuse (test_configured_measurement.CompleteWindowTests)
+An early successful sample never hides errors, dead threads or incomplete joins. ... ok
+test_missing_boundaries_unknown_peak_and_changed_device_refuse (test_configured_measurement.CompleteWindowTests)
+The actual window must have both boundaries, an allocator peak and matching raw physical bytes. ... ok
+test_pair_adapter_restores_original_on_success_and_failure (test_configured_measurement.CompleteWindowTests)
+The frozen paired global observer is never called and is restored for every exit. ... ok
+test_actual_preparation_keeps_null_plan_and_complete_optional_union (test_configured_measurement.ConfiguredPreparationTests)
+Prepare through the real entry and stage every optional dependency without resolving an identity. ... ok
+test_target_preparation_accepts_only_full_equal_original_and_distinct_result_kind (test_configured_measurement.ConfiguredPreparationTests)
+A qualification prepares without a prior common baseline, study proof or target review. ... ok
+test_unresolved_execution_collects_metadata_and_never_uses_old_resolver (test_configured_measurement.ConfiguredPreparationTests)
+The real metadata execution branch leaves Slurm's original CUDA selector untouched. ... ok
+test_wrong_context_or_instrumented_modes_refuse_before_output (test_configured_measurement.ConfiguredPreparationTests)
+This single-card profile cannot enter packing, final learning, H100 or memory instrumentation. ... ok
+test_profile_parent_uses_reserved_supervisor_metadata_without_old_gpu_query (test_configured_measurement.ConfiguredProfileTests)
+The actual metadata-only supervisor branch records its own separate directory and leaves CUDA unchanged. ... ok
+test_profile_plan_null_identity_and_optional_dependencies_are_preserved (test_configured_measurement.ConfiguredProfileTests)
+Both supervisor and child use measurement_plan.json and the original unit launch-binding path. ... ok
+test_trace_child_collects_its_own_unit_metadata_without_parent_substitution (test_configured_measurement.ConfiguredProfileTests)
+The historical release format still collects the actual child's metadata, separately from the new protocol. ... ok
+test_actual_numerical_module_files_must_match_the_frozen_source (test_configured_measurement.ProducerBoundaryTests)
+Synthetic module objects exercise source/namespace/hash checks without importing numerical code. ... ok
+test_default_and_unsupported_readers_refuse_new_profile (test_configured_measurement.ProducerBoundaryTests)
+Packing/final/scaling callers cannot accept a new record through generic identity validation. ... ok
+test_default_helper_rosters_are_unchanged (test_configured_measurement.ProducerBoundaryTests)
+Historical preparation keeps its original sixteen measurement helpers and profile addition. ... ok
+test_fresh_isolated_process_resolves_only_complete_staged_helper_rosters (test_configured_measurement.ProducerBoundaryTests)
+Import real staged/default/combined closures with isolated Python and no ambient helper fallback. ... ok
+test_isolated_optional_import_refuses_missing_sibling (test_configured_measurement.ProducerBoundaryTests)
+A missing ownership sibling cannot be replaced from the checkout or an ambient module cache. ... ok
+test_ordinary_equal_comparison_rejection_is_still_present (test_configured_measurement.ProducerBoundaryTests)
+The equality exception is restricted to the explicit target qualification branch. ... ok
+test_original_qualification_has_no_completed_study_or_baseline_dependency (test_configured_measurement.ProducerBoundaryTests)
+The explicit same-original path can prepare before baseline/final admission exists. ... ok
+test_prepared_measurement_rejects_new_preparation_flags (test_configured_measurement.ProducerBoundaryTests)
+Execution must not silently ignore a profile, qualification or source override. ... ok
+test_prepared_profile_rejects_new_preparation_flags (test_configured_measurement.ProducerBoundaryTests)
+The profiling child cannot change a recorded identity or qualification input. ... ok
+test_actual_pinned_backend_and_original_renderer_metadata_contract (test_configured_measurement.QualificationReaderTests)
+Exercise the real source with its nested x64 context without importing or running numerical code. ... ok
+test_boolean_controlled_counts_and_deselection_refuse (test_configured_measurement.QualificationReaderTests)
+Exact counters retain integer types and external test deselection is never accepted. ... ok
+test_complete_saved_semantics_pass_without_numerical_imports (test_configured_measurement.QualificationReaderTests)
+A complete isolated semantic fixture passes all newly reconstructed fields and exact source test cases. ... ok
+test_dynamic_collection_and_duplicate_phases_refuse (test_configured_measurement.QualificationReaderTests)
+Unsupported dynamic cases and repeated reports cannot replace the committed full test matrix. ... ok
+test_failed_renderer_and_changed_raw_result_agreement_refuse (test_configured_measurement.QualificationReaderTests)
+Failed full-room/synthetic checks cannot remain accepted after their result hashes are updated. ... ok
+test_full_renderer_counts_derive_from_exact_source_and_reduced_matrices_refuse (test_configured_measurement.QualificationReaderTests)
+Require all33 indexed rooms,132 variants and11 synthetic cases declared by these pinned source fixtures. ... ok
+test_missing_libraries_wrong_library_process_and_backend_refuse (test_configured_measurement.QualificationReaderTests)
+The actual loaded image/API evidence must match both original package bytes and the resolved PID. ... ok
+test_read_only_source_receipts_do_not_apply_execution_environment_controls (test_configured_measurement.QualificationReaderTests)
+The historical reader validates the complete roster while leaving the current environment untouched. ... ok
+test_renderer_backend_constants_cannot_change_after_their_recorded_hash (test_configured_measurement.QualificationReaderTests)
+The metadata derivation refuses a changed game constant rather than inferring a smaller valid matrix. ... ok
+test_renderer_scope_traversal_rejects_duplicates_and_ignores_nested_functions (test_configured_measurement.QualificationReaderTests)
+A nested function cannot supply or duplicate the current function's room matrix assignment. ... ok
+test_setup_only_or_truncated_collection_refuses (test_configured_measurement.QualificationReaderTests)
+Every declared original case needs complete phases; coherently rehashed subsets remain insufficient. ... ok
+test_valid_other_uuid_memory_and_changed_summary_refuse (test_configured_measurement.QualificationReaderTests)
+An internally valid memory proof for another card cannot be joined to this physical qualification. ... ok
+test_wrong_dtype_or_nonpositive_finite_state_refuses (test_configured_measurement.QualificationReaderTests)
+A Boolean or bare successful gate cannot replace the exact six real dtype groups and finite leaves. ... ok
+test_existing_final_is_not_replaced_by_new_publication (__main__.IndependentControls) ... ok
+test_fsync_failure_retains_partial_without_publishing_final (__main__.IndependentControls) ... ok
+test_ordinary_new_profile_admission_still_refuses (__main__.IndependentControls) ... ok
+test_payload_and_original_tool_wait_are_distinct_records (__main__.IndependentControls) ... ok
+test_saved_nsight_wait_refuses_boolean_zero (__main__.IndependentControls) ... ok
+test_saved_raw_uid_change_refuses_even_when_summary_uid_is_unchanged (__main__.IndependentControls) ... ok
+
+----------------------------------------------------------------------
+Ran 139 tests in 10.439s
+
+OK
