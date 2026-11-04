@@ -234,6 +234,55 @@ def check_backend_inputs(plan):
     return backend
 
 
+def packet_metadata_paths(plan):
+    """Enumerate every fixed preparation record, original-history reference and all26 staged helpers."""
+    fixed = (
+        "preparation_request.json", "preparation_request_unbound.json", "history_preparation_inputs.json",
+        "preparation_source_freeze.json", "software_verifier_source_freeze.json", "stage_immutable_history.py",
+        "prepare_common_correctness.py", "test_prepare_common_correctness.py", "run_preparation_metadata_tests.py",
+        "verify_common_software_assets_staged.py", "history_staging_result.json", "metadata_preparation_result.json",
+        "shared_software_assets_staged_verification.json", "initial_data_record_transition.json",
+        "reference_configuration.json", "candidate_configuration.json", "runtime_environment.json", "asset_record.json",
+        "direct_binding_profile.json", "serial_predecessor_exit_inputs.json",
+        "manifest.yaml", "config_resolved.yaml", "experiment_background.md", "command.txt",
+        "controller_preparation_source_freeze.json", "unbound_controller_runner_freeze.json",
+        "run_unbound_controller_metadata_tests.py")
+    files = [PACKET / name for name in fixed]
+    standards = ("manifest.yaml", "config_resolved.yaml", "experiment_background.md", "command.txt", "progress.json")
+    files += [PACKET / "initial_planned_data_records" / name for name in standards]
+    files += [UNIT / name for name in ("measurement_plan.json", "measurement_prepared.json",
+        "manifest.yaml", "config_resolved.yaml", "experiment_background.md", "command.txt", "direct_backend_image_expected.json")]
+    names = [Path(path).name for path in plan["helpers"]["files"]]
+    require(len(names) == len(set(names)) == 26, "the exact26 staged helper names must be distinct and complete")
+    files += [UNIT / "code" / name for name in names]
+    history = UNIT / "direct_history"
+    inputs = document(history / "inputs.json")
+    record_names = {"admission", "registry", "evidence_manifest", "exit_plan", "exit_observations", "worker_stop", "exit_status"}
+    require(set(inputs) == record_names | {"schema_version", "kind"}
+        and type(inputs["schema_version"]) is int and inputs["schema_version"] == 1
+        and inputs["kind"] == "serval02_card1_frozen_history", "the complete seven original-history references are required")
+    for name in record_names:
+        expected = history / (name + ".json")
+        require(type(inputs[name]) is dict and set(inputs[name]) == {"path", "sha256"}
+            and inputs[name]["path"] == str(expected), "the exact local original-history path changed: " + name)
+        files.append(expected)
+    files.append(history / "inputs.json")
+    return sorted(set(files))
+
+
+def validate_packet_freeze(plan, frozen):
+    """Refuse a reduced metadata/code roster before hashing any of its supplied entries."""
+    require(type(frozen.get("schema_version")) is int and frozen["schema_version"] == 1
+        and frozen.get("kind") == "actual_direct_common_correctness_packet_metadata_freeze"
+        and type(frozen.get("files")) is dict, "the packet freeze schema or kind changed")
+    expected = {str(path) for path in packet_metadata_paths(plan)}
+    require(set(frozen["files"]) == expected, "the frozen packet omitted or added a required metadata/code path")
+    for name, checksum in frozen["files"].items():
+        require(Path(name).is_relative_to(RUN) and digest(ordinary_bytes(name)) == checksum,
+            "an actual required frozen packet input changed: " + name)
+    return frozen
+
+
 def checked_inputs():
     """Validate only frozen current metadata; absent actual preparation or serial inputs must refuse."""
     no_numerical_modules()
@@ -254,9 +303,7 @@ def checked_inputs():
     require(request["packet"] == str(PACKET) and request["data_unit"] == str(UNIT)
         and request["unit_id"] == UNIT.name and request["campaign_run_dir"] == str(RUN),
         "the copied request must name its actual packet and data unit")
-    for name, expected in frozen["files"].items():
-        require(Path(name).is_relative_to(RUN) and digest(ordinary_bytes(name)) == expected,
-            "a frozen correctness input changed: " + name)
+    validate_packet_freeze(document(paths["plan"]), frozen)
     prepared, software = document(paths["preparation"]), document(paths["software"])
     require(prepared.get("passed") is True and software.get("passed") is True
         and prepared.get("plan") == binding["plan"] and software.get("plan") == binding["plan"]
@@ -266,7 +313,9 @@ def checked_inputs():
     plan = document(paths["plan"])
     require(plan["campaign_run_dir"] == str(RUN) and plan["unit_id"] == UNIT.name
         and plan["helpers"]["source_commit"] == HELPER_COMMIT and plan["helpers"]["source_root"] == request["helper_source_root"]
-        and plan["source_commit"] == SOURCE_COMMIT and plan["gpu_uuid"] == GPU_UUID
+        and plan["source_commit"] == SOURCE_COMMIT and plan["source_root"] == request["numerical_source_root"]
+        and plan["python"] == request["python"] and plan["asset_record"] == request["asset_record"]
+        and plan["gpu_uuid"] == GPU_UUID
         and plan["hardware_class"] == "h100" and plan["direct_binding"]["consumer"] == "selected_measurement"
         and plan["runtime_environment"] == {"JAX_ENABLE_X64": "true", "JAX_DEFAULT_MATMUL_PRECISION": "highest",
             "XLA_FLAGS": "--xla_gpu_exclude_nondeterministic_ops=true"}
@@ -274,6 +323,7 @@ def checked_inputs():
         and plan["copy_seeds"] == request["copy_seeds"] and plan["rounds"] == 7 and plan["minimum_updates_per_round"] == 10,
         "the actual original configuration, two candidate flags, seeds, source or runtime changed")
     qualified = document(request["qualification_plan"]["path"])
+    require(plan["helpers"] == qualified["helpers"], "the current correctness helper receipt must equal its qualified backend26 source")
     reference = json.loads(json.dumps(qualified["configuration"]))
     copies = plan["configuration"]["learner"]["n_copies"]
     require(type(copies) is int and copies in (1, 2), "only the approved one/two-copy correctness units are supported")
@@ -324,6 +374,11 @@ def check_serial_predecessor_inputs(request, input_reference):
     outcome, spawn = document(inputs["outcome"]["path"]), document(inputs["controller_spawn"]["path"])
     require(prior_plan["unit_id"] == previous.name and prior_plan["campaign_run_dir"] == str(RUN)
         and prior_plan["source_commit"] == SOURCE_COMMIT and prior_plan["helpers"]["source_commit"] == HELPER_COMMIT
+        and prior_plan["source_root"] == request["numerical_source_root"]
+        and prior_plan["helpers"]["source_root"] == request["helper_source_root"]
+        and prior_plan["python"] == request["python"]
+        and prior_plan["runtime_environment"] == request["runtime_environment"]
+        and prior_plan["asset_record"] == request["asset_record"]
         and prior_plan["gpu_uuid"] == GPU_UUID and metadata["hostname"] == HOST and metadata["uid"] == UID,
         "the prior process must be the exact owned direct source and target")
     require(type(spawn.get("actual_pid")) is int and spawn["actual_pid"] > 0
@@ -333,7 +388,7 @@ def check_serial_predecessor_inputs(request, input_reference):
         and metadata["parent_pid"] == spawn["actual_pid"], "the actual prior controller or numerical parent changed")
     identity = {key: metadata[key] for key in ("hostname", "pid", "process_start_time")}
     command = [prior_plan["python"], str(previous / "code/measure_selected.py"), "--prepared-unit", str(previous)]
-    require(wait.get("kind") == "owned_direct_process_wait_return" and wait.get("schema_version") == 1
+    require(wait.get("kind") == "owned_direct_process_wait_return" and type(wait.get("schema_version")) is int and wait["schema_version"] == 1
         and all(wait.get(key) == value for key, value in identity.items())
         and wait.get("uid") == UID and wait.get("waited_pid") == metadata["pid"] and wait.get("command") == command
         and wait.get("wait_semantics") == "Popen.wait on this exact spawned child"
@@ -358,7 +413,9 @@ def check_serial_predecessor_inputs(request, input_reference):
     require(observed.get("kind") == "owned_prior_direct_process_exit_observation"
         and observed.get("hostname") == HOST and type(observed.get("observer_pid")) is int
         and observed["observer_pid"] > 0 and observed.get("observer_uid") == UID
-        and observed.get("all_original_processes_exited") is True and observed.get("gpu_or_standing_lock_operations") == 0
+        and observed.get("all_original_processes_exited") is True
+        and type(observed.get("gpu_or_standing_lock_operations")) is int
+        and observed["gpu_or_standing_lock_operations"] == 0
         and len(observed.get("observations", [])) == 2,
         "a real owner-checked observation of both exact predecessor exits is required")
     roles = {}
@@ -373,7 +430,7 @@ def check_serial_predecessor_inputs(request, input_reference):
         and datetime.fromisoformat(observed["at_utc"]) >= datetime.fromisoformat(wait["finished_at_utc"]),
         "the two absent identities were not observed after the actual normal wait")
     execution = prior_result.get("execution_identity", {})
-    require(prior_result.get("completed") is True and all(execution.get(key) == value for key, value in identity.items()),
+    require(all(execution.get(key) == value for key, value in identity.items()),
         "the saved predecessor result does not belong to its actual exited numerical process")
     if request["serial_order"] == 1:
         require(inputs["plan"] == request["qualification_plan"]
@@ -381,7 +438,7 @@ def check_serial_predecessor_inputs(request, input_reference):
             and inputs["terminal"] == request["qualification_terminal"]
             and inputs["outcome"] == request["qualification_controller_outcome"]
             and prior_result.get("kind") == "direct_serval02_card1_full_original_qualification"
-            and prior_result.get("all_original_gates_passed") is True,
+            and prior_result.get("completed") is True and prior_result.get("all_original_gates_passed") is True,
             "the first common correctness unit must follow its actual accepted original qualification")
     else:
         require(request["serial_order"] == 2 and prior_plan["mode"] == "correctness"
@@ -389,6 +446,11 @@ def check_serial_predecessor_inputs(request, input_reference):
             and inputs["result"]["path"] == str(previous / "result.json")
             and prior_result.get("correctness_attempted") is True and prior_result.get("correctness_passed") is True
             and prior_result.get("implementation_distinct") is True and prior_result.get("measurement_valid") is False
+            and prior_result.get("measurement_mode") == "correctness"
+            and prior_result.get("decision") == "correctness_passed"
+            and type(prior_result.get("copies")) is int and prior_result["copies"] == 1
+            and prior_result.get("reference") == prior_plan["reference_configuration"]
+            and prior_result.get("candidate") == prior_plan["configuration"]
             and prior_plan["direct_qualification_inputs"] == request["direct_qualification_inputs"],
             "the second common correctness unit must follow the real first-copy correctness and its normal exit")
         reference = json.loads(json.dumps(request["reference_configuration"]))

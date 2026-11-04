@@ -1,0 +1,966 @@
+{
+  "actual_prepared_backend_package": {
+    "capability": "prepared_owning_package_image_and_same_process_mapping_version_2",
+    "created_at_seconds": 1793594829.407897,
+    "distribution": {
+      "metadata": {
+        "path": "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/jax_cuda12_pjrt-0.11.0.dist-info/METADATA",
+        "sha256": "a4ab9346404e0cf42a00dd9e877218d1e19f7871a59c361a1d7fc934b4ed2ab3"
+      },
+      "name": "jax-cuda12-pjrt",
+      "record": {
+        "path": "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/jax_cuda12_pjrt-0.11.0.dist-info/RECORD",
+        "sha256": "9eda8d59208f7bd8e709472f28559ff1debcc39c8e40f45caa60cc72d72a39ee"
+      },
+      "record_entry": {
+        "hash": "sha256=zteYiXJhGyX73H31FFMQJlbCCcBXVrUoYCqodcENHwg",
+        "relative_path": "jax_plugins/xla_cuda12/xla_cuda_plugin.so",
+        "size_bytes": 473181472
+      },
+      "version": "0.11.0"
+    },
+    "gpu_operations": 0,
+    "image": {
+      "path": "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/jax_plugins/xla_cuda12/xla_cuda_plugin.so",
+      "sha256": "ced7988972611b25fbdc7df51453102656c209c05756b528602aa875c10d1f08",
+      "size_bytes": 473181472
+    },
+    "kind": "prepared_direct_backend_package_image",
+    "numerical_imports": [],
+    "observed_file_identity": {
+      "device_major": 0,
+      "device_minor": 55,
+      "inode": 4236833
+    },
+    "observer": {
+      "hostname": "heartpiece",
+      "pid": 780006,
+      "process_start_time": "54994302",
+      "uid": 2618919,
+      "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+      "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+    },
+    "observing_python": "/usr/bin/python3",
+    "producer_source_sha256": "82898100d64f540c42c0a236acb6c20ca2808deb247b83da65927c6cb497a8e4",
+    "schema_version": 2,
+    "selected_python": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+    "site_packages": "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages"
+  },
+  "assets": {
+    "file_count": 4531,
+    "manifest_sha256": "049004b3b7e2eb3b12f72579a175ac41afad3b5f91a088d7ba1b5065aed31bb6",
+    "root": "/p/rlprojects/RND/reference_repos/jaxtari_pixel_study_assets",
+    "source_commit": "04ab9aec318c72162e2e53503a594a489d7e162b",
+    "tree_digest": "117997917caa98938bfed3e3bcea37353f8f01ea05897ff243816e73409f9a72"
+  },
+  "at_utc": "2026-11-02T07:37:57.982769+00:00",
+  "backend_expected": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/direct_backend_image_expected.json",
+    "sha256": "7d50f9ef96fbe5afa9e892905b0e3e76dde43e9f54835630c69aabf7489d35e4"
+  },
+  "birth": "56018068",
+  "cgroup": "0::/system.slice/slurmstepd.scope/job_6783003/step_171/user/task_0\n",
+  "device_opened": false,
+  "helper_files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/collect_worker_exit_receipts.py": "bcf3355b756a54251c1d03ed0494cd9e0ee2c6dba5398da1a94e168807ae058f",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py": "2fc25c271ec55c0aeb2523873eda71543e5f46341706f18e6bc9f2cc924a33a0",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/controller.py": "1c06dbf51a135fea5b32bdf4fa6feadcd597dcdd269559fb3ecdc8b58414f12a",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/device_memory_limit.py": "3abcb3641cc799424d6585e9881befbbd3c06800e9dc4d19fed5a507fe5e06ff",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py": "310bcb6b4b1a18cc9d7acac62a07dfb60874bb60aed127b50b9c07227593f9f8",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_backend_image.py": "82898100d64f540c42c0a236acb6c20ca2808deb247b83da65927c6cb497a8e4",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py": "1d39e56fb7552d84c84c93962a22d79f9004ee5c7f6870f99f6f9de900da6adc",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_allocation_observation.py": "f614a3792f196605cd1fa4b76738ff3157f72ee6700058526c2598e45a63a50c",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_case.py": "5acd8a33b849e8805a6d51023d5c5661ac989b473a6135669b9ca243256e754f",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_evidence.py": "cc66813e5a31dd54f9c266f5a094c26c6a5753c17599b1badd97911f932c5824",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_qualification.py": "93a19a553a10daf894e4e573b7aacebecf0d5a1cfa0b0f13a471c19e4184eecb",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_queue.py": "cac5c612c641aad0bc814438f0e21c02544073632484dcba99047e2ac44aaa60",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py": "7b71221d25493ad5a5b07672e593a329f912ebf3ecd259f2aeede1e6da55acc6",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py": "df811a5d51a7ef2f747bc32d1545c8286552675dfc8b859e7d0600eef4c920c5",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry.py": "40c117d6fd1937dcdd465381d1469f0ad687103d7b551d604d8c6e03063f9107",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py": "1651ea2184604082cefb97fdfe035640c4b71974ad1e6520d16ef84bdb54e0a2",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/passive_installed_slurm_observation.py": "97ce634c07cd7a2b045d4253938db21c844abd93f3bb7b9d4dbebfd5f33bf842",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/portable_evidence.py": "0ecae0ab2c21b0bbeadd47ddbd81026cb133e8f3d7f32c2148268dbfe575a4d1",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py": "2612e358f3e823289a92bdfe54856bdc8f0de5553db4bdcc5cd7617083cfd6aa",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/pregather_async_retry.py": "881c89b678782dc56568b9257a9753a78b4e06464d43e73a14f1927a5fc17695",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py": "e0d7c640086480bc6c5e6a5d867db5544a1a5fb111e63e20fe3aba50e1b5afa7",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/short_learning.py": "b17d70f4e49de9f766062beb0578729fcde9d68a29060f37d718deb644cb0999",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py": "66771819cf75ea89e1b6f8fef4467aece2eecf864cd0ca434cbb5c698365f210",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_active_configuration_observation.py": "8cc5a3544e426e3bd3e78707f6c77dc249a1d19165a593e157d2097daa07a648",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_slurm_configured_isolation.py": "d659dd1f21ddd2d7bb0474b4ded0ae4ea129c00365984c1fe7f84439b8eba694",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py": "e392dc6329cc8b5e902f3271d512cb9ee5bbc2f2fcdd6b0d85cefd981a1042b9"
+  },
+  "installed_library_images": {
+    "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/nvidia/cuda_runtime/lib/libcudart.so.12": {
+      "package": "nvidia-cuda-runtime-cu12",
+      "sha256": "256e6409e4f06f618e1fb53d4844a6b81cdded1013afa8ade40c22f99eb133b7",
+      "version": "12.9.79"
+    },
+    "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/nvidia/cudnn/lib/libcudnn.so.9": {
+      "package": "nvidia-cudnn-cu12",
+      "sha256": "0f43113ec6b171f93236560541f3b95104fed2516b19000a0e7047a5cc12f8ee",
+      "version": "9.24.0.43"
+    },
+    "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/nvidia/cudnn/lib/libcudnn_adv.so.9": {
+      "package": "nvidia-cudnn-cu12",
+      "sha256": "6007f67989b1ac8d5bbd7129fa6200ba4ae4b5c0558a4dfe4d50c19ee59569cb",
+      "version": "9.24.0.43"
+    },
+    "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/nvidia/cudnn/lib/libcudnn_cnn.so.9": {
+      "package": "nvidia-cudnn-cu12",
+      "sha256": "2b78023b42c8c82018f01dc9f94fe29ec9ba350580dd53b1750501dcb2a34ecf",
+      "version": "9.24.0.43"
+    },
+    "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/nvidia/cudnn/lib/libcudnn_engines_precompiled.so.9": {
+      "package": "nvidia-cudnn-cu12",
+      "sha256": "c70e63247cdc14311b8b2efad0eb79674dd7297c27f9f23466ae4214cd415145",
+      "version": "9.24.0.43"
+    },
+    "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/nvidia/cudnn/lib/libcudnn_engines_runtime_compiled.so.9": {
+      "package": "nvidia-cudnn-cu12",
+      "sha256": "35ec33cfd4f42c6240d18d141d52af4cf9cafdae2bc9ba292390bbbfded7a172",
+      "version": "9.24.0.43"
+    },
+    "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/nvidia/cudnn/lib/libcudnn_engines_tensor_ir.so.9": {
+      "package": "nvidia-cudnn-cu12",
+      "sha256": "cca873cbd32645e7011a5272d9032827ebdb632166a063a1a1a96ea6831fbeb0",
+      "version": "9.24.0.43"
+    },
+    "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/nvidia/cudnn/lib/libcudnn_ext.so.9": {
+      "package": "nvidia-cudnn-cu12",
+      "sha256": "920c0fe6b74fe6a8eed85faa446230e1a555b8afc02e03638a0dfa264b4ae7be",
+      "version": "9.24.0.43"
+    },
+    "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/nvidia/cudnn/lib/libcudnn_graph.so.9": {
+      "package": "nvidia-cudnn-cu12",
+      "sha256": "dac0584e8f279e910bff4241e28b56efd399898038a5c94a0b6338bc9bc41d13",
+      "version": "9.24.0.43"
+    },
+    "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/nvidia/cudnn/lib/libcudnn_heuristic.so.9": {
+      "package": "nvidia-cudnn-cu12",
+      "sha256": "b4e69e7b97da5bd825f169f6d108fe71dc0352e99e9a0ffc7200401830c297cf",
+      "version": "9.24.0.43"
+    },
+    "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/nvidia/cudnn/lib/libcudnn_ops.so.9": {
+      "package": "nvidia-cudnn-cu12",
+      "sha256": "8b51427d9807335c5873e74a40425989a20dd74af0332c90449cf19853cf8013",
+      "version": "9.24.0.43"
+    }
+  },
+  "jaxtari_source": {
+    "direct_url": {
+      "dir_info": {},
+      "url": "file:///p/rlprojects/RND/reference_repos/jaxtari_pixel_study"
+    },
+    "python_files": {
+      "jaxtari/__init__.py": {
+        "git_blob": "3846e5a12fa6a44df57a2b6c1da41a684db51c44",
+        "sha256": "d49698cd245969cb3d46f394d238d5cde2e444e810dc4a6e8207bcaca586cd08"
+      },
+      "jaxtari/core.py": {
+        "git_blob": "67bff0d17b2c65d1cf531e14b6ba36a7f94af339",
+        "sha256": "116f69d3154fb2a63c2812e78e4097fa9d60403c25fd030bfb8517fc4b41b25b"
+      },
+      "jaxtari/environment.py": {
+        "git_blob": "ab169159e3e571f5b99968a8b4330c213203cc99",
+        "sha256": "19e31dabc4f4a42965e4f2160921621fac1c4e01bda21f894740aae0ec02a1ef"
+      },
+      "jaxtari/games/__init__.py": {
+        "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "jaxtari/games/amidar_mazes/__init__.py": {
+        "git_blob": "0b7940d52bf8a87f20ba60eeefeb7622c0a57965",
+        "sha256": "df7c201f7248c2e699c4516809e14ba4b8a06c18fa97b4df20427f69ed06c94f"
+      },
+      "jaxtari/games/amidar_mazes/no_enemies.py": {
+        "git_blob": "fad74db36755ed418bda56af48c894a268b7ff0c",
+        "sha256": "424daeba2082011cd5da6612025f68327a87bbf9c262a8a7418c674ac37a748e"
+      },
+      "jaxtari/games/amidar_mazes/original.py": {
+        "git_blob": "eeb60860ad911e315c47b9c21db5b1344c8f8f86",
+        "sha256": "b87dfe516258b597b3755f6aa663f935760fbdc02d491f797785e771f63264c3"
+      },
+      "jaxtari/games/casino/__init__.py": {
+        "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "jaxtari/games/casino/renderer.py": {
+        "git_blob": "87a392b05274a04b99148b578f47355757b69c45",
+        "sha256": "0d073564a78db4cd69fbd537a7ee5e9ea23da494d0bb737d5fea94cb3153631b"
+      },
+      "jaxtari/games/jax_airraid.py": {
+        "git_blob": "5ba0d0e196de415cbf7a8618a45ba2ba6d65c50f",
+        "sha256": "80e4c38df72c74c9154cc90a9c71aba3094ebb99485ac9db6a3d19bb52ec0913"
+      },
+      "jaxtari/games/jax_alien.py": {
+        "git_blob": "956f056ffd1176a799d94dcc2ff404753e3692ad",
+        "sha256": "7b3fdb4c89eda9c80e997b74679d726742efa90432c5947b94e1f2e7f1e2a89d"
+      },
+      "jaxtari/games/jax_amidar.py": {
+        "git_blob": "7c5b66f626b6941ec45ca29ff41ac539511df939",
+        "sha256": "4448853a25f9da561c935f2b6b8bb84593b0d1fbdcefa2f46fae5b04c609dd94"
+      },
+      "jaxtari/games/jax_assault.py": {
+        "git_blob": "da19ade885674da6ce3ef8ac2e3e86357b360891",
+        "sha256": "ad025c0f65814a0ade08b3aec3769124ab12f5b6b491f6bc1ddde12aa74249e9"
+      },
+      "jaxtari/games/jax_asterix.py": {
+        "git_blob": "ec822e6644a7c98a50812ebcbd28ffd01122dcdd",
+        "sha256": "4b003217faf218f2b1251f9890961273adb2eefe98ad216cd0d77766fe282659"
+      },
+      "jaxtari/games/jax_asteroids.py": {
+        "git_blob": "5c42396fd86f7799f75d0f3a05ff5c1d6a5139f6",
+        "sha256": "0cf75588ea43dee0f883a24a030d9275e52ac5d8ddfe3564476fb037abf49c5d"
+      },
+      "jaxtari/games/jax_atlantis.py": {
+        "git_blob": "6d916ab6a3f036921a37bfed2ce7a69514060f0a",
+        "sha256": "72affb81d702e501a8d0802e792f22f779fd05c2cbbf3d084c6b62ce2d250093"
+      },
+      "jaxtari/games/jax_backgammon.py": {
+        "git_blob": "674f8cb2d5845b25af5c556b15cda9933c5ec94d",
+        "sha256": "91bdc704a935c24129e42b90ef094cbdb86678de569950388c2f67631ad0c279"
+      },
+      "jaxtari/games/jax_bankheist.py": {
+        "git_blob": "f3803c96dd83be7d99514bc5578989ff1af87511",
+        "sha256": "32a47ebd187a9162e96f2a75fee54c11a71a81bcfdb21e81c5c0c3f23a7fba18"
+      },
+      "jaxtari/games/jax_basicmath.py": {
+        "git_blob": "bf07103edc6fb4c717957c4fba52d69f6e724f1f",
+        "sha256": "ad3b27e2d97d187097246098ccdc2ec11495f1e583fb41ada4729733c3c13f89"
+      },
+      "jaxtari/games/jax_beamrider.py": {
+        "git_blob": "245b569706cc678ffafb1e783206a2097d51ecde",
+        "sha256": "057dc720f2d43dbb5be6a69ff1308c6a92c83b265f10af8c94d36cbe99e427f0"
+      },
+      "jaxtari/games/jax_berzerk.py": {
+        "git_blob": "72615b3de11d126489de43cf8eaabb761e93809e",
+        "sha256": "0abd303e4623e7119f386bc19ed1dff5240b0db72aed66cf5477a4d93ae33276"
+      },
+      "jaxtari/games/jax_blackjack.py": {
+        "git_blob": "cb1ac18355923cf3fc040bf04f992fcb0bf8fb8a",
+        "sha256": "9fd211e7158a338bd8c5b6922fbb8763435bf679423233de2830ad2bb7ad5061"
+      },
+      "jaxtari/games/jax_boxing.py": {
+        "git_blob": "4e3eba3b78786bbabe8f55765153bb9176b9db90",
+        "sha256": "afb1cebdbe0c1c0ac594162b2ebdac860625b4b0a287ccd8210b8b04d30d640b"
+      },
+      "jaxtari/games/jax_breakout.py": {
+        "git_blob": "122ad9c57656e44a5022cf0eccc5ea44af6cacd2",
+        "sha256": "2a0b3b63ce9ca10021684593f444b7466b6cc3abaea94da211b8103c5fb206e6"
+      },
+      "jaxtari/games/jax_casino_blackjack.py": {
+        "git_blob": "8f6a608e106b7427c9067a3a1baab8b26244e333",
+        "sha256": "2383b69b79c22c2e321f68ae68f6a0f8476a33709f25b7c18355475b4cb97c46"
+      },
+      "jaxtari/games/jax_casino_five_stud_poker.py": {
+        "git_blob": "20a5eef95c3f0cf53a5e9b27e3cdaf0202265a71",
+        "sha256": "874ca70a40eeeeff8c35886831c3936ce774067d59eb5ee4c21f2dac58033273"
+      },
+      "jaxtari/games/jax_casino_poker_solitaire.py": {
+        "git_blob": "950d9937c0edfb757f028ef86b5fffb9828bcb2f",
+        "sha256": "fe0e514148e6f3864f6f441c1529df503145b0a0d26a77fad2d29d9e10a3fadb"
+      },
+      "jaxtari/games/jax_centipede.py": {
+        "git_blob": "addefd7509ac2e782512249a4d386391c96adfd7",
+        "sha256": "99fb2fd1e3ab002b4b969c07c082629d9650c317597c2b4db60e2d67522bff1b"
+      },
+      "jaxtari/games/jax_choppercommand.py": {
+        "git_blob": "fd7c9349b0fee28c79ed05fc07b5de62c865294d",
+        "sha256": "ebcb8d657815fbc56e55d05491887801681331844b8325a6412c396c01a1e2b8"
+      },
+      "jaxtari/games/jax_donkeykong.py": {
+        "git_blob": "9164edef0baa6e74d91867dd8a0fba66c0a65d2b",
+        "sha256": "7f2adea97d8f64abb209553129a175242f34b1ab600efc8c57108cd19304e60e"
+      },
+      "jaxtari/games/jax_enduro.py": {
+        "git_blob": "22e5a528d608a8764dca71af60a44aa2f86410dd",
+        "sha256": "da600a8c3a54efe22f45934c2ece2bce90fc00616359d166779fe96a21b7d048"
+      },
+      "jaxtari/games/jax_fishingderby.py": {
+        "git_blob": "f82cbadf83b474bd7242fcefb6012e1f70039478",
+        "sha256": "fe89754aad267077a4923fd58abe474c5e1673e30f51e9f40ba2edcce1bd71c7"
+      },
+      "jaxtari/games/jax_flagcapture.py": {
+        "git_blob": "dbb7b159f84be046c5d0e993b22fffd80ce5ab64",
+        "sha256": "d7daeef5e5ff43e2df36cf8397031b8fcad151f8438a784ce768f1e09b126d90"
+      },
+      "jaxtari/games/jax_freeway.py": {
+        "git_blob": "c032e1a90e64ed607e71fb39acb59fa721e33b99",
+        "sha256": "aa8d8bea81c34032efb0e637679a01c36baa6785e0e764af39e91f4395ebd10b"
+      },
+      "jaxtari/games/jax_frostbite.py": {
+        "git_blob": "b95817b06606b19c76aceaa69d94c3ce546ce71c",
+        "sha256": "0028f223fb797899e415e1d45b43668fa18b3bb6bec510621acb65886f917a36"
+      },
+      "jaxtari/games/jax_galaxian.py": {
+        "git_blob": "0348361e2bbda32df6610eb2b85b41a8f78327b9",
+        "sha256": "c15eedc14d83f65c5c7bd8a5af447dc0f9201fdea7d6740e6bb50446d22cff04"
+      },
+      "jaxtari/games/jax_gopher.py": {
+        "git_blob": "e877044f0ac2864be270897e8a8623498d101215",
+        "sha256": "c37ca1681e34dbb17612a47d3ca6c7f3b8c36d7d59d88a4997c05af68c4482d0"
+      },
+      "jaxtari/games/jax_gravitar.py": {
+        "git_blob": "d203eaecb4483c05b892976508b7f228c4e54c4d",
+        "sha256": "e4095cb36cce7ec45cb12d49e1dca1937c767ca79ded9095c02f84dd889f2f28"
+      },
+      "jaxtari/games/jax_hangman.py": {
+        "git_blob": "9081bae53d47f2821784e3cefdcb22a5d20cf2d7",
+        "sha256": "4d7aa082ac7c59fd03be9a2e736d916a8152762056b321c59fd08f3e60e6187f"
+      },
+      "jaxtari/games/jax_hauntedhouse.py": {
+        "git_blob": "6dcdcf3d1be8f69bffea698b2e6c360fffff19f7",
+        "sha256": "4de094d5b99ac9039c19edaf2f3a50390542a83e4de145269efe793896302af5"
+      },
+      "jaxtari/games/jax_humancannonball.py": {
+        "git_blob": "0d1ea482401e6938f2523674af9c0dbdf446a718",
+        "sha256": "db59c9bce308fe0303ccbfa3dd01f042364befaf9474f0db34c80c04df4f797a"
+      },
+      "jaxtari/games/jax_journeyescape.py": {
+        "git_blob": "bfff21a26d2e54c60283d66f7f8525def02ec8af",
+        "sha256": "f09d619a9003612df58e05fe6beb7a2520b336308242e2b0bc90dbb57e3b1c53"
+      },
+      "jaxtari/games/jax_kaboom.py": {
+        "git_blob": "6252109e56db4cef9c7fcc84a3e4303023d99655",
+        "sha256": "1b3400532e452c46878d9a19f1a669b4a55d000451c6e4264d1962a373f94845"
+      },
+      "jaxtari/games/jax_kangaroo.py": {
+        "git_blob": "ff11c232d7db663e51a604c65d15150513b7b446",
+        "sha256": "cea2e711bc8caa58af5664b72ddf2151bd8dcfe6aef36148963882e06eca60cb"
+      },
+      "jaxtari/games/jax_kingkong.py": {
+        "git_blob": "8c1f49e386186f7851f10b814d2af02df91425b5",
+        "sha256": "c75dcf4ccb0594a53d14325f7936a75904e147cf782e7f3832e1fdca4052793c"
+      },
+      "jaxtari/games/jax_klax.py": {
+        "git_blob": "22f9d3c0a9f129ba4b3a79c99f879c21d840ad16",
+        "sha256": "1d95e8cff96f2dd36d08fb1949e6fb41d0871fe9f09bfda206cd032f1330bed7"
+      },
+      "jaxtari/games/jax_lasergates.py": {
+        "git_blob": "cd05fc19467663442fb4a7d01a04f7e13d7f1c23",
+        "sha256": "fb3f909b18b56e696a6584eddf138c20a53e12759742d556471feed116301914"
+      },
+      "jaxtari/games/jax_miniature_golf.py": {
+        "git_blob": "4af79c03bc2ad86e637ae4727370e80ea6c2a0f3",
+        "sha256": "6e09ac6bd8a367ffd8d37a015075fab67db8b29f1397ae9db19579f6404bd7de"
+      },
+      "jaxtari/games/jax_montezumarevenge.py": {
+        "git_blob": "2e3ccd6437f2dfb7f835b2d7ad804c095e2555a6",
+        "sha256": "b4f139119e37ea53a8395779748a710bc12f1fcb28fe22db811928f358366888"
+      },
+      "jaxtari/games/jax_mspacman.py": {
+        "git_blob": "beb713c7a7a961967b3c26b18174f3de14361dd9",
+        "sha256": "f30a1b8a0fb58ba45d9f151a24ef793ce3ef815171d8663e4d6d29d494ec1c00"
+      },
+      "jaxtari/games/jax_namethisgame.py": {
+        "git_blob": "7f0e9f5213fdff1c861a568941438f8107b64c82",
+        "sha256": "8baf1733a5fb7c3d5cbf732f1d45e4d18e390bf2587be09ba47127bdc686b572"
+      },
+      "jaxtari/games/jax_othello.py": {
+        "git_blob": "80f266294e4091813e2e5b28e63cad7ed1d004e1",
+        "sha256": "44bae7780fcac15f28a0fc28fe7455c0b1270e24068429f9ef28ca26e2a4596a"
+      },
+      "jaxtari/games/jax_pacman.py": {
+        "git_blob": "529596e165c81aa048459effaf818b9eb06bc039",
+        "sha256": "441650b28684a477ed8ddafe1b979def28971ded4e149542f98d6b9452c9437e"
+      },
+      "jaxtari/games/jax_phoenix.py": {
+        "git_blob": "501eb4edfd667753c4e43aeb11115de9d84882c4",
+        "sha256": "bf5025441148eedfe2997c233e2fc22c7fd68dd874604d26a461f4f40f0f3d88"
+      },
+      "jaxtari/games/jax_pong.py": {
+        "git_blob": "11a01bd19cb13c9e451ea850ac6ac03e38f72cae",
+        "sha256": "e3be8044ba2bab6b808185818e05827cde7f49a075457291500e56566bff0a74"
+      },
+      "jaxtari/games/jax_qbert.py": {
+        "git_blob": "56ef7d1d64a2499a6df365888d5f1fc824a675b8",
+        "sha256": "065cd6cfa63396d8a705c3411a95821739a9862867d19fc470cdc48b01b8d0e6"
+      },
+      "jaxtari/games/jax_riverraid.py": {
+        "git_blob": "7aa78476abd1aed0add10d51b25ed465cfda6259",
+        "sha256": "bd76a98f47db13f1b7dd0d884a6d82dd8934b1ebad16defe2ffbf810d6544bb2"
+      },
+      "jaxtari/games/jax_roadrunner.py": {
+        "git_blob": "45aebc9dffc2a29ef1fb93679a9e51ffc19b9579",
+        "sha256": "db5da8edc72bc2da4b10c4b881bc913a8f035f23fcf48ab39e0f2b0db20fcda7"
+      },
+      "jaxtari/games/jax_seaquest.py": {
+        "git_blob": "f63240870d18d649ee3ef2fb3053f34d7633e9bf",
+        "sha256": "81081b5fa114c9ffba9c8c960b623d02ea224606c9d1f1500ec2e799b9f65773"
+      },
+      "jaxtari/games/jax_sirlancelot.py": {
+        "git_blob": "761347b4451d25a5241ce7209b42f725e1b9c423",
+        "sha256": "606561d9ccbb2f0d25a3d050f01567a76278a5801c5c8eb89e00932be71367f3"
+      },
+      "jaxtari/games/jax_skiing.py": {
+        "git_blob": "53792434b5045782b4cc42b5bbf3cd700a0586d5",
+        "sha256": "ceae6ecd665f739b5c3147e7c9a661901283359e11f1d42a859d9fb786b76615"
+      },
+      "jaxtari/games/jax_slotmachine.py": {
+        "git_blob": "a814ba09948429565f97ae22ab17b5e6efa69ae5",
+        "sha256": "8c071372d34cc7125f7f14d40b3015b87d672e3ab27a2ff6b1fbcf00e69baff8"
+      },
+      "jaxtari/games/jax_spaceinvaders.py": {
+        "git_blob": "e72ef94c563331c8f7dd0f4cfea9f1c23a8ef200",
+        "sha256": "97df576ccf886d3ec030bfd72faa1ef2298962af9722f35cacb4496ad8caef7d"
+      },
+      "jaxtari/games/jax_spacewar.py": {
+        "git_blob": "90d139fc03c79d758f21bb6c9f056cdf5401b836",
+        "sha256": "535252872c690b368784aa20819511f090231152c6504ee7ba089a2758a09f2d"
+      },
+      "jaxtari/games/jax_surround.py": {
+        "git_blob": "f8cc3d2411ee06aeebde051b1fb9dd0d06f591fc",
+        "sha256": "a0416f85781a7c34dcfca0ab4d7f6cdce9ebc9f4b3af3b82e417ac46eb544e2f"
+      },
+      "jaxtari/games/jax_tennis.py": {
+        "git_blob": "6e9e6296cfc6f4ffb8f57ae98762a356cafc4b26",
+        "sha256": "c92dbf9faa9aaffa8a695a3d57c845be5fe72559090ad99914d2b1d25e3b7598"
+      },
+      "jaxtari/games/jax_tetris.py": {
+        "git_blob": "306342302b177338b6630598f8122c25abb8d911",
+        "sha256": "ffd2c7d86f7748c0c704b4967f5014017d384b1181aaa905ac9bc08296a4b68b"
+      },
+      "jaxtari/games/jax_timepilot.py": {
+        "git_blob": "cd20e6abf058f6078b07852dc752d72a114eeb6b",
+        "sha256": "868448c60990bcb1b9c36c4b9fe8047d365247424f9ff0860222bb8ec38f9aa0"
+      },
+      "jaxtari/games/jax_tron.py": {
+        "git_blob": "e84f19a25fece754670d2ad043561c915f0b80a4",
+        "sha256": "40f9c0d5fd1ca2c75dcd2d1635a30349c38d010417d8b31c2f4d85c29be6a824"
+      },
+      "jaxtari/games/jax_turmoil.py": {
+        "git_blob": "3affea708aeb8f29e49508ef6194834c9be102d2",
+        "sha256": "53f2983755adfa7c817762edfe72664fff79b4be99f8c4f513c9a3ef91692842"
+      },
+      "jaxtari/games/jax_upndown.py": {
+        "git_blob": "a67da73dc126d41dd2318f89533b6921a3c38c16",
+        "sha256": "f6286406a34851388c85425334f0ab601b7711d68c337b8cf9271d4c2c7e5841"
+      },
+      "jaxtari/games/jax_venture.py": {
+        "git_blob": "c4349d3fa1588652e47c57ffcd2293d1741e81b3",
+        "sha256": "09ddf474b417883b39476d2cec07523a2e5b4c3f952894b643465713ecd49999"
+      },
+      "jaxtari/games/jax_videocheckers.py": {
+        "git_blob": "38cf0ff8bea4cee44e2f95452e80710e4d102518",
+        "sha256": "cc8bd0d17ad86f4fd9951f5eaca898e01400df8cf63bbb917161ffe741563de5"
+      },
+      "jaxtari/games/jax_videochess.py": {
+        "git_blob": "69817a8a8a0593ddbe0ab79f2a6b189472a2fa6a",
+        "sha256": "8cbd3285ddf3d1f8d40e535a9a88a25e1e7e38f542f750441ac749ff739b5080"
+      },
+      "jaxtari/games/jax_videocube.py": {
+        "git_blob": "1e2ed6cc1db256935c4d0449a35058d71a4820ae",
+        "sha256": "93ad72815f40cb1d383b370a81a65d170aab79f1eae642bd0040c4cb3f921431"
+      },
+      "jaxtari/games/jax_videopinball.py": {
+        "git_blob": "01a46fea8b4730ba5a3c8937ca42f4bb0dbad8e6",
+        "sha256": "df72e7fbeaf9f3eee796aac39e1eae24ca1b8d7c58d651ed6ce0a6fd0ef5b026"
+      },
+      "jaxtari/games/jax_wizardofwor.py": {
+        "git_blob": "0a000780979a3845efdfd09bb3a53aaebbe98206",
+        "sha256": "76d62cbb7b6f413366ef7a62ef82c497b2bd10faa7132fa7ac1ccb74170bb1cc"
+      },
+      "jaxtari/games/jax_wordzapper.py": {
+        "git_blob": "b8518af1f7861d9d3e49ead6482dfc5bc3aa1927",
+        "sha256": "991830be3609b0d67a0d4f74ef27112fcb3838f8f44f09d948bcc24f4518115b"
+      },
+      "jaxtari/games/jax_yarsrevenge.py": {
+        "git_blob": "bde6305407ee52e4c1ca55272e6e122e86039434",
+        "sha256": "c75e8bd72574f29bb14222e49cfe36ee8346d87b53aa5b0acc152d9d7c55fd40"
+      },
+      "jaxtari/games/kangaroo_levels.py": {
+        "git_blob": "28773f4b8144e1a48ec0d7f81e70963b199be6f8",
+        "sha256": "2e25fb3769ee1c219a12c486ca16b43292c3b570498ef8f5c7aaad99f39cea1d"
+      },
+      "jaxtari/games/mods/__init__.py": {
+        "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "jaxtari/games/mods/alien/alien_mod_plugins.py": {
+        "git_blob": "adf1995527df824fbb528a5ad71e4e271f8ab23f",
+        "sha256": "c3fb9921c83862d4d7b6352086164a4019e62dc13e662fcf28e2b65d72cdfe23"
+      },
+      "jaxtari/games/mods/alien_mods.py": {
+        "git_blob": "4e8aa761eb3cc15f9b23b664e8d738dd56f36c27",
+        "sha256": "6f4e3d83b02a173c575a5c04134ee502a375f1e06640e90f901c3e547f067496"
+      },
+      "jaxtari/games/mods/amidar/__init__.py": {
+        "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "jaxtari/games/mods/amidar/amidar_mod_plugins.py": {
+        "git_blob": "205baa39f6c8c971ec1cd9ef4ab7e3003965be67",
+        "sha256": "a7d3a0c34349c8a29634a665ed6d1302d0eac2263dec18af0fa7665debb2ed83"
+      },
+      "jaxtari/games/mods/amidar_mods.py": {
+        "git_blob": "233cecc6b6bcbab6c6aee777a3180edcef602722",
+        "sha256": "29ea49d08bdb7b0da83110a2e7f32f04f505d3a650b9f5103b66f13d42a276cf"
+      },
+      "jaxtari/games/mods/asteroids/__init__.py": {
+        "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "jaxtari/games/mods/asteroids/asteroids_mod_plugins.py": {
+        "git_blob": "689466bb06d24e996d359ba17d04393d7748f3f9",
+        "sha256": "a507b8d0a62f0b95f3303da6d84dbe966ba70186daf31f7da7c653e4f2f188cf"
+      },
+      "jaxtari/games/mods/asteroids_mods.py": {
+        "git_blob": "c33273e8db89f188f277764bcfb2c19aa965e34f",
+        "sha256": "d52f3fb261250b9f19b788bc0e9e80e78f9e1b1e96d5433ae85fa8a4835b1b9f"
+      },
+      "jaxtari/games/mods/atlantis/atlantis_mod_plugins.py": {
+        "git_blob": "c925de6dd768c094c85f0028ea7001dc0d77fbf3",
+        "sha256": "be1031c7a9c73ea6e221314f2bd226c8eae173bb6e980c5f6168e6c339b405f1"
+      },
+      "jaxtari/games/mods/atlantis_mods.py": {
+        "git_blob": "ae6fc4a23f8661ae0f9208611baebdc3a745a00a",
+        "sha256": "a8d21faedaaa2ca208493df5aa236b7baffa617e6b333ca5bfdd0f9878628960"
+      },
+      "jaxtari/games/mods/backgammon_mod_plugins.py": {
+        "git_blob": "965ee35400afe8abfbf9b0031db42f19078bcc6f",
+        "sha256": "25aceaf3ff361db60094e9a1728096bc919a578b9365ed6f95bf1e41fec3d4a3"
+      },
+      "jaxtari/games/mods/backgammon_mods.py": {
+        "git_blob": "c0211ef9e4c675ec8f3675a5618347b6807decd7",
+        "sha256": "8f6e824a720d45b59aedf1c40e33fa974b9d2beb8efe1078e9ac0b6e2bf528d7"
+      },
+      "jaxtari/games/mods/bankheist/bankheist_mod_plugins.py": {
+        "git_blob": "e29f67a16dc9d5666f0a35ae65fb181848df879e",
+        "sha256": "634fd69ee339f99af67e3208f165ccd78152ecbb27ecfd6fdf4503256ba818fa"
+      },
+      "jaxtari/games/mods/bankheist_mods.py": {
+        "git_blob": "20fb680fcaa8e860c63becc4be2660ea78498be4",
+        "sha256": "c3a06e7712741d2b6098f0bf9099db6ece80d0780382564e2dd9ad942215f0c6"
+      },
+      "jaxtari/games/mods/basicmath/basicmath_mod_plugins.py": {
+        "git_blob": "9d3176f5920dd11bd149bc848e88d3cc6a3cdcbc",
+        "sha256": "86d5d89febb42aba758cbbec923744eff2a8c39b9a645b34e6caa6af574a2f01"
+      },
+      "jaxtari/games/mods/basicmath_mods.py": {
+        "git_blob": "90804ced9ffe7eed39f951e3308cc654d7205f94",
+        "sha256": "3bcaf2c7d66d15d2bc621aa961bfbab6231aba5586051b84e86cd35bdbce3a93"
+      },
+      "jaxtari/games/mods/beamrider/beamrider_mod_plugins.py": {
+        "git_blob": "4efdfd408a0a3ef7248c8023f16cd6a62e159b07",
+        "sha256": "c52e5c5f73555eb5a95af7a8a8d7bfa57e314033d51491072607b3b3664f880e"
+      },
+      "jaxtari/games/mods/beamrider_mods.py": {
+        "git_blob": "bebf0e44cd47b0164d26fef4d7f888f134d47424",
+        "sha256": "94c9dc73baf76abadd1cfc5c6bc622545117bd95b753bf09adbfbf207cecb924"
+      },
+      "jaxtari/games/mods/boxing/boxing_mod_plugins.py": {
+        "git_blob": "2dfde4bc72c476ed0495c7d2447ed0bf59ee0e5e",
+        "sha256": "f28e262ce78fc9358b34e7c1b2e966833403db2bc15abc7d3ac9ca0936624c95"
+      },
+      "jaxtari/games/mods/boxing_mods.py": {
+        "git_blob": "737e1355325c93862d7baf0925d50b1e42bc584c",
+        "sha256": "25b38edc020e715f844914a23891155f09d7c8e662cef60b31f594a1ddad5961"
+      },
+      "jaxtari/games/mods/breakout/breakout_mod_plugins.py": {
+        "git_blob": "83e94af33341f910d3f6a02547161a4cda59aa37",
+        "sha256": "38248296a90b602e6c731b09b16fa8dea13578c374b29555156f2630342e8575"
+      },
+      "jaxtari/games/mods/breakout_mods.py": {
+        "git_blob": "f7cf0607c0dd3e96eb947e1d64ef1d96975704e0",
+        "sha256": "7f6b9adbc7093184119c3fe2c7eb572cd5d6b78ffdee01ddc494b629364ed48a"
+      },
+      "jaxtari/games/mods/centipede/__init__.py": {
+        "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "jaxtari/games/mods/centipede/centipede_mod_plugins.py": {
+        "git_blob": "dd303e4455137c5bcd035f62873756f539a28930",
+        "sha256": "daf2767f9e1c03573d68ce01569993609b52ae1e252a29ff9647a1be80f98734"
+      },
+      "jaxtari/games/mods/centipede_mods.py": {
+        "git_blob": "d0a4d02fabc07084d2d8b394941467b7c7228325",
+        "sha256": "ef07e586bd076938d0e25ac10f9a46fe8cf0e4c39cc11d5e46713bc95e56c391"
+      },
+      "jaxtari/games/mods/choppercommand/choppercommand_mod_plugins.py": {
+        "git_blob": "e7b80e2ee9216cc8c88dbc8374607dd1312b6172",
+        "sha256": "4b2c2ce84caa8a059e7714adbbb9a978ac081006222a14383656e7be4eadf3bd"
+      },
+      "jaxtari/games/mods/choppercommand_mods.py": {
+        "git_blob": "fcf8b5e17753351d2604935207e4783f1fb5d541",
+        "sha256": "511a5162a66213b386e0f52a5c20e80a72c53ce3749f9375b60fcb22e32c1503"
+      },
+      "jaxtari/games/mods/donkeykong/__init__.py": {
+        "git_blob": "912256a340a7948a2e5059d9d45a6afaea44e5a4",
+        "sha256": "65ceefdc983812869a9bb6845cc69e3989fb4e1c171404798bb5a97485faaf2a"
+      },
+      "jaxtari/games/mods/donkeykong/donkeykong_mod_plugins.py": {
+        "git_blob": "1bdb92b5c3d24cfbaca8467f299ae6211428d2f4",
+        "sha256": "156800ff589ff36df306c6d11fab6ba54701496f6a605cbf2360b0b448f0f219"
+      },
+      "jaxtari/games/mods/donkeykong_mods.py": {
+        "git_blob": "48d63b964d9eee4d6f7b96778ff365f0615ce394",
+        "sha256": "83e70670827d9642a25497a55f12ce05ee0450070bb61d1388f5a9af4df5ab80"
+      },
+      "jaxtari/games/mods/enduro/enduro_mod_plugins.py": {
+        "git_blob": "d86ce4d336ed8569a8177a328e38f69b775ee7d6",
+        "sha256": "97a2901aa355f93259ecd55015f67ed23467d74ec825716fac46f8c62f25c5d3"
+      },
+      "jaxtari/games/mods/enduro_mods.py": {
+        "git_blob": "0634eeb690a83de7c1f0a1cc29164c2718cbb199",
+        "sha256": "ad07ea45e713ea981971de6401a0f90d48ba370248a9ce34c1dab11be3e2b19e"
+      },
+      "jaxtari/games/mods/fishingderby/fishingderby_mod_plugins.py": {
+        "git_blob": "6ecd22bb26cb0b8a949b65be7aa6daacb33a209c",
+        "sha256": "e6e5e9bb616ceb88f582bd34348e1c7dfcc219ee37dad6638ab0651c05a1b083"
+      },
+      "jaxtari/games/mods/fishingderby_mods.py": {
+        "git_blob": "c9e3dc68312cf55d46add888c3be81687cd98a2d",
+        "sha256": "4af417d45913e61b902267a175ff50140b0af198bf047e53fc48d8ec426a4b25"
+      },
+      "jaxtari/games/mods/freeway/freeway_mod_plugins.py": {
+        "git_blob": "ae2fec9a7068cc93dcedbc97ae9fc0dad21e7057",
+        "sha256": "b85db9e7d85a53bbcc0c0772a1a089a188d9eb4a35168d185f34c761c2519cee"
+      },
+      "jaxtari/games/mods/freeway_mods.py": {
+        "git_blob": "f444d0d19e5e7a526fcbfd0074795b6a1e7e61ac",
+        "sha256": "d32b18c422122e6e4f974554cafcf6a4c48955838e6b9369227c14d751302814"
+      },
+      "jaxtari/games/mods/frostbite/__init__.py": {
+        "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "jaxtari/games/mods/frostbite/frostbite_mod_plugins.py": {
+        "git_blob": "69c7098a10cf8b1effa844384adbbbcd9725388a",
+        "sha256": "44120d51a01f6dcb25e1c525919454a566a56d931768187b55a04cf9c50ef836"
+      },
+      "jaxtari/games/mods/frostbite_mods.py": {
+        "git_blob": "0f611fc8aaa908c03703042eafbbb700e62d73a5",
+        "sha256": "163d678149d5331af06e50213acb15e667783f9705375d8f750e854953863712"
+      },
+      "jaxtari/games/mods/gopher/gopher_mod_plugins.py": {
+        "git_blob": "2fe80875e41357c8cd5992d36456770e84ac4837",
+        "sha256": "101287fe7b2fb80fe398729c53d6ef4c41ee3af64992fd92259741b402d5bbaf"
+      },
+      "jaxtari/games/mods/gopher_mods.py": {
+        "git_blob": "c1f19c0dec0c3ca39d9fb351e4c78fd71d3a92c6",
+        "sha256": "738ed37cabb12a5f7fed44ba19fec14b7ead2caf6bfbdde90acc440c558ac918"
+      },
+      "jaxtari/games/mods/gravitar/gravitar_mod_plugins.py": {
+        "git_blob": "14022136aeff0526aa90ecfda5b49662ab4e1898",
+        "sha256": "0ae840d0832adbb6a974d6f49f0710bdd5f06aaf59dfebe53f8ef1a0b7e8bbd4"
+      },
+      "jaxtari/games/mods/gravitar_mods.py": {
+        "git_blob": "891de5da14e17ba576d23ab0e3f4b5d0dece88d9",
+        "sha256": "cfc7e5b775cd500e76a36185ce29b4f4783340cd02aa043d635b20ead7048108"
+      },
+      "jaxtari/games/mods/journey_escape/journey_escape_mod_plugins.py": {
+        "git_blob": "a4fba7010e6a712d1140f09413cc35a4a4fb430e",
+        "sha256": "ebde7518958e4372d4b25fc70867d6fb8b51e1e627d8f98c0d0c85afb79fb743"
+      },
+      "jaxtari/games/mods/journey_escape_mods.py": {
+        "git_blob": "3e547a6c646943669fab8eb7cb35f8caf5244cfa",
+        "sha256": "44a1e33bb771b85e9098381294c0a8a6298b5154b9aaefb5811a858efeefd655"
+      },
+      "jaxtari/games/mods/kaboom/kaboom_mod_plugins.py": {
+        "git_blob": "993dd1cfd2e3b3809c6b359cd2e3074176d6cf51",
+        "sha256": "1544f998a955a8c1e07f1fdcf7f66d5b3a5ac7c5e4182e9c44a81683376b9450"
+      },
+      "jaxtari/games/mods/kaboom_mods.py": {
+        "git_blob": "a28098e1f9ee4d78ed0153d352d530bf8811ccf3",
+        "sha256": "524645a42298bea616acfff909cc0546fc76d8331e608197e16b4c82a418c44b"
+      },
+      "jaxtari/games/mods/kangaroo/kangaroo_mod_plugins.py": {
+        "git_blob": "94ebcad04b6e8388438235d6099c24ebd95d85c3",
+        "sha256": "4802cf7055a6ccf6300c8f8cf100f09edee5daac47a0cc9e9b7c39e8b6d5c6cc"
+      },
+      "jaxtari/games/mods/kangaroo_mods.py": {
+        "git_blob": "6317e2f9b9985f43f0b38124e2b8a32af613f13b",
+        "sha256": "72f5434ebe7f3c460f370db9a0a0b0d849d7e93abf93cd0f4d4d0ecdc4b96a02"
+      },
+      "jaxtari/games/mods/miniature_golf/miniature_golf_mod_plugins.py": {
+        "git_blob": "f0d17551529d72eaac28af9d27dc489522ce47b3",
+        "sha256": "b08629a825694583fdc7f317936f5bcfb6bd6371a570fedd2cb89f29aef5377d"
+      },
+      "jaxtari/games/mods/miniature_golf_mods.py": {
+        "git_blob": "a56a0bb41a5f250f229784300703f450b229b6c3",
+        "sha256": "67d2a58f9e5c232165239aba88573191898e8c5c09a94c8e9d25d951ce032126"
+      },
+      "jaxtari/games/mods/montezuma_revenge/custom_rooms.py": {
+        "git_blob": "83d73ea0971de7a9ee113aae6088ae0606e38ec6",
+        "sha256": "cba6f30bacc7f393528b8d1f889baed119a3e2a6e93afd3853e2c3d2f4ff6cb1"
+      },
+      "jaxtari/games/mods/montezuma_revenge/montezuma_revenge_mod_plugins.py": {
+        "git_blob": "06293ff87853e03886add9ffdb63dc6043ee8dbc",
+        "sha256": "713c3427a44151688129d974b2446155de4e5bad9e2af6d77060ec27beac9d5b"
+      },
+      "jaxtari/games/mods/montezuma_revenge_mods.py": {
+        "git_blob": "cd08bfed9e794412ebf309bdccd773380b6bb480",
+        "sha256": "35203c0053d08464f3aca38cab15d2587d2ac3a3f4a599e0df85121ff48c6fff"
+      },
+      "jaxtari/games/mods/mspacman/mspacman_mod_plugins.py": {
+        "git_blob": "82995d17e73210cfad760252715198fc1c3b42ec",
+        "sha256": "717b9478f36e7da9d482a4ce396573d1a1a6fb2e9a1a657b6a3facc8ed2a1e88"
+      },
+      "jaxtari/games/mods/mspacman_mods.py": {
+        "git_blob": "b861d9e622fb9195fead46da1e9b914cfa51d4b1",
+        "sha256": "edc67f1d15fc7cf95ee7f468b3cde9321ee48c3d50006dd7d6d1e3bfb5d7eceb"
+      },
+      "jaxtari/games/mods/othello/__init__.py": {
+        "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "jaxtari/games/mods/othello/othello_mod_plugins.py": {
+        "git_blob": "c9cda4d3b21931073d0ced322013298ea55d2cae",
+        "sha256": "e379e12ab70901761af0b124d14deedcbb863d7a2d2ba10c078c7317f2a1ceb2"
+      },
+      "jaxtari/games/mods/othello_mods.py": {
+        "git_blob": "7cdc5e185b21d24496c681fcb5c4fb6336d04377",
+        "sha256": "b562dc496538073b3bbd4540980c849101c8fcd8440b298d697be8f435f8bf9b"
+      },
+      "jaxtari/games/mods/pacman/pacman_mod_plugins.py": {
+        "git_blob": "d136d696bb597c8d9c8fa65023a57f80f04ec223",
+        "sha256": "a733ee9e1f35f341bcedec5e314bbdb16ceda4b6985a3aabfc0a077578d5e77c"
+      },
+      "jaxtari/games/mods/pacman_mods.py": {
+        "git_blob": "938a2c47ce0e746713930e7ae28dc41b89400db7",
+        "sha256": "1f1b013e7d1b5ced597abe7dfdb1a666f0465be34c3baa46415542624fae3c54"
+      },
+      "jaxtari/games/mods/phoenix/phoenix_mod_plugins.py": {
+        "git_blob": "cafd3f0fd2c3c2f5f70c49727fff749c98d7dfaa",
+        "sha256": "7d4b17957d465f47f7a2ce5bb08064f427eeebfbc45da2bd5f95fc839cc133ad"
+      },
+      "jaxtari/games/mods/phoenix_mods.py": {
+        "git_blob": "645d76ddf3f0af838849b4a750a0f620eb351edc",
+        "sha256": "beb19b40214e49306d6ee37fecbf4178a78367e1286235af6e6dfb2b49572d6c"
+      },
+      "jaxtari/games/mods/pong/pong_mod_plugins.py": {
+        "git_blob": "bc03a120257fb5809ae5fb925d5f76aeea3576f0",
+        "sha256": "fdaca0668f7d08a531f01550d2c7a19c56e8bbab766dcf2acad93e027d4c36b8"
+      },
+      "jaxtari/games/mods/pong_mods.py": {
+        "git_blob": "a7de59d03dced802888630ef45ff6b345289b792",
+        "sha256": "709441ed8a1e648cec387011697625f28348a35ff4d3a14ea8b87e688492af47"
+      },
+      "jaxtari/games/mods/qbert/qbert_mod_plugins.py": {
+        "git_blob": "d105406755e74f7ca3bb5aa145ccfaaceebb8956",
+        "sha256": "995b97b2d729244014b0a3c8a61d439aac760f87a391a2f89283ec7dd2837f23"
+      },
+      "jaxtari/games/mods/qbert_mods.py": {
+        "git_blob": "f8561195bd319f4f1e91e1201064ff01d9ea74ef",
+        "sha256": "674850f9863bef0e2294c07c0f09812915f7d9cd617202c9d5b601791d8dfa85"
+      },
+      "jaxtari/games/mods/roadrunner/__init__.py": {
+        "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "jaxtari/games/mods/roadrunner/roadrunner_mod_plugins.py": {
+        "git_blob": "5d59cb35a3b83b8dee4cfb0e05b6f7de741cd0de",
+        "sha256": "010b2c6e060c83fa78392c6c513eeefe1050715d4d88a145b928eed862eca207"
+      },
+      "jaxtari/games/mods/roadrunner_mods.py": {
+        "git_blob": "579c43d8a16f0af2babf5397c12202beb8b56232",
+        "sha256": "a025ce172e707524864108a170e081449fdc473f6694262a1b60ae19502d2aa4"
+      },
+      "jaxtari/games/mods/seaquest/seaquest_mod_plugins.py": {
+        "git_blob": "4ea883f0f78fb84b463983870ef218ecaa2f3c11",
+        "sha256": "5337da04a600f26b43fd9a082b4e410bd3c805db932c1da06ed0dc39c312bb54"
+      },
+      "jaxtari/games/mods/seaquest_mods.py": {
+        "git_blob": "7e4a2b8a4acce2f3b7ebe78b9e014a2a4ac33ffd",
+        "sha256": "5bab26371a16d4f56ec9f5b543a174adae2186949178545e0ece17f0b0a3ad48"
+      },
+      "jaxtari/games/mods/skiing/__init__.py": {
+        "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "jaxtari/games/mods/skiing/skiing_mod_plugins.py": {
+        "git_blob": "1072a4f36de70584c4d99e78f66582b7867c4d3c",
+        "sha256": "624a09190951c06a6dd9c066205fd3e4a1263235c42c1620554749621eff92d0"
+      },
+      "jaxtari/games/mods/skiing_mods.py": {
+        "git_blob": "11414ad08c164ab8947ea408d3e3d3438fe9ab8c",
+        "sha256": "b0a930b9f3597e525c6a383285724ebcf4e4e2514dd61c56c6881f6aa69262a1"
+      },
+      "jaxtari/games/mods/spaceinvaders/spaceinvaders_mod_plugins.py": {
+        "git_blob": "37509fb7bd50fc64bf29a486e076df14370ba8eb",
+        "sha256": "2d15c7e628a249abdf9fcca119433fa29f60e11ae2f8183902c2f80291a0d419"
+      },
+      "jaxtari/games/mods/spaceinvaders_mods.py": {
+        "git_blob": "f0e5d42d4b2df809aa1fa942f804e8ca9a4b3797",
+        "sha256": "3f3a542f93fe677fbe821e1705d37d59c95f28f6705aad9303e4905045777f63"
+      },
+      "jaxtari/games/mods/tennis/tennis_mod_plugins.py": {
+        "git_blob": "8db67602eb9685d45527eca32ee7062c14833303",
+        "sha256": "c8e1ad29b620dd82d4624dc092ccd0cad89b88a0067d386a6a529f0cf9e0df69"
+      },
+      "jaxtari/games/mods/tennis_mods.py": {
+        "git_blob": "8f570e99eaf4cc4804563e75a7909afaadd520a3",
+        "sha256": "c1effdfc064bb3ed8d6c2ffd90deb23bf88d8ff7a0053029b1cdfb9dd5b252a8"
+      },
+      "jaxtari/games/mods/timepilot/__init__.py": {
+        "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "jaxtari/games/mods/timepilot/timepilot_mod_plugins.py": {
+        "git_blob": "e0436e9e9d025ca1f337eee919b9ac13c5fd35f4",
+        "sha256": "a8ab4ef910bede8a17a957ac1f740475941d63bd51fa3531dcdaddc344c56222"
+      },
+      "jaxtari/games/mods/timepilot_mods.py": {
+        "git_blob": "0bd8b813318ad1ff0232a1bbd5e94a5e9e39ed92",
+        "sha256": "aec9a2ac3de52279cc0825a5c61cdea6f47fc133a8a7788ad8ad95bf8ad341cc"
+      },
+      "jaxtari/games/mods/upndown/upndown_mod_plugins.py": {
+        "git_blob": "a75f69690252a2bf199854c9c4d59764f1693c90",
+        "sha256": "e0de5f44ed61566553f38727ddb54a98b6cf156f8a2a5783275a678440a3ec8a"
+      },
+      "jaxtari/games/mods/upndown_mod_plugins.py": {
+        "git_blob": "5aae0c570bfe23b2283f2ec47228f42e4ba1055f",
+        "sha256": "e4d672a8326da3084b7c5d5da958d33400a993e19c6f5c56e96f55001d0c976e"
+      },
+      "jaxtari/games/mods/upndown_mods.py": {
+        "git_blob": "0baf9497872986484cbdb45dcc1e3d730b00e295",
+        "sha256": "17a8f489383d24aa531b64da80487df6efd6eaf9d1759c06a25f0f2196840446"
+      },
+      "jaxtari/games/mods/venture/venture_mod_plugins.py": {
+        "git_blob": "24b3df6c951214df6c142c12d8efe4a53183cc95",
+        "sha256": "49510909574ec5e8ac3eab31aa0c250048e0a7de36ca553720c8d4782db31a48"
+      },
+      "jaxtari/games/mods/venture_mods.py": {
+        "git_blob": "e5f6a5402a4f70c6bcc1ff30122b3bb186ee3899",
+        "sha256": "5bcec7332cb58353104c7a6d18ae263217630791063b52802c0ceb9df885ebda"
+      },
+      "jaxtari/games/mods/videochess_mod_plugins.py": {
+        "git_blob": "7e8421302735e7c4aa0881a46f9f2359b7741b2f",
+        "sha256": "1d6004260fad51100c820bb245f84970df73e25647f2189a95404b04a6b91293"
+      },
+      "jaxtari/games/mods/videochess_mods.py": {
+        "git_blob": "b60eead61693eb4cfb6b2fc31a624828e9e50d40",
+        "sha256": "f040e330571b72006af7bdd1353b56af34deabed73e9b929c6296caf01d97086"
+      },
+      "jaxtari/games/mods/videopinball/videopinball_mod_plugins.py": {
+        "git_blob": "bbb3ff1a7776e3963f101bbd9d6d6eaa9ff30b42",
+        "sha256": "c424583e8e7a7f2d3157701f5bca05a826635438f4a48cd53fae308b1436353e"
+      },
+      "jaxtari/games/mods/videopinball_mods.py": {
+        "git_blob": "58cbaf79b046c65a53e4edee0a192b9affd202be",
+        "sha256": "6b9b9db6a0d9d9e0f567bc3f2bbe0819c6257f5ad3e34c162c36fa917e49545d"
+      },
+      "jaxtari/games/mods/wizardofwor/__init__.py": {
+        "git_blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+        "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+      },
+      "jaxtari/games/mods/wizardofwor/wizardofwor_mod_plugins.py": {
+        "git_blob": "487fa02ada55145c8cd4a66094f0d8c098c27b34",
+        "sha256": "a8ed48d3aa83243c478696c8f64b5f780bfaf765daacfa1cbec26ea78d5305af"
+      },
+      "jaxtari/games/mods/wizardofwor_mods.py": {
+        "git_blob": "2bcaf841d33ad0388044019d41a4faa07c2dcd60",
+        "sha256": "070d5e9692bddae7fb873745ce32b2818b2319923de6e3b40f0fb789abddf36f"
+      },
+      "jaxtari/games/mods/yarsrevenge/yarsrevenge_mod_plugins.py": {
+        "git_blob": "8c95705307ed098ed9c38ba97f0f0881e90ef955",
+        "sha256": "13346c7549634e8489ac0266ef0548c38a145b6dfa474f21fed73b6f36a32cd3"
+      },
+      "jaxtari/games/mods/yarsrevenge_mods.py": {
+        "git_blob": "c71bbbaebc4700db9f8f8b0d39e209f73c02dcdd",
+        "sha256": "78c8e33fd6eb029e2f43dd23187f831ee24c67f024ef1dc3009899f6d54bc59b"
+      },
+      "jaxtari/games/montezuma_revenge/__init__.py": {
+        "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "jaxtari/games/montezuma_revenge/core.py": {
+        "git_blob": "4249d9158d7737ca5d22211ac994123ff3121b08",
+        "sha256": "20cd004ffe6c3c0ce3de9cceec271d7920a8069252c1fcf0032d8e4a69abc4c9"
+      },
+      "jaxtari/games/montezuma_revenge/renderer.py": {
+        "git_blob": "f835f226a4ace8d8e2eb94d83086339163da9c45",
+        "sha256": "7d0b2bae41f3cd76fb6bfb7e9f4a1fd92af59001ecbbd6c0bd6f958ee2ef255c"
+      },
+      "jaxtari/games/montezuma_revenge/rooms.py": {
+        "git_blob": "7ff971a55f1d33fcc656f9d68a4112ac03b5bed1",
+        "sha256": "ca46d83758d567a710d5bda6b432f808c831ea93702cd55034be828d07905be3"
+      },
+      "jaxtari/games/mspacman_mazes.py": {
+        "git_blob": "e69ce3e25e46adce7c7fcc727f43e9b1d89bee91",
+        "sha256": "340ce1be9c7098fca655ae3971b168b1e926930a4bcf8a122f41e6fca17cf643"
+      },
+      "jaxtari/games/timepilot_levels.py": {
+        "git_blob": "7e7a1610f731f581bc4dc9a6b5abf374b3847b51",
+        "sha256": "10c39395de09399fce91be46c47804443166be48b0fab96849972dd5129b24eb"
+      },
+      "jaxtari/games/videopinball_constants.py": {
+        "git_blob": "c88149269f9f6f03a0add003a3472978c36081ec",
+        "sha256": "23f72d3737a22b58bb06cbe448c8a7825da72c4cc92953ad454eb5443c41a625"
+      },
+      "jaxtari/gym_wrapper.py": {
+        "git_blob": "3c16cc8b84098b6cea2be3ea821c692ba6c96b12",
+        "sha256": "64282fe453e07a40a36ca1f9d56dcb8ee7c211da061aa29bd46064668e0d5e5e"
+      },
+      "jaxtari/install_sprites.py": {
+        "git_blob": "b2c15a8509dee3d5befca66658c169f3666b796e",
+        "sha256": "8423e3db122b5189905f8aa73e74ac4318302a8b6dd0ce1120ad3d0929564be0"
+      },
+      "jaxtari/modification.py": {
+        "git_blob": "f36ad136b08986ab9be2c688ff9ee90ed48371ac",
+        "sha256": "5e4a95e836bba726732d93324ff78ed732f70fcdea7ebbebe68bdacf3060dcff"
+      },
+      "jaxtari/paths.py": {
+        "git_blob": "dab603a14ade70e1a3af5e4987fe17d3082f9de1",
+        "sha256": "1074f279e6a013222ad291e62934ebf5d1c6196a67701f05433de684d0692ab4"
+      },
+      "jaxtari/renderers.py": {
+        "git_blob": "147534f5657400eadf50bdb76ab5221f10c60ebf",
+        "sha256": "d8adf54963158285897eabd005f18e49f6e27cfabe2246ac2cef99ca5529bd6f"
+      },
+      "jaxtari/rendering/__init__.py": {
+        "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "jaxtari/rendering/jax_rendering_utils.py": {
+        "git_blob": "4c3c0ee65b4d97f31b5a8957d838d8b66626ff50",
+        "sha256": "a93ab0545095399ba3dfafdfca8c658aa8bc549594c577d0d33a04750e0645c0"
+      },
+      "jaxtari/spaces.py": {
+        "git_blob": "e93342752f9be465758a72c47f3db475d8efef0a",
+        "sha256": "653172c08e80082a7d3744af8dd30add74a58dd8d2e5ca6f992ca070457e4134"
+      },
+      "jaxtari/wrappers.py": {
+        "git_blob": "25672ba62e8a21dcac1ee50a49d669ac09c2ce48",
+        "sha256": "f947427f357133d2bfd4781e5793da54aaacc00669e9edbd839fdf10a8688c03"
+      }
+    },
+    "source_commit": "04ab9aec318c72162e2e53503a594a489d7e162b",
+    "source_root": "/p/rlprojects/RND/reference_repos/jaxtari_pixel_study",
+    "tree_digest": "06465115933e9b0c3e569c575774edc10f4a828190b8bee658a5592d85b7f2f7",
+    "version": "0.2.0"
+  },
+  "job_id": "6783003",
+  "kind": "actual_direct_common_correctness_shared_software_asset_and_staged_metadata_verification",
+  "numerical_tests_run": false,
+  "packages": {
+    "flax": "0.12.8",
+    "jax": "0.11.0",
+    "jax-cuda12-pjrt": "0.11.0",
+    "jax-cuda12-plugin": "0.11.0",
+    "jaxlib": "0.11.0",
+    "jaxtari": "0.2.0",
+    "numpy": "2.5.2",
+    "nvidia-cublas-cu12": "12.9.2.10",
+    "nvidia-cuda-runtime-cu12": "12.9.79",
+    "nvidia-cudnn-cu12": "9.24.0.43",
+    "optax": "0.2.8"
+  },
+  "passed": true,
+  "pid": 831227,
+  "plan": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/measurement_plan.json",
+    "sha256": "03ce65d2eaf2182f029bfbbc526aaa64259101044000a846a5745ba66ba15406"
+  },
+  "python": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+  "python_version": "3.12.13 | packaged by conda-forge | (main, Aug 11 2026, 10:27:28) [GCC 14.4.0]",
+  "qualification_credit": 0,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "server_contact": false,
+  "standing_lock_probed": false,
+  "step_id": "171",
+  "target_gpu_runtime_verified": false,
+  "torch_version": "2.6.0+cpu",
+  "worker_admitted": false
+}

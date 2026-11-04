@@ -1,0 +1,39 @@
+{
+  "accepted_first_copy_review": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-02-00-06_h100-common-correctness_raw-review_copies-1-2_source-0a880984_helpers-26_before-seven-paired-rounds-ten-updates_gpu-count-0/copies_1_terminal_review/independent_actual_review.json",
+    "sha256": "22f4ec55120c987fe8d44b55e6427ab75e25db61785e29d7cb6bdcbc55df8818"
+  },
+  "actual_bound_author_tests": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/controller_metadata_tests/author_6783003_226.json",
+    "sha256": "cdf4f4a9eee67c79b3f767d2ee5439112a39534673999d0bc4ad246629cf698f"
+  },
+  "actual_controller_pid": null,
+  "actual_numerical_child_pid": null,
+  "at_utc": "2026-11-04T23:33:24.164540+00:00",
+  "case_credit": 0,
+  "controller_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/controller_source_freeze.json",
+    "sha256": "a08274bb8c505f8c8069fd3dad649333b2faae02a028907346686f529d875047"
+  },
+  "controller_owns_gpu_standing_descriptor": false,
+  "idea_credit": 0,
+  "independent_bound_inputs_review": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/h100_correctness_copy2_bound_independent_6783003_229.json",
+    "sha256": "b0a90c90ad2268bc8db166dd4b75cdc0dc9279990a8f70c1f17cd17b6a79293f"
+  },
+  "kind": "direct_qualification_controller_root_independent_review",
+  "launch_approved": true,
+  "packet_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/packet_metadata_freeze.json",
+    "sha256": "81596cef752f9a16bc8495073fc0026804ebb452e79f91fb50e9747d4225c240"
+  },
+  "passed": true,
+  "plan": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/measurement_plan.json",
+    "sha256": "03ce65d2eaf2182f029bfbbc526aaa64259101044000a846a5745ba66ba15406"
+  },
+  "producer_owns_gpu_standing_descriptor": true,
+  "review_scope": "Second-copy correctness controller and exact successful first-copy predecessor; no timing or ordinary-worker admission.",
+  "schema_version": 1,
+  "scientific_credit": 0
+}

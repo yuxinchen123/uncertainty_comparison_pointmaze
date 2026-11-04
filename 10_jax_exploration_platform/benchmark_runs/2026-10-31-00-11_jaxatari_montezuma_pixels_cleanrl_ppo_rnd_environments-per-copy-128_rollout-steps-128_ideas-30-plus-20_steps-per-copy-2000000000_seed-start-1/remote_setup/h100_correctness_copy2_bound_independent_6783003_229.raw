@@ -1,0 +1,17 @@
+test_actual_fixed_packet_default_is_read_only_without_commands (bound_correctness_controller_tests.BackendInputTests) ... ok
+test_actual_prepared_image_and_metadata_only_observation_cannot_change (bound_correctness_controller_tests.BackendInputTests) ... ok
+test_actual_prepared_schema_two_and_real_copies_pass_without_gpu_action (bound_correctness_controller_tests.BackendInputTests) ... ok
+test_copied_and_original_pin_paths_hashes_and_bytes_are_required (bound_correctness_controller_tests.BackendInputTests) ... ok
+test_legacy_missing_schema_and_wrong_capability_refuse_before_file_reads (bound_correctness_controller_tests.BackendInputTests) ... ok
+test_missing_new_helper_or_circular_scope_is_rejected (bound_correctness_controller_tests.BackendInputTests) ... ok
+test_new_backend_partial_attempt_markers_and_dangling_aliases_are_rejected (bound_correctness_controller_tests.BackendInputTests) ... ok
+test_staged_producer_or_owning_package_version_change_is_rejected (bound_correctness_controller_tests.BackendInputTests) ... ok
+test_each_required_metadata_or_helper_path_cannot_be_omitted (__main__.IndependentBoundChecks) ... ok
+test_literal_default_outputs_the_bound_two_copy_command_without_action (__main__.IndependentBoundChecks) ... ok
+test_missing_genuine_root_review_refuses_publication_before_any_process (__main__.IndependentBoundChecks) ... ok
+test_unlisted_extra_path_refuses_before_read (__main__.IndependentBoundChecks) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.987s
+
+OK
