@@ -1,0 +1,641 @@
+........usage: python3 -m unittest [-h]
+                           [--prepared-unit PREPARED_UNIT | --capture-unit CAPTURE_UNIT | --owned-waiter-unit OWNED_WAITER_UNIT | --inspect-profile-tool INSPECT_PROFILE_TOOL]
+                           [--prepare-only]
+                           [--configured-isolation-profile CONFIGURED_ISOLATION_PROFILE]
+                           [--target-qualification-record TARGET_QUALIFICATION_RECORD]
+                           [--target-qualification-review TARGET_QUALIFICATION_REVIEW]
+                           [--direct-binding-profile DIRECT_BINDING_PROFILE]
+                           [--direct-history-inputs DIRECT_HISTORY_INPUTS]
+                           [--direct-qualification-record DIRECT_QUALIFICATION_RECORD]
+                           [--direct-qualification-review DIRECT_QUALIFICATION_REVIEW]
+                           [--direct-backend-image-record DIRECT_BACKEND_IMAGE_RECORD]
+                           [--direct-confirmation-review DIRECT_CONFIRMATION_REVIEW]
+                           [--source-root SOURCE_ROOT]
+                           [--configuration CONFIGURATION]
+                           [--runtime-environment RUNTIME_ENVIRONMENT]
+                           [--asset-record ASSET_RECORD]
+                           [--study-registry STUDY_REGISTRY]
+                           [--accepted-baseline-specification ACCEPTED_BASELINE_SPECIFICATION]
+                           [--profile-tool-record PROFILE_TOOL_RECORD]
+                           [--jaxtari-source-root JAXTARI_SOURCE_ROOT]
+                           [--run-dir RUN_DIR] [--source-commit SOURCE_COMMIT]
+                           [--unit-id UNIT_ID] [--gpu-uuid GPU_UUID]
+                           [--hardware-class HARDWARE_CLASS]
+                           [--seed-start SEED_START]
+                           [--minimum-updates MINIMUM_UPDATES]
+                           [--maximum-active-seconds MAXIMUM_ACTIVE_SECONDS]
+                           [--python PYTHON]
+python3 -m unittest: error: execution/tool inspection cannot override a prepared configuration
+..............................F...........................F.............usage: python3 -m unittest [-h] [--prepared-unit PREPARED_UNIT]
+                           [--record-device-memory-limit]
+                           [--memory-limit-allocation-kind {direct,slurm}]
+                           [--memory-limit-cluster {uva,aces}]
+                           [--memory-limit-owned-job-ledger MEMORY_LIMIT_OWNED_JOB_LEDGER]
+                           [--memory-limit-ownership-profile {uva_slurm_cgroup_v2_process_uid_ownership}]
+                           [--cleanrl-source-root CLEANRL_SOURCE_ROOT]
+                           [--qualification-software-result QUALIFICATION_SOFTWARE_RESULT]
+                           [--configured-isolation-profile CONFIGURED_ISOLATION_PROFILE]
+                           [--target-qualification]
+                           [--target-qualification-record TARGET_QUALIFICATION_RECORD]
+                           [--target-qualification-review TARGET_QUALIFICATION_REVIEW]
+                           [--common-correctness-record COMMON_CORRECTNESS_RECORD]
+                           [--common-correctness-review COMMON_CORRECTNESS_REVIEW]
+                           [--direct-binding-profile DIRECT_BINDING_PROFILE]
+                           [--direct-backend-image-record DIRECT_BACKEND_IMAGE_RECORD]
+                           [--direct-history-inputs DIRECT_HISTORY_INPUTS]
+                           [--direct-target-qualification]
+                           [--direct-qualification-record DIRECT_QUALIFICATION_RECORD]
+                           [--direct-qualification-review DIRECT_QUALIFICATION_REVIEW]
+                           [--prepare-only]
+                           [--mode {correctness,confirmation,packing-point,learning-check}]
+                           [--source-root SOURCE_ROOT]
+                           [--source-commit SOURCE_COMMIT]
+                           [--configuration CONFIGURATION]
+                           [--reference-configuration REFERENCE_CONFIGURATION]
+                           [--runtime-environment RUNTIME_ENVIRONMENT]
+                           [--asset-record ASSET_RECORD]
+                           [--jaxtari-source-root JAXTARI_SOURCE_ROOT]
+                           [--run-dir RUN_DIR] [--unit-id UNIT_ID]
+                           [--gpu-uuid GPU_UUID]
+                           [--hardware-class {h100,jaguar03_rtx_a4500}]
+                           [--seed-start SEED_START] [--copies COPIES]
+                           [--rounds ROUNDS]
+                           [--minimum-updates-per-round MINIMUM_UPDATES_PER_ROUND]
+                           [--final-confirmation]
+                           [--completed-study-proof COMPLETED_STUDY_PROOF]
+                           [--completed-study-review COMPLETED_STUDY_REVIEW]
+                           [--completed-study-manifest COMPLETED_STUDY_MANIFEST]
+                           [--completed-study-manifest-sha256 COMPLETED_STUDY_MANIFEST_SHA256]
+                           [--python PYTHON]
+python3 -m unittest: error: reviewed common correctness requires exactly one intermediate configured or direct confirmation
+usage: python3 -m unittest [-h] [--prepared-unit PREPARED_UNIT]
+                           [--record-device-memory-limit]
+                           [--memory-limit-allocation-kind {direct,slurm}]
+                           [--memory-limit-cluster {uva,aces}]
+                           [--memory-limit-owned-job-ledger MEMORY_LIMIT_OWNED_JOB_LEDGER]
+                           [--memory-limit-ownership-profile {uva_slurm_cgroup_v2_process_uid_ownership}]
+                           [--cleanrl-source-root CLEANRL_SOURCE_ROOT]
+                           [--qualification-software-result QUALIFICATION_SOFTWARE_RESULT]
+                           [--configured-isolation-profile CONFIGURED_ISOLATION_PROFILE]
+                           [--target-qualification]
+                           [--target-qualification-record TARGET_QUALIFICATION_RECORD]
+                           [--target-qualification-review TARGET_QUALIFICATION_REVIEW]
+                           [--common-correctness-record COMMON_CORRECTNESS_RECORD]
+                           [--common-correctness-review COMMON_CORRECTNESS_REVIEW]
+                           [--direct-binding-profile DIRECT_BINDING_PROFILE]
+                           [--direct-backend-image-record DIRECT_BACKEND_IMAGE_RECORD]
+                           [--direct-history-inputs DIRECT_HISTORY_INPUTS]
+                           [--direct-target-qualification]
+                           [--direct-qualification-record DIRECT_QUALIFICATION_RECORD]
+                           [--direct-qualification-review DIRECT_QUALIFICATION_REVIEW]
+                           [--prepare-only]
+                           [--mode {correctness,confirmation,packing-point,learning-check}]
+                           [--source-root SOURCE_ROOT]
+                           [--source-commit SOURCE_COMMIT]
+                           [--configuration CONFIGURATION]
+                           [--reference-configuration REFERENCE_CONFIGURATION]
+                           [--runtime-environment RUNTIME_ENVIRONMENT]
+                           [--asset-record ASSET_RECORD]
+                           [--jaxtari-source-root JAXTARI_SOURCE_ROOT]
+                           [--run-dir RUN_DIR] [--unit-id UNIT_ID]
+                           [--gpu-uuid GPU_UUID]
+                           [--hardware-class {h100,jaguar03_rtx_a4500}]
+                           [--seed-start SEED_START] [--copies COPIES]
+                           [--rounds ROUNDS]
+                           [--minimum-updates-per-round MINIMUM_UPDATES_PER_ROUND]
+                           [--final-confirmation]
+                           [--completed-study-proof COMPLETED_STUDY_PROOF]
+                           [--completed-study-review COMPLETED_STUDY_REVIEW]
+                           [--completed-study-manifest COMPLETED_STUDY_MANIFEST]
+                           [--completed-study-manifest-sha256 COMPLETED_STUDY_MANIFEST_SHA256]
+                           [--python PYTHON]
+python3 -m unittest: error: --prepared-unit executes its recorded plan and cannot take preparation overrides
+usage: python3 -m unittest [-h] [--prepared-unit PREPARED_UNIT]
+                           [--record-device-memory-limit]
+                           [--memory-limit-allocation-kind {direct,slurm}]
+                           [--memory-limit-cluster {uva,aces}]
+                           [--memory-limit-owned-job-ledger MEMORY_LIMIT_OWNED_JOB_LEDGER]
+                           [--memory-limit-ownership-profile {uva_slurm_cgroup_v2_process_uid_ownership}]
+                           [--cleanrl-source-root CLEANRL_SOURCE_ROOT]
+                           [--qualification-software-result QUALIFICATION_SOFTWARE_RESULT]
+                           [--configured-isolation-profile CONFIGURED_ISOLATION_PROFILE]
+                           [--target-qualification]
+                           [--target-qualification-record TARGET_QUALIFICATION_RECORD]
+                           [--target-qualification-review TARGET_QUALIFICATION_REVIEW]
+                           [--common-correctness-record COMMON_CORRECTNESS_RECORD]
+                           [--common-correctness-review COMMON_CORRECTNESS_REVIEW]
+                           [--direct-binding-profile DIRECT_BINDING_PROFILE]
+                           [--direct-backend-image-record DIRECT_BACKEND_IMAGE_RECORD]
+                           [--direct-history-inputs DIRECT_HISTORY_INPUTS]
+                           [--direct-target-qualification]
+                           [--direct-qualification-record DIRECT_QUALIFICATION_RECORD]
+                           [--direct-qualification-review DIRECT_QUALIFICATION_REVIEW]
+                           [--prepare-only]
+                           [--mode {correctness,confirmation,packing-point,learning-check}]
+                           [--source-root SOURCE_ROOT]
+                           [--source-commit SOURCE_COMMIT]
+                           [--configuration CONFIGURATION]
+                           [--reference-configuration REFERENCE_CONFIGURATION]
+                           [--runtime-environment RUNTIME_ENVIRONMENT]
+                           [--asset-record ASSET_RECORD]
+                           [--jaxtari-source-root JAXTARI_SOURCE_ROOT]
+                           [--run-dir RUN_DIR] [--unit-id UNIT_ID]
+                           [--gpu-uuid GPU_UUID]
+                           [--hardware-class {h100,jaguar03_rtx_a4500}]
+                           [--seed-start SEED_START] [--copies COPIES]
+                           [--rounds ROUNDS]
+                           [--minimum-updates-per-round MINIMUM_UPDATES_PER_ROUND]
+                           [--final-confirmation]
+                           [--completed-study-proof COMPLETED_STUDY_PROOF]
+                           [--completed-study-review COMPLETED_STUDY_REVIEW]
+                           [--completed-study-manifest COMPLETED_STUDY_MANIFEST]
+                           [--completed-study-manifest-sha256 COMPLETED_STUDY_MANIFEST_SHA256]
+                           [--python PYTHON]
+python3 -m unittest: error: reviewed common correctness requires exactly one intermediate configured or direct confirmation
+...............................E..E...usage: python3 -m unittest [-h] [--prepared-unit PREPARED_UNIT]
+                           [--record-device-memory-limit]
+                           [--memory-limit-allocation-kind {direct,slurm}]
+                           [--memory-limit-cluster {uva,aces}]
+                           [--memory-limit-owned-job-ledger MEMORY_LIMIT_OWNED_JOB_LEDGER]
+                           [--memory-limit-ownership-profile {uva_slurm_cgroup_v2_process_uid_ownership}]
+                           [--cleanrl-source-root CLEANRL_SOURCE_ROOT]
+                           [--qualification-software-result QUALIFICATION_SOFTWARE_RESULT]
+                           [--configured-isolation-profile CONFIGURED_ISOLATION_PROFILE]
+                           [--target-qualification]
+                           [--target-qualification-record TARGET_QUALIFICATION_RECORD]
+                           [--target-qualification-review TARGET_QUALIFICATION_REVIEW]
+                           [--common-correctness-record COMMON_CORRECTNESS_RECORD]
+                           [--common-correctness-review COMMON_CORRECTNESS_REVIEW]
+                           [--direct-binding-profile DIRECT_BINDING_PROFILE]
+                           [--direct-backend-image-record DIRECT_BACKEND_IMAGE_RECORD]
+                           [--direct-history-inputs DIRECT_HISTORY_INPUTS]
+                           [--direct-target-qualification]
+                           [--direct-qualification-record DIRECT_QUALIFICATION_RECORD]
+                           [--direct-qualification-review DIRECT_QUALIFICATION_REVIEW]
+                           [--prepare-only]
+                           [--mode {correctness,confirmation,packing-point,learning-check}]
+                           [--source-root SOURCE_ROOT]
+                           [--source-commit SOURCE_COMMIT]
+                           [--configuration CONFIGURATION]
+                           [--reference-configuration REFERENCE_CONFIGURATION]
+                           [--runtime-environment RUNTIME_ENVIRONMENT]
+                           [--asset-record ASSET_RECORD]
+                           [--jaxtari-source-root JAXTARI_SOURCE_ROOT]
+                           [--run-dir RUN_DIR] [--unit-id UNIT_ID]
+                           [--gpu-uuid GPU_UUID]
+                           [--hardware-class {h100,jaguar03_rtx_a4500}]
+                           [--seed-start SEED_START] [--copies COPIES]
+                           [--rounds ROUNDS]
+                           [--minimum-updates-per-round MINIMUM_UPDATES_PER_ROUND]
+                           [--final-confirmation]
+                           [--completed-study-proof COMPLETED_STUDY_PROOF]
+                           [--completed-study-review COMPLETED_STUDY_REVIEW]
+                           [--completed-study-manifest COMPLETED_STUDY_MANIFEST]
+                           [--completed-study-manifest-sha256 COMPLETED_STUDY_MANIFEST_SHA256]
+                           [--python PYTHON]
+python3 -m unittest: error: --prepared-unit executes its recorded plan and cannot take preparation overrides
+usage: python3 -m unittest [-h] [--prepared-unit PREPARED_UNIT]
+                           [--record-device-memory-limit]
+                           [--memory-limit-allocation-kind {direct,slurm}]
+                           [--memory-limit-cluster {uva,aces}]
+                           [--memory-limit-owned-job-ledger MEMORY_LIMIT_OWNED_JOB_LEDGER]
+                           [--memory-limit-ownership-profile {uva_slurm_cgroup_v2_process_uid_ownership}]
+                           [--cleanrl-source-root CLEANRL_SOURCE_ROOT]
+                           [--qualification-software-result QUALIFICATION_SOFTWARE_RESULT]
+                           [--configured-isolation-profile CONFIGURED_ISOLATION_PROFILE]
+                           [--target-qualification]
+                           [--target-qualification-record TARGET_QUALIFICATION_RECORD]
+                           [--target-qualification-review TARGET_QUALIFICATION_REVIEW]
+                           [--common-correctness-record COMMON_CORRECTNESS_RECORD]
+                           [--common-correctness-review COMMON_CORRECTNESS_REVIEW]
+                           [--direct-binding-profile DIRECT_BINDING_PROFILE]
+                           [--direct-backend-image-record DIRECT_BACKEND_IMAGE_RECORD]
+                           [--direct-history-inputs DIRECT_HISTORY_INPUTS]
+                           [--direct-target-qualification]
+                           [--direct-qualification-record DIRECT_QUALIFICATION_RECORD]
+                           [--direct-qualification-review DIRECT_QUALIFICATION_REVIEW]
+                           [--prepare-only]
+                           [--mode {correctness,confirmation,packing-point,learning-check}]
+                           [--source-root SOURCE_ROOT]
+                           [--source-commit SOURCE_COMMIT]
+                           [--configuration CONFIGURATION]
+                           [--reference-configuration REFERENCE_CONFIGURATION]
+                           [--runtime-environment RUNTIME_ENVIRONMENT]
+                           [--asset-record ASSET_RECORD]
+                           [--jaxtari-source-root JAXTARI_SOURCE_ROOT]
+                           [--run-dir RUN_DIR] [--unit-id UNIT_ID]
+                           [--gpu-uuid GPU_UUID]
+                           [--hardware-class {h100,jaguar03_rtx_a4500}]
+                           [--seed-start SEED_START] [--copies COPIES]
+                           [--rounds ROUNDS]
+                           [--minimum-updates-per-round MINIMUM_UPDATES_PER_ROUND]
+                           [--final-confirmation]
+                           [--completed-study-proof COMPLETED_STUDY_PROOF]
+                           [--completed-study-review COMPLETED_STUDY_REVIEW]
+                           [--completed-study-manifest COMPLETED_STUDY_MANIFEST]
+                           [--completed-study-manifest-sha256 COMPLETED_STUDY_MANIFEST_SHA256]
+                           [--python PYTHON]
+python3 -m unittest: error: --prepared-unit executes its recorded plan and cannot take preparation overrides
+usage: python3 -m unittest [-h] [--prepared-unit PREPARED_UNIT]
+                           [--record-device-memory-limit]
+                           [--memory-limit-allocation-kind {direct,slurm}]
+                           [--memory-limit-cluster {uva,aces}]
+                           [--memory-limit-owned-job-ledger MEMORY_LIMIT_OWNED_JOB_LEDGER]
+                           [--memory-limit-ownership-profile {uva_slurm_cgroup_v2_process_uid_ownership}]
+                           [--cleanrl-source-root CLEANRL_SOURCE_ROOT]
+                           [--qualification-software-result QUALIFICATION_SOFTWARE_RESULT]
+                           [--configured-isolation-profile CONFIGURED_ISOLATION_PROFILE]
+                           [--target-qualification]
+                           [--target-qualification-record TARGET_QUALIFICATION_RECORD]
+                           [--target-qualification-review TARGET_QUALIFICATION_REVIEW]
+                           [--common-correctness-record COMMON_CORRECTNESS_RECORD]
+                           [--common-correctness-review COMMON_CORRECTNESS_REVIEW]
+                           [--direct-binding-profile DIRECT_BINDING_PROFILE]
+                           [--direct-backend-image-record DIRECT_BACKEND_IMAGE_RECORD]
+                           [--direct-history-inputs DIRECT_HISTORY_INPUTS]
+                           [--direct-target-qualification]
+                           [--direct-qualification-record DIRECT_QUALIFICATION_RECORD]
+                           [--direct-qualification-review DIRECT_QUALIFICATION_REVIEW]
+                           [--prepare-only]
+                           [--mode {correctness,confirmation,packing-point,learning-check}]
+                           [--source-root SOURCE_ROOT]
+                           [--source-commit SOURCE_COMMIT]
+                           [--configuration CONFIGURATION]
+                           [--reference-configuration REFERENCE_CONFIGURATION]
+                           [--runtime-environment RUNTIME_ENVIRONMENT]
+                           [--asset-record ASSET_RECORD]
+                           [--jaxtari-source-root JAXTARI_SOURCE_ROOT]
+                           [--run-dir RUN_DIR] [--unit-id UNIT_ID]
+                           [--gpu-uuid GPU_UUID]
+                           [--hardware-class {h100,jaguar03_rtx_a4500}]
+                           [--seed-start SEED_START] [--copies COPIES]
+                           [--rounds ROUNDS]
+                           [--minimum-updates-per-round MINIMUM_UPDATES_PER_ROUND]
+                           [--final-confirmation]
+                           [--completed-study-proof COMPLETED_STUDY_PROOF]
+                           [--completed-study-review COMPLETED_STUDY_REVIEW]
+                           [--completed-study-manifest COMPLETED_STUDY_MANIFEST]
+                           [--completed-study-manifest-sha256 COMPLETED_STUDY_MANIFEST_SHA256]
+                           [--python PYTHON]
+python3 -m unittest: error: --prepared-unit executes its recorded plan and cannot take preparation overrides
+usage: python3 -m unittest [-h] [--prepared-unit PREPARED_UNIT]
+                           [--record-device-memory-limit]
+                           [--memory-limit-allocation-kind {direct,slurm}]
+                           [--memory-limit-cluster {uva,aces}]
+                           [--memory-limit-owned-job-ledger MEMORY_LIMIT_OWNED_JOB_LEDGER]
+                           [--memory-limit-ownership-profile {uva_slurm_cgroup_v2_process_uid_ownership}]
+                           [--cleanrl-source-root CLEANRL_SOURCE_ROOT]
+                           [--qualification-software-result QUALIFICATION_SOFTWARE_RESULT]
+                           [--configured-isolation-profile CONFIGURED_ISOLATION_PROFILE]
+                           [--target-qualification]
+                           [--target-qualification-record TARGET_QUALIFICATION_RECORD]
+                           [--target-qualification-review TARGET_QUALIFICATION_REVIEW]
+                           [--common-correctness-record COMMON_CORRECTNESS_RECORD]
+                           [--common-correctness-review COMMON_CORRECTNESS_REVIEW]
+                           [--direct-binding-profile DIRECT_BINDING_PROFILE]
+                           [--direct-backend-image-record DIRECT_BACKEND_IMAGE_RECORD]
+                           [--direct-history-inputs DIRECT_HISTORY_INPUTS]
+                           [--direct-target-qualification]
+                           [--direct-qualification-record DIRECT_QUALIFICATION_RECORD]
+                           [--direct-qualification-review DIRECT_QUALIFICATION_REVIEW]
+                           [--prepare-only]
+                           [--mode {correctness,confirmation,packing-point,learning-check}]
+                           [--source-root SOURCE_ROOT]
+                           [--source-commit SOURCE_COMMIT]
+                           [--configuration CONFIGURATION]
+                           [--reference-configuration REFERENCE_CONFIGURATION]
+                           [--runtime-environment RUNTIME_ENVIRONMENT]
+                           [--asset-record ASSET_RECORD]
+                           [--jaxtari-source-root JAXTARI_SOURCE_ROOT]
+                           [--run-dir RUN_DIR] [--unit-id UNIT_ID]
+                           [--gpu-uuid GPU_UUID]
+                           [--hardware-class {h100,jaguar03_rtx_a4500}]
+                           [--seed-start SEED_START] [--copies COPIES]
+                           [--rounds ROUNDS]
+                           [--minimum-updates-per-round MINIMUM_UPDATES_PER_ROUND]
+                           [--final-confirmation]
+                           [--completed-study-proof COMPLETED_STUDY_PROOF]
+                           [--completed-study-review COMPLETED_STUDY_REVIEW]
+                           [--completed-study-manifest COMPLETED_STUDY_MANIFEST]
+                           [--completed-study-manifest-sha256 COMPLETED_STUDY_MANIFEST_SHA256]
+                           [--python PYTHON]
+python3 -m unittest: error: --prepared-unit executes its recorded plan and cannot take preparation overrides
+...EEE.E.usage: python3 -m unittest [-h]
+                           [--prepared-unit PREPARED_UNIT | --capture-unit CAPTURE_UNIT | --owned-waiter-unit OWNED_WAITER_UNIT | --inspect-profile-tool INSPECT_PROFILE_TOOL]
+                           [--prepare-only]
+                           [--configured-isolation-profile CONFIGURED_ISOLATION_PROFILE]
+                           [--target-qualification-record TARGET_QUALIFICATION_RECORD]
+                           [--target-qualification-review TARGET_QUALIFICATION_REVIEW]
+                           [--direct-binding-profile DIRECT_BINDING_PROFILE]
+                           [--direct-history-inputs DIRECT_HISTORY_INPUTS]
+                           [--direct-qualification-record DIRECT_QUALIFICATION_RECORD]
+                           [--direct-qualification-review DIRECT_QUALIFICATION_REVIEW]
+                           [--direct-backend-image-record DIRECT_BACKEND_IMAGE_RECORD]
+                           [--direct-confirmation-review DIRECT_CONFIRMATION_REVIEW]
+                           [--source-root SOURCE_ROOT]
+                           [--configuration CONFIGURATION]
+                           [--runtime-environment RUNTIME_ENVIRONMENT]
+                           [--asset-record ASSET_RECORD]
+                           [--study-registry STUDY_REGISTRY]
+                           [--accepted-baseline-specification ACCEPTED_BASELINE_SPECIFICATION]
+                           [--profile-tool-record PROFILE_TOOL_RECORD]
+                           [--jaxtari-source-root JAXTARI_SOURCE_ROOT]
+                           [--run-dir RUN_DIR] [--source-commit SOURCE_COMMIT]
+                           [--unit-id UNIT_ID] [--gpu-uuid GPU_UUID]
+                           [--hardware-class HARDWARE_CLASS]
+                           [--seed-start SEED_START]
+                           [--minimum-updates MINIMUM_UPDATES]
+                           [--maximum-active-seconds MAXIMUM_ACTIVE_SECONDS]
+                           [--python PYTHON]
+python3 -m unittest: error: the actual inherited descriptor applies only to a prepared direct capture child
+usage: python3 -m unittest [-h]
+                           [--prepared-unit PREPARED_UNIT | --capture-unit CAPTURE_UNIT | --owned-waiter-unit OWNED_WAITER_UNIT | --inspect-profile-tool INSPECT_PROFILE_TOOL]
+                           [--prepare-only]
+                           [--configured-isolation-profile CONFIGURED_ISOLATION_PROFILE]
+                           [--target-qualification-record TARGET_QUALIFICATION_RECORD]
+                           [--target-qualification-review TARGET_QUALIFICATION_REVIEW]
+                           [--direct-binding-profile DIRECT_BINDING_PROFILE]
+                           [--direct-history-inputs DIRECT_HISTORY_INPUTS]
+                           [--direct-qualification-record DIRECT_QUALIFICATION_RECORD]
+                           [--direct-qualification-review DIRECT_QUALIFICATION_REVIEW]
+                           [--direct-backend-image-record DIRECT_BACKEND_IMAGE_RECORD]
+                           [--direct-confirmation-review DIRECT_CONFIRMATION_REVIEW]
+                           [--source-root SOURCE_ROOT]
+                           [--configuration CONFIGURATION]
+                           [--runtime-environment RUNTIME_ENVIRONMENT]
+                           [--asset-record ASSET_RECORD]
+                           [--study-registry STUDY_REGISTRY]
+                           [--accepted-baseline-specification ACCEPTED_BASELINE_SPECIFICATION]
+                           [--profile-tool-record PROFILE_TOOL_RECORD]
+                           [--jaxtari-source-root JAXTARI_SOURCE_ROOT]
+                           [--run-dir RUN_DIR] [--source-commit SOURCE_COMMIT]
+                           [--unit-id UNIT_ID] [--gpu-uuid GPU_UUID]
+                           [--hardware-class HARDWARE_CLASS]
+                           [--seed-start SEED_START]
+                           [--minimum-updates MINIMUM_UPDATES]
+                           [--maximum-active-seconds MAXIMUM_ACTIVE_SECONDS]
+                           [--python PYTHON]
+python3 -m unittest: error: the direct waiter requires its actual inherited descriptor
+usage: python3 -m unittest [-h]
+                           [--prepared-unit PREPARED_UNIT | --capture-unit CAPTURE_UNIT | --owned-waiter-unit OWNED_WAITER_UNIT | --inspect-profile-tool INSPECT_PROFILE_TOOL]
+                           [--prepare-only]
+                           [--configured-isolation-profile CONFIGURED_ISOLATION_PROFILE]
+                           [--target-qualification-record TARGET_QUALIFICATION_RECORD]
+                           [--target-qualification-review TARGET_QUALIFICATION_REVIEW]
+                           [--direct-binding-profile DIRECT_BINDING_PROFILE]
+                           [--direct-history-inputs DIRECT_HISTORY_INPUTS]
+                           [--direct-qualification-record DIRECT_QUALIFICATION_RECORD]
+                           [--direct-qualification-review DIRECT_QUALIFICATION_REVIEW]
+                           [--direct-backend-image-record DIRECT_BACKEND_IMAGE_RECORD]
+                           [--direct-confirmation-review DIRECT_CONFIRMATION_REVIEW]
+                           [--source-root SOURCE_ROOT]
+                           [--configuration CONFIGURATION]
+                           [--runtime-environment RUNTIME_ENVIRONMENT]
+                           [--asset-record ASSET_RECORD]
+                           [--study-registry STUDY_REGISTRY]
+                           [--accepted-baseline-specification ACCEPTED_BASELINE_SPECIFICATION]
+                           [--profile-tool-record PROFILE_TOOL_RECORD]
+                           [--jaxtari-source-root JAXTARI_SOURCE_ROOT]
+                           [--run-dir RUN_DIR] [--source-commit SOURCE_COMMIT]
+                           [--unit-id UNIT_ID] [--gpu-uuid GPU_UUID]
+                           [--hardware-class HARDWARE_CLASS]
+                           [--seed-start SEED_START]
+                           [--minimum-updates MINIMUM_UPDATES]
+                           [--maximum-active-seconds MAXIMUM_ACTIVE_SECONDS]
+                           [--python PYTHON]
+python3 -m unittest: error: execution/tool inspection cannot override a prepared configuration
+.EEE.E
+======================================================================
+ERROR: test_actual_waiter_chain_and_zero_child_wait_are_required (test_direct_measurement.DirectMeasurementTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_measurement.py", line 196, in test_actual_waiter_chain_and_zero_child_wait_are_required
+    metadata, launch, waiter, value = self.profile_chain()
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_measurement.py", line 88, in profile_chain
+    "parent_start_time": holder["process_start_time"], "command": profile.child_command(f.unit, f.plan, f.fd)}
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py", line 403, in child_command
+    if owned_processes(plan):
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py", line 105, in owned_processes
+    direct_profile_reader(plan)
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py", line 97, in direct_profile_reader
+    reader.contract(plan)
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_prerequisites.py", line 136, in contract
+    require(current(plan) and plan.get("kind") == "selected_configuration_profile"
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_prerequisites.py", line 35, in require
+    raise ValueError(message)
+ValueError: direct profile prerequisites cannot admit configured, historical, capacity, scaling or final work
+
+======================================================================
+ERROR: test_cleanup_never_signals_changed_parent_or_birth (test_direct_measurement.DirectMeasurementTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_measurement.py", line 285, in test_cleanup_never_signals_changed_parent_or_birth
+    metadata, launch, waiter, value = self.profile_chain(); f = self.f
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_measurement.py", line 88, in profile_chain
+    "parent_start_time": holder["process_start_time"], "command": profile.child_command(f.unit, f.plan, f.fd)}
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py", line 403, in child_command
+    if owned_processes(plan):
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py", line 105, in owned_processes
+    direct_profile_reader(plan)
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py", line 97, in direct_profile_reader
+    reader.contract(plan)
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_prerequisites.py", line 136, in contract
+    require(current(plan) and plan.get("kind") == "selected_configuration_profile"
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_prerequisites.py", line 35, in require
+    raise ValueError(message)
+ValueError: direct profile prerequisites cannot admit configured, historical, capacity, scaling or final work
+
+======================================================================
+ERROR: test_exception_cleanup_keeps_descriptor_until_exact_descendants_end (test_direct_measurement.DirectMeasurementTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_measurement.py", line 262, in test_exception_cleanup_keeps_descriptor_until_exact_descendants_end
+    metadata, launch, waiter, value = self.profile_chain(); f = self.f
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_measurement.py", line 88, in profile_chain
+    "parent_start_time": holder["process_start_time"], "command": profile.child_command(f.unit, f.plan, f.fd)}
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py", line 403, in child_command
+    if owned_processes(plan):
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py", line 105, in owned_processes
+    direct_profile_reader(plan)
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py", line 97, in direct_profile_reader
+    reader.contract(plan)
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_prerequisites.py", line 136, in contract
+    require(current(plan) and plan.get("kind") == "selected_configuration_profile"
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_prerequisites.py", line 35, in require
+    raise ValueError(message)
+ValueError: direct profile prerequisites cannot admit configured, historical, capacity, scaling or final work
+
+======================================================================
+ERROR: test_native_trace_other_pid_zero_events_and_unknown_schema_refuse (test_direct_measurement.DirectMeasurementTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_measurement.py", line 300, in test_native_trace_other_pid_zero_events_and_unknown_schema_refuse
+    metadata, path, save = self.trace_fixture()
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_measurement.py", line 114, in trace_fixture
+    metadata, unused_launch, unused_waiter, unused_wait = self.profile_chain(); f = self.f
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_measurement.py", line 88, in profile_chain
+    "parent_start_time": holder["process_start_time"], "command": profile.child_command(f.unit, f.plan, f.fd)}
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py", line 403, in child_command
+    if owned_processes(plan):
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py", line 105, in owned_processes
+    direct_profile_reader(plan)
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py", line 97, in direct_profile_reader
+    reader.contract(plan)
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_prerequisites.py", line 136, in contract
+    require(current(plan) and plan.get("kind") == "selected_configuration_profile"
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_prerequisites.py", line 35, in require
+    raise ValueError(message)
+ValueError: direct profile prerequisites cannot admit configured, historical, capacity, scaling or final work
+
+======================================================================
+ERROR: test_native_trace_positive_events_join_actual_capture_and_exact_bytes (test_direct_measurement.DirectMeasurementTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_measurement.py", line 292, in test_native_trace_positive_events_join_actual_capture_and_exact_bytes
+    metadata, path, save = self.trace_fixture()
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_measurement.py", line 114, in trace_fixture
+    metadata, unused_launch, unused_waiter, unused_wait = self.profile_chain(); f = self.f
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_measurement.py", line 88, in profile_chain
+    "parent_start_time": holder["process_start_time"], "command": profile.child_command(f.unit, f.plan, f.fd)}
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py", line 403, in child_command
+    if owned_processes(plan):
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py", line 105, in owned_processes
+    direct_profile_reader(plan)
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py", line 97, in direct_profile_reader
+    reader.contract(plan)
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_prerequisites.py", line 136, in contract
+    require(current(plan) and plan.get("kind") == "selected_configuration_profile"
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_prerequisites.py", line 35, in require
+    raise ValueError(message)
+ValueError: direct profile prerequisites cannot admit configured, historical, capacity, scaling or final work
+
+======================================================================
+ERROR: test_original_selectors_are_not_rewritten_by_child_command (test_direct_measurement.DirectMeasurementTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_measurement.py", line 182, in test_original_selectors_are_not_rewritten_by_child_command
+    command = profile.child_command(f.unit, f.plan, f.fd)
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py", line 403, in child_command
+    if owned_processes(plan):
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py", line 105, in owned_processes
+    direct_profile_reader(plan)
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py", line 97, in direct_profile_reader
+    reader.contract(plan)
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_prerequisites.py", line 136, in contract
+    require(current(plan) and plan.get("kind") == "selected_configuration_profile"
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_prerequisites.py", line 35, in require
+    raise ValueError(message)
+ValueError: direct profile prerequisites cannot admit configured, historical, capacity, scaling or final work
+
+======================================================================
+ERROR: test_production_waiter_does_not_turn_child_failure_into_nsight_success (test_direct_measurement.DirectMeasurementTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_measurement.py", line 251, in test_production_waiter_does_not_turn_child_failure_into_nsight_success
+    metadata = self.run_waiter_fixture(7)
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_measurement.py", line 214, in run_waiter_fixture
+    metadata, launch, waiter, value = self.profile_chain(); f = self.f
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_measurement.py", line 88, in profile_chain
+    "parent_start_time": holder["process_start_time"], "command": profile.child_command(f.unit, f.plan, f.fd)}
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py", line 403, in child_command
+    if owned_processes(plan):
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py", line 105, in owned_processes
+    direct_profile_reader(plan)
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py", line 97, in direct_profile_reader
+    reader.contract(plan)
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_prerequisites.py", line 136, in contract
+    require(current(plan) and plan.get("kind") == "selected_configuration_profile"
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_prerequisites.py", line 35, in require
+    raise ValueError(message)
+ValueError: direct profile prerequisites cannot admit configured, historical, capacity, scaling or final work
+
+======================================================================
+ERROR: test_production_waiter_spawns_one_exact_child_and_records_actual_zero_wait (test_direct_measurement.DirectMeasurementTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_measurement.py", line 247, in test_production_waiter_spawns_one_exact_child_and_records_actual_zero_wait
+    metadata = self.run_waiter_fixture(0)
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_measurement.py", line 214, in run_waiter_fixture
+    metadata, launch, waiter, value = self.profile_chain(); f = self.f
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_measurement.py", line 88, in profile_chain
+    "parent_start_time": holder["process_start_time"], "command": profile.child_command(f.unit, f.plan, f.fd)}
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py", line 403, in child_command
+    if owned_processes(plan):
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py", line 105, in owned_processes
+    direct_profile_reader(plan)
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py", line 97, in direct_profile_reader
+    reader.contract(plan)
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_prerequisites.py", line 136, in contract
+    require(current(plan) and plan.get("kind") == "selected_configuration_profile"
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_prerequisites.py", line 35, in require
+    raise ValueError(message)
+ValueError: direct profile prerequisites cannot admit configured, historical, capacity, scaling or final work
+
+======================================================================
+ERROR: test_saved_capture_argv_bytes_are_independently_checked (test_direct_measurement.DirectMeasurementTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_measurement.py", line 255, in test_saved_capture_argv_bytes_are_independently_checked
+    metadata, launch, waiter, value = self.profile_chain()
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_measurement.py", line 88, in profile_chain
+    "parent_start_time": holder["process_start_time"], "command": profile.child_command(f.unit, f.plan, f.fd)}
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py", line 403, in child_command
+    if owned_processes(plan):
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py", line 105, in owned_processes
+    direct_profile_reader(plan)
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py", line 97, in direct_profile_reader
+    reader.contract(plan)
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_prerequisites.py", line 136, in contract
+    require(current(plan) and plan.get("kind") == "selected_configuration_profile"
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_prerequisites.py", line 35, in require
+    raise ValueError(message)
+ValueError: direct profile prerequisites cannot admit configured, historical, capacity, scaling or final work
+
+======================================================================
+ERROR: test_wrong_capture_parent_or_dropped_descriptor_refuses_before_live_reads (test_direct_measurement.DirectMeasurementTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_measurement.py", line 205, in test_wrong_capture_parent_or_dropped_descriptor_refuses_before_live_reads
+    metadata, launch, waiter, value = self.profile_chain()
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_measurement.py", line 88, in profile_chain
+    "parent_start_time": holder["process_start_time"], "command": profile.child_command(f.unit, f.plan, f.fd)}
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py", line 403, in child_command
+    if owned_processes(plan):
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py", line 105, in owned_processes
+    direct_profile_reader(plan)
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py", line 97, in direct_profile_reader
+    reader.contract(plan)
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_prerequisites.py", line 136, in contract
+    require(current(plan) and plan.get("kind") == "selected_configuration_profile"
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_prerequisites.py", line 35, in require
+    raise ValueError(message)
+ValueError: direct profile prerequisites cannot admit configured, historical, capacity, scaling or final work
+
+======================================================================
+FAIL: test_new_helper_is_conditional_and_rejects_unsupported_paths (test_profile_owned_processes.ProfileProtocolTests)
+Only explicitly new configured profiles receive the observation dependency.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_owned_processes.py", line 125, in test_new_helper_is_conditional_and_rejects_unsupported_paths
+    self.assertNotIn("nsight_process_identity.py", old)
+AssertionError: 'nsight_process_identity.py' unexpectedly found in ('profile_selected.py', 'measure_selected.py', 'diagnose_gpu_execution.py', 'post_comparison_validation.py', 'infrastructure_retry.py', 'pregather_async_retry.py', 'h100_nvl_slurm_queue.py', 'h100_nvl_slurm_case.py', 'h100_nvl_slurm_evidence.py', 'h100_nvl_slurm_site_validation.py', 'h100_nvl_slurm_qualification.py', 'h100_nvl_allocation_observation.py', 'train_optimized.py', 'short_learning.py', 'device_memory_limit.py', 'validate_training_deployment.py', 'portable_evidence.py', 'direct_measurement.py', 'configured_measurement.py', 'serval02_card1_binding.py', 'uva_slurm_configured_isolation.py', 'uva_active_configuration_observation.py', 'passive_installed_slurm_observation.py', 'collect_worker_exit_receipts.py', 'ideas.py', 'controller.py', 'direct_backend_image.py', 'direct_profile_prerequisites.py', 'nsight_process_identity.py')
+
+======================================================================
+FAIL: test_conditional_union_adds_only_the_common_reader (test_profile_common_confirmation_helpers.ProfileCommonConfirmationHelpersTests)
+The new configured closure differs by exactly one file; historical default/direct rosters stay fixed.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_common_confirmation_helpers.py", line 77, in test_conditional_union_adds_only_the_common_reader
+    self.assertEqual(profile.required_helpers(configured,direct),old)
+AssertionError: Tuples differ: ('pro[742 chars]r.py', 'direct_backend_image.py', 'direct_prof[47 chars].py') != ('pro[742 chars]r.py')
+
+First tuple contains 3 additional elements.
+First extra element 26:
+'direct_backend_image.py'
+
+Diff is 994 characters long. Set self.maxDiff to None to see it.
+
+----------------------------------------------------------------------
+Ran 133 tests in 14.247s
+
+FAILED (failures=2, errors=10)

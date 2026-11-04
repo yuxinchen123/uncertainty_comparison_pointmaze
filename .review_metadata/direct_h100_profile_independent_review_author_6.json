@@ -1,0 +1,83 @@
+{
+  "kind": "independent_corrected_disabled_direct_profile_source_review",
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/.review_metadata/direct_h100_profile_source_freeze_2026-11-04_author_6.json",
+    "sha256": "b9975a6d37f5515e5a09867fa5dfa565fb771adc450535b8f6a27fc081b3bb27"
+  },
+  "base": "f958d9097586950fb11587513c5910e318ab21ed",
+  "reviewed_at_seconds": 1793836099.692715,
+  "source_checks": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_backend_image.py": true,
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py": true,
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py": true,
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_prerequisites.py": true,
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_profile_prerequisites.py": true
+  },
+  "protected_file_checks": {
+    "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/worker_environment.sh": true,
+    "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/src/exploration_platform/atari_pixels/__init__.py": true,
+    "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/src/exploration_platform/atari_pixels/checkpointing.py": true,
+    "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/src/exploration_platform/atari_pixels/config.py": true,
+    "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/src/exploration_platform/atari_pixels/environment.py": true,
+    "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/src/exploration_platform/atari_pixels/kernels.py": true,
+    "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/src/exploration_platform/atari_pixels/networks.py": true,
+    "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/src/exploration_platform/atari_pixels/pixel_preprocessing.py": true,
+    "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/src/exploration_platform/atari_pixels/settings.py": true,
+    "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/src/exploration_platform/atari_pixels/state.py": true,
+    "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/src/exploration_platform/atari_pixels/training.py": true,
+    "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/paired_benchmark.py": true,
+    "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py": true,
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/scripts/atari_pixel_campaign/worker_environment.sh": true,
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/__init__.py": true,
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/checkpointing.py": true,
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/config.py": true,
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/environment.py": true,
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/kernels.py": true,
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/networks.py": true,
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/pixel_preprocessing.py": true,
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/settings.py": true,
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/state.py": true,
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/training.py": true,
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/scripts/atari_pixel_campaign/paired_benchmark.py": true,
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py": true
+  },
+  "capture_core_syntax_unchanged": true,
+  "previous_rejected_review": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/.review_metadata/direct_h100_profile_independent_static_review_author_5.json",
+    "sha256": "3f15eaf3bb36e4437ff821b9634de3760a63dbee9a2b6970f259be266dd53da8"
+  },
+  "resolved_findings": [
+    {
+      "original": "Preparation called the raw validate_history reader.",
+      "correction": "Public direct preparation now calls configure_binding, which reads only bounded reserved history metadata and backend metadata. The original configure_plan is unchanged. Actual current validate_history now has a compute_context check before import and runs before the fresh historical-consumer child on owned compute."
+    },
+    {
+      "original": "Plan and backend sidecar paths were opened before reserved location checks.",
+      "correction": "The exact confirmation data unit, measurement_plan.json name, and both per-unit direct_backend_image_expected.json names are checked before reads. Author fixtures and an independent accepted-backend-path control assert no scientific result is opened."
+    }
+  ],
+  "metadata_tests": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/.review_metadata/direct_h100_profile_independent_6783003_248.json",
+    "sha256": "a18ea04d2e3cbb46a40912de0fbf3a93e9f47844344da602b4f5bd88eaf65fc0",
+    "job_id": "6783003",
+    "step_id": "248",
+    "tests_run": 174,
+    "failures": 0,
+    "errors": 0
+  },
+  "unresolved_source_findings": [],
+  "approved_disabled_source": true,
+  "source_scope": "Metadata adapter, exact helper union, historical consumer routing, profile backend completion chronology, and current direct refusal. Source publication may preserve this disabled scope.",
+  "remaining_required_actual_evidence": [
+    "Actual direct Nsight ancestry and original child/root waits",
+    "Actual standing-descriptor inheritance and retained custody",
+    "Actual current CUDA context UUID/PCI/minor and mapped driver/backend evidence",
+    "Separate independent actual target/process qualification and recorded admission change"
+  ],
+  "actual_direct_profile_qualification_established": false,
+  "direct_nsight_runner_implemented": false,
+  "gpu_operations": 0,
+  "job_submissions_releases_or_host_actions": 0,
+  "scientific_credit": 0,
+  "admission_granted": false
+}

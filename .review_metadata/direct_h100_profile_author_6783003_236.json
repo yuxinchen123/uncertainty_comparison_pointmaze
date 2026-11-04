@@ -1,0 +1,27 @@
+{
+  "command": [
+    "/usr/bin/python3",
+    "-B",
+    "-m",
+    "unittest",
+    "test_direct_profile_prerequisites.DirectProfileMetadataTests",
+    "test_direct_profile_prerequisites.DirectProfileBackendTests"
+  ],
+  "job_id": "6783003",
+  "step_id": "236",
+  "hostname": "heartpiece",
+  "pid": 1177694,
+  "started_at_seconds": 1793835329.425843,
+  "finished_at_seconds": 1793835330.922519,
+  "returncode": 0,
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/.review_metadata/direct_h100_profile_source_freeze_2026-11-04_author_2.json",
+    "sha256": "ca8e23cf9ffff6897e00be16b9ca3c2d1a1c2f31c122f810bdd577f9fa92d3e1"
+  },
+  "source_unchanged_before_and_after": true,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "cf2bfc9cd166fb7a964cc3ab12147e586c1340775d1fe15e08af2600c5091ad9",
+  "gpu_operations": 0,
+  "scientific_credit": 0,
+  "admission_granted": false
+}

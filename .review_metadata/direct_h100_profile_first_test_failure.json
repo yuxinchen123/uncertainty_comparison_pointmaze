@@ -1,0 +1,9 @@
+{
+  "command": "srun --jobid=6783003 --overlap --exact --ntasks=1 --cpus-per-task=1 --mem=512M /usr/bin/python3 -B -m unittest test_direct_profile_prerequisites.DirectProfileMetadataTests test_direct_profile_prerequisites.DirectProfileBackendTests",
+  "tests": 31,
+  "failures": 1,
+  "failure": "Inherited test_direct_backend_image source fixture asserts common_confirmation.py unchanged from historical 9fcc43a; approved task base f958d909 already contains subsequent reviewed common_confirmation corrections. Original fixture preserved unchanged; new subclass now verifies the approved task base, all 26 protected hashes and _capture_core syntax.",
+  "preceding_freeze_command_failed": "Constructed source path from tests working directory instead of worktree root. No source edit occurred during the test.",
+  "gpu_operations": 0,
+  "admission_granted": false
+}
