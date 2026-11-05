@@ -1,0 +1,173 @@
+{
+  "binding": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-05-49_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/direct_device_binding.json",
+    "sha256": "28e53b4a5b1979c5f0fe7dcc14867926de544249e5c88bb742aae5c7abbeb10f"
+  },
+  "capability": "prepared_owning_package_image_and_same_process_mapping_version_2",
+  "expected": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-05-49_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/direct_backend_image_expected.json",
+    "sha256": "7d50f9ef96fbe5afa9e892905b0e3e76dde43e9f54835630c69aabf7489d35e4"
+  },
+  "image": {
+    "captured": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-05-49_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/direct_backend/xla_cuda_plugin.so",
+      "sha256": "ced7988972611b25fbdc7df51453102656c209c05756b528602aa875c10d1f08"
+    },
+    "descriptor_after": {
+      "change_time_ns": 1793432064242693898,
+      "file_identity": {
+        "device_major": 0,
+        "device_minor": 68,
+        "inode": 4236833
+      },
+      "mode": 493,
+      "modification_time_ns": 1786921983092407472,
+      "regular_file": true,
+      "size_bytes": 473181472,
+      "uid": 2618919
+    },
+    "descriptor_before": {
+      "change_time_ns": 1793432064242693898,
+      "file_identity": {
+        "device_major": 0,
+        "device_minor": 68,
+        "inode": 4236833
+      },
+      "mode": 493,
+      "modification_time_ns": 1786921983092407472,
+      "regular_file": true,
+      "size_bytes": 473181472,
+      "uid": 2618919
+    },
+    "original": {
+      "path": "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/jax_plugins/xla_cuda12/xla_cuda_plugin.so",
+      "sha256": "ced7988972611b25fbdc7df51453102656c209c05756b528602aa875c10d1f08"
+    },
+    "size_bytes": 473181472,
+    "source_file_identity": {
+      "device_major": 0,
+      "device_minor": 68,
+      "inode": 4236833
+    }
+  },
+  "kind": "direct_current_process_backend_package_capture_begin",
+  "maps_after_copy": {
+    "file_identity": {
+      "device_major": 0,
+      "device_minor": 68,
+      "inode": 4236833
+    },
+    "observed_at_seconds": 1793888220.264131,
+    "path": "/proc/self/maps",
+    "raw": "7fd15dad0000-7fd1682cc000 r--p 00000000 00:44 4236833                    /p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/jax_plugins/xla_cuda12/xla_cuda_plugin.so\n7fd1682cc000-7fd173c0e000 r-xp 0a7fb000 00:44 4236833                    /p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/jax_plugins/xla_cuda12/xla_cuda_plugin.so\n7fd173c0e000-7fd173ed6000 r--p 1613c000 00:44 4236833                    /p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/jax_plugins/xla_cuda12/xla_cuda_plugin.so\n7fd173ed6000-7fd173f49000 rw-p 16403000 00:44 4236833                    /p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/jax_plugins/xla_cuda12/xla_cuda_plugin.so\n",
+    "sha256": "5ea97f1d17f7bb39ef4ae8b33ef4891ef14d8a7f4ea5d809d1e8abf7a2c2f21c"
+  },
+  "maps_before_copy": {
+    "file_identity": {
+      "device_major": 0,
+      "device_minor": 68,
+      "inode": 4236833
+    },
+    "observed_at_seconds": 1793888215.09105,
+    "path": "/proc/self/maps",
+    "raw": "7fd15dad0000-7fd1682cc000 r--p 00000000 00:44 4236833                    /p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/jax_plugins/xla_cuda12/xla_cuda_plugin.so\n7fd1682cc000-7fd173c0e000 r-xp 0a7fb000 00:44 4236833                    /p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/jax_plugins/xla_cuda12/xla_cuda_plugin.so\n7fd173c0e000-7fd173ed6000 r--p 1613c000 00:44 4236833                    /p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/jax_plugins/xla_cuda12/xla_cuda_plugin.so\n7fd173ed6000-7fd173f49000 rw-p 16403000 00:44 4236833                    /p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/jax_plugins/xla_cuda12/xla_cuda_plugin.so\n",
+    "sha256": "5ea97f1d17f7bb39ef4ae8b33ef4891ef14d8a7f4ea5d809d1e8abf7a2c2f21c"
+  },
+  "metadata": {
+    "captured": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-05-49_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/direct_backend/METADATA",
+      "sha256": "a4ab9346404e0cf42a00dd9e877218d1e19f7871a59c361a1d7fc934b4ed2ab3"
+    },
+    "descriptor_after": {
+      "change_time_ns": 1793432068334703101,
+      "file_identity": {
+        "device_major": 0,
+        "device_minor": 68,
+        "inode": 4231908
+      },
+      "mode": 436,
+      "modification_time_ns": 1786921983100407605,
+      "regular_file": true,
+      "size_bytes": 580,
+      "uid": 2618919
+    },
+    "descriptor_before": {
+      "change_time_ns": 1793432068334703101,
+      "file_identity": {
+        "device_major": 0,
+        "device_minor": 68,
+        "inode": 4231908
+      },
+      "mode": 436,
+      "modification_time_ns": 1786921983100407605,
+      "regular_file": true,
+      "size_bytes": 580,
+      "uid": 2618919
+    },
+    "original": {
+      "path": "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/jax_cuda12_pjrt-0.11.0.dist-info/METADATA",
+      "sha256": "a4ab9346404e0cf42a00dd9e877218d1e19f7871a59c361a1d7fc934b4ed2ab3"
+    },
+    "size_bytes": 580,
+    "source_file_identity": {
+      "device_major": 0,
+      "device_minor": 68,
+      "inode": 4231908
+    }
+  },
+  "plan": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-05-49_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/measurement_plan.json",
+    "sha256": "4dd7ea9dcc7f70ebc85170780b36c9564790017cd06ce7d3fbf8e1b45a7d952c"
+  },
+  "process": {
+    "hostname": "serval02",
+    "pid": 386669,
+    "process_start_time": "84815419",
+    "uid": 2618919,
+    "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+    "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+  },
+  "record": {
+    "captured": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-05-49_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/direct_backend/RECORD",
+      "sha256": "9eda8d59208f7bd8e709472f28559ff1debcc39c8e40f45caa60cc72d72a39ee"
+    },
+    "descriptor_after": {
+      "change_time_ns": 1793432068334703101,
+      "file_identity": {
+        "device_major": 0,
+        "device_minor": 68,
+        "inode": 4244557
+      },
+      "mode": 420,
+      "modification_time_ns": 1786921983132408137,
+      "regular_file": true,
+      "size_bytes": 953,
+      "uid": 2618919
+    },
+    "descriptor_before": {
+      "change_time_ns": 1793432068334703101,
+      "file_identity": {
+        "device_major": 0,
+        "device_minor": 68,
+        "inode": 4244557
+      },
+      "mode": 420,
+      "modification_time_ns": 1786921983132408137,
+      "regular_file": true,
+      "size_bytes": 953,
+      "uid": 2618919
+    },
+    "original": {
+      "path": "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/jax_cuda12_pjrt-0.11.0.dist-info/RECORD",
+      "sha256": "9eda8d59208f7bd8e709472f28559ff1debcc39c8e40f45caa60cc72d72a39ee"
+    },
+    "size_bytes": 953,
+    "source_file_identity": {
+      "device_major": 0,
+      "device_minor": 68,
+      "inode": 4244557
+    }
+  },
+  "schema_version": 2
+}

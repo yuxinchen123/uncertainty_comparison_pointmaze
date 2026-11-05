@@ -1,0 +1,25 @@
+{
+  "hostname": "serval02",
+  "pid": 386669,
+  "process_start_time": "84815419",
+  "gpu_uuid": "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3",
+  "gpu_query": "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3, NVIDIA H100 NVL, 95830 MiB, 590.48.01",
+  "slurm_job_id": "",
+  "cuda_visible_devices_original": "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3",
+  "cuda_visible_devices": "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3",
+  "worker_admitted": false,
+  "admission_granted": false,
+  "scientific_credit": 0,
+  "case_credit": 0,
+  "idea_credit": 0,
+  "packing_point_credit": 0,
+  "throughput_credit": 0,
+  "site_qualification_credit": 0,
+  "kernel_device_enforcement_verified": false,
+  "uva_configuration_service_trust_used": false,
+  "runtime_environment": {
+    "JAX_DEFAULT_MATMUL_PRECISION": "highest",
+    "JAX_ENABLE_X64": "true",
+    "XLA_FLAGS": "--xla_gpu_exclude_nondeterministic_ops=true"
+  }
+}

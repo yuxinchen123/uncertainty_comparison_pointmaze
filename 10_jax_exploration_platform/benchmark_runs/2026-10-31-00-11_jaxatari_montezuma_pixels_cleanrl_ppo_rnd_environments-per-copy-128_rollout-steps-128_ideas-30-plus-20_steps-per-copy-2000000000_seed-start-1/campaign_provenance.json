@@ -204,11 +204,11 @@
   "configured_producer_helper_commit": "43eade68238a8d010ad1d1ea681e348022a00060",
   "configured_profile_actual_qualification": false,
   "correctness_cache_diagnosis_job_id": "6777949",
-  "cron_id": "5ac3653c-dbcd-4e44-8f17-a49d58eaafe2",
-  "cron_monitor_expires_at": "2026-11-12T11:20:00Z",
-  "cron_monitor_id": "d1d183ad-31bf-4dc2-b1ff-b2c3b7017dbb",
+  "cron_id": "f50c6892-aa10-414b-b7d2-44644f7ef2e0",
+  "cron_monitor_expires_at": "2026-11-12T14:20:00Z",
+  "cron_monitor_id": "f50c6892-aa10-414b-b7d2-44644f7ef2e0",
   "cron_verified_active": true,
-  "cron_verified_utc": "2026-11-05T05:26:22.358Z",
+  "cron_verified_utc": "2026-11-05T14:21:20.932173+00:00",
   "current_branch_integrated_commit": "79a01e851ff92ddba7d0e12eaf8164cab2028878",
   "current_initial_verified_comparisons": 120,
   "device_memory_capture_diagnostic_job_id": "6781128",
@@ -721,8 +721,8 @@
     }
   ],
   "session_wakeup_schedule_record": {
-    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/hourly_wakeup_actual_native_and_snapshot_state_2026-11-05.json",
-    "sha256": "f292dbb5c8e15b7ab2c70a1d873c7a5ef1f4c7f8e27d0bdba0693e9e203a455d"
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/hourly_wakeup_after_verified_empty_command_startup_2026-11-05.json",
+    "sha256": "46a2ff8cc57a1b441f7f63f18d750c104224d875aefe0f78ed0a7ef2f6c45b3e"
   },
   "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
   "source_root": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
@@ -790,19 +790,28 @@
     "6777647"
   ],
   "superseded_monitor_job_id": "6783003",
-  "updated_utc": "2026-11-05T13:46:06.888045+00:00",
+  "updated_utc": "2026-11-05T14:21:20.932173+00:00",
   "uva_active_configuration_observation_job_id": "6781190",
   "direct_common_timing_current": {
-    "state": "failed_initial_empty_command_actual_wait1_both_processes_ended_modes_restored",
-    "packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-05-10_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1",
-    "actual_child_wait_returncode": 1,
-    "both_processes_ended": true,
-    "metadata_modes_restored": true,
-    "terminal_independent_review": {
-      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-05-10_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/independent_actual_empty_command_terminal_addendum.json",
-      "sha256": "933b444d68d29d0305480ae9b0db7b5b26a8d477643e75323b42ee79fd9326d2"
+    "state": "registered_producer_passed_GPU_startup_initializing_model",
+    "packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-05-49_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1",
+    "controller_pid": 386202,
+    "controller_birth_counter": "84810007",
+    "actual_child_pid": 386669,
+    "actual_child_birth_counter": "84815419",
+    "startup_review": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-05-49_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/independent_actual_startup_registration_review.json",
+      "sha256": "0d521aeb17a79ba06abb66d4078ef7be048670100d87b81eb1a66ca373c18a05"
     },
-    "timing_credit": 0
+    "metadata_modes_restored": true,
+    "progress": {
+      "record": "diagnostic",
+      "state": "initializing",
+      "pid": 386669,
+      "time": "2026-11-05T14:18:11.395615+00:00",
+      "variant": "reference"
+    },
+    "scientific_acceptance_pending": true
   },
   "actual_eight_CPU_initial_identity_diagnostic": {
     "state": "completed_and_independently_reviewed",
