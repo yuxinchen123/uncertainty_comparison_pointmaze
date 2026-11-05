@@ -1318,14 +1318,29 @@
   "h100_common_timing_controller_preparation": {
     "actual_units_prepared": false,
     "author": "correct_native_process_control",
+    "copy_one_request": {
+      "bind_invoked": false,
+      "packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-02-12_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1",
+      "prepare_invoked": false,
+      "request_sha256": "5d9b7eded9008313aa0962084b1f4bac3ed1b48f0c2e09ab17b1efd5560e7612",
+      "unit": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-02-12_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1",
+      "verify_invoked": false
+    },
     "copy_two_requires_actual_copy_one_timing_wait_and_exit": true,
+    "copy_two_unbound": true,
     "independent_reviewer": "timing_controller_independent",
+    "independent_source_review": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-01-16_direct-common-timing_controller-helpers-29_copies-1-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/.review_metadata/direct_common_timing_controller_independent/independent_corrected_approval.json",
+      "sha256": "e77772bfa2c48912e8174fd10d4f933f656d798b556a61a19cec74d37a895e7f"
+    },
     "original_process_and_publication_functions_unchanged": 25,
     "required_helpers": 29,
     "required_mode": "confirmation",
     "rounds": 7,
-    "source_published": false,
-    "state": "first_frozen_source_rejected_serial_order_count_join_narrow_correction_in_progress",
+    "source_commit": "765480d990cff5ae556914e3b74afba0472f64ea",
+    "source_publication": "b31e9560899828bcece85335cc4ef27ef7f10af9",
+    "source_published": true,
+    "state": "corrected_controller_published_fresh_count_one_request_prepared",
     "updates_per_arm": 10
   },
   "h100_current_observation": "The first einsum independent dense layers case completed all seven valid timing pairs;29of60 H100 and60of60 A4500 comparisons are complete. The two-policy case is active under the original sourceD28 supervisor on serval02 card1. No Slurm H100 worker or final training copy has started.",

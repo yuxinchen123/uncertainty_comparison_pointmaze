@@ -1,0 +1,14 @@
+{
+  "actual_prepare_called": false,
+  "actual_units_or_processes_or_hashes_invented": false,
+  "kind": "unexecuted_proposal_reserved_standard_record_collision",
+  "observed_source_behavior": "Reviewed canonical prepare exclusively publishes these names after data-unit preparation; existing proposal standard records would cause FileExistsError.",
+  "required_before_actual_prepare": "Root-reviewed narrow compatible handling of pre-existing identical standard records, with differences refused, or a separate reviewed procedure that preserves these proposal bytes and writes a fresh actual packet.",
+  "reserved_files_already_present": [
+    "manifest.yaml",
+    "config_resolved.yaml",
+    "experiment_background.md",
+    "command.txt"
+  ],
+  "reviewed_source_modified": false
+}
