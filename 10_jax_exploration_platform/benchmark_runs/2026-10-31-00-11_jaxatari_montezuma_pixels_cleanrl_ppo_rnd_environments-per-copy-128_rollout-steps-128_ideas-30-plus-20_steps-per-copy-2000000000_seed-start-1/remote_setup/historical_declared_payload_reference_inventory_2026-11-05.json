@@ -1,0 +1,246 @@
+{
+  "admission_granted": false,
+  "at_utc": "2026-11-05T07:12:10.636645+00:00",
+  "distinct_captured_path_count": 1292,
+  "distinct_declared_sha256_count": 646,
+  "distinct_physical_file_identity_count": 1292,
+  "existing_genuine_review_metadata": {
+    "one_copy_correctness": {
+      "approved": true,
+      "copy_seeds": [
+        1
+      ],
+      "declared_result": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/result.json",
+        "sha256": "12371d5105dd64fee3458a252ae46c3138ff4f2af732017d76e7473ebdf940c4"
+      },
+      "gpu_uuid": "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3",
+      "independent_of_producer": true,
+      "raw_audit": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-02-00-06_h100-common-correctness_raw-review_copies-1-2_source-0a880984_helpers-26_before-seven-paired-rounds-ten-updates_gpu-count-0/copies_1_terminal_review/raw_validation.json",
+        "sha256": "ade13b9c720c15a506d5eb516be74b6cc55cd76e3cd4af7003bad2ca1b8939ec"
+      },
+      "raw_audit_metadata_bytes": 15443,
+      "raw_validation_passed_before_review_existed": null,
+      "review": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-02-00-06_h100-common-correctness_raw-review_copies-1-2_source-0a880984_helpers-26_before-seven-paired-rounds-ten-updates_gpu-count-0/copies_1_terminal_review/independent_actual_review.json",
+        "sha256": "22f4ec55120c987fe8d44b55e6427ab75e25db61785e29d7cb6bdcbc55df8818"
+      },
+      "review_kind": "independent_actual_direct_common_configuration_correctness_review",
+      "scientific_credit": 0,
+      "source_contract": null,
+      "unresolved_anomalies": [],
+      "worker_admitted": false
+    },
+    "original_qualification": {
+      "approved": true,
+      "copy_seeds": null,
+      "declared_result": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-20-53_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/direct_qualification_result.json",
+        "sha256": "76eef4e18c06fef8d86fa704d3f9f00b8ebd78b34ab50e5083fcb0d4ee9bb318"
+      },
+      "gpu_uuid": null,
+      "independent_of_producer": true,
+      "raw_audit": null,
+      "raw_validation_passed_before_review_existed": true,
+      "review": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-21-27_original-h100-qualification-raw-review_source-0a880984_helpers-26_backend-schema-2_raw-statements-53_gpu-count-0/terminal_full_review/independent_actual_review.json",
+        "sha256": "8c61ec70059475a479a2e0b395bdc6cd2d5cb2a0e062ae05ef51e066c4a4d01a"
+      },
+      "review_kind": "independent_full_original_direct_qualification_review",
+      "scientific_credit": 0,
+      "source_contract": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-21-27_original-h100-qualification-raw-review_source-0a880984_helpers-26_backend-schema-2_raw-statements-53_gpu-count-0/raw_review_source_contract.json",
+        "sha256": "f2af0ee438a44f4b38846f8f40af4e8e902902c86d23ad962e59e264c26522d0"
+      },
+      "source_contract_metadata_bytes": 2702,
+      "unresolved_anomalies": null,
+      "worker_admitted": false
+    }
+  },
+  "implementation_options_not_approved": [
+    "Use one per-validation resolver keyed by actual stable file identity and hash each distinct actual file once; a matching declared SHA alone must not let another physical file skip validation.",
+    "Compose the already genuine qualification and correctness proofs using exact small review/result/plan/source hashes; explicitly state which old raw payloads are reused rather than recomputed, and keep all current source/runtime/asset/device/configuration/seed checks."
+  ],
+  "kind": "metadata_only_inventory_of_declared_historical_payload_references",
+  "largest_declared_payload_groups": [
+    {
+      "captured_path_count": 2,
+      "declared_same_content_size_bytes": 583033744,
+      "declared_sha256": "c70e63247cdc14311b8b2efad0eb79674dd7297c27f9f23466ae4214cd415145",
+      "example_original_paths": [
+        "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/nvidia/cudnn/lib/libcudnn_engines_precompiled.so.9"
+      ],
+      "mapping_count": 2,
+      "physical_identity_count": 2,
+      "units": [
+        "one_copy_correctness",
+        "original_qualification"
+      ]
+    },
+    {
+      "captured_path_count": 2,
+      "declared_same_content_size_bytes": 272749720,
+      "declared_sha256": "6007f67989b1ac8d5bbd7129fa6200ba4ae4b5c0558a4dfe4d50c19ee59569cb",
+      "example_original_paths": [
+        "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/nvidia/cudnn/lib/libcudnn_adv.so.9"
+      ],
+      "mapping_count": 2,
+      "physical_identity_count": 2,
+      "units": [
+        "one_copy_correctness",
+        "original_qualification"
+      ]
+    },
+    {
+      "captured_path_count": 2,
+      "declared_same_content_size_bytes": 115565592,
+      "declared_sha256": "dac0584e8f279e910bff4241e28b56efd399898038a5c94a0b6338bc9bc41d13",
+      "example_original_paths": [
+        "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/nvidia/cudnn/lib/libcudnn_graph.so.9"
+      ],
+      "mapping_count": 2,
+      "physical_identity_count": 2,
+      "units": [
+        "one_copy_correctness",
+        "original_qualification"
+      ]
+    },
+    {
+      "captured_path_count": 2,
+      "declared_same_content_size_bytes": 115361960,
+      "declared_sha256": "920c0fe6b74fe6a8eed85faa446230e1a555b8afc02e03638a0dfa264b4ae7be",
+      "example_original_paths": [
+        "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/nvidia/cudnn/lib/libcudnn_ext.so.9"
+      ],
+      "mapping_count": 2,
+      "physical_identity_count": 2,
+      "units": [
+        "one_copy_correctness",
+        "original_qualification"
+      ]
+    },
+    {
+      "captured_path_count": 2,
+      "declared_same_content_size_bytes": 106964632,
+      "declared_sha256": "8b51427d9807335c5873e74a40425989a20dd74af0332c90449cf19853cf8013",
+      "example_original_paths": [
+        "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/nvidia/cudnn/lib/libcudnn_ops.so.9"
+      ],
+      "mapping_count": 2,
+      "physical_identity_count": 2,
+      "units": [
+        "one_copy_correctness",
+        "original_qualification"
+      ]
+    },
+    {
+      "captured_path_count": 2,
+      "declared_same_content_size_bytes": 60822200,
+      "declared_sha256": "b4e69e7b97da5bd825f169f6d108fe71dc0352e99e9a0ffc7200401830c297cf",
+      "example_original_paths": [
+        "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/nvidia/cudnn/lib/libcudnn_heuristic.so.9"
+      ],
+      "mapping_count": 2,
+      "physical_identity_count": 2,
+      "units": [
+        "one_copy_correctness",
+        "original_qualification"
+      ]
+    },
+    {
+      "captured_path_count": 2,
+      "declared_same_content_size_bytes": 39878128,
+      "declared_sha256": "35ec33cfd4f42c6240d18d141d52af4cf9cafdae2bc9ba292390bbbfded7a172",
+      "example_original_paths": [
+        "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/nvidia/cudnn/lib/libcudnn_engines_runtime_compiled.so.9"
+      ],
+      "mapping_count": 2,
+      "physical_identity_count": 2,
+      "units": [
+        "one_copy_correctness",
+        "original_qualification"
+      ]
+    },
+    {
+      "captured_path_count": 2,
+      "declared_same_content_size_bytes": 4203840,
+      "declared_sha256": "2b78023b42c8c82018f01dc9f94fe29ec9ba350580dd53b1750501dcb2a34ecf",
+      "example_original_paths": [
+        "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/nvidia/cudnn/lib/libcudnn_cnn.so.9"
+      ],
+      "mapping_count": 2,
+      "physical_identity_count": 2,
+      "units": [
+        "one_copy_correctness",
+        "original_qualification"
+      ]
+    },
+    {
+      "captured_path_count": 2,
+      "declared_same_content_size_bytes": 2099032,
+      "declared_sha256": "cca873cbd32645e7011a5272d9032827ebdb632166a063a1a1a96ea6831fbeb0",
+      "example_original_paths": [
+        "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/nvidia/cudnn/lib/libcudnn_engines_tensor_ir.so.9"
+      ],
+      "mapping_count": 2,
+      "physical_identity_count": 2,
+      "units": [
+        "one_copy_correctness",
+        "original_qualification"
+      ]
+    },
+    {
+      "captured_path_count": 2,
+      "declared_same_content_size_bytes": 741088,
+      "declared_sha256": "256e6409e4f06f618e1fb53d4844a6b81cdded1013afa8ade40c22f99eb133b7",
+      "example_original_paths": [
+        "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/nvidia/cuda_runtime/lib/libcudart.so.12"
+      ],
+      "mapping_count": 2,
+      "physical_identity_count": 2,
+      "units": [
+        "one_copy_correctness",
+        "original_qualification"
+      ]
+    }
+  ],
+  "manifests": {
+    "one_copy_correctness": {
+      "declared_file_mappings": 693,
+      "git_source_roots": 8,
+      "reference": {
+        "bytes": 441357,
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/direct_history/evidence_manifest.json",
+        "sha256": "cdc371c6fa08e82d5e53a00881ac1722f20284cbecf7b240bfc657a5ead3f2ad"
+      },
+      "sum_unique_path_sizes_bytes": 1309199145,
+      "sum_unique_physical_file_sizes_bytes": 1309199145,
+      "unique_captured_paths": 646,
+      "unique_physical_file_identities": 646
+    },
+    "original_qualification": {
+      "declared_file_mappings": 693,
+      "git_source_roots": 8,
+      "reference": {
+        "bytes": 441357,
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-20-53_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/direct_history/evidence_manifest.json",
+        "sha256": "cdc371c6fa08e82d5e53a00881ac1722f20284cbecf7b240bfc657a5ead3f2ad"
+      },
+      "sum_unique_path_sizes_bytes": 1309199145,
+      "sum_unique_physical_file_sizes_bytes": 1309199145,
+      "unique_captured_paths": 646,
+      "unique_physical_file_identities": 646
+    }
+  },
+  "new_scientific_validation_or_cache_qualification": false,
+  "no_existing_source_or_review_changed": true,
+  "payload_hashes_currently_recomputed": false,
+  "raw_payload_bytes_opened_or_hashed_by_this_inventory": 0,
+  "required_total_check_bound_seconds": 300,
+  "scientific_credit": 0,
+  "sum_distinct_captured_path_sizes_bytes": 2618398290,
+  "sum_distinct_declared_content_sizes_bytes": 1309199145,
+  "sum_distinct_physical_file_sizes_bytes": 2618398290,
+  "total_declared_mappings": 1386
+}

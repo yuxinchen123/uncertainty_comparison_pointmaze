@@ -1,0 +1,112 @@
+{
+  "actual_runtime_upper_bound_established": false,
+  "actual_step": "6783003.373",
+  "admission_granted": false,
+  "all_inputs_unchanged": true,
+  "guard_returncode": 1,
+  "input_comparison": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-22-37_h100-common-historical-reader-observation_copies-1_helpers-28_source-7fef1649_metadata-time-limit-seconds-900_production-time-limit-seconds-180_gpu-count-0_processor-count-1_host-memory-gib-1/input_snapshot_comparison.json",
+    "sha256": "042d0d7712bfa2fc000b43dc6ea631cf8673fd0234b55a2b3ab3b7dc8454fbdb"
+  },
+  "kind": "actual_historical_reader_nested_timeout_diagnosis",
+  "may_repeat_attempted_packet": false,
+  "nested_reader_actual_wait": {
+    "actual_child": {
+      "all_uids": [
+        2618919,
+        2618919,
+        2618919,
+        2618919
+      ],
+      "birth_counter": "81613251",
+      "cgroup": "0::/system.slice/slurmstepd.scope/job_6783003/step_373/user/task_0\n",
+      "command": [
+        "/usr/bin/python3",
+        "-I",
+        "-S",
+        "-B",
+        "/p/rlprojects/RND_worktrees/2026-11-04-22-30_historical-common-reader_exact-source-8eb306af_git-inspection-function-b181e171_helpers-28_gpu-count-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_historical_consumer.py",
+        "--read-only-stdin"
+      ],
+      "parent_pid": 1234078,
+      "pid": 1234163
+    },
+    "actual_pid": 1234163,
+    "command": [
+      "/usr/bin/python3",
+      "-I",
+      "-S",
+      "-B",
+      "/p/rlprojects/RND_worktrees/2026-11-04-22-30_historical-common-reader_exact-source-8eb306af_git-inspection-function-b181e171_helpers-28_gpu-count-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_historical_consumer.py",
+      "--read-only-stdin"
+    ],
+    "exact_popen_child_reaped": true,
+    "failure": {
+      "message": "Command '['/usr/bin/python3', '-I', '-S', '-B', '/p/rlprojects/RND_worktrees/2026-11-04-22-30_historical-common-reader_exact-source-8eb306af_git-inspection-function-b181e171_helpers-28_gpu-count-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_historical_consumer.py', '--read-only-stdin']' timed out after 180 seconds",
+      "type": "TimeoutExpired"
+    },
+    "finished_at_seconds": 1793861187.5573015,
+    "parent_after": {
+      "all_uids": [
+        2618919,
+        2618919,
+        2618919,
+        2618919
+      ],
+      "birth_counter": "81612774",
+      "cgroup": "0::/system.slice/slurmstepd.scope/job_6783003/step_373/user/task_0\n",
+      "command": [
+        "/usr/bin/python3",
+        "-I",
+        "-S",
+        "-B",
+        "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-22-37_h100-common-historical-reader-observation_copies-1_helpers-28_source-7fef1649_metadata-time-limit-seconds-900_production-time-limit-seconds-180_gpu-count-0_processor-count-1_host-memory-gib-1/observe_guard_phases.py",
+        "--observed-guard-child"
+      ],
+      "parent_pid": 1234077,
+      "pid": 1234078
+    },
+    "parent_before": {
+      "all_uids": [
+        2618919,
+        2618919,
+        2618919,
+        2618919
+      ],
+      "birth_counter": "81612774",
+      "cgroup": "0::/system.slice/slurmstepd.scope/job_6783003/step_373/user/task_0\n",
+      "command": [
+        "/usr/bin/python3",
+        "-I",
+        "-S",
+        "-B",
+        "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-22-37_h100-common-historical-reader-observation_copies-1_helpers-28_source-7fef1649_metadata-time-limit-seconds-900_production-time-limit-seconds-180_gpu-count-0_processor-count-1_host-memory-gib-1/observe_guard_phases.py",
+        "--observed-guard-child"
+      ],
+      "parent_pid": 1234077,
+      "pid": 1234078
+    },
+    "pid_handle_reported_exit": true,
+    "returncode": -9,
+    "started_at_seconds": 1793861007.428788,
+    "stderr_base64": "",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_base64": "",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "timeout": true
+  },
+  "nested_reader_limit_seconds": 180,
+  "nested_reader_timeout": true,
+  "outer_diagnostic_timed_out": false,
+  "production_guard_qualified": false,
+  "root_wrapper_returncode": 0,
+  "scientific_credit": 0,
+  "stderr": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-22-37_h100-common-historical-reader-observation_copies-1_helpers-28_source-7fef1649_metadata-time-limit-seconds-900_production-time-limit-seconds-180_gpu-count-0_processor-count-1_host-memory-gib-1/diagnostic_stderr.raw",
+    "sha256": "2734fa73d9959f2bd0fa0872315e6275e3c0172f126e7a57eb8253fbd4088b4d"
+  },
+  "wait": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-22-37_h100-common-historical-reader-observation_copies-1_helpers-28_source-7fef1649_metadata-time-limit-seconds-900_production-time-limit-seconds-180_gpu-count-0_processor-count-1_host-memory-gib-1/diagnostic_wait.json",
+    "sha256": "9f5b06dd38c7bd421f48873d681c2ae4e46363b9c131c79be58b77ede7b40e04"
+  }
+}

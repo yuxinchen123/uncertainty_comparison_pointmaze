@@ -1,0 +1,12 @@
+{
+  "old_source": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/fetch_aces_2275518_rejected_first_source.py",
+  "old_sha256": "5de0fb6f12e4228c1632603ddc07bf47ffe9f806101cee2c85225ca88ed0b949",
+  "corrected_source": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/fetch_aces_2275518_exact_artifacts.py",
+  "corrected_sha256": "1220f7798185d9d627ba1fcd2a586df7ba87b8c9699afbe64ea909a364aa332f",
+  "findings_addressed": [
+    "actual_step_time_rounded_down_with_cleanup_reserve_and_nonblocking_lock",
+    "transport_nonzero_is_failure_and_nonzero_exit",
+    "canonical_no_symlink_rechecked_after_read"
+  ],
+  "actual_fetch_invoked": false
+}

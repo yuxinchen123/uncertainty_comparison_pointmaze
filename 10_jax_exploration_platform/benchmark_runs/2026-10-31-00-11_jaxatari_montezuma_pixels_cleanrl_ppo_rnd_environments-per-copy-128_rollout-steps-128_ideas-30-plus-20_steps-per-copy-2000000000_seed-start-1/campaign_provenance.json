@@ -163,9 +163,9 @@
   "configured_producer_helper_commit": "43eade68238a8d010ad1d1ea681e348022a00060",
   "configured_profile_actual_qualification": false,
   "correctness_cache_diagnosis_job_id": "6777949",
-  "cron_id": "e2b548e7-dd90-411c-a5de-4b75fcd6fef7",
-  "cron_monitor_expires_at": "2026-11-12T05:00:00Z",
-  "cron_monitor_id": "e2b548e7-dd90-411c-a5de-4b75fcd6fef7",
+  "cron_id": "1fa35ddd-3a3b-494b-80d3-c714bd303525",
+  "cron_monitor_expires_at": "2026-11-12T07:00:00Z",
+  "cron_monitor_id": "1fa35ddd-3a3b-494b-80d3-c714bd303525",
   "cron_verified_active": true,
   "cron_verified_utc": "2026-11-05T05:26:22.358Z",
   "current_branch_integrated_commit": "79a01e851ff92ddba7d0e12eaf8164cab2028878",
@@ -433,11 +433,15 @@
   ],
   "isolated_capacity_helper_commit": "332bff2faf89df98d7f48fc2296555313c5be290",
   "job_ledgers": "slurm/submitted_jobids_*.txt",
-  "last_active_persistent_monitor_job_id": "6782816",
+  "last_active_persistent_monitor_job_id": "6783003",
   "last_verified_full_monitor": {
     "job_id": "6783003",
-    "prefix": "scheduled_check_2026-11-05-06-32-00",
-    "step_id": "366"
+    "prefix": "scheduled_check_2026-11-05-07-32-49",
+    "proof": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/root_full_bounded_check_2026-11-05-07-32-49.json",
+      "sha256": "6c6d85a105d6ab0457637ba04245536377dcf2b858440f04ff6a21fd0e9fe313"
+    },
+    "step_id": "390"
   },
   "latest_actual_target_qualification_release": {
     "actual_core_reader_passed": true,
@@ -453,6 +457,10 @@
     "worker_admission": false
   },
   "latest_compiled_document_pages": 48,
+  "latest_existing_aces_deltaai_master_check": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/existing_master_checks_2026-11-05-07-32-49.json",
+    "sha256": "ed1d2a0c8f9cb707593ae340a3dbc853047b918eb5f6d3a91d0af52ed3c7254d"
+  },
   "latest_qualification_state": "failed_test_root_validation_corrected_source_preparing_fresh_attempt",
   "latest_report_pdf_pages": 64,
   "latest_report_pdf_sha256": "a4effb41f19718d25d77bdcf1f44c7c2dfef5b8ce0329bc24cd22dd1f8f39af2",
@@ -460,6 +468,7 @@
   "latest_report_verification_receipt": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/registered_comparisons_100_report_verification.json",
   "liveness_audit": "One bounded metadata call verified supervisor 3567981 and then-active runner 3890375 with their process start times, parent relationship, frozen source and canonical Python. Only the owned runner used selected card 1. That one-policy case later completed valid correctness and seven timing pairs; the two-policy case then started normally.",
   "liveness_audit_checked_at": "2026-10-31T20:40:46+00:00",
+  "maximum_validation_wall_seconds_per_check": 300,
   "merge_complete": true,
   "monitor_identity_history": [
     {
@@ -489,6 +498,18 @@
       },
       "reason": "Older standing monitor fields were missed during the verified handover; current job and source rebuilt from actual owned full report. No job action.",
       "verification_record": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-01-30_pixel-study-monitor_source-commit-f9a9c1672f788f52ba06836cee26f2dd6314cec7_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/scheduled_check_2026-11-01-11-40_verification.json"
+    },
+    {
+      "actual_check": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/root_full_bounded_check_2026-11-05-07-32-49.json",
+        "sha256": "6c6d85a105d6ab0457637ba04245536377dcf2b858440f04ff6a21fd0e9fe313"
+      },
+      "previous_fields": {
+        "last_active_persistent_monitor_job_id": "6782816",
+        "monitoring_verified_utc": "2026-11-05T03:58:45.941229+00:00",
+        "persistent_monitor_terminal_exit_code": "1:0"
+      },
+      "reason": "Current full check390 verifies current running monitor; preserve old terminal fields under their historical record."
     }
   ],
   "monitoring_cadence": "Session wakeups hourly; persistent cluster checks every twenty minutes.",
@@ -565,7 +586,7 @@
   "persistent_monitor_runtime_review_sha256": "4163465cc6ee6c239b6d8ac45377d05be3602c1745742856b7ffe335a7190a8d",
   "persistent_monitor_source_commit": "79a01e851ff92ddba7d0e12eaf8164cab2028878",
   "persistent_monitor_state": "RUNNING",
-  "persistent_monitor_terminal_exit_code": "1:0",
+  "persistent_monitor_terminal_exit_code": null,
   "persistent_monitor_verified_utc": "2026-11-02T01:03:02.231336+00:00",
   "precision_warning_audit": "remote_setup/precision_warning_audit.json",
   "previous_monitor_terminal_state": "6782816 naturally FAILED1:0 on process hostname field; no cancellation",
@@ -630,11 +651,16 @@
         "monitoring_cadence": "twenty minutes",
         "monitoring_verified_utc": "2026-11-05T03:58:45.941229+00:00"
       }
+    },
+    {
+      "previous_cron_id": "e2b548e7-dd90-411c-a5de-4b75fcd6fef7",
+      "previous_cron_monitor_id": "e2b548e7-dd90-411c-a5de-4b75fcd6fef7",
+      "reason": "Latest user check bound and current progress in hourly prompt."
     }
   ],
   "session_wakeup_schedule_record": {
-    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/session_wakeup_schedule_2026-11-05-05-21.json",
-    "sha256": "ada0f6c8e608d8153b4ba955ea013e728345b4b5c862b9e751337556119ae852"
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/hourly_wakeup_five_minute_checks_2026-11-05.json",
+    "sha256": "187d735c81d64081566ff854333e56005cf398e70a7bfb487b6953784206b01c"
   },
   "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
   "source_root": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",

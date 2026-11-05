@@ -1,0 +1,109 @@
+{
+  "approved": true,
+  "binary_bytes_written_or_staged": false,
+  "checks_passed": [
+    "The exact unchanged six-file plan SHA remains pinned.",
+    "The fixed native unit paths and local destinations remain unchanged.",
+    "Remote streaming still uses the already approved existing-master SSH options, with no authentication or transfer retries.",
+    "Each remote read retains the exact own-UID ordinary-file, size and stable identity gates.",
+    "The disk verifier still checks actual on-disk SHA and byte count under the single nonblocking large-read lock.",
+    "Exclusive local files and partial/failed records remain preserved.",
+    "No fetched image is imported, loaded or executed; verified files are changed to mode0440.",
+    "The utility performs no Slurm job query, submission, release or cancellation.",
+    "The source permits no automatic repeated transfer and makes no scientific or worker admission claim."
+  ],
+  "corrected_findings": [
+    {
+      "now": "The actual step limit is floored from remaining minus sixty seconds, insufficient remaining time refuses launch, scheduling has a five-second immediate limit, lock acquisition is nonblocking, and local timeout retains an explicit unverified-step flag. The hash process publishes actual job/step/PID/cgroup before reading bytes.",
+      "prior": "actual hash step and blocking lock could outlive remaining budget"
+    },
+    {
+      "now": "The failed file receipt and false summary are saved before an exception reaches the outer fetch_failure handler and a nonzero process exit.",
+      "prior": "nonzero SSH transport returned process success without failure JSON"
+    },
+    {
+      "now": "Both embedded readers repeat canonical path and direct-symlink refusal after reading, in addition to descriptor and path-stat identity equality.",
+      "prior": "post-read checks followed possible replacement symlinks"
+    }
+  ],
+  "deadline_arithmetic_cases": [
+    {
+      "actual_step_limit_seconds": 240,
+      "cleanup_time_left_seconds": 25,
+      "client_wait_seconds": 275,
+      "remaining_seconds": 300
+    },
+    {
+      "actual_step_limit_seconds": 180,
+      "cleanup_time_left_seconds": 84.89999999999998,
+      "client_wait_seconds": 215,
+      "remaining_seconds": 299.9
+    },
+    {
+      "actual_step_limit_seconds": 180,
+      "cleanup_time_left_seconds": 25,
+      "client_wait_seconds": 215,
+      "remaining_seconds": 240
+    },
+    {
+      "actual_step_limit_seconds": 120,
+      "cleanup_time_left_seconds": 25,
+      "client_wait_seconds": 155,
+      "remaining_seconds": 180
+    },
+    {
+      "actual_step_limit_seconds": 60,
+      "cleanup_time_left_seconds": 35,
+      "client_wait_seconds": 95,
+      "remaining_seconds": 130
+    },
+    {
+      "actual_step_limit_seconds": 60,
+      "cleanup_time_left_seconds": 25,
+      "client_wait_seconds": 95,
+      "remaining_seconds": 120
+    },
+    {
+      "hash_launch_refused": true,
+      "remaining_seconds": 119.9
+    },
+    {
+      "hash_launch_refused": true,
+      "remaining_seconds": 60
+    },
+    {
+      "hash_launch_refused": true,
+      "remaining_seconds": 0
+    }
+  ],
+  "execution_not_performed": true,
+  "independent_of_author": true,
+  "kind": "independent_focused_static_corrected_six_artifact_fetch_utility_review",
+  "new_live_tests_run": 0,
+  "passed": true,
+  "plan": {
+    "bytes": 36911,
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/aces_2275518_exact_six_file_fetch_plan_2026-11-05.json",
+    "sha256": "25112e056985f8ca2e4488b9683ca3d7a45edcd9c6bda6689e9dcd725968bda2"
+  },
+  "previous_rejection": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/fetch_aces_2275518_independent_static_review_2026-11-05.json",
+    "sha256": "1b9613f42a93aed35e5659f9bbc430a43673ff7764acafca0449264dc66ce5d8"
+  },
+  "required_before_execution": "Root publishes and verifies the exact approved source and plan before its one allowed invocation.",
+  "reviewed_at_utc": "2026-11-05T08:01:23.677521+00:00",
+  "reviewer": "/root/prepare_fresh_historical_probe",
+  "runtime_limit_of_approval": "A timed-out actual step remains unverified and must not be treated as ended or successful from the local client exit alone.",
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "scope": "Static source approval for read-only transfer of the exact six already completed ACES artifacts; no scientific or target qualification.",
+  "source": {
+    "bytes": 10244,
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/fetch_aces_2275518_exact_artifacts.py",
+    "sha256": "1220f7798185d9d627ba1fcd2a586df7ba87b8c9699afbe64ea909a364aa332f"
+  },
+  "source_unchanged_at_review_end": true,
+  "ssh_or_fetch_performed": false,
+  "static_checks_only": true,
+  "worker_admission": false
+}

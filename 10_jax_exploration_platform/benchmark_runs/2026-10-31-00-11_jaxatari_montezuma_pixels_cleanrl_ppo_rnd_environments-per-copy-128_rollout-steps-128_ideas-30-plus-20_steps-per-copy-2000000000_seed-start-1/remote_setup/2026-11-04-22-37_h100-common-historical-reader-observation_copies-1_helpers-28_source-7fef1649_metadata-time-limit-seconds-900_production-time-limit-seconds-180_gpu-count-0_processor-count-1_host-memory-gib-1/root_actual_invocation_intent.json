@@ -1,0 +1,28 @@
+{
+  "attempt_number": 1,
+  "command": [
+    "srun",
+    "--jobid=6783003",
+    "--overlap",
+    "--exact",
+    "--ntasks=1",
+    "--cpus-per-task=1",
+    "--mem=1G",
+    "flock",
+    "-x",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/queue/cpu_monitor_large_artifact_read.lock",
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-22-37_h100-common-historical-reader-observation_copies-1_helpers-28_source-7fef1649_metadata-time-limit-seconds-900_production-time-limit-seconds-180_gpu-count-0_processor-count-1_host-memory-gib-1/run_guard_observation.py"
+  ],
+  "gpu_operations_planned": 0,
+  "kind": "root_actual_fresh_historical_guard_invocation_intent",
+  "packet_review_sha256": "a86036c90f384d9ed230bb716cab4de1754e3a7a2399f108d4cab7f021585547",
+  "production_unit_proof": false,
+  "publication": "9554c1a666cb1cab1813f94ed9e08c624c884810",
+  "scientific_credit": 0,
+  "source_helper_commit": "7fef164909b5eb8b31636da7ae0c653282388203",
+  "started_at_utc": "2026-11-05T06:43:22.191574+00:00"
+}

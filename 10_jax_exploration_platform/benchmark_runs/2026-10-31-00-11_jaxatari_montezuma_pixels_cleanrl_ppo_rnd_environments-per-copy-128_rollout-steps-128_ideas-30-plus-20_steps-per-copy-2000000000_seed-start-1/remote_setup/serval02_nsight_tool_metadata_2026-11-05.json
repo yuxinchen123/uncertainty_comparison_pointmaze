@@ -1,0 +1,19 @@
+{
+  "command": [
+    "ssh",
+    "-o",
+    "BatchMode=yes",
+    "-o",
+    "ControlMaster=no",
+    "-o",
+    "ConnectTimeout=15",
+    "serval02",
+    "/usr/bin/python3 -I -S -B -c 'import os,socket,shutil,json,hashlib,stat\nfrom pathlib import Path\nassert os.getuid()==os.geteuid()==2618919\nassert socket.gethostname().split('\"'\"'.'\"'\"')[0]=='\"'\"'serval02'\"'\"'\np=Path('\"'\"'/sw/ubuntu2204/ebu082025/software/common/core/nsight-systems/2024.7.1/target-linux-x64/nsys'\"'\"').resolve(strict=True)\nfd=os.open(p,os.O_RDONLY|os.O_NOFOLLOW)\ntry:\n a=os.fstat(fd);assert stat.S_ISREG(a.st_mode) and a.st_size<128*1024*1024;h=hashlib.sha256()\n while True:\n  b=os.read(fd,1024*1024)\n  if not b:break\n  h.update(b)\n z=os.fstat(fd);keys=['\"'\"'st_dev'\"'\"','\"'\"'st_ino'\"'\"','\"'\"'st_size'\"'\"','\"'\"'st_mtime_ns'\"'\"','\"'\"'st_ctime_ns'\"'\"','\"'\"'st_mode'\"'\"','\"'\"'st_uid'\"'\"','\"'\"'st_gid'\"'\"'];assert all(getattr(a,k)==getattr(z,k)==getattr(p.stat(),k) for k in keys)\nfinally:os.close(fd)\nq=Path('\"'\"'/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python'\"'\"').resolve(strict=True);qs=q.stat()\nprint(json.dumps({'\"'\"'hostname'\"'\"':socket.gethostname(),'\"'\"'uid'\"'\"':os.getuid(),'\"'\"'tool_path'\"'\"':str(p),'\"'\"'tool_sha256'\"'\"':h.hexdigest(),'\"'\"'tool_identity'\"'\"':{k:getattr(a,k) for k in keys},'\"'\"'path_which_nsys'\"'\"':shutil.which('\"'\"'nsys'\"'\"'),'\"'\"'selected_python_resolved'\"'\"':str(q),'\"'\"'selected_python_identity'\"'\"':{'\"'\"'device'\"'\"':qs.st_dev,'\"'\"'inode'\"'\"':qs.st_ino,'\"'\"'mode'\"'\"':stat.S_IMODE(qs.st_mode),'\"'\"'uid'\"'\"':qs.st_uid},'\"'\"'tool_executed'\"'\"':False,'\"'\"'numerical_or_gpu_operation_requested'\"'\"':False}))\n'"
+  ],
+  "started_at_utc": "2026-11-05T07:28:07.331431+00:00",
+  "finished_at_utc": "2026-11-05T07:28:10.063608+00:00",
+  "returncode": 0,
+  "stdout": "{\"hostname\": \"serval02\", \"uid\": 2618919, \"tool_path\": \"/sw/ubuntu2204/ebu082025/software/common/core/nsight-systems/2024.7.1/target-linux-x64/nsys\", \"tool_sha256\": \"48e4c308f538c8971b8f62c389834372d986f00f200743f1eae90918f2f04e1d\", \"tool_identity\": {\"st_dev\": 62, \"st_ino\": 4112496, \"st_size\": 58059912, \"st_mtime_ns\": 1731612257000000000, \"st_ctime_ns\": 1753925121778687932, \"st_mode\": 33261, \"st_uid\": 2048, \"st_gid\": 90016}, \"path_which_nsys\": \"/usr/local/bin/nsys\", \"selected_python_resolved\": \"/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python3.12\", \"selected_python_identity\": {\"device\": 67, \"inode\": 4269399, \"mode\": 493, \"uid\": 2618919}, \"tool_executed\": false, \"numerical_or_gpu_operation_requested\": false}\n",
+  "stderr": "/u/sl5nw/.bashrc: line 55: conda: command not found\n",
+  "automatic_retry": false
+}

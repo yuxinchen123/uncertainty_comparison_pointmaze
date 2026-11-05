@@ -1,0 +1,62 @@
+{
+  "approved": false,
+  "binary_bytes_written_or_staged": false,
+  "checks_passed": [
+    "Exact fixed plan SHA is enforced.",
+    "Exactly six planned native artifacts are selected, with fixed local destinations.",
+    "The native path is required inside the exact owned site unit.",
+    "Remote source and local verifier require ordinary owned files and compare fd identity before/after reads.",
+    "Driver files use exact known byte counts; logs retain explicit unknown expected sizes and bounded maximum sizes.",
+    "Existing-master SSH transport uses ControlMaster=no, ProxyCommand=false and BatchMode=yes, with no authentication or transfer retry loop.",
+    "No source program loads or executes the fetched driver image.",
+    "The utility does not submit, release, cancel or query Slurm jobs.",
+    "Data files are exclusive-created and receipts declare no scientific or worker-admission credit."
+  ],
+  "embedded_hash_program_sha256": "e3ecd74f0baef8a9384e649c9a806105be48980a3d421a612304d98712d17a56",
+  "embedded_remote_program_sha256": "80a74d0dfeaf29caf7f3c2623a4e1cb4f277c5495b20c210f197ff0a481e3594",
+  "exact_plan_rows_checked": 6,
+  "findings": [
+    {
+      "kind": "remaining_budget_does_not_bound_actual_hash_step",
+      "line": 134,
+      "observed": "The verifier always requests a five-minute Slurm step after transport may have consumed most of the same file total deadline. The local subprocess.run timeout kills/reaps its srun client, without proving the allocated hash step or its blocking flock has ended.",
+      "required_correction": "Bound the actual verifier and lock acquisition within the remaining per-file time, retain cleanup time, and prove owned step termination on failure; no automatic retry or unrelated job action.",
+      "severity": "blocking"
+    },
+    {
+      "kind": "transport_failure_returns_success_and_omits_failure_record",
+      "line": 151,
+      "observed": "A nonzero SSH transport status leaves error=None, writes verified=false and a summary, then main returns normally zero. The outer exception handler does not write fetch_failure.json.",
+      "required_correction": "Preserve the partial bytes, intent and fetch receipt, then fail nonzero and save fetch_failure.json for a nonzero transport result.",
+      "severity": "blocking"
+    },
+    {
+      "kind": "post_read_path_stat_follows_symlink",
+      "line": 41,
+      "observed": "Both embedded readers check path.resolve()==path before opening, but post-read path.stat follows links. A symlink to the same already-open file can pass the final identity tuple despite the fixed plan refusing symlink paths.",
+      "required_correction": "Recheck the canonical/no-symlink path and its final path identity after the read, keeping the existing fd before/after checks.",
+      "severity": "blocking"
+    }
+  ],
+  "independent_of_author": true,
+  "kind": "independent_static_exact_six_artifact_fetch_utility_review",
+  "live_tests_run": 0,
+  "passed": false,
+  "plan": {
+    "bytes": 36911,
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/aces_2275518_exact_six_file_fetch_plan_2026-11-05.json",
+    "sha256": "25112e056985f8ca2e4488b9683ca3d7a45edcd9c6bda6689e9dcd725968bda2"
+  },
+  "review_method": "Whole-source and exact-plan inspection plus AST parsing of both embedded programs; no utility execution, live fixture, SSH, artifact fetch, Slurm action or numerical/library operation.",
+  "reviewed_at_utc": "2026-11-05T07:56:56.648307+00:00",
+  "reviewer": "/root/prepare_fresh_historical_probe",
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "source": {
+    "bytes": 8433,
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/fetch_aces_2275518_exact_artifacts.py",
+    "sha256": "5de0fb6f12e4228c1632603ddc07bf47ffe9f806101cee2c85225ca88ed0b949"
+  },
+  "ssh_or_fetch_performed": false,
+  "worker_admission": false
+}

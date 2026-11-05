@@ -1,0 +1,142 @@
+{
+  "actual_full_runtime_upper_bound_known": false,
+  "base": "7fef164909b5eb8b31636da7ae0c653282388203",
+  "candidate_admitted": false,
+  "head_before": "9554c1a666cb1cab1813f94ed9e08c624c884810",
+  "incoming": "fca48ddaf82b78ad385b7394f292aff1b4bb7701",
+  "incoming_files": [
+    {
+      "blob": "614e3b9e39e1221fa210f142169b7600ec39dd07",
+      "bytes": 925,
+      "mode": "100644",
+      "path": ".review_metadata/historical_metadata_wait_candidate/author_test_intent.json",
+      "sha256": "bf0cabce85981542a6e1245873301b7e9e95188ede67cb3635c907763b81085f"
+    },
+    {
+      "blob": "ddab35c783eed1bdaa20c49762d0766642a46965",
+      "bytes": 637,
+      "mode": "100644",
+      "path": ".review_metadata/historical_metadata_wait_candidate/author_test_return.json",
+      "sha256": "0683a9e15976c64ac61ae5d20fa8bc47bda42bbce1c30c3cfc1c44eca304dc6f"
+    },
+    {
+      "blob": "2acbf5bde27f839f6702d9b54e59c3ca854ac208",
+      "bytes": 5312,
+      "mode": "100644",
+      "path": ".review_metadata/historical_metadata_wait_candidate/author_test_stderr.raw",
+      "sha256": "9ce3b16e9dd45b85a57cda76338d404af155aafa08816e3708f490c0a9cc09ac"
+    },
+    {
+      "blob": "655686af874e2ae4f0a284235eb2c393daad2ee9",
+      "bytes": 141,
+      "mode": "100644",
+      "path": ".review_metadata/historical_metadata_wait_candidate/author_test_stdout.raw",
+      "sha256": "332ddf1a30039e5730b34c455d201dfe7f91f526afe137ec2d0f7fc872f4e48a"
+    },
+    {
+      "blob": "22c56c90a1c3583d98e4acb40f473d4e1b7133f6",
+      "bytes": 1703,
+      "mode": "100644",
+      "path": ".review_metadata/historical_metadata_wait_candidate/exact_two_constant_patch.diff",
+      "sha256": "aa089108216b35c4c98e5fc099ab547e755a092f6ecedd182a8ae92baf53def6"
+    },
+    {
+      "blob": "fb78a648d8431bb22cd51ca4940ee70124087283",
+      "bytes": 2681,
+      "mode": "100644",
+      "path": ".review_metadata/historical_metadata_wait_candidate/frozen_candidate_for_independent_review.json",
+      "sha256": "4422b94b3a585c061071313108da06ffad9e4b789c0679fb48de029096f593d5"
+    },
+    {
+      "blob": "89741e99db997fc76094737ca7cb1281c4176c75",
+      "bytes": 472,
+      "mode": "100644",
+      "path": ".review_metadata/historical_metadata_wait_candidate/publication_raw_patch_context_note.json",
+      "sha256": "a9d7e5106c388aa44f8814ce7344b6d9acafe4528ab18758aa3bdb470d6e26e1"
+    },
+    {
+      "blob": "7c0b28d978d338095b2b46a196dfdcfacc570813",
+      "bytes": 4989,
+      "mode": "100644",
+      "path": ".review_metadata/historical_metadata_wait_candidate/reviewed_publication_roster.json",
+      "sha256": "1629a31c5f8c0569027498a47c4e033ea08b5361bca455b0768899c5eb6f4cc8"
+    },
+    {
+      "blob": "b4273a857865c66f71005c05aa6ee0b49028dd1c",
+      "bytes": 719,
+      "mode": "100644",
+      "path": ".review_metadata/historical_metadata_wait_candidate/run_existing_historical_metadata_tests.py",
+      "sha256": "f679955bcada6a5bffaa044f577f91ed63a0ad76cf4b4121e404bfa2416f0bee"
+    },
+    {
+      "blob": "8248ee4a1d755331658bb99dfa43b28684b5c9cb",
+      "bytes": 1297,
+      "mode": "100644",
+      "path": ".review_metadata/historical_metadata_wait_candidate/source_change_contract.json",
+      "sha256": "476486fa8cd5db041a3a593c3e67addda9c5425a2f9f487387dd42c27b33f84b"
+    },
+    {
+      "blob": "93133941fad3a2cd1e80bb901fa5c335158dc99d",
+      "bytes": 276,
+      "mode": "100644",
+      "path": ".review_metadata/historical_metadata_wait_candidate/static_verifier_function_name_failure.json",
+      "sha256": "c86ba9939aa75d2181e2dae583daea190d086d4b28ec0d705175ab22a6b8ab71"
+    },
+    {
+      "blob": "dbf0511c5aecc23c886e153cb4e885050c2b987b",
+      "bytes": 891,
+      "mode": "100644",
+      "path": ".review_metadata/historical_metadata_wait_independent_review/independent_source_command_return.json",
+      "sha256": "51498e8cdfc7d25a79dcefa744eb7339768ee0e4bcd6665ffa9e379e50955a0a"
+    },
+    {
+      "blob": "698c79094602dc1042d0db5fe284af32cf260b46",
+      "bytes": 3327,
+      "mode": "100644",
+      "path": ".review_metadata/historical_metadata_wait_independent_review/independent_source_review.json",
+      "sha256": "59fc7873e6c707c65f4323a8805037ddf530bc476485bcc7135828186544ec46"
+    },
+    {
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "bytes": 0,
+      "mode": "100644",
+      "path": ".review_metadata/historical_metadata_wait_independent_review/independent_source_stderr.raw",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "blob": "563dae003bbbd7a179b468393d3b7b6e26e49d3a",
+      "bytes": 144,
+      "mode": "100644",
+      "path": ".review_metadata/historical_metadata_wait_independent_review/independent_source_stdout.raw",
+      "sha256": "25ecfeb38acd3bf5df90537c69324f81caf2f5919fd661b5f93a3ff0740d6339"
+    },
+    {
+      "blob": "766c823de62c1d11386a73f63cf5404b5ee29a5c",
+      "bytes": 7710,
+      "mode": "100644",
+      "path": ".review_metadata/historical_metadata_wait_independent_review/review_timeout_candidate.py",
+      "sha256": "291cf723dbe8bd5cc03cfdff7976ee8fe98cdf3a37579224c10e0871a23476d6"
+    },
+    {
+      "blob": "6a422d2b2940e03b52af4cb7d56abc55cfb13c99",
+      "bytes": 62623,
+      "mode": "100644",
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_confirmation.py",
+      "sha256": "0653f2a8b9ab51ef3037d47be74b0773051205f5fb949ff64ad9f4d17726b749"
+    },
+    {
+      "blob": "7b2de9eda73913209dca0a1c9e36660e878b3f34",
+      "bytes": 24121,
+      "mode": "100644",
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_historical_consumer.py",
+      "sha256": "c6ade4959e040f9b47a34b65b48889ebd28dc4a3d76f896db3b64f3bac7c7685"
+    }
+  ],
+  "kind": "source_only_metadata_wait_candidate_incoming",
+  "old_admitted_private_waits_still_180": true,
+  "passed": true,
+  "predicted_tree": "275660c2b6932f8b87ac059f17c13158213b2816",
+  "private_index_dry_runs": 2,
+  "protected_count": 662,
+  "scientific_credit": 0
+}
