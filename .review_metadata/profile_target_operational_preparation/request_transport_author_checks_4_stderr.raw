@@ -1,0 +1,10 @@
+test_only_actual_origin_tracking_accepts_publication (operational_corrected.OperationalChecks)
+A real private Git fixture refuses local-only and unpushed commits; no network is used. ... ok
+test_complete_synthetic_transport_checks_and_changed_plan_refuse (operational_corrected.OperationalChecks)
+Exercise every actual metadata check with explicit synthetic review/Git premises. ... ok
+test_request_uses_actual_component_plan_not_result_fields (operational_corrected.OperationalChecks) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.438s
+
+OK

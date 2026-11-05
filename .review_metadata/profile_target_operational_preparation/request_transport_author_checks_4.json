@@ -1,0 +1,42 @@
+{
+  "command": [
+    "srun",
+    "--jobid=6825983",
+    "--overlap",
+    "--exact",
+    "--nodes=1",
+    "--ntasks=1",
+    "--cpus-per-task=1",
+    "--mem=512M",
+    "--time=00:05:00",
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "-c",
+    "import importlib.util,unittest;from pathlib import Path;p=Path('/p/rlprojects/RND_worktrees/2026-11-05-11-30_common-performance-prerequisite-fact_contexts-4_paired-rounds-7_updates-per-arm-10_profile-qualification-operational-preparation_gpu-actions-0/.review_metadata/profile_target_operational_preparation/test_qualification_request_and_direct_transport.py');s=importlib.util.spec_from_file_location('operational_corrected',p);m=importlib.util.module_from_spec(s);s.loader.exec_module(m);r=unittest.TextTestRunner(verbosity=2).run(unittest.TestSuite([m.OperationalChecks(n) for n in ['test_only_actual_origin_tracking_accepts_publication', 'test_complete_synthetic_transport_checks_and_changed_plan_refuse', 'test_request_uses_actual_component_plan_not_result_fields']]));raise SystemExit(not r.wasSuccessful())"
+  ],
+  "returncode": 0,
+  "elapsed_seconds": 0.747953252051957,
+  "before": {
+    "derive_one_copy_qualification_request.py": "b377e523465a803a9a58657519d8b6e1aa8922c124486adf839e50448cdfda19",
+    "start_direct_profile_qualification_once.py": "1461b49371f36be4180994716ef24ff060fb67d63a32cfea53ce4ae4ca325f20",
+    "prepare_direct_transport_configuration.py": "32136e5da65bafba536f170b5530e3033dbd5ce28aecf9a6c084347b5677e435",
+    "test_qualification_request_and_direct_transport.py": "7e41c6c1952151ba3e34fa689c27e99361e922ceda8fb85501d1cd1672ac0451"
+  },
+  "after": {
+    "derive_one_copy_qualification_request.py": "b377e523465a803a9a58657519d8b6e1aa8922c124486adf839e50448cdfda19",
+    "start_direct_profile_qualification_once.py": "1461b49371f36be4180994716ef24ff060fb67d63a32cfea53ce4ae4ca325f20",
+    "prepare_direct_transport_configuration.py": "32136e5da65bafba536f170b5530e3033dbd5ce28aecf9a6c084347b5677e435",
+    "test_qualification_request_and_direct_transport.py": "7e41c6c1952151ba3e34fa689c27e99361e922ceda8fb85501d1cd1672ac0451"
+  },
+  "source_unchanged": true,
+  "target_actions": 0,
+  "runtime_preparation": false,
+  "methods": [
+    "test_only_actual_origin_tracking_accepts_publication",
+    "test_complete_synthetic_transport_checks_and_changed_plan_refuse",
+    "test_request_uses_actual_component_plan_not_result_fields"
+  ],
+  "prior_unaffected_methods_reused": true
+}

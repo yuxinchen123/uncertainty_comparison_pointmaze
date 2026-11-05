@@ -1,0 +1,47 @@
+{
+  "actual_job_id": "6825983",
+  "actual_local_ancestry_queries": [
+    [
+      "merge-base",
+      "--is-ancestor",
+      "d038018ce5c677b8a7fbd1c53b87cf1f3fc9d8d9",
+      "HEAD"
+    ],
+    [
+      "merge-base",
+      "--is-ancestor",
+      "d038018ce5c677b8a7fbd1c53b87cf1f3fc9d8d9",
+      "HEAD"
+    ]
+  ],
+  "actual_step_id": "47",
+  "admission_granted": false,
+  "approved": false,
+  "author_methods_independently_passed": 7,
+  "default_no_action_verified": true,
+  "findings": [
+    {
+      "detail": "verify accepts a local-only publication with no origin or remote-tracking ref",
+      "kind": "publication_tracking_missing"
+    },
+    {
+      "detail": "request deriver does not require packet.name==profile_unit_id, although owned allocation inputs use that exact remote_setup path",
+      "kind": "actual_A4500_packet_name_join_missing"
+    }
+  ],
+  "kind": "independent_operational_request_transport_initial_review",
+  "passed": false,
+  "preservation_manifest": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-11-30_common-performance-prerequisite-fact_contexts-4_paired-rounds-7_updates-per-arm-10_profile-qualification-operational-preparation_gpu-actions-0/.review_metadata/profile_target_operational_preparation/preserved_request_transport_local_publication_rejection/manifest.json",
+    "sha256": "5f4dc8a122785f09b89bf68da6e90e967ac8435f3b0ad6b3b14ee2f867a7e5c6"
+  },
+  "private_git_without_origin_accepted": true,
+  "schema_version": 1,
+  "seconds": 0.7678906959481537,
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-11-30_common-performance-prerequisite-fact_contexts-4_paired-rounds-7_updates-per-arm-10_profile-qualification-operational-preparation_gpu-actions-0/.review_metadata/profile_target_operational_preparation/request_and_direct_transport_source_freeze_1.json",
+    "sha256": "fd264f64ddaec08cf5452e606a5769c9f44045ec1d610aaabaf4edead9aeae10"
+  },
+  "source_unchanged": true,
+  "target_operations": 0
+}

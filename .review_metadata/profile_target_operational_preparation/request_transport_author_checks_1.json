@@ -1,0 +1,33 @@
+{
+  "command": [
+    "srun",
+    "--jobid=6825983",
+    "--overlap",
+    "--exact",
+    "--nodes=1",
+    "--ntasks=1",
+    "--cpus-per-task=1",
+    "--mem=512M",
+    "--time=00:05:00",
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "/p/rlprojects/RND_worktrees/2026-11-05-11-30_common-performance-prerequisite-fact_contexts-4_paired-rounds-7_updates-per-arm-10_profile-qualification-operational-preparation_gpu-actions-0/.review_metadata/profile_target_operational_preparation/test_qualification_request_and_direct_transport.py"
+  ],
+  "returncode": 0,
+  "elapsed_seconds": 0.5236010169610381,
+  "before": {
+    "derive_one_copy_qualification_request.py": "20331a6fc9625d604436c21ed03de3c06732f109044f728c9a16ba2dbb54bb9e",
+    "start_direct_profile_qualification_once.py": "d3aa057652628e4654841c798f072d417512e7a43bd7792a98ab20329fae9234",
+    "test_qualification_request_and_direct_transport.py": "026497a079dbbe24558581a9a0370bdd652a64da414093291aa432ae99fbd36b"
+  },
+  "after": {
+    "derive_one_copy_qualification_request.py": "20331a6fc9625d604436c21ed03de3c06732f109044f728c9a16ba2dbb54bb9e",
+    "start_direct_profile_qualification_once.py": "d3aa057652628e4654841c798f072d417512e7a43bd7792a98ab20329fae9234",
+    "test_qualification_request_and_direct_transport.py": "026497a079dbbe24558581a9a0370bdd652a64da414093291aa432ae99fbd36b"
+  },
+  "source_unchanged": true,
+  "target_actions": 0,
+  "runtime_preparation": false
+}
