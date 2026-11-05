@@ -1,0 +1,27 @@
+{
+  "actual_independent_tests": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-55_nsight-process-api-precheck_system-python-zero-environment-diagnostic_before-any-tool-or-popen/.review_metadata/nsight_interpreter_api_precheck_independent.json",
+    "sha256": "0478d13109f7ae2599bdaffa00208439752ae279660348225574b7001fa49946"
+  },
+  "at_utc": "2026-11-05T04:02:01.559034+00:00",
+  "checks": [
+    "required exports callable and missing names explicit",
+    "preflight before plan/tool hash/version/process creation",
+    "actual presence record has no kernel support claim",
+    "descriptor-open error propagates; no PID signal fallback",
+    "zero-environment diagnostic formatter changes interpreter only",
+    "scientific Python and numerical core unchanged",
+    "24 independent source/order/formatter tests passed"
+  ],
+  "kind": "root_independent_nsight_required_api_and_zero_environment_interpreter_review",
+  "passed": true,
+  "review_wrapper_failure_preserved": "first root wrapper read nonexistent tests field; actual tests_run field is24, no tests repeated",
+  "scientific_credit": 0,
+  "scope": "exact three-code-file changes and focused tests; actual tool and target qualification not run",
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-55_nsight-process-api-precheck_system-python-zero-environment-diagnostic_before-any-tool-or-popen/.review_metadata/nsight_interpreter_api_precheck_full_source_freeze.json",
+    "sha256": "c190f3bac58ef0229a103e95a70c6347d0ff261b097a60be43eb087c519f3426"
+  },
+  "tool_or_gpu_or_native_pidfd_actions": 0,
+  "worker_admission_granted": false
+}

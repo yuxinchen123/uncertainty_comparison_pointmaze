@@ -48,6 +48,8 @@ class PreparationTests(unittest.TestCase):
             for name in ("manifest.yaml", "config_resolved.yaml", "command.txt", "experiment_background.md", "progress.json"):
                 self.assertTrue((directory / name).is_file())
         plan = json.loads((unit / "measurement_plan.json").read_text())
+        self.assertEqual(plan["python"], "/usr/bin/python3")
+        self.assertEqual(json.loads((packet / "manifest.yaml").read_text())["python"], "/usr/bin/python3")
         self.assertIsNone(plan["job_id"]); self.assertIsNone(plan["gpu_uuid"])
         self.assertEqual(plan["work"]["learner_updates"], 0)
         self.assertIsNone(plan["resources"]["reservation"])
