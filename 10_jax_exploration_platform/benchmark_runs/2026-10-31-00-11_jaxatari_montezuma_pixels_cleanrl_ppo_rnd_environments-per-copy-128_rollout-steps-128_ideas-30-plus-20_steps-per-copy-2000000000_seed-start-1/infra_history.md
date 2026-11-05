@@ -716,3 +716,9 @@ The fresh persistent full tick returns zero, while its serialized latest status 
 
 
 2026-11-05T18:38:34.825430+00:00 — Hourly full check on current monitor 6825983 passed in 3.434 seconds after the three reviewed exact owned ACES refreshes. The two-copy H100 benchmark is still running and has reached round four of seven; no complete result or timing acceptance exists yet. Published terminal observer/raw-first/staged-consumer preparations e82f5021 remain unexecuted pending actual completion and normal waits.
+
+
+2026-11-05T19:35:37.597848+00:00 — The actual incoming source check for local commit d1469fd0 passed 5,916 checks through both private-index dry runs and protected-source verification, then stopped because the real index bytes and inode/timestamps changed. Its staged-entry hash and integration HEAD remained identical. Preserve all original program, raw output, before and checkpoint evidence; the cause of the index change is unproved. No actual merge, GPU launch or admission occurred. Prepare a fresh narrow current-state/index proof using completed checks rather than repeating accepted payload hashing. The H100 benchmark separately completed all seven paired windows and is finishing its final latency/record work, with no result accepted yet.
+
+
+2026-11-05T19:50:45.031666+00:00 — Accept the H100 two-copy common timing only after normal zero wait, exact both-process exit observation da933, independent raw-first review and unchanged staged consumer. Final review 6d1e946b accepts all seven paired ten-update rounds, median speedup 1.03054087. All four common contexts are accepted; no adaptive idea, packing point, final training or worker admission is credited. The 160,302,734-byte raw result remains outside Git.

@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "srun",
+    "--jobid=6825983",
+    "--overlap",
+    "--exact",
+    "--ntasks=1",
+    "--cpus-per-task=1",
+    "--mem=512M",
+    "--time=00:05:00",
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "/p/rlprojects/RND_worktrees/2026-11-05-10-14_profile-target-process_native-provider_separate-role-contracts_prior-abi-baseline-only_admission-closed/.review_metadata/incoming_program_preparation/verify_profile_target_index_window.py",
+    "--expected-head",
+    "a261ce4a76da3bf1ec77d76d8e9abdfd585f1e79",
+    "--output-prefix",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/profile_target_union_index_window_root_2026-11-05-11-50"
+  ],
+  "script_sha256": "e556e0abb910094ba4601e4911b14b5453da1249ac6c807d5fa44d2d7d292aaa",
+  "at_utc": "2026-11-05T19:51:56.240912+00:00",
+  "root_invocation": true,
+  "one_attempt": true,
+  "old_fullproof_remains_failed": true
+}

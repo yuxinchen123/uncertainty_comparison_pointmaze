@@ -1,0 +1,1478 @@
+{
+  "schema_version": 1,
+  "kind": "independent_actual_direct_common_configuration_confirmation_raw_audit",
+  "approved": true,
+  "passed": true,
+  "result": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-08-40_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/result.json",
+    "sha256": "a5848c9853a5eec1706ea40d9c7882a1614dec84f3ba633518f493a46fa2ea40"
+  },
+  "plan": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-08-40_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/measurement_plan.json",
+    "sha256": "40e85dafdecffaef7c3f9e28b91d8b9f5bea97a09750d822768b67d49a451da3"
+  },
+  "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+  "helper_commit": "69f1b5075530418adbe02c1e433c5647848a61ba",
+  "configuration": {
+    "environment": {
+      "batch_layout": "flat",
+      "cache_room_backgrounds": true,
+      "combine_palette_and_sprite_drawing": false,
+      "episodic_life": true,
+      "frame_skip": 4,
+      "frame_skip_unroll": 1,
+      "fuse_pixel_preprocessing": false,
+      "max_episode_steps": 108000,
+      "noop_max": 30,
+      "num_envs": 128,
+      "render_final_two_only": true,
+      "reset_only_when_needed": true,
+      "stack_update": "concatenate",
+      "sticky_action_probability": 0.25
+    },
+    "execution": {
+      "compilation_mode": "whole_iteration",
+      "iterations_per_call": 1,
+      "report_every_iterations": 10,
+      "report_readout": "none"
+    },
+    "learner": {
+      "action_count": 18,
+      "adam_epsilon": 1e-05,
+      "anneal_learning_rate": true,
+      "associative_gae": false,
+      "associative_reward_filter": false,
+      "batch_quantity_keyed_random_generation": false,
+      "cache_target_features": false,
+      "clip_coefficient": 0.1,
+      "convolution_batching": "vmap",
+      "dense_batching": "matmul",
+      "donate_state": false,
+      "entropy_coefficient": 0.001,
+      "extrinsic_coefficient": 2.0,
+      "flat_parameters": false,
+      "flatten_update_scan": false,
+      "fuse_minibatch_image_preparation": false,
+      "fuse_network_bias_and_activation": false,
+      "fuse_optimizer": false,
+      "gae_lambda": 0.95,
+      "gamma_ext": 0.999,
+      "gamma_int": 0.99,
+      "hoist_critic": false,
+      "hoist_rollout_bonus": false,
+      "hoist_rollout_log_probabilities": false,
+      "intrinsic_coefficient": 1.0,
+      "learning_rate": 0.0001,
+      "max_gradient_norm": 0.5,
+      "moment_reduction": "two_pass",
+      "n_copies": 2,
+      "n_envs": 128,
+      "network_layout": "nchw",
+      "num_minibatches": 4,
+      "num_steps": 128,
+      "observation_warmup_iterations": 50,
+      "per_copy_intrinsic_coefficients": [],
+      "per_copy_learning_rates": [],
+      "per_copy_scalar_settings": [],
+      "pre_gather_minibatches": false,
+      "predictor_update_proportion": 0.25,
+      "recompute_network_activations": false,
+      "rollout_frame_storage": "stacked_frames",
+      "rollout_observation_storage": "float32",
+      "rollout_unroll": 1,
+      "total_timesteps": 2000000000,
+      "update_epochs": 4,
+      "update_unroll": 1,
+      "upstream_reward_filter_axis": true,
+      "value_coefficient": 0.5,
+      "warmup_keeps_initial_observation": true
+    }
+  },
+  "reference_configuration": {
+    "environment": {
+      "batch_layout": "flat",
+      "cache_room_backgrounds": false,
+      "combine_palette_and_sprite_drawing": false,
+      "episodic_life": true,
+      "frame_skip": 4,
+      "frame_skip_unroll": 1,
+      "fuse_pixel_preprocessing": false,
+      "max_episode_steps": 108000,
+      "noop_max": 30,
+      "num_envs": 128,
+      "render_final_two_only": false,
+      "reset_only_when_needed": true,
+      "stack_update": "concatenate",
+      "sticky_action_probability": 0.25
+    },
+    "execution": {
+      "compilation_mode": "whole_iteration",
+      "iterations_per_call": 1,
+      "report_every_iterations": 10,
+      "report_readout": "none"
+    },
+    "learner": {
+      "action_count": 18,
+      "adam_epsilon": 1e-05,
+      "anneal_learning_rate": true,
+      "associative_gae": false,
+      "associative_reward_filter": false,
+      "batch_quantity_keyed_random_generation": false,
+      "cache_target_features": false,
+      "clip_coefficient": 0.1,
+      "convolution_batching": "vmap",
+      "dense_batching": "matmul",
+      "donate_state": false,
+      "entropy_coefficient": 0.001,
+      "extrinsic_coefficient": 2.0,
+      "flat_parameters": false,
+      "flatten_update_scan": false,
+      "fuse_minibatch_image_preparation": false,
+      "fuse_network_bias_and_activation": false,
+      "fuse_optimizer": false,
+      "gae_lambda": 0.95,
+      "gamma_ext": 0.999,
+      "gamma_int": 0.99,
+      "hoist_critic": false,
+      "hoist_rollout_bonus": false,
+      "hoist_rollout_log_probabilities": false,
+      "intrinsic_coefficient": 1.0,
+      "learning_rate": 0.0001,
+      "max_gradient_norm": 0.5,
+      "moment_reduction": "two_pass",
+      "n_copies": 2,
+      "n_envs": 128,
+      "network_layout": "nchw",
+      "num_minibatches": 4,
+      "num_steps": 128,
+      "observation_warmup_iterations": 50,
+      "per_copy_intrinsic_coefficients": [],
+      "per_copy_learning_rates": [],
+      "per_copy_scalar_settings": [],
+      "pre_gather_minibatches": false,
+      "predictor_update_proportion": 0.25,
+      "recompute_network_activations": false,
+      "rollout_frame_storage": "stacked_frames",
+      "rollout_observation_storage": "float32",
+      "rollout_unroll": 1,
+      "total_timesteps": 2000000000,
+      "update_epochs": 4,
+      "update_unroll": 1,
+      "upstream_reward_filter_axis": true,
+      "value_coefficient": 0.5,
+      "warmup_keeps_initial_observation": true
+    }
+  },
+  "copies": 2,
+  "copy_seeds": [
+    1,
+    2
+  ],
+  "gpu_uuid": "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3",
+  "resolved_binding": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-08-40_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/direct_device_binding.json",
+    "sha256": "46fa159da0ec949dd606ddf87d954810cf474788c82c852ef25e2d0e917f8590"
+  },
+  "execution_identity": {
+    "hostname": "serval02",
+    "pid": 545091,
+    "process_start_time": "85908834",
+    "started_at_seconds": 1793898985.740413,
+    "finished_at_seconds": 1793907251.4557717
+  },
+  "actual_returncode": 0,
+  "terminal_process": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-08-40_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/direct_terminal_process.json",
+    "sha256": "8a87d499abc60b5e48ffc1b3f962edeb7352b3ec5c4b29bd064ce34566439b66"
+  },
+  "exit_observation": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-08-40_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/root_actual_two_copy_process_exit_observation.json",
+    "sha256": "da93367745f423eccb940d020ffe6049cacd44ce96488ca249bb0ae611734b8d"
+  },
+  "controller_records": {
+    "terminal_process": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-08-40_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/direct_terminal_process.json",
+      "sha256": "8a87d499abc60b5e48ffc1b3f962edeb7352b3ec5c4b29bd064ce34566439b66"
+    },
+    "wait_record": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-08-40_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/direct_process_wait_return.json",
+      "sha256": "9f8b0468a96194a4244258e88b2072686e9615bdc160f3d1eb963014780eab1f"
+    },
+    "controller_spawn": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-08-40_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/direct_controller_spawn.json",
+      "sha256": "7d44c9b08ea4ac403f21830d8a33c85679ebe92cefce118b9ac362a8bc16123b"
+    },
+    "controller_outcome": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-08-40_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/direct_controller_outcome.json",
+      "sha256": "5952d2a2f1f42db098847adc19ff46e8a7f160a53874826b631a37a206fc15a6"
+    },
+    "controller_output_hashes": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-08-40_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/direct_controller_output_hashes.json",
+      "sha256": "dc6fe8d4b8499eb567a58ed35a804508de003024fe192bf44252c0ce3ccd0c74"
+    }
+  },
+  "raw_window_recomputation_passed": true,
+  "window_summaries": [
+    {
+      "label": "round 1 reference",
+      "sample_count": 1536,
+      "memory_sha256": "1924b6580fcfe62fa76d1c8b25a0a48fd72ac97f7beea04a0f5a9cb87a64159b",
+      "started_at_seconds": 1793900285.1383822,
+      "finished_at_seconds": 1793900737.0882103
+    },
+    {
+      "label": "round 1 candidate",
+      "sample_count": 1482,
+      "memory_sha256": "260f49fa698fcec29ab963bc9c1f555af15ffb3981100d47af6ee1cebdbfa539",
+      "started_at_seconds": 1793900770.5070379,
+      "finished_at_seconds": 1793901209.0629635
+    },
+    {
+      "label": "round 2 candidate",
+      "sample_count": 1458,
+      "memory_sha256": "7c17595f5044433f90ce89d025e56d90fd6c2e7818a50272995aec9b5c75ab90",
+      "started_at_seconds": 1793901242.9885821,
+      "finished_at_seconds": 1793901681.7355227
+    },
+    {
+      "label": "round 2 reference",
+      "sample_count": 1489,
+      "memory_sha256": "e84d2ce87cabca1dfe3f9bf1f7ed1cf6a4339f093cc0b1751aa317b817a04bbf",
+      "started_at_seconds": 1793901717.544635,
+      "finished_at_seconds": 1793902169.7272124
+    },
+    {
+      "label": "round 3 reference",
+      "sample_count": 1525,
+      "memory_sha256": "8a72d25d668cf0bdb4d1f3a914d07b80cf8a5ff1e949781f9ea978d3d6c4655b",
+      "started_at_seconds": 1793902205.8754754,
+      "finished_at_seconds": 1793902657.2940943
+    },
+    {
+      "label": "round 3 candidate",
+      "sample_count": 1486,
+      "memory_sha256": "93f2aead3727d16526da6653c62eabc7adfb6b20b01390c66f70042f364c8068",
+      "started_at_seconds": 1793902691.084873,
+      "finished_at_seconds": 1793903129.1202335
+    },
+    {
+      "label": "round 4 candidate",
+      "sample_count": 1482,
+      "memory_sha256": "59f30b0812aefe5c8baca20e3d0a7cf0e19d118e16553479647b0624b8fde428",
+      "started_at_seconds": 1793903162.2554853,
+      "finished_at_seconds": 1793903600.801788
+    },
+    {
+      "label": "round 4 reference",
+      "sample_count": 1534,
+      "memory_sha256": "e16f73e89c9563d9ca5c371f92fe86d040b7f2bc2b167d13f195c56fac318abb",
+      "started_at_seconds": 1793903632.8530715,
+      "finished_at_seconds": 1793904084.5387857
+    },
+    {
+      "label": "round 5 reference",
+      "sample_count": 1531,
+      "memory_sha256": "1e997ac4d14b5c1687925421f3365187e8b0e4d52294b8f977ca98c296072ff9",
+      "started_at_seconds": 1793904117.4707341,
+      "finished_at_seconds": 1793904568.7746258
+    },
+    {
+      "label": "round 5 candidate",
+      "sample_count": 1487,
+      "memory_sha256": "079abe00c947c80e9d4a8f0b26d6b527d98e9a8bf247c942babb0f92763859ce",
+      "started_at_seconds": 1793904604.6299815,
+      "finished_at_seconds": 1793905042.6091242
+    },
+    {
+      "label": "round 6 candidate",
+      "sample_count": 1494,
+      "memory_sha256": "1538f27e011bf1a158c906a7ab733595b54965b6599e36b5d9519338eb7ff55f",
+      "started_at_seconds": 1793905076.1825545,
+      "finished_at_seconds": 1793905515.5388281
+    },
+    {
+      "label": "round 6 reference",
+      "sample_count": 1537,
+      "memory_sha256": "7589a587c764639bb6788af380d0a2233bef8c038b61d58886fde28af7bd6e5c",
+      "started_at_seconds": 1793905547.439178,
+      "finished_at_seconds": 1793906000.1373959
+    },
+    {
+      "label": "round 7 reference",
+      "sample_count": 1531,
+      "memory_sha256": "38619ca83673e732e97ba47127c7b6a4b819aef8e9755ed9430730926bd7c2bd",
+      "started_at_seconds": 1793906032.7169,
+      "finished_at_seconds": 1793906483.6679888
+    },
+    {
+      "label": "round 7 candidate",
+      "sample_count": 1454,
+      "memory_sha256": "d705cff95a500c35d81dfff68c3ad383bc5c89a2e11f3d5ab5bae98e67fdcb21",
+      "started_at_seconds": 1793906516.8871615,
+      "finished_at_seconds": 1793906954.4241533
+    },
+    {
+      "label": "whole numerical work",
+      "sample_count": 26851,
+      "memory_sha256": "5a14fd650d3344e8dad282143f9522140a2a5403a6730c228d7bb3c6990cb8cb",
+      "started_at_seconds": 1793899251.4254582,
+      "finished_at_seconds": 1793907251.4557922
+    }
+  ],
+  "paired_rounds": 7,
+  "updates_per_arm_per_round": 10,
+  "paired_speedups": [
+    1.0305408699762306,
+    1.030622739031695,
+    1.0305529180897581,
+    1.029961287666068,
+    1.0304232570875624,
+    1.0303670281239485,
+    1.0306581967312922
+  ],
+  "median_speedup": 1.0305408699762306,
+  "one_sided_sign_probability": 0.0078125,
+  "decision": "accepted",
+  "correctness": {
+    "initialization": {
+      "leaves": 194,
+      "largest_float32_absolute_error": 0.0,
+      "largest_float64_absolute_error": 0.0,
+      "float32_derived_reward_moment_fields": []
+    },
+    "passed": true,
+    "supplied_inputs": {
+      "preparation": {
+        "leaves": 194,
+        "largest_float32_absolute_error": 0.0,
+        "largest_float64_absolute_error": 0.0,
+        "float32_derived_reward_moment_fields": []
+      },
+      "fixed_batch": {
+        "leaves": 9,
+        "largest_float32_absolute_error": 0.0,
+        "largest_float64_absolute_error": 0.0,
+        "float32_derived_reward_moment_fields": []
+      },
+      "fixed_batch_update": {
+        "leaves": 202,
+        "largest_float32_absolute_error": 0.0,
+        "largest_float64_absolute_error": 0.0,
+        "float32_derived_reward_moment_fields": []
+      }
+    },
+    "complete_iterations": 1,
+    "complete_iteration": {
+      "leaves": 207,
+      "largest_float32_absolute_error": 0.0,
+      "largest_float64_absolute_error": 0.0,
+      "float32_derived_reward_moment_fields": [
+        "[0].reward_statistics.mean",
+        "[0].reward_statistics.variance"
+      ]
+    }
+  },
+  "actual_assets_verified": {
+    "root": "/p/rlprojects/RND/reference_repos/jaxtari_pixel_study_assets",
+    "manifest_sha256": "049004b3b7e2eb3b12f72579a175ac41afad3b5f91a088d7ba1b5065aed31bb6",
+    "source_commit": "04ab9aec318c72162e2e53503a594a489d7e162b",
+    "file_count": 4531,
+    "tree_digest": "117997917caa98938bfed3e3bcea37353f8f01ea05897ff243816e73409f9a72"
+  },
+  "backend_expected": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-08-40_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/direct_backend_image_expected.json",
+    "sha256": "7d50f9ef96fbe5afa9e892905b0e3e76dde43e9f54835630c69aabf7489d35e4"
+  },
+  "backend_capture_begin": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-08-40_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/direct_backend_capture_begin.json",
+    "sha256": "6fc11d82481a22d2e516677aa7820c59f1edd3bff10596f86e6f887ec4ac844e"
+  },
+  "captured_backend": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-08-40_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/direct_backend_capture.json",
+    "sha256": "f12c5868b1db2aa578ff0830717edc1a5af4bf19f6a398f4714861b760c3130a"
+  },
+  "loaded_gpu_libraries_sha256": "1d2ef9f77c1dfb64776c5a1415e78f604d403326bc9c48d2540839a258fe506f",
+  "startup_review": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-08-40_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/independent_actual_startup_registration_review.json",
+    "sha256": "5cb80736948f4764581c86cd4610d6b05f232e4f525e8095ff78b0be4dd9849d"
+  },
+  "unchanged_staged_consumer_passed": true,
+  "raw_approval_created_before_unchanged_consumer": true,
+  "independent_of_producer": true,
+  "reviewer_identity": "/root/correct_native_process_control",
+  "reviewed_at_seconds": 1793907603.7468731,
+  "unresolved_anomalies": [],
+  "admission_granted": false,
+  "worker_admitted": false,
+  "scientific_new_idea_credit": 0,
+  "packing_point_credit": 0,
+  "final_training_credit": 0,
+  "qualification_credit": 0,
+  "job_id": "6825983",
+  "step_id": "37",
+  "uid": 2618919,
+  "pid": 1281379,
+  "cgroup": "0::/system.slice/slurmstepd.scope/job_6825983/step_37/user/task_0\n",
+  "stdlib_bootstrap": {
+    "scope": "standard-library imports including ctypes occurred before audit hooks; no CDLL call was requested by this script",
+    "ctypes_loaded_before_guard": true,
+    "numerical_imports_before_guard": []
+  },
+  "numerical_imports": [],
+  "gpu_or_device_or_library_operations_requested_by_audit": 0,
+  "checks": [
+    "exact current timing plan",
+    "ordinary exact document /p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-08-40_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/measurement_plan.json",
+    "actual current 29-helper source",
+    "actual unchanged numerical source",
+    "actual pinned source 10_jax_exploration_platform/scripts/atari_pixel_campaign/worker_environment.sh",
+    "actual pinned source 10_jax_exploration_platform/src/exploration_platform/atari_pixels/__init__.py",
+    "actual pinned source 10_jax_exploration_platform/src/exploration_platform/atari_pixels/checkpointing.py",
+    "actual pinned source 10_jax_exploration_platform/src/exploration_platform/atari_pixels/config.py",
+    "actual pinned source 10_jax_exploration_platform/src/exploration_platform/atari_pixels/environment.py",
+    "actual pinned source 10_jax_exploration_platform/src/exploration_platform/atari_pixels/kernels.py",
+    "actual pinned source 10_jax_exploration_platform/src/exploration_platform/atari_pixels/networks.py",
+    "actual pinned source 10_jax_exploration_platform/src/exploration_platform/atari_pixels/pixel_preprocessing.py",
+    "actual pinned source 10_jax_exploration_platform/src/exploration_platform/atari_pixels/settings.py",
+    "actual pinned source 10_jax_exploration_platform/src/exploration_platform/atari_pixels/state.py",
+    "actual pinned source 10_jax_exploration_platform/src/exploration_platform/atari_pixels/training.py",
+    "actual pinned source 10_jax_exploration_platform/scripts/atari_pixel_campaign/paired_benchmark.py",
+    "actual pinned source 10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py",
+    "actual pinned source 10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py",
+    "actual staged source 10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py",
+    "actual pinned source 10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py",
+    "actual staged source 10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py",
+    "actual pinned source 10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py",
+    "actual staged source 10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py",
+    "actual pinned source 10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry.py",
+    "actual staged source 10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry.py",
+    "actual pinned source 10_jax_exploration_platform/scripts/atari_pixel_campaign/pregather_async_retry.py",
+    "actual staged source 10_jax_exploration_platform/scripts/atari_pixel_campaign/pregather_async_retry.py",
+    "actual pinned source 10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_queue.py",
+    "actual staged source 10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_queue.py",
+    "actual pinned source 10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_case.py",
+    "actual staged source 10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_case.py",
+    "actual pinned source 10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_evidence.py",
+    "actual staged source 10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_evidence.py",
+    "actual pinned source 10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py",
+    "actual staged source 10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py",
+    "actual pinned source 10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_qualification.py",
+    "actual staged source 10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_qualification.py",
+    "actual pinned source 10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_allocation_observation.py",
+    "actual staged source 10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_allocation_observation.py",
+    "actual pinned source 10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py",
+    "actual staged source 10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py",
+    "actual pinned source 10_jax_exploration_platform/scripts/atari_pixel_campaign/short_learning.py",
+    "actual staged source 10_jax_exploration_platform/scripts/atari_pixel_campaign/short_learning.py",
+    "actual pinned source 10_jax_exploration_platform/scripts/atari_pixel_campaign/device_memory_limit.py",
+    "actual staged source 10_jax_exploration_platform/scripts/atari_pixel_campaign/device_memory_limit.py",
+    "actual pinned source 10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py",
+    "actual staged source 10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py",
+    "actual pinned source 10_jax_exploration_platform/scripts/atari_pixel_campaign/portable_evidence.py",
+    "actual staged source 10_jax_exploration_platform/scripts/atari_pixel_campaign/portable_evidence.py",
+    "actual pinned source 10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py",
+    "actual staged source 10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py",
+    "actual pinned source 10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py",
+    "actual staged source 10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py",
+    "actual pinned source 10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py",
+    "actual staged source 10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py",
+    "actual pinned source 10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_slurm_configured_isolation.py",
+    "actual staged source 10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_slurm_configured_isolation.py",
+    "actual pinned source 10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_active_configuration_observation.py",
+    "actual staged source 10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_active_configuration_observation.py",
+    "actual pinned source 10_jax_exploration_platform/scripts/atari_pixel_campaign/passive_installed_slurm_observation.py",
+    "actual staged source 10_jax_exploration_platform/scripts/atari_pixel_campaign/passive_installed_slurm_observation.py",
+    "actual pinned source 10_jax_exploration_platform/scripts/atari_pixel_campaign/collect_worker_exit_receipts.py",
+    "actual staged source 10_jax_exploration_platform/scripts/atari_pixel_campaign/collect_worker_exit_receipts.py",
+    "actual pinned source 10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py",
+    "actual staged source 10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py",
+    "actual pinned source 10_jax_exploration_platform/scripts/atari_pixel_campaign/controller.py",
+    "actual staged source 10_jax_exploration_platform/scripts/atari_pixel_campaign/controller.py",
+    "actual pinned source 10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_confirmation.py",
+    "actual staged source 10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_confirmation.py",
+    "actual pinned source 10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_historical_consumer.py",
+    "actual staged source 10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_historical_consumer.py",
+    "actual pinned source 10_jax_exploration_platform/scripts/atari_pixel_campaign/accepted_evidence_snapshot.py",
+    "actual staged source 10_jax_exploration_platform/scripts/atari_pixel_campaign/accepted_evidence_snapshot.py",
+    "actual pinned source 10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_backend_image.py",
+    "actual staged source 10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_backend_image.py",
+    "actual hashed both-process exit observation is required",
+    "actual final artifact required result.json",
+    "actual final artifact required direct_backend_capture.json",
+    "actual final artifact required direct_terminal_process.json",
+    "actual final artifact required direct_process_wait_return.json",
+    "actual final artifact required direct_controller_outcome.json",
+    "actual final artifact required direct_controller_output_hashes.json",
+    "exact shared large-read lock",
+    "current owned CPU allocation only",
+    "exact current monitor ownership ledger",
+    "all effective and saved owner UIDs",
+    "actual owned numeric CPU step",
+    "no numerical imports before audit",
+    "exact staged metadata reader namespace",
+    "ordinary exact document /p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-08-40_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/result.json",
+    "ordinary exact document /p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-08-40_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/direct_process_metadata.json",
+    "ordinary exact document /p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-08-40_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/direct_device_binding.json",
+    "no failure or instrumented result replaces timing evidence",
+    "actual result source helper seeds runtime exact",
+    "actual full configurations exact",
+    "actual complete distinct uncontaminated timing record",
+    "actual seven pairs ten updates protocol",
+    "original full configuration and two-billion-step annealing horizon",
+    "same actual approved physical card1 UUID",
+    "actual registered producer identity",
+    "actual numerical execution identity and finite chronological bounds",
+    "actual accepted original qualification exact reference",
+    "actual correctness reports passed",
+    "all exact fixed-input and full-iteration reports present",
+    "actual nonempty correctness leaves initialization",
+    "finite nonnegative observed correctness errors initialization",
+    "only unchanged source-declared derived reward moment fields initialization",
+    "actual nonempty correctness leaves complete_iteration",
+    "finite nonnegative observed correctness errors complete_iteration",
+    "only unchanged source-declared derived reward moment fields complete_iteration",
+    "actual nonempty correctness leaves preparation",
+    "finite nonnegative observed correctness errors preparation",
+    "only unchanged source-declared derived reward moment fields preparation",
+    "actual nonempty correctness leaves fixed_batch",
+    "finite nonnegative observed correctness errors fixed_batch",
+    "only unchanged source-declared derived reward moment fields fixed_batch",
+    "actual nonempty correctness leaves fixed_batch_update",
+    "finite nonnegative observed correctness errors fixed_batch_update",
+    "only unchanged source-declared derived reward moment fields fixed_batch_update",
+    "actual direct window identity round 1 reference",
+    "actual direct window custody boundaries round 1 reference",
+    "actual complete raw own-only window recomputation round 1 reference",
+    "actual measured physical memory headroom round 1 reference",
+    "raw sampler covers complete measured round",
+    "actual throughput and per-update arithmetic",
+    "actual alternating timed windows do not overlap or reverse",
+    "actual direct window identity round 1 candidate",
+    "actual direct window custody boundaries round 1 candidate",
+    "actual complete raw own-only window recomputation round 1 candidate",
+    "actual measured physical memory headroom round 1 candidate",
+    "raw sampler covers complete measured round",
+    "actual throughput and per-update arithmetic",
+    "actual alternating timed windows do not overlap or reverse",
+    "actual direct window identity round 2 candidate",
+    "actual direct window custody boundaries round 2 candidate",
+    "actual complete raw own-only window recomputation round 2 candidate",
+    "actual measured physical memory headroom round 2 candidate",
+    "raw sampler covers complete measured round",
+    "actual throughput and per-update arithmetic",
+    "actual alternating timed windows do not overlap or reverse",
+    "actual direct window identity round 2 reference",
+    "actual direct window custody boundaries round 2 reference",
+    "actual complete raw own-only window recomputation round 2 reference",
+    "actual measured physical memory headroom round 2 reference",
+    "raw sampler covers complete measured round",
+    "actual throughput and per-update arithmetic",
+    "actual alternating timed windows do not overlap or reverse",
+    "actual direct window identity round 3 reference",
+    "actual direct window custody boundaries round 3 reference",
+    "actual complete raw own-only window recomputation round 3 reference",
+    "actual measured physical memory headroom round 3 reference",
+    "raw sampler covers complete measured round",
+    "actual throughput and per-update arithmetic",
+    "actual alternating timed windows do not overlap or reverse",
+    "actual direct window identity round 3 candidate",
+    "actual direct window custody boundaries round 3 candidate",
+    "actual complete raw own-only window recomputation round 3 candidate",
+    "actual measured physical memory headroom round 3 candidate",
+    "raw sampler covers complete measured round",
+    "actual throughput and per-update arithmetic",
+    "actual alternating timed windows do not overlap or reverse",
+    "actual direct window identity round 4 candidate",
+    "actual direct window custody boundaries round 4 candidate",
+    "actual complete raw own-only window recomputation round 4 candidate",
+    "actual measured physical memory headroom round 4 candidate",
+    "raw sampler covers complete measured round",
+    "actual throughput and per-update arithmetic",
+    "actual alternating timed windows do not overlap or reverse",
+    "actual direct window identity round 4 reference",
+    "actual direct window custody boundaries round 4 reference",
+    "actual complete raw own-only window recomputation round 4 reference",
+    "actual measured physical memory headroom round 4 reference",
+    "raw sampler covers complete measured round",
+    "actual throughput and per-update arithmetic",
+    "actual alternating timed windows do not overlap or reverse",
+    "actual direct window identity round 5 reference",
+    "actual direct window custody boundaries round 5 reference",
+    "actual complete raw own-only window recomputation round 5 reference",
+    "actual measured physical memory headroom round 5 reference",
+    "raw sampler covers complete measured round",
+    "actual throughput and per-update arithmetic",
+    "actual alternating timed windows do not overlap or reverse",
+    "actual direct window identity round 5 candidate",
+    "actual direct window custody boundaries round 5 candidate",
+    "actual complete raw own-only window recomputation round 5 candidate",
+    "actual measured physical memory headroom round 5 candidate",
+    "raw sampler covers complete measured round",
+    "actual throughput and per-update arithmetic",
+    "actual alternating timed windows do not overlap or reverse",
+    "actual direct window identity round 6 candidate",
+    "actual direct window custody boundaries round 6 candidate",
+    "actual complete raw own-only window recomputation round 6 candidate",
+    "actual measured physical memory headroom round 6 candidate",
+    "raw sampler covers complete measured round",
+    "actual throughput and per-update arithmetic",
+    "actual alternating timed windows do not overlap or reverse",
+    "actual direct window identity round 6 reference",
+    "actual direct window custody boundaries round 6 reference",
+    "actual complete raw own-only window recomputation round 6 reference",
+    "actual measured physical memory headroom round 6 reference",
+    "raw sampler covers complete measured round",
+    "actual throughput and per-update arithmetic",
+    "actual alternating timed windows do not overlap or reverse",
+    "actual direct window identity round 7 reference",
+    "actual direct window custody boundaries round 7 reference",
+    "actual complete raw own-only window recomputation round 7 reference",
+    "actual measured physical memory headroom round 7 reference",
+    "raw sampler covers complete measured round",
+    "actual throughput and per-update arithmetic",
+    "actual alternating timed windows do not overlap or reverse",
+    "actual direct window identity round 7 candidate",
+    "actual direct window custody boundaries round 7 candidate",
+    "actual complete raw own-only window recomputation round 7 candidate",
+    "actual measured physical memory headroom round 7 candidate",
+    "raw sampler covers complete measured round",
+    "actual throughput and per-update arithmetic",
+    "actual alternating timed windows do not overlap or reverse",
+    "actual direct window identity whole numerical work",
+    "actual direct window custody boundaries whole numerical work",
+    "actual complete raw own-only window recomputation whole numerical work",
+    "actual measured physical memory headroom whole numerical work",
+    "actual whole-work window contains all fourteen timed windows",
+    "all exact existing paired statistics and decision fields recomputed",
+    "actual accepted intermediate common performance under existing unchanged rule",
+    "actual median per-arm transition rates",
+    "actual separate three-call synchronized latency reference",
+    "actual synchronized latency arithmetic reference",
+    "actual separate three-call synchronized latency candidate",
+    "actual synchronized latency arithmetic candidate",
+    "ordinary exact document /p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-08-40_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/asset_receipt.json",
+    "actual full asset bytes and receipt",
+    "ordinary exact document /p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-08-40_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/installed_backend.json",
+    "actual installed backend result matches saved metadata",
+    "actual current-process driver and CUDA/cuDNN loaded-library receipt",
+    "ordinary exact document /p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-08-40_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/direct_controller_spawn.json",
+    "exact original controller birth",
+    "actual root both-process exit observation hash",
+    "ordinary exact document /p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-08-40_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/root_actual_two_copy_process_exit_observation.json",
+    "root observed exact normal process exits without interventions",
+    "exact controller and numerical child exit observations",
+    "exit observations join exact PID and birth",
+    "both original processes actually ended",
+    "ordinary exact document /p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-08-40_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/independent_actual_startup_registration_review.json",
+    "genuine independent actual startup source/registration review unchanged",
+    "no numerical imports after raw review"
+  ],
+  "check_count": 245,
+  "seconds": 46.41115609498229,
+  "actual_local_source_git_commands": [
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "rev-parse",
+      "HEAD"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "symbolic-ref",
+      "--quiet",
+      "HEAD"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "status",
+      "--porcelain",
+      "--untracked-files=all",
+      "--",
+      "10_jax_exploration_platform/src/exploration_platform/atari_pixels",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/worker_environment.sh"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "ls-tree",
+      "-rz",
+      "d28e6735e79788f618acb0ebfde8609db1f776af",
+      "--",
+      "10_jax_exploration_platform/src/exploration_platform/atari_pixels",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/worker_environment.sh"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "rev-parse",
+      "HEAD"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "status",
+      "--porcelain",
+      "--untracked-files=all",
+      "--",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/paired_benchmark.py",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "show",
+      "d28e6735e79788f618acb0ebfde8609db1f776af:10_jax_exploration_platform/scripts/atari_pixel_campaign/paired_benchmark.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "show",
+      "d28e6735e79788f618acb0ebfde8609db1f776af:10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "rev-parse",
+      "HEAD"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "status",
+      "--porcelain",
+      "--untracked-files=all",
+      "--",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry.py",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/pregather_async_retry.py",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_queue.py",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_case.py",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_evidence.py",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_qualification.py",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_allocation_observation.py",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/short_learning.py",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/device_memory_limit.py",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/portable_evidence.py",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_slurm_configured_isolation.py",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_active_configuration_observation.py",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/passive_installed_slurm_observation.py",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/collect_worker_exit_receipts.py",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/controller.py",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_confirmation.py",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_historical_consumer.py",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/accepted_evidence_snapshot.py",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_backend_image.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/pregather_async_retry.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_queue.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_case.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_evidence.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_qualification.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_allocation_observation.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/short_learning.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/device_memory_limit.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/portable_evidence.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_slurm_configured_isolation.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_active_configuration_observation.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/passive_installed_slurm_observation.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/collect_worker_exit_receipts.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/controller.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_confirmation.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_historical_consumer.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/accepted_evidence_snapshot.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_backend_image.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_slurm_configured_isolation.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/device_memory_limit.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_active_configuration_observation.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/passive_installed_slurm_observation.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/collect_worker_exit_receipts.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/portable_evidence.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/controller.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/pregather_async_retry.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_queue.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_case.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_evidence.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_qualification.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_allocation_observation.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/short_learning.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_slurm_configured_isolation.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/device_memory_limit.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_active_configuration_observation.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/passive_installed_slurm_observation.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/collect_worker_exit_receipts.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/portable_evidence.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/controller.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/pregather_async_retry.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_queue.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_case.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_evidence.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_qualification.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_allocation_observation.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/short_learning.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_slurm_configured_isolation.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/device_memory_limit.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_active_configuration_observation.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/passive_installed_slurm_observation.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/collect_worker_exit_receipts.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/portable_evidence.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/controller.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/pregather_async_retry.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_queue.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_case.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_evidence.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_qualification.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_allocation_observation.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+      "show",
+      "69f1b5075530418adbe02c1e433c5647848a61ba:10_jax_exploration_platform/scripts/atari_pixel_campaign/short_learning.py"
+    ],
+    [
+      "/usr/bin/python3",
+      "-I",
+      "-S",
+      "-B",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-08-40_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/code/direct_common_confirmation.py",
+      "--plan-stdin"
+    ]
+  ],
+  "audit_source": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-08-40_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/independent_h100_common_timing_raw_review.py",
+    "sha256": "f0fa52796a9ff612b11f791aa21d00a3c8a52d7ad96845e453d37a837d0cf6ed"
+  },
+  "raw_first_approval": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-08-40_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/independent_actual_timing_raw_first.json",
+    "sha256": "a32355826b999a69bb628547a8be90fd8da79e1d6a7476c394ceec160b8d80cd"
+  },
+  "unchanged_staged_consumer": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-08-40_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/independent_actual_staged_timing_consumer.json",
+    "sha256": "85d3b162d638048f91c28113a84f26ac1c7cba0e217244dec78febccb876e12d"
+  },
+  "completed_at_seconds": 1793907671.7794266,
+  "finalizer_source": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-08-40_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/independent_h100_common_timing_staged_consumer.py",
+    "sha256": "570e65f66b0b37125b9491caf7a29346a25f8fbf048a6f58d0f4e9478a131451"
+  }
+}

@@ -938,5 +938,35 @@
     }
   ],
   "persistent_monitor_expires_at_utc": "2026-11-12T17:57:27Z",
-  "persistent_monitor_renewal_start_by_utc": "2026-11-11T17:57:27Z"
+  "persistent_monitor_renewal_start_by_utc": "2026-11-11T17:57:27Z",
+  "h100_two_copy_final_result_wakeup": {
+    "id": "8c24d341-cf0a-4c78-aa6d-3d3dc4dbeb9b",
+    "name": "H100 final timing result and code merge check",
+    "at": "2026-11-05T19:45:00Z",
+    "expires_at": "2026-11-05T20:45:00Z",
+    "verified_active": true,
+    "recurring": false,
+    "instant_completion_notification": false,
+    "listed_at_utc": "2026-11-05T19:29:48.075994+00:00",
+    "hourly_session_task_retained": "a3fbe0e9-8db3-4bac-b1d0-cc97a9f71016",
+    "hourly_next_run_at": "2026-11-05T20:27:00Z",
+    "persistent_monitor_interval_seconds": 1200
+  },
+  "common_performance_actual_completion": {
+    "completed_at_utc": "2026-11-05T19:50:45.031666+00:00",
+    "accepted_contexts": 4,
+    "required_contexts": 4,
+    "h100_one_copy_median_speedup": 1.0653780925024645,
+    "h100_two_copy_median_speedup": 1.0305408699762306,
+    "jaguar03_rtx_a4500_one_copy_median_speedup": 1.81742665,
+    "jaguar03_rtx_a4500_two_copy_median_speedup": 1.56444101,
+    "new_h100_two_copy_review": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-08-40_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/independent_actual_common_timing_review.json",
+      "sha256": "6d1e946b33bf6555d30d54fcf301595663e273ce32b98356b37ef4fcc9a0fa40"
+    },
+    "ordinary_profile_admission": false,
+    "new_idea_credit": 0,
+    "additional_ideas_selected": 0,
+    "final_training_started": false
+  }
 }

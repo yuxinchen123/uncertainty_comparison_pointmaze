@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "kind": "four_context_common_performance_prerequisite_metadata",
+  "description": "Collect the four accepted common performance contexts into the existing reviewed metadata format. This does not approve or admit a GPU worker.",
+  "preparation_base_commit": "87fbd790e41e2abfb7d54eeaa77a0a2d4a440d73",
+  "runtime_helper_commit": "d1469fd063a44167ec56760729eb0beea7ecf7d3",
+  "producer_source_sha256": "2657be58b2cd0030119278bfdba7533135afc9a815d8572e53b02e40a1517bda",
+  "created_at_utc": "2026-11-05T19:57:21.732431+00:00",
+  "resources": {
+    "owned_cpu_job": "6825983",
+    "requested_cpus": 1,
+    "requested_memory_mib": 512,
+    "gpu_count": 0,
+    "step_time_limit_seconds": 300,
+    "internal_work_limit_seconds": 285
+  },
+  "independent_source_review_sha256": "a5d890ee19110b430b1ab6a36bb1b8f269c60965770c847be3926228f8f4f474",
+  "outputs_require_separate_independent_review": true,
+  "GPU_or_worker_admission": false,
+  "scientific_credit": 0
+}

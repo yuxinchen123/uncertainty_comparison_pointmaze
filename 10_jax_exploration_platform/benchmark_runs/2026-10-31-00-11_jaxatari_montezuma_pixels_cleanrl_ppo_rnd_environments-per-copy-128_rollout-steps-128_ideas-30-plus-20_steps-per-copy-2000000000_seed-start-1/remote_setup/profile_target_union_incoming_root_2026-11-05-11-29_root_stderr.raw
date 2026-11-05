@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-05-10-14_profile-target-process_native-provider_separate-role-contracts_prior-abi-baseline-only_admission-closed/.review_metadata/incoming_program_preparation/verify_profile_target_incoming.py", line 312, in <module>
+srun: error: slurm5: task 0: Exited with exit code 1
+    if __name__ == '__main__':main()
+  File "/p/rlprojects/RND_worktrees/2026-11-05-10-14_profile-target-process_native-provider_separate-role-contracts_prior-abi-baseline-only_admission-closed/.review_metadata/incoming_program_preparation/verify_profile_target_incoming.py", line 289, in main
+    check('real index bytes identity and stage entries unchanged',real_after == real_before)
+  File "/p/rlprojects/RND_worktrees/2026-11-05-10-14_profile-target-process_native-provider_separate-role-contracts_prior-abi-baseline-only_admission-closed/.review_metadata/incoming_program_preparation/verify_profile_target_incoming.py", line 114, in check
+    if not value:raise ValueError(label)
+ValueError: real index bytes identity and stage entries unchanged

@@ -1,0 +1,38 @@
+{
+  "kind": "narrow_fresh_index_proof_preparatory_handoff",
+  "new_checks": "Fresh HEAD/stage-entry equivalence/incomingdisjointignoredcollisions; allrealindex Gitreads beforelate snapshot;2freshindex-copy readtreedryruns; privatepoststagecheck and nonGit realindexbyteidentityafter; HEADrefsnonGitpreserved.",
+  "old_proof_record_or_program_edits": false,
+  "payload_or_protected_source_hash_repeats": false,
+  "prior_checkpoint_sha256": "e482bf0b7f35bbdf148f757e8a88147fdbd1650e0a6fa3c248738a35265ca9f3",
+  "prior_fullproof_remains_failed": true,
+  "reused_completed_full_checks": 5916,
+  "root_command_argv": [
+    "srun",
+    "--jobid=6825983",
+    "--overlap",
+    "--exact",
+    "--ntasks=1",
+    "--cpus-per-task=1",
+    "--mem=512M",
+    "--time=00:05:00",
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "/p/rlprojects/RND_worktrees/2026-11-05-10-14_profile-target-process_native-provider_separate-role-contracts_prior-abi-baseline-only_admission-closed/.review_metadata/incoming_program_preparation/verify_profile_target_index_window.py",
+    "--expected-head",
+    "a261ce4a76da3bf1ec77d76d8e9abdfd585f1e79",
+    "--output-prefix",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/profile_target_union_index_window_root_2026-11-05-11-50"
+  ],
+  "root_command_shell": "srun --jobid=6825983 --overlap --exact --ntasks=1 --cpus-per-task=1 --mem=512M --time=00:05:00 /usr/bin/python3 -I -S -B /p/rlprojects/RND_worktrees/2026-11-05-10-14_profile-target-process_native-provider_separate-role-contracts_prior-abi-baseline-only_admission-closed/.review_metadata/incoming_program_preparation/verify_profile_target_index_window.py --expected-head a261ce4a76da3bf1ec77d76d8e9abdfd585f1e79 --output-prefix /p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/profile_target_union_index_window_root_2026-11-05-11-50",
+  "root_only_execution": true,
+  "root_precondition": "No heavy reader or otherrootGitmutation; all H2actualreaders ended, HEADa261stable; rootalone invokes once.",
+  "schema_version": 1,
+  "script": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-10-14_profile-target-process_native-provider_separate-role-contracts_prior-abi-baseline-only_admission-closed/.review_metadata/incoming_program_preparation/verify_profile_target_index_window.py",
+    "sha256": "e556e0abb910094ba4601e4911b14b5453da1249ac6c807d5fa44d2d7d292aaa"
+  },
+  "source_of_old_index_replacement": "unproved",
+  "verifier_invoked": false
+}

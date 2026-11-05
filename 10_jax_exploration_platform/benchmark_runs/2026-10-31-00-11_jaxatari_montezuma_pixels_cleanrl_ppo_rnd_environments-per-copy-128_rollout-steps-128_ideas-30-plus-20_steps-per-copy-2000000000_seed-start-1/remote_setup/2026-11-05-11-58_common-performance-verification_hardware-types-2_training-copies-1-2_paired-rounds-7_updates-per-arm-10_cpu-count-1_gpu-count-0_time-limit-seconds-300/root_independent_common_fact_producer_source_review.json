@@ -1,0 +1,36 @@
+{
+  "kind": "independent_common_fact_producer_source_review",
+  "approved": true,
+  "passed": true,
+  "independent_of_source_author": true,
+  "reviewer": "/root",
+  "source_files": {
+    "produce_common_profile_prerequisite_fact.py": "2657be58b2cd0030119278bfdba7533135afc9a815d8572e53b02e40a1517bda",
+    "test_produce_common_profile_prerequisite_fact.py": "7a636cf56281e777563bcd14e5e39733fc57d41d88042c977a13b311d56cf315"
+  },
+  "tests_run": 5,
+  "seconds": 0.04949895408935845,
+  "owned_job_id": "6825983",
+  "owned_step_id": "42",
+  "stdlib_bootstrap": {
+    "stdlib_imports_before_guard": [
+      "ctypes",
+      "unittest",
+      "importlib.util"
+    ],
+    "native_library_calls_requested_before_guard": 0
+  },
+  "scope": "Only thin metadata producer source and tests; actual fact creation and its independent review remain separate. Exact immutable published helper checkout and current verified owned CPU allocation are required execution premises.",
+  "actual_fact_created": false,
+  "actual_GPU_qualification_or_admission_granted": false,
+  "checks": [
+    "all four distinct typed context declarations before reading",
+    "exact accepted historical metadata readers reused",
+    "accepted original snapshot reused without raw payload rehash",
+    "native process component never relabeled numerical qualification",
+    "outputs created exclusively and durably; audit precedes fact",
+    "no self-approval output",
+    "default no action",
+    "unchanged exact author bytes after independent tests"
+  ]
+}

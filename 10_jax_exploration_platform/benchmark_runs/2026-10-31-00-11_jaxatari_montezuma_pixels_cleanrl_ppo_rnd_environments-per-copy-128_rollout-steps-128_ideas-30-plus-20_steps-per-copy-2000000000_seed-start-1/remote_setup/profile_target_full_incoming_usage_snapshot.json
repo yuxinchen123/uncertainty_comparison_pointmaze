@@ -1,0 +1,54 @@
+{
+  "actual_git_commands_or_integration_mutations_by_author": 0,
+  "author_commit": "d1469fd063a44167ec56760729eb0beea7ecf7d3",
+  "author_parent": "548cbcaef4c1fc28f80817ec9ba93f1e6b2fee4e",
+  "author_tree": "787583afd733b4f32349392006f7eda04a832ee7",
+  "created_at_utc": "2026-11-05T19:30:31.893260+00:00",
+  "incoming_UTF8_bytes": 2084783,
+  "incoming_path_count": 126,
+  "kind": "preparatory_author_incoming_verifier_handoff",
+  "large_payloads": "AcceptedH1 result stat-only; old5.67GB/capturedimages not read. Incoming aggregate2.5MB UTF8 cap; generated report/data changes explicitlyrecorded without causalmergeclaim.",
+  "required_stability": "Root confirms actualHEADa261/no concurrent index/Gitmutations after fresh fulltick; if HEAD changes use actual renewed confirmation, never reuse the stale expectedHEAD.",
+  "role": "Preparatory author metadata/Git engineering only; genuine source approval is separate34cb02a3. Root independently checks output/predicted tree before any merge.",
+  "root_command_argv": [
+    "srun",
+    "--jobid=6825983",
+    "--overlap",
+    "--exact",
+    "--ntasks=1",
+    "--cpus-per-task=1",
+    "--mem=512M",
+    "--time=00:05:00",
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "/p/rlprojects/RND_worktrees/2026-11-05-10-14_profile-target-process_native-provider_separate-role-contracts_prior-abi-baseline-only_admission-closed/.review_metadata/incoming_program_preparation/verify_profile_target_incoming.py",
+    "--expected-head",
+    "a261ce4a76da3bf1ec77d76d8e9abdfd585f1e79",
+    "--author-handoff",
+    "/p/rlprojects/RND_worktrees/2026-11-05-09-42_profile-target-qualification_original-tests-48_environments-128_rollout-steps-128_warmup-rollouts-50_reference-updates-1_default-admission-closed/.review_metadata/profile_target_qualification/publication_handoff.json",
+    "--author-handoff-sha256",
+    "19b4c3cacd23aa56976cf45493bb401262c1dbd55248f46487983d1b89f5cb6b",
+    "--output-prefix",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/profile_target_union_incoming_root_2026-11-05-11-29",
+    "--maximum-seconds",
+    "285"
+  ],
+  "root_command_shell": "srun --jobid=6825983 --overlap --exact --ntasks=1 --cpus-per-task=1 --mem=512M --time=00:05:00 /usr/bin/python3 -I -S -B /p/rlprojects/RND_worktrees/2026-11-05-10-14_profile-target-process_native-provider_separate-role-contracts_prior-abi-baseline-only_admission-closed/.review_metadata/incoming_program_preparation/verify_profile_target_incoming.py --expected-head a261ce4a76da3bf1ec77d76d8e9abdfd585f1e79 --author-handoff /p/rlprojects/RND_worktrees/2026-11-05-09-42_profile-target-qualification_original-tests-48_environments-128_rollout-steps-128_warmup-rollouts-50_reference-updates-1_default-admission-closed/.review_metadata/profile_target_qualification/publication_handoff.json --author-handoff-sha256 19b4c3cacd23aa56976cf45493bb401262c1dbd55248f46487983d1b89f5cb6b --output-prefix /p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/profile_target_union_incoming_root_2026-11-05-11-29 --maximum-seconds 285",
+  "root_only_execution": true,
+  "schema_version": 1,
+  "script": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-10-14_profile-target-process_native-provider_separate-role-contracts_prior-abi-baseline-only_admission-closed/.review_metadata/incoming_program_preparation/verify_profile_target_incoming.py",
+    "sha256": "db682ac94893b8671d97068583456f377c1456c6c617d3adfbc749d7c3041411"
+  },
+  "source_lineage": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/independent_configured_profile_preparation_incoming_2026-11-05.py",
+    "sha256": "67c14a30c297f82474c9b99ec075eb3546a49d83b9bcc4cb0e6f1047f4bcec97"
+  },
+  "static_parse_receipt": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-10-14_profile-target-process_native-provider_separate-role-contracts_prior-abi-baseline-only_admission-closed/.review_metadata/incoming_program_preparation/static_parse_receipt.json",
+    "sha256": "4cb327633452b6bfeacdc5709b835ee16feeb1be34b33b46de94ad187a3e62da"
+  },
+  "verifier_invoked": false
+}
