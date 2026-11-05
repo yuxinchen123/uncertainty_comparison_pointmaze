@@ -1,0 +1,31 @@
+{
+  "actual_guard_success_established": false,
+  "actual_independent_fixture_return": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-21-02_historical-git-source-inspection_rev-parse-abbrev-ref-HEAD_source-c28d3bc1_helpers-28_gpu-count-0/.review_metadata/historical_git_read_only_branch_name/root_independent_git_shape_test_return.json",
+    "sha256": "1c660613069853b20bb02f9c8b735ab76b48454c54d5f3a73bd733c9f1c9b3df"
+  },
+  "actual_independent_fixture_stdout": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-21-02_historical-git-source-inspection_rev-parse-abbrev-ref-HEAD_source-c28d3bc1_helpers-28_gpu-count-0/.review_metadata/historical_git_read_only_branch_name/root_independent_git_shape_tests_stdout.raw",
+    "sha256": "346bebb687319398ecb69a5ba4c0ca4c25ec39567aa4876d708cb544f9a8ebef"
+  },
+  "admission_granted": false,
+  "approved_exact_forms": [
+    "rev-parse --abbrev-ref HEAD",
+    "rev-parse <strict forty-hex commit>:<plain relative path>",
+    "status --porcelain=v1 -uall"
+  ],
+  "cache_enabled": false,
+  "existing_executable_cwd_roots_environment_configuration_and_filter_refusals_preserved": true,
+  "general_revisions_extra_options_and_mutations_still_refused": true,
+  "kind": "root_independent_exact_historical_git_form_source_review",
+  "no_live_git_command_executed_by_fixtures": true,
+  "passed": true,
+  "production_timeout_seconds": 180,
+  "reviewed_at_utc": "2026-11-05T05:15:19.881304+00:00",
+  "scientific_credit": 0,
+  "scope": "exact one-function permission change plus six old-call-shape/negative metadata tests; no genuine result consumed",
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-21-02_historical-git-source-inspection_rev-parse-abbrev-ref-HEAD_source-c28d3bc1_helpers-28_gpu-count-0/.review_metadata/historical_git_read_only_branch_name/source_and_metadata_freeze.json",
+    "sha256": "34205b1f2703e2fa0c97998b93ee2567dab24fb4a99b69127efa3870bc537df9"
+  }
+}

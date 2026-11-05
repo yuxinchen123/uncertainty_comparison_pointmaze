@@ -1,0 +1,233 @@
+configured_measurement.py:544 qualification_source_paths
+subprocess.check_output(['git', '-C', str(root), 'ls-tree', '-r', '--name-only', commit, '--', *scopes], text=True)
+
+controller.py:115 verify_source
+subprocess.run(['git', '-C', str(root), 'rev-parse', 'HEAD'], capture_output=True, text=True, check=True)
+
+controller.py:119 verify_source
+subprocess.run(['git', '-C', str(root), 'status', '--porcelain', '--untracked-files=all', '--', *SOURCE_SCOPES], capture_output=True, text=True, check=True)
+
+device_memory_limit.py:182 require_ownership_source
+subprocess.check_output(['git', '-C', str(root), 'show', helpers['source_commit'] + ':' + relative])
+
+device_memory_limit.py:1067 source_capability
+subprocess.check_output(['git', '-C', str(root), 'show', helpers['source_commit'] + ':' + relative])
+
+diagnose_gpu_execution.py:54 core_identity
+subprocess.run(['git', '-C', str(root), 'symbolic-ref', '--quiet', 'HEAD'], capture_output=True, text=True)
+
+diagnose_gpu_execution.py:62 core_identity
+subprocess.check_output(['git', '-C', str(root), 'ls-tree', '-rz', commit, '--', *CORE_SCOPES])
+
+diagnose_gpu_execution.py:51 core_identity
+subprocess.check_output(['git', '-C', str(root), 'rev-parse', 'HEAD'], text=True)
+
+diagnose_gpu_execution.py:58 core_identity
+subprocess.check_output(['git', '-C', str(root), 'status', '--porcelain', '--untracked-files=all', '--', *CORE_SCOPES], text=True)
+
+direct_measurement.py:152 verify_observer_helpers
+subprocess.check_output(['git', '-C', str(root), 'show', value['source_commit'] + ':' + relative])
+
+h100_nvl_allocation_observation.py:72 git
+subprocess.check_output(['git', '-C', str(root), *arguments])
+
+h100_nvl_slurm_evidence.py:76 git_file
+subprocess.check_output([*command, 'show', commit + ':' + relative])
+
+h100_nvl_slurm_evidence.py:87 git_record
+subprocess.run(['git', '-C', str(physical), 'symbolic-ref', '--quiet', 'HEAD'], capture_output=True)
+
+h100_nvl_slurm_evidence.py:261 backend
+subprocess.check_output(['git', '-C', str(root), 'ls-tree', '-rz', JAXTARI_COMMIT, '--', 'src/jaxtari'])
+
+h100_nvl_slurm_evidence.py:70 git_file
+subprocess.check_output([*command, 'rev-parse', '--show-toplevel'], text=True)
+
+h100_nvl_slurm_evidence.py:71 git_file
+subprocess.check_output([*command, 'rev-parse', 'HEAD'], text=True)
+
+h100_nvl_slurm_evidence.py:105 numerical_paths
+subprocess.check_output(['git', '-C', str(physical), 'ls-tree', '-r', '--name-only', commit, '--', *scopes], text=True)
+
+h100_nvl_slurm_evidence.py:74 git_file
+subprocess.check_output([*command, 'status', '--porcelain', '--untracked-files=all', '--', relative], text=True)
+
+h100_nvl_slurm_site_validation.py:247 cleanrl_identity
+subprocess.check_output(['git', '-C', str(root), 'show', CLEANRL_COMMIT + ':cleanrl/ppo_rnd_envpool.py'])
+
+h100_nvl_slurm_site_validation.py:234 numerical_paths
+query(['git', '-C', str(root), 'ls-tree', '-r', '--name-only', SOURCE_COMMIT, '--', '10_jax_exploration_platform/src/exploration_platform/__init__.py', '10_jax_exploration_platform/src/exploration_platform/atari_pixels', PREFIX, '10_jax_exploration_platform/tests/atari_pixels', '10_jax_exploration_platform/tests/test_atari_pixel_environment.py'])
+
+h100_nvl_slurm_site_validation.py:245 cleanrl_identity
+query(['git', '-C', str(root), 'rev-parse', '--show-toplevel'])
+
+h100_nvl_slurm_site_validation.py:246 cleanrl_identity
+query(['git', '-C', str(root), 'rev-parse', 'HEAD'])
+
+h100_nvl_slurm_site_validation.py:491 prepare
+query(['git', '-C', str(helper), 'rev-parse', 'HEAD'])
+
+h100_nvl_slurm_site_validation.py:249 cleanrl_identity
+query(['git', '-C', str(root), 'status', '--porcelain', '--', 'cleanrl/ppo_rnd_envpool.py'])
+
+infrastructure_retry.py:146 git_receipt
+subprocess.check_output([*command, 'show', commit + ':' + relative])
+
+infrastructure_retry.py:134 git_receipt
+subprocess.check_output([*command, 'rev-parse', '--show-toplevel'], text=True)
+
+infrastructure_retry.py:135 git_receipt
+subprocess.check_output([*command, 'rev-parse', 'HEAD'], text=True)
+
+infrastructure_retry.py:136 git_receipt
+subprocess.check_output([*command, 'rev-parse', '--abbrev-ref', 'HEAD'], text=True)
+
+infrastructure_retry.py:139 git_receipt
+subprocess.check_output([*command, 'status', '--porcelain', '--untracked-files=all', '--', *paths], text=True)
+
+infrastructure_retry.py:162 numerical_source_paths
+subprocess.check_output(['git', '-C', str(physical), 'ls-tree', '-r', '--name-only', SOURCE_COMMIT, '--', '10_jax_exploration_platform/src/exploration_platform/atari_pixels', PREFIX], text=True)
+
+infrastructure_retry.py:470 prepare
+subprocess.check_output(['git', '-C', str(helper), 'rev-parse', 'HEAD'], text=True)
+
+measure_selected.py:179 helper_receipt
+subprocess.check_output(['git', '-C', str(root), 'rev-parse', 'HEAD'], text=True)
+
+portable_evidence.py:140 git_root
+subprocess.run(['git', '-C', str(path), 'symbolic-ref', '--quiet', 'HEAD'], capture_output=True, text=True)
+
+portable_evidence.py:138 git_root
+subprocess.check_output(['git', '-C', str(path), 'rev-parse', '--show-toplevel'], text=True)
+
+portable_evidence.py:139 git_root
+subprocess.check_output(['git', '-C', str(path), 'rev-parse', 'HEAD'], text=True)
+
+portable_evidence.py:141 git_root
+subprocess.check_output(['git', '-C', str(path), 'status', '--porcelain', '--untracked-files=all'], text=True)
+
+post_comparison_validation.py:724 case_source_defaults
+subprocess.check_output(['git', '-C', str(physical_root), 'show', commit + ':10_jax_exploration_platform/' + relative])
+
+post_comparison_validation.py:1180 committed_measurement_sources
+subprocess.check_output(['git', '-C', str(physical), 'ls-tree', '-rz', commit, '--', *scopes])
+
+post_comparison_validation.py:1188 committed_measurement_sources
+subprocess.check_output(['git', '-C', str(physical), 'show', commit + ':' + relative])
+
+post_comparison_validation.py:715 case_source_defaults
+subprocess.check_output(['git', '-C', str(physical_root), 'rev-parse', 'HEAD'], text=True)
+
+post_comparison_validation.py:1175 committed_measurement_sources
+subprocess.run(['git', '-C', str(physical), 'symbolic-ref', '--quiet', 'HEAD'], capture_output=True)
+
+post_comparison_validation.py:1194 committed_measurement_sources
+subprocess.check_output(['git', '-C', str(physical), 'status', '--porcelain', '--untracked-files=all', '--', *files], text=True)
+
+post_comparison_validation.py:1861 validate_training_admission
+subprocess.check_output(['git', '-C', str(physical_root), 'rev-parse', 'HEAD'], text=True)
+
+post_comparison_validation.py:1862 validate_training_admission
+subprocess.check_output(['git', '-C', str(physical_root), 'status', '--porcelain', '--untracked-files=all', '--', '10_jax_exploration_platform/src/exploration_platform/atari_pixels', '10_jax_exploration_platform/scripts/atari_pixel_campaign'], text=True)
+
+post_comparison_validation.py:1874 validate_training_admission
+subprocess.check_output(['git', '-C', str(physical_root), 'show', commit + ':' + relative])
+
+post_comparison_validation.py:1173 committed_measurement_sources
+subprocess.check_output(['git', '-C', str(physical), 'rev-parse', 'HEAD'], text=True)
+
+post_comparison_validation.py:1172 committed_measurement_sources
+subprocess.check_output(['git', '-C', str(physical), 'rev-parse', '--show-toplevel'], text=True)
+
+pregather_async_retry.py:384 prepare
+subprocess.check_output(['git', '-C', str(helper), 'rev-parse', 'HEAD'], text=True)
+
+pregather_async_retry.py:137 validate_core
+subprocess.check_output(['git', '-C', str(physical), 'rev-parse', receipt['source_commit'] + ':' + path], text=True)
+
+serval02_card1_binding.py:343 check_live_admission
+subprocess.check_output(command + ['ls-tree', '-rz', SOURCE_COMMIT, '--', *scopes])
+
+serval02_card1_binding.py:104 source_identity
+subprocess.check_output(['git', '-C', str(root), 'show', value['source_commit'] + ':' + relative])
+
+serval02_card1_binding.py:351 check_live_admission
+subprocess.check_output(command + ['cat-file', 'blob', blob])
+
+serval02_card1_binding.py:338 check_live_admission
+subprocess.run(command + ['symbolic-ref', '--quiet', 'HEAD'], capture_output=True)
+
+serval02_card1_binding.py:341 check_live_admission
+subprocess.check_output(command + ['status', '--porcelain', '--untracked-files=all', '--', *scopes], text=True)
+
+serval02_card1_binding.py:336 check_live_admission
+subprocess.check_output(command + ['rev-parse', '--show-toplevel'], text=True)
+
+serval02_card1_binding.py:337 check_live_admission
+subprocess.check_output(command + ['rev-parse', 'HEAD'], text=True)
+
+train_optimized.py:216 source_receipt
+subprocess.check_output(['git', '-C', str(root), 'status', '--porcelain', '--untracked-files=all', '--', *paths], text=True)
+
+train_optimized.py:255 jaxtari_python_receipt
+subprocess.check_output(['git', '-C', str(root), 'ls-tree', '-rz', commit, '--', 'src/jaxtari'])
+
+train_optimized.py:222 source_receipt
+subprocess.check_output(['git', '-C', str(root), 'show', f'{commit}:{relative}'])
+
+train_optimized.py:73 component_source_commit
+subprocess.check_output(['git', '-C', str(root), 'rev-parse', '--show-toplevel'], text=True)
+
+train_optimized.py:76 component_source_commit
+subprocess.check_output(['git', '-C', str(root), 'rev-parse', 'HEAD'], text=True)
+
+train_optimized.py:212 source_receipt
+subprocess.check_output(['git', '-C', str(root), 'rev-parse', 'HEAD'], text=True)
+
+train_optimized.py:251 jaxtari_python_receipt
+subprocess.check_output(['git', '-C', str(root), 'rev-parse', '--show-toplevel'], text=True)
+
+train_optimized.py:252 jaxtari_python_receipt
+subprocess.check_output(['git', '-C', str(root), 'rev-parse', 'HEAD'], text=True)
+
+train_optimized.py:939 run
+subprocess.check_output(['git', '-C', str(PROJECT_ROOT), 'rev-parse', 'HEAD'], text=True)
+
+uva_active_configuration_observation.py:84 source_identity
+subprocess.check_output(command + ['show', commit + ':' + relative])
+
+uva_active_configuration_observation.py:80 source_identity
+subprocess.run(command + ['symbolic-ref', '--quiet', 'HEAD'], capture_output=True)
+
+uva_active_configuration_observation.py:78 source_identity
+subprocess.check_output(command + ['rev-parse', '--show-toplevel'], text=True)
+
+uva_active_configuration_observation.py:79 source_identity
+subprocess.check_output(command + ['rev-parse', 'HEAD'], text=True)
+
+uva_active_configuration_observation.py:81 source_identity
+subprocess.check_output(command + ['status', '--porcelain=v1', '-uall'], text=True)
+
+uva_slurm_configured_isolation.py:160 source_identity
+subprocess.check_output(['git', '-C', str(root), 'show', value['source_commit'] + ':' + relative])
+
+validate_training_deployment.py:76 git_root
+subprocess.run(['git', '-C', str(physical), 'symbolic-ref', '--quiet', 'HEAD'], capture_output=True, text=True)
+
+validate_training_deployment.py:145 jaxtari_identity
+subprocess.check_output(['git', '-C', str(root), 'ls-tree', '-rz', JAXTARI_COMMIT, '--', 'src/jaxtari'])
+
+validate_training_deployment.py:91 committed_files
+subprocess.check_output(['git', '-C', str(physical), 'show', commit + ':' + relative])
+
+validate_training_deployment.py:156 jaxtari_identity
+subprocess.check_output(['git', '-C', str(root), 'show', JAXTARI_COMMIT + ':src/' + name])
+
+validate_training_deployment.py:74 git_root
+subprocess.check_output(['git', '-C', str(physical), 'rev-parse', '--show-toplevel'], text=True)
+
+validate_training_deployment.py:75 git_root
+subprocess.check_output(['git', '-C', str(physical), 'rev-parse', 'HEAD'], text=True)
+
+validate_training_deployment.py:77 git_root
+subprocess.check_output(['git', '-C', str(physical), 'status', '--porcelain', '--untracked-files=all'], text=True)

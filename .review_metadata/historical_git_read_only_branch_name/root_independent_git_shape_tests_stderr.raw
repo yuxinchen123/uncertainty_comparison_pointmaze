@@ -1,0 +1,17 @@
+test_actual_executable_cwd_environment_root_and_configuration_checks_remain (historical_git_shape_tests.HistoricalReadOnlyGitFormsTests)
+A newly permitted argument form still uses the complete same inspection boundary. ... ok
+test_nearby_options_revision_expressions_and_extra_arguments_are_refused (historical_git_shape_tests.HistoricalReadOnlyGitFormsTests)
+Literal branch/object queries do not permit arbitrary revisions, options or output programs. ... ok
+test_three_exact_historical_forms_are_recognized (historical_git_shape_tests.HistoricalReadOnlyGitFormsTests)
+Only the approved branch, blob-name and porcelain aliases join existing forms. ... ok
+test_unchanged_async_blob_name_query_keeps_the_recorded_git_blob_gate (historical_git_shape_tests.HistoricalReadOnlyGitFormsTests)
+The actual old validate_core function still compares the literal blob name. ... ok
+test_unchanged_infrastructure_git_receipt_uses_the_new_exact_branch_form (historical_git_shape_tests.HistoricalReadOnlyGitFormsTests)
+The actual old function's five calls pass the policy without executing Git or source validation. ... ok
+test_unchanged_observer_source_identity_keeps_exact_status_and_source_checks (historical_git_shape_tests.HistoricalReadOnlyGitFormsTests)
+The actual old identity function emits the fixed porcelain alias without executing it. ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.040s
+
+OK

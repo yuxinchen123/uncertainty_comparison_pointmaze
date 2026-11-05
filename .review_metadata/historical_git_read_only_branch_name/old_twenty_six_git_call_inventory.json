@@ -1,0 +1,638 @@
+{
+  "analysis": "Every direct Git-list call and every call extending a Git command-prefix variable is listed. Dynamic wrapper functions are reviewed with their actual literal call sites; no source code or saved evidence was executed.",
+  "call_site_count": 78,
+  "dynamic_wrapper_literal_callers": [
+    {
+      "call": "git('status', '--porcelain=v1', '--', RELATIVE_PATH)",
+      "file": "h100_nvl_allocation_observation.py",
+      "function": "helper_source",
+      "line": 79
+    },
+    {
+      "call": "git('show', commit + ':' + RELATIVE_PATH)",
+      "file": "h100_nvl_allocation_observation.py",
+      "function": "helper_source",
+      "line": 79
+    },
+    {
+      "call": "git('rev-parse', 'HEAD')",
+      "file": "h100_nvl_allocation_observation.py",
+      "function": "helper_source",
+      "line": 75
+    },
+    {
+      "call": "git('rev-parse', '--abbrev-ref', 'HEAD')",
+      "file": "h100_nvl_allocation_observation.py",
+      "function": "helper_source",
+      "line": 76
+    },
+    {
+      "call": "git('rev-parse', '--show-toplevel')",
+      "file": "h100_nvl_allocation_observation.py",
+      "function": "helper_source",
+      "line": 73
+    }
+  ],
+  "file_count": 26,
+  "git_call_sites": [
+    {
+      "call": "subprocess.check_output(['git', '-C', str(root), 'ls-tree', '-r', '--name-only', commit, '--', *scopes], text=True)",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py",
+      "function": "qualification_source_paths",
+      "line": 544
+    },
+    {
+      "call": "subprocess.run(['git', '-C', str(root), 'rev-parse', 'HEAD'], capture_output=True, text=True, check=True)",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/controller.py",
+      "function": "verify_source",
+      "line": 115
+    },
+    {
+      "call": "subprocess.run(['git', '-C', str(root), 'status', '--porcelain', '--untracked-files=all', '--', *SOURCE_SCOPES], capture_output=True, text=True, check=True)",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/controller.py",
+      "function": "verify_source",
+      "line": 119
+    },
+    {
+      "call": "subprocess.check_output(['git', '-C', str(root), 'show', helpers['source_commit'] + ':' + relative])",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/device_memory_limit.py",
+      "function": "require_ownership_source",
+      "line": 182
+    },
+    {
+      "call": "subprocess.check_output(['git', '-C', str(root), 'show', helpers['source_commit'] + ':' + relative])",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/device_memory_limit.py",
+      "function": "source_capability",
+      "line": 1067
+    },
+    {
+      "call": "subprocess.run(['git', '-C', str(root), 'symbolic-ref', '--quiet', 'HEAD'], capture_output=True, text=True)",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py",
+      "function": "core_identity",
+      "line": 54
+    },
+    {
+      "call": "subprocess.check_output(['git', '-C', str(root), 'ls-tree', '-rz', commit, '--', *CORE_SCOPES])",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py",
+      "function": "core_identity",
+      "line": 62
+    },
+    {
+      "call": "subprocess.check_output(['git', '-C', str(root), 'rev-parse', 'HEAD'], text=True)",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py",
+      "function": "core_identity",
+      "line": 51
+    },
+    {
+      "call": "subprocess.check_output(['git', '-C', str(root), 'status', '--porcelain', '--untracked-files=all', '--', *CORE_SCOPES], text=True)",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py",
+      "function": "core_identity",
+      "line": 58
+    },
+    {
+      "call": "subprocess.check_output(['git', '-C', str(root), 'show', value['source_commit'] + ':' + relative])",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py",
+      "function": "verify_observer_helpers",
+      "line": 152
+    },
+    {
+      "call": "subprocess.check_output(['git', '-C', str(root), *arguments])",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_allocation_observation.py",
+      "function": "git",
+      "line": 72
+    },
+    {
+      "call": "subprocess.check_output([*command, 'show', commit + ':' + relative])",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_evidence.py",
+      "function": "git_file",
+      "line": 76
+    },
+    {
+      "call": "subprocess.run(['git', '-C', str(physical), 'symbolic-ref', '--quiet', 'HEAD'], capture_output=True)",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_evidence.py",
+      "function": "git_record",
+      "line": 87
+    },
+    {
+      "call": "subprocess.check_output(['git', '-C', str(root), 'ls-tree', '-rz', JAXTARI_COMMIT, '--', 'src/jaxtari'])",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_evidence.py",
+      "function": "backend",
+      "line": 261
+    },
+    {
+      "call": "subprocess.check_output([*command, 'rev-parse', '--show-toplevel'], text=True)",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_evidence.py",
+      "function": "git_file",
+      "line": 70
+    },
+    {
+      "call": "subprocess.check_output([*command, 'rev-parse', 'HEAD'], text=True)",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_evidence.py",
+      "function": "git_file",
+      "line": 71
+    },
+    {
+      "call": "subprocess.check_output(['git', '-C', str(physical), 'ls-tree', '-r', '--name-only', commit, '--', *scopes], text=True)",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_evidence.py",
+      "function": "numerical_paths",
+      "line": 105
+    },
+    {
+      "call": "subprocess.check_output([*command, 'status', '--porcelain', '--untracked-files=all', '--', relative], text=True)",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_evidence.py",
+      "function": "git_file",
+      "line": 74
+    },
+    {
+      "call": "subprocess.check_output(['git', '-C', str(root), 'show', CLEANRL_COMMIT + ':cleanrl/ppo_rnd_envpool.py'])",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py",
+      "function": "cleanrl_identity",
+      "line": 247
+    },
+    {
+      "call": "query(['git', '-C', str(root), 'ls-tree', '-r', '--name-only', SOURCE_COMMIT, '--', '10_jax_exploration_platform/src/exploration_platform/__init__.py', '10_jax_exploration_platform/src/exploration_platform/atari_pixels', PREFIX, '10_jax_exploration_platform/tests/atari_pixels', '10_jax_exploration_platform/tests/test_atari_pixel_environment.py'])",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py",
+      "function": "numerical_paths",
+      "line": 234
+    },
+    {
+      "call": "query(['git', '-C', str(root), 'rev-parse', '--show-toplevel'])",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py",
+      "function": "cleanrl_identity",
+      "line": 245
+    },
+    {
+      "call": "query(['git', '-C', str(root), 'rev-parse', 'HEAD'])",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py",
+      "function": "cleanrl_identity",
+      "line": 246
+    },
+    {
+      "call": "query(['git', '-C', str(helper), 'rev-parse', 'HEAD'])",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py",
+      "function": "prepare",
+      "line": 491
+    },
+    {
+      "call": "query(['git', '-C', str(root), 'status', '--porcelain', '--', 'cleanrl/ppo_rnd_envpool.py'])",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py",
+      "function": "cleanrl_identity",
+      "line": 249
+    },
+    {
+      "call": "subprocess.check_output([*command, 'show', commit + ':' + relative])",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry.py",
+      "function": "git_receipt",
+      "line": 146
+    },
+    {
+      "call": "subprocess.check_output([*command, 'rev-parse', '--show-toplevel'], text=True)",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry.py",
+      "function": "git_receipt",
+      "line": 134
+    },
+    {
+      "call": "subprocess.check_output([*command, 'rev-parse', 'HEAD'], text=True)",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry.py",
+      "function": "git_receipt",
+      "line": 135
+    },
+    {
+      "call": "subprocess.check_output([*command, 'rev-parse', '--abbrev-ref', 'HEAD'], text=True)",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry.py",
+      "function": "git_receipt",
+      "line": 136
+    },
+    {
+      "call": "subprocess.check_output([*command, 'status', '--porcelain', '--untracked-files=all', '--', *paths], text=True)",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry.py",
+      "function": "git_receipt",
+      "line": 139
+    },
+    {
+      "call": "subprocess.check_output(['git', '-C', str(physical), 'ls-tree', '-r', '--name-only', SOURCE_COMMIT, '--', '10_jax_exploration_platform/src/exploration_platform/atari_pixels', PREFIX], text=True)",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry.py",
+      "function": "numerical_source_paths",
+      "line": 162
+    },
+    {
+      "call": "subprocess.check_output(['git', '-C', str(helper), 'rev-parse', 'HEAD'], text=True)",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry.py",
+      "function": "prepare",
+      "line": 470
+    },
+    {
+      "call": "subprocess.check_output(['git', '-C', str(root), 'rev-parse', 'HEAD'], text=True)",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py",
+      "function": "helper_receipt",
+      "line": 179
+    },
+    {
+      "call": "subprocess.run(['git', '-C', str(path), 'symbolic-ref', '--quiet', 'HEAD'], capture_output=True, text=True)",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/portable_evidence.py",
+      "function": "git_root",
+      "line": 140
+    },
+    {
+      "call": "subprocess.check_output(['git', '-C', str(path), 'rev-parse', '--show-toplevel'], text=True)",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/portable_evidence.py",
+      "function": "git_root",
+      "line": 138
+    },
+    {
+      "call": "subprocess.check_output(['git', '-C', str(path), 'rev-parse', 'HEAD'], text=True)",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/portable_evidence.py",
+      "function": "git_root",
+      "line": 139
+    },
+    {
+      "call": "subprocess.check_output(['git', '-C', str(path), 'status', '--porcelain', '--untracked-files=all'], text=True)",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/portable_evidence.py",
+      "function": "git_root",
+      "line": 141
+    },
+    {
+      "call": "subprocess.check_output(['git', '-C', str(physical_root), 'show', commit + ':10_jax_exploration_platform/' + relative])",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py",
+      "function": "case_source_defaults",
+      "line": 724
+    },
+    {
+      "call": "subprocess.check_output(['git', '-C', str(physical), 'ls-tree', '-rz', commit, '--', *scopes])",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py",
+      "function": "committed_measurement_sources",
+      "line": 1180
+    },
+    {
+      "call": "subprocess.check_output(['git', '-C', str(physical), 'show', commit + ':' + relative])",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py",
+      "function": "committed_measurement_sources",
+      "line": 1188
+    },
+    {
+      "call": "subprocess.check_output(['git', '-C', str(physical_root), 'rev-parse', 'HEAD'], text=True)",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py",
+      "function": "case_source_defaults",
+      "line": 715
+    },
+    {
+      "call": "subprocess.run(['git', '-C', str(physical), 'symbolic-ref', '--quiet', 'HEAD'], capture_output=True)",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py",
+      "function": "committed_measurement_sources",
+      "line": 1175
+    },
+    {
+      "call": "subprocess.check_output(['git', '-C', str(physical), 'status', '--porcelain', '--untracked-files=all', '--', *files], text=True)",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py",
+      "function": "committed_measurement_sources",
+      "line": 1194
+    },
+    {
+      "call": "subprocess.check_output(['git', '-C', str(physical_root), 'rev-parse', 'HEAD'], text=True)",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py",
+      "function": "validate_training_admission",
+      "line": 1861
+    },
+    {
+      "call": "subprocess.check_output(['git', '-C', str(physical_root), 'status', '--porcelain', '--untracked-files=all', '--', '10_jax_exploration_platform/src/exploration_platform/atari_pixels', '10_jax_exploration_platform/scripts/atari_pixel_campaign'], text=True)",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py",
+      "function": "validate_training_admission",
+      "line": 1862
+    },
+    {
+      "call": "subprocess.check_output(['git', '-C', str(physical_root), 'show', commit + ':' + relative])",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py",
+      "function": "validate_training_admission",
+      "line": 1874
+    },
+    {
+      "call": "subprocess.check_output(['git', '-C', str(physical), 'rev-parse', 'HEAD'], text=True)",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py",
+      "function": "committed_measurement_sources",
+      "line": 1173
+    },
+    {
+      "call": "subprocess.check_output(['git', '-C', str(physical), 'rev-parse', '--show-toplevel'], text=True)",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py",
+      "function": "committed_measurement_sources",
+      "line": 1172
+    },
+    {
+      "call": "subprocess.check_output(['git', '-C', str(helper), 'rev-parse', 'HEAD'], text=True)",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/pregather_async_retry.py",
+      "function": "prepare",
+      "line": 384
+    },
+    {
+      "call": "subprocess.check_output(['git', '-C', str(physical), 'rev-parse', receipt['source_commit'] + ':' + path], text=True)",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/pregather_async_retry.py",
+      "function": "validate_core",
+      "line": 137
+    },
+    {
+      "call": "subprocess.check_output(command + ['ls-tree', '-rz', SOURCE_COMMIT, '--', *scopes])",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py",
+      "function": "check_live_admission",
+      "line": 343
+    },
+    {
+      "call": "subprocess.check_output(['git', '-C', str(root), 'show', value['source_commit'] + ':' + relative])",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py",
+      "function": "source_identity",
+      "line": 104
+    },
+    {
+      "call": "subprocess.check_output(command + ['cat-file', 'blob', blob])",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py",
+      "function": "check_live_admission",
+      "line": 351
+    },
+    {
+      "call": "subprocess.run(command + ['symbolic-ref', '--quiet', 'HEAD'], capture_output=True)",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py",
+      "function": "check_live_admission",
+      "line": 338
+    },
+    {
+      "call": "subprocess.check_output(command + ['status', '--porcelain', '--untracked-files=all', '--', *scopes], text=True)",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py",
+      "function": "check_live_admission",
+      "line": 341
+    },
+    {
+      "call": "subprocess.check_output(command + ['rev-parse', '--show-toplevel'], text=True)",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py",
+      "function": "check_live_admission",
+      "line": 336
+    },
+    {
+      "call": "subprocess.check_output(command + ['rev-parse', 'HEAD'], text=True)",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py",
+      "function": "check_live_admission",
+      "line": 337
+    },
+    {
+      "call": "subprocess.check_output(['git', '-C', str(root), 'status', '--porcelain', '--untracked-files=all', '--', *paths], text=True)",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py",
+      "function": "source_receipt",
+      "line": 216
+    },
+    {
+      "call": "subprocess.check_output(['git', '-C', str(root), 'ls-tree', '-rz', commit, '--', 'src/jaxtari'])",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py",
+      "function": "jaxtari_python_receipt",
+      "line": 255
+    },
+    {
+      "call": "subprocess.check_output(['git', '-C', str(root), 'show', f'{commit}:{relative}'])",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py",
+      "function": "source_receipt",
+      "line": 222
+    },
+    {
+      "call": "subprocess.check_output(['git', '-C', str(root), 'rev-parse', '--show-toplevel'], text=True)",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py",
+      "function": "component_source_commit",
+      "line": 73
+    },
+    {
+      "call": "subprocess.check_output(['git', '-C', str(root), 'rev-parse', 'HEAD'], text=True)",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py",
+      "function": "component_source_commit",
+      "line": 76
+    },
+    {
+      "call": "subprocess.check_output(['git', '-C', str(root), 'rev-parse', 'HEAD'], text=True)",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py",
+      "function": "source_receipt",
+      "line": 212
+    },
+    {
+      "call": "subprocess.check_output(['git', '-C', str(root), 'rev-parse', '--show-toplevel'], text=True)",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py",
+      "function": "jaxtari_python_receipt",
+      "line": 251
+    },
+    {
+      "call": "subprocess.check_output(['git', '-C', str(root), 'rev-parse', 'HEAD'], text=True)",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py",
+      "function": "jaxtari_python_receipt",
+      "line": 252
+    },
+    {
+      "call": "subprocess.check_output(['git', '-C', str(PROJECT_ROOT), 'rev-parse', 'HEAD'], text=True)",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py",
+      "function": "run",
+      "line": 939
+    },
+    {
+      "call": "subprocess.check_output(command + ['show', commit + ':' + relative])",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_active_configuration_observation.py",
+      "function": "source_identity",
+      "line": 84
+    },
+    {
+      "call": "subprocess.run(command + ['symbolic-ref', '--quiet', 'HEAD'], capture_output=True)",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_active_configuration_observation.py",
+      "function": "source_identity",
+      "line": 80
+    },
+    {
+      "call": "subprocess.check_output(command + ['rev-parse', '--show-toplevel'], text=True)",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_active_configuration_observation.py",
+      "function": "source_identity",
+      "line": 78
+    },
+    {
+      "call": "subprocess.check_output(command + ['rev-parse', 'HEAD'], text=True)",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_active_configuration_observation.py",
+      "function": "source_identity",
+      "line": 79
+    },
+    {
+      "call": "subprocess.check_output(command + ['status', '--porcelain=v1', '-uall'], text=True)",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_active_configuration_observation.py",
+      "function": "source_identity",
+      "line": 81
+    },
+    {
+      "call": "subprocess.check_output(['git', '-C', str(root), 'show', value['source_commit'] + ':' + relative])",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_slurm_configured_isolation.py",
+      "function": "source_identity",
+      "line": 160
+    },
+    {
+      "call": "subprocess.run(['git', '-C', str(physical), 'symbolic-ref', '--quiet', 'HEAD'], capture_output=True, text=True)",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py",
+      "function": "git_root",
+      "line": 76
+    },
+    {
+      "call": "subprocess.check_output(['git', '-C', str(root), 'ls-tree', '-rz', JAXTARI_COMMIT, '--', 'src/jaxtari'])",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py",
+      "function": "jaxtari_identity",
+      "line": 145
+    },
+    {
+      "call": "subprocess.check_output(['git', '-C', str(physical), 'show', commit + ':' + relative])",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py",
+      "function": "committed_files",
+      "line": 91
+    },
+    {
+      "call": "subprocess.check_output(['git', '-C', str(root), 'show', JAXTARI_COMMIT + ':src/' + name])",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py",
+      "function": "jaxtari_identity",
+      "line": 156
+    },
+    {
+      "call": "subprocess.check_output(['git', '-C', str(physical), 'rev-parse', '--show-toplevel'], text=True)",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py",
+      "function": "git_root",
+      "line": 74
+    },
+    {
+      "call": "subprocess.check_output(['git', '-C', str(physical), 'rev-parse', 'HEAD'], text=True)",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py",
+      "function": "git_root",
+      "line": 75
+    },
+    {
+      "call": "subprocess.check_output(['git', '-C', str(physical), 'status', '--porcelain', '--untracked-files=all'], text=True)",
+      "file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py",
+      "function": "git_root",
+      "line": 77
+    }
+  ],
+  "kind": "bounded_static_inventory_of_git_calls_in_exact_old_twenty_six_namespace",
+  "old_helper_commit": "0a880984b4a03a2ff7335337cc18576628bc9fc1",
+  "old_source_files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/collect_worker_exit_receipts.py": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/code/collect_worker_exit_receipts.py",
+      "sha256": "bcf3355b756a54251c1d03ed0494cd9e0ee2c6dba5398da1a94e168807ae058f"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/code/configured_measurement.py",
+      "sha256": "2fc25c271ec55c0aeb2523873eda71543e5f46341706f18e6bc9f2cc924a33a0"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/controller.py": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/code/controller.py",
+      "sha256": "1c06dbf51a135fea5b32bdf4fa6feadcd597dcdd269559fb3ecdc8b58414f12a"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/device_memory_limit.py": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/code/device_memory_limit.py",
+      "sha256": "3abcb3641cc799424d6585e9881befbbd3c06800e9dc4d19fed5a507fe5e06ff"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/code/diagnose_gpu_execution.py",
+      "sha256": "310bcb6b4b1a18cc9d7acac62a07dfb60874bb60aed127b50b9c07227593f9f8"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_backend_image.py": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/code/direct_backend_image.py",
+      "sha256": "82898100d64f540c42c0a236acb6c20ca2808deb247b83da65927c6cb497a8e4"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/code/direct_measurement.py",
+      "sha256": "1d39e56fb7552d84c84c93962a22d79f9004ee5c7f6870f99f6f9de900da6adc"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_allocation_observation.py": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/code/h100_nvl_allocation_observation.py",
+      "sha256": "f614a3792f196605cd1fa4b76738ff3157f72ee6700058526c2598e45a63a50c"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_case.py": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/code/h100_nvl_slurm_case.py",
+      "sha256": "5acd8a33b849e8805a6d51023d5c5661ac989b473a6135669b9ca243256e754f"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_evidence.py": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/code/h100_nvl_slurm_evidence.py",
+      "sha256": "cc66813e5a31dd54f9c266f5a094c26c6a5753c17599b1badd97911f932c5824"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_qualification.py": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/code/h100_nvl_slurm_qualification.py",
+      "sha256": "93a19a553a10daf894e4e573b7aacebecf0d5a1cfa0b0f13a471c19e4184eecb"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_queue.py": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/code/h100_nvl_slurm_queue.py",
+      "sha256": "cac5c612c641aad0bc814438f0e21c02544073632484dcba99047e2ac44aaa60"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/code/h100_nvl_slurm_site_validation.py",
+      "sha256": "7b71221d25493ad5a5b07672e593a329f912ebf3ecd259f2aeede1e6da55acc6"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/code/ideas.py",
+      "sha256": "df811a5d51a7ef2f747bc32d1545c8286552675dfc8b859e7d0600eef4c920c5"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry.py": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/code/infrastructure_retry.py",
+      "sha256": "40c117d6fd1937dcdd465381d1469f0ad687103d7b551d604d8c6e03063f9107"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/code/measure_selected.py",
+      "sha256": "1651ea2184604082cefb97fdfe035640c4b71974ad1e6520d16ef84bdb54e0a2"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/passive_installed_slurm_observation.py": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/code/passive_installed_slurm_observation.py",
+      "sha256": "97ce634c07cd7a2b045d4253938db21c844abd93f3bb7b9d4dbebfd5f33bf842"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/portable_evidence.py": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/code/portable_evidence.py",
+      "sha256": "0ecae0ab2c21b0bbeadd47ddbd81026cb133e8f3d7f32c2148268dbfe575a4d1"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/code/post_comparison_validation.py",
+      "sha256": "2612e358f3e823289a92bdfe54856bdc8f0de5553db4bdcc5cd7617083cfd6aa"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/pregather_async_retry.py": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/code/pregather_async_retry.py",
+      "sha256": "881c89b678782dc56568b9257a9753a78b4e06464d43e73a14f1927a5fc17695"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/code/serval02_card1_binding.py",
+      "sha256": "e0d7c640086480bc6c5e6a5d867db5544a1a5fb111e63e20fe3aba50e1b5afa7"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/short_learning.py": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/code/short_learning.py",
+      "sha256": "b17d70f4e49de9f766062beb0578729fcde9d68a29060f37d718deb644cb0999"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/code/train_optimized.py",
+      "sha256": "66771819cf75ea89e1b6f8fef4467aece2eecf864cd0ca434cbb5c698365f210"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_active_configuration_observation.py": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/code/uva_active_configuration_observation.py",
+      "sha256": "8cc5a3544e426e3bd3e78707f6c77dc249a1d19165a593e157d2097daa07a648"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_slurm_configured_isolation.py": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/code/uva_slurm_configured_isolation.py",
+      "sha256": "d659dd1f21ddd2d7bb0474b4ded0ae4ea129c00365984c1fe7f84439b8eba694"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/code/validate_training_deployment.py",
+      "sha256": "e392dc6329cc8b5e902f3271d512cb9ee5bbc2f2fcdd6b0d85cefd981a1042b9"
+    }
+  },
+  "reviewed_command_form_families": [
+    "rev-parse HEAD",
+    "rev-parse --show-toplevel",
+    "rev-parse --abbrev-ref HEAD (new exact form)",
+    "rev-parse <40hex>:<plain-file> (new exact form)",
+    "symbolic-ref --quiet HEAD",
+    "show <40hex>:<plain-file>",
+    "cat-file blob <40hex>",
+    "ls-tree -rz <40hex> -- <plain-paths>",
+    "ls-tree -r --name-only <40hex> -- <plain-paths>",
+    "status --porcelain --untracked-files=all [-- <plain-paths>]",
+    "status --porcelain -- <plain-paths>",
+    "status --porcelain=v1 -uall (new exact form)"
+  ],
+  "saved_scientific_evidence_recomputed": false,
+  "scientific_credit": 0,
+  "source_scope_only": true,
+  "unsupported_preparation_live_only_form": {
+    "file": "h100_nvl_allocation_observation.py",
+    "form": "status --porcelain=v1 -- <its literal helper path>",
+    "function": "helper_source",
+    "reason": "The parent authorized only three exact new forms. The preparation/live helper source path remains unsupported by this metadata reader; no arbitrary prefix or new producer entry is admitted."
+  }
+}

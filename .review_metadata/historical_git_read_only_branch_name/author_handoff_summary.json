@@ -1,0 +1,88 @@
+{
+  "actual_failure_diagnosis": {
+    "bytes": 5707,
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-21-02_historical-git-source-inspection_rev-parse-abbrev-ref-HEAD_source-c28d3bc1_helpers-28_gpu-count-0/.review_metadata/historical_git_read_only_branch_name/actual_failure_diagnosis.json",
+    "sha256": "46cee280b07c7b9708901e527096a6313d3d8b8c2138e62b6f7d4d7abb2328df"
+  },
+  "actual_source_failure_preserved": {
+    "guard_child_elapsed_seconds": 52.673216342926025,
+    "guard_child_returncode": 1,
+    "guard_child_timed_out": false,
+    "guard_or_production_proof": false,
+    "old_private_source_commit": "8eb306af9f68aed5ab5cc0d01f75b35a1f234078",
+    "outer_wrapper_recorder_returncode": 0,
+    "owned_step": "6783003.348"
+  },
+  "admission_granted": false,
+  "base_commit": "c28d3bc12d0475533dbcaa81b8a7c1e7f87b614c",
+  "capture_core_api_and_current_direct_implementation_preserved": true,
+  "commit_created": false,
+  "exact_new_forms": [
+    [
+      "rev-parse",
+      "--abbrev-ref",
+      "HEAD"
+    ],
+    [
+      "rev-parse",
+      "<strict40hex>:<strictplainfile>"
+    ],
+    [
+      "status",
+      "--porcelain=v1",
+      "-uall"
+    ]
+  ],
+  "focused_metadata_fixtures": {
+    "actual_git_commands_executed": 0,
+    "actual_step": "6783003.355",
+    "passed": true,
+    "saved_scientific_results_replayed": false,
+    "stderr": {
+      "bytes": 1438,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-21-02_historical-git-source-inspection_rev-parse-abbrev-ref-HEAD_source-c28d3bc1_helpers-28_gpu-count-0/.review_metadata/historical_git_read_only_branch_name/author_git_shape_tests_stderr.raw",
+      "sha256": "55392187dbb82ac487f6f1d0db4c2bc985f14e0f68ea48711b36cf4115622691"
+    },
+    "stdout": {
+      "bytes": 2553,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-21-02_historical-git-source-inspection_rev-parse-abbrev-ref-HEAD_source-c28d3bc1_helpers-28_gpu-count-0/.review_metadata/historical_git_read_only_branch_name/author_git_shape_tests_stdout.raw",
+      "sha256": "481f806a1b4b75ba573653ddefcdd126b425ec22b6ae3fbbb617496ce073a948"
+    },
+    "tests_run": 6
+  },
+  "historical_child_timeout_seconds": 180,
+  "independent_review_complete": false,
+  "inventory_direct_or_prefix_expanded_call_sites": 78,
+  "inventory_dynamic_wrapper_literal_callers": 5,
+  "inventory_old_source_file_count": 26,
+  "kind": "narrow_historical_read_only_git_forms_author_handoff",
+  "new_actual_observation_performed": false,
+  "optional_digest_cache_enabled": false,
+  "original_55_statement_reader_preserved": true,
+  "original_numerical_files_preserved": 13,
+  "other_base_source_files_preserved": 319,
+  "prepared_at_seconds": 1793855542.6087527,
+  "production_guard_timeout_seconds": 180,
+  "safety_boundary": "All actual executable/cwd/environment/source-root/config/filter checks remain unchanged; no trailing arguments, general revisions, mutation commands or external programs.",
+  "scientific_credit": 0,
+  "source_inventory": {
+    "bytes": 43179,
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-21-02_historical-git-source-inspection_rev-parse-abbrev-ref-HEAD_source-c28d3bc1_helpers-28_gpu-count-0/.review_metadata/historical_git_read_only_branch_name/old_twenty_six_git_call_inventory.json",
+    "sha256": "68253031227fc3a240387aa6c15fcc7c2ca6886f0a910973fed66c527d07465b"
+  },
+  "source_paths": [
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_confirmation.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_historical_git_inspection.py"
+  ],
+  "source_preservation": {
+    "bytes": 58099,
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-21-02_historical-git-source-inspection_rev-parse-abbrev-ref-HEAD_source-c28d3bc1_helpers-28_gpu-count-0/.review_metadata/historical_git_read_only_branch_name/static_source_preservation.json",
+    "sha256": "88336f83b8fa562fefaa4472ccf5ec2ed0a407847c2af88e078149d776b3c32e"
+  },
+  "source_sha256": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_confirmation.py": "ccf7bdf5eabf408f385693c30dbd6600a27284ccc79edb1068542a2a245bee71",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_historical_git_inspection.py": "8e9ed0e888f667d05d864ab3ef8456b3dde96b3a3fd8a5c2e947792148571e28"
+  },
+  "unsupported_preparation_live_form": "status --porcelain=v1 -- <literal helper path> remains refused; no preparation/live old unit is admitted.",
+  "worktree": "/p/rlprojects/RND_worktrees/2026-11-04-21-02_historical-git-source-inspection_rev-parse-abbrev-ref-HEAD_source-c28d3bc1_helpers-28_gpu-count-0"
+}
