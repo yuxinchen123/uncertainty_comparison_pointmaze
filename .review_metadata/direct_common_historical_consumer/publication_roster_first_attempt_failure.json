@@ -1,0 +1,10 @@
+{
+  "actual_file_mode": "0o660",
+  "commit_created": false,
+  "correction": "Retain actual reviewed permissions; require ordinary nonexecutable text files and verify Git mode100644 plus exact staged bytes.",
+  "failure": "The publication precheck required mode0644 for every text proof. A reviewed metadata file has a nonexecutable group-writable mode. No source bytes or permissions were changed and staging/commit had not started.",
+  "first_rejected_path": ".review_metadata/direct_common_historical_consumer/actual_old_twenty_six_source_fixture_inputs.json",
+  "index_changed": false,
+  "kind": "preserved_publication_roster_permission_assumption_failure",
+  "source_edits": false
+}

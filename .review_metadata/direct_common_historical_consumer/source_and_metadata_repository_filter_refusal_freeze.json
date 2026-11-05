@@ -1,0 +1,951 @@
+{
+  "admission_granted": false,
+  "base_commit": "cc9972dd6a8bfba39ba439883cbc821b93c55e3d",
+  "files": {
+    ".review_metadata/direct_common_historical_consumer/actual_old_twenty_six_source_fixture_inputs.json": {
+      "bytes": 5672,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/actual_old_twenty_six_source_fixture_inputs.json",
+      "sha256": "4e41f509e21fc5cb074b7ea9a8fe8d9a8998c8aef27eac0c0cbd1c10de3947d8"
+    },
+    ".review_metadata/direct_common_historical_consumer/author_actual_old_source_namespace_stderr.raw": {
+      "bytes": 0,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/author_actual_old_source_namespace_stderr.raw",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/direct_common_historical_consumer/author_actual_old_source_namespace_stdout.raw": {
+      "bytes": 18242,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/author_actual_old_source_namespace_stdout.raw",
+      "sha256": "248fa3e3ff66ebb49f0663f19a1a9dde9c9c8856bc008dadad247fcc524feddd"
+    },
+    ".review_metadata/direct_common_historical_consumer/author_focused_corrected_stderr.raw": {
+      "bytes": 24051,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/author_focused_corrected_stderr.raw",
+      "sha256": "91bcf2d25406d1f63fc0d96cb16ffcaea8e1343eb7988dcbdf439e0c1362cbe5"
+    },
+    ".review_metadata/direct_common_historical_consumer/author_focused_corrected_stdout.raw": {
+      "bytes": 3584,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/author_focused_corrected_stdout.raw",
+      "sha256": "26b92754a421169ea51ac7be3c0e59679864fc08b91b0b3ce25eb0670dc5f649"
+    },
+    ".review_metadata/direct_common_historical_consumer/author_focused_initial_stderr.raw": {
+      "bytes": 53692,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/author_focused_initial_stderr.raw",
+      "sha256": "5843e9ff460a9816e9679a258b661ff8d0da5a109bb78113a92db709c4ec450c"
+    },
+    ".review_metadata/direct_common_historical_consumer/author_focused_initial_stdout.raw": {
+      "bytes": 3259,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/author_focused_initial_stdout.raw",
+      "sha256": "9135770e3bfc817259291161bbf6153da59b17837d4153aef697871ac8b4ef8f"
+    },
+    ".review_metadata/direct_common_historical_consumer/author_focused_source_and_fixture_corrections_stderr.raw": {
+      "bytes": 22340,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/author_focused_source_and_fixture_corrections_stderr.raw",
+      "sha256": "350296db6e09d2b5f23921dfdbff93bb105f0d9d50901fc5ada0a61144a6c0d3"
+    },
+    ".review_metadata/direct_common_historical_consumer/author_focused_source_and_fixture_corrections_stdout.raw": {
+      "bytes": 3583,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/author_focused_source_and_fixture_corrections_stdout.raw",
+      "sha256": "88904e1a614d3595f5f781eaa0560eff06f3512e3a26010df8557acca0523ebb"
+    },
+    ".review_metadata/direct_common_historical_consumer/author_protected_source_scope_stderr.raw": {
+      "bytes": 0,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/author_protected_source_scope_stderr.raw",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/direct_common_historical_consumer/author_protected_source_scope_stdout.raw": {
+      "bytes": 5734,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/author_protected_source_scope_stdout.raw",
+      "sha256": "adbb30115f3492f35b9a9524e274e4b539cf24beef86adad417a02d8d987b412"
+    },
+    ".review_metadata/direct_common_historical_consumer/author_repository_filter_refusal_initial_stderr.raw": {
+      "bytes": 1539,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/author_repository_filter_refusal_initial_stderr.raw",
+      "sha256": "fe8e8d5c593329ca71dd38c01ec91bf83d09023968d61a21f75360b03993139c"
+    },
+    ".review_metadata/direct_common_historical_consumer/author_repository_filter_refusal_initial_stdout.raw": {
+      "bytes": 11947,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/author_repository_filter_refusal_initial_stdout.raw",
+      "sha256": "6bdade03c2391b156005efa05e60ac1bb3f1214e233078292a224a78fd1836ed"
+    },
+    ".review_metadata/direct_common_historical_consumer/author_repository_filter_refusal_proof_controls_stderr.raw": {
+      "bytes": 19746,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/author_repository_filter_refusal_proof_controls_stderr.raw",
+      "sha256": "7c7d9fa918acb6cfe01e1550789f8c31ef03f7b36600aa475f1393d6e60b5aab"
+    },
+    ".review_metadata/direct_common_historical_consumer/author_repository_filter_refusal_proof_controls_stdout.raw": {
+      "bytes": 0,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/author_repository_filter_refusal_proof_controls_stdout.raw",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/direct_common_historical_consumer/author_repository_filter_refusal_summary.json": {
+      "bytes": 7907,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/author_repository_filter_refusal_summary.json",
+      "sha256": "70c9c7b67648772a2bc5c38d75b4c24a165f7c7a86d0982b73e564d11a441599"
+    },
+    ".review_metadata/direct_common_historical_consumer/author_repository_filter_refusal_targeted_stderr.raw": {
+      "bytes": 4967,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/author_repository_filter_refusal_targeted_stderr.raw",
+      "sha256": "d4f740526e060e0a0bf43171223d8e7fde2c1ded54790f6528cb8dd0b4b40bf3"
+    },
+    ".review_metadata/direct_common_historical_consumer/author_repository_filter_refusal_targeted_stdout.raw": {
+      "bytes": 12608,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/author_repository_filter_refusal_targeted_stdout.raw",
+      "sha256": "478065781dea41f145371576b5980aa422b5f9ad1b6e293715b231f67db97e53"
+    },
+    ".review_metadata/direct_common_historical_consumer/author_repository_filter_static_source_scope.json": {
+      "bytes": 4265,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/author_repository_filter_static_source_scope.json",
+      "sha256": "b6a631bd18ff275bf38167d2124fd23b5923ac5d8be39350282c55b829b86fb2"
+    },
+    ".review_metadata/direct_common_historical_consumer/author_source_and_metadata_summary.json": {
+      "bytes": 6780,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/author_source_and_metadata_summary.json",
+      "sha256": "980912e4a721617fdffed45702e9b43d322f34e6b37bd30e332e86814c8fa566"
+    },
+    ".review_metadata/direct_common_historical_consumer/author_subprocess_corrections_old_namespace_stderr.raw": {
+      "bytes": 0,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/author_subprocess_corrections_old_namespace_stderr.raw",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/direct_common_historical_consumer/author_subprocess_corrections_old_namespace_stdout.raw": {
+      "bytes": 18242,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/author_subprocess_corrections_old_namespace_stdout.raw",
+      "sha256": "510461f466053c5efb3d8dd649342c57d73da8360682f5b7ceb29e1d1d0cdea3"
+    },
+    ".review_metadata/direct_common_historical_consumer/author_subprocess_corrections_protected_scope_stderr.raw": {
+      "bytes": 0,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/author_subprocess_corrections_protected_scope_stderr.raw",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/direct_common_historical_consumer/author_subprocess_corrections_protected_scope_stdout.raw": {
+      "bytes": 5734,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/author_subprocess_corrections_protected_scope_stdout.raw",
+      "sha256": "a66528c1ee6e6923600384cbd4068c80dd09fff3709369e41237b1c276756f06"
+    },
+    ".review_metadata/direct_common_historical_consumer/author_subprocess_exact_arguments_stderr.raw": {
+      "bytes": 23194,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/author_subprocess_exact_arguments_stderr.raw",
+      "sha256": "dc2ddb60a1ad54b5192b481dbecbf47758b214f92080162d9b29beb82e4a4d41"
+    },
+    ".review_metadata/direct_common_historical_consumer/author_subprocess_exact_arguments_stdout.raw": {
+      "bytes": 3583,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/author_subprocess_exact_arguments_stdout.raw",
+      "sha256": "66230b6f38495cc8042fbc5abc6ed156822b8e8b4f1329c05485917a611c1792"
+    },
+    ".review_metadata/direct_common_historical_consumer/author_subprocess_final_old_namespace_stderr.raw": {
+      "bytes": 0,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/author_subprocess_final_old_namespace_stderr.raw",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/direct_common_historical_consumer/author_subprocess_final_old_namespace_stdout.raw": {
+      "bytes": 19243,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/author_subprocess_final_old_namespace_stdout.raw",
+      "sha256": "43c4e33838e02fa9ded0b7920bc1c95f478c16581f0a02c504df47cd10fa9e62"
+    },
+    ".review_metadata/direct_common_historical_consumer/author_subprocess_permission_corrections_stderr.raw": {
+      "bytes": 23194,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/author_subprocess_permission_corrections_stderr.raw",
+      "sha256": "bc2091e9880c6ac6fedf7e232e9379042ffcb166484650c5303f4942632616b4"
+    },
+    ".review_metadata/direct_common_historical_consumer/author_subprocess_permission_corrections_stdout.raw": {
+      "bytes": 3582,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/author_subprocess_permission_corrections_stdout.raw",
+      "sha256": "61771feb5209ff22f2bf8805d349394a735270a39e2ba42d1cd3db90f9e69c07"
+    },
+    ".review_metadata/direct_common_historical_consumer/author_subprocess_permission_corrections_summary.json": {
+      "bytes": 7358,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/author_subprocess_permission_corrections_summary.json",
+      "sha256": "644bfb70a448ea9618493822585af79b8d2887bfdbd18b867aebff4c1633e0e5"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/actual_old_twenty_six_source_fixture_inputs.json": {
+      "bytes": 5672,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/actual_old_twenty_six_source_fixture_inputs.json",
+      "sha256": "4e41f509e21fc5cb074b7ea9a8fe8d9a8998c8aef27eac0c0cbd1c10de3947d8"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/author_actual_old_source_namespace_stderr.raw": {
+      "bytes": 0,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/author_actual_old_source_namespace_stderr.raw",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/author_actual_old_source_namespace_stdout.raw": {
+      "bytes": 18242,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/author_actual_old_source_namespace_stdout.raw",
+      "sha256": "248fa3e3ff66ebb49f0663f19a1a9dde9c9c8856bc008dadad247fcc524feddd"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/author_focused_corrected_stderr.raw": {
+      "bytes": 24051,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/author_focused_corrected_stderr.raw",
+      "sha256": "91bcf2d25406d1f63fc0d96cb16ffcaea8e1343eb7988dcbdf439e0c1362cbe5"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/author_focused_corrected_stdout.raw": {
+      "bytes": 3584,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/author_focused_corrected_stdout.raw",
+      "sha256": "26b92754a421169ea51ac7be3c0e59679864fc08b91b0b3ce25eb0670dc5f649"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/author_focused_initial_stderr.raw": {
+      "bytes": 53692,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/author_focused_initial_stderr.raw",
+      "sha256": "5843e9ff460a9816e9679a258b661ff8d0da5a109bb78113a92db709c4ec450c"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/author_focused_initial_stdout.raw": {
+      "bytes": 3259,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/author_focused_initial_stdout.raw",
+      "sha256": "9135770e3bfc817259291161bbf6153da59b17837d4153aef697871ac8b4ef8f"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/author_focused_source_and_fixture_corrections_stderr.raw": {
+      "bytes": 22340,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/author_focused_source_and_fixture_corrections_stderr.raw",
+      "sha256": "350296db6e09d2b5f23921dfdbff93bb105f0d9d50901fc5ada0a61144a6c0d3"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/author_focused_source_and_fixture_corrections_stdout.raw": {
+      "bytes": 3583,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/author_focused_source_and_fixture_corrections_stdout.raw",
+      "sha256": "88904e1a614d3595f5f781eaa0560eff06f3512e3a26010df8557acca0523ebb"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/author_protected_source_scope_stderr.raw": {
+      "bytes": 0,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/author_protected_source_scope_stderr.raw",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/author_protected_source_scope_stdout.raw": {
+      "bytes": 5734,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/author_protected_source_scope_stdout.raw",
+      "sha256": "adbb30115f3492f35b9a9524e274e4b539cf24beef86adad417a02d8d987b412"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/author_source_and_metadata_summary.json": {
+      "bytes": 6780,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/author_source_and_metadata_summary.json",
+      "sha256": "980912e4a721617fdffed45702e9b43d322f34e6b37bd30e332e86814c8fa566"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/author_subprocess_corrections_old_namespace_stderr.raw": {
+      "bytes": 0,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/author_subprocess_corrections_old_namespace_stderr.raw",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/author_subprocess_corrections_old_namespace_stdout.raw": {
+      "bytes": 18242,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/author_subprocess_corrections_old_namespace_stdout.raw",
+      "sha256": "510461f466053c5efb3d8dd649342c57d73da8360682f5b7ceb29e1d1d0cdea3"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/author_subprocess_corrections_protected_scope_stderr.raw": {
+      "bytes": 0,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/author_subprocess_corrections_protected_scope_stderr.raw",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/author_subprocess_corrections_protected_scope_stdout.raw": {
+      "bytes": 5734,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/author_subprocess_corrections_protected_scope_stdout.raw",
+      "sha256": "a66528c1ee6e6923600384cbd4068c80dd09fff3709369e41237b1c276756f06"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/author_subprocess_exact_arguments_stderr.raw": {
+      "bytes": 23194,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/author_subprocess_exact_arguments_stderr.raw",
+      "sha256": "dc2ddb60a1ad54b5192b481dbecbf47758b214f92080162d9b29beb82e4a4d41"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/author_subprocess_exact_arguments_stdout.raw": {
+      "bytes": 3583,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/author_subprocess_exact_arguments_stdout.raw",
+      "sha256": "66230b6f38495cc8042fbc5abc6ed156822b8e8b4f1329c05485917a611c1792"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/author_subprocess_final_old_namespace_stderr.raw": {
+      "bytes": 0,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/author_subprocess_final_old_namespace_stderr.raw",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/author_subprocess_final_old_namespace_stdout.raw": {
+      "bytes": 19243,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/author_subprocess_final_old_namespace_stdout.raw",
+      "sha256": "43c4e33838e02fa9ded0b7920bc1c95f478c16581f0a02c504df47cd10fa9e62"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/author_subprocess_permission_corrections_stderr.raw": {
+      "bytes": 23194,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/author_subprocess_permission_corrections_stderr.raw",
+      "sha256": "bc2091e9880c6ac6fedf7e232e9379042ffcb166484650c5303f4942632616b4"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/author_subprocess_permission_corrections_stdout.raw": {
+      "bytes": 3582,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/author_subprocess_permission_corrections_stdout.raw",
+      "sha256": "61771feb5209ff22f2bf8805d349394a735270a39e2ba42d1cd3db90f9e69c07"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/author_subprocess_permission_corrections_summary.json": {
+      "bytes": 7358,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/author_subprocess_permission_corrections_summary.json",
+      "sha256": "644bfb70a448ea9618493822585af79b8d2887bfdbd18b867aebff4c1633e0e5"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/actual_old_twenty_six_source_fixture_inputs.json": {
+      "bytes": 5672,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/actual_old_twenty_six_source_fixture_inputs.json",
+      "sha256": "4e41f509e21fc5cb074b7ea9a8fe8d9a8998c8aef27eac0c0cbd1c10de3947d8"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/author_actual_old_source_namespace_stderr.raw": {
+      "bytes": 0,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/author_actual_old_source_namespace_stderr.raw",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/author_actual_old_source_namespace_stdout.raw": {
+      "bytes": 18242,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/author_actual_old_source_namespace_stdout.raw",
+      "sha256": "248fa3e3ff66ebb49f0663f19a1a9dde9c9c8856bc008dadad247fcc524feddd"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/author_focused_corrected_stderr.raw": {
+      "bytes": 24051,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/author_focused_corrected_stderr.raw",
+      "sha256": "91bcf2d25406d1f63fc0d96cb16ffcaea8e1343eb7988dcbdf439e0c1362cbe5"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/author_focused_corrected_stdout.raw": {
+      "bytes": 3584,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/author_focused_corrected_stdout.raw",
+      "sha256": "26b92754a421169ea51ac7be3c0e59679864fc08b91b0b3ce25eb0670dc5f649"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/author_focused_initial_stderr.raw": {
+      "bytes": 53692,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/author_focused_initial_stderr.raw",
+      "sha256": "5843e9ff460a9816e9679a258b661ff8d0da5a109bb78113a92db709c4ec450c"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/author_focused_initial_stdout.raw": {
+      "bytes": 3259,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/author_focused_initial_stdout.raw",
+      "sha256": "9135770e3bfc817259291161bbf6153da59b17837d4153aef697871ac8b4ef8f"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/author_focused_source_and_fixture_corrections_stderr.raw": {
+      "bytes": 22340,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/author_focused_source_and_fixture_corrections_stderr.raw",
+      "sha256": "350296db6e09d2b5f23921dfdbff93bb105f0d9d50901fc5ada0a61144a6c0d3"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/author_focused_source_and_fixture_corrections_stdout.raw": {
+      "bytes": 3583,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/author_focused_source_and_fixture_corrections_stdout.raw",
+      "sha256": "88904e1a614d3595f5f781eaa0560eff06f3512e3a26010df8557acca0523ebb"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/author_protected_source_scope_stderr.raw": {
+      "bytes": 0,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/author_protected_source_scope_stderr.raw",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/author_protected_source_scope_stdout.raw": {
+      "bytes": 5734,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/author_protected_source_scope_stdout.raw",
+      "sha256": "adbb30115f3492f35b9a9524e274e4b539cf24beef86adad417a02d8d987b412"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/author_source_and_metadata_summary.json": {
+      "bytes": 6780,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/author_source_and_metadata_summary.json",
+      "sha256": "980912e4a721617fdffed45702e9b43d322f34e6b37bd30e332e86814c8fa566"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/check_actual_old_source_namespace.py": {
+      "bytes": 3844,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/check_actual_old_source_namespace.py",
+      "sha256": "54818416290887ed13ae194d064966dfb4530696fe53621eed46a19548c2c2b2"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/check_protected_source_scope.py": {
+      "bytes": 3499,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/check_protected_source_scope.py",
+      "sha256": "45078da588cf5acad5e49695ad0eac1a6e3c3e70613cbfcd41416f2b2a1f64e7"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/design.json": {
+      "bytes": 6642,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/design.json",
+      "sha256": "3315f50d3301a3b3a2cad228c70444188a0f655dc5fbd6d1bc5ad835dcfd8c3c"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/linked_worktree_binding.json": {
+      "bytes": 6204,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/linked_worktree_binding.json",
+      "sha256": "aac13b622209654a34e40e3cff529001d83692a2c18a39d8550ffbfdbe4f9319"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/optional_digest_reuse_proposal.json": {
+      "bytes": 3067,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/optional_digest_reuse_proposal.json",
+      "sha256": "f7f09b2c2568c169e0197b6d40687da0a79f72f6b5cc73b3841aff81d44408d8"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/protected_numerical_source_snapshot.json": {
+      "bytes": 1967,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/protected_numerical_source_snapshot.json",
+      "sha256": "15a014542aba5c23abe9b570eb6929b98920078296069f033848c97dabad594b"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/run_focused_metadata_checks.py": {
+      "bytes": 6020,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/run_focused_metadata_checks.py",
+      "sha256": "fa06014d27661454cc784b377b0b2c550bab4186b696d3bfec0bc17edb0eae09"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_confirmation.py": {
+      "bytes": 51582,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_confirmation.py",
+      "sha256": "2fb5026b7b8cb7ca2fd9de864bf5b594484725bad6a062525bd4bae4fe12aa54"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_historical_consumer.py": {
+      "bytes": 23228,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_historical_consumer.py",
+      "sha256": "561be815e7a6bf3912072788cdf070248fc3b673c7c03facb2a77b45954a2ede"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py": {
+      "bytes": 59918,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py",
+      "sha256": "05ae4baa2c3acb75821302bd03426cda98c60283453a9fea6202b0d00e4d0362"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py": {
+      "bytes": 74633,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py",
+      "sha256": "a1ef9d787cb7387be88a078eac6d3bae9c853d3ceb3ac6a6aeb471e71e3aff4d"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_common_confirmation.py": {
+      "bytes": 48531,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_common_confirmation.py",
+      "sha256": "6cb1c8e7d1432ddaad64c3339eb1fc2d4adb3926b5920cc06661c154eaa3b8d0"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_historical_consumer.py": {
+      "bytes": 20555,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_historical_consumer.py",
+      "sha256": "05547190d12a8f28297fdf9acc2ee6a0bb8dadce046d367e1427bc46e992d11c"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/independent_rejection.json": {
+      "bytes": 7723,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/independent_rejection.json",
+      "sha256": "341db775acca625237a9f027a4a3337b123947b7a1e59cdf8e703e6c9255a105"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/preservation.json": {
+      "bytes": 14477,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/preservation.json",
+      "sha256": "1f7c7ff1d9e396ff8f2ad8cafde19d42b4b1901188fbf1bbdb680ef9fbb8725a"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/source_and_metadata_freeze.json": {
+      "bytes": 12982,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/source_and_metadata_freeze.json",
+      "sha256": "fbd84dd9fe7be09f22402a1701614d898b3a080cf726b2438e15d11077d518d5"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/check_actual_old_source_namespace.py": {
+      "bytes": 4307,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/check_actual_old_source_namespace.py",
+      "sha256": "9f6c5bdcdb8c0a388fedd345beb335c9843dc507f0b44e758ffd231b4aeac204"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/check_protected_source_scope.py": {
+      "bytes": 3499,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/check_protected_source_scope.py",
+      "sha256": "45078da588cf5acad5e49695ad0eac1a6e3c3e70613cbfcd41416f2b2a1f64e7"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/design.json": {
+      "bytes": 6642,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/design.json",
+      "sha256": "3315f50d3301a3b3a2cad228c70444188a0f655dc5fbd6d1bc5ad835dcfd8c3c"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/linked_worktree_binding.json": {
+      "bytes": 6204,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/linked_worktree_binding.json",
+      "sha256": "aac13b622209654a34e40e3cff529001d83692a2c18a39d8550ffbfdbe4f9319"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/optional_digest_reuse_proposal.json": {
+      "bytes": 3067,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/optional_digest_reuse_proposal.json",
+      "sha256": "f7f09b2c2568c169e0197b6d40687da0a79f72f6b5cc73b3841aff81d44408d8"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/protected_numerical_source_snapshot.json": {
+      "bytes": 1967,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/protected_numerical_source_snapshot.json",
+      "sha256": "15a014542aba5c23abe9b570eb6929b98920078296069f033848c97dabad594b"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/run_focused_metadata_checks.py": {
+      "bytes": 6020,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/run_focused_metadata_checks.py",
+      "sha256": "fa06014d27661454cc784b377b0b2c550bab4186b696d3bfec0bc17edb0eae09"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/source_and_metadata_freeze.json": {
+      "bytes": 12982,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer/source_and_metadata_freeze.json",
+      "sha256": "fbd84dd9fe7be09f22402a1701614d898b3a080cf726b2438e15d11077d518d5"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer_independent_review/additional_boundaries_stderr.raw": {
+      "bytes": 0,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer_independent_review/additional_boundaries_stderr.raw",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer_independent_review/additional_boundaries_stdout.raw": {
+      "bytes": 2527,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer_independent_review/additional_boundaries_stdout.raw",
+      "sha256": "a7f4e9a3ae791f8fd1bbc5192449b2474cfa018416701da9e0dac65f5c3ea6d9"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer_independent_review/check_additional_boundaries.py": {
+      "bytes": 3448,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer_independent_review/check_additional_boundaries.py",
+      "sha256": "d320738ca3d03aa7a38e78014d3ba3cb9eea845c77982747d716361d02a9f39a"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer_independent_review/check_reserved_release.py": {
+      "bytes": 10466,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer_independent_review/check_reserved_release.py",
+      "sha256": "b3746b95279aada6ed8b390d5afe604e2e5dc39cb99f9ba3602f0f8dff644cca"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer_independent_review/focused_stderr.raw": {
+      "bytes": 22340,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer_independent_review/focused_stderr.raw",
+      "sha256": "f6a2761c2e8e58dde9f5fe347a78fff95034da9d9c911d168fdc833a49a58649"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer_independent_review/focused_stdout.raw": {
+      "bytes": 3583,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer_independent_review/focused_stdout.raw",
+      "sha256": "fa06a99ba18a14e52203a6a679e54a8c65d05ce52e30129c4b347398ab1ab90b"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer_independent_review/independent_source_review.json": {
+      "bytes": 7723,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer_independent_review/independent_source_review.json",
+      "sha256": "341db775acca625237a9f027a4a3337b123947b7a1e59cdf8e703e6c9255a105"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer_independent_review/old_namespace_stderr.raw": {
+      "bytes": 0,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer_independent_review/old_namespace_stderr.raw",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer_independent_review/old_namespace_stdout.raw": {
+      "bytes": 18242,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer_independent_review/old_namespace_stdout.raw",
+      "sha256": "6f88603738728859cca301ae363771a9541290c481c2f12e126e4994b0401994"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer_independent_review/protected_scope_stderr.raw": {
+      "bytes": 0,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer_independent_review/protected_scope_stderr.raw",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer_independent_review/protected_scope_stdout.raw": {
+      "bytes": 5734,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer_independent_review/protected_scope_stdout.raw",
+      "sha256": "1c46d5be4f90168d7ff712b15912964c08d0ee4724b542b8d0df036c7217e6ba"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer_independent_review/reserved_release_stderr.raw": {
+      "bytes": 0,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer_independent_review/reserved_release_stderr.raw",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer_independent_review/reserved_release_stdout.raw": {
+      "bytes": 595,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/.review_metadata/direct_common_historical_consumer_independent_review/reserved_release_stdout.raw",
+      "sha256": "b92a40cccc8bf71d5d58de524321ab7365e9627b8f23b898897fda4d0d6e4e46"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_confirmation.py": {
+      "bytes": 55925,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_confirmation.py",
+      "sha256": "092790c5444f0e1313dc42416b25403c67b30ef53d73234ba6e88b0bf5c12cca"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_historical_consumer.py": {
+      "bytes": 23374,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_historical_consumer.py",
+      "sha256": "5470ef2638177e6a0a56597ef85553f7cf3603df81e86d4c14e037a66b7ddd03"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py": {
+      "bytes": 59918,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py",
+      "sha256": "05ae4baa2c3acb75821302bd03426cda98c60283453a9fea6202b0d00e4d0362"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py": {
+      "bytes": 74633,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py",
+      "sha256": "a1ef9d787cb7387be88a078eac6d3bae9c853d3ceb3ac6a6aeb471e71e3aff4d"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_common_confirmation.py": {
+      "bytes": 53158,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_common_confirmation.py",
+      "sha256": "0c4b69eff2269a804f9ae2b9eb243984c0fa3d219acefe40df0b243d91729bff"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_historical_consumer.py": {
+      "bytes": 21461,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/files/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_historical_consumer.py",
+      "sha256": "d19d7a2f859b810204596c4e16a04fdc318eeaa9a08fdb7bd42435d6f0d359a0"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/independent_rejection.json": {
+      "bytes": 8493,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/independent_rejection.json",
+      "sha256": "e8c307e7d98c82394834d0df0d1de64a28b2b7ea29247956fcda7f3790763a24"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/preservation.json": {
+      "bytes": 49774,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/preservation.json",
+      "sha256": "9ec29a4c45c5d09c9bd12704057b9b92348b1323fb4eef0bcc667ebbda8b445f"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_repository_filter_correction/rejected_source_freeze.json": {
+      "bytes": 43844,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_repository_filter_correction/rejected_source_freeze.json",
+      "sha256": "83b9b25e94808d167c96da8bb034d8725e0774f1e746acb13d1b8a08ba94d751"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/actual_old_twenty_six_source_fixture_inputs.json": {
+      "bytes": 5672,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/actual_old_twenty_six_source_fixture_inputs.json",
+      "sha256": "4e41f509e21fc5cb074b7ea9a8fe8d9a8998c8aef27eac0c0cbd1c10de3947d8"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/author_actual_old_source_namespace_stderr.raw": {
+      "bytes": 0,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/author_actual_old_source_namespace_stderr.raw",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/author_actual_old_source_namespace_stdout.raw": {
+      "bytes": 18242,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/author_actual_old_source_namespace_stdout.raw",
+      "sha256": "248fa3e3ff66ebb49f0663f19a1a9dde9c9c8856bc008dadad247fcc524feddd"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/author_focused_corrected_stderr.raw": {
+      "bytes": 24051,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/author_focused_corrected_stderr.raw",
+      "sha256": "91bcf2d25406d1f63fc0d96cb16ffcaea8e1343eb7988dcbdf439e0c1362cbe5"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/author_focused_corrected_stdout.raw": {
+      "bytes": 3584,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/author_focused_corrected_stdout.raw",
+      "sha256": "26b92754a421169ea51ac7be3c0e59679864fc08b91b0b3ce25eb0670dc5f649"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/author_focused_initial_stderr.raw": {
+      "bytes": 53692,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/author_focused_initial_stderr.raw",
+      "sha256": "5843e9ff460a9816e9679a258b661ff8d0da5a109bb78113a92db709c4ec450c"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/author_focused_initial_stdout.raw": {
+      "bytes": 3259,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/author_focused_initial_stdout.raw",
+      "sha256": "9135770e3bfc817259291161bbf6153da59b17837d4153aef697871ac8b4ef8f"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/author_focused_source_and_fixture_corrections_stderr.raw": {
+      "bytes": 22340,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/author_focused_source_and_fixture_corrections_stderr.raw",
+      "sha256": "350296db6e09d2b5f23921dfdbff93bb105f0d9d50901fc5ada0a61144a6c0d3"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/author_focused_source_and_fixture_corrections_stdout.raw": {
+      "bytes": 3583,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/author_focused_source_and_fixture_corrections_stdout.raw",
+      "sha256": "88904e1a614d3595f5f781eaa0560eff06f3512e3a26010df8557acca0523ebb"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/author_protected_source_scope_stderr.raw": {
+      "bytes": 0,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/author_protected_source_scope_stderr.raw",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/author_protected_source_scope_stdout.raw": {
+      "bytes": 5734,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/author_protected_source_scope_stdout.raw",
+      "sha256": "adbb30115f3492f35b9a9524e274e4b539cf24beef86adad417a02d8d987b412"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/author_source_and_metadata_summary.json": {
+      "bytes": 6780,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/author_source_and_metadata_summary.json",
+      "sha256": "980912e4a721617fdffed45702e9b43d322f34e6b37bd30e332e86814c8fa566"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/check_actual_old_source_namespace.py": {
+      "bytes": 3844,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/check_actual_old_source_namespace.py",
+      "sha256": "54818416290887ed13ae194d064966dfb4530696fe53621eed46a19548c2c2b2"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/check_protected_source_scope.py": {
+      "bytes": 3499,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/check_protected_source_scope.py",
+      "sha256": "45078da588cf5acad5e49695ad0eac1a6e3c3e70613cbfcd41416f2b2a1f64e7"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/design.json": {
+      "bytes": 6642,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/design.json",
+      "sha256": "3315f50d3301a3b3a2cad228c70444188a0f655dc5fbd6d1bc5ad835dcfd8c3c"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/linked_worktree_binding.json": {
+      "bytes": 6204,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/linked_worktree_binding.json",
+      "sha256": "aac13b622209654a34e40e3cff529001d83692a2c18a39d8550ffbfdbe4f9319"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/optional_digest_reuse_proposal.json": {
+      "bytes": 3067,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/optional_digest_reuse_proposal.json",
+      "sha256": "f7f09b2c2568c169e0197b6d40687da0a79f72f6b5cc73b3841aff81d44408d8"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/protected_numerical_source_snapshot.json": {
+      "bytes": 1967,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/protected_numerical_source_snapshot.json",
+      "sha256": "15a014542aba5c23abe9b570eb6929b98920078296069f033848c97dabad594b"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/run_focused_metadata_checks.py": {
+      "bytes": 6020,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/.review_metadata/direct_common_historical_consumer/run_focused_metadata_checks.py",
+      "sha256": "fa06014d27661454cc784b377b0b2c550bab4186b696d3bfec0bc17edb0eae09"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_confirmation.py": {
+      "bytes": 51582,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_confirmation.py",
+      "sha256": "2fb5026b7b8cb7ca2fd9de864bf5b594484725bad6a062525bd4bae4fe12aa54"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_historical_consumer.py": {
+      "bytes": 23228,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_historical_consumer.py",
+      "sha256": "561be815e7a6bf3912072788cdf070248fc3b673c7c03facb2a77b45954a2ede"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py": {
+      "bytes": 59918,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py",
+      "sha256": "05ae4baa2c3acb75821302bd03426cda98c60283453a9fea6202b0d00e4d0362"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py": {
+      "bytes": 74633,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py",
+      "sha256": "a1ef9d787cb7387be88a078eac6d3bae9c853d3ceb3ac6a6aeb471e71e3aff4d"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_common_confirmation.py": {
+      "bytes": 48531,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_common_confirmation.py",
+      "sha256": "6cb1c8e7d1432ddaad64c3339eb1fc2d4adb3926b5920cc06661c154eaa3b8d0"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_historical_consumer.py": {
+      "bytes": 20555,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/files/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_historical_consumer.py",
+      "sha256": "05547190d12a8f28297fdf9acc2ee6a0bb8dadce046d367e1427bc46e992d11c"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/independent_rejection.json": {
+      "bytes": 7723,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/independent_rejection.json",
+      "sha256": "341db775acca625237a9f027a4a3337b123947b7a1e59cdf8e703e6c9255a105"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/preservation.json": {
+      "bytes": 14477,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/preservation.json",
+      "sha256": "1f7c7ff1d9e396ff8f2ad8cafde19d42b4b1901188fbf1bbdb680ef9fbb8725a"
+    },
+    ".review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/source_and_metadata_freeze.json": {
+      "bytes": 12982,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/source_and_metadata_freeze.json",
+      "sha256": "fbd84dd9fe7be09f22402a1701614d898b3a080cf726b2438e15d11077d518d5"
+    },
+    ".review_metadata/direct_common_historical_consumer/check_actual_old_source_namespace.py": {
+      "bytes": 4395,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/check_actual_old_source_namespace.py",
+      "sha256": "04d9996024d84afcf9baa2870ed0f96b50d973e3df28512d55681b57fec64fca"
+    },
+    ".review_metadata/direct_common_historical_consumer/check_protected_source_scope.py": {
+      "bytes": 3499,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/check_protected_source_scope.py",
+      "sha256": "45078da588cf5acad5e49695ad0eac1a6e3c3e70613cbfcd41416f2b2a1f64e7"
+    },
+    ".review_metadata/direct_common_historical_consumer/check_repository_filter_refusal.py": {
+      "bytes": 9371,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/check_repository_filter_refusal.py",
+      "sha256": "f1bb55c23df1f9ee3d5e36b6df3068a7f93d7adcc721a8f6031f93fe4109c269"
+    },
+    ".review_metadata/direct_common_historical_consumer/check_repository_filter_refusal_failed_proof_controls_runner.py": {
+      "bytes": 8672,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/check_repository_filter_refusal_failed_proof_controls_runner.py",
+      "sha256": "e38b2f44c62ef2fb1db87a772b64a1e61625f05d6e935317450cc0d682222b3d"
+    },
+    ".review_metadata/direct_common_historical_consumer/design.json": {
+      "bytes": 6642,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/design.json",
+      "sha256": "3315f50d3301a3b3a2cad228c70444188a0f655dc5fbd6d1bc5ad835dcfd8c3c"
+    },
+    ".review_metadata/direct_common_historical_consumer/linked_worktree_binding.json": {
+      "bytes": 6204,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/linked_worktree_binding.json",
+      "sha256": "aac13b622209654a34e40e3cff529001d83692a2c18a39d8550ffbfdbe4f9319"
+    },
+    ".review_metadata/direct_common_historical_consumer/optional_digest_reuse_proposal.json": {
+      "bytes": 3067,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/optional_digest_reuse_proposal.json",
+      "sha256": "f7f09b2c2568c169e0197b6d40687da0a79f72f6b5cc73b3841aff81d44408d8"
+    },
+    ".review_metadata/direct_common_historical_consumer/owned_cpu_accounting_after_repository_filter_checks.raw": {
+      "bytes": 22620,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/owned_cpu_accounting_after_repository_filter_checks.raw",
+      "sha256": "42b194e32acdaac17dff8f5ad7dd35d817c8c9acc047906289815fa0cbb75448"
+    },
+    ".review_metadata/direct_common_historical_consumer/protected_numerical_source_snapshot.json": {
+      "bytes": 1967,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/protected_numerical_source_snapshot.json",
+      "sha256": "15a014542aba5c23abe9b570eb6929b98920078296069f033848c97dabad594b"
+    },
+    ".review_metadata/direct_common_historical_consumer/repository_configuration_source_scope_clarification.json": {
+      "bytes": 1917,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/repository_configuration_source_scope_clarification.json",
+      "sha256": "b2a2ca5668d5d9a568a3c0cb85f79173fc2c6a111db7a7e5769c9daa8594abb4"
+    },
+    ".review_metadata/direct_common_historical_consumer/run_focused_metadata_checks.py": {
+      "bytes": 6020,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/run_focused_metadata_checks.py",
+      "sha256": "fa06014d27661454cc784b377b0b2c550bab4186b696d3bfec0bc17edb0eae09"
+    },
+    ".review_metadata/direct_common_historical_consumer/source_and_metadata_freeze.json": {
+      "bytes": 12982,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/source_and_metadata_freeze.json",
+      "sha256": "fbd84dd9fe7be09f22402a1701614d898b3a080cf726b2438e15d11077d518d5"
+    },
+    ".review_metadata/direct_common_historical_consumer/source_and_metadata_subprocess_permission_corrections_freeze.json": {
+      "bytes": 43844,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/source_and_metadata_subprocess_permission_corrections_freeze.json",
+      "sha256": "83b9b25e94808d167c96da8bb034d8725e0774f1e746acb13d1b8a08ba94d751"
+    },
+    ".review_metadata/direct_common_historical_consumer_independent_review/additional_boundaries_stderr.raw": {
+      "bytes": 0,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/additional_boundaries_stderr.raw",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/direct_common_historical_consumer_independent_review/additional_boundaries_stdout.raw": {
+      "bytes": 2527,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/additional_boundaries_stdout.raw",
+      "sha256": "a7f4e9a3ae791f8fd1bbc5192449b2474cfa018416701da9e0dac65f5c3ea6d9"
+    },
+    ".review_metadata/direct_common_historical_consumer_independent_review/check_additional_boundaries.py": {
+      "bytes": 3448,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/check_additional_boundaries.py",
+      "sha256": "d320738ca3d03aa7a38e78014d3ba3cb9eea845c77982747d716361d02a9f39a"
+    },
+    ".review_metadata/direct_common_historical_consumer_independent_review/check_corrected_boundaries.py": {
+      "bytes": 4568,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/check_corrected_boundaries.py",
+      "sha256": "e53ececc4d286869ec2ba0e2a7a3910f068b3fbd9e7064b2d8107b337b11dfc3"
+    },
+    ".review_metadata/direct_common_historical_consumer_independent_review/check_local_filter_regression.py": {
+      "bytes": 3731,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/check_local_filter_regression.py",
+      "sha256": "51e26071d3dcef4af95cf462fbd0e6cee36cdf8eac55301bdc6df44ac238c2da"
+    },
+    ".review_metadata/direct_common_historical_consumer_independent_review/check_local_filter_regression_same_size.py": {
+      "bytes": 3732,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/check_local_filter_regression_same_size.py",
+      "sha256": "934f27ea5014cdc5f586eb3a18cbdbcdbc5edcab1600487010a2a8b256e8efa5"
+    },
+    ".review_metadata/direct_common_historical_consumer_independent_review/check_reserved_release.py": {
+      "bytes": 10466,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/check_reserved_release.py",
+      "sha256": "b3746b95279aada6ed8b390d5afe604e2e5dc39cb99f9ba3602f0f8dff644cca"
+    },
+    ".review_metadata/direct_common_historical_consumer_independent_review/corrected_boundaries_stderr.raw": {
+      "bytes": 0,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/corrected_boundaries_stderr.raw",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/direct_common_historical_consumer_independent_review/corrected_boundaries_stdout.raw": {
+      "bytes": 8067,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/corrected_boundaries_stdout.raw",
+      "sha256": "77d1a37c6dcd5e6c2a279a5e4eb5629330ffc47419ff2995004f8698ff1193ae"
+    },
+    ".review_metadata/direct_common_historical_consumer_independent_review/corrected_focused_stderr.raw": {
+      "bytes": 23194,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/corrected_focused_stderr.raw",
+      "sha256": "cffa0af031e9bc321f2fc8cb8a1414b520f39e89e8b62e65aa9bf39529126336"
+    },
+    ".review_metadata/direct_common_historical_consumer_independent_review/corrected_focused_stdout.raw": {
+      "bytes": 3581,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/corrected_focused_stdout.raw",
+      "sha256": "71b324a09cf2c11d3d9da65e9d524d37caa3c8777ca07997fe5e5b0d74ba7b27"
+    },
+    ".review_metadata/direct_common_historical_consumer_independent_review/corrected_local_filter_same_size_stderr.raw": {
+      "bytes": 0,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/corrected_local_filter_same_size_stderr.raw",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/direct_common_historical_consumer_independent_review/corrected_local_filter_same_size_stdout.raw": {
+      "bytes": 4053,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/corrected_local_filter_same_size_stdout.raw",
+      "sha256": "929fc449226d8c20ade263c78a671ab68646db1147527c01afcb218b2ab27501"
+    },
+    ".review_metadata/direct_common_historical_consumer_independent_review/corrected_local_filter_stderr.raw": {
+      "bytes": 0,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/corrected_local_filter_stderr.raw",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/direct_common_historical_consumer_independent_review/corrected_local_filter_stdout.raw": {
+      "bytes": 3512,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/corrected_local_filter_stdout.raw",
+      "sha256": "4865dfec62aba1db1bce087c4199e645d80521f8263645aaaa2e8e0e686db604"
+    },
+    ".review_metadata/direct_common_historical_consumer_independent_review/focused_stderr.raw": {
+      "bytes": 22340,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/focused_stderr.raw",
+      "sha256": "f6a2761c2e8e58dde9f5fe347a78fff95034da9d9c911d168fdc833a49a58649"
+    },
+    ".review_metadata/direct_common_historical_consumer_independent_review/focused_stdout.raw": {
+      "bytes": 3583,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/focused_stdout.raw",
+      "sha256": "fa06a99ba18a14e52203a6a679e54a8c65d05ce52e30129c4b347398ab1ab90b"
+    },
+    ".review_metadata/direct_common_historical_consumer_independent_review/independent_source_review.json": {
+      "bytes": 7723,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/independent_source_review.json",
+      "sha256": "341db775acca625237a9f027a4a3337b123947b7a1e59cdf8e703e6c9255a105"
+    },
+    ".review_metadata/direct_common_historical_consumer_independent_review/independent_subprocess_permission_corrections_review.json": {
+      "bytes": 8493,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/independent_subprocess_permission_corrections_review.json",
+      "sha256": "e8c307e7d98c82394834d0df0d1de64a28b2b7ea29247956fcda7f3790763a24"
+    },
+    ".review_metadata/direct_common_historical_consumer_independent_review/old_namespace_stderr.raw": {
+      "bytes": 0,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/old_namespace_stderr.raw",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/direct_common_historical_consumer_independent_review/old_namespace_stdout.raw": {
+      "bytes": 18242,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/old_namespace_stdout.raw",
+      "sha256": "6f88603738728859cca301ae363771a9541290c481c2f12e126e4994b0401994"
+    },
+    ".review_metadata/direct_common_historical_consumer_independent_review/protected_scope_stderr.raw": {
+      "bytes": 0,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/protected_scope_stderr.raw",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/direct_common_historical_consumer_independent_review/protected_scope_stdout.raw": {
+      "bytes": 5734,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/protected_scope_stdout.raw",
+      "sha256": "1c46d5be4f90168d7ff712b15912964c08d0ee4724b542b8d0df036c7217e6ba"
+    },
+    ".review_metadata/direct_common_historical_consumer_independent_review/reserved_release_stderr.raw": {
+      "bytes": 0,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/reserved_release_stderr.raw",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/direct_common_historical_consumer_independent_review/reserved_release_stdout.raw": {
+      "bytes": 595,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/reserved_release_stdout.raw",
+      "sha256": "b92a40cccc8bf71d5d58de524321ab7365e9627b8f23b898897fda4d0d6e4e46"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_confirmation.py": {
+      "bytes": 62479,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_confirmation.py",
+      "sha256": "db4bda6431df2964bb5d297a6395dd5ec1709da6fd8ec4583677629387e2b025"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_historical_consumer.py": {
+      "bytes": 24121,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_historical_consumer.py",
+      "sha256": "7683a8185a077b5522764ba2a6f04e621186e7ef70d21e6ea90cb1862d7f2fb6"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py": {
+      "bytes": 59918,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py",
+      "sha256": "05ae4baa2c3acb75821302bd03426cda98c60283453a9fea6202b0d00e4d0362"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py": {
+      "bytes": 74633,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py",
+      "sha256": "a1ef9d787cb7387be88a078eac6d3bae9c853d3ceb3ac6a6aeb471e71e3aff4d"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_common_confirmation.py": {
+      "bytes": 53630,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_common_confirmation.py",
+      "sha256": "2c0d9a092fb406896f310ca7ecf78a2457a99d84cdaa9b53ffe39dbbf936449d"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_historical_consumer.py": {
+      "bytes": 22011,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_historical_consumer.py",
+      "sha256": "1389a6f70b356c66aef8e035d0ffe505e7258d09c72f3dcbdce708b2e75eadea"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_repository_configuration.py": {
+      "bytes": 7030,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_repository_configuration.py",
+      "sha256": "c4ae79f99b558c03e83de2ce2289b2094840bc1052ee8c296c22e1558883ed9c"
+    }
+  },
+  "independent_corrected_review_complete": false,
+  "independent_rejection_sha256": "e8c307e7d98c82394834d0df0d1de64a28b2b7ea29247956fcda7f3790763a24",
+  "kind": "strict_historical_consumer_repository_filter_refusal_source_freeze",
+  "optional_digest_cache_enabled": false,
+  "previous_freeze_sha256": "83b9b25e94808d167c96da8bb034d8725e0774f1e746acb13d1b8a08ba94d751",
+  "production_metadata_time_limit_seconds": 180,
+  "qualification_established": false,
+  "saved_scientific_evidence_recomputed": false,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "source_paths": [
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_historical_consumer.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_confirmation.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_historical_consumer.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_common_confirmation.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_repository_configuration.py"
+  ],
+  "worktree": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute"
+}

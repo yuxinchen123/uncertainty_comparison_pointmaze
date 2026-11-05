@@ -1,0 +1,134 @@
+{
+  "admission_granted": false,
+  "all_185_frozen_files_unchanged": true,
+  "approved": true,
+  "independent_changed_metadata_and_actual_fixture_checks": {
+    "actual_step": "6783003.327",
+    "actual_temporary_cases_passed": 5,
+    "clean_process_included_filters_refused": true,
+    "focused_tests_passed": 24,
+    "ordinary_dirty_source_detected": true,
+    "parent_environment_unchanged": true,
+    "runner": {
+      "bytes": 9371,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/check_repository_filter_refusal.py",
+      "sha256": "f1bb55c23df1f9ee3d5e36b6df3068a7f93d7adcc721a8f6031f93fe4109c269"
+    },
+    "same_size_restored_mtime_configuration_change_refused": true,
+    "stderr": {
+      "bytes": 4967,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/final_filter_controls_stderr.raw",
+      "sha256": "65b342b6a5fcba67e209b95601f49897576d61826245c36fc00f5dd457334067"
+    },
+    "stdout": {
+      "bytes": 12608,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/final_filter_controls_stdout.raw",
+      "sha256": "804d09043d4dfee11c5ef9f13368fb18a601d64141abca28a15833a5b47b5b9f"
+    },
+    "temporary_filter_marker_calls": 0
+  },
+  "independent_previous_same_size_filter_regression": {
+    "actual_step": "6783003.328",
+    "runner": {
+      "bytes": 4081,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/check_prior_same_size_filter_refused.py",
+      "sha256": "07ab82d6735a7f5404ebd14df179e41d3bbf38d58f137deab6a9afaf0a518e25"
+    },
+    "same_temporary_setup_shape_as_rejected_regression": true,
+    "status_refused_before_execution": true,
+    "stderr": {
+      "bytes": 0,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/final_prior_same_size_filter_stderr.raw",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 3645,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/final_prior_same_size_filter_stdout.raw",
+      "sha256": "a490f459ae4e78acc0c56d3a41178577a9bc9c25207e50e17ee09dba780058d0"
+    },
+    "temporary_filter_marker_calls": 0
+  },
+  "independent_protected_source_comparison": {
+    "actual_step": "6783003.330",
+    "entire_old_reader_55_statement_body_retained": true,
+    "execution_functions_unchanged": 12,
+    "new_explicit_metadata_dispatch_statements": 1,
+    "numerical_files_unchanged": 13,
+    "runner": {
+      "bytes": 3499,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/check_protected_source_scope.py",
+      "sha256": "45078da588cf5acad5e49695ad0eac1a6e3c3e70613cbfcd41416f2b2a1f64e7"
+    },
+    "stderr": {
+      "bytes": 0,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/final_protected_scope_stderr.raw",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 5734,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/final_protected_scope_stdout.raw",
+      "sha256": "39fedbff401da9c629fbad01fd8d4a9564c56878ac165925cd2fc1d404bb3ecf"
+    }
+  },
+  "kind": "independent_exact_historical_consumer_repository_filter_correction_source_approval",
+  "limitations": [
+    "No saved scientific results were replayed.",
+    "No numerical, GPU, Nsight, device, network, SSH or scheduler action was performed.",
+    "The source approval does not cover later source edits, helper-count changes or merged combinations not represented by this exact freeze."
+  ],
+  "passed": true,
+  "previous_rejected_reviews": [
+    {
+      "bytes": 7723,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/independent_source_review.json",
+      "sha256": "341db775acca625237a9f027a4a3337b123947b7a1e59cdf8e703e6c9255a105"
+    },
+    {
+      "bytes": 8493,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/independent_subprocess_permission_corrections_review.json",
+      "sha256": "e8c307e7d98c82394834d0df0d1de64a28b2b7ea29247956fcda7f3790763a24"
+    }
+  ],
+  "production_guard_success_established": false,
+  "qualification_established": false,
+  "required_before_operational_use": [
+    "Publish independently reviewed source and standard records.",
+    "Obtain the genuine corrected real-input metadata guard proof under the unchanged production time bound.",
+    "Independently verify any integration with the current direct-process implementation and eight-card API, preserving both feature sets and the complete staged helper union.",
+    "Recheck complete raw scientific prerequisites with the exact intended staged consumer; this source approval grants no numerical or worker admission."
+  ],
+  "resolved_findings": [
+    "Actual executable, plain argument list, cwd and exact isolated environment are checked for every metadata subprocess.",
+    "Only declared Git source-inspection forms plus one exact key-only configuration query are permitted.",
+    "Every source-inspection call checks effective filter/include/includeIf keys and refuses matches or any query result other than native return one with empty output and error.",
+    "Exact regular same-user configuration bytes and file identities, Git worktree pointers and common-directory layout are pinned before and after queries, on later calls and before successful proof publication.",
+    "The original dirty-source checks remain active; no numerical, tolerance, qualification-source or physical identity gate was removed."
+  ],
+  "reviewed_at_seconds": 1793852003.3943157,
+  "reviewer": "/root/review_historical_consumer_bridge",
+  "saved_scientific_evidence_recomputed": false,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "source_freeze": {
+    "bytes": 115552,
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/source_and_metadata_repository_filter_refusal_freeze.json",
+    "sha256": "2c6d79b3c32b8e49d762400c92a5950218a02be0cbdcff7a46fc76a2d3cb33b9"
+  },
+  "source_paths": [
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_historical_consumer.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_confirmation.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_historical_consumer.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_common_confirmation.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_repository_configuration.py"
+  ],
+  "source_review_scope": "Exact seven-path source and test change in the frozen detached worktree. This approves same-user pinned repository configuration trust and mutation detection; it does not claim kernel-enforced immutable configuration or protection from a malicious owner replacing configuration between checks.",
+  "unchanged_contracts": {
+    "current_common_helper_count": 28,
+    "old_historical_helper_count": 26,
+    "optional_digest_cache_enabled": false,
+    "original_numerical_source": "d28e6735e79788f618acb0ebfde8609db1f776af",
+    "production_metadata_time_limit_seconds": 180
+  }
+}

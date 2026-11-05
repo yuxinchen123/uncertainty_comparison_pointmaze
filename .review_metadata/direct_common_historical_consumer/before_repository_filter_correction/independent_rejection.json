@@ -1,0 +1,118 @@
+{
+  "admission_granted": false,
+  "all_78_frozen_files_unchanged": true,
+  "approved": false,
+  "blocking_findings": [
+    {
+      "actual_step": "6783003.320",
+      "cause": "GIT_ATTR_NOSYSTEM skips system attributes; it does not suppress repository .gitattributes and local filter.<name>.clean or process configuration. The allowed working-tree status call can convert file content through that filter.",
+      "id": "repository_local_clean_filter_executes_under_allowed_status",
+      "marker_calls": 3,
+      "observed": "The exact allowed Git status form under the exact new fixed environment executed a repository-local clean filter three times for a same-size tracked-file change. The filter wrote a harmless marker only inside the temporary fixture directory.",
+      "required_correction": "Use source inspection that cannot invoke working-tree filters, or a strict independently reviewed configuration solution that disables or refuses every effective external clean/process filter before such inspection. Preserve all dirty-source/source-byte gates; do not merely remove them.",
+      "runner": {
+        "bytes": 3732,
+        "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/check_local_filter_regression_same_size.py",
+        "sha256": "934f27ea5014cdc5f586eb3a18cbdbcdbc5edcab1600487010a2a8b256e8efa5"
+      },
+      "source": "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_confirmation.py:670",
+      "stderr": {
+        "bytes": 0,
+        "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/corrected_local_filter_same_size_stderr.raw",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 4053,
+        "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/corrected_local_filter_same_size_stdout.raw",
+        "sha256": "929fc449226d8c20ade263c78a671ab68646db1147527c01afcb218b2ab27501"
+      }
+    }
+  ],
+  "focused_metadata_tests": {
+    "actual_step": "6783003.315",
+    "errors": 0,
+    "failures": 0,
+    "stderr": {
+      "bytes": 23194,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/corrected_focused_stderr.raw",
+      "sha256": "cffa0af031e9bc321f2fc8cb8a1414b520f39e89e8b62e65aa9bf39529126336"
+    },
+    "stdout": {
+      "bytes": 3581,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/corrected_focused_stdout.raw",
+      "sha256": "71b324a09cf2c11d3d9da65e9d524d37caa3c8777ca07997fe5e5b0d74ba7b27"
+    },
+    "tests_run": 66
+  },
+  "independent_boundary_checks": {
+    "actual_step": "6783003.319",
+    "checks": 33,
+    "parent_environment_unchanged": true,
+    "passed": true,
+    "runner": {
+      "bytes": 4568,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/check_corrected_boundaries.py",
+      "sha256": "e53ececc4d286869ec2ba0e2a7a3910f068b3fbd9e7064b2d8107b337b11dfc3"
+    },
+    "stderr": {
+      "bytes": 0,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/corrected_boundaries_stderr.raw",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 8067,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/corrected_boundaries_stdout.raw",
+      "sha256": "77d1a37c6dcd5e6c2a279a5e4eb5629330ffc47419ff2995004f8698ff1193ae"
+    }
+  },
+  "kind": "independent_corrected_historical_consumer_source_review",
+  "limitations": [
+    "No saved scientific evidence was revalidated.",
+    "No production 180-second guard success was established.",
+    "No GPU, device, network, SSH, Nsight or scheduler action was performed; only bounded owned CPU steps and temporary Git fixtures."
+  ],
+  "optional_digest_cache_enabled": false,
+  "permissions_and_scope": "Root explicitly authorized the bounded temporary-repository clean-filter regression. All fixture writes and the harmless marker stayed inside TemporaryDirectory; temporary files were removed on normal fixture completion. No actual source checkout, campaign evidence or frozen file was changed.",
+  "preserved_nonreproducing_first_fixture": {
+    "actual_step": "6783003.318",
+    "reason": "A different-size change let Git report modification from file metadata without executing the clean filter. The subsequent same-size fixture was separate; no prior record was overwritten.",
+    "runner": {
+      "bytes": 3731,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/check_local_filter_regression.py",
+      "sha256": "51e26071d3dcef4af95cf462fbd0e6cee36cdf8eac55301bdc6df44ac238c2da"
+    },
+    "stderr": {
+      "bytes": 0,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/corrected_local_filter_stderr.raw",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 3512,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/corrected_local_filter_stdout.raw",
+      "sha256": "4865dfec62aba1db1bce087c4199e645d80521f8263645aaaa2e8e0e686db604"
+    }
+  },
+  "prior_independent_rejection": {
+    "bytes": 7723,
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/independent_source_review.json",
+    "sha256": "341db775acca625237a9f027a4a3337b123947b7a1e59cdf8e703e6c9255a105"
+  },
+  "production_metadata_time_limit_seconds": 180,
+  "qualification_established": false,
+  "resolved_findings": [
+    "The actual Python and Git executable fields must match their declared arguments.",
+    "Arguments must be plain strings in a list; cwd overrides and unlisted Git options are refused.",
+    "The fixed metadata environment removes inherited loader, Git, Python and executable-search overrides without changing the parent environment."
+  ],
+  "reviewed_at_seconds": 1793850980.0641918,
+  "reviewer": "/root/review_historical_consumer_bridge",
+  "saved_scientific_evidence_recomputed": false,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "source_freeze": {
+    "bytes": 43844,
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/source_and_metadata_subprocess_permission_corrections_freeze.json",
+    "sha256": "83b9b25e94808d167c96da8bb034d8725e0774f1e746acb13d1b8a08ba94d751"
+  },
+  "source_review_complete": true
+}

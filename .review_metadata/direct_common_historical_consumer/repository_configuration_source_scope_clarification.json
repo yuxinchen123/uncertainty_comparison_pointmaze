@@ -1,0 +1,27 @@
+{
+  "after": "Keep every original Git dirty-source and byte comparison. Before each used repository inspection, pin same-user Git layout/configuration bytes and identities, run one exact key-only effective-configuration query, and refuse all filter/include sections or any unknown query result. Recheck every used repository immediately before successful isolated proof. Any concurrent configuration change is refusal.",
+  "attributes_scope": "Working-tree attributes remain under the original dirty/source checks. With every effective filter section refused, attribute filter names have no external clean/process driver. Environment variables alone are not claimed to make Git independent of repository configuration.",
+  "before": "The fixed child environment disabled system attributes, hooks, fsmonitor and inherited overrides, but Git status could still execute a repository-local clean or process filter through working-tree attributes. The independent same-size fixture recorded three harmless temporary marker calls.",
+  "kind": "repository_configuration_source_scope_clarification",
+  "old_consumer_globals_replaced": false,
+  "only_accepted_native_return": {
+    "returncode": 1,
+    "stderr_bytes": 0,
+    "stdout_bytes": 0
+  },
+  "optional_digest_cache_enabled": false,
+  "original_reader_body_changed": false,
+  "production_metadata_time_limit_seconds": 180,
+  "qualification_established": false,
+  "query": [
+    "config",
+    "--null",
+    "--includes",
+    "--name-only",
+    "--get-regexp",
+    "^(filter\\.|include\\.|includeif\\.)"
+  ],
+  "recorded_values": "Canonical input paths, file/directory identities, key-count metadata and byte digests only; no configuration values.",
+  "scientific_credit": 0,
+  "trust": "Pinned same-user source/configuration trust plus mutation detection. This is not kernel-enforced immutability or protection against an undetected malicious same-user atomic race."
+}

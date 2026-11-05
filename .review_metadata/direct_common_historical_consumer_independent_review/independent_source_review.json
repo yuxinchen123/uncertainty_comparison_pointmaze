@@ -1,0 +1,120 @@
+{
+  "admission_granted": false,
+  "all_25_frozen_files_unchanged": true,
+  "approved": false,
+  "blocking_findings": [
+    {
+      "id": "subprocess_executable_field_not_checked",
+      "impact": "The claimed exact subprocess allowlist does not bind the actual executable.",
+      "observed": "The exact historical argument list is allowed when the subprocess audit executable field is a different path. The historical Git audit also allows its Git argument list with another executable field.",
+      "reproduction": "Synthetic subprocess.Popen audit tuples only, actual step 6783003.301. No substituted executable was launched.",
+      "required_correction": "Check the actual executable field for both historical Python and allowed Git invocations, in addition to the exact arguments. Add rejection fixtures.",
+      "source": "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_confirmation.py:679"
+    },
+    {
+      "id": "git_extra_arguments_allow_external_programs_or_writes",
+      "impact": "The newly reused audit permission is broader than exact read-only source inspection; Git options and inherited/local configuration can allow additional programs or output writes outside Python audit hooks.",
+      "observed": "The historical read-only audit accepts git -C <declared root> diff --ext-diff. It permits every remaining argument after an allowed Git subcommand.",
+      "reproduction": "Synthetic subprocess.Popen audit tuple only, actual step 6783003.301. No external program was launched.",
+      "required_correction": "Constrain historical Git invocations to the actual declared source-inspection argument forms and a reviewed environment/configuration policy that prevents external commands and output writes. Preserve old source bytes; reject unlisted argument forms.",
+      "source": "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_confirmation.py:687"
+    }
+  ],
+  "exact_old_source_namespace": {
+    "actual_old_modules_loaded": 26,
+    "actual_step": "6783003.302",
+    "passed": true,
+    "stderr": {
+      "bytes": 0,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/old_namespace_stderr.raw",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 18242,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/old_namespace_stdout.raw",
+      "sha256": "6f88603738728859cca301ae363771a9541290c481c2f12e126e4994b0401994"
+    }
+  },
+  "focused_metadata_tests": {
+    "actual_step": "6783003.300",
+    "errors": 0,
+    "failures": 0,
+    "stderr": {
+      "bytes": 22340,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/focused_stderr.raw",
+      "sha256": "f6a2761c2e8e58dde9f5fe347a78fff95034da9d9c911d168fdc833a49a58649"
+    },
+    "stdout": {
+      "bytes": 3583,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/focused_stdout.raw",
+      "sha256": "fa06a99ba18a14e52203a6a679e54a8c65d05ce52e30129c4b347398ab1ab90b"
+    },
+    "tests_run": 62
+  },
+  "independent_audit_decisions": {
+    "actual_step": "6783003.301",
+    "runner": {
+      "bytes": 3448,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/check_additional_boundaries.py",
+      "sha256": "d320738ca3d03aa7a38e78014d3ba3cb9eea845c77982747d716361d02a9f39a"
+    },
+    "stderr": {
+      "bytes": 0,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/additional_boundaries_stderr.raw",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 2527,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/additional_boundaries_stdout.raw",
+      "sha256": "a7f4e9a3ae791f8fd1bbc5192449b2474cfa018416701da9e0dac65f5c3ea6d9"
+    }
+  },
+  "kind": "independent_frozen_historical_consumer_source_review",
+  "limitations": [
+    "No saved scientific evidence was revalidated.",
+    "No production 180-second guard success was established.",
+    "No timing, GPU, native library, network or launcher qualification was performed.",
+    "The fixed currently reviewed callers were not observed using the substituted executable or extra Git arguments; findings concern the stated strict audit permission boundary."
+  ],
+  "protected_source_scope": {
+    "actual_step": "6783003.303",
+    "execution_functions_unchanged": 12,
+    "new_explicit_metadata_dispatch_statements": 1,
+    "numerical_files_unchanged": 13,
+    "original_55_statement_reader_body_retained": true,
+    "passed": true,
+    "stderr": {
+      "bytes": 0,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/protected_scope_stderr.raw",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 5734,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/protected_scope_stdout.raw",
+      "sha256": "1c46d5be4f90168d7ff712b15912964c08d0ee4724b542b8d0df036c7217e6ba"
+    }
+  },
+  "qualification_established": false,
+  "reviewed_and_preserved": [
+    "exact old 26-helper namespace and committed bytes",
+    "current 28-helper staged/source/Git closure",
+    "owned-compute gate",
+    "parent and child PID/birth/challenge/result proof bindings",
+    "existing original qualification body and numerical execution syntax",
+    "zero-credit role and no final operational bypass",
+    "optional digest cache remains disabled",
+    "production 180-second limit unchanged"
+  ],
+  "reviewed_at_seconds": 1793850227.4809318,
+  "reviewer": "/root/review_historical_consumer_bridge",
+  "root_actions_performed": false,
+  "saved_scientific_evidence_recomputed": false,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "source_freeze": {
+    "bytes": 12982,
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/source_and_metadata_freeze.json",
+    "sha256": "fbd84dd9fe7be09f22402a1701614d898b3a080cf726b2438e15d11077d518d5"
+  },
+  "source_review_complete": true
+}

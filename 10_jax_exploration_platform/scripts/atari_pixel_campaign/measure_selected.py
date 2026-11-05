@@ -194,7 +194,7 @@ def required_helpers(configured=False, direct=False, common=False, backend_image
         import direct_measurement as support
         names = (*HELPERS, *support.helper_names())
         if common:
-            names += ("direct_common_confirmation.py",)
+            names += ("direct_common_confirmation.py", "direct_historical_consumer.py")
         if backend_image:
             names += ("direct_backend_image.py",)
         return tuple(dict.fromkeys(names))
@@ -346,6 +346,13 @@ def prepare(args):
         "python": str(args.python.absolute()),
         "compilation_cache_policy": "disabled", "hypothesis_count_contribution": 0,
         "selected_by_producer": False, "jobs_submitted_by_producer": False}
+    if common and direct:
+        import direct_measurement as direct_support
+        import direct_common_confirmation as prerequisite
+        historical = direct_support.historical_support(plan)
+        plan["direct_historical_consumer_protocol"] = dict(historical.PROTOCOL)
+        plan["common_correctness_inputs"] = {"result": prerequisite.reference(correctness_record),
+            "review": prerequisite.reference(correctness_review)}
     if configured:
         import configured_measurement as support
         profile, profile_input = read_document(args.configured_isolation_profile)

@@ -61,6 +61,32 @@ def helper_names():
     return tuple(dict.fromkeys(("direct_measurement.py", "configured_measurement.py", *core().HELPERS)))
 
 
+def historical_support(plan):
+    """Load only the explicit current-common read-only historical consumer source."""
+    name = "direct_historical_consumer"
+    path = Path(__file__).with_name(name + ".py").resolve(strict=True)
+    raw = path.read_bytes()
+    expected = plan["helpers"]["files"].get("10_jax_exploration_platform/scripts/atari_pixel_campaign/" + name + ".py")
+    require(core().digest(raw) == expected, "the exact historical consumer dependency is missing or changed")
+    if name in sys.modules:
+        module = sys.modules[name]
+        require(getattr(module, "__file__", None) == str(path)
+            and getattr(module, "_executed_source_sha256", None) == expected,
+            "an ambient historical consumer cannot replace the pinned source")
+        return module
+    specification = importlib.util.spec_from_file_location(name, path)
+    module = importlib.util.module_from_spec(specification)
+    sys.modules[name] = module
+    try:
+        exec(compile(raw, str(path), "exec"), module.__dict__)
+        module._executed_source_sha256 = expected
+    except BaseException:
+        if sys.modules.get(name) is module:
+            del sys.modules[name]
+        raise
+    return module
+
+
 
 def backend_support(plan):
     """Load only the exact new staged metadata helper; no legacy operational fallback."""
@@ -632,6 +658,8 @@ def validate_test_collection(plan, tests, stdout):
 
 def verify_qualification_inputs(plan):
     """Refuse a missing, changed, unrelated or unreviewed actual full-original qualification."""
+    if "common_correctness_inputs" in plan:
+        return historical_support(plan).request(plan, "qualification")
     identity = core()
     expected_backend = backend_support(plan).expected_for_plan(plan)
     inputs = plan["direct_qualification_inputs"]

@@ -15,6 +15,14 @@ import sysconfig
 import time
 
 NAME = "direct_common_confirmation.py"
+HISTORICAL_NAME = "direct_historical_consumer.py"
+HISTORICAL_PROTOCOL = {"schema_version": 1, "capability": "exact_old_staged_direct_consumer_read_only_process",
+    "old_helper_commit": "0a880984b4a03a2ff7335337cc18576628bc9fc1", "old_helper_count": 26,
+    "current_common_helper_count": 28, "digest_cache": "disabled", "operational_admission": False}
+_ACTIVE_HISTORICAL_SOURCE_SHA256 = None
+REPOSITORY_CONFIGURATION_QUERY = ["config", "--null", "--includes", "--name-only", "--get-regexp",
+    r"^(filter\.|include\.|includeif\.)"]
+_REPOSITORY_CONFIGURATION = {}
 PREFIX = "10_jax_exploration_platform/scripts/atari_pixel_campaign/"
 NUMERICAL = {"jax", "jaxlib", "numpy", "torch", "flax", "optax", "scipy", "cupy", "jaxtari", "exploration_platform"}
 PROOF_NAME = "direct_common_correctness_validation.json"
@@ -104,10 +112,15 @@ def contract(plan):
         and type(backend["expected"]["path"]) is str and Path(backend["expected"]["path"]).is_absolute()
         and type(backend["expected"]["sha256"]) is str
         and re.fullmatch(r"[0-9a-f]{64}", backend["expected"]["sha256"])
-        and len(plan["helpers"]["files"]) == 27
+        and len(plan["helpers"]["files"]) == 28
         and plan["helpers"]["files"].get(PREFIX + "direct_backend_image.py") ==
             digest(Path(__file__).with_name("direct_backend_image.py").read_bytes()),
-        "direct common confirmation requires its exact new backend record and all 27 helpers")
+        "direct common confirmation requires its exact new backend record and all 28 helpers")
+    historical = Path(__file__).with_name(HISTORICAL_NAME)
+    require(encoded(plan.get("direct_historical_consumer_protocol")) == encoded(HISTORICAL_PROTOCOL)
+        and historical.resolve(strict=True) == historical and historical.is_file()
+        and plan["helpers"]["files"].get(PREFIX + HISTORICAL_NAME) == digest(historical.read_bytes()),
+        "the explicit current read-only historical consumer protocol and source are required")
     inputs = plan.get("common_correctness_inputs")
     require(isinstance(inputs, dict) and set(inputs) == {"result", "review"},
         "actual direct common correctness and genuine independent review are required")
@@ -130,6 +143,8 @@ def contract(plan):
         "direct common confirmation changed independent copy/seed identities")
     require(digest(Path(__file__).read_bytes()) == plan["helpers"]["files"].get(PREFIX + NAME),
         "the exact optional direct prerequisite helper must be staged")
+    global _ACTIVE_HISTORICAL_SOURCE_SHA256
+    _ACTIVE_HISTORICAL_SOURCE_SHA256 = plan["helpers"]["files"][PREFIX + HISTORICAL_NAME]
     return inputs
 
 
@@ -249,7 +264,7 @@ def qualification_reuse_evidence(support, plan):
     require(len(protected) == 13, "qualification reuse must retain all thirteen numerical files")
     functions = {}
     scopes = {"measure_selected.py": ("_compute", "run_prepared", "save_measurement_result", "producer_support", "card_admission"),
-        "direct_measurement.py": ("verify_qualification_inputs", "run_qualification", "support", "capture_backend",
+        "direct_measurement.py": ("run_qualification", "support", "capture_backend",
             "capture_backend_completion", "post_binding_checks", "process_sample", "validate_window")}
     for filename, names in scopes.items():
         old_path = directory / "code" / filename
@@ -266,10 +281,43 @@ def qualification_reuse_evidence(support, plan):
         for name in names:
             require(name in old and old[name] == new.get(name), "qualification reuse changed protected execution: " + name)
             functions[filename + ":" + name] = digest(old[name].encode())
+    extension = qualification_reader_extension(directory / "code/direct_measurement.py",
+        Path(__file__).with_name("direct_measurement.py"))
     require(qualified_result["source_commit"] == qualified["source_commit"], "qualified numerical source label changed")
     return {"qualified_result": inputs["result"], "qualified_plan": reference(directory / "measurement_plan.json"),
         "source_contract": source_ref, "protected_numerical_files": protected, "protected_function_syntax": functions,
-        "backend_preparation": plan["inputs"]["direct_backend_image_record"], "numerical_work_changed": False}
+        "backend_preparation": plan["inputs"]["direct_backend_image_record"], "numerical_work_changed": False,
+        "qualification_reader_metadata_extension": extension}
+
+
+def qualification_reader_extension(original_path, current_path):
+    """Retain the entire original reader body after one explicit read-only metadata dispatch."""
+    def function(path):
+        """Read source syntax without executing any old or current producer."""
+        matches = [node for node in ast.parse(Path(path).read_text()).body
+            if isinstance(node, ast.FunctionDef) and node.name == "verify_qualification_inputs"]
+        require(len(matches) == 1, "the exact qualification reader function is required")
+        return matches[0]
+    def source_reference(path):
+        """Bind Python source bytes without parsing them as a JSON record."""
+        path = Path(path)
+        require(path.resolve(strict=True) == path and path.is_file(), "an exact ordinary source file is required")
+        return {"path": str(path), "sha256": digest(path.read_bytes())}
+    old, current = function(original_path), function(current_path)
+    statement = ast.parse('if "common_correctness_inputs" in plan:\n    return historical_support(plan).request(plan, "qualification")\n').body[0]
+    require(len(current.body) == len(old.body) + 1
+        and ast.dump(current.body[0], include_attributes=False) == ast.dump(old.body[0], include_attributes=False)
+        and ast.dump(current.body[1], include_attributes=False) == ast.dump(statement, include_attributes=False)
+        and [ast.dump(node, include_attributes=False) for node in current.body[2:]] ==
+            [ast.dump(node, include_attributes=False) for node in old.body[1:]]
+        and ast.dump(current.args, include_attributes=False) == ast.dump(old.args, include_attributes=False)
+        and current.decorator_list == old.decorator_list and current.returns == old.returns,
+        "qualification reuse changed an original gate or broadened the metadata dispatch")
+    return {"kind": "one_explicit_current_common_read_only_qualification_dispatch",
+        "original_reader_source": source_reference(original_path), "current_reader_source": source_reference(current_path),
+        "original_body_statements": len(old.body), "current_body_statements": len(current.body),
+        "inserted_statement_index": 1, "inserted_statement": ast.unparse(statement),
+        "entire_original_body_retained": True, "old_operational_path_changed": False}
 
 
 def validate_actual(plan, plan_sha256):
@@ -285,7 +333,13 @@ def validate_actual(plan, plan_sha256):
     directory = Path(inputs["result"]["path"]).parent
     require(Path(inputs["result"]["path"]).name == "result.json",
         "direct common correctness needs the actual ordinary correctness result")
-    previous, binding = support.verify_saved_measurement(directory, result)
+    historical = support.historical_support(plan).request(plan, "correctness")
+    previous = read(directory / "measurement_plan.json")[0]
+    binding = read(directory / "direct_device_binding.json")[0]
+    require(historical["proof"]["old_plan"] == reference(directory / "measurement_plan.json")
+        and historical["proof"]["old_inputs"] == inputs
+        and historical["proof"]["old_consumer_return_sha256"] == digest(encoded([previous, binding])),
+        "the exact isolated historical correctness consumer returned another saved binding")
     reuse = qualification_reuse_evidence(support, plan)
     require(previous.get("mode") == "correctness" and "common_correctness_inputs" not in previous
         and result.get("measurement_mode") == "correctness" and result.get("measurement_valid") is False
@@ -380,7 +434,8 @@ def validate_actual(plan, plan_sha256):
         "source_commit": plan["source_commit"], "helper_commit": plan["helpers"]["source_commit"],
         "parent_pid": os.getppid(), "validation_pid": os.getpid(), "finished_at_seconds": time.time(),
         "numerical_imports": [], "gpu_operations": 0, "scientific_credit": 0,
-        "learning_equivalence_established": False, "admission_granted": False}
+        "learning_equivalence_established": False, "admission_granted": False,
+        "historical_correctness_consumer": historical}
 
 
 
@@ -392,7 +447,8 @@ def request(plan, raw=None, directory=None):
     executable = Path(directory) / "code" / NAME if directory is not None else Path(__file__).absolute()
     command = ["/usr/bin/python3", "-I", "-S", "-B", str(executable), "--plan-stdin"]
     try:
-        result = subprocess.run(command, input=raw, capture_output=True, timeout=180, check=False)
+        result = subprocess.run(command, input=raw, capture_output=True, timeout=180, check=False,
+            env=metadata_environment(os.environ))
     except BaseException as error:
         if directory is not None:
             publish_child_capture(directory, command, None, getattr(error, "stdout", None) or b"",
@@ -408,6 +464,7 @@ def request(plan, raw=None, directory=None):
         and type(proof.get("parent_pid")) is int and proof["parent_pid"] == os.getpid()
         and proof.get("numerical_imports") == [] and type(proof.get("gpu_operations")) is int and proof["gpu_operations"] == 0,
         "the isolated correctness child returned another plan or parent")
+    validate_repository_configuration_proof(proof.get("repository_configuration_validation"))
     validate_bootstrap_record(proof.get("stdlib_ctypes_bootstrap"))
     return proof
 
@@ -614,6 +671,161 @@ def declared_git_roots(plan):
         roots.update(targets)
     return roots
 
+def metadata_environment(original):
+    """Give only isolated metadata children a fixed source-inspection environment, never their numerical parent."""
+    # Before: arbitrary inherited Git/loader overrides. After: fixed system executables and read-only Git settings.
+    result = {"PATH": "/usr/bin", "LANG": "C.UTF-8", "LC_ALL": "C.UTF-8", "TERM": "dumb",
+        "PYTHONDONTWRITEBYTECODE": "1", "GIT_OPTIONAL_LOCKS": "0", "GIT_CONFIG_NOSYSTEM": "1",
+        "GIT_CONFIG_SYSTEM": "/dev/null", "GIT_CONFIG_GLOBAL": "/dev/null", "GIT_ALLOW_PROTOCOL": "",
+        "GIT_NO_LAZY_FETCH": "1", "GIT_NO_REPLACE_OBJECTS": "1", "GIT_TERMINAL_PROMPT": "0",
+        "GIT_ATTR_NOSYSTEM": "1", "GIT_PAGER": "", "PAGER": ""}
+    configuration = (("core.fsmonitor", "false"), ("core.hooksPath", "/dev/null"),
+        ("core.untrackedCache", "false"), ("core.preloadIndex", "false"),
+        ("protocol.allow", "never"), ("gc.auto", "0"), ("maintenance.auto", "false"))
+    result["GIT_CONFIG_COUNT"] = str(len(configuration))
+    for index, (key, value) in enumerate(configuration):
+        result["GIT_CONFIG_KEY_" + str(index)] = key
+        result["GIT_CONFIG_VALUE_" + str(index)] = value
+    for name in ("SLURM_JOB_ID", "SLURM_STEP_ID"):
+        if name in original:
+            result[name] = original[name]
+    return result
+
+
+def require_metadata_environment(value):
+    """Reject overridden executable search, dynamic loaders, Git configuration or transport settings."""
+    actual = dict(os.environ) if value is None else value
+    require(type(actual) is dict and actual == metadata_environment(actual),
+        "source-inspection subprocesses require the exact isolated metadata environment")
+
+
+def source_inspection_git(command, roots):
+    """Admit only the actual fixed Git source-inspection forms without extra options or output files."""
+    require(type(command) is list and all(type(value) is str for value in command)
+        and len(command) > 3 and command[:2] == ["git", "-C"] and command[2] in roots,
+        "only exact declared local read-only Git source commands are permitted")
+    def relative(value):
+        """Keep a plain source path from becoming a revision, option or Git pathspec program."""
+        plain = value[:-1] if value.endswith("/") else value
+        return bool(plain) and plain != "." and not value.startswith(("/", "-", ":")) and "\0" not in value \
+            and ".." not in Path(value).parts and Path(value).as_posix() == plain \
+            and all(character.isalnum() or character in "_./-" for character in value)
+    arguments = command[3:]
+    allowed = arguments == REPOSITORY_CONFIGURATION_QUERY or arguments in (["rev-parse", "HEAD"], ["rev-parse", "--show-toplevel"],
+        ["symbolic-ref", "--quiet", "HEAD"], ["status", "--porcelain", "--untracked-files=all"])
+    if len(arguments) == 2 and arguments[0] == "show":
+        revision, separator, path = arguments[1].partition(":")
+        allowed = bool(separator and re.fullmatch(r"[0-9a-f]{40}", revision) and relative(path) and not path.endswith("/"))
+    elif len(arguments) == 3 and arguments[:2] == ["cat-file", "blob"]:
+        allowed = bool(re.fullmatch(r"[0-9a-f]{40}", arguments[2]))
+    elif len(arguments) >= 5 and arguments[:2] == ["ls-tree", "-rz"] and arguments[3] == "--":
+        allowed = bool(re.fullmatch(r"[0-9a-f]{40}", arguments[2]) and all(map(relative, arguments[4:])))
+    elif len(arguments) >= 6 and arguments[:3] == ["ls-tree", "-r", "--name-only"] and arguments[4] == "--":
+        allowed = bool(re.fullmatch(r"[0-9a-f]{40}", arguments[3]) and all(map(relative, arguments[5:])))
+    elif len(arguments) >= 5 and arguments[:4] == ["status", "--porcelain", "--untracked-files=all", "--"]:
+        allowed = all(map(relative, arguments[4:]))
+    elif len(arguments) >= 4 and arguments[:3] == ["status", "--porcelain", "--"]:
+        allowed = all(map(relative, arguments[3:]))
+    require(allowed, "unlisted Git source-inspection arguments are forbidden")
+
+
+def repository_configuration_inputs(root):
+    """Pin exact same-user Git layout and configuration files without logging configuration values."""
+    import stat
+    files = {}
+    def file(path, optional=False):
+        """Bind current ordinary bytes and full file identity, or the declared absence of an optional file."""
+        path = Path(path)
+        if optional and not path.exists() and not path.is_symlink():
+            files[str(path)] = {"exists": False}
+            return None
+        require(path.resolve(strict=True) == path and not path.is_symlink(), "Git configuration path changed")
+        descriptor = os.open(path, os.O_RDONLY | os.O_NOFOLLOW)
+        try:
+            before = os.fstat(descriptor)
+            require(stat.S_ISREG(before.st_mode) and before.st_uid == 2618919 and before.st_size <= LIMIT,
+                "Git configuration needs bounded ordinary same-user files")
+            with os.fdopen(os.dup(descriptor), "rb") as stream:
+                raw = stream.read(LIMIT + 1)
+            after = os.fstat(descriptor)
+        finally:
+            os.close(descriptor)
+        fields = ("st_dev", "st_ino", "st_uid", "st_gid", "st_mode", "st_nlink", "st_size", "st_mtime_ns", "st_ctime_ns")
+        identity = {name: getattr(before, name) for name in fields}
+        require(len(raw) <= LIMIT and identity == {name: getattr(after, name) for name in fields}
+            and identity == {name: getattr(path.stat(), name) for name in fields},
+            "Git configuration changed during its pinned read")
+        files[str(path)] = {"exists": True, "identity": identity, "sha256": digest(raw)}
+        return raw
+    root = Path(root)
+    require(root.resolve(strict=True) == root and root.is_dir(), "Git source root changed")
+    entry = root / ".git"
+    if entry.is_dir() and not entry.is_symlink():
+        git_directory = entry
+    else:
+        raw = file(entry)
+        require(raw.startswith(b"gitdir: ") and raw.endswith(b"\n") and raw.count(b"\n") == 1,
+            "unrecognized Git worktree pointer")
+        target = Path(os.fsdecode(raw[8:-1]))
+        git_directory = (entry.parent / target).resolve(strict=True)
+    common_raw = file(git_directory / "commondir", optional=True)
+    common_directory = git_directory if common_raw is None else (
+        git_directory / os.fsdecode(common_raw).strip()).resolve(strict=True)
+    for directory in {git_directory, common_directory}:
+        value = directory.stat()
+        require(directory.resolve(strict=True) == directory and directory.is_dir() and value.st_uid == 2618919,
+            "Git configuration directory is not the pinned same-user source")
+        files[str(directory)] = {"directory": True, "device": value.st_dev, "inode": value.st_ino,
+            "uid": value.st_uid, "gid": value.st_gid, "mode": value.st_mode}
+    file(common_directory / "config", optional=True)
+    file(git_directory / "config.worktree", optional=True)
+    return files
+
+
+def verify_repository_configuration(root, environment):
+    """Refuse all effective filter/include configuration before Git can inspect working-tree contents."""
+    before = repository_configuration_inputs(root)
+    if root in _REPOSITORY_CONFIGURATION:
+        require(before == _REPOSITORY_CONFIGURATION[root]["inputs"], "pinned repository configuration changed")
+    command = ["git", "-C", root, *REPOSITORY_CONFIGURATION_QUERY]
+    outcome = subprocess.run(command, env=environment, capture_output=True, timeout=5, check=False)
+    require(len(outcome.stdout) <= LIMIT and len(outcome.stderr) <= LIMIT,
+        "repository configuration query exceeded its bound")
+    # Git's native no-match return is one with no bytes or errors. Any configured filter/include is refused.
+    require(outcome.returncode == 1 and outcome.stdout == b"" and outcome.stderr == b"",
+        "repository filters, includes or unverified configuration query forbid source inspection: " + json.dumps({
+            "returncode": outcome.returncode, "stdout_sha256": digest(outcome.stdout),
+            "stderr_sha256": digest(outcome.stderr), "nonempty_key_count": sum(bool(key) for key in outcome.stdout.split(b"\0"))},
+            sort_keys=True))
+    after = repository_configuration_inputs(root)
+    require(after == before, "repository configuration changed during its read-only query")
+    row = {"inputs": before, "query": command, "returncode": outcome.returncode,
+        "stdout_sha256": digest(outcome.stdout), "stderr_sha256": digest(outcome.stderr), "matched_key_names": [],
+        "configured_filters_or_includes": False}
+    _REPOSITORY_CONFIGURATION[root] = row
+    return row
+
+
+def finish_repository_configurations():
+    """Rehash every used repository configuration before a successful isolated validation proof."""
+    for root in tuple(_REPOSITORY_CONFIGURATION):
+        verify_repository_configuration(root, metadata_environment(os.environ))
+    return {"kind": "same_user_pinned_repository_configuration_and_mutation_detection",
+        "repositories": dict(_REPOSITORY_CONFIGURATION), "filters_and_includes_refused": True,
+        "scope": "Pinned same-user source/configuration trust and mutation detection; no kernel-enforced file immutability."}
+
+
+def validate_repository_configuration_proof(value):
+    """Require the isolated child's explicit nonempty repository/configuration trust and mutation proof."""
+    require(type(value) is dict and set(value) == {"kind", "repositories", "filters_and_includes_refused", "scope"}
+        and value["kind"] == "same_user_pinned_repository_configuration_and_mutation_detection"
+        and type(value["repositories"]) is dict and bool(value["repositories"])
+        and value["filters_and_includes_refused"] is True
+        and value["scope"] == "Pinned same-user source/configuration trust and mutation detection; no kernel-enforced file immutability.",
+        "isolated validation omitted its exact pinned repository configuration proof")
+    return value
+
+
 def metadata_event_guard(event, values, roots):
     """Refuse numerical imports, device/library/network access and unlisted Git roots."""
     if event == "import" and values[0].split(".")[0] in NUMERICAL:
@@ -624,11 +836,23 @@ def metadata_event_guard(event, values, roots):
             or os.fsdecode(values[0]) == "/tmp/sl5nw_serval02_card1.lock"):
         raise RuntimeError("device access forbidden in direct correctness child")
     if event == "subprocess.Popen":
+        require(len(values) == 4 and type(values[0]) is str, "subprocess needs its actual executable and environment")
         command = values[1]
-        require(isinstance(command, list) and len(command) > 3 and command[:2] == ["git", "-C"]
-            and command[2] in roots and command[3] in {"show", "cat-file", "rev-parse", "status",
-                "symbolic-ref", "ls-tree", "merge-base", "diff", "diff-files", "diff-index"},
-            "only exact declared local read-only Git source commands are permitted")
+        require(type(command) is list and all(type(value) is str for value in command) and values[2] is None,
+            "source-inspection subprocesses require plain arguments and no working-directory override")
+        historical = Path(__file__).with_name(HISTORICAL_NAME)
+        expected = ["/usr/bin/python3", "-I", "-S", "-B", str(historical), "--read-only-stdin"]
+        if command == expected:
+            require(values[0] == expected[0] and _ACTIVE_HISTORICAL_SOURCE_SHA256 is not None
+                and digest(historical.read_bytes()) == _ACTIVE_HISTORICAL_SOURCE_SHA256,
+                "only the exact active read-only historical child may start")
+            require_metadata_environment(values[3])
+            return
+        require(values[0] == "git", "the actual executable must match the declared source-inspection Git")
+        source_inspection_git(command, roots)
+        require_metadata_environment(values[3])
+        if command[3:] != REPOSITORY_CONFIGURATION_QUERY:
+            verify_repository_configuration(command[2], metadata_environment(os.environ) if values[3] is None else values[3])
 
 
 def stdlib_ctypes_bootstrap():
@@ -664,6 +888,9 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--plan-stdin", action="store_true", required=True)
     parser.parse_args()
+    environment = metadata_environment(os.environ)
+    os.environ.clear()
+    os.environ.update(environment)
     bootstrap = stdlib_ctypes_bootstrap()
     validate_bootstrap_record(bootstrap)
     roots = set()
@@ -676,6 +903,7 @@ def main():
     roots.update(declared_git_roots(plan))
     sys.path.insert(0, str(Path(__file__).absolute().parent))
     proof = validate_actual(plan, digest(raw))
+    proof["repository_configuration_validation"] = finish_repository_configurations()
     proof["metadata_compute_context"] = context
     proof["stdlib_ctypes_bootstrap"] = bootstrap
     print(json.dumps(proof, allow_nan=False))

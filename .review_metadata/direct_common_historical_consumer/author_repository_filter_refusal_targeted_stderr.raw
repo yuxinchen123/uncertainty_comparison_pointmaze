@@ -1,0 +1,53 @@
+test_changed_configuration_during_query_is_refused (repository_configuration_tests.RepositoryConfigurationTests)
+The actual files are rehashed after the query before any status is allowed. ... ok
+test_changed_pinned_configuration_is_refused_before_another_query (repository_configuration_tests.RepositoryConfigurationTests)
+A later changed file identity or digest cannot replace the first observed source configuration. ... ok
+test_every_other_git_inspection_checks_configuration_first (repository_configuration_tests.RepositoryConfigurationTests)
+Existing byte, tree and dirty-source checks are preserved after the new refusal. ... ok
+test_exact_configuration_query_is_allowed_without_recursion (repository_configuration_tests.RepositoryConfigurationTests)
+The configuration query itself reads keys only and grants no status permission. ... ok
+test_final_configuration_recheck_refuses_mutation (repository_configuration_tests.RepositoryConfigurationTests)
+A changed source configuration cannot produce a successful validation proof. ... ok
+test_matching_filter_include_or_any_query_error_is_refused (repository_configuration_tests.RepositoryConfigurationTests)
+Configured keys and every other return/output meaning remain unverified. ... ok
+test_only_native_empty_no_match_return_is_allowed (repository_configuration_tests.RepositoryConfigurationTests)
+Native return one without output or errors pins the exact configuration inputs. ... ok
+test_returned_configuration_proof_is_explicit_and_nonempty (repository_configuration_tests.RepositoryConfigurationTests)
+A missing or changed trust/refusal statement cannot disappear from the returned child proof. ... ok
+test_child_request_leaves_parent_paths_and_public_modules_unchanged (existing_configuration_controls_0.DirectCommonConfirmationTests)
+The parent dispatches only the declared no-site interpreter and changes no import paths. ... ok
+test_different_parent_raw_plan_and_boolean_gpu_claim_are_rejected (existing_configuration_controls_0.DirectCommonConfirmationTests)
+A successful child response must describe this exact parent and plan. ... ok
+test_success_captures_raw_child_before_publishing_proof_and_cannot_repeat (existing_configuration_controls_0.DirectCommonConfirmationTests)
+Keep one durable actual validation attempt and its exact raw successful return. ... ok
+test_failed_and_malformed_child_return_preserves_raw_without_success_proof (existing_configuration_controls_0.DirectCommonConfirmationTests)
+Retain both nonzero and invalid successful output before refusing the worker. ... ok
+test_timeout_preserves_partial_output_and_attempt (existing_configuration_controls_0.DirectCommonConfirmationTests)
+A timed-out child never becomes a successful prerequisite or starts a repeat. ... ok
+test_saved_proof_requires_same_actual_parent_and_precedes_numeric_work (existing_configuration_controls_0.DirectCommonConfirmationTests)
+The saved result cannot claim another worker's or later validation. ... ok
+test_boolean_counts_or_new_admission_are_refused (existing_configuration_controls_1.ReturnedProofIdentityTests)
+Boolean zero and scientific or operational credit are different meanings. ... ok
+test_changed_child_parent_or_challenge_is_refused (existing_configuration_controls_1.ReturnedProofIdentityTests)
+A correct-looking result from another process or request cannot substitute. ... ok
+test_changed_old_or_current_sources_are_refused (existing_configuration_controls_1.ReturnedProofIdentityTests)
+Neither a different original helper nor another current closure is accepted. ... ok
+test_exact_synthetic_identity_is_recognized (existing_configuration_controls_1.ReturnedProofIdentityTests)
+Only the supplied expected metadata identities match this synthetic fixture. ... ok
+test_declared_read_only_git_is_allowed (existing_configuration_controls_1.ReadOnlyAuditTests)
+Source checks may inspect one exact declared local root. ... ok
+test_later_native_library_loads_and_numerical_imports_are_refused (existing_configuration_controls_1.ReadOnlyAuditTests)
+The explicit earlier ctypes bootstrap grants no later library access. ... ok
+test_process_execution_and_file_metadata_mutation_are_refused (existing_configuration_controls_1.ReadOnlyAuditTests)
+Alternate process APIs and metadata writes grant no historical read-only capability. ... ok
+test_python_child_is_forbidden_inside_historical_replay (existing_configuration_controls_1.ReadOnlyAuditTests)
+The old reader cannot become a second launcher. ... ok
+test_substituted_actual_git_executable_and_external_diff_are_refused (existing_configuration_controls_1.ReadOnlyAuditTests)
+Exact-looking arguments cannot conceal another executable or an external Git command. ... ok
+test_writes_and_changed_roots_are_refused (existing_configuration_controls_1.ReadOnlyAuditTests)
+Neither a filesystem mutation nor a foreign Git root is a permitted read. ... ok
+
+----------------------------------------------------------------------
+Ran 24 tests in 0.177s
+
+OK

@@ -1,0 +1,87 @@
+{
+  "actual_step": "301",
+  "actual_subprocess_commands_executed": 0,
+  "admission_granted": false,
+  "checks": [
+    {
+      "allowed": true,
+      "name": "exact declared historical command"
+    },
+    {
+      "allowed": true,
+      "name": "historical argv with substituted executable"
+    },
+    {
+      "allowed": false,
+      "exception": "only exact declared local read-only Git source commands are permitted",
+      "name": "unlisted Python command"
+    },
+    {
+      "allowed": true,
+      "name": "Git argv with substituted executable"
+    },
+    {
+      "allowed": true,
+      "name": "Git diff with external executable option"
+    },
+    {
+      "allowed": false,
+      "exception": "only exact declared local read-only Git source commands are permitted",
+      "name": "Git foreign root"
+    },
+    {
+      "allowed": false,
+      "exception": "network or library operation forbidden in direct correctness child",
+      "name": "refused event socket.connect (None, None)"
+    },
+    {
+      "allowed": false,
+      "exception": "network or library operation forbidden in direct correctness child",
+      "name": "refused event ctypes.dlopen ('libcuda.so',)"
+    },
+    {
+      "allowed": false,
+      "exception": "device access forbidden in direct correctness child",
+      "name": "refused event open ('/dev/nvidia0', 'rb', 0)"
+    },
+    {
+      "allowed": false,
+      "exception": "device access forbidden in direct correctness child",
+      "name": "refused event open ('/tmp/sl5nw_serval02_card1.lock', 'rb', 0)"
+    },
+    {
+      "allowed": false,
+      "exception": "historical consumer cannot write files",
+      "name": "refused event open ('/synthetic/output', 'wb', 1)"
+    },
+    {
+      "allowed": false,
+      "exception": "historical consumer cannot execute an unlisted process",
+      "name": "refused event os.fork ()"
+    }
+  ],
+  "finished_at_seconds": 1793850143.8314114,
+  "kind": "independent_synthetic_audit_decisions",
+  "numerical_imports": [],
+  "process": {
+    "all_uids": [
+      2618919,
+      2618919,
+      2618919,
+      2618919
+    ],
+    "birth_counter": "80526879",
+    "cgroup": "0::/system.slice/slurmstepd.scope/job_6783003/step_301/user/task_0\n",
+    "command": [
+      "/usr/bin/python3",
+      "-I",
+      "-S",
+      "-B",
+      ".review_metadata/direct_common_historical_consumer_independent_review/check_additional_boundaries.py"
+    ],
+    "parent_pid": 1217313,
+    "pid": 1217319
+  },
+  "saved_scientific_evidence_recomputed": false,
+  "scientific_credit": 0
+}
