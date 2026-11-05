@@ -1,0 +1,120 @@
+{
+  "actual_adjacent_namespace_differences": [
+    {
+      "both_old_copies_match_qualified_receipt": true,
+      "current_adjacent_sha256": "39a6376ba5e2d42848cc04d6d84131a7670debaf4fe147b50f50a706b6823a76",
+      "file": "measure_selected.py",
+      "old_source_sha256": "1651ea2184604082cefb97fdfe035640c4b71974ad1e6520d16ef84bdb54e0a2",
+      "old_staged_sha256": "1651ea2184604082cefb97fdfe035640c4b71974ad1e6520d16ef84bdb54e0a2",
+      "qualified_expected": "1651ea2184604082cefb97fdfe035640c4b71974ad1e6520d16ef84bdb54e0a2"
+    },
+    {
+      "both_old_copies_match_qualified_receipt": true,
+      "current_adjacent_sha256": "7a2125536624ed5b31b3277aeb740cf4233b7001456447a8b3756e2423a2f3a6",
+      "file": "direct_measurement.py",
+      "old_source_sha256": "1d39e56fb7552d84c84c93962a22d79f9004ee5c7f6870f99f6f9de900da6adc",
+      "old_staged_sha256": "1d39e56fb7552d84c84c93962a22d79f9004ee5c7f6870f99f6f9de900da6adc",
+      "qualified_expected": "1d39e56fb7552d84c84c93962a22d79f9004ee5c7f6870f99f6f9de900da6adc"
+    }
+  ],
+  "actual_child_birth_counter": "80216384",
+  "actual_child_pid": 1208342,
+  "actual_exception": "ValueError: the complete direct observer helper closure changed",
+  "actual_guard_child_returncode": 1,
+  "actual_history_durations_seconds": [
+    90.30375481303781,
+    62.892865409026854,
+    50.81278374500107
+  ],
+  "actual_history_passes": 3,
+  "actual_history_total_seconds": 204.00940396706574,
+  "actual_job_id": "6783003",
+  "actual_parent_pid": 1208341,
+  "actual_references": {
+    "diagnostic_child.json": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-18-39_h100-common-guard-phase-observation_copies-1_helpers-27_metadata-time-limit-seconds-900_production-time-limit-seconds-180_gpu-count-0_processor-count-1_host-memory-gib-1/diagnostic_child.json",
+      "sha256": "fe9268280afe27dfe9512cdb822c343c7f38e13add2c602c3480200a8a31d148"
+    },
+    "diagnostic_intent.json": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-18-39_h100-common-guard-phase-observation_copies-1_helpers-27_metadata-time-limit-seconds-900_production-time-limit-seconds-180_gpu-count-0_processor-count-1_host-memory-gib-1/diagnostic_intent.json",
+      "sha256": "71a35a5856e33191eed37e3d1edf40e309da67765f22264135e6b54e841a71f7"
+    },
+    "diagnostic_observation.json": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-18-39_h100-common-guard-phase-observation_copies-1_helpers-27_metadata-time-limit-seconds-900_production-time-limit-seconds-180_gpu-count-0_processor-count-1_host-memory-gib-1/diagnostic_observation.json",
+      "sha256": "7f8dd99c58835c7c9d2bb30e7bd41e71a9e62b667da53c58f921daae2f3df5e4"
+    },
+    "diagnostic_stderr.raw": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-18-39_h100-common-guard-phase-observation_copies-1_helpers-27_metadata-time-limit-seconds-900_production-time-limit-seconds-180_gpu-count-0_processor-count-1_host-memory-gib-1/diagnostic_stderr.raw",
+      "sha256": "cbffff17283cf5d72c89a53d90617c705999461bc35a4089d0c0e6dcc07011d8"
+    },
+    "diagnostic_stdout.raw": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-18-39_h100-common-guard-phase-observation_copies-1_helpers-27_metadata-time-limit-seconds-900_production-time-limit-seconds-180_gpu-count-0_processor-count-1_host-memory-gib-1/diagnostic_stdout.raw",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "diagnostic_wait.json": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-18-39_h100-common-guard-phase-observation_copies-1_helpers-27_metadata-time-limit-seconds-900_production-time-limit-seconds-180_gpu-count-0_processor-count-1_host-memory-gib-1/diagnostic_wait.json",
+      "sha256": "1b979402e62c1ab693b9309a0d38a6f99913e9b6caf5d64078057fa3f84ab535"
+    },
+    "validator_phase_summary.json": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-18-39_h100-common-guard-phase-observation_copies-1_helpers-27_metadata-time-limit-seconds-900_production-time-limit-seconds-180_gpu-count-0_processor-count-1_host-memory-gib-1/validator_phase_summary.json",
+      "sha256": "63bcba5b99f53212ac60aca220bfbdfc3647cf79e81bd95b81bee0b5f2551a7e"
+    },
+    "validator_phase_times.jsonl": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-18-39_h100-common-guard-phase-observation_copies-1_helpers-27_metadata-time-limit-seconds-900_production-time-limit-seconds-180_gpu-count-0_processor-count-1_host-memory-gib-1/validator_phase_times.jsonl",
+      "sha256": "18a67c3fb69c105057e8c6d833429ee08dc2adf2023c1d080256f464320fefac"
+    }
+  },
+  "actual_step_id": "278",
+  "actual_validate_actual_duration_seconds": 213.39210022299085,
+  "admission_granted": false,
+  "at_utc": "2026-11-05T02:57:38.521926+00:00",
+  "case_credit": 0,
+  "current_reader_helper_commit": "cc9972dd6a8bfba39ba439883cbc821b93c55e3d",
+  "diagnostic_bound_seconds": 900,
+  "existing_qualification_or_correctness_evidence_modified": false,
+  "failure": "The current common guard uses current helper module globals while replaying old twenty-six-helper qualification/window evidence. The complete observer closure comparison correctly rejects two changed adjacent helpers.",
+  "final_training_credit": 0,
+  "formal_timing_preparation_started": false,
+  "guard_qualified": false,
+  "guard_validation_completed_successfully": false,
+  "history_fraction_of_observed_validation_duration": 0.9560307235079445,
+  "idea_credit": 0,
+  "kind": "actual_failed_common_guard_metadata_phase_diagnosis",
+  "next_step": "Separately review a strict isolated old-source consumer path and bounded metadata waiting while preserving every actual source/configuration/numerical/closure gate. A timeout-only change cannot fix the observed namespace mismatch.",
+  "old_qualified_helper_commit": "0a880984b4a03a2ff7335337cc18576628bc9fc1",
+  "outer_recorder_returncode": 0,
+  "production_bound_seconds_unchanged": 180,
+  "production_source_or_input_changed": false,
+  "scientific_credit": 0,
+  "source_mechanism_is_static_inspection_not_per_file_io_counter": true,
+  "source_references": {
+    "direct_measurement.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-18-29_h100-common-confirmation-source_commit-cc9972dd6a8bfba39ba439883cbc821b93c55e3d/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py",
+      "sha256": "7a2125536624ed5b31b3277aeb740cf4233b7001456447a8b3756e2423a2f3a6"
+    },
+    "portable_evidence.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-18-29_h100-common-confirmation-source_commit-cc9972dd6a8bfba39ba439883cbc821b93c55e3d/10_jax_exploration_platform/scripts/atari_pixel_campaign/portable_evidence.py",
+      "sha256": "0ecae0ab2c21b0bbeadd47ddbd81026cb133e8f3d7f32c2148268dbfe575a4d1"
+    },
+    "post_comparison_validation.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-18-29_h100-common-confirmation-source_commit-cc9972dd6a8bfba39ba439883cbc821b93c55e3d/10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py",
+      "sha256": "2612e358f3e823289a92bdfe54856bdc8f0de5553db4bdcc5cd7617083cfd6aa"
+    },
+    "serval02_card1_binding.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-18-29_h100-common-confirmation-source_commit-cc9972dd6a8bfba39ba439883cbc821b93c55e3d/10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py",
+      "sha256": "e0d7c640086480bc6c5e6a5d867db5544a1a5fb111e63e20fe3aba50e1b5afa7"
+    }
+  },
+  "specific_duplicate_io_source_mechanism": [
+    "validate_binding calls validate_metadata, which reruns validate_history for each separately checked saved binding/window.",
+    "Every validate_history builds a fresh ExactPathResolver and checks all explicitly mapped historical files.",
+    "ExactPathResolver.file_path streams a complete SHA256; read_bytes then reads and SHA256-checks the same file again to reject changes between checks.",
+    "Evidence keeps per-path receipts, source defaults and runtime provenance; it does not cache complete raw file contents."
+  ],
+  "terminal_accounting": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-18-39_h100-common-guard-phase-observation_copies-1_helpers-27_metadata-time-limit-seconds-900_production-time-limit-seconds-180_gpu-count-0_processor-count-1_host-memory-gib-1/diagnostic_terminal_accounting.json",
+    "sha256": "6c3c5af1d3aeeadbac6689cef381080ebe3286dceae7bc4bcd73b702f4637931"
+  },
+  "timeout": false,
+  "timing_credit": 0
+}

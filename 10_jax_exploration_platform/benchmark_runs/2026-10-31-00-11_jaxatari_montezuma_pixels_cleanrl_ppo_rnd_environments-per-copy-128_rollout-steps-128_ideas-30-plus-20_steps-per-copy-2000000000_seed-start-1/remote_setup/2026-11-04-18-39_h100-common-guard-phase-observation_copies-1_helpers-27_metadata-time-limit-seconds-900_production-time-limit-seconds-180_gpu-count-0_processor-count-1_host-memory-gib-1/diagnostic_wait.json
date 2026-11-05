@@ -1,0 +1,79 @@
+{
+  "actual_child": {
+    "all_uids": [
+      2618919,
+      2618919,
+      2618919,
+      2618919
+    ],
+    "birth_counter": "80216384",
+    "cgroup": "0::/system.slice/slurmstepd.scope/job_6783003/step_278/user/task_0\n",
+    "command": [
+      "/usr/bin/python3",
+      "-I",
+      "-S",
+      "-B",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-18-39_h100-common-guard-phase-observation_copies-1_helpers-27_metadata-time-limit-seconds-900_production-time-limit-seconds-180_gpu-count-0_processor-count-1_host-memory-gib-1/observe_guard_phases.py",
+      "--observed-guard-child"
+    ],
+    "parent_pid": 1208341,
+    "pid": 1208342
+  },
+  "actual_child_pid": 1208342,
+  "child_identity_saved": true,
+  "exact_popen_child_reaped": true,
+  "exited_normally": false,
+  "finished_at_seconds": 1793847254.232593,
+  "kind": "actual_distinct_metadata_phase_observation_wait",
+  "observation_failure": null,
+  "parent_after": {
+    "all_uids": [
+      2618919,
+      2618919,
+      2618919,
+      2618919
+    ],
+    "birth_counter": "80216373",
+    "cgroup": "0::/system.slice/slurmstepd.scope/job_6783003/step_278/user/task_0\n",
+    "command": [
+      "/usr/bin/python3",
+      "-I",
+      "-S",
+      "-B",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-18-39_h100-common-guard-phase-observation_copies-1_helpers-27_metadata-time-limit-seconds-900_production-time-limit-seconds-180_gpu-count-0_processor-count-1_host-memory-gib-1/observe_guard_phases.py"
+    ],
+    "parent_pid": 1208340,
+    "pid": 1208341
+  },
+  "parent_before": {
+    "all_uids": [
+      2618919,
+      2618919,
+      2618919,
+      2618919
+    ],
+    "birth_counter": "80216373",
+    "cgroup": "0::/system.slice/slurmstepd.scope/job_6783003/step_278/user/task_0\n",
+    "command": [
+      "/usr/bin/python3",
+      "-I",
+      "-S",
+      "-B",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-18-39_h100-common-guard-phase-observation_copies-1_helpers-27_metadata-time-limit-seconds-900_production-time-limit-seconds-180_gpu-count-0_processor-count-1_host-memory-gib-1/observe_guard_phases.py"
+    ],
+    "parent_pid": 1208340,
+    "pid": 1208341
+  },
+  "production_timeout_seconds_unchanged": 180,
+  "returncode": 1,
+  "started_at_seconds": 1793847038.7798386,
+  "stderr": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-18-39_h100-common-guard-phase-observation_copies-1_helpers-27_metadata-time-limit-seconds-900_production-time-limit-seconds-180_gpu-count-0_processor-count-1_host-memory-gib-1/diagnostic_stderr.raw",
+    "sha256": "cbffff17283cf5d72c89a53d90617c705999461bc35a4089d0c0e6dcc07011d8"
+  },
+  "stdout": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-18-39_h100-common-guard-phase-observation_copies-1_helpers-27_metadata-time-limit-seconds-900_production-time-limit-seconds-180_gpu-count-0_processor-count-1_host-memory-gib-1/diagnostic_stdout.raw",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "timeout": false
+}

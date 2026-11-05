@@ -1,0 +1,30 @@
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-18-39_h100-common-guard-phase-observation_copies-1_helpers-27_metadata-time-limit-seconds-900_production-time-limit-seconds-180_gpu-count-0_processor-count-1_host-memory-gib-1/observe_guard_phases.py", line 217, in <module>
+    observed_child()
+  File "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-18-39_h100-common-guard-phase-observation_copies-1_helpers-27_metadata-time-limit-seconds-900_production-time-limit-seconds-180_gpu-count-0_processor-count-1_host-memory-gib-1/observe_guard_phases.py", line 113, in observed_child
+    execute_guard_main(source, observer)
+  File "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-18-39_h100-common-guard-phase-observation_copies-1_helpers-27_metadata-time-limit-seconds-900_production-time-limit-seconds-180_gpu-count-0_processor-count-1_host-memory-gib-1/observe_guard_phases.py", line 123, in execute_guard_main
+    runpy.run_path(str(source), run_name="__main__")
+  File "/usr/lib/python3.10/runpy.py", line 289, in run_path
+    return _run_module_code(code, init_globals, run_name,
+  File "/usr/lib/python3.10/runpy.py", line 96, in _run_module_code
+    _run_code(code, mod_globals, init_globals,
+  File "/usr/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/p/rlprojects/RND_worktrees/2026-11-04-18-29_h100-common-confirmation-source_commit-cc9972dd6a8bfba39ba439883cbc821b93c55e3d/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_confirmation.py", line 684, in <module>
+    main()
+  File "/p/rlprojects/RND_worktrees/2026-11-04-18-29_h100-common-confirmation-source_commit-cc9972dd6a8bfba39ba439883cbc821b93c55e3d/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_confirmation.py", line 678, in main
+    proof = validate_actual(plan, digest(raw))
+  File "/p/rlprojects/RND_worktrees/2026-11-04-18-29_h100-common-confirmation-source_commit-cc9972dd6a8bfba39ba439883cbc821b93c55e3d/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_confirmation.py", line 288, in validate_actual
+    previous, binding = support.verify_saved_measurement(directory, result)
+  File "/p/rlprojects/RND_worktrees/2026-11-04-18-29_h100-common-confirmation-source_commit-cc9972dd6a8bfba39ba439883cbc821b93c55e3d/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py", line 767, in verify_saved_measurement
+    verify_qualification_inputs(plan)
+  File "/p/rlprojects/RND_worktrees/2026-11-04-18-29_h100-common-confirmation-source_commit-cc9972dd6a8bfba39ba439883cbc821b93c55e3d/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py", line 680, in verify_qualification_inputs
+    rebuilt_memory = validate_window(memory["assigned_gpu_process_observation"], directory)
+  File "/p/rlprojects/RND_worktrees/2026-11-04-18-29_h100-common-confirmation-source_commit-cc9972dd6a8bfba39ba439883cbc821b93c55e3d/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py", line 184, in validate_window
+    verify_observer_helpers(plan, unit)
+  File "/p/rlprojects/RND_worktrees/2026-11-04-18-29_h100-common-confirmation-source_commit-cc9972dd6a8bfba39ba439883cbc821b93c55e3d/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py", line 153, in verify_observer_helpers
+    require(value["files"].get(relative) == identity.digest(raw) == identity.receipt(root / relative)["sha256"]
+  File "/p/rlprojects/RND_worktrees/2026-11-04-18-29_h100-common-confirmation-source_commit-cc9972dd6a8bfba39ba439883cbc821b93c55e3d/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py", line 30, in require
+    raise ValueError(message)
+ValueError: the complete direct observer helper closure changed

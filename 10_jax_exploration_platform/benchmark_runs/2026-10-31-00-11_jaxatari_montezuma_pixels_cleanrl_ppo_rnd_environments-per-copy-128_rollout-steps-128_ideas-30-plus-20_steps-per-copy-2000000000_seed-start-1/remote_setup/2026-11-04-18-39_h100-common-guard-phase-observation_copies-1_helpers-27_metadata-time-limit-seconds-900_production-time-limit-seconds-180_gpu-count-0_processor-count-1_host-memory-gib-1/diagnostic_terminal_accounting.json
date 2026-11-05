@@ -1,0 +1,18 @@
+{
+  "at_utc": "2026-11-05T02:57:38.432191+00:00",
+  "attempt_step_from_immutable_intent": "278",
+  "command": [
+    "sacct",
+    "--jobs=6783003.278",
+    "--noheader",
+    "--parsable2",
+    "--format=JobIDRaw,State,ExitCode,ElapsedRaw,TotalCPU,MaxRSS,MaxDiskRead,MaxDiskWrite,NodeList"
+  ],
+  "job_action": false,
+  "kind": "exact_owned_distinct_metadata_phase_observation_terminal_accounting",
+  "reader_job_id": "6783003",
+  "reader_step_id": "280",
+  "returncode": 0,
+  "stderr": "",
+  "stdout": "6783003.278|COMPLETED|0:0|216|02:41.213|1048420K|28989.14M|39.39M|heartpiece\n"
+}
