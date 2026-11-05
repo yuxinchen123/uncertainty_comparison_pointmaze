@@ -1,0 +1,25 @@
+{
+  "at_utc": "2026-11-05T21:10:43.152014+00:00",
+  "job_id": "6826372",
+  "kind": "actual_profile_target_qualification_three_ledgers_fsynced",
+  "ledgers": [
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/submitted_jobids.txt",
+      "sha256": "8b1941aa7e1abe8cad3f8ffe721c5beb3a56d0e8b462b8bfdebbe726145dfead"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/submitted_jobids_uva.txt",
+      "sha256": "74adb4a32f634509958954ba4642cc42c48f7e6f504ed3e623011d81335931fa"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/submissions.tsv",
+      "sha256": "2ab427e40c8b6a36740e57c3e71bba4d8bddb3db07f6f2f07740f0f63e04d0ba"
+    }
+  ],
+  "submission_row": [
+    "6826372",
+    "full_original_profile_source_target_qualification",
+    "d1469fd063a44167ec56760729eb0beea7ecf7d3",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-12-57_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3/job.sbatch"
+  ]
+}
