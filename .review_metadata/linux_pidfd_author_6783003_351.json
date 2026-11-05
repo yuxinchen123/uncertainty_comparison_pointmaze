@@ -1,0 +1,25 @@
+{
+  "kind": "actual_owned_cpu_native_pidfd_source_test_execution",
+  "job_id": "6783003",
+  "step_id": "351",
+  "hostname": "heartpiece",
+  "pid": 1226129,
+  "sys_executable": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+  "sys_version": "3.12.13 | packaged by conda-forge | (main, Aug 11 2026, 10:27:28) [GCC 14.4.0]",
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-20-48_linux-pidfd-native-process-control_selected-python-3.12_process-handles-only_no-environment-transitions/.review_metadata/linux_pidfd_native_source_freeze_author_2.json",
+    "sha256": "69679c24324b306d3bbd1bc92188767b37846848f988dac642a2fb307ae20fb1"
+  },
+  "started_at_seconds": 1793854614.6949484,
+  "finished_at_seconds": 1793854618.241372,
+  "tests": 27,
+  "failures": 0,
+  "errors": 0,
+  "passed": true,
+  "source_and_protected_unchanged": true,
+  "actual_tool_or_gpu_execution": false,
+  "standing_gpu_lock_opened": false,
+  "native_process_control_only": true,
+  "scientific_credit": 0,
+  "admission_granted": false
+}

@@ -1,0 +1,50 @@
+{
+  "files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/linux_pidfd_process_control.py": {
+      "sha256": "1ad04ff92d043c18c127d42a5155e55e55e516525fa094c5897b133c05a8e077",
+      "size_bytes": 16362
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py": {
+      "sha256": "0fe777e0ff0d3015a1cb90df0c77014c1d68483d94193f7e5b668b867079c6f1",
+      "size_bytes": 38506
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_linux_pidfd_process_control.py": {
+      "sha256": "a0eec4d80d2c3e53ba2210cdaaa3e6f8ca7de6ce81fa89662ad3bc08928059b0",
+      "size_bytes": 9910
+    },
+    ".review_metadata/linux_pidfd_native_source_freeze_author_1.json": {
+      "sha256": "a4984923c51fc681b4d808d12b45460bb666662e78599d4985cd9303e73fe9cc",
+      "size_bytes": 27396
+    },
+    ".review_metadata/run_linux_pidfd_native_author_tests.py": {
+      "sha256": "8e67024c60f0a530c99eac4cbfcd2e6aabf0227971c9d6d3a0eee9439e38a544",
+      "size_bytes": 2458
+    },
+    ".review_metadata/linux_pidfd_author_first_stdout.raw": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    ".review_metadata/linux_pidfd_author_first_stderr.raw": {
+      "sha256": "90dd6335252cd14cdf06995f8545814e401f60df0b936155620360ca4411338b",
+      "size_bytes": 3475
+    },
+    ".review_metadata/linux_pidfd_actual_cpu_6783003_349/actual_self_preflight.json": {
+      "sha256": "2a9ccffc06c99f3770eb08c68abdd4562b01acf63c4ba8c41888430f5f83da05",
+      "size_bytes": 4452
+    },
+    ".review_metadata/linux_pidfd_actual_cpu_6783003_349/actual_temporary_owned_child.json": {
+      "sha256": "4001951d9ce2e36954ef4c113397749ac5dc19d8c257c2b3a5e4a54e2579ab01",
+      "size_bytes": 16370
+    },
+    ".review_metadata/linux_pidfd_actual_cpu_6783003_349/synthetic_unsupported_kernel_response.json": {
+      "sha256": "60a7e9a012b821e67cedd1fbcc319fb0ccf3318bcc06420c54a93eb811bacc7d",
+      "size_bytes": 4044
+    }
+  },
+  "actual_cpu_step": "6783003.349",
+  "tests_passed": 9,
+  "surrounding_verifier_passed": false,
+  "failure": "SystemPython3.10 and selectedPython3.12 ast.dump include different AST fields; unchanged profile core source bytes need a version-independent source hash check.",
+  "tool_or_gpu_execution": false,
+  "admission_granted": false
+}

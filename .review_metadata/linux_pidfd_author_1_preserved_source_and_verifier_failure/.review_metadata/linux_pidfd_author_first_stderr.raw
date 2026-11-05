@@ -1,0 +1,29 @@
+test_actual_owned_child_uses_same_uid_cgroup_birth_checks_and_pidfd_cleanup (test_linux_pidfd_process_control.NativePidfdContractTests.test_actual_owned_child_uses_same_uid_cgroup_birth_checks_and_pidfd_cleanup)
+Manage one fresh CPU child through the unchanged ancestry reader with the explicit provider. ... ok
+test_actual_self_preflight_opens_signals_zero_and_closes_before_other_use (test_linux_pidfd_process_control.NativePidfdContractTests.test_actual_self_preflight_opens_signals_zero_and_closes_before_other_use)
+Three successful native calls establish process control, with no claim about CUDA. ... ok
+test_adapter_keeps_default_identity_functions_and_explicit_control_separate (test_linux_pidfd_process_control.NativePidfdContractTests.test_adapter_keeps_default_identity_functions_and_explicit_control_separate)
+No generic module function is replaced when an explicit adapter is created. ... ok
+test_contract_uses_actual_public_headers_symbols_and_selected_python (test_linux_pidfd_process_control.NativePidfdContractTests.test_contract_uses_actual_public_headers_symbols_and_selected_python)
+The captured contract has exact syscall declarations and actual mapped libc offsets. ... ok
+test_inherited_or_not_yet_ready_state_cannot_manage_a_process (test_linux_pidfd_process_control.NativePidfdContractTests.test_inherited_or_not_yet_ready_state_cannot_manage_a_process)
+Explicit provider state belongs to its one actual producer and completed preflight. ... ok
+test_native_backend_requires_an_explicit_kind_and_exact_contract (test_linux_pidfd_process_control.NativePidfdContractTests.test_native_backend_requires_an_explicit_kind_and_exact_contract)
+A missing declaration, changed image, header, ABI or interpreter never enables this provider. ... ok
+test_native_provider_does_not_fabricate_missing_python_exports (test_linux_pidfd_process_control.NativePidfdContractTests.test_native_provider_does_not_fabricate_missing_python_exports)
+The selected interpreter retains its actual build capabilities and default refusal. ... ok
+test_unknown_and_boolean_handles_signals_and_pids_are_refused (test_linux_pidfd_process_control.NativePidfdContractTests.test_unknown_and_boolean_handles_signals_and_pids_are_refused)
+No malformed argument reaches a target process or becomes a numeric-PID signal. ... ok
+test_unsupported_kernel_response_is_recorded_and_refused_without_fallback (test_linux_pidfd_process_control.NativePidfdContractTests.test_unsupported_kernel_response_is_recorded_and_refused_without_fallback)
+A labelled synthetic ENOSYS response proves refusal, not actual kernel incompatibility. ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 5.912s
+
+OK
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-04-20-48_linux-pidfd-native-process-control_selected-python-3.12_process-handles-only_no-environment-transitions/.review_metadata/run_linux_pidfd_native_author_tests.py", line 14, in <module>
+    core=next(n for n in ast.parse((s/'profile_selected.py').read_text()).body if isinstance(n,ast.FunctionDef) and n.name=='_capture_core');assert ast.dump(core,include_attributes=False)==f['capture_core_ast']
+                                                                                                                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
+srun: error: heartpiece: task 0: Exited with exit code 1
