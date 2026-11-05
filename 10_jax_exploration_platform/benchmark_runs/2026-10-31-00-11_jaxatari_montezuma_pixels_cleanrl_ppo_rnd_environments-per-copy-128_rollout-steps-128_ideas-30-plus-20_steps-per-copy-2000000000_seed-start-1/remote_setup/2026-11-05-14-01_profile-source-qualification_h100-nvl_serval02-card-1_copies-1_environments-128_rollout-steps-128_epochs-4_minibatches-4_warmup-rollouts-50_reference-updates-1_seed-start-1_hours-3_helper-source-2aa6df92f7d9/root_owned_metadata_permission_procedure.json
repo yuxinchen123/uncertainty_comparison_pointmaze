@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "kind": "root_only_owned_metadata_permission_protection_and_same_file_restore_procedure",
+  "current_metadata_lock_snapshots": [
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/queue/metadata.lock",
+      "st_dev": 76,
+      "st_ino": 4329110,
+      "st_uid": 2618919,
+      "st_nlink": 1,
+      "size": 0,
+      "current_mode": 432,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/processes.lock",
+      "st_dev": 76,
+      "st_ino": 4304699,
+      "st_uid": 2618919,
+      "st_nlink": 1,
+      "size": 0,
+      "current_mode": 432,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "mode_now": 432,
+  "protected_mode_before_ssh": 416,
+  "restore_mode_after_actual_registration_or_verified_failed_startup_exit": 432,
+  "permission_changes_by_this_preparation": 0,
+  "remote_actions": 0,
+  "standing_gpu_lock_operations": 0,
+  "steps": [
+    "Before the one reviewed SSH, root verifies these exact owned regular files and saves current inode/device/bytes/mode, then protects only their group-write permissions.",
+    "Root/controller never open the standing GPU descriptor; the actual numerical producer owns that descriptor.",
+    "After real durable child/controller registration, or actual failed-startup child wait and both exact process exits, root verifies the same inode/bytes and restores0660.",
+    "Preserve any failed observation and actual return status; permission changes grant no scientific or timing credit."
+  ],
+  "observation_host": "portal05",
+  "observed_at_utc": "2026-11-05T22:04:53.608570+00:00",
+  "source_procedure_reference": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-08-40_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/root_owned_metadata_permission_procedure.json",
+    "sha256": "dcdac5811e86ec14bb0ca2be354506e7d11a598efaf792f1d6eab228c0792179"
+  }
+}
