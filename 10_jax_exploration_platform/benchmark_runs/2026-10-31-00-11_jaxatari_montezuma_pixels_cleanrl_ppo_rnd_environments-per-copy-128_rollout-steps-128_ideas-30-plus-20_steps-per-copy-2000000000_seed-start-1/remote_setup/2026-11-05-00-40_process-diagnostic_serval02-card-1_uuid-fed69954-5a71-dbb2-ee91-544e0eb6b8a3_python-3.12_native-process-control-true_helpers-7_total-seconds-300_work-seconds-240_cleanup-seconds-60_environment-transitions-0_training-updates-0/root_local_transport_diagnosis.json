@@ -1,0 +1,40 @@
+{
+  "at_utc": "2026-11-05T08:45:21.630569+00:00",
+  "local_configuration_only": true,
+  "network_or_authentication_attempts": 0,
+  "observed": [
+    {
+      "argv": [
+        "ssh",
+        "-G",
+        "serval02"
+      ],
+      "resolved": {
+        "user": "sl5nw",
+        "hostname": "serval02",
+        "port": "22",
+        "controlmaster": "false"
+      }
+    },
+    {
+      "argv": [
+        "ssh",
+        "-G",
+        "-o",
+        "ProxyCommand=false",
+        "serval02"
+      ],
+      "resolved": {
+        "user": "sl5nw",
+        "hostname": "serval02",
+        "port": "22",
+        "controlmaster": "false",
+        "proxycommand": "false"
+      }
+    }
+  ],
+  "diagnosis": "The literal ProxyCommand=false starts the local false command when no existing multiplexed connection is selected. It is required only for the separate existing-only ACES/DeltaAI routes, and must not be copied to the direct serval02 launch. The failed transport has no target-side controller record.",
+  "prior_successful_serval02_command": "remote_setup/serval02_nsight_tool_metadata_2026-11-05.json",
+  "correction": "Use the previously successful direct serval02 shape: BatchMode=yes ControlMaster=no ConnectTimeout=15; no ProxyCommand override. Prepare a fresh unit before one newly reviewed launch.",
+  "failed_packet_never_reused": true
+}

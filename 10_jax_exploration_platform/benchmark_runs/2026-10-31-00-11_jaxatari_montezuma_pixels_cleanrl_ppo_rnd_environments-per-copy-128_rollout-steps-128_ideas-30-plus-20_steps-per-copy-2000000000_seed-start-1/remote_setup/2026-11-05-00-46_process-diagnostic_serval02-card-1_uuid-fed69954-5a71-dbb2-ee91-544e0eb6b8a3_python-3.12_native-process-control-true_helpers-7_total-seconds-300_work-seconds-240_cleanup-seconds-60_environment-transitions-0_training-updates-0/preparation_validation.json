@@ -1,0 +1,55 @@
+{
+  "admission_granted": false,
+  "check_count": 9,
+  "checked_at_utc": "2026-11-05T08:47:56.399976+00:00",
+  "checks": [
+    {
+      "name": "all prepared plan controls match accepted prior metadata checks except new unit identity",
+      "passed": true
+    },
+    {
+      "name": "new plan identity and prepared hash",
+      "passed": true
+    },
+    {
+      "name": "exact unchanged clean source",
+      "passed": true
+    },
+    {
+      "name": "all seven staged source hashes match plan and published source",
+      "passed": true
+    },
+    {
+      "name": "manifest and resolved controls exact",
+      "passed": true
+    },
+    {
+      "name": "exact reviewed direct SSH options without ProxyCommand override",
+      "passed": true
+    },
+    {
+      "name": "proposed target command binds exact controller",
+      "passed": true
+    },
+    {
+      "name": "metadata preparation success within declared limit",
+      "passed": true
+    },
+    {
+      "name": "no target runtime or approval files",
+      "passed": true
+    }
+  ],
+  "environment_transitions": 0,
+  "gpu_operations": 0,
+  "independent_review": false,
+  "kind": "fresh_metadata_only_prepared_direct_native_diagnostic_validation",
+  "passed": true,
+  "ssh_invoked": false,
+  "tool_invoked": false,
+  "training_updates": 0,
+  "unchanged_source_control_validation": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-00-40_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/preparation_validation.json",
+    "sha256": "24de2ccbf505b49e2d45fb7d18e9b1180913ec25bc2fc1e1b495f64ad33e639b"
+  }
+}
