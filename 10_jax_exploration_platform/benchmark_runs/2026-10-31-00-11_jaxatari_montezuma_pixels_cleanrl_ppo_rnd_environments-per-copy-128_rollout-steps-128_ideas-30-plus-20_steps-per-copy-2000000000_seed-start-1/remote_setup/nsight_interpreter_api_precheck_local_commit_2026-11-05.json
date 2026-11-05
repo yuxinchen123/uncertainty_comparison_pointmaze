@@ -1,0 +1,123 @@
+{
+  "at_utc": "2026-11-05T04:05:06.018524+00:00",
+  "commit": "5bfcf255114bfe64f340c40c491cc8c3ac558d77",
+  "exact_reviewed_json_ignore_rules": ".gitignore:55:*.json\t.review_metadata/nsight_interpreter_api_commit_allowlist.json\n.gitignore:55:*.json\t.review_metadata/nsight_interpreter_api_failure_diagnosis.json\n.gitignore:55:*.json\t.review_metadata/nsight_interpreter_api_precheck_author.json\n.gitignore:55:*.json\t.review_metadata/nsight_interpreter_api_precheck_full_source_freeze.json\n.gitignore:55:*.json\t.review_metadata/nsight_interpreter_api_precheck_independent.json\n.gitignore:55:*.json\t.review_metadata/nsight_interpreter_api_precheck_root_review.json\n.gitignore:55:*.json\t.review_metadata/nsight_interpreter_api_precheck_source_freeze.json\n.gitignore:55:*.json\t.review_metadata/nsight_interpreter_api_preservation.json\n.gitignore:55:*.json\t.review_metadata/nsight_selected_interpreter_capabilities_actual_6783003_317.json\n.gitignore:55:*.json\t.review_metadata/nsight_system_interpreter_capabilities_actual_6783003_316.json\n",
+  "explicitly_authorized_review_metadata_added_by_exact_allowlist_only": true,
+  "files": {
+    ".review_metadata/nsight_interpreter_api_commit_allowlist.json": {
+      "bytes": 3766,
+      "git_blob": "5b29d50386ac2fb3cd6086ed0b535b0d741afef3",
+      "git_mode": "100644",
+      "sha256": "137ac414fdd04b1632fdc6a6e30b53a6f4534d6a3550adf048f786bd8f74b18d"
+    },
+    ".review_metadata/nsight_interpreter_api_failure_diagnosis.json": {
+      "bytes": 6895,
+      "git_blob": "91abb9a641a274785e9bcd13a7e559a87919b5fb",
+      "git_mode": "100644",
+      "sha256": "5f9a631554fbe16c49f678a0c8399ce34d62eac0c209b5afee8e2db3f98c2699"
+    },
+    ".review_metadata/nsight_interpreter_api_precheck_author.json": {
+      "bytes": 12780,
+      "git_blob": "f31d4dfe4209d705cd0f5252f5256d1637973a25",
+      "git_mode": "100644",
+      "sha256": "4cef7ec7b56fdc3273d2b23efd40dc3d9f64f4082b073ce1806403a1a9b5e885"
+    },
+    ".review_metadata/nsight_interpreter_api_precheck_full_source_freeze.json": {
+      "bytes": 2028,
+      "git_blob": "6cad9fba6f1c4754aaac5e2fb5ac091466524fd2",
+      "git_mode": "100644",
+      "sha256": "c190f3bac58ef0229a103e95a70c6347d0ff261b097a60be43eb087c519f3426"
+    },
+    ".review_metadata/nsight_interpreter_api_precheck_independent.json": {
+      "bytes": 12780,
+      "git_blob": "664091989a21647f76a00a6c16b5562f238f5b0c",
+      "git_mode": "100644",
+      "sha256": "0478d13109f7ae2599bdaffa00208439752ae279660348225574b7001fa49946"
+    },
+    ".review_metadata/nsight_interpreter_api_precheck_root_review.json": {
+      "bytes": 1631,
+      "git_blob": "1ead1ac87b4a7936dd7d6bc43d3b6c48802f4cff",
+      "git_mode": "100644",
+      "sha256": "adf28c36ad0e706ac40ebfc6ba85f3446a1686f3b5a924e1c7e07fe0754ee093"
+    },
+    ".review_metadata/nsight_interpreter_api_precheck_source_freeze.json": {
+      "bytes": 1775,
+      "git_blob": "cfb8b18a424307a4f1bdf49308702bcf0610ee52",
+      "git_mode": "100644",
+      "sha256": "85862d1af66fe97200c0574c93c9970522bd0af97f6c51b099035c1d45fce271"
+    },
+    ".review_metadata/nsight_interpreter_api_preservation.json": {
+      "bytes": 6765,
+      "git_blob": "ffb363c0b5fa192db8b0914260299fd936318be4",
+      "git_mode": "100644",
+      "sha256": "2d0e005f274b28662405a7b81cba646e6373d0a8a294e66e7fc769c453c10e6c"
+    },
+    ".review_metadata/nsight_process_control_capability_observation_source.raw": {
+      "bytes": 2500,
+      "git_blob": "d701f9d464e880e5016864e9324623161d96411c",
+      "git_mode": "100644",
+      "sha256": "8199f6fbf29dc3253f16f0d1e02d3eeb8924fe2f2fc902aa677154bd90abd296"
+    },
+    ".review_metadata/nsight_selected_interpreter_capabilities_actual_6783003_317.json": {
+      "bytes": 1620,
+      "git_blob": "ad2666ec5102d0d3cb7816858e4aaab22af72ecc",
+      "git_mode": "100644",
+      "sha256": "4b2bbc6905293bc7d56c7f70f426464548e4fcef02c3e109025466dc2071d468"
+    },
+    ".review_metadata/nsight_system_interpreter_capabilities_actual_6783003_316.json": {
+      "bytes": 1479,
+      "git_blob": "5b2ca3acbebc30dc56371483b0ff913333c65ab9",
+      "git_mode": "100644",
+      "sha256": "e4d0d09aa3e2681592a6829074a5ff6bf65a74fc19ac61b9f170c2ede9ffe6f7"
+    },
+    ".review_metadata/prepare_nsight_process_diagnostic.py": {
+      "bytes": 10316,
+      "git_blob": "a9fd6b3e0689f4110876b716d97fa6b6e98f89c9",
+      "git_mode": "100644",
+      "sha256": "4407d8c2486f83ac30355ecfa6434029aabb62b371b00b842f7c94520213f823"
+    },
+    ".review_metadata/run_nsight_interpreter_api_precheck_tests.py": {
+      "bytes": 5380,
+      "git_blob": "54f66c5c30a903f6b72be7c088bdc9ef7a9f28a6",
+      "git_mode": "100644",
+      "sha256": "93114686553ecca7a0f2319e1b8472bc070d90ad9a4f6e9624ae9857f6f57426"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_nsight_process_tree.py": {
+      "bytes": 16745,
+      "git_blob": "f51853542d9c01bcf1bb7298c5eb59b2c0383358",
+      "git_mode": "100644",
+      "sha256": "7936699937b2516495846ce6fca2affd4b651149a7bd2da0075b06ed7aeaf43b"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py": {
+      "bytes": 37869,
+      "git_blob": "5437fc3a538c53a27910d55a90eb7a72417a520f",
+      "git_mode": "100644",
+      "sha256": "9fc9cc817cbd222b2208a44382f99d0b76be87ceb791f2bb5b96481b3995972a"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_nsight_diagnostic_preparation.py": {
+      "bytes": 11671,
+      "git_blob": "aa00ef4581d8e5eb9d90f5b583997f373fa46df2",
+      "git_mode": "100644",
+      "sha256": "55730ff719f882431f63b78d4410dfcc4ed55cfa8a0ff5c11eb23c4f70bac1c1"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_nsight_process_control_capability.py": {
+      "bytes": 6388,
+      "git_blob": "b44806732b2740e88a3d79ad40010c3d9ffc64fd",
+      "git_mode": "100644",
+      "sha256": "41bca3b23cf34da49804b3f6f1f7486e72dce6b7198681c89629748ee8ab5e96"
+    }
+  },
+  "initial_ignore_check_refusal_preserved": true,
+  "kind": "actual_detached_nsight_interpreter_api_precheck_commit",
+  "parent": "2ead6e5c8517ec164679ce6a2764627e19317be0",
+  "path_count": 17,
+  "pushed": false,
+  "root_integration_or_job_actions": false,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "source_freeze_sha256": "c190f3bac58ef0229a103e95a70c6347d0ff261b097a60be43eb087c519f3426",
+  "total_bytes": 142388,
+  "tree": "ecf9784bdb565cb17144e7ea1df65de20f0d61e2",
+  "worktree": "/p/rlprojects/RND_worktrees/2026-11-04-19-55_nsight-process-api-precheck_system-python-zero-environment-diagnostic_before-any-tool-or-popen",
+  "worktree_clean": true
+}

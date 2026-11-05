@@ -1,0 +1,55 @@
+{
+  "admission_granted": false,
+  "campaign_run_dir": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1",
+  "capture_process_protocol": "nsight-owned-descendant-observation-version-1",
+  "case_credit": 0,
+  "environment_credit": 0,
+  "gpu_uuid": null,
+  "helpers": {
+    "files": {
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_nsight_process_tree.py": "7936699937b2516495846ce6fca2affd4b651149a7bd2da0075b06ed7aeaf43b",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py": "9fc9cc817cbd222b2208a44382f99d0b76be87ceb791f2bb5b96481b3995972a"
+    },
+    "source_commit": "7aff76d9d163d01de805364de917cc558e783535",
+    "source_root": "/p/rlprojects/RND_worktrees/2026-11-04-20-08_nsight-process-diagnostic-source_system-python-3.10_required-process-api-precheck_commit-7aff76d9d163d01de805364de917cc558e783535"
+  },
+  "idea_credit": 0,
+  "job_id": null,
+  "kind": "nsight_process_identity_diagnostic",
+  "learner_credit": 0,
+  "packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-20-09_nsight-process-observation_jaguar03_gpu-count-1_processor-count-1_host-memory-gib-2_time-limit-minutes-5_python-usr-bin-python3_reservation-sl5nw_168_qos-csresnolim_tool-version-2024.7.1.84_environment-transitions-0",
+  "physical_gres_mapping_verified": false,
+  "profile_credit": 0,
+  "profile_tool": {
+    "path": "/sw/ubuntu2204/ebu082025/software/common/core/nsight-systems/2024.7.1/target-linux-x64/nsys",
+    "sha256": "48e4c308f538c8971b8f62c389834372d986f00f200743f1eae90918f2f04e1d",
+    "version": "NVIDIA Nsight Systems version 2024.7.1.84-247135125610v0"
+  },
+  "python": "/usr/bin/python3",
+  "resources": {
+    "account": "sl5nw_base",
+    "gres": "gpu:nvidia_rtx_a4500:1",
+    "host_memory_gib": 2,
+    "node": "jaguar03",
+    "nodes": 1,
+    "partition": "gpu",
+    "qos": "csresnolim",
+    "requested_cpus": 1,
+    "requeue": false,
+    "reservation": "sl5nw_168",
+    "tasks": 1,
+    "wall_seconds": 300
+  },
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "unit_id": "2026-11-04-20-09_nsight-process-observation_jaguar03_gpu-count-1_processor-count-1_host-memory-gib-2_time-limit-minutes-5_python-usr-bin-python3_reservation-sl5nw_168_qos-csresnolim_tool-version-2024.7.1.84_environment-transitions-0",
+  "whole_tool_library_or_device_activity_quantified": false,
+  "work": {
+    "actual_nsight_profile_command_count": 1,
+    "cuda_profiler_api_calls_by_payload": 0,
+    "learner_updates": 0,
+    "numpy_or_jax_or_torch_imports": 0,
+    "warmup_rollouts": 0
+  },
+  "worker_admitted": false
+}

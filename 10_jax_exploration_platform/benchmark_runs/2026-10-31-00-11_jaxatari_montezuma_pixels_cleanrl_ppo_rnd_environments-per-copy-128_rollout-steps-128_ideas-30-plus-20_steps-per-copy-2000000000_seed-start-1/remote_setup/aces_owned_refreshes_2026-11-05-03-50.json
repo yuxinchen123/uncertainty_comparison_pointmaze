@@ -1,0 +1,57 @@
+{
+  "actual_refreshes": [
+    {
+      "key": "aces_full_site_qualification",
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/refresh_aces_site.py",
+        "--run-dir",
+        "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1",
+        "--packet",
+        "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-02-22_aces-full-site_h100_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3_torch-2.6.0-cpu"
+      ],
+      "started_at_utc": "2026-11-05T03:48:32.931273+00:00",
+      "finished_at_utc": "2026-11-05T03:48:33.383985+00:00",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/refresh_aces_site.py\", line 165, in refresh\n    payload, details = receive(inputs)\n  File \"/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/refresh_aces_site.py\", line 90, in receive\n    adapter.require(result[\"returncode\"] == 0 and len(result[\"stdout\"].encode()) <= transport.MAX_RESPONSE_BYTES,\n  File \"/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/aces_site_monitor.py\", line 30, in require\n    raise ValueError(message)\nValueError: existing-master ACES site metadata command failed: banner exchange: Connection to UNKNOWN port 65535: Broken pipe\n\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/refresh_aces_site.py\", line 195, in <module>\n    main()\n  File \"/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/refresh_aces_site.py\", line 191, in main\n    print(json.dumps(refresh(arguments.run_dir, arguments.packet), indent=2), flush=True)\n  File \"/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/refresh_aces_site.py\", line 182, in refresh\n    raise RuntimeError(\"ACES site refresh failed; inspect \" + str(path)) from error\nRuntimeError: ACES site refresh failed; inspect /p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/20_mins_monitoring/aces_site_refresh_errors/2026-11-05-03-48-33_47a4a723fa504cb4b00bd29720615e48.json\n"
+    },
+    {
+      "key": "aces_autodetect_full_site_qualification",
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/refresh_aces_site.py",
+        "--run-dir",
+        "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1",
+        "--packet",
+        "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-05-23_aces-full-site_h100_autodetect-nvml_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3"
+      ],
+      "started_at_utc": "2026-11-05T03:48:33.384113+00:00",
+      "finished_at_utc": "2026-11-05T03:48:33.714314+00:00",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/refresh_aces_site.py\", line 165, in refresh\n    payload, details = receive(inputs)\n  File \"/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/refresh_aces_site.py\", line 90, in receive\n    adapter.require(result[\"returncode\"] == 0 and len(result[\"stdout\"].encode()) <= transport.MAX_RESPONSE_BYTES,\n  File \"/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/aces_site_monitor.py\", line 30, in require\n    raise ValueError(message)\nValueError: existing-master ACES site metadata command failed: kex_exchange_identification: Connection closed by remote host\nConnection closed by UNKNOWN port 65535\n\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/refresh_aces_site.py\", line 195, in <module>\n    main()\n  File \"/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/refresh_aces_site.py\", line 191, in main\n    print(json.dumps(refresh(arguments.run_dir, arguments.packet), indent=2), flush=True)\n  File \"/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/refresh_aces_site.py\", line 182, in refresh\n    raise RuntimeError(\"ACES site refresh failed; inspect \" + str(path)) from error\nRuntimeError: ACES site refresh failed; inspect /p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/20_mins_monitoring/aces_site_refresh_errors/2026-11-05-03-48-33_87e59608bcdd44a9a4d1d4adea122b10.json\n"
+    },
+    {
+      "key": "aces_allocation_observation",
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/refresh_aces_allocation_observation.py",
+        "--run-dir",
+        "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1",
+        "--packet",
+        "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-23-23_ACES_allocation-observation_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-minutes-5_partition-gpu_account-158590754315_helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f"
+      ],
+      "started_at_utc": "2026-11-05T03:48:33.714480+00:00",
+      "finished_at_utc": "2026-11-05T03:48:34.040932+00:00",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/refresh_aces_allocation_observation.py\", line 299, in refresh\n    payload, transport = receive(inputs)\n  File \"/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/refresh_aces_allocation_observation.py\", line 170, in receive\n    raise RuntimeError(\"existing-master ACES metadata command failed: \" + received[\"stderr\"][:4000])\nRuntimeError: existing-master ACES metadata command failed: kex_exchange_identification: Connection closed by remote host\nConnection closed by UNKNOWN port 65535\n\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/refresh_aces_allocation_observation.py\", line 331, in <module>\n    main()\n  File \"/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/refresh_aces_allocation_observation.py\", line 327, in main\n    print(json.dumps(refresh(args.run_dir, args.packet), indent=2), flush=True)\n  File \"/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/refresh_aces_allocation_observation.py\", line 318, in refresh\n    raise RuntimeError(\"ACES metadata refresh failed; prior snapshot retained=\" + str(retained) + \"; error record \" + str(path)) from error\nRuntimeError: ACES metadata refresh failed; prior snapshot retained=True; error record /p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/20_mins_monitoring/aces_refresh_errors/2026-11-05-03-48-33_e34ccca05edb4d71a816d0827194cfe8.json\n"
+    }
+  ],
+  "no_job_action": true,
+  "no_explicit_master_check": true
+}

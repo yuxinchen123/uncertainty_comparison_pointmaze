@@ -1,0 +1,26 @@
+{
+  "actual_independent_tests": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-18-29_pixel-study-monitor_source-commit-6b7d492217140bba3d2f36b93754ecde2d020ccc_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/monitor_launcher_root_independent_metadata_tests.json",
+    "sha256": "7839b28082f6c5db96e56a6619a781292fb41e7b9eb67f283144f7398a12a5d0"
+  },
+  "checked_at_utc": "2026-11-05T04:00:35.617004+00:00",
+  "checks": [
+    "all330frozen source/packet files hash to expected bytes",
+    "ten independent controls passed on owned CPU290",
+    "default no action; single held submit with fsynced owned IDs",
+    "release needs actual fixed owned identifier and independent published review",
+    "no code path stops current healthy monitor"
+  ],
+  "deployment_adopted": false,
+  "kind": "root_independent_one_shot_cpu_monitor_launcher_source_review",
+  "known_display_limitation": "generic prepared component and historical cancelled monitor rows may still be wrongly labeled running; actual native rows govern",
+  "old_monitor_stays_active": true,
+  "passed": true,
+  "review_scope": "launcher source and synthetic scheduler controls; no scheduler mutation or runtime deployment",
+  "scientific_credit": 0,
+  "source_files_unchanged": true,
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-18-29_pixel-study-monitor_source-commit-6b7d492217140bba3d2f36b93754ecde2d020ccc_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/monitor_launcher_source_freeze.json",
+    "sha256": "3b0222e60e61b92c79d6f15d02178047529d9f1c572b0b60c060319d03cf6bc0"
+  }
+}

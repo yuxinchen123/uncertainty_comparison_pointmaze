@@ -1,0 +1,14 @@
+{
+  "actual_source_freeze_sha256": "3b0222e60e61b92c79d6f15d02178047529d9f1c572b0b60c060319d03cf6bc0",
+  "actual_submission_release_or_new_job_actions": 0,
+  "failure": "ValueError: the actual source freeze changed",
+  "job_id": "6783003",
+  "kind": "monitor_launcher_author_command_failure_before_tests",
+  "observed_at_utc": "2026-11-05T03:29:03.908670+00:00",
+  "returncode": 1,
+  "source_unchanged": true,
+  "step_id": null,
+  "step_id_not_exposed_by_failed_invocation": true,
+  "supplied_expected_freeze": "e291eae",
+  "tests_run": 0
+}

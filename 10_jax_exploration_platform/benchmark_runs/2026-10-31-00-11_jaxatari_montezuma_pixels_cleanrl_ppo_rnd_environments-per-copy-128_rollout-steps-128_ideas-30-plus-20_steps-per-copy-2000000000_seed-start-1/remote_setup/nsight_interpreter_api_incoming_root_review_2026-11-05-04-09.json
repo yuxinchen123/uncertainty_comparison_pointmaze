@@ -1,0 +1,48 @@
+{
+  "actual_merge_or_gpu_action": false,
+  "approved": true,
+  "at_utc": "2026-11-05T04:06:22.318829+00:00",
+  "dirty_source_overlap": false,
+  "incoming": "5bfcf255114bfe64f340c40c491cc8c3ac558d77",
+  "kind": "independent_root_incoming_source_review",
+  "path_count": 17,
+  "predicted_tree": "239477a27e0ed425d0d14af3cda111aca22dab6d",
+  "private_dry_runs": [
+    {
+      "command": [
+        "git",
+        "-C",
+        "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+        "read-tree",
+        "-m",
+        "-u",
+        "--dry-run",
+        "2ead6e5c8517ec164679ce6a2764627e19317be0",
+        "8e317fe06b18a8d8c174bafff7ede8f8ed87d919",
+        "5bfcf255114bfe64f340c40c491cc8c3ac558d77"
+      ],
+      "returncode": 0,
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "-C",
+        "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+        "read-tree",
+        "-m",
+        "-u",
+        "--dry-run",
+        "2ead6e5c8517ec164679ce6a2764627e19317be0",
+        "8e317fe06b18a8d8c174bafff7ede8f8ed87d919",
+        "5bfcf255114bfe64f340c40c491cc8c3ac558d77"
+      ],
+      "returncode": 0,
+      "stderr": ""
+    }
+  ],
+  "protected_file_count": 662,
+  "real_index_unchanged": true,
+  "root_head": "8e317fe06b18a8d8c174bafff7ede8f8ed87d919",
+  "untracked_or_ignored_collision": false
+}

@@ -164,6 +164,8 @@
   "configured_profile_actual_qualification": false,
   "correctness_cache_diagnosis_job_id": "6777949",
   "cron_id": "023e010a-5fb7-4e46-85ba-400203cd08a6",
+  "cron_monitor_expires_at": "2026-11-12T03:50:00Z",
+  "cron_monitor_id": "a11f793d-7ab1-4a38-983a-989f67b763ad",
   "cron_verified_active": true,
   "cron_verified_utc": "2026-11-05T03:00:22.673534+00:00",
   "current_branch_integrated_commit": "79a01e851ff92ddba7d0e12eaf8164cab2028878",
@@ -433,27 +435,9 @@
   "job_ledgers": "slurm/submitted_jobids_*.txt",
   "last_active_persistent_monitor_job_id": "6782816",
   "last_verified_full_monitor": {
-    "aces_current_state": "UNKNOWN_existing_master_closed_refresh_failed",
-    "at_utc": "2026-11-05T02:44:08.445203+00:00",
-    "initial_queue_counts": {
-      "completed": 120,
-      "failed": 0,
-      "pending": 0,
-      "running": 0
-    },
-    "report": {
-      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-16-33_pixel-study-monitor-recovery_source-commit-79a01e851ff92ddba7d0e12eaf8164cab2028878_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/scheduled_check_2026-11-05-02-44-00_report.md",
-      "sha256": "ea8b8efe82f9648b6322a94b7c181f086875d13faa54276a19336701ed8a5c92"
-    },
-    "scientific_acceptance_uses_exact_new_staged_readers": true,
-    "status": {
-      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-16-33_pixel-study-monitor-recovery_source-commit-79a01e851ff92ddba7d0e12eaf8164cab2028878_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/scheduled_check_2026-11-05-02-44-00_status.json",
-      "sha256": "82bcd79e457184732eaa1e803e1b9d5495c7ce77c9d86e754a17bc53bb57b66c"
-    },
-    "verification": {
-      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-16-33_pixel-study-monitor-recovery_source-commit-79a01e851ff92ddba7d0e12eaf8164cab2028878_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/scheduled_check_2026-11-05-02-44-00_verification.json",
-      "sha256": "4cdfcb483ec43a8c2ac0f3255e55d53fc531db47ad848152e196c0f539407015"
-    }
+    "job_id": "6783003",
+    "prefix": "scheduled_check_2026-11-05-03-54-00",
+    "step_id": "314"
   },
   "latest_actual_target_qualification_release": {
     "actual_core_reader_passed": true,
@@ -507,11 +491,12 @@
       "verification_record": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-01-30_pixel-study-monitor_source-commit-f9a9c1672f788f52ba06836cee26f2dd6314cec7_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/scheduled_check_2026-11-01-11-40_verification.json"
     }
   ],
-  "monitoring_cadence": "every_twenty_minutes",
-  "monitoring_verified_utc": "2026-11-04T23:49:01.293419+00:00",
+  "monitoring_cadence": "twenty minutes",
+  "monitoring_verified_utc": "2026-11-05T03:58:45.941229+00:00",
   "new_zero_credit_qualification_job_id": "6782778",
   "nsight_process_diagnostic_job_id": "6820154",
-  "nsight_process_diagnostic_state": "HELD; exact release review pending",
+  "nsight_process_diagnostic_release_receipt_sha256": "8f75e0d1421ccd203252d6f417c20d3d2257e1d6ec729aa36bb86e44606507fa",
+  "nsight_process_diagnostic_state": "FAILED1:0 before payload release; process API unavailable",
   "operational_record_corrections": [
     {
       "at_utc": "2026-11-01T16:28:55.406669+00:00",
@@ -697,6 +682,6 @@
     "6777647"
   ],
   "superseded_monitor_job_id": "6781087",
-  "updated_utc": "2026-11-05T03:49:10.732957+00:00",
+  "updated_utc": "2026-11-05T03:58:45.941259+00:00",
   "uva_active_configuration_observation_job_id": "6781190"
 }

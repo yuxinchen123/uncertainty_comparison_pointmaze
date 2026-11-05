@@ -1,0 +1,30 @@
+{
+  "at_utc": "2026-11-05T03:54:26.361184+00:00",
+  "capture_release_absent": true,
+  "cause_observed": "required Python os.pidfd_open or signal.pidfd_send_signal availability check failed after tool launch; exact missing attribute not yet measured",
+  "cleanup_verified": false,
+  "environment_transitions": 0,
+  "failure": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-04-19-37_nsight-process-observation_jaguar03_gpu-count-1_processor-count-1_host-memory-gib-2_time-limit-minutes-5_reservation-sl5nw_168_qos-csresnolim_tool-version-2024.7.1.84_environment-transitions-0/failure.json",
+    "sha256": "b4f5f5b5caf41a2e063eabbab0677261075ab791500592c12995b2c10693b2f2"
+  },
+  "job_id": "6820154",
+  "kind": "actual_reserved_nsight_process_diagnostic_failure",
+  "learner_updates": 0,
+  "never_retry_or_reuse_this_packet": true,
+  "scientific_credit": 0,
+  "terminal_parent": [
+    "6820154",
+    "FAILED",
+    "1:0",
+    "1",
+    "jaguar03",
+    "billing=310,cpu=1,gres/gpu=1,mem=2G,node=1",
+    "billing=311,cpu=2,gres/gpu=1,mem=2G,node=1"
+  ],
+  "terminal_raw": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-19-37_nsight-process-observation_jaguar03_gpu-count-1_processor-count-1_host-memory-gib-2_time-limit-minutes-5_reservation-sl5nw_168_qos-csresnolim_tool-version-2024.7.1.84_environment-transitions-0/root_actual_terminal_accounting_stdout.raw",
+    "sha256": "fa39cfbf45b2093381db70e96f8d923ed639a2275c4c4a72075119041f5a13e0"
+  },
+  "whole_tool_native_or_device_activity_quantified": false
+}
