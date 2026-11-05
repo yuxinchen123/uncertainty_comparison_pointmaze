@@ -1,0 +1,37 @@
+{
+  "actual_scheduler_actions": 0,
+  "all_scheduler_replies_are_synthetic": true,
+  "errors": 0,
+  "failures": 0,
+  "finished_at_utc": "2026-11-05T10:40:31.874672+00:00",
+  "gpu_operations": 0,
+  "job_id": "6783003",
+  "kind": "persistent_cpu_monitor_launcher_metadata_tests",
+  "passed": true,
+  "process_id": 1253778,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "source_files_unchanged": true,
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-02-31_pixel-study-monitor_source-commit-b431573a272ccec354cfbccb2b7528b4b846e7b9_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/monitor_launcher_source_freeze.json",
+    "sha256": "e3c483b646245427d10cbd7362f27c816bc7cb9da7a71431666c5469143cb044"
+  },
+  "started_at_utc": "2026-11-05T10:40:16.608383+00:00",
+  "step_id": "468",
+  "test_ids": [
+    "nsight_launcher_tests.MonitorLauncherTests.test_changed_prepared_source_refuses_before_intent",
+    "nsight_launcher_tests.MonitorLauncherTests.test_default_real_publication_check_performs_no_action",
+    "nsight_launcher_tests.MonitorLauncherTests.test_failed_release_preserves_attempt_without_false_success",
+    "nsight_launcher_tests.MonitorLauncherTests.test_foreign_query_owner_extra_gpu_and_wrong_memory_refuse",
+    "nsight_launcher_tests.MonitorLauncherTests.test_inherited_batch_options_are_removed",
+    "nsight_launcher_tests.MonitorLauncherTests.test_one_held_submission_writes_three_real_ledgers_before_receipt",
+    "nsight_launcher_tests.MonitorLauncherTests.test_partial_second_ledger_failure_preserves_id_and_refuses_retry",
+    "nsight_launcher_tests.MonitorLauncherTests.test_reduced_freeze_and_missing_prepared_review_refuse",
+    "nsight_launcher_tests.MonitorLauncherTests.test_release_once_saves_receipt_before_completion_and_never_changes_old_monitor",
+    "nsight_launcher_tests.MonitorLauncherTests.test_release_refuses_without_published_independent_binding_review"
+  ],
+  "test_output": "test_changed_prepared_source_refuses_before_intent (nsight_launcher_tests.MonitorLauncherTests)\nA changed original artifact cannot reach a native submission attempt. ... ok\ntest_default_real_publication_check_performs_no_action (nsight_launcher_tests.MonitorLauncherTests)\nThe actual private source and Git publication check never invokes a scheduler. ... ok\ntest_failed_release_preserves_attempt_without_false_success (nsight_launcher_tests.MonitorLauncherTests)\nA failed native return cannot publish a successful release or be retried automatically. ... ok\ntest_foreign_query_owner_extra_gpu_and_wrong_memory_refuse (nsight_launcher_tests.MonitorLauncherTests)\nOwnership is checked before a query; changed cached resources cannot become a binding. ... ok\ntest_inherited_batch_options_are_removed (nsight_launcher_tests.MonitorLauncherTests)\nInherited reservation, memory or partition options cannot alter the recorded request. ... ok\ntest_one_held_submission_writes_three_real_ledgers_before_receipt (nsight_launcher_tests.MonitorLauncherTests)\nThe real private identifier and row are durable before the successful receipt publication. ... ok\ntest_partial_second_ledger_failure_preserves_id_and_refuses_retry (nsight_launcher_tests.MonitorLauncherTests)\nA real first append remains saved when a private second-ledger error prevents a receipt. ... ok\ntest_reduced_freeze_and_missing_prepared_review_refuse (nsight_launcher_tests.MonitorLauncherTests)\nA newly committed private roster cannot remove a required actual prepared proof. ... ok\ntest_release_once_saves_receipt_before_completion_and_never_changes_old_monitor (nsight_launcher_tests.MonitorLauncherTests)\nThe actual private release receipt precedes completion; no old monitor control path exists. ... ok\ntest_release_refuses_without_published_independent_binding_review (nsight_launcher_tests.MonitorLauncherTests)\nA successful held job cannot be released without its exact approved fixed binding. ... ok\n\n----------------------------------------------------------------------\nRan 10 tests in 15.166s\n\nOK\n",
+  "tests_run": 10,
+  "tool_executions": 0,
+  "uid": 2618919
+}

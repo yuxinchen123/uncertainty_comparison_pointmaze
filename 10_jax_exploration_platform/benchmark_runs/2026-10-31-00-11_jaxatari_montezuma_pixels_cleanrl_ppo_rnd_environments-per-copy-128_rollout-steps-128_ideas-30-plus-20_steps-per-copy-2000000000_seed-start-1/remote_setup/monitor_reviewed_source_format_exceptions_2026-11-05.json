@@ -1,0 +1,81 @@
+{
+  "kind": "preserve_reviewed_and_executed_source_and_raw_output_bytes",
+  "at_utc": "2026-11-05T10:45:37.891231+00:00",
+  "findings": [
+    {
+      "path": "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-02-31_pixel-study-monitor_source-commit-b431573a272ccec354cfbccb2b7528b4b846e7b9_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/candidate_after_reporting_index_full_stdout.raw",
+      "line": 683,
+      "sha256": "1500d44718ba4b877b3eac6a905ca30c6f19f5f8896f220dcdbfb6420bfac63e",
+      "finding": "new blank line at EOF."
+    },
+    {
+      "path": "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-02-31_pixel-study-monitor_source-commit-b431573a272ccec354cfbccb2b7528b4b846e7b9_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/freeze_packet.py",
+      "line": 38,
+      "sha256": "22fc5d0ea9fded5e98cfc344fcc036bb5236df8dec9aacbfc0eaed74399edbcd",
+      "finding": "new blank line at EOF."
+    },
+    {
+      "path": "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-02-31_pixel-study-monitor_source-commit-b431573a272ccec354cfbccb2b7528b4b846e7b9_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/independent_launcher_source_review.py",
+      "line": 99,
+      "sha256": "deba41ac08c85420ecaa1301507d6f96e2b2a5aa465e9a6af27116f1bba1576d",
+      "finding": "new blank line at EOF."
+    },
+    {
+      "path": "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-02-31_pixel-study-monitor_source-commit-b431573a272ccec354cfbccb2b7528b4b846e7b9_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/independent_prepared_review_runner.py",
+      "line": 114,
+      "sha256": "fc56060fd479951ce9275e1490be530894a63e935ba7e68fb04a432dd1449ba4",
+      "finding": "new blank line at EOF."
+    },
+    {
+      "path": "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-02-31_pixel-study-monitor_source-commit-b431573a272ccec354cfbccb2b7528b4b846e7b9_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/prepare_packet.py",
+      "line": 263,
+      "sha256": "a6b6a272ca83cb74211767d1eda61b984aff71b7c9d9ee628046feb0baecf7b0",
+      "finding": "new blank line at EOF."
+    },
+    {
+      "path": "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-02-31_pixel-study-monitor_source-commit-b431573a272ccec354cfbccb2b7528b4b846e7b9_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/run_full_candidate_after_reporting_index.py",
+      "line": 158,
+      "sha256": "bbf8442ed0d9e466f322d00cf352ecf1a2b13cd9314bc18e24864481fbeae3ca",
+      "finding": "new blank line at EOF."
+    },
+    {
+      "path": "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-02-31_pixel-study-monitor_source-commit-b431573a272ccec354cfbccb2b7528b4b846e7b9_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/run_monitor_launcher_metadata_tests.py",
+      "line": 103,
+      "sha256": "0ff18cfc4680fa8c065583a9e88c06f3bf2e3a6021da160a3e8eaa4485f0f953",
+      "finding": "new blank line at EOF."
+    },
+    {
+      "path": "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-02-31_pixel-study-monitor_source-commit-b431573a272ccec354cfbccb2b7528b4b846e7b9_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/source_snapshot/b431573a272ccec354cfbccb2b7528b4b846e7b9/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_monitor_selected_unit_jobs.py",
+      "line": 243,
+      "sha256": "01544a6f71434636c18a9f30abebe7f931f8a551815ba7a764eb1b8a186848ba",
+      "finding": "new blank line at EOF."
+    },
+    {
+      "path": "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-02-31_pixel-study-monitor_source-commit-b431573a272ccec354cfbccb2b7528b4b846e7b9_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/source_snapshot/b431573a272ccec354cfbccb2b7528b4b846e7b9/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_common_confirmation_helpers.py",
+      "line": 162,
+      "sha256": "139816aba5b3ad33c60a5ecd5318368456538d2282d8dcfe301a5280b3a84006",
+      "finding": "new blank line at EOF."
+    },
+    {
+      "path": "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-02-31_pixel-study-monitor_source-commit-b431573a272ccec354cfbccb2b7528b4b846e7b9_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/source_snapshot/b431573a272ccec354cfbccb2b7528b4b846e7b9/10_jax_exploration_platform/src/exploration_platform/grid_initialization/config.py",
+      "line": 126,
+      "sha256": "4b13b0df90bed3f3dae0209113e23ebe932cde69c7e0a5d421dae16392c19d43",
+      "finding": "new blank line at EOF."
+    },
+    {
+      "path": "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-02-31_pixel-study-monitor_source-commit-b431573a272ccec354cfbccb2b7528b4b846e7b9_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/test_launch_monitor_once.py",
+      "line": 285,
+      "sha256": "daaccb0d0323c8ccbb7b751f3b1810f541b5deebef67eee2cef974aa156a29bd",
+      "finding": "new blank line at EOF."
+    },
+    {
+      "path": "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-02-31_pixel-study-monitor_source-commit-b431573a272ccec354cfbccb2b7528b4b846e7b9_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/verify_prepared_monitor.py",
+      "line": 167,
+      "sha256": "de69a3ae1b810cb03e60d5148532a3fa27f3b78b6912b2e14645ec442f15d9e1",
+      "finding": "new blank line at EOF."
+    }
+  ],
+  "reason": "Preserve exact frozen, archived and executed source bytes and raw command output; do not normalize recorded bytes after independent review.",
+  "all_other_staged_paths_format_check_passed": true,
+  "source_or_raw_bytes_edited": false
+}

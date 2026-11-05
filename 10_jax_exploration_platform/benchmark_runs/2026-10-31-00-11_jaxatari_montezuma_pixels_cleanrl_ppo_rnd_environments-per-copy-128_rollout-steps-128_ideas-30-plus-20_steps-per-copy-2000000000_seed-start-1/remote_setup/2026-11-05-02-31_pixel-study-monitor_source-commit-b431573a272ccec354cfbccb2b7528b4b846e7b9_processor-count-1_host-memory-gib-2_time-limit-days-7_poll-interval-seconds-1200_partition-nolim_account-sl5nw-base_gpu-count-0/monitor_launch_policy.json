@@ -1,0 +1,20 @@
+{
+  "automatic_old_monitor_stop_or_adoption_by_launcher": false,
+  "before_any_old_monitor_stop": [
+    "actual new runtime and exact source verification",
+    "actual first full report",
+    "independent complete runtime and first-full-report approval",
+    "fresh exact old auxiliary-step drain evidence"
+  ],
+  "kind": "healthy_persistent_cpu_monitor_replacement_launch_policy",
+  "native_session_cadence_seconds": 3600,
+  "native_session_expected_completion_wakeups_allowed": true,
+  "new_monitor_job_id": null,
+  "old_monitor_to_preserve": "6783003",
+  "persistent_monitor_cadence_seconds": 1200,
+  "root_alone_performs_actual_job_actions": true,
+  "root_must_verify_both_monitoring_mechanisms_in_actual_submission_turn": true,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "session_cadence_reason": "The user declined twenty-minute session wakeups; the persistent cluster monitor remains at1200seconds."
+}

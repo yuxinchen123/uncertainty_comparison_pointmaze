@@ -1,0 +1,23 @@
+{
+  "accepted_reporting_entries": 6,
+  "admission_authority": false,
+  "current_actual_prepared_direct_unit": "2026-11-05-02-24_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1",
+  "current_actual_prepared_direct_unit_must_not_be_called_running_without_owned_registration_and_progress": true,
+  "h100_common_timing_missing_copies": [
+    1,
+    2
+  ],
+  "kind": "persistent_cpu_monitor_metadata_and_display_scope",
+  "new_monitor_job_id": null,
+  "new_scientific_raw_validation": false,
+  "no_future_result_or_review_hashes": true,
+  "old_monitor_to_preserve": "6783003",
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "scope": "Read actual owned job and unit metadata and report statuses; exact staged scientific readers and genuine independent raw reviews remain the scientific authority.",
+  "source_commit": "b431573a272ccec354cfbccb2b7528b4b846e7b9",
+  "source_review": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-02-03_monitor-direct-unit-display_prepared-bound-unlaunched_running-owned-registration-and-progress_gpu-count-0/.review_metadata/direct_unit_monitor_display/independent_corrected_display_460.json",
+    "sha256": "02cff0bf5b8e5408c84ec93071805f88981dc53dc88fc8d1e230e4ed5877b530"
+  }
+}
