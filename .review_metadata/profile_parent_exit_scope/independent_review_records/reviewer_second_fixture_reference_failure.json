@@ -1,0 +1,16 @@
+{
+  "author_runtime_modified": false,
+  "cause": "Preserved actual CPU fixture manifest retains original /tmp paths; isolated NEW-reader legacy-result premise used relocated actual-copy paths. Adjust only synthetic manifest scope terminal/restored refs to actual copied-byte refs.",
+  "error": "ValueError: the new scope source/outcome manifest is incomplete",
+  "job_id": "6825983",
+  "kind": "reviewer_fixture_path_reference_failure",
+  "passed": false,
+  "positive_and_post_terminal_mutation_already_passed_before_this_harness_failure": true,
+  "returncode": 1,
+  "source": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-10-14_profile-target-process_native-provider_separate-role-contracts_prior-abi-baseline-only_admission-closed/.review_metadata/profile_parent_exit_scope_initial_review/reproduce_saved_reader_boundaries_before_fixture_reference_correction.py",
+    "sha256": "e2235755d850bed7bdf6dfa27eb6f39f4dba2520b8842f1e78d2d64392996999"
+  },
+  "step_id": null,
+  "step_id_status": "direct invocation did not print step before failure; no value inferred"
+}

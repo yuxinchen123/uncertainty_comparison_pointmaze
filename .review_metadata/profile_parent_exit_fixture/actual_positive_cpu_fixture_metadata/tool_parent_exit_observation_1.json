@@ -1,0 +1,143 @@
+{
+  "child_list_sample_valid": false,
+  "fresh_producer_children": {
+    "birth": "87530206",
+    "finished_at_seconds": 1793914498.5786846,
+    "identities": {
+      "1298747": {
+        "cgroup": "0::/system.slice/slurmstepd.scope/job_6825983/step_106/user/task_0\n",
+        "command": [
+          "/usr/bin/python3",
+          "-I",
+          "-S",
+          "-B",
+          "-c",
+          "import os,sys;from pathlib import Path;fd=os.open(sys.argv[1],os.O_RDONLY);Path(sys.argv[2]).write_text(str(os.getpid()));os.read(fd,1);os.close(fd)",
+          "/tmp/tmp00hwckl8/grandchild_finish.fifo",
+          "/tmp/tmp00hwckl8/grandchild_ready.txt"
+        ],
+        "command_raw_sha256": "b0a34951d59da8bcffc2aa1fe5e19490be8a1593a1af116a4297919bf9ab4693",
+        "observed_at_seconds": 1793914498.5785906,
+        "parent_pid": 1298745,
+        "pid": 1298747,
+        "process_group": 1298746,
+        "process_start_time": "87530224",
+        "session": 1298746,
+        "stat_after": "1298747 (python3) S 1298745 1298746 1298746 0 -1 4194304 1086 0 0 0 1 0 0 0 20 0 1 0 87530224 18231296 2272 536870912 94100950421504 94100953261581 140728309767264 0 0 0 0 16781312 2 1 0 0 17 9 0 0 0 0 0 94100955633712 94100955917784 94101165088768 140728309770290 140728309770546 140728309770546 140728309776359 0\n",
+        "stat_before": "1298747 (python3) S 1298745 1298746 1298746 0 -1 4194304 1086 0 0 0 1 0 0 0 20 0 1 0 87530224 18231296 2272 536870912 94100950421504 94100953261581 140728309767264 0 0 0 0 16781312 2 1 0 0 17 9 0 0 0 0 0 94100955633712 94100955917784 94101165088768 140728309770290 140728309770546 140728309770546 140728309776359 0\n",
+        "state": "S",
+        "status": "Name:\tpython3\nUmask:\t0022\nState:\tS (sleeping)\nTgid:\t1298747\nNgid:\t0\nPid:\t1298747\nPPid:\t1298745\nTracerPid:\t0\nUid:\t2618919\t2618919\t2618919\t2618919\nGid:\t90030\t90030\t90030\t90030\nFDSize:\t64\nGroups:\t90030 90113 \nNStgid:\t1298747\nNSpid:\t1298747\nNSpgid:\t1298746\nNSsid:\t1298746\nVmPeak:\t   17836 kB\nVmSize:\t   17804 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t    9088 kB\nVmRSS:\t    9088 kB\nRssAnon:\t    3732 kB\nRssFile:\t    5356 kB\nRssShmem:\t       0 kB\nVmData:\t    5132 kB\nVmStk:\t     136 kB\nVmExe:\t    2776 kB\nVmLib:\t    2488 kB\nVmPTE:\t      72 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t1\nThreads:\t1\nSigQ:\t0/1029789\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000000000\nSigIgn:\t0000000001001000\nSigCgt:\t0000000000000002\nCapInh:\t0000000000000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tthread vulnerable\nSpeculationIndirectBranch:\tconditional enabled\nCpus_allowed:\t000200\nCpus_allowed_list:\t9\nMems_allowed:\t00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000001\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t1\nnonvoluntary_ctxt_switches:\t6\n",
+        "status_after": "Name:\tpython3\nUmask:\t0022\nState:\tS (sleeping)\nTgid:\t1298747\nNgid:\t0\nPid:\t1298747\nPPid:\t1298745\nTracerPid:\t0\nUid:\t2618919\t2618919\t2618919\t2618919\nGid:\t90030\t90030\t90030\t90030\nFDSize:\t64\nGroups:\t90030 90113 \nNStgid:\t1298747\nNSpid:\t1298747\nNSpgid:\t1298746\nNSsid:\t1298746\nVmPeak:\t   17836 kB\nVmSize:\t   17804 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t    9088 kB\nVmRSS:\t    9088 kB\nRssAnon:\t    3732 kB\nRssFile:\t    5356 kB\nRssShmem:\t       0 kB\nVmData:\t    5132 kB\nVmStk:\t     136 kB\nVmExe:\t    2776 kB\nVmLib:\t    2488 kB\nVmPTE:\t      72 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t1\nThreads:\t1\nSigQ:\t0/1029789\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000000000\nSigIgn:\t0000000001001000\nSigCgt:\t0000000000000002\nCapInh:\t0000000000000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tthread vulnerable\nSpeculationIndirectBranch:\tconditional enabled\nCpus_allowed:\t000200\nCpus_allowed_list:\t9\nMems_allowed:\t00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000001\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t1\nnonvoluntary_ctxt_switches:\t6\n",
+        "uids": [
+          2618919,
+          2618919,
+          2618919,
+          2618919
+        ]
+      }
+    },
+    "pid": 1298745,
+    "pids": [
+      1298747
+    ],
+    "rows": [
+      {
+        "parent_read_identity": {
+          "after": {
+            "cgroup": "0::/system.slice/slurmstepd.scope/job_6825983/step_106/user/task_0\n",
+            "pid": 1298745,
+            "pidfd_live": true,
+            "process_start_time": "87530206",
+            "stat": "1298745 (python3) R 1298739 1298745 1298738 0 -1 4194560 4242 1139 0 0 11 2 2 0 20 0 1 0 87530206 36499456 6280 536870912 94819336777728 94819339617805 140723184193728 0 0 0 0 16781312 2 0 0 0 17 9 0 0 0 0 0 94819341989936 94819342274008 94819928367104 140723184195633 140723184195890 140723184195890 140723184201703 0\n",
+            "status": "Name:\tpython3\nUmask:\t0022\nState:\tR (running)\nTgid:\t1298745\nNgid:\t0\nPid:\t1298745\nPPid:\t1298739\nTracerPid:\t0\nUid:\t2618919\t2618919\t2618919\t2618919\nGid:\t90030\t90030\t90030\t90030\nFDSize:\t64\nGroups:\t90030 90113 \nNStgid:\t1298745\nNSpid:\t1298745\nNSpgid:\t1298745\nNSsid:\t1298738\nVmPeak:\t   35644 kB\nVmSize:\t   35644 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t   25120 kB\nVmRSS:\t   25120 kB\nRssAnon:\t   15072 kB\nRssFile:\t   10048 kB\nRssShmem:\t       0 kB\nVmData:\t   17112 kB\nVmStk:\t     136 kB\nVmExe:\t    2776 kB\nVmLib:\t    5704 kB\nVmPTE:\t     104 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t1\nThreads:\t1\nSigQ:\t0/1029789\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000000000\nSigIgn:\t0000000001001000\nSigCgt:\t0000000000000002\nCapInh:\t0000000000000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tthread vulnerable\nSpeculationIndirectBranch:\tconditional enabled\nCpus_allowed:\t000200\nCpus_allowed_list:\t9\nMems_allowed:\t00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000001\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t52\nnonvoluntary_ctxt_switches:\t13\n",
+            "uids": [
+              2618919,
+              2618919,
+              2618919,
+              2618919
+            ]
+          },
+          "before": {
+            "cgroup": "0::/system.slice/slurmstepd.scope/job_6825983/step_106/user/task_0\n",
+            "pid": 1298745,
+            "pidfd_live": true,
+            "process_start_time": "87530206",
+            "stat": "1298745 (python3) R 1298739 1298745 1298738 0 -1 4194560 4242 1139 0 0 11 2 2 0 20 0 1 0 87530206 36499456 6280 536870912 94819336777728 94819339617805 140723184193728 0 0 0 0 16781312 2 0 0 0 17 9 0 0 0 0 0 94819341989936 94819342274008 94819928367104 140723184195633 140723184195890 140723184195890 140723184201703 0\n",
+            "status": "Name:\tpython3\nUmask:\t0022\nState:\tR (running)\nTgid:\t1298745\nNgid:\t0\nPid:\t1298745\nPPid:\t1298739\nTracerPid:\t0\nUid:\t2618919\t2618919\t2618919\t2618919\nGid:\t90030\t90030\t90030\t90030\nFDSize:\t64\nGroups:\t90030 90113 \nNStgid:\t1298745\nNSpid:\t1298745\nNSpgid:\t1298745\nNSsid:\t1298738\nVmPeak:\t   35644 kB\nVmSize:\t   35644 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t   25120 kB\nVmRSS:\t   25120 kB\nRssAnon:\t   15072 kB\nRssFile:\t   10048 kB\nRssShmem:\t       0 kB\nVmData:\t   17112 kB\nVmStk:\t     136 kB\nVmExe:\t    2776 kB\nVmLib:\t    5704 kB\nVmPTE:\t     104 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t1\nThreads:\t1\nSigQ:\t0/1029789\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000000000\nSigIgn:\t0000000001001000\nSigCgt:\t0000000000000002\nCapInh:\t0000000000000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tthread vulnerable\nSpeculationIndirectBranch:\tconditional enabled\nCpus_allowed:\t000200\nCpus_allowed_list:\t9\nMems_allowed:\t00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000001\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t52\nnonvoluntary_ctxt_switches:\t13\n",
+            "uids": [
+              2618919,
+              2618919,
+              2618919,
+              2618919
+            ]
+          },
+          "expected_birth": "87530206",
+          "expected_pid": 1298745,
+          "pidfd_live_after": true,
+          "pidfd_live_before": true,
+          "proc_directory_device": 23,
+          "proc_directory_inode": 9108250
+        },
+        "raw": "1298747 ",
+        "sha256": "97c4a94bad2b723a6ddbfca64f9c2cee5b49371a606a74c56a475cb987d50564",
+        "thread_stat_after": "1298745 (python3) R 1298739 1298745 1298738 0 -1 4194560 4242 1139 0 0 11 2 2 0 20 0 1 0 87530206 36499456 6280 536870912 94819336777728 94819339617805 140723184193728 0 0 0 0 16781312 2 0 0 0 17 9 0 0 0 0 0 94819341989936 94819342274008 94819928367104 140723184195633 140723184195890 140723184195890 140723184201703 0\n",
+        "thread_stat_before": "1298745 (python3) R 1298739 1298745 1298738 0 -1 4194560 4242 1139 0 0 11 2 2 0 20 0 1 0 87530206 36499456 6280 536870912 94819336777728 94819339617805 140723184193728 0 0 0 0 16781312 2 0 0 0 17 9 0 0 0 0 0 94819341989936 94819342274008 94819928367104 140723184195633 140723184195890 140723184195890 140723184201703 0\n",
+        "tid": 1298745
+      }
+    ],
+    "started_at_seconds": 1793914498.578005
+  },
+  "handle_state": {
+    "close_on_exec": true,
+    "descriptor": 5,
+    "device": 14,
+    "fdinfo_sha256": "4d03484b81078039b4b6976b94dc25ffa8d78232c7d7f11266c31a75118ef500",
+    "handle_exited": true,
+    "inode": 12685,
+    "observed_at_seconds": 1793914498.577981,
+    "pid": -1,
+    "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t12685\nPid:\t-1\nNSpid:\t-1\n"
+  },
+  "initial_identity": {
+    "cgroup": "0::/system.slice/slurmstepd.scope/job_6825983/step_106/user/task_0\n",
+    "command": [
+      "/usr/bin/python3",
+      "-I",
+      "-S",
+      "-B",
+      "-c",
+      "import json,os,subprocess,sys\ngrand=subprocess.Popen([sys.executable,'-I','-S','-B','-c',\n    'import os,sys;from pathlib import Path;fd=os.open(sys.argv[1],os.O_RDONLY);Path(sys.argv[2]).write_text(str(os.getpid()));os.read(fd,1);os.close(fd)',sys.argv[1],sys.argv[2]],close_fds=True)\nprint(json.dumps({'parent_pid':os.getpid(),'grandchild_pid':grand.pid}),flush=True)\nsys.stdin.buffer.read(1)\nos._exit(0)\n",
+      "/tmp/tmp00hwckl8/grandchild_finish.fifo",
+      "/tmp/tmp00hwckl8/grandchild_ready.txt"
+    ],
+    "command_raw_sha256": "4984d6b87d2c2bbf5461691d3e31163807e8b9047d3dddecbe9883bd49ca07b4",
+    "observed_at_seconds": 1793914498.5109837,
+    "parent_pid": 1298745,
+    "pid": 1298746,
+    "process_group": 1298746,
+    "process_start_time": "87530221",
+    "session": 1298746,
+    "stat_after": "1298746 (python3) R 1298745 1298746 1298746 0 -1 4194304 6 0 0 0 0 0 0 0 20 0 1 0 87530221 6635520 2 536870912 94307320844288 94307323684365 140720758312272 0 0 0 0 0 0 0 0 0 17 9 0 0 0 0 0 94307326056496 94307326340568 94307554848768 140720758314799 140720758315314 140720758315314 140720758321127 0\n",
+    "stat_before": "1298746 (python3) R 1298745 1298746 1298746 0 -1 4194304 6 0 0 0 0 0 0 0 20 0 1 0 87530221 6635520 2 536870912 94307320844288 94307323684365 140720758312272 0 0 0 0 0 0 0 0 0 17 9 0 0 0 0 0 94307326056496 94307326340568 94307554848768 140720758314799 140720758315314 140720758315314 140720758321127 0\n",
+    "state": "R",
+    "status": "Name:\tpython3\nUmask:\t0022\nState:\tR (running)\nTgid:\t1298746\nNgid:\t0\nPid:\t1298746\nPPid:\t1298745\nTracerPid:\t0\nUid:\t2618919\t2618919\t2618919\t2618919\nGid:\t90030\t90030\t90030\t90030\nFDSize:\t64\nGroups:\t90030 90113 \nNStgid:\t1298746\nNSpid:\t1298746\nNSpgid:\t1298746\nNSsid:\t1298746\nVmPeak:\t    6480 kB\nVmSize:\t    6480 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t       8 kB\nVmRSS:\t       8 kB\nRssAnon:\t       8 kB\nRssFile:\t       0 kB\nRssShmem:\t       0 kB\nVmData:\t     576 kB\nVmStk:\t     136 kB\nVmExe:\t    2776 kB\nVmLib:\t     176 kB\nVmPTE:\t      36 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t1\nThreads:\t1\nSigQ:\t0/1029789\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000000000\nSigIgn:\t0000000000000000\nSigCgt:\t0000000000000000\nCapInh:\t0000000000000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tthread vulnerable\nSpeculationIndirectBranch:\tconditional enabled\nCpus_allowed:\t000200\nCpus_allowed_list:\t9\nMems_allowed:\t00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000001\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t0\nnonvoluntary_ctxt_switches:\t2\n",
+    "status_after": "Name:\tpython3\nUmask:\t0022\nState:\tR (running)\nTgid:\t1298746\nNgid:\t0\nPid:\t1298746\nPPid:\t1298745\nTracerPid:\t0\nUid:\t2618919\t2618919\t2618919\t2618919\nGid:\t90030\t90030\t90030\t90030\nFDSize:\t64\nGroups:\t90030 90113 \nNStgid:\t1298746\nNSpid:\t1298746\nNSpgid:\t1298746\nNSsid:\t1298746\nVmPeak:\t    6480 kB\nVmSize:\t    6480 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t       8 kB\nVmRSS:\t       8 kB\nRssAnon:\t       8 kB\nRssFile:\t       0 kB\nRssShmem:\t       0 kB\nVmData:\t     576 kB\nVmStk:\t     136 kB\nVmExe:\t    2776 kB\nVmLib:\t     176 kB\nVmPTE:\t      36 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t1\nThreads:\t1\nSigQ:\t0/1029789\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000000000\nSigIgn:\t0000000000000000\nSigCgt:\t0000000000000000\nCapInh:\t0000000000000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tthread vulnerable\nSpeculationIndirectBranch:\tconditional enabled\nCpus_allowed:\t000200\nCpus_allowed_list:\t9\nMems_allowed:\t00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000001\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t0\nnonvoluntary_ctxt_switches:\t2\n",
+    "uids": [
+      2618919,
+      2618919,
+      2618919,
+      2618919
+    ]
+  },
+  "observed_at_seconds": 1793914498.5779912,
+  "outcome": "pinned_parent_exited_fresh_root_reconciled",
+  "parent_birth": "87530221",
+  "parent_pid": 1298746,
+  "positive_parent_pid": 1298745,
+  "protocol": "profile-target-pinned-parent-exit-observation-version-1",
+  "refusal": {
+    "error_type": "ValueError",
+    "message": "the known parent exited before its child lists could be accepted"
+  },
+  "schema_version": 1
+}

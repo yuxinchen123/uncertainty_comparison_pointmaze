@@ -1,0 +1,52 @@
+{
+  "GPU_device_library_or_live_process_actions": false,
+  "actual_exit_event_retained": {
+    "at_seconds": 1793914498.585954,
+    "birth": "87530221",
+    "discarded_child_list_valid": false,
+    "kind": "known_pinned_parent_exit_reconciled",
+    "observation": {
+      "path": "/tmp/tmp00hwckl8/tool_parent_exit_observation_1.json",
+      "sha256": "5515a8d3faf5fb484dd085052c6bf49f86dbd1aa1acc38197cb967bec4f2c73d"
+    },
+    "pid": 1298746
+  },
+  "actual_positive_CPU_fixture": {
+    "directory": "/p/rlprojects/RND_worktrees/2026-11-05-13-23_profile-tool-scope_pinned-parent-exit_fresh-producer-child-proof_unknown-parents-refused_gpu-actions-0/.review_metadata/profile_parent_exit_fixture/actual_positive_cpu_fixture_metadata",
+    "native_process_provider": false,
+    "original_observation": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-13-23_profile-tool-scope_pinned-parent-exit_fresh-producer-child-proof_unknown-parents-refused_gpu-actions-0/.review_metadata/profile_parent_exit_fixture/actual_positive_cpu_fixture_metadata/tool_parent_exit_observation_1.json",
+      "sha256": "5515a8d3faf5fb484dd085052c6bf49f86dbd1aa1acc38197cb967bec4f2c73d"
+    },
+    "scope": "own actual system-Python stdlib pidfds; no current target/GPU qualification"
+  },
+  "approved": false,
+  "decision": "BLOCK",
+  "existing_runtime_algorithm_or_old_AA7_modified": false,
+  "job_id": "6825983",
+  "kind": "independent_initial_profile_parent_exit_scope_saved_reader_review",
+  "mutated_observation_times": {
+    "fresh_end": 1793924501.600296,
+    "fresh_start": 1793924500.600296,
+    "handle_state": 1793924498.600296,
+    "record": 1793924499.600296,
+    "scope_terminal": 1793914498.600296
+  },
+  "omission_control_premises": "Only the NEW manifest function is under test. Legacy full-scope and completed producer role are explicit synthetic premises, with actual own-CPU terminal/event bytes and actual stdlib open-event identities. This is not full source/target acceptance.",
+  "omitted_manifest_record_with_immutable_terminal_event_incorrectly_accepted": true,
+  "passed": false,
+  "post_terminal_observation_incorrectly_accepted": true,
+  "preservation_manifest": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-10-14_profile-target-process_native-provider_separate-role-contracts_prior-abi-baseline-only_admission-closed/.review_metadata/profile_parent_exit_scope_initial_review/preservation_manifest.json",
+    "sha256": "0b1af5b2e6d5d1979d46a59f379a2914aee0adf99c607181bbd643b1547bda7b"
+  },
+  "required_corrections": [
+    "Bind ordered manifest observations exactly to immutable terminal exit events, including ref/PID/birth.",
+    "Bind observation/fresh proof to the actual same open generation and close event and scope/prod terminal time window."
+  ],
+  "schema_version": 1,
+  "seconds": 0.051785166026093066,
+  "source_freeze_sha256": "e2a4b5e77e5229ef2c8107afa0e6d989c3927dcde63e2102bbd1469fbc131b35",
+  "step_id": "109",
+  "unchanged_positive_record_accepted": true
+}

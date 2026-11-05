@@ -1,0 +1,302 @@
+{
+  "schema_version": 1,
+  "kind": "reviewed_profile_parent_exit_scope_source_publication_roster",
+  "base_commit": "a508b6b29a0ddc3b73bb39c90edb9edd1dcd3db0",
+  "files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_tool_scope.py": {
+      "sha256": "d93a1c775a303e78861e340543babf2ea2a308cfccdbec2c9ac5e684cc91efd4",
+      "size_bytes": 21192
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_process.py": {
+      "sha256": "97b59cabc6cec404e4ecab56de289d18f57e63103d1ca1d00d424ff4e921d02a",
+      "size_bytes": 63233
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_direct_process.py": {
+      "sha256": "57b9800daf78cc7e18ef4641e170b3564827b65d135742f5e63c311ac652b9cb",
+      "size_bytes": 48550
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_target_tool_scope_parent_exit.py": {
+      "sha256": "58e565aac53636c00bcd3c24296214394e45408657ca2688b3b1b6b3f0e5e2b0",
+      "size_bytes": 12246
+    },
+    ".review_metadata/profile_parent_exit_fixture/actual_positive_cpu_fixture_metadata/fixture_observer_metadata.json": {
+      "sha256": "e5e1ca59218f4c92401ac2174dae2ccf2e62f18e9bcac932e9d1e1770a0a602d",
+      "size_bytes": 5826
+    },
+    ".review_metadata/profile_parent_exit_fixture/actual_positive_cpu_fixture_metadata/tool_descendant_cleanup_progress.json": {
+      "sha256": "ddfd706bf79f4f6bea9baae291d2d6f9dd56c4c2b219b2931beb592ce84a2a6f",
+      "size_bytes": 1461
+    },
+    ".review_metadata/profile_parent_exit_fixture/actual_positive_cpu_fixture_metadata/tool_descendant_scope_begin.json": {
+      "sha256": "54ad442b88b9fdc0a462045b457edaa0926a485e86b37a374bcd925697521470",
+      "size_bytes": 11651
+    },
+    ".review_metadata/profile_parent_exit_fixture/actual_positive_cpu_fixture_metadata/tool_descendant_scope_restored.json": {
+      "sha256": "7dfeba47178f8771af2786fc11b6687868a091559a0f528627dab17dd41a2c44",
+      "size_bytes": 582
+    },
+    ".review_metadata/profile_parent_exit_fixture/actual_positive_cpu_fixture_metadata/tool_descendant_scope_terminal.json": {
+      "sha256": "7af8a3876bea28aceb8b29b51e86df7a11e13cff7dc112e4a5d264fe4fa98211",
+      "size_bytes": 28582
+    },
+    ".review_metadata/profile_parent_exit_fixture/actual_positive_cpu_fixture_metadata/tool_parent_exit_observation_1.json": {
+      "sha256": "5515a8d3faf5fb484dd085052c6bf49f86dbd1aa1acc38197cb967bec4f2c73d",
+      "size_bytes": 16616
+    },
+    ".review_metadata/profile_parent_exit_fixture/actual_positive_cpu_fixture_metadata/tool_parent_exit_observations.json": {
+      "sha256": "87af439438dd5e2b005efaab2271b575162dbabb25adc13f5971427eeee54739",
+      "size_bytes": 1005
+    },
+    ".review_metadata/profile_parent_exit_fixture/actual_positive_cpu_fixture_metadata/tool_root_wait_1298746.json": {
+      "sha256": "4927aee65c9721275ecaf8f086279f00127b1da677620cc663e89816ed85cea1",
+      "size_bytes": 790
+    },
+    ".review_metadata/profile_parent_exit_fixture/author_focused_checks_1.json": {
+      "sha256": "dfe70c8e261a5e0b9f81cfdec9897487143ecb40553bc91c7245b80f6e785b43",
+      "size_bytes": 1043
+    },
+    ".review_metadata/profile_parent_exit_fixture/author_focused_checks_1.stdout.raw": {
+      "sha256": "8ccd84bde5f4f2ff278445d55e8f8f9a3511f7a01792e91a4c9eaca97f2c3127",
+      "size_bytes": 4308
+    },
+    ".review_metadata/profile_parent_exit_fixture/author_focused_checks_2.json": {
+      "sha256": "5af26e7113b08d51ecab829033669346f1f90f58be41bf98a7a0fa45cb1a59ed",
+      "size_bytes": 1042
+    },
+    ".review_metadata/profile_parent_exit_fixture/author_focused_checks_2.stdout.raw": {
+      "sha256": "23447b4b79d906df7523c25fb74ee9d9e7d6438c1c552c704b1e9c71331fb5de",
+      "size_bytes": 2250
+    },
+    ".review_metadata/profile_parent_exit_fixture/author_focused_checks_3.json": {
+      "sha256": "8dd22ce0e748f3b8395be43709ebd645a48e781c25b8e6dbfaa34b6dab6e2b68",
+      "size_bytes": 1042
+    },
+    ".review_metadata/profile_parent_exit_fixture/author_focused_checks_3.stdout.raw": {
+      "sha256": "e81a4aaac4dad3a4130d3ee2b2c38ba29c56d30f0d0f464be99c76b2fb3cb341",
+      "size_bytes": 296
+    },
+    ".review_metadata/profile_parent_exit_fixture/author_focused_checks_4.json": {
+      "sha256": "5db62d064e6e3e1dadd636c32097fdb6897543ac3df03fde43083c27cbe53ee1",
+      "size_bytes": 1042
+    },
+    ".review_metadata/profile_parent_exit_fixture/author_focused_checks_4.stdout.raw": {
+      "sha256": "0e5678acc2aacc94bc8173fcf73b91913a71709c2df29803d34986f5421cc820",
+      "size_bytes": 296
+    },
+    ".review_metadata/profile_parent_exit_fixture/author_handoff_initial_runtime.json": {
+      "sha256": "9ef052b76fbd85508d08ae706b042726c53d2269a8db36aeb3ae47a07e03be51",
+      "size_bytes": 1903
+    },
+    ".review_metadata/profile_parent_exit_fixture/author_source_freeze_1.json": {
+      "sha256": "ed5d34ea37534670c206f6ba4fea0949dedaa657dcc21970bea4fbf5bea148a5",
+      "size_bytes": 3138
+    },
+    ".review_metadata/profile_parent_exit_fixture/author_source_freeze_2.json": {
+      "sha256": "24db1b9ed34ae864e53382d68be65094314b2d2ce1364d302d5158b3f12cff2f",
+      "size_bytes": 3138
+    },
+    ".review_metadata/profile_parent_exit_fixture/author_source_freeze_3.json": {
+      "sha256": "ced0880a60af425460f68369a993e98109b494de5342b2ebbba327107a364667",
+      "size_bytes": 3138
+    },
+    ".review_metadata/profile_parent_exit_fixture/author_source_freeze_4.json": {
+      "sha256": "ced0880a60af425460f68369a993e98109b494de5342b2ebbba327107a364667",
+      "size_bytes": 3138
+    },
+    ".review_metadata/profile_parent_exit_fixture/final_fixture_source_handoff.json": {
+      "sha256": "221f1f4289e1f16454eeaeaf29d75745169e88cd9450273c3e22d539e89ac190",
+      "size_bytes": 1484
+    },
+    ".review_metadata/profile_parent_exit_fixture/preserved_first_fixture_wiring_failure/.review_metadata/profile_parent_exit_fixture/author_focused_checks_1.json": {
+      "sha256": "dfe70c8e261a5e0b9f81cfdec9897487143ecb40553bc91c7245b80f6e785b43",
+      "size_bytes": 1043
+    },
+    ".review_metadata/profile_parent_exit_fixture/preserved_first_fixture_wiring_failure/.review_metadata/profile_parent_exit_fixture/author_focused_checks_1.stdout.raw": {
+      "sha256": "8ccd84bde5f4f2ff278445d55e8f8f9a3511f7a01792e91a4c9eaca97f2c3127",
+      "size_bytes": 4308
+    },
+    ".review_metadata/profile_parent_exit_fixture/preserved_first_fixture_wiring_failure/.review_metadata/profile_parent_exit_fixture/author_source_freeze_1.json": {
+      "sha256": "ed5d34ea37534670c206f6ba4fea0949dedaa657dcc21970bea4fbf5bea148a5",
+      "size_bytes": 3138
+    },
+    ".review_metadata/profile_parent_exit_fixture/preserved_first_fixture_wiring_failure/.review_metadata/profile_parent_exit_fixture/run_focused_cpu_fixture.py": {
+      "sha256": "6628c8e4bfd96aecdcb757220c994d0a09342c70add15376e4fb78985d783c42",
+      "size_bytes": 3344
+    },
+    ".review_metadata/profile_parent_exit_fixture/preserved_first_fixture_wiring_failure/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_target_tool_scope_parent_exit.py": {
+      "sha256": "685524aabff2f4a63cb281897f5f9fd566145261622c7f1e8066959a4989b82b",
+      "size_bytes": 11009
+    },
+    ".review_metadata/profile_parent_exit_fixture/preserved_fixture_before_actual_close_event_recording/.review_metadata/profile_parent_exit_fixture/author_focused_checks_4.json": {
+      "sha256": "5db62d064e6e3e1dadd636c32097fdb6897543ac3df03fde43083c27cbe53ee1",
+      "size_bytes": 1042
+    },
+    ".review_metadata/profile_parent_exit_fixture/preserved_fixture_before_actual_close_event_recording/.review_metadata/profile_parent_exit_fixture/author_handoff_initial_runtime.json": {
+      "sha256": "9ef052b76fbd85508d08ae706b042726c53d2269a8db36aeb3ae47a07e03be51",
+      "size_bytes": 1903
+    },
+    ".review_metadata/profile_parent_exit_fixture/preserved_fixture_before_actual_close_event_recording/.review_metadata/profile_parent_exit_fixture/author_source_freeze_4.json": {
+      "sha256": "ced0880a60af425460f68369a993e98109b494de5342b2ebbba327107a364667",
+      "size_bytes": 3138
+    },
+    ".review_metadata/profile_parent_exit_fixture/preserved_fixture_before_actual_close_event_recording/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_target_tool_scope_parent_exit.py": {
+      "sha256": "f67abfda9e6975702f6feecccab7895df6f8b19d386fa2a3bc69f904c587bb06",
+      "size_bytes": 11182
+    },
+    ".review_metadata/profile_parent_exit_fixture/preserved_second_fixture_saved_shape_failure/.review_metadata/profile_parent_exit_fixture/author_focused_checks_2.json": {
+      "sha256": "5af26e7113b08d51ecab829033669346f1f90f58be41bf98a7a0fa45cb1a59ed",
+      "size_bytes": 1042
+    },
+    ".review_metadata/profile_parent_exit_fixture/preserved_second_fixture_saved_shape_failure/.review_metadata/profile_parent_exit_fixture/author_focused_checks_2.stdout.raw": {
+      "sha256": "23447b4b79d906df7523c25fb74ee9d9e7d6438c1c552c704b1e9c71331fb5de",
+      "size_bytes": 2250
+    },
+    ".review_metadata/profile_parent_exit_fixture/preserved_second_fixture_saved_shape_failure/.review_metadata/profile_parent_exit_fixture/author_source_freeze_2.json": {
+      "sha256": "24db1b9ed34ae864e53382d68be65094314b2d2ce1364d302d5158b3f12cff2f",
+      "size_bytes": 3138
+    },
+    ".review_metadata/profile_parent_exit_fixture/preserved_second_fixture_saved_shape_failure/.review_metadata/profile_parent_exit_fixture/run_corrected_cpu_fixture.py": {
+      "sha256": "680bd30171db91c2f928de317b85c50e327d527f7062c09e768c806fda26bd4e",
+      "size_bytes": 3344
+    },
+    ".review_metadata/profile_parent_exit_fixture/preserved_second_fixture_saved_shape_failure/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_target_tool_scope_parent_exit.py": {
+      "sha256": "e759a7b257bfcd63c0e52bc2697406178dbcd7fe66bef418ec131f90178eb5d5",
+      "size_bytes": 11079
+    },
+    ".review_metadata/profile_parent_exit_fixture/run_corrected_cpu_fixture.py": {
+      "sha256": "680bd30171db91c2f928de317b85c50e327d527f7062c09e768c806fda26bd4e",
+      "size_bytes": 3344
+    },
+    ".review_metadata/profile_parent_exit_fixture/run_focused_cpu_fixture.py": {
+      "sha256": "6628c8e4bfd96aecdcb757220c994d0a09342c70add15376e4fb78985d783c42",
+      "size_bytes": 3344
+    },
+    ".review_metadata/profile_parent_exit_fixture/run_preserved_positive_cpu_fixture.py": {
+      "sha256": "ecde833fb19822e0622325cb7d94142ae6ee353bf5e6820b345844705d534dbe",
+      "size_bytes": 4203
+    },
+    ".review_metadata/profile_parent_exit_fixture/run_saved_shape_corrected_cpu_fixture.py": {
+      "sha256": "98af5263f721c1e564e3920737db2515c6171a2cab7b7c140dfbd7a0830e2422",
+      "size_bytes": 3396
+    },
+    ".review_metadata/profile_parent_exit_scope/complete_source_freeze.json": {
+      "sha256": "fea4470c776d04097aea53d3131f5a10b48718f3ecd94298df427cb35d7f3432",
+      "size_bytes": 3232
+    },
+    ".review_metadata/profile_parent_exit_scope/independent_review_records/independent_corrected_saved_reader_review.json": {
+      "sha256": "fc1c3e2808a869ff301b83b9fd3db3cc826dc477872278841592da37a82edf09",
+      "size_bytes": 8046
+    },
+    ".review_metadata/profile_parent_exit_scope/independent_review_records/independent_initial_saved_reader_review.json": {
+      "sha256": "7a0cb9f1871ab9dc6610cb8e7550c50d2b312bbde80270fd6c06b128e6689f55",
+      "size_bytes": 2997
+    },
+    ".review_metadata/profile_parent_exit_scope/independent_review_records/preservation_manifest.json": {
+      "sha256": "0b1af5b2e6d5d1979d46a59f379a2914aee0adf99c607181bbd643b1547bda7b",
+      "size_bytes": 4321
+    },
+    ".review_metadata/profile_parent_exit_scope/independent_review_records/preserved_runtime/direct_tool_descendants.py": {
+      "sha256": "8fc3e6d870611a2a9e57825b5374a73050a6c98fc3d918f336619e1cfff48889",
+      "size_bytes": 44548
+    },
+    ".review_metadata/profile_parent_exit_scope/independent_review_records/preserved_runtime/linux_pidfd_process_control.py": {
+      "sha256": "37754acfdf8f139eecc2e9bbac91ee56cc12069a77f237968fe713f8b5b81172",
+      "size_bytes": 24148
+    },
+    ".review_metadata/profile_parent_exit_scope/independent_review_records/preserved_runtime/profile_target_direct_process.py": {
+      "sha256": "57b9800daf78cc7e18ef4641e170b3564827b65d135742f5e63c311ac652b9cb",
+      "size_bytes": 48550
+    },
+    ".review_metadata/profile_parent_exit_scope/independent_review_records/preserved_runtime/profile_target_process.py": {
+      "sha256": "97b59cabc6cec404e4ecab56de289d18f57e63103d1ca1d00d424ff4e921d02a",
+      "size_bytes": 63233
+    },
+    ".review_metadata/profile_parent_exit_scope/independent_review_records/preserved_runtime/profile_target_tool_scope.py": {
+      "sha256": "ec364e13ef02d41f75d8415b0ca800ddba993d45b119d798d82aaf7f7919a93b",
+      "size_bytes": 19338
+    },
+    ".review_metadata/profile_parent_exit_scope/independent_review_records/preserved_runtime/runtime_source_freeze_initial.json": {
+      "sha256": "e2a4b5e77e5229ef2c8107afa0e6d989c3927dcde63e2102bbd1469fbc131b35",
+      "size_bytes": 1916
+    },
+    ".review_metadata/profile_parent_exit_scope/independent_review_records/reproduce_saved_reader_boundaries.py": {
+      "sha256": "e1f7be58b4196469536750d918ec7488d1796e8c6d50ec80a5dbcbbd8d4d8067",
+      "size_bytes": 7395
+    },
+    ".review_metadata/profile_parent_exit_scope/independent_review_records/reproduce_saved_reader_boundaries_before_fixture_reference_correction.py": {
+      "sha256": "e2235755d850bed7bdf6dfa27eb6f39f4dba2520b8842f1e78d2d64392996999",
+      "size_bytes": 7125
+    },
+    ".review_metadata/profile_parent_exit_scope/independent_review_records/reproduce_saved_reader_boundaries_before_missing_constant_correction.py": {
+      "sha256": "ca789f0cb362532fa23c1ea71a261b5e639117afd3f8e3220e51dec308ea0d3d",
+      "size_bytes": 6854
+    },
+    ".review_metadata/profile_parent_exit_scope/independent_review_records/review_corrected_saved_joins.py": {
+      "sha256": "92ae500b4b2704563da7b7eba9ed51ff10c0dfd22637bb49cd64c395a56b70b8",
+      "size_bytes": 11935
+    },
+    ".review_metadata/profile_parent_exit_scope/independent_review_records/review_corrected_saved_joins_before_sparse_source_location_correction.py": {
+      "sha256": "cb6e6c7e6cab536eb1ac10b47d18c2d54b3e624f85c4a5741fc327c1fdc2f293",
+      "size_bytes": 11705
+    },
+    ".review_metadata/profile_parent_exit_scope/independent_review_records/reviewer_corrected_fixture_sparse_path_failure.json": {
+      "sha256": "8bf1f3c1e036757e13644d86b517e2a380b350821e8210e44333de74de6db1f5",
+      "size_bytes": 507
+    },
+    ".review_metadata/profile_parent_exit_scope/independent_review_records/reviewer_first_fixture_extraction_failure.json": {
+      "sha256": "d77486d90b9218ae8dfcf1ee9d5fec3bcde3ffdeaebcbf51a8961a138fdac649",
+      "size_bytes": 867
+    },
+    ".review_metadata/profile_parent_exit_scope/independent_review_records/reviewer_second_fixture_reference_failure.json": {
+      "sha256": "40a0309cf59e78639f86b1dc3a6e763f44095dd01537b4061ce0be43993c8653",
+      "size_bytes": 1074
+    },
+    ".review_metadata/profile_parent_exit_scope/preserved_before_saved_reader_joins/preservation_manifest.json": {
+      "sha256": "b67edd9b6d1339f5650b4ef98b7a8321f53bbb89b23c5973674a25fee79fba09",
+      "size_bytes": 1490
+    },
+    ".review_metadata/profile_parent_exit_scope/preserved_before_saved_reader_joins/profile_target_direct_process.py": {
+      "sha256": "57b9800daf78cc7e18ef4641e170b3564827b65d135742f5e63c311ac652b9cb",
+      "size_bytes": 48550
+    },
+    ".review_metadata/profile_parent_exit_scope/preserved_before_saved_reader_joins/profile_target_process.py": {
+      "sha256": "97b59cabc6cec404e4ecab56de289d18f57e63103d1ca1d00d424ff4e921d02a",
+      "size_bytes": 63233
+    },
+    ".review_metadata/profile_parent_exit_scope/preserved_before_saved_reader_joins/profile_target_tool_scope.py": {
+      "sha256": "ec364e13ef02d41f75d8415b0ca800ddba993d45b119d798d82aaf7f7919a93b",
+      "size_bytes": 19338
+    },
+    ".review_metadata/profile_parent_exit_scope/runtime_source_freeze_initial.json": {
+      "sha256": "e2a4b5e77e5229ef2c8107afa0e6d989c3927dcde63e2102bbd1469fbc131b35",
+      "size_bytes": 1916
+    },
+    ".review_metadata/profile_parent_exit_scope/runtime_source_freeze_saved_joins.json": {
+      "sha256": "f867af82a50eaffc3af112e944a3571106549a1578cb0f9b943c0b0813d179ae",
+      "size_bytes": 2417
+    }
+  },
+  "active_source_and_test_files": [
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_tool_scope.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_process.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_direct_process.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_target_tool_scope_parent_exit.py"
+  ],
+  "independent_review": {
+    "relative_path": ".review_metadata/profile_parent_exit_scope/independent_review_records/independent_corrected_saved_reader_review.json",
+    "sha256": "fc1c3e2808a869ff301b83b9fd3db3cc826dc477872278841592da37a82edf09"
+  },
+  "source_freeze": {
+    "relative_path": ".review_metadata/profile_parent_exit_scope/runtime_source_freeze_saved_joins.json",
+    "sha256": "f867af82a50eaffc3af112e944a3571106549a1578cb0f9b943c0b0813d179ae"
+  },
+  "new_helper_counts": {
+    "h100": 45,
+    "jaguar03_rtx_a4500": 36
+  },
+  "old_component_helpers_modified": false,
+  "NUM_or_capture_core_modified": false,
+  "actual_GPU_qualification": false,
+  "future_fixture_close_branch_executed": false,
+  "saved_proof_close_premises_synthetic_in_controls": true
+}

@@ -1,0 +1,26 @@
+{
+  "adapter_sha256": "ec364e13ef02d41f75d8415b0ca800ddba993d45b119d798d82aaf7f7919a93b",
+  "admission_granted": false,
+  "base_sha256": "8fc3e6d870611a2a9e57825b5374a73050a6c98fc3d918f336619e1cfff48889",
+  "discarded_child_list_samples_accepted_as_valid": false,
+  "failure_count": 0,
+  "producer_birth": "87530206",
+  "producer_pid": 1298745,
+  "protocol": "profile-target-pinned-parent-exit-observation-version-1",
+  "records": [
+    {
+      "path": "/tmp/tmp00hwckl8/tool_parent_exit_observation_1.json",
+      "sha256": "5515a8d3faf5fb484dd085052c6bf49f86dbd1aa1acc38197cb967bec4f2c73d"
+    }
+  ],
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "scope_restored": {
+    "path": "/tmp/tmp00hwckl8/tool_descendant_scope_restored.json",
+    "sha256": "7dfeba47178f8771af2786fc11b6687868a091559a0f528627dab17dd41a2c44"
+  },
+  "scope_terminal": {
+    "path": "/tmp/tmp00hwckl8/tool_descendant_scope_terminal.json",
+    "sha256": "7af8a3876bea28aceb8b29b51e86df7a11e13cff7dc112e4a5d264fe4fa98211"
+  }
+}

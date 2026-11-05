@@ -1,0 +1,10 @@
+{
+  "cause": "Reviewer assumed non-sparse checkout; sparse author worktree intentionally contains scripts only. Verify unchanged NUM source at actual integration path instead, without executing it.",
+  "error": "FileNotFoundError for original NUM source training.py in sparse author worktree",
+  "job_id": "6825983",
+  "passed": false,
+  "preserved_source_sha256": "cb6e6c7e6cab536eb1ac10b47d18c2d54b3e624f85c4a5741fc327c1fdc2f293",
+  "returncode": 1,
+  "runtime_source_failure": false,
+  "step_id": null
+}

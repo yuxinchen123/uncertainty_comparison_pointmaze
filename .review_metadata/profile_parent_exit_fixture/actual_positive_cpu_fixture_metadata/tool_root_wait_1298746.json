@@ -1,0 +1,18 @@
+{
+  "birth": "87530221",
+  "command": [
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "-c",
+    "import json,os,subprocess,sys\ngrand=subprocess.Popen([sys.executable,'-I','-S','-B','-c',\n    'import os,sys;from pathlib import Path;fd=os.open(sys.argv[1],os.O_RDONLY);Path(sys.argv[2]).write_text(str(os.getpid()));os.read(fd,1);os.close(fd)',sys.argv[1],sys.argv[2]],close_fds=True)\nprint(json.dumps({'parent_pid':os.getpid(),'grandchild_pid':grand.pid}),flush=True)\nsys.stdin.buffer.read(1)\nos._exit(0)\n",
+    "/tmp/tmp00hwckl8/grandchild_finish.fifo",
+    "/tmp/tmp00hwckl8/grandchild_ready.txt"
+  ],
+  "finished_at_seconds": 1793914498.5873795,
+  "kind": "actual_scoped_tool_popen_wait",
+  "pid": 1298746,
+  "returncode": 0,
+  "started_at_seconds": 1793914498.510681
+}

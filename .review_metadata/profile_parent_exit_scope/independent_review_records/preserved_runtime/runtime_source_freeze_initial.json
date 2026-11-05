@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "kind": "new_profile_scope_runtime_source_initial_freeze",
+  "base_commit": "a508b6b29a0ddc3b73bb39c90edb9edd1dcd3db0",
+  "files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_tool_scope.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-13-23_profile-tool-scope_pinned-parent-exit_fresh-producer-child-proof_unknown-parents-refused_gpu-actions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_tool_scope.py",
+      "sha256": "ec364e13ef02d41f75d8415b0ca800ddba993d45b119d798d82aaf7f7919a93b",
+      "size_bytes": 19338
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_process.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-13-23_profile-tool-scope_pinned-parent-exit_fresh-producer-child-proof_unknown-parents-refused_gpu-actions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_process.py",
+      "sha256": "97b59cabc6cec404e4ecab56de289d18f57e63103d1ca1d00d424ff4e921d02a",
+      "size_bytes": 63233
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_direct_process.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-13-23_profile-tool-scope_pinned-parent-exit_fresh-producer-child-proof_unknown-parents-refused_gpu-actions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_direct_process.py",
+      "sha256": "57b9800daf78cc7e18ef4641e170b3564827b65d135742f5e63c311ac652b9cb",
+      "size_bytes": 48550
+    }
+  },
+  "old_direct_tool_descendants_modified": false,
+  "accepted_component_helpers_modified": false,
+  "numerical_core_modified": false,
+  "capture_core_modified": false,
+  "historical_offending_parent_pid_known": false,
+  "new_helper_counts": {
+    "h100": 45,
+    "jaguar03_rtx_a4500": 36
+  },
+  "future_actual_qualification_required": true,
+  "GPU_actions": 0
+}

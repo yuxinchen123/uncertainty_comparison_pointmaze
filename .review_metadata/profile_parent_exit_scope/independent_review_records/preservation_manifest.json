@@ -1,0 +1,42 @@
+{
+  "actual_GPU_or_target_operations": false,
+  "files": {
+    "/p/rlprojects/RND_worktrees/2026-11-05-13-23_profile-tool-scope_pinned-parent-exit_fresh-producer-child-proof_unknown-parents-refused_gpu-actions-0/.review_metadata/profile_parent_exit_scope/runtime_source_freeze_initial.json": {
+      "bytes": 1916,
+      "preserved_path": "/p/rlprojects/RND_worktrees/2026-11-05-10-14_profile-target-process_native-provider_separate-role-contracts_prior-abi-baseline-only_admission-closed/.review_metadata/profile_parent_exit_scope_initial_review/preserved_runtime/runtime_source_freeze_initial.json",
+      "sha256": "e2a4b5e77e5229ef2c8107afa0e6d989c3927dcde63e2102bbd1469fbc131b35"
+    },
+    "/p/rlprojects/RND_worktrees/2026-11-05-13-23_profile-tool-scope_pinned-parent-exit_fresh-producer-child-proof_unknown-parents-refused_gpu-actions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_tool_descendants.py": {
+      "bytes": 44548,
+      "preserved_path": "/p/rlprojects/RND_worktrees/2026-11-05-10-14_profile-target-process_native-provider_separate-role-contracts_prior-abi-baseline-only_admission-closed/.review_metadata/profile_parent_exit_scope_initial_review/preserved_runtime/direct_tool_descendants.py",
+      "sha256": "8fc3e6d870611a2a9e57825b5374a73050a6c98fc3d918f336619e1cfff48889"
+    },
+    "/p/rlprojects/RND_worktrees/2026-11-05-13-23_profile-tool-scope_pinned-parent-exit_fresh-producer-child-proof_unknown-parents-refused_gpu-actions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/linux_pidfd_process_control.py": {
+      "bytes": 24148,
+      "preserved_path": "/p/rlprojects/RND_worktrees/2026-11-05-10-14_profile-target-process_native-provider_separate-role-contracts_prior-abi-baseline-only_admission-closed/.review_metadata/profile_parent_exit_scope_initial_review/preserved_runtime/linux_pidfd_process_control.py",
+      "sha256": "37754acfdf8f139eecc2e9bbac91ee56cc12069a77f237968fe713f8b5b81172"
+    },
+    "/p/rlprojects/RND_worktrees/2026-11-05-13-23_profile-tool-scope_pinned-parent-exit_fresh-producer-child-proof_unknown-parents-refused_gpu-actions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_direct_process.py": {
+      "bytes": 48550,
+      "preserved_path": "/p/rlprojects/RND_worktrees/2026-11-05-10-14_profile-target-process_native-provider_separate-role-contracts_prior-abi-baseline-only_admission-closed/.review_metadata/profile_parent_exit_scope_initial_review/preserved_runtime/profile_target_direct_process.py",
+      "sha256": "57b9800daf78cc7e18ef4641e170b3564827b65d135742f5e63c311ac652b9cb"
+    },
+    "/p/rlprojects/RND_worktrees/2026-11-05-13-23_profile-tool-scope_pinned-parent-exit_fresh-producer-child-proof_unknown-parents-refused_gpu-actions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_process.py": {
+      "bytes": 63233,
+      "preserved_path": "/p/rlprojects/RND_worktrees/2026-11-05-10-14_profile-target-process_native-provider_separate-role-contracts_prior-abi-baseline-only_admission-closed/.review_metadata/profile_parent_exit_scope_initial_review/preserved_runtime/profile_target_process.py",
+      "sha256": "97b59cabc6cec404e4ecab56de289d18f57e63103d1ca1d00d424ff4e921d02a"
+    },
+    "/p/rlprojects/RND_worktrees/2026-11-05-13-23_profile-tool-scope_pinned-parent-exit_fresh-producer-child-proof_unknown-parents-refused_gpu-actions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_tool_scope.py": {
+      "bytes": 19338,
+      "preserved_path": "/p/rlprojects/RND_worktrees/2026-11-05-10-14_profile-target-process_native-provider_separate-role-contracts_prior-abi-baseline-only_admission-closed/.review_metadata/profile_parent_exit_scope_initial_review/preserved_runtime/profile_target_tool_scope.py",
+      "sha256": "ec364e13ef02d41f75d8415b0ca800ddba993d45b119d798d82aaf7f7919a93b"
+    }
+  },
+  "findings": [
+    "New observation manifest is not matched to immutable terminal known-parent-exit events.",
+    "New observation timestamp is not upper-bounded by same-generation handle close or actual terminal closure."
+  ],
+  "kind": "preserved_initial_profile_parent_exit_scope_saved_reader_findings",
+  "source_freeze_sha256": "e2a4b5e77e5229ef2c8107afa0e6d989c3927dcde63e2102bbd1469fbc131b35",
+  "source_modified_by_reviewer": false
+}

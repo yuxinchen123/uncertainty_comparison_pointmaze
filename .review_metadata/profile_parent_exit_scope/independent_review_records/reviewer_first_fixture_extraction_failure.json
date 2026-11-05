@@ -1,0 +1,15 @@
+{
+  "cause": "The reviewer AST-isolation harness extracted functions but omitted a required module constant; not an author runtime defect.",
+  "error": "NameError: name EXIT_REFUSALS is not defined",
+  "job_id": "6825983",
+  "kind": "reviewer_fixture_extraction_failure",
+  "passed": false,
+  "returncode": 1,
+  "source": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-10-14_profile-target-process_native-provider_separate-role-contracts_prior-abi-baseline-only_admission-closed/.review_metadata/profile_parent_exit_scope_initial_review/reproduce_saved_reader_boundaries_before_missing_constant_correction.py",
+    "sha256": "ca789f0cb362532fa23c1ea71a261b5e639117afd3f8e3220e51dec308ea0d3d"
+  },
+  "source_runtime_unchanged": true,
+  "step_id": null,
+  "step_id_status": "failure occurred before first direct invocation printed its step; no value inferred"
+}
