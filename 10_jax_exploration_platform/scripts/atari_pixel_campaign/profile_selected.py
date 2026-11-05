@@ -88,6 +88,8 @@ def required_helpers(configured=False, direct=False, common=False, owned_process
         raise ValueError("the new direct profile closure requires the separate direct target")
     if owned_processes and (not configured or direct):
         raise ValueError("owned Nsight observation is supported only by its configured A4500 profile")
+    if direct_profile:
+        return tuple(sorted(Path(relative).name for relative in direct_profile_reader().helper_roster()))
     optional = ("direct_profile_prerequisites.py", "nsight_process_identity.py", "direct_profile_process.py",
         "direct_capture_release.py", "direct_tool_descendants.py") if direct_profile else (("nsight_process_identity.py",) if owned_processes else ())
     return tuple(dict.fromkeys(("profile_selected.py", *measurement.required_helpers(configured, direct, common, direct_profile), *optional)))
@@ -320,10 +322,15 @@ def prepare(args):
     if direct:
         import direct_measurement as support
         profile, profile_input = measurement.read_document(args.direct_binding_profile)
-        direct_profile_reader().configure_binding(plan, profile, args.direct_history_inputs, args.direct_backend_image_record)
+        reader = direct_profile_reader()
+        if "accepted_evidence_snapshot_protocol" in confirmation_plan:
+            # The new immutable own-unit pointer and original admission copy
+            # must exist before configure_binding() takes their exact reference.
+            reader.prepare_history_pointer(args.direct_history_inputs, plan, confirmation_plan)
+        reader.configure_binding(plan, profile, args.direct_history_inputs, args.direct_backend_image_record)
         plan["inputs"]["direct_binding_profile"] = profile_input
         plan["inputs"]["direct_history_inputs"] = plan["direct_binding"]["frozen_inputs"]
-        direct_profile_reader().configure(plan, baseline, args.direct_confirmation_review,
+        reader.configure(plan, baseline, args.direct_confirmation_review,
             args.direct_qualification_record, args.direct_qualification_review)
     accepted_confirmation_common_reader(plan)
     artifacts = {directory / "measurement_plan.json": measurement.json_bytes(plan),

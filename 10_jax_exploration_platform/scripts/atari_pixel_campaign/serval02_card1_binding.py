@@ -199,6 +199,11 @@ def snapshot_exit_history(exit_plan, observations, stop, status):
 
 def validate_history(plan):
     """Rederive the full initial study and exit before any new direct contact."""
+    if "direct_profile_protocol" in plan:
+        validate_plan(plan); source_identity(plan)
+        profile_history = adjacent("direct_measurement").adjacent("direct_profile_prerequisites").validate_profile_history(plan)
+        if profile_history is not None:
+            return profile_history
     if "accepted_evidence_snapshot_protocol" in plan:
         validate_plan(plan); source_identity(plan)
         return adjacent("direct_measurement").adjacent("accepted_evidence_snapshot").history(plan)

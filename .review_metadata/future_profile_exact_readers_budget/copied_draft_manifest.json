@@ -1,0 +1,39 @@
+{
+  "base_commit": "27f9b5c9276de2405c9aa7225b2c4c6b99e5c50d",
+  "checkout_completion_verified": true,
+  "entire_foundation_requires_fresh_independent_review": true,
+  "explicit_copied_paths": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_prerequisites.py": {
+      "base_sha256": null,
+      "copied_from": "/p/rlprojects/RND_worktrees/2026-11-04-22-42_direct-profile-saved-consumers_original-helpers-26_common-helpers-28_profile-admission-disabled_gpu-count-0_processor-count-1_host-memory-mib-512/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_prerequisites.py",
+      "copied_sha256": "51ff4fbab4d50197b07b58a7766e0ee390f1e7f1f70307decd05469c7a752ca2"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_saved_consumers.py": {
+      "base_sha256": null,
+      "copied_from": "/p/rlprojects/RND_worktrees/2026-11-04-22-42_direct-profile-saved-consumers_original-helpers-26_common-helpers-28_profile-admission-disabled_gpu-count-0_processor-count-1_host-memory-mib-512/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_saved_consumers.py",
+      "copied_sha256": "27dab392e58f41afce89b404ab21a1d2ee527c95e8d0c2ba11a7edccfdb779bf"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_profile_prerequisites.py": {
+      "base_sha256": null,
+      "copied_from": "/p/rlprojects/RND_worktrees/2026-11-04-22-42_direct-profile-saved-consumers_original-helpers-26_common-helpers-28_profile-admission-disabled_gpu-count-0_processor-count-1_host-memory-mib-512/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_profile_prerequisites.py",
+      "copied_sha256": "f8b24223d19f7e36a6ec15d9c13a2746b904c0c417c8f16ce10b1a2735636624"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_profile_saved_consumers.py": {
+      "base_sha256": null,
+      "copied_from": "/p/rlprojects/RND_worktrees/2026-11-04-22-42_direct-profile-saved-consumers_original-helpers-26_common-helpers-28_profile-admission-disabled_gpu-count-0_processor-count-1_host-memory-mib-512/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_profile_saved_consumers.py",
+      "copied_sha256": "244fa2aac77af397eda0e0c2204614c05f61a83af040eee4c9a736faa627eec2"
+    }
+  },
+  "formal_profile_admission": false,
+  "kind": "explicit_frozen_draft_copy_before_full_adapter_implementation",
+  "post_checkout_exact_four_path_recopy_verification": true,
+  "prior_component_review": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-22-42_direct-profile-saved-consumers_original-helpers-26_common-helpers-28_profile-admission-disabled_gpu-count-0_processor-count-1_host-memory-mib-512/.review_metadata/direct_profile_saved_consumers_29/independent_component_summary.json",
+    "sha256": "c3130b532c9580013fa0acd637fe421c1f48eb73a90471885f6b00adebe2b43f"
+  },
+  "schema_version": 1,
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-22-42_direct-profile-saved-consumers_original-helpers-26_common-helpers-28_profile-admission-disabled_gpu-count-0_processor-count-1_host-memory-mib-512/.review_metadata/direct_profile_saved_consumers_29/source_freeze.json",
+    "sha256": "544aac434c68be4f31e4627029f124c15963544a96835a63c8d7cc5694c23c18"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "current_69f_binding_sha256": "af72d3de3e84f7b8be08a73f90f5becf143b1d32c90083c1773b10343751361b",
+  "current_69f_shared_history_dispatch_has_profile_branch": false,
+  "current_timing_source_or_unit_edited": false,
+  "gap_summary": [
+    "New profile history pointer omits original admission, reproducing KeyError(admission) in the actual approved69f shared claim producer.",
+    "prepare_history_pointer has no production caller.",
+    "Actual69f shared validate_history has no profile-specific dispatch to validate_current_history."
+  ],
+  "history_pointer_admission_missing_actual_cpu_reproduction": "/p/rlprojects/RND_worktrees/2026-11-05-11-09_future-profile-exact-readers_shared-metadata-seconds-300_work-seconds-240_cleanup-seconds-60_admission-closed/.review_metadata/independent_full_profile_adapter_review/independent_dependency_6821437_50.json",
+  "kind": "independent_closed_future_profile_integration_gap_source_findings",
+  "operational_admission": false,
+  "production_prepare_history_pointer_calls": [],
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "source_freeze_sha256": "b23cf4c912d8207f55b1671ce89b620f30800c62782b2334cbcffb1a040a69f5"
+}
