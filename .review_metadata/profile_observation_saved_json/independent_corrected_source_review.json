@@ -1,0 +1,232 @@
+{
+  "CPU_component_scope": "One fresh own system-Python child with stdlib process handles; this is not a GPU/native-provider/Nsight qualification or a repeat of the prior scope lifecycle.",
+  "actual_GPU_Nsight_target_actions": false,
+  "actual_failed_unit_metadata": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-14-20_profile-observation_saved-json-canonical-process-keys_gpu-actions-0/.review_metadata/profile_observation_saved_json/actual_failed_unit_metadata_references.json",
+    "sha256": "1c272169a3dc4c56e31dc9a756fb96355deb1d6dccc3cc3ee9d00c0ed013bcb1",
+    "size_bytes": 6365
+  },
+  "actual_job_id": "6825983",
+  "actual_step_id": "136",
+  "approved": true,
+  "author_cpu_proof": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-14-20_profile-observation_saved-json-canonical-process-keys_gpu-actions-0/.review_metadata/profile_observation_saved_json/author_cpu_source_check.json",
+    "sha256": "82b6826b3ef09ae796ba0b86ad34e4d96127c2499b59034e0667a5162b276249",
+    "size_bytes": 12466
+  },
+  "changed_runtime_functions": [
+    "capture_configured_native_processes"
+  ],
+  "check_count": 109,
+  "checks": [
+    "exact current owned CPU allocation",
+    "bounded ordinary /p/rlprojects/RND_worktrees/2026-11-05-14-20_profile-observation_saved-json-canonical-process-keys_gpu-actions-0/.review_metadata/profile_observation_saved_json/corrected_source_freeze.json",
+    "stable /p/rlprojects/RND_worktrees/2026-11-05-14-20_profile-observation_saved-json-canonical-process-keys_gpu-actions-0/.review_metadata/profile_observation_saved_json/corrected_source_freeze.json",
+    "exact held two-file freeze",
+    "bounded ordinary /p/rlprojects/RND_worktrees/2026-11-05-14-20_profile-observation_saved-json-canonical-process-keys_gpu-actions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py",
+    "stable /p/rlprojects/RND_worktrees/2026-11-05-14-20_profile-observation_saved-json-canonical-process-keys_gpu-actions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py",
+    "exact frozen source 10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py",
+    "bounded ordinary /p/rlprojects/RND_worktrees/2026-11-05-14-20_profile-observation_saved-json-canonical-process-keys_gpu-actions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_observation_saved_json.py",
+    "stable /p/rlprojects/RND_worktrees/2026-11-05-14-20_profile-observation_saved-json-canonical-process-keys_gpu-actions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_observation_saved_json.py",
+    "exact frozen source 10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_observation_saved_json.py",
+    "bounded ordinary /p/rlprojects/RND_worktrees/2026-11-05-14-20_profile-observation_saved-json-canonical-process-keys_gpu-actions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py",
+    "stable /p/rlprojects/RND_worktrees/2026-11-05-14-20_profile-observation_saved-json-canonical-process-keys_gpu-actions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py",
+    "read-only Git show",
+    "same source function roster",
+    "unchanged function AST process_birth",
+    "unchanged function AST process_parent",
+    "unchanged function AST profile_updates",
+    "unchanged function AST tool_record",
+    "unchanged function AST helper_receipt",
+    "unchanged function AST required_helpers",
+    "unchanged function AST direct_profile_reader",
+    "unchanged function AST direct_process_reader",
+    "unchanged function AST owned_processes",
+    "unchanged function AST require_reviewed_profile_process_admission",
+    "unchanged function AST process_reader",
+    "unchanged function AST target_qualification_reader",
+    "unchanged function AST target_process_reader",
+    "unchanged function AST configured_native_reader",
+    "unchanged function AST accepted_confirmation_common_reader",
+    "unchanged function AST configured_profile_reader",
+    "unchanged function AST verify_profile_target_qualification",
+    "unchanged function AST verify_current_profile_backend",
+    "unchanged function AST interruption_cleanup",
+    "unchanged function AST initial_summaries_complete",
+    "unchanged function AST prepare",
+    "unchanged function AST verify_prepared",
+    "unchanged function AST validate_measured_baseline",
+    "unchanged function AST child_command",
+    "unchanged function AST stop_own_child",
+    "unchanged function AST capture_and_summarize",
+    "unchanged function AST run_prepared",
+    "unchanged function AST capture",
+    "unchanged function AST _capture_core",
+    "unchanged function AST capture_owned_processes",
+    "unchanged function AST run_owned_waiter",
+    "unchanged function AST capture_owned_child",
+    "unchanged function AST configured_native_tool_record",
+    "unchanged function AST run_configured_native_prepared",
+    "unchanged function AST run_configured_native_waiter",
+    "unchanged function AST capture_configured_native_child",
+    "unchanged function AST capture_direct_owned_processes",
+    "unchanged function AST run_direct_owned_waiter",
+    "unchanged function AST capture_direct_owned_child",
+    "unchanged function AST run_direct_target_prepared",
+    "unchanged function AST parse_arguments",
+    "actual old erroneous live-dict argument",
+    "only exact canonical published-JSON argument changes in failed function",
+    "read-only Git diff",
+    "all other tracked runtime, NUM and component helper bytes unchanged",
+    "bounded ordinary /p/rlprojects/RND_worktrees/2026-11-05-14-20_profile-observation_saved-json-canonical-process-keys_gpu-actions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py",
+    "stable /p/rlprojects/RND_worktrees/2026-11-05-14-20_profile-observation_saved-json-canonical-process-keys_gpu-actions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py",
+    "read-only Git show",
+    "protected strict source remains byte-identical",
+    "bounded ordinary /p/rlprojects/RND_worktrees/2026-11-05-14-20_profile-observation_saved-json-canonical-process-keys_gpu-actions-0/.review_metadata/profile_observation_saved_json/author_cpu_source_check.json",
+    "stable /p/rlprojects/RND_worktrees/2026-11-05-14-20_profile-observation_saved-json-canonical-process-keys_gpu-actions-0/.review_metadata/profile_observation_saved_json/author_cpu_source_check.json",
+    "author CPU proof retained",
+    "bounded ordinary /p/rlprojects/RND_worktrees/2026-11-05-14-20_profile-observation_saved-json-canonical-process-keys_gpu-actions-0/.review_metadata/profile_observation_saved_json/actual_failed_unit_metadata_references.json",
+    "stable /p/rlprojects/RND_worktrees/2026-11-05-14-20_profile-observation_saved-json-canonical-process-keys_gpu-actions-0/.review_metadata/profile_observation_saved_json/actual_failed_unit_metadata_references.json",
+    "exact failed actual unit metadata references",
+    "bounded ordinary /p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-01_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-2aa6df92f7d9/capture_process_observation.json",
+    "stable /p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-01_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-2aa6df92f7d9/capture_process_observation.json",
+    "actual failed record exact /p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-01_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-2aa6df92f7d9/capture_process_observation.json",
+    "bounded ordinary /p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-01_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-2aa6df92f7d9/failure.json",
+    "stable /p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-01_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-2aa6df92f7d9/failure.json",
+    "actual failed record exact /p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-01_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-2aa6df92f7d9/failure.json",
+    "bounded ordinary /p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-01_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-2aa6df92f7d9/progress.json",
+    "stable /p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-01_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-2aa6df92f7d9/progress.json",
+    "actual failed record exact /p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-01_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-2aa6df92f7d9/progress.json",
+    "bounded ordinary /p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-01_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-2aa6df92f7d9/code/profile_selected.py",
+    "stable /p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-01_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-2aa6df92f7d9/code/profile_selected.py",
+    "actual failed record exact /p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-01_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-2aa6df92f7d9/code/profile_selected.py",
+    "bounded ordinary /p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-01_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-2aa6df92f7d9/code/nsight_process_identity.py",
+    "stable /p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-01_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-2aa6df92f7d9/code/nsight_process_identity.py",
+    "actual failed record exact /p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-01_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-2aa6df92f7d9/code/nsight_process_identity.py",
+    "bounded ordinary /p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-01_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-2aa6df92f7d9/failure.json",
+    "stable /p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-01_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-2aa6df92f7d9/failure.json",
+    "bounded ordinary /p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-01_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-2aa6df92f7d9/capture_process_observation.json",
+    "stable /p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-01_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-2aa6df92f7d9/capture_process_observation.json",
+    "actual caller failure diagnosis unchanged",
+    "actual already-published failed observation has canonical string PID keys",
+    "bounded ordinary /p/rlprojects/RND_worktrees/2026-11-05-14-20_profile-observation_saved-json-canonical-process-keys_gpu-actions-0/.review_metadata/profile_observation_saved_json/independent_focused_tests.log",
+    "stable /p/rlprojects/RND_worktrees/2026-11-05-14-20_profile-observation_saved-json-canonical-process-keys_gpu-actions-0/.review_metadata/profile_observation_saved_json/independent_focused_tests.log",
+    "four actual focused methods reuse preserved completed step135 log",
+    "bounded ordinary /p/rlprojects/RND_worktrees/2026-11-05-14-20_profile-observation_saved-json-canonical-process-keys_gpu-actions-0/.review_metadata/profile_observation_saved_json/independent_actual_cpu_artifacts/actual_cpu_wait.json",
+    "stable /p/rlprojects/RND_worktrees/2026-11-05-14-20_profile-observation_saved-json-canonical-process-keys_gpu-actions-0/.review_metadata/profile_observation_saved_json/independent_actual_cpu_artifacts/actual_cpu_wait.json",
+    "bounded ordinary /p/rlprojects/RND_worktrees/2026-11-05-14-20_profile-observation_saved-json-canonical-process-keys_gpu-actions-0/.review_metadata/profile_observation_saved_json/independent_actual_cpu_artifacts/actual_cpu_observation.json",
+    "stable /p/rlprojects/RND_worktrees/2026-11-05-14-20_profile-observation_saved-json-canonical-process-keys_gpu-actions-0/.review_metadata/profile_observation_saved_json/independent_actual_cpu_artifacts/actual_cpu_observation.json",
+    "actual step135 own CPU child normal0 and old boundary reproduction",
+    "actual preserved four-method CPU step135",
+    "independent saved mutation refuses integer-key",
+    "independent saved mutation refuses signed-key",
+    "independent saved mutation refuses birth",
+    "bounded ordinary /p/rlprojects/RND_worktrees/2026-11-05-14-20_profile-observation_saved-json-canonical-process-keys_gpu-actions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py",
+    "stable /p/rlprojects/RND_worktrees/2026-11-05-14-20_profile-observation_saved-json-canonical-process-keys_gpu-actions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py",
+    "frozen source unchanged after focused check 10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py",
+    "bounded ordinary /p/rlprojects/RND_worktrees/2026-11-05-14-20_profile-observation_saved-json-canonical-process-keys_gpu-actions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_observation_saved_json.py",
+    "stable /p/rlprojects/RND_worktrees/2026-11-05-14-20_profile-observation_saved-json-canonical-process-keys_gpu-actions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_observation_saved_json.py",
+    "frozen source unchanged after focused check 10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_observation_saved_json.py",
+    "no numerical runtime imported"
+  ],
+  "files": {
+    "/p/rlprojects/RND_worktrees/2026-11-05-14-20_profile-observation_saved-json-canonical-process-keys_gpu-actions-0/.review_metadata/profile_observation_saved_json/actual_failed_unit_metadata_references.json": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-14-20_profile-observation_saved-json-canonical-process-keys_gpu-actions-0/.review_metadata/profile_observation_saved_json/actual_failed_unit_metadata_references.json",
+      "sha256": "1c272169a3dc4c56e31dc9a756fb96355deb1d6dccc3cc3ee9d00c0ed013bcb1",
+      "size_bytes": 6365
+    },
+    "/p/rlprojects/RND_worktrees/2026-11-05-14-20_profile-observation_saved-json-canonical-process-keys_gpu-actions-0/.review_metadata/profile_observation_saved_json/author_cpu_source_check.json": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-14-20_profile-observation_saved-json-canonical-process-keys_gpu-actions-0/.review_metadata/profile_observation_saved_json/author_cpu_source_check.json",
+      "sha256": "82b6826b3ef09ae796ba0b86ad34e4d96127c2499b59034e0667a5162b276249",
+      "size_bytes": 12466
+    },
+    "/p/rlprojects/RND_worktrees/2026-11-05-14-20_profile-observation_saved-json-canonical-process-keys_gpu-actions-0/.review_metadata/profile_observation_saved_json/corrected_source_freeze.json": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-14-20_profile-observation_saved-json-canonical-process-keys_gpu-actions-0/.review_metadata/profile_observation_saved_json/corrected_source_freeze.json",
+      "sha256": "0655f491eb27c3415916fa9b59505c3708556f4d540a1fdf109107f328af526f",
+      "size_bytes": 750
+    },
+    "/p/rlprojects/RND_worktrees/2026-11-05-14-20_profile-observation_saved-json-canonical-process-keys_gpu-actions-0/.review_metadata/profile_observation_saved_json/independent_actual_cpu_artifacts/actual_cpu_observation.json": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-14-20_profile-observation_saved-json-canonical-process-keys_gpu-actions-0/.review_metadata/profile_observation_saved_json/independent_actual_cpu_artifacts/actual_cpu_observation.json",
+      "sha256": "8e3b6bb23b4c0db896f9cc86812d77fce0bb64e5ebce378aa8a12afa87d149c5",
+      "size_bytes": 15014
+    },
+    "/p/rlprojects/RND_worktrees/2026-11-05-14-20_profile-observation_saved-json-canonical-process-keys_gpu-actions-0/.review_metadata/profile_observation_saved_json/independent_actual_cpu_artifacts/actual_cpu_wait.json": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-14-20_profile-observation_saved-json-canonical-process-keys_gpu-actions-0/.review_metadata/profile_observation_saved_json/independent_actual_cpu_artifacts/actual_cpu_wait.json",
+      "sha256": "52806c132003740b9ef2fc98025f4a2e264fbe456717bb7917f6c95bfabd46e0",
+      "size_bytes": 300
+    },
+    "/p/rlprojects/RND_worktrees/2026-11-05-14-20_profile-observation_saved-json-canonical-process-keys_gpu-actions-0/.review_metadata/profile_observation_saved_json/independent_focused_tests.log": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-14-20_profile-observation_saved-json-canonical-process-keys_gpu-actions-0/.review_metadata/profile_observation_saved_json/independent_focused_tests.log",
+      "sha256": "8273362667d8f11f98bd41e8fc085c96efb9c31941b6c120728e0136ebb2f7c7",
+      "size_bytes": 969
+    },
+    "/p/rlprojects/RND_worktrees/2026-11-05-14-20_profile-observation_saved-json-canonical-process-keys_gpu-actions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-14-20_profile-observation_saved-json-canonical-process-keys_gpu-actions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py",
+      "sha256": "1833e05b42d680194e4a8da9cd2b487d3af7529285d1a9d550edc7d3b63f6279",
+      "size_bytes": 40306
+    },
+    "/p/rlprojects/RND_worktrees/2026-11-05-14-20_profile-observation_saved-json-canonical-process-keys_gpu-actions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-14-20_profile-observation_saved-json-canonical-process-keys_gpu-actions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py",
+      "sha256": "df2fbee36493492b112792a1695235feb6a586fdb481d73f311e0915b2ddd09b",
+      "size_bytes": 114821
+    },
+    "/p/rlprojects/RND_worktrees/2026-11-05-14-20_profile-observation_saved-json-canonical-process-keys_gpu-actions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_observation_saved_json.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-14-20_profile-observation_saved-json-canonical-process-keys_gpu-actions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_observation_saved_json.py",
+      "sha256": "9c90390463f84379f3e5a1ac1b9d5ad76b0b2bcb6d68602406a07b07d70c8313",
+      "size_bytes": 8659
+    },
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-01_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-2aa6df92f7d9/capture_process_observation.json": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-01_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-2aa6df92f7d9/capture_process_observation.json",
+      "sha256": "8e0864212c175159c8f81daefc54b1b8a8d444fd70ea640d23f9ea9dbb13eb38",
+      "size_bytes": 50388
+    },
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-01_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-2aa6df92f7d9/code/nsight_process_identity.py": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-01_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-2aa6df92f7d9/code/nsight_process_identity.py",
+      "sha256": "1833e05b42d680194e4a8da9cd2b487d3af7529285d1a9d550edc7d3b63f6279",
+      "size_bytes": 40306
+    },
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-01_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-2aa6df92f7d9/code/profile_selected.py": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-01_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-2aa6df92f7d9/code/profile_selected.py",
+      "sha256": "bd96ba3a5b0fa5b5cf99adbba5e6862fa6048654e13ebb0fd4724222243a424c",
+      "size_bytes": 114750
+    },
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-01_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-2aa6df92f7d9/failure.json": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-01_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-2aa6df92f7d9/failure.json",
+      "sha256": "5e12177a7e89907fa5d344c81662274de6abd2876739068905d786e5d2958bf3",
+      "size_bytes": 3648
+    },
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-01_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-2aa6df92f7d9/progress.json": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-01_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-2aa6df92f7d9/progress.json",
+      "sha256": "c7dcff18710bceb39608ef2103597777e80789a90ec05f14eb015072f215fa50",
+      "size_bytes": 197
+    }
+  },
+  "independent_of_author": true,
+  "kind": "independent_profile_observation_saved_json_source_review",
+  "new_process_fixture_in_this_saved_only_completion": false,
+  "old_component_diagnostics_reexecuted": false,
+  "original_failed_unit_reexecuted": false,
+  "passed": true,
+  "profile_or_worker_admission": false,
+  "reviewed_at_utc": "2026-11-05T22:24:06.625954+00:00",
+  "reviewer_hostname": "slurm5",
+  "reviewer_pid": 1302769,
+  "reviewer_uid": 2618919,
+  "runtime_change": "Validate exact already-published observation via unchanged read_json; the protected validator and original live collector remain unchanged.",
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "seconds": 0.36472367704845965,
+  "source_base": "ef00da972d4a5c28b6a71a71da6f9c7d31aea18f",
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-14-20_profile-observation_saved-json-canonical-process-keys_gpu-actions-0/.review_metadata/profile_observation_saved_json/corrected_source_freeze.json",
+    "sha256": "0655f491eb27c3415916fa9b59505c3708556f4d540a1fdf109107f328af526f",
+    "size_bytes": 750
+  },
+  "test_log": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-14-20_profile-observation_saved-json-canonical-process-keys_gpu-actions-0/.review_metadata/profile_observation_saved_json/independent_focused_tests.log",
+    "sha256": "8273362667d8f11f98bd41e8fc085c96efb9c31941b6c120728e0136ebb2f7c7"
+  },
+  "tests_reused_from_actual_step": "135",
+  "tests_run": 4,
+  "unresolved_anomalies": []
+}

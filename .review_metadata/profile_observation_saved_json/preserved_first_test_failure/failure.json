@@ -1,0 +1,8 @@
+{
+  "kind": "author_cpu_fixture_failure",
+  "owned_job_id": "6825983",
+  "returncode": 1,
+  "error": "a saved thread-child list has another parent",
+  "cause": "The fixture called observe twice on the same retained object; its second collection appended a duplicate child-list record. Production source did not change.",
+  "source_sha256": "dbfb7f6bb3ac9103d7a8d5773df02d013736c51781b2f5235094820d52c4bbe4"
+}

@@ -1,0 +1,17 @@
+{
+  "actual_committed_paths": [
+    ".review_metadata/profile_observation_saved_json/independent_review_program.py",
+    ".review_metadata/profile_observation_saved_json/independent_review_program_initial.py",
+    ".review_metadata/profile_observation_saved_json/preserved_first_test_failure/test_profile_observation_saved_json.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_observation_saved_json.py"
+  ],
+  "correction": "Stage every explicitly allowlisted bounded proof file with force-add, verify the complete private index, and amend only this unpublished own detached commit.",
+  "failure": "Directory staging omitted ignored JSON proof files. The staged-roster assertion failed, but a subsequent shell line still ran the private commit.",
+  "integration_mutated": false,
+  "kind": "private_author_commit_roster_failure",
+  "partial_commit": "48ca4582df2b732bf1dd7d899c906b799cb89305",
+  "partial_commit_preserved_in_local_reflog": true,
+  "partial_tree": "d05c5425e20981485dfadb71a3b7ce326f5d1f25",
+  "runtime_source_changed": false
+}

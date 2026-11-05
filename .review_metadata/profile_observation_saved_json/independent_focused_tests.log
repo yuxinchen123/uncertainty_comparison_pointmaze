@@ -1,0 +1,13 @@
+test_actual_live_publish_strict_reader_and_normal_wait (independent_saved_observation_boundary_test.SavedObservationBoundaryTests)
+The actual live caller validates the exact published JSON and retains its raw identity. ... ok
+test_missing_or_changed_staged_reader_hash_refuses (independent_saved_observation_boundary_test.SavedObservationBoundaryTests)
+The real loader rejects missing protocol and substituted source metadata before loading a helper. ... ok
+test_noncanonical_saved_keys_and_changed_raw_hash_refuse (independent_saved_observation_boundary_test.SavedObservationBoundaryTests)
+Serialization never permits PID aliases or a changed raw command digest. ... ok
+test_only_the_failed_live_caller_changes (independent_saved_observation_boundary_test.SavedObservationBoundaryTests)
+The new call matches the existing H100 and prior A4500 saved-JSON boundary. ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.266s
+
+OK
