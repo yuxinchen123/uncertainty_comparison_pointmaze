@@ -1,0 +1,33 @@
+{
+  "actual_future_pid_or_outer_publication_guessed": false,
+  "actual_inner_publication": "61b57745832bb640ff5c66019edf0a4aca34ced4",
+  "actual_remote_or_controller_action": false,
+  "all_non_main_function_asts_unchanged": true,
+  "complete_source_equal_after_constant_normalization": true,
+  "derived_source": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-04-07_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/root_start_controller_once.py",
+    "sha256": "1ea3e7a091d6792d342b320ce4992d29b2ab8eaafd3e548a969fdaade9c9563c"
+  },
+  "function_names": [
+    "write",
+    "controller_metadata",
+    "retain_custody",
+    "cleanup_under_barrier",
+    "main"
+  ],
+  "kind": "actual_corrected_root_transport_single_publication_literal_derivation",
+  "main_only_single_publication_constant_changed": true,
+  "metadata_only": true,
+  "no_prior_template_or_preparer_used": true,
+  "old_publication": "d3208df3e8588b29544835fc6e6d242c4be44153",
+  "only_text_change": "Replace the single actual inner publication constant.",
+  "original_corrected_custody_review": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-02-24_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/independent_corrected_root_transport_retention_review.json",
+    "sha256": "e0c1b534f43cff08dfa70c8c4c70bb1fb646720577d033c92fceda65f6684d38"
+  },
+  "original_corrected_source": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-02-24_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/root_start_controller_once.py",
+    "sha256": "060ee49018531e797d9a7dd23bf8ab9f49978de48a713b3956f1923289980fdc"
+  },
+  "schema_version": 1
+}

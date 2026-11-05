@@ -1,0 +1,39 @@
+{
+  "current_metadata_lock_snapshots": [
+    {
+      "current_mode": 432,
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/queue/metadata.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "st_dev": 76,
+      "st_ino": 4329110,
+      "st_nlink": 1,
+      "st_uid": 2618919
+    },
+    {
+      "current_mode": 432,
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/processes.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "st_dev": 76,
+      "st_ino": 4304699,
+      "st_nlink": 1,
+      "st_uid": 2618919
+    }
+  ],
+  "kind": "root_only_owned_metadata_permission_protection_and_same_file_restore_procedure",
+  "mode_now": 432,
+  "permission_changes_by_this_preparation": 0,
+  "protected_mode_before_ssh": 416,
+  "remote_actions": 0,
+  "restore_mode_after_actual_registration_or_verified_failed_startup_exit": 432,
+  "schema_version": 1,
+  "standing_gpu_lock_operations": 0,
+  "steps": [
+    "Root freshly verifies these exact regular owned file paths, device/inode, byte hashes, modes and no links before any change.",
+    "Root records actual before values, changes only these two owned metadata files from mode0660 to0640, and durably records actual after values before the one SSH.",
+    "Root and metadata controller never open or own the standing GPU descriptor. The numerical producer alone can acquire its original standing lock.",
+    "After actual registered controller and numerical child records exist, or a failed startup has exact verified controller exit with no numerical child, root restores mode0660 on the same files after verifying unchanged inode/device/bytes.",
+    "Record real restoration and verification; do not infer a PID, registration, process exit or successful timing from a permission change."
+  ]
+}

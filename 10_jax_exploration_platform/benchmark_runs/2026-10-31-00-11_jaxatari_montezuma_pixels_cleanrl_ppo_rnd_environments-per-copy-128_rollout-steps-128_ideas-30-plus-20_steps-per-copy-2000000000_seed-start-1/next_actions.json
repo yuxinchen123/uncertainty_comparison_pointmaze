@@ -1364,6 +1364,7 @@
       "sha256": "0161a60a7f78c0d94e7d5d49e9dbc832ba1a249c798d98142dfdd3a014083825"
     },
     "copy_one_gpu_launched": false,
+    "copy_one_inner_publication": "61b57745832bb640ff5c66019edf0a4aca34ced4",
     "copy_one_registration_pending": false,
     "copy_one_request": {
       "data_unit": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-04-07_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1",
@@ -1371,6 +1372,10 @@
       "request": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-04-07_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/preparation_request.json"
     },
     "copy_one_ssh_invoked_once": false,
+    "copy_one_transport_independent_review": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-04-07_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/root_transport_independent_literal_review.json",
+      "sha256": "96799567a0fe6746249722976e15cc4f117a56dbc0dff4f7de58e228ac1b485f"
+    },
     "copy_two_remains_unbound_until_actual_copy_one_timing_normal_exit": true,
     "copy_two_requires_actual_copy_one_timing_wait_and_exit": true,
     "copy_two_requires_updated_helper_and_actual_copy_one_timing_exit": true,
@@ -1408,7 +1413,7 @@
     "source_commit": "765480d990cff5ae556914e3b74afba0472f64ea",
     "source_publication": "b31e9560899828bcece85335cc4ef27ef7f10af9",
     "source_published": true,
-    "state": "fresh_actual_bound_unit_independently_reviewed",
+    "state": "fresh_transport_approved_waiting_outer_publication",
     "updates_per_arm": 10
   },
   "h100_common_timing_previous_attempts": [
