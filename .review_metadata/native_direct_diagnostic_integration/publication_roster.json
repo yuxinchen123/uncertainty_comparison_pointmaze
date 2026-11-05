@@ -1,0 +1,3396 @@
+{
+  "actual_target_launch_or_formal_admission": false,
+  "all_rejected_corrected_source_and_review_records_preserved": true,
+  "kind": "exact_reviewed_native_direct_diagnostic_publication_roster",
+  "parent": "4f9d610f45c3bbd28bbad26c082dd5ba54b91642",
+  "publication_files": {
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/default_scope/orphan_root_failure/actual_cpu_processes.json": {
+      "actual_permission_mode": 432,
+      "bytes": 47,
+      "git_mode": "100644",
+      "sha256": "acf7cb40192373e1fd02ba667d800b655a13aabdbe2d3a19c4ea1241d607ed30"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/default_scope/orphan_root_failure/cpu_regression_result.json": {
+      "actual_permission_mode": 432,
+      "bytes": 7788,
+      "git_mode": "100644",
+      "sha256": "91d232bcdd5c994bb64d3ff4fa9038746e8c48f99ca6b594ae29f276682b6ba5"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/default_scope/orphan_root_failure/data/unit/direct_process_failure.json": {
+      "actual_permission_mode": 432,
+      "bytes": 245,
+      "git_mode": "100644",
+      "sha256": "9a63046eac1435eb21808acedf3163f79cbd4d36897b566304d5317de688cfa8"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/default_scope/orphan_root_failure/data/unit/direct_profile_process_intent.json": {
+      "actual_permission_mode": 432,
+      "bytes": 23843,
+      "git_mode": "100644",
+      "sha256": "af2d248928c4115c63bb11d45685a42692b0780929d6380bb6e0a363c0585205"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/default_scope/orphan_root_failure/data/unit/executed_command.json": {
+      "actual_permission_mode": 432,
+      "bytes": 742,
+      "git_mode": "100644",
+      "sha256": "cb4fdff7744bf7734a8bf0d9dbd32d603cc70463596da7ce745d9f91091ed5e8"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/default_scope/orphan_root_failure/data/unit/measurement_plan.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1292,
+      "git_mode": "100644",
+      "sha256": "8c2f57f0450639f327c776578886632162ade6f0588f894cf9c612d0488d66f8"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/default_scope/orphan_root_failure/data/unit/tool_descendant_cleanup_progress.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1501,
+      "git_mode": "100644",
+      "sha256": "117d76ee383a460bdb1f7289d782266c2ea61be37e144ac674369b790a0ec0e0"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/default_scope/orphan_root_failure/data/unit/tool_descendant_scope_begin.json": {
+      "actual_permission_mode": 432,
+      "bytes": 28053,
+      "git_mode": "100644",
+      "sha256": "2ae6275caea19a9c73aabe4391924f4858001229407d9772c5b2c55026870ffd"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/default_scope/orphan_root_failure/data/unit/tool_descendant_scope_restored.json": {
+      "actual_permission_mode": 432,
+      "bytes": 592,
+      "git_mode": "100644",
+      "sha256": "9546ddb709d10c0dc9d92cf6df55efdab08cc90bd2205b7dd547993750ae02a6"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/default_scope/orphan_root_failure/data/unit/tool_descendant_scope_terminal.json": {
+      "actual_permission_mode": 432,
+      "bytes": 50129,
+      "git_mode": "100644",
+      "sha256": "cdeb603f32de34b58b2cba40c45d8897e38e6085d193cf2a57271571f2645449"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/default_scope/orphan_root_failure/data/unit/tool_root_wait_1239653.json": {
+      "actual_permission_mode": 432,
+      "bytes": 973,
+      "git_mode": "100644",
+      "sha256": "200b67a0b2de3de53464a364ee960e0b194abe19c11ea8efa3a49f5fe009e898"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/default_scope/orphan_root_failure/temporary_evidence_paths.json": {
+      "actual_permission_mode": 432,
+      "bytes": 4453,
+      "git_mode": "100644",
+      "sha256": "2410e0b349a4023d4c33913ab7b9fc99b6fb90e4f1ee93e0afa7f5046d5ed949"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/default_scope/orphan_root_failure/worker_stderr.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 0,
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/default_scope/orphan_root_failure/worker_stdout.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 7066,
+      "git_mode": "100644",
+      "sha256": "03fb99be4b36a3fc156e74ab24b40ec84490d2604531c0cab5bf03f7c0eb1b4a"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/default_scope/startup_timeout/actual_cpu_processes.json": {
+      "actual_permission_mode": 432,
+      "bytes": 45,
+      "git_mode": "100644",
+      "sha256": "792149c6d6abf13d409868974049700a7021ef1d1488cd1321f66f99ecf35bff"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/default_scope/startup_timeout/cpu_regression_result.json": {
+      "actual_permission_mode": 432,
+      "bytes": 7496,
+      "git_mode": "100644",
+      "sha256": "bca859a436917cfe151cc3198cf473f3af86e0674c3d4b409b1e9a264d2267a3"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/default_scope/startup_timeout/data/unit/direct_process_failure.json": {
+      "actual_permission_mode": 432,
+      "bytes": 278,
+      "git_mode": "100644",
+      "sha256": "d69f34448cf1e1238a1f728dff09ee0ae575dd5f4a1d01bbf323b470f07b41f4"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/default_scope/startup_timeout/data/unit/direct_profile_process_intent.json": {
+      "actual_permission_mode": 432,
+      "bytes": 23499,
+      "git_mode": "100644",
+      "sha256": "41ca56f3ea6c7a64fb4028842fb3541d070403fbe787516324e3979207a4a261"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/default_scope/startup_timeout/data/unit/executed_command.json": {
+      "actual_permission_mode": 432,
+      "bytes": 429,
+      "git_mode": "100644",
+      "sha256": "0007546bfa169a05b689a57ed8c427696e716737e3e628d8fbc8535da1cda0b6"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/default_scope/startup_timeout/data/unit/measurement_plan.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1292,
+      "git_mode": "100644",
+      "sha256": "e0458d0a22eaee5bd05b8b08062a6f32fe2204eaaddf5258fd323603714fb228"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/default_scope/startup_timeout/data/unit/profiler_process.json": {
+      "actual_permission_mode": 432,
+      "bytes": 619,
+      "git_mode": "100644",
+      "sha256": "8cbea60b1240da88149f1c010e81835426a47b1f49b1b12fcbe6db464ad3aac6"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/default_scope/startup_timeout/data/unit/tool_descendant_cleanup_progress.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1259,
+      "git_mode": "100644",
+      "sha256": "7ef11415a6bf23c4e2a178af618ee8e195f730c4cca1aaf7c987d18f08b2f37c"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/default_scope/startup_timeout/data/unit/tool_descendant_scope_begin.json": {
+      "actual_permission_mode": 432,
+      "bytes": 28026,
+      "git_mode": "100644",
+      "sha256": "78f514bbd9b2c79f96765c50dff5f322281d5c32c0e0d2963dad03478ad0d181"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/default_scope/startup_timeout/data/unit/tool_descendant_scope_restored.json": {
+      "actual_permission_mode": 432,
+      "bytes": 592,
+      "git_mode": "100644",
+      "sha256": "47eb3fc843520dc77cbdc9c4109d4b29409112404cb38a4fb650a05246c29213"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/default_scope/startup_timeout/data/unit/tool_descendant_scope_terminal.json": {
+      "actual_permission_mode": 432,
+      "bytes": 41131,
+      "git_mode": "100644",
+      "sha256": "31a37a739b5c571b2ea6c48566530b29dd9b4a1ac1038f14508b60b0a1691f11"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/default_scope/startup_timeout/data/unit/tool_root_wait_1239657.json": {
+      "actual_permission_mode": 432,
+      "bytes": 658,
+      "git_mode": "100644",
+      "sha256": "1baeebd210ce7afeb19d47ce38f9865d250985154c5b70d3ec21c1b332951c36"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/default_scope/startup_timeout/temporary_evidence_paths.json": {
+      "actual_permission_mode": 432,
+      "bytes": 4797,
+      "git_mode": "100644",
+      "sha256": "b4194019d4ad31c1db7eb0aaf4fe752d286c804d99ebcec2d60335a5e4290a34"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/default_scope/startup_timeout/worker_stderr.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 0,
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/default_scope/startup_timeout/worker_stdout.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 6782,
+      "git_mode": "100644",
+      "sha256": "7903a07f1f205791a7fece146abab91e004c6ae218e0addaf050b03271150e1c"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/native_provider/actual_exhausted_ordinary_limit_child_cleanup.json": {
+      "actual_permission_mode": 432,
+      "bytes": 21079,
+      "git_mode": "100644",
+      "sha256": "566eef870b133fa6e69028e95c87ee8275f69695cfbecc5058c61ad5d2bd8ca5"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/native_provider/actual_exhausted_ordinary_limit_close.json": {
+      "actual_permission_mode": 432,
+      "bytes": 8572,
+      "git_mode": "100644",
+      "sha256": "7af176ae45c7220227697c995bb3d56b34a3ed8812a119252a064b69ae1489b5"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/native_provider/actual_self_preflight.json": {
+      "actual_permission_mode": 432,
+      "bytes": 6784,
+      "git_mode": "100644",
+      "sha256": "880e6435814b0b4c09396244c2e40e886f9298907d95626107351f2e2d371049"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/native_provider/actual_temporary_owned_child.json": {
+      "actual_permission_mode": 432,
+      "bytes": 21297,
+      "git_mode": "100644",
+      "sha256": "e5d22785848d91e82ee41935c726291dc447334b689698531690ac440f688623"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/native_provider/synthetic_unsupported_kernel_response.json": {
+      "actual_permission_mode": 432,
+      "bytes": 4745,
+      "git_mode": "100644",
+      "sha256": "033d511bf711e6aef91d9192d09717b323465af01283707c3f9bf8b6069ed49f"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/native_scope/orphan_root_failure/actual_cpu_processes.json": {
+      "actual_permission_mode": 432,
+      "bytes": 47,
+      "git_mode": "100644",
+      "sha256": "47334ec3616ee8af0a37bf23180c185135965bbe64afb5c02cb60771c14d6fad"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/native_scope/orphan_root_failure/cpu_regression_result.json": {
+      "actual_permission_mode": 432,
+      "bytes": 390,
+      "git_mode": "100644",
+      "sha256": "66bdee871ab3b3c85a113321f1fe7ba7268fd34e5c5d581564019272f41d4561"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/native_scope/orphan_root_failure/data/unit/direct_process_failure.json": {
+      "actual_permission_mode": 432,
+      "bytes": 245,
+      "git_mode": "100644",
+      "sha256": "9a63046eac1435eb21808acedf3163f79cbd4d36897b566304d5317de688cfa8"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/native_scope/orphan_root_failure/data/unit/direct_profile_process_intent.json": {
+      "actual_permission_mode": 432,
+      "bytes": 24377,
+      "git_mode": "100644",
+      "sha256": "8541b20982551ac8bf386ae5ba44fa2e53adec7288c77b7fef5f4ea334b8a146"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/native_scope/orphan_root_failure/data/unit/executed_command.json": {
+      "actual_permission_mode": 432,
+      "bytes": 808,
+      "git_mode": "100644",
+      "sha256": "7691b0a19bc2f35256cf4c2054eecd7e8f577f474201f4edfb6c6f7d0df85f8a"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/native_scope/orphan_root_failure/data/unit/measurement_plan.json": {
+      "actual_permission_mode": 432,
+      "bytes": 2182,
+      "git_mode": "100644",
+      "sha256": "55a6b9e7ca789c3d5c9141be390c335c959b85cb11f4e0b0e895d7c4dacf2506"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/native_scope/orphan_root_failure/data/unit/native_process_producer_begin.json": {
+      "actual_permission_mode": 432,
+      "bytes": 13622,
+      "git_mode": "100644",
+      "sha256": "b7b6a1bc9dbea8e239ed28fbb1302ebb228deacf23071eddc16364a48e623b85"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/native_scope/orphan_root_failure/data/unit/native_process_target_contract.json": {
+      "actual_permission_mode": 432,
+      "bytes": 3663,
+      "git_mode": "100644",
+      "sha256": "20758f58fa994eb722e0ee4617062dbf6b55f0ca04e36ecbc7091408e71d4c99"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/native_scope/orphan_root_failure/data/unit/tool_descendant_cleanup_progress.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1501,
+      "git_mode": "100644",
+      "sha256": "bb55281f8ecac23c1d4149acd454f1214c65f61be2d032e800493db4fca3dbad"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/native_scope/orphan_root_failure/data/unit/tool_descendant_scope_begin.json": {
+      "actual_permission_mode": 432,
+      "bytes": 28465,
+      "git_mode": "100644",
+      "sha256": "d82b86d91f89830970a0b3ea53f271b9b6cd05a4652ca0b0252c8ad363f8bee2"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/native_scope/orphan_root_failure/data/unit/tool_descendant_scope_restored.json": {
+      "actual_permission_mode": 432,
+      "bytes": 592,
+      "git_mode": "100644",
+      "sha256": "b6963680f3881de43a65f8632341934b4783ed55757a3976708b2c7da38dafeb"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/native_scope/orphan_root_failure/data/unit/tool_descendant_scope_terminal.json": {
+      "actual_permission_mode": 432,
+      "bytes": 49258,
+      "git_mode": "100644",
+      "sha256": "a4a0785c8ba66883f745473a7ffe841114c5516e944def444f58beb0ce049b29"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/native_scope/orphan_root_failure/data/unit/tool_root_wait_1239635.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1039,
+      "git_mode": "100644",
+      "sha256": "fa53ef9884a0cce01225ca5cd4af848fb82b7ef16be6013cf54188f98cc7d146"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/native_scope/orphan_root_failure/worker_stderr.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 1927,
+      "git_mode": "100644",
+      "sha256": "e3b6b3f0e5223d5dcd023717cccc6b4f90c54f2d07a196c45e74e1cf5d238b18"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/native_scope/orphan_root_failure/worker_stdout.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 0,
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/native_scope/startup_timeout/actual_cpu_processes.json": {
+      "actual_permission_mode": 432,
+      "bytes": 45,
+      "git_mode": "100644",
+      "sha256": "5ccb308a92d22832b26459fbbb0e21057559d36f90881f1eaa7481c954186911"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/native_scope/startup_timeout/cpu_regression_result.json": {
+      "actual_permission_mode": 432,
+      "bytes": 419,
+      "git_mode": "100644",
+      "sha256": "19d30a0fa05f9827f7165fecbefe442ede20471bc4b59f9b23174a5c2d7d6882"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/native_scope/startup_timeout/data/unit/direct_process_failure.json": {
+      "actual_permission_mode": 432,
+      "bytes": 278,
+      "git_mode": "100644",
+      "sha256": "d69f34448cf1e1238a1f728dff09ee0ae575dd5f4a1d01bbf323b470f07b41f4"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/native_scope/startup_timeout/data/unit/direct_profile_process_intent.json": {
+      "actual_permission_mode": 432,
+      "bytes": 24034,
+      "git_mode": "100644",
+      "sha256": "565befaf96efcbba7c8bb9b650ee527205deb9bec3a7b303f5d783c2c10c64f0"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/native_scope/startup_timeout/data/unit/executed_command.json": {
+      "actual_permission_mode": 432,
+      "bytes": 495,
+      "git_mode": "100644",
+      "sha256": "7d449277729ac182a2d57a68efb89aae7995350e0f6bb7f8528c9322a6040611"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/native_scope/startup_timeout/data/unit/measurement_plan.json": {
+      "actual_permission_mode": 432,
+      "bytes": 2182,
+      "git_mode": "100644",
+      "sha256": "1ae850bb6cde0590f41c19eb99dbcb3be256943d4c9c4949a364fde4f0ae487a"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/native_scope/startup_timeout/data/unit/native_process_producer_begin.json": {
+      "actual_permission_mode": 432,
+      "bytes": 13612,
+      "git_mode": "100644",
+      "sha256": "a3efb59822514dd53f9212995fadbab4552c9ebb2a6013e5143146d42f6527af"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/native_scope/startup_timeout/data/unit/native_process_target_contract.json": {
+      "actual_permission_mode": 432,
+      "bytes": 3663,
+      "git_mode": "100644",
+      "sha256": "e7d432483ed8a46acbbc8ca316203e6b783b3fc0f38156fa4424d168fcd1424d"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/native_scope/startup_timeout/data/unit/profiler_process.json": {
+      "actual_permission_mode": 432,
+      "bytes": 685,
+      "git_mode": "100644",
+      "sha256": "20324025323dfcd63ee705d6d776a8f9f1fca85796352e952e5623f0de6a68e3"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/native_scope/startup_timeout/data/unit/tool_descendant_cleanup_progress.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1259,
+      "git_mode": "100644",
+      "sha256": "c0103cc3d778d2419935e6db313201d981bc355ec21f37eafdc29bc603d8bcf4"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/native_scope/startup_timeout/data/unit/tool_descendant_scope_begin.json": {
+      "actual_permission_mode": 432,
+      "bytes": 28434,
+      "git_mode": "100644",
+      "sha256": "ba844ae258ad679b7e538206f1a5a3f39411f335d2d9ffa4000437ddef388408"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/native_scope/startup_timeout/data/unit/tool_descendant_scope_restored.json": {
+      "actual_permission_mode": 432,
+      "bytes": 592,
+      "git_mode": "100644",
+      "sha256": "891dfdd57da237be8815bf6ff25848d024ceb8842a6d0f6e9cb2f608f10c0731"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/native_scope/startup_timeout/data/unit/tool_descendant_scope_terminal.json": {
+      "actual_permission_mode": 432,
+      "bytes": 41524,
+      "git_mode": "100644",
+      "sha256": "0169981156eebf96e4e1c6e449a5d60bca1c931eefe4fda44d334dc25dfec99b"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/native_scope/startup_timeout/data/unit/tool_root_wait_1239639.json": {
+      "actual_permission_mode": 432,
+      "bytes": 726,
+      "git_mode": "100644",
+      "sha256": "ef9f0e960c1207555999c45a37a97c2670481451eaf26babba37057d49dace48"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/native_scope/startup_timeout/worker_stderr.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 1927,
+      "git_mode": "100644",
+      "sha256": "e3b6b3f0e5223d5dcd023717cccc6b4f90c54f2d07a196c45e74e1cf5d238b18"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_374/native_scope/startup_timeout/worker_stdout.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 0,
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/default_scope/orphan_root_failure/actual_cpu_processes.json": {
+      "actual_permission_mode": 432,
+      "bytes": 47,
+      "git_mode": "100644",
+      "sha256": "ff108f83f29b9e7ea52542eca83acee78daebdd61c9b11ec09e8326c461ab177"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/default_scope/orphan_root_failure/cpu_regression_result.json": {
+      "actual_permission_mode": 432,
+      "bytes": 7788,
+      "git_mode": "100644",
+      "sha256": "66dea08ca7b5d91286abf3f608f79535c731f43e2c92e01d9606b81f43c2c4be"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/default_scope/orphan_root_failure/data/unit/direct_process_failure.json": {
+      "actual_permission_mode": 432,
+      "bytes": 245,
+      "git_mode": "100644",
+      "sha256": "9a63046eac1435eb21808acedf3163f79cbd4d36897b566304d5317de688cfa8"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/default_scope/orphan_root_failure/data/unit/direct_profile_process_intent.json": {
+      "actual_permission_mode": 432,
+      "bytes": 23845,
+      "git_mode": "100644",
+      "sha256": "5c74b521b9d012e3e20ff8917340b67b6b86cc327eccb54cbfb69584c9070294"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/default_scope/orphan_root_failure/data/unit/executed_command.json": {
+      "actual_permission_mode": 432,
+      "bytes": 742,
+      "git_mode": "100644",
+      "sha256": "7463c6acb0b626c2c14faf1575021552f04c3bc0599242f15e99229fd265d31d"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/default_scope/orphan_root_failure/data/unit/measurement_plan.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1292,
+      "git_mode": "100644",
+      "sha256": "4ce6b28d8f50f250d18199954c011080d4d66be6871f5c79e94979567c266392"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/default_scope/orphan_root_failure/data/unit/tool_descendant_cleanup_progress.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1498,
+      "git_mode": "100644",
+      "sha256": "db7a88d791c331495361fd1abf71d1b73226f9c57469d8c1c7ddcc249ea0741c"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/default_scope/orphan_root_failure/data/unit/tool_descendant_scope_begin.json": {
+      "actual_permission_mode": 432,
+      "bytes": 28056,
+      "git_mode": "100644",
+      "sha256": "2271d17eee4bbbf563d3810f57c70c7615a5b6faecc1be17736d6358b530275d"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/default_scope/orphan_root_failure/data/unit/tool_descendant_scope_restored.json": {
+      "actual_permission_mode": 432,
+      "bytes": 592,
+      "git_mode": "100644",
+      "sha256": "8fb4ec2699241f8b3ce0c8ba03ecd6968730b316b2a85f7e61660f67fb8ef4c5"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/default_scope/orphan_root_failure/data/unit/tool_descendant_scope_terminal.json": {
+      "actual_permission_mode": 432,
+      "bytes": 50127,
+      "git_mode": "100644",
+      "sha256": "afd5908ecfbe87d42978c20e93640d90bf5915497118713ba1a034114deb8d3c"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/default_scope/orphan_root_failure/data/unit/tool_root_wait_1239754.json": {
+      "actual_permission_mode": 432,
+      "bytes": 973,
+      "git_mode": "100644",
+      "sha256": "143be53149f53655fc8ff7cd990845edfa12ee97b336de999e3d03a40ccb72f5"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/default_scope/orphan_root_failure/temporary_evidence_paths.json": {
+      "actual_permission_mode": 432,
+      "bytes": 4453,
+      "git_mode": "100644",
+      "sha256": "b8c9c53249593ff69cd47443e0709e35638c81e7285ae8ad32ba9a5921548676"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/default_scope/orphan_root_failure/worker_stderr.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 0,
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/default_scope/orphan_root_failure/worker_stdout.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 7066,
+      "git_mode": "100644",
+      "sha256": "d1b3c61b932df64035026ce0e9b8668e2a52996a454c88b9c4712628af480e75"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/default_scope/startup_timeout/actual_cpu_processes.json": {
+      "actual_permission_mode": 432,
+      "bytes": 45,
+      "git_mode": "100644",
+      "sha256": "575fd62702366e2d807fcbb040a16561d61444f1bf3939849fd0a7beefc5184a"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/default_scope/startup_timeout/cpu_regression_result.json": {
+      "actual_permission_mode": 432,
+      "bytes": 7496,
+      "git_mode": "100644",
+      "sha256": "86861f67b57511eb72fff8b75081e9b9d4cee693ce0d048245cba554ad7d08d9"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/default_scope/startup_timeout/data/unit/direct_process_failure.json": {
+      "actual_permission_mode": 432,
+      "bytes": 278,
+      "git_mode": "100644",
+      "sha256": "d69f34448cf1e1238a1f728dff09ee0ae575dd5f4a1d01bbf323b470f07b41f4"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/default_scope/startup_timeout/data/unit/direct_profile_process_intent.json": {
+      "actual_permission_mode": 432,
+      "bytes": 23495,
+      "git_mode": "100644",
+      "sha256": "68f86fb79390f95304db3a31f675613f396445c7fa0ca8c1229e189ee27c9643"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/default_scope/startup_timeout/data/unit/executed_command.json": {
+      "actual_permission_mode": 432,
+      "bytes": 429,
+      "git_mode": "100644",
+      "sha256": "b0fd6fe948cb28109fabac2c06bbb31b71688ebfba68bff2dda44b9bc469bb1c"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/default_scope/startup_timeout/data/unit/measurement_plan.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1292,
+      "git_mode": "100644",
+      "sha256": "3e2fbf48c7c0ff22fe98e9ea803de605e45ba4a9dcd52babff1907bf8073302e"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/default_scope/startup_timeout/data/unit/profiler_process.json": {
+      "actual_permission_mode": 432,
+      "bytes": 619,
+      "git_mode": "100644",
+      "sha256": "f8825800f7c4c76660da6855fbaa65e076bf1a6dbc637687d874a2ae0a400f90"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/default_scope/startup_timeout/data/unit/tool_descendant_cleanup_progress.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1261,
+      "git_mode": "100644",
+      "sha256": "6ffede8438f2f44b589d4043a19b8c3526ce562b8e68e392974b09aa93a11dc8"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/default_scope/startup_timeout/data/unit/tool_descendant_scope_begin.json": {
+      "actual_permission_mode": 432,
+      "bytes": 28020,
+      "git_mode": "100644",
+      "sha256": "93fad40a65c83502a4fb93ca834e737b654b45f444e6c9c9dce2c4ff557579b7"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/default_scope/startup_timeout/data/unit/tool_descendant_scope_restored.json": {
+      "actual_permission_mode": 432,
+      "bytes": 592,
+      "git_mode": "100644",
+      "sha256": "114b3759033c2b7afdb102caf39230616ed9baa86b24e0e79d71ca3bc594d104"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/default_scope/startup_timeout/data/unit/tool_descendant_scope_terminal.json": {
+      "actual_permission_mode": 432,
+      "bytes": 41126,
+      "git_mode": "100644",
+      "sha256": "d3cafaead6bedeee5e3cf24dd41741f17efe34d4e6035f1aa903832d82156441"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/default_scope/startup_timeout/data/unit/tool_root_wait_1239758.json": {
+      "actual_permission_mode": 432,
+      "bytes": 660,
+      "git_mode": "100644",
+      "sha256": "1851aa2acd0637168bd0b2baea200a9dd0e8726c7b1aaf10b74ca1e77bc462ab"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/default_scope/startup_timeout/temporary_evidence_paths.json": {
+      "actual_permission_mode": 432,
+      "bytes": 4797,
+      "git_mode": "100644",
+      "sha256": "213a5728d03ccd0d8e8ecccf32ed8f9f5352adb8c5bd845464cdba6bb1991d57"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/default_scope/startup_timeout/worker_stderr.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 0,
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/default_scope/startup_timeout/worker_stdout.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 6782,
+      "git_mode": "100644",
+      "sha256": "4bb0896891b12ed25613f4908c7c27bb35683adef027bf0acf5c542f245e3f11"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/native_provider/actual_exhausted_ordinary_limit_child_cleanup.json": {
+      "actual_permission_mode": 432,
+      "bytes": 21089,
+      "git_mode": "100644",
+      "sha256": "91edf76f91df9bdc4ffe61c8cee7f53e534bcf3a8a2c08814599fe82bd7f8e86"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/native_provider/actual_exhausted_ordinary_limit_close.json": {
+      "actual_permission_mode": 432,
+      "bytes": 8569,
+      "git_mode": "100644",
+      "sha256": "b4de1d3c04b48a1b8bcf25062d782ade2e41dc403829707993a571e148269f88"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/native_provider/actual_self_preflight.json": {
+      "actual_permission_mode": 432,
+      "bytes": 6785,
+      "git_mode": "100644",
+      "sha256": "dcec6cc254c7db96af28cc4881bec8b2e2ef69daf85b0402ce73a52747a3f9cd"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/native_provider/actual_temporary_owned_child.json": {
+      "actual_permission_mode": 432,
+      "bytes": 21315,
+      "git_mode": "100644",
+      "sha256": "a9e3327369ad66003bf45b6fc230741dc7e6f1cd4f35ecca490a6854f282d128"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/native_provider/synthetic_unsupported_kernel_response.json": {
+      "actual_permission_mode": 432,
+      "bytes": 4744,
+      "git_mode": "100644",
+      "sha256": "e16975f9acff9a87b64a66cef97271e946a77e6e5247701746f0a9f0bafe3258"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/native_scope/orphan_root_failure/actual_cpu_processes.json": {
+      "actual_permission_mode": 432,
+      "bytes": 47,
+      "git_mode": "100644",
+      "sha256": "b0ba90a5718a2f10e13a186c3bd8bf32cd1b482f6545003664b3c3740798fe1b"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/native_scope/orphan_root_failure/cpu_regression_result.json": {
+      "actual_permission_mode": 432,
+      "bytes": 23818,
+      "git_mode": "100644",
+      "sha256": "39564b6578f834643fcff2235d96e6ec9e33cfca6226604367644bd76ee784ce"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/native_scope/orphan_root_failure/data/unit/direct_process_failure.json": {
+      "actual_permission_mode": 432,
+      "bytes": 245,
+      "git_mode": "100644",
+      "sha256": "9a63046eac1435eb21808acedf3163f79cbd4d36897b566304d5317de688cfa8"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/native_scope/orphan_root_failure/data/unit/direct_profile_process_intent.json": {
+      "actual_permission_mode": 432,
+      "bytes": 24382,
+      "git_mode": "100644",
+      "sha256": "fd35d41c9e435b0859eff87bd489ac40c251ac0249e3280fa2545e5a3722c8a7"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/native_scope/orphan_root_failure/data/unit/executed_command.json": {
+      "actual_permission_mode": 432,
+      "bytes": 808,
+      "git_mode": "100644",
+      "sha256": "ac6c2944a6a366434084c3b8fa79072f13fe033ff43586edddfc53735e7fdbfb"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/native_scope/orphan_root_failure/data/unit/measurement_plan.json": {
+      "actual_permission_mode": 432,
+      "bytes": 2182,
+      "git_mode": "100644",
+      "sha256": "b5dbadca88679d3cda7416688b17aae520963024f1ca49b5f21db4f6e1e548d8"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/native_scope/orphan_root_failure/data/unit/native_process_producer_begin.json": {
+      "actual_permission_mode": 432,
+      "bytes": 13621,
+      "git_mode": "100644",
+      "sha256": "bad92b71a59092f7895a731e9b8b3f74439c8520428907be518416ad3234a6c2"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/native_scope/orphan_root_failure/data/unit/native_process_target_contract.json": {
+      "actual_permission_mode": 432,
+      "bytes": 3663,
+      "git_mode": "100644",
+      "sha256": "b990be692576f9c3a518d8cabc76517ffdb5077d06258c75808f637dd18aaaf2"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/native_scope/orphan_root_failure/data/unit/tool_descendant_cleanup_progress.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1500,
+      "git_mode": "100644",
+      "sha256": "66690e9edb360e27a53164e20f216cd0375aac61411a0d15c44341220908b724"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/native_scope/orphan_root_failure/data/unit/tool_descendant_scope_begin.json": {
+      "actual_permission_mode": 432,
+      "bytes": 28468,
+      "git_mode": "100644",
+      "sha256": "36743dafb36245c48e68fcc5624b8655f197c0219690a9b71e50f16278358bb5"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/native_scope/orphan_root_failure/data/unit/tool_descendant_scope_restored.json": {
+      "actual_permission_mode": 432,
+      "bytes": 592,
+      "git_mode": "100644",
+      "sha256": "d783b89f768fa31e110e2a4e405fda57d111a58adb93428cf8c184539c0d83a8"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/native_scope/orphan_root_failure/data/unit/tool_descendant_scope_terminal.json": {
+      "actual_permission_mode": 432,
+      "bytes": 49259,
+      "git_mode": "100644",
+      "sha256": "26fc3233385887a0a3ab902cb907256bdf4d116b26160fe1d352507dd46aaa33"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/native_scope/orphan_root_failure/data/unit/tool_root_wait_1239734.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1039,
+      "git_mode": "100644",
+      "sha256": "a706a4db5eec2c8f3a341582458c5b1eb3636b1a4508b2bd00f0b8763d9e415f"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/native_scope/orphan_root_failure/worker_stderr.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 0,
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/native_scope/orphan_root_failure/worker_stdout.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 18798,
+      "git_mode": "100644",
+      "sha256": "ded5ca2d809f686d872ce0f922faef54627a577703c0be725a44c13097d22370"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/native_scope/startup_timeout/actual_cpu_processes.json": {
+      "actual_permission_mode": 432,
+      "bytes": 45,
+      "git_mode": "100644",
+      "sha256": "7d476f586b9041af6531f47a243a67b5fbf2bb5c247c2c7025caed0faaa36587"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/native_scope/startup_timeout/cpu_regression_result.json": {
+      "actual_permission_mode": 432,
+      "bytes": 24599,
+      "git_mode": "100644",
+      "sha256": "3437c6d9c4a5bdbbd4e1c8f8ad006e0901b05adbffa10e12a40585f45c422531"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/native_scope/startup_timeout/data/unit/direct_process_failure.json": {
+      "actual_permission_mode": 432,
+      "bytes": 278,
+      "git_mode": "100644",
+      "sha256": "d69f34448cf1e1238a1f728dff09ee0ae575dd5f4a1d01bbf323b470f07b41f4"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/native_scope/startup_timeout/data/unit/direct_profile_process_intent.json": {
+      "actual_permission_mode": 432,
+      "bytes": 24034,
+      "git_mode": "100644",
+      "sha256": "b7c860fa5431c2188e80eb8f6ef846b8c385de49f6a3e6726cd649d2118437f9"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/native_scope/startup_timeout/data/unit/executed_command.json": {
+      "actual_permission_mode": 432,
+      "bytes": 495,
+      "git_mode": "100644",
+      "sha256": "316ee2dc874953cfee80940d88fd5b312260c6be121bdac58203afd05cd0cb77"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/native_scope/startup_timeout/data/unit/measurement_plan.json": {
+      "actual_permission_mode": 432,
+      "bytes": 2182,
+      "git_mode": "100644",
+      "sha256": "75cccc87045db7184ce51ca0061498b8944ccfe2291334979674a43023f804d0"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/native_scope/startup_timeout/data/unit/native_process_producer_begin.json": {
+      "actual_permission_mode": 432,
+      "bytes": 13606,
+      "git_mode": "100644",
+      "sha256": "bca89cd22889e5a20dd69b82b7a42e16134158524e934e2961af227de64615ba"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/native_scope/startup_timeout/data/unit/native_process_target_contract.json": {
+      "actual_permission_mode": 432,
+      "bytes": 3663,
+      "git_mode": "100644",
+      "sha256": "d095190cf7a436a9813f6987b028acf7577dabfa453799d96dcf117058a391d6"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/native_scope/startup_timeout/data/unit/profiler_process.json": {
+      "actual_permission_mode": 432,
+      "bytes": 685,
+      "git_mode": "100644",
+      "sha256": "8922dcfeb59068648ce35c0828e4235c11ab047af232f2c50c3128c0ccaaa53b"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/native_scope/startup_timeout/data/unit/tool_descendant_cleanup_progress.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1256,
+      "git_mode": "100644",
+      "sha256": "552478feb1223a19b3aa52f567f6e23af03cb275c72608444d962005c93bdd22"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/native_scope/startup_timeout/data/unit/tool_descendant_scope_begin.json": {
+      "actual_permission_mode": 432,
+      "bytes": 28434,
+      "git_mode": "100644",
+      "sha256": "aa2bf78b2d1d950cf291071c0d1499e1b947aff312172531bad90028fcabdc1e"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/native_scope/startup_timeout/data/unit/tool_descendant_scope_restored.json": {
+      "actual_permission_mode": 432,
+      "bytes": 592,
+      "git_mode": "100644",
+      "sha256": "200f20b6c519de3020a6ce5e7f6fd9dba2f0d76c0971e28f0426927060c7e171"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/native_scope/startup_timeout/data/unit/tool_descendant_scope_terminal.json": {
+      "actual_permission_mode": 432,
+      "bytes": 41518,
+      "git_mode": "100644",
+      "sha256": "6945c0ff536f1a79801c33e20e1f4538e50af0adda888e4e5c7c31427b5c7928"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/native_scope/startup_timeout/data/unit/tool_root_wait_1239740.json": {
+      "actual_permission_mode": 432,
+      "bytes": 726,
+      "git_mode": "100644",
+      "sha256": "fa57d1eeaf12d2d2b9caf51f8657353a95fb62765eb6564cf7dd59b7ea3f41d4"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/native_scope/startup_timeout/worker_stderr.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 0,
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_375/native_scope/startup_timeout/worker_stdout.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 19295,
+      "git_mode": "100644",
+      "sha256": "724863df0ba87dff650d58806c40118beb1689bc89b907893b08fbef5e612fdf"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/default_scope/orphan_root_failure/actual_cpu_processes.json": {
+      "actual_permission_mode": 432,
+      "bytes": 47,
+      "git_mode": "100644",
+      "sha256": "b3938d2bc47857256f503a1f9d305ef0380dffc953e9f853210f19a51bcc91ce"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/default_scope/orphan_root_failure/cpu_regression_result.json": {
+      "actual_permission_mode": 432,
+      "bytes": 7789,
+      "git_mode": "100644",
+      "sha256": "a1718ca3caf1d314f1f598c51dda50200e98a82c4cf249670dfad1ef6796210e"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/default_scope/orphan_root_failure/data/unit/direct_process_failure.json": {
+      "actual_permission_mode": 432,
+      "bytes": 245,
+      "git_mode": "100644",
+      "sha256": "9a63046eac1435eb21808acedf3163f79cbd4d36897b566304d5317de688cfa8"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/default_scope/orphan_root_failure/data/unit/direct_profile_process_intent.json": {
+      "actual_permission_mode": 432,
+      "bytes": 23846,
+      "git_mode": "100644",
+      "sha256": "a10f0c2e9d57719095815613772a00aef79d50e2d81717f6bc488c6ab4fc441b"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/default_scope/orphan_root_failure/data/unit/executed_command.json": {
+      "actual_permission_mode": 432,
+      "bytes": 742,
+      "git_mode": "100644",
+      "sha256": "92a3d5b9fe7bf67f147e8b2cf323822f26eb1dcdea255299502bd73aacc2a184"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/default_scope/orphan_root_failure/data/unit/measurement_plan.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1292,
+      "git_mode": "100644",
+      "sha256": "c6d8284a2c80986a5c8d2c8b4ad1e938cfc6dbad9de6e28c4da0b49e07809db6"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/default_scope/orphan_root_failure/data/unit/tool_descendant_cleanup_progress.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1500,
+      "git_mode": "100644",
+      "sha256": "74f327c1dbd478ff0bb86da3f365595e89ce61033b04c65ef75a95a87e16dc4d"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/default_scope/orphan_root_failure/data/unit/tool_descendant_scope_begin.json": {
+      "actual_permission_mode": 432,
+      "bytes": 28058,
+      "git_mode": "100644",
+      "sha256": "5f15462429dd5fceedb5c5cc2067f7c116b32c88b853d2258cb3eeddb0679f9c"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/default_scope/orphan_root_failure/data/unit/tool_descendant_scope_restored.json": {
+      "actual_permission_mode": 432,
+      "bytes": 592,
+      "git_mode": "100644",
+      "sha256": "9cd22f72e2ee8937c74274122b5e4fe7ec13e71f8ee060e6b39ac61a31ff0ead"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/default_scope/orphan_root_failure/data/unit/tool_descendant_scope_terminal.json": {
+      "actual_permission_mode": 432,
+      "bytes": 50129,
+      "git_mode": "100644",
+      "sha256": "2260c651948849656813110dfd708bae6aa1cb2889ce9393563e0b040699be2a"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/default_scope/orphan_root_failure/data/unit/tool_root_wait_1240520.json": {
+      "actual_permission_mode": 432,
+      "bytes": 973,
+      "git_mode": "100644",
+      "sha256": "15dddb92dfd97802929308caca69c4a2c26470c763bca2b6cc095b0a4fd48f1c"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/default_scope/orphan_root_failure/temporary_evidence_paths.json": {
+      "actual_permission_mode": 432,
+      "bytes": 4453,
+      "git_mode": "100644",
+      "sha256": "2134b657448e674c42c5681968a112df46513cf15f6591de9f7dab4dcbf81094"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/default_scope/orphan_root_failure/worker_stderr.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 0,
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/default_scope/orphan_root_failure/worker_stdout.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 7067,
+      "git_mode": "100644",
+      "sha256": "48e5e3acd10fb07471184ff5c0cb84dfa2fc70cd996ecc48a55163b54c069f89"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/default_scope/startup_timeout/actual_cpu_processes.json": {
+      "actual_permission_mode": 432,
+      "bytes": 45,
+      "git_mode": "100644",
+      "sha256": "a5c30e38963a5efe4938e3e4368a66cb9e8a4409574782035965d524fe4988b9"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/default_scope/startup_timeout/cpu_regression_result.json": {
+      "actual_permission_mode": 432,
+      "bytes": 7498,
+      "git_mode": "100644",
+      "sha256": "461edab89151722f7ad2f951e1394cd8669ce2727dd6792b7583d5d88d40cb55"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/default_scope/startup_timeout/data/unit/direct_process_failure.json": {
+      "actual_permission_mode": 432,
+      "bytes": 278,
+      "git_mode": "100644",
+      "sha256": "d69f34448cf1e1238a1f728dff09ee0ae575dd5f4a1d01bbf323b470f07b41f4"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/default_scope/startup_timeout/data/unit/direct_profile_process_intent.json": {
+      "actual_permission_mode": 432,
+      "bytes": 23496,
+      "git_mode": "100644",
+      "sha256": "4e313ed41b59279a2f5d271d0430f3e6348e71571389ac7c8a2730e75bdfe432"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/default_scope/startup_timeout/data/unit/executed_command.json": {
+      "actual_permission_mode": 432,
+      "bytes": 429,
+      "git_mode": "100644",
+      "sha256": "aa81707e017729804759ae8443d77d1de0c721396a68d7b3ec2009535107b651"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/default_scope/startup_timeout/data/unit/measurement_plan.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1292,
+      "git_mode": "100644",
+      "sha256": "62e4ea00500d9aef440a1db61b6b33ebd9eddfc32d6fdecae31d943c914af504"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/default_scope/startup_timeout/data/unit/profiler_process.json": {
+      "actual_permission_mode": 432,
+      "bytes": 619,
+      "git_mode": "100644",
+      "sha256": "29bcd670f5cf0bee64439ec8aa74b3150182376b8927d48c6913b563477abf44"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/default_scope/startup_timeout/data/unit/tool_descendant_cleanup_progress.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1260,
+      "git_mode": "100644",
+      "sha256": "f529a5bdb6d6cca13ddb4d419d86d814afd01c9c1f62c14231a6a789795fbabc"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/default_scope/startup_timeout/data/unit/tool_descendant_scope_begin.json": {
+      "actual_permission_mode": 432,
+      "bytes": 28021,
+      "git_mode": "100644",
+      "sha256": "b7901cfac92eae354e25514bcb6132f57eee6d6fb3e5cb98c532dee291c89848"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/default_scope/startup_timeout/data/unit/tool_descendant_scope_restored.json": {
+      "actual_permission_mode": 432,
+      "bytes": 592,
+      "git_mode": "100644",
+      "sha256": "fe3219113cd70e8721938c711ddb87d58f8008513a21e979a01aac956bc7e9ce"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/default_scope/startup_timeout/data/unit/tool_descendant_scope_terminal.json": {
+      "actual_permission_mode": 432,
+      "bytes": 41132,
+      "git_mode": "100644",
+      "sha256": "7e58cc9e4a7be7045ac13262bd2ff0e521c5fd3092df635a23e44fe01a92ff99"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/default_scope/startup_timeout/data/unit/tool_root_wait_1240524.json": {
+      "actual_permission_mode": 432,
+      "bytes": 659,
+      "git_mode": "100644",
+      "sha256": "8e2995f761e440a19ffd61322e848d3724dbca0603521bc1820fd2816cf6fb0e"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/default_scope/startup_timeout/temporary_evidence_paths.json": {
+      "actual_permission_mode": 432,
+      "bytes": 4797,
+      "git_mode": "100644",
+      "sha256": "a89c43f1800516e3771bc472787ec7e744fba71906ba861b21a53de3f4141a86"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/default_scope/startup_timeout/worker_stderr.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 0,
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/default_scope/startup_timeout/worker_stdout.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 6784,
+      "git_mode": "100644",
+      "sha256": "f3ec34d46bfd875435d55f2ecb8a41b65e770eba5c2ee0c30636b02374dea894"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/native_provider/actual_exhausted_ordinary_limit_child_cleanup.json": {
+      "actual_permission_mode": 432,
+      "bytes": 21088,
+      "git_mode": "100644",
+      "sha256": "6b3d7e661ee664eedeebf1cdf8625f2695653110b6db6925d34a82ceeeea488d"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/native_provider/actual_exhausted_ordinary_limit_close.json": {
+      "actual_permission_mode": 432,
+      "bytes": 8574,
+      "git_mode": "100644",
+      "sha256": "c17efa8c22aebc1841d0b49e44b656e8e4eb6e3a1d605f32473b1d49a37b3b02"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/native_provider/actual_self_preflight.json": {
+      "actual_permission_mode": 432,
+      "bytes": 6783,
+      "git_mode": "100644",
+      "sha256": "1a43fd266b92bf6d48db75b8e547b26b94df30497f49701246f655c77d2ecdf0"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/native_provider/actual_temporary_owned_child.json": {
+      "actual_permission_mode": 432,
+      "bytes": 21310,
+      "git_mode": "100644",
+      "sha256": "22983b5d6599b62e39663f27e1d92bf64260b50a0be72a42ae405a0838ec1c17"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/native_provider/synthetic_unsupported_kernel_response.json": {
+      "actual_permission_mode": 432,
+      "bytes": 4745,
+      "git_mode": "100644",
+      "sha256": "34f799334e61da614ab2a1c6430de12d306e5ff193e70fbcc32c60fa9aaf8402"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/native_scope/orphan_root_failure/actual_cpu_processes.json": {
+      "actual_permission_mode": 432,
+      "bytes": 47,
+      "git_mode": "100644",
+      "sha256": "ed9eb53722d01a02230a8a84f7af1ed132ea87e26f76bf3832bc0e6f22d8d912"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/native_scope/orphan_root_failure/cpu_regression_result.json": {
+      "actual_permission_mode": 432,
+      "bytes": 23822,
+      "git_mode": "100644",
+      "sha256": "5217ec1f7e84425f88612f0623c93fbecc570486d073688906618227c9fe64c7"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/native_scope/orphan_root_failure/data/unit/direct_process_failure.json": {
+      "actual_permission_mode": 432,
+      "bytes": 245,
+      "git_mode": "100644",
+      "sha256": "9a63046eac1435eb21808acedf3163f79cbd4d36897b566304d5317de688cfa8"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/native_scope/orphan_root_failure/data/unit/direct_profile_process_intent.json": {
+      "actual_permission_mode": 432,
+      "bytes": 24382,
+      "git_mode": "100644",
+      "sha256": "528e92b96c71d6dc0fa48120d46e3d91a097723093df03a6ea564457db56d673"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/native_scope/orphan_root_failure/data/unit/executed_command.json": {
+      "actual_permission_mode": 432,
+      "bytes": 808,
+      "git_mode": "100644",
+      "sha256": "ce4cb9d037685bb3229727149415141f4c8ad1f1be9ffaade53fabe92ea62144"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/native_scope/orphan_root_failure/data/unit/measurement_plan.json": {
+      "actual_permission_mode": 432,
+      "bytes": 2182,
+      "git_mode": "100644",
+      "sha256": "a675fca1843458e560b5122e60b882e722fe504ee8e915c603ca955c344a9481"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/native_scope/orphan_root_failure/data/unit/native_process_producer_begin.json": {
+      "actual_permission_mode": 432,
+      "bytes": 13619,
+      "git_mode": "100644",
+      "sha256": "09e746426c9c1c91d9be108c83e9d07ee6b3f1003d555719edab4fcf2d68a708"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/native_scope/orphan_root_failure/data/unit/native_process_target_contract.json": {
+      "actual_permission_mode": 432,
+      "bytes": 3663,
+      "git_mode": "100644",
+      "sha256": "7515200bb1bafdae6d611b6cb80a4d2c4c7d23f873abeed9e67a0da47aae4a5a"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/native_scope/orphan_root_failure/data/unit/tool_descendant_cleanup_progress.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1499,
+      "git_mode": "100644",
+      "sha256": "2be63e065925cefb8b88b4683eb773e7b5f46a7ef1649e1ad70cc47dc97484fa"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/native_scope/orphan_root_failure/data/unit/tool_descendant_scope_begin.json": {
+      "actual_permission_mode": 432,
+      "bytes": 28467,
+      "git_mode": "100644",
+      "sha256": "c14646639be61795709a7359895517d8b0aece3372fef270175632a2d16e94a2"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/native_scope/orphan_root_failure/data/unit/tool_descendant_scope_restored.json": {
+      "actual_permission_mode": 432,
+      "bytes": 592,
+      "git_mode": "100644",
+      "sha256": "064bc32ffe0e138b6e129e9f57762cdc4c8c815b88a4bd693f325c8908938f73"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/native_scope/orphan_root_failure/data/unit/tool_descendant_scope_terminal.json": {
+      "actual_permission_mode": 432,
+      "bytes": 49259,
+      "git_mode": "100644",
+      "sha256": "094f7842054d2a2e8141e41436a7f947f8a05a5ec5df3de248659adbabbc332b"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/native_scope/orphan_root_failure/data/unit/tool_root_wait_1240491.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1039,
+      "git_mode": "100644",
+      "sha256": "8f557cd19dde8e39a42cd6d81b28cb1bdc0f3dfa603aadb59aec4830ce9bc90f"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/native_scope/orphan_root_failure/worker_stderr.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 0,
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/native_scope/orphan_root_failure/worker_stdout.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 18802,
+      "git_mode": "100644",
+      "sha256": "1c5f89a5bf9c9535c03519b61b34fcffef5905f16b77b7f9d00c174ecc3289e2"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/native_scope/startup_timeout/actual_cpu_processes.json": {
+      "actual_permission_mode": 432,
+      "bytes": 45,
+      "git_mode": "100644",
+      "sha256": "49a53b95c28b55ae0b06d4f5b7ec0e4bf934df9d80d6d829f913d9509b812898"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/native_scope/startup_timeout/cpu_regression_result.json": {
+      "actual_permission_mode": 432,
+      "bytes": 24611,
+      "git_mode": "100644",
+      "sha256": "4b39cde7da13e6a21ddec75dafbc93bc8384ab67845bb7c8d7bdf85ebbd7f5e9"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/native_scope/startup_timeout/data/unit/direct_process_failure.json": {
+      "actual_permission_mode": 432,
+      "bytes": 278,
+      "git_mode": "100644",
+      "sha256": "d69f34448cf1e1238a1f728dff09ee0ae575dd5f4a1d01bbf323b470f07b41f4"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/native_scope/startup_timeout/data/unit/direct_profile_process_intent.json": {
+      "actual_permission_mode": 432,
+      "bytes": 24032,
+      "git_mode": "100644",
+      "sha256": "4b8f6a2cc69079d7725223263a4bbf6728e3c54b616462d144f658203601f632"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/native_scope/startup_timeout/data/unit/executed_command.json": {
+      "actual_permission_mode": 432,
+      "bytes": 495,
+      "git_mode": "100644",
+      "sha256": "2b3d3a38ef0216e0669bbe11b0323ef542078daed6528f2952de6800da7c4be9"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/native_scope/startup_timeout/data/unit/measurement_plan.json": {
+      "actual_permission_mode": 432,
+      "bytes": 2182,
+      "git_mode": "100644",
+      "sha256": "c4693981cdb75de1808fa9ce8443155cd37abe5b052a6343b8f90a5e3b368363"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/native_scope/startup_timeout/data/unit/native_process_producer_begin.json": {
+      "actual_permission_mode": 432,
+      "bytes": 13610,
+      "git_mode": "100644",
+      "sha256": "42b32d5e33207ad02fb56ff38942ba49abeba5b68d82a1fdcf218a8f9732a458"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/native_scope/startup_timeout/data/unit/native_process_target_contract.json": {
+      "actual_permission_mode": 432,
+      "bytes": 3663,
+      "git_mode": "100644",
+      "sha256": "326ca41226b51976eb987efeee491399738c467ebab49f3f72700cc5f2fcbbf8"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/native_scope/startup_timeout/data/unit/profiler_process.json": {
+      "actual_permission_mode": 432,
+      "bytes": 685,
+      "git_mode": "100644",
+      "sha256": "58974a0cd116ea0907614053b692157c682ae53a77d3a02f25b6e6d262f4d65b"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/native_scope/startup_timeout/data/unit/tool_descendant_cleanup_progress.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1260,
+      "git_mode": "100644",
+      "sha256": "7cfa63d14574c5a96c27d0d95995710883aa5ad75f09e8bbdb116f62e7aaac77"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/native_scope/startup_timeout/data/unit/tool_descendant_scope_begin.json": {
+      "actual_permission_mode": 432,
+      "bytes": 28434,
+      "git_mode": "100644",
+      "sha256": "7d045cae9063a3bb34fe178e6c47d3f12eb622e87d3535590f34c66ba850a0b1"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/native_scope/startup_timeout/data/unit/tool_descendant_scope_restored.json": {
+      "actual_permission_mode": 432,
+      "bytes": 592,
+      "git_mode": "100644",
+      "sha256": "1334b767cb3a51be72c0372b681cba91f6003c524b9f63cee14468939ec8bd65"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/native_scope/startup_timeout/data/unit/tool_descendant_scope_terminal.json": {
+      "actual_permission_mode": 432,
+      "bytes": 41525,
+      "git_mode": "100644",
+      "sha256": "33f3390bbca124f81ee92bd4f41bd1c3bc4f2555ecf28c01da3f59302e678901"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/native_scope/startup_timeout/data/unit/tool_root_wait_1240495.json": {
+      "actual_permission_mode": 432,
+      "bytes": 726,
+      "git_mode": "100644",
+      "sha256": "c1492e9c888d148a7557a8508614445167173ea14e2bbf837395e6ca3f74f8b9"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/native_scope/startup_timeout/worker_stderr.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 0,
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_378/native_scope/startup_timeout/worker_stdout.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 19307,
+      "git_mode": "100644",
+      "sha256": "7985509d8a49ac48ca6ebb13797da3080b730317439f782daca9cc10226998a5"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/default_scope/orphan_root_failure/actual_cpu_processes.json": {
+      "actual_permission_mode": 432,
+      "bytes": 47,
+      "git_mode": "100644",
+      "sha256": "b5f9a760749cb7af3d0e593e3afb922f968e8602c82fb1535ce91c86e6450844"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/default_scope/orphan_root_failure/cpu_regression_result.json": {
+      "actual_permission_mode": 432,
+      "bytes": 7789,
+      "git_mode": "100644",
+      "sha256": "30ff10b1743c6142ca44218f9f0667802ce1d35f93a98a1c02f3330372379eb9"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/default_scope/orphan_root_failure/data/unit/direct_process_failure.json": {
+      "actual_permission_mode": 432,
+      "bytes": 245,
+      "git_mode": "100644",
+      "sha256": "9a63046eac1435eb21808acedf3163f79cbd4d36897b566304d5317de688cfa8"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/default_scope/orphan_root_failure/data/unit/direct_profile_process_intent.json": {
+      "actual_permission_mode": 432,
+      "bytes": 23840,
+      "git_mode": "100644",
+      "sha256": "68e36ff8c58100aa5e9606b4faedb5f6db90c86b53d4f5df108c3f45892259ff"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/default_scope/orphan_root_failure/data/unit/executed_command.json": {
+      "actual_permission_mode": 432,
+      "bytes": 742,
+      "git_mode": "100644",
+      "sha256": "ba641c2fc8cf522ad4b3eb9eaa1be33e6de1fb79e84bd17cebe8dd92a90cea07"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/default_scope/orphan_root_failure/data/unit/measurement_plan.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1292,
+      "git_mode": "100644",
+      "sha256": "1a0cbd71bebe163d9a6c58afcab6233364b242e57b8c15ced46e148ac0b0a2c2"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/default_scope/orphan_root_failure/data/unit/tool_descendant_cleanup_progress.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1498,
+      "git_mode": "100644",
+      "sha256": "e4939db31fd39a26787bd0e09f22f78d07a178cdd19af08e8890c91d772149b5"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/default_scope/orphan_root_failure/data/unit/tool_descendant_scope_begin.json": {
+      "actual_permission_mode": 432,
+      "bytes": 28051,
+      "git_mode": "100644",
+      "sha256": "b598767b0c1fb34953c357fff6051602619648de5c2859ed81b7930b04ecfffa"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/default_scope/orphan_root_failure/data/unit/tool_descendant_scope_restored.json": {
+      "actual_permission_mode": 432,
+      "bytes": 592,
+      "git_mode": "100644",
+      "sha256": "1d739b0b937c68e3f49c6ada3434d67225cfd296d0fc0868f66be25fb1781edf"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/default_scope/orphan_root_failure/data/unit/tool_descendant_scope_terminal.json": {
+      "actual_permission_mode": 432,
+      "bytes": 50127,
+      "git_mode": "100644",
+      "sha256": "d4304ca3f57af8dabfe80f9353b5623604a7f9fe3f76673103a3857485c67fee"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/default_scope/orphan_root_failure/data/unit/tool_root_wait_1240637.json": {
+      "actual_permission_mode": 432,
+      "bytes": 973,
+      "git_mode": "100644",
+      "sha256": "a2a522463b520ba537f63962b4f657d44ce2529c8f59edd999df0d35188306a6"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/default_scope/orphan_root_failure/temporary_evidence_paths.json": {
+      "actual_permission_mode": 432,
+      "bytes": 4453,
+      "git_mode": "100644",
+      "sha256": "fe0df7812a83b83874c411adb31494f8739843ec611be39edf3d8327dca1f919"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/default_scope/orphan_root_failure/worker_stderr.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 0,
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/default_scope/orphan_root_failure/worker_stdout.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 7067,
+      "git_mode": "100644",
+      "sha256": "a3fae270ddcdcc50ed55aa500369375ab317215c71a6f56044aad49594f02a66"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/default_scope/startup_timeout/actual_cpu_processes.json": {
+      "actual_permission_mode": 432,
+      "bytes": 45,
+      "git_mode": "100644",
+      "sha256": "45cee47766e3dbb8b64843054aeac0f82f6833cedb765326e75796ffb13078f4"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/default_scope/startup_timeout/cpu_regression_result.json": {
+      "actual_permission_mode": 432,
+      "bytes": 7498,
+      "git_mode": "100644",
+      "sha256": "649bc558be7823b2a43766d67b4cc3eb568ef199548622b6dae83f4e4a1dbc98"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/default_scope/startup_timeout/data/unit/direct_process_failure.json": {
+      "actual_permission_mode": 432,
+      "bytes": 278,
+      "git_mode": "100644",
+      "sha256": "d69f34448cf1e1238a1f728dff09ee0ae575dd5f4a1d01bbf323b470f07b41f4"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/default_scope/startup_timeout/data/unit/direct_profile_process_intent.json": {
+      "actual_permission_mode": 432,
+      "bytes": 23495,
+      "git_mode": "100644",
+      "sha256": "ec715cb96aa940644f63ba719f465538300867090986ab2b90a17e6f9d3eb4fd"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/default_scope/startup_timeout/data/unit/executed_command.json": {
+      "actual_permission_mode": 432,
+      "bytes": 429,
+      "git_mode": "100644",
+      "sha256": "7f630533d15f84b8f40e7fa8fa405c76530c8e98bb64ec81a7e75664a18376ba"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/default_scope/startup_timeout/data/unit/measurement_plan.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1292,
+      "git_mode": "100644",
+      "sha256": "d7cba35b9eaa54c5ace847c69e87dea3fd184d601710f5a591c2986e4b9f98b5"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/default_scope/startup_timeout/data/unit/profiler_process.json": {
+      "actual_permission_mode": 432,
+      "bytes": 619,
+      "git_mode": "100644",
+      "sha256": "aeb1923a9a345f383b9b1b4a379668ebd2fd1b1d2a81f3ce7bbde5f7bdcf568d"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/default_scope/startup_timeout/data/unit/tool_descendant_cleanup_progress.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1259,
+      "git_mode": "100644",
+      "sha256": "2d27f7e2c7adc6c5ace79d88dc35dee474bb4ddc981412490fe3a28bda509f97"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/default_scope/startup_timeout/data/unit/tool_descendant_scope_begin.json": {
+      "actual_permission_mode": 432,
+      "bytes": 28014,
+      "git_mode": "100644",
+      "sha256": "e2b338acd6d1d49cbf78162a2c11e7a967438ef5cbcef933a39cb62ed07c0018"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/default_scope/startup_timeout/data/unit/tool_descendant_scope_restored.json": {
+      "actual_permission_mode": 432,
+      "bytes": 592,
+      "git_mode": "100644",
+      "sha256": "a445d6c7b0f6443d0fcf3b4c65a04e9be9f6765f9e72e58b8e3e53fb4135aadf"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/default_scope/startup_timeout/data/unit/tool_descendant_scope_terminal.json": {
+      "actual_permission_mode": 432,
+      "bytes": 41130,
+      "git_mode": "100644",
+      "sha256": "1832f49d856c20c2474f2d7614bcf4dbf75fe62c9c02a58dc18c26bb7e861bf4"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/default_scope/startup_timeout/data/unit/tool_root_wait_1240641.json": {
+      "actual_permission_mode": 432,
+      "bytes": 660,
+      "git_mode": "100644",
+      "sha256": "036d34f95cf1b0e329b28d5be0fbbfcb2ad4af5cab947037d0f1d446da2240de"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/default_scope/startup_timeout/temporary_evidence_paths.json": {
+      "actual_permission_mode": 432,
+      "bytes": 4797,
+      "git_mode": "100644",
+      "sha256": "f1940595727d7b1d86f18c9cb111acc22e36492bec70bb8169eaa349f976f6a9"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/default_scope/startup_timeout/worker_stderr.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 0,
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/default_scope/startup_timeout/worker_stdout.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 6784,
+      "git_mode": "100644",
+      "sha256": "1718d355d57a251c722e660072827b3b30cafc23bd84e3bbe58870a98e0ea8ba"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/native_provider/actual_exhausted_ordinary_limit_child_cleanup.json": {
+      "actual_permission_mode": 432,
+      "bytes": 21089,
+      "git_mode": "100644",
+      "sha256": "ae4b51817a3681ca0472085f1b251e1147d792c423e17c1159f2637c1da2e637"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/native_provider/actual_exhausted_ordinary_limit_close.json": {
+      "actual_permission_mode": 432,
+      "bytes": 8573,
+      "git_mode": "100644",
+      "sha256": "c4caa644d8b5807b4dbda1e66251d734c17473bc934eeec1436812e145d38cfc"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/native_provider/actual_self_preflight.json": {
+      "actual_permission_mode": 432,
+      "bytes": 6783,
+      "git_mode": "100644",
+      "sha256": "0fa23e9919eaad4d35cc51609f09370c9a19e8907745d6f12728a04b2be09692"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/native_provider/actual_temporary_owned_child.json": {
+      "actual_permission_mode": 432,
+      "bytes": 21315,
+      "git_mode": "100644",
+      "sha256": "9aefb5b5716d107287d59ab116e3ec6a485fd451ccabd6c59d87820a5977f82a"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/native_provider/synthetic_unsupported_kernel_response.json": {
+      "actual_permission_mode": 432,
+      "bytes": 4745,
+      "git_mode": "100644",
+      "sha256": "c46b8821ab35757f9ade728ebb8a3b96ffd52aaa1f817deae9771b8201377583"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/native_scope/orphan_root_failure/actual_cpu_processes.json": {
+      "actual_permission_mode": 432,
+      "bytes": 47,
+      "git_mode": "100644",
+      "sha256": "8c511cb8aa0a4ba2024d2958db6da83cf4c806fe4506e22a2eb0580d3c46a574"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/native_scope/orphan_root_failure/cpu_regression_result.json": {
+      "actual_permission_mode": 432,
+      "bytes": 23818,
+      "git_mode": "100644",
+      "sha256": "ed028e341828eb111b50b267ad4e151b1b4f91330515cb48e127d4655a81b4b4"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/native_scope/orphan_root_failure/data/unit/direct_process_failure.json": {
+      "actual_permission_mode": 432,
+      "bytes": 245,
+      "git_mode": "100644",
+      "sha256": "9a63046eac1435eb21808acedf3163f79cbd4d36897b566304d5317de688cfa8"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/native_scope/orphan_root_failure/data/unit/direct_profile_process_intent.json": {
+      "actual_permission_mode": 432,
+      "bytes": 24383,
+      "git_mode": "100644",
+      "sha256": "54c512b1b89701b457b49e5c71a616d89c472aae860198dda1dbba81f1d2daa4"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/native_scope/orphan_root_failure/data/unit/executed_command.json": {
+      "actual_permission_mode": 432,
+      "bytes": 808,
+      "git_mode": "100644",
+      "sha256": "3c46d8bd85ca3bae4f0de031c8768e2d7c8a40fcc0938d59629753eb151b2706"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/native_scope/orphan_root_failure/data/unit/measurement_plan.json": {
+      "actual_permission_mode": 432,
+      "bytes": 2182,
+      "git_mode": "100644",
+      "sha256": "21313d0cc7b9fc77faed63153e646853cac9285a917f4c109dca9fdaf259f9cd"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/native_scope/orphan_root_failure/data/unit/native_process_producer_begin.json": {
+      "actual_permission_mode": 432,
+      "bytes": 13619,
+      "git_mode": "100644",
+      "sha256": "cefc41177d9f1df3b7d0629361fca63bef567add13c543b1ebb4416376494579"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/native_scope/orphan_root_failure/data/unit/native_process_target_contract.json": {
+      "actual_permission_mode": 432,
+      "bytes": 3663,
+      "git_mode": "100644",
+      "sha256": "b9178358071989282fa4c2c02e1f2a429535a832c19f790a0b651c35940e0ca8"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/native_scope/orphan_root_failure/data/unit/tool_descendant_cleanup_progress.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1500,
+      "git_mode": "100644",
+      "sha256": "2a3fdd239be053e5fa186159fb0107163dc6a70324734bd24c644d75c2b61cef"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/native_scope/orphan_root_failure/data/unit/tool_descendant_scope_begin.json": {
+      "actual_permission_mode": 432,
+      "bytes": 28467,
+      "git_mode": "100644",
+      "sha256": "5f436e1d8f0df20bfac61d8c456a9d4112114051794e8665e798ac69c7b7c75e"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/native_scope/orphan_root_failure/data/unit/tool_descendant_scope_restored.json": {
+      "actual_permission_mode": 432,
+      "bytes": 592,
+      "git_mode": "100644",
+      "sha256": "035fe36851d2dffc81421798a3dfbcf6ba8776feeabd031f71be5679f1f3bc19"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/native_scope/orphan_root_failure/data/unit/tool_descendant_scope_terminal.json": {
+      "actual_permission_mode": 432,
+      "bytes": 50554,
+      "git_mode": "100644",
+      "sha256": "942b1032879b25f0d176b4228f26527f7fc706ce3e6885568c09093744426546"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/native_scope/orphan_root_failure/data/unit/tool_root_wait_1240627.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1038,
+      "git_mode": "100644",
+      "sha256": "a0d760ea96c0f6424333e8ecbd419e34e398130e7a4fb40c58e6bbf70be89607"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/native_scope/orphan_root_failure/worker_stderr.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 0,
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/native_scope/orphan_root_failure/worker_stdout.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 18798,
+      "git_mode": "100644",
+      "sha256": "c7c0181cb0ed168e014e99929b31c7e24521ea6aa04248b3a10d601d59973bd6"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/native_scope/startup_timeout/actual_cpu_processes.json": {
+      "actual_permission_mode": 432,
+      "bytes": 45,
+      "git_mode": "100644",
+      "sha256": "e5cbc8accb2615b4cbdb3bc0c4c1e3a0960005237e884c4567a2c5fbf471dba8"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/native_scope/startup_timeout/cpu_regression_result.json": {
+      "actual_permission_mode": 432,
+      "bytes": 24612,
+      "git_mode": "100644",
+      "sha256": "052ef39341520d02438103cb0fbebe3256465c1abe4db7a7f05dcc6ac01b573d"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/native_scope/startup_timeout/data/unit/direct_process_failure.json": {
+      "actual_permission_mode": 432,
+      "bytes": 278,
+      "git_mode": "100644",
+      "sha256": "d69f34448cf1e1238a1f728dff09ee0ae575dd5f4a1d01bbf323b470f07b41f4"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/native_scope/startup_timeout/data/unit/direct_profile_process_intent.json": {
+      "actual_permission_mode": 432,
+      "bytes": 24033,
+      "git_mode": "100644",
+      "sha256": "eb5edee37b4b2678ae091be96e4ed49d3d04c3e5fce5b7ee9464e80389cd5ddc"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/native_scope/startup_timeout/data/unit/executed_command.json": {
+      "actual_permission_mode": 432,
+      "bytes": 495,
+      "git_mode": "100644",
+      "sha256": "da3efb16c991284ac1e527cbca49a666ea4ca09ad94aa0966bf6805dfffa5e5f"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/native_scope/startup_timeout/data/unit/measurement_plan.json": {
+      "actual_permission_mode": 432,
+      "bytes": 2182,
+      "git_mode": "100644",
+      "sha256": "3cc65bcc0d1445cc350b07da7d35374818c45d6e6533bd8455f8eed62856a2fe"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/native_scope/startup_timeout/data/unit/native_process_producer_begin.json": {
+      "actual_permission_mode": 432,
+      "bytes": 13611,
+      "git_mode": "100644",
+      "sha256": "c3b39f276356ec18130d2d552cee52d77cae281b34f6f768f614b272b5904245"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/native_scope/startup_timeout/data/unit/native_process_target_contract.json": {
+      "actual_permission_mode": 432,
+      "bytes": 3663,
+      "git_mode": "100644",
+      "sha256": "5adf7e23809c782e5bbb5bd6112cac1db31a142e64e16a8e15707580d9a727ca"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/native_scope/startup_timeout/data/unit/profiler_process.json": {
+      "actual_permission_mode": 432,
+      "bytes": 685,
+      "git_mode": "100644",
+      "sha256": "57a954357ddd9cf38a61b6c37516df1d788ab55741e698033b4f8af38a6d1ac4"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/native_scope/startup_timeout/data/unit/tool_descendant_cleanup_progress.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1261,
+      "git_mode": "100644",
+      "sha256": "92dea591a31b63ecf23557877be2a048315b34b1b9a657fddd4f5e39de975258"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/native_scope/startup_timeout/data/unit/tool_descendant_scope_begin.json": {
+      "actual_permission_mode": 432,
+      "bytes": 28432,
+      "git_mode": "100644",
+      "sha256": "e521ee4cbbda87a7d4b3809cb0c8cc9940c2ea5d38b7f6504e8cd863eb4447f5"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/native_scope/startup_timeout/data/unit/tool_descendant_scope_restored.json": {
+      "actual_permission_mode": 432,
+      "bytes": 592,
+      "git_mode": "100644",
+      "sha256": "77029403b244b9963a99d27944db73156356742e3ab8c10e669dd310627d92ea"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/native_scope/startup_timeout/data/unit/tool_descendant_scope_terminal.json": {
+      "actual_permission_mode": 432,
+      "bytes": 41550,
+      "git_mode": "100644",
+      "sha256": "6edf520eb7e06bc56b96e171b55a66fdf908bc70d1fb7f9b83a54318bbd30d42"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/native_scope/startup_timeout/data/unit/tool_root_wait_1240631.json": {
+      "actual_permission_mode": 432,
+      "bytes": 725,
+      "git_mode": "100644",
+      "sha256": "3fa25879f30ee6e3d8032d474e830bd83cb1a9e86209085e6f24ce86eef86d6d"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/native_scope/startup_timeout/worker_stderr.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 0,
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_379/native_scope/startup_timeout/worker_stdout.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 19308,
+      "git_mode": "100644",
+      "sha256": "6355a2c2c661f413c6f3ef3add5d17c65901ccace7ef3c124d399b3aa88a2ec2"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/default_scope/orphan_root_failure/actual_cpu_processes.json": {
+      "actual_permission_mode": 432,
+      "bytes": 47,
+      "git_mode": "100644",
+      "sha256": "74976bcce399a94a9453a68870725d6499228b7e0b8bff90a35b267decf0466f"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/default_scope/orphan_root_failure/cpu_regression_result.json": {
+      "actual_permission_mode": 432,
+      "bytes": 7787,
+      "git_mode": "100644",
+      "sha256": "db80447c9945b01e3b39c3663adb7d36ee687d44976ae1d642da8634e1f6cd2d"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/default_scope/orphan_root_failure/data/unit/direct_process_failure.json": {
+      "actual_permission_mode": 432,
+      "bytes": 245,
+      "git_mode": "100644",
+      "sha256": "9a63046eac1435eb21808acedf3163f79cbd4d36897b566304d5317de688cfa8"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/default_scope/orphan_root_failure/data/unit/direct_profile_process_intent.json": {
+      "actual_permission_mode": 432,
+      "bytes": 23838,
+      "git_mode": "100644",
+      "sha256": "edd793af9222926152c506954877ee80c7b5fb19c8e4e83be062b4165dec1caf"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/default_scope/orphan_root_failure/data/unit/executed_command.json": {
+      "actual_permission_mode": 432,
+      "bytes": 742,
+      "git_mode": "100644",
+      "sha256": "0a2cdd671e4508f2d0f216dc22c3b48b8118e512fa478bb1809c8b1731724b8c"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/default_scope/orphan_root_failure/data/unit/measurement_plan.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1292,
+      "git_mode": "100644",
+      "sha256": "4e369b4248f306e4b70e8ee883d4d75c016873341810e19cc57d837b0a3d4056"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/default_scope/orphan_root_failure/data/unit/tool_descendant_cleanup_progress.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1498,
+      "git_mode": "100644",
+      "sha256": "541e4e4ec9fed3a8699f7d4c4e0c3cd07a1b2529928a7e5a949959e4b82c76fe"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/default_scope/orphan_root_failure/data/unit/tool_descendant_scope_begin.json": {
+      "actual_permission_mode": 432,
+      "bytes": 28049,
+      "git_mode": "100644",
+      "sha256": "4f78bbdfee08ad485949d59a3bdbdc75f5369a817ed4b3f920960768c5b84187"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/default_scope/orphan_root_failure/data/unit/tool_descendant_scope_restored.json": {
+      "actual_permission_mode": 432,
+      "bytes": 592,
+      "git_mode": "100644",
+      "sha256": "7500d8398e2a7688f1b6d49d82196ec255780f0989c904dde9ad2703d2e6c768"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/default_scope/orphan_root_failure/data/unit/tool_descendant_scope_terminal.json": {
+      "actual_permission_mode": 432,
+      "bytes": 48864,
+      "git_mode": "100644",
+      "sha256": "0d483a7fe2ffff33abc1cd841a0ab58ca26f2e24ad9d42aacc87aac3204250c8"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/default_scope/orphan_root_failure/data/unit/tool_root_wait_1240694.json": {
+      "actual_permission_mode": 432,
+      "bytes": 973,
+      "git_mode": "100644",
+      "sha256": "64ff683ab02efa086ea4f876f4370b31f0c0810bff741d6d1fe48593b9185919"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/default_scope/orphan_root_failure/temporary_evidence_paths.json": {
+      "actual_permission_mode": 432,
+      "bytes": 4453,
+      "git_mode": "100644",
+      "sha256": "69160e4899ab0da24d0007e4f0d53e18864e2a5ab336a61ad585e73265d3c7dd"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/default_scope/orphan_root_failure/worker_stderr.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 0,
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/default_scope/orphan_root_failure/worker_stdout.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 7065,
+      "git_mode": "100644",
+      "sha256": "2272128ad67e1cadd40c4b6d2000435ec23c487948983e80788500299cae59d3"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/default_scope/startup_timeout/actual_cpu_processes.json": {
+      "actual_permission_mode": 432,
+      "bytes": 45,
+      "git_mode": "100644",
+      "sha256": "68087e5e2ff49822b5b3ccb565e41c47593bb2f6b5c05325b831e3a7f58d6dcb"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/default_scope/startup_timeout/cpu_regression_result.json": {
+      "actual_permission_mode": 432,
+      "bytes": 7497,
+      "git_mode": "100644",
+      "sha256": "588cb83373666c47b1234e77f4f78859a84ddf12fa925a94c813a905a9f13966"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/default_scope/startup_timeout/data/unit/direct_process_failure.json": {
+      "actual_permission_mode": 432,
+      "bytes": 278,
+      "git_mode": "100644",
+      "sha256": "d69f34448cf1e1238a1f728dff09ee0ae575dd5f4a1d01bbf323b470f07b41f4"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/default_scope/startup_timeout/data/unit/direct_profile_process_intent.json": {
+      "actual_permission_mode": 432,
+      "bytes": 23496,
+      "git_mode": "100644",
+      "sha256": "b1083e59882fdaa9128a341279d771b2ad1216ecf58b5c3c0de7fe88b2ad5987"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/default_scope/startup_timeout/data/unit/executed_command.json": {
+      "actual_permission_mode": 432,
+      "bytes": 429,
+      "git_mode": "100644",
+      "sha256": "dc1fae0084a676fb6a269f1e0eecf552ec68d2ce680bb786e29c6e57b5d32069"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/default_scope/startup_timeout/data/unit/measurement_plan.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1292,
+      "git_mode": "100644",
+      "sha256": "f945c77c361e254791a44956c92f97b4763a0436f9af74da0133759f0decd399"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/default_scope/startup_timeout/data/unit/profiler_process.json": {
+      "actual_permission_mode": 432,
+      "bytes": 619,
+      "git_mode": "100644",
+      "sha256": "4dfdc892f2896d52174c7fcf697994d99939c5d10f88d279828b6371fb9a998d"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/default_scope/startup_timeout/data/unit/tool_descendant_cleanup_progress.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1260,
+      "git_mode": "100644",
+      "sha256": "fb9dcea1008144c08891dcbd9ad9653f6f15dea58754e260657517d5a7064852"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/default_scope/startup_timeout/data/unit/tool_descendant_scope_begin.json": {
+      "actual_permission_mode": 432,
+      "bytes": 28020,
+      "git_mode": "100644",
+      "sha256": "6b9e8952233538f0ec5d8d1d4dac9800a96e9a289a9aed2332e40381403e72a7"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/default_scope/startup_timeout/data/unit/tool_descendant_scope_restored.json": {
+      "actual_permission_mode": 432,
+      "bytes": 592,
+      "git_mode": "100644",
+      "sha256": "9343fc90bbd46c9a2b0beffe6c6a4172bccdadb242b20a6fa0269d0758ecf3d3"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/default_scope/startup_timeout/data/unit/tool_descendant_scope_terminal.json": {
+      "actual_permission_mode": 432,
+      "bytes": 41128,
+      "git_mode": "100644",
+      "sha256": "2128ef6cec269fd30c65c32aad75730bab3411c1e988015c55714e7be5b529b1"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/default_scope/startup_timeout/data/unit/tool_root_wait_1240698.json": {
+      "actual_permission_mode": 432,
+      "bytes": 660,
+      "git_mode": "100644",
+      "sha256": "84300143422000b549fff88bf88edee6a2c0802edd41610d48f56909cd7ecd83"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/default_scope/startup_timeout/temporary_evidence_paths.json": {
+      "actual_permission_mode": 432,
+      "bytes": 4797,
+      "git_mode": "100644",
+      "sha256": "32c88cccb945265b00ae8398b00c276eb3baf53cd84349a0f0e7291e9fd6a248"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/default_scope/startup_timeout/worker_stderr.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 0,
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/default_scope/startup_timeout/worker_stdout.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 6783,
+      "git_mode": "100644",
+      "sha256": "286de1fa27cacb23ee9ac680c8ed340e09a5c9ff3ee0b7b762648ee6b77bb8de"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/native_provider/actual_exhausted_ordinary_limit_child_cleanup.json": {
+      "actual_permission_mode": 432,
+      "bytes": 21084,
+      "git_mode": "100644",
+      "sha256": "6a64b02da2d31ca4f9749580332811f7263db9593503f4e0a0cc24a5c7ca02ba"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/native_provider/actual_exhausted_ordinary_limit_close.json": {
+      "actual_permission_mode": 432,
+      "bytes": 8575,
+      "git_mode": "100644",
+      "sha256": "db304817e443da20de2e02e46caac87b5850c14de484f60c8fd4769542701dd3"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/native_provider/actual_self_preflight.json": {
+      "actual_permission_mode": 432,
+      "bytes": 6786,
+      "git_mode": "100644",
+      "sha256": "4d5f34cae734cbac678f0db88cc10deb5495484e0729afa9641decf8d6370d33"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/native_provider/actual_temporary_owned_child.json": {
+      "actual_permission_mode": 432,
+      "bytes": 21313,
+      "git_mode": "100644",
+      "sha256": "79adbbe0e282de5c7a44565101db0ce621a770f3777273420a2e3fc08af7c8a6"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/native_provider/synthetic_unsupported_kernel_response.json": {
+      "actual_permission_mode": 432,
+      "bytes": 4744,
+      "git_mode": "100644",
+      "sha256": "c949d04fe85a924fa0e0a8577575def095757877e5fbdf632c4b3829d7539c94"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/native_scope/orphan_root_failure/actual_cpu_processes.json": {
+      "actual_permission_mode": 432,
+      "bytes": 47,
+      "git_mode": "100644",
+      "sha256": "96ce1d856ad4b3e0b04cfa42c65e0f5d8e01402c90080fb099c7fa86e69f2d56"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/native_scope/orphan_root_failure/cpu_regression_result.json": {
+      "actual_permission_mode": 432,
+      "bytes": 23822,
+      "git_mode": "100644",
+      "sha256": "6e4c58f972aa94c7f1eac5a0b422dba85cc6c6c92baf3583ec5c6314b2d0882f"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/native_scope/orphan_root_failure/data/unit/direct_process_failure.json": {
+      "actual_permission_mode": 432,
+      "bytes": 245,
+      "git_mode": "100644",
+      "sha256": "9a63046eac1435eb21808acedf3163f79cbd4d36897b566304d5317de688cfa8"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/native_scope/orphan_root_failure/data/unit/direct_profile_process_intent.json": {
+      "actual_permission_mode": 432,
+      "bytes": 24383,
+      "git_mode": "100644",
+      "sha256": "85ba3206f432d52e4a8b7472ec33740b3465b56c0e51cde197d1026fd467c9d2"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/native_scope/orphan_root_failure/data/unit/executed_command.json": {
+      "actual_permission_mode": 432,
+      "bytes": 808,
+      "git_mode": "100644",
+      "sha256": "1e463c1281a2ba819ff39bc0db30abedaccc398463e5005a7976eb7b347ad4ce"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/native_scope/orphan_root_failure/data/unit/measurement_plan.json": {
+      "actual_permission_mode": 432,
+      "bytes": 2182,
+      "git_mode": "100644",
+      "sha256": "dfd48c91fbbd818fd0a780944f4cdf86c72cdf2153c9d171f464b25a0efee0cf"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/native_scope/orphan_root_failure/data/unit/native_process_producer_begin.json": {
+      "actual_permission_mode": 432,
+      "bytes": 13619,
+      "git_mode": "100644",
+      "sha256": "f42b570964ba5ef4910f2360970166cae5bb55607128c9fe4e25603f2a3da109"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/native_scope/orphan_root_failure/data/unit/native_process_target_contract.json": {
+      "actual_permission_mode": 432,
+      "bytes": 3663,
+      "git_mode": "100644",
+      "sha256": "92d06cfea028b25522c6d9aa581ea9a3f96c252f6146db1cf0e369d13cc8dbe5"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/native_scope/orphan_root_failure/data/unit/tool_descendant_cleanup_progress.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1499,
+      "git_mode": "100644",
+      "sha256": "e61b84c96e21ad8904eef45491d193c66bcf1cf537ce3450f486afc85b68b973"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/native_scope/orphan_root_failure/data/unit/tool_descendant_scope_begin.json": {
+      "actual_permission_mode": 432,
+      "bytes": 28467,
+      "git_mode": "100644",
+      "sha256": "b2d947256fcea8b01f68c71298223f1020bb41a245ce043acfcbb90511ff6c4d"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/native_scope/orphan_root_failure/data/unit/tool_descendant_scope_restored.json": {
+      "actual_permission_mode": 432,
+      "bytes": 592,
+      "git_mode": "100644",
+      "sha256": "c37cc316a4d27761aef9527eb0b24d8b91729b7af3a80f2397a6d57d4ca09cc9"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/native_scope/orphan_root_failure/data/unit/tool_descendant_scope_terminal.json": {
+      "actual_permission_mode": 432,
+      "bytes": 49255,
+      "git_mode": "100644",
+      "sha256": "16ae998913626f814e863f2feb8580df7dfc2966ad093d8d3df1282ea47f0837"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/native_scope/orphan_root_failure/data/unit/tool_root_wait_1240682.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1038,
+      "git_mode": "100644",
+      "sha256": "4896d4d2a114edf6a6f0d088fcc2c3cd429ba62c484ba70a47b2cfd1fec7b354"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/native_scope/orphan_root_failure/worker_stderr.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 0,
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/native_scope/orphan_root_failure/worker_stdout.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 18802,
+      "git_mode": "100644",
+      "sha256": "c76ce8da74ae0b4a9e456518a2612fe31faf2137df8defb518e312a4b17d2087"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/native_scope/startup_timeout/actual_cpu_processes.json": {
+      "actual_permission_mode": 432,
+      "bytes": 45,
+      "git_mode": "100644",
+      "sha256": "23b721d3c5086325f784018eaa884a510145640bde7393836c5e97f05265c229"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/native_scope/startup_timeout/cpu_regression_result.json": {
+      "actual_permission_mode": 432,
+      "bytes": 24611,
+      "git_mode": "100644",
+      "sha256": "d8ef345b92690bd7fc6dc13c0871243cfd240a48b933d9a1b7039115d607313c"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/native_scope/startup_timeout/data/unit/direct_process_failure.json": {
+      "actual_permission_mode": 432,
+      "bytes": 278,
+      "git_mode": "100644",
+      "sha256": "d69f34448cf1e1238a1f728dff09ee0ae575dd5f4a1d01bbf323b470f07b41f4"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/native_scope/startup_timeout/data/unit/direct_profile_process_intent.json": {
+      "actual_permission_mode": 432,
+      "bytes": 24039,
+      "git_mode": "100644",
+      "sha256": "719af5837e50b059c7ac64417e6e7c99a26cc14e83981cea5cb0524f58e9b9d0"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/native_scope/startup_timeout/data/unit/executed_command.json": {
+      "actual_permission_mode": 432,
+      "bytes": 495,
+      "git_mode": "100644",
+      "sha256": "3018714db31cf02b2948a8ce27752ead3744c904d401a98c270fcbc6f903f393"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/native_scope/startup_timeout/data/unit/measurement_plan.json": {
+      "actual_permission_mode": 432,
+      "bytes": 2182,
+      "git_mode": "100644",
+      "sha256": "c6bc04b1e279c2896b5d92280ffa950ece9e486b498527caa35b019c1d3c5178"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/native_scope/startup_timeout/data/unit/native_process_producer_begin.json": {
+      "actual_permission_mode": 432,
+      "bytes": 13613,
+      "git_mode": "100644",
+      "sha256": "eb3d5b33ca20af13194802af20b5ab0a534497e25913b96a3b15328df087b68a"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/native_scope/startup_timeout/data/unit/native_process_target_contract.json": {
+      "actual_permission_mode": 432,
+      "bytes": 3663,
+      "git_mode": "100644",
+      "sha256": "6f7089f7d0774d114258a891ca0ef419035327a07694b8df9e6ea73a219e01bd"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/native_scope/startup_timeout/data/unit/profiler_process.json": {
+      "actual_permission_mode": 432,
+      "bytes": 685,
+      "git_mode": "100644",
+      "sha256": "41c2e0d3a8601dc764cb93105d6d085f6c7b45fd330b96e9289b80067f60d32e"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/native_scope/startup_timeout/data/unit/tool_descendant_cleanup_progress.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1261,
+      "git_mode": "100644",
+      "sha256": "85ce96cecb32d0027b0078b89b37c080712dd7e696c628a6f32417eb70dc2097"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/native_scope/startup_timeout/data/unit/tool_descendant_scope_begin.json": {
+      "actual_permission_mode": 432,
+      "bytes": 28440,
+      "git_mode": "100644",
+      "sha256": "5fb71ef6c314974186133ddd268378d0cc6003f031a8a90cc3c18d3745cc18aa"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/native_scope/startup_timeout/data/unit/tool_descendant_scope_restored.json": {
+      "actual_permission_mode": 432,
+      "bytes": 592,
+      "git_mode": "100644",
+      "sha256": "1e9ac78cebfd973332e33d17f61f65529e1254e93c4635ec1d3a4ce9427846e9"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/native_scope/startup_timeout/data/unit/tool_descendant_scope_terminal.json": {
+      "actual_permission_mode": 432,
+      "bytes": 41533,
+      "git_mode": "100644",
+      "sha256": "b6107c0034191f182437f4414da71db965624740aba6f761eb5dc00c8f9a5225"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/native_scope/startup_timeout/data/unit/tool_root_wait_1240687.json": {
+      "actual_permission_mode": 432,
+      "bytes": 726,
+      "git_mode": "100644",
+      "sha256": "3f057fb491cdaeb4ef5d02d53e437554532b73342ba8223834ff04247d443bdb"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/native_scope/startup_timeout/worker_stderr.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 0,
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/actual_cpu_380/native_scope/startup_timeout/worker_stdout.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 19307,
+      "git_mode": "100644",
+      "sha256": "606e51c21374b30338b1da61f3f2fb2eef66ef54940f25757db39009e4c7ff7a"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/author_6783003_374.json": {
+      "actual_permission_mode": 432,
+      "bytes": 8049,
+      "git_mode": "100644",
+      "sha256": "2dff55c0837d794fddd303f6ed2a766adb175b1484e8eb64cac16381387b6dbb"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/author_6783003_375.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1165,
+      "git_mode": "100644",
+      "sha256": "c0ef15aec4efdfef34f5f5fcdbb62678595c31a9f2d6591b3f1d65b92855d633"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/author_6783003_378.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1165,
+      "git_mode": "100644",
+      "sha256": "176cfaf1bc548b348712085cb0af7e5871ee5206bd0b401bfc05f8b1d86b8f8c"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/author_6783003_379.json": {
+      "actual_permission_mode": 432,
+      "bytes": 2461,
+      "git_mode": "100644",
+      "sha256": "f7d15e6a53feedcc30f42b25fd84928491a75814d71fc21653e4a7246d7c8243"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/author_6783003_380.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1165,
+      "git_mode": "100644",
+      "sha256": "1d5da166728960ee2885902dd2d8ce25a3bc86fdb2952374fa51a136473374a0"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/author_fifth_stderr.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 32773,
+      "git_mode": "100644",
+      "sha256": "3b57cfb20a9e5b1b4c98c3c9565934f269bb01bc007b7de7c1b781386ff3bbf1"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/author_fifth_stdout.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 380,
+      "git_mode": "100644",
+      "sha256": "f04bd77bb639daa07245dd2093308f40950aa3644a34762583d335f264191891"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/author_first_stderr.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 37808,
+      "git_mode": "100644",
+      "sha256": "6be7becb300f5a3d1f169a6fa1a3bfc5f34a7cad411bb0e07334be60471bdc35"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/author_first_stdout.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 381,
+      "git_mode": "100644",
+      "sha256": "711cb25ea7b4eceb7299af33b4e16606aa8cce92a6c3c744e0f846bb880cff39"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/author_fourth_stderr.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 34624,
+      "git_mode": "100644",
+      "sha256": "a1b280e4a452108f9c641f74c403198943042209a1cbad075661ab8dec104cce"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/author_fourth_stdout.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 381,
+      "git_mode": "100644",
+      "sha256": "6e91a355848dc8fbcfaacca8b0f35dd993e8065b9391566f51fa1df6f1bfd8fa"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/author_handoff.json": {
+      "actual_permission_mode": 432,
+      "bytes": 34885,
+      "git_mode": "100644",
+      "sha256": "5b5e985908e60540a70387733d983def3b48cff4bacbec9d8b866dedf954c674"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/author_second_stderr.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 30306,
+      "git_mode": "100644",
+      "sha256": "33c17d7e3ee89ac48901ad7d27f1c81640fad0c374ecd21394feef4041c3a6f1"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/author_second_stdout.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 380,
+      "git_mode": "100644",
+      "sha256": "249aa89015cba8bf2b4f6aae92b11d328208b7a9d48ffe0bf0b73be1d657fd57"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/author_source_freeze_1.json": {
+      "actual_permission_mode": 432,
+      "bytes": 11497,
+      "git_mode": "100644",
+      "sha256": "680667dfe77f89d8ae4e940d70a188c7a05fe4cc4d005a1954c3fb458c7a28da"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/author_source_freeze_2.json": {
+      "actual_permission_mode": 432,
+      "bytes": 11914,
+      "git_mode": "100644",
+      "sha256": "08cca2e6ee43ba742529cea95a7f2ec3fe3a36282cca4cf8896cfed0aa3b03e8"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/author_source_freeze_3.json": {
+      "actual_permission_mode": 432,
+      "bytes": 12089,
+      "git_mode": "100644",
+      "sha256": "855023b94a9ffe64df2ce72168ea5afcafd20e4ce97417f9bff06df774d6b690"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/author_source_freeze_4.json": {
+      "actual_permission_mode": 432,
+      "bytes": 12259,
+      "git_mode": "100644",
+      "sha256": "f8c3bd5acce7ae3b4783c0ac14a86efe1c48be45c735dab86b20f3c7fc096cbc"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/author_source_freeze_5.json": {
+      "actual_permission_mode": 432,
+      "bytes": 12259,
+      "git_mode": "100644",
+      "sha256": "4d389d484b091e3b3dfc125529b01e0633862d3101c4467c0d6bbd5b50b5548c"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/author_third_stderr.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 32216,
+      "git_mode": "100644",
+      "sha256": "8435ddd3a3602938c3ffdc69c626b8cfb421626876757bc7f149a679fd6d863f"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/author_third_stdout.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 380,
+      "git_mode": "100644",
+      "sha256": "f0b9be3e52a2e77162c7378060b362fe4d54ae35cd375f1a9dfe690562511f49"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/fdinfo_correction_actual_cpu_382/native_provider/actual_exhausted_ordinary_limit_child_cleanup.json": {
+      "actual_permission_mode": 432,
+      "bytes": 21526,
+      "git_mode": "100644",
+      "sha256": "d40ba72fda5dcb28efcef4cd4408ee428f3b0453054de09a0283daf22a909354"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/fdinfo_correction_actual_cpu_382/native_provider/actual_exhausted_ordinary_limit_close.json": {
+      "actual_permission_mode": 432,
+      "bytes": 8849,
+      "git_mode": "100644",
+      "sha256": "e1668955e6965ad35229dfd773970921ad12a75db996784965bef22abbe26b19"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/fdinfo_correction_actual_cpu_382/native_scope/orphan_root_failure/actual_cpu_processes.json": {
+      "actual_permission_mode": 432,
+      "bytes": 47,
+      "git_mode": "100644",
+      "sha256": "15a098e302ac7b653270537c338ebb99d6439879d1272c76263bd476aab87aca"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/fdinfo_correction_actual_cpu_382/native_scope/orphan_root_failure/cpu_regression_result.json": {
+      "actual_permission_mode": 432,
+      "bytes": 24530,
+      "git_mode": "100644",
+      "sha256": "6a68fc6824f7943e3f3ec4165a6098c467b6410a053f318e8327aeb4f1b778c5"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/fdinfo_correction_actual_cpu_382/native_scope/orphan_root_failure/data/unit/direct_process_failure.json": {
+      "actual_permission_mode": 432,
+      "bytes": 245,
+      "git_mode": "100644",
+      "sha256": "9a63046eac1435eb21808acedf3163f79cbd4d36897b566304d5317de688cfa8"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/fdinfo_correction_actual_cpu_382/native_scope/orphan_root_failure/data/unit/direct_profile_process_intent.json": {
+      "actual_permission_mode": 432,
+      "bytes": 24383,
+      "git_mode": "100644",
+      "sha256": "30ce71c0bbf93e97dd97b16720811ef4a57712a95328d60b9ce19d411221a9d3"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/fdinfo_correction_actual_cpu_382/native_scope/orphan_root_failure/data/unit/executed_command.json": {
+      "actual_permission_mode": 432,
+      "bytes": 808,
+      "git_mode": "100644",
+      "sha256": "181228e632ad954b9e2f829f15aeda5f1ec2fa9f37f7eaa9f5b039dc6a3a0ee5"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/fdinfo_correction_actual_cpu_382/native_scope/orphan_root_failure/data/unit/measurement_plan.json": {
+      "actual_permission_mode": 432,
+      "bytes": 2182,
+      "git_mode": "100644",
+      "sha256": "737043001db4b942c3dbddb5da0ee522bfb04d4ca823f90cea6270ddbb5f9792"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/fdinfo_correction_actual_cpu_382/native_scope/orphan_root_failure/data/unit/native_process_producer_begin.json": {
+      "actual_permission_mode": 432,
+      "bytes": 13794,
+      "git_mode": "100644",
+      "sha256": "9ee870e5f08cd9638608335cd2dfeff198c837fe57eeed6ac7e6df24b72d3d5e"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/fdinfo_correction_actual_cpu_382/native_scope/orphan_root_failure/data/unit/native_process_target_contract.json": {
+      "actual_permission_mode": 432,
+      "bytes": 3663,
+      "git_mode": "100644",
+      "sha256": "187bca5ba73b092926a06f18d9d659c87dd68addd7c7105986f1f04fc7dff807"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/fdinfo_correction_actual_cpu_382/native_scope/orphan_root_failure/data/unit/tool_descendant_cleanup_progress.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1501,
+      "git_mode": "100644",
+      "sha256": "207820603700d4b854cd296ec8e64c9bf8b3867c80dc3204387daccbd9342a2b"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/fdinfo_correction_actual_cpu_382/native_scope/orphan_root_failure/data/unit/tool_descendant_scope_begin.json": {
+      "actual_permission_mode": 432,
+      "bytes": 28467,
+      "git_mode": "100644",
+      "sha256": "bd539646432aae7bc3ddf423267f49e6a4768f141da2ece49b0ecc901cd86992"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/fdinfo_correction_actual_cpu_382/native_scope/orphan_root_failure/data/unit/tool_descendant_scope_restored.json": {
+      "actual_permission_mode": 432,
+      "bytes": 592,
+      "git_mode": "100644",
+      "sha256": "177c624d25fd982ed1bd0339f99bdfd4b389972ec650feb8ed3d92e9d2c48882"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/fdinfo_correction_actual_cpu_382/native_scope/orphan_root_failure/data/unit/tool_descendant_scope_terminal.json": {
+      "actual_permission_mode": 432,
+      "bytes": 49260,
+      "git_mode": "100644",
+      "sha256": "25aa03aadb36b642a9983d78bd6dec482250683505959b788f2fec30c7abdbe2"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/fdinfo_correction_actual_cpu_382/native_scope/orphan_root_failure/data/unit/tool_root_wait_1241094.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1039,
+      "git_mode": "100644",
+      "sha256": "20215862afa33e9ff92410e52ad75a77ef326fd29c993f4dd333c03bb7d2ece3"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/fdinfo_correction_actual_cpu_382/native_scope/orphan_root_failure/worker_stderr.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 0,
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/fdinfo_correction_actual_cpu_382/native_scope/orphan_root_failure/worker_stdout.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 19270,
+      "git_mode": "100644",
+      "sha256": "c56f24824f4e07010e4ec51527c77a51bea9287c56686c8b37fc56195d148acd"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/fdinfo_correction_actual_cpu_382/native_scope/startup_timeout/actual_cpu_processes.json": {
+      "actual_permission_mode": 432,
+      "bytes": 45,
+      "git_mode": "100644",
+      "sha256": "d642fd1f851041571a865d07ad93240a8fc3e9b3d695d2eb44b9be1e8e5f6682"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/fdinfo_correction_actual_cpu_382/native_scope/startup_timeout/cpu_regression_result.json": {
+      "actual_permission_mode": 432,
+      "bytes": 25374,
+      "git_mode": "100644",
+      "sha256": "429161598df36026cf8ba3167424fbd141aefe53f02d5c03df8fca5f4f2e3824"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/fdinfo_correction_actual_cpu_382/native_scope/startup_timeout/data/unit/direct_process_failure.json": {
+      "actual_permission_mode": 432,
+      "bytes": 278,
+      "git_mode": "100644",
+      "sha256": "d69f34448cf1e1238a1f728dff09ee0ae575dd5f4a1d01bbf323b470f07b41f4"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/fdinfo_correction_actual_cpu_382/native_scope/startup_timeout/data/unit/direct_profile_process_intent.json": {
+      "actual_permission_mode": 432,
+      "bytes": 24033,
+      "git_mode": "100644",
+      "sha256": "bea2e9b7427d3b7b22de61e50df71e0dd86880154bd945a4d0ef7887e1a11ca4"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/fdinfo_correction_actual_cpu_382/native_scope/startup_timeout/data/unit/executed_command.json": {
+      "actual_permission_mode": 432,
+      "bytes": 495,
+      "git_mode": "100644",
+      "sha256": "76adf83a81c21119e431208cd39df3bce338d249133bb25dcb05aef555ac8e9b"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/fdinfo_correction_actual_cpu_382/native_scope/startup_timeout/data/unit/measurement_plan.json": {
+      "actual_permission_mode": 432,
+      "bytes": 2182,
+      "git_mode": "100644",
+      "sha256": "cc1d08443421fbeec2eead3bd449b56968cd2f154cbf0f225c984b17a8642d3b"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/fdinfo_correction_actual_cpu_382/native_scope/startup_timeout/data/unit/native_process_producer_begin.json": {
+      "actual_permission_mode": 432,
+      "bytes": 13789,
+      "git_mode": "100644",
+      "sha256": "23b24e5c738285c909ba35ed4828b229de9d50ae3eb2bca0647cf3d5c5911b0a"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/fdinfo_correction_actual_cpu_382/native_scope/startup_timeout/data/unit/native_process_target_contract.json": {
+      "actual_permission_mode": 432,
+      "bytes": 3663,
+      "git_mode": "100644",
+      "sha256": "800ff7f8154b6c7bcfdd7fe2d1922ba0503c202235e16b659707a29defd7a2a1"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/fdinfo_correction_actual_cpu_382/native_scope/startup_timeout/data/unit/profiler_process.json": {
+      "actual_permission_mode": 432,
+      "bytes": 685,
+      "git_mode": "100644",
+      "sha256": "d5d3a8c9f586baf3b7c9d37e7dfad371162d77b66f85a10f4b749e9414079ed9"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/fdinfo_correction_actual_cpu_382/native_scope/startup_timeout/data/unit/tool_descendant_cleanup_progress.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1259,
+      "git_mode": "100644",
+      "sha256": "0c215e7d010d1b3bdce7353195b26d2063a31a8b53bf9e9588565b833b6d2f0d"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/fdinfo_correction_actual_cpu_382/native_scope/startup_timeout/data/unit/tool_descendant_scope_begin.json": {
+      "actual_permission_mode": 432,
+      "bytes": 28433,
+      "git_mode": "100644",
+      "sha256": "c76561713713c06bc330c0c9d749f949862ed2a0d1f106b9222aa9f990bfd587"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/fdinfo_correction_actual_cpu_382/native_scope/startup_timeout/data/unit/tool_descendant_scope_restored.json": {
+      "actual_permission_mode": 432,
+      "bytes": 592,
+      "git_mode": "100644",
+      "sha256": "b5cb9b5b205fd9becf4b53b2ae7ee867586e0ecbe14c1ae4219bc579d561c635"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/fdinfo_correction_actual_cpu_382/native_scope/startup_timeout/data/unit/tool_descendant_scope_terminal.json": {
+      "actual_permission_mode": 432,
+      "bytes": 41902,
+      "git_mode": "100644",
+      "sha256": "8a9aa2e358b7c1f2f3d5adb6c9c1fe2794f996ccc189c3bef9c44b26e5b5259b"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/fdinfo_correction_actual_cpu_382/native_scope/startup_timeout/data/unit/tool_root_wait_1241101.json": {
+      "actual_permission_mode": 432,
+      "bytes": 724,
+      "git_mode": "100644",
+      "sha256": "8a3d77c97457ad0f2d34e604b37b7d2264b717c1826e43bf12e1d0760df56c68"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/fdinfo_correction_actual_cpu_382/native_scope/startup_timeout/worker_stderr.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 0,
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/fdinfo_correction_actual_cpu_382/native_scope/startup_timeout/worker_stdout.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 19810,
+      "git_mode": "100644",
+      "sha256": "c12d5e7a46ae9376f334b1dfaac10dfcdd1dedcc3246e8e9694709ae44bdce87"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/fdinfo_correction_author_6783003_382.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1093,
+      "git_mode": "100644",
+      "sha256": "c4b91f7594bac571682c1fed31e792bff7f0792685cb9bf5f4111dc80eae7946"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/fdinfo_correction_author_handoff.json": {
+      "actual_permission_mode": 432,
+      "bytes": 4686,
+      "git_mode": "100644",
+      "sha256": "d84c4433ac3c163f1904247a776e817e0400eada75a3d56d1cebcce8488e593d"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/fdinfo_correction_author_stderr.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 7971,
+      "git_mode": "100644",
+      "sha256": "29147b02db63e747515cf9221a62282cd1b22278727f1fd8c50b7a091a3fb672"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/fdinfo_correction_author_stdout.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 397,
+      "git_mode": "100644",
+      "sha256": "5ab3c8bbfb1bd0d2a76645c1f7a7b997a38be95f025b07f2523f033d95224927"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/fdinfo_correction_source_freeze.json": {
+      "actual_permission_mode": 432,
+      "bytes": 13191,
+      "git_mode": "100644",
+      "sha256": "08d01eea45353d77fbd4982e242763e38a42aa67cf9bb9fa86237fe085f7bbcf"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/fdinfo_exact_381_author_383.json": {
+      "actual_permission_mode": 432,
+      "bytes": 2284,
+      "git_mode": "100644",
+      "sha256": "ac98cc4cc23bd55d6610db4532626161f5dac352f1f6d947270662dfbae18201"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/fdinfo_exact_381_author_actual_cpu_383/raw_fdinfo_close_on_exec_boundary.json": {
+      "actual_permission_mode": 432,
+      "bytes": 11689,
+      "git_mode": "100644",
+      "sha256": "c88c115869a365d55af2851b69b00be653f300e20c3d28e3a5a1179614550fe7"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/fdinfo_exact_381_author_actual_cpu_383/raw_fdinfo_inode_boundary.json": {
+      "actual_permission_mode": 432,
+      "bytes": 11750,
+      "git_mode": "100644",
+      "sha256": "744a231622530e4cd61df816b99af56c06099304a0e2d4109e65fc21bc54faad"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/fdinfo_exact_381_author_stderr.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 408,
+      "git_mode": "100644",
+      "sha256": "a66aa91a92e1d0b44507d9486447ffd3b71332033f7109afe2452c73a26e1588"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/fdinfo_exact_381_author_stdout.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 359,
+      "git_mode": "100644",
+      "sha256": "5294af8a933f6d572662c6306b1574a4fdf31b484ac1e0493befb391d6102bb1"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/first_failed_fixture_and_interpreter_source/10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_direct_nsight_process.py": {
+      "actual_permission_mode": 432,
+      "bytes": 28079,
+      "git_mode": "100644",
+      "sha256": "e82c92d923e49f62ac00ed188f48770825705efe0a51a63c603bfdd6fe9e07d2"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/first_failed_fixture_and_interpreter_source/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_process.py": {
+      "actual_permission_mode": 432,
+      "bytes": 47667,
+      "git_mode": "100644",
+      "sha256": "e700285d2afae685601a2fea3d8b2bd1db756b67cd23d675bbad5ae8c234cc74"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/first_failed_fixture_and_interpreter_source/10_jax_exploration_platform/scripts/atari_pixel_campaign/linux_pidfd_process_control.py": {
+      "actual_permission_mode": 432,
+      "bytes": 22001,
+      "git_mode": "100644",
+      "sha256": "ca60390a006aae8ab19e60ff9c12a83e74f02124884c773b2c0174106f110cbc"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/first_failed_fixture_and_interpreter_source/10_jax_exploration_platform/scripts/atari_pixel_campaign/native_process_evidence.py": {
+      "actual_permission_mode": 432,
+      "bytes": 30364,
+      "git_mode": "100644",
+      "sha256": "df7dbce1abce8fd2b9240811da84898219efda77475fa2c33b2ad07a0b260ce8"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/first_failed_fixture_and_interpreter_source/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/direct_tool_descendants_cpu_worker.py": {
+      "actual_permission_mode": 432,
+      "bytes": 8024,
+      "git_mode": "100644",
+      "sha256": "b5083dabdedaed99dcf8e55820d6484c748ae7864d1dcb6c9792ae5f608211d7"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/first_failed_fixture_and_interpreter_source/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/native_direct_tool_cpu_worker.py": {
+      "actual_permission_mode": 432,
+      "bytes": 8479,
+      "git_mode": "100644",
+      "sha256": "d6f8eda17c4c6fd925905aec6a3285b661192b687473ca0696f6e3518145c4f6"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/first_failed_fixture_and_interpreter_source/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_profile_process.py": {
+      "actual_permission_mode": 432,
+      "bytes": 29951,
+      "git_mode": "100644",
+      "sha256": "829aa2375da6425493a95fd49976a439cdff36f715270a3261f05d7bff3859a5"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/first_failed_fixture_and_interpreter_source/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_tool_descendants.py": {
+      "actual_permission_mode": 432,
+      "bytes": 10690,
+      "git_mode": "100644",
+      "sha256": "0710f44ab5ac87c42f4ff501eb72a40d7ee4daf4e05f28c314ff361133388369"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/first_failed_fixture_and_interpreter_source/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_linux_pidfd_process_control.py": {
+      "actual_permission_mode": 432,
+      "bytes": 18606,
+      "git_mode": "100644",
+      "sha256": "246b25a6ab56f1ba4760e449fcd888a984c4fa4f1093a49247aa5aa29e5e10ea"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/first_failed_fixture_and_interpreter_source/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_native_direct_process_cpu.py": {
+      "actual_permission_mode": 432,
+      "bytes": 7928,
+      "git_mode": "100644",
+      "sha256": "965bc8298fe6e3b663773e59ff5b68df9ea1afb2409f9df8a6b07393a6484237"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/first_failed_fixture_and_interpreter_source/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_native_process_evidence.py": {
+      "actual_permission_mode": 432,
+      "bytes": 16679,
+      "git_mode": "100644",
+      "sha256": "f31ba6651edc456ec1c2cd12004d3385a1fb68ee2df8cd65218490ac2507a646"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/first_failed_fixture_and_interpreter_source/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_nsight_process_identity.py": {
+      "actual_permission_mode": 432,
+      "bytes": 13674,
+      "git_mode": "100644",
+      "sha256": "f0d7784770fab215b30bead3ba4d67f3d8f98a42758065a2ba93c48a04d52797"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/first_failed_fixture_and_interpreter_source/author_6783003_374.json": {
+      "actual_permission_mode": 432,
+      "bytes": 8049,
+      "git_mode": "100644",
+      "sha256": "2dff55c0837d794fddd303f6ed2a766adb175b1484e8eb64cac16381387b6dbb"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/first_failed_fixture_and_interpreter_source/author_first_stderr.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 37808,
+      "git_mode": "100644",
+      "sha256": "6be7becb300f5a3d1f169a6fa1a3bfc5f34a7cad411bb0e07334be60471bdc35"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/first_failed_fixture_and_interpreter_source/author_first_stdout.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 381,
+      "git_mode": "100644",
+      "sha256": "711cb25ea7b4eceb7299af33b4e16606aa8cce92a6c3c744e0f846bb880cff39"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/first_failed_fixture_and_interpreter_source/author_source_freeze_1.json": {
+      "actual_permission_mode": 432,
+      "bytes": 11497,
+      "git_mode": "100644",
+      "sha256": "680667dfe77f89d8ae4e940d70a188c7a05fe4cc4d005a1954c3fb458c7a28da"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/first_failed_fixture_and_interpreter_source/preservation_manifest.json": {
+      "actual_permission_mode": 432,
+      "bytes": 2943,
+      "git_mode": "100644",
+      "sha256": "d3d377dcfd2cae626b33074ef81873c9c141d9090e4ca793cffac3047cf62133"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/first_failed_fixture_and_interpreter_source/run_author_tests.py": {
+      "actual_permission_mode": 432,
+      "bytes": 3097,
+      "git_mode": "100644",
+      "sha256": "4a3ea3d7632243ec8e4161bbbd949d0dd9a62eb4eff57caf2e2cbf58098cea2e"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/fourth_order_fixture_failure/author_6783003_379.json": {
+      "actual_permission_mode": 432,
+      "bytes": 2461,
+      "git_mode": "100644",
+      "sha256": "f7d15e6a53feedcc30f42b25fd84928491a75814d71fc21653e4a7246d7c8243"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/fourth_order_fixture_failure/author_fourth_stderr.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 34624,
+      "git_mode": "100644",
+      "sha256": "a1b280e4a452108f9c641f74c403198943042209a1cbad075661ab8dec104cce"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/fourth_order_fixture_failure/author_fourth_stdout.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 381,
+      "git_mode": "100644",
+      "sha256": "6e91a355848dc8fbcfaacca8b0f35dd993e8065b9391566f51fa1df6f1bfd8fa"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/fourth_order_fixture_failure/author_source_freeze_4.json": {
+      "actual_permission_mode": 432,
+      "bytes": 12259,
+      "git_mode": "100644",
+      "sha256": "f8c3bd5acce7ae3b4783c0ac14a86efe1c48be45c735dab86b20f3c7fc096cbc"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/fourth_order_fixture_failure/run_author_tests_fourth.py": {
+      "actual_permission_mode": 432,
+      "bytes": 4284,
+      "git_mode": "100644",
+      "sha256": "93c34c95abbdb462080ae84c0367d9f22b9798fc204e56b8d2998a5f206d9f53"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/fourth_order_fixture_failure/test_native_diagnostic_order.py": {
+      "actual_permission_mode": 432,
+      "bytes": 3564,
+      "git_mode": "100644",
+      "sha256": "d514126196724cf3b228b85a3cd859f6579b15215217fc2ada2c0a13d4c6dd97"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/historical_AST_375_stderr.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 310,
+      "git_mode": "100644",
+      "sha256": "e00be182ab4a3cd0d0c19a4a5eb592258dd801351299a097c46326e2ff324837"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/historical_AST_375_stdout.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 0,
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/historical_AST_378_stderr.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 310,
+      "git_mode": "100644",
+      "sha256": "df396bda9d4dc57b7e961572d83fc5da6bab9d66a83b5e70531ce5141c4f1013"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/historical_AST_378_stdout.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 0,
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/historical_AST_379_stderr.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 310,
+      "git_mode": "100644",
+      "sha256": "330072efbed3f29a3b9a0ff6491ae962bc0f06c4015b9a94372a7753a7e7d7da"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/historical_AST_379_stdout.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 0,
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/historical_AST_380_stderr.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 310,
+      "git_mode": "100644",
+      "sha256": "a496996da028035b02350f68139ea6ae3326dadae6937ea54800545708d26723"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/historical_AST_380_stdout.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 0,
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_381.json": {
+      "actual_permission_mode": 432,
+      "bytes": 61460,
+      "git_mode": "100644",
+      "sha256": "a16f98e06384da44c55ee4845c149a884477a65e6f2c2900f7c5b3235d3486e6"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_actual_cpu_381/native_scope/orphan_root_failure/actual_cpu_processes.json": {
+      "actual_permission_mode": 432,
+      "bytes": 47,
+      "git_mode": "100644",
+      "sha256": "a0675e096f740f2b289d0ae72f53fdc0768e9277c3ec53111c836112f0e86069"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_actual_cpu_381/native_scope/orphan_root_failure/cpu_regression_result.json": {
+      "actual_permission_mode": 432,
+      "bytes": 23820,
+      "git_mode": "100644",
+      "sha256": "be059d7f7abf9d419c79a93244620914d6c5ff9350e586e59b88f73da4e00347"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_actual_cpu_381/native_scope/orphan_root_failure/data/unit/direct_process_failure.json": {
+      "actual_permission_mode": 432,
+      "bytes": 245,
+      "git_mode": "100644",
+      "sha256": "9a63046eac1435eb21808acedf3163f79cbd4d36897b566304d5317de688cfa8"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_actual_cpu_381/native_scope/orphan_root_failure/data/unit/direct_profile_process_intent.json": {
+      "actual_permission_mode": 432,
+      "bytes": 24372,
+      "git_mode": "100644",
+      "sha256": "12910f0de0a84ad31386538a34efb341afa41ca8ea2c752afc65cb1b93a9f522"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_actual_cpu_381/native_scope/orphan_root_failure/data/unit/executed_command.json": {
+      "actual_permission_mode": 432,
+      "bytes": 808,
+      "git_mode": "100644",
+      "sha256": "4151c1f08bc785495b04b3c4d9d051321349ee7139261b8e4563fb28b843da04"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_actual_cpu_381/native_scope/orphan_root_failure/data/unit/measurement_plan.json": {
+      "actual_permission_mode": 432,
+      "bytes": 2182,
+      "git_mode": "100644",
+      "sha256": "a46b960a7736179ae71fae4e5e6a67cb4ad745f093a378612cd06256bef57997"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_actual_cpu_381/native_scope/orphan_root_failure/data/unit/native_process_producer_begin.json": {
+      "actual_permission_mode": 432,
+      "bytes": 13618,
+      "git_mode": "100644",
+      "sha256": "5c9eb0e2adbb80f3ba8dd273cb189ab16bcf94e927a0ef38de89a98d36608cfe"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_actual_cpu_381/native_scope/orphan_root_failure/data/unit/native_process_target_contract.json": {
+      "actual_permission_mode": 432,
+      "bytes": 3663,
+      "git_mode": "100644",
+      "sha256": "07a67e887eb83a96aa7ff9368787b50b4e11f877f748204b7deb5fc08b5c66cb"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_actual_cpu_381/native_scope/orphan_root_failure/data/unit/tool_descendant_cleanup_progress.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1499,
+      "git_mode": "100644",
+      "sha256": "1d949711c956a2ee8150c2eacabe37bc7264b7ef0e877b9ef88c3ffda9428fa6"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_actual_cpu_381/native_scope/orphan_root_failure/data/unit/tool_descendant_scope_begin.json": {
+      "actual_permission_mode": 432,
+      "bytes": 28455,
+      "git_mode": "100644",
+      "sha256": "536f8493a975c6d118dd4a6913ac2973876b75608502c60840bc9f9e7055ef0a"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_actual_cpu_381/native_scope/orphan_root_failure/data/unit/tool_descendant_scope_restored.json": {
+      "actual_permission_mode": 432,
+      "bytes": 592,
+      "git_mode": "100644",
+      "sha256": "478eb2adb869878bdfe3f025b139187c4b3ab952e72f086d8b057344003d0cee"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_actual_cpu_381/native_scope/orphan_root_failure/data/unit/tool_descendant_scope_terminal.json": {
+      "actual_permission_mode": 432,
+      "bytes": 49235,
+      "git_mode": "100644",
+      "sha256": "b38017e149f4103b80294de95803ff8b9150c1477085242e787326bc83be0794"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_actual_cpu_381/native_scope/orphan_root_failure/data/unit/tool_root_wait_1240871.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1039,
+      "git_mode": "100644",
+      "sha256": "327ccaca8569904088fa61de6782fcc8887d0fcd7dec84947b8718608aa42ff9"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_actual_cpu_381/native_scope/orphan_root_failure/worker_stderr.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 0,
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_actual_cpu_381/native_scope/orphan_root_failure/worker_stdout.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 18800,
+      "git_mode": "100644",
+      "sha256": "c307314de76b70122588548c699e91117c254cdd856bb3e958ba4392bd40ade1"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_actual_cpu_381/native_scope/startup_timeout/actual_cpu_processes.json": {
+      "actual_permission_mode": 432,
+      "bytes": 45,
+      "git_mode": "100644",
+      "sha256": "d1fc14963238f6afe665c33411132efd884f207245ef1f4ab1bf548f8fb946ce"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_actual_cpu_381/native_scope/startup_timeout/cpu_regression_result.json": {
+      "actual_permission_mode": 432,
+      "bytes": 24599,
+      "git_mode": "100644",
+      "sha256": "f5610e1d85e73fa627ac99468597eeb20a778178f0f3e8c8a507b85caa59a4ce"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_actual_cpu_381/native_scope/startup_timeout/data/unit/direct_process_failure.json": {
+      "actual_permission_mode": 432,
+      "bytes": 278,
+      "git_mode": "100644",
+      "sha256": "d69f34448cf1e1238a1f728dff09ee0ae575dd5f4a1d01bbf323b470f07b41f4"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_actual_cpu_381/native_scope/startup_timeout/data/unit/direct_profile_process_intent.json": {
+      "actual_permission_mode": 432,
+      "bytes": 24028,
+      "git_mode": "100644",
+      "sha256": "b5785e5a0fe73326bab3840654621f72d430cddb17fdb53a63205f2f59fc03e2"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_actual_cpu_381/native_scope/startup_timeout/data/unit/executed_command.json": {
+      "actual_permission_mode": 432,
+      "bytes": 495,
+      "git_mode": "100644",
+      "sha256": "ca5955437d8e223e0b7b7f3faffe1efaea46a388924469be21cd5c07008ab065"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_actual_cpu_381/native_scope/startup_timeout/data/unit/measurement_plan.json": {
+      "actual_permission_mode": 432,
+      "bytes": 2182,
+      "git_mode": "100644",
+      "sha256": "0f092f7921d537647be55d335d9b3a53fb249df4b1e73e392502b7171f9654f4"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_actual_cpu_381/native_scope/startup_timeout/data/unit/native_process_producer_begin.json": {
+      "actual_permission_mode": 432,
+      "bytes": 13610,
+      "git_mode": "100644",
+      "sha256": "3f58b3d50062c431888d1af6296516624a438c49733ec9a0a37de1f1de2710f8"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_actual_cpu_381/native_scope/startup_timeout/data/unit/native_process_target_contract.json": {
+      "actual_permission_mode": 432,
+      "bytes": 3663,
+      "git_mode": "100644",
+      "sha256": "68120532fc262a7c4c9188efb130c335a7e0fa0aa343ca9fd9c0b5d66f23a2d0"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_actual_cpu_381/native_scope/startup_timeout/data/unit/profiler_process.json": {
+      "actual_permission_mode": 432,
+      "bytes": 685,
+      "git_mode": "100644",
+      "sha256": "6a5be5f3ad5ef25e5de2a1ddd9666fe7b1dfea967461cf1912ed52c0bf24a7b1"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_actual_cpu_381/native_scope/startup_timeout/data/unit/tool_descendant_cleanup_progress.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1258,
+      "git_mode": "100644",
+      "sha256": "85fb17a928b215547c64fb60bdc1e3b0ef69fb09146633cbe445c741a70b3dfa"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_actual_cpu_381/native_scope/startup_timeout/data/unit/tool_descendant_scope_begin.json": {
+      "actual_permission_mode": 432,
+      "bytes": 28424,
+      "git_mode": "100644",
+      "sha256": "bd8fd112f2b22a6caaa35dfa4ef4cf7e77619a182f18f47d585b58645f0db948"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_actual_cpu_381/native_scope/startup_timeout/data/unit/tool_descendant_scope_restored.json": {
+      "actual_permission_mode": 432,
+      "bytes": 592,
+      "git_mode": "100644",
+      "sha256": "6318b243a975b353f33c4ddb02013d88f4bcd5516ddee30c827a2b7c22c37321"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_actual_cpu_381/native_scope/startup_timeout/data/unit/tool_descendant_scope_terminal.json": {
+      "actual_permission_mode": 432,
+      "bytes": 41504,
+      "git_mode": "100644",
+      "sha256": "6fdf45fa79ead23ec7af2df78548339bd82126bd7eef58a935c67746b8331fb2"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_actual_cpu_381/native_scope/startup_timeout/data/unit/tool_root_wait_1240875.json": {
+      "actual_permission_mode": 432,
+      "bytes": 726,
+      "git_mode": "100644",
+      "sha256": "fabc92f6f415a218909f9e3dceb1842a72024b3dc288e18a8d40ba7c32296bcb"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_actual_cpu_381/native_scope/startup_timeout/worker_stderr.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 0,
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_actual_cpu_381/native_scope/startup_timeout/worker_stdout.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 19295,
+      "git_mode": "100644",
+      "sha256": "522ad5d9b941e5f7a502f20db85b043146fedb99ceceea23c5e22d43ef19b231"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_actual_cpu_381/raw_fdinfo_close_on_exec_boundary.json": {
+      "actual_permission_mode": 432,
+      "bytes": 11285,
+      "git_mode": "100644",
+      "sha256": "fa0b0728d8e81b65946ae2ac486df9798eeaa2c7493806f84bc666603bfecab7"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_actual_cpu_381/raw_fdinfo_inode_boundary.json": {
+      "actual_permission_mode": 432,
+      "bytes": 11320,
+      "git_mode": "100644",
+      "sha256": "1ad6c6634c6a9fbc2e27805a3cf2da0f26ee1d3c1ed16209f548cacda712899c"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_fdinfo_386.json": {
+      "actual_permission_mode": 432,
+      "bytes": 49290,
+      "git_mode": "100644",
+      "sha256": "6eb180fb0e9735fa83e86a19c53b373fe89fea75e13c93a28319d80d40b4fe22"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_fdinfo_actual_cpu_386/native_scope/orphan_root_failure/actual_cpu_processes.json": {
+      "actual_permission_mode": 432,
+      "bytes": 47,
+      "git_mode": "100644",
+      "sha256": "8d1e497840e9d39f39ba34efda33a46a367228947c50623f7c5fe3a5113b42e8"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_fdinfo_actual_cpu_386/native_scope/orphan_root_failure/cpu_regression_result.json": {
+      "actual_permission_mode": 432,
+      "bytes": 24522,
+      "git_mode": "100644",
+      "sha256": "6b3eaeea48c967714155d144bf6d1c6f6bc93d5ec9c67a6dffc6d50414a5d3af"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_fdinfo_actual_cpu_386/native_scope/orphan_root_failure/data/unit/direct_process_failure.json": {
+      "actual_permission_mode": 432,
+      "bytes": 245,
+      "git_mode": "100644",
+      "sha256": "9a63046eac1435eb21808acedf3163f79cbd4d36897b566304d5317de688cfa8"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_fdinfo_actual_cpu_386/native_scope/orphan_root_failure/data/unit/direct_profile_process_intent.json": {
+      "actual_permission_mode": 432,
+      "bytes": 24373,
+      "git_mode": "100644",
+      "sha256": "0e2817f75f2c12e4c226b38cde71d4459018a7dab8276e245b8ca4ef44474fae"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_fdinfo_actual_cpu_386/native_scope/orphan_root_failure/data/unit/executed_command.json": {
+      "actual_permission_mode": 432,
+      "bytes": 808,
+      "git_mode": "100644",
+      "sha256": "8b31aea4b1812d897830b88e94bd58c2168f6d463283152899e4c613dd685a09"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_fdinfo_actual_cpu_386/native_scope/orphan_root_failure/data/unit/measurement_plan.json": {
+      "actual_permission_mode": 432,
+      "bytes": 2182,
+      "git_mode": "100644",
+      "sha256": "fbf04a4abe74ede5dddcc1b004546cb6fef1799a17f8ecaafaec267284bada3c"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_fdinfo_actual_cpu_386/native_scope/orphan_root_failure/data/unit/native_process_producer_begin.json": {
+      "actual_permission_mode": 432,
+      "bytes": 13793,
+      "git_mode": "100644",
+      "sha256": "c8c5eaf5a89ccbbb7974ad6b1d8b62373d898c35ba24490917b924d8863570b5"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_fdinfo_actual_cpu_386/native_scope/orphan_root_failure/data/unit/native_process_target_contract.json": {
+      "actual_permission_mode": 432,
+      "bytes": 3663,
+      "git_mode": "100644",
+      "sha256": "48fcb810c8c67ffc843ac496c95acd2c5560a38c73ba4d081251b05f2db40819"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_fdinfo_actual_cpu_386/native_scope/orphan_root_failure/data/unit/tool_descendant_cleanup_progress.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1500,
+      "git_mode": "100644",
+      "sha256": "e36b4816cae9836662651832803865499d22f7bac63f32de76a52bbb039fc819"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_fdinfo_actual_cpu_386/native_scope/orphan_root_failure/data/unit/tool_descendant_scope_begin.json": {
+      "actual_permission_mode": 432,
+      "bytes": 28454,
+      "git_mode": "100644",
+      "sha256": "0204f0ab779be791a5e639108ed40a10786340960948c2983d67b31a745831b8"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_fdinfo_actual_cpu_386/native_scope/orphan_root_failure/data/unit/tool_descendant_scope_restored.json": {
+      "actual_permission_mode": 432,
+      "bytes": 592,
+      "git_mode": "100644",
+      "sha256": "e03a711bbb9e6490cae674f92f3aac96772f3596f3959b1657f4aee2df5da9c3"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_fdinfo_actual_cpu_386/native_scope/orphan_root_failure/data/unit/tool_descendant_scope_terminal.json": {
+      "actual_permission_mode": 432,
+      "bytes": 49239,
+      "git_mode": "100644",
+      "sha256": "58f348df9f1038cd9679ce9bb18228dc1f5a453527c386fcd424ae66af940f85"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_fdinfo_actual_cpu_386/native_scope/orphan_root_failure/data/unit/tool_root_wait_1241792.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1038,
+      "git_mode": "100644",
+      "sha256": "f363b06351a0f598e19d18f5906262b98e901e4e4d5b8278e23e27e8fe888f45"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_fdinfo_actual_cpu_386/native_scope/orphan_root_failure/worker_stderr.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 0,
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_fdinfo_actual_cpu_386/native_scope/orphan_root_failure/worker_stdout.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 19262,
+      "git_mode": "100644",
+      "sha256": "2542d82785a0ecda5e3f3de79d75c3ba674d41d6dfc7d416eb44796c95795732"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_fdinfo_actual_cpu_386/native_scope/startup_timeout/actual_cpu_processes.json": {
+      "actual_permission_mode": 432,
+      "bytes": 45,
+      "git_mode": "100644",
+      "sha256": "57a1a36438fc5ada6913caebec4eb1b53b66c98bb3dc7099b42ac5468ea6e377"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_fdinfo_actual_cpu_386/native_scope/startup_timeout/cpu_regression_result.json": {
+      "actual_permission_mode": 432,
+      "bytes": 25372,
+      "git_mode": "100644",
+      "sha256": "229e7acf3a4850d2047129d8d00ad3975111c140b76abae5558065fcf76731d6"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_fdinfo_actual_cpu_386/native_scope/startup_timeout/data/unit/direct_process_failure.json": {
+      "actual_permission_mode": 432,
+      "bytes": 278,
+      "git_mode": "100644",
+      "sha256": "d69f34448cf1e1238a1f728dff09ee0ae575dd5f4a1d01bbf323b470f07b41f4"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_fdinfo_actual_cpu_386/native_scope/startup_timeout/data/unit/direct_profile_process_intent.json": {
+      "actual_permission_mode": 432,
+      "bytes": 24024,
+      "git_mode": "100644",
+      "sha256": "ce5338475ba78e2ac7ef5f62b29ad4f5bfa66d29681d2602fb8b395ecd56da42"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_fdinfo_actual_cpu_386/native_scope/startup_timeout/data/unit/executed_command.json": {
+      "actual_permission_mode": 432,
+      "bytes": 495,
+      "git_mode": "100644",
+      "sha256": "ded73dae59ea84ccd4a9ce8febb23ec74ebeab0f89d402695d23b017ef4a69bd"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_fdinfo_actual_cpu_386/native_scope/startup_timeout/data/unit/measurement_plan.json": {
+      "actual_permission_mode": 432,
+      "bytes": 2182,
+      "git_mode": "100644",
+      "sha256": "62f3cf63ac46b1e7a43ec35fcee8dc059fbd7cb469b2a1686150b26c8b30c3e8"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_fdinfo_actual_cpu_386/native_scope/startup_timeout/data/unit/native_process_producer_begin.json": {
+      "actual_permission_mode": 432,
+      "bytes": 13787,
+      "git_mode": "100644",
+      "sha256": "fae66c3800652bd06d53c286e8a0dea993038b8ad93587f1af0f64d447a00315"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_fdinfo_actual_cpu_386/native_scope/startup_timeout/data/unit/native_process_target_contract.json": {
+      "actual_permission_mode": 432,
+      "bytes": 3663,
+      "git_mode": "100644",
+      "sha256": "440c0d6d4667f5d3e1bb379f682d0e573fa2f712efdd0bd1b8af0d9c1bbdfcdc"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_fdinfo_actual_cpu_386/native_scope/startup_timeout/data/unit/profiler_process.json": {
+      "actual_permission_mode": 432,
+      "bytes": 685,
+      "git_mode": "100644",
+      "sha256": "b01854fb113bc75fbfdca5f5951f06fc3f6b8916f68c5b1d6ba8f31045e791e5"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_fdinfo_actual_cpu_386/native_scope/startup_timeout/data/unit/tool_descendant_cleanup_progress.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1261,
+      "git_mode": "100644",
+      "sha256": "7628965cd6b312f9381279e4734f985cac60e01cb2b99e7f1c419f862e5c60d7"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_fdinfo_actual_cpu_386/native_scope/startup_timeout/data/unit/tool_descendant_scope_begin.json": {
+      "actual_permission_mode": 432,
+      "bytes": 28420,
+      "git_mode": "100644",
+      "sha256": "438c9893ff0324fe92a95df995c77327e7ca22f85d907af032fda815d42c7709"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_fdinfo_actual_cpu_386/native_scope/startup_timeout/data/unit/tool_descendant_scope_restored.json": {
+      "actual_permission_mode": 432,
+      "bytes": 592,
+      "git_mode": "100644",
+      "sha256": "3a6aea2876398b2dc739f8448eadd3925797b5731f596752daf06384b5e987a2"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_fdinfo_actual_cpu_386/native_scope/startup_timeout/data/unit/tool_descendant_scope_terminal.json": {
+      "actual_permission_mode": 432,
+      "bytes": 41512,
+      "git_mode": "100644",
+      "sha256": "0c1972da201c8cc48043b68bc2864720012e176c397f0548e300bc838be17eaa"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_fdinfo_actual_cpu_386/native_scope/startup_timeout/data/unit/tool_root_wait_1241789.json": {
+      "actual_permission_mode": 432,
+      "bytes": 726,
+      "git_mode": "100644",
+      "sha256": "d982c704574e626802e2d4995eece5ed6fa900dc36f7e1f032af89b3b6cf2239"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_fdinfo_actual_cpu_386/native_scope/startup_timeout/worker_stderr.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 0,
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_fdinfo_actual_cpu_386/native_scope/startup_timeout/worker_stdout.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 19808,
+      "git_mode": "100644",
+      "sha256": "dfd92e2e2f60a5f80b36e841e8c98debab2d91673de6d2944524de21a5bb07d6"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_fdinfo_actual_cpu_386/raw_fdinfo_close_on_exec_boundary.json": {
+      "actual_permission_mode": 432,
+      "bytes": 11689,
+      "git_mode": "100644",
+      "sha256": "c88c115869a365d55af2851b69b00be653f300e20c3d28e3a5a1179614550fe7"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_fdinfo_actual_cpu_386/raw_fdinfo_inode_boundary.json": {
+      "actual_permission_mode": 432,
+      "bytes": 11750,
+      "git_mode": "100644",
+      "sha256": "744a231622530e4cd61df816b99af56c06099304a0e2d4109e65fc21bc54faad"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_fdinfo_stderr.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 6073,
+      "git_mode": "100644",
+      "sha256": "39b9ff518d0e6d031c8e75487e04ee81f7f228d3cdb283d045614d571aa80263"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_fdinfo_stdout.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 387,
+      "git_mode": "100644",
+      "sha256": "5989550b7176b91bb3848ab3dd8dda1fab074c3e473e51f1291e084d911e5c28"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_rejected_freeze_5_preserved/author_handoff.json": {
+      "actual_permission_mode": 432,
+      "bytes": 34885,
+      "git_mode": "100644",
+      "sha256": "5b5e985908e60540a70387733d983def3b48cff4bacbec9d8b866dedf954c674"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_rejected_freeze_5_preserved/author_source_freeze_5.json": {
+      "actual_permission_mode": 432,
+      "bytes": 12259,
+      "git_mode": "100644",
+      "sha256": "4d389d484b091e3b3dfc125529b01e0633862d3101c4467c0d6bbd5b50b5548c"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_rejected_freeze_5_preserved/independent_381.json": {
+      "actual_permission_mode": 432,
+      "bytes": 61460,
+      "git_mode": "100644",
+      "sha256": "a16f98e06384da44c55ee4845c149a884477a65e6f2c2900f7c5b3235d3486e6"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_rejected_freeze_5_preserved/independent_stderr.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 9896,
+      "git_mode": "100644",
+      "sha256": "5ed968b8cb3e8a10a3a388478bfb87a452783ba1e620fa967fd69cd2434185c3"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_rejected_freeze_5_preserved/independent_stdout.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 381,
+      "git_mode": "100644",
+      "sha256": "2cd4d9db772da0161b8b7cbd84b32b8e83c428fc6edcd08fae7d978a8781886d"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_rejected_freeze_5_preserved/preservation_manifest.json": {
+      "actual_permission_mode": 432,
+      "bytes": 10703,
+      "git_mode": "100644",
+      "sha256": "ba87cb0e129439ad2be2d36a9507d9af5bf9cd5e9ca224382e6a530ed168c69b"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_rejected_freeze_5_preserved/run_independent_review.py": {
+      "actual_permission_mode": 432,
+      "bytes": 8169,
+      "git_mode": "100644",
+      "sha256": "87c35ecd0ccbbec133bd42b8811e12049d7f59ba61d4f61d98efedbe710ff505"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_rejected_freeze_5_preserved/source/10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_direct_nsight_process.py": {
+      "actual_permission_mode": 432,
+      "bytes": 28412,
+      "git_mode": "100644",
+      "sha256": "84169667299d9bace11ac29ec268b265947ebb999e6d6cf7784080cd158b7c17"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_rejected_freeze_5_preserved/source/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_process.py": {
+      "actual_permission_mode": 432,
+      "bytes": 48422,
+      "git_mode": "100644",
+      "sha256": "2c251b8c58bd6138bbf2455a7bf27d1e63873862e61b7261529339048f512088"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_rejected_freeze_5_preserved/source/10_jax_exploration_platform/scripts/atari_pixel_campaign/linux_pidfd_process_control.py": {
+      "actual_permission_mode": 432,
+      "bytes": 22357,
+      "git_mode": "100644",
+      "sha256": "1a4786ca9977458add0f50d1a1e44c27baedb3920cc0a5a575d5c0c997e3603c"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_rejected_freeze_5_preserved/source/10_jax_exploration_platform/scripts/atari_pixel_campaign/native_process_evidence.py": {
+      "actual_permission_mode": 432,
+      "bytes": 34078,
+      "git_mode": "100644",
+      "sha256": "2f2a92e5ebce0d8caeb96268d0d2435472b08f44629cc3d70a838ba39729b313"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_rejected_freeze_5_preserved/source/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/direct_tool_descendants_cpu_worker.py": {
+      "actual_permission_mode": 432,
+      "bytes": 8024,
+      "git_mode": "100644",
+      "sha256": "b5083dabdedaed99dcf8e55820d6484c748ae7864d1dcb6c9792ae5f608211d7"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_rejected_freeze_5_preserved/source/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/native_direct_tool_cpu_worker.py": {
+      "actual_permission_mode": 432,
+      "bytes": 8558,
+      "git_mode": "100644",
+      "sha256": "440bdb4327ec377729161d0d85addf14e1327c151341ac9218ae1251e3e80fc0"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_rejected_freeze_5_preserved/source/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_profile_process.py": {
+      "actual_permission_mode": 432,
+      "bytes": 29951,
+      "git_mode": "100644",
+      "sha256": "829aa2375da6425493a95fd49976a439cdff36f715270a3261f05d7bff3859a5"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_rejected_freeze_5_preserved/source/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_tool_descendants.py": {
+      "actual_permission_mode": 432,
+      "bytes": 10690,
+      "git_mode": "100644",
+      "sha256": "0710f44ab5ac87c42f4ff501eb72a40d7ee4daf4e05f28c314ff361133388369"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_rejected_freeze_5_preserved/source/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_linux_pidfd_process_control.py": {
+      "actual_permission_mode": 432,
+      "bytes": 18606,
+      "git_mode": "100644",
+      "sha256": "246b25a6ab56f1ba4760e449fcd888a984c4fa4f1093a49247aa5aa29e5e10ea"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_rejected_freeze_5_preserved/source/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_native_diagnostic_order.py": {
+      "actual_permission_mode": 432,
+      "bytes": 3663,
+      "git_mode": "100644",
+      "sha256": "46732fa1d0259441c634a77bec40e323a6114e5c48c1de9c82f578a4e5e5582a"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_rejected_freeze_5_preserved/source/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_native_direct_process_cpu.py": {
+      "actual_permission_mode": 432,
+      "bytes": 7928,
+      "git_mode": "100644",
+      "sha256": "965bc8298fe6e3b663773e59ff5b68df9ea1afb2409f9df8a6b07393a6484237"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_rejected_freeze_5_preserved/source/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_native_process_evidence.py": {
+      "actual_permission_mode": 432,
+      "bytes": 16783,
+      "git_mode": "100644",
+      "sha256": "4d65c8fc2a255cac63c8904141b2ec30fa6b13239964b312d7aa132c3c94dd5e"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_rejected_freeze_5_preserved/source/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_native_process_role_evidence.py": {
+      "actual_permission_mode": 432,
+      "bytes": 12437,
+      "git_mode": "100644",
+      "sha256": "142e26ffcfd659b3f7aeda53705072d0993bc8d5e39f5f8acd003ec2907bc8a9"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_rejected_freeze_5_preserved/source/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_nsight_process_identity.py": {
+      "actual_permission_mode": 432,
+      "bytes": 13674,
+      "git_mode": "100644",
+      "sha256": "f0d7784770fab215b30bead3ba4d67f3d8f98a42758065a2ba93c48a04d52797"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_stderr.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 9896,
+      "git_mode": "100644",
+      "sha256": "5ed968b8cb3e8a10a3a388478bfb87a452783ba1e620fa967fd69cd2434185c3"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/independent_stdout.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 381,
+      "git_mode": "100644",
+      "sha256": "2cd4d9db772da0161b8b7cbd84b32b8e83c428fc6edcd08fae7d978a8781886d"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/publication_paths.txt": {
+      "actual_permission_mode": 432,
+      "bytes": 77574,
+      "git_mode": "100644",
+      "sha256": "1a587fc6429708c2e48b9bc8b8e1fb59f796cf113bb5f2be1c71c1e307956fea"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/run_author_tests.py": {
+      "actual_permission_mode": 432,
+      "bytes": 3097,
+      "git_mode": "100644",
+      "sha256": "4a3ea3d7632243ec8e4161bbbd949d0dd9a62eb4eff57caf2e2cbf58098cea2e"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/run_author_tests_fifth.py": {
+      "actual_permission_mode": 432,
+      "bytes": 4284,
+      "git_mode": "100644",
+      "sha256": "50c434d3371ae13e11a03513438a7d9f43a6cf3fd49e4b5453a5f08d7a80f159"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/run_author_tests_fourth.py": {
+      "actual_permission_mode": 432,
+      "bytes": 4284,
+      "git_mode": "100644",
+      "sha256": "93c34c95abbdb462080ae84c0367d9f22b9798fc204e56b8d2998a5f206d9f53"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/run_author_tests_second.py": {
+      "actual_permission_mode": 432,
+      "bytes": 4217,
+      "git_mode": "100644",
+      "sha256": "05f61c67638530571dbc5d8122af639218742c8dfff92370e8891a25edcb4e77"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/run_author_tests_third.py": {
+      "actual_permission_mode": 432,
+      "bytes": 4253,
+      "git_mode": "100644",
+      "sha256": "f6a3d4e93e696450721d95405230f03c95048ef5c81ece4385e7b060c7673123"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/run_fdinfo_correction_author.py": {
+      "actual_permission_mode": 432,
+      "bytes": 3344,
+      "git_mode": "100644",
+      "sha256": "54f8f8123a2b17f5cf390b8ba83891d30be47a25be4fd7cd4f6b5d63ac4e8ccf"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/run_fdinfo_exact_381_regressions.py": {
+      "actual_permission_mode": 432,
+      "bytes": 2688,
+      "git_mode": "100644",
+      "sha256": "10d600e2418357cf97779281c62339bce1a185468bbbafac2b8c35986143393d"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/run_independent_fdinfo_correction_review.py": {
+      "actual_permission_mode": 432,
+      "bytes": 9447,
+      "git_mode": "100644",
+      "sha256": "080467a9801e9c662d27201cdfe3937d2ba5adfe0c226673b2e6b885f4627f6c"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/run_independent_review.py": {
+      "actual_permission_mode": 432,
+      "bytes": 8169,
+      "git_mode": "100644",
+      "sha256": "87c35ecd0ccbbec133bd42b8811e12049d7f59ba61d4f61d98efedbe710ff505"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/source_after_113_passing_tests_before_saved_reader_completion_checks/10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_direct_nsight_process.py": {
+      "actual_permission_mode": 432,
+      "bytes": 28079,
+      "git_mode": "100644",
+      "sha256": "e82c92d923e49f62ac00ed188f48770825705efe0a51a63c603bfdd6fe9e07d2"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/source_after_113_passing_tests_before_saved_reader_completion_checks/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_process.py": {
+      "actual_permission_mode": 432,
+      "bytes": 47667,
+      "git_mode": "100644",
+      "sha256": "e700285d2afae685601a2fea3d8b2bd1db756b67cd23d675bbad5ae8c234cc74"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/source_after_113_passing_tests_before_saved_reader_completion_checks/10_jax_exploration_platform/scripts/atari_pixel_campaign/linux_pidfd_process_control.py": {
+      "actual_permission_mode": 432,
+      "bytes": 22001,
+      "git_mode": "100644",
+      "sha256": "ca60390a006aae8ab19e60ff9c12a83e74f02124884c773b2c0174106f110cbc"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/source_after_113_passing_tests_before_saved_reader_completion_checks/10_jax_exploration_platform/scripts/atari_pixel_campaign/native_process_evidence.py": {
+      "actual_permission_mode": 432,
+      "bytes": 30364,
+      "git_mode": "100644",
+      "sha256": "df7dbce1abce8fd2b9240811da84898219efda77475fa2c33b2ad07a0b260ce8"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/source_after_113_passing_tests_before_saved_reader_completion_checks/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/direct_tool_descendants_cpu_worker.py": {
+      "actual_permission_mode": 432,
+      "bytes": 8024,
+      "git_mode": "100644",
+      "sha256": "b5083dabdedaed99dcf8e55820d6484c748ae7864d1dcb6c9792ae5f608211d7"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/source_after_113_passing_tests_before_saved_reader_completion_checks/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/native_direct_tool_cpu_worker.py": {
+      "actual_permission_mode": 432,
+      "bytes": 8558,
+      "git_mode": "100644",
+      "sha256": "440bdb4327ec377729161d0d85addf14e1327c151341ac9218ae1251e3e80fc0"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/source_after_113_passing_tests_before_saved_reader_completion_checks/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_profile_process.py": {
+      "actual_permission_mode": 432,
+      "bytes": 29951,
+      "git_mode": "100644",
+      "sha256": "829aa2375da6425493a95fd49976a439cdff36f715270a3261f05d7bff3859a5"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/source_after_113_passing_tests_before_saved_reader_completion_checks/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_tool_descendants.py": {
+      "actual_permission_mode": 432,
+      "bytes": 10690,
+      "git_mode": "100644",
+      "sha256": "0710f44ab5ac87c42f4ff501eb72a40d7ee4daf4e05f28c314ff361133388369"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/source_after_113_passing_tests_before_saved_reader_completion_checks/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_linux_pidfd_process_control.py": {
+      "actual_permission_mode": 432,
+      "bytes": 18606,
+      "git_mode": "100644",
+      "sha256": "246b25a6ab56f1ba4760e449fcd888a984c4fa4f1093a49247aa5aa29e5e10ea"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/source_after_113_passing_tests_before_saved_reader_completion_checks/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_native_direct_process_cpu.py": {
+      "actual_permission_mode": 432,
+      "bytes": 7928,
+      "git_mode": "100644",
+      "sha256": "965bc8298fe6e3b663773e59ff5b68df9ea1afb2409f9df8a6b07393a6484237"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/source_after_113_passing_tests_before_saved_reader_completion_checks/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_native_process_evidence.py": {
+      "actual_permission_mode": 432,
+      "bytes": 16679,
+      "git_mode": "100644",
+      "sha256": "f31ba6651edc456ec1c2cd12004d3385a1fb68ee2df8cd65218490ac2507a646"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/source_after_113_passing_tests_before_saved_reader_completion_checks/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_nsight_process_identity.py": {
+      "actual_permission_mode": 432,
+      "bytes": 13674,
+      "git_mode": "100644",
+      "sha256": "f0d7784770fab215b30bead3ba4d67f3d8f98a42758065a2ba93c48a04d52797"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/source_after_113_passing_tests_before_saved_reader_completion_checks/source_freeze.json": {
+      "actual_permission_mode": 432,
+      "bytes": 11914,
+      "git_mode": "100644",
+      "sha256": "08cca2e6ee43ba742529cea95a7f2ec3fe3a36282cca4cf8896cfed0aa3b03e8"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/source_after_120_passing_tests_before_contract_schema_and_default_order_checks/10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_direct_nsight_process.py": {
+      "actual_permission_mode": 432,
+      "bytes": 28262,
+      "git_mode": "100644",
+      "sha256": "2859c45330905c3090790b90e5e871ec11747d9de3b6c9a0909517edf3405c1a"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/source_after_120_passing_tests_before_contract_schema_and_default_order_checks/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_process.py": {
+      "actual_permission_mode": 432,
+      "bytes": 48422,
+      "git_mode": "100644",
+      "sha256": "2c251b8c58bd6138bbf2455a7bf27d1e63873862e61b7261529339048f512088"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/source_after_120_passing_tests_before_contract_schema_and_default_order_checks/10_jax_exploration_platform/scripts/atari_pixel_campaign/linux_pidfd_process_control.py": {
+      "actual_permission_mode": 432,
+      "bytes": 22357,
+      "git_mode": "100644",
+      "sha256": "1a4786ca9977458add0f50d1a1e44c27baedb3920cc0a5a575d5c0c997e3603c"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/source_after_120_passing_tests_before_contract_schema_and_default_order_checks/10_jax_exploration_platform/scripts/atari_pixel_campaign/native_process_evidence.py": {
+      "actual_permission_mode": 432,
+      "bytes": 33777,
+      "git_mode": "100644",
+      "sha256": "6fb545486c863d49710f06bce548ba60a0252a623469761191ad27d32e7c7bb6"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/source_after_120_passing_tests_before_contract_schema_and_default_order_checks/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/direct_tool_descendants_cpu_worker.py": {
+      "actual_permission_mode": 432,
+      "bytes": 8024,
+      "git_mode": "100644",
+      "sha256": "b5083dabdedaed99dcf8e55820d6484c748ae7864d1dcb6c9792ae5f608211d7"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/source_after_120_passing_tests_before_contract_schema_and_default_order_checks/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/native_direct_tool_cpu_worker.py": {
+      "actual_permission_mode": 432,
+      "bytes": 8558,
+      "git_mode": "100644",
+      "sha256": "440bdb4327ec377729161d0d85addf14e1327c151341ac9218ae1251e3e80fc0"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/source_after_120_passing_tests_before_contract_schema_and_default_order_checks/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_profile_process.py": {
+      "actual_permission_mode": 432,
+      "bytes": 29951,
+      "git_mode": "100644",
+      "sha256": "829aa2375da6425493a95fd49976a439cdff36f715270a3261f05d7bff3859a5"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/source_after_120_passing_tests_before_contract_schema_and_default_order_checks/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_tool_descendants.py": {
+      "actual_permission_mode": 432,
+      "bytes": 10690,
+      "git_mode": "100644",
+      "sha256": "0710f44ab5ac87c42f4ff501eb72a40d7ee4daf4e05f28c314ff361133388369"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/source_after_120_passing_tests_before_contract_schema_and_default_order_checks/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_linux_pidfd_process_control.py": {
+      "actual_permission_mode": 432,
+      "bytes": 18606,
+      "git_mode": "100644",
+      "sha256": "246b25a6ab56f1ba4760e449fcd888a984c4fa4f1093a49247aa5aa29e5e10ea"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/source_after_120_passing_tests_before_contract_schema_and_default_order_checks/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_native_direct_process_cpu.py": {
+      "actual_permission_mode": 432,
+      "bytes": 7928,
+      "git_mode": "100644",
+      "sha256": "965bc8298fe6e3b663773e59ff5b68df9ea1afb2409f9df8a6b07393a6484237"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/source_after_120_passing_tests_before_contract_schema_and_default_order_checks/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_native_process_evidence.py": {
+      "actual_permission_mode": 432,
+      "bytes": 16783,
+      "git_mode": "100644",
+      "sha256": "4d65c8fc2a255cac63c8904141b2ec30fa6b13239964b312d7aa132c3c94dd5e"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/source_after_120_passing_tests_before_contract_schema_and_default_order_checks/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_native_process_role_evidence.py": {
+      "actual_permission_mode": 432,
+      "bytes": 12437,
+      "git_mode": "100644",
+      "sha256": "142e26ffcfd659b3f7aeda53705072d0993bc8d5e39f5f8acd003ec2907bc8a9"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/source_after_120_passing_tests_before_contract_schema_and_default_order_checks/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_nsight_process_identity.py": {
+      "actual_permission_mode": 432,
+      "bytes": 13674,
+      "git_mode": "100644",
+      "sha256": "f0d7784770fab215b30bead3ba4d67f3d8f98a42758065a2ba93c48a04d52797"
+    },
+    ".review_metadata/native_direct_diagnostic_integration/source_after_120_passing_tests_before_contract_schema_and_default_order_checks/source_freeze.json": {
+      "actual_permission_mode": 432,
+      "bytes": 12089,
+      "git_mode": "100644",
+      "sha256": "855023b94a9ffe64df2ce72168ea5afcafd20e4ce97417f9bff06df774d6b690"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_direct_nsight_process.py": {
+      "actual_permission_mode": 432,
+      "bytes": 28412,
+      "git_mode": "100644",
+      "sha256": "84169667299d9bace11ac29ec268b265947ebb999e6d6cf7784080cd158b7c17"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_process.py": {
+      "actual_permission_mode": 432,
+      "bytes": 48422,
+      "git_mode": "100644",
+      "sha256": "2c251b8c58bd6138bbf2455a7bf27d1e63873862e61b7261529339048f512088"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/linux_pidfd_process_control.py": {
+      "actual_permission_mode": 432,
+      "bytes": 24148,
+      "git_mode": "100644",
+      "sha256": "37754acfdf8f139eecc2e9bbac91ee56cc12069a77f237968fe713f8b5b81172"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/native_process_evidence.py": {
+      "actual_permission_mode": 432,
+      "bytes": 36125,
+      "git_mode": "100644",
+      "sha256": "fab67cb91dfc5e82299547452213a3373c4a92baa569235751b51d273958956a"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/native_direct_tool_cpu_worker.py": {
+      "actual_permission_mode": 432,
+      "bytes": 8558,
+      "git_mode": "100644",
+      "sha256": "440bdb4327ec377729161d0d85addf14e1327c151341ac9218ae1251e3e80fc0"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_native_diagnostic_order.py": {
+      "actual_permission_mode": 432,
+      "bytes": 3663,
+      "git_mode": "100644",
+      "sha256": "46732fa1d0259441c634a77bec40e323a6114e5c48c1de9c82f578a4e5e5582a"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_native_direct_process_cpu.py": {
+      "actual_permission_mode": 432,
+      "bytes": 7928,
+      "git_mode": "100644",
+      "sha256": "965bc8298fe6e3b663773e59ff5b68df9ea1afb2409f9df8a6b07393a6484237"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_native_pidfd_fdinfo.py": {
+      "actual_permission_mode": 432,
+      "bytes": 8373,
+      "git_mode": "100644",
+      "sha256": "4fcb9c594fbb6daa4db59c98fff2a4c62fc2a98b60050cbcee84bedd5ee364ba"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_native_process_evidence.py": {
+      "actual_permission_mode": 432,
+      "bytes": 16825,
+      "git_mode": "100644",
+      "sha256": "91b144d1cc7c31dda14cf6df8df3d3fe5d7d2c20ac842c81ef7ae9953009aeb9"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_native_process_role_evidence.py": {
+      "actual_permission_mode": 432,
+      "bytes": 12479,
+      "git_mode": "100644",
+      "sha256": "b8f94d6cb69a12bd9f34d9410d38cb135e52053a6dd3c852172047f5ef60bf89"
+    }
+  },
+  "review": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-22-37_direct-native-process-diagnostic_selected-python-3.12_contract-observation-only_environment-transitions-0/.review_metadata/native_direct_diagnostic_integration/independent_fdinfo_386.json",
+    "sha256": "6eb180fb0e9735fa83e86a19c53b373fe89fea75e13c93a28319d80d40b4fe22"
+  },
+  "runtime_paths": [
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/linux_pidfd_process_control.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/native_process_evidence.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_process.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_direct_nsight_process.py"
+  ],
+  "test_paths": [
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/native_direct_tool_cpu_worker.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_native_diagnostic_order.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_native_direct_process_cpu.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_native_pidfd_fdinfo.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_native_process_evidence.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_native_process_role_evidence.py"
+  ],
+  "this_manifest_is_also_published": true,
+  "total_published_paths": 562,
+  "unrelated_profile_adapter_or_probe_source_included": false,
+  "worktree": "/p/rlprojects/RND_worktrees/2026-11-04-22-37_direct-native-process-diagnostic_selected-python-3.12_contract-observation-only_environment-transitions-0"
+}

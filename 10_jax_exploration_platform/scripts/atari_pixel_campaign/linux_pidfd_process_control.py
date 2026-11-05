@@ -14,6 +14,7 @@ KIND = "linux-x86-64-libc-syscall-pidfd-version-1"
 HEADERS = ("/usr/include/unistd.h", "/usr/include/x86_64-linux-gnu/asm/unistd_64.h")
 NUMBERS = {"pidfd_open": 434, "pidfd_send_signal": 424}
 MAX_CALLS = 4096
+MAX_DESCRIPTOR_EVENTS = 4 * MAX_CALLS
 
 
 def require(value, message):
@@ -59,6 +60,31 @@ def checked_file(path, maximum, *, root_owned):
             "device": before.st_dev, "inode": before.st_ino}, raw
     finally:
         os.close(descriptor)
+
+
+def parse_pidfd_fdinfo(raw, expected_inode, expected_pid=None):
+    """Join duplicate-safe kernel fdinfo inode, process and octal CLOEXEC fields to one descriptor."""
+    require(type(raw) is str and raw.isascii() and raw.endswith('\n') and '\r' not in raw and '\0' not in raw
+        and len(raw.encode()) <= 16384, 'pidfd fdinfo must be one complete bounded ASCII record')
+    require(type(expected_inode) is int and 0 < expected_inode <= 18446744073709551615
+        and (expected_pid is None or type(expected_pid) is int and 0 < expected_pid <= 2147483647),
+        'pidfd expected inode and process must use exact positive integer types')
+    # Before: raw key/value lines; after: one value per kernel field, with no ignored duplicate spelling.
+    fields = {}
+    for line in raw.splitlines():
+        key, separator, value = line.partition(':')
+        require(separator == ':' and re.fullmatch(r'[A-Za-z_][A-Za-z0-9_]*', key) and key not in fields,
+            'pidfd fdinfo contains a malformed or duplicate kernel field')
+        fields[key] = value.strip(' \t')
+    require({'ino', 'Pid', 'flags'} <= set(fields)
+        and re.fullmatch(r'[1-9][0-9]*', fields['ino'])
+        and re.fullmatch(r'(?:[1-9][0-9]*|-1)', fields['Pid'])
+        and re.fullmatch(r'[0-7]{8,11}', fields['flags']), 'pidfd raw inode, process or octal flags are invalid')
+    inode, pid, flags = int(fields['ino']), int(fields['Pid']), int(fields['flags'], 8)
+    require(inode == expected_inode and (expected_pid is None or pid in (expected_pid, -1))
+        and -1 <= pid <= 2147483647 and flags <= 4294967295 and flags & os.O_CLOEXEC == os.O_CLOEXEC,
+        'pidfd raw inode, process or CLOEXEC flags differ from its retained descriptor')
+    return {'inode': inode, 'pid': pid, 'flags': flags, 'close_on_exec': True}
 
 
 def validate_abi():
@@ -148,6 +174,7 @@ class NativePidfdProvider:
         """Validate the exact declared metadata and finish a real self-handle preflight before use."""
         require(type(contract) is dict and contract.get("kind") == KIND, "an explicit native pidfd contract is required")
         self.owner_pid, self.calls, self.handles = os.getpid(), [], {}
+        self.descriptor_events = []
         self.normal_call_count, self.cleanup_call_count = 0, 0
         self.failed, self.preflight_passed, self.preflight_call_count = False, False, 0
         actual, self.bootstrap = current_contract()
@@ -181,7 +208,7 @@ class NativePidfdProvider:
         require(os.getpid() == self.owner_pid, "native process-control state cannot be reused by another process")
         require(not ready or self.preflight_passed, "actual self pidfd preflight is required before managing children")
 
-    def invoke(self, name, arguments, function, *, phase, cleanup_descriptor=None):
+    def invoke(self, name, arguments, function, *, phase, cleanup_descriptor=None, descriptor_identity=None):
         """Bound ordinary calls while reserving one TERM, KILL and close for each opened descriptor."""
         self.check_owner(ready=False)
         # Each ordinary open reserves at most three additional records, never a general unbounded bypass.
@@ -205,6 +232,8 @@ class NativePidfdProvider:
             self.handles[cleanup_descriptor]["cleanup_remaining"].remove(operation)
             self.cleanup_call_count += 1
             budget = "reserved_descriptor_cleanup"
+        if descriptor_identity is not None:
+            self.record_descriptor(name, arguments['fd'], len(self.calls), descriptor_identity)
         ctypes.set_errno(0)
         started = time.time()
         result = function()
@@ -222,14 +251,20 @@ class NativePidfdProvider:
     def descriptor_identity(self, descriptor, pid=None):
         """Inspect only this provider's own descriptor, without reopening a target process by PID."""
         require(type(descriptor) is int and descriptor >= 0, "one typed retained pidfd is required")
+        inheritable = os.get_inheritable(descriptor)
         require(os.readlink('/proc/self/fd/' + str(descriptor)) == "anon_inode:[pidfd]"
-            and os.get_inheritable(descriptor) is False, "the actual native handle is not a close-on-exec pidfd")
+            and inheritable is False, "the actual native handle is not a close-on-exec pidfd")
         info = os.fstat(descriptor)
-        raw = Path('/proc/self/fdinfo/' + str(descriptor)).read_text()
-        matches = re.findall(r"^Pid:\s*(-?\d+)\s*$", raw, re.MULTILINE)
-        require(len(matches) == 1 and (pid is None or int(matches[0]) in (pid, -1)),
-            "the retained pidfd no longer identifies its opened process")
-        return {"device": info.st_dev, "inode": info.st_ino, "pid": int(matches[0]),
+        with Path('/proc/self/fdinfo/' + str(descriptor)).open() as stream:
+            raw = stream.read(16385)
+        after = os.fstat(descriptor)
+        require(len(raw.encode()) <= 16384 and (info.st_dev, info.st_ino) == (after.st_dev, after.st_ino)
+            and os.readlink('/proc/self/fd/' + str(descriptor)) == "anon_inode:[pidfd]"
+            and os.get_inheritable(descriptor) is False,
+            "the retained pidfd identity changed or exceeded its metadata bound")
+        parsed = parse_pidfd_fdinfo(raw, info.st_ino, pid)
+        return {"device": info.st_dev, "inode": info.st_ino, "pid": parsed['pid'],
+            "flags": parsed['flags'], "inheritable": inheritable,
             "raw_fdinfo": raw, "fdinfo_sha256": hashlib.sha256(raw.encode()).hexdigest()}
 
     def retained(self, descriptor):
@@ -240,18 +275,28 @@ class NativePidfdProvider:
         require(all(actual[key] == expected[key] for key in ("device", "inode")), "the retained native pidfd descriptor changed")
         return actual
 
+    def record_descriptor(self, operation, descriptor, call_sequence, identity):
+        """Retain one bounded descriptor observation joined to its actual open-call generation."""
+        require(len(self.descriptor_events) < MAX_DESCRIPTOR_EVENTS and descriptor in self.handles,
+            "native descriptor identity evidence exceeded its explicit bound")
+        handle = self.handles[descriptor]
+        self.descriptor_events.append({'event_sequence': len(self.descriptor_events), 'operation': operation,
+            'descriptor': descriptor, 'call_sequence': call_sequence, 'open_generation': handle['generation'],
+            'opened_pid': handle['pid'], 'identity': identity, 'observed_at_seconds': time.time()})
+
     def _open(self, pid, phase):
         """Open an actual kernel pidfd; callers retain their existing positive ownership checks."""
         require(type(pid) is int and 0 < pid <= 2147483647, "one positive typed Linux process identifier is required")
         descriptor = self.invoke("pidfd_open", {"syscall": NUMBERS["pidfd_open"], "pid": pid, "flags": 0},
             lambda: self.syscall(ctypes.c_long(NUMBERS["pidfd_open"]), ctypes.c_long(pid), ctypes.c_ulong(0)), phase=phase)
         require(descriptor >= 0 and descriptor not in self.handles, "the kernel returned an invalid or duplicated pidfd")
-        self.handles[descriptor] = {"pid": pid,
+        self.handles[descriptor] = {"pid": pid, "generation": len(self.calls) - 1,
             "cleanup_remaining": [int(signal.SIGTERM), int(signal.SIGKILL), "close"]}
         try:
             identity = self.descriptor_identity(descriptor, pid)
             require(identity["pid"] == pid, "the opened process exited before its native handle was verified")
             self.handles[descriptor].update({key: identity[key] for key in ("device", "inode")})
+            self.record_descriptor('pidfd_open', descriptor, len(self.calls) - 1, identity)
         except BaseException:
             self.invoke("close", {"fd": descriptor}, lambda: self.close(descriptor), phase="failed_open_cleanup",
                 cleanup_descriptor=descriptor)
@@ -264,19 +309,20 @@ class NativePidfdProvider:
         require(type(number) in (int, signal.Signals) and number in (0, signal.SIGTERM, signal.SIGKILL),
             "unsupported native process-control signal")
         number = int(number)
-        self.retained(descriptor)
+        identity = self.retained(descriptor)
         result = self.invoke("pidfd_send_signal", {"syscall": NUMBERS["pidfd_send_signal"], "fd": descriptor,
             "signal": number, "siginfo": None, "flags": 0}, lambda: self.syscall(
                 ctypes.c_long(NUMBERS["pidfd_send_signal"]), ctypes.c_long(descriptor), ctypes.c_long(number),
                 ctypes.c_void_p(None), ctypes.c_ulong(0)), phase=phase,
-                cleanup_descriptor=descriptor if number in (int(signal.SIGTERM), int(signal.SIGKILL)) else None)
+                cleanup_descriptor=descriptor if number in (int(signal.SIGTERM), int(signal.SIGKILL)) else None,
+                descriptor_identity=identity)
         require(result == 0, "the kernel signal call returned an unexpected nonzero result")
 
     def _close(self, descriptor, phase):
         """Close only a verified descriptor with its actual libc return recorded."""
-        self.retained(descriptor)
+        identity = self.retained(descriptor)
         result = self.invoke("close", {"fd": descriptor}, lambda: self.close(descriptor), phase=phase,
-            cleanup_descriptor=descriptor)
+            cleanup_descriptor=descriptor, descriptor_identity=identity)
         require(result == 0, "the native close returned an unexpected nonzero result")
         del self.handles[descriptor]
 
@@ -311,6 +357,7 @@ class NativePidfdProvider:
         return {"kind": KIND, "contract": self.contract, "bootstrap": self.bootstrap,
             "preflight_passed": self.preflight_passed, "preflight_call_count": self.preflight_call_count,
             "calls": self.calls, "open_handle_count": len(self.handles), "native_call_failure": self.failed,
+            "descriptor_events": self.descriptor_events,
             "ordinary_call_count": self.normal_call_count, "ordinary_call_limit": MAX_CALLS,
             "reserved_cleanup_call_count": self.cleanup_call_count,
             "maximum_cleanup_records_per_open": 3,
@@ -337,3 +384,16 @@ class NativeProcessObserver:
         """Retain the same positive ancestry and UID/cgroup checks with one explicit provider argument."""
         return self.metadata_observer.OwnedProcesses(root_pid, root_birth, parent, reader,
             process_control=self.provider)
+
+    def parent_handle(self, intent):
+        """Pin the known parent through this process's provider without changing default module globals."""
+        parent = intent['parent']
+        descriptor = self.provider.open_process_handle(parent['pid'])
+        try:
+            actual = self.metadata_observer.ProcReader().snapshot(parent['pid'], parent['uids'][0], parent['cgroup'])
+            require(self.metadata_observer.stable(actual) == self.metadata_observer.stable(parent)
+                and not self.provider.handle_exited(descriptor), 'the actual native supervisor disappeared or changed')
+        except BaseException:
+            self.provider.close_process_handle(descriptor)
+            raise
+        return descriptor

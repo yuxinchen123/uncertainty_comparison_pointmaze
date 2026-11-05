@@ -61,6 +61,27 @@ def metadata_guard():
     sys.addaudithook(audit)
 
 
+
+def required_helpers(native=False):
+    """Keep the default five helpers; explicitly add only native provider and evidence helpers."""
+    direct.require(type(native) is bool, 'native diagnostic selection must be explicit')
+    return (*HELPERS, 'linux_pidfd_process_control.py', 'native_process_evidence.py') if native else HELPERS
+
+
+def native_role(directory, plan, role):
+    """Validate an actual role and source before starting its one explicit native provider."""
+    current = direct.context(plan, directory)
+    observer = direct.generic(plan)
+    if role == 'producer':
+        current = producer_release(directory, plan)
+    else:
+        direct.no_standing_descriptor()
+        intent = direct.validate_intent(directory, plan, observer.read_json(directory / 'direct_profile_process_intent.json'))
+        direct.require(current['command'] == intent['waiter_command' if role == 'waiter' else 'capture_command'],
+            'native child startup requires its exact current staged source role')
+    return direct.adjacent_helper(plan, 'native_process_evidence').bootstrap(directory, plan, role, observer, current)
+
+
 def read_plan(directory):
     """Require the exact staged immutable diagnostic and selected private Python."""
     directory = Path(directory).resolve(strict=True)
@@ -73,9 +94,9 @@ def read_plan(directory):
         and str(Path(sys.executable).absolute()) == plan["python"]
         and json.loads((directory / "measurement_prepared.json").read_bytes()) == {"plan_sha256": hashlib.sha256(raw).hexdigest()}
         and plan.get("diagnostic_boundary") == ZERO, "execute only the exact staged zero-transition direct diagnostic")
-    direct.require(set(plan["helpers"]["files"]) == {direct.PREFIX + name for name in HELPERS},
-        "the direct diagnostic requires exactly its five process-control and release helpers")
-    for name in HELPERS:
+    direct.require(set(plan["helpers"]["files"]) == {direct.PREFIX + name for name in required_helpers('native_process_control' in plan)},
+        "the direct diagnostic requires exactly its declared process-control and release helpers")
+    for name in required_helpers('native_process_control' in plan):
         path = directory / "code" / name
         direct.require(path.resolve(strict=True) == path and path.is_file()
             and hashlib.sha256(path.read_bytes()).hexdigest() == plan["helpers"]["files"][direct.PREFIX + name],
@@ -225,10 +246,10 @@ def producer_release(directory, plan):
     return current
 
 
-def produce_with_owned_descriptor(directory):
+def produce_with_owned_descriptor(directory, *, runtime=None):
     """Alone acquire the approved existing lock and retain it through every actual tool/child wait."""
     directory, plan = read_plan(directory)
-    observer = direct.generic(plan)
+    observer = direct.runtime_observer(plan, runtime.observer if runtime is not None else None)
     current = producer_release(directory, plan)
     direct.require(not any(os.path.lexists(directory / name) for name in (
         "direct_profile_process_intent.json", "result.json", "failure.json", "trace", "capture_identity.json")),
@@ -244,7 +265,8 @@ def produce_with_owned_descriptor(directory):
         direct.descriptor_record(plan, descriptor, current, local=True)
         tool = plan["profile_tool"]
         direct.require(observer.receipt(tool["path"])["sha256"] == tool["sha256"], "the recorded actual profiling tool changed")
-        with direct.tool_scope(directory, plan, descriptor) as scope:
+        with (direct.tool_scope(directory, plan, descriptor) if runtime is None else
+                direct.tool_scope(directory, plan, descriptor, observer=observer)) as scope:
             actual = scope.run([tool["path"], "--version"], capture_output=True, timeout=15, check=False)
             observer.publish(directory / "tool_version_return.json", {"command": [tool["path"], "--version"],
                 "returncode": actual.returncode, "stdout": actual.stdout.decode(), "stderr": actual.stderr.decode()})
@@ -254,36 +276,41 @@ def produce_with_owned_descriptor(directory):
         diagnostic = observer.read_json(directory / "probe_result.json")
         direct.require(diagnostic.get("completed") is True and all(diagnostic.get(key) == value for key, value in ZERO.items()),
             "the actual metadata payload did not complete as a zero-transition diagnostic")
+        if runtime is not None:
+            runtime.complete(('tool_descendant_scope_terminal.json', 'tool_descendant_scope_restored.json', 'profiler_actual_wait.json'))
         proof = direct.validate_saved(directory, plan)
         observer.publish(directory / "result.json", {"kind": direct.DIAGNOSTIC, "completed": True, **ZERO,
             "plan": observer.receipt(directory / "measurement_plan.json"), "process_proof": proof,
             "payload": observer.receipt(directory / "probe_result.json"), "tool_version": observer.receipt(directory / "tool_version_return.json")})
     except BaseException as error:
+        native_failure = {} if runtime is None else {'native_process_failure': runtime.failure(error)}
         observer.publish(directory / "failure.json", {"kind": direct.DIAGNOSTIC, "error_type": type(error).__name__,
-            "error": str(error), "measurement_valid": False, **ZERO})
+            "error": str(error), "measurement_valid": False, **native_failure, **ZERO})
         raise
     finally:
         if descriptor is not None:
             os.close(descriptor)
 
 
-def producer(directory):
+def producer(directory, *, runtime=None):
     """Install cleanup-aware signal handling before the sole producer opens its GPU descriptor."""
     with producer_interruptions():
-        return produce_with_owned_descriptor(directory)
+        return produce_with_owned_descriptor(directory, runtime=runtime)
 
 
-def probe(directory):
+def probe(directory, *, runtime=None):
     """Observe the actual producer and exit without importing a learner or calling CUDA."""
     directory, plan = read_plan(directory)
     observer = direct.generic(plan)
-    claim = direct.wait_release(directory, plan)
+    claim = direct.wait_release(directory, plan, observer=runtime.observer if runtime is not None else None)
     started = time.time()
     observer.publish(directory / "probe_result.json", {"kind": "actual_direct_standard_library_process_payload",
         "completed": True, "pid": claim["pid"], "process_start_time": claim["process_start_time"],
         "numerical_modules": sorted(direct.NUMERICAL.intersection(sys.modules)), "cuda_profiler_api_called": False,
         "standing_descriptor_inherited": False, "payload_started_at_seconds": started,
         "payload_finished_at_seconds": time.time(), **ZERO})
+
+    if runtime is not None:runtime.complete(('capture_release_observed.json', 'probe_result.json'))
 
 
 def prepare(arguments):
@@ -294,7 +321,8 @@ def prepare(arguments):
     root = arguments.source_root.resolve(strict=True)
     commit = subprocess.check_output(["git", "-C", str(root), "rev-parse", "HEAD"], text=True).strip()
     files = {}
-    for name in HELPERS:
+    selected_helpers = required_helpers(getattr(arguments, 'native_process_control', False))
+    for name in selected_helpers:
         relative = direct.PREFIX + name
         raw = subprocess.check_output(["git", "-C", str(root), "show", commit + ":" + relative])
         direct.require(raw == (root / relative).read_bytes() == (SCRIPTS / name).read_bytes(), "commit reviewed diagnostic source before preparation")
@@ -311,10 +339,12 @@ def prepare(arguments):
         "helpers": {"source_root": str(root), "source_commit": commit, "files": files}, "profile_tool": tool,
         "maximum_active_seconds": 300, "diagnostic_boundary": ZERO,
         "preparation_scope": "metadata only; no launch review, C2 exit evidence, process, tool run or qualification is fabricated"}
+    if getattr(arguments, 'native_process_control', False):
+        plan['native_process_control'] = direct.adjacent_helper(plan, 'native_process_evidence').declaration(plan)
     directory.mkdir(parents=True)
     (directory / "code").mkdir()
     observer = direct.generic(plan)
-    for name in HELPERS:
+    for name in selected_helpers:
         path = directory / "code" / name
         with path.open("xb") as stream:
             stream.write((SCRIPTS / name).read_bytes()); stream.flush(); os.fsync(stream.fileno())
@@ -350,29 +380,45 @@ def main():
     for name in ("source-root", "run-dir", "profile-tool-record", "python"):
         parser.add_argument("--" + name, type=Path)
     parser.add_argument("--unit-id")
+    parser.add_argument("--native-process-control", action="store_true")
     args = parser.parse_args()
     if args.prepare_only:
         direct.require(all(getattr(args, name) is not None for name in ("source_root", "run_dir", "profile_tool_record", "python", "unit_id")),
             "diagnostic preparation needs explicit source, run, actual tool record, Python and unit identity")
         print(json.dumps({"prepared_unit": str(prepare(args)), "jobs_submitted": 0, "gpu_operations": 0}))
         return
-    direct.require(not any(getattr(args, name) is not None for name in ("source_root", "run_dir", "profile_tool_record", "python", "unit_id")),
+    direct.require(not args.native_process_control and not any(getattr(args, name) is not None for name in ("source_root", "run_dir", "profile_tool_record", "python", "unit_id")),
         "execution cannot override immutable preparation inputs")
-    if args.producer_unit:
-        directory, plan = read_plan(args.producer_unit)
-        direct.context(plan, directory)
-        direct.adjacent_helper(plan, "direct_tool_descendants").prepare_native_control()
-    metadata_guard()
-    if args.controller_unit:
-        controller(args.controller_unit)
-    elif args.producer_unit:
-        producer(args.producer_unit)
-    elif args.direct_owned_waiter_unit:
-        directory, plan = read_plan(args.direct_owned_waiter_unit)
-        raise SystemExit(direct.run_waiter(directory, plan))
-    else:
-        probe(args.direct_owned_capture_unit)
+    selected = args.producer_unit or args.direct_owned_waiter_unit or args.direct_owned_capture_unit
+    runtime = None
+    # Read only the explicit selection before choosing startup order; default child guards keep their order.
+    if selected and 'native_process_control' in json.loads((selected / 'measurement_plan.json').read_bytes()):
+        directory, plan = read_plan(selected)
+        role = 'producer' if args.producer_unit else 'waiter' if args.direct_owned_waiter_unit else 'capture'
+        runtime = native_role(directory, plan, role)
+    try:
+        if args.producer_unit:
+            directory, plan = read_plan(args.producer_unit)
+            direct.context(plan, directory)
+            direct.adjacent_helper(plan, 'direct_tool_descendants').prepare_native_control()
+        metadata_guard()
+        if args.controller_unit:
+            controller(args.controller_unit)
+        elif args.producer_unit:
+            producer(args.producer_unit, runtime=runtime)
+        elif args.direct_owned_waiter_unit:
+            directory, plan = read_plan(args.direct_owned_waiter_unit)
+            returned = direct.run_waiter(directory, plan, observer=runtime.observer if runtime is not None else None)
+            if runtime is not None:
+                direct.require(returned == 0, 'native waiter cannot complete after an unsuccessful payload wait')
+                runtime.complete(('capture_actual_launch.json', 'capture_actual_wait.json'))
+            return returned
+        else:
+            probe(args.direct_owned_capture_unit, runtime=runtime)
+    except BaseException as error:
+        if runtime is not None and not runtime.files['failure'].exists():runtime.failure(error)
+        raise
 
 
-if __name__ == "__main__":
-    main()
+if __name__ == '__main__':
+    raise SystemExit(main())

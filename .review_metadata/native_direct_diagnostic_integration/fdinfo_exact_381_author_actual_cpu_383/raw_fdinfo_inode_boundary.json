@@ -1,0 +1,386 @@
+{
+  "accepted": false,
+  "actual_native_calls": 0,
+  "changed": {
+    "bootstrap": {
+      "gpu_or_cuda_qualification": false,
+      "pid": 101,
+      "symbols": {
+        "close": {
+          "actual_mapping": "1000-2000 r-xp 00000000 08:01 42 /synthetic/public/libc.so.6",
+          "actual_pointer": 4608,
+          "image": {
+            "device": 2049,
+            "inode": 42,
+            "mode": 493,
+            "path": "/synthetic/public/libc.so.6",
+            "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+            "size_bytes": 8192,
+            "uid": 0
+          },
+          "symbol_file_offset": 512
+        },
+        "syscall": {
+          "actual_mapping": "1000-2000 r-xp 00000000 08:01 42 /synthetic/public/libc.so.6",
+          "actual_pointer": 4352,
+          "image": {
+            "device": 2049,
+            "inode": 42,
+            "mode": 493,
+            "path": "/synthetic/public/libc.so.6",
+            "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+            "size_bytes": 8192,
+            "uid": 0
+          },
+          "symbol_file_offset": 256
+        }
+      },
+      "sys_executable": "/synthetic/selected/python",
+      "sys_version": "explicit synthetic Python version; no interpreter or target qualification"
+    },
+    "calls": [
+      {
+        "arguments": {
+          "flags": 0,
+          "pid": 101,
+          "syscall": 434
+        },
+        "call_budget": "ordinary",
+        "errno": 0,
+        "finished_at_seconds": 10.1,
+        "name": "pidfd_open",
+        "phase": "self_preflight",
+        "producer_pid": 101,
+        "result": 7,
+        "sequence": 0,
+        "started_at_seconds": 10.0
+      },
+      {
+        "arguments": {
+          "fd": 7,
+          "flags": 0,
+          "siginfo": null,
+          "signal": 0,
+          "syscall": 424
+        },
+        "call_budget": "ordinary",
+        "errno": 0,
+        "finished_at_seconds": 11.1,
+        "name": "pidfd_send_signal",
+        "phase": "self_preflight",
+        "producer_pid": 101,
+        "result": 0,
+        "sequence": 1,
+        "started_at_seconds": 11.0
+      },
+      {
+        "arguments": {
+          "fd": 7
+        },
+        "call_budget": "reserved_descriptor_cleanup",
+        "errno": 0,
+        "finished_at_seconds": 12.1,
+        "name": "close",
+        "phase": "self_preflight",
+        "producer_pid": 101,
+        "result": 0,
+        "sequence": 2,
+        "started_at_seconds": 12.0
+      }
+    ],
+    "contract": {
+      "kind": "linux-x86-64-libc-syscall-pidfd-version-1",
+      "selected_python": {
+        "actual_running_image_path": "/synthetic/selected/python"
+      },
+      "symbols": {
+        "close": {
+          "image": {
+            "device": 2049,
+            "inode": 42,
+            "mode": 493,
+            "path": "/synthetic/public/libc.so.6",
+            "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+            "size_bytes": 8192,
+            "uid": 0
+          },
+          "symbol_file_offset": 512
+        },
+        "syscall": {
+          "image": {
+            "device": 2049,
+            "inode": 42,
+            "mode": 493,
+            "path": "/synthetic/public/libc.so.6",
+            "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+            "size_bytes": 8192,
+            "uid": 0
+          },
+          "symbol_file_offset": 256
+        }
+      }
+    },
+    "descriptor_events": [
+      {
+        "call_sequence": 0,
+        "descriptor": 7,
+        "event_sequence": 0,
+        "identity": {
+          "device": 6,
+          "fdinfo_sha256": "4e538d8e50bc896d3ce9ca130c245a326da462167f281edbdf0033d86d05af3e",
+          "flags": 524290,
+          "inheritable": false,
+          "inode": 1077,
+          "pid": 101,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t5\nino:\t77\nPid:\t101\nNSpid:\t101\n"
+        },
+        "observed_at_seconds": 10.15,
+        "open_generation": 0,
+        "opened_pid": 101,
+        "operation": "pidfd_open"
+      },
+      {
+        "call_sequence": 1,
+        "descriptor": 7,
+        "event_sequence": 1,
+        "identity": {
+          "device": 6,
+          "fdinfo_sha256": "4e538d8e50bc896d3ce9ca130c245a326da462167f281edbdf0033d86d05af3e",
+          "flags": 524290,
+          "inheritable": false,
+          "inode": 1077,
+          "pid": 101,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t5\nino:\t77\nPid:\t101\nNSpid:\t101\n"
+        },
+        "observed_at_seconds": 10.9,
+        "open_generation": 0,
+        "opened_pid": 101,
+        "operation": "pidfd_send_signal"
+      },
+      {
+        "call_sequence": 2,
+        "descriptor": 7,
+        "event_sequence": 2,
+        "identity": {
+          "device": 6,
+          "fdinfo_sha256": "4e538d8e50bc896d3ce9ca130c245a326da462167f281edbdf0033d86d05af3e",
+          "flags": 524290,
+          "inheritable": false,
+          "inode": 1077,
+          "pid": 101,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t5\nino:\t77\nPid:\t101\nNSpid:\t101\n"
+        },
+        "observed_at_seconds": 11.9,
+        "open_generation": 0,
+        "opened_pid": 101,
+        "operation": "close"
+      }
+    ],
+    "gpu_or_cuda_qualification": false,
+    "kind": "linux-x86-64-libc-syscall-pidfd-version-1",
+    "maximum_cleanup_records_per_open": 3,
+    "native_call_failure": false,
+    "numeric_pid_signal_fallback": false,
+    "open_handle_count": 0,
+    "ordinary_call_count": 2,
+    "ordinary_call_limit": 4096,
+    "preflight_call_count": 3,
+    "preflight_passed": true,
+    "python_exports_changed": false,
+    "reserved_cleanup_call_count": 1,
+    "scientific_credit": 0
+  },
+  "error": "pidfd raw inode, process or CLOEXEC flags differ from its retained descriptor",
+  "mutation": "all per-generation summary inodes changed; retained raw fdinfo ino remains original",
+  "original": {
+    "bootstrap": {
+      "gpu_or_cuda_qualification": false,
+      "pid": 101,
+      "symbols": {
+        "close": {
+          "actual_mapping": "1000-2000 r-xp 00000000 08:01 42 /synthetic/public/libc.so.6",
+          "actual_pointer": 4608,
+          "image": {
+            "device": 2049,
+            "inode": 42,
+            "mode": 493,
+            "path": "/synthetic/public/libc.so.6",
+            "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+            "size_bytes": 8192,
+            "uid": 0
+          },
+          "symbol_file_offset": 512
+        },
+        "syscall": {
+          "actual_mapping": "1000-2000 r-xp 00000000 08:01 42 /synthetic/public/libc.so.6",
+          "actual_pointer": 4352,
+          "image": {
+            "device": 2049,
+            "inode": 42,
+            "mode": 493,
+            "path": "/synthetic/public/libc.so.6",
+            "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+            "size_bytes": 8192,
+            "uid": 0
+          },
+          "symbol_file_offset": 256
+        }
+      },
+      "sys_executable": "/synthetic/selected/python",
+      "sys_version": "explicit synthetic Python version; no interpreter or target qualification"
+    },
+    "calls": [
+      {
+        "arguments": {
+          "flags": 0,
+          "pid": 101,
+          "syscall": 434
+        },
+        "call_budget": "ordinary",
+        "errno": 0,
+        "finished_at_seconds": 10.1,
+        "name": "pidfd_open",
+        "phase": "self_preflight",
+        "producer_pid": 101,
+        "result": 7,
+        "sequence": 0,
+        "started_at_seconds": 10.0
+      },
+      {
+        "arguments": {
+          "fd": 7,
+          "flags": 0,
+          "siginfo": null,
+          "signal": 0,
+          "syscall": 424
+        },
+        "call_budget": "ordinary",
+        "errno": 0,
+        "finished_at_seconds": 11.1,
+        "name": "pidfd_send_signal",
+        "phase": "self_preflight",
+        "producer_pid": 101,
+        "result": 0,
+        "sequence": 1,
+        "started_at_seconds": 11.0
+      },
+      {
+        "arguments": {
+          "fd": 7
+        },
+        "call_budget": "reserved_descriptor_cleanup",
+        "errno": 0,
+        "finished_at_seconds": 12.1,
+        "name": "close",
+        "phase": "self_preflight",
+        "producer_pid": 101,
+        "result": 0,
+        "sequence": 2,
+        "started_at_seconds": 12.0
+      }
+    ],
+    "contract": {
+      "kind": "linux-x86-64-libc-syscall-pidfd-version-1",
+      "selected_python": {
+        "actual_running_image_path": "/synthetic/selected/python"
+      },
+      "symbols": {
+        "close": {
+          "image": {
+            "device": 2049,
+            "inode": 42,
+            "mode": 493,
+            "path": "/synthetic/public/libc.so.6",
+            "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+            "size_bytes": 8192,
+            "uid": 0
+          },
+          "symbol_file_offset": 512
+        },
+        "syscall": {
+          "image": {
+            "device": 2049,
+            "inode": 42,
+            "mode": 493,
+            "path": "/synthetic/public/libc.so.6",
+            "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+            "size_bytes": 8192,
+            "uid": 0
+          },
+          "symbol_file_offset": 256
+        }
+      }
+    },
+    "descriptor_events": [
+      {
+        "call_sequence": 0,
+        "descriptor": 7,
+        "event_sequence": 0,
+        "identity": {
+          "device": 6,
+          "fdinfo_sha256": "4e538d8e50bc896d3ce9ca130c245a326da462167f281edbdf0033d86d05af3e",
+          "flags": 524290,
+          "inheritable": false,
+          "inode": 77,
+          "pid": 101,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t5\nino:\t77\nPid:\t101\nNSpid:\t101\n"
+        },
+        "observed_at_seconds": 10.15,
+        "open_generation": 0,
+        "opened_pid": 101,
+        "operation": "pidfd_open"
+      },
+      {
+        "call_sequence": 1,
+        "descriptor": 7,
+        "event_sequence": 1,
+        "identity": {
+          "device": 6,
+          "fdinfo_sha256": "4e538d8e50bc896d3ce9ca130c245a326da462167f281edbdf0033d86d05af3e",
+          "flags": 524290,
+          "inheritable": false,
+          "inode": 77,
+          "pid": 101,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t5\nino:\t77\nPid:\t101\nNSpid:\t101\n"
+        },
+        "observed_at_seconds": 10.9,
+        "open_generation": 0,
+        "opened_pid": 101,
+        "operation": "pidfd_send_signal"
+      },
+      {
+        "call_sequence": 2,
+        "descriptor": 7,
+        "event_sequence": 2,
+        "identity": {
+          "device": 6,
+          "fdinfo_sha256": "4e538d8e50bc896d3ce9ca130c245a326da462167f281edbdf0033d86d05af3e",
+          "flags": 524290,
+          "inheritable": false,
+          "inode": 77,
+          "pid": 101,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t5\nino:\t77\nPid:\t101\nNSpid:\t101\n"
+        },
+        "observed_at_seconds": 11.9,
+        "open_generation": 0,
+        "opened_pid": 101,
+        "operation": "close"
+      }
+    ],
+    "gpu_or_cuda_qualification": false,
+    "kind": "linux-x86-64-libc-syscall-pidfd-version-1",
+    "maximum_cleanup_records_per_open": 3,
+    "native_call_failure": false,
+    "numeric_pid_signal_fallback": false,
+    "open_handle_count": 0,
+    "ordinary_call_count": 2,
+    "ordinary_call_limit": 4096,
+    "preflight_call_count": 3,
+    "preflight_passed": true,
+    "python_exports_changed": false,
+    "reserved_cleanup_call_count": 1,
+    "scientific_credit": 0
+  },
+  "source_sha256": "fab67cb91dfc5e82299547452213a3373c4a92baa569235751b51d273958956a",
+  "synthetic_saved_metadata_only": true
+}

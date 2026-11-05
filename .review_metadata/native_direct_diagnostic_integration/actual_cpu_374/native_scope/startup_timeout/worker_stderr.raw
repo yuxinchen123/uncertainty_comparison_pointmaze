@@ -1,0 +1,13 @@
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-04-22-37_direct-native-process-diagnostic_selected-python-3.12_contract-observation-only_environment-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/native_direct_tool_cpu_worker.py", line 142, in <module>
+    run(sys.argv[1], sys.argv[2])
+  File "/p/rlprojects/RND_worktrees/2026-11-04-22-37_direct-native-process-diagnostic_selected-python-3.12_contract-observation-only_environment-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/native_direct_tool_cpu_worker.py", line 111, in run
+    result["payload_exit_observed_by_independent_pidfd"] = observer.handle_exited(independent_handles[actual["payload_pid"]])
+                                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/p/rlprojects/RND_worktrees/2026-11-04-22-37_direct-native-process-diagnostic_selected-python-3.12_contract-observation-only_environment-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/linux_pidfd_process_control.py", line 312, in handle_exited
+    self.retained(descriptor)
+  File "/p/rlprojects/RND_worktrees/2026-11-04-22-37_direct-native-process-diagnostic_selected-python-3.12_contract-observation-only_environment-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/linux_pidfd_process_control.py", line 241, in retained
+    require(type(descriptor) is int and descriptor in self.handles, "the descriptor was not opened by this provider")
+  File "/p/rlprojects/RND_worktrees/2026-11-04-22-37_direct-native-process-diagnostic_selected-python-3.12_contract-observation-only_environment-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/linux_pidfd_process_control.py", line 23, in require
+    raise ValueError(message)
+ValueError: the descriptor was not opened by this provider

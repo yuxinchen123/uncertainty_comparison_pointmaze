@@ -1,0 +1,32 @@
+{
+  "actual_own_self_and_fresh_own_CPU_children_only": true,
+  "admission_granted": false,
+  "errors": [
+    {
+      "test": "test_default_child_guard_order_and_absent_native_bootstrap_are_preserved (test_native_diagnostic_order.NativeDiagnosticOrderTests.test_default_child_guard_order_and_absent_native_bootstrap_are_preserved) (role='direct-owned-capture')",
+      "traceback": "Traceback (most recent call last):\n  File \"/p/rlprojects/RND_worktrees/2026-11-04-22-37_direct-native-process-diagnostic_selected-python-3.12_contract-observation-only_environment-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_native_diagnostic_order.py\", line 58, in test_default_child_guard_order_and_absent_native_bootstrap_are_preserved\n    with self.subTest(role=role):self.run_role(role, False)\n                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/p/rlprojects/RND_worktrees/2026-11-04-22-37_direct-native-process-diagnostic_selected-python-3.12_contract-observation-only_environment-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_native_diagnostic_order.py\", line 48, in run_role\n    if role != 'producer':self.assertLess(events.index('guard'), events.index('read_plan'))\n                                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^\nValueError: 'read_plan' is not in list\n"
+    }
+  ],
+  "failures": [],
+  "finished_at_seconds": 1793861901.9732702,
+  "historical_python_source_tests": 1,
+  "historical_source_returncode": 0,
+  "hostname": "heartpiece",
+  "job_id": "6783003",
+  "kind": "author_native_direct_diagnostic_integration_owned_CPU_tests",
+  "passed": false,
+  "pid": 1240613,
+  "python": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+  "scientific_credit": 0,
+  "selected_python_tests": 121,
+  "source_and_protected_unchanged": true,
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-22-37_direct-native-process-diagnostic_selected-python-3.12_contract-observation-only_environment-transitions-0/.review_metadata/native_direct_diagnostic_integration/author_source_freeze_4.json",
+    "sha256": "f8c3bd5acce7ae3b4783c0ac14a86efe1c48be45c735dab86b20f3c7fc096cbc"
+  },
+  "started_at_seconds": 1793861888.8001277,
+  "step_id": "379",
+  "sys_version": "3.12.13 | packaged by conda-forge | (main, Aug 11 2026, 10:27:28) [GCC 14.4.0]",
+  "tests_run": 122,
+  "tool_or_GPU_or_standing_GPU_lock_action": false
+}
