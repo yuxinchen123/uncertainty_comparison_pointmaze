@@ -8,6 +8,7 @@ import json
 import os
 from pathlib import Path
 import re
+import stat
 import subprocess
 import tempfile
 import textwrap
@@ -246,25 +247,135 @@ def selected_unit_job(directory, unit, jobs):
             "requested_gpu": "RTX A4500 requested" if "--gres=gpu:nvidia_rtx_a4500:1" in command else None}
 
 
+def direct_unit_display(directory, unit, progress, hardware, current_processes):
+    """Read only direct preparation/registration metadata, never a scientific producer or device."""
+    plan_path = unit / "measurement_plan.json"
+    if not plan_path.exists() and not plan_path.is_symlink():
+        return None
+    def document(path, reference=None):
+        if path.resolve(strict=True) != path or path.is_symlink():
+            raise ValueError("direct display metadata requires its exact ordinary path")
+        descriptor = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+        try:
+            if not stat.S_ISREG(os.fstat(descriptor).st_mode):
+                raise ValueError("direct display metadata must be an ordinary file")
+            with os.fdopen(os.dup(descriptor), "rb") as stream:
+                raw = stream.read(4 * 1024 * 1024 + 1)
+        finally:
+            os.close(descriptor)
+        if len(raw) > 4 * 1024 * 1024 or reference is not None and reference != {"path": str(path), "sha256": hashlib.sha256(raw).hexdigest()}:
+            raise ValueError("direct display metadata changed or exceeded its bound")
+        return json.loads(raw), raw
+    plan, raw = document(plan_path)
+    if not isinstance(plan, dict) or "direct_binding" not in plan or plan.get("kind") != "selected_configuration_measurement":
+        return None
+    phase = (progress or {}).get("state")
+    if phase in {"completed", "checkpointed", "failed", "superseded"}:
+        return None
+    binding = plan["direct_binding"]
+    profile = binding.get("profile", {}) if isinstance(binding, dict) else {}
+    if (type(plan.get("schema_version")) is not int or plan["schema_version"] != 1
+            or not isinstance(binding, dict) or type(binding.get("schema_version")) is not int or binding["schema_version"] != 1
+            or plan.get("campaign_run_dir") != str(directory) or plan.get("unit_id") != unit.name
+            or plan.get("mode") not in {"correctness", "confirmation"} or plan.get("hardware_class") != "h100"
+            or plan.get("gpu_uuid") != "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3"
+            or profile.get("gpu_uuid") != plan["gpu_uuid"] or profile.get("hostname") != "serval02" or profile.get("model") != "NVIDIA H100 NVL"
+            or type(profile.get("uid")) is not int or profile["uid"] != 2618919
+            or binding.get("consumer") != "selected_measurement"
+            or binding.get("current_launch_inputs_path") != str(unit / "direct_current_launch.json")):
+        raise ValueError("direct display plan does not identify the exact authorized campaign/unit/target")
+    prepared, unused = document(unit / "measurement_prepared.json")
+    reference = {"path": str(plan_path), "sha256": hashlib.sha256(raw).hexdigest()}
+    if prepared != {"plan_sha256": reference["sha256"]}:
+        raise ValueError("direct display preparation does not bind this exact plan")
+    base = {"pool": "serval02", "gpu": ["NVIDIA H100 NVL"], "job_id": "", "scientific_credit": 0, "admission_authority": False}
+    if hardware.get("slurm_job_id") not in (None, ""):
+        raise ValueError("a direct unit cannot claim a Slurm job identifier")
+    preparation = {None, "planned", "prepared", "prepared_not_submitted", "prepared_not_launched", "bound", "bound_not_launched"}
+    launch_path = unit / "direct_current_launch.json"
+    if not launch_path.exists() and not launch_path.is_symlink():
+        if phase not in preparation or hardware:
+            raise ValueError("direct execution progress has no exact owned registration")
+        packet = directory / "remote_setup" / unit.name
+        metadata_binding = packet / "controller_bound_metadata.json"
+        if metadata_binding.exists() or metadata_binding.is_symlink():
+            bound, unused = document(metadata_binding)
+            if (type(bound.get("schema_version")) is not int or bound["schema_version"] != 1
+                    or bound.get("kind") != "actual_prepared_direct_common_timing_controller_inputs"
+                    or bound.get("plan") != reference):
+                raise ValueError("direct controller metadata binding names another prepared plan")
+            request, unused = document(packet / "preparation_request.json", bound["request"])
+            if (request.get("kind") != "direct_common_timing_preparation_request"
+                    or request.get("campaign_run_dir") != str(directory) or request.get("packet") != str(packet)
+                    or request.get("data_unit") != str(unit) or request.get("unit_id") != unit.name):
+                raise ValueError("direct controller metadata binding names another campaign or unit")
+            return {**base, "state": "planned", "progress": "controller metadata bound; owned registration and launch not recorded"}
+        return {**base, "state": "planned", "progress": "prepared; owned registration and launch not recorded"}
+    launch, unused = document(launch_path)
+    row, ledger = launch["process_row"], launch["process_ledger"]
+    if (type(launch.get("schema_version")) is not int or launch["schema_version"] != 1
+            or launch.get("kind") != "serval02_card1_current_launch" or launch.get("plan") != reference
+            or ledger.get("source_path") != str(directory / "processes.json")
+            or ledger.get("snapshot", {}).get("path") != str(unit / "direct_current_process_ledger_snapshot.json")
+            or row.get("hostname") != "serval02" or row.get("gpu_uuid") != plan["gpu_uuid"]
+            or row.get("unit") != unit.name or row.get("kind") != plan["kind"]
+            or row.get("source_root") != plan.get("source_root") or row.get("source_commit") != plan.get("source_commit")
+            or row.get("helper_commit") != plan.get("helpers", {}).get("source_commit")
+            or type(row.get("pid")) is not int or row["pid"] <= 0
+            or not isinstance(row.get("start_time"), str) or not re.fullmatch(r"[1-9][0-9]*", row["start_time"])):
+        raise ValueError("direct display registration names another source, target or process birth")
+    rows, unused = document(Path(ledger["snapshot"]["path"]), ledger["snapshot"])
+    if (not isinstance(rows, list) or any(not isinstance(item, dict) for item in rows)
+            or sum(item == row for item in rows) != 1
+            or sum(all(item.get(key) == row[key] for key in ("hostname", "pid", "start_time")) for item in rows) != 1):
+        raise ValueError("direct display owner is missing, duplicated or substituted in its frozen ledger")
+    if (not isinstance(current_processes, list) or any(not isinstance(item, dict) for item in current_processes)
+            or sum(item == row for item in current_processes) != 1
+            or sum(all(item.get(key) == row[key] for key in ("hostname", "pid", "start_time")) for item in current_processes) != 1):
+        raise ValueError("direct display owner is missing, duplicated or substituted in the current campaign ledger")
+    if phase in preparation:
+        return {**base, "state": "planned", "progress": "owned registration recorded; numerical progress not observed"}
+    if phase in {"waiting_for_standing_lock", "waiting_for_predecessor"}:
+        return {**base, "state": "waiting", "progress": phase.replace("_", " ")}
+    if phase not in {"initializing", "normalization_warmup", "compile_warmup", "correctness_passed", "running"}:
+        raise ValueError("unknown direct progress phase is not execution evidence")
+    if (hardware.get("hostname") != row["hostname"] or hardware.get("pid") != row["pid"]
+            or hardware.get("process_start_time") != row["start_time"] or hardware.get("gpu_uuid") != plan["gpu_uuid"]
+            or hardware.get("slurm_job_id") not in (None, "")):
+        raise ValueError("direct progress lacks matching actual process/hardware metadata")
+    return {**base, "state": "running", "progress": "owned direct execution progress recorded"}
+
+
 def unit_rows(directory, excluded_unit_names=(), jobs=()):
     """Read one small status file per unit without retaining training histories."""
     rows = []
-    hosts = process_hosts(read_json(directory / "processes.json"))
+    current_processes = read_json(directory / "processes.json")
+    hosts = process_hosts(current_processes)
     actions = read_json(directory / "next_actions.json") or {}
     superseded = set(actions.get("packing_device_memory_failure_receipt", {}).get("preserved_unsubmitted_preparations", []))
     # A 252-byte auxiliary directory is valid, but adding ".json" would exceed
     # the filesystem's filename limit. Match only filenames that actually exist.
     specifications = {path.stem: path for path in (directory / "queue/specifications").glob("*.json")}
     final_statuses = {path.stem: path for path in (directory / "final_training_queue/status").glob("*.json")}
-    for path in sorted((directory / "data").glob("*/progress.json")):
+    progress_paths = {path.parent: path for path in (directory / "data").glob("*/progress.json")}
+    for plan_path in (directory / "data").glob("*/measurement_plan.json"):
+        try:
+            plan = read_json(plan_path)
+        except (OSError, ValueError, TypeError):
+            continue
+        if isinstance(plan, dict) and "direct_binding" in plan and plan.get("kind") == "selected_configuration_measurement":
+            progress_paths.setdefault(plan_path.parent, plan_path.parent / "progress.json")
+    for path in sorted(progress_paths.values()):
         if path.parent.name in excluded_unit_names:
             continue
         value = read_json(path)
+        if value is None:
+            value = {"state": "prepared_not_submitted"}
         hardware = read_json(path.parent / "hardware.json") or {}
         specification_path = specifications.get(path.parent.name)
         specification = read_json(specification_path) if specification_path is not None else None
         result = read_json(path.parent / "result.json") if value["state"] == "completed" else None
-        age = time.time() - path.stat().st_mtime
+        age = time.time() - (path if path.exists() else path.parent / "measurement_plan.json").stat().st_mtime
         phase = value["state"]
         state = ("waiting" if phase.startswith("waiting") else phase
                  if phase in {"completed", "checkpointed", "failed", "initializing", "normalization_warmup"}
@@ -348,6 +459,17 @@ def unit_rows(directory, excluded_unit_names=(), jobs=()):
                 progress += "; " + selected_job["progress"]
             if selected_job["state"] == "unknown":
                 hardware, selected, group = {}, [], None
+        direct = None
+        if not failure:
+            try:
+                direct = direct_unit_display(directory, path.parent, value, hardware, current_processes)
+            except (OSError, ValueError, TypeError, KeyError, AttributeError) as error:
+                direct = {"state": "unknown", "progress": "direct ownership metadata error: " + str(error),
+                          "pool": "unknown", "gpu": [], "job_id": "", "scientific_credit": 0, "admission_authority": False}
+        if direct is not None:
+            state = direct["state"]
+            if state != "running":
+                progress = direct["progress"]
         row = {"run": name, "pool": group["pool"] if group else hardware.get("hostname", hosts.get(path.parent.name,
                          selected_job.get("node") or "UVA gpu" if selected_job is not None else "unknown")),
                      "gpu": group["gpu"] if group else selected[1:2] or
@@ -357,6 +479,9 @@ def unit_rows(directory, excluded_unit_names=(), jobs=()):
         if selected_job is not None:
             row["selected_owned_job"] = bool(selected_job["job_id"])
             row["selected_unit_name"] = path.parent.name
+        if direct is not None:
+            row.update(pool=direct["pool"], gpu=selected[1:2] or direct["gpu"], slurm_job_id="",
+                       direct_metadata_display_only=True, scientific_credit=0, admission_authority=False)
         rows.append(row)
     return rows
 

@@ -1,0 +1,52 @@
+test_bound_registration_without_numerical_progress_is_planned (independent_monitor_direct_fixture.DirectDisplayTests) ... ok
+test_controller_metadata_binding_does_not_claim_registration_or_running (independent_monitor_direct_fixture.DirectDisplayTests) ... ok
+test_direct_metadata_cannot_claim_a_slurm_identifier_or_other_birth (independent_monitor_direct_fixture.DirectDisplayTests) ... ok
+test_initial_direct_worker_without_selected_plan_keeps_existing_display (independent_monitor_direct_fixture.DirectDisplayTests) ... ok
+test_prepared_phase_names_stay_planned (independent_monitor_direct_fixture.DirectDisplayTests) ... ok
+test_prepared_without_progress_is_visible_once_and_not_running (independent_monitor_direct_fixture.DirectDisplayTests) ... ok
+test_running_needs_registration_progress_and_matching_actual_hardware (independent_monitor_direct_fixture.DirectDisplayTests) ... ok
+test_unknown_phase_and_duplicate_owner_are_not_running (independent_monitor_direct_fixture.DirectDisplayTests) ... ok
+test_current_registration_removed_or_substituted_cannot_be_running (__main__.ExtraDisplayBoundaries) ... test_failure_and_completed_result_keep_priority (__main__.ExtraDisplayBoundaries) ... ok
+test_other_function_hashes_and_no_scientific_reader_authority (__main__.ExtraDisplayBoundaries) ... ok
+test_wrong_registered_source_unit_UUID_and_plan_are_unknown (__main__.ExtraDisplayBoundaries) ... ok
+
+======================================================================
+ERROR: test_current_registration_removed_or_substituted_cannot_be_running (__main__.ExtraDisplayBoundaries) (mode='duplicate')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-05-02-03_monitor-direct-unit-display_prepared-bound-unlaunched_running-owned-registration-and-progress_gpu-count-0/.review_metadata/direct_unit_monitor_display/independent_focused_display_review.py", line 51, in test_current_registration_removed_or_substituted_cannot_be_running
+    row=monitor.unit_rows(f.run)[0]
+  File "/p/rlprojects/RND_worktrees/2026-11-05-02-03_monitor-direct-unit-display_prepared-bound-unlaunched_running-owned-registration-and-progress_gpu-count-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/monitor.py", line 348, in unit_rows
+    hosts = process_hosts(read_json(directory / "processes.json"))
+  File "/p/rlprojects/RND_worktrees/2026-11-05-02-03_monitor-direct-unit-display_prepared-bound-unlaunched_running-owned-registration-and-progress_gpu-count-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/monitor.py", line 126, in process_hosts
+    raise ValueError("duplicate process unit identity: " + unit)
+ValueError: duplicate process unit identity: direct_common_copy_one
+
+======================================================================
+FAIL: test_current_registration_removed_or_substituted_cannot_be_running (__main__.ExtraDisplayBoundaries) (mode='missing')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-05-02-03_monitor-direct-unit-display_prepared-bound-unlaunched_running-owned-registration-and-progress_gpu-count-0/.review_metadata/direct_unit_monitor_display/independent_focused_display_review.py", line 53, in test_current_registration_removed_or_substituted_cannot_be_running
+    self.assertNotEqual(row['state'],'running','a missing/substituted/duplicate current campaign registration was promoted to RUNNING')
+AssertionError: 'running' == 'running' : a missing/substituted/duplicate current campaign registration was promoted to RUNNING
+
+======================================================================
+FAIL: test_current_registration_removed_or_substituted_cannot_be_running (__main__.ExtraDisplayBoundaries) (mode='other_birth')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-05-02-03_monitor-direct-unit-display_prepared-bound-unlaunched_running-owned-registration-and-progress_gpu-count-0/.review_metadata/direct_unit_monitor_display/independent_focused_display_review.py", line 53, in test_current_registration_removed_or_substituted_cannot_be_running
+    self.assertNotEqual(row['state'],'running','a missing/substituted/duplicate current campaign registration was promoted to RUNNING')
+AssertionError: 'running' == 'running' : a missing/substituted/duplicate current campaign registration was promoted to RUNNING
+
+======================================================================
+FAIL: test_current_registration_removed_or_substituted_cannot_be_running (__main__.ExtraDisplayBoundaries) (mode='other_source')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-05-02-03_monitor-direct-unit-display_prepared-bound-unlaunched_running-owned-registration-and-progress_gpu-count-0/.review_metadata/direct_unit_monitor_display/independent_focused_display_review.py", line 53, in test_current_registration_removed_or_substituted_cannot_be_running
+    self.assertNotEqual(row['state'],'running','a missing/substituted/duplicate current campaign registration was promoted to RUNNING')
+AssertionError: 'running' == 'running' : a missing/substituted/duplicate current campaign registration was promoted to RUNNING
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.115s
+
+FAILED (failures=3, errors=1)

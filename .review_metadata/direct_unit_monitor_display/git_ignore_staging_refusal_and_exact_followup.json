@@ -1,0 +1,12 @@
+{
+  "cause": "The existing repository ignore rule refused25 explicitly rostered JSON review and receipt paths. The source commit command still ran; source bytes were not changed.",
+  "correction": "Add only the exact56 rostered text paths and this metadata using git add -f, preserving the first local commit as the next parent.",
+  "first_partial_local_commit": "4018d7e96661d4a4d44e3204650900b520e6669b",
+  "first_partial_paths": 31,
+  "intended_rostered_paths": 56,
+  "kind": "preserved_exact_json_staging_refusal_and_narrow_followup",
+  "push_performed": false,
+  "schema_version": 1,
+  "source_changed": false,
+  "tests_repeated": false
+}
