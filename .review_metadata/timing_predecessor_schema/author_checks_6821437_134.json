@@ -1,0 +1,67 @@
+{
+  "actual_result_read_once": true,
+  "actual_two_copy_unit_created": false,
+  "errors": [],
+  "failures": [],
+  "finished_at_seconds": 1793892399.1340055,
+  "historical_raw_consumer_replayed": false,
+  "job_id": "6821437",
+  "kind": "narrow_timing_predecessor_actual_schema_author_checks",
+  "numerical_or_gpu_operations": 0,
+  "passed": true,
+  "projection_is_schema_fixture_only": true,
+  "scientific_credit": 0,
+  "source_after": {
+    ".review_metadata/timing_predecessor_schema/controller_published_d225.py": {
+      "bytes": 62194,
+      "mode": "0o660",
+      "sha256": "8e567998fc5209f5ff4370338fe62bf78391b7c5637adf989572b42486adcb0e"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_timing_controller.py": {
+      "bytes": 70177,
+      "mode": "0o660",
+      "sha256": "1d8bb43df5c4c247e28bb3d588674e8d3cd7718363c62584bc57267d67af10e2"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/prepare_direct_common_timing.py": {
+      "bytes": 15066,
+      "mode": "0o660",
+      "sha256": "5a09d3228beb6ebf843e595ba9fd743d53bfcabd1bcc5f93b37704fb43fa0cb0"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_timing_predecessor_actual_schema.py": {
+      "bytes": 10377,
+      "mode": "0o660",
+      "sha256": "aeae37317b82488a928444fa21101c0c860eaa0548127328e6e9bd6cff6c28da"
+    }
+  },
+  "source_before": {
+    ".review_metadata/timing_predecessor_schema/controller_published_d225.py": {
+      "bytes": 62194,
+      "mode": "0o660",
+      "sha256": "8e567998fc5209f5ff4370338fe62bf78391b7c5637adf989572b42486adcb0e"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_timing_controller.py": {
+      "bytes": 70177,
+      "mode": "0o660",
+      "sha256": "1d8bb43df5c4c247e28bb3d588674e8d3cd7718363c62584bc57267d67af10e2"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/prepare_direct_common_timing.py": {
+      "bytes": 15066,
+      "mode": "0o660",
+      "sha256": "5a09d3228beb6ebf843e595ba9fd743d53bfcabd1bcc5f93b37704fb43fa0cb0"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_timing_predecessor_actual_schema.py": {
+      "bytes": 10377,
+      "mode": "0o660",
+      "sha256": "aeae37317b82488a928444fa21101c0c860eaa0548127328e6e9bd6cff6c28da"
+    }
+  },
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-07-20_h100-timing-predecessor_actual-confirmation-schema_two-copy-request_read-only-exits_gpu-actions-0/.review_metadata/timing_predecessor_schema/author_source_freeze_1.json",
+    "sha256": "989ce2b6c94898130977d3fa4954a3b96b2a730a1fd643340d3ee1e78356bd1e"
+  },
+  "source_unchanged": true,
+  "started_at_seconds": 1793892386.2413611,
+  "step_id": "134",
+  "synthetic_current_unit_helper_premise": true,
+  "tests_run": 7
+}

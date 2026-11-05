@@ -1,0 +1,27 @@
+{
+  "actual_controller_or_gpu_actions": 0,
+  "actual_two_copy_preparation_invoked": false,
+  "files": {
+    ".review_metadata/timing_predecessor_schema/controller_published_d225.py": {
+      "bytes": 62194,
+      "mode": "0o660",
+      "sha256": "8e567998fc5209f5ff4370338fe62bf78391b7c5637adf989572b42486adcb0e"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_timing_controller.py": {
+      "bytes": 70177,
+      "mode": "0o660",
+      "sha256": "1d8bb43df5c4c247e28bb3d588674e8d3cd7718363c62584bc57267d67af10e2"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/prepare_direct_common_timing.py": {
+      "bytes": 15066,
+      "mode": "0o660",
+      "sha256": "5a09d3228beb6ebf843e595ba9fd743d53bfcabd1bcc5f93b37704fb43fa0cb0"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_timing_predecessor_actual_schema.py": {
+      "bytes": 10377,
+      "mode": "0o660",
+      "sha256": "aeae37317b82488a928444fa21101c0c860eaa0548127328e6e9bd6cff6c28da"
+    }
+  },
+  "kind": "narrow_timing_predecessor_actual_schema_source_freeze"
+}

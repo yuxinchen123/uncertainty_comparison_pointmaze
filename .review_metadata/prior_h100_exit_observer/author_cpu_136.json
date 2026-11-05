@@ -1,0 +1,17 @@
+{
+  "kind": "prior_exit_observer_author_cpu_fixtures",
+  "slurm_job_id": "6821437",
+  "slurm_step_id": "136",
+  "tests": 11,
+  "errors": 0,
+  "failures": 0,
+  "passed": true,
+  "seconds": 0.015691254986450076,
+  "freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-07-23_prior-h100-exit-observation_controller-pid-386202_birth-84810007_numerical-pid-386669_birth-84815419_read-only-true_gpu-operations-0/source_and_test_freeze.json",
+    "sha256": "c2bdfc35c8f48512870b4fb12a74e402aaeadb029b474fbb5a66c6e3676a2019"
+  },
+  "target_proc_namespace_accessed": false,
+  "actual_remote_or_target_invocation": false,
+  "signals_or_gpu_operations": 0
+}

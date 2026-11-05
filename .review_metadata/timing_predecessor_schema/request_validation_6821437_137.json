@@ -1,0 +1,22 @@
+{
+  "actual_prepare_verify_claim_bind_ssh_or_gpu_invocations": 0,
+  "actual_result_payload_reread": false,
+  "changed_controller_functions": [
+    "check_serial_predecessor_inputs"
+  ],
+  "finished_at_seconds": 1793892604.6728785,
+  "helper_count": 29,
+  "job_id": "6821437",
+  "kind": "private_two_copy_request_metadata_validation",
+  "passed": true,
+  "protected_numerical_count": 13,
+  "request_semantics_exact": true,
+  "scientific_credit": 0,
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-07-20_h100-timing-predecessor_actual-confirmation-schema_two-copy-request_read-only-exits_gpu-actions-0/.review_metadata/timing_predecessor_schema/request_and_source_freeze.json",
+    "sha256": "ad9485a028e4dfc06acd8931d9083d93c8224fec695b0c0e357fe2292328338c"
+  },
+  "started_at_seconds": 1793892604.394439,
+  "step_id": "137",
+  "unchanged_controller_functions": 34
+}

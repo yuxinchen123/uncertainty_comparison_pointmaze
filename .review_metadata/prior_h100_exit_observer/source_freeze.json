@@ -1,0 +1,23 @@
+{
+  "kind": "held_read_only_exact_prior_h100_exit_observer_source",
+  "files": {
+    "observe_exact_prior_h100_exits.py": {
+      "sha256": "87bdf73927b03341ebe6b5b3d3600e8b77e62820b7f8c07f78c9ff5936ba9540",
+      "mode": "0o660",
+      "size_bytes": 7117
+    }
+  },
+  "expected_roles": {
+    "controller": {
+      "pid": 386202,
+      "birth": "84810007"
+    },
+    "numerical_child": {
+      "pid": 386669,
+      "birth": "84815419"
+    }
+  },
+  "actual_target_invocation_performed": false,
+  "signals_or_gpu_operations": 0,
+  "standard_output_kind": "owned_prior_direct_process_exit_observation"
+}

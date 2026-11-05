@@ -1,0 +1,41 @@
+{
+  "accepted_c2_correctness": {
+    "plan": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/measurement_plan.json",
+      "sha256": "03ce65d2eaf2182f029bfbbc526aaa64259101044000a846a5745ba66ba15406"
+    },
+    "result": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/result.json",
+      "sha256": "13977a20526e668ed6378d830c4cce97ed2a74714eac9174908179eed2dc36dc"
+    },
+    "review": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-02-00-06_h100-common-correctness_raw-review_copies-1-2_source-0a880984_helpers-26_before-seven-paired-rounds-ten-updates_gpu-count-0/copies_2_terminal_review/independent_actual_review.json",
+      "sha256": "b0aa9a0953a4079e592dd86c4c692c0b09b3958c891760a26103c7e3a7fa1bf6"
+    }
+  },
+  "accepted_one_copy_review": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-05-49_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/independent_actual_common_timing_review.json",
+    "sha256": "901a5805d7f768cd3b3159fe7e478fffdbee36280c2144f195ada1b3471bdf22"
+  },
+  "actual_h1_result_referenced_without_reread": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-05-49_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/result.json",
+    "sha256": "3b33aa81942f878a4de1ec0909ca5e72eda9a36275181489521495cf743872e5"
+  },
+  "actual_prepare_verify_claim_bind_or_launch_invocations": 0,
+  "base_request": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-05-49_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/preparation_request.json",
+    "sha256": "6905ccc61600faeec603f38923b70d83a5db9c583cd182f29de611bdfebd9294"
+  },
+  "current_cuda_backend_runtime_and_numerical_contracts_unchanged": true,
+  "kind": "private_two_copy_common_timing_request_derivation",
+  "only_request_semantic_changes": [
+    "n_copies1->2 in both arms",
+    "copy_seeds[1]->[1,2]",
+    "serial_order1->2",
+    "serial predecessor genuine H1 timing",
+    "common correctness genuine C2",
+    "fresh Pacific unit/packet paths"
+  ],
+  "optional_old_wrapper_source_commit_label_removed": true,
+  "source_claim_note": "d225 is preserved baseline; only serial-predecessor timing schema predicate is corrected and separately frozen. No future publication commit is guessed."
+}
