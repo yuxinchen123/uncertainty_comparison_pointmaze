@@ -1,0 +1,41 @@
+{
+  "actual_historical_metadata_compatibility": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-07-34_a4500-profile-preparation_common-gpu-types-2_copies-1-2_reviewed-native-process-contract_admission-closed_gpu-operations-0/.review_metadata/configured_profile_prerequisites/actual_historical_metadata_2.json",
+    "sha256": "7e246e942379a074a6cc399fe3c8839cc09626f1d87c1b3538889defcda81334"
+  },
+  "approved": false,
+  "changed_scope": [
+    "configured_profile_prerequisites.py",
+    "profile_selected.py metadata preparation/helper routing only",
+    "tests/test_configured_profile_prerequisites.py"
+  ],
+  "focused_author_checks": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-07-34_a4500-profile-preparation_common-gpu-types-2_copies-1-2_reviewed-native-process-contract_admission-closed_gpu-operations-0/.review_metadata/configured_profile_prerequisites/focused_author_2.json",
+    "sha256": "b1970ae2a7c1b53c4caebe37248faf917dcb18e54f86c7ea8f1695016c04a197"
+  },
+  "independent_review_pending": true,
+  "kind": "configured_profile_prerequisites_author_handoff",
+  "no_actual_preparation_or_target_action": true,
+  "parent": "90ea7a898d69ee23c51fff7cfbcfd0499a768e09",
+  "preserved_first_rejection": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-07-34_a4500-profile-preparation_common-gpu-types-2_copies-1-2_reviewed-native-process-contract_admission-closed_gpu-operations-0/.review_metadata/configured_profile_prerequisites/preserved_first_typed_review_rejection/preservation_manifest.json",
+    "sha256": "388428e40444e6bdef14521c7be34029c494a4eeba4bd718fb5770d4111be3de"
+  },
+  "proposal": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-07-34_a4500-profile-preparation_common-gpu-types-2_copies-1-2_reviewed-native-process-contract_admission-closed_gpu-operations-0/.review_metadata/configured_profile_prerequisites/preparation_inputs_proposal.json",
+    "sha256": "6cabcdd123fb949e404ba557a4a7a3eff0ef48810d1639473f95b7fc32115bdc"
+  },
+  "remaining_operation_admission": "closed; source metadata approval cannot replace actual qualification or both-GPU common performance",
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-07-34_a4500-profile-preparation_common-gpu-types-2_copies-1-2_reviewed-native-process-contract_admission-closed_gpu-operations-0/.review_metadata/configured_profile_prerequisites/source_freeze_2.json",
+    "sha256": "9d238cf5f29f61a94a55d448fe36f915fe177ca30ebb3142605236e44544a212"
+  },
+  "unchanged": [
+    "13 numerical files",
+    "_capture_core AST",
+    "unconditional configured profile execution admission",
+    "all private historical helper/source and result bytes",
+    "H100 direct profile path"
+  ],
+  "worktree": "/p/rlprojects/RND_worktrees/2026-11-05-07-34_a4500-profile-preparation_common-gpu-types-2_copies-1-2_reviewed-native-process-contract_admission-closed_gpu-operations-0"
+}

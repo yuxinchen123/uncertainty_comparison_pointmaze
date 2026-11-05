@@ -1,0 +1,35 @@
+{
+  "kind": "independent_a4500_profile_prerequisite_initial_findings",
+  "approved": false,
+  "held_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-07-34_a4500-profile-preparation_common-gpu-types-2_copies-1-2_reviewed-native-process-contract_admission-closed_gpu-operations-0/.review_metadata/configured_profile_prerequisites/source_freeze_3.json",
+    "sha256": "6bd5bea67787e3f09de1bc36eb4f192a0b8ab4f748ac56aa3b66eba4e3341e6d"
+  },
+  "required_corrections": [
+    {
+      "finding": "Proof and review reference derivation reads bytes before the declared size/owner/regular-file/stability checks.",
+      "reproduced_entries": [
+        "confirmation_metadata",
+        "configure_plan"
+      ],
+      "fixture": "A private synthetic sparse17MiB proof was never read; the read_bytes spy raised before metadata bound validation."
+    },
+    {
+      "finding": "The new runtime prerequisite route checks historical facts before collecting installed metadata, and its installed record has no package-version field or explicit comparison with the accepted original qualification.",
+      "actual_installed_record_keys": [
+        "jaxtari_source",
+        "gpu_libraries"
+      ],
+      "execution_guard_remains_closed": true
+    }
+  ],
+  "metadata_fixture_only": true,
+  "actual_large_payload_bytes_read": 0,
+  "actual_profile_preparation_or_GPU_or_numerical_or_remote_actions": 0,
+  "scientific_credit": 0,
+  "job_id": "6821437",
+  "step_id": "166",
+  "uid": 2618919,
+  "pid": 1108004,
+  "source_bytes_unchanged": true
+}

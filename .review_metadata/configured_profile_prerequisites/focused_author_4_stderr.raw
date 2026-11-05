@@ -1,0 +1,15 @@
+test_reference_derivation_refuses_oversized_or_unowned_inputs_before_opening (author_configured_profile_tests.MetadataPrerequisiteTests)
+Both preparation entry points apply the size/owner bound before any file read. ... ok
+test_current_package_library_and_jaxtari_metadata_must_equal_original_qualification (author_configured_profile_tests.MetadataPrerequisiteTests)
+Current versions and existing image hashes cannot silently replace qualified software. ... ok
+test_small_qualification_metadata_keeps_exact_source_profile_assets_and_package_schema (author_configured_profile_tests.MetadataPrerequisiteTests)
+The current software join uses a pinned original target, not a generic success record. ... ok
+test_actual_owned_metadata_duplicate_changed_and_symlink_refusals (author_configured_profile_tests.MetadataPrerequisiteTests)
+An ordinary matching file passes; ambiguous, changed and indirect bytes fail. ... ok
+test_full_four_context_metadata_fact_still_grants_no_operation_or_numerical_admission (author_configured_profile_tests.MetadataPrerequisiteTests)
+Complete synthetic reviews pass only with explicit unchanged snapshot/source premises. ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.024s
+
+OK

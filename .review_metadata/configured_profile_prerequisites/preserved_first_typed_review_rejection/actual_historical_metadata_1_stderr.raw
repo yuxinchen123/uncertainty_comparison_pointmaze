@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "<stdin>", line 39, in <module>
+srun: error: slurm2: task 0: Exited with exit code 1
+  File "/p/rlprojects/RND_worktrees/2026-11-05-07-34_a4500-profile-preparation_common-gpu-types-2_copies-1-2_reviewed-native-process-contract_admission-closed_gpu-operations-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_profile_prerequisites.py", line 224, in reviewed_context
+    require(review.get("kind") == "independent_actual_common_configuration_confirmation_review"
+  File "/p/rlprojects/RND_worktrees/2026-11-05-07-34_a4500-profile-preparation_common-gpu-types-2_copies-1-2_reviewed-native-process-contract_admission-closed_gpu-operations-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_profile_prerequisites.py", line 40, in require
+    raise ValueError(message)
+ValueError: the A4500 common performance lacks its genuine original staged-consumer/raw approval

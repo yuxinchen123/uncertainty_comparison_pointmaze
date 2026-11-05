@@ -1,0 +1,17 @@
+{
+  "actual_step": "6821437.168",
+  "explanation": "The original broad raw_result_payloads_opened and historical_payloads_rehashed flags refer only to timing results and captured binaries. The new code also read and hashed the bounded original qualification JSON to compare its backend metadata. This addendum states that actual scope without changing the saved check receipt.",
+  "kind": "historical_metadata_check_scope_clarification",
+  "large_captured_driver_or_backend_binary_payloads_opened_or_rehashed": false,
+  "new_current_target_qualification_claimed": false,
+  "old_raw_gate_consumers_reexecuted": false,
+  "original_qualification_JSON_bytes": 6637504,
+  "original_qualification_JSON_hashed_to_pinned_result_reference": true,
+  "original_qualification_JSON_metadata_opened": true,
+  "original_receipt": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-07-34_a4500-profile-preparation_common-gpu-types-2_copies-1-2_reviewed-native-process-contract_admission-closed_gpu-operations-0/.review_metadata/configured_profile_prerequisites/actual_historical_metadata_4.json",
+    "sha256": "e2e1ac4e1ce3bcedd8c7fc06b38f3db0a028cf22d0f2e3dc9ee766d3f2ff442c"
+  },
+  "original_receipt_preserved": true,
+  "timing_result_payloads_opened": false
+}

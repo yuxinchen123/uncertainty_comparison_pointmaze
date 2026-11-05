@@ -1,0 +1,67 @@
+{
+  "actual_contexts": [
+    {
+      "copies": 1,
+      "hardware_class": "jaguar03_rtx_a4500",
+      "review": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-20-35_common-a4500-confirmation-independent-raw-audit_copies-1_job-6783295_gpu-count-0_closed-historical-source-approvals_explicit-UTC-accounting/review.json",
+        "sha256": "c949d41603813be5344bd8d39a3a6ea357fb8cc45211e0e3cb9b5af80783794f"
+      }
+    },
+    {
+      "copies": 2,
+      "hardware_class": "jaguar03_rtx_a4500",
+      "review": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-20-37_common-a4500-confirmation-independent-raw-audit_copies-2_job-6783296_gpu-count-0_closed-historical-source-approvals_explicit-UTC-accounting/review.json",
+        "sha256": "6bd2243057e95c295279e725e17c9bca622f1e95061b5737643f842541fdc306"
+      }
+    },
+    {
+      "copies": 1,
+      "hardware_class": "h100",
+      "review": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-05-49_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/independent_actual_common_timing_review.json",
+        "sha256": "901a5805d7f768cd3b3159fe7e478fffdbee36280c2144f195ada1b3471bdf22"
+      }
+    },
+    {
+      "copies": 2,
+      "hardware_class": "h100",
+      "review": null,
+      "state": "requires actual successful result and independent raw review"
+    }
+  ],
+  "actual_helper_commit": null,
+  "actual_profile_preparation_attempted": false,
+  "helper_commit_state": "unknown until reviewed publication; root creates a clean exact checkout",
+  "independent_source_review": null,
+  "kind": "unprepared_configured_profile_metadata_input_proposal",
+  "new_cli": [
+    "--configured-profile-prerequisite-proof",
+    "--configured-profile-prerequisite-review"
+  ],
+  "operational_admission": false,
+  "remaining_actual_prerequisites": [
+    "accepted H100 common timing copies2 plus independent complete raw and terminal review",
+    "independent four-context prerequisite proof review",
+    "publish exact reviewed source and standard actual preparation inputs before canonical preparation",
+    "actual prepared-unit metadata and exact-source review",
+    "separate reviewed source/target numerical-profile admission; execution gate currently refuses all new configured profiles"
+  ],
+  "required_proof_schema": {
+    "campaign_run_dir": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1",
+    "contexts": "exactly the four real hardware/count independent-review references; no null entry accepted",
+    "initial_snapshot_inputs": "exact proof88791 and reviewac50 from existing H100 plan",
+    "kind": "reviewed_four_context_configured_profile_prerequisites",
+    "native_process_qualification": "exact native_process_control.expected_target_contract from genuinely reviewed process component426",
+    "operational_admission": false,
+    "schema_version": 1,
+    "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+    "target_qualification_inputs": "exact original A4500 result0c4f and review004f used by accepted A4500 common timing"
+  },
+  "required_review_kind": "independent_reviewed_four_context_configured_profile_prerequisites",
+  "source_files_held": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-07-34_a4500-profile-preparation_common-gpu-types-2_copies-1-2_reviewed-native-process-contract_admission-closed_gpu-operations-0/.review_metadata/configured_profile_prerequisites/source_freeze_2.json",
+    "sha256": "9d238cf5f29f61a94a55d448fe36f915fe177ca30ebb3142605236e44544a212"
+  }
+}

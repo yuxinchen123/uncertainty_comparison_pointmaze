@@ -11,6 +11,7 @@ import fcntl
 import hashlib
 import importlib
 import importlib.util
+from importlib import metadata as package_metadata
 import json
 import math
 import os
@@ -72,16 +73,22 @@ def tool_record(path):
     return {"path": str(actual), "version": version, "sha256": training.file_sha256(actual)}
 
 
-def helper_receipt(configured=False, direct=False, common=False, owned_processes=False, *, direct_profile=False, configured_native=False):
+def helper_receipt(configured=False, direct=False, common=False, owned_processes=False, *, direct_profile=False, configured_native=False, configured_prerequisites=False):
     """Bind every staged helper to its exact committed bytes."""
     root = SCRIPTS.parents[2]
     commit = subprocess.check_output(["git", "-C", str(root), "rev-parse", "HEAD"], text=True).strip()
     return training.source_receipt(root, commit, [str((SCRIPTS / name).relative_to(root)) for name in required_helpers(
-        configured, direct, common, owned_processes, direct_profile=direct_profile, configured_native=configured_native)])
+        configured, direct, common, owned_processes, direct_profile=direct_profile, configured_native=configured_native,
+        configured_prerequisites=configured_prerequisites)])
 
 
-def required_helpers(configured=False, direct=False, common=False, owned_processes=False, *, direct_profile=False, configured_native=False):
+def required_helpers(configured=False, direct=False, common=False, owned_processes=False, *, direct_profile=False, configured_native=False, configured_prerequisites=False):
     """Include the exact optional identity closure while preserving the default profile roster."""
+    if configured_prerequisites:
+        if not configured or direct or common or not owned_processes or not configured_native:
+            raise ValueError("reviewed four-context prerequisites require only the explicit native A4500 profile")
+        return tuple(dict.fromkeys((*required_helpers(configured, direct, common, owned_processes,
+            configured_native=configured_native), "configured_profile_prerequisites.py")))
     if direct and (configured or common or owned_processes):
         raise ValueError("direct profile prerequisites use their own historical consumer, not configured/common helper admission")
     if direct_profile and not direct:
@@ -196,6 +203,12 @@ def accepted_confirmation_common_reader(plan):
     if "direct_binding" in plan:
         direct_profile_reader(plan).validate_metadata(plan)
         return False
+    if configured_profile_reader(plan) is not None:
+        configured_profile_reader(plan).validate(plan)
+        if ("accepted_confirmation_requires_common_reader" in plan
+                or "10_jax_exploration_platform/scripts/atari_pixel_campaign/common_confirmation.py" in plan["helpers"]["files"]):
+            raise ValueError("the new historical prerequisites cannot replay old evidence through the current common reader")
+        return False
     record = plan["inputs"]["accepted_confirmation"]
     confirmation, actual = measurement.read_document(Path(record["path"]))
     if actual != record:
@@ -210,6 +223,51 @@ def accepted_confirmation_common_reader(plan):
     if (relative in plan["helpers"]["files"]) != common:
         raise ValueError("the profile omitted or added the accepted confirmation's optional reader")
     return common
+
+
+def configured_profile_reader(plan=None, *, selected=False):
+    """Load only the new explicit pure metadata path and its exact staged source."""
+    path = SCRIPTS / "configured_profile_prerequisites.py"
+    relative = "10_jax_exploration_platform/scripts/atari_pixel_campaign/" + path.name
+    if plan is not None:
+        selected = "configured_profile_prerequisite_protocol" in plan
+        if not selected:
+            if relative in plan.get("helpers", {}).get("files", {}):
+                raise ValueError("the prerequisite helper needs its explicit profile protocol")
+            return None
+        if ("configured_isolation" not in plan or "direct_binding" in plan
+                or "configured_native_process_control" not in plan
+                or plan["helpers"]["files"].get(relative) != training.file_sha256(path)):
+            raise ValueError("the explicit native A4500 prerequisite helper changed or lacks its declaration")
+    if not selected:
+        return None
+    if path.resolve(strict=True) != path or path.is_symlink() or not path.is_file():
+        raise ValueError("the prerequisite helper must be its exact ordinary staged source")
+    specification = importlib.util.spec_from_file_location("selected_configured_profile_prerequisites", path)
+    module = importlib.util.module_from_spec(specification); specification.loader.exec_module(module)
+    return module
+
+
+def verify_profile_target_qualification(plan):
+    """Keep historical qualification in its reviewed namespace while preserving legacy checks."""
+    reader = configured_profile_reader(plan)
+    if reader is not None:
+        reader.validate(plan)
+        return reader.qualification_metadata(plan)
+    return measurement.producer_support(plan).verify_qualification_inputs(plan)
+
+
+def verify_current_profile_backend(plan, installed, qualified):
+    """Join current package versions and already hashed images to the accepted original target."""
+    reader = configured_profile_reader(plan)
+    if reader is None:
+        return installed, None
+    # Before: the producer has JAXtari and image hashes; after: the complete
+    # original package-version map is present and all three fields must match.
+    installed = {**installed, "packages": {name: package_metadata.version(name)
+        for name in qualified["installed_backend"]["packages"]}}
+    evidence = reader.verify_current_backend(qualified, installed)
+    return installed, evidence
 
 
 @contextmanager
@@ -250,7 +308,14 @@ def prepare(args):
     """Stage immutable profile inputs without loading an array library or touching a GPU."""
     configured = getattr(args, "configured_isolation_profile", None) is not None
     direct = getattr(args, "direct_binding_profile", None) is not None
-    if configured:
+    prerequisite_proof = getattr(args, "configured_profile_prerequisite_proof", None)
+    prerequisite_review = getattr(args, "configured_profile_prerequisite_review", None)
+    prerequisite_selected = prerequisite_proof is not None or prerequisite_review is not None
+    if prerequisite_selected and (not configured or direct or prerequisite_proof is None or prerequisite_review is None
+            or not getattr(args, "configured_native_process_qualification", None)
+            or not getattr(args, "configured_native_process_review", None)):
+        raise ValueError("reviewed profile preparation requires both actual four-context records and native target qualification/review")
+    if configured and not prerequisite_selected:
         require_reviewed_profile_process_admission()
     if direct:
         direct_profile_reader().require_admission()
@@ -300,6 +365,11 @@ def prepare(args):
             raise ValueError("the accepted common review changed its frozen plan or baseline path")
         confirmation = {"candidate": confirmation_plan["configuration"], "measurement_mode": "confirmation",
             "decision": review.get("decision"), "direct_binding": confirmation_plan["direct_binding"]}
+    elif prerequisite_selected:
+        confirmation, confirmation_input = configured_profile_reader(selected=True).confirmation_metadata(
+            prerequisite_proof, prerequisite_review, args.hardware_class, configuration["learner"]["n_copies"])
+        if baseline["confirmation_record"] != confirmation_input["path"]:
+            raise ValueError("the proposed baseline differs from its reviewed historical confirmation")
     else:
         confirmation, confirmation_input = measurement.read_document(baseline["confirmation_record"])
     if (confirmation.get("measurement_mode") != "confirmation" or confirmation.get("decision") != "accepted"
@@ -309,7 +379,7 @@ def prepare(args):
         raise ValueError("default profiling cannot consume a configured-isolation measurement")
     if "direct_binding" in confirmation and not direct:
         raise ValueError("default profiling cannot consume an explicit direct-binding measurement")
-    common_reader = "common_correctness_inputs" in confirmation
+    common_reader = "common_correctness_inputs" in confirmation and not prerequisite_selected
     if common_reader and (not configured or direct):
         raise ValueError("a common-confirmation reader requires only configured A4500 profiling")
     if direct:
@@ -324,8 +394,9 @@ def prepare(args):
         support.core().require_profile(explicit_profile)
         if baseline.get("configured_isolation_profile") != explicit_profile:
             raise ValueError("the accepted baseline specification must explicitly name this configured-isolation profile")
-        support.verify_saved_measurement(Path(confirmation_input["path"]).parent, confirmation)
-        validation._identity_fields(confirmation, args.hardware_class, args.source_commit, runtime)
+        if not prerequisite_selected:
+            support.verify_saved_measurement(Path(confirmation_input["path"]).parent, confirmation)
+            validation._identity_fields(confirmation, args.hardware_class, args.source_commit, runtime)
     else:
         validation.identity(confirmation, args.hardware_class, args.source_commit, runtime)
     tool, tool_input = measurement.read_document(args.profile_tool_record)
@@ -339,7 +410,8 @@ def prepare(args):
     directory = run / "data" / args.unit_id
     plan = {"schema_version": 1, "kind": KIND, "source_root": str(root), "source_commit": args.source_commit,
         "core": core, "paired_source": paired_source, "helpers": helper_receipt(
-            configured, direct, common_reader, configured, direct_profile=direct, configured_native=native_selected),
+            configured, direct, common_reader, configured, direct_profile=direct, configured_native=native_selected,
+            configured_prerequisites=prerequisite_selected),
         "configuration": configuration, "runtime_environment": runtime, "asset_record": assets,
         "hardware_class": args.hardware_class, "gpu_uuid": args.gpu_uuid,
         "campaign_run_dir": str(run), "unit_id": args.unit_id, "compilation_cache_policy": "disabled",
@@ -362,12 +434,19 @@ def prepare(args):
         profile, profile_input = measurement.read_document(args.configured_isolation_profile)
         support.configure_plan(plan, profile, "component_profile")
         plan["inputs"]["configured_isolation_profile"] = profile_input
-        support.prepare_qualification_inputs(plan, args.target_qualification_record, args.target_qualification_review)
+        if not prerequisite_selected:
+            support.prepare_qualification_inputs(plan, args.target_qualification_record, args.target_qualification_review)
         if native_selected:
             native = configured_native_reader(selected=True)
             plan["maximum_active_seconds"] = 240
             plan["diagnostic_time_budget"] = dict(native.BUDGET)
             native.configure_plan(plan, native_qualification, native_review, process_reader(plan))
+        if prerequisite_selected:
+            evidence = configured_profile_reader(selected=True).configure_plan(plan, prerequisite_proof, prerequisite_review)
+            expected = evidence["target_qualification_inputs"]
+            if (str(args.target_qualification_record.resolve(strict=True)) != expected["result"]["path"]
+                    or str(args.target_qualification_review.resolve(strict=True)) != expected["review"]["path"]):
+                raise ValueError("the full-original qualification arguments differ from the reviewed accepted target")
     if direct:
         import direct_measurement as support
         profile, profile_input = measurement.read_document(args.direct_binding_profile)
@@ -389,7 +468,8 @@ def prepare(args):
         directory / "command.txt": (shlex.join(configured_native_reader(plan).producer_command(directory, plan)
             if native_selected else [str(args.python), str(directory / "code/profile_selected.py"),
                 "--prepared-unit", str(directory)]) + "\n").encode()}
-    for name in required_helpers(configured, direct, common_reader, configured, direct_profile=direct, configured_native=native_selected):
+    for name in required_helpers(configured, direct, common_reader, configured, direct_profile=direct, configured_native=native_selected,
+            configured_prerequisites=prerequisite_selected):
         artifacts[directory / "code" / name] = (SCRIPTS / name).read_bytes()
     artifacts[directory / "experiment_background.md"] = (
         "## Purpose\n\nProfile the explicitly supplied accepted baseline after all thirty initial mechanisms. "
@@ -428,7 +508,8 @@ def verify_prepared(directory, plan):
         require_reviewed_profile_process_admission()
     for name in required_helpers("configured_isolation" in plan, "direct_binding" in plan, common_reader,
             owned_processes(plan), direct_profile="direct_profile_protocol" in plan,
-            configured_native=configured_native_reader(plan) is not None):
+            configured_native=configured_native_reader(plan) is not None,
+            configured_prerequisites=configured_profile_reader(plan) is not None):
         expected = plan["helpers"]["files"]["10_jax_exploration_platform/scripts/atari_pixel_campaign/" + name]
         if training.file_sha256(directory / "code" / name) != expected:
             raise ValueError("a staged profile helper changed: " + name)
@@ -448,6 +529,10 @@ def validate_measured_baseline(directory, plan):
     """Revalidate original initial cases and the accepted combination on compute, not during preparation."""
     if "direct_binding" in plan:
         return direct_profile_reader(plan).before_compute(directory, plan)
+    if configured_profile_reader(plan) is not None:
+        evidence = configured_profile_reader(plan).validate(plan)
+        diagnostic.atomic_json(directory / "baseline_validation.json", evidence)
+        return evidence
     registry_path = Path(plan["initial_registry_record"])
     if (registry_path != directory / "inputs/study_registry.json"
             or training.file_sha256(registry_path) != plan["inputs"]["study_registry"]["sha256"]):
@@ -1014,15 +1099,19 @@ def run_configured_native_prepared(directory, plan, runtime_environment):
             support = measurement.producer_support(plan)
             supervisor = directory / "supervisor";supervisor.mkdir(exist_ok=False)
             configuration_metadata = support.core().collect_metadata(plan, supervisor)
-            support.verify_qualification_inputs(plan)
+            qualified = verify_profile_target_qualification(plan)
             validate_measured_baseline(directory, plan)
             assets = training.verify_assets(plan["asset_record"], os.environ)
             installed = {"jaxtari_source": training.jaxtari_python_receipt(plan.get("jaxtari_source_root")),
                 "gpu_libraries": training.installed_gpu_library_receipts()}
+            installed, backend_validation = verify_current_profile_backend(plan, installed, qualified)
             diagnostic.atomic_json(directory / "supervisor_metadata.json", {
                 "hardware": {"configured_isolation_metadata": configuration_metadata}, "runtime_environment": runtime_environment})
             diagnostic.atomic_json(directory / "asset_receipt.json", assets)
             diagnostic.atomic_json(directory / "installed_backend.json", installed)
+            if backend_validation is not None:
+                backend_validation["installed_backend"] = metadata.receipt(directory / "installed_backend.json")
+                diagnostic.atomic_json(directory / "qualified_backend_validation.json", backend_validation)
             if any(name.split(".")[0] in {"jax", "jaxlib", "numpy", "torch"} for name in sys.modules):
                 raise RuntimeError("the configured native metadata producer initialized a numerical runtime")
             deadline.remaining("work")
@@ -1036,6 +1125,10 @@ def run_configured_native_prepared(directory, plan, runtime_environment):
             waited = metadata.read_json(directory / "capture_actual_wait.json")
             result["configured_native_process_proof"] = native.validate_saved(
                 directory, plan, metadata, intent, observation, launch, waited, native.saved_deadline(directory, plan, metadata))
+            if configured_profile_reader(plan) is not None:
+                result["configured_profile_prerequisite_protocol"] = plan["configured_profile_prerequisite_protocol"]
+                result["configured_profile_prerequisite_inputs"] = plan["configured_profile_prerequisite_inputs"]
+                result["qualified_backend_validation"] = metadata.receipt(directory / "qualified_backend_validation.json")
             metadata.validate_saved(directory, plan, result)
             diagnostic.atomic_json(directory / "result.json", result)
             diagnostic.record_progress(directory, "completed", completed=True, profile_updates=result["profile_updates"])
@@ -1286,6 +1379,8 @@ def parse_arguments(argv=None):
     parser.add_argument("--configured-isolation-profile", type=Path)
     parser.add_argument("--configured-native-process-qualification", type=Path)
     parser.add_argument("--configured-native-process-review", type=Path)
+    parser.add_argument("--configured-profile-prerequisite-proof", type=Path)
+    parser.add_argument("--configured-profile-prerequisite-review", type=Path)
     parser.add_argument("--target-qualification-record", type=Path)
     parser.add_argument("--target-qualification-review", type=Path)
     parser.add_argument("--direct-binding-profile", type=Path)
@@ -1311,7 +1406,7 @@ def parse_arguments(argv=None):
             or args.direct_owned_waiter_unit or args.direct_owned_capture_unit or args.inspect_profile_tool):
         if args.prepare_only or any(getattr(args, name) is not None for name in (*fields, "jaxtari_source_root", "seed_start",
                                                                               "minimum_updates", "maximum_active_seconds", "python", "configured_isolation_profile", "target_qualification_record", "target_qualification_review",
-                                                                              "direct_binding_profile", "direct_history_inputs", "direct_qualification_record", "direct_qualification_review", "direct_backend_image_record", "direct_confirmation_review", "configured_native_process_qualification", "configured_native_process_review")):
+                                                                              "direct_binding_profile", "direct_history_inputs", "direct_qualification_record", "direct_qualification_review", "direct_backend_image_record", "direct_confirmation_review", "configured_native_process_qualification", "configured_native_process_review", "configured_profile_prerequisite_proof", "configured_profile_prerequisite_review")):
             parser.error("execution/tool inspection cannot override a prepared configuration")
         if args.direct_held_lock_fd is not None:
             if (args.capture_unit is None and args.direct_waiter_unit is None) or args.direct_held_lock_fd < 0:
