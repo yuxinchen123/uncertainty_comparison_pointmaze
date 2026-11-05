@@ -1,0 +1,43 @@
+{
+  "actual_actions": false,
+  "actual_campaign_unit_used": false,
+  "all_frozen_hashes_unchanged": true,
+  "command": [
+    "srun",
+    "--jobid=6825983",
+    "--overlap",
+    "--exact",
+    "--ntasks=1",
+    "--cpus-per-task=1",
+    "--mem=512M",
+    "--time=00:05:00",
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "/p/rlprojects/RND_worktrees/2026-11-05-11-30_common-performance-prerequisite-fact_contexts-4_paired-rounds-7_updates-per-arm-10_profile-qualification-operational-preparation_gpu-actions-0/.review_metadata/profile_target_operational_preparation/test_submit_profile_qualification_held_once.py"
+  ],
+  "job_id": "6825983",
+  "kind": "profile_target_qualification_aa_launcher_author_metadata_tests",
+  "passed": true,
+  "recorded_at_utc": "2026-11-05T20:09:48.999401+00:00",
+  "returncode": 0,
+  "scheduler_calls_synthetic_only": true,
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-11-30_common-performance-prerequisite-fact_contexts-4_paired-rounds-7_updates-per-arm-10_profile-qualification-operational-preparation_gpu-actions-0/.review_metadata/profile_target_operational_preparation/aa_held_launcher_source_freeze_1.json",
+    "sha256": "1cd1546ce77fef24313fbeb8c2c62e321957b09675a0e3e4669159d7552fca2b"
+  },
+  "stderr": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-11-30_common-performance-prerequisite-fact_contexts-4_paired-rounds-7_updates-per-arm-10_profile-qualification-operational-preparation_gpu-actions-0/.review_metadata/profile_target_operational_preparation/aa_held_launcher_author_1_stderr.raw",
+    "sha256": "a82da074df0f3c71a06736f9e8baa8d3d5364b6bce8dde680db97987b32526cb"
+  },
+  "stdout": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-11-30_common-performance-prerequisite-fact_contexts-4_paired-rounds-7_updates-per-arm-10_profile-qualification-operational-preparation_gpu-actions-0/.review_metadata/profile_target_operational_preparation/aa_held_launcher_author_1_stdout.raw",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "step_id": null,
+  "step_id_status": "not recorded by this first direct unittest invocation; no value inferred",
+  "tests": 14,
+  "tool_session_id": 70661,
+  "unittest_reported_seconds": 8.804
+}

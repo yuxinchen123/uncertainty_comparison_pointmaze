@@ -1,0 +1,41 @@
+{
+  "actual_actions_performed": false,
+  "actual_fixed_ID_release_review_still_required": true,
+  "actual_job_id": null,
+  "actual_packet_prepared": false,
+  "actual_prepared_input_required": {
+    "binding": "actual parent/prepared_child_binding.json",
+    "bound_launch_review": "actual parent/controller_launch_independent_review.json with exact actual parent/child refs and approved/passed/independent_of_producer true",
+    "child_plan": "actual child/measurement_plan.json kind full_original_profile_source_target_qualification",
+    "packet": "R/remote_setup/<child.unit_id>, preserving its actual four preparation standard records",
+    "parent_plan": "actual parent/measurement_plan.json kind profile_target_qualification_controller"
+  },
+  "default_action": false,
+  "fresh_reservation_UTC_observation_required_at_real_submit_and_release": true,
+  "independent_review": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-11-30_common-performance-prerequisite-fact_contexts-4_paired-rounds-7_updates-per-arm-10_profile-qualification-operational-preparation_gpu-actions-0/.review_metadata/profile_target_operational_preparation/aa_independent_corrected_source_review.json",
+    "sha256": "a40c26618bc3321950e40aaae0257c55b79d85099d383db8b0ac7dea1e359ec7"
+  },
+  "kind": "reviewed_profile_target_qualification_aa_launcher_source_handoff",
+  "metadata_only_modes": [
+    "--prepare-request --parent-unit ACTUAL_PARENT --scheduling reservation|normal",
+    "--prepare-binding-once"
+  ],
+  "no_runtime_d146_source_change": true,
+  "publication_review_still_required_for_actual_packet": true,
+  "root_alone_actions": true,
+  "root_usage_origin": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-11-30_common-performance-prerequisite-fact_contexts-4_paired-rounds-7_updates-per-arm-10_profile-qualification-operational-preparation_gpu-actions-0/.review_metadata/profile_target_operational_preparation/aa_held_launcher_ROOT_USAGE.json",
+    "sha256": "422837a4764ba3af6682412346320a2fb5f10bdfa88888411fc571fb91da3dea"
+  },
+  "root_usage_update": "Use final corrected freeze887e0ea and corrected-source reviewa40c2661; earlier usage references freeze1 only as preserved origin. Root publishes reviewed source before late actual request/binding; no actual packet/unit binding exists yet.",
+  "source_files": {
+    "/p/rlprojects/RND_worktrees/2026-11-05-11-30_common-performance-prerequisite-fact_contexts-4_paired-rounds-7_updates-per-arm-10_profile-qualification-operational-preparation_gpu-actions-0/.review_metadata/profile_target_operational_preparation/submit_profile_qualification_held_once.py": "5a12373711096753ed9f80eb2c9e49c8eceb220b5e96083ca32103ddc6b7f85b",
+    "/p/rlprojects/RND_worktrees/2026-11-05-11-30_common-performance-prerequisite-fact_contexts-4_paired-rounds-7_updates-per-arm-10_profile-qualification-operational-preparation_gpu-actions-0/.review_metadata/profile_target_operational_preparation/test_submit_profile_qualification_held_once.py": "c7e8314e225f7e3bd8fe61c74e757bc2a6c1cebc2559c0afc5c14ee560c42a08"
+  },
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-11-30_common-performance-prerequisite-fact_contexts-4_paired-rounds-7_updates-per-arm-10_profile-qualification-operational-preparation_gpu-actions-0/.review_metadata/profile_target_operational_preparation/aa_held_launcher_source_freeze_2_actual_job_command.json",
+    "sha256": "887e0ea7477770695a9b1c2f6a426b4940331076ce8a58849ed44764c995a74a"
+  },
+  "zero_scientific_profile_case_idea_packing_final_worker_credit": true
+}

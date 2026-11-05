@@ -1,0 +1,31 @@
+{
+  "actual_launch_request_not_created": true,
+  "actual_prepared_plan_or_packet_available": false,
+  "author_checks": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-11-30_common-performance-prerequisite-fact_contexts-4_paired-rounds-7_updates-per-arm-10_profile-qualification-operational-preparation_gpu-actions-0/.review_metadata/profile_target_operational_preparation/aa_held_launcher_author_checks_1.json",
+    "sha256": "d1786cf51a9486b1d6cfe815e643dfb8bed2bda9b9281bb41711ff03639c5c57"
+  },
+  "default_no_action": true,
+  "kind": "profile_target_qualification_aa_launcher_author_handoff",
+  "later_packet_preparation": [
+    "copy exact reviewed utility and focused test into the actual canonical child-named packet",
+    "require actual prepared parent/child and genuine parent controller_launch_independent_review.json",
+    "--prepare-request --parent-unit ACTUAL --scheduling reservation|normal (no publication argument)",
+    "--prepare-binding-once (no publication argument)",
+    "freeze all actual inputs and obtain independent packet/static/launcher reviews",
+    "root publishes exact inputs before default/publication check and one held submission",
+    "actual fixed-ID release binding/review/publication before once-only release"
+  ],
+  "owned_paths": [
+    "/p/rlprojects/RND_worktrees/2026-11-05-11-30_common-performance-prerequisite-fact_contexts-4_paired-rounds-7_updates-per-arm-10_profile-qualification-operational-preparation_gpu-actions-0/.review_metadata/profile_target_operational_preparation/submit_profile_qualification_held_once.py",
+    "/p/rlprojects/RND_worktrees/2026-11-05-11-30_common-performance-prerequisite-fact_contexts-4_paired-rounds-7_updates-per-arm-10_profile-qualification-operational-preparation_gpu-actions-0/.review_metadata/profile_target_operational_preparation/test_submit_profile_qualification_held_once.py"
+  ],
+  "receipt_schema": "unchanged uva_slurm_configured_isolation.owned_inputs",
+  "root_only_actions": true,
+  "runtime_source_unchanged": "d1469fd063a44167ec56760729eb0beea7ecf7d3",
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-11-30_common-performance-prerequisite-fact_contexts-4_paired-rounds-7_updates-per-arm-10_profile-qualification-operational-preparation_gpu-actions-0/.review_metadata/profile_target_operational_preparation/aa_held_launcher_source_freeze_1.json",
+    "sha256": "1cd1546ce77fef24313fbeb8c2c62e321957b09675a0e3e4669159d7552fca2b"
+  },
+  "zero_whole_job_work_count_invented": false
+}

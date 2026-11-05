@@ -1,0 +1,53 @@
+{
+  "actual_job_id": "6825983",
+  "actual_step_id": "56",
+  "admission_granted": false,
+  "approved": false,
+  "findings": [
+    {
+      "detail": {
+        "actual_recorded_held_command": [
+          "sbatch",
+          "--hold",
+          "--parsable",
+          "--no-requeue",
+          "--partition=gpu",
+          "--account=sl5nw_base",
+          "--qos=csresnolim",
+          "--nodelist=jaguar03",
+          "--nodes=1",
+          "--ntasks=1",
+          "--cpus-per-task=8",
+          "--mem=64G",
+          "--gres=gpu:nvidia_rtx_a4500:1",
+          "--time=03:00:00",
+          "--reservation=sl5nw_168",
+          "/tmp/tmpfxrtxp04/synthetic_integration/platform/benchmark_runs/synthetic_campaign/remote_setup/synthetic-aa-capture/job.sbatch"
+        ],
+        "job_command_bytes": "Synthetic distinct synthetic-aa-capture command.txt\n",
+        "job_script_and_receipts_were_correct": true,
+        "packet_command_bytes": "Synthetic distinct synthetic-aa-capture command.txt\n",
+        "synthetic_fixture": true
+      },
+      "kind": "per_job_command_is_preparation_command"
+    }
+  ],
+  "independent_author_methods_passed": 14,
+  "kind": "independent_aa_profile_qualification_launcher_initial_review",
+  "passed": false,
+  "preservation_manifest": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-11-30_common-performance-prerequisite-fact_contexts-4_paired-rounds-7_updates-per-arm-10_profile-qualification-operational-preparation_gpu-actions-0/.review_metadata/profile_target_operational_preparation/preserved_aa_launcher_per_job_command_rejection/manifest.json",
+    "sha256": "85e8fc651953166c5736ebd6f01f3c6249b90a0193c9195fec120dc8ba22425b"
+  },
+  "real_scheduler_calls": 0,
+  "schema_version": 1,
+  "seconds": 10.42786947498098,
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-11-30_common-performance-prerequisite-fact_contexts-4_paired-rounds-7_updates-per-arm-10_profile-qualification-operational-preparation_gpu-actions-0/.review_metadata/profile_target_operational_preparation/aa_held_launcher_source_freeze_1.json",
+    "sha256": "1cd1546ce77fef24313fbeb8c2c62e321957b09675a0e3e4669159d7552fca2b"
+  },
+  "source_unchanged": true,
+  "target_operations": 0,
+  "unchanged_uva_owned_inputs_function_consumed_private_envelope": true,
+  "upstream_validation_premise_explicitly_synthetic": true
+}

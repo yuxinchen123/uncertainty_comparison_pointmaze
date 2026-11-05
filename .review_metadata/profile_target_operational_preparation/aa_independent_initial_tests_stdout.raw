@@ -1,0 +1,19 @@
+test_all_three_fsyncs_precede_submission_receipt (independent_aa_launcher_tests.LaunchTests) ... ok
+test_bounded_regular_duplicate_and_boolean_metadata (independent_aa_launcher_tests.LaunchTests) ... ok
+test_default_has_no_scheduler_calls (independent_aa_launcher_tests.LaunchTests) ... ok
+test_exact_held_resource_and_owner_refusals (independent_aa_launcher_tests.LaunchTests) ... ok
+test_failed_release_has_no_final_envelope_and_no_retry (independent_aa_launcher_tests.LaunchTests) ... ok
+test_fixed_release_job_and_snapshot_substitution_refuse (independent_aa_launcher_tests.LaunchTests) ... ok
+test_fresh_reservation_wrong_window_and_node_refuse (independent_aa_launcher_tests.LaunchTests) ... ok
+test_missing_unpublished_and_stale_origin_refuse (independent_aa_launcher_tests.LaunchTests) ... ok
+test_mutated_child_or_bound_review_refuses_before_query (independent_aa_launcher_tests.LaunchTests) ... ok
+test_one_shot_metadata_request_and_binding_refuse (independent_aa_launcher_tests.LaunchTests) ... ok
+test_packet_parent_child_standards_separate_and_complete (independent_aa_launcher_tests.LaunchTests) ... ok
+test_release_receipt_before_atomic_unchanged_envelope (independent_aa_launcher_tests.LaunchTests) ... ok
+test_submission_attempt_and_duplicate_id_never_resubmit (independent_aa_launcher_tests.LaunchTests) ... ok
+test_unowned_identifier_refuses_before_job_query (independent_aa_launcher_tests.LaunchTests) ... ok
+
+----------------------------------------------------------------------
+Ran 14 tests in 8.933s
+
+OK

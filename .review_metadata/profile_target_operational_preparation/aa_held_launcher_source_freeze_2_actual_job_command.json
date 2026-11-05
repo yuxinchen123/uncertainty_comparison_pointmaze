@@ -1,0 +1,20 @@
+{
+  "actual_actions": false,
+  "at_utc": "2026-11-05T20:13:24.795204+00:00",
+  "correction": "Only per-job command.txt now records actual held sbatch argv; all existing P/parent/child standard bytes remain unchanged. One affected submission-record test adds actual command and immutable standard assertions.",
+  "files": {
+    "/p/rlprojects/RND_worktrees/2026-11-05-11-30_common-performance-prerequisite-fact_contexts-4_paired-rounds-7_updates-per-arm-10_profile-qualification-operational-preparation_gpu-actions-0/.review_metadata/profile_target_operational_preparation/submit_profile_qualification_held_once.py": "5a12373711096753ed9f80eb2c9e49c8eceb220b5e96083ca32103ddc6b7f85b",
+    "/p/rlprojects/RND_worktrees/2026-11-05-11-30_common-performance-prerequisite-fact_contexts-4_paired-rounds-7_updates-per-arm-10_profile-qualification-operational-preparation_gpu-actions-0/.review_metadata/profile_target_operational_preparation/test_submit_profile_qualification_held_once.py": "c7e8314e225f7e3bd8fe61c74e757bc2a6c1cebc2559c0afc5c14ee560c42a08"
+  },
+  "kind": "profile_target_qualification_aa_launcher_corrected_author_freeze",
+  "preserved_first_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-11-30_common-performance-prerequisite-fact_contexts-4_paired-rounds-7_updates-per-arm-10_profile-qualification-operational-preparation_gpu-actions-0/.review_metadata/profile_target_operational_preparation/aa_held_launcher_source_freeze_1.json",
+    "sha256": "1cd1546ce77fef24313fbeb8c2c62e321957b09675a0e3e4669159d7552fca2b"
+  },
+  "prior_independent_review": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-11-30_common-performance-prerequisite-fact_contexts-4_paired-rounds-7_updates-per-arm-10_profile-qualification-operational-preparation_gpu-actions-0/.review_metadata/profile_target_operational_preparation/aa_independent_initial_review.json",
+    "sha256": "9dd182ab611e34b734b006d9683e20949a3d4bbbd23875ec7a9b4bc908fd8aed"
+  },
+  "root_only_actions": true,
+  "schema_version": 1
+}
