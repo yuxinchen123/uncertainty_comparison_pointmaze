@@ -578,6 +578,22 @@
     "original_pdf_preserved": true,
     "rule": "Other session actively writes grid reports and plots. Preserve them and original full PDF; never replace that PDF with an older partial snapshot. Both branches retain merged pixel97 and grid source."
   },
+  "final_branch_consolidation": {
+    "all_remote_heads_already_included": true,
+    "audit": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/branch_consolidation_audit_2026-11-05-02-20.json",
+      "sha256": "a26e4d9825539c0306edbc0820a161c7fc7dfc58847bfa5fe124d00c95c4496d"
+    },
+    "branch_deletions_performed": false,
+    "cleanup_complete": false,
+    "current_default_branch": "development",
+    "current_remote_branch_count": 19,
+    "policy": "Publish completed reviewed work through the integration branch; do not add remote scratch branches. After the study and all owned work finish, retain one main development branch containing the final reviewed history, verify every retiring branch is included or its remaining work is explicitly preserved, then remove redundant remote and local branch references. Preserve active and immutable source worktrees, historical evidence and unrelated edits. No repository fork deletion is authorized merely by a branch name.",
+    "primary_integration_branch": "merge-atari-cleanrl",
+    "repository": "git@github.com:yuxinchen123/uncertainty_comparison_pointmaze.git",
+    "requested_at_utc": "2026-11-05T02:20:55.923110+00:00",
+    "user_requested": true
+  },
   "final_condition": "Only after50ideas, final correctness/confirmation, packing curves and1vs8GPU comparison, launch optimized2Bpercopy training with checkpoints, using permitted ACES/DeltaAI/MIT forH100.",
   "final_evidence_protocol_completion": {
     "additional_required_checks": [

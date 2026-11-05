@@ -1,0 +1,24 @@
+{
+  "kind": "independent_review_of_actual_nsight_diagnostic_launcher",
+  "passed": true,
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-15-37_nsight-process-observation_jaguar03_gpu-count-1_processor-count-1_host-memory-gib-2_time-limit-minutes-5_placement-unreserved_tool-version-2024.7.1.84_environment-transitions-0/launcher_source_freeze.json",
+    "sha256": "00ad668071814054a341ff10e8a8a00e32b03eb9dbd668696c4a5163b5b54d01"
+  },
+  "actual_independent_tests": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-15-37_nsight-process-observation_jaguar03_gpu-count-1_processor-count-1_host-memory-gib-2_time-limit-minutes-5_placement-unreserved_tool-version-2024.7.1.84_environment-transitions-0/launcher_root_independent_metadata_tests.json",
+    "sha256": "ae73b55dc7e1447e314050443fb7db28ae510925f04db2e0ec7d17ecb781070a"
+  },
+  "reviewer": "root",
+  "reviewed_at_utc": "2026-11-05T02:26:16.597386+00:00",
+  "actual_packet_and_two_sets_of_standard_records_checked": true,
+  "explicit_unreserved_one_a4500_one_cpu_two_gib_five_minutes": true,
+  "default_operation_performs_no_scheduler_action": true,
+  "real_id_and_three_ledger_rows_fsynced_before_release": true,
+  "actual_release_receipt_precedes_atomic_final_inputs": true,
+  "inherited_batch_reservation_removed": true,
+  "attempted_submission_and_release_cannot_be_reused": true,
+  "scientific_credit": 0,
+  "source_allows_no_worker_admission": true,
+  "actual_scheduler_actions_performed_in_review": false
+}

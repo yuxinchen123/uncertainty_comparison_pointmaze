@@ -1,0 +1,27 @@
+{
+  "automatic_retry_permitted": false,
+  "command": [
+    "srun",
+    "--jobid=6783003",
+    "--overlap",
+    "--exact",
+    "--ntasks=1",
+    "--cpus-per-task=1",
+    "--mem=256M",
+    "--time=00:10:00",
+    "flock",
+    "-x",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/queue/cpu_monitor_large_artifact_read.lock",
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "-c",
+    "import os,sys,json,hashlib,stat,datetime,pathlib\nassert os.environ.get(\"SLURM_JOB_ID\")==\"6783003\" and os.environ.get(\"SLURM_STEP_ID\",\"\").isdigit()\nrecord_path=pathlib.Path(sys.argv[1]); record_bytes=record_path.read_bytes()\nassert hashlib.sha256(record_bytes).hexdigest()==\"bacba88c05986571f8f7f6322a47f11cf0d18b5982382dc8596e86c34ee909f6\"\nrecord=json.loads(record_bytes); path=pathlib.Path(record[\"path\"])\nassert path.is_absolute() and path.resolve(strict=True)==path\nfd=os.open(path,os.O_RDONLY|os.O_NOFOLLOW); started=datetime.datetime.now(datetime.timezone.utc).isoformat()\ntry:\n before=os.fstat(fd); assert stat.S_ISREG(before.st_mode) and before.st_size==58059912 and before.st_mode&0o111\n digest=hashlib.sha256(); count=0\n while True:\n  block=os.read(fd,1024*1024)\n  if not block:break\n  count+=len(block);digest.update(block)\n after=os.fstat(fd); current=path.stat()\n keys=(\"st_dev\",\"st_ino\",\"st_size\",\"st_mtime_ns\",\"st_ctime_ns\",\"st_uid\",\"st_mode\")\n assert all(getattr(before,k)==getattr(after,k)==getattr(current,k) for k in keys)\n assert count==before.st_size and digest.hexdigest()==record[\"sha256\"],\"the pinned Nsight executable bytes changed\"\nfinally:os.close(fd)\nprint(json.dumps({\"kind\":\"actual_nsight_executable_stream_hash_before_diagnostic_preparation\",\"passed\":True,\"started_at_utc\":started,\"finished_at_utc\":datetime.datetime.now(datetime.timezone.utc).isoformat(),\"job_id\":os.environ[\"SLURM_JOB_ID\"],\"step_id\":os.environ[\"SLURM_STEP_ID\"],\"hostname\":os.uname().nodename,\"pid\":os.getpid(),\"tool_record\":{\"path\":str(record_path),\"sha256\":hashlib.sha256(record_bytes).hexdigest()},\"executable\":{\"path\":str(path),\"sha256\":digest.hexdigest(),\"bytes\":count,\"device\":before.st_dev,\"inode\":before.st_ino,\"uid\":before.st_uid,\"mode\":oct(stat.S_IMODE(before.st_mode))},\"block_bytes\":1024*1024,\"tool_execution_count\":0,\"library_or_device_operations\":0,\"scientific_credit\":0}))\n",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-21-17_nsight-systems-tool-version-and-hash_existing-cpu-allocation-6783003_processor-count-1_host-memory-mib-256_gpu-count-0_shared-read-lock/tool_record.json"
+  ],
+  "helper_source_record": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-15-37_nsight-current-preparation-source.json",
+  "phase": "tool_hash",
+  "planned_unit_id": "2026-11-04-15-37_nsight-process-observation_jaguar03_gpu-count-1_processor-count-1_host-memory-gib-2_time-limit-minutes-5_placement-unreserved_tool-version-2024.7.1.84_environment-transitions-0",
+  "started_at_utc": "2026-11-04T23:44:02.331674+00:00"
+}

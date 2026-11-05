@@ -1,0 +1,166 @@
+{
+  "kind": "current_branch_consolidation_read_only_audit",
+  "at_utc": "2026-11-05T02:20:14.096251+00:00",
+  "integration_head": "5c03ca865b1bd706d683c3e1b3a85fb751d944ad",
+  "configured_repository": "git@github.com:yuxinchen123/uncertainty_comparison_pointmaze.git",
+  "github_default_branch_observed": "development",
+  "remote_branches": [
+    {
+      "branch": "origin/Use-RLexplore-RND",
+      "commit": "cef3073939e09ab4b2d3864a0bce8c1bb6cd7020",
+      "included_in_integration": true,
+      "unique_commits": 0
+    },
+    {
+      "branch": "origin/common-a4500-confirmation-reviewed-correctness-2026-11-01",
+      "commit": "b1c7405c2dce76270554973bdf81c87271216cd4",
+      "included_in_integration": true,
+      "unique_commits": 0
+    },
+    {
+      "branch": "origin/development",
+      "commit": "f9a0d4f6134b77a9c29251ff5351f17ec09266c2",
+      "included_in_integration": true,
+      "unique_commits": 0
+    },
+    {
+      "branch": "origin/direct-qualification-metadata-import-provenance-2026-11-01",
+      "commit": "0d6857cdfcc4863ce764c67a4d8c694d03777972",
+      "included_in_integration": true,
+      "unique_commits": 0
+    },
+    {
+      "branch": "origin/direct-serval02-card-one-selected-profile-assigned-device-observation",
+      "commit": "44f7d99db22c01bfd8beefefc5f548f5517d5348",
+      "included_in_integration": true,
+      "unique_commits": 0
+    },
+    {
+      "branch": "origin/fused-antmaze",
+      "commit": "f0565aea131f34a6d0f5a4678485a69fc1025af3",
+      "included_in_integration": true,
+      "unique_commits": 0
+    },
+    {
+      "branch": "origin/fused-atari",
+      "commit": "adf6861a7406c6235942d52f9276ad42aa8bcef6",
+      "included_in_integration": true,
+      "unique_commits": 0
+    },
+    {
+      "branch": "origin/implement-selected-configured-isolation-2026-11-01",
+      "commit": "cccebba3262d33ec6486f1ea051f2b2d32b12169",
+      "included_in_integration": true,
+      "unique_commits": 0
+    },
+    {
+      "branch": "origin/merge-atari-cleanrl",
+      "commit": "9fdc32c65da492e2c48c7f559c43cc1501ac4b01",
+      "included_in_integration": true,
+      "unique_commits": 0
+    },
+    {
+      "branch": "origin/merge-pixel-report-and-initial-bonus-2026-10-31-22-39",
+      "commit": "9920914aa768d0d5d136527cad3cf6c6aa1b4215",
+      "included_in_integration": true,
+      "unique_commits": 0
+    },
+    {
+      "branch": "origin/monitor-process-hostname-compatibility-2026-11-01",
+      "commit": "8e69929f03d2e3e0fad0e13187b7303646b96771",
+      "included_in_integration": true,
+      "unique_commits": 0
+    },
+    {
+      "branch": "origin/monitor-selected-unit-owned-job-display-2026-11-01",
+      "commit": "8255b6b44b9a7dd1c414ee610be504d626cd447c",
+      "included_in_integration": true,
+      "unique_commits": 0
+    },
+    {
+      "branch": "origin/original-qualification-pytest-root-pinned-2026-11-01",
+      "commit": "e5afbf6b51a3d1666b46e71c0631a45d47080cd8",
+      "included_in_integration": true,
+      "unique_commits": 0
+    },
+    {
+      "branch": "origin/prepare-learning-and-latency-component-2026-11-01",
+      "commit": "4551c792ab3f6c345f7c4dafa95238173dfbf7ba",
+      "included_in_integration": true,
+      "unique_commits": 0
+    },
+    {
+      "branch": "origin/prepare-passive-installed-slurm-observation-2026-11-01",
+      "commit": "f5b353822d3383cac3082c2442e7e9e5a0dd7279",
+      "included_in_integration": true,
+      "unique_commits": 0
+    },
+    {
+      "branch": "origin/prepare-passive-slurm-wrapper-2026-11-01",
+      "commit": "611c17937901300d6a10799a0de3b2c1266659f4",
+      "included_in_integration": true,
+      "unique_commits": 0
+    },
+    {
+      "branch": "origin/profile-common-confirmation-helper-closure-2026-11-01",
+      "commit": "0c2f4d552e705d248842cae5a28db3de6e03688e",
+      "included_in_integration": true,
+      "unique_commits": 0
+    },
+    {
+      "branch": "origin/serval02-card-one-current-process-binding-and-frozen-history",
+      "commit": "e41e3da92508cea1be28c5d45ea13db8d930891f",
+      "included_in_integration": true,
+      "unique_commits": 0
+    },
+    {
+      "branch": "origin/uva-jaguar03-configured-isolation-single-gpu-service-uid-64030",
+      "commit": "fe0b695bc0737a4e157f28c1ba1f6b1e9e48f178",
+      "included_in_integration": true,
+      "unique_commits": 0
+    }
+  ],
+  "local_unmerged_branches": [
+    {
+      "local_branch": "aces-autodetect-incremental-native-preparation",
+      "commit": "d4256e859f681821620010683709f1a0b0dd982b",
+      "unique_commits": 1
+    },
+    {
+      "local_branch": "configured-a4500-group-runtime",
+      "commit": "bef825c669d9514e3c633bb1358eb6b43e09b141",
+      "unique_commits": 2
+    },
+    {
+      "local_branch": "configured-a4500-group-scaling",
+      "commit": "33fafb16fadc59b518748ec05a92a2e7452c991b",
+      "unique_commits": 1
+    },
+    {
+      "local_branch": "direct-h100-profile-backend-common",
+      "commit": "471406e7f8157b937aec819ab9e6766a31ee26b4",
+      "unique_commits": 1
+    },
+    {
+      "local_branch": "monitor-post-initial-validation-reporting",
+      "commit": "05f65ec2e9f706858234e6c8a0e9255a326fc22f",
+      "unique_commits": 1
+    },
+    {
+      "local_branch": "prepare-measured-device-memory-limit-2026-11-01",
+      "commit": "078d3b6b9adf716c54d13749dd82b3ff9f070014",
+      "unique_commits": 6
+    },
+    {
+      "local_branch": "prepare-uva-active-configuration-observation-2026-11-01",
+      "commit": "04d137de2016bc6330a8a5c095c57419327a9317",
+      "unique_commits": 1
+    }
+  ],
+  "remote_branch_count": 19,
+  "all_remote_heads_included": true,
+  "branch_deletions_performed": false,
+  "worktree_deletions_performed": false,
+  "user_requested_final_one_main_branch": true,
+  "final_cleanup_trigger": "all owned implementation and experiments complete, reviewed commits included, active source worktrees no longer needed; then make integration the single main development branch and remove merged remote branch references"
+}
