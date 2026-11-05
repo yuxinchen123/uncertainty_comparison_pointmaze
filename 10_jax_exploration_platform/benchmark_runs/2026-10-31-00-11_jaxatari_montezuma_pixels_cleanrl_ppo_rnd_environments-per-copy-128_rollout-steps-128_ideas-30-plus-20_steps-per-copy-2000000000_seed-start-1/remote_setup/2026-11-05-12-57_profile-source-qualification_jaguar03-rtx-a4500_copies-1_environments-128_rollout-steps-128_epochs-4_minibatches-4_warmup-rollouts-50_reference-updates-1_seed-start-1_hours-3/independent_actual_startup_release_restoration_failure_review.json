@@ -1,0 +1,101 @@
+{
+  "actual_cpu_job_id": "6825983",
+  "actual_cpu_step_id": "101",
+  "admission_granted": false,
+  "approved": true,
+  "capture_log": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-12-57_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3/capture.log",
+    "sha256": "c9b55d9964ec5555861d2464e6af5856fa4bb4b2cda67dea8fec981a03735238"
+  },
+  "case_credit": 0,
+  "check_count": 26,
+  "checks": [
+    "exact actual staged owned-input reader source",
+    "unchanged actual staged owned-input consumer accepts the real envelope",
+    "actual successful one-shot release is joined to its atomic final envelope",
+    "release return, durable receipt, final envelope and startup observations have the actual order",
+    "actual exact child Popen identity is bound before the controller release",
+    "exact actual raw null-terminated command and digest",
+    "all four actual process user identifiers and host are exact",
+    "saved actual PID/birth/parent/stat bytes agree",
+    "exact actual raw null-terminated command and digest",
+    "all four actual process user identifiers and host are exact",
+    "saved actual PID/birth/parent/stat bytes agree",
+    "actual child parent and eight-CPU affinity agree",
+    "actual bounded startup completed without weakening exact identity",
+    "actual startup observations retained every original identity predicate",
+    "actual root permission restoration uses its same-host original snapshots",
+    "root restored exact same file identity and bytes from0640 to original0660",
+    "root restored exact same file identity and bytes from0640 to original0660",
+    "permission restoration consumed these actual durable startup/release records",
+    "the later actual run is failed, not qualified or successful",
+    "actual tool-scope failure preceded restoration; later permission restoration did not cause it",
+    "saved cleanup includes actual ECHILD, exited pinned handles and exact root waits",
+    "actual final own child-list bytes are empty and hashed",
+    "actual saved tool Popen wait is unchanged",
+    "actual saved tool Popen wait is unchanged",
+    "version returned zero, profile root was terminated during cleanup, and ordinary successful-scope gates must refuse",
+    "no completed profile qualification or capture-release evidence exists"
+  ],
+  "controller_birth": "87353069",
+  "controller_pid": 2503106,
+  "controller_release": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-12-57_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3/profile_target_controller_release.json",
+    "sha256": "50c0b2e181070cd9fd38e34c80f6c6a08e0ebc5c034ab58dfac0dcb80dfdb26e"
+  },
+  "controller_spawn": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-12-57_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_controller/controller_spawn.json",
+    "sha256": "4874bae547e64a0e07b80f295bd09380f2b9c5c3fd48f5b4788839469b36f050"
+  },
+  "failed_parent_pid_recorded": false,
+  "failure": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-12-57_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3/failure.json",
+    "sha256": "4edca7addeaa8f9678e715609c4f3d71b4a87a1c04c32c7703718b1fa77e80d1"
+  },
+  "final_training_credit": 0,
+  "historical_race_cause_established": false,
+  "idea_credit": 0,
+  "independent_of_producer": true,
+  "job_id": "6826372",
+  "kind": "independent_actual_qualification_startup_release_restoration_and_failure_review",
+  "native_tool_work_quantified": false,
+  "numerical_completion_proven": false,
+  "ordinary_saved_scope_would_refuse_interventions_and_nonzero_root_wait": true,
+  "owned_inputs": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-12-57_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3/owned_allocation_inputs.json",
+    "sha256": "bdd0d8e2c80181572f31e3648666e9a5ebab526a556ec66dd7460cff96813b7e"
+  },
+  "passed": true,
+  "permission_restoration": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-12-57_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3/metadata_permission_restoration.json",
+    "sha256": "d13e43eecd5c048473c250926fcbadfad989b56563bd743a03713eaeacef71d6"
+  },
+  "producer_birth": "87353087",
+  "producer_pid": 2503108,
+  "profile_credit": 0,
+  "qualification_passed": false,
+  "reviewer_native_or_GPU_operations_after_guard": 0,
+  "reviewer_permission_changes": 0,
+  "reviewer_scheduler_queries": 0,
+  "run_failed": true,
+  "schema_version": 2,
+  "scientific_credit": 0,
+  "scope": "Startup, release/envelope and permission workflow only; failed qualification stays failed",
+  "seconds": 0.2014997450169176,
+  "source_exit_between_scan_and_parent_identity_is_possible": true,
+  "startup": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-12-57_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3/profile_target_child_startup_observations.json",
+    "sha256": "ec8e0f756a5c5109bda7cdc6d776404fc270c09dc3ddf1ef000f5e65e6641c84"
+  },
+  "stdlib_own_process_bootstrap": [
+    {
+      "event": "ctypes.dlopen",
+      "own_process_only": true
+    }
+  ],
+  "tool_scope_terminal": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-12-57_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3/tool_descendant_scope_terminal.json",
+    "sha256": "ecd4f4f8c9af0b95072386d6a11186e4f3569f835e805573c2d4ed285e242e12"
+  },
+  "worker_admitted": false
+}

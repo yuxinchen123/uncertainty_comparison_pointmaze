@@ -1,0 +1,1879 @@
+{
+  "hardware": {
+    "configured_isolation_metadata": {
+      "schema_version": 1,
+      "kind": "uva_configured_isolation_metadata",
+      "profile": {
+        "schema_version": 1,
+        "name": "uva-jaguar03-autodetect-nvml-configured-isolation-version-1",
+        "cluster": "uva",
+        "hostname": "jaguar03",
+        "username": "sl5nw",
+        "uid": 2618919,
+        "configuration_service_name": "slurm",
+        "configuration_service_uid": 64030,
+        "model": "NVIDIA RTX A4500",
+        "memory_mib": 20470,
+        "driver": "580.159.04",
+        "gpu_count": 1,
+        "physical_gres_mapping_verified": false,
+        "kernel_device_enforcement_verified": false,
+        "installed_binary_matches_upstream_verified": false,
+        "isolation_basis": "explicit trust in the five reviewed administrator-managed UVA configuration files"
+      },
+      "capability": "unresolved_plan_original_selector_current_cuda_jax_binding_v1",
+      "physical_gres_mapping_verified": false,
+      "kernel_device_enforcement_verified": false,
+      "installed_binary_matches_upstream_verified": false,
+      "worker_admitted": false,
+      "admission_granted": false,
+      "case_credit": 0,
+      "idea_credit": 0,
+      "site_qualification_credit": 0,
+      "source": {
+        "source_root": "/p/rlprojects/RND_worktrees/2026-11-05-11-56_profile-qualification-helper_source-d1469fd063a4_h100-helpers-44_a4500-helpers-35_gpu-count-0",
+        "source_commit": "d1469fd063a44167ec56760729eb0beea7ecf7d3",
+        "files": {
+          "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py": "bd96ba3a5b0fa5b5cf99adbba5e6862fa6048654e13ebb0fd4724222243a424c",
+          "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py": "fe8725b2e641d1c60de31bdd5ae49b31745222c6cf436b7202c330741df859ab",
+          "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py": "0f2cba5aa8dfae67552f131998dfc8784d849fc1a2683764d63d4fda8b6a3d12",
+          "10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py": "2612e358f3e823289a92bdfe54856bdc8f0de5553db4bdcc5cd7617083cfd6aa",
+          "10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry.py": "40c117d6fd1937dcdd465381d1469f0ad687103d7b551d604d8c6e03063f9107",
+          "10_jax_exploration_platform/scripts/atari_pixel_campaign/pregather_async_retry.py": "881c89b678782dc56568b9257a9753a78b4e06464d43e73a14f1927a5fc17695",
+          "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_queue.py": "cac5c612c641aad0bc814438f0e21c02544073632484dcba99047e2ac44aaa60",
+          "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_case.py": "5acd8a33b849e8805a6d51023d5c5661ac989b473a6135669b9ca243256e754f",
+          "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_evidence.py": "cc66813e5a31dd54f9c266f5a094c26c6a5753c17599b1badd97911f932c5824",
+          "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py": "7b71221d25493ad5a5b07672e593a329f912ebf3ecd259f2aeede1e6da55acc6",
+          "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_qualification.py": "93a19a553a10daf894e4e573b7aacebecf0d5a1cfa0b0f13a471c19e4184eecb",
+          "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_allocation_observation.py": "f614a3792f196605cd1fa4b76738ff3157f72ee6700058526c2598e45a63a50c",
+          "10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py": "66771819cf75ea89e1b6f8fef4467aece2eecf864cd0ca434cbb5c698365f210",
+          "10_jax_exploration_platform/scripts/atari_pixel_campaign/short_learning.py": "b17d70f4e49de9f766062beb0578729fcde9d68a29060f37d718deb644cb0999",
+          "10_jax_exploration_platform/scripts/atari_pixel_campaign/device_memory_limit.py": "3abcb3641cc799424d6585e9881befbbd3c06800e9dc4d19fed5a507fe5e06ff",
+          "10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py": "e392dc6329cc8b5e902f3271d512cb9ee5bbc2f2fcdd6b0d85cefd981a1042b9",
+          "10_jax_exploration_platform/scripts/atari_pixel_campaign/portable_evidence.py": "0ecae0ab2c21b0bbeadd47ddbd81026cb133e8f3d7f32c2148268dbfe575a4d1",
+          "10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py": "bde06959eb37322f3d9f8a82ab7457b24c7082a1176f06ff89f4e44f8dbdce0f",
+          "10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_slurm_configured_isolation.py": "7fc004d37f01fb5c6e3c24b2b6525577ceb158fe66dd9706f5189a1c139fd064",
+          "10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_active_configuration_observation.py": "8cc5a3544e426e3bd3e78707f6c77dc249a1d19165a593e157d2097daa07a648",
+          "10_jax_exploration_platform/scripts/atari_pixel_campaign/passive_installed_slurm_observation.py": "97ce634c07cd7a2b045d4253938db21c844abd93f3bb7b9d4dbebfd5f33bf842",
+          "10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py": "1833e05b42d680194e4a8da9cd2b487d3af7529285d1a9d550edc7d3b63f6279",
+          "10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_native_process.py": "3b7bacf07c7a8d4eeafe74f0e5b4c8a02365ccaa32326ab430d3316d3891c54a",
+          "10_jax_exploration_platform/scripts/atari_pixel_campaign/linux_pidfd_process_control.py": "37754acfdf8f139eecc2e9bbac91ee56cc12069a77f237968fe713f8b5b81172",
+          "10_jax_exploration_platform/scripts/atari_pixel_campaign/native_process_evidence.py": "8e67bf42ad3f348d009ca793a16fcdfd5771f08e4ff70dfd88f348496bd6a35a",
+          "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_tool_descendants.py": "8fc3e6d870611a2a9e57825b5374a73050a6c98fc3d918f336619e1cfff48889",
+          "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_process.py": "6177930cf35114405fc6dfca0c7738c26d897eb4aa3fc0eb5adeb39c75b55f77",
+          "10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_profile_prerequisites.py": "f00cc7f5e361275f5569de6c65af8466eb53668a89fd827e10f45991c633c26f",
+          "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_qualification.py": "5a43a52541c26777538ca98010887438fa3ec8433b4b27030dfd0e0e3b05e021",
+          "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_process.py": "03ff5628fa2d211fb96373e37ad6eee18ccf71a3d7c2272c143e02bde94f236a",
+          "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_direct_process.py": "0b141087d1425946dc8b143bd805b097bcca6190c439c185af7c0ed4e92d324b",
+          "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_release.py": "72e5912a892eab22ba3a07c67ed80f8cf7a3e387492fd278b77e4cc1728abf61",
+          "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_qualification_backend.py": "c0dbeac088fdbcd150b1d818ff9fd34fec8b067b2560fb8ba9e6cf65ab666c09",
+          "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_backend_image.py": "55756b454c477635e22b2852dc9dbb002db257830f0dc9071b1018f4d3f350b7",
+          "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_timing_controller.py": "1d8bb43df5c4c247e28bb3d588674e8d3cd7718363c62584bc57267d67af10e2"
+        }
+      },
+      "inputs": {
+        "job_id": "6826372",
+        "kind": "uva_configured_isolation_owned_inputs",
+        "ledger": {
+          "snapshot": {
+            "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-12-57_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3/configured_isolation_owned_job_ids.txt",
+            "sha256": "74adb4a32f634509958954ba4642cc42c48f7e6f504ed3e623011d81335931fa"
+          },
+          "source_path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/submitted_jobids_uva.txt"
+        },
+        "plan": {
+          "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-12-57_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3/measurement_plan.json",
+          "sha256": "17551b6dbefa860ac2715f58b04a780588ae0b74effecb9db768c5a76e17f5bf"
+        },
+        "release": {
+          "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-12-57_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3/release_receipt.json",
+          "sha256": "33c76f9dddd69b985f3e222ba56a6e4ebddd4e437beeeb7aaa2eceb186bc7be1"
+        },
+        "schema_version": 1,
+        "submission": {
+          "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-12-57_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3/submission_receipt.json",
+          "sha256": "347c93e45749a428286274796441557318bcf3dbaf67554df224b8c841469f2c"
+        },
+        "submission_row": [
+          "6826372",
+          "full_original_profile_source_target_qualification",
+          "d1469fd063a44167ec56760729eb0beea7ecf7d3",
+          "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-12-57_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3/job.sbatch"
+        ],
+        "submissions": {
+          "snapshot": {
+            "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-12-57_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3/configured_isolation_owned_submissions.tsv",
+            "sha256": "2ab427e40c8b6a36740e57c3e71bba4d8bddb3db07f6f2f07740f0f63e04d0ba"
+          },
+          "source_path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/submissions.tsv"
+        }
+      },
+      "inputs_receipt": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-12-57_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3/owned_allocation_inputs.json",
+        "sha256": "bdd0d8e2c80181572f31e3648666e9a5ebab526a556ec66dd7460cff96813b7e"
+      },
+      "process": {
+        "hostname": "jaguar03",
+        "pid": 2503108,
+        "uid": 2618919,
+        "process_start_time": "87353087",
+        "parent_pid": 2503106,
+        "cpu_affinity": [
+          0,
+          1,
+          2,
+          3,
+          112,
+          113,
+          114,
+          115
+        ],
+        "cgroup": "0::/system.slice/slurmstepd.scope/job_6826372/step_0/user/task_0\n"
+      },
+      "environment": {
+        "CUDA_VISIBLE_DEVICES": "0",
+        "SLURM_CONF": "/etc/slurm/slurm.conf",
+        "SLURM_JOB_ID": "6826372",
+        "SLURM_STEP_ID": "0",
+        "SLURM_JOB_GPUS": "0",
+        "SLURM_STEP_GPUS": "0",
+        "SLURM_GPUS_ON_NODE": "1",
+        "SLURM_CPUS_PER_TASK": "8"
+      },
+      "cgroup_capture_path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-12-57_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3/supervisor/configured_isolation_process.json",
+      "cgroup": {
+        "schema_version": 1,
+        "kind": "uva_cgroup_v2_ownership_observation",
+        "ownership_profile": {
+          "schema_version": 1,
+          "kind": "uva_slurm_cgroup_v2_process_uid_ownership",
+          "cluster": "uva",
+          "username": "sl5nw",
+          "uid": 2618919,
+          "cgroup_version": 2,
+          "path_prefix": "/system.slice/slurmstepd.scope",
+          "numeric_step_required": true,
+          "task_name": "task_0",
+          "uid_encoded_in_cgroup_path": false,
+          "kernel_device_enforcement_verified": false
+        },
+        "ownership_capability": "own_proc_uids_stat_and_root_cgroup2_task_membership_v1",
+        "directories_before": [
+          {
+            "path": "/sys/fs/cgroup",
+            "status": "readable",
+            "uid": 0,
+            "mode": 365,
+            "inode": 1,
+            "device": 29,
+            "regular_file": false,
+            "directory": true,
+            "symlink": false,
+            "exact_path": true
+          },
+          {
+            "path": "/sys/fs/cgroup/system.slice",
+            "status": "readable",
+            "uid": 0,
+            "mode": 493,
+            "inode": 71,
+            "device": 29,
+            "regular_file": false,
+            "directory": true,
+            "symlink": false,
+            "exact_path": true
+          },
+          {
+            "path": "/sys/fs/cgroup/system.slice/slurmstepd.scope",
+            "status": "readable",
+            "uid": 0,
+            "mode": 493,
+            "inode": 4729,
+            "device": 29,
+            "regular_file": false,
+            "directory": true,
+            "symlink": false,
+            "exact_path": true
+          },
+          {
+            "path": "/sys/fs/cgroup/system.slice/slurmstepd.scope/job_6826372",
+            "status": "readable",
+            "uid": 0,
+            "mode": 493,
+            "inode": 524996,
+            "device": 29,
+            "regular_file": false,
+            "directory": true,
+            "symlink": false,
+            "exact_path": true
+          },
+          {
+            "path": "/sys/fs/cgroup/system.slice/slurmstepd.scope/job_6826372/step_0",
+            "status": "readable",
+            "uid": 0,
+            "mode": 493,
+            "inode": 525290,
+            "device": 29,
+            "regular_file": false,
+            "directory": true,
+            "symlink": false,
+            "exact_path": true
+          },
+          {
+            "path": "/sys/fs/cgroup/system.slice/slurmstepd.scope/job_6826372/step_0/user",
+            "status": "readable",
+            "uid": 0,
+            "mode": 493,
+            "inode": 525332,
+            "device": 29,
+            "regular_file": false,
+            "directory": true,
+            "symlink": false,
+            "exact_path": true
+          },
+          {
+            "path": "/sys/fs/cgroup/system.slice/slurmstepd.scope/job_6826372/step_0/user/task_0",
+            "status": "readable",
+            "uid": 0,
+            "mode": 493,
+            "inode": 525458,
+            "device": 29,
+            "regular_file": false,
+            "directory": true,
+            "symlink": false,
+            "exact_path": true
+          }
+        ],
+        "directories_after": [
+          {
+            "path": "/sys/fs/cgroup",
+            "status": "readable",
+            "uid": 0,
+            "mode": 365,
+            "inode": 1,
+            "device": 29,
+            "regular_file": false,
+            "directory": true,
+            "symlink": false,
+            "exact_path": true
+          },
+          {
+            "path": "/sys/fs/cgroup/system.slice",
+            "status": "readable",
+            "uid": 0,
+            "mode": 493,
+            "inode": 71,
+            "device": 29,
+            "regular_file": false,
+            "directory": true,
+            "symlink": false,
+            "exact_path": true
+          },
+          {
+            "path": "/sys/fs/cgroup/system.slice/slurmstepd.scope",
+            "status": "readable",
+            "uid": 0,
+            "mode": 493,
+            "inode": 4729,
+            "device": 29,
+            "regular_file": false,
+            "directory": true,
+            "symlink": false,
+            "exact_path": true
+          },
+          {
+            "path": "/sys/fs/cgroup/system.slice/slurmstepd.scope/job_6826372",
+            "status": "readable",
+            "uid": 0,
+            "mode": 493,
+            "inode": 524996,
+            "device": 29,
+            "regular_file": false,
+            "directory": true,
+            "symlink": false,
+            "exact_path": true
+          },
+          {
+            "path": "/sys/fs/cgroup/system.slice/slurmstepd.scope/job_6826372/step_0",
+            "status": "readable",
+            "uid": 0,
+            "mode": 493,
+            "inode": 525290,
+            "device": 29,
+            "regular_file": false,
+            "directory": true,
+            "symlink": false,
+            "exact_path": true
+          },
+          {
+            "path": "/sys/fs/cgroup/system.slice/slurmstepd.scope/job_6826372/step_0/user",
+            "status": "readable",
+            "uid": 0,
+            "mode": 493,
+            "inode": 525332,
+            "device": 29,
+            "regular_file": false,
+            "directory": true,
+            "symlink": false,
+            "exact_path": true
+          },
+          {
+            "path": "/sys/fs/cgroup/system.slice/slurmstepd.scope/job_6826372/step_0/user/task_0",
+            "status": "readable",
+            "uid": 0,
+            "mode": 493,
+            "inode": 525458,
+            "device": 29,
+            "regular_file": false,
+            "directory": true,
+            "symlink": false,
+            "exact_path": true
+          }
+        ],
+        "memberships": [
+          {
+            "path": "/sys/fs/cgroup/system.slice/slurmstepd.scope/job_6826372/cgroup.procs",
+            "status": "readable",
+            "uid": 0,
+            "mode": 420,
+            "inode": 524998,
+            "device": 29,
+            "regular_file": true,
+            "directory": false,
+            "symlink": false,
+            "exact_path": true,
+            "raw": "",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "path": "/sys/fs/cgroup/system.slice/slurmstepd.scope/job_6826372/step_0/cgroup.procs",
+            "status": "readable",
+            "uid": 0,
+            "mode": 420,
+            "inode": 525292,
+            "device": 29,
+            "regular_file": true,
+            "directory": false,
+            "symlink": false,
+            "exact_path": true,
+            "raw": "",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "path": "/sys/fs/cgroup/system.slice/slurmstepd.scope/job_6826372/step_0/user/cgroup.procs",
+            "status": "readable",
+            "uid": 0,
+            "mode": 420,
+            "inode": 525334,
+            "device": 29,
+            "regular_file": true,
+            "directory": false,
+            "symlink": false,
+            "exact_path": true,
+            "raw": "",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "path": "/sys/fs/cgroup/system.slice/slurmstepd.scope/job_6826372/step_0/user/task_0/cgroup.procs",
+            "status": "readable",
+            "uid": 0,
+            "mode": 420,
+            "inode": 525460,
+            "device": 29,
+            "regular_file": true,
+            "directory": false,
+            "symlink": false,
+            "exact_path": true,
+            "raw": "2503106\n2503108\n",
+            "sha256": "89a3e6c2da1b0b259c7336893dbf63eb5e295b09e82734bce3afbdcb977f9def"
+          }
+        ],
+        "before": {
+          "pid": 2503108,
+          "uid": 2618919,
+          "effective_uid": 2618919,
+          "status": {
+            "path": "/proc/self/status",
+            "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+            "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1",
+            "full_sha256": "1f1a4ed99264062e530599657ad165969af74b9ebf7d57dda7bca68f5db2db92"
+          },
+          "stat": {
+            "path": "/proc/self/stat",
+            "raw": "2503108 (python) R 2503106 2503108 2503108 0 -1 4194304 56816 5726 2 55 144 37 6 10 20 0 1 0 87353087 169467904 39065 68719476736 94766972235776 94766974663453 140724670304032 0 0 0 0 16781312 16386 0 0 0 17 2 0 0 0 0 0 94766976088816 94766978070256 94767182807040 140724670309083 140724670310071 140724670310071 140724670316483 0\n",
+            "sha256": "1a74842cb5cf6d915faf1abf4cb82179c9f381d1a52770b3d13e3ee594cda65c"
+          },
+          "cgroup": {
+            "path": "/proc/self/cgroup",
+            "raw": "0::/system.slice/slurmstepd.scope/job_6826372/step_0/user/task_0\n",
+            "sha256": "035413ea9a2a66c02392c7766da77fb8b25dc268e1393ad18da98390afb08907"
+          },
+          "namespace": {
+            "path": "/proc/self/ns/cgroup",
+            "target": "cgroup:[4026531835]",
+            "inode": 4026531835
+          }
+        },
+        "mountinfo": {
+          "path": "/proc/self/mountinfo",
+          "raw": "34 24 0:29 / /sys/fs/cgroup rw,nosuid,nodev,noexec,relatime shared:9 - cgroup2 cgroup2 rw,nsdelegate,memory_recursiveprot\n",
+          "sha256": "53883c403add93f39276bb9f04f2d327a159553a4213d2e0283a95af796fd8e5",
+          "full_sha256": "8fd320ecf15920123945985337af3a7cecc050f7e08d2bde922e842ff39ebad6"
+        },
+        "after": {
+          "pid": 2503108,
+          "uid": 2618919,
+          "effective_uid": 2618919,
+          "status": {
+            "path": "/proc/self/status",
+            "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+            "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1",
+            "full_sha256": "1f1a4ed99264062e530599657ad165969af74b9ebf7d57dda7bca68f5db2db92"
+          },
+          "stat": {
+            "path": "/proc/self/stat",
+            "raw": "2503108 (python) R 2503106 2503108 2503108 0 -1 4194304 56816 5726 2 55 144 37 6 10 20 0 1 0 87353087 169467904 39065 68719476736 94766972235776 94766974663453 140724670304032 0 0 0 0 16781312 16386 0 0 0 17 2 0 0 0 0 0 94766976088816 94766978070256 94767182807040 140724670309083 140724670310071 140724670310071 140724670316483 0\n",
+            "sha256": "1a74842cb5cf6d915faf1abf4cb82179c9f381d1a52770b3d13e3ee594cda65c"
+          },
+          "cgroup": {
+            "path": "/proc/self/cgroup",
+            "raw": "0::/system.slice/slurmstepd.scope/job_6826372/step_0/user/task_0\n",
+            "sha256": "035413ea9a2a66c02392c7766da77fb8b25dc268e1393ad18da98390afb08907"
+          },
+          "namespace": {
+            "path": "/proc/self/ns/cgroup",
+            "target": "cgroup:[4026531835]",
+            "inode": 4026531835
+          }
+        }
+      },
+      "job": {
+        "command": [
+          "scontrol",
+          "show",
+          "job",
+          "-d",
+          "6826372"
+        ],
+        "returncode": 0,
+        "capture_status": "completed",
+        "byte_limit": 32768,
+        "stdout_full_sha256": "4bb4aa38fb5923b7bf426cf601391aa2744fb07e7e6a9a9564b27340d45d939d",
+        "stdout_captured_bytes": 2474,
+        "stderr_full_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_captured_bytes": 0,
+        "stdout_scope": "complete_raw_utf8",
+        "stdout": "JobId=6826372 JobName=profile-target-qualification\n   UserId=sl5nw(2618919) GroupId=collaborator(90030) MCS_label=N/A\n   Priority=811 Nice=0 Account=sl5nw_base QOS=csresnolim\n   JobState=RUNNING Reason=None Dependency=(null)\n   Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0\n   DerivedExitCode=0:0\n   RunTime=00:00:06 TimeLimit=03:00:00 TimeMin=N/A\n   SubmitTime=2026-11-05T21:10:43 EligibleTime=2026-11-05T21:14:14\n   AccrueTime=2026-11-05T21:14:14\n   StartTime=2026-11-05T21:14:14 EndTime=2026-11-06T00:14:14 Deadline=N/A\n   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-11-05T21:14:14 Scheduler=Main\n   Partition=gpu AllocNode:Sid=portal05:987115\n   ReqNodeList=jaguar03 ExcNodeList=(null)\n   NodeList=jaguar03\n   BatchHost=jaguar03\n   NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:*\n   ReqTRES=cpu=8,mem=64G,node=1,billing=9840,gres/gpu=1\n   AllocTRES=cpu=8,mem=64G,node=1,billing=9840,gres/gpu=1\n   Socks/Node=* NtasksPerN:B:S:C=0:0:*:1 CoreSpec=*\n   JOB_GRES=gpu:nvidia_rtx_a4500:1\n     Nodes=jaguar03 CPU_IDs=0-7 Mem=65536 GRES=gpu:nvidia_rtx_a4500:1(IDX:0)\n   MinCPUsNode=8 MinMemoryNode=64G MinTmpDiskNode=0\n   Features=(null) DelayBoot=00:00:00\n   Reservation=sl5nw_168\n   OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null)\n   Command=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-12-57_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3/job.sbatch\n   WorkDir=/p/rlprojects/RND\n   StdErr=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/jobs/profile-target-6826372.err\n   StdIn=/dev/null\n   StdOut=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/jobs/profile-target-6826372.out\n   Power=\n   TresPerNode=gres/gpu:nvidia_rtx_a4500:1\n   TresPerTask=cpu:8\n   \n\n",
+        "stderr": ""
+      },
+      "step": {
+        "command": [
+          "scontrol",
+          "show",
+          "step",
+          "-d",
+          "6826372.0"
+        ],
+        "returncode": 0,
+        "capture_status": "completed",
+        "byte_limit": 32768,
+        "stdout_full_sha256": "50690aa6d14455123d76916809dd19666609906bd74dbf483909fbed975bcfa4",
+        "stdout_captured_bytes": 404,
+        "stderr_full_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_captured_bytes": 0,
+        "stdout_scope": "complete_raw_utf8",
+        "stdout": "StepId=6826372.0 UserId=2618919 StartTime=2026-11-05T21:14:14 TimeLimit=UNLIMITED\n   State=RUNNING Partition=gpu NodeList=jaguar03\n   Nodes=1 CPUs=8 Tasks=1 Name=python3 Network=(null)\n   TRES=cpu=8,gres/gpu=1,mem=64G,node=1\n   ResvPorts=(null)\n   CPUFreqReq=Default Dist=Cyclic\n   SrunHost:Pid=jaguar03:2503083\n   TresPerStep=cpu:8\n   TresPerNode=gres/gpu:nvidia_rtx_a4500:1\n   TresPerTask=cpu:8,cpu:8\n\n",
+        "stderr": ""
+      },
+      "running_configuration": {
+        "command": [
+          "scontrol",
+          "show",
+          "config"
+        ],
+        "returncode": 0,
+        "capture_status": "completed",
+        "byte_limit": 32768,
+        "stdout_full_sha256": "3891094292f0762acab83f2223dbfcbb5be708ed6650558a69e56e638567e971",
+        "stdout_captured_bytes": 8122,
+        "stderr_full_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_captured_bytes": 0,
+        "stdout_scope": "filtered_controller_nonsecret_settings",
+        "stdout": "GresTypes = gpu\nPluginDir = /sw/ubuntu2204/custom/slurm/23.11.6/lib/slurm\nProctrackType = proctrack/cgroup\nSlurmUser = slurm(64030)\nSlurmdLogFile = /var/log/slurm/slurmd.log\nSlurmdPidFile = /var/run/slurmd.pid\nSlurmdSpoolDir = /var/spool/slurmd\nSlurmdUser = root(0)\nSLURM_CONF = /etc/slurm/slurm.conf\nTaskPlugin = task/cgroup,task/affinity\nCgroupMountpoint = /sys/fs/cgroup\nCgroupPlugin = autodetect\nConstrainCores = no\nConstrainDevices = no\nConstrainRAMSpace = no\nEnableControllers = no\nIgnoreSystemd = no\nIgnoreSystemdOnFailure = no\n",
+        "stderr": "",
+        "filtered_stdout_sha256": "941c77d4c832709668c2b99889dd326c75809b955b3d221d63426549d4d18bcc",
+        "filtered_stdout_bytes": 535
+      },
+      "configuration": {
+        "service": {
+          "name": "slurm",
+          "uid": 64030,
+          "gid": 64030
+        },
+        "cache_absent": true,
+        "files": {
+          "/etc/slurm/slurm.conf": {
+            "path": "/etc/slurm/slurm.conf",
+            "read_status": "read",
+            "read_trace": {
+              "pinned_directory_chain": [
+                {
+                  "path": "/",
+                  "owner_uid": 0,
+                  "mode": 493,
+                  "inode": 2,
+                  "device": 64770,
+                  "byte_count": 4096,
+                  "modified_ns": 1782814322213413042,
+                  "changed_ns": 1782814322213413042,
+                  "directory": true,
+                  "regular_file": false
+                },
+                {
+                  "path": "/etc",
+                  "owner_uid": 0,
+                  "mode": 493,
+                  "inode": 31457281,
+                  "device": 64770,
+                  "byte_count": 12288,
+                  "modified_ns": 1793627110708908532,
+                  "changed_ns": 1793627110708908532,
+                  "directory": true,
+                  "regular_file": false
+                },
+                {
+                  "path": "/etc/slurm",
+                  "owner_uid": 64030,
+                  "mode": 493,
+                  "inode": 31588634,
+                  "device": 64770,
+                  "byte_count": 4096,
+                  "modified_ns": 1789066137431616618,
+                  "changed_ns": 1789066137431616618,
+                  "directory": true,
+                  "regular_file": false
+                }
+              ],
+              "descriptor_before": {
+                "path": "/etc/slurm/slurm.conf",
+                "owner_uid": 64030,
+                "mode": 420,
+                "inode": 27263041,
+                "device": 64770,
+                "byte_count": 3531,
+                "modified_ns": 1789066137436074733,
+                "changed_ns": 1789066137431616618,
+                "directory": false,
+                "regular_file": true
+              },
+              "reader_before": {
+                "path": "/etc/slurm/slurm.conf",
+                "owner_uid": 64030,
+                "mode": 420,
+                "inode": 27263041,
+                "device": 64770,
+                "byte_count": 3531,
+                "modified_ns": 1789066137436074733,
+                "changed_ns": 1789066137431616618,
+                "directory": false,
+                "regular_file": true
+              },
+              "descriptor_after": {
+                "path": "/etc/slurm/slurm.conf",
+                "owner_uid": 64030,
+                "mode": 420,
+                "inode": 27263041,
+                "device": 64770,
+                "byte_count": 3531,
+                "modified_ns": 1789066137436074733,
+                "changed_ns": 1789066137431616618,
+                "directory": false,
+                "regular_file": true
+              },
+              "bytes_read": 3531,
+              "size_limit_bytes": 32768,
+              "complete_file": true,
+              "path_after": {
+                "path": "/etc/slurm/slurm.conf",
+                "status": "observed",
+                "owner_uid": 64030,
+                "mode": 420,
+                "inode": 27263041,
+                "device": 64770,
+                "directory": false,
+                "regular_file": true,
+                "symlink": false,
+                "exact_path": true
+              },
+              "path_replaced_during_read": false,
+              "inode_changed_during_read": false
+            },
+            "uid": 64030,
+            "mode": 420,
+            "regular_file": true,
+            "symlink": false,
+            "sha256": "213efdf97aeae42c5e4697171a49d195a801a67c232293cf0c0b04e15a57c47a",
+            "settings": [
+              {
+                "line": 26,
+                "name": "SlurmdPidFile",
+                "value": "/var/run/slurmd.pid"
+              },
+              {
+                "line": 29,
+                "name": "SlurmdLogFile",
+                "value": "/var/log/slurm/slurmd.log"
+              },
+              {
+                "line": 30,
+                "name": "SlurmdSpoolDir",
+                "value": "/var/spool/slurmd"
+              },
+              {
+                "line": 32,
+                "name": "SlurmUser",
+                "value": "slurm"
+              },
+              {
+                "line": 38,
+                "name": "GresTypes",
+                "value": "gpu"
+              },
+              {
+                "line": 40,
+                "name": "ProctrackType",
+                "value": "proctrack/cgroup"
+              },
+              {
+                "line": 42,
+                "name": "TaskPlugin",
+                "value": "task/cgroup,task/affinity"
+              }
+            ],
+            "includes": [
+              {
+                "line": 121,
+                "token": "/etc/slurm/nodes.conf"
+              },
+              {
+                "line": 122,
+                "token": "/etc/slurm/partitions.conf"
+              }
+            ],
+            "directory_chain": [
+              {
+                "path": "/",
+                "uid": 0,
+                "mode": 493,
+                "inode": 2,
+                "device": 64770,
+                "directory": true,
+                "symlink": false
+              },
+              {
+                "path": "/etc",
+                "uid": 0,
+                "mode": 493,
+                "inode": 31457281,
+                "device": 64770,
+                "directory": true,
+                "symlink": false
+              },
+              {
+                "path": "/etc/slurm",
+                "uid": 64030,
+                "mode": 493,
+                "inode": 31588634,
+                "device": 64770,
+                "directory": true,
+                "symlink": false
+              }
+            ],
+            "directory_chain_after": [
+              {
+                "path": "/",
+                "uid": 0,
+                "mode": 493,
+                "inode": 2,
+                "device": 64770,
+                "directory": true,
+                "symlink": false
+              },
+              {
+                "path": "/etc",
+                "uid": 0,
+                "mode": 493,
+                "inode": 31457281,
+                "device": 64770,
+                "directory": true,
+                "symlink": false
+              },
+              {
+                "path": "/etc/slurm",
+                "uid": 64030,
+                "mode": 493,
+                "inode": 31588634,
+                "device": 64770,
+                "directory": true,
+                "symlink": false
+              }
+            ]
+          },
+          "/etc/slurm/nodes.conf": {
+            "path": "/etc/slurm/nodes.conf",
+            "read_status": "read",
+            "read_trace": {
+              "pinned_directory_chain": [
+                {
+                  "path": "/",
+                  "owner_uid": 0,
+                  "mode": 493,
+                  "inode": 2,
+                  "device": 64770,
+                  "byte_count": 4096,
+                  "modified_ns": 1782814322213413042,
+                  "changed_ns": 1782814322213413042,
+                  "directory": true,
+                  "regular_file": false
+                },
+                {
+                  "path": "/etc",
+                  "owner_uid": 0,
+                  "mode": 493,
+                  "inode": 31457281,
+                  "device": 64770,
+                  "byte_count": 12288,
+                  "modified_ns": 1793627110708908532,
+                  "changed_ns": 1793627110708908532,
+                  "directory": true,
+                  "regular_file": false
+                },
+                {
+                  "path": "/etc/slurm",
+                  "owner_uid": 64030,
+                  "mode": 493,
+                  "inode": 31588634,
+                  "device": 64770,
+                  "byte_count": 4096,
+                  "modified_ns": 1789066137431616618,
+                  "changed_ns": 1789066137431616618,
+                  "directory": true,
+                  "regular_file": false
+                }
+              ],
+              "descriptor_before": {
+                "path": "/etc/slurm/nodes.conf",
+                "owner_uid": 64030,
+                "mode": 420,
+                "inode": 27263038,
+                "device": 64770,
+                "byte_count": 9356,
+                "modified_ns": 1784731710405396699,
+                "changed_ns": 1784731710403172886,
+                "directory": false,
+                "regular_file": true
+              },
+              "reader_before": {
+                "path": "/etc/slurm/nodes.conf",
+                "owner_uid": 64030,
+                "mode": 420,
+                "inode": 27263038,
+                "device": 64770,
+                "byte_count": 9356,
+                "modified_ns": 1784731710405396699,
+                "changed_ns": 1784731710403172886,
+                "directory": false,
+                "regular_file": true
+              },
+              "descriptor_after": {
+                "path": "/etc/slurm/nodes.conf",
+                "owner_uid": 64030,
+                "mode": 420,
+                "inode": 27263038,
+                "device": 64770,
+                "byte_count": 9356,
+                "modified_ns": 1784731710405396699,
+                "changed_ns": 1784731710403172886,
+                "directory": false,
+                "regular_file": true
+              },
+              "bytes_read": 9356,
+              "size_limit_bytes": 32768,
+              "complete_file": true,
+              "path_after": {
+                "path": "/etc/slurm/nodes.conf",
+                "status": "observed",
+                "owner_uid": 64030,
+                "mode": 420,
+                "inode": 27263038,
+                "device": 64770,
+                "directory": false,
+                "regular_file": true,
+                "symlink": false,
+                "exact_path": true
+              },
+              "path_replaced_during_read": false,
+              "inode_changed_during_read": false
+            },
+            "uid": 64030,
+            "mode": 420,
+            "regular_file": true,
+            "symlink": false,
+            "sha256": "1c9dc0acd626a1f794feddae773da4295d5807e06e872a9330a722eac2e59a5c",
+            "settings": [
+              {
+                "line": 23,
+                "name": "NodeName",
+                "value": "affogato01"
+              },
+              {
+                "line": 24,
+                "name": "NodeName",
+                "value": "affogato02"
+              },
+              {
+                "line": 25,
+                "name": "NodeName",
+                "value": "affogato03"
+              },
+              {
+                "line": 26,
+                "name": "NodeName",
+                "value": "affogato[04-05]"
+              },
+              {
+                "line": 27,
+                "name": "NodeName",
+                "value": "affogato[06-10]"
+              },
+              {
+                "line": 28,
+                "name": "NodeName",
+                "value": "bigcat[01-05]"
+              },
+              {
+                "line": 29,
+                "name": "NodeName",
+                "value": "bigcat06"
+              },
+              {
+                "line": 30,
+                "name": "NodeName",
+                "value": "cortado[01-10]"
+              },
+              {
+                "line": 31,
+                "name": "NodeName",
+                "value": "heartpiece"
+              },
+              {
+                "line": 32,
+                "name": "NodeName",
+                "value": "hydro"
+              },
+              {
+                "line": 33,
+                "name": "NodeName",
+                "value": "lynx[08-09]"
+              },
+              {
+                "line": 34,
+                "name": "NodeName",
+                "value": "puma01"
+              },
+              {
+                "line": 35,
+                "name": "NodeName",
+                "value": "panther01"
+              },
+              {
+                "line": 36,
+                "name": "NodeName",
+                "value": "slurm1"
+              },
+              {
+                "line": 37,
+                "name": "NodeName",
+                "value": "slurm[2-4]"
+              },
+              {
+                "line": 38,
+                "name": "NodeName",
+                "value": "slurm5"
+              },
+              {
+                "line": 39,
+                "name": "NodeName",
+                "value": "struct[01-09]"
+              },
+              {
+                "line": 42,
+                "name": "NodeName",
+                "value": "adriatic[01-06]"
+              },
+              {
+                "line": 42,
+                "name": "Gres",
+                "value": "gpu:quadro_rtx_4000:4"
+              },
+              {
+                "line": 43,
+                "name": "NodeName",
+                "value": "affogato11"
+              },
+              {
+                "line": 43,
+                "name": "Gres",
+                "value": "gpu:nvidia_geforce_rtx_2080_ti:4"
+              },
+              {
+                "line": 44,
+                "name": "NodeName",
+                "value": "affogato[13-15]"
+              },
+              {
+                "line": 44,
+                "name": "Gres",
+                "value": "gpu:nvidia_geforce_gtx_1080_ti:4"
+              },
+              {
+                "line": 45,
+                "name": "NodeName",
+                "value": "ai[01-04]"
+              },
+              {
+                "line": 45,
+                "name": "Gres",
+                "value": "gpu:nvidia_geforce_rtx_2080_ti:4"
+              },
+              {
+                "line": 46,
+                "name": "NodeName",
+                "value": "ai06"
+              },
+              {
+                "line": 46,
+                "name": "Gres",
+                "value": "gpu:nvidia_geforce_rtx_2080_ti:3"
+              },
+              {
+                "line": 47,
+                "name": "NodeName",
+                "value": "ai[05,10]"
+              },
+              {
+                "line": 47,
+                "name": "Gres",
+                "value": "gpu:nvidia_geforce_gtx_1080:4"
+              },
+              {
+                "line": 48,
+                "name": "NodeName",
+                "value": "ai[07-08]"
+              },
+              {
+                "line": 48,
+                "name": "Gres",
+                "value": "gpu:nvidia_geforce_gtx_1080_ti:4"
+              },
+              {
+                "line": 49,
+                "name": "NodeName",
+                "value": "ai09"
+              },
+              {
+                "line": 49,
+                "name": "Gres",
+                "value": "gpu:nvidia_geforce_gtx_1080_ti:4"
+              },
+              {
+                "line": 50,
+                "name": "NodeName",
+                "value": "cheetah01"
+              },
+              {
+                "line": 50,
+                "name": "Gres",
+                "value": "gpu:nvidia_a100-pcie-40gb:4"
+              },
+              {
+                "line": 51,
+                "name": "NodeName",
+                "value": "cheetah02"
+              },
+              {
+                "line": 51,
+                "name": "Gres",
+                "value": "gpu:nvidia_rtx_4000_ada_generation:4"
+              },
+              {
+                "line": 52,
+                "name": "NodeName",
+                "value": "cheetah03"
+              },
+              {
+                "line": 52,
+                "name": "Gres",
+                "value": "gpu:nvidia_geforce_rtx_2080_ti:2"
+              },
+              {
+                "line": 53,
+                "name": "NodeName",
+                "value": "cheetah04"
+              },
+              {
+                "line": 53,
+                "name": "Gres",
+                "value": "gpu:a100:4"
+              },
+              {
+                "line": 54,
+                "name": "NodeName",
+                "value": "cheetah[08-09]"
+              },
+              {
+                "line": 54,
+                "name": "Gres",
+                "value": "gpu:nvidia_rtx_a4000:4"
+              },
+              {
+                "line": 55,
+                "name": "NodeName",
+                "value": "lotus"
+              },
+              {
+                "line": 55,
+                "name": "Gres",
+                "value": "gpu:quadro_rtx_6000:8"
+              },
+              {
+                "line": 56,
+                "name": "NodeName",
+                "value": "lynx01"
+              },
+              {
+                "line": 56,
+                "name": "Gres",
+                "value": "gpu:nvidia_titan_xp:4"
+              },
+              {
+                "line": 57,
+                "name": "NodeName",
+                "value": "lynx[02-04]"
+              },
+              {
+                "line": 57,
+                "name": "Gres",
+                "value": "gpu:nvidia_geforce_gtx_1080_ti:4"
+              },
+              {
+                "line": 58,
+                "name": "NodeName",
+                "value": "lynx[05-07]"
+              },
+              {
+                "line": 58,
+                "name": "Gres",
+                "value": "gpu:tesla_p100-pcie-12gb:4"
+              },
+              {
+                "line": 59,
+                "name": "NodeName",
+                "value": "lynx10"
+              },
+              {
+                "line": 59,
+                "name": "Gres",
+                "value": "gpu:nvidia_geforce_rtx_2080_ti:4"
+              },
+              {
+                "line": 60,
+                "name": "NodeName",
+                "value": "nekomata[01-02]"
+              },
+              {
+                "line": 60,
+                "name": "Gres",
+                "value": "gpu:nvidia_geforce_rtx_5080:2"
+              },
+              {
+                "line": 61,
+                "name": "NodeName",
+                "value": "jaguar01"
+              },
+              {
+                "line": 61,
+                "name": "Gres",
+                "value": "gpu:nvidia_a40:4"
+              },
+              {
+                "line": 62,
+                "name": "NodeName",
+                "value": "jaguar02"
+              },
+              {
+                "line": 62,
+                "name": "Gres",
+                "value": "gpu:nvidia_a16:8"
+              },
+              {
+                "line": 63,
+                "name": "NodeName",
+                "value": "jaguar03"
+              },
+              {
+                "line": 63,
+                "name": "Gres",
+                "value": "gpu:nvidia_rtx_a4500:8"
+              },
+              {
+                "line": 64,
+                "name": "NodeName",
+                "value": "jaguar05"
+              },
+              {
+                "line": 64,
+                "name": "Gres",
+                "value": "gpu:quadro_rtx_4000:4"
+              },
+              {
+                "line": 65,
+                "name": "NodeName",
+                "value": "jaguar06"
+              },
+              {
+                "line": 65,
+                "name": "Gres",
+                "value": "gpu:a40:2"
+              },
+              {
+                "line": 66,
+                "name": "NodeName",
+                "value": "jinx[01-02]"
+              },
+              {
+                "line": 66,
+                "name": "Gres",
+                "value": "gpu:nvidia_geforce_gtx_1080:2"
+              },
+              {
+                "line": 67,
+                "name": "NodeName",
+                "value": "titanx03"
+              },
+              {
+                "line": 67,
+                "name": "Gres",
+                "value": "gpu:nvidia_titan_x:1"
+              },
+              {
+                "line": 70,
+                "name": "NodeName",
+                "value": "serval03"
+              },
+              {
+                "line": 70,
+                "name": "Gres",
+                "value": "gpu:nvidia_h100_nvl:1"
+              },
+              {
+                "line": 71,
+                "name": "NodeName",
+                "value": "serval[06-09]"
+              },
+              {
+                "line": 71,
+                "name": "Gres",
+                "value": "gpu:nvidia_h100_nvl:2"
+              }
+            ],
+            "includes": [],
+            "directory_chain": [
+              {
+                "path": "/",
+                "uid": 0,
+                "mode": 493,
+                "inode": 2,
+                "device": 64770,
+                "directory": true,
+                "symlink": false
+              },
+              {
+                "path": "/etc",
+                "uid": 0,
+                "mode": 493,
+                "inode": 31457281,
+                "device": 64770,
+                "directory": true,
+                "symlink": false
+              },
+              {
+                "path": "/etc/slurm",
+                "uid": 64030,
+                "mode": 493,
+                "inode": 31588634,
+                "device": 64770,
+                "directory": true,
+                "symlink": false
+              }
+            ],
+            "directory_chain_after": [
+              {
+                "path": "/",
+                "uid": 0,
+                "mode": 493,
+                "inode": 2,
+                "device": 64770,
+                "directory": true,
+                "symlink": false
+              },
+              {
+                "path": "/etc",
+                "uid": 0,
+                "mode": 493,
+                "inode": 31457281,
+                "device": 64770,
+                "directory": true,
+                "symlink": false
+              },
+              {
+                "path": "/etc/slurm",
+                "uid": 64030,
+                "mode": 493,
+                "inode": 31588634,
+                "device": 64770,
+                "directory": true,
+                "symlink": false
+              }
+            ]
+          },
+          "/etc/slurm/partitions.conf": {
+            "path": "/etc/slurm/partitions.conf",
+            "read_status": "read",
+            "read_trace": {
+              "pinned_directory_chain": [
+                {
+                  "path": "/",
+                  "owner_uid": 0,
+                  "mode": 493,
+                  "inode": 2,
+                  "device": 64770,
+                  "byte_count": 4096,
+                  "modified_ns": 1782814322213413042,
+                  "changed_ns": 1782814322213413042,
+                  "directory": true,
+                  "regular_file": false
+                },
+                {
+                  "path": "/etc",
+                  "owner_uid": 0,
+                  "mode": 493,
+                  "inode": 31457281,
+                  "device": 64770,
+                  "byte_count": 12288,
+                  "modified_ns": 1793627110708908532,
+                  "changed_ns": 1793627110708908532,
+                  "directory": true,
+                  "regular_file": false
+                },
+                {
+                  "path": "/etc/slurm",
+                  "owner_uid": 64030,
+                  "mode": 493,
+                  "inode": 31588634,
+                  "device": 64770,
+                  "byte_count": 4096,
+                  "modified_ns": 1789066137431616618,
+                  "changed_ns": 1789066137431616618,
+                  "directory": true,
+                  "regular_file": false
+                }
+              ],
+              "descriptor_before": {
+                "path": "/etc/slurm/partitions.conf",
+                "owner_uid": 64030,
+                "mode": 420,
+                "inode": 27263039,
+                "device": 64770,
+                "byte_count": 2347,
+                "modified_ns": 1784731718821238994,
+                "changed_ns": 1784731718819200312,
+                "directory": false,
+                "regular_file": true
+              },
+              "reader_before": {
+                "path": "/etc/slurm/partitions.conf",
+                "owner_uid": 64030,
+                "mode": 420,
+                "inode": 27263039,
+                "device": 64770,
+                "byte_count": 2347,
+                "modified_ns": 1784731718821238994,
+                "changed_ns": 1784731718819200312,
+                "directory": false,
+                "regular_file": true
+              },
+              "descriptor_after": {
+                "path": "/etc/slurm/partitions.conf",
+                "owner_uid": 64030,
+                "mode": 420,
+                "inode": 27263039,
+                "device": 64770,
+                "byte_count": 2347,
+                "modified_ns": 1784731718821238994,
+                "changed_ns": 1784731718819200312,
+                "directory": false,
+                "regular_file": true
+              },
+              "bytes_read": 2347,
+              "size_limit_bytes": 32768,
+              "complete_file": true,
+              "path_after": {
+                "path": "/etc/slurm/partitions.conf",
+                "status": "observed",
+                "owner_uid": 64030,
+                "mode": 420,
+                "inode": 27263039,
+                "device": 64770,
+                "directory": false,
+                "regular_file": true,
+                "symlink": false,
+                "exact_path": true
+              },
+              "path_replaced_during_read": false,
+              "inode_changed_during_read": false
+            },
+            "uid": 64030,
+            "mode": 420,
+            "regular_file": true,
+            "symlink": false,
+            "sha256": "161b848c4ee1281341d7791391e516df99fb4a98ea16d07d57355b4553871d8c",
+            "settings": [],
+            "includes": [],
+            "directory_chain": [
+              {
+                "path": "/",
+                "uid": 0,
+                "mode": 493,
+                "inode": 2,
+                "device": 64770,
+                "directory": true,
+                "symlink": false
+              },
+              {
+                "path": "/etc",
+                "uid": 0,
+                "mode": 493,
+                "inode": 31457281,
+                "device": 64770,
+                "directory": true,
+                "symlink": false
+              },
+              {
+                "path": "/etc/slurm",
+                "uid": 64030,
+                "mode": 493,
+                "inode": 31588634,
+                "device": 64770,
+                "directory": true,
+                "symlink": false
+              }
+            ],
+            "directory_chain_after": [
+              {
+                "path": "/",
+                "uid": 0,
+                "mode": 493,
+                "inode": 2,
+                "device": 64770,
+                "directory": true,
+                "symlink": false
+              },
+              {
+                "path": "/etc",
+                "uid": 0,
+                "mode": 493,
+                "inode": 31457281,
+                "device": 64770,
+                "directory": true,
+                "symlink": false
+              },
+              {
+                "path": "/etc/slurm",
+                "uid": 64030,
+                "mode": 493,
+                "inode": 31588634,
+                "device": 64770,
+                "directory": true,
+                "symlink": false
+              }
+            ]
+          },
+          "/etc/slurm/gres.conf": {
+            "path": "/etc/slurm/gres.conf",
+            "read_status": "read",
+            "read_trace": {
+              "pinned_directory_chain": [
+                {
+                  "path": "/",
+                  "owner_uid": 0,
+                  "mode": 493,
+                  "inode": 2,
+                  "device": 64770,
+                  "byte_count": 4096,
+                  "modified_ns": 1782814322213413042,
+                  "changed_ns": 1782814322213413042,
+                  "directory": true,
+                  "regular_file": false
+                },
+                {
+                  "path": "/etc",
+                  "owner_uid": 0,
+                  "mode": 493,
+                  "inode": 31457281,
+                  "device": 64770,
+                  "byte_count": 12288,
+                  "modified_ns": 1793627110708908532,
+                  "changed_ns": 1793627110708908532,
+                  "directory": true,
+                  "regular_file": false
+                },
+                {
+                  "path": "/etc/slurm",
+                  "owner_uid": 64030,
+                  "mode": 493,
+                  "inode": 31588634,
+                  "device": 64770,
+                  "byte_count": 4096,
+                  "modified_ns": 1789066137431616618,
+                  "changed_ns": 1789066137431616618,
+                  "directory": true,
+                  "regular_file": false
+                }
+              ],
+              "descriptor_before": {
+                "path": "/etc/slurm/gres.conf",
+                "owner_uid": 64030,
+                "mode": 420,
+                "inode": 27263034,
+                "device": 64770,
+                "byte_count": 1044,
+                "modified_ns": 1784731702205744028,
+                "changed_ns": 1784731702203146271,
+                "directory": false,
+                "regular_file": true
+              },
+              "reader_before": {
+                "path": "/etc/slurm/gres.conf",
+                "owner_uid": 64030,
+                "mode": 420,
+                "inode": 27263034,
+                "device": 64770,
+                "byte_count": 1044,
+                "modified_ns": 1784731702205744028,
+                "changed_ns": 1784731702203146271,
+                "directory": false,
+                "regular_file": true
+              },
+              "descriptor_after": {
+                "path": "/etc/slurm/gres.conf",
+                "owner_uid": 64030,
+                "mode": 420,
+                "inode": 27263034,
+                "device": 64770,
+                "byte_count": 1044,
+                "modified_ns": 1784731702205744028,
+                "changed_ns": 1784731702203146271,
+                "directory": false,
+                "regular_file": true
+              },
+              "bytes_read": 1044,
+              "size_limit_bytes": 32768,
+              "complete_file": true,
+              "path_after": {
+                "path": "/etc/slurm/gres.conf",
+                "status": "observed",
+                "owner_uid": 64030,
+                "mode": 420,
+                "inode": 27263034,
+                "device": 64770,
+                "directory": false,
+                "regular_file": true,
+                "symlink": false,
+                "exact_path": true
+              },
+              "path_replaced_during_read": false,
+              "inode_changed_during_read": false
+            },
+            "uid": 64030,
+            "mode": 420,
+            "regular_file": true,
+            "symlink": false,
+            "sha256": "1d7d1d7dd21d54a549b74a80ebaf0fe3b5016fa5ae702de945b81a43b9b76af7",
+            "settings": [
+              {
+                "line": 13,
+                "name": "NodeName",
+                "value": "ai[00-10]"
+              },
+              {
+                "line": 13,
+                "name": "AutoDetect",
+                "value": "nvml"
+              },
+              {
+                "line": 14,
+                "name": "NodeName",
+                "value": "adriatic[01-06]"
+              },
+              {
+                "line": 14,
+                "name": "AutoDetect",
+                "value": "nvml"
+              },
+              {
+                "line": 15,
+                "name": "NodeName",
+                "value": "affogato[11,13-15]"
+              },
+              {
+                "line": 15,
+                "name": "AutoDetect",
+                "value": "nvml"
+              },
+              {
+                "line": 16,
+                "name": "NodeName",
+                "value": "cheetah[01-05,08-09]"
+              },
+              {
+                "line": 16,
+                "name": "AutoDetect",
+                "value": "nvml"
+              },
+              {
+                "line": 17,
+                "name": "NodeName",
+                "value": "jaguar[01-03,05-06]"
+              },
+              {
+                "line": 17,
+                "name": "AutoDetect",
+                "value": "nvml"
+              },
+              {
+                "line": 18,
+                "name": "NodeName",
+                "value": "jinx[01-02]"
+              },
+              {
+                "line": 18,
+                "name": "AutoDetect",
+                "value": "nvml"
+              },
+              {
+                "line": 19,
+                "name": "NodeName",
+                "value": "lynx[01-07,10-11]"
+              },
+              {
+                "line": 19,
+                "name": "AutoDetect",
+                "value": "nvml"
+              },
+              {
+                "line": 20,
+                "name": "NodeName",
+                "value": "lotus"
+              },
+              {
+                "line": 20,
+                "name": "AutoDetect",
+                "value": "nvml"
+              },
+              {
+                "line": 21,
+                "name": "NodeName",
+                "value": "nekomata[01-02]"
+              },
+              {
+                "line": 21,
+                "name": "AutoDetect",
+                "value": "nvml"
+              },
+              {
+                "line": 22,
+                "name": "NodeName",
+                "value": "serval[03,06-09]"
+              },
+              {
+                "line": 22,
+                "name": "AutoDetect",
+                "value": "nvml"
+              },
+              {
+                "line": 25,
+                "name": "NodeName",
+                "value": "titanx[02-03]"
+              },
+              {
+                "line": 25,
+                "name": "AutoDetect",
+                "value": "nvml"
+              }
+            ],
+            "includes": [],
+            "directory_chain": [
+              {
+                "path": "/",
+                "uid": 0,
+                "mode": 493,
+                "inode": 2,
+                "device": 64770,
+                "directory": true,
+                "symlink": false
+              },
+              {
+                "path": "/etc",
+                "uid": 0,
+                "mode": 493,
+                "inode": 31457281,
+                "device": 64770,
+                "directory": true,
+                "symlink": false
+              },
+              {
+                "path": "/etc/slurm",
+                "uid": 64030,
+                "mode": 493,
+                "inode": 31588634,
+                "device": 64770,
+                "directory": true,
+                "symlink": false
+              }
+            ],
+            "directory_chain_after": [
+              {
+                "path": "/",
+                "uid": 0,
+                "mode": 493,
+                "inode": 2,
+                "device": 64770,
+                "directory": true,
+                "symlink": false
+              },
+              {
+                "path": "/etc",
+                "uid": 0,
+                "mode": 493,
+                "inode": 31457281,
+                "device": 64770,
+                "directory": true,
+                "symlink": false
+              },
+              {
+                "path": "/etc/slurm",
+                "uid": 64030,
+                "mode": 493,
+                "inode": 31588634,
+                "device": 64770,
+                "directory": true,
+                "symlink": false
+              }
+            ]
+          },
+          "/etc/slurm/cgroup.conf": {
+            "path": "/etc/slurm/cgroup.conf",
+            "read_status": "read",
+            "read_trace": {
+              "pinned_directory_chain": [
+                {
+                  "path": "/",
+                  "owner_uid": 0,
+                  "mode": 493,
+                  "inode": 2,
+                  "device": 64770,
+                  "byte_count": 4096,
+                  "modified_ns": 1782814322213413042,
+                  "changed_ns": 1782814322213413042,
+                  "directory": true,
+                  "regular_file": false
+                },
+                {
+                  "path": "/etc",
+                  "owner_uid": 0,
+                  "mode": 493,
+                  "inode": 31457281,
+                  "device": 64770,
+                  "byte_count": 12288,
+                  "modified_ns": 1793627110708908532,
+                  "changed_ns": 1793627110708908532,
+                  "directory": true,
+                  "regular_file": false
+                },
+                {
+                  "path": "/etc/slurm",
+                  "owner_uid": 64030,
+                  "mode": 493,
+                  "inode": 31588634,
+                  "device": 64770,
+                  "byte_count": 4096,
+                  "modified_ns": 1789066137431616618,
+                  "changed_ns": 1789066137431616618,
+                  "directory": true,
+                  "regular_file": false
+                }
+              ],
+              "descriptor_before": {
+                "path": "/etc/slurm/cgroup.conf",
+                "owner_uid": 64030,
+                "mode": 420,
+                "inode": 31588675,
+                "device": 64770,
+                "byte_count": 495,
+                "modified_ns": 1751297880683196688,
+                "changed_ns": 1752695842418402081,
+                "directory": false,
+                "regular_file": true
+              },
+              "reader_before": {
+                "path": "/etc/slurm/cgroup.conf",
+                "owner_uid": 64030,
+                "mode": 420,
+                "inode": 31588675,
+                "device": 64770,
+                "byte_count": 495,
+                "modified_ns": 1751297880683196688,
+                "changed_ns": 1752695842418402081,
+                "directory": false,
+                "regular_file": true
+              },
+              "descriptor_after": {
+                "path": "/etc/slurm/cgroup.conf",
+                "owner_uid": 64030,
+                "mode": 420,
+                "inode": 31588675,
+                "device": 64770,
+                "byte_count": 495,
+                "modified_ns": 1751297880683196688,
+                "changed_ns": 1752695842418402081,
+                "directory": false,
+                "regular_file": true
+              },
+              "bytes_read": 495,
+              "size_limit_bytes": 32768,
+              "complete_file": true,
+              "path_after": {
+                "path": "/etc/slurm/cgroup.conf",
+                "status": "observed",
+                "owner_uid": 64030,
+                "mode": 420,
+                "inode": 31588675,
+                "device": 64770,
+                "directory": false,
+                "regular_file": true,
+                "symlink": false,
+                "exact_path": true
+              },
+              "path_replaced_during_read": false,
+              "inode_changed_during_read": false
+            },
+            "uid": 64030,
+            "mode": 420,
+            "regular_file": true,
+            "symlink": false,
+            "sha256": "b2d8db246a72c9463d782c8c25b0f56ab5940e3fcba194342440d7c898caadc9",
+            "settings": [
+              {
+                "line": 10,
+                "name": "CgroupPlugin",
+                "value": "cgroup/v2"
+              },
+              {
+                "line": 11,
+                "name": "ConstrainCores",
+                "value": "yes"
+              },
+              {
+                "line": 12,
+                "name": "ConstrainDevices",
+                "value": "yes"
+              },
+              {
+                "line": 13,
+                "name": "ConstrainRAMSpace",
+                "value": "yes"
+              }
+            ],
+            "includes": [],
+            "directory_chain": [
+              {
+                "path": "/",
+                "uid": 0,
+                "mode": 493,
+                "inode": 2,
+                "device": 64770,
+                "directory": true,
+                "symlink": false
+              },
+              {
+                "path": "/etc",
+                "uid": 0,
+                "mode": 493,
+                "inode": 31457281,
+                "device": 64770,
+                "directory": true,
+                "symlink": false
+              },
+              {
+                "path": "/etc/slurm",
+                "uid": 64030,
+                "mode": 493,
+                "inode": 31588634,
+                "device": 64770,
+                "directory": true,
+                "symlink": false
+              }
+            ],
+            "directory_chain_after": [
+              {
+                "path": "/",
+                "uid": 0,
+                "mode": 493,
+                "inode": 2,
+                "device": 64770,
+                "directory": true,
+                "symlink": false
+              },
+              {
+                "path": "/etc",
+                "uid": 0,
+                "mode": 493,
+                "inode": 31457281,
+                "device": 64770,
+                "directory": true,
+                "symlink": false
+              },
+              {
+                "path": "/etc/slurm",
+                "uid": 64030,
+                "mode": 493,
+                "inode": 31588634,
+                "device": 64770,
+                "directory": true,
+                "symlink": false
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "runtime_environment": {
+    "JAX_DEFAULT_MATMUL_PRECISION": "highest",
+    "JAX_ENABLE_COMPILATION_CACHE": "false",
+    "JAX_ENABLE_X64": "true",
+    "JAX_PERSISTENT_CACHE_ENABLE_XLA_CACHES": "",
+    "XLA_FLAGS": "--xla_gpu_exclude_nondeterministic_ops=true"
+  }
+}

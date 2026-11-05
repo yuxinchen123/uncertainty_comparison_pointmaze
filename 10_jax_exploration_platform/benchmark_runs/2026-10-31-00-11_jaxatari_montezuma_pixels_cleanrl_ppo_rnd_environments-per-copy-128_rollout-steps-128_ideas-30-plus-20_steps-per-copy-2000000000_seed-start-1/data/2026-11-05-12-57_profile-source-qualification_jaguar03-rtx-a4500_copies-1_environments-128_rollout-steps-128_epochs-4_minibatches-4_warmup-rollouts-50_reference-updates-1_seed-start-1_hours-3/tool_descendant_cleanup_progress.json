@@ -1,0 +1,245 @@
+{
+  "configured_allocation_process_custody_must_remain": false,
+  "events": [
+    {
+      "at_seconds": 1793913323.5935562,
+      "birth": "87359953",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2503108,
+      "pid": 2503326
+    },
+    {
+      "at_seconds": 1793913323.8509939,
+      "birth": "87359978",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2503108,
+      "pid": 2503336
+    },
+    {
+      "at_seconds": 1793913324.1797352,
+      "birth": "87360009",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2503336,
+      "pid": 2503344
+    },
+    {
+      "at_seconds": 1793913324.180671,
+      "birth": "87360010",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2503344,
+      "pid": 2503345
+    },
+    {
+      "at_seconds": 1793913324.1815932,
+      "birth": "87360010",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2503345,
+      "pid": 2503346
+    },
+    {
+      "at_seconds": 1793913324.343372,
+      "birth": "87360023",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2503336,
+      "pid": 2503357
+    },
+    {
+      "at_seconds": 1793913324.401078,
+      "birth": "87360030",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2503336,
+      "pid": 2503359
+    },
+    {
+      "at_seconds": 1793913324.4049134,
+      "birth": "87360030",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2503359,
+      "pid": 2503360
+    },
+    {
+      "at_seconds": 1793913324.4054763,
+      "birth": "87360030",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2503359,
+      "pid": 2503361
+    },
+    {
+      "at_seconds": 1793913324.9573169,
+      "birth": "87360088",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2503360,
+      "pid": 2503370
+    },
+    {
+      "at_seconds": 1793913325.1467786,
+      "birth": "87360106",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2503360,
+      "pid": 2503378
+    },
+    {
+      "at_seconds": 1793913325.7399106,
+      "birth": "87360167",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2503360,
+      "pid": 2503386
+    },
+    {
+      "at_seconds": 1793913325.8010263,
+      "kind": "positive_child_disappeared_before_pin",
+      "parent_pid": 2503360,
+      "pid": 2503390
+    },
+    {
+      "at_seconds": 1793913325.8589425,
+      "birth": "87360179",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2503360,
+      "pid": 2503405
+    },
+    {
+      "at_seconds": 1793913325.9186301,
+      "birth": "87360185",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2503360,
+      "pid": 2503416
+    },
+    {
+      "at_seconds": 1793913326.1523328,
+      "birth": "87360207",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2503360,
+      "pid": 2503420
+    },
+    {
+      "at_seconds": 1793913326.388708,
+      "birth": "87360231",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2503420,
+      "pid": 2503424
+    },
+    {
+      "at_seconds": 1793913326.4505236,
+      "birth": "87360237",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2503420,
+      "pid": 2503428
+    },
+    {
+      "at_seconds": 1793913326.5101435,
+      "birth": "87360242",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2503420,
+      "pid": 2503432
+    },
+    {
+      "at_seconds": 1793913326.9741883,
+      "birth": "87360290",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2503420,
+      "pid": 2503449
+    },
+    {
+      "at_seconds": 1793913327.0349023,
+      "birth": "87360295",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2503420,
+      "pid": 2503457
+    },
+    {
+      "at_seconds": 1793913327.0956986,
+      "birth": "87360301",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2503420,
+      "pid": 2503468
+    },
+    {
+      "at_seconds": 1793913327.1561491,
+      "birth": "87360307",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2503420,
+      "pid": 2503479
+    },
+    {
+      "at_seconds": 1793913327.1708705,
+      "birth": "87360309",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2503420,
+      "pid": 2503483
+    },
+    {
+      "at_seconds": 1793913327.3928971,
+      "birth": "87360030",
+      "exit_code": -15,
+      "kind": "reaped_actual_adopted_child",
+      "pid": 2503359,
+      "wait_status": 15
+    },
+    {
+      "at_seconds": 1793913327.4600112,
+      "birth": "87360010",
+      "exit_code": 0,
+      "kind": "reaped_actual_adopted_child",
+      "pid": 2503346,
+      "wait_status": 0
+    }
+  ],
+  "gpu_or_cuda_qualification": false,
+  "interventions": [
+    {
+      "at_seconds": 1793913327.172975,
+      "birth": "87360309",
+      "pid": 2503483,
+      "signal": 15
+    },
+    {
+      "at_seconds": 1793913327.1741552,
+      "birth": "87360207",
+      "pid": 2503420,
+      "signal": 15
+    },
+    {
+      "at_seconds": 1793913327.1750197,
+      "birth": "87360030",
+      "pid": 2503361,
+      "signal": 15
+    },
+    {
+      "at_seconds": 1793913327.17542,
+      "birth": "87360030",
+      "pid": 2503360,
+      "signal": 15
+    },
+    {
+      "at_seconds": 1793913327.1758013,
+      "birth": "87360030",
+      "pid": 2503359,
+      "signal": 15
+    },
+    {
+      "at_seconds": 1793913327.176269,
+      "birth": "87360010",
+      "pid": 2503346,
+      "signal": 15
+    },
+    {
+      "at_seconds": 1793913327.176991,
+      "birth": "87359978",
+      "pid": 2503336,
+      "signal": 15
+    }
+  ],
+  "kind": "direct_tool_descendant_cleanup_progress",
+  "known_nodes": 23,
+  "known_roots": 2,
+  "native_process_control_only": true,
+  "phase": "kernel_closure_verified_and_native_flag_restored",
+  "producer_birth": "87353087",
+  "producer_pid": 2503108,
+  "read_errors": [],
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "standing_descriptor_must_remain_open": false,
+  "subreaper_active": false
+}

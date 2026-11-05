@@ -1,0 +1,38 @@
+{
+  "at_utc": "2026-11-05T21:26:43.935012+00:00",
+  "actual_native_or_frozen_source_bytes_edited": false,
+  "bounded_UTF8_files": 300,
+  "large_images_raw_trace_payloads_excluded": true,
+  "whitespace_findings": [
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-13-12_profile-source-qualification_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3/code/direct_common_timing_controller.py",
+      "sha256": "1d8bb43df5c4c247e28bb3d588674e8d3cd7718363c62584bc57267d67af10e2",
+      "line": "1056",
+      "issue": "new blank line at EOF."
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-13-12_profile-source-qualification_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_controller/code/direct_common_timing_controller.py",
+      "sha256": "1d8bb43df5c4c247e28bb3d588674e8d3cd7718363c62584bc57267d67af10e2",
+      "line": "1056",
+      "issue": "new blank line at EOF."
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-09-25_pixel-study-monitor_source-commit-548cbcaef4c1fc28f80817ec9ba93f1e6b2fee4e_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/root_full_tick_after_actual_6826372_failure_2026-11-05-21-24-30_stdout.raw",
+      "sha256": "67d633a1f937d535795416e1c4a669c880bc99e799e3c2286dfd8d5346c0b8aa",
+      "line": "747",
+      "issue": "new blank line at EOF."
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-12-57_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3/release_final_query_stdout.raw",
+      "sha256": "040b9d53391be447ff41f1df3e2be9ba7c4645a5fcbfd71d55a6ba9082a58b0e",
+      "line": "1",
+      "issue": "trailing whitespace."
+    }
+  ],
+  "failed_qualification_jobs": [
+    "6826361",
+    "6826372"
+  ],
+  "H100_prepared_not_launched": true,
+  "ordinary_profiles_admitted": false
+}

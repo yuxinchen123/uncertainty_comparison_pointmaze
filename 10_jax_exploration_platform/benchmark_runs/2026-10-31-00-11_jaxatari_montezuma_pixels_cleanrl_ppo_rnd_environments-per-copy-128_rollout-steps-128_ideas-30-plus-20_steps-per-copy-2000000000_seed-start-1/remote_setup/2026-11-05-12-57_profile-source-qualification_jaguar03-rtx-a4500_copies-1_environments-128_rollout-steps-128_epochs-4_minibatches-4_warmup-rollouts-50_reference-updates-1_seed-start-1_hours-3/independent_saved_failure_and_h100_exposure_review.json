@@ -1,0 +1,633 @@
+{
+  "H_actual_process_launched": false,
+  "H_race_exposure": "same executable collector path; actual H occurrence untested",
+  "actual_outcome": "FAILED; never relabeled or granted qualification",
+  "actual_root_waits": [
+    {
+      "birth": "87359953",
+      "command": [
+        "/sw/ubuntu2204/ebu082025/software/common/core/nsight-systems/2024.7.1/target-linux-x64/nsys",
+        "--version"
+      ],
+      "finished_at_seconds": 1793913323.714454,
+      "kind": "actual_scoped_tool_popen_wait",
+      "pid": 2503326,
+      "returncode": 0,
+      "started_at_seconds": 1793913323.592983
+    },
+    {
+      "birth": "87359978",
+      "command": [
+        "/sw/ubuntu2204/ebu082025/software/common/core/nsight-systems/2024.7.1/target-linux-x64/nsys",
+        "profile",
+        "--trace=cuda,cudnn",
+        "--sample=none",
+        "--cpuctxsw=none",
+        "--cuda-graph-trace=node",
+        "--capture-range=cudaProfilerApi",
+        "--capture-range-end=stop",
+        "--stop-on-exit=true",
+        "--force-overwrite=false",
+        "--output=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-12-57_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3/trace/capture",
+        "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+        "-I",
+        "-S",
+        "-B",
+        "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-12-57_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3/code/profile_selected.py",
+        "--owned-waiter-unit",
+        "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-12-57_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3"
+      ],
+      "finished_at_seconds": 1793913327.3853302,
+      "kind": "actual_scoped_tool_popen_wait",
+      "pid": 2503336,
+      "returncode": -15,
+      "started_at_seconds": 1793913323.8504207
+    }
+  ],
+  "cause_boundary": "scan tests nonproducer pidfd liveness before child_lists; the process can exit afterward. child_lists/parent_identity raises ordinary ValueError for that positive exit; scan catches only ENOENT/ESRCH.",
+  "cleanup_phase": "kernel_closure_verified_and_native_flag_restored",
+  "concrete_failure_predicate": "parent_identity rejected the retained known-parent pidfd becoming exited after matching UID/stat/birth/cgroup reads, before accepting child lists",
+  "failure_error": "ValueError('the known parent exited before its child lists could be accepted')",
+  "failure_scan_parent_PID": "NOT RECORDED in the saved exception; no numerical PID assigned",
+  "job_id": "6825983",
+  "kind": "independent_actual_AA6826372_failure_shared_H_scope_analysis",
+  "no_live_PID_or_foreign_process_queries": true,
+  "no_process_group_inference": true,
+  "passed": true,
+  "positive_nodes": [
+    {
+      "birth": "87359953",
+      "initial_command": [
+        "/sw/ubuntu2204/ebu082025/software/common/core/nsight-systems/2024.7.1/target-linux-x64/nsys",
+        "--version"
+      ],
+      "initial_parent_pid": 2503108,
+      "initial_state": "D",
+      "last_parent_pid": 2503108,
+      "last_state": "R",
+      "pid": 2503326,
+      "positive_parent_pid": 2503108
+    },
+    {
+      "birth": "87359978",
+      "initial_command": [
+        "/sw/ubuntu2204/ebu082025/software/common/core/nsight-systems/2024.7.1/target-linux-x64/nsys",
+        "profile",
+        "--trace=cuda,cudnn",
+        "--sample=none",
+        "--cpuctxsw=none",
+        "--cuda-graph-trace=node",
+        "--capture-range=cudaProfilerApi",
+        "--capture-range-end=stop",
+        "--stop-on-exit=true",
+        "--force-overwrite=false",
+        "--output=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-12-57_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3/trace/capture",
+        "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+        "-I",
+        "-S",
+        "-B",
+        "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-12-57_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3/code/profile_selected.py",
+        "--owned-waiter-unit",
+        "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-12-57_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3"
+      ],
+      "initial_parent_pid": 2503108,
+      "initial_state": "R",
+      "last_parent_pid": 2503108,
+      "last_state": "Z",
+      "pid": 2503336,
+      "positive_parent_pid": 2503108
+    },
+    {
+      "birth": "87360009",
+      "initial_command": [
+        "/sw/ubuntu2204/ebu082025/software/common/core/nsight-systems/2024.7.1/target-linux-x64/nsys",
+        "--start-agent",
+        "--session-name",
+        "profile-2503336",
+        "--shm-name",
+        "NSys-create-agent-28ed2fcc-bb8a-4ce9-9a12-ee7f0b3c7ee9-4026531836-2024.7.1"
+      ],
+      "initial_parent_pid": 2503336,
+      "initial_state": "S",
+      "last_parent_pid": 2503336,
+      "last_state": "S",
+      "pid": 2503344,
+      "positive_parent_pid": 2503336
+    },
+    {
+      "birth": "87360010",
+      "initial_command": [
+        "/sw/ubuntu2204/ebu082025/software/common/core/nsight-systems/2024.7.1/target-linux-x64/nsys",
+        "--start-agent",
+        "--session-name",
+        "profile-2503336",
+        "--shm-name",
+        "NSys-create-agent-28ed2fcc-bb8a-4ce9-9a12-ee7f0b3c7ee9-4026531836-2024.7.1"
+      ],
+      "initial_parent_pid": 2503344,
+      "initial_state": "S",
+      "last_parent_pid": 2503344,
+      "last_state": "S",
+      "pid": 2503345,
+      "positive_parent_pid": 2503344
+    },
+    {
+      "birth": "87360010",
+      "initial_command": [
+        "/sw/ubuntu2204/ebu082025/software/common/core/nsight-systems/2024.7.1/target-linux-x64/nsys",
+        "--start-agent",
+        "--session-name",
+        "profile-2503336",
+        "--shm-name",
+        "NSys-create-agent-28ed2fcc-bb8a-4ce9-9a12-ee7f0b3c7ee9-4026531836-2024.7.1"
+      ],
+      "initial_parent_pid": 2503345,
+      "initial_state": "S",
+      "last_parent_pid": 2503108,
+      "last_state": "Z",
+      "pid": 2503346,
+      "positive_parent_pid": 2503345
+    },
+    {
+      "birth": "87360023",
+      "initial_command": [
+        "/sw/ubuntu2204/ebu082025/software/common/core/nsight-systems/2024.7.1/target-linux-x64/CudaGpuInfoDumper",
+        "/tmp/nsys-cuda-gpu-info-61c0-225d.bin"
+      ],
+      "initial_parent_pid": 2503336,
+      "initial_state": "R",
+      "last_parent_pid": 2503336,
+      "last_state": "R",
+      "pid": 2503357,
+      "positive_parent_pid": 2503336
+    },
+    {
+      "birth": "87360030",
+      "initial_command": [
+        "/sw/ubuntu2204/ebu082025/software/common/core/nsight-systems/2024.7.1/target-linux-x64/nsys-launcher",
+        "/tmp/b8ff-af6a-8d3b-2b7a",
+        "37"
+      ],
+      "initial_parent_pid": 2503336,
+      "initial_state": "S",
+      "last_parent_pid": 2503108,
+      "last_state": "Z",
+      "pid": 2503359,
+      "positive_parent_pid": 2503336
+    },
+    {
+      "birth": "87360030",
+      "initial_command": [
+        "/sw/ubuntu2204/ebu082025/software/common/core/nsight-systems/2024.7.1/target-linux-x64/nsys-launcher",
+        "/tmp/b8ff-af6a-8d3b-2b7a",
+        "37"
+      ],
+      "initial_parent_pid": 2503359,
+      "initial_state": "S",
+      "last_parent_pid": 2503359,
+      "last_state": "Z",
+      "pid": 2503360,
+      "positive_parent_pid": 2503359
+    },
+    {
+      "birth": "87360030",
+      "initial_command": [
+        "nsys-tee",
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "initial_parent_pid": 2503359,
+      "initial_state": "S",
+      "last_parent_pid": 2503359,
+      "last_state": "S",
+      "pid": 2503361,
+      "positive_parent_pid": 2503359
+    },
+    {
+      "birth": "87360088",
+      "initial_command": [
+        "git",
+        "-C",
+        "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+        "cat-file",
+        "--batch"
+      ],
+      "initial_parent_pid": 2503360,
+      "initial_state": "S",
+      "last_parent_pid": 2503360,
+      "last_state": "S",
+      "pid": 2503370,
+      "positive_parent_pid": 2503360
+    },
+    {
+      "birth": "87360106",
+      "initial_command": [
+        "git",
+        "-C",
+        "/p/rlprojects/RND_worktrees/2026-11-01-18-47_common-confirmation-source_commit-9fcc43a478b93d731df780805fd7c3c514cdf67f",
+        "cat-file",
+        "--batch"
+      ],
+      "initial_parent_pid": 2503360,
+      "initial_state": "R",
+      "last_parent_pid": 2503360,
+      "last_state": "R",
+      "pid": 2503378,
+      "positive_parent_pid": 2503360
+    },
+    {
+      "birth": "87360167",
+      "initial_command": [
+        "git",
+        "-C",
+        "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+        "symbolic-ref",
+        "--quiet",
+        "HEAD"
+      ],
+      "initial_parent_pid": 2503360,
+      "initial_state": "R",
+      "last_parent_pid": 2503360,
+      "last_state": "R",
+      "pid": 2503386,
+      "positive_parent_pid": 2503360
+    },
+    {
+      "birth": "87360179",
+      "initial_command": [
+        "git",
+        "-C",
+        "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+        "status",
+        "--porcelain",
+        "--untracked-files=all",
+        "--",
+        "10_jax_exploration_platform/scripts/atari_pixel_campaign/paired_benchmark.py",
+        "10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py"
+      ],
+      "initial_parent_pid": 2503360,
+      "initial_state": "R",
+      "last_parent_pid": 2503360,
+      "last_state": "R",
+      "pid": 2503405,
+      "positive_parent_pid": 2503360
+    },
+    {
+      "birth": "87360185",
+      "initial_command": [
+        "git",
+        "-C",
+        "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+        "show",
+        "d28e6735e79788f618acb0ebfde8609db1f776af:10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py"
+      ],
+      "initial_parent_pid": 2503360,
+      "initial_state": "D",
+      "last_parent_pid": 2503360,
+      "last_state": "D",
+      "pid": 2503416,
+      "positive_parent_pid": 2503360
+    },
+    {
+      "birth": "87360207",
+      "initial_command": [
+        "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+        "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-12-57_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3/code/profile_selected.py",
+        "--capture-unit",
+        "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-12-57_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3"
+      ],
+      "initial_parent_pid": 2503360,
+      "initial_state": "S",
+      "last_parent_pid": 2503360,
+      "last_state": "S",
+      "pid": 2503420,
+      "positive_parent_pid": 2503360
+    },
+    {
+      "birth": "87360231",
+      "initial_command": [
+        "git",
+        "-C",
+        "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+        "cat-file",
+        "--batch"
+      ],
+      "initial_parent_pid": 2503420,
+      "initial_state": "S",
+      "last_parent_pid": 2503420,
+      "last_state": "S",
+      "pid": 2503424,
+      "positive_parent_pid": 2503420
+    },
+    {
+      "birth": "87360237",
+      "initial_command": [
+        "git",
+        "-C",
+        "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0",
+        "cat-file",
+        "--batch"
+      ],
+      "initial_parent_pid": 2503420,
+      "initial_state": "S",
+      "last_parent_pid": 2503420,
+      "last_state": "S",
+      "pid": 2503428,
+      "positive_parent_pid": 2503420
+    },
+    {
+      "birth": "87360242",
+      "initial_command": [
+        "git",
+        "-C",
+        "/p/rlprojects/RND_worktrees/2026-11-01-18-47_common-confirmation-source_commit-9fcc43a478b93d731df780805fd7c3c514cdf67f",
+        "cat-file",
+        "--batch"
+      ],
+      "initial_parent_pid": 2503420,
+      "initial_state": "R",
+      "last_parent_pid": 2503420,
+      "last_state": "R",
+      "pid": 2503432,
+      "positive_parent_pid": 2503420
+    },
+    {
+      "birth": "87360290",
+      "initial_command": [
+        "git",
+        "-C",
+        "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+        "rev-parse",
+        "HEAD"
+      ],
+      "initial_parent_pid": 2503420,
+      "initial_state": "R",
+      "last_parent_pid": 2503420,
+      "last_state": "R",
+      "pid": 2503449,
+      "positive_parent_pid": 2503420
+    },
+    {
+      "birth": "87360295",
+      "initial_command": [
+        "git",
+        "-C",
+        "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+        "status",
+        "--porcelain",
+        "--untracked-files=all",
+        "--",
+        "10_jax_exploration_platform/src/exploration_platform/atari_pixels",
+        "10_jax_exploration_platform/scripts/atari_pixel_campaign/worker_environment.sh"
+      ],
+      "initial_parent_pid": 2503420,
+      "initial_state": "D",
+      "last_parent_pid": 2503420,
+      "last_state": "D",
+      "pid": 2503457,
+      "positive_parent_pid": 2503420
+    },
+    {
+      "birth": "87360301",
+      "initial_command": [
+        "git",
+        "-C",
+        "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+        "rev-parse",
+        "HEAD"
+      ],
+      "initial_parent_pid": 2503420,
+      "initial_state": "R",
+      "last_parent_pid": 2503420,
+      "last_state": "R",
+      "pid": 2503468,
+      "positive_parent_pid": 2503420
+    },
+    {
+      "birth": "87360307",
+      "initial_command": [
+        "git",
+        "-C",
+        "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+        "show",
+        "d28e6735e79788f618acb0ebfde8609db1f776af:10_jax_exploration_platform/scripts/atari_pixel_campaign/paired_benchmark.py"
+      ],
+      "initial_parent_pid": 2503420,
+      "initial_state": "R",
+      "last_parent_pid": 2503420,
+      "last_state": "R",
+      "pid": 2503479,
+      "positive_parent_pid": 2503420
+    },
+    {
+      "birth": "87360309",
+      "initial_command": [
+        "git",
+        "-C",
+        "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+        "show",
+        "d28e6735e79788f618acb0ebfde8609db1f776af:10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py"
+      ],
+      "initial_parent_pid": 2503420,
+      "initial_state": "S",
+      "last_parent_pid": 2503420,
+      "last_state": "S",
+      "pid": 2503483,
+      "positive_parent_pid": 2503420
+    }
+  ],
+  "qualification_granted": false,
+  "raw_file_refs": {
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-12-57_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3/code/direct_tool_descendants.py": {
+      "bytes": 44548,
+      "sha256": "8fc3e6d870611a2a9e57825b5374a73050a6c98fc3d918f336619e1cfff48889"
+    },
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-12-57_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3/code/profile_target_process.py": {
+      "bytes": 63199,
+      "sha256": "03ff5628fa2d211fb96373e37ad6eee18ccf71a3d7c2272c143e02bde94f236a"
+    },
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-12-57_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3/failure.json": {
+      "bytes": 4802,
+      "sha256": "4edca7addeaa8f9678e715609c4f3d71b4a87a1c04c32c7703718b1fa77e80d1"
+    },
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-12-57_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3/tool_descendant_cleanup_progress.json": {
+      "bytes": 5819,
+      "sha256": "c40fcbecf8412dc7652feede2fff845367d714775bafe6d8d034c1c153620c0f"
+    },
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-12-57_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3/tool_descendant_scope_restored.json": {
+      "bytes": 1012,
+      "sha256": "8d6960d56195a00797ea4e347f97b9cdfbc8531cc4889509de7b0ac0d17c81a4"
+    },
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-12-57_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3/tool_descendant_scope_terminal.json": {
+      "bytes": 243425,
+      "sha256": "ecd4f4f8c9af0b95072386d6a11186e4f3569f835e805573c2d4ed285e242e12"
+    },
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-12-57_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3/tool_root_wait_2503326.json": {
+      "bytes": 328,
+      "sha256": "f0fc59e8cf940d4b734df0d62a7b4c90f00de92fcc6bbc80ed20d247f7d6d6ec"
+    },
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-12-57_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3/tool_root_wait_2503336.json": {
+      "bytes": 2087,
+      "sha256": "a8a0310b5d92a997c76b3634fc659e5e5753d6f8015de5e70a451fbe7465f18e"
+    },
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-13-12_profile-source-qualification_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3/code/direct_tool_descendants.py": {
+      "bytes": 44548,
+      "sha256": "8fc3e6d870611a2a9e57825b5374a73050a6c98fc3d918f336619e1cfff48889"
+    },
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-13-12_profile-source-qualification_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3/code/profile_target_direct_process.py": {
+      "bytes": 48516,
+      "sha256": "0b141087d1425946dc8b143bd805b097bcca6190c439c185af7c0ed4e92d324b"
+    },
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-13-12_profile-source-qualification_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3/code/profile_target_process.py": {
+      "bytes": 63199,
+      "sha256": "03ff5628fa2d211fb96373e37ad6eee18ccf71a3d7c2272c143e02bde94f236a"
+    }
+  },
+  "safe_correction_constraints": [
+    "Keep refusing unknown/reused/foreign parents and discard incomplete child-list observations.",
+    "Recognize only a positively pinned owned generation whose retained handle proves exit; never fabricate empty children.",
+    "Fresh producer/adopted-child reconciliation, exact root/adopted waits, all retained handles exited, empty own child lists and actual ECHILD remain mandatory before custody release.",
+    "Existing AA7 and old d146 staged sources remain immutable; any correction is separate qualification-only source requiring review/fresh actual qualification."
+  ],
+  "saved_interventions": [
+    {
+      "at_seconds": 1793913327.172975,
+      "birth": "87360309",
+      "pid": 2503483,
+      "signal": 15
+    },
+    {
+      "at_seconds": 1793913327.1741552,
+      "birth": "87360207",
+      "pid": 2503420,
+      "signal": 15
+    },
+    {
+      "at_seconds": 1793913327.1750197,
+      "birth": "87360030",
+      "pid": 2503361,
+      "signal": 15
+    },
+    {
+      "at_seconds": 1793913327.17542,
+      "birth": "87360030",
+      "pid": 2503360,
+      "signal": 15
+    },
+    {
+      "at_seconds": 1793913327.1758013,
+      "birth": "87360030",
+      "pid": 2503359,
+      "signal": 15
+    },
+    {
+      "at_seconds": 1793913327.176269,
+      "birth": "87360010",
+      "pid": 2503346,
+      "signal": 15
+    },
+    {
+      "at_seconds": 1793913327.176991,
+      "birth": "87359978",
+      "pid": 2503336,
+      "signal": 15
+    }
+  ],
+  "saved_read_errors": [],
+  "saved_scope_flags": {
+    "all_historical_descendants_identified": false,
+    "all_tool_descendants_exited_before_allocation_custody_release": true,
+    "within_diagnostic_budget": true
+  },
+  "saved_scope_restore": {
+    "gpu_or_cuda_qualification": false,
+    "native_prctl_request_counts": {
+      "PR_GET_CHILD_SUBREAPER": 8,
+      "PR_SET_CHILD_SUBREAPER": 2
+    },
+    "native_process_control_only": true,
+    "restore": {
+      "errno": 0,
+      "request": "PR_SET_CHILD_SUBREAPER",
+      "returncode": 0,
+      "value": 0
+    },
+    "terminal": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-12-57_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3/tool_descendant_scope_terminal.json",
+      "sha256": "ecd4f4f8c9af0b95072386d6a11186e4f3569f835e805573c2d4ed285e242e12"
+    },
+    "verified": {
+      "errno": 0,
+      "request": "PR_GET_CHILD_SUBREAPER",
+      "returncode": 0,
+      "value": 0
+    }
+  },
+  "saved_terminal_kernel_closure": {
+    "actual_echild": true,
+    "all_actual_tool_roots_waited": true,
+    "all_pinned_handles_exited": true,
+    "errno": 10,
+    "fresh_own_child_lists": [
+      {
+        "parent_read_identity": {
+          "after": {
+            "cgroup": "0::/system.slice/slurmstepd.scope/job_6826372/step_0/user/task_0\n",
+            "pid": 2503108,
+            "pidfd_live": true,
+            "process_start_time": "87353087",
+            "stat": "2503108 (python) R 2503106 2503108 2503108 0 -1 4194304 75297 149713 2 135 1029 479 181 146 20 0 1 0 87353087 252608512 54636 68719476736 94766972235776 94766974663453 140724670304032 0 0 0 0 16781312 16386 0 0 0 17 114 0 0 0 0 0 94766976088816 94766978070256 94767182807040 140724670309083 140724670310071 140724670310071 140724670316483 0\n",
+            "status": "Name:\tpython\nUmask:\t0077\nState:\tR (running)\nTgid:\t2503108\nNgid:\t0\nPid:\t2503108\nPPid:\t2503106\nTracerPid:\t0\nUid:\t2618919\t2618919\t2618919\t2618919\nGid:\t90030\t90030\t90030\t90030\nFDSize:\t256\nGroups:\t90030 90113 \nNStgid:\t2503108\nNSpid:\t2503108\nNSpgid:\t2503108\nNSsid:\t2503108\nVmPeak:\t  250784 kB\nVmSize:\t  246688 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t  222496 kB\nVmRSS:\t  218544 kB\nRssAnon:\t  205628 kB\nRssFile:\t   12916 kB\nRssShmem:\t       0 kB\nVmData:\t  216876 kB\nVmStk:\t     136 kB\nVmExe:\t    2372 kB\nVmLib:\t    7068 kB\nVmPTE:\t     496 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t1\nThreads:\t1\nSigQ:\t0/4127023\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000000000\nSigIgn:\t0000000001001000\nSigCgt:\t0000000000004002\nCapInh:\t0000000000000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tthread vulnerable\nSpeculationIndirectBranch:\tconditional enabled\nCpus_allowed:\t00000000,00000000,00000000,000f0000,00000000,00000000,0000000f\nCpus_allowed_list:\t0-3,112-115\nMems_allowed:\t00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000003\nMems_allowed_list:\t0-1\nvoluntary_ctxt_switches:\t67377\nnonvoluntary_ctxt_switches:\t424\n",
+            "uids": [
+              2618919,
+              2618919,
+              2618919,
+              2618919
+            ]
+          },
+          "before": {
+            "cgroup": "0::/system.slice/slurmstepd.scope/job_6826372/step_0/user/task_0\n",
+            "pid": 2503108,
+            "pidfd_live": true,
+            "process_start_time": "87353087",
+            "stat": "2503108 (python) R 2503106 2503108 2503108 0 -1 4194304 75297 149713 2 135 1029 479 181 146 20 0 1 0 87353087 252608512 54636 68719476736 94766972235776 94766974663453 140724670304032 0 0 0 0 16781312 16386 0 0 0 17 114 0 0 0 0 0 94766976088816 94766978070256 94767182807040 140724670309083 140724670310071 140724670310071 140724670316483 0\n",
+            "status": "Name:\tpython\nUmask:\t0077\nState:\tR (running)\nTgid:\t2503108\nNgid:\t0\nPid:\t2503108\nPPid:\t2503106\nTracerPid:\t0\nUid:\t2618919\t2618919\t2618919\t2618919\nGid:\t90030\t90030\t90030\t90030\nFDSize:\t256\nGroups:\t90030 90113 \nNStgid:\t2503108\nNSpid:\t2503108\nNSpgid:\t2503108\nNSsid:\t2503108\nVmPeak:\t  250784 kB\nVmSize:\t  246688 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t  222496 kB\nVmRSS:\t  218544 kB\nRssAnon:\t  205628 kB\nRssFile:\t   12916 kB\nRssShmem:\t       0 kB\nVmData:\t  216876 kB\nVmStk:\t     136 kB\nVmExe:\t    2372 kB\nVmLib:\t    7068 kB\nVmPTE:\t     496 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t1\nThreads:\t1\nSigQ:\t0/4127023\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000000000\nSigIgn:\t0000000001001000\nSigCgt:\t0000000000004002\nCapInh:\t0000000000000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tthread vulnerable\nSpeculationIndirectBranch:\tconditional enabled\nCpus_allowed:\t00000000,00000000,00000000,000f0000,00000000,00000000,0000000f\nCpus_allowed_list:\t0-3,112-115\nMems_allowed:\t00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000003\nMems_allowed_list:\t0-1\nvoluntary_ctxt_switches:\t67377\nnonvoluntary_ctxt_switches:\t424\n",
+            "uids": [
+              2618919,
+              2618919,
+              2618919,
+              2618919
+            ]
+          },
+          "expected_birth": "87353087",
+          "expected_pid": 2503108,
+          "pidfd_live_after": true,
+          "pidfd_live_before": true,
+          "proc_directory_device": 23,
+          "proc_directory_inode": 13441488
+        },
+        "raw": "",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "thread_stat_after": "2503108 (python) R 2503106 2503108 2503108 0 -1 4194304 75297 149713 2 135 1029 478 181 146 20 0 1 0 87353087 252608512 54636 68719476736 94766972235776 94766974663453 140724670304032 0 0 0 0 16781312 16386 0 0 0 17 114 0 0 0 0 0 94766976088816 94766978070256 94767182807040 140724670309083 140724670310071 140724670310071 140724670316483 0\n",
+        "thread_stat_before": "2503108 (python) R 2503106 2503108 2503108 0 -1 4194304 75297 149713 2 135 1029 478 181 146 20 0 1 0 87353087 252608512 54636 68719476736 94766972235776 94766974663453 140724670304032 0 0 0 0 16781312 16386 0 0 0 17 114 0 0 0 0 0 94766976088816 94766978070256 94767182807040 140724670309083 140724670310071 140724670310071 140724670316483 0\n",
+        "tid": 2503108
+      }
+    ],
+    "observed_at_seconds": 1793913327.4652069
+  },
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "seconds": 0.2808893600013107,
+  "source_functions": {
+    "child_lists": "511c5b575ccdb23ab5cfc2a01e93a99edf51164d0a6bb92ca29bb12f02aac67f",
+    "finish": "6863dd035feb04fb761553685edb5956b60323055c8c2f7c1b91a37de92aa843",
+    "known_parent": "2dd4382b48a65bcac0406ad2a131f5d957e1e866b8998067a89a85aa02dd05b0",
+    "parent_identity": "038bd7263bf13fae7b06763653a65abe184ad7a6aa26f9f9ee6d4840f0375685",
+    "scan": "76f3c66d39a64260c49515083b8867ab846b91e0d5bb72e427d648c57f963b78"
+  },
+  "source_same_collector_AA_and_H": true,
+  "step_id": "100",
+  "worker_admitted": false
+}

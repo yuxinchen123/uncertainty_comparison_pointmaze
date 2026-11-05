@@ -1,0 +1,87 @@
+{
+  "actual_popen_pid": 2503108,
+  "admission_granted": false,
+  "case_credit": 0,
+  "controller_holds_standing_descriptor": false,
+  "deadline_monotonic": 873560.912192492,
+  "exact_command_ready": true,
+  "expected_command": [
+    "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-12-57_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3/code/profile_selected.py",
+    "--prepared-unit",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-12-57_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3"
+  ],
+  "expected_parent_pid": 2503106,
+  "failure": null,
+  "final_training_credit": 0,
+  "finished_monotonic": 873530.912692635,
+  "historical_failure_cause_inferred": false,
+  "idea_credit": 0,
+  "kind": "actual_profile_target_empty_only_startup",
+  "maximum_seconds": 30,
+  "measurement_valid": false,
+  "observations": [
+    {
+      "actual_popen_returncode": null,
+      "expected_raw_command": true,
+      "observed_monotonic": 873530.912663504,
+      "predicates": {
+        "affinity": true,
+        "birth": true,
+        "parent": true,
+        "pid": true,
+        "raw_decode": true,
+        "raw_hash": true,
+        "uid": true
+      },
+      "process": {
+        "affinity": [
+          0,
+          1,
+          2,
+          3,
+          112,
+          113,
+          114,
+          115
+        ],
+        "command": [
+          "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+          "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-12-57_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3/code/profile_selected.py",
+          "--prepared-unit",
+          "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-12-57_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3"
+        ],
+        "command_bytes_hex": "2f702f726c70726f6a656374732f524e442f2e76656e76732f61746172695f706978656c735f6a61782f62696e2f707974686f6e002f702f726c70726f6a656374732f524e445f776f726b74726565732f6d657267652d61746172692d636c65616e726c2f31305f6a61785f6578706c6f726174696f6e5f706c6174666f726d2f62656e63686d61726b5f72756e732f323032362d31302d33312d30302d31315f6a617861746172695f6d6f6e74657a756d615f706978656c735f636c65616e726c5f70706f5f726e645f656e7669726f6e6d656e74732d7065722d636f70792d3132385f726f6c6c6f75742d73746570732d3132385f69646561732d33302d706c75732d32305f73746570732d7065722d636f70792d323030303030303030305f736565642d73746172742d312f646174612f323032362d31312d30352d31322d35375f70726f66696c652d736f757263652d7175616c696669636174696f6e5f6a616775617230332d7274782d61343530305f636f706965732d315f656e7669726f6e6d656e74732d3132385f726f6c6c6f75742d73746570732d3132385f65706f6368732d345f6d696e69626174636865732d345f7761726d75702d726f6c6c6f7574732d35305f7265666572656e63652d757064617465732d315f736565642d73746172742d315f686f7572732d332f636f64652f70726f66696c655f73656c65637465642e7079002d2d70726570617265642d756e6974002f702f726c70726f6a656374732f524e445f776f726b74726565732f6d657267652d61746172692d636c65616e726c2f31305f6a61785f6578706c6f726174696f6e5f706c6174666f726d2f62656e63686d61726b5f72756e732f323032362d31302d33312d30302d31315f6a617861746172695f6d6f6e74657a756d615f706978656c735f636c65616e726c5f70706f5f726e645f656e7669726f6e6d656e74732d7065722d636f70792d3132385f726f6c6c6f75742d73746570732d3132385f69646561732d33302d706c75732d32305f73746570732d7065722d636f70792d323030303030303030305f736565642d73746172742d312f646174612f323032362d31312d30352d31322d35375f70726f66696c652d736f757263652d7175616c696669636174696f6e5f6a616775617230332d7274782d61343530305f636f706965732d315f656e7669726f6e6d656e74732d3132385f726f6c6c6f75742d73746570732d3132385f65706f6368732d345f6d696e69626174636865732d345f7761726d75702d726f6c6c6f7574732d35305f7265666572656e63652d757064617465732d315f736565642d73746172742d315f686f7572732d3300",
+        "command_sha256": "37a4fcaf19f34a19f7096ebee7decc0af1ed895ff71e35cd67ae424de3fda1e7",
+        "hostname": "jaguar03",
+        "observed_at_utc": "2026-11-05T21:14:14.973193+00:00",
+        "parent_pid": 2503106,
+        "pid": 2503108,
+        "process_start_time": "87353087",
+        "stat": "2503108 (python) R 2503106 2503108 2503108 0 -1 4456448 22 0 0 0 0 0 0 0 20 0 1 0 87353087 7307264 2 68719476736 94766972235776 94766974663453 140724670304032 0 0 0 0 0 0 0 0 0 17 114 0 0 0 0 0 94766976088816 94766978070256 94767182807040 140724670309083 140724670310071 140724670310071 140724670316483 0\n",
+        "stat_sha256": "69db080eb7d69318abaa3662a9e88f47c9ce076623abe139c65bbee7ae8ef6d4",
+        "uid": 2618919,
+        "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+        "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+      },
+      "raw_command_empty": false
+    }
+  ],
+  "observed_birth": "87353087",
+  "packing_point_credit": 0,
+  "profile_credit": 0,
+  "scientific_credit": 0,
+  "selected_affinity": [
+    0,
+    1,
+    2,
+    3,
+    112,
+    113,
+    114,
+    115
+  ],
+  "started_monotonic": 873530.912192492,
+  "throughput_credit": 0,
+  "worker_admitted": false
+}
