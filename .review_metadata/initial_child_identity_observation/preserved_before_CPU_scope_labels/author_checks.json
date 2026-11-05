@@ -1,0 +1,32 @@
+{
+  "actual_eight_CPU_target_diagnostic_performed": false,
+  "command": [
+    "srun",
+    "--jobid=6821437",
+    "--overlap",
+    "--exact",
+    "-n1",
+    "-c1",
+    "--mem=512M",
+    "--time=00:05:00",
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "/p/rlprojects/RND_worktrees/2026-11-05-04-52_initial-child-identity_observations-before-refusal_selected-python-3.12_cpu-acknowledgment_cpu-count-8_total-seconds-300_gpu-count-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_initial_child_identity.py"
+  ],
+  "current_owned_cpu_job_id": "6821437",
+  "followup_before_freeze": "Explicit isolated-startup labels and a stronger affinity-restoration condition were added after the four-method run; peer actual fixture must verify final bytes.",
+  "kind": "author_focused_CPU_identity_observation_checks",
+  "methods": 4,
+  "reported_seconds": 1.642,
+  "returncode": 0,
+  "scientific_credit": 0,
+  "scope": [
+    "unchanged original controller predicates/functions",
+    "separate first/acknowledged observations",
+    "actual selected-private-Python child on1CPU",
+    "synthetic first mismatch not hidden by later actual match"
+  ],
+  "step_id_not_captured_by_test_command": true
+}

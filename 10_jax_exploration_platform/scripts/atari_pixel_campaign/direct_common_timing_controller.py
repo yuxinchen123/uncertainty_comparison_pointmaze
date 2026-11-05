@@ -613,6 +613,22 @@ def wait_exact(child, identity, expected_uid, seconds):
     raise RuntimeError("the exact child wait produced no result")
 
 
+def child_identity_observation(observed, command, affinity, parent_pid, popen_pid, *, initial_birth=None):
+    """Save each actual predicate without accepting a mismatch or inferring its cause."""
+    predicates = {"parent_pid_matches": observed["parent_pid"] == parent_pid,
+        "command_matches": observed["command"] == command,
+        "inherited_affinity_matches": observed["affinity"] == affinity,
+        "popen_pid_matches": observed["pid"] == popen_pid}
+    if initial_birth is not None:
+        predicates["birth_matches_first_observation"] = observed["process_start_time"] == initial_birth
+    return {"schema_version": 1, "kind": "actual_direct_child_identity_observation_before_registration",
+        "at_utc": now(), "actual_popen_pid": popen_pid, "expected_parent_pid": parent_pid,
+        "expected_command": command, "expected_affinity": affinity, "observed_child": observed,
+        "predicate_results": predicates, "all_predicates_match": all(predicates.values()),
+        "registration_performed_by_this_observation": False, "historical_failure_cause_established": False,
+        **BOUNDARY}
+
+
 def supervise(plan, command, unit, environment, *, expected_uid, cpu_count,
               registration_hostname, seconds=10800, after_spawn=None, launch_lock=None, prelaunch_check=None):
     """Common real-process mechanism; tests use only private CPU fixture paths.
@@ -652,6 +668,8 @@ def supervise(plan, command, unit, environment, *, expected_uid, cpu_count,
                 stdout=stdout, stderr=stderr, shell=False, close_fds=True)
             # Popen has returned a real PID; nothing below invents a future identity.
             child_identity = read_process(child.pid, expected_uid)
+            publish(unit / "direct_controller_initial_child_observation.json",
+                child_identity_observation(child_identity, command, selected_affinity, os.getpid(), child.pid))
             require(child_identity["parent_pid"] == os.getpid() and child_identity["command"] == command
                     and child_identity["affinity"] == selected_affinity, "actual child parent, argv or inherited CPU affinity differs")
             spawn = {"schema_version": 1, "kind": "actual_direct_qualification_popen_return",
@@ -662,6 +680,9 @@ def supervise(plan, command, unit, environment, *, expected_uid, cpu_count,
             if after_spawn is not None:
                 after_spawn(child, child_identity)  # CPU tests only; never provided by the fixed CLI.
             current_child = read_process(child.pid, expected_uid)
+            publish(unit / "direct_controller_pre_registration_child_observation.json",
+                child_identity_observation(current_child, command, selected_affinity, os.getpid(), child.pid,
+                    initial_birth=child_identity["process_start_time"]))
             require(current_child["process_start_time"] == child_identity["process_start_time"]
                     and current_child["parent_pid"] == os.getpid() and current_child["command"] == command
                     and current_child["affinity"] == selected_affinity, "actual child exited or changed before durable registration")

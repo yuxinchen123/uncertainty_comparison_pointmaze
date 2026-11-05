@@ -1,0 +1,121 @@
+{
+  "actual_owned_CPU_context": {
+    "cgroup": "0::/system.slice/slurmstepd.scope/job_6821437/step_64/user/task_0\n",
+    "hostname": "slurm2",
+    "job_id": "6821437",
+    "pid": 1083673,
+    "step_id": "64",
+    "uids": [
+      2618919,
+      2618919,
+      2618919
+    ]
+  },
+  "actual_target_eight_CPU_diagnostic_run": false,
+  "approved": true,
+  "checks": [
+    "current exact owned CPU job and step",
+    "actual independent reviewer UID values",
+    "exact held three-file author freeze",
+    "exact held file bytes/mode: diagnose_initial_child_identity.py",
+    "exact held file bytes/mode: direct_common_timing_controller.py",
+    "exact held file bytes/mode: test_initial_child_identity.py",
+    "actual selected private executable image hash",
+    "source freeze grants no retrospective cause or operational/scientific admission",
+    "exact four focused affected author methods, no broad replay",
+    "all four final-byte focused methods passed",
+    "only original supervise observations and one pure record helper changed",
+    "actual controller fixture restores original affinity",
+    "actual own CPU child PID/birth and normal wait retained",
+    "exact waited CPU fixture child is no longer present",
+    "real controller publishes both matching observations and waits for actual zero exit",
+    "normal CPU-only fixture publishes one actual registration",
+    "actual controller fixture restores original affinity",
+    "actual own CPU child PID/birth and normal wait retained",
+    "exact waited CPU fixture child is no longer present",
+    "real controller publishes labelled synthetic mismatch then refuses and waits",
+    "initial refusal publishes no spawn, launch or registration",
+    "held source unchanged after actual CPU fixtures: diagnose_initial_child_identity.py",
+    "held source unchanged after actual CPU fixtures: direct_common_timing_controller.py",
+    "held source unchanged after actual CPU fixtures: test_initial_child_identity.py",
+    "author freeze unchanged after independent tests"
+  ],
+  "controller_sha256": "09a1c944116541b631e12e465f5e782641429e305e9a135da4dc8e5379f9a5b6",
+  "diagnostic_startup_flags_differ_from_original": true,
+  "elapsed_seconds": 1.7977785259718075,
+  "files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_initial_child_identity.py": {
+      "bytes": 11913,
+      "mode": "0o660",
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-04-52_initial-child-identity_observations-before-refusal_selected-python-3.12_cpu-acknowledgment_cpu-count-8_total-seconds-300_gpu-count-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_initial_child_identity.py",
+      "sha256": "25876e545a9791b15c0ec649882da3a4accc9bcc56788e4f7a28911f0ad763ba"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_timing_controller.py": {
+      "bytes": 56219,
+      "mode": "0o660",
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-04-52_initial-child-identity_observations-before-refusal_selected-python-3.12_cpu-acknowledgment_cpu-count-8_total-seconds-300_gpu-count-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_timing_controller.py",
+      "sha256": "09a1c944116541b631e12e465f5e782641429e305e9a135da4dc8e5379f9a5b6"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_initial_child_identity.py": {
+      "bytes": 5529,
+      "mode": "0o660",
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-04-52_initial-child-identity_observations-before-refusal_selected-python-3.12_cpu-acknowledgment_cpu-count-8_total-seconds-300_gpu-count-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_initial_child_identity.py",
+      "sha256": "4b3312a8e2437b0bc776ead943bb3237ad45bdce0d1e788e124203d4a1089e5d"
+    }
+  },
+  "focused_author_methods_passed": 4,
+  "freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-04-52_initial-child-identity_observations-before-refusal_selected-python-3.12_cpu-acknowledgment_cpu-count-8_total-seconds-300_gpu-count-0/.review_metadata/initial_child_identity_observation/corrected_source_freeze.json",
+    "sha256": "63c3186658242633d913b8302c1b0dae38adb8ee72faf311c64b693d324665cc"
+  },
+  "full_original_launch_reproduced": false,
+  "historical_failure_cause_established": false,
+  "independent_actual_controller_cases": [
+    {
+      "CPU_count": 1,
+      "actual_birth": "84453614",
+      "actual_pid": 1083683,
+      "explicit_numerical_or_GPU_operations": false,
+      "normal_wait_status": 0,
+      "observed_initial_predicates": {
+        "command_matches": true,
+        "inherited_affinity_matches": true,
+        "parent_pid_matches": true,
+        "popen_pid_matches": true
+      },
+      "passed": true,
+      "scientific_admission": false,
+      "synthetic_initial_command_mismatch": false
+    },
+    {
+      "CPU_count": 1,
+      "actual_birth": "84453625",
+      "actual_pid": 1083684,
+      "explicit_numerical_or_GPU_operations": false,
+      "normal_wait_status": 2,
+      "observed_initial_predicates": {
+        "command_matches": false,
+        "inherited_affinity_matches": true,
+        "parent_pid_matches": true,
+        "popen_pid_matches": true
+      },
+      "passed": false,
+      "scientific_admission": false,
+      "synthetic_initial_command_mismatch": true
+    }
+  ],
+  "kind": "independent_initial_child_observation_and_selected_interpreter_CPU_source_review",
+  "passed": true,
+  "process_native_startup_work": "unquantified",
+  "required_before_root_target_diagnostic": [
+    "Publish exact source, this independent review and standard zero-credit diagnostic records.",
+    "Bind actual selected-image and source hashes, run once on the approved direct host with eight selected CPUs; never touch the standing GPU lock or change campaign metadata permissions.",
+    "Preserve every first/final identity, acknowledgment and actual wait including failure; do not infer the failed historical child values.",
+    "No production timing repair or numerical admission follows from this isolated-startup diagnostic alone."
+  ],
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "selected_private_interpreter_one_CPU_fixture_children": 4,
+  "source_review_scope": "observation-only controller correction and isolated selected-interpreter CPU acknowledgment diagnostic; no numerical, direct GPU, profiling or training admission",
+  "target_run_admitted": false
+}

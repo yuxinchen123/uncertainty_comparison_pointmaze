@@ -1,0 +1,51 @@
+{
+  "actual_eight_CPU_diagnostic_performed": false,
+  "actual_execution_by_author": "two bounded selected-private-Python one-CPU fixtures, no target execution",
+  "author_checks": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-04-52_initial-child-identity_observations-before-refusal_selected-python-3.12_cpu-acknowledgment_cpu-count-8_total-seconds-300_gpu-count-0/.review_metadata/initial_child_identity_observation/author_checks.json",
+    "sha256": "99c131015292b303b580e644d604c7142501f47e293162948b763ca16f725506"
+  },
+  "base_commit": "765480d990cff5ae556914e3b74afba0472f64ea",
+  "diagnostic_isolated_startup_flags": [
+    "-I",
+    "-S",
+    "-B"
+  ],
+  "files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_initial_child_identity.py": {
+      "bytes": 11522,
+      "mode": "0o660",
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-04-52_initial-child-identity_observations-before-refusal_selected-python-3.12_cpu-acknowledgment_cpu-count-8_total-seconds-300_gpu-count-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_initial_child_identity.py",
+      "sha256": "7bf77224f16f57ee092933d5030060e49915388a780c93036b4ad052f4d13d76"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_timing_controller.py": {
+      "bytes": 56219,
+      "mode": "0o660",
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-04-52_initial-child-identity_observations-before-refusal_selected-python-3.12_cpu-acknowledgment_cpu-count-8_total-seconds-300_gpu-count-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_timing_controller.py",
+      "sha256": "09a1c944116541b631e12e465f5e782641429e305e9a135da4dc8e5379f9a5b6"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_initial_child_identity.py": {
+      "bytes": 5155,
+      "mode": "0o660",
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-04-52_initial-child-identity_observations-before-refusal_selected-python-3.12_cpu-acknowledgment_cpu-count-8_total-seconds-300_gpu-count-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_initial_child_identity.py",
+      "sha256": "e0b9db21eaf070ca8110a127c0b96f769733efb003fb4116cdacd0fb8472e99c"
+    }
+  },
+  "full_original_launch_reproduced": false,
+  "historical_failure_cause_established": false,
+  "kind": "initial_child_identity_observation_and_CPU_acknowledgment_source_freeze",
+  "old_live_sources_and_failed_units_unchanged": true,
+  "operational_admission": false,
+  "original_scientific_child_predicates_unchanged": true,
+  "original_scientific_startup_flags": [],
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "selected_executable": {
+    "bytes": 31301856,
+    "mode": "0o755",
+    "path": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+    "resolved_path": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python3.12",
+    "sha256": "c889543c0e008c1362b69c711330cac598833a790dc0c48c5ee4a8567d3f3b51"
+  },
+  "source_root": "/p/rlprojects/RND_worktrees/2026-11-05-04-52_initial-child-identity_observations-before-refusal_selected-python-3.12_cpu-acknowledgment_cpu-count-8_total-seconds-300_gpu-count-0"
+}
