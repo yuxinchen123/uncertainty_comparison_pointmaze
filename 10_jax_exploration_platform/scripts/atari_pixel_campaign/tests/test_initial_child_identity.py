@@ -45,6 +45,16 @@ class InitialChildIdentityTests(unittest.TestCase):
         self.assertEqual(changed, ['supervise'])
         tree = copy.deepcopy(new['supervise'])
         class RemoveObservationPublications(ast.NodeTransformer):
+            # The new startup observer is explicit; original checks outside it remain exact.
+            def visit_Assign(self, node):
+                if isinstance(node.value, ast.Call) and any(isinstance(target, ast.Name) and target.id == 'startup_started'
+                        for target in node.targets):
+                    return None
+                if isinstance(node.value, ast.Call) and isinstance(node.value.func, ast.Name) \
+                        and node.value.func.id == 'wait_for_exact_child_startup':
+                    return None
+                return node
+
             def visit_Expr(self, node):
                 if isinstance(node.value, ast.Call) and isinstance(node.value.func, ast.Name) and node.value.func.id == 'publish' \
                         and any(isinstance(value, ast.Constant) and value.value in {

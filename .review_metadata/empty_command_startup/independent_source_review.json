@@ -1,0 +1,107 @@
+{
+  "GPU_or_worker_admission": false,
+  "actual_original_flags_CPU_or_GPU_launch_repeated": false,
+  "actual_owned_CPU_context": {
+    "hostname": "slurm2",
+    "job_id": "6821437",
+    "pid": 1088635,
+    "step_id": "89"
+  },
+  "additional_ordinary_error_retention_cases": 2,
+  "all_UID_PID_birth_PPID_affinity_rechecked_each_observation": true,
+  "approved": true,
+  "checks": [
+    "current exact owned CPU allocation/step/owner",
+    "exact final held empty-only source freeze",
+    "held exact source/test bytes and modes: direct_common_timing_controller.py",
+    "held exact source/test bytes and modes: test_empty_command_startup.py",
+    "held exact source/test bytes and modes: test_initial_child_identity.py",
+    "actual evidence scope does not claim earlier cause, kernel mechanism or30second readytime",
+    "exact already reviewed actual evidence reference: initial_observation",
+    "exact already reviewed actual evidence reference: later_same_child_observation",
+    "exact already reviewed actual evidence reference: independent_actual_transition_audit",
+    "exact ten affected empty-only startup methods",
+    "ten affected methods plus one source-preservation method pass on final bytes",
+    "only existing supervise and one new strict startup helper changed from failed09a source",
+    "removing only startup clock and strict helper call leaves all original predicates, observation records, publication, registration and wait logic unchanged",
+    "only genuinely empty raw command may wait; ready requires complete exact raw bytes",
+    "one strict maximum30second deadline, not restarted per observation",
+    "ordinary observer error preserves actual empty observation sequence and refuses",
+    "ordinary poll error preserves actual empty observation sequence and refuses",
+    "actual CPU fixture retains exact own child wait and restores affinity",
+    "actual waited CPU fixture child no longer exists",
+    "real controller permits labelled synthetic empty first sample only after actual expected child command with exact raw bytes",
+    "real CPU success registers only after strict exact startup observer",
+    "actual CPU fixture retains exact own child wait and restores affinity",
+    "actual waited CPU fixture child no longer exists",
+    "real controller refuses synthetic extra empty argument and waits exact child to failure",
+    "raw-command mismatch never registers or publishes success",
+    "held final source/test unchanged after focused CPU checks: direct_common_timing_controller.py",
+    "held final source/test unchanged after focused CPU checks: test_empty_command_startup.py",
+    "held final source/test unchanged after focused CPU checks: test_initial_child_identity.py",
+    "held exact source freeze unchanged after independent checks",
+    "no numerical imports in reviewer"
+  ],
+  "earlier_failed_attempt_cause_inferred": false,
+  "elapsed_seconds": 1.7303824110422283,
+  "files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_timing_controller.py": {
+      "bytes": 62194,
+      "mode": "0o660",
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-05-32_empty-command-startup_wait-seconds-30_preserve-owner-birth-parent-affinity_exact-argv-before-registration_gpu-count-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_timing_controller.py",
+      "sha256": "8e567998fc5209f5ff4370338fe62bf78391b7c5637adf989572b42486adcb0e"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_empty_command_startup.py": {
+      "bytes": 8191,
+      "mode": "0o660",
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-05-32_empty-command-startup_wait-seconds-30_preserve-owner-birth-parent-affinity_exact-argv-before-registration_gpu-count-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_empty_command_startup.py",
+      "sha256": "0393d6ad44041cb2fe8db64f0103c83138351334a0e4275b389ea22f65b64cc5"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_initial_child_identity.py": {
+      "bytes": 6112,
+      "mode": "0o660",
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-05-32_empty-command-startup_wait-seconds-30_preserve-owner-birth-parent-affinity_exact-argv-before-registration_gpu-count-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_initial_child_identity.py",
+      "sha256": "6b6d89f2b5d01e08521680e23bea314287652f8e921350d25a3bb756d38dbd3d"
+    }
+  },
+  "focused_methods_passed": 11,
+  "independent_actual_controller_CPU_cases": [
+    {
+      "CPU_count": 1,
+      "NUM_or_GPU_work": false,
+      "actual_child_birth": "84719970",
+      "actual_child_pid": 1088644,
+      "actual_normal_wait_returncode": 0,
+      "explicitly_synthetic_initial_metadata_case": "synthetic_empty_then_actual_exact",
+      "scientific_admission": false
+    },
+    {
+      "CPU_count": 1,
+      "NUM_or_GPU_work": false,
+      "actual_child_birth": "84719982",
+      "actual_child_pid": 1088645,
+      "actual_normal_wait_returncode": 2,
+      "explicitly_synthetic_initial_metadata_case": "synthetic_extra_trailing_empty_argument",
+      "scientific_admission": false
+    }
+  ],
+  "isolated_actual_CPU_fixture_children": 3,
+  "kernel_mechanism_or_actual_readytime_established": false,
+  "kind": "independent_strict_empty_only_bounded_startup_source_review",
+  "maximum_startup_wait_seconds": 30,
+  "nonempty_command_requires_complete_exact_raw_bytes": true,
+  "passed": true,
+  "requires_before_actual_new_timing_attempt": [
+    "Publish independently reviewed source and standard fresh-unit records; preserve failed05-10.",
+    "Verify actual previous child wait and both exact exits before any successor.",
+    "Prepare and bind a fresh unit using exact unchanged helper69f/29 and numericalD28/original scientific configuration.",
+    "Review actual bound source/records and one-shot transport before root-only actual launch; original complete expected argv remains mandatory before registration."
+  ],
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "source_change_scope": "one bounded empty-only startup observer and its supervise call/clock; original nonempty argv/parent/birth/affinity/publication/wait checks retained",
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-05-32_empty-command-startup_wait-seconds-30_preserve-owner-birth-parent-affinity_exact-argv-before-registration_gpu-count-0/.review_metadata/empty_command_startup/source_freeze.json",
+    "sha256": "9fa36c9cef144d1008d9c91af41a301b75d44da863dcb00999706383f16052d1"
+  }
+}

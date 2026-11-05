@@ -1,0 +1,89 @@
+{
+  "files_excluding_this_roster": {
+    ".review_metadata/empty_command_startup/actual_evidence_inputs.json": {
+      "bytes": 2458,
+      "mode": "0o660",
+      "sha256": "69f3bd51f04188b784681ab71a68d557c335a0584fb2be9d7305a51d4a695f23"
+    },
+    ".review_metadata/empty_command_startup/author_checks.json": {
+      "bytes": 1647,
+      "mode": "0o660",
+      "sha256": "ad19fdbdbb093c1c018f3d19193543a2fbe7b9f03d1f7f903b9688c93aa28a96"
+    },
+    ".review_metadata/empty_command_startup/independent_source_review.json": {
+      "bytes": 6576,
+      "mode": "0o660",
+      "sha256": "8b4f58210ba5557b5b0ae71d7f6d069839814444c883909748ca256f19e69a42"
+    },
+    ".review_metadata/empty_command_startup/independent_source_review.py": {
+      "bytes": 13312,
+      "mode": "0o660",
+      "sha256": "7ff21dca0be5b936f90398f37024138ac1ffe9cd5d1585fc5f68fe642fd8e00d"
+    },
+    ".review_metadata/empty_command_startup/independent_source_review_return.json": {
+      "bytes": 501,
+      "mode": "0o660",
+      "sha256": "4adfa6b4d31f3d0963b0f9fa2332b050a5108591cdd33df70ead3f489ab65635"
+    },
+    ".review_metadata/empty_command_startup/independent_source_review_stderr.raw": {
+      "bytes": 1528,
+      "mode": "0o660",
+      "sha256": "576a696306983dd9da36353fcdcd154e9f91cf1434b627816eb2cbd3f1b33d46"
+    },
+    ".review_metadata/empty_command_startup/independent_source_review_stdout.raw": {
+      "bytes": 418,
+      "mode": "0o660",
+      "sha256": "ce434965a0f491decdab8e90bbacfd79086d08ae30ffd27722492dbc36941e59"
+    },
+    ".review_metadata/empty_command_startup/preserved_before_exact_raw_argv_guard/direct_common_timing_controller.py": {
+      "bytes": 61930,
+      "mode": "0o660",
+      "sha256": "947cfe2b9aab2ad06ec654fcbae262e92087f69cf5c473e0de8e7a42651f472a"
+    },
+    ".review_metadata/empty_command_startup/preserved_before_exact_raw_argv_guard/preservation.json": {
+      "bytes": 1616,
+      "mode": "0o660",
+      "sha256": "37108ce7f03d692073471420109a81985e83f6f2304d6cbd85566952385d0c26"
+    },
+    ".review_metadata/empty_command_startup/preserved_before_exact_raw_argv_guard/test_empty_command_startup.py": {
+      "bytes": 7552,
+      "mode": "0o660",
+      "sha256": "49825fcfc62e51a56683b67e03458d146dfe71e58f7d99f2b895e74154ed3294"
+    },
+    ".review_metadata/empty_command_startup/source_freeze.json": {
+      "bytes": 6124,
+      "mode": "0o660",
+      "sha256": "9fa36c9cef144d1008d9c91af41a301b75d44da863dcb00999706383f16052d1"
+    },
+    ".review_metadata/empty_command_startup/test_initial_child_identity_before_syntax_correction.py": {
+      "bytes": 6113,
+      "mode": "0o660",
+      "sha256": "d6e554b1c10d3818790498753bf96c11f449af8802dd43fdf3235f9b82458b03"
+    },
+    ".review_metadata/empty_command_startup/test_only_syntax_failure.json": {
+      "bytes": 354,
+      "mode": "0o660",
+      "sha256": "dda747aef7d6b64d3d75514d71ab9e374f8efdad79d358d56bcde398b0c5a87c"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_timing_controller.py": {
+      "bytes": 62194,
+      "mode": "0o660",
+      "sha256": "8e567998fc5209f5ff4370338fe62bf78391b7c5637adf989572b42486adcb0e"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_empty_command_startup.py": {
+      "bytes": 8191,
+      "mode": "0o660",
+      "sha256": "0393d6ad44041cb2fe8db64f0103c83138351334a0e4275b389ea22f65b64cc5"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_initial_child_identity.py": {
+      "bytes": 6112,
+      "mode": "0o660",
+      "sha256": "6b6d89f2b5d01e08521680e23bea314287652f8e921350d25a3bb756d38dbd3d"
+    }
+  },
+  "independent_review_sha256": "8b4f58210ba5557b5b0ae71d7f6d069839814444c883909748ca256f19e69a42",
+  "kind": "exact_allowlisted_bounded_empty_command_startup_publication",
+  "no_NUM_or_helper69f_or_old_unit_edits": true,
+  "parent": "e16c015ac7c9ca674f768240cad35a372eb18e87",
+  "schema_version": 1
+}
