@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "ssh",
+    "-o",
+    "BatchMode=yes",
+    "-o",
+    "ControlMaster=no",
+    "-o",
+    "ConnectTimeout=15",
+    "serval02",
+    "/usr/bin/python3 -I -S -B -c 'import pathlib,json,os,socket,datetime\nassert socket.gethostname().split('\"'\"'.'\"'\"')[0]=='\"'\"'serval02'\"'\"' and os.getresuid()==(2618919,)*3\nrows=[]\nfor pid,birth in [(370657,'\"'\"'84591278'\"'\"'),(371111,'\"'\"'84596712'\"'\"')]:\n try:\n  s=(pathlib.Path('\"'\"'/proc'\"'\"')/str(pid)/'\"'\"'stat'\"'\"').read_text();current=s[s.rfind('\"'\"')'\"'\"')+2:].split()[19];rows.append({'\"'\"'pid'\"'\"':pid,'\"'\"'expected_birth_counter'\"'\"':birth,'\"'\"'proc_entry_absent'\"'\"':False,'\"'\"'original_process_ended'\"'\"':current!=birth})\n except FileNotFoundError:rows.append({'\"'\"'pid'\"'\"':pid,'\"'\"'expected_birth_counter'\"'\"':birth,'\"'\"'proc_entry_absent'\"'\"':True,'\"'\"'original_process_ended'\"'\"':True})\nv={'\"'\"'at_utc'\"'\"':datetime.datetime.now(datetime.timezone.utc).isoformat(),'\"'\"'host'\"'\"':socket.gethostname(),'\"'\"'uid'\"'\"':os.getuid(),'\"'\"'kind'\"'\"':'\"'\"'exact_owned_failed_controller_and_child_exit_observation'\"'\"','\"'\"'observations'\"'\"':rows,'\"'\"'all_original_processes_ended'\"'\"':all(x['\"'\"'original_process_ended'\"'\"'] for x in rows),'\"'\"'signals_sent'\"'\"':0,'\"'\"'gpu_or_standing_lock_operations'\"'\"':0,'\"'\"'global_process_enumeration'\"'\"':False};print(json.dumps(v));assert v['\"'\"'all_original_processes_ended'\"'\"']\n'"
+  ],
+  "at_utc": "2026-11-05T13:37:55.624284+00:00",
+  "read_only": true
+}

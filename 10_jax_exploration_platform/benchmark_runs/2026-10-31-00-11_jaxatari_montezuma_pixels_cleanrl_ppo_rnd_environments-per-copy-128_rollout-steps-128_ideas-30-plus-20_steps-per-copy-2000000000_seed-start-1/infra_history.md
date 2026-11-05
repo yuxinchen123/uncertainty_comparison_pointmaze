@@ -638,3 +638,17 @@ The corrected observation-only controller source is published through e98de74f, 
 ## November 5: fresh timing metadata passes with saved observation source
 
 The 05:10 packet passes its actual one-time preparation, cold verification, shared admission-claim probe and binding in 5.22, 1.78, 2.43 and 2.18 seconds. Preserve the portal plan-visibility failure between successful owned-compute phases and the unstarted claim-probe construction; no preparation or verification is repeated. The actual prepare receipt provides the new plan hash, then portal bytes and the owned-compute probe both match. Independent actual bound review verifies 87 frozen files and 462 checks in 1.694 seconds, hash 17c16c05f627a7962bee55a7e7e08b376293e311901d33f268ce42409d28b47e. The new observation test and e16/db15 source proof are included. Only saved observations were added to supervise; the original identity refusals and all scientific settings remain unchanged. Exact transport publication and review remain before any remote launch.
+
+
+## November 5, 13:29 UTC: actual empty command line causes startup refusal
+
+The05:10controller starts once through published59bc/e7abb. Initial child371111/birth84596712 has matching parent370657,allUIDs and eight-CPU mask,but empty command bytes. This failed comparison is now saved rather than inferred. A separate read-only observation at13:32:48 sees that exact same child with the exact expected command; the actual transition time is unknown. Preserve raw stat accurately: stateD,arg_start140733453932894,arg_end0. No earlier failure cause or storage mechanism is inferred. Registration and timing remain absent; wait for the real child status and both process exits before restoring the protected metadata permissions. A bounded empty-only startup observer is under separate implementation/review; every final identity requirement stays exact and every wrong nonempty command refuses. Never reuse05:10.
+
+
+## November 5, 13:35 UTC: failed empty-command attempt closes normally
+
+Child371111returnsnormalstatus1at13:35:23.955988withoutintervention. Its subsequent producer failure is the absent current-launch record before numerical computation. Separate exact-PID/birth observations confirm both child and controller absent. Restore only the original metadata permissions to0660on the same inode and bytes at13:37:57. Independent terminal addendum verifies59checks on6821437.88,hash933b444d68d29d0305480ae9b0db7b5b26a8d477643e75323b42ee79fd9326d2. Partial process metadata now proves the actual standing FLOCK; the initial role labels alone did not. No training,timing or scientific credit.
+
+## November 5: integrate the reviewed closed profiling source
+
+Merge/push reviewedsourcee2066e8cas c8c958eb,actualtreeb1438fb0. Ten independent affected checks,33before/afterhashes,genuine4a71authority and exact69fclaim/live functions pass. Incoming review verifies all662protected files,96current timing static files and two real private-index dryruns. Function comparisons preserve the numerical capture core,all current binding functions except the explicit new profile-history dispatch,and the original history body. Preserve final blank lines in one frozen regression test and its rejected-source archive. Formal profiling/native operations remain disabled; no profile or scientific credit is granted.

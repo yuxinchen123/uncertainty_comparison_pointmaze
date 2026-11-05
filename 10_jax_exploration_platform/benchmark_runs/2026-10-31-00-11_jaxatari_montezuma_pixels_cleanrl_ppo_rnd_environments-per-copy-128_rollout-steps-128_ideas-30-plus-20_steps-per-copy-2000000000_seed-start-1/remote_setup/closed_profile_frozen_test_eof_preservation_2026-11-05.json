@@ -1,0 +1,11 @@
+{
+  "actual_warnings": [
+    ".review_metadata/independent_full_profile_adapter_review/preserved_b23_integration_failure/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_metadata_runtime.py:125: new blank line at EOF.",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_metadata_runtime.py:125: new blank line at EOF."
+  ],
+  "scope": "One independently frozen regression-test file and its exact rejected-source archive retain a final blank line.",
+  "decision": "Preserve exact reviewed source/test and historical bytes; no runtime or numerical source whitespace warning.",
+  "incoming_commit": "e2066e8cdb95fa0041148bb8b84f1840aee35c43",
+  "predicted_and_actual_source_merge_tree": "b1438fb0ddcbea08adc56da41c7e6f0aa5051e29",
+  "source_bytes_changed_for_formatting": false
+}
