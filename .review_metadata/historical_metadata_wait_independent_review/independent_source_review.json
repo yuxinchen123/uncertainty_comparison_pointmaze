@@ -1,0 +1,64 @@
+{
+  "actual_genuine_guard_invoked_by_reviewer": false,
+  "actual_numeric_step": "377",
+  "actual_numerical_gpu_device_tool_operations": 0,
+  "actual_owned_job": "6783003",
+  "actual_pid": 1240301,
+  "actual_runtime_upper_bound_known": false,
+  "admission_granted": false,
+  "approved": true,
+  "at_utc": "2026-11-05T06:55:28.826539+00:00",
+  "author_actual_step": "6783003.376",
+  "candidate_source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-22-50_historical-metadata-wait_candidate-child-seconds-900_candidate-guard-seconds-1800_admitted-seconds-180_gpu-count-0/.review_metadata/historical_metadata_wait_candidate/frozen_candidate_for_independent_review.json",
+    "sha256": "4422b94b3a585c061071313108da06ffad9e4b789c0679fb48de029096f593d5"
+  },
+  "diagnostic_outer_seconds": 2100,
+  "diagnostic_packet_approval_granted": false,
+  "exact_changes": [
+    {
+      "all_other_source_bytes_and_syntax_unchanged": true,
+      "before_seconds": 180,
+      "candidate_seconds": 900,
+      "location": "module WAIT_SECONDS",
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_historical_consumer.py",
+      "source_sha256": "c6ade4959e040f9b47a34b65b48889ebd28dc4a3d76f896db3b64f3bac7c7685"
+    },
+    {
+      "all_other_source_bytes_and_syntax_unchanged": true,
+      "before_seconds": 180,
+      "candidate_seconds": 1800,
+      "location": "request subprocess.run timeout",
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_confirmation.py",
+      "source_sha256": "0653f2a8b9ab51ef3037d47be74b0773051205f5fb949ff64ad9f4d17726b749"
+    }
+  ],
+  "existing_private_sources_unchanged": [
+    {
+      "admitted_child_wait_seconds": 180,
+      "admitted_guard_wait_seconds": 180,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-22-30_historical-common-reader_exact-source-8eb306af_git-inspection-function-b181e171_helpers-28_gpu-count-0",
+      "source_files": {
+        "direct_common_confirmation.py": "ccf7bdf5eabf408f385693c30dbd6600a27284ccc79edb1068542a2a245bee71",
+        "direct_historical_consumer.py": "7683a8185a077b5522764ba2a6f04e621186e7ef70d21e6ea90cb1862d7f2fb6"
+      }
+    }
+  ],
+  "frozen10files_unchanged": true,
+  "kind": "independent_unadmitted_metadata_wait_candidate_source_review",
+  "passed": true,
+  "preserved_author_metadata_tests": 27,
+  "previous_observation": "The prior nested child exceeded180seconds, was killed and reaped; this is a lower bound only.",
+  "protected_source_roster": {
+    "files_verified": 662,
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/direct_nsight_incoming_independent_2026-11-04-20-01-56_protected_before.json",
+    "sha256": "3412f310f74e010aab08548a77813f811ad51e5a5b5ae9db1798ee21afe77430"
+  },
+  "required_before_adoption": [
+    "Fresh reviewed standard diagnostic packet and source publication before one actual trial.",
+    "Actual full successful raw read and independent runtime/source review.",
+    "Separate explicit recorded adoption; current admitted180second limits remain unchanged."
+  ],
+  "schema_version": 1,
+  "scientific_credit": 0
+}

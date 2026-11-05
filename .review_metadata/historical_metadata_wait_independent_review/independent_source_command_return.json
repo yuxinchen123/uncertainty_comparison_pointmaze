@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "srun",
+    "--jobid=6783003",
+    "--overlap",
+    "--exact",
+    "-n1",
+    "-c1",
+    "--mem=512M",
+    "flock",
+    "-x",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/queue/cpu_monitor_large_artifact_read.lock",
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "/p/rlprojects/RND_worktrees/2026-11-04-22-50_historical-metadata-wait_candidate-child-seconds-900_candidate-guard-seconds-1800_admitted-seconds-180_gpu-count-0/.review_metadata/historical_metadata_wait_independent_review/review_timeout_candidate.py"
+  ],
+  "returncode": 0,
+  "started_at_utc": "2026-11-05T06:55:19.365017+00:00",
+  "finished_at_utc": "2026-11-05T06:55:28.884186+00:00"
+}

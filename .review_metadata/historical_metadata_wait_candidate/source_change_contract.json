@@ -1,0 +1,33 @@
+{
+  "actual_runtime_upper_bound_known": false,
+  "admission_granted": false,
+  "base_source": "7fef164909b5eb8b31636da7ae0c653282388203",
+  "changes": [
+    {
+      "before_child_wait_seconds": 180,
+      "candidate_child_wait_seconds": 900,
+      "file": "direct_historical_consumer.py"
+    },
+    {
+      "before_parent_guard_seconds": 180,
+      "candidate_parent_guard_seconds": 1800,
+      "file": "direct_common_confirmation.py"
+    }
+  ],
+  "existing_admitted_source_limits_changed": false,
+  "files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_confirmation.py": {
+      "bytes": 62623,
+      "sha256": "0653f2a8b9ab51ef3037d47be74b0773051205f5fb949ff64ad9f4d17726b749"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_historical_consumer.py": {
+      "bytes": 24121,
+      "sha256": "c6ade4959e040f9b47a34b65b48889ebd28dc4a3d76f896db3b64f3bac7c7685"
+    }
+  },
+  "kind": "unadmitted_historical_metadata_wait_candidate",
+  "measured_previous_child_elapsed_lower_bound_seconds": 180,
+  "next_diagnostic_outer_seconds": 2100,
+  "scientific_credit": 0,
+  "worktree": "/p/rlprojects/RND_worktrees/2026-11-04-22-50_historical-metadata-wait_candidate-child-seconds-900_candidate-guard-seconds-1800_admitted-seconds-180_gpu-count-0"
+}

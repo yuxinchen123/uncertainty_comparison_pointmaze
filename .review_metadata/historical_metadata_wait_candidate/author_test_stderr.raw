@@ -1,0 +1,59 @@
+test_identity_failure_reaps_the_exact_metadata_child (test_direct_historical_consumer.ActualOwnChildCleanupTests)
+The actual helper child receives no fake plan before its failed identity check. ... ok
+test_ambient_module_with_same_name_is_refused_before_loading (test_direct_historical_consumer.ClosedOldNamespaceTests)
+A pre-existing current module is never reused as an old global. ... ok
+test_buffer_substitution_is_refused (test_direct_historical_consumer.ClosedOldNamespaceTests)
+The closed loader refuses source bytes that differ from its declared SHA256. ... ok
+test_late_staged_source_substitution_is_refused (test_direct_historical_consumer.ClosedOldNamespaceTests)
+A staged helper changed after closure pinning is refused before its code executes. ... ok
+test_numerical_import_finder_refuses_gpu_and_array_packages (test_direct_historical_consumer.ClosedOldNamespaceTests)
+The old namespace cannot initialize a numerical or GPU package. ... ok
+test_old_adjacent_style_import_observes_only_the_exact_old_source (test_direct_historical_consumer.ClosedOldNamespaceTests)
+An already reserved old name executes its pinned bytes when its file is inspected. ... ok
+test_transitive_import_keeps_a_separate_exact_old_global (test_direct_historical_consumer.ClosedOldNamespaceTests)
+An old helper importing another old helper cannot receive a current value. ... ok
+test_an_old_gate_change_is_not_hidden_by_the_dispatch (test_direct_historical_consumer.DependencyAndReaderSyntaxTests)
+A changed original statement remains a hard source-contract failure. ... ok
+test_incomplete_or_ambiguous_target_union_is_refused (test_direct_historical_consumer.DependencyAndReaderSyntaxTests)
+A common flag cannot omit its backend or select two target policies. ... ok
+test_new_common_stages_historical_dependency_and_ordinary_does_not (test_direct_historical_consumer.DependencyAndReaderSyntaxTests)
+The explicit common capability stages exactly its complete two-file addition. ... ok
+test_original_qualification_reader_body_is_retained_after_one_statement (test_direct_historical_consumer.DependencyAndReaderSyntaxTests)
+The new metadata dispatch adds no removal or rewrite of an old reader gate. ... ok
+test_boolean_schema_is_not_integer_schema (test_direct_historical_consumer.HistoricalProtocolTests)
+Boolean equality cannot substitute for an integer capability version. ... ok
+test_cache_or_extra_helper_is_not_silently_enabled (test_direct_historical_consumer.HistoricalProtocolTests)
+A future twenty-nine-file cache needs a separate reviewed protocol. ... ok
+test_duplicate_or_nonfinite_process_metadata_is_refused (test_direct_historical_consumer.HistoricalProtocolTests)
+Input keys and finite numeric meaning remain exact across process messages. ... ok
+test_exact_current_protocol_is_recognized (test_direct_historical_consumer.HistoricalProtocolTests)
+The synthetic current role requires all twenty-eight declared files. ... ok
+test_final_or_other_target_never_uses_historical_operational_bypass (test_direct_historical_consumer.HistoricalProtocolTests)
+Neither final admission nor another physical target receives this capability. ... ok
+test_old_registered_helper_count_cannot_bypass_current_protocol (test_direct_historical_consumer.HistoricalProtocolTests)
+An old twenty-six-helper unit remains an old read-only input only. ... ok
+test_declared_read_only_git_is_allowed (test_direct_historical_consumer.ReadOnlyAuditTests)
+Source checks may inspect one exact declared local root. ... ok
+test_later_native_library_loads_and_numerical_imports_are_refused (test_direct_historical_consumer.ReadOnlyAuditTests)
+The explicit earlier ctypes bootstrap grants no later library access. ... ok
+test_process_execution_and_file_metadata_mutation_are_refused (test_direct_historical_consumer.ReadOnlyAuditTests)
+Alternate process APIs and metadata writes grant no historical read-only capability. ... ok
+test_python_child_is_forbidden_inside_historical_replay (test_direct_historical_consumer.ReadOnlyAuditTests)
+The old reader cannot become a second launcher. ... ok
+test_substituted_actual_git_executable_and_external_diff_are_refused (test_direct_historical_consumer.ReadOnlyAuditTests)
+Exact-looking arguments cannot conceal another executable or an external Git command. ... ok
+test_writes_and_changed_roots_are_refused (test_direct_historical_consumer.ReadOnlyAuditTests)
+Neither a filesystem mutation nor a foreign Git root is a permitted read. ... ok
+test_boolean_counts_or_new_admission_are_refused (test_direct_historical_consumer.ReturnedProofIdentityTests)
+Boolean zero and scientific or operational credit are different meanings. ... ok
+test_changed_child_parent_or_challenge_is_refused (test_direct_historical_consumer.ReturnedProofIdentityTests)
+A correct-looking result from another process or request cannot substitute. ... ok
+test_changed_old_or_current_sources_are_refused (test_direct_historical_consumer.ReturnedProofIdentityTests)
+Neither a different original helper nor another current closure is accepted. ... ok
+test_exact_synthetic_identity_is_recognized (test_direct_historical_consumer.ReturnedProofIdentityTests)
+Only the supplied expected metadata identities match this synthetic fixture. ... ok
+
+----------------------------------------------------------------------
+Ran 27 tests in 0.198s
+
+OK
