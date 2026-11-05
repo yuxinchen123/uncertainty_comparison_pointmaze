@@ -1,0 +1,38 @@
+{
+  "actual_new_packet_unit_logdir_created_by_author": false,
+  "actual_phases_or_observer_or_ssh_actions_by_author": 0,
+  "claim_hash_source": "actual packet metadata_preparation_result.json.plan.sha256",
+  "files": {
+    "preparation_request.json": {
+      "bytes": 19666,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-07-20_h100-timing-predecessor_actual-confirmation-schema_two-copy-request_read-only-exits_gpu-actions-0/.review_metadata/fresh_two_copy_request_2026-11-05-08-40/preparation_request.json",
+      "sha256": "0bdcf7866deab236ba44fabfa20e403803fe9424759a93d65c7f9f44acc02311"
+    },
+    "preserved_07_20_failure_references.json": {
+      "bytes": 5527,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-07-20_h100-timing-predecessor_actual-confirmation-schema_two-copy-request_read-only-exits_gpu-actions-0/.review_metadata/fresh_two_copy_request_2026-11-05-08-40/preserved_07_20_failure_references.json",
+      "sha256": "3c1198d34303ca425590a182b2740292087185d3b4177bc4ec741843d02970b1"
+    },
+    "request_derivation.json": {
+      "bytes": 1975,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-07-20_h100-timing-predecessor_actual-confirmation-schema_two-copy-request_read-only-exits_gpu-actions-0/.review_metadata/fresh_two_copy_request_2026-11-05-08-40/request_derivation.json",
+      "sha256": "e21715cce0eac3a7f67a9e031f1285fad527a94132fa2b3161a35b8b80a06c15"
+    },
+    "root_log_directory_and_metadata_procedure.json": {
+      "bytes": 35649,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-07-20_h100-timing-predecessor_actual-confirmation-schema_two-copy-request_read-only-exits_gpu-actions-0/.review_metadata/fresh_two_copy_request_2026-11-05-08-40/root_log_directory_and_metadata_procedure.json",
+      "sha256": "b2a4bdb2445da3a3da85be4d77978b1bf23e5208b4c1fc232042cacb88169e8e"
+    }
+  },
+  "kind": "fresh_pacific_two_copy_request_and_log_directory_procedure_freeze",
+  "log_directory_actual_creation_and_target_verification_required_before_ssh": true,
+  "old_failed_07_20_not_reused": true,
+  "old_successful_metadata_phases_not_repeated": true,
+  "only_request_changes": [
+    "unit_id",
+    "packet",
+    "data_unit"
+  ],
+  "production_source_or_tests_changed": false,
+  "source_cba_helper_69f_numerical_d28_unchanged": true
+}

@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "kind": "failed_direct_transport_before_controller_popen",
+  "at_utc": "2026-11-05T16:41:28.525129+00:00",
+  "launch_return": {
+    "returncode": 1,
+    "seconds": 2.5324358539655805,
+    "finished_at_utc": "2026-11-05T16:35:56.967341+00:00",
+    "actual_outer_publication": "0351dddf5ccda7ff9e5bee38ec0dd475aa99d674"
+  },
+  "transport_failure": {
+    "actual_popen_pid": null,
+    "automatic_retry_permitted": false,
+    "cleanup": null,
+    "error": "[Errno 2] No such file or directory: '/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/direct_jobs/2026-11-05-07-20_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/controller.stdout'",
+    "error_type": "FileNotFoundError",
+    "kind": "failed_root_controller_transport_under_metadata_barrier",
+    "ordinary_launch_success": false,
+    "scientific_credit": 0
+  },
+  "actual_controller_pid": null,
+  "actual_numerical_child_pid": null,
+  "popen_reached": false,
+  "basis": "Actual traceback is the exclusive output open preceding Popen; saved failure has null actual_popen_pid and no cleanup; remote script exited one.",
+  "absent_paths": [
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-07-20_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/root_actual_controller_spawn.json",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-07-20_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/direct_process_metadata.json",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-07-20_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/before_compute_ready.json",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-07-20_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/current_launch_process_registration.json",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/direct_jobs/2026-11-05-07-20_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1"
+  ],
+  "current_unit_process_rows": 0,
+  "numerical_or_gpu_work_from_this_attempt": 0,
+  "scientific_credit": 0,
+  "automatic_retry_permitted": false,
+  "packet_must_never_be_reused": true,
+  "root_cause": "Root did not create the controller output directory before the one SSH invocation.",
+  "standing_gpu_lock_operations": 0
+}

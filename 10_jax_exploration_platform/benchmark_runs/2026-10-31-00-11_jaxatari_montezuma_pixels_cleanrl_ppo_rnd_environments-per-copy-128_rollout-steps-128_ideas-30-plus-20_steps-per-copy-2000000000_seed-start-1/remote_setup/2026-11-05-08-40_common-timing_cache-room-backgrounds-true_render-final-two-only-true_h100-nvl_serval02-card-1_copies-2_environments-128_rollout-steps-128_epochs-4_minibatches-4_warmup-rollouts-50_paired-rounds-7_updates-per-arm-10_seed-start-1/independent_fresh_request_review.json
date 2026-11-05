@@ -1,0 +1,183 @@
+{
+  "actual_bound_review_still_required": true,
+  "actual_preparation_or_transport_approved": false,
+  "actual_target_log_directory_evidence_still_required": true,
+  "allocation": "6821437",
+  "approved": true,
+  "at_utc": "2026-11-05T16:47:41.234399+00:00",
+  "check_count": 97,
+  "checks": [
+    "exact current owned CPU allocation",
+    "bounded owned regular request_and_procedure_freeze.json",
+    "stable request_and_procedure_freeze.json",
+    "held four-record freeze",
+    "bounded owned regular preparation_request.json",
+    "stable preparation_request.json",
+    "actual frozen preparation_request.json",
+    "bounded owned regular preparation_request.json",
+    "stable preparation_request.json",
+    "bounded owned regular preserved_07_20_failure_references.json",
+    "stable preserved_07_20_failure_references.json",
+    "actual frozen preserved_07_20_failure_references.json",
+    "bounded owned regular preserved_07_20_failure_references.json",
+    "stable preserved_07_20_failure_references.json",
+    "bounded owned regular request_derivation.json",
+    "stable request_derivation.json",
+    "actual frozen request_derivation.json",
+    "bounded owned regular request_derivation.json",
+    "stable request_derivation.json",
+    "bounded owned regular root_log_directory_and_metadata_procedure.json",
+    "stable root_log_directory_and_metadata_procedure.json",
+    "actual frozen root_log_directory_and_metadata_procedure.json",
+    "bounded owned regular root_log_directory_and_metadata_procedure.json",
+    "stable root_log_directory_and_metadata_procedure.json",
+    "bounded owned regular preparation_request.json",
+    "stable preparation_request.json",
+    "bounded owned regular request_derivation.json",
+    "stable request_derivation.json",
+    "bounded owned regular root_log_directory_and_metadata_procedure.json",
+    "stable root_log_directory_and_metadata_procedure.json",
+    "bounded owned regular preserved_07_20_failure_references.json",
+    "stable preserved_07_20_failure_references.json",
+    "bounded owned regular preparation_request.json",
+    "stable preparation_request.json",
+    "bounded owned regular preparation_request.json",
+    "stable preparation_request.json",
+    "exact previously reviewed old request",
+    "only three new request path fields",
+    "fresh exact packet/unit identity",
+    "old attempted packet not reused",
+    "root-promoted exact preparation_request.json",
+    "root-promoted exact preserved_07_20_failure_references.json",
+    "root-promoted exact request_derivation.json",
+    "root-promoted exact root_log_directory_and_metadata_procedure.json",
+    "no future data/log directory claimed as actual",
+    "exact typed two-copy seeds",
+    "seven alternating ten-update pairs unchanged",
+    "unchanged exact helper/numerical source",
+    "actual reviewed controller commit",
+    "genuine accepted H1 predecessor unchanged",
+    "accepted copy-two correctness unchanged",
+    "no invented future attempts or identities",
+    "standing descriptor remains producer-only policy",
+    "claim hash from actual new prepare receipt",
+    "actual new prepared-unit canonical claim",
+    "bounded exact allocation phase bind",
+    "new packet phase bind",
+    "bounded exact allocation phase prepare",
+    "new packet phase prepare",
+    "bounded exact allocation phase verify",
+    "new packet phase verify",
+    "exact fresh log directory paths",
+    "owner write/execute permissions required",
+    "exclusive ordinary log directory preparation",
+    "actual target-view metadata visibility required",
+    "mount identity compared only within actual observation host",
+    "fresh directory evidence root_preparation_receipt",
+    "fresh directory evidence root_immediately_before_ssh_verification_receipt",
+    "all canonical and root markers listed once",
+    "attempt markers limited to fresh packet/unit/logs",
+    "stdout/stderr and real Popen markers excluded before launch",
+    "fresh pre-SSH exclusion precedes sole intent",
+    "actual bound source review still required",
+    "real reviewed publication before transport",
+    "old pre-Popen failure remains failed with no fake identity",
+    "bounded owned regular actual_launch_command_preparation.json",
+    "stable actual_launch_command_preparation.json",
+    "old actual failure reference actual_launch_command_preparation.json",
+    "bounded owned regular root_remote_launch_return.json",
+    "stable root_remote_launch_return.json",
+    "old actual failure reference root_remote_launch_return.json",
+    "bounded owned regular root_remote_launch_stderr.raw",
+    "stable root_remote_launch_stderr.raw",
+    "old actual failure reference root_remote_launch_stderr.raw",
+    "bounded owned regular root_request_source_publication.json",
+    "stable root_request_source_publication.json",
+    "old actual failure reference root_request_source_publication.json",
+    "bounded owned regular root_transport_failure.json",
+    "stable root_transport_failure.json",
+    "old actual failure reference root_transport_failure.json",
+    "bounded owned regular root_transport_popen_attempt.json",
+    "stable root_transport_popen_attempt.json",
+    "old actual failure reference root_transport_popen_attempt.json",
+    "bounded owned regular direct_qualification_controller.py",
+    "stable direct_qualification_controller.py",
+    "exact current canonical attempt-name list",
+    "no preparation scientific credit",
+    "bounded owned regular preparation_request.json",
+    "stable preparation_request.json",
+    "bounded owned regular request_and_procedure_freeze.json",
+    "stable request_and_procedure_freeze.json"
+  ],
+  "freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-07-20_h100-timing-predecessor_actual-confirmation-schema_two-copy-request_read-only-exits_gpu-actions-0/.review_metadata/fresh_two_copy_request_2026-11-05-08-40/request_and_procedure_freeze.json",
+    "sha256": "f8de4cd91c0b22bc1ec5afeb6665afff65f3c875c9fd913d9a0801a879e02261"
+  },
+  "gpu_or_remote_operations_by_reviewer": false,
+  "inputs": {
+    "/p/rlprojects/RND_worktrees/2026-11-05-07-20_h100-timing-predecessor_actual-confirmation-schema_two-copy-request_read-only-exits_gpu-actions-0/.review_metadata/fresh_two_copy_request_2026-11-05-08-40/preparation_request.json": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-07-20_h100-timing-predecessor_actual-confirmation-schema_two-copy-request_read-only-exits_gpu-actions-0/.review_metadata/fresh_two_copy_request_2026-11-05-08-40/preparation_request.json",
+      "sha256": "0bdcf7866deab236ba44fabfa20e403803fe9424759a93d65c7f9f44acc02311"
+    },
+    "/p/rlprojects/RND_worktrees/2026-11-05-07-20_h100-timing-predecessor_actual-confirmation-schema_two-copy-request_read-only-exits_gpu-actions-0/.review_metadata/fresh_two_copy_request_2026-11-05-08-40/preserved_07_20_failure_references.json": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-07-20_h100-timing-predecessor_actual-confirmation-schema_two-copy-request_read-only-exits_gpu-actions-0/.review_metadata/fresh_two_copy_request_2026-11-05-08-40/preserved_07_20_failure_references.json",
+      "sha256": "3c1198d34303ca425590a182b2740292087185d3b4177bc4ec741843d02970b1"
+    },
+    "/p/rlprojects/RND_worktrees/2026-11-05-07-20_h100-timing-predecessor_actual-confirmation-schema_two-copy-request_read-only-exits_gpu-actions-0/.review_metadata/fresh_two_copy_request_2026-11-05-08-40/request_and_procedure_freeze.json": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-07-20_h100-timing-predecessor_actual-confirmation-schema_two-copy-request_read-only-exits_gpu-actions-0/.review_metadata/fresh_two_copy_request_2026-11-05-08-40/request_and_procedure_freeze.json",
+      "sha256": "f8de4cd91c0b22bc1ec5afeb6665afff65f3c875c9fd913d9a0801a879e02261"
+    },
+    "/p/rlprojects/RND_worktrees/2026-11-05-07-20_h100-timing-predecessor_actual-confirmation-schema_two-copy-request_read-only-exits_gpu-actions-0/.review_metadata/fresh_two_copy_request_2026-11-05-08-40/request_derivation.json": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-07-20_h100-timing-predecessor_actual-confirmation-schema_two-copy-request_read-only-exits_gpu-actions-0/.review_metadata/fresh_two_copy_request_2026-11-05-08-40/request_derivation.json",
+      "sha256": "e21715cce0eac3a7f67a9e031f1285fad527a94132fa2b3161a35b8b80a06c15"
+    },
+    "/p/rlprojects/RND_worktrees/2026-11-05-07-20_h100-timing-predecessor_actual-confirmation-schema_two-copy-request_read-only-exits_gpu-actions-0/.review_metadata/fresh_two_copy_request_2026-11-05-08-40/root_log_directory_and_metadata_procedure.json": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-07-20_h100-timing-predecessor_actual-confirmation-schema_two-copy-request_read-only-exits_gpu-actions-0/.review_metadata/fresh_two_copy_request_2026-11-05-08-40/root_log_directory_and_metadata_procedure.json",
+      "sha256": "b2a4bdb2445da3a3da85be4d77978b1bf23e5208b4c1fc232042cacb88169e8e"
+    },
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-07-20_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/actual_launch_command_preparation.json": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-07-20_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/actual_launch_command_preparation.json",
+      "sha256": "1d35417d60ff0378fccee6228f9753da9ae45e3697c40f0b9a7a583f2c1eeb64"
+    },
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-07-20_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/preparation_request.json": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-07-20_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/preparation_request.json",
+      "sha256": "86cfb7d5f28fa68fbb09c01b8f1f5218345748e7f90da03ed79e1a6c2d24cbfe"
+    },
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-07-20_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/root_remote_launch_return.json": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-07-20_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/root_remote_launch_return.json",
+      "sha256": "c76ce65f737c26b14bc5376698ff1688f607abad36f182668e8006904e799b58"
+    },
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-07-20_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/root_remote_launch_stderr.raw": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-07-20_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/root_remote_launch_stderr.raw",
+      "sha256": "4b8fa03ff61cf24a6988b77f8bfdd5174b050fb3390339a6fd8e40dd81e728c3"
+    },
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-07-20_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/root_request_source_publication.json": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-07-20_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/root_request_source_publication.json",
+      "sha256": "62cea702e32e15881227339336c15a920cf774fc60a73510bbace4c53bfe2e3e"
+    },
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-07-20_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/root_transport_failure.json": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-07-20_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/root_transport_failure.json",
+      "sha256": "e50c8702c7cd0a032c19d6dfdff36ea2ea077e1f9c5bbb189003adb4d6f6b64e"
+    },
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-07-20_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/root_transport_popen_attempt.json": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-07-20_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/root_transport_popen_attempt.json",
+      "sha256": "fd6e6050a3daac7185c7e2eb11c485db768835b1afcf163b738cd44fe4f454c1"
+    }
+  },
+  "kind": "independent_fresh_two_copy_timing_request_and_log_directory_procedure_review",
+  "only_request_changes": [
+    "data_unit",
+    "packet",
+    "unit_id"
+  ],
+  "passed": true,
+  "request": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-07-20_h100-timing-predecessor_actual-confirmation-schema_two-copy-request_read-only-exits_gpu-actions-0/.review_metadata/fresh_two_copy_request_2026-11-05-08-40/preparation_request.json",
+    "sha256": "0bdcf7866deab236ba44fabfa20e403803fe9424759a93d65c7f9f44acc02311"
+  },
+  "request_preparation_approved_after_publication": true,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "step": "173",
+  "unchanged_controller_commit": "cba869200cb31131b354c985f77b43386f90f9b9"
+}
