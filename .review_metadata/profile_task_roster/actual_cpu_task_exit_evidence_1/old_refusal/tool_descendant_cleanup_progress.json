@@ -1,0 +1,26 @@
+{
+  "configured_allocation_process_custody_must_remain": false,
+  "events": [
+    {
+      "at_seconds": 1793921358.1525192,
+      "birth": "88216186",
+      "kind": "pinned_positive_child",
+      "parent_pid": 1310228,
+      "pid": 1310229
+    }
+  ],
+  "gpu_or_cuda_qualification": false,
+  "interventions": [],
+  "kind": "direct_tool_descendant_cleanup_progress",
+  "known_nodes": 1,
+  "known_roots": 1,
+  "native_process_control_only": true,
+  "phase": "kernel_closure_verified_and_native_flag_restored",
+  "producer_birth": "88216170",
+  "producer_pid": 1310228,
+  "read_errors": [],
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "standing_descriptor_must_remain_open": false,
+  "subreaper_active": false
+}

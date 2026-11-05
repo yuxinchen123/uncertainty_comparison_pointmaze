@@ -1,0 +1,31 @@
+{
+  "failure": "test passed parser function instead of required parser module; both lifecycle assertions preceded the failing saved-record API call",
+  "files": {
+    "actual_task_exit_fixture_1.stderr.raw": {
+      "bytes": 2409,
+      "sha256": "102e8ee05d1e86607bd033f5c70279341e54ee1fded0b7c26517fe4e8bba2d24"
+    },
+    "actual_task_exit_fixture_1.stdout.raw": {
+      "bytes": 2723,
+      "sha256": "39378ea29c07b3bdd9d9da027dfe6f5245bea92bab3e911a582f8ca8a5696f90"
+    },
+    "actual_task_exit_fixture_checks_1.json": {
+      "bytes": 2779,
+      "sha256": "7e8867bdefc8fff540ed165997d1bcebb8c43d2284802f47e382907f97b2b43b"
+    },
+    "fixture_source_freeze_1.json": {
+      "bytes": 1353,
+      "sha256": "f07f6f2d8309fd66524bd4a48f6c9f437ee82c290f8a26a124783936902c75ec"
+    },
+    "run_actual_task_exit_fixture.py": {
+      "bytes": 2422,
+      "sha256": "55dad3fc9e084b0a2139b90b1e56183e16fce69a11b452e2f81a954e965e8e8d"
+    },
+    "test_profile_target_tool_scope_task_exit.py": {
+      "bytes": 11863,
+      "sha256": "8880a0d97e4d9cfbb79f79fd318b996f0aecc5c5c53f74c49d4a736256f346b5"
+    }
+  },
+  "new_case_raw_scope_files": "TemporaryDirectory cleaned after this fixture API failure; no raw records backfilled",
+  "runtime_unchanged": "37ff07a2ddf5fe24ddca8d20371c94d48970b11667a25ea32741a072929dd297"
+}

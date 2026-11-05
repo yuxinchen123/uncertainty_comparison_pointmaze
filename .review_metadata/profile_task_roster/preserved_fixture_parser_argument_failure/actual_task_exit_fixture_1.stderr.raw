@@ -1,0 +1,23 @@
+test_real_enumerated_worker_exit_old_refusal_and_fresh_complete_read (actual_task_exit_fixture.LiveParentTaskExitTests)
+The exact same controlled event refuses in the old base and requires a complete fresh read in the new scope. ... ERROR
+
+======================================================================
+ERROR: test_real_enumerated_worker_exit_old_refusal_and_fresh_complete_read (actual_task_exit_fixture.LiveParentTaskExitTests)
+The exact same controlled event refuses in the old base and requires a complete fresh read in the new scope.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-05-15-11_profile-task-roster_known-live-parent_enumerated-thread-exit_fresh-complete-read_gpu-actions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_target_tool_scope_task_exit.py", line 166, in test_real_enumerated_worker_exit_old_refusal_and_fresh_complete_read
+    self.run_case(False);self.run_case(True)
+  File "/p/rlprojects/RND_worktrees/2026-11-05-15-11_profile-task-roster_known-live-parent_enumerated-thread-exit_fresh-complete-read_gpu-actions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_target_tool_scope_task_exit.py", line 153, in run_case
+    adapter.validate_task_roster_record(record,terminal,begin,owner,base,observer,events,parser,
+  File "/p/rlprojects/RND_worktrees/2026-11-05-15-11_profile-task-roster_known-live-parent_enumerated-thread-exit_fresh-complete-read_gpu-actions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_tool_scope.py", line 623, in validate_task_roster_record
+    validate_live_generation(states,pid,events,parser,terminal['terminal']['observed_at_seconds'],producer_terminal_time)
+  File "/p/rlprojects/RND_worktrees/2026-11-05-15-11_profile-task-roster_known-live-parent_enumerated-thread-exit_fresh-complete-read_gpu-actions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_tool_scope.py", line 535, in validate_live_generation
+    and parser.parse_pidfd_fdinfo(state['raw_fdinfo'],state['inode'],pid)['pid']==pid
+AttributeError: 'function' object has no attribute 'parse_pidfd_fdinfo'
+
+----------------------------------------------------------------------
+Ran 1 test in 0.324s
+
+FAILED (errors=1)
+srun: error: slurm5: task 0: Exited with exit code 1

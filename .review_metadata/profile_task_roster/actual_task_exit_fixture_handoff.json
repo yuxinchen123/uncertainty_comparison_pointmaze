@@ -1,0 +1,69 @@
+{
+  "GPU_or_target_qualification": false,
+  "actual_new_case_evidence": {
+    "/p/rlprojects/RND_worktrees/2026-11-05-15-11_profile-task-roster_known-live-parent_enumerated-thread-exit_fresh-complete-read_gpu-actions-0/.review_metadata/profile_task_roster/actual_cpu_task_exit_evidence_2/fresh_complete_read/fixture_control.json": {
+      "bytes": 1520,
+      "sha256": "3421ebff624cd89ee926fbd0acedabdc2543560e6cb2c9d5585f4845597dd427"
+    },
+    "/p/rlprojects/RND_worktrees/2026-11-05-15-11_profile-task-roster_known-live-parent_enumerated-thread-exit_fresh-complete-read_gpu-actions-0/.review_metadata/profile_task_roster/actual_cpu_task_exit_evidence_2/fresh_complete_read/tool_descendant_cleanup_progress.json": {
+      "bytes": 1154,
+      "sha256": "12eb9e5aa84a2731f9dcede247256005cc452ad042dba4b17c46ed532b83a812"
+    },
+    "/p/rlprojects/RND_worktrees/2026-11-05-15-11_profile-task-roster_known-live-parent_enumerated-thread-exit_fresh-complete-read_gpu-actions-0/.review_metadata/profile_task_roster/actual_cpu_task_exit_evidence_2/fresh_complete_read/tool_descendant_scope_begin.json": {
+      "bytes": 11471,
+      "sha256": "9b3f69091938490d08fb77d8be7906d13abec4f6a1f410f989a7df95de6efce9"
+    },
+    "/p/rlprojects/RND_worktrees/2026-11-05-15-11_profile-task-roster_known-live-parent_enumerated-thread-exit_fresh-complete-read_gpu-actions-0/.review_metadata/profile_task_roster/actual_cpu_task_exit_evidence_2/fresh_complete_read/tool_descendant_scope_restored.json": {
+      "bytes": 582,
+      "sha256": "1cc1bd447559a777362df493b7646c79fc116907fa0d6d252ea03f7599b9be20"
+    },
+    "/p/rlprojects/RND_worktrees/2026-11-05-15-11_profile-task-roster_known-live-parent_enumerated-thread-exit_fresh-complete-read_gpu-actions-0/.review_metadata/profile_task_roster/actual_cpu_task_exit_evidence_2/fresh_complete_read/tool_descendant_scope_terminal.json": {
+      "bytes": 19817,
+      "sha256": "b095326afb076d3eedbdd4eb07fce73c040df85a5a19f06baab0c00c40070513"
+    },
+    "/p/rlprojects/RND_worktrees/2026-11-05-15-11_profile-task-roster_known-live-parent_enumerated-thread-exit_fresh-complete-read_gpu-actions-0/.review_metadata/profile_task_roster/actual_cpu_task_exit_evidence_2/fresh_complete_read/tool_parent_exit_observations.json": {
+      "bytes": 837,
+      "sha256": "3d5138d3dd8d2fac29fb1d3b568c3375932dfb68168c9661356261f97b15c08f"
+    },
+    "/p/rlprojects/RND_worktrees/2026-11-05-15-11_profile-task-roster_known-live-parent_enumerated-thread-exit_fresh-complete-read_gpu-actions-0/.review_metadata/profile_task_roster/actual_cpu_task_exit_evidence_2/fresh_complete_read/tool_root_wait_1310270.json": {
+      "bytes": 1169,
+      "sha256": "6bb21071c35417521532db6481f49a8834d4eeeccb67d0327aee9e3bc2c115be"
+    },
+    "/p/rlprojects/RND_worktrees/2026-11-05-15-11_profile-task-roster_known-live-parent_enumerated-thread-exit_fresh-complete-read_gpu-actions-0/.review_metadata/profile_task_roster/actual_cpu_task_exit_evidence_2/fresh_complete_read/tool_task_roster_observation_1.json": {
+      "bytes": 23854,
+      "sha256": "62b968f5e05c9b272427051007f1c31d8137d9f56b52d9f2b77b46a6ef424ad8"
+    },
+    "/p/rlprojects/RND_worktrees/2026-11-05-15-11_profile-task-roster_known-live-parent_enumerated-thread-exit_fresh-complete-read_gpu-actions-0/.review_metadata/profile_task_roster/actual_cpu_task_exit_evidence_2/fresh_complete_read/tool_task_roster_observations.json": {
+      "bytes": 1011,
+      "sha256": "0ecce4222f8334ef0b2c306fd0b35c5f436703932eb9af1cdab93185a1fec421"
+    }
+  },
+  "actual_passed": "Real own live parent retained across enumerated worker task ENOENT; fresh complete same-parent read on attempt2; pure task-record validation with actual stdlib pidfd generation opens/closes; exact parent wait0, ECHILD, no interventions/read errors/retained descriptors.",
+  "admission_granted": false,
+  "kind": "own_cpu_live_parent_enumerated_task_exit_fixture_handoff",
+  "native_provider_role_claimed": false,
+  "old_case": "Step176 reached old exact ENOENT refusal and normal closure assertions, then its separate new-case pure assertion failed only on fixture parser API argument. Reused old case; affected new case rerun178 only.",
+  "old_refusal_receipt": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-15-11_profile-task-roster_known-live-parent_enumerated-thread-exit_fresh-complete-read_gpu-actions-0/.review_metadata/profile_task_roster/actual_task_exit_fixture_checks_1.json",
+    "sha256": "7e8867bdefc8fff540ed165997d1bcebb8c43d2284802f47e382907f97b2b43b"
+  },
+  "preserved_raw_paths": "Original temporary paths in captured receipt bytes remain unchanged; preserved copies are indexed by actual basename and exact SHA, and no historical times or records are backfilled.",
+  "receipt": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-15-11_profile-task-roster_known-live-parent_enumerated-thread-exit_fresh-complete-read_gpu-actions-0/.review_metadata/profile_task_roster/actual_task_exit_fixture_checks_2.json",
+    "sha256": "4ba5d561a074f105f73f9a63871ae45cd04123bbf6c8b6ce598d4ff681c69ad8"
+  },
+  "runtime": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-15-11_profile-task-roster_known-live-parent_enumerated-thread-exit_fresh-complete-read_gpu-actions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_tool_scope.py",
+    "sha256": "37ff07a2ddf5fe24ddca8d20371c94d48970b11667a25ea32741a072929dd297"
+  },
+  "scientific_credit": 0,
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-15-11_profile-task-roster_known-live-parent_enumerated-thread-exit_fresh-complete-read_gpu-actions-0/.review_metadata/profile_task_roster/fixture_source_freeze_2_parser_argument.json",
+    "sha256": "ccbdeeb419e9c9de6da5be0e3a9448d7c2f7af1c9b3dd9b26b2e73de5ff76dbd"
+  },
+  "test_only_api_failure_preserved": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-15-11_profile-task-roster_known-live-parent_enumerated-thread-exit_fresh-complete-read_gpu-actions-0/.review_metadata/profile_task_roster/preserved_fixture_parser_argument_failure/preservation.json",
+    "sha256": "c7602a77e42acf99c60ace34330ec227c734665e41f51920825a7fba4f1b7d20"
+  },
+  "upstream_custody_premise": "explicitly synthetic non-GPU configured-allocation custody"
+}
