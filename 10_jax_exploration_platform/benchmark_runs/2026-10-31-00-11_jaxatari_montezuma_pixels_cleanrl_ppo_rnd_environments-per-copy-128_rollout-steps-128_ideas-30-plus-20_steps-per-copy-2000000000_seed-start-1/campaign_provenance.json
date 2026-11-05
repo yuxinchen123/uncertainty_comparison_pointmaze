@@ -912,5 +912,21 @@
     "gpu_launched": false,
     "actual_controller_pid": null,
     "actual_child_pid": null
+  },
+  "current_h100_common_timing_direct": {
+    "packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-08-40_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1",
+    "unit": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-08-40_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1",
+    "controller_pid": 543087,
+    "controller_birth_counter": "85900187",
+    "numeric_pid": 545091,
+    "numeric_birth_counter": "85908834",
+    "state": "registered_setup_running",
+    "helper_commit": "69f1b5075530418adbe02c1e433c5647848a61ba",
+    "controller_source_commit": "cba869200cb31131b354c985f77b43386f90f9b9",
+    "numerical_source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+    "inner_publication": "401f3b4df15a7cf5424d6884de99f9ec0caf74af",
+    "outer_publication": "30791c1b72c0f7a2a347f616da96bd7e9894b678",
+    "startup_review_sha256": "5cb80736948f4764581c86cd4610d6b05f232e4f525e8095ff78b0be4dd9849d",
+    "accepted_timing": false
   }
 }

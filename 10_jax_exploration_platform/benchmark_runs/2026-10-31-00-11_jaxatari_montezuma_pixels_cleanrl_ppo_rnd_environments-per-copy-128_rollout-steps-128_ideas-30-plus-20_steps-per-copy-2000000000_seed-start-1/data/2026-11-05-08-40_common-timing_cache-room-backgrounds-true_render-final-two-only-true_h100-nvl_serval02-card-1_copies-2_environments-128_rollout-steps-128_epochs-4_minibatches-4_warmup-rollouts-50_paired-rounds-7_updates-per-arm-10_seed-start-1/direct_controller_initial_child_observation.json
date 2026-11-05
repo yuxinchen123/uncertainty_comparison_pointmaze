@@ -1,0 +1,64 @@
+{
+  "actual_popen_pid": 545091,
+  "admission_granted": false,
+  "all_predicates_match": false,
+  "at_utc": "2026-11-05T17:08:27.828718+00:00",
+  "case_credit": 0,
+  "controller_owns_gpu_standing_descriptor": false,
+  "expected_affinity": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "expected_command": [
+    "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-08-40_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/code/measure_selected.py",
+    "--prepared-unit",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-08-40_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1"
+  ],
+  "expected_parent_pid": 543087,
+  "historical_failure_cause_established": false,
+  "idea_credit": 0,
+  "kind": "actual_direct_child_identity_observation_before_registration",
+  "observed_child": {
+    "affinity": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "command": [],
+    "command_bytes_hex": "",
+    "command_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "hostname": "serval02",
+    "observed_at_utc": "2026-11-05T17:08:27.828659+00:00",
+    "parent_pid": 543087,
+    "pid": 545091,
+    "process_start_time": "85908834",
+    "stat": "545091 (python) D 543087 543087 543087 0 -1 4194304 1 0 0 0 0 0 0 0 20 0 1 0 85908834 7028736 0 18446744073709551615 0 0 140729691416926 0 0 0 0 0 0 1 0 0 17 2 0 0 0 0 0 0 0 94452240842752 140729691416926 0 0 0 0\n",
+    "stat_sha256": "b5a2dc7fe3a2bd7b5c32719ebd7a6585761d1821a960820f05ce8fdd980aa5b7",
+    "uid": 2618919,
+    "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+    "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+  },
+  "predicate_results": {
+    "command_matches": false,
+    "inherited_affinity_matches": true,
+    "parent_pid_matches": true,
+    "popen_pid_matches": true
+  },
+  "producer_owns_gpu_standing_descriptor": true,
+  "registration_performed_by_this_observation": false,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "worker_admitted": false
+}

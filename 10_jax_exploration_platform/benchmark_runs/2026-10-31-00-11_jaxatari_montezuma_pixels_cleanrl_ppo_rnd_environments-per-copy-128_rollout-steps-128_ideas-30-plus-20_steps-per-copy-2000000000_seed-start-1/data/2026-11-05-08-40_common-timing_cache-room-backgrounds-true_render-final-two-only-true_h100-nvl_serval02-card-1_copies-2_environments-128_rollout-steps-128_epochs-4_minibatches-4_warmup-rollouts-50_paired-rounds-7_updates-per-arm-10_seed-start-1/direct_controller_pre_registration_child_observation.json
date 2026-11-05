@@ -1,0 +1,70 @@
+{
+  "actual_popen_pid": 545091,
+  "admission_granted": false,
+  "all_predicates_match": true,
+  "at_utc": "2026-11-05T17:08:28.035627+00:00",
+  "case_credit": 0,
+  "controller_owns_gpu_standing_descriptor": false,
+  "expected_affinity": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "expected_command": [
+    "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-08-40_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/code/measure_selected.py",
+    "--prepared-unit",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-08-40_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1"
+  ],
+  "expected_parent_pid": 543087,
+  "historical_failure_cause_established": false,
+  "idea_credit": 0,
+  "kind": "actual_direct_child_identity_observation_before_registration",
+  "observed_child": {
+    "affinity": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "command": [
+      "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-08-40_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/code/measure_selected.py",
+      "--prepared-unit",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-08-40_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1"
+    ],
+    "command_bytes_hex": "2f702f726c70726f6a656374732f524e442f2e76656e76732f61746172695f706978656c735f6a61782f62696e2f707974686f6e002f702f726c70726f6a656374732f524e445f776f726b74726565732f6d657267652d61746172692d636c65616e726c2f31305f6a61785f6578706c6f726174696f6e5f706c6174666f726d2f62656e63686d61726b5f72756e732f323032362d31302d33312d30302d31315f6a617861746172695f6d6f6e74657a756d615f706978656c735f636c65616e726c5f70706f5f726e645f656e7669726f6e6d656e74732d7065722d636f70792d3132385f726f6c6c6f75742d73746570732d3132385f69646561732d33302d706c75732d32305f73746570732d7065722d636f70792d323030303030303030305f736565642d73746172742d312f646174612f323032362d31312d30352d30382d34305f636f6d6d6f6e2d74696d696e675f63616368652d726f6f6d2d6261636b67726f756e64732d747275655f72656e6465722d66696e616c2d74776f2d6f6e6c792d747275655f683130302d6e766c5f73657276616c30322d636172642d315f636f706965732d325f656e7669726f6e6d656e74732d3132385f726f6c6c6f75742d73746570732d3132385f65706f6368732d345f6d696e69626174636865732d345f7761726d75702d726f6c6c6f7574732d35305f7061697265642d726f756e64732d375f757064617465732d7065722d61726d2d31305f736565642d73746172742d312f636f64652f6d6561737572655f73656c65637465642e7079002d2d70726570617265642d756e6974002f702f726c70726f6a656374732f524e445f776f726b74726565732f6d657267652d61746172692d636c65616e726c2f31305f6a61785f6578706c6f726174696f6e5f706c6174666f726d2f62656e63686d61726b5f72756e732f323032362d31302d33312d30302d31315f6a617861746172695f6d6f6e74657a756d615f706978656c735f636c65616e726c5f70706f5f726e645f656e7669726f6e6d656e74732d7065722d636f70792d3132385f726f6c6c6f75742d73746570732d3132385f69646561732d33302d706c75732d32305f73746570732d7065722d636f70792d323030303030303030305f736565642d73746172742d312f646174612f323032362d31312d30352d30382d34305f636f6d6d6f6e2d74696d696e675f63616368652d726f6f6d2d6261636b67726f756e64732d747275655f72656e6465722d66696e616c2d74776f2d6f6e6c792d747275655f683130302d6e766c5f73657276616c30322d636172642d315f636f706965732d325f656e7669726f6e6d656e74732d3132385f726f6c6c6f75742d73746570732d3132385f65706f6368732d345f6d696e69626174636865732d345f7761726d75702d726f6c6c6f7574732d35305f7061697265642d726f756e64732d375f757064617465732d7065722d61726d2d31305f736565642d73746172742d3100",
+    "command_sha256": "da51f28362733e1034860f6f4ecf73930eb51d24427b7409b6fdc3dc22df698f",
+    "hostname": "serval02",
+    "observed_at_utc": "2026-11-05T17:08:28.035565+00:00",
+    "parent_pid": 543087,
+    "pid": 545091,
+    "process_start_time": "85908834",
+    "stat": "545091 (python) D 543087 543087 543087 0 -1 4194304 260 0 20 0 0 1 0 0 20 0 1 0 85908834 10698752 256 18446744073709551615 94452235001856 94452237429533 140729691410784 0 0 0 0 0 0 1 0 0 17 2 0 0 0 0 0 94452238854896 94452240836336 94452257619968 140729691416926 140729691418020 140729691418020 140729691418563 0\n",
+    "stat_sha256": "1c40faaeda684d1f314e0dd7fd85eb257e22f12ef59ce7d2aa1f77937ed72c5f",
+    "uid": 2618919,
+    "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+    "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+  },
+  "predicate_results": {
+    "birth_matches_first_observation": true,
+    "command_matches": true,
+    "inherited_affinity_matches": true,
+    "parent_pid_matches": true,
+    "popen_pid_matches": true
+  },
+  "producer_owns_gpu_standing_descriptor": true,
+  "registration_performed_by_this_observation": false,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "worker_admitted": false
+}
