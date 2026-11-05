@@ -1,0 +1,31 @@
+{
+  "all_expected_processes_absent": true,
+  "all_original_processes_exited": true,
+  "at_utc": "2026-11-05T16:49:01.945735+00:00",
+  "global_process_scans": 0,
+  "gpu_or_standing_lock_operations": 0,
+  "hostname": "serval02",
+  "kind": "owned_prior_direct_process_exit_observation",
+  "observations": [
+    {
+      "expected_birth": "84810007",
+      "expected_pid": 386202,
+      "observation": "absent",
+      "observed_at_utc": "2026-11-05T16:49:01.945556+00:00",
+      "original_process_exited": true,
+      "role": "controller"
+    },
+    {
+      "expected_birth": "84815419",
+      "expected_pid": 386669,
+      "observation": "absent",
+      "observed_at_utc": "2026-11-05T16:49:01.945672+00:00",
+      "original_process_exited": true,
+      "role": "numerical_child"
+    }
+  ],
+  "observer_pid": 526233,
+  "observer_uid": 2618919,
+  "read_only": true,
+  "signals_sent": 0
+}

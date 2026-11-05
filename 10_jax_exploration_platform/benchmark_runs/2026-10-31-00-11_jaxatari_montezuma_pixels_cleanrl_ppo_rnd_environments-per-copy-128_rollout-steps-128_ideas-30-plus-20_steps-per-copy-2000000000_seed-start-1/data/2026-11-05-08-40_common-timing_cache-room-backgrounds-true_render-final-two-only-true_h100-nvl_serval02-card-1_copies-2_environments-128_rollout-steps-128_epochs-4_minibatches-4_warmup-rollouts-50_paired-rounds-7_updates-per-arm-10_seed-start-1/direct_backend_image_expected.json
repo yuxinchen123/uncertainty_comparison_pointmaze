@@ -1,0 +1,47 @@
+{
+  "capability": "prepared_owning_package_image_and_same_process_mapping_version_2",
+  "created_at_seconds": 1793594829.407897,
+  "distribution": {
+    "metadata": {
+      "path": "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/jax_cuda12_pjrt-0.11.0.dist-info/METADATA",
+      "sha256": "a4ab9346404e0cf42a00dd9e877218d1e19f7871a59c361a1d7fc934b4ed2ab3"
+    },
+    "name": "jax-cuda12-pjrt",
+    "record": {
+      "path": "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/jax_cuda12_pjrt-0.11.0.dist-info/RECORD",
+      "sha256": "9eda8d59208f7bd8e709472f28559ff1debcc39c8e40f45caa60cc72d72a39ee"
+    },
+    "record_entry": {
+      "hash": "sha256=zteYiXJhGyX73H31FFMQJlbCCcBXVrUoYCqodcENHwg",
+      "relative_path": "jax_plugins/xla_cuda12/xla_cuda_plugin.so",
+      "size_bytes": 473181472
+    },
+    "version": "0.11.0"
+  },
+  "gpu_operations": 0,
+  "image": {
+    "path": "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/jax_plugins/xla_cuda12/xla_cuda_plugin.so",
+    "sha256": "ced7988972611b25fbdc7df51453102656c209c05756b528602aa875c10d1f08",
+    "size_bytes": 473181472
+  },
+  "kind": "prepared_direct_backend_package_image",
+  "numerical_imports": [],
+  "observed_file_identity": {
+    "device_major": 0,
+    "device_minor": 55,
+    "inode": 4236833
+  },
+  "observer": {
+    "hostname": "heartpiece",
+    "pid": 780006,
+    "process_start_time": "54994302",
+    "uid": 2618919,
+    "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+    "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+  },
+  "observing_python": "/usr/bin/python3",
+  "producer_source_sha256": "82898100d64f540c42c0a236acb6c20ca2808deb247b83da65927c6cb497a8e4",
+  "schema_version": 2,
+  "selected_python": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+  "site_packages": "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages"
+}

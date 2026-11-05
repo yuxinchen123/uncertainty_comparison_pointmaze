@@ -692,3 +692,9 @@ The fresh persistent full tick returns zero, while its serialized latest status 
 
 
 2026-11-05T16:42:25.061269+00:00 — The 07:20 two-copy direct launch failed before Popen because root omitted the controller log directory. Saved null-PID transport failure, traceback, absent spawn/registration and same-file permission restoration. No numerical process or GPU work occurred. Never reuse the packet. Fresh two-copy request retains all reviewed source and science settings and must create/verify the log directory before SSH.
+
+
+2026-11-05T16:49:59Z — Fresh08:40 two-copy metadata prepare, verify, claim and bind passed once; the claim uses the actual packet plan receipt. Root created the exact owned controller log directory and copied four standard records; read-only target check confirms actual serval02 visibility, writable/searchable directory and absent exclusive output files. No GPU launch yet. Failed07:20 remains unchanged.
+
+
+2026-11-05T17:00:29Z — Published independently reviewed A4500 profiling preparation source e9ce620d096920469ca4856ae61abf455d41eb8d as integration0a7f6383b00a35d4ad19f5c8debc4a78f8660e68, exact predicted tree309ba736c7cb36687f445b36df7247133dadd714. Incoming review19b31161 passed3650checks in164.94seconds with all662protected files,209accepted H100 static inputs and13numerical files unchanged; two real private-index dry runs passed. Current package/backend metadata now joins accepted original qualification before profiling tools. Execution admission remains closed and second H100 common timing is still required. The fresh two-copy source-freeze task had ended before root sent actual setup records; root restarted it with followup_task rather than repeating any successful phase.

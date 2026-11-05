@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "ssh",
+    "-o",
+    "BatchMode=yes",
+    "-o",
+    "ControlMaster=no",
+    "-o",
+    "ConnectTimeout=15",
+    "serval02",
+    "/usr/bin/python3 -I -S -B -c 'from pathlib import Path;import os,stat,json,hashlib,socket;d=Path('\"'\"'/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/direct_jobs/2026-11-05-08-40_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1'\"'\"');s=d.lstat();assert socket.gethostname().split('\"'\"'.'\"'\"')[0]=='\"'\"'serval02'\"'\"' and os.getuid()==os.geteuid()==2618919;assert stat.S_ISDIR(s.st_mode) and not d.is_symlink() and s.st_uid==2618919 and os.access(d,os.W_OK|os.X_OK);assert not os.path.lexists(d/'\"'\"'controller.stdout'\"'\"') and not os.path.lexists(d/'\"'\"'controller.stderr'\"'\"');files={n:hashlib.sha256((d/n).read_bytes()).hexdigest() for n in ['\"'\"'manifest.yaml'\"'\"','\"'\"'config_resolved.yaml'\"'\"','\"'\"'command.txt'\"'\"','\"'\"'experiment_background.md'\"'\"']};print(json.dumps({'\"'\"'host'\"'\"':socket.gethostname(),'\"'\"'uid'\"'\"':os.getuid(),'\"'\"'directory'\"'\"':str(d),'\"'\"'directory_is_owned'\"'\"':True,'\"'\"'directory_writable_and_searchable'\"'\"':True,'\"'\"'stdout_stderr_absent'\"'\"':True,'\"'\"'files'\"'\"':files,'\"'\"'standing_gpu_lock_operations'\"'\"':0}))'"
+  ],
+  "one_attempt_only": true,
+  "readonly": true
+}
