@@ -1,0 +1,26 @@
+{
+  "kind": "exact_metadata_child_audit_guard_focused_controls",
+  "passed": true,
+  "checks": [
+    "exact frozen metadata command/environment admitted as a simulated event only",
+    "refused exact negative simulated event 0",
+    "refused exact negative simulated event 1",
+    "refused exact negative simulated event 2",
+    "refused exact negative simulated event 3",
+    "refused exact negative simulated event 4",
+    "refused exact negative simulated event 5",
+    "changed metadata source hash refused"
+  ],
+  "check_count": 8,
+  "simulated_audit_events_only": true,
+  "actual_child_processes_created": 0,
+  "actual_result_reads": 0,
+  "GPU_native_or_numerical_operations": 0,
+  "source": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-05-49_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/independent_h100_common_timing_raw_review_exact_metadata_child.py",
+    "sha256": "a247a3b3e05a320c0fdde513d3f94190918f80beae37b793ea9a35bc73f6519b"
+  },
+  "job_id": "6821437",
+  "step_id": "126",
+  "seconds": 0.0010289479978382587
+}

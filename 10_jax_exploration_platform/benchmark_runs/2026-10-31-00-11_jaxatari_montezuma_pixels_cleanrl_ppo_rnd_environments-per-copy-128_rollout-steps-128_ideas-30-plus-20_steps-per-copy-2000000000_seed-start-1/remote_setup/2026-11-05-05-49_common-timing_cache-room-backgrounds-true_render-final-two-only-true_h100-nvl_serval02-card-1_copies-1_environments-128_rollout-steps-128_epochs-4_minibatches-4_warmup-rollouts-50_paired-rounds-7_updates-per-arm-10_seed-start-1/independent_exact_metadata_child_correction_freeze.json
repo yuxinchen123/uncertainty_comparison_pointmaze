@@ -1,0 +1,34 @@
+{
+  "kind": "exact_metadata_child_raw_audit_correction_source_freeze",
+  "old_source_unchanged": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-05-49_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/independent_h100_common_timing_raw_review.py",
+    "sha256": "ec5f86c33d50f4f623d1c58cebe090ef2d7d6c29f0ff8e5e78d68c21c46a9dcc"
+  },
+  "old_consumer_unchanged": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-05-49_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/independent_h100_common_timing_staged_consumer.py",
+    "sha256": "20c8a6ba82add0e1d9938caad304cb89381aeaea1210bbcedaf0ddb8a6506a24"
+  },
+  "old_failure_return": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-05-49_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/independent_actual_raw_audit_return.json",
+    "sha256": "539aa3d54b1a4a7b686a2054a8dabd4e997eba524db0c66dad1147275df1cb58"
+  },
+  "new_source": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-05-49_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/independent_h100_common_timing_raw_review_exact_metadata_child.py",
+    "sha256": "a247a3b3e05a320c0fdde513d3f94190918f80beae37b793ea9a35bc73f6519b"
+  },
+  "new_consumer": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-05-49_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/independent_h100_common_timing_staged_consumer_exact_metadata_child.py",
+    "sha256": "06611d9becead71c0c352f87fa216e5edce9fdb3aa750c73e8e67f7ffac6f576"
+  },
+  "only_changed_raw_function": "audit_context",
+  "all_other_raw_function_ASTs_identical": true,
+  "consumer_only_changes": [
+    "new raw source path",
+    "actual new raw source SHA256"
+  ],
+  "actual_raw_approval_created": false,
+  "scientific_source_or_tolerance_or_seed_changes": false,
+  "allowed_child": "Exact /usr/bin/python3 -I -S -B U/code/direct_common_confirmation.py --plan-stdin, actual pinned source bytes, no cwd override, exact unchanged staged metadata_environment",
+  "still_forbidden": "Other Python commands, alternate script or flags, executable/cwd/environment substitutions, network, device and native-library operations",
+  "root_review_pending": true
+}

@@ -1,0 +1,11 @@
+{
+  "kind": "preserve_actual_native_output_bytes",
+  "warnings": [
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-06-39_native-process-control_jaguar03_python-3.12_gpu-count-1_processor-count-1_host-memory-gib-2_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/release_preparation_query_stdout.raw:1: trailing whitespace.",
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/root_full_tick_native_component_held_2026-11-05-15-16-42_stdout.raw:713: new blank line at EOF."
+  ],
+  "check_returncode": 2,
+  "check_stdout_sha256": "061ce1a5d8fe75461c08ceb36088e4ab514ba1f2eb31bc5609f9eb61ad735924",
+  "reason": "These are exact saved scheduler/full-monitor output bytes; preserve them rather than changing reviewed raw evidence.",
+  "runtime_source_whitespace_warnings": 0
+}

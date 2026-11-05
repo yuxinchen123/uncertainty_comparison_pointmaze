@@ -1,0 +1,23 @@
+{
+  "argv": [
+    "srun",
+    "--jobid=6821437",
+    "--overlap",
+    "--exact",
+    "--time=00:05:00",
+    "-n1",
+    "-c1",
+    "--mem=512M",
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-06-39_native-process-control_jaguar03_python-3.12_gpu-count-1_processor-count-1_host-memory-gib-2_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/launch_diagnostic_once.py",
+    "--prepare-release",
+    "--publication-commit",
+    "493c15234c2ad2be6a59fd226d977fd66e8c0296"
+  ],
+  "actual_job_id": "6825842",
+  "one_attempt_only": true,
+  "no_release_action": true
+}

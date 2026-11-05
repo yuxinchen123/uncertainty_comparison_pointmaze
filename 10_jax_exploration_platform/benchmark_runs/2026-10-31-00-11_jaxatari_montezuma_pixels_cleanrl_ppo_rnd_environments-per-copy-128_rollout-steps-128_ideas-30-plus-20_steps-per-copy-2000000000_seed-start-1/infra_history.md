@@ -677,3 +677,9 @@ The canonical A4500 component preparer returns zero in 2.030 seconds and creates
 ## November 5: corrected launcher and actual prepared packet pass independent review
 
 The local-only publication case is now rejected. Eight focused source checks pass, with all action and ledger logic unchanged. After source publication, root creates the real prepared binding once in 0.474 seconds. Independent review verifies 521 actual source and record checks against the 27-file packet in 0.308 seconds. Preserve the reviewer's corrected assertion failure separately; no frozen input changes. Publish the actual binding and genuine review before the single held submission. No job has been submitted at this record. All seven H100 timing pairs are complete, with final records still pending.
+
+## November 5: one-copy H100 timing accepted; component job held with exact release review
+
+The H100 producer completes normally and both exact processes are observed absent. Preserve the initial raw-audit guard refusal and its separate exact metadata-child correction. The corrected independent raw audit passes 245 checks in 46.37 seconds and the unchanged staged reader passes in 26.54 seconds. All seven timing pairs favor the candidate; median speedup is 6.54 percent. The two-copy metadata reader needs its own narrow real-report field and bounded-size correction before preparation; the accepted result is unchanged.
+
+A4500 component job 6825842 is submitted held exactly once at 07:15 PT after publication. Both identifier ledgers and exact submission row are durable before the receipt. The exact release binding passes 307 independent checks. Publish the actual identifier evidence and fixed reviewed release command before release. Hourly session scheduling remains verified and the persistent full report passes in 4.207 seconds. No target or scientific credit is assigned to a held job.

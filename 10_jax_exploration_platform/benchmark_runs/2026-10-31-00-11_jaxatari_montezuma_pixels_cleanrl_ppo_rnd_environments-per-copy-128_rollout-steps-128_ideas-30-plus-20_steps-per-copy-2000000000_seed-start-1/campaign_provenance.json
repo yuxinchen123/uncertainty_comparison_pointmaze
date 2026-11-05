@@ -793,7 +793,7 @@
   "updated_utc": "2026-11-05T14:21:20.932173+00:00",
   "uva_active_configuration_observation_job_id": "6781190",
   "direct_common_timing_current": {
-    "state": "all_measurement_windows_complete_final_records_pending",
+    "state": "copy_one_independently_accepted",
     "packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-05-49_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1",
     "controller_pid": 386202,
     "controller_birth_counter": "84810007",
@@ -810,12 +810,21 @@
       "pid": 386669,
       "time": "2026-11-05T15:10:32.367389+00:00"
     },
-    "scientific_acceptance_pending": true,
+    "scientific_acceptance_pending": false,
     "reported_correctness_passed": true,
     "completed_paired_rounds_observed": 7,
     "partial_progress_record": {
       "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/h100_common_timing_partial_progress_2026-11-05-14-43.json",
       "sha256": "97f9629f509bbf1a8c9f6b9e4e8be537127aa454b1404e5742aa92035cba3ab6"
+    },
+    "final_review": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-05-49_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/independent_actual_common_timing_review.json",
+      "sha256": "901a5805d7f768cd3b3159fe7e478fffdbee36280c2144f195ada1b3471bdf22"
+    },
+    "median_speedup": 1.0653780925024645,
+    "actual_process_exits": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-05-49_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/root_actual_both_process_exits_2026-11-05-15-11-52.json",
+      "sha256": "0bf103bf71e5329b917e11c5aa679d21c256872bc1372377e7e6c6cc1928ef20"
     }
   },
   "actual_eight_CPU_initial_identity_diagnostic": {
@@ -874,6 +883,13 @@
     "prepared_launcher_review": {
       "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-06-39_native-process-control_jaguar03_python-3.12_gpu-count-1_processor-count-1_host-memory-gib-2_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/launcher_independent_review.json",
       "sha256": "73a650299674294209caa8d987c84c9bf1b0c2a706caee14587a41f99c24c582"
+    },
+    "job_id": "6825842",
+    "submitted_held": true,
+    "actual_release_performed": false,
+    "release_review": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-06-39_native-process-control_jaguar03_python-3.12_gpu-count-1_processor-count-1_host-memory-gib-2_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/release_independent_review.json",
+      "sha256": "aa62c5d6788e6ec786052222772ce393562bf6e063c673a64f912d9c80aab158"
     }
   }
 }
