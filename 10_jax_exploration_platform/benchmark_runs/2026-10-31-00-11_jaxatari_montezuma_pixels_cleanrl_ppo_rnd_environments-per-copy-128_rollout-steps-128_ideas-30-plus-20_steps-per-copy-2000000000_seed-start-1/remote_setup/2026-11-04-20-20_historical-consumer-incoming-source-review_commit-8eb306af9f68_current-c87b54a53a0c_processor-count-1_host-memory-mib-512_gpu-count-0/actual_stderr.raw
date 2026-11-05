@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-20-20_historical-consumer-incoming-source-review_commit-8eb306af9f68_current-c87b54a53a0c_processor-count-1_host-memory-mib-512_gpu-count-0/review_incoming.py", line 236, in <module>
+srun: error: heartpiece: task 0: Exited with exit code 1
+    main()
+  File "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-20-20_historical-consumer-incoming-source-review_commit-8eb306af9f68_current-c87b54a53a0c_processor-count-1_host-memory-mib-512_gpu-count-0/review_incoming.py", line 151, in main
+    assert merge.returncode == 0
+AssertionError

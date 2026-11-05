@@ -1,0 +1,656 @@
+run or job                        pool          gpu           state       progress
+TRAINING
+monitor                           nolim         none          RUNNING     monitor active
+2026-11-01-08-35_pixel-study-     unknown       unknown       RUNNING     0; no record for 4989
+monitor_source-commit-fb3071f377                                          min
+2ed836144f5876dbdda1113a5339d5_p
+rocessor-count-1_host-memory-
+gib-2_time-limit-days-7_poll-
+interval-seconds-1200_partition-
+nolim_account-sl5nw-base_gpu-
+count-0
+2026-11-04-15-37_nsight-process-  unknown       unknown       RUNNING     prepared not submitted;
+observation_jaguar03_gpu-                                                 no record for 278 min
+count-1_processor-count-1_host-
+memory-gib-2_time-limit-
+minutes-5_placement-
+unreserved_tool-
+version-2024.7.1.84_environment-
+transitions-0
+2026-11-04-18-33_nsight-process-  unknown       unknown       RUNNING     prepared not submitted;
+observation_jaguar03_gpu-                                                 no record for 108 min
+count-1_processor-count-1_host-
+memory-gib-2_time-limit-
+minutes-5_placement-
+unreserved_qos-normal_tool-
+version-2024.7.1.84_environment-
+transitions-0
+2026-11-04-20-09_nsight-process-  unknown       unknown       RUNNING     prepared not submitted
+observation_jaguar03_gpu-
+count-1_processor-count-1_host-
+memory-gib-2_time-limit-
+minutes-5_python-usr-bin-
+python3_reservation-
+sl5nw_168_qos-csresnolim_tool-
+version-2024.7.1.84_environment-
+transitions-0
+WAITING
+HELD
+held study job                    UVA           gres/gpu:nvi  HELD        (JobHeldUser)
+                                                dia_rtx_a450
+                                                0:1
+FINISHED
+2026-10-31-10-16_gather-          jaguar03      1 RTX A4500   FINISHED    7 rounds complete
+minibatches_allocator-cuda-async
+_copies-2_environments-
+128_rollout-
+steps-128_rounds-7_updates-per-
+round-1_seed-start-1
+2026-11-01-00-57_jaguar03-        jaguar03      1 RTX A4500   FINISHED    checks passed
+a4500_checkpoint-restart_gpu-
+count-1_processor-count-8_host-
+memory-gib-64_time-limit-minutes
+-40_seed-11_copies-
+1_environments-1_rollout-steps-
+2_updates-7_epochs-
+1_minibatches-1_observation-
+warmup-0_group-size-3_report-
+period-4
+2026-11-01-05-16_device-memory-   unknown       unknown       FINISHED    superseded before
+capture-diagnostic_jaguar03_gpu-                                          submission; 0 completed
+count-1_processor-count-8_host-                                           fixtures
+memory-gib-64_time-limit-
+minutes-20_qos-
+csresnolim_fixture-
+rounds-7_calls-per-round-10
+2026-11-01-05-29_device-memory-   unknown       unknown       FINISHED    superseded before
+capture-diagnostic_jaguar03_gpu-                                          submission; 0 completed
+count-1_processor-count-8_host-                                           fixtures
+memory-gib-64_time-limit-
+minutes-20_qos-csresnolim_blas-
+threads-1_fixture-
+rounds-7_calls-per-round-10
+2026-11-01-06-53_device-memory-   jaguar03      1 RTX A4500   FAILED      correctness command
+capture-diagnostic_jaguar03_gpu-                                          exited 1
+count-1_processor-count-8_host-
+memory-gib-64_time-limit-
+minutes-20_qos-csresnolim_blas-
+threads-1_fixture-
+rounds-7_calls-per-
+round-10_ownership-
+cgroup-v2_process-uids-4
+2026-11-01-07-42_uva-active-      jaguar03      unknown       FINISHED    0
+configuration-
+observation_jaguar03_gpu-
+count-0_processor-count-1_host-
+memory-gib-2_time-limit-
+minutes-5_qos-csresnolim
+2026-11-01-10-00_passive-         jaguar03      unknown       FINISHED    0
+installed-slurm-
+observation_jaguar03_gpu-
+count-0_processor-count-1_host-
+memory-gib-2_time-limit-
+minutes-5_qos-csresnolim
+2026-11-01-12-36_full-original-   jaguar03      1 RTX A4500   FAILED      ValueError('pytest
+qualification_jaguar03_gpu-                                               collection used an
+count-1_processor-count-8_host-                                           unrelated root
+memory-gib-64_time-limit-hours-                                           directory')
+3_policies-1_environments-
+128_rollout-steps-128_epochs-
+4_minibatches-4_warmup-
+rollouts-50_reference-updates-
+1_seed-1_driver-580.159.04
+2026-11-01-13-50_original-        jaguar03      1 RTX A4500   FINISHED    0
+qualification_explicit-pytest-
+root_jaguar03_gpu-
+count-1_processor-count-8_host-
+memory-gib-64_time-limit-hours-
+3_copies-1_environments-
+128_rollout-steps-128_epochs-
+4_minibatches-4_warmup-
+rollouts-50_reference-
+updates-1_seed-1
+2026-11-01-14-53_full-original-   serval02      unknown       FAILED      ValueError('the imported
+direct-qualification_serval02-                                            numerical helper differs
+card-1_driver-590.48.01_gpu-                                              from its recorded
+count-1_processor-count-                                                  source: ideas')
+8_policies-1_environments-
+128_rollout-steps-128_epochs-
+4_minibatches-4_warmup-
+rollouts-50_reference-
+updates-1_seed-1_memory-
+mib-95830
+2026-11-01-15-09_common_cache-    jaguar03      1 RTX A4500   FINISHED    0
+room-backgrounds-true_render-
+final-two-only-true_correctness_
+jaguar03_copies-1_environments-
+128_rollout-steps-128_epochs-
+4_minibatches-4_warmup-
+rollouts-50_seed-start-1
+2026-11-01-15-09_common_cache-    jaguar03      1 RTX A4500   FINISHED    0
+room-backgrounds-true_render-
+final-two-only-true_correctness_
+jaguar03_copies-2_environments-
+128_rollout-steps-128_epochs-
+4_minibatches-4_warmup-
+rollouts-50_seed-start-1
+2026-11-01-17-17_original-qualif  serval02      1 H100 NVL    FINISHED    0
+ication_h100-nvl_serval02-card-
+1_driver-590.48.01_gpu-
+count-1_processor-count-
+8_policies-1_environments-
+128_rollout-steps-128_epochs-
+4_minibatches-4_warmup-
+rollouts-50_reference-
+updates-1_seed-1_memory-
+mib-95830
+2026-11-01-18-54_common_cache-    jaguar03      1 RTX A4500   FINISHED    7 rounds complete
+room-backgrounds-true_render-
+final-two-only-
+true_confirmation_paired-
+rounds-7_updates-per-arm-
+10_copies-1_environments-
+128_rollout-steps-128_epochs-
+4_minibatches-4_warmup-
+rollouts-50_seed-
+start-1_hours-2_jaguar03
+2026-11-01-18-54_common_cache-    jaguar03      1 RTX A4500   FINISHED    7 rounds complete
+room-backgrounds-true_render-
+final-two-only-
+true_confirmation_paired-
+rounds-7_updates-per-arm-
+10_copies-2_environments-
+128_rollout-steps-128_epochs-
+4_minibatches-4_warmup-
+rollouts-50_seed-
+start-1_hours-3_jaguar03
+2026-11-01-20-53_original-qualif  serval02      1 H100 NVL    FINISHED    0
+ication_h100-nvl_serval02-card-
+1_driver-590.48.01_gpu-
+count-1_processor-count-
+8_policies-1_environments-
+128_rollout-steps-128_epochs-
+4_minibatches-4_warmup-
+rollouts-50_reference-
+updates-1_seed-1_memory-
+mib-95830
+2026-11-01-21-31_selected-        unknown       unknown       FAILED      ValueError('the recorded
+common-a4500-kernel-                                                      capture process is not
+profile_cache-backgrounds-                                                this live Nsight child')
+true_render-final-two-only-true_
+copies-1_environments-
+128_rollout-steps-128_epochs-
+4_minibatches-4_warmup-
+rollouts-50_capture-
+updates-1_seed-start-1_hours-2
+2026-11-01-21-31_selected-        unknown       unknown       FAILED      ValueError('the recorded
+common-a4500-kernel-                                                      capture process is not
+profile_cache-backgrounds-                                                this live Nsight child')
+true_render-final-two-only-true_
+copies-2_environments-
+128_rollout-steps-128_epochs-
+4_minibatches-4_warmup-
+rollouts-50_capture-
+updates-1_seed-start-1_hours-3
+2026-11-01-23-06_common_cache-    serval02      1 H100 NVL    FINISHED    0
+room-backgrounds-true_render-
+final-two-only-true_correctness_
+h100-nvl_serval02-card-1_copies-
+1_environments-128_rollout-steps
+-128_epochs-4_minibatches-
+4_warmup-rollouts-50_seed-
+start-1_hours-3
+2026-11-01-23-06_common_cache-    serval02      1 H100 NVL    FINISHED    0
+room-backgrounds-true_render-
+final-two-only-true_correctness_
+h100-nvl_serval02-card-1_copies-
+2_environments-128_rollout-steps
+-128_epochs-4_minibatches-
+4_warmup-rollouts-50_seed-
+start-1_hours-3
+2026-11-04-19-37_nsight-process-  unknown       unknown       FAILED      ValueError('owned
+observation_jaguar03_gpu-                                                 process control requires
+count-1_processor-count-1_host-                                           Linux pidfd support')
+memory-gib-2_time-limit-
+minutes-5_reservation-
+sl5nw_168_qos-csresnolim_tool-
+version-2024.7.1.84_environment-
+transitions-0
+aces_reference_copies_1_source_d  ac049         1 H100 PCIe   FINISHED    7 rounds complete
+28e6735e797
+allocator_region_before_initiali  jaguar03      1 RTX A4500   FINISHED    7 rounds complete
+zation_bytes-
+9663676416_batch_rollout_intrins
+ic_rewards_copies-
+2_environments-128_rollout-
+steps-128_seed-start-1_original-
+updates-per-
+round-1_helpers-44eb38d01669
+backend_metadata_verification     unknown       unknown       FINISHED    checks passed
+configuration_files_683483470f28  jaguar03      1 RTX A4500   FINISHED    checks passed
+deltaai_original_pixel_real_game  gh040.hsn.cm  1 GH200       FINISHED    1 round complete
+_copies-1_environments-           .delta.inter  120GB
+2_rollout-2_updates-2             nal.ncsa.edu
+cache room backgrounds (1 copy)   serval02      1 H100 NVL    FINISHED    7/7 pairs; accepted;
+                                                                          +1.3%
+cache room backgrounds (2         serval02      1 H100 NVL    FINISHED    7/7 pairs; accepted;
+copies)                                                                   +0.9%
+cache room backgrounds (1 copy)   jaguar03      1 RTX A4500   FINISHED    7/7 pairs; accepted;
+                                                                          +11.1%
+cache room backgrounds (2         jaguar03      1 RTX A4500   FINISHED    7/7 pairs; accepted;
+copies)                                                                   +8.7%
+render final two game states (1   serval02      1 H100 NVL    FINISHED    7/7 pairs; accepted;
+copy)                                                                     +5.8%
+render final two game states (2   serval02      1 H100 NVL    FINISHED    7/7 pairs; accepted;
+copies)                                                                   +2.7%
+render final two game states (1   jaguar03      1 RTX A4500   FINISHED    7/7 pairs; accepted;
+copy)                                                                     +68.9%
+render final two game states (2   jaguar03      1 RTX A4500   FINISHED    7/7 pairs; accepted;
+copies)                                                                   +49.2%
+unroll four frame game loop (1    serval02      1 H100 NVL    FINISHED    7/7 pairs; inconclusive;
+copy)                                                                     +0.4%
+unroll four frame game loop (2    serval02      1 H100 NVL    FINISHED    7/7 pairs; accepted;
+copies)                                                                   +0.1%
+unroll four frame game loop (1    jaguar03      1 RTX A4500   FINISHED    7/7 pairs; accepted;
+copy)                                                                     +1.2%
+unroll four frame game loop (2    jaguar03      1 RTX A4500   FINISHED    7/7 pairs; accepted;
+copies)                                                                   +0.4%
+nested policy environment         serval02      1 H100 NVL    FINISHED    7/7 pairs; inconclusive;
+batching (1 copy)                                                         +0.0%
+nested policy environment         serval02      1 H100 NVL    FINISHED    7/7 pairs; inconclusive;
+batching (2 copies)                                                       +0.1%
+nested policy environment         jaguar03      1 RTX A4500   FINISHED    7/7 pairs; rejected;
+batching (1 copy)                                                         -2.0%
+nested policy environment         jaguar03      1 RTX A4500   FINISHED    7/7 pairs; rejected;
+batching (2 copies)                                                       -0.0%
+fuse pixel preprocessing (1       serval02      1 H100 NVL    FINISHED    7/7 pairs; rejected;
+copy)                                                                     -0.2%
+fuse pixel preprocessing (2       serval02      1 H100 NVL    FINISHED    7/7 pairs; rejected;
+copies)                                                                   -0.1%
+fuse pixel preprocessing (1       jaguar03      1 RTX A4500   FINISHED    7/7 pairs; rejected;
+copy)                                                                     -1.4%
+fuse pixel preprocessing (2       jaguar03      1 RTX A4500   FINISHED    7/7 pairs; rejected;
+copies)                                                                   -1.1%
+combine palette and sprite        serval02      1 H100 NVL    FINISHED    7/7 pairs; inconclusive;
+drawing (1 copy)                                                          +0.0%
+combine palette and sprite        serval02      1 H100 NVL    FINISHED    7/7 pairs; inconclusive;
+drawing (2 copies)                                                        +0.0%
+combine palette and sprite        jaguar03      1 RTX A4500   FINISHED    7/7 pairs; rejected;
+drawing (1 copy)                                                          -0.0%
+combine palette and sprite        jaguar03      1 RTX A4500   FINISHED    7/7 pairs; inconclusive;
+drawing (2 copies)                                                        +0.0%
+store rollout observations as     serval02      1 H100 NVL    FINISHED    7/7 pairs; inconclusive;
+bytes (1 copy)                                                            +0.1%
+store rollout observations as     serval02      1 H100 NVL    FINISHED    7/7 pairs; inconclusive;
+bytes (2 copies)                                                          +0.2%
+store rollout observations as     jaguar03      1 RTX A4500   FINISHED    7/7 pairs; accepted;
+bytes (1 copy)                                                            +0.4%
+store rollout observations as     jaguar03      1 RTX A4500   FINISHED    7/7 pairs; accepted;
+bytes (2 copies)                                                          +0.3%
+reconstruct stacks from           serval02      1 H100 NVL    FINISHED    7/7 pairs; inconclusive;
+individual frames (1 copy)                                                +0.0%
+reconstruct stacks from           serval02      1 H100 NVL    FINISHED    7/7 pairs; inconclusive;
+individual frames (2 copies)                                              +0.2%
+reconstruct stacks from           jaguar03      1 RTX A4500   FINISHED    7/7 pairs; accepted;
+individual frames (1 copy)                                                +0.3%
+reconstruct stacks from           jaguar03      1 RTX A4500   FINISHED    7/7 pairs; accepted;
+individual frames (2 copies)                                              +0.4%
+circular frame stack (1 copy)     serval02      1 H100 NVL    FINISHED    7/7 pairs; inconclusive;
+                                                                          +0.0%
+circular frame stack (2 copies)   serval02      1 H100 NVL    FINISHED    7/7 pairs; rejected;
+                                                                          -0.0%
+circular frame stack (1 copy)     jaguar03      1 RTX A4500   FINISHED    7/7 pairs; inconclusive;
+                                                                          +0.0%
+circular frame stack (2 copies)   jaguar03      1 RTX A4500   FINISHED    7/7 pairs; inconclusive;
+                                                                          +0.0%
+fuse minibatch image preparation  serval02      1 H100 NVL    FINISHED    7/7 pairs; rejected;
+(1 copy)                                                                  -0.3%
+fuse minibatch image preparation  serval02      1 H100 NVL    FINISHED    7/7 pairs; rejected;
+(2 copies)                                                                -0.0%
+fuse minibatch image preparation  jaguar03      1 RTX A4500   FINISHED    7/7 pairs; rejected;
+(1 copy)                                                                  -0.6%
+fuse minibatch image preparation  jaguar03      1 RTX A4500   FINISHED    7/7 pairs; rejected;
+(2 copies)                                                                -0.8%
+donate training buffers (1 copy)  serval02      1 H100 NVL    FINISHED    7/7 pairs; rejected;
+                                                                          -0.0%
+donate training buffers (2        serval02      1 H100 NVL    FINISHED    7/7 pairs; rejected;
+copies)                                                                   -0.1%
+donate training buffers (1 copy)  jaguar03      1 RTX A4500   FINISHED    7/7 pairs; rejected;
+                                                                          -0.0%
+donate training buffers (2        jaguar03      1 RTX A4500   FINISHED    7/7 pairs; inconclusive;
+copies)                                                                   +0.0%
+recompute network activations (1  serval02      1 H100 NVL    FINISHED    7/7 pairs; rejected;
+copy)                                                                     -1.8%
+recompute network activations (2  serval02      1 H100 NVL    FINISHED    7/7 pairs; rejected;
+copies)                                                                   -5.0%
+recompute network activations (1  jaguar03      1 RTX A4500   FINISHED    7/7 pairs; rejected;
+copy)                                                                     -6.2%
+recompute network activations (2  jaguar03      1 RTX A4500   FINISHED    7/7 pairs; rejected;
+copies)                                                                   -12.7%
+channels last convolutions (1     serval02      1 H100 NVL    FINISHED    7/7 pairs; rejected;
+copy)                                                                     -0.0%
+channels last convolutions (2     serval02      1 H100 NVL    FINISHED    7/7 pairs; inconclusive;
+copies)                                                                   +0.0%
+channels last convolutions (1     jaguar03      1 RTX A4500   FINISHED    7/7 pairs; rejected;
+copy)                                                                     -0.2%
+channels last convolutions (2     jaguar03      1 RTX A4500   FINISHED    7/7 pairs; inconclusive;
+copies)                                                                   +0.1%
+group independent convolutions    serval02      1 H100 NVL    FINISHED    7/7 pairs; rejected;
+(1 copy)                                                                  -0.3%
+group independent convolutions    serval02      1 H100 NVL    FINISHED    7/7 pairs; rejected;
+(2 copies)                                                                -0.0%
+group independent convolutions    jaguar03      1 RTX A4500   FINISHED    7/7 pairs; rejected;
+(1 copy)                                                                  -0.1%
+group independent convolutions    jaguar03      1 RTX A4500   FINISHED    7/7 pairs; inconclusive;
+(2 copies)                                                                +0.0%
+einsum independent dense layers   serval02      1 H100 NVL    FINISHED    7/7 pairs; rejected;
+(1 copy)                                                                  -0.0%
+einsum independent dense layers   serval02      1 H100 NVL    FINISHED    7/7 pairs; rejected;
+(2 copies)                                                                -0.0%
+einsum independent dense layers   jaguar03      1 RTX A4500   FINISHED    7/7 pairs; rejected;
+(1 copy)                                                                  -0.0%
+einsum independent dense layers   jaguar03      1 RTX A4500   FINISHED    7/7 pairs; rejected;
+(2 copies)                                                                -0.0%
+fuse network bias and activation  serval02      1 H100 NVL    FINISHED    7/7 pairs; rejected;
+(1 copy)                                                                  -19.1%
+fuse network bias and activation  serval02      1 H100 NVL    FINISHED    7/7 pairs; rejected;
+(2 copies)                                                                -0.1%
+fuse network bias and activation  jaguar03      1 RTX A4500   FINISHED    7/7 pairs; rejected;
+(1 copy)                                                                  -2.9%
+fuse network bias and activation  jaguar03      1 RTX A4500   FINISHED    7/7 pairs; rejected;
+(2 copies)                                                                -2.4%
+cache frozen training target      serval02      1 H100 NVL    FINISHED    7/7 pairs; inconclusive;
+features (1 copy)                                                         +0.4%
+cache frozen training target      serval02      1 H100 NVL    FINISHED    7/7 pairs; accepted;
+features (2 copies)                                                       +0.5%
+cache frozen training target      jaguar03      1 RTX A4500   FINISHED    7/7 pairs; accepted;
+features (1 copy)                                                         +1.7%
+cache frozen training target      jaguar03      1 RTX A4500   FINISHED    7/7 pairs; accepted;
+features (2 copies)                                                       +5.2%
+batch rollout intrinsic rewards   serval02      1 H100 NVL    FINISHED    7/7 pairs; rejected;
+(1 copy)                                                                  -0.1%
+batch rollout intrinsic rewards   serval02      1 H100 NVL    FINISHED    7/7 pairs; rejected;
+(2 copies)                                                                -0.0%
+batch rollout intrinsic rewards   jaguar03      1 RTX A4500   FINISHED    7/7 pairs; inconclusive;
+(1 copy)                                                                  +0.1%
+batch rollout intrinsic rewards   jaguar03      1 RTX A4500   FINISHED    7/7 pairs; accepted;
+(2 copies)                                                                +0.5%
+flat parameter and optimizer      serval02      1 H100 NVL    FINISHED    7/7 pairs; inconclusive;
+buffers (1 copy)                                                          +0.0%
+flat parameter and optimizer      serval02      1 H100 NVL    FINISHED    7/7 pairs; accepted;
+buffers (2 copies)                                                        +0.3%
+flat parameter and optimizer      jaguar03      1 RTX A4500   FINISHED    7/7 pairs; rejected;
+buffers (1 copy)                                                          -0.3%
+flat parameter and optimizer      jaguar03      1 RTX A4500   FINISHED    7/7 pairs; inconclusive;
+buffers (2 copies)                                                        +0.3%
+fuse gradient clipping and adam   serval02      1 H100 NVL    FINISHED    7/7 pairs; rejected;
+(1 copy)                                                                  -0.6%
+fuse gradient clipping and adam   serval02      1 H100 NVL    FINISHED    7/7 pairs; accepted;
+(2 copies)                                                                +0.2%
+fuse gradient clipping and adam   jaguar03      1 RTX A4500   FINISHED    7/7 pairs; inconclusive;
+(1 copy)                                                                  +0.0%
+fuse gradient clipping and adam   jaguar03      1 RTX A4500   FINISHED    7/7 pairs; rejected;
+(2 copies)                                                                -0.1%
+single sixteen minibatch scan (1  serval02      1 H100 NVL    FINISHED    7/7 pairs; inconclusive;
+copy)                                                                     +0.1%
+single sixteen minibatch scan (2  serval02      1 H100 NVL    FINISHED    7/7 pairs; rejected;
+copies)                                                                   -0.1%
+single sixteen minibatch scan (1  jaguar03      1 RTX A4500   FINISHED    7/7 pairs; rejected;
+copy)                                                                     -0.0%
+single sixteen minibatch scan (2  jaguar03      1 RTX A4500   FINISHED    7/7 pairs; rejected;
+copies)                                                                   -0.0%
+unroll minibatch update loop (1   serval02      1 H100 NVL    FINISHED    7/7 pairs; accepted;
+copy)                                                                     +0.6%
+unroll minibatch update loop (2   serval02      1 H100 NVL    FINISHED    7/7 pairs; inconclusive;
+copies)                                                                   +0.0%
+unroll minibatch update loop (1   jaguar03      1 RTX A4500   FINISHED    7/7 pairs; rejected;
+copy)                                                                     -0.1%
+unroll minibatch update loop (2   jaguar03      1 RTX A4500   FINISHED    7/7 pairs; accepted;
+copies)                                                                   +0.1%
+gather epoch minibatches in       serval02      1 H100 NVL    FINISHED    7/7 pairs; rejected;
+advance (1 copy)                                                          -0.3%
+gather epoch minibatches in       serval02      1 H100 NVL    FINISHED    7/7 pairs; accepted;
+advance (2 copies)                                                        +0.2%
+gather epoch minibatches in       jaguar03      1 RTX A4500   FINISHED    7/7 pairs; rejected;
+advance (1 copy)                                                          -0.6%
+gather epoch minibatches in       jaguar03      1 RTX A4500   FINISHED    7/7 pairs; rejected;
+advance (2 copies)                                                        -1.8%
+associative advantage scan (1     serval02      1 H100 NVL    FINISHED    7/7 pairs; rejected;
+copy)                                                                     -0.2%
+associative advantage scan (2     serval02      1 H100 NVL    FINISHED    7/7 pairs; inconclusive;
+copies)                                                                   +0.1%
+associative advantage scan (1     jaguar03      1 RTX A4500   FINISHED    7/7 pairs; rejected;
+copy)                                                                     -0.0%
+associative advantage scan (2     jaguar03      1 RTX A4500   FINISHED    7/7 pairs; inconclusive;
+copies)                                                                   +0.0%
+separate rollout and update       serval02      1 H100 NVL    FINISHED    7/7 pairs; rejected;
+compilation (1 copy)                                                      -0.1%
+separate rollout and update       serval02      1 H100 NVL    FINISHED    7/7 pairs; rejected;
+compilation (2 copies)                                                    -0.1%
+separate rollout and update       jaguar03      1 RTX A4500   FINISHED    7/7 pairs; rejected;
+compilation (1 copy)                                                      -0.4%
+separate rollout and update       jaguar03      1 RTX A4500   FINISHED    7/7 pairs; rejected;
+compilation (2 copies)                                                    -0.4%
+unroll policy rollout loop (1     serval02      1 H100 NVL    FINISHED    7/7 pairs; inconclusive;
+copy)                                                                     +0.1%
+unroll policy rollout loop (2     serval02      1 H100 NVL    FINISHED    7/7 pairs; inconclusive;
+copies)                                                                   +0.0%
+unroll policy rollout loop (1     jaguar03      1 RTX A4500   FINISHED    7/7 pairs; inconclusive;
+copy)                                                                     +0.3%
+unroll policy rollout loop (2     jaguar03      1 RTX A4500   FINISHED    7/7 pairs; accepted;
+copies)                                                                   +0.2%
+group complete training           serval02      1 H100 NVL    FINISHED    7/7 pairs; rejected;
+iterations (1 copy)                                                       -0.4%
+group complete training           serval02      1 H100 NVL    FINISHED    7/7 pairs; inconclusive;
+iterations (2 copies)                                                     +0.0%
+group complete training           jaguar03      1 RTX A4500   FINISHED    7/7 pairs; accepted;
+iterations (1 copy)                                                       +0.1%
+group complete training           jaguar03      1 RTX A4500   FINISHED    7/7 pairs; inconclusive;
+iterations (2 copies)                                                     +0.0%
+batch quantity keyed random       serval02      1 H100 NVL    FINISHED    7/7 pairs; accepted;
+generation (1 copy)                                                       +0.2%
+batch quantity keyed random       serval02      1 H100 NVL    FINISHED    7/7 pairs; rejected;
+generation (2 copies)                                                     -0.0%
+batch quantity keyed random       jaguar03      1 RTX A4500   FINISHED    7/7 pairs; rejected;
+generation (1 copy)                                                       -0.0%
+batch quantity keyed random       jaguar03      1 RTX A4500   FINISHED    7/7 pairs; inconclusive;
+generation (2 copies)                                                     +0.0%
+accumulate scheduled reports on   serval02      1 H100 NVL    FINISHED    7/7 pairs; inconclusive;
+device (1 copy)                                                           +0.1%
+accumulate scheduled reports on   serval02      1 H100 NVL    FINISHED    7/7 pairs; accepted;
+device (2 copies)                                                         +0.1%
+accumulate scheduled reports on   jaguar03      1 RTX A4500   FINISHED    7/7 pairs; inconclusive;
+device (1 copy)                                                           +0.0%
+accumulate scheduled reports on   jaguar03      1 RTX A4500   FINISHED    7/7 pairs; inconclusive;
+device (2 copies)                                                         +0.1%
+combine running statistic         serval02      1 H100 NVL    FINISHED    7/7 pairs; inconclusive;
+reductions (1 copy)                                                       +0.0%
+combine running statistic         serval02      1 H100 NVL    FINISHED    7/7 pairs; rejected;
+reductions (2 copies)                                                     -0.0%
+combine running statistic         jaguar03      1 RTX A4500   FINISHED    7/7 pairs; rejected;
+reductions (1 copy)                                                       -0.1%
+combine running statistic         jaguar03      1 RTX A4500   FINISHED    7/7 pairs; inconclusive;
+reductions (2 copies)                                                     +0.0%
+isolated_capacity_batch_rollout_  jaguar03      1 RTX A4500   FINISHED    7 rounds complete
+intrinsic_rewards_copies-
+2_environments-128_rollout-steps
+-128_epochs-4_minibatches-
+4_seed-start-1_updates-per-
+round-10_helpers-332bff2faf89
+isolated_capacity_original_refer  jaguar03      1 RTX A4500   FINISHED    7 rounds complete
+ence_copies-2_environments-
+128_rollout-steps-128_epochs-
+4_minibatches-4_seed-
+start-1_updates-per-
+round-10_helpers-332bff2faf89
+isolated_capacity_unroll_minibat  jaguar03      1 RTX A4500   FINISHED    7 rounds complete
+ch_update_loop_copies-
+2_environments-128_rollout-steps
+-128_epochs-4_minibatches-
+4_seed-start-1_updates-per-
+round-10_helpers-332bff2faf89
+jaguar03_diagnostic_determinism-  jaguar03      1 RTX A4500   FINISHED    0
+disabled_copies-1_environments-
+128_rollout-steps-128_epochs-
+4_minibatches-4_warmup-
+rollouts-50_timed-
+rounds-2_updates-per-
+round-2_traced-updates-1_seed-
+1_source-d28e6735e797_helper-
+4766ba4aac28
+jaguar03_diagnostic_determinism-  jaguar03      1 RTX A4500   FINISHED    0
+enabled_copies-1_environments-
+128_rollout-steps-128_epochs-
+4_minibatches-4_warmup-
+rollouts-50_timed-
+rounds-2_updates-per-
+round-2_traced-updates-1_seed-
+1_source-d28e6735e797_helper-
+4766ba4aac28
+jaguar03_optimized_training_chec  jaguar03      1 RTX A4500   FINISHED    checks passed
+ks_6f55596a4b69
+jaguar03_pixel_gates_1d488ab23e1  jaguar03      1 RTX A4500   FINISHED    checks passed
+1
+jaguar03_pixel_gates_683483470f2  jaguar03      1 RTX A4500   FINISHED    checks passed
+8
+jaguar03_pixel_gates_d28e6735e79  jaguar03      1 RTX A4500   FINISHED    checks passed
+7
+jaguar03_pixel_reference_copies_  jaguar03      1 RTX A4500   FINISHED    7 rounds complete
+1
+jaguar03_pixel_reference_copies_  jaguar03      1 RTX A4500   FINISHED    7 rounds complete
+2_source_1d488ab23e11
+jaguar03_pixel_smoke              jaguar03      1 RTX A4500   FINISHED    1 round complete
+jaguar03_rendering_1d488ab23e11   jaguar03      1 RTX A4500   FAILED      correctness command
+                                                                          exited 1
+jaguar03_rendering_683483470f28   jaguar03      1 RTX A4500   FAILED      correctness command
+                                                                          exited 1
+jaguar03_rendering_d28e6735e797   jaguar03      1 RTX A4500   FINISHED    checks passed
+original_reference_scaling_compo  jaguar03      1× RTX A4500  FINISHED    7 rounds complete
+nent_gpus-1_policies-per-
+gpu-1_environments-per-
+policy-128_rollout-steps-
+128_epochs-4_minibatches-
+4_warmup-
+rollouts-50_rounds-7_updates-
+per-round-10_seed-start-1
+original_reference_scaling_compo  jaguar03      8× RTX A4500  FINISHED    7 rounds complete
+nent_gpus-8_policies-per-
+gpu-1_environments-per-
+policy-128_rollout-steps-
+128_epochs-4_minibatches-
+4_warmup-
+rollouts-50_rounds-7_updates-
+per-round-10_seed-start-1
+serval02_convolution-backend-     serval02      1 H100 NVL    FINISHED    0
+channels-last-
+control_copies-1_environments-
+per-copy-128_rollout-steps-
+128_epochs-4_minibatches-
+4_warmup-rollouts-50_timed-
+rounds-2_updates-per-
+round-2_traced-updates-1_seed-
+1_source-d28e6735e797_helper-
+4766ba4aac28
+serval02_determinism-disabled-    serval02      1 H100 NVL    FINISHED    0
+control_copies-1_environments-
+per-copy-128_rollout-steps-
+128_epochs-4_minibatches-
+4_warmup-rollouts-50_timed-
+rounds-2_updates-per-
+round-2_traced-updates-1_seed-
+1_source-d28e6735e797_helper-
+4766ba4aac28
+serval02_pixel_benchmark_copies_  serval02      1 H100 NVL    FINISHED    7 rounds complete
+1
+serval02_pixel_benchmark_copies_  serval02      1 H100 NVL    FINISHED    7 rounds complete
+2_source_1d488ab23e11
+serval02_pixel_gates_copies_1_so  serval02      1 H100 NVL    FINISHED    checks passed
+urce_1d488ab23e11
+serval02_pixel_gates_copies_1_so  serval02      1 H100 NVL    FAILED      correctness command
+urce_683483470f28                                                         exited 2
+serval02_pixel_gates_copies_1_so  serval02      1 H100 NVL    FINISHED    checks passed
+urce_d28e6735e797
+serval02_pixel_rendering_copies_  serval02      1 H100 NVL    FAILED      correctness command
+1_source_1d488ab23e11                                                     exited 1
+serval02_pixel_rendering_copies_  serval02      1 H100 NVL    FAILED      correctness command
+1_source_683483470f28                                                     exited 1
+serval02_pixel_rendering_copies_  serval02      1 H100 NVL    FINISHED    checks passed
+1_source_d28e6735e797
+serval02_pixel_smoke_copies_1     serval02      1 H100 NVL    FINISHED    1 round complete
+serval02_pixel_training-checks_c  serval02      1 H100 NVL    FINISHED    checks passed
+opies_1_source_660346abd510
+serval02_reference_execution_dia  serval02      1 H100 NVL    FINISHED    0
+gnostic_copies-1_environments-
+per-copy-128_rollout-steps-
+128_epochs-4_minibatches-
+4_warmup-rollouts-50_timed-
+rounds-2_updates-per-
+round-2_traced-updates-1_seed-
+1_source-d28e6735e797_helper-
+96b3381e336b
+temporary_correctness_cache_afte  jaguar03      1 RTX A4500   FAILED      JaxRuntimeError("RESOURC
+r_fixed_inputs_batch_rollout_int                                          E_EXHAUSTED: Out of
+rinsic_rewards_copies-                                                    memory while trying to
+2_environments-128_rollout-                                               allocate 8.52GiB. [tf-
+steps-128_seed-start-1_original-                                          allocator-allocation-
+updates-per-round-1_helpers-                                              error=''] [executable_na
+ad3f70a5ef67                                                              me='jit_iteration']")
+H100 NVL site validation          UVA           1 H100 NVL    FAILED      site failed: every
+                                                requested                 recorded Slurm job/step
+                                                                          allocation must name
+                                                                          this exact physical GPU
+H100 NVL site validation          serval08      1 H100 NVL    FAILED      site failed: every
+                                                                          recorded Slurm job/step
+                                                                          allocation must name
+                                                                          this exact physical GPU
+H100 NVL allocation observation   UVA           1 H100 NVL    COLLECTED   serval06; metadata
+                                  gpu/sl5nw                               collected; qualification
+                                                                          required; zero case and
+                                                                          idea credit
+PLANNED
+2026-11-01-14-02_pixel-study-     unknown       none          PLANNED     submission recorded;
+monitor_source-commit-                                                    execution not observed
+31fd9fe7cd96343741e8b48a18019efe
+e9b4ac5c_processor-count-1_host-
+memory-gib-2_time-limit-
+days-7_poll-interval-
+seconds-1200_partition-
+nolim_account-sl5nw-base_gpu-
+count-0
+2026-11-01-15-21_pixel-study-     unknown       none          PLANNED     submission recorded;
+monitor_source-commit-                                                    execution not observed
+7fd40de24201b5e1efce398f49549db2
+6c1e94d9_processor-count-1_host-
+memory-gib-2_time-limit-
+days-7_poll-interval-
+seconds-1200_partition-
+nolim_account-sl5nw-base_gpu-
+count-0
+2026-11-01-16-33_pixel-study-     unknown       none          PLANNED     submission recorded;
+monitor-recovery_source-commit-                                           execution not observed
+79a01e851ff92ddba7d0e12eaf8164ca
+b2028878_processor-count-1_host-
+memory-gib-2_time-limit-
+days-7_poll-interval-
+seconds-1200_partition-
+nolim_account-sl5nw-base_gpu-
+count-0
+2026-11-04-18-29_pixel-study-     unknown       none          PLANNED     not submitted; 0
+monitor_source-commit-                                                    completed fixtures
+6b7d492217140bba3d2f36b93754ecde
+2d020ccc_processor-count-1_host-
+memory-gib-2_time-limit-
+days-7_poll-interval-
+seconds-1200_partition-
+nolim_account-sl5nw-base_gpu-
+count-0
+remaining comparisons             study         H100 / A4500  PLANNED     0 awaiting current runs
+next study phase                  study         H100 / A4500  PLANNED     parent chooses five
+                                                                          hypotheses from profiles
+1. ACES allocation observation: UNKNOWN; remote status unknown: ACES remote status requires a fresh
+observation; last snapshot 2026-11-02 00:09:09 PT
+2. ACES original pixel full-site check: UNKNOWN; H100 PCIe requested; remote site status unknown:
+ACES full-site status is stale or from the future; refresh its exact owned ID
+3. ACES original pixel full-site check: UNKNOWN; H100 PCIe requested; remote site status unknown:
+ACES full-site status is stale or from the future; refresh its exact owned ID
+

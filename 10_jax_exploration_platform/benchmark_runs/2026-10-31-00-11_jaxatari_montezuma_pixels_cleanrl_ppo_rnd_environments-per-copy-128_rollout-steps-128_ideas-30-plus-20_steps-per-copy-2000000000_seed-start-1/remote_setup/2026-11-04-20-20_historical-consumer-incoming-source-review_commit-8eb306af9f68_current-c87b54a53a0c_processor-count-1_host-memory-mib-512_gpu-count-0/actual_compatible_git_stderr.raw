@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-20-20_historical-consumer-incoming-source-review_commit-8eb306af9f68_current-c87b54a53a0c_processor-count-1_host-memory-mib-512_gpu-count-0/review_incoming_compatible_git.py", line 253, in <module>
+srun: error: heartpiece: task 0: Exited with exit code 1
+    main()
+  File "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-20-20_historical-consumer-incoming-source-review_commit-8eb306af9f68_current-c87b54a53a0c_processor-count-1_host-memory-mib-512_gpu-count-0/review_incoming_compatible_git.py", line 145, in main
+    canonical = json.loads(canonical_path.read_bytes())
+  File "/usr/lib/python3.10/pathlib.py", line 1126, in read_bytes
+    with self.open(mode='rb') as f:
+  File "/usr/lib/python3.10/pathlib.py", line 1119, in open
+    return self._accessor.open(self, mode, buffering, encoding, errors,
+FileNotFoundError: [Errno 2] No such file or directory: '/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/direct_nsight_incoming_independent_2026-11-04-20-01-56_protected_before_compatible_git.json'
