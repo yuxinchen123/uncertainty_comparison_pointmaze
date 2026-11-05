@@ -1,0 +1,35 @@
+{
+  "actual_scheduler_target_native_or_gpu_operations": false,
+  "approved": false,
+  "author_cases_all_passed": true,
+  "author_cases_reproduced": 11,
+  "elapsed_seconds": 0.2564511060481891,
+  "findings": [
+    {
+      "field": "bounded ordinary metadata read",
+      "observed_stream_read_sizes": [
+        -1
+      ],
+      "payload_read_or_allocated_by_reproducer": false,
+      "reproduced": true,
+      "requested_correction": "read at most the fixed metadata limit plus one byte and verify exact size; do not allow a file growth race to allocate without a bound"
+    },
+    {
+      "field": "failure marker presence",
+      "reproduced": true,
+      "requested_correction": "a present failure file must prevent completed display even when parsed JSON is empty or null",
+      "synthetic_empty_failure_row_state": "completed"
+    }
+  ],
+  "job_id": "6821437",
+  "kind": "independent_monitor_metadata_initial_findings",
+  "passed": false,
+  "persistent_monitor_not_changed": true,
+  "scientific_credit": 0,
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-08-12_monitor-configured-native-diagnostic_owned-ledger-visible_unknown-kinds-explicit_gpu-actions-0/.review_metadata/monitor_configured_native_component/author_source_freeze_1.json",
+    "sha256": "4304a45f9a4bd777aa847d99bad2cf552cea3cf854e440b6b7fc99f3cc7e77b7"
+  },
+  "source_unchanged": true,
+  "step_id": "175"
+}
