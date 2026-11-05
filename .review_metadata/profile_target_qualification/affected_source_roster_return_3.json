@@ -1,0 +1,27 @@
+{
+  "files": {
+    "/p/rlprojects/RND_worktrees/2026-11-05-09-42_profile-target-qualification_original-tests-48_environments-128_rollout-steps-128_warmup-rollouts-50_reference-updates-1_default-admission-closed/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_prerequisites.py": "e5ecd84d042dd9d948ea3c312d6edcb896bdd052e5f49be5ee7ff211d3ced4c3",
+    "/p/rlprojects/RND_worktrees/2026-11-05-09-42_profile-target-qualification_original-tests-48_environments-128_rollout-steps-128_warmup-rollouts-50_reference-updates-1_default-admission-closed/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_target_integration.py": "c6f375995dc26fc761a4c02fda3109fa0755c0b330244b79d64be7e4b0b0b5a1"
+  },
+  "scope": "affected bounded source-roster reader and metadata fixtures only",
+  "returncode": 0,
+  "seconds": 1.3068277835845947,
+  "command": [
+    "srun",
+    "--jobid=6825983",
+    "--overlap",
+    "--exact",
+    "--nodes=1",
+    "--ntasks=1",
+    "--cpus-per-task=1",
+    "--mem=512M",
+    "--time=00:05:00",
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "/p/rlprojects/RND_worktrees/2026-11-05-09-42_profile-target-qualification_original-tests-48_environments-128_rollout-steps-128_warmup-rollouts-50_reference-updates-1_default-admission-closed/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_target_integration.py",
+    "-v"
+  ],
+  "source_unchanged": true
+}

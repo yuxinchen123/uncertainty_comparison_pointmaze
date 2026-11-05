@@ -1,0 +1,31 @@
+{
+  "kind": "separate_profile_target_qualification_resource_budget_reason",
+  "actual_prior_full_original_h100_producer_seconds": 3440.440061,
+  "actual_start": "2026-11-02T05:34:40.390115+00:00",
+  "actual_normal_wait": "2026-11-02T06:32:00.830176+00:00",
+  "spawn": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-20-53_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/direct_controller_spawn.json",
+    "sha256": "bda87445567cbd15f63faedbffc7411a5334b9a6a8cb1fd71deb4614bdb2b9d6"
+  },
+  "wait": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-20-53_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/direct_process_wait_return.json",
+    "sha256": "3776fc4869590e7182ac14178860733d5d8711bb93dd4361cbbfedba05a28963"
+  },
+  "actual_returncode": 0,
+  "qualification_budget": {
+    "schema_version": 1,
+    "work_seconds": 10200,
+    "cleanup_seconds": 600,
+    "total_seconds": 10800
+  },
+  "historical_diagnostic_budget_unchanged": {
+    "schema_version": 1,
+    "work_seconds": 240,
+    "cleanup_seconds": 60,
+    "total_seconds": 300
+  },
+  "interpretation": "The prior full-original work exceeds five minutes. The separate three-hour qualification resource bound does not establish that added profile capture and original gates will fit.",
+  "gpu_operations": 0,
+  "scientific_credit": 0,
+  "actual_future_qualification_prepared": false
+}

@@ -1,0 +1,158 @@
+{
+  "actual_target_prepared": false,
+  "all16_runtime_test_files_preserved": true,
+  "at_utc": "2026-11-05T19:03:53.625635+00:00",
+  "files": {
+    ".review_metadata/profile_target_qualification/copied_corrected_backend_slice.json": {
+      "bytes": 1822,
+      "sha256": "b6986ef343416adf652c068faa42aa22d88674aab894f2fc4c99bcadaf66dbdf"
+    },
+    ".review_metadata/profile_target_qualification/copied_corrected_process_slice.json": {
+      "bytes": 1764,
+      "sha256": "d5a08f4e03d12ca493b606e43d85ff86704a812f6c89841d9327f9e793bdfc7c"
+    },
+    ".review_metadata/profile_target_qualification/independent_union_first_review.json": {
+      "bytes": 19267,
+      "sha256": "1799b7ced8ed2c11e4b085644220859e7965a5f73d63005d7d031c0410c65119"
+    },
+    ".review_metadata/profile_target_qualification/independent_union_first_review.py": {
+      "bytes": 16232,
+      "sha256": "92703a2599c962c392e36430d4606aa950705b49876e471c300d82aafad6a4b9"
+    },
+    ".review_metadata/profile_target_qualification/independent_union_first_review_before_guard_correction.py": {
+      "bytes": 11147,
+      "sha256": "f043d3fef4c3e4d7e12380557828b545e4ad914c57e7c98adb157227b3bcfc86"
+    },
+    ".review_metadata/profile_target_qualification/independent_union_first_review_before_log_recording_correction.py": {
+      "bytes": 10769,
+      "sha256": "9239262e9ef0f27173d734897455924a45ef3c001099c7ab0832c702550248f1"
+    },
+    ".review_metadata/profile_target_qualification/independent_union_first_unittest.raw": {
+      "bytes": 561,
+      "sha256": "a8115657eb05d56a66c249d210e92be05b5f3207e1690a863f3aece24f107aed"
+    },
+    ".review_metadata/profile_target_qualification/independent_union_first_unittest_recorded_attempt2.raw": {
+      "bytes": 12329,
+      "sha256": "8c52d420109ca79920ce4df2f577c49d2d2365bacfebd3ee88d7d3a07add3b17"
+    },
+    ".review_metadata/profile_target_qualification/independent_union_first_unittest_result_attempt2.json": {
+      "bytes": 111,
+      "sha256": "38846d01e49ae95ca2f02e7a01d5fdf58b06b3f2135557e24fb9840a915aa507"
+    },
+    ".review_metadata/profile_target_qualification/independent_union_guard_failure_2.json": {
+      "bytes": 486,
+      "sha256": "379c17b4515c699e1b8c94cad5cc75ff98a6ac0290e4823a4074b45a97797597"
+    },
+    ".review_metadata/profile_target_qualification/independent_union_recorder_failure_1.json": {
+      "bytes": 499,
+      "sha256": "9a209a2e9eeeaee64aa5b4ce8cc252c6c025551bedab14bc18b1f53eeb1dc48f"
+    },
+    ".review_metadata/profile_target_qualification/independent_union_two_guard_refused_cases.raw": {
+      "bytes": 561,
+      "sha256": "a8115657eb05d56a66c249d210e92be05b5f3207e1690a863f3aece24f107aed"
+    },
+    ".review_metadata/profile_target_qualification/independent_union_two_guard_refused_cases_result.json": {
+      "bytes": 109,
+      "sha256": "b8bf7e7523210256c2d1886d4f73a42afc6dc9aeea7cbfbc37dd341f7b34a3e2"
+    },
+    ".review_metadata/profile_target_qualification/qualification_budget_reason.json": {
+      "bytes": 2163,
+      "sha256": "0ae23a61cee41dee8f0a233b9807ceca2c34b772151e63d828a12448abe8a3b7"
+    },
+    ".review_metadata/profile_target_qualification/target_resource_proposal/command_proposal.json": {
+      "bytes": 1129,
+      "sha256": "94f7f9e93ee15e3fb7b9b006b59d2f7c4ffeedf14a0034c9b2cdf29af45a29e0"
+    },
+    ".review_metadata/profile_target_qualification/target_resource_proposal/resource_proposal.json": {
+      "bytes": 3635,
+      "sha256": "af49b747a70280bb0f3670ae29e4a550d45e5a306a58a8be39c8129e90c9ffe5"
+    },
+    ".review_metadata/profile_target_qualification/union_author_checks_command_1.json": {
+      "bytes": 1047,
+      "sha256": "cb3578fd12bc45ba017b4a7ee46f744d756335b6413f24437eb4139a7fab7f76"
+    },
+    ".review_metadata/profile_target_qualification/union_author_checks_return_1.json": {
+      "bytes": 676,
+      "sha256": "9a6381d4fe091ef117974a66e22a64fd9ee1b72b14fb6f756c1367d42151fe5e"
+    },
+    ".review_metadata/profile_target_qualification/union_author_checks_stderr_1.raw": {
+      "bytes": 8807,
+      "sha256": "0d571298fc2d51dc1a87f766cc828c65887733f2f3f00dc38bea33d8645f7309"
+    },
+    ".review_metadata/profile_target_qualification/union_author_checks_stdout_1.raw": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/profile_target_qualification/union_source_freeze_1.json": {
+      "bytes": 7952,
+      "sha256": "82e42ff2954295687df24b68f9821ad6196980cedd1dd2f153dc71c4cd16df0b"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_profile_prerequisites.py": {
+      "bytes": 29522,
+      "sha256": "f00cc7f5e361275f5569de6c65af8466eb53668a89fd827e10f45991c633c26f"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py": {
+      "bytes": 61784,
+      "sha256": "3ceccdbbecc3d4223400d3d8acc5a87a7ee88ab3d91f8130feb94b392553ad1f"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_prerequisites.py": {
+      "bytes": 55938,
+      "sha256": "e5ecd84d042dd9d948ea3c312d6edcb896bdd052e5f49be5ee7ff211d3ced4c3"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_qualification_backend.py": {
+      "bytes": 33429,
+      "sha256": "c0dbeac088fdbcd150b1d818ff9fd34fec8b067b2560fb8ba9e6cf65ab666c09"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py": {
+      "bytes": 113924,
+      "sha256": "f2c474218b0f7530fbfc366b75bea0b5fdb4fc07afaffaa9d1169227abc36830"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_direct_process.py": {
+      "bytes": 48516,
+      "sha256": "0b141087d1425946dc8b143bd805b097bcca6190c439c185af7c0ed4e92d324b"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_process.py": {
+      "bytes": 63199,
+      "sha256": "03ff5628fa2d211fb96373e37ad6eee18ccf71a3d7c2272c143e02bde94f236a"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_qualification.py": {
+      "bytes": 50779,
+      "sha256": "317b743183b86f246615cf0c4879358ba9f1b6b172886e9dadedb2f3c44616e0"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_release.py": {
+      "bytes": 17757,
+      "sha256": "72e5912a892eab22ba3a07c67ed80f8cf7a3e387492fd278b77e4cc1728abf61"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py": {
+      "bytes": 57400,
+      "sha256": "32bf0694646c3f22cbd4c1b9609c8d8902fe915cd7e93aca00f5d1fe4282faed"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_qualification_backend.py": {
+      "bytes": 20187,
+      "sha256": "010f0da4fecd194356e6e2b59feda875a66b99b3b41a27e33f0c331949963d04"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_target_integration.py": {
+      "bytes": 8171,
+      "sha256": "c6f375995dc26fc761a4c02fda3109fa0755c0b330244b79d64be7e4b0b0b5a1"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_target_process.py": {
+      "bytes": 24380,
+      "sha256": "1c141be24143088f9e1d8929d47324dc5bcd690ee8b30c40ce8876a79f7c9353"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_target_qualification.py": {
+      "bytes": 13546,
+      "sha256": "2bc1c999f42739fb13c73ef4500557c5553cf61bbffca2bf90211d0e065644ca"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_target_real_metadata.py": {
+      "bytes": 8433,
+      "sha256": "948134ca405b8e95f2270fedab74419e699f3936bacc08545de3645f9ba044d4"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_slurm_configured_isolation.py": {
+      "bytes": 43697,
+      "sha256": "7fc004d37f01fb5c6e3c24b2b6525577ceb158fe66dd9706f5189a1c139fd064"
+    }
+  },
+  "kind": "preserved_first_full_union_integration_rejection",
+  "native_operation_scope": "No NativePidfdProvider initialization, pidfd/prctl tool scope, GPU, NUM or remote call was requested. Ordinary stdlib ctypes self-bootstrap preceded the strict audit. The fresh own standard-library CPU child and interpreter/native startup work were not numerically quantified.",
+  "schema_version": 1
+}

@@ -86,13 +86,19 @@ def validate_plan(plan, consumer=None):
         "direct authorization does not establish a current physical binding")
     require((value["consumer"] == "selected_measurement" and plan.get("kind") == "selected_configuration_measurement"
         and plan.get("mode") in {"correctness", "confirmation"}
-        or value["consumer"] == "component_profile" and plan.get("kind") == "selected_configuration_profile" and plan.get("mode") in {None, "profile"})
+        or value["consumer"] == "component_profile" and plan.get("kind") in {"selected_configuration_profile", "full_original_profile_source_target_qualification"} and plan.get("mode") in {None, "profile"})
         and not any(key in plan for key in ("configured_isolation", "device_memory_limit_protocol", "final_protocol",
             "final_confirmation_protocol", "completed_study", "completed_study_manifest", "scaling_protocol")),
         "unsupported packing, capacity, final, scaling, portable or UVA consumer")
     unit = unit_directory(plan)
     require(value["frozen_inputs"]["path"] == str(unit / "direct_history/inputs.json")
         and value["current_launch_inputs_path"] == str(unit / "direct_current_launch.json"), "history and current launch must use distinct reserved unit paths")
+    if plan.get("kind") == "full_original_profile_source_target_qualification":
+        qualifier = adjacent("profile_target_qualification")
+        require(receipt(Path(qualifier.__file__))["sha256"] == plan["helpers"]["files"].get(
+            "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_qualification.py"),
+            "the explicit qualification metadata helper changed")
+        qualifier.contract(plan)
     return value
 
 
@@ -538,7 +544,9 @@ def collect_metadata(plan, directory, lock_fd, parent_lock_receipt=None):
 def live_custody(metadata, fd):
     """Recheck only this process and its proved descriptor; never reacquire the lock."""
     if metadata.get("role") == "producer_guarded_child":
-        return adjacent("direct_profile_process").live_capture_custody(metadata, fd, sys.modules[__name__])
+        plan = read_receipt(receipt(Path(metadata["output_directory"]) / "measurement_plan.json"))
+        reader = adjacent("profile_target_direct_process" if "profile_target_process_control" in plan else "direct_profile_process")
+        return reader.live_capture_custody(metadata, fd, sys.modules[__name__])
     current = current_process(); process = validate_process(current)
     require(process == metadata["after"]["identity"]
         and {key: val for key, val in os.environ.items() if key == "CUDA_VISIBLE_DEVICES" or key.startswith("SLURM_")}
@@ -633,6 +641,8 @@ def bind_process(plan, metadata, jax_device, directory):
             "startup_memory_observed": False, "other_gpu_processes_observed": False, **BOUNDARY}
         validate_binding(plan, metadata, value, directory)
         publish(directory / "direct_device_binding.json", value)
+        if plan.get("kind") == "full_original_profile_source_target_qualification" or "profile_admission_inputs" in plan:
+            adjacent("profile_target_qualification").on_binding(directory, plan, value)
         attempt.update(passed=True, binding=receipt(directory / "direct_device_binding.json"))
         return value
     except BaseException as error:
@@ -701,7 +711,8 @@ def validate_binding(plan, metadata, value, directory=None):
 
 def validate_metadata(plan, value):
     if value.get("role") == "producer_guarded_child":
-        return adjacent("direct_profile_process").validate_capture_metadata(plan, value, sys.modules[__name__])
+        reader = adjacent("profile_target_direct_process" if "profile_target_process_control" in plan else "direct_profile_process")
+        return reader.validate_capture_metadata(plan, value, sys.modules[__name__])
     validate_plan(plan)
     require(type(value.get("schema_version")) is int and value["schema_version"] == 1 and value.get("kind") == "serval02_card1_process_metadata"
         and value.get("capability") == CAPABILITY and "capture_error" not in value, "partial or unsupported direct metadata")

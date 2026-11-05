@@ -1,0 +1,46 @@
+{
+  "actual_GPU_native_NUM_remote_operations": false,
+  "actual_controller_or_child_invoked": false,
+  "affected_role_entrypoints": [
+    "run_direct_owned_waiter",
+    "capture_direct_owned_child",
+    "run_owned_waiter"
+  ],
+  "approved": false,
+  "at_utc": "2026-11-05T19:06:47.655674+00:00",
+  "check_count": 9,
+  "checks": [
+    "current owned CPU only",
+    "exact current owned CPU step",
+    "exact already preserved rejected first union",
+    "actual preserved source profile_selected.py",
+    "actual preserved source profile_target_qualification.py",
+    "generic verify_prepared invokes the live direct controller-child barrier",
+    "barrier requires the current process to be the exact actual controller child producer",
+    "both H descendant roles call that same generic verification",
+    "release check has no role-specific descendant interpretation"
+  ],
+  "finding": "Generic verify_prepared applies the live controller-child PID equality barrier to waiter/capture descendants. The controller release names the producer Popen child; those descendant roles necessarily have different PIDs/parents and will refuse before their own strict native release.",
+  "job_id": "6825983",
+  "kind": "independent_first_union_controller_release_role_boundary_addendum",
+  "passed": false,
+  "preserved_first_union": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-09-42_profile-target-qualification_original-tests-48_environments-128_rollout-steps-128_warmup-rollouts-50_reference-updates-1_default-admission-closed/.review_metadata/profile_target_qualification/preserved_union_first_rejection/manifest.json",
+    "sha256": "a35b4cb768682841343bffd32a2a852162c03f4ad4d6cfdfe7c9e628490b019b"
+  },
+  "proof": "Static actual archived call graph and exact PID predicate; no target process or synthetic future PID was observed or invented.",
+  "required_correction": "Apply the live root-controller child barrier in the actual producer entry only, or use a separate strict role-aware saved producer-release validation for descendants. Preserve genuine producer identity and all existing native ancestry/capture-release gates.",
+  "schema_version": 1,
+  "seconds": 0.10289614298380911,
+  "source_files": [
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-09-42_profile-target-qualification_original-tests-48_environments-128_rollout-steps-128_warmup-rollouts-50_reference-updates-1_default-admission-closed/.review_metadata/profile_target_qualification/preserved_union_first_rejection/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py",
+      "sha256": "f2c474218b0f7530fbfc366b75bea0b5fdb4fc07afaffaa9d1169227abc36830"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-09-42_profile-target-qualification_original-tests-48_environments-128_rollout-steps-128_warmup-rollouts-50_reference-updates-1_default-admission-closed/.review_metadata/profile_target_qualification/preserved_union_first_rejection/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_qualification.py",
+      "sha256": "317b743183b86f246615cf0c4879358ba9f1b6b172886e9dadedb2f3c44616e0"
+    }
+  ],
+  "step_id": "27"
+}

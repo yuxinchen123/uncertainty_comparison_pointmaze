@@ -1,0 +1,36 @@
+{
+  "operational": false,
+  "metadata_preparation": [
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "/p/rlprojects/RND_worktrees/2026-11-05-09-42_profile-target-qualification_original-tests-48_environments-128_rollout-steps-128_warmup-rollouts-50_reference-updates-1_default-admission-closed/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_qualification.py",
+    "--request",
+    "ACTUAL_REVIEWED_PUBLISHED_REQUEST_PATH"
+  ],
+  "controller": [
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "ACTUAL_STAGED_CONTROLLER_SOURCE",
+    "--prepared-unit",
+    "ACTUAL_CONTROLLER_UNIT"
+  ],
+  "separate_admission_writer": [
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "ACTUAL_PUBLISHED_QUALIFICATION_HELPER",
+    "--write-admission",
+    "FRESH_ACTUAL_ADMISSION_OUTPUT",
+    "--qualification-result",
+    "ACTUAL_COMPLETED_QUALIFICATION_RESULT",
+    "--qualification-review",
+    "ACTUAL_GENUINE_INDEPENDENT_REVIEW"
+  ],
+  "ordinary_default": "closed without actual profile_admission_inputs record and separate review",
+  "placeholders_are_not_valid_launch_arguments": true
+}

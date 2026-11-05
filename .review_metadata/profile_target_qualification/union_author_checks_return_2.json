@@ -1,0 +1,29 @@
+{
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-09-42_profile-target-qualification_original-tests-48_environments-128_rollout-steps-128_warmup-rollouts-50_reference-updates-1_default-admission-closed/.review_metadata/profile_target_qualification/union_source_freeze_2_corrected_runtime_interfaces.json",
+    "sha256": "dee047f4bd891c1523382658d8726c8ff360dc53f24f189bd6c2e3085e697d8f"
+  },
+  "returncode": 0,
+  "seconds": 3.665138006210327,
+  "command": [
+    "srun",
+    "--jobid=6825983",
+    "--overlap",
+    "--exact",
+    "--nodes=1",
+    "--ntasks=1",
+    "--cpus-per-task=1",
+    "--mem=512M",
+    "--time=00:05:00",
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "-c",
+    "import unittest;loader=unittest.TestLoader();suite=unittest.TestSuite();suite.addTests(loader.discover('/p/rlprojects/RND_worktrees/2026-11-05-09-42_profile-target-qualification_original-tests-48_environments-128_rollout-steps-128_warmup-rollouts-50_reference-updates-1_default-admission-closed/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests',pattern='test_profile_target_*.py'));suite.addTests(loader.discover('/p/rlprojects/RND_worktrees/2026-11-05-09-42_profile-target-qualification_original-tests-48_environments-128_rollout-steps-128_warmup-rollouts-50_reference-updates-1_default-admission-closed/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests',pattern='test_profile_qualification_backend.py'));result=unittest.TextTestRunner(verbosity=2).run(suite);raise SystemExit(not result.wasSuccessful())"
+  ],
+  "source_unchanged": true,
+  "protected_unchanged": true,
+  "scope": "metadata and declared own-CPU fixture only; no numerical/native/GPU/tool target operations",
+  "admission_granted": false
+}

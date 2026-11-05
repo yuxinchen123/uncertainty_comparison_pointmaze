@@ -1,0 +1,896 @@
+{
+  "actual_GPU_or_submission_actions": false,
+  "all_files_utf8": true,
+  "files_excluding_this_roster": {
+    ".review_metadata/profile_target_qualification/affected_integration_command_2.json": {
+      "git_blob": "958717b4553f060ad179947dbd7d53ccd87cbe72",
+      "git_mode": "100644",
+      "sha256": "06ba78eefd25029c4dbb16668fdcb89011740fde3bfcb54ef129f9734b9cdf22",
+      "size_bytes": 469
+    },
+    ".review_metadata/profile_target_qualification/affected_integration_return_2.json": {
+      "git_blob": "578b58124c0f05cd13e0ec2977ab82d9bcedc5e6",
+      "git_mode": "100644",
+      "sha256": "b888f15933c68f9f71dcb0bc1442bf3627794e372c80992e6df277cc1d796ece",
+      "size_bytes": 2328
+    },
+    ".review_metadata/profile_target_qualification/affected_integration_stderr_2.raw": {
+      "git_blob": "f0e08ed5df250f7af889d9356ec0213b68930050",
+      "git_mode": "100644",
+      "sha256": "9a2b31d9adc97eae58f7865c8b0805f531c42f5858a79abb46c130165c1c8e1b",
+      "size_bytes": 3272
+    },
+    ".review_metadata/profile_target_qualification/affected_integration_stdout_2.raw": {
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    ".review_metadata/profile_target_qualification/affected_runtime_return_2.json": {
+      "git_blob": "9cdc793f5f738a839e410c22c3dc38da125cc4e2",
+      "git_mode": "100644",
+      "sha256": "ab33b82ec5469640fed785d2228b5af56e7861c118350b29173b2a25f45db42c",
+      "size_bytes": 4205
+    },
+    ".review_metadata/profile_target_qualification/affected_runtime_source_freeze_2.json": {
+      "git_blob": "d73d2bea320ec2671d0240f4059f9925fae41acf",
+      "git_mode": "100644",
+      "sha256": "81be7b70c17e3df22754c89fc4f5080488e75b1b7935c1b8c11a17d41f34f561",
+      "size_bytes": 2682
+    },
+    ".review_metadata/profile_target_qualification/affected_runtime_stderr_2.raw": {
+      "git_blob": "b3c1aa4d8022821224203508cb866f34614084b4",
+      "git_mode": "100644",
+      "sha256": "660266161ee1e113d2ce638ce53771b423eb48277654e6a925161c00414830ab",
+      "size_bytes": 3492
+    },
+    ".review_metadata/profile_target_qualification/affected_runtime_stdout_2.raw": {
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    ".review_metadata/profile_target_qualification/affected_source_roster_return_3.json": {
+      "git_blob": "d21e89d4c6f10b5b7bec210f0d698ab595fb9018",
+      "git_mode": "100644",
+      "sha256": "ce9e531b4e564c96a76cf4885d0ac5c5cfcdfc9539a505d22f40c4a6c78da3e5",
+      "size_bytes": 1445
+    },
+    ".review_metadata/profile_target_qualification/affected_source_roster_stderr_3.raw": {
+      "git_blob": "5f44ffc8bbb4b83ed925ccc5a2757e7499693c24",
+      "git_mode": "100644",
+      "sha256": "a01ad09e2531f761a74fb20da0087bb93839046c4eaf2f7d2f7f828bbb3b829a",
+      "size_bytes": 1285
+    },
+    ".review_metadata/profile_target_qualification/affected_source_roster_stdout_3.raw": {
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    ".review_metadata/profile_target_qualification/author_handoff_pending_independent_review.json": {
+      "git_blob": "b3db424f0b30806341e7aed4a29688e4489fc885",
+      "git_mode": "100644",
+      "sha256": "4312a01449eac3e2568610b32a4cc0cf63018fd6880f4f367ed15ff1739c3a0d",
+      "size_bytes": 6037
+    },
+    ".review_metadata/profile_target_qualification/author_reviewed_source_handoff.json": {
+      "git_blob": "89e1ff25960b090bbe4ba321a25427c8f311365e",
+      "git_mode": "100644",
+      "sha256": "15d2b745bee934b4936108a26112818036cc5ef90ae6c6154318ec7246d293b7",
+      "size_bytes": 4209
+    },
+    ".review_metadata/profile_target_qualification/cold_union_return_1.json": {
+      "git_blob": "89d59c7592d22ea9690b07d254383df2849bfc8a",
+      "git_mode": "100644",
+      "sha256": "c9f7497c3bc3504ae2d91e3968cd50488c47e3743b940b03a21041dcac995503",
+      "size_bytes": 3251
+    },
+    ".review_metadata/profile_target_qualification/cold_union_source_freeze_1.json": {
+      "git_blob": "bbc19ac36c7c895113863cafe2cb8f389785bd91",
+      "git_mode": "100644",
+      "sha256": "2f399a862c8d5709e04090f01d56d4e69fcf4347809742dd39890dbfd301607b",
+      "size_bytes": 2622
+    },
+    ".review_metadata/profile_target_qualification/cold_union_stderr_1.raw": {
+      "git_blob": "216c466827939c9426accef7eefb9898e5394d31",
+      "git_mode": "100644",
+      "sha256": "a7004323c1e2b8d7d75852c195338426b5067cf90a64040c916c637c4a47a62a",
+      "size_bytes": 300
+    },
+    ".review_metadata/profile_target_qualification/cold_union_stdout_1.raw": {
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    ".review_metadata/profile_target_qualification/copied_author_slices.json": {
+      "git_blob": "eb25fb2054e150c2949e157d74fde49756bb3f3e",
+      "git_mode": "100644",
+      "sha256": "8fc95db20193e02e8b188e3e57e37764c5ffe26419d8003a10db3a4cb7767dd7",
+      "size_bytes": 4011
+    },
+    ".review_metadata/profile_target_qualification/copied_corrected_backend_slice.json": {
+      "git_blob": "56f404768c7ccf128915e4c1dd3956cdfd72d998",
+      "git_mode": "100644",
+      "sha256": "b6986ef343416adf652c068faa42aa22d88674aab894f2fc4c99bcadaf66dbdf",
+      "size_bytes": 1822
+    },
+    ".review_metadata/profile_target_qualification/copied_corrected_process_slice.json": {
+      "git_blob": "d79849bcae581e986dd05223d0c769bfecf39b0f",
+      "git_mode": "100644",
+      "sha256": "d5a08f4e03d12ca493b606e43d85ff86704a812f6c89841d9327f9e793bdfc7c",
+      "size_bytes": 1764
+    },
+    ".review_metadata/profile_target_qualification/dependency_reviews/independent_backend_canonical_review.json": {
+      "git_blob": "b4136bf3d00695d9dd77d7977edb7bacc8582b60",
+      "git_mode": "100644",
+      "sha256": "f954d994f2105699e54b576ad95ae585c3fc9b5edc9890b20d2f3c3c3cce8001",
+      "size_bytes": 7112
+    },
+    ".review_metadata/profile_target_qualification/dependency_reviews/independent_process_saved_claim_review.json": {
+      "git_blob": "969c1d9988b46b7b002488a521f11a80a87a3abe",
+      "git_mode": "100644",
+      "sha256": "dd4f3a67ceca8ecff6c7aad8c7bc9c09ccb631964d96b3238eb53fb69cc34065",
+      "size_bytes": 10324
+    },
+    ".review_metadata/profile_target_qualification/dependency_reviews/independent_resource_proposal_review.json": {
+      "git_blob": "c4a62a2086d6185a57e4d61a1092240d211b5a70",
+      "git_mode": "100644",
+      "sha256": "a2431d908c584a09dbc22aaa6e8dd0c00c57be531e89d236161327e0a7319bf1",
+      "size_bytes": 6292
+    },
+    ".review_metadata/profile_target_qualification/first_focused_command.json": {
+      "git_blob": "248a8206c82d1442323e7044be5027118cb44c60",
+      "git_mode": "100644",
+      "sha256": "916542553f6494090a3af26fcd0067092a54b6fb3939cedeb6c40f716dc28c66",
+      "size_bytes": 503
+    },
+    ".review_metadata/profile_target_qualification/first_focused_return.json": {
+      "git_blob": "109a73a669ff8750f42dcfca0f505b2fad3f3cc1",
+      "git_mode": "100644",
+      "sha256": "3afd14cc9c6708827f91f9e8137b2029637db158841b6a2c756ef1d27e06cb3e",
+      "size_bytes": 1332
+    },
+    ".review_metadata/profile_target_qualification/first_focused_source_freeze.json": {
+      "git_blob": "22bc9c6ef63dd08de9b55081b56c825258e4bba8",
+      "git_mode": "100644",
+      "sha256": "d6a2ebd9b68876c0ba5665bec7f0da3833d9825fd787c0ec51810e8ffdfc7c1e",
+      "size_bytes": 1251
+    },
+    ".review_metadata/profile_target_qualification/first_focused_stderr.raw": {
+      "git_blob": "a31ae70f201b0395e22740e5f8069e59995a840a",
+      "git_mode": "100644",
+      "sha256": "51c0263eca61c952dd2732dcf69e8b9be038472c981432aaac2642e83415acd6",
+      "size_bytes": 1886
+    },
+    ".review_metadata/profile_target_qualification/first_focused_stdout.raw": {
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    ".review_metadata/profile_target_qualification/focused_union_command_1.json": {
+      "git_blob": "2e2617aca5439c71a4db3beb8ced83d84944424a",
+      "git_mode": "100644",
+      "sha256": "b7c1f68e26bde07f5bb3eabdd989310f707d41a10813964e722c4068b7f2b379",
+      "size_bytes": 1056
+    },
+    ".review_metadata/profile_target_qualification/focused_union_return_1.json": {
+      "git_blob": "7909d8639d0cd9305b7d51f87a992735a1221b40",
+      "git_mode": "100644",
+      "sha256": "697bc33df66d6d5b494d09454d76ce9daf785e041ea28c9ead3725f0e65f7e22",
+      "size_bytes": 4823
+    },
+    ".review_metadata/profile_target_qualification/focused_union_source_freeze_1.json": {
+      "git_blob": "7a9a96acc4578cec93a0f6e9b7193415eacc53c8",
+      "git_mode": "100644",
+      "sha256": "80cf6fdc771746f0ed5431c1e74946bc83e0d98fc3e7a2d0b0f1fa2848e0db0b",
+      "size_bytes": 4735
+    },
+    ".review_metadata/profile_target_qualification/focused_union_stderr_1.raw": {
+      "git_blob": "7b4237a7ce07c6734230ff17f4c6a7f235658bcb",
+      "git_mode": "100644",
+      "sha256": "5d8eeddc3241e7bf7cfd4af5d67163ff2a2adc8c34caaf0e5dfb61947865fe6c",
+      "size_bytes": 5139
+    },
+    ".review_metadata/profile_target_qualification/focused_union_stdout_1.raw": {
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    ".review_metadata/profile_target_qualification/independent_controller_release_role_boundary_addendum.json": {
+      "git_blob": "428c271b986f9fbbe702ab5b10f96b4d60c86ee2",
+      "git_mode": "100644",
+      "sha256": "36028d37800fa62b7a1e9d96628482ae332eb3f427db00634d4c7f0be6f312ba",
+      "size_bytes": 3166
+    },
+    ".review_metadata/profile_target_qualification/independent_union_corrected_review.json": {
+      "git_blob": "9d4ddf4f0cd933b2d8c16735e850f40041c8f7d0",
+      "git_mode": "100644",
+      "sha256": "34cb02a3da0df49db2a5dc40f934e18888034c8c113a852a857dc84e45991fae",
+      "size_bytes": 15718
+    },
+    ".review_metadata/profile_target_qualification/independent_union_corrected_review.py": {
+      "git_blob": "b51cb35795e7fda5097fb54e3650fe6496da6848",
+      "git_mode": "100644",
+      "sha256": "422fbd1a941a44141fabbc86084fb351d14541c51bd040a3b2b4b9bc4e004ba4",
+      "size_bytes": 12592
+    },
+    ".review_metadata/profile_target_qualification/independent_union_corrected_unittest.raw": {
+      "git_blob": "84e2005dff52774288f0eb837646f78b2ca11e8f",
+      "git_mode": "100644",
+      "sha256": "c188475de956edf8b57c91c97f5fe0a884cda881bc988e672b3641088018f571",
+      "size_bytes": 2343
+    },
+    ".review_metadata/profile_target_qualification/independent_union_first_review.json": {
+      "git_blob": "050cfb2db34c36db8178d833c75beef50cb45fef",
+      "git_mode": "100644",
+      "sha256": "1799b7ced8ed2c11e4b085644220859e7965a5f73d63005d7d031c0410c65119",
+      "size_bytes": 19267
+    },
+    ".review_metadata/profile_target_qualification/independent_union_first_review.py": {
+      "git_blob": "95b93ada6e249e4b721b3ee1e81fa18401844e79",
+      "git_mode": "100644",
+      "sha256": "92703a2599c962c392e36430d4606aa950705b49876e471c300d82aafad6a4b9",
+      "size_bytes": 16232
+    },
+    ".review_metadata/profile_target_qualification/independent_union_first_review_before_guard_correction.py": {
+      "git_blob": "043d3e89420dacf9aaae69ba50f77a8eb335219e",
+      "git_mode": "100644",
+      "sha256": "f043d3fef4c3e4d7e12380557828b545e4ad914c57e7c98adb157227b3bcfc86",
+      "size_bytes": 11147
+    },
+    ".review_metadata/profile_target_qualification/independent_union_first_review_before_log_recording_correction.py": {
+      "git_blob": "be1e57e4116600b37a83876bf6a455a043810030",
+      "git_mode": "100644",
+      "sha256": "9239262e9ef0f27173d734897455924a45ef3c001099c7ab0832c702550248f1",
+      "size_bytes": 10769
+    },
+    ".review_metadata/profile_target_qualification/independent_union_first_unittest.raw": {
+      "git_blob": "ea474c55189422a31d9271bf16ce039c680e9230",
+      "git_mode": "100644",
+      "sha256": "a8115657eb05d56a66c249d210e92be05b5f3207e1690a863f3aece24f107aed",
+      "size_bytes": 561
+    },
+    ".review_metadata/profile_target_qualification/independent_union_first_unittest_recorded_attempt2.raw": {
+      "git_blob": "33770f3210b5c3497bcecf1e095b8a0ccd3c0e49",
+      "git_mode": "100644",
+      "sha256": "8c52d420109ca79920ce4df2f577c49d2d2365bacfebd3ee88d7d3a07add3b17",
+      "size_bytes": 12329
+    },
+    ".review_metadata/profile_target_qualification/independent_union_first_unittest_result_attempt2.json": {
+      "git_blob": "cabbb28417fea148e38c32caf8358763e5137f1b",
+      "git_mode": "100644",
+      "sha256": "38846d01e49ae95ca2f02e7a01d5fdf58b06b3f2135557e24fb9840a915aa507",
+      "size_bytes": 111
+    },
+    ".review_metadata/profile_target_qualification/independent_union_guard_failure_2.json": {
+      "git_blob": "1d45aa1ca65915e76782c0dad46ce181195d8364",
+      "git_mode": "100644",
+      "sha256": "379c17b4515c699e1b8c94cad5cc75ff98a6ac0290e4823a4074b45a97797597",
+      "size_bytes": 486
+    },
+    ".review_metadata/profile_target_qualification/independent_union_recorder_failure_1.json": {
+      "git_blob": "a0a12566ac34a56cb849b0a31844e599d2ddae2d",
+      "git_mode": "100644",
+      "sha256": "9a209a2e9eeeaee64aa5b4ce8cc252c6c025551bedab14bc18b1f53eeb1dc48f",
+      "size_bytes": 499
+    },
+    ".review_metadata/profile_target_qualification/independent_union_two_guard_refused_cases.raw": {
+      "git_blob": "ea474c55189422a31d9271bf16ce039c680e9230",
+      "git_mode": "100644",
+      "sha256": "a8115657eb05d56a66c249d210e92be05b5f3207e1690a863f3aece24f107aed",
+      "size_bytes": 561
+    },
+    ".review_metadata/profile_target_qualification/independent_union_two_guard_refused_cases_result.json": {
+      "git_blob": "feba780b320cf6a01ef0fc285ae76bb9669457f3",
+      "git_mode": "100644",
+      "sha256": "b8bf7e7523210256c2d1886d4f73a42afc6dc9aeea7cbfbc37dd341f7b34a3e2",
+      "size_bytes": 109
+    },
+    ".review_metadata/profile_target_qualification/integration_fixture_before_budget_loader_correction.py": {
+      "git_blob": "d6eab2004d8fb6d24cf7cbe9871658da1695463f",
+      "git_mode": "100644",
+      "sha256": "078c35c54e10f96dd08d014a51fccaaae107baaa5536ee6264ccd01d6900c363",
+      "size_bytes": 7811
+    },
+    ".review_metadata/profile_target_qualification/preserved_initial_copied_backend/profile_qualification_backend.py": {
+      "git_blob": "687658460448e84d84b88959c053c932edc851f5",
+      "git_mode": "100644",
+      "sha256": "e1a03b35fecc7bfb80ca3f114eb7ab631e4b2e852047be0bb2f0b52ed4d104f9",
+      "size_bytes": 33416
+    },
+    ".review_metadata/profile_target_qualification/preserved_initial_copied_backend/test_profile_qualification_backend.py": {
+      "git_blob": "f83c0725d069fd35771c300e4dfe897c8a6e8f5d",
+      "git_mode": "100644",
+      "sha256": "fd522ba66730de74136f3721377bd1f4a44b81406045c13ac452bc2e59c38539",
+      "size_bytes": 18957
+    },
+    ".review_metadata/profile_target_qualification/preserved_initial_copied_process/profile_target_process.py": {
+      "git_blob": "830dd2c61056f56de4ba4f5861c810f91ee7e55a",
+      "git_mode": "100644",
+      "sha256": "ec5d7c9b5050f800143dd8b0c2b1e1cada084f6ef0749a8873d431d1a27f5a32",
+      "size_bytes": 48371
+    },
+    ".review_metadata/profile_target_qualification/preserved_initial_copied_process/test_profile_target_process.py": {
+      "git_blob": "4ebd46694123d9fef7c9a81aec9f39e51ef3da2c",
+      "git_mode": "100644",
+      "sha256": "dbf258d508b8c035ecd61d813c354abb8c01fec8dd08aa3ffe7e5aa675e629f5",
+      "size_bytes": 12547
+    },
+    ".review_metadata/profile_target_qualification/preserved_shared_direct_profile_draft/direct_profile_process.py": {
+      "git_blob": "8de5dd0d543651894c2973145e8498a3816da6da",
+      "git_mode": "100644",
+      "sha256": "6f8bf47a0d79a55197acb91aa8848f237157d0b750231bc8088971bed9d10177",
+      "size_bytes": 63845
+    },
+    ".review_metadata/profile_target_qualification/preserved_shared_direct_profile_draft/reason.json": {
+      "git_blob": "71e425d1583ba4aa8e24c80b9a69541d239939a3",
+      "git_mode": "100644",
+      "sha256": "f5db8373f26e965e685898afdb2b5f7b4c55cfba8aaf51ec338d60a55d1876d2",
+      "size_bytes": 330
+    },
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/.review_metadata/profile_target_qualification/copied_corrected_backend_slice.json": {
+      "git_blob": "56f404768c7ccf128915e4c1dd3956cdfd72d998",
+      "git_mode": "100644",
+      "sha256": "b6986ef343416adf652c068faa42aa22d88674aab894f2fc4c99bcadaf66dbdf",
+      "size_bytes": 1822
+    },
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/.review_metadata/profile_target_qualification/copied_corrected_process_slice.json": {
+      "git_blob": "d79849bcae581e986dd05223d0c769bfecf39b0f",
+      "git_mode": "100644",
+      "sha256": "d5a08f4e03d12ca493b606e43d85ff86704a812f6c89841d9327f9e793bdfc7c",
+      "size_bytes": 1764
+    },
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/.review_metadata/profile_target_qualification/independent_union_first_review.json": {
+      "git_blob": "050cfb2db34c36db8178d833c75beef50cb45fef",
+      "git_mode": "100644",
+      "sha256": "1799b7ced8ed2c11e4b085644220859e7965a5f73d63005d7d031c0410c65119",
+      "size_bytes": 19267
+    },
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/.review_metadata/profile_target_qualification/independent_union_first_review.py": {
+      "git_blob": "95b93ada6e249e4b721b3ee1e81fa18401844e79",
+      "git_mode": "100644",
+      "sha256": "92703a2599c962c392e36430d4606aa950705b49876e471c300d82aafad6a4b9",
+      "size_bytes": 16232
+    },
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/.review_metadata/profile_target_qualification/independent_union_first_review_before_guard_correction.py": {
+      "git_blob": "043d3e89420dacf9aaae69ba50f77a8eb335219e",
+      "git_mode": "100644",
+      "sha256": "f043d3fef4c3e4d7e12380557828b545e4ad914c57e7c98adb157227b3bcfc86",
+      "size_bytes": 11147
+    },
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/.review_metadata/profile_target_qualification/independent_union_first_review_before_log_recording_correction.py": {
+      "git_blob": "be1e57e4116600b37a83876bf6a455a043810030",
+      "git_mode": "100644",
+      "sha256": "9239262e9ef0f27173d734897455924a45ef3c001099c7ab0832c702550248f1",
+      "size_bytes": 10769
+    },
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/.review_metadata/profile_target_qualification/independent_union_first_unittest.raw": {
+      "git_blob": "ea474c55189422a31d9271bf16ce039c680e9230",
+      "git_mode": "100644",
+      "sha256": "a8115657eb05d56a66c249d210e92be05b5f3207e1690a863f3aece24f107aed",
+      "size_bytes": 561
+    },
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/.review_metadata/profile_target_qualification/independent_union_first_unittest_recorded_attempt2.raw": {
+      "git_blob": "33770f3210b5c3497bcecf1e095b8a0ccd3c0e49",
+      "git_mode": "100644",
+      "sha256": "8c52d420109ca79920ce4df2f577c49d2d2365bacfebd3ee88d7d3a07add3b17",
+      "size_bytes": 12329
+    },
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/.review_metadata/profile_target_qualification/independent_union_first_unittest_result_attempt2.json": {
+      "git_blob": "cabbb28417fea148e38c32caf8358763e5137f1b",
+      "git_mode": "100644",
+      "sha256": "38846d01e49ae95ca2f02e7a01d5fdf58b06b3f2135557e24fb9840a915aa507",
+      "size_bytes": 111
+    },
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/.review_metadata/profile_target_qualification/independent_union_guard_failure_2.json": {
+      "git_blob": "1d45aa1ca65915e76782c0dad46ce181195d8364",
+      "git_mode": "100644",
+      "sha256": "379c17b4515c699e1b8c94cad5cc75ff98a6ac0290e4823a4074b45a97797597",
+      "size_bytes": 486
+    },
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/.review_metadata/profile_target_qualification/independent_union_recorder_failure_1.json": {
+      "git_blob": "a0a12566ac34a56cb849b0a31844e599d2ddae2d",
+      "git_mode": "100644",
+      "sha256": "9a209a2e9eeeaee64aa5b4ce8cc252c6c025551bedab14bc18b1f53eeb1dc48f",
+      "size_bytes": 499
+    },
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/.review_metadata/profile_target_qualification/independent_union_two_guard_refused_cases.raw": {
+      "git_blob": "ea474c55189422a31d9271bf16ce039c680e9230",
+      "git_mode": "100644",
+      "sha256": "a8115657eb05d56a66c249d210e92be05b5f3207e1690a863f3aece24f107aed",
+      "size_bytes": 561
+    },
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/.review_metadata/profile_target_qualification/independent_union_two_guard_refused_cases_result.json": {
+      "git_blob": "feba780b320cf6a01ef0fc285ae76bb9669457f3",
+      "git_mode": "100644",
+      "sha256": "b8bf7e7523210256c2d1886d4f73a42afc6dc9aeea7cbfbc37dd341f7b34a3e2",
+      "size_bytes": 109
+    },
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/.review_metadata/profile_target_qualification/qualification_budget_reason.json": {
+      "git_blob": "c3f67d6a85878188a24c6161b3bd3e10c33b3ee2",
+      "git_mode": "100644",
+      "sha256": "0ae23a61cee41dee8f0a233b9807ceca2c34b772151e63d828a12448abe8a3b7",
+      "size_bytes": 2163
+    },
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/.review_metadata/profile_target_qualification/target_resource_proposal/command_proposal.json": {
+      "git_blob": "bbe766a2d079d91df28a02ec1ebb1d34c779af1f",
+      "git_mode": "100644",
+      "sha256": "94f7f9e93ee15e3fb7b9b006b59d2f7c4ffeedf14a0034c9b2cdf29af45a29e0",
+      "size_bytes": 1129
+    },
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/.review_metadata/profile_target_qualification/target_resource_proposal/resource_proposal.json": {
+      "git_blob": "7ac94704fff69e0b5365a9757234b16a1ff127ac",
+      "git_mode": "100644",
+      "sha256": "af49b747a70280bb0f3670ae29e4a550d45e5a306a58a8be39c8129e90c9ffe5",
+      "size_bytes": 3635
+    },
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/.review_metadata/profile_target_qualification/union_author_checks_command_1.json": {
+      "git_blob": "7cf18859eb6d8d629a8c655582a6158adfb7b121",
+      "git_mode": "100644",
+      "sha256": "cb3578fd12bc45ba017b4a7ee46f744d756335b6413f24437eb4139a7fab7f76",
+      "size_bytes": 1047
+    },
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/.review_metadata/profile_target_qualification/union_author_checks_return_1.json": {
+      "git_blob": "18479d04496cedf367dc0d4b1547336e97904e6c",
+      "git_mode": "100644",
+      "sha256": "9a6381d4fe091ef117974a66e22a64fd9ee1b72b14fb6f756c1367d42151fe5e",
+      "size_bytes": 676
+    },
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/.review_metadata/profile_target_qualification/union_author_checks_stderr_1.raw": {
+      "git_blob": "03c52c490289beabc3abf7ff0cf9bbd087812d60",
+      "git_mode": "100644",
+      "sha256": "0d571298fc2d51dc1a87f766cc828c65887733f2f3f00dc38bea33d8645f7309",
+      "size_bytes": 8807
+    },
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/.review_metadata/profile_target_qualification/union_author_checks_stdout_1.raw": {
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/.review_metadata/profile_target_qualification/union_source_freeze_1.json": {
+      "git_blob": "9a6b20ca4aa3e8baeda5131e6d8d86067c3eba13",
+      "git_mode": "100644",
+      "sha256": "82e42ff2954295687df24b68f9821ad6196980cedd1dd2f153dc71c4cd16df0b",
+      "size_bytes": 7952
+    },
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_profile_prerequisites.py": {
+      "git_blob": "ed9dcc8ede970fb8713164e433a7eb71f6ffbbea",
+      "git_mode": "100644",
+      "sha256": "f00cc7f5e361275f5569de6c65af8466eb53668a89fd827e10f45991c633c26f",
+      "size_bytes": 29522
+    },
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py": {
+      "git_blob": "12258464e453e30b5fc2000eaebd611adee5c93c",
+      "git_mode": "100644",
+      "sha256": "3ceccdbbecc3d4223400d3d8acc5a87a7ee88ab3d91f8130feb94b392553ad1f",
+      "size_bytes": 61784
+    },
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_prerequisites.py": {
+      "git_blob": "84a4f361faa6bef3b6ed57690409c59916a4794a",
+      "git_mode": "100644",
+      "sha256": "e5ecd84d042dd9d948ea3c312d6edcb896bdd052e5f49be5ee7ff211d3ced4c3",
+      "size_bytes": 55938
+    },
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_qualification_backend.py": {
+      "git_blob": "70dd0c4e3682ddc49a9ffdd155fdf82ba3b5f9fc",
+      "git_mode": "100644",
+      "sha256": "c0dbeac088fdbcd150b1d818ff9fd34fec8b067b2560fb8ba9e6cf65ab666c09",
+      "size_bytes": 33429
+    },
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py": {
+      "git_blob": "301920447a28730ef0b5473a3585c74c2197cf33",
+      "git_mode": "100644",
+      "sha256": "f2c474218b0f7530fbfc366b75bea0b5fdb4fc07afaffaa9d1169227abc36830",
+      "size_bytes": 113924
+    },
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_direct_process.py": {
+      "git_blob": "79b23c8100dbbd512f7535b48387b7f699f00de2",
+      "git_mode": "100644",
+      "sha256": "0b141087d1425946dc8b143bd805b097bcca6190c439c185af7c0ed4e92d324b",
+      "size_bytes": 48516
+    },
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_process.py": {
+      "git_blob": "e9251b17aa228f4e728f966c36824459ef7900ba",
+      "git_mode": "100644",
+      "sha256": "03ff5628fa2d211fb96373e37ad6eee18ccf71a3d7c2272c143e02bde94f236a",
+      "size_bytes": 63199
+    },
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_qualification.py": {
+      "git_blob": "f5331fec2d48c90587820c1e1065c5a836900b3a",
+      "git_mode": "100644",
+      "sha256": "317b743183b86f246615cf0c4879358ba9f1b6b172886e9dadedb2f3c44616e0",
+      "size_bytes": 50779
+    },
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_release.py": {
+      "git_blob": "f12f692587f434af5fecdfec1f559382d2794172",
+      "git_mode": "100644",
+      "sha256": "72e5912a892eab22ba3a07c67ed80f8cf7a3e387492fd278b77e4cc1728abf61",
+      "size_bytes": 17757
+    },
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py": {
+      "git_blob": "3316102d697b45dad82008c5457761def80932c6",
+      "git_mode": "100644",
+      "sha256": "32bf0694646c3f22cbd4c1b9609c8d8902fe915cd7e93aca00f5d1fe4282faed",
+      "size_bytes": 57400
+    },
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_qualification_backend.py": {
+      "git_blob": "f69a09063ca59b96acb3736239f0c218ee549169",
+      "git_mode": "100644",
+      "sha256": "010f0da4fecd194356e6e2b59feda875a66b99b3b41a27e33f0c331949963d04",
+      "size_bytes": 20187
+    },
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_target_integration.py": {
+      "git_blob": "22e629c35add6f47e1678ea831085e1cd6fbfce5",
+      "git_mode": "100644",
+      "sha256": "c6f375995dc26fc761a4c02fda3109fa0755c0b330244b79d64be7e4b0b0b5a1",
+      "size_bytes": 8171
+    },
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_target_process.py": {
+      "git_blob": "63e4088e5b999d5d0f4b6863ce841ab523c7d7fa",
+      "git_mode": "100644",
+      "sha256": "1c141be24143088f9e1d8929d47324dc5bcd690ee8b30c40ce8876a79f7c9353",
+      "size_bytes": 24380
+    },
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_target_qualification.py": {
+      "git_blob": "f9a6de4feb065a3a0f03871261031694efd5bcb5",
+      "git_mode": "100644",
+      "sha256": "2bc1c999f42739fb13c73ef4500557c5553cf61bbffca2bf90211d0e065644ca",
+      "size_bytes": 13546
+    },
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_target_real_metadata.py": {
+      "git_blob": "ce239877df875f0a977caec9e57e539003df2af0",
+      "git_mode": "100644",
+      "sha256": "948134ca405b8e95f2270fedab74419e699f3936bacc08545de3645f9ba044d4",
+      "size_bytes": 8433
+    },
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_slurm_configured_isolation.py": {
+      "git_blob": "a0b4983b5fc84a050f5a4cf09025607626ec5dea",
+      "git_mode": "100644",
+      "sha256": "7fc004d37f01fb5c6e3c24b2b6525577ceb158fe66dd9706f5189a1c139fd064",
+      "size_bytes": 43697
+    },
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/manifest.json": {
+      "git_blob": "c6384b86a3b42b252a3784e14be556fbc6b70e24",
+      "git_mode": "100644",
+      "sha256": "a35b4cb768682841343bffd32a2a852162c03f4ad4d6cfdfe7c9e628490b019b",
+      "size_bytes": 8281
+    },
+    ".review_metadata/profile_target_qualification/qualification_budget_reason.json": {
+      "git_blob": "c3f67d6a85878188a24c6161b3bd3e10c33b3ee2",
+      "git_mode": "100644",
+      "sha256": "0ae23a61cee41dee8f0a233b9807ceca2c34b772151e63d828a12448abe8a3b7",
+      "size_bytes": 2163
+    },
+    ".review_metadata/profile_target_qualification/runtime_writer_indentation_failure.json": {
+      "git_blob": "7c32afe54500b3c5c2559671d5dafde7116cb489",
+      "git_mode": "100644",
+      "sha256": "38950da3bdd286ba592f3a2fe244caff2a9fb109f38a3cf7111447920cae2f53",
+      "size_bytes": 244
+    },
+    ".review_metadata/profile_target_qualification/runtime_writer_indentation_failure_source.py": {
+      "git_blob": "a4dcad6cc619a5a675f1822eb7749ffb7b2e1376",
+      "git_mode": "100644",
+      "sha256": "2b95297257ee0da929a8f39278434903d685303327906f3235aab73690494ce5",
+      "size_bytes": 111999
+    },
+    ".review_metadata/profile_target_qualification/source_roster_before_json_reader_correction.py": {
+      "git_blob": "edbacab66d7fce9c807a87270cdffe7b914836ed",
+      "git_mode": "100644",
+      "sha256": "1087711df8a664b04c4411fdeb8944f3c8ffc7be1c0fe64139bd646f9c42bbda",
+      "size_bytes": 55075
+    },
+    ".review_metadata/profile_target_qualification/target_resource_proposal/command_proposal.json": {
+      "git_blob": "bbe766a2d079d91df28a02ec1ebb1d34c779af1f",
+      "git_mode": "100644",
+      "sha256": "94f7f9e93ee15e3fb7b9b006b59d2f7c4ffeedf14a0034c9b2cdf29af45a29e0",
+      "size_bytes": 1129
+    },
+    ".review_metadata/profile_target_qualification/target_resource_proposal/resource_proposal.json": {
+      "git_blob": "7ac94704fff69e0b5365a9757234b16a1ff127ac",
+      "git_mode": "100644",
+      "sha256": "af49b747a70280bb0f3670ae29e4a550d45e5a306a58a8be39c8129e90c9ffe5",
+      "size_bytes": 3635
+    },
+    ".review_metadata/profile_target_qualification/union_author_checks_command_1.json": {
+      "git_blob": "7cf18859eb6d8d629a8c655582a6158adfb7b121",
+      "git_mode": "100644",
+      "sha256": "cb3578fd12bc45ba017b4a7ee46f744d756335b6413f24437eb4139a7fab7f76",
+      "size_bytes": 1047
+    },
+    ".review_metadata/profile_target_qualification/union_author_checks_return_1.json": {
+      "git_blob": "18479d04496cedf367dc0d4b1547336e97904e6c",
+      "git_mode": "100644",
+      "sha256": "9a6381d4fe091ef117974a66e22a64fd9ee1b72b14fb6f756c1367d42151fe5e",
+      "size_bytes": 676
+    },
+    ".review_metadata/profile_target_qualification/union_author_checks_return_2.json": {
+      "git_blob": "90d09ee3166c59fe8f42936d8b9cf98395b8aaaa",
+      "git_mode": "100644",
+      "sha256": "ef2883ed21f7858fe31a926f5c4f6b7534d9fbfd2dea3277a66bf60ae7768b2d",
+      "size_bytes": 1754
+    },
+    ".review_metadata/profile_target_qualification/union_author_checks_stderr_1.raw": {
+      "git_blob": "03c52c490289beabc3abf7ff0cf9bbd087812d60",
+      "git_mode": "100644",
+      "sha256": "0d571298fc2d51dc1a87f766cc828c65887733f2f3f00dc38bea33d8645f7309",
+      "size_bytes": 8807
+    },
+    ".review_metadata/profile_target_qualification/union_author_checks_stderr_2.raw": {
+      "git_blob": "bddedd6279024736c24ed27f47d893d19ac6eeb1",
+      "git_mode": "100644",
+      "sha256": "4b58d5d4c24fa1d02b520584cc9693c03469155c4935126dc3c3d99a18ab479c",
+      "size_bytes": 9959
+    },
+    ".review_metadata/profile_target_qualification/union_author_checks_stdout_1.raw": {
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    ".review_metadata/profile_target_qualification/union_author_checks_stdout_2.raw": {
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    ".review_metadata/profile_target_qualification/union_source_freeze_1.json": {
+      "git_blob": "9a6b20ca4aa3e8baeda5131e6d8d86067c3eba13",
+      "git_mode": "100644",
+      "sha256": "82e42ff2954295687df24b68f9821ad6196980cedd1dd2f153dc71c4cd16df0b",
+      "size_bytes": 7952
+    },
+    ".review_metadata/profile_target_qualification/union_source_freeze_2_corrected_runtime_interfaces.json": {
+      "git_blob": "e865b565ca5563134cf0e6a04527ec174335b6f9",
+      "git_mode": "100644",
+      "sha256": "dee047f4bd891c1523382658d8726c8ff360dc53f24f189bd6c2e3085e697d8f",
+      "size_bytes": 9516
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_profile_prerequisites.py": {
+      "git_blob": "ed9dcc8ede970fb8713164e433a7eb71f6ffbbea",
+      "git_mode": "100644",
+      "sha256": "f00cc7f5e361275f5569de6c65af8466eb53668a89fd827e10f45991c633c26f",
+      "size_bytes": 29522
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py": {
+      "git_blob": "bc7907931a50702efd74650663c430ee4afe2746",
+      "git_mode": "100644",
+      "sha256": "cc3523a07ebf50b983b00e60caa6220438829ab92137cf6c1ac5964d26e7bff8",
+      "size_bytes": 62469
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_prerequisites.py": {
+      "git_blob": "3c8f84b0606b84bfff2cee6edd99b3655821c34b",
+      "git_mode": "100644",
+      "sha256": "116d06e8966f01f98282dc53a24d94e2f53c212ca81ce7d2112a480e5eeae4fc",
+      "size_bytes": 57767
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_qualification_backend.py": {
+      "git_blob": "70dd0c4e3682ddc49a9ffdd155fdf82ba3b5f9fc",
+      "git_mode": "100644",
+      "sha256": "c0dbeac088fdbcd150b1d818ff9fd34fec8b067b2560fb8ba9e6cf65ab666c09",
+      "size_bytes": 33429
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py": {
+      "git_blob": "74ddf3039eca2d94b411935679d9639f7071c4d1",
+      "git_mode": "100644",
+      "sha256": "bd96ba3a5b0fa5b5cf99adbba5e6862fa6048654e13ebb0fd4724222243a424c",
+      "size_bytes": 114750
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_direct_process.py": {
+      "git_blob": "79b23c8100dbbd512f7535b48387b7f699f00de2",
+      "git_mode": "100644",
+      "sha256": "0b141087d1425946dc8b143bd805b097bcca6190c439c185af7c0ed4e92d324b",
+      "size_bytes": 48516
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_process.py": {
+      "git_blob": "e9251b17aa228f4e728f966c36824459ef7900ba",
+      "git_mode": "100644",
+      "sha256": "03ff5628fa2d211fb96373e37ad6eee18ccf71a3d7c2272c143e02bde94f236a",
+      "size_bytes": 63199
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_qualification.py": {
+      "git_blob": "9968103a357530b5257b6fc507ba51267af1b2c4",
+      "git_mode": "100644",
+      "sha256": "5a43a52541c26777538ca98010887438fa3ec8433b4b27030dfd0e0e3b05e021",
+      "size_bytes": 59273
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_release.py": {
+      "git_blob": "f12f692587f434af5fecdfec1f559382d2794172",
+      "git_mode": "100644",
+      "sha256": "72e5912a892eab22ba3a07c67ed80f8cf7a3e387492fd278b77e4cc1728abf61",
+      "size_bytes": 17757
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py": {
+      "git_blob": "3316102d697b45dad82008c5457761def80932c6",
+      "git_mode": "100644",
+      "sha256": "32bf0694646c3f22cbd4c1b9609c8d8902fe915cd7e93aca00f5d1fe4282faed",
+      "size_bytes": 57400
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_qualification_backend.py": {
+      "git_blob": "f69a09063ca59b96acb3736239f0c218ee549169",
+      "git_mode": "100644",
+      "sha256": "010f0da4fecd194356e6e2b59feda875a66b99b3b41a27e33f0c331949963d04",
+      "size_bytes": 20187
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_target_integration.py": {
+      "git_blob": "22e629c35add6f47e1678ea831085e1cd6fbfce5",
+      "git_mode": "100644",
+      "sha256": "c6f375995dc26fc761a4c02fda3109fa0755c0b330244b79d64be7e4b0b0b5a1",
+      "size_bytes": 8171
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_target_process.py": {
+      "git_blob": "63e4088e5b999d5d0f4b6863ce841ab523c7d7fa",
+      "git_mode": "100644",
+      "sha256": "1c141be24143088f9e1d8929d47324dc5bcd690ee8b30c40ce8876a79f7c9353",
+      "size_bytes": 24380
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_target_qualification.py": {
+      "git_blob": "93d8be4db2f463be2984941e7ebc68f108b664da",
+      "git_mode": "100644",
+      "sha256": "0e43da62de938bb5dbbb04261204cd7bd3bbf1f3b487333a6c674ecd04085c23",
+      "size_bytes": 13987
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_target_real_metadata.py": {
+      "git_blob": "ce239877df875f0a977caec9e57e539003df2af0",
+      "git_mode": "100644",
+      "sha256": "948134ca405b8e95f2270fedab74419e699f3936bacc08545de3645f9ba044d4",
+      "size_bytes": 8433
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_target_runtime_interfaces.py": {
+      "git_blob": "c1078c8cdf7600abd3f14d359b87ebc366e51042",
+      "git_mode": "100644",
+      "sha256": "4b7c888b9f362a389c7690102d43be945c678660f29f7560c5650c6b0a725a50",
+      "size_bytes": 12701
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_slurm_configured_isolation.py": {
+      "git_blob": "a0b4983b5fc84a050f5a4cf09025607626ec5dea",
+      "git_mode": "100644",
+      "sha256": "7fc004d37f01fb5c6e3c24b2b6525577ceb158fe66dd9706f5189a1c139fd064",
+      "size_bytes": 43697
+    }
+  },
+  "independent_review": {
+    "relative_path": ".review_metadata/profile_target_qualification/independent_union_corrected_review.json",
+    "sha256": "34cb02a3da0df49db2a5dc40f934e18888034c8c113a852a857dc84e45991fae"
+  },
+  "kind": "allowlisted_detached_profile_target_qualification_publication_roster",
+  "maximum_file_bytes": 2500000,
+  "parent": "548cbcaef4c1fc28f80817ec9ba93f1e6b2fee4e",
+  "paths": [
+    ".review_metadata/profile_target_qualification/affected_integration_command_2.json",
+    ".review_metadata/profile_target_qualification/affected_integration_return_2.json",
+    ".review_metadata/profile_target_qualification/affected_integration_stderr_2.raw",
+    ".review_metadata/profile_target_qualification/affected_integration_stdout_2.raw",
+    ".review_metadata/profile_target_qualification/affected_runtime_return_2.json",
+    ".review_metadata/profile_target_qualification/affected_runtime_source_freeze_2.json",
+    ".review_metadata/profile_target_qualification/affected_runtime_stderr_2.raw",
+    ".review_metadata/profile_target_qualification/affected_runtime_stdout_2.raw",
+    ".review_metadata/profile_target_qualification/affected_source_roster_return_3.json",
+    ".review_metadata/profile_target_qualification/affected_source_roster_stderr_3.raw",
+    ".review_metadata/profile_target_qualification/affected_source_roster_stdout_3.raw",
+    ".review_metadata/profile_target_qualification/author_handoff_pending_independent_review.json",
+    ".review_metadata/profile_target_qualification/author_reviewed_source_handoff.json",
+    ".review_metadata/profile_target_qualification/cold_union_return_1.json",
+    ".review_metadata/profile_target_qualification/cold_union_source_freeze_1.json",
+    ".review_metadata/profile_target_qualification/cold_union_stderr_1.raw",
+    ".review_metadata/profile_target_qualification/cold_union_stdout_1.raw",
+    ".review_metadata/profile_target_qualification/copied_author_slices.json",
+    ".review_metadata/profile_target_qualification/copied_corrected_backend_slice.json",
+    ".review_metadata/profile_target_qualification/copied_corrected_process_slice.json",
+    ".review_metadata/profile_target_qualification/dependency_reviews/independent_backend_canonical_review.json",
+    ".review_metadata/profile_target_qualification/dependency_reviews/independent_process_saved_claim_review.json",
+    ".review_metadata/profile_target_qualification/dependency_reviews/independent_resource_proposal_review.json",
+    ".review_metadata/profile_target_qualification/first_focused_command.json",
+    ".review_metadata/profile_target_qualification/first_focused_return.json",
+    ".review_metadata/profile_target_qualification/first_focused_source_freeze.json",
+    ".review_metadata/profile_target_qualification/first_focused_stderr.raw",
+    ".review_metadata/profile_target_qualification/first_focused_stdout.raw",
+    ".review_metadata/profile_target_qualification/focused_union_command_1.json",
+    ".review_metadata/profile_target_qualification/focused_union_return_1.json",
+    ".review_metadata/profile_target_qualification/focused_union_source_freeze_1.json",
+    ".review_metadata/profile_target_qualification/focused_union_stderr_1.raw",
+    ".review_metadata/profile_target_qualification/focused_union_stdout_1.raw",
+    ".review_metadata/profile_target_qualification/independent_controller_release_role_boundary_addendum.json",
+    ".review_metadata/profile_target_qualification/independent_union_corrected_review.json",
+    ".review_metadata/profile_target_qualification/independent_union_corrected_review.py",
+    ".review_metadata/profile_target_qualification/independent_union_corrected_unittest.raw",
+    ".review_metadata/profile_target_qualification/independent_union_first_review.json",
+    ".review_metadata/profile_target_qualification/independent_union_first_review.py",
+    ".review_metadata/profile_target_qualification/independent_union_first_review_before_guard_correction.py",
+    ".review_metadata/profile_target_qualification/independent_union_first_review_before_log_recording_correction.py",
+    ".review_metadata/profile_target_qualification/independent_union_first_unittest.raw",
+    ".review_metadata/profile_target_qualification/independent_union_first_unittest_recorded_attempt2.raw",
+    ".review_metadata/profile_target_qualification/independent_union_first_unittest_result_attempt2.json",
+    ".review_metadata/profile_target_qualification/independent_union_guard_failure_2.json",
+    ".review_metadata/profile_target_qualification/independent_union_recorder_failure_1.json",
+    ".review_metadata/profile_target_qualification/independent_union_two_guard_refused_cases.raw",
+    ".review_metadata/profile_target_qualification/independent_union_two_guard_refused_cases_result.json",
+    ".review_metadata/profile_target_qualification/integration_fixture_before_budget_loader_correction.py",
+    ".review_metadata/profile_target_qualification/prepared_detached_publication_roster.json",
+    ".review_metadata/profile_target_qualification/preserved_initial_copied_backend/profile_qualification_backend.py",
+    ".review_metadata/profile_target_qualification/preserved_initial_copied_backend/test_profile_qualification_backend.py",
+    ".review_metadata/profile_target_qualification/preserved_initial_copied_process/profile_target_process.py",
+    ".review_metadata/profile_target_qualification/preserved_initial_copied_process/test_profile_target_process.py",
+    ".review_metadata/profile_target_qualification/preserved_shared_direct_profile_draft/direct_profile_process.py",
+    ".review_metadata/profile_target_qualification/preserved_shared_direct_profile_draft/reason.json",
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/.review_metadata/profile_target_qualification/copied_corrected_backend_slice.json",
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/.review_metadata/profile_target_qualification/copied_corrected_process_slice.json",
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/.review_metadata/profile_target_qualification/independent_union_first_review.json",
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/.review_metadata/profile_target_qualification/independent_union_first_review.py",
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/.review_metadata/profile_target_qualification/independent_union_first_review_before_guard_correction.py",
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/.review_metadata/profile_target_qualification/independent_union_first_review_before_log_recording_correction.py",
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/.review_metadata/profile_target_qualification/independent_union_first_unittest.raw",
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/.review_metadata/profile_target_qualification/independent_union_first_unittest_recorded_attempt2.raw",
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/.review_metadata/profile_target_qualification/independent_union_first_unittest_result_attempt2.json",
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/.review_metadata/profile_target_qualification/independent_union_guard_failure_2.json",
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/.review_metadata/profile_target_qualification/independent_union_recorder_failure_1.json",
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/.review_metadata/profile_target_qualification/independent_union_two_guard_refused_cases.raw",
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/.review_metadata/profile_target_qualification/independent_union_two_guard_refused_cases_result.json",
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/.review_metadata/profile_target_qualification/qualification_budget_reason.json",
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/.review_metadata/profile_target_qualification/target_resource_proposal/command_proposal.json",
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/.review_metadata/profile_target_qualification/target_resource_proposal/resource_proposal.json",
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/.review_metadata/profile_target_qualification/union_author_checks_command_1.json",
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/.review_metadata/profile_target_qualification/union_author_checks_return_1.json",
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/.review_metadata/profile_target_qualification/union_author_checks_stderr_1.raw",
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/.review_metadata/profile_target_qualification/union_author_checks_stdout_1.raw",
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/.review_metadata/profile_target_qualification/union_source_freeze_1.json",
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_profile_prerequisites.py",
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py",
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_prerequisites.py",
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_qualification_backend.py",
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py",
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_direct_process.py",
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_process.py",
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_qualification.py",
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_release.py",
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py",
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_qualification_backend.py",
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_target_integration.py",
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_target_process.py",
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_target_qualification.py",
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_target_real_metadata.py",
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_slurm_configured_isolation.py",
+    ".review_metadata/profile_target_qualification/preserved_union_first_rejection/manifest.json",
+    ".review_metadata/profile_target_qualification/qualification_budget_reason.json",
+    ".review_metadata/profile_target_qualification/runtime_writer_indentation_failure.json",
+    ".review_metadata/profile_target_qualification/runtime_writer_indentation_failure_source.py",
+    ".review_metadata/profile_target_qualification/source_roster_before_json_reader_correction.py",
+    ".review_metadata/profile_target_qualification/target_resource_proposal/command_proposal.json",
+    ".review_metadata/profile_target_qualification/target_resource_proposal/resource_proposal.json",
+    ".review_metadata/profile_target_qualification/union_author_checks_command_1.json",
+    ".review_metadata/profile_target_qualification/union_author_checks_return_1.json",
+    ".review_metadata/profile_target_qualification/union_author_checks_return_2.json",
+    ".review_metadata/profile_target_qualification/union_author_checks_stderr_1.raw",
+    ".review_metadata/profile_target_qualification/union_author_checks_stderr_2.raw",
+    ".review_metadata/profile_target_qualification/union_author_checks_stdout_1.raw",
+    ".review_metadata/profile_target_qualification/union_author_checks_stdout_2.raw",
+    ".review_metadata/profile_target_qualification/union_source_freeze_1.json",
+    ".review_metadata/profile_target_qualification/union_source_freeze_2_corrected_runtime_interfaces.json",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_profile_prerequisites.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_prerequisites.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_qualification_backend.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_direct_process.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_process.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_qualification.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_release.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_qualification_backend.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_target_integration.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_target_process.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_target_qualification.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_target_real_metadata.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_target_runtime_interfaces.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_slurm_configured_isolation.py"
+  ],
+  "schema_version": 1,
+  "source_freeze": {
+    "relative_path": ".review_metadata/profile_target_qualification/union_source_freeze_2_corrected_runtime_interfaces.json",
+    "sha256": "dee047f4bd891c1523382658d8726c8ff360dc53f24f189bd6c2e3085e697d8f"
+  }
+}

@@ -142,9 +142,15 @@ def validate_plan(plan, consumer=None):
     require(value["owned_inputs_path"] == str(directory / "owned_allocation_inputs.json"), "owned launch binding must be this exact unit")
     require((value["consumer"] == "selected_measurement" and plan.get("kind") == "selected_configuration_measurement"
         and plan.get("mode") in {"correctness", "confirmation"}
-        or value["consumer"] == "component_profile" and plan.get("kind") == "selected_configuration_profile" and plan.get("mode") in {None, "profile"})
+        or value["consumer"] == "component_profile" and plan.get("kind") in {"selected_configuration_profile", "full_original_profile_source_target_qualification"} and plan.get("mode") in {None, "profile"})
         and not any(key in plan for key in ("device_memory_limit_protocol", "final_protocol", "final_confirmation_protocol", "completed_study", "completed_study_manifest", "fixed_total_scaling", "scaling_protocol")),
         "packing, instrumented, final, scaling and portable consumers need separate explicit support")
+    if plan.get("kind") == "full_original_profile_source_target_qualification":
+        qualifier = adjacent("profile_target_qualification")
+        require(receipt(Path(qualifier.__file__))["sha256"] == plan["helpers"]["files"].get(
+            "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_qualification.py"),
+            "the explicit qualification metadata helper changed")
+        qualifier.contract(plan)
     return value
 
 
@@ -512,6 +518,8 @@ def bind_process(plan, metadata, jax_device, directory):
         value = bind_process_attempt(plan, metadata, jax_device, directory, attempt)
         publish(directory / "resolved_device_binding.json", value)
         attempt.update(passed=True, binding=receipt(directory / "resolved_device_binding.json"))
+        if plan.get("kind") == "full_original_profile_source_target_qualification" or "profile_admission_inputs" in plan:
+            adjacent("profile_target_qualification").on_binding(directory, plan, value)
         return value
     except BaseException as error:
         attempt.update(passed=False, error_type=type(error).__name__, error=str(error))

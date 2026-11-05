@@ -1,0 +1,32 @@
+{
+  "scope": "cold copied source namespace and real historical component metadata only; no numerical/native/GPU/tool operations",
+  "files": {
+    "/p/rlprojects/RND_worktrees/2026-11-05-09-42_profile-target-qualification_original-tests-48_environments-128_rollout-steps-128_warmup-rollouts-50_reference-updates-1_default-admission-closed/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_direct_process.py": "0b141087d1425946dc8b143bd805b097bcca6190c439c185af7c0ed4e92d324b",
+    "/p/rlprojects/RND_worktrees/2026-11-05-09-42_profile-target-qualification_original-tests-48_environments-128_rollout-steps-128_warmup-rollouts-50_reference-updates-1_default-admission-closed/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_process.py": "03ff5628fa2d211fb96373e37ad6eee18ccf71a3d7c2272c143e02bde94f236a",
+    "/p/rlprojects/RND_worktrees/2026-11-05-09-42_profile-target-qualification_original-tests-48_environments-128_rollout-steps-128_warmup-rollouts-50_reference-updates-1_default-admission-closed/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_release.py": "72e5912a892eab22ba3a07c67ed80f8cf7a3e387492fd278b77e4cc1728abf61",
+    "/p/rlprojects/RND_worktrees/2026-11-05-09-42_profile-target-qualification_original-tests-48_environments-128_rollout-steps-128_warmup-rollouts-50_reference-updates-1_default-admission-closed/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_qualification.py": "317b743183b86f246615cf0c4879358ba9f1b6b172886e9dadedb2f3c44616e0",
+    "/p/rlprojects/RND_worktrees/2026-11-05-09-42_profile-target-qualification_original-tests-48_environments-128_rollout-steps-128_warmup-rollouts-50_reference-updates-1_default-admission-closed/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_qualification_backend.py": "c0dbeac088fdbcd150b1d818ff9fd34fec8b067b2560fb8ba9e6cf65ab666c09",
+    "/p/rlprojects/RND_worktrees/2026-11-05-09-42_profile-target-qualification_original-tests-48_environments-128_rollout-steps-128_warmup-rollouts-50_reference-updates-1_default-admission-closed/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py": "f2c474218b0f7530fbfc366b75bea0b5fdb4fc07afaffaa9d1169227abc36830",
+    "/p/rlprojects/RND_worktrees/2026-11-05-09-42_profile-target-qualification_original-tests-48_environments-128_rollout-steps-128_warmup-rollouts-50_reference-updates-1_default-admission-closed/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_target_real_metadata.py": "948134ca405b8e95f2270fedab74419e699f3936bacc08545de3645f9ba044d4"
+  },
+  "returncode": 0,
+  "seconds": 0.7024636268615723,
+  "command": [
+    "srun",
+    "--jobid=6825983",
+    "--overlap",
+    "--exact",
+    "--nodes=1",
+    "--ntasks=1",
+    "--cpus-per-task=1",
+    "--mem=512M",
+    "--time=00:05:00",
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "/p/rlprojects/RND_worktrees/2026-11-05-09-42_profile-target-qualification_original-tests-48_environments-128_rollout-steps-128_warmup-rollouts-50_reference-updates-1_default-admission-closed/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_target_real_metadata.py",
+    "-v"
+  ],
+  "source_unchanged": true
+}

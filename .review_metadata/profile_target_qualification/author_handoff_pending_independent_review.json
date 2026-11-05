@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "kind": "profile_target_qualification_author_handoff_pending_independent_union_review",
+  "worktree": "/p/rlprojects/RND_worktrees/2026-11-05-09-42_profile-target-qualification_original-tests-48_environments-128_rollout-steps-128_warmup-rollouts-50_reference-updates-1_default-admission-closed",
+  "base_commit": "548cbcaef4c1fc28f80817ec9ba93f1e6b2fee4e",
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-09-42_profile-target-qualification_original-tests-48_environments-128_rollout-steps-128_warmup-rollouts-50_reference-updates-1_default-admission-closed/.review_metadata/profile_target_qualification/union_source_freeze_1.json",
+    "sha256": "82e42ff2954295687df24b68f9821ad6196980cedd1dd2f153dc71c4cd16df0b"
+  },
+  "author_cpu_checks": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-09-42_profile-target-qualification_original-tests-48_environments-128_rollout-steps-128_warmup-rollouts-50_reference-updates-1_default-admission-closed/.review_metadata/profile_target_qualification/union_author_checks_return_1.json",
+    "sha256": "9a6381d4fe091ef117974a66e22a64fd9ee1b72b14fb6f756c1367d42151fe5e"
+  },
+  "passed_methods": 51,
+  "cold_real_source_namespace_check": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-09-42_profile-target-qualification_original-tests-48_environments-128_rollout-steps-128_warmup-rollouts-50_reference-updates-1_default-admission-closed/.review_metadata/profile_target_qualification/cold_union_return_1.json",
+    "sha256": "c9f7497c3bc3504ae2d91e3968cd50488c47e3743b940b03a21041dcac995503"
+  },
+  "actual_target_prepared": false,
+  "actual_prepin_observed": false,
+  "actual_gpu_work": false,
+  "actual_job_submitted": false,
+  "actual_component_repeated": false,
+  "ordinary_admission_exists": false,
+  "independent_whole_union_review": null,
+  "source_and_test_path_count": 16,
+  "preservation": {
+    "accepted_component_source_files": 7,
+    "numerical_files": 13,
+    "capture_core": "exact original syntax tree",
+    "original_direct_process": "exact original bytes",
+    "original_direct_release": "exact original bytes"
+  },
+  "concrete_before": "Selected profile execution had no distinct full-original current-source/current-CUDA/whole-tool target qualification and no separate reviewed admission path. Existing default gates were closed.",
+  "concrete_after": "A separate zero-credit controller stages one distinct qualification capture. The unchanged core captures complete profile updates, then the same bound child runs all unchanged original tests, renderer and one original full reference update. Separate backend and process records surround the work. Only actual qualified result plus genuine independent raw review and separate reviewed admission can open exact ordinary profiling. Default gates stay closed.",
+  "work_counts": "Profile copies remain one or two with exact seeds. Original reference gates always use one independent copy, fifty normalization rollouts and one full update/sixteen optimizer minibatches. Actual profile compile/update origins are retained separately; test/renderer fixture work and whole-job transition totals remain unknown.",
+  "remaining_before_any_gpu_target": [
+    "genuine fourth common context and independent proof",
+    "independent complete source-union review",
+    "one exact detached commit, incoming preservation proof, integration merge and publication",
+    "fresh actual target software prepin and actual reviewed source/controller standards/packet",
+    "root alone actual one-shot launch with owned identifiers/rows fsynced before release when scheduled"
+  ],
+  "resource_proposal": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-09-42_profile-target-qualification_original-tests-48_environments-128_rollout-steps-128_warmup-rollouts-50_reference-updates-1_default-admission-closed/.review_metadata/profile_target_qualification/target_resource_proposal/resource_proposal.json",
+    "sha256": "af49b747a70280bb0f3670ae29e4a550d45e5a306a58a8be39c8129e90c9ffe5"
+  },
+  "command_proposal": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-09-42_profile-target-qualification_original-tests-48_environments-128_rollout-steps-128_warmup-rollouts-50_reference-updates-1_default-admission-closed/.review_metadata/profile_target_qualification/target_resource_proposal/command_proposal.json",
+    "sha256": "94f7f9e93ee15e3fb7b9b006b59d2f7c4ffeedf14a0034c9b2cdf29af45a29e0"
+  },
+  "budget_evidence": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-09-42_profile-target-qualification_original-tests-48_environments-128_rollout-steps-128_warmup-rollouts-50_reference-updates-1_default-admission-closed/.review_metadata/profile_target_qualification/qualification_budget_reason.json",
+    "sha256": "0ae23a61cee41dee8f0a233b9807ceca2c34b772151e63d828a12448abe8a3b7"
+  },
+  "corrected_source_copies": [
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-09-42_profile-target-qualification_original-tests-48_environments-128_rollout-steps-128_warmup-rollouts-50_reference-updates-1_default-admission-closed/.review_metadata/profile_target_qualification/copied_corrected_process_slice.json",
+      "sha256": "d5a08f4e03d12ca493b606e43d85ff86704a812f6c89841d9327f9e793bdfc7c"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-09-42_profile-target-qualification_original-tests-48_environments-128_rollout-steps-128_warmup-rollouts-50_reference-updates-1_default-admission-closed/.review_metadata/profile_target_qualification/copied_corrected_backend_slice.json",
+      "sha256": "b6986ef343416adf652c068faa42aa22d88674aab894f2fc4c99bcadaf66dbdf"
+    }
+  ],
+  "known_limits": [
+    "No numerical target qualification, ordinary profile or admission has run.",
+    "The three-hour bound is not evidence that the extra capture will fit.",
+    "Ordinary profile budgets remain unchanged and require an actual measured fit assessment before launch.",
+    "This source adds no scientific, idea, timing, packing, final-training or worker credit."
+  ]
+}
