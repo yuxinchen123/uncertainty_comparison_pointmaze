@@ -72,15 +72,15 @@ def tool_record(path):
     return {"path": str(actual), "version": version, "sha256": training.file_sha256(actual)}
 
 
-def helper_receipt(configured=False, direct=False, common=False, owned_processes=False, *, direct_profile=False):
+def helper_receipt(configured=False, direct=False, common=False, owned_processes=False, *, direct_profile=False, configured_native=False):
     """Bind every staged helper to its exact committed bytes."""
     root = SCRIPTS.parents[2]
     commit = subprocess.check_output(["git", "-C", str(root), "rev-parse", "HEAD"], text=True).strip()
     return training.source_receipt(root, commit, [str((SCRIPTS / name).relative_to(root)) for name in required_helpers(
-        configured, direct, common, owned_processes, direct_profile=direct_profile)])
+        configured, direct, common, owned_processes, direct_profile=direct_profile, configured_native=configured_native)])
 
 
-def required_helpers(configured=False, direct=False, common=False, owned_processes=False, *, direct_profile=False):
+def required_helpers(configured=False, direct=False, common=False, owned_processes=False, *, direct_profile=False, configured_native=False):
     """Include the exact optional identity closure while preserving the default profile roster."""
     if direct and (configured or common or owned_processes):
         raise ValueError("direct profile prerequisites use their own historical consumer, not configured/common helper admission")
@@ -88,6 +88,11 @@ def required_helpers(configured=False, direct=False, common=False, owned_process
         raise ValueError("the new direct profile closure requires the separate direct target")
     if owned_processes and (not configured or direct):
         raise ValueError("owned Nsight observation is supported only by its configured A4500 profile")
+    if configured_native:
+        if not configured or direct or not owned_processes or direct_profile:
+            raise ValueError("native allocation helpers require only the explicit configured owned-process profile")
+        native = configured_native_reader(selected=True)
+        return tuple(dict.fromkeys((*required_helpers(configured, direct, common, owned_processes), *native.HELPERS)))
     if direct_profile:
         return tuple(sorted(Path(relative).name for relative in direct_profile_reader().helper_roster()))
     optional = ("direct_profile_prerequisites.py", "nsight_process_identity.py", "direct_profile_process.py",
@@ -150,6 +155,39 @@ def process_reader(plan):
         raise ValueError("the staged Nsight process observation helper changed")
     specification = importlib.util.spec_from_file_location("selected_profile_owned_process_reader", path)
     module = importlib.util.module_from_spec(specification); specification.loader.exec_module(module)
+    return module
+
+
+_CONFIGURED_NATIVE_READERS = {}
+
+
+def configured_native_reader(plan=None, *, selected=False):
+    """Load only an explicitly declared A4500 metadata policy; never import its native provider here."""
+    relative = "10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_native_process.py"
+    if plan is not None:
+        if "direct_binding" in plan:
+            if "configured_native_process_control" in plan:
+                raise ValueError("configured native control cannot replace direct H100 process admission")
+            return None
+        selected = any(key in plan for key in ("native_process_control", "configured_native_process_control"))
+        declared = relative in plan.get("helpers", {}).get("files", {})
+        if not selected:
+            if declared:raise ValueError("configured native helpers require their explicit source-bound declaration")
+            return None
+    if not selected:return None
+    path = SCRIPTS / "configured_native_process.py"
+    if path.resolve(strict=True) != path or path.is_symlink() or not path.is_file():
+        raise ValueError("the explicit configured native policy helper is not its ordinary staged source")
+    expected = training.file_sha256(path)
+    if plan is not None and plan["helpers"]["files"].get(relative) != expected:
+        raise ValueError("the actual configured native policy source changed")
+    key = (str(path), expected)
+    if key not in _CONFIGURED_NATIVE_READERS:
+        spec = importlib.util.spec_from_file_location("selected_configured_native_policy", path)
+        module = importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+        _CONFIGURED_NATIVE_READERS[key] = module
+    module = _CONFIGURED_NATIVE_READERS[key]
+    if plan is not None:module.optional_policy(plan)
     return module
 
 
@@ -216,6 +254,12 @@ def prepare(args):
         require_reviewed_profile_process_admission()
     if direct:
         direct_profile_reader().require_admission()
+    native_qualification = getattr(args, "configured_native_process_qualification", None)
+    native_review = getattr(args, "configured_native_process_review", None)
+    native_selected = native_qualification is not None or native_review is not None
+    if native_selected and (not configured or direct or native_qualification is None or native_review is None
+            or args.maximum_active_seconds != 240):
+        raise ValueError("native A4500 preparation requires both actual qualification/review records and the explicit240second active bound")
     if direct and (configured or args.hardware_class != "h100" or args.gpu_uuid != measurement.CARD1):
         raise ValueError("direct profiling requires only its separately approved card-one profile")
     if configured and (args.gpu_uuid is not None or args.hardware_class != "jaguar03_rtx_a4500"):
@@ -295,7 +339,7 @@ def prepare(args):
     directory = run / "data" / args.unit_id
     plan = {"schema_version": 1, "kind": KIND, "source_root": str(root), "source_commit": args.source_commit,
         "core": core, "paired_source": paired_source, "helpers": helper_receipt(
-            configured, direct, common_reader, configured, direct_profile=direct),
+            configured, direct, common_reader, configured, direct_profile=direct, configured_native=native_selected),
         "configuration": configuration, "runtime_environment": runtime, "asset_record": assets,
         "hardware_class": args.hardware_class, "gpu_uuid": args.gpu_uuid,
         "campaign_run_dir": str(run), "unit_id": args.unit_id, "compilation_cache_policy": "disabled",
@@ -319,6 +363,11 @@ def prepare(args):
         support.configure_plan(plan, profile, "component_profile")
         plan["inputs"]["configured_isolation_profile"] = profile_input
         support.prepare_qualification_inputs(plan, args.target_qualification_record, args.target_qualification_review)
+        if native_selected:
+            native = configured_native_reader(selected=True)
+            plan["maximum_active_seconds"] = 240
+            plan["diagnostic_time_budget"] = dict(native.BUDGET)
+            native.configure_plan(plan, native_qualification, native_review, process_reader(plan))
     if direct:
         import direct_measurement as support
         profile, profile_input = measurement.read_document(args.direct_binding_profile)
@@ -337,9 +386,10 @@ def prepare(args):
         directory / "manifest.yaml": measurement.json_bytes(plan),
         directory / "config_resolved.yaml": measurement.json_bytes(configuration),
         directory / "inputs/study_registry.json": args.study_registry.read_bytes(),
-        directory / "command.txt": (shlex.join([str(args.python), str(directory / "code/profile_selected.py"),
-                                               "--prepared-unit", str(directory)]) + "\n").encode()}
-    for name in required_helpers(configured, direct, common_reader, configured, direct_profile=direct):
+        directory / "command.txt": (shlex.join(configured_native_reader(plan).producer_command(directory, plan)
+            if native_selected else [str(args.python), str(directory / "code/profile_selected.py"),
+                "--prepared-unit", str(directory)]) + "\n").encode()}
+    for name in required_helpers(configured, direct, common_reader, configured, direct_profile=direct, configured_native=native_selected):
         artifacts[directory / "code" / name] = (SCRIPTS / name).read_bytes()
     artifacts[directory / "experiment_background.md"] = (
         "## Purpose\n\nProfile the explicitly supplied accepted baseline after all thirty initial mechanisms. "
@@ -377,7 +427,8 @@ def verify_prepared(directory, plan):
     if owned_processes(plan):
         require_reviewed_profile_process_admission()
     for name in required_helpers("configured_isolation" in plan, "direct_binding" in plan, common_reader,
-            owned_processes(plan), direct_profile="direct_profile_protocol" in plan):
+            owned_processes(plan), direct_profile="direct_profile_protocol" in plan,
+            configured_native=configured_native_reader(plan) is not None):
         expected = plan["helpers"]["files"]["10_jax_exploration_platform/scripts/atari_pixel_campaign/" + name]
         if training.file_sha256(directory / "code" / name) != expected:
             raise ValueError("a staged profile helper changed: " + name)
@@ -469,6 +520,8 @@ def capture_and_summarize(directory, plan, held_descriptor=None):
         direct_profile_reader(plan).require_admission()
         return capture_direct_owned_processes(directory, plan, held_descriptor)
     if owned_processes(plan):
+        if configured_native_reader(plan) is not None:
+            raise ValueError("native configured tools require their original whole-tool producer runtime")
         return capture_owned_processes(directory, plan)
     trace = directory / "trace"
     trace.mkdir()
@@ -568,6 +621,8 @@ def run_prepared(directory):
                 raise ValueError("the profile inherited an unsupported runtime setting: " + name)
             os.environ[name] = value
         try:
+            if configured_native_reader(plan) is not None:
+                return run_configured_native_prepared(directory, plan, runtime)
             with interruption_cleanup(), measurement.card_admission(directory, plan) as held:
                 support = measurement.producer_support(plan)
                 direct = "direct_binding" in plan
@@ -743,6 +798,8 @@ def _capture_core(directory, plan, hardware, installed):
 
 def capture_owned_processes(directory, plan):
     """Release the real waited capture only after observing its owned Nsight ancestry."""
+    if configured_native_reader(plan) is not None:
+        raise ValueError("native configured captures cannot start outside their original whole-tool scope")
     reader = process_reader(plan)
     trace = directory / "trace"; trace.mkdir()
     command = child_command(directory, plan)
@@ -829,6 +886,8 @@ def run_owned_waiter(directory):
     directory = Path(directory).resolve(strict=True)
     plan = json.loads((directory / "measurement_plan.json").read_text())
     verify_prepared(directory, plan)
+    if configured_native_reader(plan) is not None:
+        return run_configured_native_waiter(directory, plan)
     reader = process_reader(plan)
     if any(name.split(".")[0] in {"jax", "jaxlib", "numpy", "torch"} for name in sys.modules):
         raise RuntimeError("the profile waiter initialized a numerical runtime")
@@ -892,6 +951,8 @@ def run_owned_waiter(directory):
 
 def capture_owned_child(directory, plan):
     """Remain blocked until the actual source child and its ancestry have been checked."""
+    if configured_native_reader(plan) is not None:
+        return capture_configured_native_child(directory, plan)
     reader = process_reader(plan)
     claim = reader.claim_self(directory, plan)
     intent = reader.read_json(directory / "profile_process_intent.json")
@@ -917,6 +978,230 @@ def capture_owned_child(directory, plan):
         _capture_core(directory, plan, hardware, installed)
     finally:
         os.close(parent)
+
+
+def configured_native_tool_record(directory, plan, scope, deadline, phase):
+    """Run every version observation inside the one original owned tool scope."""
+    tool = plan["profile_tool"];deadline.remaining("work")
+    if training.file_sha256(Path(tool["path"])) != tool["sha256"]:
+        raise ValueError("the exact native-profile tool image changed before version execution")
+    completed = scope.run([tool["path"], "--version"], capture_output=True, timeout=deadline.timeout(15))
+    actual = {"command": [tool["path"], "--version"], "returncode": completed.returncode,
+        "stdout": completed.stdout.decode("utf-8", errors="strict"), "stderr": completed.stderr.decode("utf-8", errors="strict")}
+    diagnostic.atomic_json(Path(directory) / ("native_tool_version_" + phase + ".json"), actual)
+    deadline.remaining("work")
+    if completed.returncode != 0 or completed.stderr != b"" or actual["stdout"].strip() != tool["version"]:
+        raise ValueError("the scoped native-profile tool version differs from its frozen record")
+    if training.file_sha256(Path(tool["path"])) != tool["sha256"]:
+        raise ValueError("the exact native-profile tool image changed during version execution")
+    return actual
+
+
+def run_configured_native_prepared(directory, plan, runtime_environment):
+    """Retain one explicit provider and whole-tool scope before version through export and close."""
+    started = time.monotonic();native = configured_native_reader(plan);metadata = process_reader(plan)
+    owner = native.context(directory, plan, metadata)
+    if owner["command"] != native.producer_command(directory, plan):
+        raise ValueError("execute the exact configured native producer command")
+    deadline = native.deadline(directory, plan, metadata, owner=owner, started=started)
+    active = None
+    try:
+        active = native.bootstrap(directory, plan, "producer", metadata, owner, deadline=deadline)
+        observer = active.observer
+        with interruption_cleanup(), measurement.card_admission(directory, plan):
+            # All original source/qualification/asset checks remain before the
+            # first tool. Git children cannot enter the closed tool-only domain.
+            support = measurement.producer_support(plan)
+            supervisor = directory / "supervisor";supervisor.mkdir(exist_ok=False)
+            configuration_metadata = support.core().collect_metadata(plan, supervisor)
+            support.verify_qualification_inputs(plan)
+            validate_measured_baseline(directory, plan)
+            assets = training.verify_assets(plan["asset_record"], os.environ)
+            installed = {"jaxtari_source": training.jaxtari_python_receipt(plan.get("jaxtari_source_root")),
+                "gpu_libraries": training.installed_gpu_library_receipts()}
+            diagnostic.atomic_json(directory / "supervisor_metadata.json", {
+                "hardware": {"configured_isolation_metadata": configuration_metadata}, "runtime_environment": runtime_environment})
+            diagnostic.atomic_json(directory / "asset_receipt.json", assets)
+            diagnostic.atomic_json(directory / "installed_backend.json", installed)
+            if any(name.split(".")[0] in {"jax", "jaxlib", "numpy", "torch"} for name in sys.modules):
+                raise RuntimeError("the configured native metadata producer initialized a numerical runtime")
+            deadline.remaining("work")
+            with native.tool_scope(directory, plan, observer, owner, deadline=deadline) as scope:
+                configured_native_tool_record(directory, plan, scope, deadline, "before")
+                result = capture_configured_native_processes(directory, plan, active, scope, deadline)
+            active.complete(native.completion_references(plan, "producer"))
+            intent = metadata.read_json(directory / "profile_process_intent.json")
+            observation = metadata.read_json(directory / "capture_process_observation.json")
+            launch = metadata.read_json(directory / "capture_actual_launch.json")
+            waited = metadata.read_json(directory / "capture_actual_wait.json")
+            result["configured_native_process_proof"] = native.validate_saved(
+                directory, plan, metadata, intent, observation, launch, waited, native.saved_deadline(directory, plan, metadata))
+            metadata.validate_saved(directory, plan, result)
+            diagnostic.atomic_json(directory / "result.json", result)
+            diagnostic.record_progress(directory, "completed", completed=True, profile_updates=result["profile_updates"])
+            return result
+    except BaseException as error:
+        if active is not None:active.failure(error)
+        raise
+
+
+def capture_configured_native_processes(directory, plan, active, scope, deadline):
+    """Wait on the exact capture root and export only through the already retained producer scope."""
+    native = configured_native_reader(plan);observer = native.runtime_observer(plan, active.observer)
+    if observer.native_process_runtime is not active or active.role != "producer":
+        raise ValueError("the capture must reuse its original unfinished native producer provider")
+    if scope.observer is not observer or scope.plan != plan or not scope.active or scope.deadline is not deadline:
+        raise ValueError("the native capture cannot replace its established producer scope or original deadline")
+    trace = directory / "trace";trace.mkdir()
+    command = child_command(directory, plan);observer.publish(directory / "executed_command.json", command)
+    intent = observer.make_intent(directory, plan, command)
+    processes = None
+    with (directory / "capture.log").open("x") as log:
+        child = scope.spawn(command, stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
+        initial = scope.nodes[child.pid]["initial"]
+        owner = {"pid": child.pid, "process_start_time": initial["process_start_time"], "parent_pid": os.getpid(),
+            "parent_start_time": intent["parent"]["process_start_time"], "command": command}
+        observer.publish(directory / "profiler_process.json", owner)
+        try:
+            while not all((directory / name).exists() for name in ("capture_identity.json", "capture_actual_launch.json")):
+                if child.poll() is not None:raise RuntimeError("the actual scoped Nsight root ended before its blocked capture claim")
+                deadline.remaining("work");scope.scan();time.sleep(.05)
+            # The closed scope already pins the real root through startup.
+            # Strict complete-command ancestry starts at the blocked claim,
+            # before release, rather than rejecting a transient empty cmdline.
+            processes = observer.OwnedProcesses(child.pid, initial["process_start_time"], intent["parent"])
+            claim = observer.validate_claim(directory, plan, intent, observer.read_json(directory / "capture_identity.json"))
+            launch = observer.read_json(directory / "capture_actual_launch.json")
+            if (launch["claim"] != observer.receipt(directory / "capture_identity.json")
+                    or launch["challenge"] != intent["challenge"] or launch["command"] != intent["capture_command"]
+                    or observer.stable(launch["child"]) != observer.stable(claim["process"])
+                    or claim["process"]["parent_pid"] != launch["waiter"]["pid"]):
+                raise ValueError("the scoped capture launch differs from the actual source-bound child")
+            observation = processes.observe(claim["pid"], claim["process_start_time"], intent["capture_command"])
+            observer.publish(directory / "capture_process_observation.json", observation)
+            observer.validate_observation(observation, claim, intent["capture_command"], intent["parent"])
+            deadline.remaining("work")
+            observer.publish(directory / "capture_release.json", {**owner, "capture_identity": claim,
+                "process_observation": observer.receipt(directory / "capture_process_observation.json")})
+            returned = scope.wait(child, deadline.timeout())
+            observer.record_root_wait(directory, intent, owner, returned)
+            waited = observer.read_json(directory / "capture_actual_wait.json")
+            if returned != 0 or type(waited["returncode"]) is not int or waited["returncode"] != 0 or waited["interventions"]:
+                raise RuntimeError("the scoped root or actual capture did not return normally without intervention")
+        finally:
+            if processes is not None:processes.close()
+    configured_native_tool_record(directory, plan, scope, deadline, "after")
+    captured = observer.read_json(directory / "capture_result.json")
+    analysis = diagnostic.summarize_trace(directory, plan["profile_tool"]["path"], run_command=scope.run)
+    deadline.remaining("work")
+    if training.file_sha256(Path(plan["profile_tool"]["path"])) != plan["profile_tool"]["sha256"]:
+        raise ValueError("the original native-profile tool image changed during final export")
+    for name, column in (("cuda_gpu_kern_sum", "Instances"), ("cuda_api_sum", "Num Calls")):
+        summary = analysis["summaries"][name]
+        if diagnostic.summary_csv_evidence(summary["path"], column) != {key: summary[key] for key in ("rows", "columns", "sha256")}:
+            raise ValueError("the scoped native profile lacks unchanged positive raw CUDA events")
+    return {**captured, "completed": True, "trace_analysis_record": str(trace / "analysis.json"),
+        "trace_report_sha256": training.file_sha256(trace / "capture.nsys-rep"),
+        "capture_process_protocol": OWNED_PROCESS_PROTOCOL,
+        "capture_process_observation": observer.receipt(directory / "capture_process_observation.json"),
+        "profiler_actual_wait": observer.receipt(directory / "profiler_actual_wait.json"),
+        "capture_actual_wait": observer.receipt(directory / "capture_actual_wait.json")}
+
+
+def run_configured_native_waiter(directory, plan):
+    """Give this exact metadata waiter its own provider and wait on one positively identified child."""
+    native = configured_native_reader(plan);metadata = process_reader(plan)
+    if any(name.split(".")[0] in {"jax", "jaxlib", "numpy", "torch"} for name in sys.modules):
+        raise RuntimeError("the configured native waiter initialized a numerical runtime")
+    owner = native.context(directory, plan, metadata)
+    intent = metadata.validate_intent(directory, plan, metadata.read_json(directory / "profile_process_intent.json"))
+    if owner["command"] != intent["waiter_command"]:raise ValueError("the native waiter source command changed")
+    deadline = native.deadline(directory, plan, metadata)
+    active = native.bootstrap(directory, plan, "waiter", metadata, owner, deadline=deadline)
+    observer = active.observer;parent = None;child = None;child_handle = None;launched = None
+    try:
+        parent = observer.parent_handle(intent)
+        deadline.remaining("work")
+        child = subprocess.Popen(intent["capture_command"], close_fds=True, pass_fds=())
+        child_handle = observer.open_process_handle(child.pid)
+        while not (directory / "capture_identity.json").exists():
+            if child.poll() is not None or observer.handle_exited(parent):
+                raise RuntimeError("the native capture or pinned original producer exited before its claim")
+            time.sleep(min(.05, deadline.remaining("work")))
+        claim = observer.validate_claim(directory, plan, intent, observer.read_json(directory / "capture_identity.json"))
+        actual = observer.ProcReader().snapshot(child.pid, os.getuid(), owner["cgroup"])
+        if (child.pid != claim["pid"] or actual["parent_pid"] != owner["pid"]
+                or observer.stable(actual) != observer.stable(claim["process"]) or observer.handle_exited(child_handle)):
+            raise ValueError("the native waiter actual Popen child differs from its pinned source-bound claim")
+        launched = {"schema_version": 1, "challenge": intent["challenge"], "waiter": owner, "child": actual,
+            "command": intent["capture_command"], "claim": observer.receipt(directory / "capture_identity.json")}
+        observer.publish(directory / "capture_actual_launch.json", launched)
+        while child.poll() is None:
+            if observer.handle_exited(parent):raise RuntimeError("the pinned native producer exited before the capture wait")
+            time.sleep(min(.05, deadline.remaining("work")))
+        returned = child.wait(timeout=deadline.timeout())
+        actual_wait_finished = time.time()
+        observer.publish(directory / "capture_actual_wait.json", {"schema_version": 1, "challenge": intent["challenge"],
+            "command": intent["capture_command"], "waited_pid": child.pid, "returncode": returned,
+            "exited_normally": returned >= 0, "interventions": [], "launch": observer.receipt(directory / "capture_actual_launch.json"),
+            "wait_semantics": "Popen.wait on this exact spawned capture Python",
+            "actual_wait_finished_at_seconds": actual_wait_finished})
+        if returned != 0:raise RuntimeError("the actual native-profile capture returned unsuccessfully")
+    except BaseException as error:
+        # The producer's closed scope retains all descendants, including an
+        # adopted capture. Never guess or signal a process by numeric PID here.
+        observer.publish(directory / "capture_waiter_failure.json", {"error": repr(error), "launched": launched,
+            "known_actual_child_pid": None if child is None else child.pid,
+            "actual_child_wait_completed": child is not None and child.returncode is not None,
+            "producer_scope_must_close_remaining_descendants": True, "scientific_credit": 0})
+        active.failure(error);raise
+    finally:
+        if child_handle is not None:observer.close_process_handle(child_handle)
+        if parent is not None:observer.close_process_handle(parent)
+    active.complete(native.completion_references(plan, "waiter"))
+    return returned
+
+
+def capture_configured_native_child(directory, plan):
+    """Keep the numerical child unchanged inside an explicit provider/release/timing envelope."""
+    native = configured_native_reader(plan);metadata = process_reader(plan)
+    owner = native.context(directory, plan, metadata)
+    intent = metadata.validate_intent(directory, plan, metadata.read_json(directory / "profile_process_intent.json"))
+    if owner["command"] != intent["capture_command"]:raise ValueError("the native capture source command changed")
+    deadline = native.deadline(directory, plan, metadata)
+    active = native.bootstrap(directory, plan, "capture", metadata, owner, deadline=deadline)
+    observer = active.observer;parent = None
+    try:
+        claim = observer.claim_self(directory, plan);parent = observer.parent_handle(intent)
+        while not os.path.lexists(directory / "capture_release.json"):
+            if observer.handle_exited(parent):raise RuntimeError("the pinned native producer disappeared before release")
+            time.sleep(min(.05, deadline.remaining("work")))
+        profiler = observer.read_json(directory / "profiler_process.json")
+        release = observer.read_json(directory / "capture_release.json")
+        if release != {**profiler, "capture_identity": claim,
+                "process_observation": observer.receipt(directory / "capture_process_observation.json")}:
+            raise ValueError("the native release differs from this exact source-bound child")
+        observer.validate_live_observation(directory, plan, claim);deadline.remaining("work")
+        observer.publish(directory / "capture_release_observed.json", {"release": observer.receipt(directory / "capture_release.json"),
+            "capture_identity": observer.receipt(directory / "capture_identity.json"), "observed_at_seconds": time.time(),
+            "scientific_credit": 0, "admission_granted": False})
+        support = measurement.producer_support(plan)
+        configuration_metadata = support.core().collect_metadata(plan, directory)
+        hardware = {"configured_isolation_metadata": configuration_metadata}
+        hardware["runtime_environment"] = training.enforce_runtime(plan["runtime_environment"], os.environ)
+        installed = observer.read_json(directory / "installed_backend.json")
+        payload_started = time.time();deadline.remaining("work")
+        _capture_core(directory, plan, hardware, installed)
+        payload_finished = time.time();deadline.remaining("work")
+        observer.publish(directory / "native_capture_payload_timing.json", {"payload_started_at_seconds": payload_started,
+            "payload_finished_at_seconds": payload_finished, "diagnostic_deadline": deadline.snapshot(),
+            "payload_kind": "original_full_profile_capture", "numerical_timestamps_reinterpreted": False,
+            "scientific_credit": 0, "admission_granted": False})
+    except BaseException as error:
+        active.failure(error);raise
+    finally:
+        if parent is not None:observer.close_process_handle(parent)
+    active.complete(native.completion_references(plan, "capture"))
 
 
 def capture_direct_owned_processes(directory, plan, held_descriptor):
@@ -999,6 +1284,8 @@ def parse_arguments(argv=None):
     operation.add_argument("--inspect-profile-tool", type=Path)
     parser.add_argument("--prepare-only", action="store_true")
     parser.add_argument("--configured-isolation-profile", type=Path)
+    parser.add_argument("--configured-native-process-qualification", type=Path)
+    parser.add_argument("--configured-native-process-review", type=Path)
     parser.add_argument("--target-qualification-record", type=Path)
     parser.add_argument("--target-qualification-review", type=Path)
     parser.add_argument("--direct-binding-profile", type=Path)
@@ -1024,7 +1311,7 @@ def parse_arguments(argv=None):
             or args.direct_owned_waiter_unit or args.direct_owned_capture_unit or args.inspect_profile_tool):
         if args.prepare_only or any(getattr(args, name) is not None for name in (*fields, "jaxtari_source_root", "seed_start",
                                                                               "minimum_updates", "maximum_active_seconds", "python", "configured_isolation_profile", "target_qualification_record", "target_qualification_review",
-                                                                              "direct_binding_profile", "direct_history_inputs", "direct_qualification_record", "direct_qualification_review", "direct_backend_image_record", "direct_confirmation_review")):
+                                                                              "direct_binding_profile", "direct_history_inputs", "direct_qualification_record", "direct_qualification_review", "direct_backend_image_record", "direct_confirmation_review", "configured_native_process_qualification", "configured_native_process_review")):
             parser.error("execution/tool inspection cannot override a prepared configuration")
         if args.direct_held_lock_fd is not None:
             if (args.capture_unit is None and args.direct_waiter_unit is None) or args.direct_held_lock_fd < 0:

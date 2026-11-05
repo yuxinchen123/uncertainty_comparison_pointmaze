@@ -1,0 +1,115 @@
+{
+  "actual_target_qualification": false,
+  "created_at_utc": "2026-11-05T14:40:03.742703+00:00",
+  "errors": [],
+  "failures": [],
+  "finished_at_seconds": 1793889603.742701,
+  "formal_profile_admission": false,
+  "freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-06-20_a4500-native-process-control_python-3.12_total-seconds-300_work-seconds-240_cleanup-seconds-60_admission-closed/.review_metadata/configured_native_process/corrected_union_source_freeze.json",
+    "sha256": "36524765c7fba07fad274b0ee170d03df05ead3ea2a1217ffbbfb22ecd84dd39"
+  },
+  "host": "slurm2",
+  "job_id": "6821437",
+  "kind": "configured_native_profile_plumbing_five_author_checks",
+  "passed": true,
+  "pid": 1093109,
+  "scientific_credit": 0,
+  "source_after": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_native_process.py": {
+      "mode": "0o660",
+      "sha256": "3b7bacf07c7a8d4eeafe74f0e5b4c8a02365ccaa32326ab430d3316d3891c54a"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_configured_native_process.py": {
+      "mode": "0o660",
+      "sha256": "90f4244bb08fb37998197d9000c1063d0b024455b274092a2e8793d9fbe8acc2"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_process.py": {
+      "mode": "0o660",
+      "sha256": "6177930cf35114405fc6dfca0c7738c26d897eb4aa3fc0eb5adeb39c75b55f77"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_tool_descendants.py": {
+      "mode": "0o660",
+      "sha256": "8fc3e6d870611a2a9e57825b5374a73050a6c98fc3d918f336619e1cfff48889"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/linux_pidfd_process_control.py": {
+      "mode": "0o660",
+      "sha256": "37754acfdf8f139eecc2e9bbac91ee56cc12069a77f237968fe713f8b5b81172"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/native_process_evidence.py": {
+      "mode": "0o660",
+      "sha256": "8e67bf42ad3f348d009ca793a16fcdfd5771f08e4ff70dfd88f348496bd6a35a"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py": {
+      "mode": "0o660",
+      "sha256": "1833e05b42d680194e4a8da9cd2b487d3af7529285d1a9d550edc7d3b63f6279"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py": {
+      "mode": "0o660",
+      "sha256": "59aa781caeb66ceed38def4c279480d65f437a949676f7150056a693e272c22a"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_configured_native_process.py": {
+      "mode": "0o660",
+      "sha256": "634e129c66bdc3d7fde37de692f19964ee4c6ea637cb770b165561e539ae91ed"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_configured_native_profile_plumbing.py": {
+      "mode": "0o660",
+      "sha256": "715154b3d03234c24c7cac55f8b9dd035948c1b10fef1dabcc62ae10234b3024"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_configured_native_saved_roles.py": {
+      "mode": "0o660",
+      "sha256": "982ecf0c323b7f0c568f4a94464d43a594a7ccf2d9ec0dc34629a1912051c3f4"
+    }
+  },
+  "source_before": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_native_process.py": {
+      "mode": "0o660",
+      "sha256": "3b7bacf07c7a8d4eeafe74f0e5b4c8a02365ccaa32326ab430d3316d3891c54a"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_configured_native_process.py": {
+      "mode": "0o660",
+      "sha256": "90f4244bb08fb37998197d9000c1063d0b024455b274092a2e8793d9fbe8acc2"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_process.py": {
+      "mode": "0o660",
+      "sha256": "6177930cf35114405fc6dfca0c7738c26d897eb4aa3fc0eb5adeb39c75b55f77"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_tool_descendants.py": {
+      "mode": "0o660",
+      "sha256": "8fc3e6d870611a2a9e57825b5374a73050a6c98fc3d918f336619e1cfff48889"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/linux_pidfd_process_control.py": {
+      "mode": "0o660",
+      "sha256": "37754acfdf8f139eecc2e9bbac91ee56cc12069a77f237968fe713f8b5b81172"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/native_process_evidence.py": {
+      "mode": "0o660",
+      "sha256": "8e67bf42ad3f348d009ca793a16fcdfd5771f08e4ff70dfd88f348496bd6a35a"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py": {
+      "mode": "0o660",
+      "sha256": "1833e05b42d680194e4a8da9cd2b487d3af7529285d1a9d550edc7d3b63f6279"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py": {
+      "mode": "0o660",
+      "sha256": "59aa781caeb66ceed38def4c279480d65f437a949676f7150056a693e272c22a"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_configured_native_process.py": {
+      "mode": "0o660",
+      "sha256": "634e129c66bdc3d7fde37de692f19964ee4c6ea637cb770b165561e539ae91ed"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_configured_native_profile_plumbing.py": {
+      "mode": "0o660",
+      "sha256": "715154b3d03234c24c7cac55f8b9dd035948c1b10fef1dabcc62ae10234b3024"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_configured_native_saved_roles.py": {
+      "mode": "0o660",
+      "sha256": "982ecf0c323b7f0c568f4a94464d43a594a7ccf2d9ec0dc34629a1912051c3f4"
+    }
+  },
+  "source_unchanged": true,
+  "started_at_seconds": 1793889603.3950486,
+  "step_id": "108",
+  "synthetic_upstream_and_tool_premises": true,
+  "tests_run": 5
+}

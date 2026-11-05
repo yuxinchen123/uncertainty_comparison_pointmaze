@@ -1,0 +1,31 @@
+{
+  "kind": "configured_native_author_helper_source_freeze",
+  "base": "ba07a961eeb00f368db70416fd69a9a9313df9b9",
+  "scope": "source-only; no target qualification or admission",
+  "files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_native_process.py": {
+      "sha256": "2092ba878d2d736c7cc39bf4add7749243f0fbf990cfe2fc231f982eb00a8d5d",
+      "mode": "0o660"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_configured_native_process.py": {
+      "sha256": "4112b0eaf75f3ccd8b9f8de3c8c29b1eda8c83a02e0a1b0e51e3cc016a27d521",
+      "mode": "0o660"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/native_process_evidence.py": {
+      "sha256": "13101d9ea594ea3b65eabfe1b7227fa396ded5731e471494233059b644d4511a",
+      "mode": "0o660"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py": {
+      "sha256": "1833e05b42d680194e4a8da9cd2b487d3af7529285d1a9d550edc7d3b63f6279",
+      "mode": "0o660"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_tool_descendants.py": {
+      "sha256": "8fc3e6d870611a2a9e57825b5374a73050a6c98fc3d918f336619e1cfff48889",
+      "mode": "0o660"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_configured_native_process.py": {
+      "sha256": "4d17663bb1de19853b3e603224ea5f19d741f8ec5aced3c9fd75f7c0d554f5ab",
+      "mode": "0o660"
+    }
+  }
+}

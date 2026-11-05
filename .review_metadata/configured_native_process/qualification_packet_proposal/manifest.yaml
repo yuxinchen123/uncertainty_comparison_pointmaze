@@ -1,0 +1,38 @@
+{
+  "kind": "configured_native_nsight_process_diagnostic",
+  "proposal_only": true,
+  "source_publication_required": true,
+  "reviewed_helper_commit": null,
+  "actual_job_id": null,
+  "actual_step_id": null,
+  "gpu_uuid": null,
+  "selected_python": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+  "hardware_class": "jaguar03_rtx_a4500",
+  "requested_gpu_count": 1,
+  "requested_cpu_count": 1,
+  "host_memory_gib": 2,
+  "maximum_active_seconds": 240,
+  "diagnostic_time_budget": {
+    "schema_version": 1,
+    "work_seconds": 240,
+    "cleanup_seconds": 60,
+    "total_seconds": 300
+  },
+  "environment_transitions": 0,
+  "training_updates": 0,
+  "scientific_credit": 0,
+  "profile_credit": 0,
+  "physical_gres_mapping_verified": false,
+  "kernel_device_enforcement_verified": false,
+  "admission_granted": false,
+  "standing_gpu_descriptor_held": false,
+  "packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-06-39_native-process-control_jaguar03_python-3.12_gpu-count-1_processor-count-1_host-memory-gib-2_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0",
+  "data_unit": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-06-39_native-process-control_jaguar03_python-3.12_gpu-count-1_processor-count-1_host-memory-gib-2_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0",
+  "profile_tool_record": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/serval02_nsight_tool_record_verified_bytes_2026-11-05.json",
+    "sha256": "bacba88c05986571f8f7f6322a47f11cf0d18b5982382dc8596e86c34ee909f6"
+  },
+  "reservation": "sl5nw_168",
+  "reservation_end_utc_last_recorded": "2026-11-17T05:00:01Z",
+  "fresh_exact_reservation_check_required": true
+}

@@ -1,0 +1,28 @@
+{
+  "kind": "root_only_configured_native_diagnostic_submission_proposal",
+  "proposal_only": true,
+  "submission_command": [
+    "sbatch",
+    "--hold",
+    "--parsable",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-06-39_native-process-control_jaguar03_python-3.12_gpu-count-1_processor-count-1_host-memory-gib-2_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/job.sbatch"
+  ],
+  "release_command_before_actual_id_exists": null,
+  "state": "no job submitted, no packet promoted, no data unit prepared",
+  "exact_ledger_row_after_actual_id": [
+    null,
+    "configured_native_nsight_process_diagnostic",
+    null,
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-06-39_native-process-control_jaguar03_python-3.12_gpu-count-1_processor-count-1_host-memory-gib-2_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/job.sbatch"
+  ],
+  "ordered_steps": [
+    "Independently approve the final union source and publish it with standard proposal records.",
+    "Create a clean actual source checkout and record its exact commit. Run the canonical metadata-only preparer once for this fresh unit, then publish actual generated standard records/plan/helper hashes.",
+    "Root freshly checks the exact reservation and resources; if absent, prepare a distinct unreserved normal-QOS packet rather than editing an attempted frozen plan.",
+    "Independently review exact held-submit and release utilities derived from the previously accepted single-submission mechanism, including the new exact kind and packet. Publish before calling them.",
+    "Submit once held. Append and fsync the real ID to both campaign UVA ID ledgers and the exact TSV row before publishing the actual submission receipt.",
+    "Review and publish the exact returned ID release command. Release once, fsync the actual release receipt, then atomically publish owned_launch_inputs.json using actual plan/submission/release refs.",
+    "Verify current persistent monitoring after submission. Collect exact actual numeric step/accounting, raw process contracts, all three native role records, actual tool waits, child-scope ECHILD and descriptor closures.",
+    "Independent owned-compute raw review may qualify the process-control component only. Keep formal profiling admission and original CUDA/backend/source/configuration gates separate."
+  ]
+}

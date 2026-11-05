@@ -84,10 +84,14 @@ def bounded(directory, name):
 
 class OwnedToolScope:
     """Adopt orphans from a single closed tool-spawn scope and require kernel terminal proof."""
-    def __init__(self, directory, plan, observer, owner, check_descriptor, *, grace_seconds=120, deadline=None):
+    def __init__(self, directory, plan, observer, owner, check_descriptor, *, grace_seconds=120, deadline=None, custody_kind='standing_gpu_descriptor'):
         """Use a fresh single-threaded producer, exact tool path and already verified standing descriptor."""
         self.directory, self.plan, self.observer = Path(directory), plan, observer
         self.owner, self.check_descriptor = owner, check_descriptor
+        require(custody_kind in ('standing_gpu_descriptor', 'configured_allocation_process'), 'one explicit process custody kind is required')
+        require(custody_kind == 'standing_gpu_descriptor' or 'configured_native_process_control' in plan,
+            'configured allocation custody requires its explicit native plan policy')
+        self.custody_kind = custody_kind
         self.uid, self.pid, self.birth, self.cgroup = owner["uids"][0], owner["pid"], owner["process_start_time"], owner["cgroup"]
         require(('diagnostic_time_budget' in plan) == (deadline is not None),
             'a declared diagnostic scope requires its actual shared deadline')
@@ -126,7 +130,8 @@ class OwnedToolScope:
             "producer_pid": self.pid, "producer_birth": self.birth, "subreaper_active": self.active,
             "known_nodes": len(self.nodes), "known_roots": len(self.roots), "events": self.events,
             "interventions": self.interventions, "read_errors": self.read_errors,
-            "standing_descriptor_must_remain_open": not self.closed, "scientific_credit": 0,
+            "standing_descriptor_must_remain_open": not self.closed and self.custody_kind == 'standing_gpu_descriptor', "scientific_credit": 0,
+            **({} if self.custody_kind == 'standing_gpu_descriptor' else {'configured_allocation_process_custody_must_remain': not self.closed}),
             "native_process_control_only": True, "gpu_or_cuda_qualification": False}
         path = self.directory / "tool_descendant_cleanup_progress.json"
         self.sequence += 1
@@ -321,6 +326,7 @@ class OwnedToolScope:
             "native_bootstrap": self.native_bootstrap, "previous_subreaper": self.previous,
             "set_subreaper": changed, "verified_subreaper": verified, "single_threaded_closed_scope": True,
             "established_at_seconds": time.time(), "native_request_counts_before": self.request_counts_before}
+        if self.custody_kind != 'standing_gpu_descriptor':self.baseline['custody_kind'] = self.custody_kind
         if self.deadline is not None:self.baseline['diagnostic_deadline'] = self.deadline.snapshot()
         self.observer.publish(self.directory / "tool_descendant_scope_begin.json", self.baseline)
         self.progress("scope_established", force=True)
@@ -518,6 +524,10 @@ class OwnedToolScope:
                 and not any(row["kind"].startswith("standing_descriptor") for row in self.read_errors),
             "all_historical_descendants_identified": False, "scientific_credit": 0, "gpu_or_cuda_qualification": False,
             "native_request_counts_before_restore": dict(_REQUEST_COUNTS)}
+        if self.custody_kind == 'configured_allocation_process':
+            self.terminal['custody_kind'] = self.custody_kind
+            self.terminal['all_tool_descendants_exited_before_allocation_custody_release'] = self.terminal.pop(
+                'all_tool_descendants_exited_before_descriptor_release')
         if self.deadline is not None:
             final_snapshot = self.deadline.snapshot()
             within = self.diagnostic_budget_status(kernel_closure_verified=True, snapshot=final_snapshot)
@@ -592,7 +602,8 @@ def validate_saved_scope(directory, plan, observer, producer, root_pid, root_bir
     require(type(terminal.get("schema_version")) is int and terminal["schema_version"] == 1
         and terminal.get("kind") == "direct_tool_descendant_kernel_terminal_closure" and terminal["begin"] == begin_ref
         and terminal["producer_pid"] == producer["pid"] and terminal["producer_birth"] == producer["process_start_time"]
-        and terminal.get("all_tool_descendants_exited_before_descriptor_release") is True
+        and terminal.get('all_tool_descendants_exited_before_allocation_custody_release'
+            if 'configured_native_process_control' in plan else 'all_tool_descendants_exited_before_descriptor_release') is True
         and terminal.get("interventions") == [] and terminal.get("read_errors") == [],
         "ordinary saved evidence requires actual complete descendant exit and uninterrupted producer custody")
     final = terminal["terminal"]
