@@ -1,0 +1,549 @@
+{
+  "base": "dcc4614a6cc96a7710eeb1ee48220fed4d58c9c4",
+  "files": [
+    {
+      "blob": "f6c660fb45115fd99c3ad75057eb1124531d7246",
+      "bytes": 4452,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_actual_cpu_6783003_349/actual_self_preflight.json",
+      "sha256": "2a9ccffc06c99f3770eb08c68abdd4562b01acf63c4ba8c41888430f5f83da05"
+    },
+    {
+      "blob": "95a41492fb5f876c350a15cb292dd13347ce8527",
+      "bytes": 16370,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_actual_cpu_6783003_349/actual_temporary_owned_child.json",
+      "sha256": "4001951d9ce2e36954ef4c113397749ac5dc19d8c257c2b3a5e4a54e2579ab01"
+    },
+    {
+      "blob": "89fc30ecfcd8a3980907703050dea24d89b37436",
+      "bytes": 4044,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_actual_cpu_6783003_349/synthetic_unsupported_kernel_response.json",
+      "sha256": "60a7e9a012b821e67cedd1fbcc319fb0ccf3318bcc06420c54a93eb811bacc7d"
+    },
+    {
+      "blob": "7ae88933128edeb1138157c11fed9013ed54317e",
+      "bytes": 4452,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_actual_cpu_6783003_351/actual_self_preflight.json",
+      "sha256": "1c9232bf0925d0d3bbf894ba485704f5e6a0d9ba627e099e8be775a5e6017d71"
+    },
+    {
+      "blob": "4b23fadd87685e831b170643f8ce5166791853b7",
+      "bytes": 16378,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_actual_cpu_6783003_351/actual_temporary_owned_child.json",
+      "sha256": "1e08e82606869cd793594ce46437bc740e607a327c93044a2e539a9389865fc2"
+    },
+    {
+      "blob": "8230202518ae395f735cdd214e3aa8453b368079",
+      "bytes": 4046,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_actual_cpu_6783003_351/synthetic_unsupported_kernel_response.json",
+      "sha256": "af398e1896b021edf2401aefd9f4a96d4f8a003e860287ab69afc2fe860c1832"
+    },
+    {
+      "blob": "f6c660fb45115fd99c3ad75057eb1124531d7246",
+      "bytes": 4452,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_author_1_preserved_source_and_verifier_failure/.review_metadata/linux_pidfd_actual_cpu_6783003_349/actual_self_preflight.json",
+      "sha256": "2a9ccffc06c99f3770eb08c68abdd4562b01acf63c4ba8c41888430f5f83da05"
+    },
+    {
+      "blob": "95a41492fb5f876c350a15cb292dd13347ce8527",
+      "bytes": 16370,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_author_1_preserved_source_and_verifier_failure/.review_metadata/linux_pidfd_actual_cpu_6783003_349/actual_temporary_owned_child.json",
+      "sha256": "4001951d9ce2e36954ef4c113397749ac5dc19d8c257c2b3a5e4a54e2579ab01"
+    },
+    {
+      "blob": "89fc30ecfcd8a3980907703050dea24d89b37436",
+      "bytes": 4044,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_author_1_preserved_source_and_verifier_failure/.review_metadata/linux_pidfd_actual_cpu_6783003_349/synthetic_unsupported_kernel_response.json",
+      "sha256": "60a7e9a012b821e67cedd1fbcc319fb0ccf3318bcc06420c54a93eb811bacc7d"
+    },
+    {
+      "blob": "3ca4c7ce49160f2f8aeab7d5352de75f423210f1",
+      "bytes": 3475,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_author_1_preserved_source_and_verifier_failure/.review_metadata/linux_pidfd_author_first_stderr.raw",
+      "sha256": "90dd6335252cd14cdf06995f8545814e401f60df0b936155620360ca4411338b"
+    },
+    {
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "bytes": 0,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_author_1_preserved_source_and_verifier_failure/.review_metadata/linux_pidfd_author_first_stdout.raw",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "blob": "ceb687ba5b4df2bf77fb578eee6c68ca3712fd4d",
+      "bytes": 27396,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_author_1_preserved_source_and_verifier_failure/.review_metadata/linux_pidfd_native_source_freeze_author_1.json",
+      "sha256": "a4984923c51fc681b4d808d12b45460bb666662e78599d4985cd9303e73fe9cc"
+    },
+    {
+      "blob": "e636e8112bad7273064051a6194a78ba858decbc",
+      "bytes": 2458,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_author_1_preserved_source_and_verifier_failure/.review_metadata/run_linux_pidfd_native_author_tests.py",
+      "sha256": "8e67024c60f0a530c99eac4cbfcd2e6aabf0227971c9d6d3a0eee9439e38a544"
+    },
+    {
+      "blob": "be5ff3b7b87531fc4a2fe1df5fdd762b1175f5b3",
+      "bytes": 16362,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_author_1_preserved_source_and_verifier_failure/10_jax_exploration_platform/scripts/atari_pixel_campaign/linux_pidfd_process_control.py",
+      "sha256": "1ad04ff92d043c18c127d42a5155e55e55e516525fa094c5897b133c05a8e077"
+    },
+    {
+      "blob": "ffd6f5df3caedda0339eecba352f8ee24711d555",
+      "bytes": 38506,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_author_1_preserved_source_and_verifier_failure/10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py",
+      "sha256": "0fe777e0ff0d3015a1cb90df0c77014c1d68483d94193f7e5b668b867079c6f1"
+    },
+    {
+      "blob": "d97f703b402ccd1472e24538a7fba09ad0183407",
+      "bytes": 9910,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_author_1_preserved_source_and_verifier_failure/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_linux_pidfd_process_control.py",
+      "sha256": "a0eec4d80d2c3e53ba2210cdaaa3e6f8ca7de6ce81fa89662ad3bc08928059b0"
+    },
+    {
+      "blob": "708b06817311488e2fa3ea3771a7db40f9fdd6c4",
+      "bytes": 2366,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_author_1_preserved_source_and_verifier_failure/preservation_manifest.json",
+      "sha256": "23a722a2a882faafd2a791608d862f761bfac699274435e5e949d1172c606e93"
+    },
+    {
+      "blob": "5f09e272112363339fa301bb5430dff5d13f6b43",
+      "bytes": 1035,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_author_6783003_351.json",
+      "sha256": "109ff22ac46e948bcf0ad7bf97a500719204e155c02be7cca1f16b53c6856d57"
+    },
+    {
+      "blob": "3ca4c7ce49160f2f8aeab7d5352de75f423210f1",
+      "bytes": 3475,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_author_first_stderr.raw",
+      "sha256": "90dd6335252cd14cdf06995f8545814e401f60df0b936155620360ca4411338b"
+    },
+    {
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "bytes": 0,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_author_first_stdout.raw",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "blob": "b7e91fe9bcb59d34501eb81d6cb4167bd348bb38",
+      "bytes": 7201,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_author_second_stderr.raw",
+      "sha256": "f2ffe481451c95a6f274a58a105e0803c2c35acbddc58d59e37ac186a6c666f9"
+    },
+    {
+      "blob": "e396486214ae5212b88e3dc4e7649cc74086cc09",
+      "bytes": 323,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_author_second_stdout.raw",
+      "sha256": "9d6527f7289ba2ba33e1a4cbb2534b0c3daa09a8e13db75628106b117a7010bb"
+    },
+    {
+      "blob": "9b937eb0b7ca7f49b8df111b6637d43d4a07f87c",
+      "bytes": 17101,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_corrected_actual_cpu_6783003_362/actual_exhausted_ordinary_limit_child_cleanup.json",
+      "sha256": "380930f7c49129033a5e02d07ff413c44824e5856d2afc12486d5ede11f6d0b8"
+    },
+    {
+      "blob": "8703017336a7517e9fad3ff336a5a7b63ef67d86",
+      "bytes": 5900,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_corrected_actual_cpu_6783003_362/actual_exhausted_ordinary_limit_close.json",
+      "sha256": "f2550c17815e2ee6c3ce2766efd1ff4f186de069b2c6f3a606f5b57ea961708c"
+    },
+    {
+      "blob": "8c20d91d91a92869f2f0191f1416ce0c967a674b",
+      "bytes": 5166,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_corrected_actual_cpu_6783003_362/actual_self_preflight.json",
+      "sha256": "ab7a9de20d0f23c84457045c22854d21a95dc0590e35a3cfca807aee47047aef"
+    },
+    {
+      "blob": "0ea1feb64838b3fa71660814264d3e61d38d893c",
+      "bytes": 17324,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_corrected_actual_cpu_6783003_362/actual_temporary_owned_child.json",
+      "sha256": "ca9ec72ba1db41caeb81c6342f01b8f70e82f977b5e64f4143db6f26cbf86a94"
+    },
+    {
+      "blob": "f6e09f98ba9b54d32d4dbe70b252702b03c01c3c",
+      "bytes": 4716,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_corrected_actual_cpu_6783003_362/synthetic_unsupported_kernel_response.json",
+      "sha256": "fa3010a7c7441250163e6d7c088f5bd485f366b2d2932c8e193efde0b793edbb"
+    },
+    {
+      "blob": "0add1245c2a9e0292c1f4fdf74df729e087e76d1",
+      "bytes": 1046,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_corrected_author_6783003_362.json",
+      "sha256": "47ce0ea47b71b494a8df478dea041213bd8e7456318131c4c3860cca247586b9"
+    },
+    {
+      "blob": "7f72e10258a207822c392dfdd5d78281aa48eb88",
+      "bytes": 7244,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_native_author_handoff.json",
+      "sha256": "55f46bdf1ec221b9226ea894c65117e9d188279510245b6ae5e822bd00dc2a70"
+    },
+    {
+      "blob": "55196d2c63b5e9c2deca9b05c6a8820da699e246",
+      "bytes": 6333,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_native_corrected_author_handoff.json",
+      "sha256": "c7a87be923ec64b6567eee165088e69c418e8581a2e70a8e50ec1f7f75283295"
+    },
+    {
+      "blob": "678ac8df9a73662e4118481d322f511565e6f616",
+      "bytes": 24862,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_native_corrected_independent_364.json",
+      "sha256": "1e6e7f693fc57bd91e0a65be732127bbef013eabdd1f3ce9db15c280d77bb130"
+    },
+    {
+      "blob": "004276fa921b73bb26640d19a6e7f2070de8ba13",
+      "bytes": 753,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_native_corrected_independent_cpu_364/actual_kernel_held_executable_descriptor_join.json",
+      "sha256": "90a3e2062f4f62c51eda0251d20be242cfd141dc70b7edfd7124f005e9d1a355"
+    },
+    {
+      "blob": "0ff76707f6a28a597d6dccba6be95daa2fc4c74f",
+      "bytes": 16777,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_native_corrected_independent_cpu_364/actual_own_pidfd_substitution_refused.json",
+      "sha256": "b1c035c549d930ee81f69e22a67c9110341e92edefc2069936fe24aaf65a45b7"
+    },
+    {
+      "blob": "d1cf70ea90d833d5033626ef03281d28ee2ff640",
+      "bytes": 6645,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_native_corrected_independent_cpu_364/call_budget_boundary.json",
+      "sha256": "c5bc85805fc3ae9d5456196ac679b08bec4c4634c9bd45907235d6bd011f0080"
+    },
+    {
+      "blob": "82ff3bdfe2643102e8b567c81d195ca2732f6ed5",
+      "bytes": 17410,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_native_corrected_independent_cpu_364/independent_focused_author_cases/actual_exhausted_ordinary_limit_child_cleanup.json",
+      "sha256": "744a116c143710a80a81a6b9876bbae5a05e4839daf35c63c80b18c85673713c"
+    },
+    {
+      "blob": "0ad5bd4746585b18f7ad7488d43ff6761d39d802",
+      "bytes": 5902,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_native_corrected_independent_cpu_364/independent_focused_author_cases/actual_exhausted_ordinary_limit_close.json",
+      "sha256": "c0e0d94d952c53c7ff5791aa7ca7a599369bf7c21f9805e78b27f50bda1c9913"
+    },
+    {
+      "blob": "59f230904665a79a63c689acda1086837b5e4b26",
+      "bytes": 5165,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_native_corrected_independent_cpu_364/independent_focused_author_cases/actual_self_preflight.json",
+      "sha256": "307c807bbd622d261406e8ab36f1d8ed68ae41209429340d676a80e728d221ea"
+    },
+    {
+      "blob": "0b2005a9df6aba57873e078a221624f98a33ef21",
+      "bytes": 17633,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_native_corrected_independent_cpu_364/independent_focused_author_cases/actual_temporary_owned_child.json",
+      "sha256": "35dda299aa9e3678e8ee9d95643d18e1a9950f738d1f704cb2697bb0928e97b5"
+    },
+    {
+      "blob": "383f395c9b867e97e900a5a84a156b258b4448f0",
+      "bytes": 4716,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_native_corrected_independent_cpu_364/independent_focused_author_cases/synthetic_unsupported_kernel_response.json",
+      "sha256": "a1e1b66f3a8263716c3c759fd6af078de613f30d1fa35d2489f90a6de972346a"
+    },
+    {
+      "blob": "6b4eff64a8073fb48ec117d7129fe2fb7d9ca103",
+      "bytes": 639,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_native_corrected_independent_cpu_364/selected_executable_image_boundary.json",
+      "sha256": "806307879cd5b3c1d9b7289c64a85dd2379a4cb9bed6d0178fd51d095cf4e8e6"
+    },
+    {
+      "blob": "987bae4e4d499c01551289827a6a8dde3d9500c8",
+      "bytes": 5668,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_native_corrected_independent_stderr.raw",
+      "sha256": "327d53ed09d9d7eecc43e1a348f31d70403454d65c91ab19926c20abfd2c2c37"
+    },
+    {
+      "blob": "264a2781377234ff18b42ec82199e8ffadb9b2a8",
+      "bytes": 370,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_native_corrected_independent_stdout.raw",
+      "sha256": "6e35c11cdb84f6f84d84632328271a767153a2a20ddd09ba58479154a3929123"
+    },
+    {
+      "blob": "d8f17bdaa273d78e06596ac2a8b2324477c5d691",
+      "bytes": 28890,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_native_corrected_source_freeze_author_1.json",
+      "sha256": "e86c7c59a992400082c693c3b954000d83181d4a28c07610ec57adf9b2ce95a3"
+    },
+    {
+      "blob": "133376a332c3085a0ad7771386b3ad8dc8e33cde",
+      "bytes": 28890,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_native_corrected_source_freeze_author_2.json",
+      "sha256": "16abb944415412b692a26a43601b6c3577d4e83a14f5f45e09611335f0a0aff4"
+    },
+    {
+      "blob": "0155b7eff5ad655bbd67047bd33d6dc4b62ce954",
+      "bytes": 21123,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_native_independent_354.json",
+      "sha256": "718658b5dbe2a93967d389b8f88ab834196a35871e33a3851e051561a4b7282b"
+    },
+    {
+      "blob": "30713d5e3e561476996f9c4724eae3648017a62f",
+      "bytes": 5856,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_native_independent_cpu_354/call_budget_boundary.json",
+      "sha256": "ad0824e754c240af1d72f314d3ccff643f58824388364f3667e58c651710175d"
+    },
+    {
+      "blob": "c8e8655860290658c7682dc50b5e9323c46054cf",
+      "bytes": 4451,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_native_independent_cpu_354/independent_original_ten_cases/actual_self_preflight.json",
+      "sha256": "7589a9eb5d03438dcc3e88260abedaf93144614ba1f68001e1a4faa87fbec6ba"
+    },
+    {
+      "blob": "ea707c1d87aa0fc70373add0d9ca1e7c740ba21b",
+      "bytes": 16671,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_native_independent_cpu_354/independent_original_ten_cases/actual_temporary_owned_child.json",
+      "sha256": "442f1a898c911299b15835e14fc63a1a92e187f6557ddc8909925c95b5fd285e"
+    },
+    {
+      "blob": "070a2b8b10bdfd201d84fcae787919e61607debe",
+      "bytes": 4046,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_native_independent_cpu_354/independent_original_ten_cases/synthetic_unsupported_kernel_response.json",
+      "sha256": "825be84ff88140f1672135f819f093f248eaf5c0604d4504b6170f98f7ed2a65"
+    },
+    {
+      "blob": "4a2707fd3363f57ad1fabc7a8eeedc61b57b157f",
+      "bytes": 763,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_native_independent_cpu_354/selected_executable_image_boundary.json",
+      "sha256": "37f85976cf9ab2b6ea517a4504078f3944c6fb5a21901967c9bbd1f4a6dd34ce"
+    },
+    {
+      "blob": "582789ed4997dd1dbcc0da7240ca45656530e6a7",
+      "bytes": 5527,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_native_independent_stderr.raw",
+      "sha256": "486be7d15641384cf57514b4e86cbd7015c198a934438db6c2e4d5564f87a5b2"
+    },
+    {
+      "blob": "af7ac91867a43530754f7c8c185d315940546b13",
+      "bytes": 361,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_native_independent_stdout.raw",
+      "sha256": "2e906e1f51dbdf1c4d77d933c07063c3c7fec2eb504eadf20c2b4cfef409a6e2"
+    },
+    {
+      "blob": "4b73747a0b85e582e6b32433fb7632e4878d140f",
+      "bytes": 7359,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_native_publication_first_paths_before_permission_correction.txt",
+      "sha256": "fa15a7ba7ff09263ff74d6654ccde363e3d9eaa38cd197ba4036af2b1b66ef27"
+    },
+    {
+      "blob": "04dd179689f3d92bbccd9456d006bae1705c3302",
+      "bytes": 845,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_native_publication_first_permission_assertion.json",
+      "sha256": "0241bb7de9cf06d51719afd09b1b95537e91c4e71c3786fe001664c1308403c6"
+    },
+    {
+      "blob": "ddf0a6dee975c0b760e228a1e71d68770e9cfb52",
+      "bytes": 7532,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_native_publication_paths.txt",
+      "sha256": "d1fd4634607229beae46aabcdb1e1092cec94ea3a08349bbe7828bc313d48b84"
+    },
+    {
+      "blob": "b5ba7b28ceeccf20398460354c644619611b0c13",
+      "bytes": 22261,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_native_publication_roster.json",
+      "sha256": "8eaaeac2186da127f87faccab64f86f6f93945da7873fbc6c6f541af31f81bab"
+    },
+    {
+      "blob": "7f72e10258a207822c392dfdd5d78281aa48eb88",
+      "bytes": 7244,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_native_rejected_author_2_preserved_before_corrections/linux_pidfd_native_author_handoff.json",
+      "sha256": "55f46bdf1ec221b9226ea894c65117e9d188279510245b6ae5e822bd00dc2a70"
+    },
+    {
+      "blob": "0155b7eff5ad655bbd67047bd33d6dc4b62ce954",
+      "bytes": 21123,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_native_rejected_author_2_preserved_before_corrections/linux_pidfd_native_independent_354.json",
+      "sha256": "718658b5dbe2a93967d389b8f88ab834196a35871e33a3851e051561a4b7282b"
+    },
+    {
+      "blob": "4c054d1875c0d5b9d346a20854bfbcc0ba79481f",
+      "bytes": 28497,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_native_rejected_author_2_preserved_before_corrections/linux_pidfd_native_source_freeze_author_2.json",
+      "sha256": "69679c24324b306d3bbd1bc92188767b37846848f988dac642a2fb307ae20fb1"
+    },
+    {
+      "blob": "d3334237e45e503e317e56cabbf13a35bfd605c3",
+      "bytes": 3134,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_native_rejected_author_2_preserved_before_corrections/preservation_manifest.json",
+      "sha256": "72c63438542643b95bdc487ee0846ba48d7a55aae662fc2b000005418329a8c7"
+    },
+    {
+      "blob": "441d18756dbaa37fd30f7cffe7f4ccf011ffdf52",
+      "bytes": 16832,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_native_rejected_author_2_preserved_before_corrections/source/10_jax_exploration_platform/scripts/atari_pixel_campaign/linux_pidfd_process_control.py",
+      "sha256": "a0ef3aba6876ffbbb525a8d36df0d3eea8e8e301580ea4fd4eb5c28046fae65b"
+    },
+    {
+      "blob": "ffd6f5df3caedda0339eecba352f8ee24711d555",
+      "bytes": 38506,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_native_rejected_author_2_preserved_before_corrections/source/10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py",
+      "sha256": "0fe777e0ff0d3015a1cb90df0c77014c1d68483d94193f7e5b668b867079c6f1"
+    },
+    {
+      "blob": "0e9d67b1acd9848d57948789433a0338e52dcf70",
+      "bytes": 10926,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_native_rejected_author_2_preserved_before_corrections/source/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_linux_pidfd_process_control.py",
+      "sha256": "458d7b559b72e45d8ebadfd84dbe66f0be767639ec55b22ff364fd16833612f9"
+    },
+    {
+      "blob": "8924e8d696c4298fcc9dac97a3e98c0223bd9be1",
+      "bytes": 3250,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_native_remaining_integration.json",
+      "sha256": "9ad53e93c99e731638b418172406f75f5139822ff253f30ea4c5087cb4073bb8"
+    },
+    {
+      "blob": "ceb687ba5b4df2bf77fb578eee6c68ca3712fd4d",
+      "bytes": 27396,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_native_source_freeze_author_1.json",
+      "sha256": "a4984923c51fc681b4d808d12b45460bb666662e78599d4985cd9303e73fe9cc"
+    },
+    {
+      "blob": "4c054d1875c0d5b9d346a20854bfbcc0ba79481f",
+      "bytes": 28497,
+      "mode": "100644",
+      "path": ".review_metadata/linux_pidfd_native_source_freeze_author_2.json",
+      "sha256": "69679c24324b306d3bbd1bc92188767b37846848f988dac642a2fb307ae20fb1"
+    },
+    {
+      "blob": "7472db7e0068cf45885c6670039a236c5f67c501",
+      "bytes": 2631,
+      "mode": "100644",
+      "path": ".review_metadata/observe_selected_python_native_pidfd_capabilities.py",
+      "sha256": "e12d5bb014b4cd9a7b119b85100b0a37c1445cfb0d4758df64099f58abc5e3a1"
+    },
+    {
+      "blob": "f88874fd403e8e08cf4aa9684af0ab31644eb666",
+      "bytes": 3006,
+      "mode": "100644",
+      "path": ".review_metadata/run_linux_pidfd_native_author_second_tests.py",
+      "sha256": "2a04ca541b27d2c790c4a6b7933c3d437537087ab389dcdd8c38c6cd8b920710"
+    },
+    {
+      "blob": "e636e8112bad7273064051a6194a78ba858decbc",
+      "bytes": 2458,
+      "mode": "100644",
+      "path": ".review_metadata/run_linux_pidfd_native_author_tests.py",
+      "sha256": "8e67024c60f0a530c99eac4cbfcd2e6aabf0227971c9d6d3a0eee9439e38a544"
+    },
+    {
+      "blob": "8f9589684da4203a92db428e3ca5af2873cff795",
+      "bytes": 3036,
+      "mode": "100644",
+      "path": ".review_metadata/run_linux_pidfd_native_corrected_author_tests.py",
+      "sha256": "8bfc298a8c522409bb46c25a715dbc5c214eef03cadaf569caea7d985ec7658c"
+    },
+    {
+      "blob": "b926d26ca6aeb27ccfd0d596c536d4346ff4bac0",
+      "bytes": 15006,
+      "mode": "100644",
+      "path": ".review_metadata/run_linux_pidfd_native_corrected_independent_review.py",
+      "sha256": "50e27c4a38277bbdad6e2b3307a992e2473a5b748cdcbb0a7b486edf48056aaa"
+    },
+    {
+      "blob": "4c0b7562d9796f21a1ecc08423bd1f7d9885d4fe",
+      "bytes": 10384,
+      "mode": "100644",
+      "path": ".review_metadata/run_linux_pidfd_native_independent_review.py",
+      "sha256": "35b08ea9c4f8bf1b30dd2512a5d0c4c5abf42497f1175595d2259e23909caeef"
+    },
+    {
+      "blob": "8aece711c16ee7afc1723fc26ebc67298a68ab57",
+      "bytes": 78716,
+      "mode": "100644",
+      "path": ".review_metadata/selected_python_native_pidfd_capabilities_6783003_347.json",
+      "sha256": "bdc485671d30103cab3697b1cbb6c32b77f8575533d84ac6e642c83a33409c11"
+    },
+    {
+      "blob": "e976998a3436ec3d90774500a048fc45cc3754eb",
+      "bytes": 20023,
+      "mode": "100644",
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/linux_pidfd_process_control.py",
+      "sha256": "34b938ed0e395f612963ea659ac69b6d743a19c96828c8de741da1ae02f060d6"
+    },
+    {
+      "blob": "ffd6f5df3caedda0339eecba352f8ee24711d555",
+      "bytes": 38506,
+      "mode": "100644",
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py",
+      "sha256": "0fe777e0ff0d3015a1cb90df0c77014c1d68483d94193f7e5b668b867079c6f1"
+    },
+    {
+      "blob": "563424e70ad042998e0ba9d4b03d3e48069155b5",
+      "bytes": 18606,
+      "mode": "100644",
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_linux_pidfd_process_control.py",
+      "sha256": "246b25a6ab56f1ba4760e449fcd888a984c4fa4f1093a49247aa5aa29e5e10ea"
+    }
+  ],
+  "head_before": "b181e171bb1bdb792f3a7082b00f7186ebc9939a",
+  "incoming_commit": "fd71c21ad543bda41218f957be2ad8522397557a",
+  "incoming_count": 76,
+  "kind": "incoming_unwired_native_process_control_source",
+  "numerical_or_gpu_work_performed": false,
+  "operational_wiring_performed": false,
+  "passed": true,
+  "predicted_tree": "aa99107d90bea99e8482a5e57a1d6404ef6b62ab",
+  "private_index_read_tree_dry_runs": 2,
+  "protected_count": 662,
+  "protected_snapshot": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/direct_nsight_incoming_independent_2026-11-04-20-01-56_protected_before.json",
+  "scientific_credit": 0
+}

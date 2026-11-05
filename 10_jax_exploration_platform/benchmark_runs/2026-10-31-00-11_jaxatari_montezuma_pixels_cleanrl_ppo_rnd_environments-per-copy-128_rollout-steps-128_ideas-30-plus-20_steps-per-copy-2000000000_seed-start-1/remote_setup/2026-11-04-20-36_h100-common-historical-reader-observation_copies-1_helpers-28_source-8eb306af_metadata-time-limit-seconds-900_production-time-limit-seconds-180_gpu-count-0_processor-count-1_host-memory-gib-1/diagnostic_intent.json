@@ -1,0 +1,38 @@
+{
+  "at_utc": "2026-11-05T04:55:03.971012+00:00",
+  "automatic_retry_permitted": false,
+  "command": [
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-20-36_h100-common-historical-reader-observation_copies-1_helpers-28_source-8eb306af_metadata-time-limit-seconds-900_production-time-limit-seconds-180_gpu-count-0_processor-count-1_host-memory-gib-1/observe_guard_phases.py",
+    "--observed-guard-child"
+  ],
+  "diagnostic_timeout_seconds": 900,
+  "job_id": "6783003",
+  "kind": "one_distinct_metadata_phase_observation_attempt",
+  "parent": {
+    "all_uids": [
+      2618919,
+      2618919,
+      2618919,
+      2618919
+    ],
+    "birth_counter": "80962823",
+    "cgroup": "0::/system.slice/slurmstepd.scope/job_6783003/step_348/user/task_0\n",
+    "command": [
+      "/usr/bin/python3",
+      "-I",
+      "-S",
+      "-B",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-20-36_h100-common-historical-reader-observation_copies-1_helpers-28_source-8eb306af_metadata-time-limit-seconds-900_production-time-limit-seconds-180_gpu-count-0_processor-count-1_host-memory-gib-1/run_guard_observation.py"
+    ],
+    "parent_pid": 1225440,
+    "pid": 1225441
+  },
+  "plan_sha256": "5283db6016e84b7aac950d2ff76b5ef38fe2bf935cab6c223bbe0ce93f6fc0e2",
+  "production_timeout_seconds": 180,
+  "scientific_credit": 0,
+  "step_id": "348"
+}

@@ -540,3 +540,14 @@ Before: the session task a11f793d-7ab1-4a38-983a-989f67b763ad woke the agent eve
 After: the user requested wakeups near job completion or after a long wait. New task e2b548e7-dd90-411c-a5de-4b75fcd6fef7 is created and list-verified with a 3,600-second interval, first due November 5 at 06:21:36 UTC and expiring November 12 at 05:00 UTC. The old twenty-minute task is deleted; a fresh list contains only the hourly task. Future job launches may receive additional one-shot wakeups near their expected completion. These are estimates, not instantaneous completion notifications; none were needed for an active experiment at this change.
 
 The separate persistent CPU monitor 6783003 remains RUNNING on heartpiece, verified by its exact owned identifier. It retains its 1,200-second checks. The study continues without permission questions. This scheduling change grants no scientific or experiment credit.
+
+
+## November 5, 2026: publish the corrected historical reader commands
+
+Before: read-only observation 6783003.348 had failed inside its exact historical consumer, while its outer recorder returned zero. The standing next-action entry still described an uninvoked packet.
+
+After: record the actual guard return of one, normal exact-child reap, unchanged input snapshots and zero production or scientific credit. Never repeat that attempted packet. The frozen historical code legitimately calls three read-only Git forms missing from the new restricted runner. Six independent controls pass for the narrow correction; exact incoming review checks seventeen files, two actual private-index read-tree dry runs and 662 unchanged protected files. Publish b181e171bb1bdb792f3a7082b00f7186ebc9939a, tree a5fa0e41c4979dc69c49d23daa0a65aad2363a65. Prepare a fresh read-only observation from that source; no new genuine-input invocation has occurred at this record. Original numerical bytes, old source, tolerances, production deadline and disabled digest cache remain unchanged.
+
+Fresh full monitor step 366 passes all 120 initial comparisons, with zero active or failed formal cases. Three exact existing-master ACES refreshes fail without authentication; current site states remain unknown. A permitted explicit master check finds ACES closed and DeltaAI open. Its own dated receipt gives the next permitted check time. The session remains hourly and the cluster monitor remains at 1,200 seconds.
+
+The corrected eight-card source has 62 independent tests and 25 additional boundary checks passed. It still requires current shared-code compatibility and actual GPU validation. No additional ideas or final training have started.
