@@ -1,0 +1,55 @@
+{
+  "actual_scheduler_network_gpu_or_native_process_operations": 0,
+  "actual_small_6825842_metadata_checked": true,
+  "errors": [],
+  "failures": [],
+  "finished_at_seconds": 1793895593.3275437,
+  "job_id": "6821437",
+  "kind": "configured_native_component_monitor_author_checks",
+  "passed": true,
+  "persistent_monitor_coverage_not_yet_changed": true,
+  "scientific_credit": 0,
+  "source_after": {
+    ".review_metadata/monitor_configured_native_component/monitor_before_native_display.py": {
+      "bytes": 84417,
+      "mode": "0o660",
+      "sha256": "6144af1267beaa9b372ebf0572d252009b26f4743899388e83501da9e4b06a36"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/monitor.py": {
+      "bytes": 97342,
+      "mode": "0o660",
+      "sha256": "06de863d22dbecbbb52fd4a0831ddfc979484be43c6c1916b1666a4fc25d5175"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_monitor_native_component.py": {
+      "bytes": 9242,
+      "mode": "0o660",
+      "sha256": "eed91f4a4bc9ab3724f80d808572affa9f304dccd8200ff1364b22063edf7921"
+    }
+  },
+  "source_before": {
+    ".review_metadata/monitor_configured_native_component/monitor_before_native_display.py": {
+      "bytes": 84417,
+      "mode": "0o660",
+      "sha256": "6144af1267beaa9b372ebf0572d252009b26f4743899388e83501da9e4b06a36"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/monitor.py": {
+      "bytes": 97342,
+      "mode": "0o660",
+      "sha256": "06de863d22dbecbbb52fd4a0831ddfc979484be43c6c1916b1666a4fc25d5175"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_monitor_native_component.py": {
+      "bytes": 9242,
+      "mode": "0o660",
+      "sha256": "eed91f4a4bc9ab3724f80d808572affa9f304dccd8200ff1364b22063edf7921"
+    }
+  },
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-08-12_monitor-configured-native-diagnostic_owned-ledger-visible_unknown-kinds-explicit_gpu-actions-0/.review_metadata/monitor_configured_native_component/author_source_freeze_1.json",
+    "sha256": "4304a45f9a4bd777aa847d99bad2cf552cea3cf854e440b6b7fc99f3cc7e77b7"
+  },
+  "source_unchanged": true,
+  "started_at_seconds": 1793895593.0571973,
+  "step_id": "161",
+  "synthetic_private_negative_fixtures": true,
+  "tests_run": 11
+}

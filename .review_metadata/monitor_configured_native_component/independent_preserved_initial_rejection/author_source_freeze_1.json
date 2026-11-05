@@ -1,0 +1,24 @@
+{
+  "actual_monitor_deployment": false,
+  "files": {
+    ".review_metadata/monitor_configured_native_component/monitor_before_native_display.py": {
+      "bytes": 84417,
+      "mode": "0o660",
+      "sha256": "6144af1267beaa9b372ebf0572d252009b26f4743899388e83501da9e4b06a36"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/monitor.py": {
+      "bytes": 97342,
+      "mode": "0o660",
+      "sha256": "06de863d22dbecbbb52fd4a0831ddfc979484be43c6c1916b1666a4fc25d5175"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_monitor_native_component.py": {
+      "bytes": 9242,
+      "mode": "0o660",
+      "sha256": "eed91f4a4bc9ab3724f80d808572affa9f304dccd8200ff1364b22063edf7921"
+    }
+  },
+  "kind": "configured_native_component_monitor_source_freeze",
+  "live_monitor_edited": false,
+  "metadata_display_only": true,
+  "scientific_credit": 0
+}

@@ -346,6 +346,159 @@ def direct_unit_display(directory, unit, progress, hardware, current_processes):
     return {**base, "state": "running", "progress": "owned direct execution progress recorded"}
 
 
+def configured_native_component_display(directory, unit, plan, jobs):
+    """Display one exact owned native-process component; perform no scientific validation or query."""
+    kind = "configured_native_nsight_process_diagnostic"
+    if not isinstance(plan, dict) or plan.get("kind") != kind:
+        return None
+    base = {"kind": "configured_native_component", "run": "native process control component", "pool": "UVA gpu",
+            "gpu": ["RTX A4500 requested"], "slurm_job_id": "", "state": "unknown", "progress": "component ownership metadata unverified",
+            "component_unit_name": unit.name, "component_metadata_display_only": True, "scientific_credit": 0,
+            "profile_credit": 0, "admission_authority": False}
+
+    def document(path, reference=None, parse=True):
+        """Read bounded ordinary owned metadata only after checking its exact known filename."""
+        path = Path(path)
+        if path.resolve(strict=True) != path or not stat.S_ISREG(path.lstat().st_mode):
+            raise ValueError("component metadata must be an exact regular file")
+        fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+        try:
+            before = os.fstat(fd)
+            if before.st_uid != os.getuid() or before.st_size > 1024 * 1024:
+                raise ValueError("component metadata is not owned and bounded")
+            with os.fdopen(fd, "rb", closefd=False) as stream:
+                raw = stream.read(1024 * 1024 + 1)
+            after = os.fstat(fd)
+            if len(raw) != before.st_size or len(raw) > 1024 * 1024 or (before.st_dev, before.st_ino, before.st_size, before.st_mtime_ns, before.st_ctime_ns) != (after.st_dev, after.st_ino, after.st_size, after.st_mtime_ns, after.st_ctime_ns):
+                raise ValueError("component metadata changed during its read")
+        finally:
+            os.close(fd)
+        if reference is not None and reference != {"path": str(path), "sha256": hashlib.sha256(raw).hexdigest()}:
+            raise ValueError("component metadata reference differs")
+        return (json.loads(raw) if parse else raw), {"path": str(path), "sha256": hashlib.sha256(raw).hexdigest()}
+
+    if unit != directory / "data" / unit.name or plan.get("campaign_run_dir") != str(directory) or plan.get("unit_id") != unit.name:
+        raise ValueError("component plan names another unit")
+    packet = directory / "remote_setup" / unit.name
+    if plan.get("packet") != str(packet):
+        raise ValueError("component plan names another packet")
+    frozen_plan, plan_ref = document(unit / "measurement_plan.json")
+    if frozen_plan != plan:
+        raise ValueError("component plan changed during discovery")
+    helpers = plan.get("helpers", {})
+    if (type(plan.get("schema_version")) is not int or plan["schema_version"] != 1
+            or not isinstance(helpers, dict) or not re.fullmatch(r"[0-9a-f]{40}", helpers.get("source_commit", ""))):
+        raise ValueError("component plan source is incomplete")
+    submission_path = packet / "submission_receipt.json"
+    if not submission_path.exists():
+        submissions_path = directory / "slurm/submissions.tsv"
+        if submissions_path.exists() and any(line.split("\t")[-1] == str(packet / "job.sbatch") for line in submissions_path.read_text().splitlines()):
+            raise ValueError("component ledger row exists without its submission receipt")
+        if any((unit / name).exists() for name in ("owned_launch_inputs.json", "result.json", "failure.json")):
+            raise ValueError("component output has no owned submission")
+        return {**base, "state": "planned", "progress": "prepared component; not submitted; zero study credit"}
+    submission, submission_ref = document(submission_path)
+    job = submission.get("job_id")
+    row = [job, kind, helpers["source_commit"], str(packet / "job.sbatch")]
+    if (type(job) is not str or not re.fullmatch(r"[1-9][0-9]*", job)
+            or submission.get("kind") != "owned_configured_native_process_diagnostic_submission"
+            or type(submission.get("returncode")) is not int or submission["returncode"] != 0
+            or submission.get("plan_sha256") != plan_ref["sha256"] or submission.get("data_unit") != str(unit)
+            or submission.get("submitted_held") is not True or submission.get("submission_row") != row):
+        raise ValueError("component submission receipt differs")
+    for name in ("submitted_jobids.txt", "submitted_jobids_uva.txt"):
+        if (directory / "slurm" / name).read_text().splitlines().count(job) != 1:
+            raise ValueError("component identifier is not uniquely campaign-owned")
+    current_rows = [line.split("\t") for line in (directory / "slurm/submissions.tsv").read_text().splitlines()
+                    if line.split("\t")[0] == job]
+    if current_rows != [row]:
+        raise ValueError("component current submission row differs")
+    base.update(slurm_job_id=job, component_owned_job=True)
+    active = [value for value in jobs if value[0] == job]
+    if len(active) > 1:
+        raise ValueError("component has duplicate active scheduler rows")
+    state = active[0][1] if active else None
+    reason = active[0][4] if active else ""
+    ownership = unit / "owned_launch_inputs.json"
+    if not ownership.exists():
+        if state == "PENDING":
+            return {**base, "state": "held" if "Held" in reason else "waiting",
+                    "progress": "owned component submitted; execution not observed; zero study credit"}
+        return {**base, "progress": "owned submission; final launch inputs absent"}
+    owned, _ = document(ownership)
+    release, release_ref = document(packet / "release_receipt.json", owned.get("release"))
+    if (type(owned.get("schema_version")) is not int or owned["schema_version"] != 1 or owned.get("job_id") != job
+            or owned.get("plan") != plan_ref or owned.get("submission") != submission_ref or owned.get("submission_row") != row
+            or release.get("kind") != "owned_configured_native_process_diagnostic_release" or release.get("job_id") != job
+            or type(release.get("returncode")) is not int or release["returncode"] != 0
+            or release.get("plan_sha256") != plan_ref["sha256"] or release.get("data_unit") != str(unit)):
+        raise ValueError("component final launch inputs differ")
+    failure_present = (unit / "failure.json").exists()
+    failure = document(unit / "failure.json")[0] if failure_present else None
+    result = document(unit / "result.json")[0] if (unit / "result.json").exists() else None
+    result_valid = bool(isinstance(result, dict) and type(result.get("schema_version")) is int and result["schema_version"] == 1
+        and result.get("kind") == kind and result.get("completed") is True and result.get("plan") == plan_ref and result.get("source") == helpers
+        and all(type(result.get(key)) is int and result[key] == 0 for key in ("scientific_credit", "profile_credit", "case_credit", "idea_credit", "environment_transitions", "training_updates"))
+        and all(result.get(key) is False for key in ("admission_granted", "worker_admitted", "physical_gres_mapping_verified", "kernel_device_enforcement_verified")))
+    if state == "RUNNING":
+        return {**base, "state": "running", "progress": "owned component active; zero study credit" + ("; output recorded" if result_valid else "")}
+    if state == "PENDING":
+        return {**base, "state": "held" if "Held" in reason else "waiting", "progress": "owned component pending; zero study credit"}
+    account_path = packet / "root_actual_terminal_accounting_return.json"
+    if not account_path.exists():
+        return {**base, "progress": "owned component not active; terminal accounting unavailable"}
+    account, _ = document(account_path)
+    expected = ["sacct", "-j", job, "--parsable2", "--format=JobIDRaw,State,ExitCode,ElapsedRaw,AllocCPUS,ReqMem,AllocTRES,NodeList"]
+    if (account.get("argv") != expected or account.get("actual_owned_job_id") != job
+            or type(account.get("returncode")) is not int or account["returncode"] != 0):
+        raise ValueError("component cached accounting does not name its exact owned job")
+    accounting_raw, unused_ref = document(packet / "root_actual_terminal_accounting_stdout.raw", parse=False)
+    if len(accounting_raw) > 65536:
+        raise ValueError("component cached accounting exceeds its metadata bound")
+    reader = csv.DictReader(accounting_raw.decode().splitlines(), delimiter="|")
+    if reader.fieldnames != ["JobIDRaw", "State", "ExitCode", "ElapsedRaw", "AllocCPUS", "ReqMem", "AllocTRES", "NodeList"]:
+        raise ValueError("component cached accounting header differs")
+    accounting = list(reader)
+    identities = [value.get("JobIDRaw") for value in accounting]
+    if len(set(identities)) != len(identities) or job not in identities or not any(re.fullmatch(re.escape(job) + r"\.[0-9]+", value or "") for value in identities):
+        raise ValueError("component terminal accounting is partial or duplicated")
+    if not all(value == job or value in {job + ".batch", job + ".extern"} or re.fullmatch(re.escape(job) + r"\.[0-9]+", value or "") for value in identities):
+        raise ValueError("component accounting includes another job")
+    if not all(value.get("NodeList") == "jaguar03" for value in accounting):
+        raise ValueError("component terminal accounting names another node")
+    terminal_failures = {"FAILED", "CANCELLED", "TIMEOUT", "OUT_OF_MEMORY", "NODE_FAIL", "PREEMPTED", "BOOT_FAIL", "DEADLINE", "REVOKED"}
+    if any(value.get("State", "").split()[0] not in terminal_failures | {"COMPLETED"} for value in accounting):
+        return {**base, "progress": "owned component terminal accounting is not complete"}
+    if any(value.get("State") != "COMPLETED" or value.get("ExitCode") != "0:0" for value in accounting):
+        return {**base, "state": "failed", "progress": "owned component terminal failure; zero study credit"}
+    if failure_present:
+        return {**base, "state": "failed", "progress": "component failure record retained; zero study credit"}
+    if not result_valid:
+        return {**base, "progress": "owned job completed; component result absent or mismatched"}
+    return {**base, "state": "completed", "progress": "owned component completed; zero study credit"}
+
+
+def unsupported_owned_plan_display(directory, unit, plan):
+    """Keep an otherwise omitted owned future plan visible without inferring scientific success."""
+    if not isinstance(plan, dict) or type(plan.get("kind")) is not str:
+        return None
+    packet = directory / "remote_setup" / unit.name
+    if plan.get("packet") != str(packet) or plan.get("unit_id") != unit.name or plan.get("campaign_run_dir") != str(directory):
+        return None
+    ids_path, rows_path = directory / "slurm/submitted_jobids_uva.txt", directory / "slurm/submissions.tsv"
+    if not ids_path.exists() or not rows_path.exists():
+        return None
+    ids = ids_path.read_text().splitlines()
+    rows = [line.split("\t") for line in rows_path.read_text().splitlines()]
+    matches = [row for row in rows if len(row) == 4 and row[1] == plan["kind"] and row[3] == str(packet / "job.sbatch")]
+    if not matches:
+        return None
+    job = matches[0][0] if len(matches) == 1 and ids.count(matches[0][0]) == 1 and re.fullmatch(r"[1-9][0-9]*", matches[0][0]) else ""
+    return {"kind": "unsupported_owned_plan", "run": unit.name, "pool": "UVA", "gpu": [], "slurm_job_id": job,
+            "state": "unknown", "progress": "unsupported owned component kind: " + plan["kind"], "component_unit_name": unit.name,
+            "component_metadata_display_only": True, "scientific_credit": 0, "admission_authority": False}
+
+
 def unit_rows(directory, excluded_unit_names=(), jobs=()):
     """Read one small status file per unit without retaining training histories."""
     rows = []
@@ -363,8 +516,27 @@ def unit_rows(directory, excluded_unit_names=(), jobs=()):
             plan = read_json(plan_path)
         except (OSError, ValueError, TypeError):
             continue
-        if isinstance(plan, dict) and "direct_binding" in plan and plan.get("kind") == "selected_configuration_measurement":
+        if plan_path.parent.name in excluded_unit_names:
+            continue
+        if isinstance(plan, dict) and plan.get("kind") == "configured_native_nsight_process_diagnostic":
+            progress_paths.pop(plan_path.parent, None)
+            try:
+                component = configured_native_component_display(directory, plan_path.parent, plan, jobs)
+            except (OSError, ValueError, TypeError, KeyError, AttributeError) as error:
+                component = {"run": "native process control component", "pool": "UVA", "gpu": [], "slurm_job_id": "",
+                    "state": "unknown", "progress": "component ownership metadata error: " + str(error),
+                    "component_unit_name": plan_path.parent.name, "component_metadata_display_only": True,
+                    "scientific_credit": 0, "admission_authority": False}
+            rows.append(component)
+        elif isinstance(plan, dict) and "direct_binding" in plan and plan.get("kind") == "selected_configuration_measurement":
             progress_paths.setdefault(plan_path.parent, plan_path.parent / "progress.json")
+        elif plan_path.parent not in progress_paths:
+            try:
+                unsupported = unsupported_owned_plan_display(directory, plan_path.parent, plan)
+            except (OSError, ValueError, TypeError, KeyError):
+                unsupported = None
+            if unsupported is not None:
+                rows.append(unsupported)
     for path in sorted(progress_paths.values()):
         if path.parent.name in excluded_unit_names:
             continue
@@ -1067,7 +1239,7 @@ def tick(directory):
     aces_rows = aces_rows + aces_sites
     excluded_units = {row["data_unit_name"] for row in sites + aces_rows if row.get("data_unit_name")}
     units = unit_rows(directory, excluded_unit_names=excluded_units, jobs=jobs)
-    selected_jobs = {unit["slurm_job_id"] for unit in units if unit.get("selected_owned_job")
+    selected_jobs = {unit["slurm_job_id"] for unit in units if (unit.get("selected_owned_job") or unit.get("component_owned_job"))
                      and unit["state"] in {"running", "initializing", "normalization_warmup", "waiting", "held"}}
     display_units = units + sites + aces_rows
     now = datetime.now(ZoneInfo("America/Los_Angeles")).strftime("%Y-%m-%d %H:%M:%S PT")
@@ -1111,7 +1283,7 @@ def tick(directory):
                               final_training_progress(final_training)))
     for unit in display_units:
         if unit["state"] == "waiting":
-            gpu = gpu_label(unit["gpu"][0]) if unit.get("selected_owned_job") and unit["gpu"] or unit.get("kind") in {"site_validation", "allocation_observation", "aces_full_site"} else "none"
+            gpu = gpu_label(unit["gpu"][0]) if (unit.get("selected_owned_job") or unit.get("component_owned_job")) and unit["gpu"] or unit.get("kind") in {"site_validation", "allocation_observation", "aces_full_site"} else "none"
             rows.append(table_row(unit["run"], unit["pool"], gpu, "WAITING", unit["progress"]))
     for identifier, state, node, gpu, reason in jobs:
         if state == "PENDING" and identifier not in site_jobs and identifier not in selected_jobs:

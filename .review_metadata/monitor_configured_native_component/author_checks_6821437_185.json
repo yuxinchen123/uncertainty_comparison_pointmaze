@@ -1,0 +1,55 @@
+{
+  "actual_scheduler_network_gpu_or_native_process_operations": 0,
+  "actual_small_6825842_metadata_checked": true,
+  "errors": [],
+  "failures": [],
+  "finished_at_seconds": 1793898036.4585073,
+  "job_id": "6821437",
+  "kind": "configured_native_component_monitor_author_checks",
+  "passed": true,
+  "persistent_monitor_coverage_not_yet_changed": true,
+  "scientific_credit": 0,
+  "source_after": {
+    ".review_metadata/monitor_configured_native_component/monitor_before_native_display.py": {
+      "bytes": 84417,
+      "mode": "0o660",
+      "sha256": "6144af1267beaa9b372ebf0572d252009b26f4743899388e83501da9e4b06a36"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/monitor.py": {
+      "bytes": 97459,
+      "mode": "0o660",
+      "sha256": "f8f90bd925a94b76ba17cae76460c29623b902e5f6c4dcf418b559524956d867"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_monitor_native_component.py": {
+      "bytes": 10594,
+      "mode": "0o660",
+      "sha256": "70626bd9df9ade7e428182794f78255704f622727c7ffae6d00369b827d0853b"
+    }
+  },
+  "source_before": {
+    ".review_metadata/monitor_configured_native_component/monitor_before_native_display.py": {
+      "bytes": 84417,
+      "mode": "0o660",
+      "sha256": "6144af1267beaa9b372ebf0572d252009b26f4743899388e83501da9e4b06a36"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/monitor.py": {
+      "bytes": 97459,
+      "mode": "0o660",
+      "sha256": "f8f90bd925a94b76ba17cae76460c29623b902e5f6c4dcf418b559524956d867"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_monitor_native_component.py": {
+      "bytes": 10594,
+      "mode": "0o660",
+      "sha256": "70626bd9df9ade7e428182794f78255704f622727c7ffae6d00369b827d0853b"
+    }
+  },
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-08-12_monitor-configured-native-diagnostic_owned-ledger-visible_unknown-kinds-explicit_gpu-actions-0/.review_metadata/monitor_configured_native_component/author_source_freeze_2.json",
+    "sha256": "e0ad98d6a9095833bf37b2904b33888cfd0f56ed45985c23d090055f54a6bc88"
+  },
+  "source_unchanged": true,
+  "started_at_seconds": 1793898032.990682,
+  "step_id": "185",
+  "synthetic_private_negative_fixtures": true,
+  "tests_run": 4
+}

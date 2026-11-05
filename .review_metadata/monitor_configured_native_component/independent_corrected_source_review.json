@@ -1,0 +1,31 @@
+{
+  "actual_current_monitor_deployment": false,
+  "actual_metadata_job_visible": "6825842",
+  "actual_scheduler_native_target_or_gpu_operations": false,
+  "admission_authority": false,
+  "all_other_source_text_unchanged_since_initial_review": true,
+  "approved": true,
+  "changed_predicates_and_actual_positive_methods": 4,
+  "elapsed_seconds": 0.11490389902610332,
+  "independent_bounded_reader_cases": 2,
+  "job_id": "6821437",
+  "kind": "independent_corrected_native_component_monitor_source_review",
+  "passed": true,
+  "preserved_rejected_source": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-08-12_monitor-configured-native-diagnostic_owned-ledger-visible_unknown-kinds-explicit_gpu-actions-0/.review_metadata/monitor_configured_native_component/independent_preserved_initial_rejection/preservation_manifest.json",
+    "sha256": "8cf01bae30b9fe6c2cadefd20bfc410eff5d9b100931816403f4d194ad6596c8"
+  },
+  "previous_eleven_case_pass_reused": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-08-12_monitor-configured-native-diagnostic_owned-ledger-visible_unknown-kinds-explicit_gpu-actions-0/.review_metadata/monitor_configured_native_component/independent_initial_findings.json",
+    "sha256": "0090ef607ef9f03f3bc710821d221f5f483ab2cde0fac83c85cc4532e41c99e2"
+  },
+  "required_before_monitor_handover": "root prepares and publishes one replacement, then verifies actual runtime and first full report before old step drain/cancellation",
+  "scientific_credit": 0,
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-08-12_monitor-configured-native-diagnostic_owned-ledger-visible_unknown-kinds-explicit_gpu-actions-0/.review_metadata/monitor_configured_native_component/author_source_freeze_2.json",
+    "sha256": "e0ad98d6a9095833bf37b2904b33888cfd0f56ed45985c23d090055f54a6bc88"
+  },
+  "source_unchanged": true,
+  "step_id": "188",
+  "unknown_owned_kind_stays_unknown": true
+}
