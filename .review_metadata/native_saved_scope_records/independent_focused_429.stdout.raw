@@ -1,0 +1,24 @@
+test_actual_attempt_is_still_failed_and_zero_credit (independent_scope_author_tests.ActualSavedScopeRecordsTests)
+A reader regression never reclassifies the failed producer or grants any study credit. ... ok
+test_actual_empty_command_observation_remains_exact (independent_scope_author_tests.ActualSavedScopeRecordsTests)
+An actual empty scope command requires its actual empty-byte hash, with no claimed argv. ... ok
+test_actual_initial_and_final_scope_records (independent_scope_author_tests.ActualSavedScopeRecordsTests)
+All retained scope identities pass their actual schema without fabricated cmdline bytes. ... ok
+test_changed_actual_input_and_reference_refused (independent_scope_author_tests.ActualSavedScopeRecordsTests)
+A changed fixture or scope reference cannot use the accepted actual input identity. ... ok
+test_command_hash_cgroup_and_types_refused (independent_scope_author_tests.ActualSavedScopeRecordsTests)
+Altered commands, cgroups, Boolean identities and missing fields fail directly. ... ok
+test_original_reader_refuses_scope_but_accepts_actual_full_records (independent_scope_author_tests.ActualSavedScopeRecordsTests)
+The original raw-command ancestry and owner proof stays unchanged and required. ... ok
+test_raw_stat_birth_and_parent_changes_refused (independent_scope_author_tests.ActualSavedScopeRecordsTests)
+Raw birth/parent and every retained typed identity must agree. ... ok
+test_raw_uid_and_expected_owner_changes_refused (independent_scope_author_tests.ActualSavedScopeRecordsTests)
+Summary or retained status changes cannot authorize a foreign process. ... ok
+test_only_the_single_cross_schema_call_changed_and_all_15_functions_retained (__main__.ExtraIndependentBoundaries) ... ok
+test_schema_roles_remain_separate_and_no_raw_fields_are_invented (__main__.ExtraIndependentBoundaries) ... ok
+test_typed_raw_identity_and_command_hash_negative_boundaries (__main__.ExtraIndependentBoundaries) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.115s
+
+OK

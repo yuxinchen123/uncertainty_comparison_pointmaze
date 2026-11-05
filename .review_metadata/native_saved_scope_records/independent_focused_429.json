@@ -1,0 +1,32 @@
+{
+  "GPU_operations": 0,
+  "actual_cpu_job": "6783003",
+  "actual_cpu_step": "429",
+  "actual_original_target_reexecuted": false,
+  "approved": true,
+  "checks": 11,
+  "elapsed_seconds": 0.18149682600051165,
+  "errors": 0,
+  "failures": 0,
+  "kind": "independent_narrow_native_saved_scope_schema_review",
+  "large_binary_reads": 0,
+  "library_loads": 0,
+  "native_calls": 0,
+  "numerical_imports": [],
+  "only_existing_function_change": "validate_saved: scope initial records use strict separate validate_scope_snapshot; all generic full owner/ancestry validators unchanged",
+  "passed": true,
+  "prior_actual_failed_unit_still_failed": true,
+  "profile_admission": false,
+  "protected_34_hashes_unchanged": true,
+  "protected_function_AST_count": 15,
+  "reviewer": "/root/implement_direct_h100_profiles/review_direct_profile_source",
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "scope_zombie_records_are_supported_without_fabricated_cmdline": true,
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-00-51_native-saved-scope-records_raw-stat-status-command-hash_environment-transitions-0/.review_metadata/native_saved_scope_records/source_freeze.json",
+    "sha256": "ca0505be76f23f5f39429845c7ac8799b7579065ace0cca5ba3d7e3ea99fed69"
+  },
+  "source_sha256": "e65c37b558ca55d6e46f4c96e539e19ea724b5dc6c713741cf82a347c0ad9b8d",
+  "worker_admission": false
+}

@@ -1,0 +1,79 @@
+{
+  "actual_runtime_or_gpu_action": false,
+  "added_functions": [
+    "scope_stat",
+    "validate_scope_snapshot"
+  ],
+  "admission_granted": false,
+  "base": "39c93b44af70f9dfa63f38cde93f78b3604cc365",
+  "changed_existing_functions": [
+    "validate_saved"
+  ],
+  "failed_prior_attempt_reclassified": false,
+  "files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/native_process_evidence.py": {
+      "bytes": 41227,
+      "sha256": "e65c37b558ca55d6e46f4c96e539e19ea724b5dc6c713741cf82a347c0ad9b8d"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_native_saved_scope_records.py": {
+      "bytes": 7237,
+      "sha256": "125ef2acf7493fdafca31e678219336f728895df84ca80b1bb26eeccc47f7905"
+    }
+  },
+  "kind": "native_saved_scope_schema_source_freeze",
+  "new_runtime_change": "Use only the scope-specific validator for tool_descendant_scope_terminal positive nodes; keep full ProcReader validation for owners and ancestry.",
+  "protected_files": {
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py": "df811a5d51a7ef2f747bc32d1545c8286552675dfc8b859e7d0600eef4c920c5",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/scripts/atari_pixel_campaign/paired_benchmark.py": "c3e39d8e5d2549c3e2682e196861095780b30740a49821b2077da620386f2916",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/scripts/atari_pixel_campaign/worker_environment.sh": "61de3a987d6494fba948083e32ba13e97f30f53e980797c72c1508e726818955",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/__init__.py": "4692ca9941cece84d6cbea0c19b9344a0dfe5d32f3a1a9d93ad7cd93fe135de2",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/checkpointing.py": "f156b27e0c5d275db7e472f8659ca46d594624a8f573d43eee5383cdaf9f17fb",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/config.py": "8b3643fba5e3382f612507416f2204500966592a6872bb286dea1935c5f32218",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/environment.py": "aa0ad31c8fbd04c67fb9742ea103e9262dfe9cc5b6e719889c50454537b1c8b7",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/kernels.py": "dd895f5d95f6d39c79dce277254af9a19ac49112fcec0b16a5ba096a8082e8ff",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/networks.py": "ee65436eda5fab6ae2f8c303eaf3c072b5cdfa1f6d86cfc310dfa4974c98a5bd",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/pixel_preprocessing.py": "8a9f30f36ef7b07fa0ae513d1aee442a9964c2f8da179203b031c7aca8735188",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/settings.py": "17f20c6dd84c99eb435337b4446418cdcda3f426514d228996f40de4220c6f26",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/state.py": "9fcf0b6bb09bbf70dc88cd28952a6fa50969371f0d8aa66739c91ced1fe887f4",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/training.py": "5b868d95c8e0f5798330e38fcf7d9a6981838881333bafe73465c1af070a5100",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_nsight_process_tree.py": "7936699937b2516495846ce6fca2affd4b651149a7bd2da0075b06ed7aeaf43b",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_capture_release.py": "8d7623b1b5cf8bf7a8b65321a33ec1cf551bf99f63d445145a638a9011982e42",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py": "a926bf592f19f3921ee5ec5b139e03fef04270dda0238bae1be2b01c1574f300",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_prerequisites.py": "772d610250c80df36a2a09a86ec6714b69317cce3f4b1ed3cebbab060e87a7c3",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py": "df811a5d51a7ef2f747bc32d1545c8286552675dfc8b859e7d0600eef4c920c5",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/linux_pidfd_process_control.py": "37754acfdf8f139eecc2e9bbac91ee56cc12069a77f237968fe713f8b5b81172",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py": "a1ef9d787cb7387be88a078eac6d3bae9c853d3ceb3ac6a6aeb471e71e3aff4d",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py": "0fe777e0ff0d3015a1cb90df0c77014c1d68483d94193f7e5b668b867079c6f1",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/paired_benchmark.py": "c3e39d8e5d2549c3e2682e196861095780b30740a49821b2077da620386f2916",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py": "36a60d5e4d5536413600c5d36d39fd107a031f434048d83e38ed209b375f62e9",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/worker_environment.sh": "61de3a987d6494fba948083e32ba13e97f30f53e980797c72c1508e726818955",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/__init__.py": "4692ca9941cece84d6cbea0c19b9344a0dfe5d32f3a1a9d93ad7cd93fe135de2",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/checkpointing.py": "f156b27e0c5d275db7e472f8659ca46d594624a8f573d43eee5383cdaf9f17fb",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/config.py": "8b3643fba5e3382f612507416f2204500966592a6872bb286dea1935c5f32218",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/environment.py": "aa0ad31c8fbd04c67fb9742ea103e9262dfe9cc5b6e719889c50454537b1c8b7",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/kernels.py": "dd895f5d95f6d39c79dce277254af9a19ac49112fcec0b16a5ba096a8082e8ff",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/networks.py": "ee65436eda5fab6ae2f8c303eaf3c072b5cdfa1f6d86cfc310dfa4974c98a5bd",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/pixel_preprocessing.py": "8a9f30f36ef7b07fa0ae513d1aee442a9964c2f8da179203b031c7aca8735188",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/settings.py": "17f20c6dd84c99eb435337b4446418cdcda3f426514d228996f40de4220c6f26",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/state.py": "9fcf0b6bb09bbf70dc88cd28952a6fa50969371f0d8aa66739c91ced1fe887f4",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/training.py": "5b868d95c8e0f5798330e38fcf7d9a6981838881333bafe73465c1af070a5100"
+  },
+  "scientific_credit": 0,
+  "unchanged_existing_function_ast_hashes": {
+    "Runtime": "f423a74731b3342252ea8a6a5143414b2b4710eaa4a0125cbe1ef6fa004e9f5e",
+    "bootstrap": "8555c50849d4ba65a88114cdb1cf2a199bcd4981f05a46215bf9e97fc3f63960",
+    "capture_contract": "d195c1eda54e6f5ddddd08c1d917e0aaac099f0a12238c599b067f96505fbc7f",
+    "declaration": "4cd84f59f0f0912bae8994c8c24602de068fc6f6989f31ad1591174fb67b2566",
+    "finite_time": "4e99c6ebbdb10904da945b2724cec6195979f1d522baa169124976e5dc5502c1",
+    "load_provider": "926d40257e5112b709688c60527f0bc165564bd9d43be3d8fae162b8343084ac",
+    "parse_pidfd_fdinfo": "968792c85130d4a90ec505acd83e92bebcb035ba10034725f6465c0691b22ae2",
+    "policy": "b3520683323aae50bcaed8da6f92a43c1bd1ac6db5bda38ee14358a07393808b",
+    "read_reference": "ff1a265899d114ed48eca26ad2047ba644b4728a035b55f01f3c3164c7cdd2c4",
+    "reference": "58fde59530d0b898bfd491d9df1e5297f0a1e4bad90a2f608ed3cc3328744eec",
+    "require": "b0af89284c8354335a22b054447bb48829865c9ceae753561385e477b5bbf8c8",
+    "role_files": "639bc835f7b9fa578ad0a6096613c1573ae70cb0d92c9ed842a8b9155c52b5d8",
+    "same": "4cb65471eb89fb1c0196bdf9b572890d05977f2b883eee9bce3d5c22b3a1ed8d",
+    "validate_calls": "e6b320eb90e6881140024a474be6e46bbe479ff38f90b36cc9d08e8395ee0569",
+    "validate_contract": "846fbc5491a5cd46bce2360a3e8c87b2702e8d3dcd7c25623b17bab7000d560d"
+  }
+}

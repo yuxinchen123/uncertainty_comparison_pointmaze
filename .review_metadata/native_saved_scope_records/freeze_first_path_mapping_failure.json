@@ -1,0 +1,8 @@
+{
+  "cause": "The accepted prior protected roster includes original frozen source paths as well as worktree paths; relative_to was applied to both.",
+  "correction": "Map only prior worktree paths; verify original absolute frozen paths in place.",
+  "error_type": "ValueError",
+  "freeze_published": false,
+  "kind": "preserved_author_metadata_path_mapping_failure",
+  "source_changed": false
+}
