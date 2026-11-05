@@ -1,0 +1,25 @@
+{
+  "kind": "actual_two_copy_root_transport_one_literal_derivation",
+  "actual_inner_publication": "401f3b4df15a7cf5424d6884de99f9ec0caf74af",
+  "old_publication": "c88f4b1a4111919066f80cb81701041b00b43bad",
+  "original_corrected_source": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-05-49_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/root_start_controller_once.py",
+    "sha256": "26fd972e1850d07f08dcbab342b24828c021e27f5112dc05c42c60a43eb3d314"
+  },
+  "derived_source": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-08-40_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/root_start_controller_once.py",
+    "sha256": "ca31246a7282fdd8f19d58d7565f0dec407332ff530971b3b6b0589eb3fced10"
+  },
+  "prior_independent_mechanism_review": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-05-49_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/root_transport_independent_literal_review.json",
+    "sha256": "70334826a19823ae87a308df2b5053a85543db36baa6dae69522972e106dd8b2"
+  },
+  "only_text_change": "Replace the single actual inner-publication literal; all other source bytes remain identical.",
+  "complete_source_equal_after_constant_normalization": true,
+  "unchanged_non_main_function_asts": {
+    "write": true,
+    "controller_metadata": true,
+    "retain_custody": true,
+    "cleanup_under_barrier": true
+  }
+}
