@@ -1,0 +1,31 @@
+{
+  "kind": "actual_terminal_accounting_after_exact_old_monitor_stop",
+  "at_utc": "2026-11-05T10:57:34.468591+00:00",
+  "job_id": "6783003",
+  "argv": [
+    "sacct",
+    "--noheader",
+    "--parsable2",
+    "--jobs=6783003",
+    "--format=JobIDRaw,State,ExitCode,Elapsed,NodeList"
+  ],
+  "returncode": 0,
+  "actual_parent_and_batch_rows": [
+    [
+      "6783003",
+      "CANCELLED by 2618919",
+      "0:0",
+      "3-09:56:46",
+      "heartpiece"
+    ],
+    [
+      "6783003.batch",
+      "CANCELLED",
+      "0:15",
+      "3-09:56:46",
+      "heartpiece"
+    ]
+  ],
+  "new_monitor": "6821437",
+  "new_monitor_remains_canonical": true
+}

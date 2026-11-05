@@ -1,0 +1,56 @@
+{
+  "kind": "fresh_owned_old_monitor_drain_before_exact_stop",
+  "at_utc": "2026-11-05T10:55:14.645457+00:00",
+  "old_job_id": "6783003",
+  "new_job_id": "6821437",
+  "new_adoption_published_commit": "27f9b5c9276de2405c9aa7225b2c4c6b99e5c50d",
+  "old_ledger_row": [
+    "6783003",
+    "monitor",
+    "79a01e851ff92ddba7d0e12eaf8164cab2028878",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-16-33_pixel-study-monitor-recovery_source-commit-79a01e851ff92ddba7d0e12eaf8164cab2028878_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/monitor.sbatch"
+  ],
+  "new_running": {
+    "argv": [
+      "scontrol",
+      "show",
+      "job",
+      "-o",
+      "6821437"
+    ],
+    "returncode": 0,
+    "stdout": "JobId=6821437 JobName=pixel_study_monitor UserId=sl5nw(2618919) GroupId=collaborator(90030) MCS_label=N/A Priority=811 Nice=0 Account=sl5nw_base QOS=normal JobState=RUNNING Reason=None Dependency=(null) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:04:41 TimeLimit=7-00:00:00 TimeMin=N/A SubmitTime=2026-11-05T05:46:21 EligibleTime=2026-11-05T05:50:06 AccrueTime=2026-11-05T05:50:06 StartTime=2026-11-05T05:50:33 EndTime=2026-11-12T05:50:33 Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-11-05T05:50:33 Scheduler=Backfill Partition=nolim AllocNode:Sid=portal05:533726 ReqNodeList=(null) ExcNodeList=(null) NodeList=slurm2 BatchHost=slurm2 NumNodes=1 NumCPUs=2 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=1,mem=2G,node=1,billing=309 AllocTRES=cpu=2,mem=2G,node=1,billing=311 Socks/Node=* NtasksPerN:B:S:C=0:0:*:1 CoreSpec=* MinCPUsNode=1 MinMemoryNode=2G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-02-31_pixel-study-monitor_source-commit-b431573a272ccec354cfbccb2b7528b4b846e7b9_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/monitor.sbatch WorkDir=/p/rlprojects/RND_worktrees/merge-atari-cleanrl StdErr=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/jobs/monitor_6821437.log StdIn=/dev/null StdOut=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/jobs/monitor_6821437.log Power= TresPerNode=gres/gpu:0 TresPerTask=cpu:1 \n",
+    "stderr": ""
+  },
+  "old_running": {
+    "argv": [
+      "scontrol",
+      "show",
+      "job",
+      "-o",
+      "6783003"
+    ],
+    "returncode": 0,
+    "stdout": "JobId=6783003 JobName=pixel_study_monitor UserId=sl5nw(2618919) GroupId=collaborator(90030) MCS_label=N/A Priority=405 Nice=0 Account=sl5nw_base QOS=normal JobState=RUNNING Reason=None Dependency=(null) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=3-09:56:46 TimeLimit=7-00:00:00 TimeMin=N/A SubmitTime=2026-11-01T19:46:41 EligibleTime=2026-11-01T19:58:23 AccrueTime=2026-11-01T19:58:23 StartTime=2026-11-01T19:58:28 EndTime=2026-11-08T19:58:28 Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-11-01T19:58:28 Scheduler=Backfill Partition=nolim AllocNode:Sid=portal05:2024061 ReqNodeList=(null) ExcNodeList=(null) NodeList=heartpiece BatchHost=heartpiece NumNodes=1 NumCPUs=2 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=1,mem=2G,node=1,billing=309 AllocTRES=cpu=2,mem=2G,node=1,billing=311 Socks/Node=* NtasksPerN:B:S:C=0:0:*:1 CoreSpec=* MinCPUsNode=1 MinMemoryNode=2G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-16-33_pixel-study-monitor-recovery_source-commit-79a01e851ff92ddba7d0e12eaf8164cab2028878_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/monitor.sbatch WorkDir=/p/rlprojects/RND StdErr=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/jobs/monitor_6783003.log StdIn=/dev/null StdOut=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/jobs/monitor_6783003.log Power= TresPerNode=gres/gpu:0 TresPerTask=cpu:1 \n",
+    "stderr": ""
+  },
+  "old_active_steps": {
+    "argv": [
+      "squeue",
+      "--steps",
+      "--jobs=6783003",
+      "--noheader",
+      "--format=%i|%T"
+    ],
+    "returncode": 0,
+    "stdout": "6783003.batch|%T\n",
+    "stderr": "squeue: error: Invalid job step format specification: T\n"
+  },
+  "no_auxiliary_steps_active": true,
+  "command": [
+    "scancel",
+    "6783003"
+  ],
+  "attempt_only_once": true,
+  "no_other_job_to_cancel": true
+}

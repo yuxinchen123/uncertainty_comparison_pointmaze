@@ -205,8 +205,8 @@
   "configured_profile_actual_qualification": false,
   "correctness_cache_diagnosis_job_id": "6777949",
   "cron_id": "5ac3653c-dbcd-4e44-8f17-a49d58eaafe2",
-  "cron_monitor_expires_at": "2026-11-12T09:20:00Z",
-  "cron_monitor_id": "5ac3653c-dbcd-4e44-8f17-a49d58eaafe2",
+  "cron_monitor_expires_at": "2026-11-12T11:20:00Z",
+  "cron_monitor_id": "d1d183ad-31bf-4dc2-b1ff-b2c3b7017dbb",
   "cron_verified_active": true,
   "cron_verified_utc": "2026-11-05T05:26:22.358Z",
   "current_branch_integrated_commit": "79a01e851ff92ddba7d0e12eaf8164cab2028878",
@@ -479,12 +479,11 @@
     "active_formal": 0,
     "failed_formal": 0,
     "initial_complete": 120,
-    "job_id": "6783003",
+    "job_id": "6821437",
     "record": {
-      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/root_full_bounded_check_2026-11-05-09-10-51.json",
-      "sha256": "c779b18494d83b3dfddeb77b2d76e71ad2b5e50a1b70e8468ba2fc926056884c"
-    },
-    "step": "435"
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/root_full_report_after_monitor_handover_2026-11-05.json",
+      "sha256": "d5608ac9ad4ff8917ac841e0baaa925303ffc462b74472255f6818c6718ceed9"
+    }
   },
   "latest_actual_target_qualification_release": {
     "actual_core_reader_passed": true,
@@ -652,7 +651,7 @@
   "persistent_monitor_terminal_exit_code": null,
   "persistent_monitor_verified_utc": "2026-11-05T10:53:35.736433+00:00",
   "precision_warning_audit": "remote_setup/precision_warning_audit.json",
-  "previous_monitor_terminal_state": "6782816 naturally FAILED1:0 on process hostname field; no cancellation",
+  "previous_monitor_terminal_state": "6783003 CANCELLED once after independent replacement approval and fresh auxiliary-step drain",
   "queue_status_at_check": {
     "completed": 117,
     "failed": 0,
@@ -790,7 +789,7 @@
     "6777646",
     "6777647"
   ],
-  "superseded_monitor_job_id": "6781087",
+  "superseded_monitor_job_id": "6783003",
   "updated_utc": "2026-11-05T09:12:49.059247+00:00",
   "uva_active_configuration_observation_job_id": "6781190"
 }

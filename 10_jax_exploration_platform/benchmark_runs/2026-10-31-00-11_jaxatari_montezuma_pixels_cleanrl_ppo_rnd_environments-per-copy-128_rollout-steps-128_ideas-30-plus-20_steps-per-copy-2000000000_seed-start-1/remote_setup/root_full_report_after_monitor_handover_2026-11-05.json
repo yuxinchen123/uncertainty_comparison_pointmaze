@@ -1,0 +1,36 @@
+{
+  "kind": "root_full_report_after_verified_monitor_handover",
+  "at_utc": "2026-11-05T11:07:39.326887+00:00",
+  "job_id": "6821437",
+  "source_commit": "b431573a272ccec354cfbccb2b7528b4b846e7b9",
+  "actual_return": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-02-31_pixel-study-monitor_source-commit-b431573a272ccec354cfbccb2b7528b4b846e7b9_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/root_post_handover_full_tick_return.json",
+    "sha256": "1c4050b442ff51b61c3aba1fb5119185d43875b61148ca751bc677f836f08e59"
+  },
+  "elapsed_seconds": 2.8441303230356425,
+  "initial_counts": {
+    "pending": 0,
+    "running": 0,
+    "completed": 120,
+    "failed": 0
+  },
+  "actual_planned_timing_units": [
+    {
+      "run": "2026-11-05-02-24_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "planned",
+      "progress": "controller metadata bound; owned registration and launch not recorded",
+      "age_seconds": 2407.513263463974,
+      "direct_metadata_display_only": true,
+      "scientific_credit": 0,
+      "admission_authority": false
+    }
+  ],
+  "old_monitor_terminal_state": "CANCELLED",
+  "current_persistent_interval_seconds": 1200,
+  "current_session_cadence_seconds": 3600
+}
