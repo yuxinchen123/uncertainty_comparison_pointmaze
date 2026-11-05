@@ -1,0 +1,26 @@
+{
+  "actual_gpu_remote_or_tool_operations": 0,
+  "command": [
+    "srun",
+    "--jobid=6821437",
+    "--overlap",
+    "--exact",
+    "-n1",
+    "-c1",
+    "--mem=512M",
+    "--time=00:05:00",
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-02-24_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/test_root_transport_barrier.py"
+  ],
+  "elapsed_seconds": 0.3712552940705791,
+  "finished_at_utc": "2026-11-05T11:06:11.542071+00:00",
+  "kind": "actual_owned_cpu_root_transport_author_causal_fixture_return",
+  "memory_mebibytes": 512,
+  "real_timing_controller_started": false,
+  "returncode": 0,
+  "started_at_utc": "2026-11-05T11:06:11.170866+00:00",
+  "step_seconds": 300
+}

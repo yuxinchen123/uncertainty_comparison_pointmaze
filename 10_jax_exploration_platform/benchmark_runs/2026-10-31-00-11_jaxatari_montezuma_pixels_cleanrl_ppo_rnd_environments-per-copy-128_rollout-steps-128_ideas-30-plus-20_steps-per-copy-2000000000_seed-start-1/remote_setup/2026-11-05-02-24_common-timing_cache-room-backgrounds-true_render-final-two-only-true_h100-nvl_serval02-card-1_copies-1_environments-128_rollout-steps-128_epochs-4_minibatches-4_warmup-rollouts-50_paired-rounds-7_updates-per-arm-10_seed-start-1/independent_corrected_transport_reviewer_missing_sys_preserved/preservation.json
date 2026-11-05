@@ -1,0 +1,13 @@
+{
+  "kind": "reviewer_finalizer_missing_sys_import",
+  "production_source_changed": false,
+  "all_three_case_calls_and_assertions_completed_before_NameError": true,
+  "case_result_artifacts_not_written_before_finalizer_failure": true,
+  "why_one_new_short_run_is_needed": "Retain actual case identities and the final review instead of claiming an incomplete recorder is a completed approval.",
+  "files": {
+    "independent_corrected_root_transport_retention_review.py": "62f610c916b9bde58b8e20eeef8347b4ae15bf0a95e6491a1519f27e830ce35a",
+    "independent_corrected_transport_review_stdout.raw": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "independent_corrected_transport_review_stderr.raw": "f1a1dd6992f2e6748b49f8cec462212dd0a347842bfc2389ab6949b9f86fda41",
+    "independent_corrected_transport_review_return.json": "557bcf25f534e327e302a20f139d0c67d8d065553c6cad8855e670e060ad1b1f"
+  }
+}

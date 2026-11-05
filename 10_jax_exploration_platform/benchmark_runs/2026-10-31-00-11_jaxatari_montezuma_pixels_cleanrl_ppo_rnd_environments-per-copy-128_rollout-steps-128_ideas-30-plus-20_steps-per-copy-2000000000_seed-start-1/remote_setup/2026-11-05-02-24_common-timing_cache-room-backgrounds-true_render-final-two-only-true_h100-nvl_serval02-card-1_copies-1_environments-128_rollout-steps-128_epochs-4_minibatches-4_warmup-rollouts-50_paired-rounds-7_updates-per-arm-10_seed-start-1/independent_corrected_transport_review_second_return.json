@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "srun",
+    "--jobid=6821437",
+    "--overlap",
+    "--exact",
+    "--time=00:05:00",
+    "-n1",
+    "-c1",
+    "--mem=512M",
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-02-24_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/independent_corrected_root_transport_retention_review.py",
+    "--freeze",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-02-24_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/corrected_root_transport_custody_source_freeze.json",
+    "--sha256",
+    "99ddac063edd97d12d7b3f5b414f7a440952e7c00e3302525128f29ec9b42c7f"
+  ],
+  "returncode": 0,
+  "elapsed_seconds": 0.6735351390670985,
+  "finished_at_utc": "2026-11-05T11:23:23.993451+00:00",
+  "no_automatic_retry": true,
+  "previous_recorder_failure_preserved": true
+}

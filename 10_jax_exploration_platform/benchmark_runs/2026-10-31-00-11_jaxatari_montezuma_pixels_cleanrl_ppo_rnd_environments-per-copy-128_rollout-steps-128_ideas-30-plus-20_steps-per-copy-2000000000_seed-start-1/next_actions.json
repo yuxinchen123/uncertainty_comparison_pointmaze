@@ -1380,6 +1380,15 @@
     "root_transport_correction": {
       "actual_gpu_or_ssh_attempted": false,
       "author": "correct_native_process_control",
+      "corrected_review": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-02-24_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/independent_corrected_root_transport_retention_review.json",
+        "sha256": "e0c1b534f43cff08dfa70c8c4c70bb1fb646720577d033c92fceda65f6684d38"
+      },
+      "corrected_source_freeze": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-02-24_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/corrected_root_transport_custody_source_freeze.json",
+        "sha256": "99ddac063edd97d12d7b3f5b414f7a440952e7c00e3302525128f29ec9b42c7f"
+      },
+      "corrected_ssh_proposal": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-02-24_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/corrected_root_transport_proposal.json",
       "no_frozen_controller_or_helper_edits": true,
       "reason": "Save the genuine actual controller Popen identity before numerical registration; ordinary unknown-cleanup errors must retain the metadata lock.",
       "rejected_failure_receipt_sha256": "f3b87cfcb69a1e5e8739082f6be87ca6ac56a313cff5539f1689410dcbc1a9cb",
@@ -1388,7 +1397,7 @@
         "sha256": "b76c23df24fcac60fc1afd2524c8249edf588b95624ccb1757deca5dc72f0a65"
       },
       "reviewer": "review_bound_h100_timing_launch",
-      "state": "ordinary_poll_exception_custody_correction_under_review"
+      "state": "independently_approved_waiting_publication_and_one_ssh"
     },
     "rounds": 7,
     "source_commit": "765480d990cff5ae556914e3b74afba0472f64ea",

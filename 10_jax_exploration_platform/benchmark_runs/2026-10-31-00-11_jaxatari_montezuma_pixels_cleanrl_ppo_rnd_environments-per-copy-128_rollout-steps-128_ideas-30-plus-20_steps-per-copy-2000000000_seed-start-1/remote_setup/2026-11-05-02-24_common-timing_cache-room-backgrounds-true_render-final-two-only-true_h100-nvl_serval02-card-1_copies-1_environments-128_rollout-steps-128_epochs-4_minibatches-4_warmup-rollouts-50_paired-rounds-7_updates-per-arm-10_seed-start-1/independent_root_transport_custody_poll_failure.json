@@ -1,0 +1,26 @@
+{
+  "actual_cpu_child_wait_returncode": 0,
+  "actual_escaped_error": "declared CPU fixture: ordinary Popen.poll failure",
+  "actual_numeric_step": "7",
+  "actual_owned_cpu_job": "6821437",
+  "actual_target_operation": false,
+  "elapsed_seconds": 0.04445437900722027,
+  "frozen_starter_sha256": "6cda455a6a808722a31e9995c69cc798c5fba9547d012505d4b327b1c4210446",
+  "hostname": "slurm2",
+  "injected_failure": "one explicitly declared ordinary Popen.poll OSError",
+  "kind": "independent_root_transport_unknown_custody_poll_exception_reproduction",
+  "numerical_gpu_tool_remote_operations": 0,
+  "production_source_approved": false,
+  "real_child_alive_when_custody_helper_escaped": true,
+  "real_child_passed_metadata_barrier_after_unwind": true,
+  "real_cpu_child_birth": "83777522",
+  "real_cpu_child_pid": 1070500,
+  "reproduced": true,
+  "root_spawn_record_existed": false,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-02-24_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/corrected_root_transport_source_freeze.json",
+    "sha256": "b76c23df24fcac60fc1afd2524c8249edf588b95624ccb1757deca5dc72f0a65"
+  }
+}
