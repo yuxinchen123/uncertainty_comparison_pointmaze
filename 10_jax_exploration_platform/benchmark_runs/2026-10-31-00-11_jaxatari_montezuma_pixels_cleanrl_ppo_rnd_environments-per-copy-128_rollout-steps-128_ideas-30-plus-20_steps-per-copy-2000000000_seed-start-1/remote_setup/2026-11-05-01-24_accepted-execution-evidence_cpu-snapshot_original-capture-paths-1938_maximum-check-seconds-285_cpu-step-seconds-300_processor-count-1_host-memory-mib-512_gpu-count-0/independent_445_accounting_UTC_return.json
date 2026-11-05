@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "sacct",
+    "-n",
+    "-P",
+    "-j",
+    "6783003.445",
+    "--format=JobIDRaw,JobName,State,ExitCode,NodeList,AllocCPUS,ReqMem,AllocTRES,Start,End,ElapsedRaw",
+    "--units=M"
+  ],
+  "elapsed_seconds": 0.2101436509983614,
+  "environment_override": {
+    "TZ": "UTC"
+  },
+  "reason": "Explicit UTC formatting joins scheduler wall-clock rows to recorded UTC invocation/return; initial unqualified-local display preserved separately.",
+  "recorded_at_utc": "2026-11-05T09:45:17.993255+00:00",
+  "returncode": 0
+}

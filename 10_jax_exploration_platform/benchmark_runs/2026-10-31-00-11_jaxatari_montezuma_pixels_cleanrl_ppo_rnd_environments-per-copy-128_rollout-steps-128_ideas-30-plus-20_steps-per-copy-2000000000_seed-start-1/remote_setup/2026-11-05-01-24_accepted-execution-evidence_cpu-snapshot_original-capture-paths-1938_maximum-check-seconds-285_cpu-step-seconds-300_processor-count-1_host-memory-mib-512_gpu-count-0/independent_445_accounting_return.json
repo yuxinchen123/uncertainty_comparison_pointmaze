@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "sacct",
+    "-n",
+    "-P",
+    "-j",
+    "6783003.445",
+    "--format=JobIDRaw,JobName,State,ExitCode,NodeList,AllocCPUS,ReqMem,AllocTRES,Start,End,ElapsedRaw",
+    "--units=M"
+  ],
+  "elapsed_seconds": 0.19121008005458862,
+  "matching_owned_job_ledger_verified": true,
+  "recorded_at_utc": "2026-11-05T09:44:31.270178+00:00",
+  "returncode": 0
+}
