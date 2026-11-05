@@ -411,6 +411,52 @@ def validate_calls(evidence, owner, allowed, contract):
     return {'calls': len(calls), 'ordinary_calls': ordinary, 'cleanup_calls': cleanup}
 
 
+def scope_stat(raw):
+    """Parse retained scope identity bytes for living children and unreaped terminal children."""
+    first, remaining = raw.rsplit(') ', 1)
+    fields = remaining.split();pid = first.split(' (', 1)[0]
+    require(pid.isdecimal() and len(fields) >= 20 and len(fields[0]) == 1
+        and all(fields[index].isdecimal() for index in (1, 2, 3, 19)),
+        'saved scoped stat lacks its exact process, parent, group, session or birth fields')
+    return {'pid': int(pid), 'parent_pid': int(fields[1]), 'process_group': int(fields[2]),
+        'session': int(fields[3]), 'process_start_time': fields[19], 'state': fields[0]}
+
+
+def validate_scope_snapshot(record, uid, cgroup, observer):
+    """Check the scope producer's saved schema without inventing absent raw command fields."""
+    fields = {'pid', 'parent_pid', 'process_group', 'session', 'process_start_time', 'state', 'uids', 'cgroup',
+        'stat_before', 'stat_after', 'status', 'status_after', 'command', 'command_raw_sha256', 'observed_at_seconds'}
+    require(type(record) is dict and set(record) == fields and type(uid) is int and uid >= 0
+        and type(cgroup) is str and bool(cgroup)
+        and all(type(record[key]) is str and 0 < len(record[key].encode()) <= observer.MAX_BYTES
+            for key in ('stat_before', 'stat_after', 'status', 'status_after')),
+        'saved scoped process requires its exact bounded stat/status schema')
+    # Scope snapshots retain the final state; a scheduling state may change between the two reads.
+    before, after = scope_stat(record['stat_before']), scope_stat(record['stat_after'])
+    require(all(before[key] == after[key] for key in ('pid', 'parent_pid', 'process_start_time'))
+        and all(type(record[key]) is type(value) and record[key] == value for key, value in after.items())
+        and type(record['pid']) is int and record['pid'] > 0
+        and type(record['state']) is str and len(record['state']) == 1
+        and record['state'] == record['stat_after'].rsplit(') ', 1)[1].split()[0]
+        and type(record['uids']) is list and len(record['uids']) == 4
+        and all(type(value) is int for value in record['uids'])
+        and observer.parsed_uids(record['status']) == observer.parsed_uids(record['status_after'])
+        == record['uids'] == [uid] * 4 and record['cgroup'] == cgroup
+        and finite_time(record['observed_at_seconds']),
+        'saved scoped process differs from its raw PID, birth, user identifiers, state or cgroup')
+    # Before: ['tool', '--version']; after: hash of Linux argument bytes, never a fabricated cmdline field.
+    command = record['command']
+    require(command is None or type(command) is list and bool(command)
+        and all(type(part) is str and '\0' not in part for part in command) and bool(command[0]),
+        'saved scoped command must be a typed argument list or an actual empty-command observation')
+    encoded = b'' if command is None else b'\0'.join(part.encode() for part in command) + b'\0'
+    require(type(record['command_raw_sha256']) is str
+        and re.fullmatch('[0-9a-f]{64}', record['command_raw_sha256'])
+        and hashlib.sha256(encoded).hexdigest() == record['command_raw_sha256'],
+        'saved scoped command arguments differ from their retained actual command hash')
+    return {key: record[key] for key in ('pid', 'parent_pid', 'process_start_time', 'uids', 'cgroup')}
+
+
 def validate_saved(directory, plan, observer, intent, observation, launch, waited, mapping=None, diagnostic_deadline=None):
     """Read all three actual role records without loading a library or observing any historical live process."""
     policy(plan);directory = Path(directory)
@@ -424,7 +470,7 @@ def validate_saved(directory, plan, observer, intent, observation, launch, waite
     allowed = {owner['pid']: owner for owner in owners.values()}
     for node in terminal_scope['positive_nodes'].values():
         record = node['initial']
-        observer.validate_snapshot(record, owners['producer']['uids'][0], owners['producer']['cgroup'])
+        validate_scope_snapshot(record, owners['producer']['uids'][0], owners['producer']['cgroup'], observer)
         require(record['pid'] not in allowed or all(record[key] == allowed[record['pid']][key] for key in ('pid', 'process_start_time', 'uids', 'cgroup')),
             'native opened process has conflicting positive identity')
         allowed[record['pid']] = record

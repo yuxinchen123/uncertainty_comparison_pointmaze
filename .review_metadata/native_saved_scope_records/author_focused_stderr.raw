@@ -1,0 +1,118 @@
+test_actual_attempt_is_still_failed_and_zero_credit (test_native_saved_scope_records.ActualSavedScopeRecordsTests)
+A reader regression never reclassifies the failed producer or grants any study credit. ... ok
+test_actual_empty_command_observation_remains_exact (test_native_saved_scope_records.ActualSavedScopeRecordsTests)
+An actual empty scope command requires its actual empty-byte hash, with no claimed argv. ... ERROR
+test_actual_initial_and_final_scope_records (test_native_saved_scope_records.ActualSavedScopeRecordsTests)
+All retained scope identities pass their actual schema without fabricated cmdline bytes. ... test_changed_actual_input_and_reference_refused (test_native_saved_scope_records.ActualSavedScopeRecordsTests)
+A changed fixture or scope reference cannot use the accepted actual input identity. ... ok
+test_command_hash_cgroup_and_types_refused (test_native_saved_scope_records.ActualSavedScopeRecordsTests)
+Altered commands, cgroups, Boolean identities and missing fields fail directly. ... ok
+test_original_reader_refuses_scope_but_accepts_actual_full_records (test_native_saved_scope_records.ActualSavedScopeRecordsTests)
+The original raw-command ancestry and owner proof stays unchanged and required. ... ok
+test_raw_stat_birth_and_parent_changes_refused (test_native_saved_scope_records.ActualSavedScopeRecordsTests)
+Raw birth/parent and every retained typed identity must agree. ... ok
+test_raw_uid_and_expected_owner_changes_refused (test_native_saved_scope_records.ActualSavedScopeRecordsTests)
+Summary or retained status changes cannot authorize a foreign process. ... ok
+test_complete_synthetic_self_preflight_is_read_without_native_loading (test_native_process_evidence.NativeSavedCallTests)
+The saved call reader accepts exact metadata without loading the native provider. ... ok
+test_missing_identity_duplicate_generation_and_changed_fdinfo_refuse (test_native_process_evidence.NativeSavedCallTests)
+Missing or substituted raw handle observations cannot support a completed saved record. ... ok
+test_nonfinite_times_wrong_returns_and_boolean_counts_refuse (test_native_process_evidence.NativeSavedCallTests)
+Successful metadata needs ordered finite times and exact integer identities and returns. ... ok
+test_partial_preflight_or_unknown_open_handles_never_complete (test_native_process_evidence.NativeSavedCallTests)
+Self preflight and terminal handle counts are required even if every remaining record looks valid. ... ok
+test_reused_descriptor_number_requires_a_new_open_generation_after_close (test_native_process_evidence.NativeSavedCallTests)
+A later open may reuse a descriptor number only after the earlier generation closes. ... ok
+test_unknown_process_signal_syscall_and_cleanup_budget_refuse (test_native_process_evidence.NativeSavedCallTests)
+No unproved process or changed native operation can be accepted as successful saved work. ... ok
+
+======================================================================
+ERROR: test_actual_empty_command_observation_remains_exact (test_native_saved_scope_records.ActualSavedScopeRecordsTests)
+An actual empty scope command requires its actual empty-byte hash, with no claimed argv.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-05-00-51_native-saved-scope-records_raw-stat-status-command-hash_environment-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_native_saved_scope_records.py", line 105, in test_actual_empty_command_observation_remains_exact
+    self.check_record(record)
+  File "/p/rlprojects/RND_worktrees/2026-11-05-00-51_native-saved-scope-records_raw-stat-status-command-hash_environment-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_native_saved_scope_records.py", line 45, in check_record
+    return evidence.validate_scope_snapshot(record, self.uid, self.cgroup, observer)
+  File "/p/rlprojects/RND_worktrees/2026-11-05-00-51_native-saved-scope-records_raw-stat-status-command-hash_environment-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/native_process_evidence.py", line 424, in validate_scope_snapshot
+    before, after = observer.parsed_stat(record['stat_before']), observer.parsed_stat(record['stat_after'])
+  File "/p/rlprojects/RND_worktrees/2026-11-05-00-51_native-saved-scope-records_raw-stat-status-command-hash_environment-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py", line 88, in parsed_stat
+    require(fields[0] not in {"Z", "X", "x"}, "the observed process has already exited")
+  File "/p/rlprojects/RND_worktrees/2026-11-05-00-51_native-saved-scope-records_raw-stat-status-command-hash_environment-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py", line 24, in require
+    raise ValueError(message)
+ValueError: the observed process has already exited
+
+======================================================================
+ERROR: test_actual_initial_and_final_scope_records (test_native_saved_scope_records.ActualSavedScopeRecordsTests) (pid=231267, stage='last')
+All retained scope identities pass their actual schema without fabricated cmdline bytes.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-05-00-51_native-saved-scope-records_raw-stat-status-command-hash_environment-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_native_saved_scope_records.py", line 53, in test_actual_initial_and_final_scope_records
+    checked = self.check_record(record)
+  File "/p/rlprojects/RND_worktrees/2026-11-05-00-51_native-saved-scope-records_raw-stat-status-command-hash_environment-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_native_saved_scope_records.py", line 45, in check_record
+    return evidence.validate_scope_snapshot(record, self.uid, self.cgroup, observer)
+  File "/p/rlprojects/RND_worktrees/2026-11-05-00-51_native-saved-scope-records_raw-stat-status-command-hash_environment-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/native_process_evidence.py", line 424, in validate_scope_snapshot
+    before, after = observer.parsed_stat(record['stat_before']), observer.parsed_stat(record['stat_after'])
+  File "/p/rlprojects/RND_worktrees/2026-11-05-00-51_native-saved-scope-records_raw-stat-status-command-hash_environment-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py", line 88, in parsed_stat
+    require(fields[0] not in {"Z", "X", "x"}, "the observed process has already exited")
+  File "/p/rlprojects/RND_worktrees/2026-11-05-00-51_native-saved-scope-records_raw-stat-status-command-hash_environment-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py", line 24, in require
+    raise ValueError(message)
+ValueError: the observed process has already exited
+
+======================================================================
+ERROR: test_actual_initial_and_final_scope_records (test_native_saved_scope_records.ActualSavedScopeRecordsTests) (pid=231283, stage='last')
+All retained scope identities pass their actual schema without fabricated cmdline bytes.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-05-00-51_native-saved-scope-records_raw-stat-status-command-hash_environment-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_native_saved_scope_records.py", line 53, in test_actual_initial_and_final_scope_records
+    checked = self.check_record(record)
+  File "/p/rlprojects/RND_worktrees/2026-11-05-00-51_native-saved-scope-records_raw-stat-status-command-hash_environment-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_native_saved_scope_records.py", line 45, in check_record
+    return evidence.validate_scope_snapshot(record, self.uid, self.cgroup, observer)
+  File "/p/rlprojects/RND_worktrees/2026-11-05-00-51_native-saved-scope-records_raw-stat-status-command-hash_environment-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/native_process_evidence.py", line 424, in validate_scope_snapshot
+    before, after = observer.parsed_stat(record['stat_before']), observer.parsed_stat(record['stat_after'])
+  File "/p/rlprojects/RND_worktrees/2026-11-05-00-51_native-saved-scope-records_raw-stat-status-command-hash_environment-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py", line 88, in parsed_stat
+    require(fields[0] not in {"Z", "X", "x"}, "the observed process has already exited")
+  File "/p/rlprojects/RND_worktrees/2026-11-05-00-51_native-saved-scope-records_raw-stat-status-command-hash_environment-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py", line 24, in require
+    raise ValueError(message)
+ValueError: the observed process has already exited
+
+======================================================================
+ERROR: test_actual_initial_and_final_scope_records (test_native_saved_scope_records.ActualSavedScopeRecordsTests) (pid=231285, stage='last')
+All retained scope identities pass their actual schema without fabricated cmdline bytes.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-05-00-51_native-saved-scope-records_raw-stat-status-command-hash_environment-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_native_saved_scope_records.py", line 53, in test_actual_initial_and_final_scope_records
+    checked = self.check_record(record)
+  File "/p/rlprojects/RND_worktrees/2026-11-05-00-51_native-saved-scope-records_raw-stat-status-command-hash_environment-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_native_saved_scope_records.py", line 45, in check_record
+    return evidence.validate_scope_snapshot(record, self.uid, self.cgroup, observer)
+  File "/p/rlprojects/RND_worktrees/2026-11-05-00-51_native-saved-scope-records_raw-stat-status-command-hash_environment-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/native_process_evidence.py", line 424, in validate_scope_snapshot
+    before, after = observer.parsed_stat(record['stat_before']), observer.parsed_stat(record['stat_after'])
+  File "/p/rlprojects/RND_worktrees/2026-11-05-00-51_native-saved-scope-records_raw-stat-status-command-hash_environment-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py", line 88, in parsed_stat
+    require(fields[0] not in {"Z", "X", "x"}, "the observed process has already exited")
+  File "/p/rlprojects/RND_worktrees/2026-11-05-00-51_native-saved-scope-records_raw-stat-status-command-hash_environment-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py", line 24, in require
+    raise ValueError(message)
+ValueError: the observed process has already exited
+
+======================================================================
+ERROR: test_actual_initial_and_final_scope_records (test_native_saved_scope_records.ActualSavedScopeRecordsTests) (pid=231291, stage='last')
+All retained scope identities pass their actual schema without fabricated cmdline bytes.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-05-00-51_native-saved-scope-records_raw-stat-status-command-hash_environment-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_native_saved_scope_records.py", line 53, in test_actual_initial_and_final_scope_records
+    checked = self.check_record(record)
+  File "/p/rlprojects/RND_worktrees/2026-11-05-00-51_native-saved-scope-records_raw-stat-status-command-hash_environment-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_native_saved_scope_records.py", line 45, in check_record
+    return evidence.validate_scope_snapshot(record, self.uid, self.cgroup, observer)
+  File "/p/rlprojects/RND_worktrees/2026-11-05-00-51_native-saved-scope-records_raw-stat-status-command-hash_environment-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/native_process_evidence.py", line 424, in validate_scope_snapshot
+    before, after = observer.parsed_stat(record['stat_before']), observer.parsed_stat(record['stat_after'])
+  File "/p/rlprojects/RND_worktrees/2026-11-05-00-51_native-saved-scope-records_raw-stat-status-command-hash_environment-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py", line 88, in parsed_stat
+    require(fields[0] not in {"Z", "X", "x"}, "the observed process has already exited")
+  File "/p/rlprojects/RND_worktrees/2026-11-05-00-51_native-saved-scope-records_raw-stat-status-command-hash_environment-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py", line 24, in require
+    raise ValueError(message)
+ValueError: the observed process has already exited
+
+----------------------------------------------------------------------
+Ran 14 tests in 0.031s
+
+FAILED (errors=5)
+srun: error: heartpiece: task 0: Exited with exit code 1

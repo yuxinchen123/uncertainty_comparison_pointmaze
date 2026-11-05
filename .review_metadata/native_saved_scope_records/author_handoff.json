@@ -1,0 +1,38 @@
+{
+  "actual_input_manifest": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-00-51_native-saved-scope-records_raw-stat-status-command-hash_environment-transitions-0/.review_metadata/native_saved_scope_records/actual_schema_fixture_inputs.json",
+    "sha256": "1bf8f9cfc95a2249547c524a8eb0e35992bad2cacdbda0b516038fc5638a2b43"
+  },
+  "author_corrected_check": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-00-51_native-saved-scope-records_raw-stat-status-command-hash_environment-transitions-0/.review_metadata/native_saved_scope_records/author_corrected_return.json",
+    "sha256": "44bacd11efc0932d3bf233ae6f1d4056b2ec790f437afba9ee09778a5adce2ee"
+  },
+  "author_corrected_stderr": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-00-51_native-saved-scope-records_raw-stat-status-command-hash_environment-transitions-0/.review_metadata/native_saved_scope_records/author_corrected_stderr.raw",
+    "sha256": "eae0be5c418211c8846ce2013f8cb5581fe8807a302249a3745f5f8502078117"
+  },
+  "base": "39c93b44af70f9dfa63f38cde93f78b3604cc365",
+  "corrected_test_body_seconds": 0.014,
+  "corrected_test_methods": 8,
+  "failed_prior_attempt_still_failed": true,
+  "independent_review_required": true,
+  "kind": "native_saved_scope_schema_author_handoff",
+  "new_packet_prepared": false,
+  "no_independent_approval_or_credit_claimed": true,
+  "preserved_failed_attempt": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-00-51_native-saved-scope-records_raw-stat-status-command-hash_environment-transitions-0/.review_metadata/native_saved_scope_records/failed_attempt_preserved/preservation_manifest.json",
+    "sha256": "98498574d99c02dc4a7bf04287b55e6bd33ffca1f917a41bc3404e8407c7e043"
+  },
+  "preserved_first_author_parser_failure": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-00-51_native-saved-scope-records_raw-stat-status-command-hash_environment-transitions-0/.review_metadata/native_saved_scope_records/author_first_parser_failure_preserved/preservation_manifest.json",
+    "sha256": "e5da72904da550b3d1980e5ac16e39c2fcd56bd9c8455aba250e2cabbc08ee07"
+  },
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-00-51_native-saved-scope-records_raw-stat-status-command-hash_environment-transitions-0/.review_metadata/native_saved_scope_records/source_freeze.json",
+    "sha256": "ca0505be76f23f5f39429845c7ac8799b7579065ace0cca5ba3d7e3ea99fed69"
+  },
+  "source_held": true,
+  "ssh_or_tool_or_gpu_actions": false,
+  "unchanged_saved_call_test_methods_previously_passed": 6,
+  "worktree": "/p/rlprojects/RND_worktrees/2026-11-05-00-51_native-saved-scope-records_raw-stat-status-command-hash_environment-transitions-0"
+}

@@ -1,0 +1,21 @@
+test_actual_attempt_is_still_failed_and_zero_credit (test_native_saved_scope_records.ActualSavedScopeRecordsTests)
+A reader regression never reclassifies the failed producer or grants any study credit. ... ok
+test_actual_empty_command_observation_remains_exact (test_native_saved_scope_records.ActualSavedScopeRecordsTests)
+An actual empty scope command requires its actual empty-byte hash, with no claimed argv. ... ok
+test_actual_initial_and_final_scope_records (test_native_saved_scope_records.ActualSavedScopeRecordsTests)
+All retained scope identities pass their actual schema without fabricated cmdline bytes. ... ok
+test_changed_actual_input_and_reference_refused (test_native_saved_scope_records.ActualSavedScopeRecordsTests)
+A changed fixture or scope reference cannot use the accepted actual input identity. ... ok
+test_command_hash_cgroup_and_types_refused (test_native_saved_scope_records.ActualSavedScopeRecordsTests)
+Altered commands, cgroups, Boolean identities and missing fields fail directly. ... ok
+test_original_reader_refuses_scope_but_accepts_actual_full_records (test_native_saved_scope_records.ActualSavedScopeRecordsTests)
+The original raw-command ancestry and owner proof stays unchanged and required. ... ok
+test_raw_stat_birth_and_parent_changes_refused (test_native_saved_scope_records.ActualSavedScopeRecordsTests)
+Raw birth/parent and every retained typed identity must agree. ... ok
+test_raw_uid_and_expected_owner_changes_refused (test_native_saved_scope_records.ActualSavedScopeRecordsTests)
+Summary or retained status changes cannot authorize a foreign process. ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.014s
+
+OK

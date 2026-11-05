@@ -1,0 +1,33 @@
+{
+  "argv": [
+    "srun",
+    "--jobid=6783003",
+    "--overlap",
+    "--exact",
+    "-n1",
+    "-c1",
+    "--mem=512M",
+    "--time=00:05:00",
+    "/usr/bin/python3",
+    "-B",
+    "-m",
+    "unittest",
+    "-v",
+    "test_native_saved_scope_records",
+    "test_native_process_evidence.NativeSavedCallTests"
+  ],
+  "cwd": "/p/rlprojects/RND_worktrees/2026-11-05-00-51_native-saved-scope-records_raw-stat-status-command-hash_environment-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests",
+  "elapsed_seconds": 0.5210740600014105,
+  "environment_transitions": 0,
+  "failed_original_attempt_remains_failed": true,
+  "finished_at_utc": "2026-11-05T08:54:48.259164+00:00",
+  "gpu_operations": 0,
+  "kind": "owned_cpu_focused_actual_saved_schema_regression_return",
+  "live_process_queries": false,
+  "memory_mebibytes": 512,
+  "native_calls": 0,
+  "returncode": 1,
+  "started_at_utc": "2026-11-05T08:54:47.738101+00:00",
+  "time_limit_seconds": 300,
+  "tool_runs": 0
+}
