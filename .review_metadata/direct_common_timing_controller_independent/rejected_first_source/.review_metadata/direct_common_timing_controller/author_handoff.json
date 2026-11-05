@@ -1,0 +1,40 @@
+{
+  "actual_saved_correctness_predecessor_reader_test_passed": true,
+  "author_focused_return": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-01-16_direct-common-timing_controller-helpers-29_copies-1-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/.review_metadata/direct_common_timing_controller/author_corrected_return.json",
+    "sha256": "1de99703d46fa9dd660b9f91682037e51addd93fbb55ffd9621eb5a955832596"
+  },
+  "author_focused_stderr": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-01-16_direct-common-timing_controller-helpers-29_copies-1-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/.review_metadata/direct_common_timing_controller/author_corrected_stderr.raw",
+    "sha256": "9125842e440f9bc5438361db3da55e9e7cf6cb4efb82045de917850aff4c754c"
+  },
+  "base": "fd10d4a8e08a8a83fa0e73d528da5268ba004984",
+  "kind": "direct_common_timing_controller_and_preparer_author_handoff",
+  "limits": {
+    "cpu_step_seconds": 300,
+    "metadata_child_seconds": 180,
+    "metadata_cli_work_seconds": 240
+  },
+  "no_actual_unit_or_remote_gpu_job_action": true,
+  "original_numerical_files_unchanged": 13,
+  "preserved_first_fixture_failures": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-01-16_direct-common-timing_controller-helpers-29_copies-1-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/.review_metadata/direct_common_timing_controller/first_fixture_assertion_failure_preserved/manifest.json",
+    "sha256": "811a4ea9b2957058701f5ecf5486a9113358f36f9352307e934d59b6d89f13f9"
+  },
+  "required_future_actual_validation": [
+    "Independent source review of the new timing-only admission and preparer.",
+    "Actual complete CPU snapshot and genuine review from the corrected producer.",
+    "Genuine cold staged twenty-nine-helper child proof before numerical work.",
+    "Fresh metadata-only prepare, verify and bind phases, each in owned CPU with five-minute limit and512MiB.",
+    "Root exact source/packet publication and independent launch review before any actual host command."
+  ],
+  "software_scope": "Only shared metadata and exact staged source are verified here; unchanged numerical producer retains live source, assets, runtime, backend, CUDA and occupancy gates.",
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-01-16_direct-common-timing_controller-helpers-29_copies-1-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/.review_metadata/direct_common_timing_controller/source_freeze.json",
+    "sha256": "1bbdf561344c8a00852794436b7c74fa32f3f80465607b81d1a5cd93d75ea327"
+  },
+  "source_held": true,
+  "source_publication_functions_unchanged": 25,
+  "test_methods": 6,
+  "worktree": "/p/rlprojects/RND_worktrees/2026-11-05-01-16_direct-common-timing_controller-helpers-29_copies-1-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1"
+}

@@ -1,0 +1,29 @@
+{
+  "actual_timing_units_prepared": 0,
+  "argv": [
+    "srun",
+    "--jobid=6783003",
+    "--overlap",
+    "--exact",
+    "-n1",
+    "-c1",
+    "--mem=512M",
+    "--time=00:05:00",
+    "/usr/bin/python3",
+    "-B",
+    "-m",
+    "unittest",
+    "-v",
+    "test_direct_common_timing_controller.TimingCopyOrderCorrectionTests"
+  ],
+  "cpu_step_seconds": 300,
+  "cwd": "/p/rlprojects/RND_worktrees/2026-11-05-01-16_direct-common-timing_controller-helpers-29_copies-1-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests",
+  "elapsed_seconds": 1.9774228759342805,
+  "finished_at_utc": "2026-11-05T09:50:09.857257+00:00",
+  "kind": "focused_timing_serial_copy_order_and_canonical_preparer_regression",
+  "memory_mebibytes": 512,
+  "remote_gpu_native_actions": 0,
+  "returncode": 0,
+  "started_at_utc": "2026-11-05T09:50:07.879838+00:00",
+  "whole_prior_case_batch_repeated": false
+}

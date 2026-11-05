@@ -1,0 +1,78 @@
+{
+  "admission_granted": false,
+  "all_new_operations_require_confirmation_and_reviewed_snapshot": true,
+  "base": "fd10d4a8e08a8a83fa0e73d528da5268ba004984",
+  "changed_admission_functions": [
+    "check_backend_inputs",
+    "packet_metadata_paths",
+    "validate_packet_freeze",
+    "checked_inputs",
+    "check_serial_predecessor_inputs"
+  ],
+  "existing_tracked_files_modified": [],
+  "files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_timing_controller.py": {
+      "bytes": 53604,
+      "sha256": "e159db9bd3c2cbffef2e6322489aa3ce5799f7ff6d416ab55d01934491fb6b9e"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/prepare_direct_common_timing.py": {
+      "bytes": 14564,
+      "sha256": "cbd70618dd97d8bc49ea6b280938e776e6d7d8ed0980d8cfe0f3f2044fb5400e"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_common_timing_controller.py": {
+      "bytes": 11423,
+      "sha256": "f3eae137cb10c4680bccfc61b7c807f390f5bec0ee9c0f788f42a7bacc49bb08"
+    }
+  },
+  "fresh_actual_packet_prepared": false,
+  "gpu_or_remote_or_job_actions": false,
+  "kind": "direct_common_timing_controller_and_preparer_source_freeze",
+  "protected_original_numerical_files": {
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py": "df811a5d51a7ef2f747bc32d1545c8286552675dfc8b859e7d0600eef4c920c5",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/scripts/atari_pixel_campaign/paired_benchmark.py": "c3e39d8e5d2549c3e2682e196861095780b30740a49821b2077da620386f2916",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/scripts/atari_pixel_campaign/worker_environment.sh": "61de3a987d6494fba948083e32ba13e97f30f53e980797c72c1508e726818955",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/__init__.py": "4692ca9941cece84d6cbea0c19b9344a0dfe5d32f3a1a9d93ad7cd93fe135de2",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/checkpointing.py": "f156b27e0c5d275db7e472f8659ca46d594624a8f573d43eee5383cdaf9f17fb",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/config.py": "8b3643fba5e3382f612507416f2204500966592a6872bb286dea1935c5f32218",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/environment.py": "aa0ad31c8fbd04c67fb9742ea103e9262dfe9cc5b6e719889c50454537b1c8b7",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/kernels.py": "dd895f5d95f6d39c79dce277254af9a19ac49112fcec0b16a5ba096a8082e8ff",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/networks.py": "ee65436eda5fab6ae2f8c303eaf3c072b5cdfa1f6d86cfc310dfa4974c98a5bd",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/pixel_preprocessing.py": "8a9f30f36ef7b07fa0ae513d1aee442a9964c2f8da179203b031c7aca8735188",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/settings.py": "17f20c6dd84c99eb435337b4446418cdcda3f426514d228996f40de4220c6f26",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/state.py": "9fcf0b6bb09bbf70dc88cd28952a6fa50969371f0d8aa66739c91ced1fe887f4",
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/training.py": "5b868d95c8e0f5798330e38fcf7d9a6981838881333bafe73465c1af070a5100"
+  },
+  "scientific_credit": 0,
+  "snapshot_source_commit_pinned_in_implementation": false,
+  "staged_filename_compatibility": {
+    "direct_common_timing_controller.py": "direct_qualification_controller.py",
+    "tests/test_direct_common_timing_controller.py": "test_direct_qualification_controller.py"
+  },
+  "unchanged_process_publication_function_ast_hashes": {
+    "actual_launch": "935ccb674a0a4829d5f6f1c35d5a5ef3b91d17c68a68829fb8dca73dbb2cf3f5",
+    "append_registration": "c62a443287290525407f3179aae26c0cc104c9715077731749fb93d16d06226e",
+    "check_publication": "b2b227aa84d04689fd14373a2861d6d1ccba0131f4bd9df3282f7e40980cc6f8",
+    "check_unattempted": "d76c7bbdd30f35741f2608039d82003b0a0ef85a9117e57ac33f0cb1bc415173",
+    "child_environment": "48648b7f1c03b877e3f170a6db5bd16f34650c8db603872575607474fc6b2d1f",
+    "chosen_affinity": "f90c048f68339557ab7eabeb4eb5c5ba8de3d0a939409e041116457f5ecd78a2",
+    "digest": "0b854b65fff3a246b9483923c448dabca49fa39ff421b7ca34bf22614fbc44db",
+    "document": "e1b0a2178693eb777acc4d2b51a60187d0dbe3dc0453b5a78a4a241cb36e4619",
+    "encoded": "bcb67324ba7382dc5f22281fe98bf965d46530765c37b73ebf24b6fe1c7f6fd3",
+    "fsync_directory": "176e5811d61ee67d908d81b70e69881c7532643e97a7b3e23b6648431c5230af",
+    "load_core": "92d1084949cd3dfce32df45096a568bdfe4551f1d7be5871b0c42d25624c04da",
+    "log_receipt": "305605563964895340b21e2f45558f173d16a7de05fcaafea204d289df32797a",
+    "main": "034310081ed501c95c67d9ebbf10bd09689fc93a57c1cdb2ae6beed8e4068593",
+    "metadata_lock": "4be1919d9d9f37d5a1a8a8e3102056004343def84fc004789eb6237592be5cf6",
+    "no_numerical_modules": "de818687011ea81a891d46768e6925511bf4bfccfc50fb7d52575a025a5b829a",
+    "now": "0821e5547e33e30630380f395c75e3500724b22f7503542276fd6b766cc36e0f",
+    "ordinary_bytes": "eb8055a2ac0f8765f20a6fb29345e9034fc9d6c657ef177787a59210f769cffe",
+    "owner_record": "dbd884a5db37186dbc0d6752dd9734d37480c70eef9fc3d2a4fb662814733d2d",
+    "publish": "08e1c7b34984649a86808a819cf0d9f7f0e6fd0598586a1f6432d6b15ed96239",
+    "read_process": "3dd7fa165b44893bef0a09630964de6b4240acbda480eed5c1a4ede70e53e4de",
+    "receipt": "575b25cb3b4a73a75e21ffef039b4f470ef1414ffb1494d25fd47b6779dc3ee7",
+    "require": "313409857c78ee3b13cb621d7c3a2a2e2f6a9b853025c83483ed51f4c1cbdacb",
+    "stable_stat": "a50ab68be2e13ee923d52ed747096c1e3b0b77eb3b9308d453e696f351b35dce",
+    "supervise": "30f5ba9d2355d4642a0f6e8bc92dbc89d5b05050921ab9109c72092364ecf9a2",
+    "wait_exact": "57c9e4a3c99f0e1d5063782bdac76b2ded36a8e6e3e8d810297f1f9493570ab7"
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "kind": "independent_common_timing_controller_source_review",
+  "passed": false,
+  "approved": false,
+  "decision": "BLOCK",
+  "source_freeze_sha256": "1bbdf561344c8a00852794436b7c74fa32f3f80465607b81d1a5cd93d75ea327",
+  "actual_cpu_job_id": "6783003",
+  "actual_cpu_step_id": "443",
+  "review_record": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-01-16_direct-common-timing_controller-helpers-29_copies-1-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/.review_metadata/direct_common_timing_controller_independent/review_step_443.json",
+    "sha256": "8daa56e5c7f7144e46c05f5c9c85a86290795cb8b9ae35dfaec2df341ba1b7d2"
+  },
+  "tests_run": 7,
+  "author_focused_controls_passed": 6,
+  "independent_boundary_controls_failed": 1,
+  "elapsed_seconds": 2.3565159189747646,
+  "finding": {
+    "function": "check_serial_predecessor_inputs",
+    "missing_join": "The current independent copy count is not tied to the requested serial position.",
+    "reproduced_request": {
+      "configuration_learner_n_copies": 2,
+      "copy_seeds": [1, 2],
+      "serial_order": 1,
+      "predecessor": "Genuine accepted second-copy correctness, with its real successful wait and saved exits."
+    },
+    "observed": "The predecessor gate returned successfully instead of refusing the two-copy request in serial position one.",
+    "effect": "A two-copy timing plan can select serial position one and bypass the required completed one-copy timing predecessor.",
+    "required_correction": "Join the strict integer current copy count to serial_order in the timing request and controller admission. Keep existing actual predecessor wait, source, proof and exit checks. Update the synthetic request fixture to name the intended one-copy timing request explicitly."
+  },
+  "preserved_rejected_source": ".review_metadata/direct_common_timing_controller_independent/rejected_first_source",
+  "frozen_source_files_unchanged": true,
+  "unchanged_process_publication_function_asts_verified": 25,
+  "original_numerical_files_verified_unchanged": 13,
+  "actual_timing_packet_or_unit_prepared": false,
+  "numerical_imports": [],
+  "remote_actions": 0,
+  "gpu_operations": 0,
+  "native_process_control_operations": 0,
+  "scientific_credit": 0,
+  "additional_nonblocking_note": "The staged preparation copy imports the canonical controller filename. Execute the canonical preparation source, or declare a separately reviewed staging import mapping before treating the copied preparation file as executable."
+}

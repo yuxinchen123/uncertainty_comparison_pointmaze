@@ -1,0 +1,38 @@
+{
+  "actual_job_id": "6783003",
+  "actual_packet_or_timing_unit_prepared": false,
+  "actual_pid": 1250700,
+  "actual_step_id": "450",
+  "elapsed_seconds": 2.6827825140208006,
+  "errors": [],
+  "failures": [],
+  "first_rejection_preserved": true,
+  "frozen_files_before": {
+    "/p/rlprojects/RND_worktrees/2026-11-05-01-16_direct-common-timing_controller-helpers-29_copies-1-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_timing_controller.py": {
+      "mode": 432,
+      "sha256": "e6671f2265e90d6cd3c303880944b442a5eb59a5e8e0caa4adad0b644a3920fe"
+    },
+    "/p/rlprojects/RND_worktrees/2026-11-05-01-16_direct-common-timing_controller-helpers-29_copies-1-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/prepare_direct_common_timing.py": {
+      "mode": 432,
+      "sha256": "5a09d3228beb6ebf843e595ba9fd743d53bfcabd1bcc5f93b37704fb43fa0cb0"
+    },
+    "/p/rlprojects/RND_worktrees/2026-11-05-01-16_direct-common-timing_controller-helpers-29_copies-1-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_common_timing_controller.py": {
+      "mode": 432,
+      "sha256": "b1e538f2f56f99032f52916043e886d645a547d2e83afec9a35d2493e80243eb"
+    }
+  },
+  "frozen_files_unchanged": true,
+  "gpu_operations": 0,
+  "handoff_sha256": "2db4671aa5146081e8e05c8e443963a64edd30df6e73c5f2ea708a4fe360afab",
+  "kind": "independent_corrected_common_timing_controller_review",
+  "native_process_control_operations": 0,
+  "numerical_imports": [],
+  "original_numerical_files_verified_unchanged": 13,
+  "passed": true,
+  "previous_six_method_batch_repeated": false,
+  "remote_actions": 0,
+  "scientific_credit": 0,
+  "source_freeze_sha256": "67e9c1acc2834c35780353b51ba5dfb18ebaeafacae5e3a3d3b4c2d732ea4c9f",
+  "tests_run": 8,
+  "unchanged_process_publication_function_asts_verified": 25
+}

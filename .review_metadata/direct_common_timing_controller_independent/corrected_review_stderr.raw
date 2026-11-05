@@ -1,0 +1,18 @@
+test_actual_plan_copy_count_cannot_differ_from_request (test_direct_common_timing_controller.TimingCopyOrderCorrectionTests)
+A one-copy declaration cannot admit a current two-copy timing plan. ... ok
+test_canonical_preparer_import_and_archival_only_mapping (test_direct_common_timing_controller.TimingCopyOrderCorrectionTests)
+The canonical source imports on CPU; every advertised phase uses it, never the archival packet copy. ... ok
+test_crossed_boolean_and_missing_seed_orders_refused_before_reads (test_direct_common_timing_controller.TimingCopyOrderCorrectionTests)
+Two/order-one, one/order-two and Boolean or partial identities cannot reach prior records. ... ok
+test_exact_one_and_two_copy_orders (test_direct_common_timing_controller.TimingCopyOrderCorrectionTests)
+Each current copy count has its own strict matching order and complete independent seeds. ... ok
+test_proper_one_copy_request_uses_actual_saved_second_correctness (test_direct_common_timing_controller.TimingCopyOrderCorrectionTests)
+The corrected genuine-predecessor control explicitly declares current count one. ... ok
+test_changed_genuine_predecessor_source_refused (__main__.IndependentTimingBoundaryTests) ... ok
+test_copy_two_cannot_use_first_serial_position (__main__.IndependentTimingBoundaryTests) ... ok
+test_independent_seed_and_actual_plan_refusals (__main__.IndependentTimingBoundaryTests) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 2.597s
+
+OK

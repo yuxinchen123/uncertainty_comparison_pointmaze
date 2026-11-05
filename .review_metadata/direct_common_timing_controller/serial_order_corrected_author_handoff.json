@@ -1,0 +1,69 @@
+{
+  "actual_reviewed_cpu_snapshot_now_exists_per_root_but_unconsumed_by_this_author": true,
+  "actual_units_remote_gpu_native_job_actions": 0,
+  "author_focused_return": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-01-16_direct-common-timing_controller-helpers-29_copies-1-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/.review_metadata/direct_common_timing_controller/serial_order_corrected_return.json",
+    "sha256": "e7ef1fce6390e4ba67736afbc79a0a107d782a48eca13b2b075d3d07832098b5"
+  },
+  "author_focused_stderr": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-01-16_direct-common-timing_controller-helpers-29_copies-1-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/.review_metadata/direct_common_timing_controller/serial_order_corrected_stderr.raw",
+    "sha256": "5eb3b0d7b0b79e1b08b80758ec25688e168feda54261ae8c00de0ca507a37542"
+  },
+  "base": "fd10d4a8e08a8a83fa0e73d528da5268ba004984",
+  "canonical_source_must_be_reviewed_committed_and_published_before_phase_execution": true,
+  "copied_packet_preparer_is_archival_only": true,
+  "count_order_rules": {
+    "count_one": "strict integer count1, serial_order1, seeds[1], real accepted correctness count2 and exact exits",
+    "count_two": "strict integer count2, serial_order2, seeds[1,2], real prior count1 timing normal0 and both exact exits"
+  },
+  "focused_test_methods": 5,
+  "independent_rejection": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-01-16_direct-common-timing_controller-helpers-29_copies-1-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/.review_metadata/direct_common_timing_controller_independent/independent_block_summary.json",
+    "sha256": "b0f33c18804b2ea34d15ba1a9b292a13cb7bdaf04b1a5843cb2cdf47bdb3a2ad"
+  },
+  "independent_review_required": true,
+  "kind": "corrected_common_timing_serial_copy_order_author_handoff",
+  "metadata_phase_command_templates": {
+    "bind": [
+      "/usr/bin/python3",
+      "-I",
+      "-S",
+      "-B",
+      "/p/rlprojects/RND_worktrees/2026-11-05-01-16_direct-common-timing_controller-helpers-29_copies-1-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/prepare_direct_common_timing.py",
+      "bind",
+      "--packet",
+      "<actual fresh packet path>"
+    ],
+    "prepare": [
+      "/usr/bin/python3",
+      "-I",
+      "-S",
+      "-B",
+      "/p/rlprojects/RND_worktrees/2026-11-05-01-16_direct-common-timing_controller-helpers-29_copies-1-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/prepare_direct_common_timing.py",
+      "prepare",
+      "--request",
+      "<actual fresh request path>"
+    ],
+    "verify": [
+      "/usr/bin/python3",
+      "-I",
+      "-S",
+      "-B",
+      "/p/rlprojects/RND_worktrees/2026-11-05-01-16_direct-common-timing_controller-helpers-29_copies-1-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/prepare_direct_common_timing.py",
+      "verify",
+      "--packet",
+      "<actual fresh packet path>"
+    ]
+  },
+  "preserved_rejected_source": "/p/rlprojects/RND_worktrees/2026-11-05-01-16_direct-common-timing_controller-helpers-29_copies-1-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/.review_metadata/direct_common_timing_controller_independent/rejected_first_source",
+  "previous_six_method_suite_repeated": false,
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-01-16_direct-common-timing_controller-helpers-29_copies-1-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/.review_metadata/direct_common_timing_controller/serial_order_corrected_source_freeze.json",
+    "sha256": "67e9c1acc2834c35780353b51ba5dfb18ebaeafacae5e3a3d3b4c2d732ea4c9f"
+  },
+  "source_held": true,
+  "test_body_seconds": 1.566,
+  "unchanged_numerical_files": 13,
+  "unchanged_process_publication_functions": 25,
+  "worktree": "/p/rlprojects/RND_worktrees/2026-11-05-01-16_direct-common-timing_controller-helpers-29_copies-1-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1"
+}

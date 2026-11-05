@@ -1,0 +1,6 @@
+{
+  "kind": "preserved_author_numerical_roster_metadata_shape_error",
+  "error": "The core receipt has11 entries with nested SHA fields; the paired receipt adds two files. The first freeze check compared nested entries with bare digests.",
+  "source_modified_by_failure": false,
+  "correction": "Read each exact core sha256 and the two paired-source digests, preserving all13 original files."
+}
