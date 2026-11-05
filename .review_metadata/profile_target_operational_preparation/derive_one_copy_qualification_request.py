@@ -109,6 +109,7 @@ def derive(args):
     else:
         argv += ['--gpu-uuid', 'GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3', '--direct-binding-profile', profile_input['path'],
             '--direct-history-inputs', str(run / 'data' / args.profile_unit_id / 'direct_history/inputs.json'),
+            '--direct-backend-image-record', backend_ref['path'],
             '--direct-qualification-record', qualification['result']['path'], '--direct-qualification-review', qualification['review']['path'],
             '--direct-confirmation-review', entries[0]['review']['path'], '--profile-process-component-result', native_result_ref['path'],
             '--profile-process-component-review', native_review_ref['path']]
@@ -117,6 +118,10 @@ def derive(args):
         'four_context_proof': proof_ref, 'four_context_review': review_ref, 'original_qualification_plan': original_ref,
         'backend_image_record': backend_ref, 'accepted_confirmation_sha256': accepted['result']['sha256'],
         'controller_maximum_seconds': 10800}
+    if not configured:
+        require(argv.count('--direct-backend-image-record') == 1
+            and argv[argv.index('--direct-backend-image-record') + 1] == request['backend_image_record']['path'],
+            'the parser presence argument must name the same fresh profile backend record')
     packet.mkdir()
     for name, value in (('configuration.json', common['configuration']), ('runtime_environment.json', common['runtime_environment']),
             ('asset_record.json', common['asset_record']), ('accepted_baseline.json', baseline),

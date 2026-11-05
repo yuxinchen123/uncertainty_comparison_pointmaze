@@ -1,0 +1,34 @@
+{
+  "actual_failed_request_unchanged": true,
+  "actual_failed_request_with_only_fresh_record_argument_parses": true,
+  "actual_failed_request_without_argument_still_refused": true,
+  "actual_job_id": "6825983",
+  "actual_runtime_prepared": false,
+  "actual_step_id": "67",
+  "admission_granted": false,
+  "affected_methods_passed": 2,
+  "approved": true,
+  "argument_path_equals_request_fresh_backend_record": true,
+  "explicit_stdlib_own_process_bootstrap_before_guard": [
+    {
+      "event": "ctypes.dlopen",
+      "own_process_only": true
+    }
+  ],
+  "fresh_backend_record_sha256": "19e752ef9b93999e8bec28a0706947935c31f4229a3b33556597de8f86575412",
+  "independent_of_author": true,
+  "kind": "independent_h100_operational_parser_presence_argument_review",
+  "new_backend_reader_accepts_and_old_reader_refuses_new_record": true,
+  "old_record_reused": false,
+  "original_failed_unit_directories_still_absent": true,
+  "passed": true,
+  "runtime_source_diff_empty": true,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "seconds": 0.3654305230593309,
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-12-25_h100-profile-qualification-parser_backend-record-new-schema-presence_only-operational-command-change_gpu-actions-0/.review_metadata/h100_qualification_parser_backend_argument/source_freeze.json",
+    "sha256": "3ae0a94b0fbe48e4a68c2c38430bfdf3eeb95b88f5ca5126da2a4e233240d48e"
+  },
+  "target_operations": 0
+}
