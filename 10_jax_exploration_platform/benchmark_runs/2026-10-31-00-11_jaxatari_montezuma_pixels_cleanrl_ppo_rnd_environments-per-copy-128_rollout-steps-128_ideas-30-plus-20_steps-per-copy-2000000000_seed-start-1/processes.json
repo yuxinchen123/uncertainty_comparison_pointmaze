@@ -248,5 +248,17 @@
     "gpu_uuid": "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3",
     "producer_owns_standing_descriptor": true,
     "controller_owns_standing_descriptor": false
+  },
+  {
+    "kind": "direct_nsight_process_descriptor_diagnostic",
+    "hostname": "serval02",
+    "pid": 244079,
+    "start_time": "83008672",
+    "unit": "2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0",
+    "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+    "helper_commit": "ba1d6cfec7ba772cd07c8833f4252e7b923aaf5e",
+    "gpu_uuid": "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3",
+    "producer_owns_standing_descriptor": true,
+    "controller_owns_standing_descriptor": false
   }
 ]

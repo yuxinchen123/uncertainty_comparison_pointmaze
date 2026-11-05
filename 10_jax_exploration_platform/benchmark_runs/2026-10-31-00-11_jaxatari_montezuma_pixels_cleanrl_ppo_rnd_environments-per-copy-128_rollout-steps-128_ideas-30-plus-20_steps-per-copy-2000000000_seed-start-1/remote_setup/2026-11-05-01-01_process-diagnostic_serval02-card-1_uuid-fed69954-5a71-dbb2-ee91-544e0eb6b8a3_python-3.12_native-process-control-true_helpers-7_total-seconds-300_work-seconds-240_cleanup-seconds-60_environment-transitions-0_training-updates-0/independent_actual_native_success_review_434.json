@@ -1,0 +1,480 @@
+{
+  "GPU_library_loads_or_device_ops": 0,
+  "actual_contract_CPU_executable_libc_header_bytes_verified_as_data": true,
+  "actual_contract_observation_only": true,
+  "actual_controller_wait": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/controller_wait.json",
+    "sha256": "18daa0a4ac46e0b6d32109bc08fb845570d550d51bdc13a2d1aa573b66fa5fa5"
+  },
+  "actual_cpu": {
+    "cgroup": "0::/system.slice/slurmstepd.scope/job_6783003/step_434/user/task_0\n",
+    "job_id": "6783003",
+    "pid": 1247900,
+    "step_id": "434"
+  },
+  "actual_launch_return": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/root_actual_target_launch_return.json",
+    "sha256": "0b0568a4e731cf2d76617b83fa45bd02efe5befa2c4e50e7bcc8e9c25be040e3"
+  },
+  "actual_live_PID_queries_in_review": 0,
+  "actual_native_syscalls_in_review": 0,
+  "all_native_role_failures_absent": true,
+  "all_scientific_case_idea_timing_packing_final_credit": 0,
+  "all_seven_helper_hashes": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_direct_nsight_process.py": "e87a0bedd58c1b55bd259c1dce8305e89e24e2e39df5eff807427fd5e631983a",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_capture_release.py": "8d7623b1b5cf8bf7a8b65321a33ec1cf551bf99f63d445145a638a9011982e42",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_process.py": "6177930cf35114405fc6dfca0c7738c26d897eb4aa3fc0eb5adeb39c75b55f77",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_tool_descendants.py": "7d6298771a12764493e28ed0bddbd8799faa280b8b5f481357379041922df8ec",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/linux_pidfd_process_control.py": "37754acfdf8f139eecc2e9bbac91ee56cc12069a77f237968fe713f8b5b81172",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/native_process_evidence.py": "e65c37b558ca55d6e46f4c96e539e19ea724b5dc6c713741cf82a347c0ad9b8d",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py": "0fe777e0ff0d3015a1cb90df0c77014c1d68483d94193f7e5b668b867079c6f1"
+  },
+  "all_tool_children_ECHILD_and_empty_lists": true,
+  "approved": true,
+  "current_CUDA_context_qualified": false,
+  "elapsed_seconds": 0.6343593520577997,
+  "exact_release_ack_precedes_payload": true,
+  "exact_unchanged_staged_consumer": "direct_profile_process.validate_saved",
+  "formal_profile_admission": false,
+  "kernel_device_enforcement_verified": false,
+  "kind": "independent_actual_direct_native_process_component_review",
+  "native_library_symbol_lookups_in_review": 0,
+  "native_roles": {
+    "capture": {
+      "birth": "83009066",
+      "calls": 5,
+      "native_call_failure": false,
+      "pid": 244170,
+      "python_version": "3.12.13 | packaged by conda-forge | (main, Aug 11 2026, 10:27:28) [GCC 14.4.0]",
+      "remaining_open_handles": 0,
+      "self_preflight": true
+    },
+    "producer": {
+      "birth": "83008672",
+      "calls": 33,
+      "native_call_failure": false,
+      "pid": 244079,
+      "python_version": "3.12.13 | packaged by conda-forge | (main, Aug 11 2026, 10:27:28) [GCC 14.4.0]",
+      "remaining_open_handles": 0,
+      "self_preflight": true
+    },
+    "waiter": {
+      "birth": "83008980",
+      "calls": 5,
+      "native_call_failure": false,
+      "pid": 244147,
+      "python_version": "3.12.13 | packaged by conda-forge | (main, Aug 11 2026, 10:27:28) [GCC 14.4.0]",
+      "remaining_open_handles": 0,
+      "self_preflight": true
+    }
+  },
+  "next_step": "Separate reviewed placement/profile/source admission is still required; no ordinary profile enabled by this diagnostic.",
+  "no_old_failed_unit_reclassification": true,
+  "normal_tool_and_payload_waits": true,
+  "numerical_imports": [],
+  "numerical_or_dtype_qualification": false,
+  "packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0",
+  "passed": true,
+  "physical_mapping_verified": false,
+  "plan": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/measurement_plan.json",
+    "sha256": "b0182335219034ea345207a586e8b64e601df3aa942eee3f7a017f8c62cc3b30"
+  },
+  "raw_sources_and_metadata_pre_post_unchanged": {
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/capture.log": "926e8e0aa054bccc874a29242401e27c058ef2237419f8a3139f40885ababff7",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/capture_actual_launch.json": "c3c5e2eea21f514378cc80856c63a3a8711498331af7fc56b8290c78a03fe3ff",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/capture_actual_wait.json": "b2de55fb7892af23321aa99061109039671741ed9cf8e69858660edf06058641",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/capture_identity.json": "4c01de9e3670d7f911a2a391bfe1977e310383a96d523fb7f6bc1a0c8e67b0ea",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/capture_process_observation.json": "b014bb4cfe81bffadd333e54c3b818ac1ec2f6d35eede679dbc29477214491b1",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/capture_release.json": "4755d5e699d3f315ad2e9b4f8ebc03f5ddf504f5b11f19e8c5bb6d4288930a74",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/capture_release_observed.json": "93081aa7491a6ad4bef5ea301cfb172a46d5cd51698d2a41b2f4ac545828a418",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/capture_release_observed.raw": "4755d5e699d3f315ad2e9b4f8ebc03f5ddf504f5b11f19e8c5bb6d4288930a74",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/code/diagnose_direct_nsight_process.py": "e87a0bedd58c1b55bd259c1dce8305e89e24e2e39df5eff807427fd5e631983a",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/code/direct_capture_release.py": "8d7623b1b5cf8bf7a8b65321a33ec1cf551bf99f63d445145a638a9011982e42",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/code/direct_profile_process.py": "6177930cf35114405fc6dfca0c7738c26d897eb4aa3fc0eb5adeb39c75b55f77",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/code/direct_tool_descendants.py": "7d6298771a12764493e28ed0bddbd8799faa280b8b5f481357379041922df8ec",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/code/linux_pidfd_process_control.py": "37754acfdf8f139eecc2e9bbac91ee56cc12069a77f237968fe713f8b5b81172",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/code/native_process_evidence.py": "e65c37b558ca55d6e46f4c96e539e19ea724b5dc6c713741cf82a347c0ad9b8d",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/code/nsight_process_identity.py": "0fe777e0ff0d3015a1cb90df0c77014c1d68483d94193f7e5b668b867079c6f1",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/controller_output_hashes.json": "ac5df512f3716dac7af7f6e07575406a6629711d19c47366fd866eb792fbb71b",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/controller_spawn.json": "3b728a5dd2b2f6791f2a7b00497cfa10b4bd57b7ea0edc23599f2b25ce7493f5",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/controller_wait.json": "18daa0a4ac46e0b6d32109bc08fb845570d550d51bdc13a2d1aa573b66fa5fa5",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/diagnostic_controller_time_origin.json": "4e02194eb536e03fe46bbc6a751b174f55f6b7209dbf15bf17c9034b3fffd588",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/diagnostic_launch_review.json": "127ac919173cb4a4957ff16f575005b5a04abfa260dfffcdbb1894761377dde7",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/diagnostic_process_ledger_append.json": "60c41bab79d1fa7a2e5be416dbb276a8d0bc3f2e1a88aea3e3bbb8bfbc82a692",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/direct_profile_process_intent.json": "c98d773ced2ca26a19a8ff306aa7d3ab79c41490d262bfe17b4b5f1df6a1d1e5",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/executed_command.json": "e1d07917fd4382c299100381d2976421330d22539c769377b728041874c6e0bb",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/measurement_plan.json": "b0182335219034ea345207a586e8b64e601df3aa942eee3f7a017f8c62cc3b30",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/measurement_prepared.json": "fbb8a088669f77a6575dcd39ef6025d5bdb12ec29918ca3fd816e316bbecac72",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/native_process_capture_begin.json": "eff085a2468f693062c2d8c67150fc6910977a1cd1f545203c8154461ab573cb",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/native_process_capture_terminal.json": "bce69f8315be3c82035386272cd543d59189a2b31838e2cddbb7874e05f6e8ff",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/native_process_producer_begin.json": "72bbcea2f98767aa1c3e9527190dcd60682825d268ae2a0c2574d8f7159f11c5",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/native_process_producer_terminal.json": "519230c82de04276fd4ef1a246a912b48683afbad4369dcc293e020729d7d760",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/native_process_target_contract.json": "393ddf4e1bdb278c36871b68000b1608714c883af3e93c02230f79503513306e",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/native_process_waiter_begin.json": "f618a6cdd2c7267f146a359d699191973a9109c0cf989cf53b09b84191724c8b",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/native_process_waiter_terminal.json": "3721514fa6aa1261864b6cfd084652a5f9a13efd5f714813c829281d678036c3",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/probe_result.json": "8555c3971a84fd57570cb1f8be5478d4ed07f6d6b0947b5a715abf4b1215dfcd",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/producer_lock_before_release.json": "fa6c7def99a59b6a2a48584f9b8684c8793339ea9b75dbf185fa2d37c99e9649",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/producer_release.json": "7cf66c58181d2e11208accced4237b6a3c4523a1cd26a95830187ee2160d2e9a",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/producer_stderr.raw": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/producer_stdout.raw": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/profiler_actual_wait.json": "3441d114184982cdefb87122d8ba41be0458dc00fa976cb06b307e2e3c3898c8",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/profiler_process.json": "44f53b5802f7a8e1b9ce7cb6b369f672784c2b69c2f1aa2bd6754f5ea3cdfec4",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/result.json": "6a3b08741af1284348d1913e7bb4cbf8b8998e5eb69f60715cea3c976bd2b9f3",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/tool_descendant_cleanup_progress.json": "169686876f2c78db433c11d6d71dfd96cf3c31eb6c2c5aab4e35f6e92cbe5fc3",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/tool_descendant_scope_begin.json": "270e64d6bc969362df4a143de812be204f476f0aad54c7f760abdb6f843ee9f5",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/tool_descendant_scope_restored.json": "8774e69dc785ba8de6cbb65475663c86da165ac814564929b70b3749e475274c",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/tool_descendant_scope_terminal.json": "6b8b8d1008b62de06011aa5994ae7b74d668fdb7dc0a859bf44372dd6fed7617",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/tool_root_wait_244095.json": "dea2a220001c948b2c7971bd865f31cb7ed7a625bb5383f54d0aac3ca02de440",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/tool_root_wait_244111.json": "4ab0917c8200aba901121426a852a767bd0f5f48c3cf0192ad5e14bf392cfd4a",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/tool_version_return.json": "b03ff251550b68fccf3380cecd46bbd3f5cd2127379304806eb63b76c64ca697"
+  },
+  "result": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/result.json",
+    "sha256": "6a3b08741af1284348d1913e7bb4cbf8b8998e5eb69f60715cea3c976bd2b9f3"
+  },
+  "review_scope": "Actual zero-environment native process-control diagnostic only; not numerical/current-CUDA/formal-profile qualification",
+  "reviewer": "/root/implement_direct_h100_profiles/review_direct_profile_source",
+  "same_origin_240_work_60_cleanup_300_total_budget_verified": true,
+  "saved_consumer_matches_actual_producer_proof": true,
+  "schema_version": 1,
+  "single_producer_FLOCK_custody_across_waits_and_closure": true,
+  "source_commit": "ba1d6cfec7ba772cd07c8833f4252e7b923aaf5e",
+  "tool_or_remote_operations_in_review": 0,
+  "typed_subreaper_restore_verified": true,
+  "unit": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0",
+  "verified_process_proof": {
+    "actual_kernel_descendant_closure_verified": true,
+    "admission_granted": false,
+    "capture_identity": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/capture_identity.json",
+      "sha256": "4c01de9e3670d7f911a2a391bfe1977e310383a96d523fb7f6bc1a0c8e67b0ea"
+    },
+    "capture_release": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/capture_release.json",
+      "sha256": "4755d5e699d3f315ad2e9b4f8ebc03f5ddf504f5b11f19e8c5bb6d4288930a74"
+    },
+    "capture_release_observed": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/capture_release_observed.json",
+      "sha256": "93081aa7491a6ad4bef5ea301cfb172a46d5cd51698d2a41b2f4ac545828a418"
+    },
+    "capture_release_observed_at_seconds": 1793869510.875899,
+    "capture_release_observed_bytes": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/capture_release_observed.raw",
+      "sha256": "4755d5e699d3f315ad2e9b4f8ebc03f5ddf504f5b11f19e8c5bb6d4288930a74"
+    },
+    "capture_wait": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/capture_actual_wait.json",
+      "sha256": "b2de55fb7892af23321aa99061109039671741ed9cf8e69858660edf06058641"
+    },
+    "kind": "actual_direct_nsight_payload_and_producer_waits",
+    "native_process_evidence": {
+      "admission_granted": false,
+      "kind": "saved_native_diagnostic_three_role_process_evidence",
+      "passed": true,
+      "qualification": false,
+      "roles": {
+        "capture": {
+          "begin": {
+            "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/native_process_capture_begin.json",
+            "sha256": "eff085a2468f693062c2d8c67150fc6910977a1cd1f545203c8154461ab573cb"
+          },
+          "calls": 5,
+          "cleanup_calls": 2,
+          "ordinary_calls": 3,
+          "terminal": {
+            "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/native_process_capture_terminal.json",
+            "sha256": "bce69f8315be3c82035386272cd543d59189a2b31838e2cddbb7874e05f6e8ff"
+          }
+        },
+        "producer": {
+          "begin": {
+            "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/native_process_producer_begin.json",
+            "sha256": "72bbcea2f98767aa1c3e9527190dcd60682825d268ae2a0c2574d8f7159f11c5"
+          },
+          "calls": 33,
+          "cleanup_calls": 16,
+          "ordinary_calls": 17,
+          "terminal": {
+            "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/native_process_producer_terminal.json",
+            "sha256": "519230c82de04276fd4ef1a246a912b48683afbad4369dcc293e020729d7d760"
+          }
+        },
+        "waiter": {
+          "begin": {
+            "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/native_process_waiter_begin.json",
+            "sha256": "f618a6cdd2c7267f146a359d699191973a9109c0cf989cf53b09b84191724c8b"
+          },
+          "calls": 5,
+          "cleanup_calls": 2,
+          "ordinary_calls": 3,
+          "terminal": {
+            "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/native_process_waiter_terminal.json",
+            "sha256": "3721514fa6aa1261864b6cfd084652a5f9a13efd5f714813c829281d678036c3"
+          }
+        }
+      },
+      "scientific_credit": 0,
+      "target_contract": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/native_process_target_contract.json",
+        "sha256": "393ddf4e1bdb278c36871b68000b1608714c883af3e93c02230f79503513306e"
+      }
+    },
+    "passed": true,
+    "prework_chronology_verified": true,
+    "producer_lock_after": {
+      "fd": 3,
+      "fd_stat": {
+        "device": 64512,
+        "inode": 23077017,
+        "mode": 420,
+        "regular_file": true,
+        "uid": 2618919
+      },
+      "fd_target": "/tmp/sl5nw_serval02_card1.lock",
+      "fdinfo": "pos:\t0\nflags:\t02504002\nmnt_id:\t31\nino:\t23077017\nlock:\t1: FLOCK  ADVISORY  WRITE 244079 fc:00:23077017 0 EOF\n",
+      "fdinfo_sha256": "ffb0c923e355bf8f0d40517b2617ae1fed7fed3cc656c3c3c96d57c758e1cec3",
+      "local_to_producer": true,
+      "path": "/tmp/sl5nw_serval02_card1.lock",
+      "path_stat": {
+        "device": 64512,
+        "inode": 23077017,
+        "mode": 420,
+        "regular_file": true,
+        "uid": 2618919
+      },
+      "path_symlink": false,
+      "producer": {
+        "cgroup": "0::/user.slice/user-2618919.slice/session-4563.scope\n",
+        "cmdline": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python\u0000-I\u0000-S\u0000-B\u0000/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/code/diagnose_direct_nsight_process.py\u0000--producer-unit\u0000/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0\u0000",
+        "cmdline_sha256": "8ba23b5569dd8cc0e7a7e49b0040da0459492664957f3e50f91ac1c2a71db3d4",
+        "command": [
+          "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+          "-I",
+          "-S",
+          "-B",
+          "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/code/diagnose_direct_nsight_process.py",
+          "--producer-unit",
+          "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0"
+        ],
+        "executable": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python3.12",
+        "observed_at_seconds": 1793869508.3569162,
+        "parent_pid": 243994,
+        "pid": 244079,
+        "process_group": 243994,
+        "process_start_time": "83008672",
+        "session": 243994,
+        "stat_after": "244079 (python) R 243994 243994 243994 0 -1 4194304 25193 2799 8 9 60 33 2 3 20 0 1 0 83008672 39899136 6648 18446744073709551615 94564236312576 94564238740253 140729706920144 0 0 0 0 16781312 16386 0 0 0 17 57 0 0 0 0 0 94564240165616 94564242147056 94564246155264 140729706924182 140729706925295 140729706925295 140729706926019 0\n",
+        "stat_before": "244079 (python) R 243994 243994 243994 0 -1 4194304 25193 2799 8 9 60 33 2 3 20 0 1 0 83008672 39899136 6648 18446744073709551615 94564236312576 94564238740253 140729706920144 0 0 0 0 16781312 16386 0 0 0 17 57 0 0 0 0 0 94564240165616 94564242147056 94564246155264 140729706924182 140729706925295 140729706925295 140729706926019 0\n",
+        "status": "Name:\tpython\nUmask:\t0022\nState:\tR (running)\nTgid:\t244079\nNgid:\t0\nPid:\t244079\nPPid:\t243994\nTracerPid:\t0\nUid:\t2618919\t2618919\t2618919\t2618919\nGid:\t90030\t90030\t90030\t90030\nFDSize:\t64\nGroups:\t90030 90113 \nNStgid:\t244079\nNSpid:\t244079\nNSpgid:\t243994\nNSsid:\t243994\nVmPeak:\t  100156 kB\nVmSize:\t   38964 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t   87600 kB\nVmRSS:\t   26592 kB\nRssAnon:\t   15328 kB\nRssFile:\t   11264 kB\nRssShmem:\t       0 kB\nVmData:\t   19268 kB\nVmStk:\t     132 kB\nVmExe:\t    2372 kB\nVmLib:\t    6448 kB\nVmPTE:\t     112 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t1\nThreads:\t1\nSigQ:\t0/4125014\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000000000\nSigIgn:\t0000000001001000\nSigCgt:\t0000000000004002\nCapInh:\t0000000000000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tthread vulnerable\nSpeculationIndirectBranch:\tconditional enabled\nCpus_allowed:\tffffffff,ffffffff,ffffffff,ffffffff\nCpus_allowed_list:\t0-127\nMems_allowed:\t00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,0000000f\nMems_allowed_list:\t0-3\nvoluntary_ctxt_switches:\t1233\nnonvoluntary_ctxt_switches:\t3\n",
+        "status_after": "Name:\tpython\nUmask:\t0022\nState:\tR (running)\nTgid:\t244079\nNgid:\t0\nPid:\t244079\nPPid:\t243994\nTracerPid:\t0\nUid:\t2618919\t2618919\t2618919\t2618919\nGid:\t90030\t90030\t90030\t90030\nFDSize:\t64\nGroups:\t90030 90113 \nNStgid:\t244079\nNSpid:\t244079\nNSpgid:\t243994\nNSsid:\t243994\nVmPeak:\t  100156 kB\nVmSize:\t   38964 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t   87600 kB\nVmRSS:\t   26592 kB\nRssAnon:\t   15328 kB\nRssFile:\t   11264 kB\nRssShmem:\t       0 kB\nVmData:\t   19268 kB\nVmStk:\t     132 kB\nVmExe:\t    2372 kB\nVmLib:\t    6448 kB\nVmPTE:\t     112 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t1\nThreads:\t1\nSigQ:\t0/4125014\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000000000\nSigIgn:\t0000000001001000\nSigCgt:\t0000000000004002\nCapInh:\t0000000000000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tthread vulnerable\nSpeculationIndirectBranch:\tconditional enabled\nCpus_allowed:\tffffffff,ffffffff,ffffffff,ffffffff\nCpus_allowed_list:\t0-127\nMems_allowed:\t00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,0000000f\nMems_allowed_list:\t0-3\nvoluntary_ctxt_switches:\t1233\nnonvoluntary_ctxt_switches:\t3\n",
+        "uids": [
+          2618919,
+          2618919,
+          2618919,
+          2618919
+        ]
+      },
+      "producer_after": {
+        "cgroup": "0::/user.slice/user-2618919.slice/session-4563.scope\n",
+        "cmdline": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python\u0000-I\u0000-S\u0000-B\u0000/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/code/diagnose_direct_nsight_process.py\u0000--producer-unit\u0000/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0\u0000",
+        "cmdline_sha256": "8ba23b5569dd8cc0e7a7e49b0040da0459492664957f3e50f91ac1c2a71db3d4",
+        "command": [
+          "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+          "-I",
+          "-S",
+          "-B",
+          "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/code/diagnose_direct_nsight_process.py",
+          "--producer-unit",
+          "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0"
+        ],
+        "executable": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python3.12",
+        "observed_at_seconds": 1793869512.4063509,
+        "parent_pid": 243994,
+        "pid": 244079,
+        "process_group": 243994,
+        "process_start_time": "83008672",
+        "session": 243994,
+        "stat_after": "244079 (python) R 243994 243994 243994 0 -1 4194304 25239 8840 8 30 116 50 6 61 20 0 1 0 83008672 48287744 6648 18446744073709551615 94564236312576 94564238740253 140729706920144 0 0 0 0 16781312 16386 0 0 0 17 57 0 0 0 0 0 94564240165616 94564242147056 94564246155264 140729706924182 140729706925295 140729706925295 140729706926019 0\n",
+        "stat_before": "244079 (python) R 243994 243994 243994 0 -1 4194304 25239 8840 8 30 116 50 6 61 20 0 1 0 83008672 48287744 6648 18446744073709551615 94564236312576 94564238740253 140729706920144 0 0 0 0 16781312 16386 0 0 0 17 57 0 0 0 0 0 94564240165616 94564242147056 94564246155264 140729706924182 140729706925295 140729706925295 140729706926019 0\n",
+        "status": "Name:\tpython\nUmask:\t0022\nState:\tR (running)\nTgid:\t244079\nNgid:\t0\nPid:\t244079\nPPid:\t243994\nTracerPid:\t0\nUid:\t2618919\t2618919\t2618919\t2618919\nGid:\t90030\t90030\t90030\t90030\nFDSize:\t64\nGroups:\t90030 90113 \nNStgid:\t244079\nNSpid:\t244079\nNSpgid:\t243994\nNSsid:\t243994\nVmPeak:\t  100156 kB\nVmSize:\t   47156 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t   87600 kB\nVmRSS:\t   26592 kB\nRssAnon:\t   15328 kB\nRssFile:\t   11264 kB\nRssShmem:\t       0 kB\nVmData:\t   27460 kB\nVmStk:\t     132 kB\nVmExe:\t    2372 kB\nVmLib:\t    6448 kB\nVmPTE:\t     116 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t1\nThreads:\t1\nSigQ:\t1/4125014\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000000000\nSigIgn:\t0000000001001000\nSigCgt:\t0000000000004002\nCapInh:\t0000000000000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tthread vulnerable\nSpeculationIndirectBranch:\tconditional enabled\nCpus_allowed:\tffffffff,ffffffff,ffffffff,ffffffff\nCpus_allowed_list:\t0-127\nMems_allowed:\t00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,0000000f\nMems_allowed_list:\t0-3\nvoluntary_ctxt_switches:\t1443\nnonvoluntary_ctxt_switches:\t4\n",
+        "status_after": "Name:\tpython\nUmask:\t0022\nState:\tR (running)\nTgid:\t244079\nNgid:\t0\nPid:\t244079\nPPid:\t243994\nTracerPid:\t0\nUid:\t2618919\t2618919\t2618919\t2618919\nGid:\t90030\t90030\t90030\t90030\nFDSize:\t64\nGroups:\t90030 90113 \nNStgid:\t244079\nNSpid:\t244079\nNSpgid:\t243994\nNSsid:\t243994\nVmPeak:\t  100156 kB\nVmSize:\t   47156 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t   87600 kB\nVmRSS:\t   26592 kB\nRssAnon:\t   15328 kB\nRssFile:\t   11264 kB\nRssShmem:\t       0 kB\nVmData:\t   27460 kB\nVmStk:\t     132 kB\nVmExe:\t    2372 kB\nVmLib:\t    6448 kB\nVmPTE:\t     116 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t1\nThreads:\t1\nSigQ:\t1/4125014\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000000000\nSigIgn:\t0000000001001000\nSigCgt:\t0000000000004002\nCapInh:\t0000000000000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tthread vulnerable\nSpeculationIndirectBranch:\tconditional enabled\nCpus_allowed:\tffffffff,ffffffff,ffffffff,ffffffff\nCpus_allowed_list:\t0-127\nMems_allowed:\t00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,0000000f\nMems_allowed_list:\t0-3\nvoluntary_ctxt_switches:\t1443\nnonvoluntary_ctxt_switches:\t4\n",
+        "uids": [
+          2618919,
+          2618919,
+          2618919,
+          2618919
+        ]
+      },
+      "producer_before": {
+        "cgroup": "0::/user.slice/user-2618919.slice/session-4563.scope\n",
+        "cmdline": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python\u0000-I\u0000-S\u0000-B\u0000/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/code/diagnose_direct_nsight_process.py\u0000--producer-unit\u0000/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0\u0000",
+        "cmdline_sha256": "8ba23b5569dd8cc0e7a7e49b0040da0459492664957f3e50f91ac1c2a71db3d4",
+        "command": [
+          "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+          "-I",
+          "-S",
+          "-B",
+          "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/code/diagnose_direct_nsight_process.py",
+          "--producer-unit",
+          "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0"
+        ],
+        "executable": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python3.12",
+        "observed_at_seconds": 1793869512.4056463,
+        "parent_pid": 243994,
+        "pid": 244079,
+        "process_group": 243994,
+        "process_start_time": "83008672",
+        "session": 243994,
+        "stat_after": "244079 (python) R 243994 243994 243994 0 -1 4194304 25239 8840 8 30 116 50 6 61 20 0 1 0 83008672 48287744 6648 18446744073709551615 94564236312576 94564238740253 140729706920144 0 0 0 0 16781312 16386 0 0 0 17 57 0 0 0 0 0 94564240165616 94564242147056 94564246155264 140729706924182 140729706925295 140729706925295 140729706926019 0\n",
+        "stat_before": "244079 (python) R 243994 243994 243994 0 -1 4194304 25239 8840 8 30 116 50 6 61 20 0 1 0 83008672 48287744 6648 18446744073709551615 94564236312576 94564238740253 140729706920144 0 0 0 0 16781312 16386 0 0 0 17 57 0 0 0 0 0 94564240165616 94564242147056 94564246155264 140729706924182 140729706925295 140729706925295 140729706926019 0\n",
+        "status": "Name:\tpython\nUmask:\t0022\nState:\tR (running)\nTgid:\t244079\nNgid:\t0\nPid:\t244079\nPPid:\t243994\nTracerPid:\t0\nUid:\t2618919\t2618919\t2618919\t2618919\nGid:\t90030\t90030\t90030\t90030\nFDSize:\t64\nGroups:\t90030 90113 \nNStgid:\t244079\nNSpid:\t244079\nNSpgid:\t243994\nNSsid:\t243994\nVmPeak:\t  100156 kB\nVmSize:\t   47156 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t   87600 kB\nVmRSS:\t   26592 kB\nRssAnon:\t   15328 kB\nRssFile:\t   11264 kB\nRssShmem:\t       0 kB\nVmData:\t   27460 kB\nVmStk:\t     132 kB\nVmExe:\t    2372 kB\nVmLib:\t    6448 kB\nVmPTE:\t     116 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t1\nThreads:\t1\nSigQ:\t1/4125014\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000000000\nSigIgn:\t0000000001001000\nSigCgt:\t0000000000004002\nCapInh:\t0000000000000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tthread vulnerable\nSpeculationIndirectBranch:\tconditional enabled\nCpus_allowed:\tffffffff,ffffffff,ffffffff,ffffffff\nCpus_allowed_list:\t0-127\nMems_allowed:\t00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,0000000f\nMems_allowed_list:\t0-3\nvoluntary_ctxt_switches:\t1443\nnonvoluntary_ctxt_switches:\t4\n",
+        "status_after": "Name:\tpython\nUmask:\t0022\nState:\tR (running)\nTgid:\t244079\nNgid:\t0\nPid:\t244079\nPPid:\t243994\nTracerPid:\t0\nUid:\t2618919\t2618919\t2618919\t2618919\nGid:\t90030\t90030\t90030\t90030\nFDSize:\t64\nGroups:\t90030 90113 \nNStgid:\t244079\nNSpid:\t244079\nNSpgid:\t243994\nNSsid:\t243994\nVmPeak:\t  100156 kB\nVmSize:\t   47156 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t   87600 kB\nVmRSS:\t   26592 kB\nRssAnon:\t   15328 kB\nRssFile:\t   11264 kB\nRssShmem:\t       0 kB\nVmData:\t   27460 kB\nVmStk:\t     132 kB\nVmExe:\t    2372 kB\nVmLib:\t    6448 kB\nVmPTE:\t     116 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t1\nThreads:\t1\nSigQ:\t1/4125014\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000000000\nSigIgn:\t0000000001001000\nSigCgt:\t0000000000004002\nCapInh:\t0000000000000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tthread vulnerable\nSpeculationIndirectBranch:\tconditional enabled\nCpus_allowed:\tffffffff,ffffffff,ffffffff,ffffffff\nCpus_allowed_list:\t0-127\nMems_allowed:\t00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,0000000f\nMems_allowed_list:\t0-3\nvoluntary_ctxt_switches:\t1443\nnonvoluntary_ctxt_switches:\t4\n",
+        "uids": [
+          2618919,
+          2618919,
+          2618919,
+          2618919
+        ]
+      },
+      "read_by_pid": 244079
+    },
+    "producer_lock_before": {
+      "fd": 3,
+      "fd_stat": {
+        "device": 64512,
+        "inode": 23077017,
+        "mode": 420,
+        "regular_file": true,
+        "uid": 2618919
+      },
+      "fd_target": "/tmp/sl5nw_serval02_card1.lock",
+      "fdinfo": "pos:\t0\nflags:\t02504002\nmnt_id:\t31\nino:\t23077017\nlock:\t1: FLOCK  ADVISORY  WRITE 244079 fc:00:23077017 0 EOF\n",
+      "fdinfo_sha256": "ffb0c923e355bf8f0d40517b2617ae1fed7fed3cc656c3c3c96d57c758e1cec3",
+      "local_to_producer": true,
+      "path": "/tmp/sl5nw_serval02_card1.lock",
+      "path_stat": {
+        "device": 64512,
+        "inode": 23077017,
+        "mode": 420,
+        "regular_file": true,
+        "uid": 2618919
+      },
+      "path_symlink": false,
+      "producer": {
+        "cgroup": "0::/user.slice/user-2618919.slice/session-4563.scope\n",
+        "cmdline": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python\u0000-I\u0000-S\u0000-B\u0000/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/code/diagnose_direct_nsight_process.py\u0000--producer-unit\u0000/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0\u0000",
+        "cmdline_sha256": "8ba23b5569dd8cc0e7a7e49b0040da0459492664957f3e50f91ac1c2a71db3d4",
+        "command": [
+          "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+          "-I",
+          "-S",
+          "-B",
+          "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/code/diagnose_direct_nsight_process.py",
+          "--producer-unit",
+          "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0"
+        ],
+        "executable": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python3.12",
+        "observed_at_seconds": 1793869508.3569162,
+        "parent_pid": 243994,
+        "pid": 244079,
+        "process_group": 243994,
+        "process_start_time": "83008672",
+        "session": 243994,
+        "stat_after": "244079 (python) R 243994 243994 243994 0 -1 4194304 25193 2799 8 9 60 33 2 3 20 0 1 0 83008672 39899136 6648 18446744073709551615 94564236312576 94564238740253 140729706920144 0 0 0 0 16781312 16386 0 0 0 17 57 0 0 0 0 0 94564240165616 94564242147056 94564246155264 140729706924182 140729706925295 140729706925295 140729706926019 0\n",
+        "stat_before": "244079 (python) R 243994 243994 243994 0 -1 4194304 25193 2799 8 9 60 33 2 3 20 0 1 0 83008672 39899136 6648 18446744073709551615 94564236312576 94564238740253 140729706920144 0 0 0 0 16781312 16386 0 0 0 17 57 0 0 0 0 0 94564240165616 94564242147056 94564246155264 140729706924182 140729706925295 140729706925295 140729706926019 0\n",
+        "status": "Name:\tpython\nUmask:\t0022\nState:\tR (running)\nTgid:\t244079\nNgid:\t0\nPid:\t244079\nPPid:\t243994\nTracerPid:\t0\nUid:\t2618919\t2618919\t2618919\t2618919\nGid:\t90030\t90030\t90030\t90030\nFDSize:\t64\nGroups:\t90030 90113 \nNStgid:\t244079\nNSpid:\t244079\nNSpgid:\t243994\nNSsid:\t243994\nVmPeak:\t  100156 kB\nVmSize:\t   38964 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t   87600 kB\nVmRSS:\t   26592 kB\nRssAnon:\t   15328 kB\nRssFile:\t   11264 kB\nRssShmem:\t       0 kB\nVmData:\t   19268 kB\nVmStk:\t     132 kB\nVmExe:\t    2372 kB\nVmLib:\t    6448 kB\nVmPTE:\t     112 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t1\nThreads:\t1\nSigQ:\t0/4125014\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000000000\nSigIgn:\t0000000001001000\nSigCgt:\t0000000000004002\nCapInh:\t0000000000000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tthread vulnerable\nSpeculationIndirectBranch:\tconditional enabled\nCpus_allowed:\tffffffff,ffffffff,ffffffff,ffffffff\nCpus_allowed_list:\t0-127\nMems_allowed:\t00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,0000000f\nMems_allowed_list:\t0-3\nvoluntary_ctxt_switches:\t1233\nnonvoluntary_ctxt_switches:\t3\n",
+        "status_after": "Name:\tpython\nUmask:\t0022\nState:\tR (running)\nTgid:\t244079\nNgid:\t0\nPid:\t244079\nPPid:\t243994\nTracerPid:\t0\nUid:\t2618919\t2618919\t2618919\t2618919\nGid:\t90030\t90030\t90030\t90030\nFDSize:\t64\nGroups:\t90030 90113 \nNStgid:\t244079\nNSpid:\t244079\nNSpgid:\t243994\nNSsid:\t243994\nVmPeak:\t  100156 kB\nVmSize:\t   38964 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t   87600 kB\nVmRSS:\t   26592 kB\nRssAnon:\t   15328 kB\nRssFile:\t   11264 kB\nRssShmem:\t       0 kB\nVmData:\t   19268 kB\nVmStk:\t     132 kB\nVmExe:\t    2372 kB\nVmLib:\t    6448 kB\nVmPTE:\t     112 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t1\nThreads:\t1\nSigQ:\t0/4125014\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000000000\nSigIgn:\t0000000001001000\nSigCgt:\t0000000000004002\nCapInh:\t0000000000000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tthread vulnerable\nSpeculationIndirectBranch:\tconditional enabled\nCpus_allowed:\tffffffff,ffffffff,ffffffff,ffffffff\nCpus_allowed_list:\t0-127\nMems_allowed:\t00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,0000000f\nMems_allowed_list:\t0-3\nvoluntary_ctxt_switches:\t1233\nnonvoluntary_ctxt_switches:\t3\n",
+        "uids": [
+          2618919,
+          2618919,
+          2618919,
+          2618919
+        ]
+      },
+      "producer_after": {
+        "cgroup": "0::/user.slice/user-2618919.slice/session-4563.scope\n",
+        "cmdline": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python\u0000-I\u0000-S\u0000-B\u0000/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/code/diagnose_direct_nsight_process.py\u0000--producer-unit\u0000/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0\u0000",
+        "cmdline_sha256": "8ba23b5569dd8cc0e7a7e49b0040da0459492664957f3e50f91ac1c2a71db3d4",
+        "command": [
+          "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+          "-I",
+          "-S",
+          "-B",
+          "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/code/diagnose_direct_nsight_process.py",
+          "--producer-unit",
+          "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0"
+        ],
+        "executable": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python3.12",
+        "observed_at_seconds": 1793869508.3630416,
+        "parent_pid": 243994,
+        "pid": 244079,
+        "process_group": 243994,
+        "process_start_time": "83008672",
+        "session": 243994,
+        "stat_after": "244079 (python) R 243994 243994 243994 0 -1 4194304 25193 2799 8 9 60 33 2 3 20 0 1 0 83008672 39899136 6648 18446744073709551615 94564236312576 94564238740253 140729706920144 0 0 0 0 16781312 16386 0 0 0 17 57 0 0 0 0 0 94564240165616 94564242147056 94564246155264 140729706924182 140729706925295 140729706925295 140729706926019 0\n",
+        "stat_before": "244079 (python) R 243994 243994 243994 0 -1 4194304 25193 2799 8 9 60 33 2 3 20 0 1 0 83008672 39899136 6648 18446744073709551615 94564236312576 94564238740253 140729706920144 0 0 0 0 16781312 16386 0 0 0 17 57 0 0 0 0 0 94564240165616 94564242147056 94564246155264 140729706924182 140729706925295 140729706925295 140729706926019 0\n",
+        "status": "Name:\tpython\nUmask:\t0022\nState:\tR (running)\nTgid:\t244079\nNgid:\t0\nPid:\t244079\nPPid:\t243994\nTracerPid:\t0\nUid:\t2618919\t2618919\t2618919\t2618919\nGid:\t90030\t90030\t90030\t90030\nFDSize:\t64\nGroups:\t90030 90113 \nNStgid:\t244079\nNSpid:\t244079\nNSpgid:\t243994\nNSsid:\t243994\nVmPeak:\t  100156 kB\nVmSize:\t   38964 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t   87600 kB\nVmRSS:\t   26592 kB\nRssAnon:\t   15328 kB\nRssFile:\t   11264 kB\nRssShmem:\t       0 kB\nVmData:\t   19268 kB\nVmStk:\t     132 kB\nVmExe:\t    2372 kB\nVmLib:\t    6448 kB\nVmPTE:\t     112 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t1\nThreads:\t1\nSigQ:\t0/4125014\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000000000\nSigIgn:\t0000000001001000\nSigCgt:\t0000000000004002\nCapInh:\t0000000000000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tthread vulnerable\nSpeculationIndirectBranch:\tconditional enabled\nCpus_allowed:\tffffffff,ffffffff,ffffffff,ffffffff\nCpus_allowed_list:\t0-127\nMems_allowed:\t00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,0000000f\nMems_allowed_list:\t0-3\nvoluntary_ctxt_switches:\t1237\nnonvoluntary_ctxt_switches:\t3\n",
+        "status_after": "Name:\tpython\nUmask:\t0022\nState:\tR (running)\nTgid:\t244079\nNgid:\t0\nPid:\t244079\nPPid:\t243994\nTracerPid:\t0\nUid:\t2618919\t2618919\t2618919\t2618919\nGid:\t90030\t90030\t90030\t90030\nFDSize:\t64\nGroups:\t90030 90113 \nNStgid:\t244079\nNSpid:\t244079\nNSpgid:\t243994\nNSsid:\t243994\nVmPeak:\t  100156 kB\nVmSize:\t   38964 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t   87600 kB\nVmRSS:\t   26592 kB\nRssAnon:\t   15328 kB\nRssFile:\t   11264 kB\nRssShmem:\t       0 kB\nVmData:\t   19268 kB\nVmStk:\t     132 kB\nVmExe:\t    2372 kB\nVmLib:\t    6448 kB\nVmPTE:\t     112 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t1\nThreads:\t1\nSigQ:\t0/4125014\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000000000\nSigIgn:\t0000000001001000\nSigCgt:\t0000000000004002\nCapInh:\t0000000000000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tthread vulnerable\nSpeculationIndirectBranch:\tconditional enabled\nCpus_allowed:\tffffffff,ffffffff,ffffffff,ffffffff\nCpus_allowed_list:\t0-127\nMems_allowed:\t00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,0000000f\nMems_allowed_list:\t0-3\nvoluntary_ctxt_switches:\t1237\nnonvoluntary_ctxt_switches:\t3\n",
+        "uids": [
+          2618919,
+          2618919,
+          2618919,
+          2618919
+        ]
+      },
+      "producer_before": {
+        "cgroup": "0::/user.slice/user-2618919.slice/session-4563.scope\n",
+        "cmdline": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python\u0000-I\u0000-S\u0000-B\u0000/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/code/diagnose_direct_nsight_process.py\u0000--producer-unit\u0000/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0\u0000",
+        "cmdline_sha256": "8ba23b5569dd8cc0e7a7e49b0040da0459492664957f3e50f91ac1c2a71db3d4",
+        "command": [
+          "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+          "-I",
+          "-S",
+          "-B",
+          "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/code/diagnose_direct_nsight_process.py",
+          "--producer-unit",
+          "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0"
+        ],
+        "executable": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python3.12",
+        "observed_at_seconds": 1793869508.3624196,
+        "parent_pid": 243994,
+        "pid": 244079,
+        "process_group": 243994,
+        "process_start_time": "83008672",
+        "session": 243994,
+        "stat_after": "244079 (python) R 243994 243994 243994 0 -1 4194304 25193 2799 8 9 60 33 2 3 20 0 1 0 83008672 39899136 6648 18446744073709551615 94564236312576 94564238740253 140729706920144 0 0 0 0 16781312 16386 0 0 0 17 57 0 0 0 0 0 94564240165616 94564242147056 94564246155264 140729706924182 140729706925295 140729706925295 140729706926019 0\n",
+        "stat_before": "244079 (python) R 243994 243994 243994 0 -1 4194304 25193 2799 8 9 60 33 2 3 20 0 1 0 83008672 39899136 6648 18446744073709551615 94564236312576 94564238740253 140729706920144 0 0 0 0 16781312 16386 0 0 0 17 57 0 0 0 0 0 94564240165616 94564242147056 94564246155264 140729706924182 140729706925295 140729706925295 140729706926019 0\n",
+        "status": "Name:\tpython\nUmask:\t0022\nState:\tR (running)\nTgid:\t244079\nNgid:\t0\nPid:\t244079\nPPid:\t243994\nTracerPid:\t0\nUid:\t2618919\t2618919\t2618919\t2618919\nGid:\t90030\t90030\t90030\t90030\nFDSize:\t64\nGroups:\t90030 90113 \nNStgid:\t244079\nNSpid:\t244079\nNSpgid:\t243994\nNSsid:\t243994\nVmPeak:\t  100156 kB\nVmSize:\t   38964 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t   87600 kB\nVmRSS:\t   26592 kB\nRssAnon:\t   15328 kB\nRssFile:\t   11264 kB\nRssShmem:\t       0 kB\nVmData:\t   19268 kB\nVmStk:\t     132 kB\nVmExe:\t    2372 kB\nVmLib:\t    6448 kB\nVmPTE:\t     112 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t1\nThreads:\t1\nSigQ:\t0/4125014\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000000000\nSigIgn:\t0000000001001000\nSigCgt:\t0000000000004002\nCapInh:\t0000000000000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tthread vulnerable\nSpeculationIndirectBranch:\tconditional enabled\nCpus_allowed:\tffffffff,ffffffff,ffffffff,ffffffff\nCpus_allowed_list:\t0-127\nMems_allowed:\t00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,0000000f\nMems_allowed_list:\t0-3\nvoluntary_ctxt_switches:\t1237\nnonvoluntary_ctxt_switches:\t3\n",
+        "status_after": "Name:\tpython\nUmask:\t0022\nState:\tR (running)\nTgid:\t244079\nNgid:\t0\nPid:\t244079\nPPid:\t243994\nTracerPid:\t0\nUid:\t2618919\t2618919\t2618919\t2618919\nGid:\t90030\t90030\t90030\t90030\nFDSize:\t64\nGroups:\t90030 90113 \nNStgid:\t244079\nNSpid:\t244079\nNSpgid:\t243994\nNSsid:\t243994\nVmPeak:\t  100156 kB\nVmSize:\t   38964 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t   87600 kB\nVmRSS:\t   26592 kB\nRssAnon:\t   15328 kB\nRssFile:\t   11264 kB\nRssShmem:\t       0 kB\nVmData:\t   19268 kB\nVmStk:\t     132 kB\nVmExe:\t    2372 kB\nVmLib:\t    6448 kB\nVmPTE:\t     112 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t1\nThreads:\t1\nSigQ:\t0/4125014\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000000000\nSigIgn:\t0000000001001000\nSigCgt:\t0000000000004002\nCapInh:\t0000000000000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tthread vulnerable\nSpeculationIndirectBranch:\tconditional enabled\nCpus_allowed:\tffffffff,ffffffff,ffffffff,ffffffff\nCpus_allowed_list:\t0-127\nMems_allowed:\t00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,0000000f\nMems_allowed_list:\t0-3\nvoluntary_ctxt_switches:\t1237\nnonvoluntary_ctxt_switches:\t3\n",
+        "uids": [
+          2618919,
+          2618919,
+          2618919,
+          2618919
+        ]
+      },
+      "read_by_pid": 244079
+    },
+    "root_wait": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/profiler_actual_wait.json",
+      "sha256": "3441d114184982cdefb87122d8ba41be0458dc00fa976cb06b307e2e3c3898c8"
+    },
+    "scientific_credit": 0,
+    "standing_descriptor_passed_to_children": false,
+    "tool_descendant_scope_begin": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/tool_descendant_scope_begin.json",
+      "sha256": "270e64d6bc969362df4a143de812be204f476f0aad54c7f760abdb6f843ee9f5"
+    },
+    "tool_descendant_scope_restored": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/tool_descendant_scope_restored.json",
+      "sha256": "8774e69dc785ba8de6cbb65475663c86da165ac814564929b70b3749e475274c"
+    },
+    "tool_descendant_scope_terminal": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/tool_descendant_scope_terminal.json",
+      "sha256": "6b8b8d1008b62de06011aa5994ae7b74d668fdb7dc0a859bf44372dd6fed7617"
+    }
+  },
+  "whole_tool_native_or_device_activity_quantified": false,
+  "worker_admission": false
+}

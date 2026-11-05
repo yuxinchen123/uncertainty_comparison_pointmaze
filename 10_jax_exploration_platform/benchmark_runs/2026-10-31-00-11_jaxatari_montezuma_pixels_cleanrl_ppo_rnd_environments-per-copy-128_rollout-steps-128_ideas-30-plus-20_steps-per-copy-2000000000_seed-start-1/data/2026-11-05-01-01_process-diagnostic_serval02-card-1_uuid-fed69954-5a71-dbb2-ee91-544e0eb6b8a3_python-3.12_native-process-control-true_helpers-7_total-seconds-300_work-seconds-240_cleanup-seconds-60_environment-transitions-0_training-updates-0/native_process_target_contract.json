@@ -1,0 +1,99 @@
+{
+  "actual_target_observation_only": true,
+  "admission_granted": false,
+  "captured_files": {
+    "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python3.12": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/native_process_contract_bytes/c889543c0e008c1362b69c711330cac598833a790dc0c48c5ee4a8567d3f3b51",
+      "sha256": "c889543c0e008c1362b69c711330cac598833a790dc0c48c5ee4a8567d3f3b51"
+    },
+    "/usr/include/unistd.h": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/native_process_contract_bytes/99eb4050035a1a816090762770f0843c728666745d7e727e64dc347d8a99ac28",
+      "sha256": "99eb4050035a1a816090762770f0843c728666745d7e727e64dc347d8a99ac28"
+    },
+    "/usr/include/x86_64-linux-gnu/asm/unistd_64.h": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/native_process_contract_bytes/9f1c975001d7cd39af3a2c14d518d80b0aaaab8bec3ad12b5e56419bdc8cafbe",
+      "sha256": "9f1c975001d7cd39af3a2c14d518d80b0aaaab8bec3ad12b5e56419bdc8cafbe"
+    },
+    "/usr/lib/x86_64-linux-gnu/libc.so.6": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/native_process_contract_bytes/c53819710b163d3f1d2541778590d58d3ef31cb0ed75adcbe059faac68c1e72d",
+      "sha256": "c53819710b163d3f1d2541778590d58d3ef31cb0ed75adcbe059faac68c1e72d"
+    }
+  },
+  "contract": {
+    "abi": {
+      "byteorder": "little",
+      "int_bytes": 4,
+      "long_bytes": 8,
+      "machine": "x86_64",
+      "platform": "linux",
+      "pointer_bytes": 8
+    },
+    "headers": {
+      "/usr/include/unistd.h": {
+        "device": 64512,
+        "inode": 9709845,
+        "mode": 420,
+        "path": "/usr/include/unistd.h",
+        "sha256": "99eb4050035a1a816090762770f0843c728666745d7e727e64dc347d8a99ac28",
+        "size_bytes": 44967,
+        "uid": 0
+      },
+      "/usr/include/x86_64-linux-gnu/asm/unistd_64.h": {
+        "device": 64512,
+        "inode": 9984020,
+        "mode": 420,
+        "path": "/usr/include/x86_64-linux-gnu/asm/unistd_64.h",
+        "sha256": "9f1c975001d7cd39af3a2c14d518d80b0aaaab8bec3ad12b5e56419bdc8cafbe",
+        "size_bytes": 9687,
+        "uid": 0
+      }
+    },
+    "kind": "linux-x86-64-libc-syscall-pidfd-version-1",
+    "selected_python": {
+      "actual_running_image_path": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python3.12",
+      "device": 69,
+      "inode": 4269399,
+      "mode": 493,
+      "path": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python3.12",
+      "sha256": "c889543c0e008c1362b69c711330cac598833a790dc0c48c5ee4a8567d3f3b51",
+      "size_bytes": 31301856,
+      "uid": 2618919
+    },
+    "symbols": {
+      "close": {
+        "image": {
+          "device": 64512,
+          "inode": 9708724,
+          "mode": 493,
+          "path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+          "sha256": "c53819710b163d3f1d2541778590d58d3ef31cb0ed75adcbe059faac68c1e72d",
+          "size_bytes": 2220400,
+          "uid": 0
+        },
+        "symbol_file_offset": 1134544
+      },
+      "syscall": {
+        "image": {
+          "device": 64512,
+          "inode": 9708724,
+          "mode": 493,
+          "path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+          "sha256": "c53819710b163d3f1d2541778590d58d3ef31cb0ed75adcbe059faac68c1e72d",
+          "size_bytes": 2220400,
+          "uid": 0
+        },
+        "symbol_file_offset": 1173744
+      }
+    },
+    "syscall_numbers": {
+      "pidfd_open": 434,
+      "pidfd_send_signal": 424
+    }
+  },
+  "kind": "observed_native_process_target_contract",
+  "qualification": false,
+  "source": {
+    "linux_pidfd_process_control.py": "37754acfdf8f139eecc2e9bbac91ee56cc12069a77f237968fe713f8b5b81172",
+    "native_process_evidence.py": "e65c37b558ca55d6e46f4c96e539e19ea724b5dc6c713741cf82a347c0ad9b8d"
+  }
+}
