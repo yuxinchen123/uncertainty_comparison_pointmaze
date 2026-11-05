@@ -1,0 +1,31 @@
+{
+  "command": [
+    "srun",
+    "--jobid=6783003",
+    "--overlap",
+    "--exact",
+    "--ntasks=1",
+    "--cpus-per-task=1",
+    "--mem=512M",
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/.review_metadata/prepare_nsight_process_diagnostic.py",
+    "--helper-root",
+    "/p/rlprojects/RND_worktrees/2026-11-04-15-37_nsight-process-diagnostic-source_commit-18d727bda2e8c0ab48dc047a4dd89104de2b6cba",
+    "--helper-commit",
+    "18d727bda2e8c0ab48dc047a4dd89104de2b6cba",
+    "--campaign-run",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1",
+    "--tool-record",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-21-17_nsight-systems-tool-version-and-hash_existing-cpu-allocation-6783003_processor-count-1_host-memory-mib-256_gpu-count-0_shared-read-lock/tool_record.json",
+    "--unit-id",
+    "2026-11-04-18-33_nsight-process-observation_jaguar03_gpu-count-1_processor-count-1_host-memory-gib-2_time-limit-minutes-5_placement-unreserved_qos-normal_tool-version-2024.7.1.84_environment-transitions-0",
+    "--unreserved"
+  ],
+  "returncode": 0,
+  "finished_at_utc": "2026-11-05T02:33:48.740203+00:00",
+  "stdout_sha256": "b585a1d1d776da57f1f484ecc566af9d3abdd19cdc70b911901b105ea78d4c59",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

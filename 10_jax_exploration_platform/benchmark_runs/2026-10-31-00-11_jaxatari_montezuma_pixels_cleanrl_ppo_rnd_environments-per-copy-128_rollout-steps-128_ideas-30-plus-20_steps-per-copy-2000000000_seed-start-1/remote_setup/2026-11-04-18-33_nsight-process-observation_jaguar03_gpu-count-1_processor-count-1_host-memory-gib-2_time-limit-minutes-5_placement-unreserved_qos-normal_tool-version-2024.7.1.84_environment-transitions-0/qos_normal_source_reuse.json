@@ -1,0 +1,32 @@
+{
+  "files": [
+    {
+      "all_other_text_identical": true,
+      "literal_replacements": 3,
+      "name": "launch_diagnostic_once.py",
+      "new_sha256": "b9f781e00542e007c19b46c8fe4e2d52bdfc64c95bf5b96494eb09f7de7be967",
+      "old_sha256": "937a72019ebaf80c8bfbc30280fcf7070480a9963125e55d1ca8a86e9a5a67be"
+    },
+    {
+      "all_other_text_identical": true,
+      "literal_replacements": 1,
+      "name": "test_launch_diagnostic_once.py",
+      "new_sha256": "447b271277f1a055f9015a065db26ef1cd2bad8be361378556fb55697d9c7b47",
+      "old_sha256": "08b4391bfc8c91fd2fc9e7e79e35d9735895caedc6921b5e3890e8e002ef15b3"
+    },
+    {
+      "all_other_text_identical": true,
+      "literal_replacements": 0,
+      "name": "run_launcher_metadata_tests.py",
+      "new_sha256": "de292bb9d86507b9d3daecb951af9ce91d8776f446d6b0ddc3df44b1cc0fc82f",
+      "old_sha256": "de292bb9d86507b9d3daecb951af9ce91d8776f446d6b0ddc3df44b1cc0fc82f"
+    }
+  ],
+  "kind": "exact_prior_reviewed_launcher_normal_qos_substitution",
+  "old_failed_packet_preserved": true,
+  "prior_source_review": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-15-37_nsight-process-observation_jaguar03_gpu-count-1_processor-count-1_host-memory-gib-2_time-limit-minutes-5_placement-unreserved_tool-version-2024.7.1.84_environment-transitions-0/launcher_independent_review.json",
+    "sha256": "021961f3c01e1550af75adf32bb8bcdd734eb343bd6abb282228897672b6da4b"
+  },
+  "publication_before_new_launch_required": true
+}
