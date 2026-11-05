@@ -90,6 +90,12 @@ def historical_support(plan):
 
 def backend_support(plan):
     """Load only the exact new staged metadata helper; no legacy operational fallback."""
+    if plan.get("kind") == "full_original_profile_source_target_qualification":
+        qualifier = adjacent("profile_target_qualification")
+        qualifier.contract(plan)
+        module = qualifier.adjacent(plan, "profile_qualification_backend")
+        module.expected_for_plan(plan)
+        return module
     require("direct_backend_image" in plan, "current direct execution requires backend package-image schema two")
     name = "direct_backend_image.py"
     path = Path(__file__).with_name(name)
@@ -103,6 +109,8 @@ def backend_support(plan):
 
 def capture_backend_completion(directory, plan, result):
     """Join post-numerical actual maps to the new immutable initial backend capture."""
+    if plan.get("kind") == "full_original_profile_source_target_qualification":
+        return adjacent("profile_target_qualification").verify_completed_backend(directory, plan, result)
     return backend_support(plan).capture_complete(directory, plan, result)
 
 def configure_plan(plan, profile, history_inputs, consumer, *, backend_image_record=None):
@@ -176,7 +184,10 @@ def verify_observer_helpers(plan, unit):
         if plan.get("capture_process_protocol") == "direct-h100-owned-nsight-and-retained-descriptor-version-1":
             names += ("direct_profile_process.py", "direct_profile_prerequisites.py", "direct_backend_image.py", "nsight_process_identity.py",
                 "direct_capture_release.py", "direct_tool_descendants.py")
-    for name in names:
+    if "profile_target_process_control" in plan:
+        names += adjacent("profile_target_process").helpers()
+        names += adjacent("profile_target_qualification").helpers()
+    for name in dict.fromkeys(names):
         relative = identity.PREFIX + name
         raw = subprocess.check_output(["git", "-C", str(root), "show", value["source_commit"] + ":" + relative])
         require(value["files"].get(relative) == identity.digest(raw) == identity.receipt(root / relative)["sha256"]
@@ -327,6 +338,8 @@ def capture_backend(directory, binding):
     identity = core()
     directory = Path(directory)
     plan = identity.read_receipt(identity.receipt(directory / "measurement_plan.json"))
+    if plan.get("kind") == "full_original_profile_source_target_qualification":
+        return adjacent("profile_target_qualification").verify_bound_backend_begin(directory, plan, binding)
     return backend_support(plan).capture_begin(directory, plan, binding)
 
 
@@ -518,7 +531,8 @@ def validate_capture_wait(directory, metadata):
     identity = core(); directory = Path(directory)
     plan = identity.read_receipt(identity.receipt(directory / "measurement_plan.json"))
     if metadata.get("role") == "producer_guarded_child":
-        return adjacent("direct_profile_process").validate_saved(directory, plan)
+        reader = adjacent("profile_target_direct_process" if "profile_target_process_control" in plan else "direct_profile_process")
+        return reader.validate_saved(directory, plan)
     launch, waiter = validate_waiter_chain(plan, directory, metadata["after"], metadata["lock_after"]["fd"], live=False)
     value = identity.read_receipt(identity.receipt(directory / "direct_capture_wait_return.json"))
     require(type(value.get("schema_version")) is int and value["schema_version"] == 1
@@ -891,7 +905,9 @@ def validate_backend_capture(directory, binding, loaded):
 def validate_profile_terminal(directory, metadata, result):
     identity = core(); directory = Path(directory); process = metadata["after"]["identity"]
     if metadata.get("role") == "producer_guarded_child":
-        return adjacent("direct_profile_process").validate_profile_terminal(directory, metadata, result, sys.modules[__name__])
+        plan = identity.read_receipt(identity.receipt(directory / "measurement_plan.json"))
+        reader = adjacent("profile_target_direct_process" if "profile_target_process_control" in plan else "direct_profile_process")
+        return reader.validate_profile_terminal(directory, metadata, result, sys.modules[__name__])
     value = identity.read_receipt(identity.receipt(directory / "direct_profile_terminal.json"))
     owner = identity.read_receipt(identity.receipt(directory / "profiler_process.json"))
     plan = identity.read_receipt(identity.receipt(directory / "measurement_plan.json"))

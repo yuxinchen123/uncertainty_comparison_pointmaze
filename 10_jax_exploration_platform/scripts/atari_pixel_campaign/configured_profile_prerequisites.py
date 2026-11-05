@@ -313,11 +313,18 @@ def initial_snapshot(files, inputs, historical_plan):
 def validate(plan, *, files=None):
     """Require one reviewed complete four-context fact while leaving all operation gates closed."""
     require(equal(plan.get("configured_profile_prerequisite_protocol"), PROTOCOL)
-        and plan.get("kind") == "selected_configuration_profile" and plan.get("hardware_class") == "jaguar03_rtx_a4500"
+        and plan.get("kind") in {"selected_configuration_profile", "full_original_profile_source_target_qualification"} and plan.get("hardware_class") == "jaguar03_rtx_a4500"
         and plan.get("source_commit") == SOURCE and plan.get("gpu_uuid") is None
         and "configured_isolation" in plan and "direct_binding" not in plan
         and "configured_native_process_control" in plan and "native_process_control" in plan,
         "these prerequisites prepare only an unresolved explicit A4500 profile")
+    if plan.get("kind") == "full_original_profile_source_target_qualification":
+        path = Path(__file__).with_name("profile_target_qualification.py")
+        require(hashlib.sha256(path.read_bytes()).hexdigest() == plan["helpers"]["files"].get(PREFIX + path.name),
+            "the distinct target qualification helper changed")
+        specification = importlib.util.spec_from_file_location("configured_profile_target_contract", path)
+        qualifier = importlib.util.module_from_spec(specification);specification.loader.exec_module(qualifier)
+        qualifier.contract(plan)
     files = MetadataFiles() if files is None else files
     inputs = plan["configured_profile_prerequisite_inputs"]
     require(set(inputs) == {"proof", "review"}, "actual prerequisite proof and independent review are both required")

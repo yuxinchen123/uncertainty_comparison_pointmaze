@@ -1,0 +1,9 @@
+test_existing_component_helpers_and_numerical_capture_are_unchanged (test_profile_target_integration.ProfileTargetIntegrationTests)
+New metadata plumbing cannot alter old component source or the thirteen numerical files. ... ok
+test_actual_own_cpu_child_is_recorded_and_waited_without_gpu_work (test_profile_target_qualification.TargetQualificationMetadataTests)
+Run one isolated standard-library CPU child and verify real UID/birth/argv/affinity records. ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.573s
+
+OK

@@ -131,8 +131,28 @@ def current(plan):
     return plan.get("direct_profile_protocol") == PROTOCOL
 
 
-def require_admission():
+def target_qualification(plan):
+    """Load only the exact adjacent new qualifier in its shared path/hash namespace."""
+    path = Path(__file__).with_name("profile_target_qualification.py")
+    raw = path.read_bytes();expected = plan["helpers"]["files"].get(PREFIX + path.name)
+    require(path.resolve(strict=True) == path and digest(raw) == expected, "the separate source/target helper changed")
+    key = "profile_target_" + hashlib.sha256((str(path) + expected).encode()).hexdigest()
+    if key not in sys.modules:
+        specification = importlib.util.spec_from_file_location(key, path)
+        module = importlib.util.module_from_spec(specification)
+        exec(compile(raw, str(path), "exec"), module.__dict__)
+        module._profile_target_executed_sha256 = expected
+        sys.modules[key] = module
+    module = sys.modules[key]
+    require(Path(module.__file__) == path and module._profile_target_executed_sha256 == expected,
+        "an ambient qualifier cannot replace the exact source helper")
+    return module
+
+
+def require_admission(plan=None):
     """Keep actual preparation, execution and acceptance closed pending real direct target review."""
+    if plan is not None and ("profile_target_qualification" in plan or "profile_admission_inputs" in plan):
+        return target_qualification(plan).authorize(plan)
     raise ValueError("direct H100 profiles remain disabled pending actual Nsight process/descriptor survival and current-CUDA-context qualification with independent review")
 
 
@@ -175,12 +195,32 @@ def helper_roster(plan=None):
         require(type(values) is tuple and all(type(value) is str and Path(value).name == value for value in values),
             "the source helper roster must contain literal adjacent filenames")
         names.update(values)
+    if plan is not None and ("profile_target_qualification" in plan or "profile_admission_inputs" in plan):
+        for filename in ("profile_target_qualification.py", "profile_target_process.py"):
+            path = Path(__file__).with_name(filename)
+            before = path.lstat()
+            require(path.resolve(strict=True) == path and stat.S_ISREG(before.st_mode)
+                and before.st_uid == os.getuid() and 0 < before.st_size <= 2 * 1024 * 1024,
+                "the new adjacent roster source exceeds its owned regular-file bound")
+            descriptor = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+            try:
+                raw = os.read(descriptor, 2 * 1024 * 1024 + 1)
+                fields = ("st_dev", "st_ino", "st_mode", "st_size", "st_mtime_ns", "st_ctime_ns", "st_uid")
+                require(len(raw) == before.st_size and all(getattr(before, key) == getattr(os.fstat(descriptor), key)
+                    == getattr(path.lstat(), key) for key in fields), "the roster source changed during capture")
+            finally:os.close(descriptor)
+            require(hashlib.sha256(raw).hexdigest() == plan["helpers"]["files"].get(PREFIX + filename),
+                "the exact new profile helper roster source changed")
+            specification = importlib.util.spec_from_file_location("direct_profile_roster_" + filename[:-3], path)
+            module = importlib.util.module_from_spec(specification)
+            exec(compile(raw, str(path), "exec"), module.__dict__)
+            names.update(module.helpers())
     return {PREFIX + name for name in names}
 
 
 def contract(plan):
     """Limit metadata and backend support to the separately declared card-one capture."""
-    require(current(plan) and plan.get("kind") == "selected_configuration_profile"
+    require(current(plan) and plan.get("kind") in {"selected_configuration_profile", "full_original_profile_source_target_qualification"}
         and plan.get("hardware_class") == "h100" and plan.get("gpu_uuid") == CARD_ONE
         and plan.get("capture_process_protocol") == PROCESS_PROTOCOL
         and "direct_binding" in plan and not any(key in plan for key in (
@@ -188,6 +228,8 @@ def contract(plan):
             "direct_qualification", "final_confirmation_protocol", "final_protocol", "completed_study",
             "device_memory_limit_protocol", "fixed_total_scaling", "scaling_protocol", "common_correctness_inputs")),
         "direct profile prerequisites cannot admit configured, historical, capacity, scaling or final work")
+    if plan.get("kind") == "full_original_profile_source_target_qualification":
+        require_admission(plan)
     copies = plan["configuration"]["learner"]["n_copies"]
     require(type(copies) is int and copies in (1, 2) and plan.get("copy_seeds") == list(range(1, copies + 1))
         and all(type(seed) is int for seed in plan["copy_seeds"])
@@ -202,11 +244,15 @@ def contract(plan):
     reader.metadata_runtime(plan)
     require(encoded(plan.get("direct_profile_saved_consumer_protocol")) == encoded(reader.PROTOCOL),
         "new direct profile metadata requires the exact separate saved-consumer protocol")
-    backend = plan.get("direct_backend_image", {})
-    require(type(backend.get("schema_version")) is int and backend["schema_version"] == 2
-        and backend.get("capability") == "prepared_owning_package_image_and_same_process_mapping_version_2",
-        "a direct profile requires the new prepared backend package record")
-    reference_shape(backend["expected"])
+    if plan.get("kind") == "full_original_profile_source_target_qualification":
+        target_qualification(plan).adjacent(plan, "profile_qualification_backend").expected_for_plan(plan)
+        require("direct_backend_image" not in plan, "a new qualification cannot borrow the old backend protocol")
+    else:
+        backend = plan.get("direct_backend_image", {})
+        require(type(backend.get("schema_version")) is int and backend["schema_version"] == 2
+            and backend.get("capability") == "prepared_owning_package_image_and_same_process_mapping_version_2",
+            "a direct profile requires the new prepared backend package record")
+        reference_shape(backend["expected"])
     inputs = plan.get("direct_profile_prerequisites")
     require(type(inputs) is dict and set(inputs) == {"confirmation_plan", "confirmation", "confirmation_review",
         "correctness", "correctness_review", "qualification", "qualification_review"},
@@ -276,8 +322,12 @@ def validate_metadata(plan):
     accepted_backend = checked_reference(reserved_metadata(previous["direct_backend_image"]["expected"],
         unit, "direct_backend_image_expected.json"))
     profile_unit = Path(plan["campaign_run_dir"]) / "data" / plan["unit_id"]
-    profile_backend = checked_reference(reserved_metadata(plan["direct_backend_image"]["expected"],
-        profile_unit, "direct_backend_image_expected.json"))
+    if plan.get("kind") == "full_original_profile_source_target_qualification":
+        profile_backend = checked_reference(reserved_metadata(plan["profile_qualification_backend"]["expected"],
+            profile_unit, "profile_qualification_backend_expected.json"))
+    else:
+        profile_backend = checked_reference(reserved_metadata(plan["direct_backend_image"]["expected"],
+            profile_unit, "direct_backend_image_expected.json"))
     require(all(encoded(accepted_backend[key]) == encoded(profile_backend[key])
         for key in ("selected_python", "site_packages", "image", "distribution")),
         "the profile changed the accepted prepared backend package image")
@@ -324,18 +374,21 @@ def configure_binding(plan, profile, history_inputs, backend_image_record):
     unit = Path(plan["campaign_run_dir"]) / "data" / plan["unit_id"]
     require(Path(history_inputs) == unit / "direct_history/inputs.json",
         "direct profile history must use its own reserved immutable input file")
-    backend_path = Path(backend_image_record)
-    require(backend_path.name == "direct_backend_image_expected.json"
-        and backend_path.parent.parent == Path(plan["campaign_run_dir"]) / "data"
-        and backend_path.resolve(strict=True) == backend_path,
-        "direct profile backend input must be a reserved per-unit prepared metadata sidecar")
+    qualification = plan.get("kind") == "full_original_profile_source_target_qualification"
+    if not qualification:
+        backend_path = Path(backend_image_record)
+        require(backend_path.name == "direct_backend_image_expected.json"
+            and backend_path.parent.parent == Path(plan["campaign_run_dir"]) / "data"
+            and backend_path.resolve(strict=True) == backend_path,
+            "direct profile backend input must be a reserved per-unit prepared metadata sidecar")
     plan["direct_profile_protocol"] = PROTOCOL
     plan["capture_process_protocol"] = PROCESS_PROTOCOL
     plan["direct_binding"] = {"schema_version": 1, "profile": profile, "capability": identity.CAPABILITY,
         "consumer": "component_profile", "physical_identity": identity.pending_identity(),
         "frozen_inputs": reference(history_inputs), "current_launch_inputs_path": str(unit / "direct_current_launch.json")}
     identity.validate_plan(plan, "component_profile")
-    support.adjacent("direct_backend_image").configure_plan(plan, backend_path)
+    if not qualification:
+        support.adjacent("direct_backend_image").configure_plan(plan, backend_path)
     return plan
 
 
@@ -541,7 +594,7 @@ def original_admission_metadata(plan, common, *, live=False):
 def history_pointer(plan, common):
     """Describe only a genuine accepted common snapshot; no new qualification or future result is created."""
     require("accepted_evidence_snapshot_protocol" in common, "new profile history pointer requires the exact new29 reviewed fact")
-    require(plan.get("kind") == "selected_configuration_profile" and plan.get("hardware_class") == "h100"
+    require(plan.get("kind") in {"selected_configuration_profile", "full_original_profile_source_target_qualification"} and plan.get("hardware_class") == "h100"
         and plan.get("gpu_uuid") == CARD_ONE and type(plan.get("unit_id")) is str
         and Path(plan["unit_id"]).name == plan["unit_id"] and plan["unit_id"] not in ("", ".", ".."),
         "the reviewed profile history needs its exact separate card-one metadata identity")
@@ -727,6 +780,8 @@ def complete_capture(directory, plan):
     module = importlib.import_module("direct_measurement")
     require(Path(module.__file__).resolve(strict=True) == directory / "code/direct_measurement.py",
         "backend completion must run through the exact staged direct helper")
+    if plan.get("kind") == "full_original_profile_source_target_qualification":
+        return module.capture_backend_completion(directory, plan, capture)
     module.capture_backend_completion(directory, plan, capture)
     require((directory / "capture_result.json").read_bytes() == raw, "backend completion changed the immutable numerical capture")
     value = {"schema_version": 1, "kind": "direct_profile_post_core_backend_completion",
@@ -744,14 +799,19 @@ def completed_capture_binding(directory, plan, captured):
     directory = Path(directory)
     actual, raw = read(directory / "capture_result.json", 64 * 1024 * 1024)
     require(encoded(captured) == encoded(actual), "the outer profile publisher changed the original numerical capture")
-    completion = checked_reference(reference(directory / "direct_profile_backend_completion.json"))
-    require(type(completion.get("schema_version")) is int and completion["schema_version"] == 1
-        and completion.get("kind") == "direct_profile_post_core_backend_completion"
-        and completion.get("capture_result") == {"path": str(directory / "capture_result.json"), "sha256": digest(raw)}
-        and completion.get("backend_capture") == reference(directory / "direct_backend_capture.json")
-        and completion.get("execution_identity") == captured["execution_identity"]
-        and completion.get("original_capture_bytes_unchanged") is True,
-        "the outer profile lacks the exact same-process post-core backend completion")
+    qualification = plan.get("kind") == "full_original_profile_source_target_qualification"
+    if qualification:
+        backend_proof = target_qualification(plan).verify_completed_backend(directory, plan, captured)
+    else:
+        completion = checked_reference(reference(directory / "direct_profile_backend_completion.json"))
+        require(type(completion.get("schema_version")) is int and completion["schema_version"] == 1
+            and completion.get("kind") == "direct_profile_post_core_backend_completion"
+            and completion.get("capture_result") == {"path": str(directory / "capture_result.json"), "sha256": digest(raw)}
+            and completion.get("backend_capture") == reference(directory / "direct_backend_capture.json")
+            and completion.get("execution_identity") == captured["execution_identity"]
+            and completion.get("original_capture_bytes_unchanged") is True,
+            "the outer profile lacks the exact same-process post-core backend completion")
+        backend_proof = {"direct_profile_backend_completion": reference(directory / "direct_profile_backend_completion.json")}
     proof = checked_reference(reference(directory / PROOF_NAME))
     outer = checked_reference(reference(directory / "direct_profile_metadata_outer_scope.json"))
     output = (directory / "direct_profile_baseline_stdout.raw").read_bytes()
@@ -773,8 +833,7 @@ def completed_capture_binding(directory, plan, captured):
     saved_consumers(plan).validate_bundle(plan, proof["exact_saved_consumer_bundle"])
     require(proof.get("combination_metadata_dispatch_source_proof", {}).get("all_other_statement_syntax_unchanged") is True,
         "the saved profile baseline omitted its exact metadata-dispatch source proof")
-    return {"direct_profile_backend_completion": reference(directory / "direct_profile_backend_completion.json"),
-        "direct_profile_baseline_validation": reference(directory / PROOF_NAME)}
+    return {**backend_proof, "direct_profile_baseline_validation": reference(directory / PROOF_NAME)}
 
 
 def main():

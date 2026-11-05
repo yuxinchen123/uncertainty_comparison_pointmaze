@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "kind": "unsubmitted_full_original_profile_target_qualification_resource_proposal",
+  "operational": false,
+  "source_commit": null,
+  "actual_unit_prepared": false,
+  "job_id": null,
+  "controller_pid": null,
+  "numerical_pid": null,
+  "ordinary_profile_admission": false,
+  "scientific_credit": 0,
+  "qualification_kind": "full_original_profile_source_target_qualification",
+  "qualification_budget": {
+    "schema_version": 1,
+    "work_seconds": 10200,
+    "cleanup_seconds": 600,
+    "total_seconds": 10800
+  },
+  "count_scope": "one or two exact selected independent copies, each separately qualified; original reference gate always one copy",
+  "resources": [
+    {
+      "hardware_class": "jaguar03_rtx_a4500",
+      "placement": "jaguar03",
+      "gpus": 1,
+      "cpus": 8,
+      "host_memory_gib": 64,
+      "wall_time_hours": 3,
+      "partition": "gpu",
+      "account": "sl5nw_base",
+      "qos": "csresnolim",
+      "reservation": "sl5nw_168",
+      "reservation_requires_fresh_owned_UTC_check": true,
+      "gpu_uuid": null,
+      "submission": "root only, held once, actual identifiers and rows fsynced before independent release review/publication and one release"
+    },
+    {
+      "hardware_class": "h100",
+      "placement": "serval02 physical card1 only",
+      "gpus": 1,
+      "cpus": 8,
+      "wall_time_hours": 3,
+      "gpu_uuid": "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3",
+      "standing_lock": "/tmp/sl5nw_serval02_card1.lock",
+      "standing_descriptor_owner": "sole profile producer; root and metadata controller never open it",
+      "submission": "root only, one reviewed published direct launch after existing two-copy timing and both process exits are independently accepted"
+    }
+  ],
+  "required_before_actual_preparation": [
+    "independently reviewed and published exact source/helper union",
+    "genuine all-four-context accepted common performance proof and independent review",
+    "actual selected-Python/backend package prepin on correct target with no numerical or GPU import",
+    "actual original qualification plan and unchanged source/software/assets/renderer/reference gates",
+    "existing accepted exact same-target ABI component refs reused without repeating them",
+    "fresh actual standards and one-use controller/capture request with exact commits and hashes"
+  ],
+  "required_before_actual_launch": [
+    "independent actual prepared-plan/source/controller review",
+    "reviewed code plus four standard records committed and pushed",
+    "current reservation/allocation/selector and predecessor exit evidence",
+    "actual owned job ID/rows durably recorded before any release; no future IDs or PID assertions"
+  ],
+  "required_before_ordinary_profiling": [
+    "actual full zero-credit profile-source/target qualification completes",
+    "independent raw review of all48 original tests, renderer, one full original reference update, actual package/mapped bytes/current CUDA identity and whole-tool process waits",
+    "separate recorded source/target/copies/seeds/tool/Python admission and independent review",
+    "publish admission before using ordinary selected profile CLI"
+  ],
+  "limits": [
+    "No actual profile, diagnostic, target prepin, submission, release or remote action was performed for this proposal.",
+    "The historical300/240/60 component budget remains unchanged.",
+    "The new three-hour bound is a resource limit; prior3440.440061s full-original work does not show that added capture will fit.",
+    "All qualification results have zero case, idea, profile, timing, packing, final-training and worker credit."
+  ]
+}

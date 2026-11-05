@@ -1,0 +1,35 @@
+test_existing_component_helpers_and_numerical_capture_are_unchanged (__main__.ProfileTargetIntegrationTests)
+New metadata plumbing cannot alter old component source or the thirteen numerical files. ... ok
+test_new_direct_contract_rejects_old_diagnostic_and_missing_policy (__main__.ProfileTargetIntegrationTests)
+The new source cannot reinterpret an old diagnostic or an undeclared ordinary profile. ... ok
+test_new_release_keeps_real_direct_kind_and_reserved_unit (__main__.ProfileTargetIntegrationTests)
+New-kind release support neither changes old readers nor admits foreign directories. ... ok
+test_original_descriptor_and_release_checks_are_retained (__main__.ProfileTargetIntegrationTests)
+Copies of unchanged raw custody checks preserve their exact source syntax trees. ... ok
+test_real_helper_unions_are_closed_and_default_routes_refuse (__main__.ProfileTargetIntegrationTests)
+Both real hardware spellings stage exact dependencies while ordinary admission stays absent. ... ERROR
+test_selected_python_scientific_package_flags_remain_original (__main__.ProfileTargetIntegrationTests)
+Only the metadata waiter is isolated; the actual scientific child retains package startup. ... ok
+
+======================================================================
+ERROR: test_real_helper_unions_are_closed_and_default_routes_refuse (__main__.ProfileTargetIntegrationTests)
+Both real hardware spellings stage exact dependencies while ordinary admission stays absent.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-05-09-42_profile-target-qualification_original-tests-48_environments-128_rollout-steps-128_warmup-rollouts-50_reference-updates-1_default-admission-closed/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_target_integration.py", line 107, in test_real_helper_unions_are_closed_and_default_routes_refuse
+    expected = module("direct_profile_prerequisites").helper_roster({"profile_target_qualification": {},
+  File "/p/rlprojects/RND_worktrees/2026-11-05-09-42_profile-target-qualification_original-tests-48_environments-128_rollout-steps-128_warmup-rollouts-50_reference-updates-1_default-admission-closed/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_prerequisites.py", line 188, in helper_roster
+    require(hashlib.sha256(read(path)).hexdigest() == plan["helpers"]["files"].get(PREFIX + filename),
+  File "/p/rlprojects/RND_worktrees/2026-11-05-09-42_profile-target-qualification_original-tests-48_environments-128_rollout-steps-128_warmup-rollouts-50_reference-updates-1_default-admission-closed/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_prerequisites.py", line 85, in read
+    return json.loads(raw, object_pairs_hook=unique,
+  File "/usr/lib/python3.10/json/__init__.py", line 359, in loads
+    return cls(**kw).decode(s)
+  File "/usr/lib/python3.10/json/decoder.py", line 340, in decode
+    raise JSONDecodeError("Extra data", s, end)
+json.decoder.JSONDecodeError: Extra data: line 1 column 3 (char 2)
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.928s
+
+FAILED (errors=1)
+srun: error: slurm5: task 0: Exited with exit code 1

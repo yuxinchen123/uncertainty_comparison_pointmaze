@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "kind": "independently_reviewed_profile_target_qualification_source_author_handoff",
+  "worktree": "/p/rlprojects/RND_worktrees/2026-11-05-09-42_profile-target-qualification_original-tests-48_environments-128_rollout-steps-128_warmup-rollouts-50_reference-updates-1_default-admission-closed",
+  "base_commit": "548cbcaef4c1fc28f80817ec9ba93f1e6b2fee4e",
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-09-42_profile-target-qualification_original-tests-48_environments-128_rollout-steps-128_warmup-rollouts-50_reference-updates-1_default-admission-closed/.review_metadata/profile_target_qualification/union_source_freeze_2_corrected_runtime_interfaces.json",
+    "sha256": "dee047f4bd891c1523382658d8726c8ff360dc53f24f189bd6c2e3085e697d8f"
+  },
+  "whole_union_independent_review": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-09-42_profile-target-qualification_original-tests-48_environments-128_rollout-steps-128_warmup-rollouts-50_reference-updates-1_default-admission-closed/.review_metadata/profile_target_qualification/independent_union_corrected_review.json",
+    "sha256": "34cb02a3da0df49db2a5dc40f934e18888034c8c113a852a857dc84e45991fae"
+  },
+  "author_checks": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-09-42_profile-target-qualification_original-tests-48_environments-128_rollout-steps-128_warmup-rollouts-50_reference-updates-1_default-admission-closed/.review_metadata/profile_target_qualification/union_author_checks_return_2.json",
+    "sha256": "ef2883ed21f7858fe31a926f5c4f6b7534d9fbfd2dea3277a66bf60ae7768b2d"
+  },
+  "passed_author_methods": 56,
+  "independent_checks": 99,
+  "independent_affected_methods": 9,
+  "independent_prior_methods_reused": 51,
+  "resource_proposal_independent_review": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-09-42_profile-target-qualification_original-tests-48_environments-128_rollout-steps-128_warmup-rollouts-50_reference-updates-1_default-admission-closed/.review_metadata/profile_target_qualification/dependency_reviews/independent_resource_proposal_review.json",
+    "sha256": "a2431d908c584a09dbc22aaa6e8dd0c00c57be531e89d236161327e0a7319bf1"
+  },
+  "resource_proposal": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-09-42_profile-target-qualification_original-tests-48_environments-128_rollout-steps-128_warmup-rollouts-50_reference-updates-1_default-admission-closed/.review_metadata/profile_target_qualification/target_resource_proposal/resource_proposal.json",
+    "sha256": "af49b747a70280bb0f3670ae29e4a550d45e5a306a58a8be39c8129e90c9ffe5"
+  },
+  "command_proposal": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-09-42_profile-target-qualification_original-tests-48_environments-128_rollout-steps-128_warmup-rollouts-50_reference-updates-1_default-admission-closed/.review_metadata/profile_target_qualification/target_resource_proposal/command_proposal.json",
+    "sha256": "94f7f9e93ee15e3fb7b9b006b59d2f7c4ffeedf14a0034c9b2cdf29af45a29e0"
+  },
+  "exact_local_publication_commit": "will be reported only by a separate actual post-commit handoff",
+  "actual_target_or_prepin_or_GPU_or_submission_or_admission": false,
+  "ordinary_default": "closed until actual current target qualification, genuine raw review and separate reviewed admission",
+  "qualification_budget": {
+    "schema_version": 1,
+    "work_seconds": 10200,
+    "cleanup_seconds": 600,
+    "total_seconds": 10800
+  },
+  "old_source_and_failures_preserved": true,
+  "protected_existing_aa_helpers": 7,
+  "protected_numerical_files": 13,
+  "capture_core_unchanged": true,
+  "source_and_test_path_count": 17,
+  "phase_limits": [
+    "This reviewed source is not an actual target qualification.",
+    "The all-four-context prerequisite and current target prepin/raw review still must exist before root launches it.",
+    "Ordinary A4500 profiling must use the exact qualified physical UUID; an allocation/continuation arrangement is still operational work.",
+    "Ordinary profiling budgets remain unchanged; actual qualification profile durations must inform a separate fit decision.",
+    "No scientific, case, idea, timing, packing, final-training or worker credit is granted."
+  ]
+}
