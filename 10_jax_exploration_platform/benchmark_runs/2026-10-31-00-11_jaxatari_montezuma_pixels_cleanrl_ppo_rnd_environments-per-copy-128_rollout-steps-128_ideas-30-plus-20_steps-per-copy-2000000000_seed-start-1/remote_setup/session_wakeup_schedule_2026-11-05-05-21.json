@@ -1,0 +1,39 @@
+{
+  "active_job_completion_one_shots_created": 0,
+  "deleted_previous_tasks": [
+    {
+      "id": "a11f793d-7ab1-4a38-983a-989f67b763ad",
+      "result": {
+        "content": [
+          {
+            "text": "{\"deleted\":true}",
+            "type": "text"
+          }
+        ],
+        "structuredContent": {
+          "deleted": true
+        }
+      }
+    }
+  ],
+  "future_one_shot_wakeups": "Schedule near estimated completion of newly launched jobs when useful; this is not an instantaneous job-completion event.",
+  "list_verified": true,
+  "native_schedule": {
+    "created_at": "2026-11-05T05:21:36.765524593Z",
+    "every_seconds": 3600,
+    "expires_at": "2026-11-12T05:00:00Z",
+    "id": "e2b548e7-dd90-411c-a5de-4b75fcd6fef7",
+    "name": "RND study hourly long-wait wakeup",
+    "next_run_at": "2026-11-05T06:21:36.765524593Z",
+    "recurring": true,
+    "session_id": "01a1909f-d7d3-75d1-8af8-fc80199cfae2",
+    "timezone": "UTC"
+  },
+  "persistent_monitor": {
+    "job_id": "6783003",
+    "kept_running": true,
+    "poll_interval_seconds": 1200
+  },
+  "user_instruction": "No twenty-minute session monitor. Wake near expected job completion or after a long wait.",
+  "verified_at_utc": "2026-11-05T05:26:22.358Z"
+}

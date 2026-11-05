@@ -1490,24 +1490,25 @@
     "step_id": "314"
   },
   "monitoring_session_cron": {
-    "cadence_seconds": 1200,
-    "created_at": "2026-11-05T03:00:22.212195032Z",
-    "cron": "*/20 * * * *",
-    "expires_at": "2026-11-12T02:50:00Z",
-    "id": "023e010a-5fb7-4e46-85ba-400203cd08a6",
+    "cadence_seconds": 3600,
+    "created_at": "2026-11-05T05:21:36.765524593Z",
+    "every_seconds": 3600,
+    "expected_completion_one_shots_for_future_jobs": true,
+    "expires_at": "2026-11-12T05:00:00Z",
+    "id": "e2b548e7-dd90-411c-a5de-4b75fcd6fef7",
+    "instantaneous_completion_event_available": false,
     "list_verified": true,
-    "name": "RND pixel Montezuma merge and fifty-idea study",
-    "next_run_at": "2026-11-05T03:20:00Z",
+    "name": "RND study hourly long-wait wakeup",
+    "next_run_at": "2026-11-05T06:21:36.765524593Z",
     "persistent_job_id": "6783003",
+    "persistent_poll_interval_seconds": 1200,
     "previous_deleted": true,
-    "previous_id": "66b79d6f-374c-4459-b16e-e468df50f780",
-    "prompt_bytes": 15800,
-    "prompt_sha256": "e091d0acdce2532f6a10d9aba0eb75dc39d45a779df5e508d2ce57a777c0ab9d",
-    "record": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/monitoring_task_2026-11-05-02-55.json",
-    "record_sha256": "cf6b53a847964aedfc46e0ba35d1f7f23d326c9c52f45dfed21fc9809633382b",
+    "previous_id": "a11f793d-7ab1-4a38-983a-989f67b763ad",
+    "record": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/session_wakeup_schedule_2026-11-05-05-21.json",
+    "record_sha256": "ada0f6c8e608d8153b4ba955ea013e728345b4b5c862b9e751337556119ae852",
     "recurring": true,
     "session_id": "01a1909f-d7d3-75d1-8af8-fc80199cfae2",
-    "timezone": "America/Los_Angeles"
+    "timezone": "UTC"
   },
   "monitoring_session_cron_previous_records": [
     {
@@ -2878,16 +2879,67 @@
     "successful_profile_results": 0
   },
   "session_monitoring_task": {
-    "cron": "*/20 * * * *",
-    "expires_at": "2026-11-12T03:50:00Z",
+    "cadence_seconds": 3600,
+    "created_at": "2026-11-05T05:21:36.765524593Z",
+    "every_seconds": 3600,
+    "expected_completion_one_shots_for_future_jobs": true,
+    "expires_at": "2026-11-12T05:00:00Z",
+    "id": "e2b548e7-dd90-411c-a5de-4b75fcd6fef7",
+    "instantaneous_completion_event_available": false,
+    "list_verified": true,
+    "name": "RND study hourly long-wait wakeup",
     "new_list_verified": true,
+    "next_run_at": "2026-11-05T06:21:36.765524593Z",
+    "persistent_job_id": "6783003",
+    "persistent_poll_interval_seconds": 1200,
     "previous_deleted": true,
-    "record": {
-      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/monitoring_task_2026-11-05-03-58.json",
-      "sha256": "ec496bd47ab1438af0049407034a8a591c52207842f8e8fa82d72b28780680bb"
-    },
-    "task_id": "a11f793d-7ab1-4a38-983a-989f67b763ad"
+    "previous_id": "a11f793d-7ab1-4a38-983a-989f67b763ad",
+    "record": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/session_wakeup_schedule_2026-11-05-05-21.json",
+    "record_sha256": "ada0f6c8e608d8153b4ba955ea013e728345b4b5c862b9e751337556119ae852",
+    "recurring": true,
+    "session_id": "01a1909f-d7d3-75d1-8af8-fc80199cfae2",
+    "task_id": "e2b548e7-dd90-411c-a5de-4b75fcd6fef7",
+    "timezone": "UTC"
   },
+  "session_twenty_minute_wakeups_enabled": false,
+  "session_wakeup_schedule_previous_records": [
+    {
+      "changed_at_utc": "2026-11-05T05:26:22.358Z",
+      "monitoring_session_cron": {
+        "cadence_seconds": 1200,
+        "created_at": "2026-11-05T03:00:22.212195032Z",
+        "cron": "*/20 * * * *",
+        "expires_at": "2026-11-12T02:50:00Z",
+        "id": "023e010a-5fb7-4e46-85ba-400203cd08a6",
+        "list_verified": true,
+        "name": "RND pixel Montezuma merge and fifty-idea study",
+        "next_run_at": "2026-11-05T03:20:00Z",
+        "persistent_job_id": "6783003",
+        "previous_deleted": true,
+        "previous_id": "66b79d6f-374c-4459-b16e-e468df50f780",
+        "prompt_bytes": 15800,
+        "prompt_sha256": "e091d0acdce2532f6a10d9aba0eb75dc39d45a779df5e508d2ce57a777c0ab9d",
+        "record": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/monitoring_task_2026-11-05-02-55.json",
+        "record_sha256": "cf6b53a847964aedfc46e0ba35d1f7f23d326c9c52f45dfed21fc9809633382b",
+        "recurring": true,
+        "session_id": "01a1909f-d7d3-75d1-8af8-fc80199cfae2",
+        "timezone": "America/Los_Angeles"
+      },
+      "reason": "Latest user instruction removes twenty-minute session wakeups.",
+      "session_monitoring_task": {
+        "cron": "*/20 * * * *",
+        "expires_at": "2026-11-12T03:50:00Z",
+        "new_list_verified": true,
+        "previous_deleted": true,
+        "record": {
+          "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/monitoring_task_2026-11-05-03-58.json",
+          "sha256": "ec496bd47ab1438af0049407034a8a591c52207842f8e8fa82d72b28780680bb"
+        },
+        "task_id": "a11f793d-7ab1-4a38-983a-989f67b763ad"
+      }
+    }
+  ],
+  "session_wakeup_user_instruction": "No twenty-minute session monitor. Wake near expected job completion or after a long wait.",
   "standing_metadata_path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/campaign_provenance.json",
   "status_checked_at": "2026-11-04T23:49:01.293419+00:00",
   "strict_direct_backend_image_implementation": {

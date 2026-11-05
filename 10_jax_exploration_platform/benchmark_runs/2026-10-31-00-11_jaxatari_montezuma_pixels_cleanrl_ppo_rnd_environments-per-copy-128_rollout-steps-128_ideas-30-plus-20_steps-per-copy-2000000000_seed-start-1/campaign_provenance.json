@@ -163,11 +163,11 @@
   "configured_producer_helper_commit": "43eade68238a8d010ad1d1ea681e348022a00060",
   "configured_profile_actual_qualification": false,
   "correctness_cache_diagnosis_job_id": "6777949",
-  "cron_id": "023e010a-5fb7-4e46-85ba-400203cd08a6",
-  "cron_monitor_expires_at": "2026-11-12T03:50:00Z",
-  "cron_monitor_id": "a11f793d-7ab1-4a38-983a-989f67b763ad",
+  "cron_id": "e2b548e7-dd90-411c-a5de-4b75fcd6fef7",
+  "cron_monitor_expires_at": "2026-11-12T05:00:00Z",
+  "cron_monitor_id": "e2b548e7-dd90-411c-a5de-4b75fcd6fef7",
   "cron_verified_active": true,
-  "cron_verified_utc": "2026-11-05T03:00:22.673534+00:00",
+  "cron_verified_utc": "2026-11-05T05:26:22.358Z",
   "current_branch_integrated_commit": "79a01e851ff92ddba7d0e12eaf8164cab2028878",
   "current_initial_verified_comparisons": 120,
   "device_memory_capture_diagnostic_job_id": "6781128",
@@ -491,7 +491,7 @@
       "verification_record": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-01-30_pixel-study-monitor_source-commit-f9a9c1672f788f52ba06836cee26f2dd6314cec7_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/scheduled_check_2026-11-01-11-40_verification.json"
     }
   ],
-  "monitoring_cadence": "twenty minutes",
+  "monitoring_cadence": "Session wakeups hourly; persistent cluster checks every twenty minutes.",
   "monitoring_verified_utc": "2026-11-05T03:58:45.941229+00:00",
   "new_zero_credit_qualification_job_id": "6782778",
   "nsight_process_diagnostic_job_id": "6820179",
@@ -559,6 +559,7 @@
   "performance_diagnostic_unit": "serval02_reference_execution_diagnostic_copies-1_environments-per-copy-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_timed-rounds-2_updates-per-round-2_traced-updates-1_seed-1_source-d28e6735e797_helper-96b3381e336b",
   "persistent_monitor_current_allocation_usable": true,
   "persistent_monitor_job_id": "6783003",
+  "persistent_monitor_poll_interval_seconds": 1200,
   "persistent_monitor_previous_job_id": "6782816",
   "persistent_monitor_recovery_packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-16-33_pixel-study-monitor-recovery_source-commit-79a01e851ff92ddba7d0e12eaf8164cab2028878_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0",
   "persistent_monitor_runtime_review_sha256": "4163465cc6ee6c239b6d8ac45377d05be3602c1745742856b7ffe335a7190a8d",
@@ -616,6 +617,25 @@
   "reservation_name": "sl5nw_168",
   "retired_unstarted_nsight_process_diagnostic_job_id": "6820096",
   "reviewed_backend_and_monitor_source_commit": "0a880984b4a03a2ff7335337cc18576628bc9fc1",
+  "session_twenty_minute_wakeups_enabled": false,
+  "session_wakeup_cadence_seconds": 3600,
+  "session_wakeup_schedule_history": [
+    {
+      "changed_at_utc": "2026-11-05T05:26:22.358Z",
+      "previous_fields": {
+        "cron_id": "023e010a-5fb7-4e46-85ba-400203cd08a6",
+        "cron_monitor_expires_at": "2026-11-12T03:50:00Z",
+        "cron_monitor_id": "a11f793d-7ab1-4a38-983a-989f67b763ad",
+        "cron_verified_utc": "2026-11-05T03:00:22.673534+00:00",
+        "monitoring_cadence": "twenty minutes",
+        "monitoring_verified_utc": "2026-11-05T03:58:45.941229+00:00"
+      }
+    }
+  ],
+  "session_wakeup_schedule_record": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/session_wakeup_schedule_2026-11-05-05-21.json",
+    "sha256": "ada0f6c8e608d8153b4ba955ea013e728345b4b5c862b9e751337556119ae852"
+  },
   "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
   "source_root": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
   "standing_record_refresh_history": [

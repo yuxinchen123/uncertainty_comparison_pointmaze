@@ -531,3 +531,12 @@ Both A4500 jobs were released exactly once after published checks and now run on
 - November4,19:54Pacific: actual reserved diagnostic6820154 starts and fails1:0 in one second before payload release because the selected Python lacks both required pidfd APIs. Preserve all raw producer/terminal records, cleanupnull and zero environment/learner work; whole-tool native activity is unquantified. System-Python versus training-Python availability is measured on owned CPU without invoking a pidfd syscall. A strict pre-tool preflight and separate zero-environment system-Python diagnostic are being prepared. Full monitor314 passes120 formal cases; native taska11f793d is verified at twenty minutes before old task deletion. Corrected historical reader still permits repository-local clean filters; its actual synthetic proof is retained and the source remains unapproved.
 
 - November4,20:08Pacific: integrate/push reviewed direct process source8e317fe0 and required-API/system-Python diagnostic correction7aff76d9. Both predicted trees match and662 protected files remain unchanged; all source-only approvals remain distinct from actual tool/GPU qualification. Clean detached7aff helper is verified. Resume missing eight-card coordinator/worker/schema-two/counter implementation using the already corrected and independently approved backend package. No future packing or scientific credit is added.
+
+
+## November 5, 2026: replace twenty-minute session wakeups at the user's request
+
+Before: the session task a11f793d-7ab1-4a38-983a-989f67b763ad woke the agent every twenty minutes.
+
+After: the user requested wakeups near job completion or after a long wait. New task e2b548e7-dd90-411c-a5de-4b75fcd6fef7 is created and list-verified with a 3,600-second interval, first due November 5 at 06:21:36 UTC and expiring November 12 at 05:00 UTC. The old twenty-minute task is deleted; a fresh list contains only the hourly task. Future job launches may receive additional one-shot wakeups near their expected completion. These are estimates, not instantaneous completion notifications; none were needed for an active experiment at this change.
+
+The separate persistent CPU monitor 6783003 remains RUNNING on heartpiece, verified by its exact owned identifier. It retains its 1,200-second checks. The study continues without permission questions. This scheduling change grants no scientific or experiment credit.
