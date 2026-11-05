@@ -299,10 +299,17 @@ def validate_expected(value, python=None):
 
 
 def plan_path(plan, directory):
-    """Use only the current selected measurement plan format."""
-    require(plan.get("kind") == "selected_configuration_measurement"
-        and plan.get("mode") in {"correctness", "confirmation"}, "this new backend protocol admits only direct selected measurements")
+    """Keep selected measurements and the separately declared profile window distinct."""
+    selected = plan.get("kind") == "selected_configuration_measurement" and plan.get("mode") in {"correctness", "confirmation"}
+    require(selected or profile_plan(plan), "this backend protocol requires a selected measurement or its explicit direct profile")
     return Path(directory) / "measurement_plan.json"
+
+
+def profile_plan(plan):
+    """Recognize only the new direct profile, never a historical or configured profile."""
+    return (plan.get("kind") == "selected_configuration_profile" and plan.get("mode") in {None, "profile"}
+        and plan.get("direct_profile_protocol") == "direct-h100-reviewed-common-profile-version-1"
+        and "direct_binding" in plan and "configured_isolation" not in plan)
 
 
 def configure_plan(plan, record_path):
@@ -469,6 +476,21 @@ def capture_complete(directory, plan, result):
 
 def completed_work(plan, result):
     """Require actual completed work before publishing or reading a backend completion."""
+    if profile_plan(plan):
+        updates = plan.get("profile_updates")
+        start, finish = result.get("profile_start_iteration"), result.get("profile_end_iteration")
+        require(type(updates) is int and updates > 0 and type(start) is int and start >= 0
+            and type(finish) is int and finish - start == updates and result.get("profile_updates") == updates
+            and type(result.get("profile_updates")) is int and result.get("capture_completed") is True
+            and type(result.get("normalization_warmup_iterations")) is int
+            and result["normalization_warmup_iterations"] == 50
+            and type(result.get("compiled_signatures_before")) is list
+            and result["compiled_signatures_before"] == result.get("compiled_signatures_after")
+            and result.get("configuration") == plan["configuration"]
+            and result.get("copy_seeds") == plan["copy_seeds"]
+            and result.get("actual_runtime_environment") == plan["runtime_environment"],
+            "backend profile completion needs the entire unchanged compiled full-update window")
+        return "complete_selected_profile_window"
     if "direct_qualification" in plan:
         require(result.get("all_original_gates_passed") is True and type(result.get("reference_iteration")) is int
             and result["reference_iteration"] == 1 and type(result.get("reference_optimizer_step")) is int
@@ -543,11 +565,23 @@ def validate_capture(directory, plan, binding, loaded, result):
         and all(type(execution[key]) in (int, float) and math.isfinite(execution[key])
             for key in ("started_at_seconds", "finished_at_seconds"))
         and all(type(post[key]) in (int, float) and math.isfinite(post[key])
-            for key in ("started_at_seconds", "finished_at_seconds"))
-        and execution["started_at_seconds"] <= maps[0]["observed_at_seconds"]
-        <= maps[1]["observed_at_seconds"] <= execution["finished_at_seconds"]
-        <= post["started_at_seconds"] <= post["finished_at_seconds"]
-        <= maps[2]["observed_at_seconds"], "backend snapshots do not surround this actual full numerical execution")
+            for key in ("started_at_seconds", "finished_at_seconds")), "backend execution and post-work timestamps are incomplete")
+    if profile_plan(plan):
+        # Before: mapped capture precedes the original core's execution timestamp.
+        # After: preserve that timestamp and join it to the complete surrounding memory window.
+        memory = result["profile_memory"]["assigned_gpu_process_observation"]
+        started, finished = memory.get("window_started_at_seconds"), memory.get("window_finished_at_seconds")
+        require(type(started) in (int, float) and math.isfinite(started)
+            and type(finished) in (int, float) and math.isfinite(finished)
+            and maps[0]["observed_at_seconds"] <= maps[1]["observed_at_seconds"] <= started
+            <= execution["started_at_seconds"] <= execution["finished_at_seconds"] <= finished
+            <= post["started_at_seconds"] <= post["finished_at_seconds"] <= maps[2]["observed_at_seconds"],
+            "profile package capture does not surround the complete original memory and execution windows")
+    else:
+        require(execution["started_at_seconds"] <= maps[0]["observed_at_seconds"]
+            <= maps[1]["observed_at_seconds"] <= execution["finished_at_seconds"]
+            <= post["started_at_seconds"] <= post["finished_at_seconds"] <= maps[2]["observed_at_seconds"],
+            "backend snapshots do not surround this actual full numerical execution")
     require(image["descriptor_before"] == image["descriptor_after"]
         and image["descriptor_before"]["file_identity"] == image["source_file_identity"]
         and image["descriptor_before"]["size_bytes"] == expected["image"]["size_bytes"]

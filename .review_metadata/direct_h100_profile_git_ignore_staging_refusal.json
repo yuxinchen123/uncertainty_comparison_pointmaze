@@ -1,0 +1,7 @@
+{
+  "kind": "exact_review_allowlist_git_ignore_staging_refusal",
+  "action": "git add with the exact 45-path source/review list",
+  "result": "Repository ignore rules refused the twenty new review JSON files. The explicit source files, raw test outputs and review runners were staged. No existing file was overwritten.",
+  "correction": "Force-add only the exact reviewed source/review allowlist, including this refusal record; do not change ignore rules.",
+  "source_unchanged": true
+}

@@ -741,11 +741,20 @@ def verify_qualification_inputs(plan):
     return result
 
 
-def verify_saved_measurement(directory, result):
+def verify_saved_measurement(directory, result, *, historical_profile_read_only=False):
     """Validate the explicit local single-card evidence; portable, packing and final readers remain unsupported."""
     identity = core()
     directory = Path(directory)
     plan = identity.read_receipt(identity.receipt(directory / "measurement_plan.json"))
+    if plan.get("kind") == "selected_configuration_profile":
+        require(type(historical_profile_read_only) is bool, "historical profile access must be explicitly read-only")
+        if "direct_profile_protocol" in plan:
+            adapter = adjacent("direct_profile_prerequisites")
+            adapter.contract(plan)
+            adapter.require_admission()
+        else:
+            require(historical_profile_read_only,
+                "historical direct profile readers require explicit read-only access; an old unit is not new admission")
     identity.validate_plan(plan)
     require(directory == Path(plan["campaign_run_dir"]) / "data" / plan["unit_id"]
         and identity.read_receipt(identity.receipt(directory / "measurement_prepared.json")) == {

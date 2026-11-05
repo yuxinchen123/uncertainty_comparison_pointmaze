@@ -1,0 +1,28 @@
+{
+  "kind": "independent_direct_profile_metadata_source_review",
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/.review_metadata/direct_h100_profile_source_freeze_2026-11-04_author_6.json",
+    "sha256": "b9975a6d37f5515e5a09867fa5dfa565fb771adc450535b8f6a27fc081b3bb27"
+  },
+  "base": "f958d9097586950fb11587513c5910e318ab21ed",
+  "job_id": "6783003",
+  "step_id": "248",
+  "hostname": "heartpiece",
+  "pid": 1181044,
+  "started_at_seconds": 1793836045.8912723,
+  "finished_at_seconds": 1793836070.4920075,
+  "tests_run": 174,
+  "failures": 0,
+  "errors": 0,
+  "source_unchanged_before_and_after": true,
+  "unittest_output": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-23_direct-h100-profile_backend-schema-2_reviewed-common-baseline_copies-1-2_environments-128_rollout-steps-128_capture-updates-1/.review_metadata/direct_h100_profile_independent_6783003_248_unittest.raw",
+    "sha256": "3ec44edcf1f91f82d07d25240efb2b8d3fc2a5d05f7e55991d774729a75483db"
+  },
+  "gpu_operations": 0,
+  "scientific_credit": 0,
+  "admission_granted": false,
+  "actual_direct_process_descriptor_cuda_qualification": false,
+  "approved_disabled_source": true,
+  "scope": "Source and metadata only. Actual direct profiling remains unconditionally disabled; no process/FD/CUDA qualification or job action is approved."
+}
