@@ -1,0 +1,10 @@
+{
+  "kind": "synthetic_fixture_json_tuple_list_normalization_correction",
+  "first_actual_step": "6783003.48",
+  "first_methods": 13,
+  "first_failures": 1,
+  "first_errors": 3,
+  "production_source_changed": false,
+  "reason": "The fixture kept source-default empty tuples in memory while the frozen JSON plan contains lists; strict exact comparison correctly refused the differing representation.",
+  "first_source_bytes": "/p/rlprojects/RND_worktrees/2026-11-01-18-34_a4500-group-scaling_gpu-counts-1-8_gpus-per-step-1_rounds-7_minimum-updates-per-round-10_preserve-selected-configuration-and-global-seeds/.review_metadata/a4500_group_scaling_preparation/first_source_bytes"
+}

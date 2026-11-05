@@ -1,0 +1,10 @@
+{
+  "correction": "The first final-record-only fixture used the same nested execution object as result; deep-copy final before mutation so the repeated test now independently covers final-only typed equality.",
+  "first_actual_step": "197",
+  "first_run_passed": 30,
+  "preserved_first_controls": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/group_backend_package_independent_corrected_review/controls_before_final_only_object_copy.py",
+    "sha256": "51b23a80acfb29107480df536512c62cb0da841a7e91422d90af71375dd48022"
+  },
+  "production_source_changed": false
+}

@@ -1,0 +1,190 @@
+{
+  "actual_job": "6783003",
+  "actual_numerical_gpu_device_tool_scheduler_operations": 0,
+  "actual_pid": 1228641,
+  "actual_step": "361",
+  "at_utc": "2026-11-05T05:29:22.765980+00:00",
+  "cases": [
+    {
+      "error": "combination evidence lacks actual fixed-input and complete-iteration correctness reports",
+      "error_type": "ValueError",
+      "name": "original_actual_saved_member_empty_reports",
+      "passed": true,
+      "refused": true
+    },
+    {
+      "error": "actual own kernel cgroup differs from the claimed job and step",
+      "error_type": "ValueError",
+      "name": "original_actual_kernel_job_substitution",
+      "passed": true,
+      "refused": true
+    },
+    {
+      "name": "positive_physical_index1_global_seed2",
+      "passed": true
+    },
+    {
+      "error": "the actual physical member prerequisite used different global independent-copy seeds",
+      "error_type": "ValueError",
+      "name": "physical_index1_different_seed_1",
+      "passed": true,
+      "refused": true
+    },
+    {
+      "error": "the actual physical member prerequisite used different global independent-copy seeds",
+      "error_type": "ValueError",
+      "name": "physical_index1_different_seed_2.0",
+      "passed": true,
+      "refused": true
+    },
+    {
+      "error": "the actual physical member prerequisite used different global independent-copy seeds",
+      "error_type": "ValueError",
+      "name": "physical_index1_different_seed_True",
+      "passed": true,
+      "refused": true
+    },
+    {
+      "name": "positive_complete_controller_wrapper_numeric_chain",
+      "passed": true
+    },
+    {
+      "error": "saved group controller changed its exact job, plan, helper or numerical source",
+      "error_type": "ValueError",
+      "name": "controller_boolean_schema",
+      "passed": true,
+      "refused": true
+    },
+    {
+      "error": "saved group controller changed its exact job, plan, helper or numerical source",
+      "error_type": "ValueError",
+      "name": "controller_nan_start",
+      "passed": true,
+      "refused": true
+    },
+    {
+      "error": "saved group controller changed its exact job, plan, helper or numerical source",
+      "error_type": "ValueError",
+      "name": "controller_changed_numerical_source",
+      "passed": true,
+      "refused": true
+    },
+    {
+      "error": "saved process hostname, PID, parent, birth, all UIDs or exact argv changed",
+      "error_type": "ValueError",
+      "name": "controller_foreign_saved_uid",
+      "passed": true,
+      "refused": true
+    },
+    {
+      "error": "actual own kernel cgroup differs from the claimed job and step",
+      "error_type": "ValueError",
+      "name": "controller_job_in_kernel_path_changed",
+      "passed": true,
+      "refused": true
+    },
+    {
+      "error": "actual own kernel cgroup differs from the claimed job and step",
+      "error_type": "ValueError",
+      "name": "controller_batch_role_changed",
+      "passed": true,
+      "refused": true
+    },
+    {
+      "error": "saved process hostname, PID, parent, birth, all UIDs or exact argv changed",
+      "error_type": "ValueError",
+      "name": "controller_boolean_birth",
+      "passed": true,
+      "refused": true
+    },
+    {
+      "error": "actual own kernel cgroup differs from the claimed job and step",
+      "error_type": "ValueError",
+      "name": "coherent_wrapper_foreign_job",
+      "passed": true,
+      "refused": true
+    },
+    {
+      "error": "actual own kernel cgroup differs from the claimed job and step",
+      "error_type": "ValueError",
+      "name": "coherent_wrapper_numeric_cgroup",
+      "passed": true,
+      "refused": true
+    },
+    {
+      "error": "saved process hostname, PID, parent, birth, all UIDs or exact argv changed",
+      "error_type": "ValueError",
+      "name": "coherent_wrapper_same_as_controller_pid",
+      "passed": true,
+      "refused": true
+    },
+    {
+      "error": "saved process hostname, PID, parent, birth, all UIDs or exact argv changed",
+      "error_type": "ValueError",
+      "name": "coherent_wrapper_false_parent",
+      "passed": true,
+      "refused": true
+    },
+    {
+      "error": "Slurm-wrapper custody or exact wait changed",
+      "error_type": "ValueError",
+      "name": "wrapper_intent_retry_enabled",
+      "passed": true,
+      "refused": true
+    },
+    {
+      "error": "wrapper intent/start/wait lost its exact source-bound controller and submitted plan",
+      "error_type": "ValueError",
+      "name": "wrapper_intent_wrong_helpers",
+      "passed": true,
+      "refused": true
+    },
+    {
+      "error": "wrapper custody times do not follow the actual controller/intent/start/wait order",
+      "error_type": "ValueError",
+      "name": "wrapper_intent_reversed_start",
+      "passed": true,
+      "refused": true
+    },
+    {
+      "error": "Slurm-wrapper custody or exact wait changed",
+      "error_type": "ValueError",
+      "name": "wrapper_wait_boolean_return",
+      "passed": true,
+      "refused": true
+    },
+    {
+      "error": "wrapper intent/start/wait lost its exact source-bound controller and submitted plan",
+      "error_type": "ValueError",
+      "name": "wrapper_wait_wrong_job",
+      "passed": true,
+      "refused": true
+    },
+    {
+      "error": "wrapper custody times do not follow the actual controller/intent/start/wait order",
+      "error_type": "ValueError",
+      "name": "wrapper_wait_after_intent_before_start",
+      "passed": true,
+      "refused": true
+    },
+    {
+      "error": "a batch controller or srun wrapper was relabelled as a numerical process",
+      "error_type": "ValueError",
+      "name": "numeric_pid_relabelled_from_its_wrapper",
+      "passed": true,
+      "refused": true
+    }
+  ],
+  "frozen_file_count": 35,
+  "kind": "independent_corrected_group_runtime_boundaries",
+  "passed": true,
+  "schema_version": 2,
+  "scientific_credit": 0,
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/group_runtime_four_predicate_corrections/corrected_source_freeze_for_independent_review.json",
+    "sha256": "fb795e40e663b1638ea0536ddf3727c6d4b4e0e36efdcf97b62f757449bb626a"
+  },
+  "source_unchanged": true,
+  "stdlib_bootstrap_before_audit": "ctypes initializes its own-process Python API before the audit; later library operations refused",
+  "unrelated_upstream_gates": "explicit successful metadata placeholders only, actual named predicates unchanged"
+}

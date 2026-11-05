@@ -1,0 +1,89 @@
+{
+  "GPU_qualification": false,
+  "actual_backend_binary_reads": 0,
+  "actual_library_or_device_or_GPU_or_network_operations": 0,
+  "admission_granted": false,
+  "at_utc": "2026-11-02T08:11:43.380878+00:00",
+  "blocked_actions": [],
+  "errors": [],
+  "failures": [
+    {
+      "test": "independent_controls.IndependentControls.test_coherent_float_numerical_pid_is_refused",
+      "traceback": "Traceback (most recent call last):\n  File \"/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/independent_group_backend_package_review/independent_controls.py\", line 24, in test_coherent_float_numerical_pid_is_refused\n    self.refusal('floating numerical execution PID',lambda:B.validate_capture(f.worker,f.plan,f.metadata,f.binding,result['loaded_gpu_libraries'],result),'A floating value is not an exact discrete process identity.')\n  File \"/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/independent_group_backend_package_review/independent_controls.py\", line 18, in refusal\n    self.assertIsNotNone(error,name+' was accepted')\nAssertionError: unexpectedly None : floating numerical execution PID was accepted\n"
+    },
+    {
+      "test": "independent_controls.IndependentControls.test_qualification_counters_must_agree_with_declared_copy_count",
+      "traceback": "Traceback (most recent call last):\n  File \"/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/independent_group_backend_package_review/independent_controls.py\", line 37, in test_qualification_counters_must_agree_with_declared_copy_count\n    self.refusal('qualification copy count versus one-copy work totals',lambda:B.completed_work(f.worker,f.plan,result),'Either qualification must explicitly require one copy, or its full work counts must be derived from the declared count.')\n  File \"/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/independent_group_backend_package_review/independent_controls.py\", line 18, in refusal\n    self.assertIsNotNone(error,name+' was accepted')\nAssertionError: unexpectedly None : qualification copy count versus one-copy work totals was accepted\n"
+    },
+    {
+      "test": "independent_controls.IndependentControls.test_relabelled_python_with_another_environment_package_is_refused",
+      "traceback": "Traceback (most recent call last):\n  File \"/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/independent_group_backend_package_review/independent_controls.py\", line 32, in test_relabelled_python_with_another_environment_package_is_refused\n    self.refusal('different selected Python environment',lambda:B.validate_prepared(f.plan),'The selected Python is in another environment while site-packages and the actual image remain in the original one.')\n  File \"/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/independent_group_backend_package_review/independent_controls.py\", line 18, in refusal\n    self.assertIsNotNone(error,name+' was accepted')\nAssertionError: unexpectedly None : different selected Python environment was accepted\n"
+    }
+  ],
+  "group_completeness": false,
+  "independent_outcomes": [
+    {
+      "actual": "reject",
+      "error": "ValueError('captured owning package bytes changed')",
+      "expected": "reject",
+      "name": "changed captured owner metadata",
+      "reason": "The saved reader must hash the actual shared captured owner bytes."
+    },
+    {
+      "actual": "accept",
+      "error": null,
+      "expected": "reject",
+      "name": "floating numerical execution PID",
+      "reason": "A floating value is not an exact discrete process identity."
+    },
+    {
+      "actual": "reject",
+      "error": "ValueError('backend proof cannot change group, final, capacity or portable protocols')",
+      "expected": "reject",
+      "name": "direct protocol in group plan",
+      "reason": "A direct protocol is not a group package proof."
+    },
+    {
+      "actual": "accept",
+      "error": null,
+      "expected": "reject",
+      "name": "qualification copy count versus one-copy work totals",
+      "reason": "Either qualification must explicitly require one copy, or its full work counts must be derived from the declared count."
+    },
+    {
+      "actual": "accept",
+      "error": null,
+      "expected": "reject",
+      "name": "different selected Python environment",
+      "reason": "The selected Python is in another environment while site-packages and the actual image remain in the original one."
+    },
+    {
+      "actual": "reject",
+      "error": "ValueError('backend capture belongs to another group worker')",
+      "expected": "reject",
+      "name": "coordinator used as worker",
+      "reason": "The package evidence belongs to an exact reserved worker directory."
+    }
+  ],
+  "job_id": "6783003",
+  "kind": "independent_group_backend_package_fixture_run",
+  "only_small_synthetic_package_bytes_read": true,
+  "passed": false,
+  "raw": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/independent_group_backend_package_review/independent_controls_6783003_191.raw",
+    "sha256": "45660cfc0f355c00ce5186cdbfd9a8f32299843b6d5cbbfdd5cff59aa5b67c48"
+  },
+  "scientific_credit": 0,
+  "source_after": {
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_backend_image.py": "82898100d64f540c42c0a236acb6c20ca2808deb247b83da65927c6cb497a8e4",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/10_jax_exploration_platform/scripts/atari_pixel_campaign/group_backend_package.py": "4012dc32d3b9001a12ef8f1e129fef79a289061b01a292199af65a18b600f525",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_group_backend_package.py": "d3922d7dc3df2f21f5e346aa8670137ea85698be65fef030f982112ac1eaefee"
+  },
+  "source_before": {
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_backend_image.py": "82898100d64f540c42c0a236acb6c20ca2808deb247b83da65927c6cb497a8e4",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/10_jax_exploration_platform/scripts/atari_pixel_campaign/group_backend_package.py": "4012dc32d3b9001a12ef8f1e129fef79a289061b01a292199af65a18b600f525",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_group_backend_package.py": "d3922d7dc3df2f21f5e346aa8670137ea85698be65fef030f982112ac1eaefee"
+  },
+  "step_id": "191",
+  "tests": 6
+}

@@ -1,0 +1,127 @@
+{
+  "actions": {
+    "gpu_or_device_or_tool_operations": 0,
+    "integration_edits": 0,
+    "numerical_imports": 0,
+    "scientific_credit": 0,
+    "source_edits": 0,
+    "source_overlay_copy_operations": 12,
+    "submissions_or_releases": 0
+  },
+  "actual_cold_helper_closure": {
+    "helper_count": 29,
+    "job_id": "6783003",
+    "passed": true,
+    "protected_numerical_files": 13,
+    "receipt": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-22-26_a4500-group-runtime_current-shared-helpers-29_coordinator-gpus-0_worker-gpus-1_environments-128_rollout-steps-128_rounds-7_updates-per-round-10/.review_metadata/group_runtime_current_integration_overlay/current_overlay_cold_source_closure.json",
+      "sha256": "f0077570e6c46fdf70fd5cc155539adefffe73ee8c0d417c9af1a5b8eee0df8b"
+    },
+    "step_id": "368"
+  },
+  "actual_combined_metadata_tests": {
+    "job_id": "6783003",
+    "passed": true,
+    "receipt": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-22-26_a4500-group-runtime_current-shared-helpers-29_coordinator-gpus-0_worker-gpus-1_environments-128_rollout-steps-128_rounds-7_updates-per-round-10/.review_metadata/group_runtime_current_integration_overlay/current_overlay_metadata_test_receipt.json",
+      "sha256": "a0b7aafa5cf138e83c182cd5e23e22dc0d0112477cec56553d54e97f64640095"
+    },
+    "step_id": "367",
+    "tests_run": 84
+  },
+  "actual_group_jobs_submitted": 0,
+  "actual_group_units_prepared": 0,
+  "approved": true,
+  "approved35_original_files_unchanged": true,
+  "approved_original_group_source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/group_runtime_four_predicate_corrections/corrected_source_freeze_for_independent_review.json",
+    "sha256": "fb795e40e663b1638ea0536ddf3727c6d4b4e0e36efdcf97b62f757449bb626a"
+  },
+  "base_commit": "b181e171bb1bdb792f3a7082b00f7186ebc9939a",
+  "base_group_worktree_commit": "bef825c669d9514e3c633bb1358eb6b43e09b141",
+  "created_at_utc": "2026-11-05T06:30:38.859625+00:00",
+  "current_compatibility_worktree": "/p/rlprojects/RND_worktrees/2026-11-04-22-26_a4500-group-runtime_current-shared-helpers-29_coordinator-gpus-0_worker-gpus-1_environments-128_rollout-steps-128_rounds-7_updates-per-round-10",
+  "dependency_assessment": {
+    "additional_direct_history_or_nsight_helpers_required": false,
+    "basis": "The group code uses selected.HELPERS and configured helper declarations, unchanged package primitives and separate group readers. The four newer shared files remain unchanged. Cold imports and all84 group/package metadata fixtures pass from the real project layout.",
+    "new_actual_group_source_count_and_physical_member_qualification_required": true,
+    "new_backend_package_prepin_required": true,
+    "no_profile_or_historical_operational_bypass": true,
+    "old_single_card_or_original_qualification_reusable_for_group": false,
+    "required_helper_count": 29
+  },
+  "first_probe_failure_preserved": {
+    "cause": "Reviewer placed helpers in a flat temporary directory. The unchanged train_optimized PROJECT_ROOT computation requires the actual project directory depth. The real-layout detached overlay passes.",
+    "child_return": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-22-26_a4500-group-runtime_current-shared-helpers-29_coordinator-gpus-0_worker-gpus-1_environments-128_rollout-steps-128_rounds-7_updates-per-round-10/.review_metadata/group_runtime_corrected_independent_review_2026-11-05/current_integration_cold_import_child_return.json",
+      "sha256": "12248e4b6af3218fde03ea7f550944751027d717866a8e96da1df5cc8c709f1e"
+    },
+    "source_failure": false
+  },
+  "future_selected_configuration_or_packing_chosen": false,
+  "group_source_byte_changes": 0,
+  "kind": "independent_group_runtime_current_integration_compatibility_review",
+  "operational_admission_granted": false,
+  "passed": true,
+  "publication_scope": "Add exactly eight reviewed group source files, four reviewed group test files and explicit text review/provenance records. Do not replace current shared helpers or copy historical numerical sources.",
+  "remaining_required_work": [
+    "Root independently checks exact incoming tree/paths/bytes and protected sources before publishing this additive commit.",
+    "Prepare and independently review actual group source/count/physical-member qualification and correctness before any actual group execution or scientific use.",
+    "Actual one-card/eight-card common-wall scaling and exact-eight applicability evidence remain unperformed."
+  ],
+  "retained_current_shared_files": [
+    {
+      "changed_declarations_since_group_base": [
+        "verify_saved_measurement"
+      ],
+      "current_git_blob": "03d57824b25bf6947ae5945586559e30d873aaa1",
+      "current_sha256": "bde06959eb37322f3d9f8a82ab7457b24c7082a1176f06ff89f4e44f8dbdce0f",
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py",
+      "retained_exactly": true
+    },
+    {
+      "changed_declarations_since_group_base": [
+        "summarize_trace"
+      ],
+      "current_git_blob": "7f7070e349cc1b2b12d3b73a88058eb9592c2fb1",
+      "current_sha256": "0f2cba5aa8dfae67552f131998dfc8784d849fc1a2683764d63d4fda8b6a3d12",
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py",
+      "retained_exactly": true
+    },
+    {
+      "changed_declarations_since_group_base": [
+        "completed_work",
+        "plan_path",
+        "profile_plan",
+        "validate_capture"
+      ],
+      "current_git_blob": "750a069116f883f8ffef845e87e95f2148c23276",
+      "current_sha256": "55756b454c477635e22b2852dc9dbb002db257830f0dc9071b1018f4d3f350b7",
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_backend_image.py",
+      "retained_exactly": true
+    },
+    {
+      "changed_declarations_since_group_base": [
+        "common_confirmation_support",
+        "parse_arguments",
+        "prepare",
+        "required_helpers"
+      ],
+      "current_git_blob": "c75eaae81e6483e8ef48f25480d1a620bb68cf5c",
+      "current_sha256": "a1ef9d787cb7387be88a078eac6d3bae9c853d3ceb3ac6a6aeb471e71e3aff4d",
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py",
+      "retained_exactly": true
+    }
+  ],
+  "schema_version": 2,
+  "source_addition_transfer": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-22-26_a4500-group-runtime_current-shared-helpers-29_coordinator-gpus-0_worker-gpus-1_environments-128_rollout-steps-128_rounds-7_updates-per-round-10/.review_metadata/group_runtime_current_integration_overlay/overlay_source_transfer.json",
+    "sha256": "1ba0f92bacad41f7367db8afd9af725b150061e6c8d7ed936605dbf86f9417c2"
+  },
+  "source_additions": 8,
+  "source_approval": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-22-26_a4500-group-runtime_current-shared-helpers-29_coordinator-gpus-0_worker-gpus-1_environments-128_rollout-steps-128_rounds-7_updates-per-round-10/.review_metadata/group_runtime_corrected_independent_review_2026-11-05/independent_corrected_group_runtime_review.json",
+    "sha256": "2961ab3033456d58a0d51973acfec40ac218bb08443cc02745f21e389d059750"
+  },
+  "test_additions": 4
+}

@@ -1,0 +1,28 @@
+{
+  "base": "fdb35f886ad01c6d4ed387dc55b172d0221a9853",
+  "branch": "configured-a4500-group-runtime",
+  "committed": false,
+  "draft_files": {
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/10_jax_exploration_platform/scripts/atari_pixel_campaign/group_backend_package.py": "4012dc32d3b9001a12ef8f1e129fef79a289061b01a292199af65a18b600f525",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_group_backend_package.py": "d3922d7dc3df2f21f5e346aa8670137ea85698be65fef030f982112ac1eaefee"
+  },
+  "historical_group_api_commit": "33fafb16fadc59b518748ec05a92a2e7452c991b",
+  "historical_group_api_merge": "bef825c669d9514e3c633bb1358eb6b43e09b141",
+  "kind": "unfinished_group_runtime_implementation_saved",
+  "qualification_credit": 0,
+  "reason": "Prioritize the newly accepted H100 common correctness prerequisites; resume group runtime implementation afterward",
+  "remaining": [
+    "schema-two unresolved resources and own job/step metadata",
+    "staged batch/zero-GPU coordinator/one-GPU numerical workers",
+    "actual srun wrapper versus worker identities and exact waits",
+    "initialization and unchanged warmup with observed training iteration origin",
+    "qualification/correctness/readers and staged admission gates",
+    "common-wall windows and fixed-total-eight comparisons",
+    "metadata tests then independent source review and later real qualification"
+  ],
+  "reviewed": false,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "tested": false,
+  "worktree": "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10"
+}

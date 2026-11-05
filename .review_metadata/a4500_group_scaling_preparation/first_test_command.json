@@ -1,0 +1,14 @@
+[
+  "srun",
+  "--jobid=6783003",
+  "--overlap",
+  "--exact",
+  "--ntasks=1",
+  "--cpus-per-task=1",
+  "--mem=384M",
+  "/usr/bin/python3",
+  "-I",
+  "-S",
+  "-B",
+  "/p/rlprojects/RND_worktrees/2026-11-01-18-34_a4500-group-scaling_gpu-counts-1-8_gpus-per-step-1_rounds-7_minimum-updates-per-round-10_preserve-selected-configuration-and-global-seeds/.review_metadata/a4500_group_scaling_preparation/run_group_metadata_tests.py"
+]

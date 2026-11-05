@@ -1,0 +1,31 @@
+test_default_entrypoint_refuses_unqualified_execution (test_configured_a4500_group.CommonWallTests)
+New source does not silently enable existing/default/final workers. ... ok
+test_no_existing_numerical_or_single_card_source_edits (test_configured_a4500_group.CommonWallTests)
+This feature owns only its three new modules and new tests. ... ok
+test_nonoverlap_incomplete_or_nonfinite_group (test_configured_a4500_group.CommonWallTests)
+Missing workers, reversed/future windows and no concurrency are refused. ... ok
+test_one_deadline_for_entire_multiworker_barrier (test_configured_a4500_group.CommonWallTests)
+The second worker receives only the remaining common timeout. ... ok
+test_total_work_over_one_interval_not_sum_of_rates (test_configured_a4500_group.CommonWallTests)
+Different worker durations still use the coordinator's common wall denominator. ... ok
+test_coordinator_never_has_native_device_binding (test_configured_a4500_group.GroupMetadataTests)
+The physical binder refuses a zero-GPU coordinator even with a synthetic device. ... ok
+test_eight_job_one_worker_and_current_context (test_configured_a4500_group.GroupMetadataTests)
+Eight logical job devices and one step selector bind physical minor three. ... ok
+test_explicit_step_commands_do_not_launch (test_configured_a4500_group.GroupMetadataTests)
+Coordinator uses documented --gres=none; worker requests one typed GPU. ... ok
+test_global_seed_protocol_and_exact_eight_gate (test_configured_a4500_group.GroupMetadataTests)
+Fixed total retains eight seeds; a smaller-count eligibility claim is refused. ... ok
+test_live_ledger_required_before_any_query (test_configured_a4500_group.GroupMetadataTests)
+Removing the actual own row fails without issuing a scheduler or GPU command. ... ok
+test_missing_context_mapping_and_driver_capture_negatives (test_configured_a4500_group.GroupMetadataTests)
+No context fallback, invented mapping or changed actual driver bytes are accepted. ... ok
+test_ownership_resources_and_selector_negatives (test_configured_a4500_group.GroupMetadataTests)
+Foreign ownership, changed counts and unproved selectors are refused. ... ok
+test_zero_gpu_numeric_coordinator (test_configured_a4500_group.GroupMetadataTests)
+Actual coordinator step TRES proves zero GPUs independently of the eight-GPU job. ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 2.665s
+
+OK

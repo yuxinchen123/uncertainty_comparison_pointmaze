@@ -1,0 +1,1805 @@
+{
+  "base_commit": "b181e171bb1bdb792f3a7082b00f7186ebc9939a",
+  "kind": "group_runtime_current_integration_reviewed_publication_roster",
+  "operational_admission_granted": false,
+  "publication_files": {
+    ".review_metadata/a4500_group_scaling_preparation/author_handoff.json": {
+      "actual_permission_mode": 432,
+      "bytes": 2399,
+      "git_mode": "100644",
+      "sha256": "11063bc4c488276446abfd2d0fcd968685eba06b0e3abee04811693746aad013"
+    },
+    ".review_metadata/a4500_group_scaling_preparation/fifth_cpu_running.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 22,
+      "git_mode": "100644",
+      "sha256": "23cd4de839486ca3e1bdb0d370acda48eb079d867379cff7e0b150fcd9cafaeb"
+    },
+    ".review_metadata/a4500_group_scaling_preparation/fifth_test_command.json": {
+      "actual_permission_mode": 432,
+      "bytes": 428,
+      "git_mode": "100644",
+      "sha256": "5c42ce2e009fa464200aa53e6f331ff76193a21738826839e7e86474ec5d8c09"
+    },
+    ".review_metadata/a4500_group_scaling_preparation/fifth_test_return.json": {
+      "actual_permission_mode": 432,
+      "bytes": 253,
+      "git_mode": "100644",
+      "sha256": "a29dc98e12319cba867e8224dce66de26c1df79fac91c3d8a4011e4f538773ac"
+    },
+    ".review_metadata/a4500_group_scaling_preparation/fifth_test_stderr.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 3090,
+      "git_mode": "100644",
+      "sha256": "7a1193c6f0b158cf407874f53d94e35ddc5254683190ca3898527ae7e5760abc"
+    },
+    ".review_metadata/a4500_group_scaling_preparation/fifth_test_stdout.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 182,
+      "git_mode": "100644",
+      "sha256": "835b7d8f3e26f264a03fec860d130b890779b39f0f72a33ec522305c71a82891"
+    },
+    ".review_metadata/a4500_group_scaling_preparation/first_cpu_running.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 22,
+      "git_mode": "100644",
+      "sha256": "23cd4de839486ca3e1bdb0d370acda48eb079d867379cff7e0b150fcd9cafaeb"
+    },
+    ".review_metadata/a4500_group_scaling_preparation/first_failure_correction.json": {
+      "actual_permission_mode": 432,
+      "bytes": 680,
+      "git_mode": "100644",
+      "sha256": "3f8ff41d0935c6121f8753bbe8a7fbfb789bea6036aa7762f55b6496179261d5"
+    },
+    ".review_metadata/a4500_group_scaling_preparation/first_source_bytes/configured_gpu_scaling.py": {
+      "actual_permission_mode": 432,
+      "bytes": 18747,
+      "git_mode": "100644",
+      "sha256": "3cf3f5ea720e7fb8a6280d51f0fb519aec5f1f64ce881b5038c63117743f741a"
+    },
+    ".review_metadata/a4500_group_scaling_preparation/first_source_bytes/configured_scaling_evidence.py": {
+      "actual_permission_mode": 432,
+      "bytes": 19878,
+      "git_mode": "100644",
+      "sha256": "900bebd8b8589c53e41f3a5a53473686bb87b8d5336d160601d493596efad3f9"
+    },
+    ".review_metadata/a4500_group_scaling_preparation/first_source_bytes/tests/test_configured_a4500_group.py": {
+      "actual_permission_mode": 432,
+      "bytes": 16908,
+      "git_mode": "100644",
+      "sha256": "0da311469f9f7d2aed5f39a73fcdbc90ede13055dc9d1c2895233cfbff46cd3f"
+    },
+    ".review_metadata/a4500_group_scaling_preparation/first_source_bytes/uva_group_binding.py": {
+      "actual_permission_mode": 432,
+      "bytes": 32223,
+      "git_mode": "100644",
+      "sha256": "205f8ecc2b2111ecd06f429756d9d6772eb0130a981f9dfbf5ed8233874e9f34"
+    },
+    ".review_metadata/a4500_group_scaling_preparation/first_source_snapshot.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1424,
+      "git_mode": "100644",
+      "sha256": "7ab5ad03a4001486ec8b7dd5ec5c3a97be1eb9c6bd812de2064c9b8da4e05d2a"
+    },
+    ".review_metadata/a4500_group_scaling_preparation/first_test_command.json": {
+      "actual_permission_mode": 432,
+      "bytes": 428,
+      "git_mode": "100644",
+      "sha256": "5c42ce2e009fa464200aa53e6f331ff76193a21738826839e7e86474ec5d8c09"
+    },
+    ".review_metadata/a4500_group_scaling_preparation/first_test_return.json": {
+      "actual_permission_mode": 432,
+      "bytes": 253,
+      "git_mode": "100644",
+      "sha256": "760602508ed86a6b16fbfbfabb5bfd249ac6ac27545438f7fdb5e9505d00cca6"
+    },
+    ".review_metadata/a4500_group_scaling_preparation/first_test_stderr.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 9108,
+      "git_mode": "100644",
+      "sha256": "5e726fce9e35debe6e06daf5de847aebb8c3ab718462804b2abc2e09de210c34"
+    },
+    ".review_metadata/a4500_group_scaling_preparation/first_test_stdout.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 183,
+      "git_mode": "100644",
+      "sha256": "b1bbfedc6ec14ed8902a7be5735ffc0905d3562000f22cc5641f87193f01c859"
+    },
+    ".review_metadata/a4500_group_scaling_preparation/fourth_cpu_running.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 22,
+      "git_mode": "100644",
+      "sha256": "23cd4de839486ca3e1bdb0d370acda48eb079d867379cff7e0b150fcd9cafaeb"
+    },
+    ".review_metadata/a4500_group_scaling_preparation/fourth_failure_correction.json": {
+      "actual_permission_mode": 432,
+      "bytes": 663,
+      "git_mode": "100644",
+      "sha256": "9376d661ac9670771834f6fe2c056b331638684bbf6cddb3a9f5bdc783b2b693"
+    },
+    ".review_metadata/a4500_group_scaling_preparation/fourth_source_bytes/configured_gpu_scaling.py": {
+      "actual_permission_mode": 432,
+      "bytes": 18956,
+      "git_mode": "100644",
+      "sha256": "8bf109927cbeee2741c8930caa8e4961d1c156fe6ab77476a292a06f13b2df2f"
+    },
+    ".review_metadata/a4500_group_scaling_preparation/fourth_source_bytes/configured_scaling_evidence.py": {
+      "actual_permission_mode": 432,
+      "bytes": 19878,
+      "git_mode": "100644",
+      "sha256": "900bebd8b8589c53e41f3a5a53473686bb87b8d5336d160601d493596efad3f9"
+    },
+    ".review_metadata/a4500_group_scaling_preparation/fourth_source_bytes/tests/test_configured_a4500_group.py": {
+      "actual_permission_mode": 432,
+      "bytes": 22068,
+      "git_mode": "100644",
+      "sha256": "ff3fc32c34a45a57030627cd41a77ff0142c15e63383ebd4559ded5e4bfb83ed"
+    },
+    ".review_metadata/a4500_group_scaling_preparation/fourth_source_bytes/uva_group_binding.py": {
+      "actual_permission_mode": 432,
+      "bytes": 32933,
+      "git_mode": "100644",
+      "sha256": "558516ea99e7a7e2ae91b36d96cf59da37f12ea51139482745da40ad646cab21"
+    },
+    ".review_metadata/a4500_group_scaling_preparation/fourth_test_command.json": {
+      "actual_permission_mode": 432,
+      "bytes": 428,
+      "git_mode": "100644",
+      "sha256": "5c42ce2e009fa464200aa53e6f331ff76193a21738826839e7e86474ec5d8c09"
+    },
+    ".review_metadata/a4500_group_scaling_preparation/fourth_test_return.json": {
+      "actual_permission_mode": 432,
+      "bytes": 253,
+      "git_mode": "100644",
+      "sha256": "f86abbf3c163a8700063bf46d54328fe6d4d043c6dbebabdd99e4f685594a5f7"
+    },
+    ".review_metadata/a4500_group_scaling_preparation/fourth_test_stderr.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 4380,
+      "git_mode": "100644",
+      "sha256": "ade3dfecdc0606d0bea9636ad4551a6b30c3b69bf80b654798de569c861b7cc8"
+    },
+    ".review_metadata/a4500_group_scaling_preparation/fourth_test_stdout.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 183,
+      "git_mode": "100644",
+      "sha256": "9ce77d2c4c4f72bfcb24ca74a76ee292b690a6cbcac0ee3430f8a4bb4cae354e"
+    },
+    ".review_metadata/a4500_group_scaling_preparation/installed_srun_help.stderr": {
+      "actual_permission_mode": 432,
+      "bytes": 0,
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/a4500_group_scaling_preparation/installed_srun_help.stdout": {
+      "actual_permission_mode": 432,
+      "bytes": 10315,
+      "git_mode": "100644",
+      "sha256": "cd6206b19bda3631a91350da27c7832da3bed63d00d882f288befa15304e0dbc"
+    },
+    ".review_metadata/a4500_group_scaling_preparation/installed_srun_zero_gres_semantics.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1221,
+      "git_mode": "100644",
+      "sha256": "fb358c1966cac893b9f85ecfe2ec9defbbbc58a3ad55497de995ae71f3c2942b"
+    },
+    ".review_metadata/a4500_group_scaling_preparation/run_group_metadata_tests.py": {
+      "actual_permission_mode": 432,
+      "bytes": 2318,
+      "git_mode": "100644",
+      "sha256": "5a2e790d9c3b95614e6f311db9fc84e8995500dca00c63f5a4e095f331158788"
+    },
+    ".review_metadata/a4500_group_scaling_preparation/second_cpu_running.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 22,
+      "git_mode": "100644",
+      "sha256": "23cd4de839486ca3e1bdb0d370acda48eb079d867379cff7e0b150fcd9cafaeb"
+    },
+    ".review_metadata/a4500_group_scaling_preparation/second_failure_correction.json": {
+      "actual_permission_mode": 432,
+      "bytes": 723,
+      "git_mode": "100644",
+      "sha256": "084f2772fc80bab121d25bab3fc50987daa31ae9c913fe125bbd1a4a7db4f0f8"
+    },
+    ".review_metadata/a4500_group_scaling_preparation/second_source_bytes/configured_gpu_scaling.py": {
+      "actual_permission_mode": 432,
+      "bytes": 18747,
+      "git_mode": "100644",
+      "sha256": "3cf3f5ea720e7fb8a6280d51f0fb519aec5f1f64ce881b5038c63117743f741a"
+    },
+    ".review_metadata/a4500_group_scaling_preparation/second_source_bytes/configured_scaling_evidence.py": {
+      "actual_permission_mode": 432,
+      "bytes": 19878,
+      "git_mode": "100644",
+      "sha256": "900bebd8b8589c53e41f3a5a53473686bb87b8d5336d160601d493596efad3f9"
+    },
+    ".review_metadata/a4500_group_scaling_preparation/second_source_bytes/tests/test_configured_a4500_group.py": {
+      "actual_permission_mode": 432,
+      "bytes": 17058,
+      "git_mode": "100644",
+      "sha256": "dc5796eb27abb5b1863112b4aaf00e19b9540665e7fa06e0febc4822f72dfb29"
+    },
+    ".review_metadata/a4500_group_scaling_preparation/second_source_bytes/uva_group_binding.py": {
+      "actual_permission_mode": 432,
+      "bytes": 32223,
+      "git_mode": "100644",
+      "sha256": "205f8ecc2b2111ecd06f429756d9d6772eb0130a981f9dfbf5ed8233874e9f34"
+    },
+    ".review_metadata/a4500_group_scaling_preparation/second_test_command.json": {
+      "actual_permission_mode": 432,
+      "bytes": 428,
+      "git_mode": "100644",
+      "sha256": "5c42ce2e009fa464200aa53e6f331ff76193a21738826839e7e86474ec5d8c09"
+    },
+    ".review_metadata/a4500_group_scaling_preparation/second_test_return.json": {
+      "actual_permission_mode": 432,
+      "bytes": 253,
+      "git_mode": "100644",
+      "sha256": "21b1358a7bb6388a191cd12f3ce922e1d282d9649d6439c12aa372a1e75a1f17"
+    },
+    ".review_metadata/a4500_group_scaling_preparation/second_test_stderr.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 8978,
+      "git_mode": "100644",
+      "sha256": "a535b51469d92c46d930ccb69288cdec5e3e258284916263546963718c56b9de"
+    },
+    ".review_metadata/a4500_group_scaling_preparation/second_test_stdout.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 183,
+      "git_mode": "100644",
+      "sha256": "ee69ebb2809ddd423340a1c1e48668b31d7de4bb2b0cb63e52167713b0cc6e57"
+    },
+    ".review_metadata/a4500_group_scaling_preparation/source_freeze.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1966,
+      "git_mode": "100644",
+      "sha256": "497f0b49daa72f21a8253cbcf1b397d0bae02874d2ca05f1a1a42953fd8faa62"
+    },
+    ".review_metadata/a4500_group_scaling_preparation/third_cpu_running.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 22,
+      "git_mode": "100644",
+      "sha256": "23cd4de839486ca3e1bdb0d370acda48eb079d867379cff7e0b150fcd9cafaeb"
+    },
+    ".review_metadata/a4500_group_scaling_preparation/third_test_command.json": {
+      "actual_permission_mode": 432,
+      "bytes": 428,
+      "git_mode": "100644",
+      "sha256": "5c42ce2e009fa464200aa53e6f331ff76193a21738826839e7e86474ec5d8c09"
+    },
+    ".review_metadata/a4500_group_scaling_preparation/third_test_return.json": {
+      "actual_permission_mode": 432,
+      "bytes": 253,
+      "git_mode": "100644",
+      "sha256": "206761d60bc378944c26393d0a43708b968b97b860676a7b5c34afef24fd1c4a"
+    },
+    ".review_metadata/a4500_group_scaling_preparation/third_test_stderr.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 2397,
+      "git_mode": "100644",
+      "sha256": "a221694702ebb976d8bda559a18f79e538432d4ec1a8668858a719557a813e78"
+    },
+    ".review_metadata/a4500_group_scaling_preparation/third_test_stdout.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 182,
+      "git_mode": "100644",
+      "sha256": "57917fba0a10410b2d347978a3116833837e9e564c8466140d6e2daf8b96c297"
+    },
+    ".review_metadata/group_backend_package_independent_corrected_review/controls.py": {
+      "actual_permission_mode": 432,
+      "bytes": 6798,
+      "git_mode": "100644",
+      "sha256": "37a3954d6fb6445bb98b5b93c59e60dfcee1dbb102d22895e70a90b8ff3ff830"
+    },
+    ".review_metadata/group_backend_package_independent_corrected_review/controls_before_final_only_object_copy.py": {
+      "actual_permission_mode": 292,
+      "bytes": 6691,
+      "git_mode": "100644",
+      "sha256": "51b23a80acfb29107480df536512c62cb0da841a7e91422d90af71375dd48022"
+    },
+    ".review_metadata/group_backend_package_independent_corrected_review/independent_corrected_fixtures_6783003_197.json": {
+      "actual_permission_mode": 432,
+      "bytes": 3178,
+      "git_mode": "100644",
+      "sha256": "ff5d134cffbb408e2a3ea51150d50fe22b842124f8ba9d4209f5125904f224c7"
+    },
+    ".review_metadata/group_backend_package_independent_corrected_review/independent_corrected_fixtures_6783003_197.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 6198,
+      "git_mode": "100644",
+      "sha256": "6c8138d37c8152fe4506ee3b66ef82033a0abd01d082dd64140f22bd444d278d"
+    },
+    ".review_metadata/group_backend_package_independent_corrected_review/independent_final_record_only_fixture_6783003_198.json": {
+      "actual_permission_mode": 432,
+      "bytes": 3184,
+      "git_mode": "100644",
+      "sha256": "cd5132cea34475949296c3b3f0a51426b1959db6ca3999de016e1c4cadf832d0"
+    },
+    ".review_metadata/group_backend_package_independent_corrected_review/independent_final_record_only_fixture_6783003_198.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 316,
+      "git_mode": "100644",
+      "sha256": "3ae1e0196d4394a484777dbb08090efa3ad80c0373bc1e603260806ac0b95851"
+    },
+    ".review_metadata/group_backend_package_independent_corrected_review/review.json": {
+      "actual_permission_mode": 432,
+      "bytes": 11274,
+      "git_mode": "100644",
+      "sha256": "13c348ce43f8d38de4e5e5a3f245697511db18b0537d86ade017434a57b23e17"
+    },
+    ".review_metadata/group_backend_package_independent_corrected_review/review_fixture_coverage_correction.json": {
+      "actual_permission_mode": 432,
+      "bytes": 746,
+      "git_mode": "100644",
+      "sha256": "7b7095fb0216f18cbf4d0df2ca0ef89b2638659bc14be83f31b3a5a3a222fb46"
+    },
+    ".review_metadata/group_backend_package_independent_corrected_review/run_final_record_only_fixture.py": {
+      "actual_permission_mode": 432,
+      "bytes": 3984,
+      "git_mode": "100644",
+      "sha256": "1485ca7adde127bedfe151fbd3d27b03336216d7012d7511b0f7f1794089c7d1"
+    },
+    ".review_metadata/group_backend_package_independent_corrected_review/run_independent_review.py": {
+      "actual_permission_mode": 432,
+      "bytes": 3977,
+      "git_mode": "100644",
+      "sha256": "6a951d1616a2f19dbe9bb8e9809b126719f433b4b60ceebb8770de7751ab7bed"
+    },
+    ".review_metadata/group_backend_package_independent_corrected_review/run_independent_review_before_final_only_object_copy.py": {
+      "actual_permission_mode": 432,
+      "bytes": 3977,
+      "git_mode": "100644",
+      "sha256": "6a951d1616a2f19dbe9bb8e9809b126719f433b4b60ceebb8770de7751ab7bed"
+    },
+    ".review_metadata/group_backend_package_ready_after_independent_review_complete.json": {
+      "actual_permission_mode": 432,
+      "bytes": 2943,
+      "git_mode": "100644",
+      "sha256": "92a32b95363e11b8abe51fe12d2395e04fa2ff89b456c627a2186d1d390020d0"
+    },
+    ".review_metadata/group_package_before_three_reader_corrections/files.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1282,
+      "git_mode": "100644",
+      "sha256": "98e88f4d9beefa7d2c0cd841bef9139fc2a797761f8dbedc297d833a17cfc59f"
+    },
+    ".review_metadata/group_package_before_three_reader_corrections/group_backend_package.py": {
+      "actual_permission_mode": 292,
+      "bytes": 28587,
+      "git_mode": "100644",
+      "sha256": "4012dc32d3b9001a12ef8f1e129fef79a289061b01a292199af65a18b600f525"
+    },
+    ".review_metadata/group_package_before_three_reader_corrections/independent_controls.py": {
+      "actual_permission_mode": 292,
+      "bytes": 4273,
+      "git_mode": "100644",
+      "sha256": "918fc9a4d73147ae4dc32d34e62230e299cc5b601b056c97ef1a9d8097e64fba"
+    },
+    ".review_metadata/group_package_before_three_reader_corrections/independent_controls_6783003_191.json": {
+      "actual_permission_mode": 292,
+      "bytes": 8459,
+      "git_mode": "100644",
+      "sha256": "36334e9bcd806fb0594a20c851ebbe82ca5d5b05c3326c3a67cf5520cdc2af33"
+    },
+    ".review_metadata/group_package_before_three_reader_corrections/independent_controls_6783003_191.raw": {
+      "actual_permission_mode": 292,
+      "bytes": 5548,
+      "git_mode": "100644",
+      "sha256": "45660cfc0f355c00ce5186cdbfd9a8f32299843b6d5cbbfdd5cff59aa5b67c48"
+    },
+    ".review_metadata/group_package_before_three_reader_corrections/original_fixtures_6783003_189.json": {
+      "actual_permission_mode": 292,
+      "bytes": 3105,
+      "git_mode": "100644",
+      "sha256": "b3b6645b4dcabf0051ed5e689986fa6fbd47561122a205c890eb84f9149ee6ee"
+    },
+    ".review_metadata/group_package_before_three_reader_corrections/original_fixtures_6783003_189.raw": {
+      "actual_permission_mode": 292,
+      "bytes": 3706,
+      "git_mode": "100644",
+      "sha256": "78066751c159268dd710498fe00819f139bbd04f92407a151c919826a2edba1d"
+    },
+    ".review_metadata/group_package_before_three_reader_corrections/review.json": {
+      "actual_permission_mode": 292,
+      "bytes": 4693,
+      "git_mode": "100644",
+      "sha256": "8208f93d8049b6de60eaf4625337e7ae4d3bc5a48563616f7590791b0966376c"
+    },
+    ".review_metadata/group_package_before_three_reader_corrections/run_independent_controls.py": {
+      "actual_permission_mode": 292,
+      "bytes": 3886,
+      "git_mode": "100644",
+      "sha256": "7b73f58fe1ca09087bf5b25f8366c4a67427a42557fe966466ac1214e90e275c"
+    },
+    ".review_metadata/group_package_before_three_reader_corrections/tests/test_group_backend_package.py": {
+      "actual_permission_mode": 292,
+      "bytes": 18880,
+      "git_mode": "100644",
+      "sha256": "d3922d7dc3df2f21f5e346aa8670137ea85698be65fef030f982112ac1eaefee"
+    },
+    ".review_metadata/group_package_corrected_source_before_author_tests/group_backend_package.py": {
+      "actual_permission_mode": 292,
+      "bytes": 29916,
+      "git_mode": "100644",
+      "sha256": "3a312803d173d767317e99efb53e56a6ba011374d8bde250db814ae1d9ddd76a"
+    },
+    ".review_metadata/group_package_corrected_source_before_author_tests/tests/test_group_backend_package.py": {
+      "actual_permission_mode": 292,
+      "bytes": 23208,
+      "git_mode": "100644",
+      "sha256": "972dbbf5a9bd054c470443c49e6f257fb97877e3f261d51f847eb0e8bc9470d1"
+    },
+    ".review_metadata/group_runtime_before_completion/configured_gpu_scaling.py": {
+      "actual_permission_mode": 432,
+      "bytes": 18956,
+      "git_mode": "100644",
+      "sha256": "8bf109927cbeee2741c8930caa8e4961d1c156fe6ab77476a292a06f13b2df2f"
+    },
+    ".review_metadata/group_runtime_before_completion/configured_scaling_evidence.py": {
+      "actual_permission_mode": 432,
+      "bytes": 19878,
+      "git_mode": "100644",
+      "sha256": "900bebd8b8589c53e41f3a5a53473686bb87b8d5336d160601d493596efad3f9"
+    },
+    ".review_metadata/group_runtime_before_completion/group_backend_package.py": {
+      "actual_permission_mode": 432,
+      "bytes": 29916,
+      "git_mode": "100644",
+      "sha256": "3a312803d173d767317e99efb53e56a6ba011374d8bde250db814ae1d9ddd76a"
+    },
+    ".review_metadata/group_runtime_before_completion/manifest.json": {
+      "actual_permission_mode": 432,
+      "bytes": 2385,
+      "git_mode": "100644",
+      "sha256": "c35fdf2145d8f4497a5c5121a2f635e5cbfe9d3751091aad531ddbfcf33c7b6c"
+    },
+    ".review_metadata/group_runtime_before_completion/tests/test_configured_a4500_group.py": {
+      "actual_permission_mode": 432,
+      "bytes": 24902,
+      "git_mode": "100644",
+      "sha256": "cb1726d68c0646c02790575f904ed3d30de48799213c0cc97bbf883e289696b2"
+    },
+    ".review_metadata/group_runtime_before_completion/uva_group_binding.py": {
+      "actual_permission_mode": 432,
+      "bytes": 32933,
+      "git_mode": "100644",
+      "sha256": "558516ea99e7a7e2ae91b36d96cf59da37f12ea51139482745da40ad646cab21"
+    },
+    ".review_metadata/group_runtime_completion/author_handoff.json": {
+      "actual_permission_mode": 432,
+      "bytes": 5715,
+      "git_mode": "100644",
+      "sha256": "d144ea26263338cb364a8d7af91f0ad1fc556533b5e05ab659e769831b1453b3"
+    },
+    ".review_metadata/group_runtime_completion/check_source_closure.py": {
+      "actual_permission_mode": 432,
+      "bytes": 3522,
+      "git_mode": "100644",
+      "sha256": "f619eed769fa2a34525230e9759f93f125f931788f0036c80b04bc3d5b0938a6"
+    },
+    ".review_metadata/group_runtime_completion/closed_source_and_protected_numerical_receipt.json": {
+      "actual_permission_mode": 432,
+      "bytes": 12822,
+      "git_mode": "100644",
+      "sha256": "c923692fecaec90783faaadfbf5b6d0d3866808b4784e9ff439ec23cf06199c3"
+    },
+    ".review_metadata/group_runtime_completion/complete_protected_source_and_original_gate_comparison.json": {
+      "actual_permission_mode": 432,
+      "bytes": 4225,
+      "git_mode": "100644",
+      "sha256": "da296a804764e400a838a3e553235c08bda881a63d4815d5f4cd70466cd7dac4"
+    },
+    ".review_metadata/group_runtime_completion/first_author_test_receipt.json": {
+      "actual_permission_mode": 432,
+      "bytes": 20023,
+      "git_mode": "100644",
+      "sha256": "96e478bde04585e2bc2d37768fbc04bc08aaa25457ba53d5b09e88a6864c001d"
+    },
+    ".review_metadata/group_runtime_completion/fourth_author_test_receipt.json": {
+      "actual_permission_mode": 432,
+      "bytes": 22182,
+      "git_mode": "100644",
+      "sha256": "e3055b57ea5b3aebb8218ec44cbb8178719b13757764506b65e1e93e6555fb5a"
+    },
+    ".review_metadata/group_runtime_completion/preserved_third_failed_author_source/configured_gpu_scaling.py": {
+      "actual_permission_mode": 432,
+      "bytes": 19241,
+      "git_mode": "100644",
+      "sha256": "d8333da955f810a1b683aaac93e00645818469e33dd01b63b6808541b2f81792"
+    },
+    ".review_metadata/group_runtime_completion/preserved_third_failed_author_source/configured_scaling_evidence.py": {
+      "actual_permission_mode": 432,
+      "bytes": 14653,
+      "git_mode": "100644",
+      "sha256": "7524a3a928dcf1201eed4540c5be7b7ced7064a7df8b7e0a2e793bb0fb3e0d6e"
+    },
+    ".review_metadata/group_runtime_completion/preserved_third_failed_author_source/group_backend_package.py": {
+      "actual_permission_mode": 432,
+      "bytes": 29916,
+      "git_mode": "100644",
+      "sha256": "3a312803d173d767317e99efb53e56a6ba011374d8bde250db814ae1d9ddd76a"
+    },
+    ".review_metadata/group_runtime_completion/preserved_third_failed_author_source/group_original_qualification.py": {
+      "actual_permission_mode": 432,
+      "bytes": 9109,
+      "git_mode": "100644",
+      "sha256": "057d1dd0e7b65cf011f0983da1e2f21a39266d10c0da556245ea214d385a2584"
+    },
+    ".review_metadata/group_runtime_completion/preserved_third_failed_author_source/group_runtime.py": {
+      "actual_permission_mode": 432,
+      "bytes": 38446,
+      "git_mode": "100644",
+      "sha256": "16d5ded0bf6fa970a14497e7ffc572201a84e1a402bd6cf0de2eedc8cf6dbc9b"
+    },
+    ".review_metadata/group_runtime_completion/preserved_third_failed_author_source/group_runtime_evidence.py": {
+      "actual_permission_mode": 432,
+      "bytes": 20412,
+      "git_mode": "100644",
+      "sha256": "58dddffbb15b816f5a4ad8e13c317a9f94fb31b415e10abc1e9f0e846febbf64"
+    },
+    ".review_metadata/group_runtime_completion/preserved_third_failed_author_source/group_runtime_launch.py": {
+      "actual_permission_mode": 432,
+      "bytes": 20224,
+      "git_mode": "100644",
+      "sha256": "ea94124e51f62915cd717d76f57e948792e3e1497f2c3e43970230d27d44a4f5"
+    },
+    ".review_metadata/group_runtime_completion/preserved_third_failed_author_source/preservation_note.json": {
+      "actual_permission_mode": 432,
+      "bytes": 279,
+      "git_mode": "100644",
+      "sha256": "86f8ad1872c3ff5badc2561001b34a385d23300bd78db0ae3b2efaa6b03370c5"
+    },
+    ".review_metadata/group_runtime_completion/preserved_third_failed_author_source/tests/test_configured_a4500_group.py": {
+      "actual_permission_mode": 432,
+      "bytes": 25480,
+      "git_mode": "100644",
+      "sha256": "c6d387b0bff5ed4e1f0fc62273b6cb855367772580720bbddc41aa16158e9bad"
+    },
+    ".review_metadata/group_runtime_completion/preserved_third_failed_author_source/tests/test_group_runtime.py": {
+      "actual_permission_mode": 432,
+      "bytes": 25551,
+      "git_mode": "100644",
+      "sha256": "fe772f66236ed5f60a2dfa6f1264ed92e5d1271cef78c0ba7e02547060294483"
+    },
+    ".review_metadata/group_runtime_completion/preserved_third_failed_author_source/uva_group_binding.py": {
+      "actual_permission_mode": 432,
+      "bytes": 34782,
+      "git_mode": "100644",
+      "sha256": "6ef48d785da7d933e48ab130aa24c4adf5cdaffddb376847f3683b116b9f5015"
+    },
+    ".review_metadata/group_runtime_completion/protected_source_and_original_gate_comparison.json": {
+      "actual_permission_mode": 432,
+      "bytes": 2184,
+      "git_mode": "100644",
+      "sha256": "53aef6641cb5868a97a260bd6b2ab204bd835d3a459bd963575ad7a79262ec32"
+    },
+    ".review_metadata/group_runtime_completion/run_metadata_tests.py": {
+      "actual_permission_mode": 432,
+      "bytes": 5324,
+      "git_mode": "100644",
+      "sha256": "c771fdc70ec986dd3201a88c093756c0e380785f82c6b8e34e8d30a157f58f28"
+    },
+    ".review_metadata/group_runtime_completion/second_author_test_receipt.json": {
+      "actual_permission_mode": 432,
+      "bytes": 20239,
+      "git_mode": "100644",
+      "sha256": "df0d0227e679f8f57a1ee796a80e4108e99293d0b694994b4a603fb59c5614be"
+    },
+    ".review_metadata/group_runtime_completion/source_before_first_author_tests/configured_gpu_scaling.py": {
+      "actual_permission_mode": 432,
+      "bytes": 19241,
+      "git_mode": "100644",
+      "sha256": "d8333da955f810a1b683aaac93e00645818469e33dd01b63b6808541b2f81792"
+    },
+    ".review_metadata/group_runtime_completion/source_before_first_author_tests/configured_scaling_evidence.py": {
+      "actual_permission_mode": 432,
+      "bytes": 14653,
+      "git_mode": "100644",
+      "sha256": "7524a3a928dcf1201eed4540c5be7b7ced7064a7df8b7e0a2e793bb0fb3e0d6e"
+    },
+    ".review_metadata/group_runtime_completion/source_before_first_author_tests/group_backend_package.py": {
+      "actual_permission_mode": 432,
+      "bytes": 29916,
+      "git_mode": "100644",
+      "sha256": "3a312803d173d767317e99efb53e56a6ba011374d8bde250db814ae1d9ddd76a"
+    },
+    ".review_metadata/group_runtime_completion/source_before_first_author_tests/group_original_qualification.py": {
+      "actual_permission_mode": 432,
+      "bytes": 9109,
+      "git_mode": "100644",
+      "sha256": "057d1dd0e7b65cf011f0983da1e2f21a39266d10c0da556245ea214d385a2584"
+    },
+    ".review_metadata/group_runtime_completion/source_before_first_author_tests/group_runtime.py": {
+      "actual_permission_mode": 432,
+      "bytes": 37631,
+      "git_mode": "100644",
+      "sha256": "7c027c97144fb9579194491f4437cab34cf55febeec62bd442d2c9dc79eca977"
+    },
+    ".review_metadata/group_runtime_completion/source_before_first_author_tests/group_runtime_evidence.py": {
+      "actual_permission_mode": 432,
+      "bytes": 19094,
+      "git_mode": "100644",
+      "sha256": "67ccd977d5d28ac55f5e1431ee18d9b6011243a4dc4d1581ff7e308784cc01b3"
+    },
+    ".review_metadata/group_runtime_completion/source_before_first_author_tests/tests/test_configured_a4500_group.py": {
+      "actual_permission_mode": 432,
+      "bytes": 25435,
+      "git_mode": "100644",
+      "sha256": "878d6263934ebb24bc983cec647599a5aa9e4c8978b77a96c62aad71f7906e23"
+    },
+    ".review_metadata/group_runtime_completion/source_before_first_author_tests/tests/test_group_runtime.py": {
+      "actual_permission_mode": 432,
+      "bytes": 13298,
+      "git_mode": "100644",
+      "sha256": "a600c6bc220bd9dcf0b0b1ba16da3d894dd8b064e9d27e98e5dced8c00c2e0ee"
+    },
+    ".review_metadata/group_runtime_completion/source_before_first_author_tests/uva_group_binding.py": {
+      "actual_permission_mode": 432,
+      "bytes": 33939,
+      "git_mode": "100644",
+      "sha256": "aca5e2d6488167fff03aae7776b193c6ce96ce56b9d7782cf8c3059cee7d04e0"
+    },
+    ".review_metadata/group_runtime_completion/source_before_fourth_author_tests/configured_gpu_scaling.py": {
+      "actual_permission_mode": 432,
+      "bytes": 19241,
+      "git_mode": "100644",
+      "sha256": "d8333da955f810a1b683aaac93e00645818469e33dd01b63b6808541b2f81792"
+    },
+    ".review_metadata/group_runtime_completion/source_before_fourth_author_tests/configured_scaling_evidence.py": {
+      "actual_permission_mode": 432,
+      "bytes": 14653,
+      "git_mode": "100644",
+      "sha256": "7524a3a928dcf1201eed4540c5be7b7ced7064a7df8b7e0a2e793bb0fb3e0d6e"
+    },
+    ".review_metadata/group_runtime_completion/source_before_fourth_author_tests/group_backend_package.py": {
+      "actual_permission_mode": 432,
+      "bytes": 29916,
+      "git_mode": "100644",
+      "sha256": "3a312803d173d767317e99efb53e56a6ba011374d8bde250db814ae1d9ddd76a"
+    },
+    ".review_metadata/group_runtime_completion/source_before_fourth_author_tests/group_original_qualification.py": {
+      "actual_permission_mode": 432,
+      "bytes": 9109,
+      "git_mode": "100644",
+      "sha256": "057d1dd0e7b65cf011f0983da1e2f21a39266d10c0da556245ea214d385a2584"
+    },
+    ".review_metadata/group_runtime_completion/source_before_fourth_author_tests/group_runtime.py": {
+      "actual_permission_mode": 432,
+      "bytes": 38446,
+      "git_mode": "100644",
+      "sha256": "16d5ded0bf6fa970a14497e7ffc572201a84e1a402bd6cf0de2eedc8cf6dbc9b"
+    },
+    ".review_metadata/group_runtime_completion/source_before_fourth_author_tests/group_runtime_evidence.py": {
+      "actual_permission_mode": 432,
+      "bytes": 20412,
+      "git_mode": "100644",
+      "sha256": "58dddffbb15b816f5a4ad8e13c317a9f94fb31b415e10abc1e9f0e846febbf64"
+    },
+    ".review_metadata/group_runtime_completion/source_before_fourth_author_tests/group_runtime_launch.py": {
+      "actual_permission_mode": 432,
+      "bytes": 20679,
+      "git_mode": "100644",
+      "sha256": "d0114bc48976fb02bc6ea94cdc3b5e2b2b9f28c31a240f673dd494b76478d038"
+    },
+    ".review_metadata/group_runtime_completion/source_before_fourth_author_tests/tests/test_configured_a4500_group.py": {
+      "actual_permission_mode": 432,
+      "bytes": 25480,
+      "git_mode": "100644",
+      "sha256": "c6d387b0bff5ed4e1f0fc62273b6cb855367772580720bbddc41aa16158e9bad"
+    },
+    ".review_metadata/group_runtime_completion/source_before_fourth_author_tests/tests/test_group_runtime.py": {
+      "actual_permission_mode": 432,
+      "bytes": 25610,
+      "git_mode": "100644",
+      "sha256": "2ad71962018c552514ed469e9897e58a07515cf80774db3b322b38411c107fe9"
+    },
+    ".review_metadata/group_runtime_completion/source_before_fourth_author_tests/uva_group_binding.py": {
+      "actual_permission_mode": 432,
+      "bytes": 34782,
+      "git_mode": "100644",
+      "sha256": "6ef48d785da7d933e48ab130aa24c4adf5cdaffddb376847f3683b116b9f5015"
+    },
+    ".review_metadata/group_runtime_completion/source_freeze_before_first_author_tests.json": {
+      "actual_permission_mode": 432,
+      "bytes": 3343,
+      "git_mode": "100644",
+      "sha256": "ffa44a7385aaab10672f582f1b2ee8ec4317e0521fdb44357872a154f0647471"
+    },
+    ".review_metadata/group_runtime_completion/source_freeze_before_fourth_author_tests.json": {
+      "actual_permission_mode": 432,
+      "bytes": 3840,
+      "git_mode": "100644",
+      "sha256": "dd1ff64e2133a5cda2a4b76b09fc926992336741265ac2fa5050d5c50a08251c"
+    },
+    ".review_metadata/group_runtime_completion/source_freeze_before_second_author_tests.json": {
+      "actual_permission_mode": 432,
+      "bytes": 3441,
+      "git_mode": "100644",
+      "sha256": "87c3f3d1b235e19c9c43e053f756f258d0f569e84c97107172de19138282e508"
+    },
+    ".review_metadata/group_runtime_completion/source_freeze_before_third_author_tests.json": {
+      "actual_permission_mode": 432,
+      "bytes": 3802,
+      "git_mode": "100644",
+      "sha256": "6206201c84dc4ea35f2fb47e6e2ba16f760410419e8adef2d75f271e7ca29c5f"
+    },
+    ".review_metadata/group_runtime_completion/source_freeze_for_independent_review.json": {
+      "actual_permission_mode": 432,
+      "bytes": 13528,
+      "git_mode": "100644",
+      "sha256": "6a4b03ede9d6496f5f06fead6f14d2ee7fe5aa2fd1e2c129173246d03617f5f9"
+    },
+    ".review_metadata/group_runtime_completion/third_author_test_receipt.json": {
+      "actual_permission_mode": 432,
+      "bytes": 27647,
+      "git_mode": "100644",
+      "sha256": "bc1a5b81a6695d9b88c1aab8b865fda00d4231196c52526f72906fff84b83c95"
+    },
+    ".review_metadata/group_runtime_corrected_independent_review_2026-11-05/check_corrected_boundaries.py": {
+      "actual_permission_mode": 432,
+      "bytes": 12045,
+      "git_mode": "100644",
+      "sha256": "f9bb08e97d93e8ce799475a98c0e759bcc777e0043c09bed2dece2dc0fb4c787"
+    },
+    ".review_metadata/group_runtime_corrected_independent_review_2026-11-05/check_current_integration_compatibility.py": {
+      "actual_permission_mode": 432,
+      "bytes": 8124,
+      "git_mode": "100644",
+      "sha256": "4c331adbcea05e7f3c500b8c32f607295bc18136200440b3efb4b0419f27aacc"
+    },
+    ".review_metadata/group_runtime_corrected_independent_review_2026-11-05/corrected_metadata_test_command_return.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1527,
+      "git_mode": "100644",
+      "sha256": "1951070bcadac68e813eb9806350052788bc901c5320a30656d17824eb46e5cd"
+    },
+    ".review_metadata/group_runtime_corrected_independent_review_2026-11-05/corrected_metadata_test_receipt.json": {
+      "actual_permission_mode": 432,
+      "bytes": 43996,
+      "git_mode": "100644",
+      "sha256": "15caa4a847d25b5ec69f7dc0a18212794517f7ceac80b990181ee8dbdfbf3ed8"
+    },
+    ".review_metadata/group_runtime_corrected_independent_review_2026-11-05/corrected_metadata_test_stderr.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 0,
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/group_runtime_corrected_independent_review_2026-11-05/corrected_metadata_test_stdout.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 163,
+      "git_mode": "100644",
+      "sha256": "cfe5688421053408190d80c29febbf69f2b2f0124c33169c9382b8e4a013faaa"
+    },
+    ".review_metadata/group_runtime_corrected_independent_review_2026-11-05/current_integration_cold_import_child_return.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1212,
+      "git_mode": "100644",
+      "sha256": "12248e4b6af3218fde03ea7f550944751027d717866a8e96da1df5cc8c709f1e"
+    },
+    ".review_metadata/group_runtime_corrected_independent_review_2026-11-05/current_integration_compatibility_command_return.json": {
+      "actual_permission_mode": 432,
+      "bytes": 951,
+      "git_mode": "100644",
+      "sha256": "9a2863ee89b7d92a98e5a09b2c637350613736e9e4f0bd76c18f3537a3dbe8ab"
+    },
+    ".review_metadata/group_runtime_corrected_independent_review_2026-11-05/current_integration_compatibility_stderr.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 917,
+      "git_mode": "100644",
+      "sha256": "2eb7fa12e86f21d1166829465b33d5558ad2be8c8502b500381337f0adf0c9a9"
+    },
+    ".review_metadata/group_runtime_corrected_independent_review_2026-11-05/current_integration_compatibility_stdout.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 0,
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/group_runtime_corrected_independent_review_2026-11-05/independent_boundary_command_return.json": {
+      "actual_permission_mode": 432,
+      "bytes": 938,
+      "git_mode": "100644",
+      "sha256": "9fa8ec048f3e69d6fd05c746fb521aacfa30a8c3ee46ffae718cb14f0693359e"
+    },
+    ".review_metadata/group_runtime_corrected_independent_review_2026-11-05/independent_boundary_stderr.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 0,
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/group_runtime_corrected_independent_review_2026-11-05/independent_boundary_stdout.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 131,
+      "git_mode": "100644",
+      "sha256": "a122580530b22bde135c4c6f725f8b7586f6ef266dbc9f3881caa01402d3fc83"
+    },
+    ".review_metadata/group_runtime_corrected_independent_review_2026-11-05/independent_closure_command_return.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1210,
+      "git_mode": "100644",
+      "sha256": "96cef21ad8ccd181c859e87cf728d9e4465a20a6462a462e38cf050ac94cef66"
+    },
+    ".review_metadata/group_runtime_corrected_independent_review_2026-11-05/independent_closure_stderr.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 0,
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/group_runtime_corrected_independent_review_2026-11-05/independent_closure_stdout.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 168,
+      "git_mode": "100644",
+      "sha256": "ff4504591e707f1f6fb4ccf7dc5b2ae3595a3f5554d7c43ebfb6abefd09f130c"
+    },
+    ".review_metadata/group_runtime_corrected_independent_review_2026-11-05/independent_corrected_boundary_receipt.json": {
+      "actual_permission_mode": 432,
+      "bytes": 6586,
+      "git_mode": "100644",
+      "sha256": "5aabc3cd3c42450e388f17b7c7d66ea44f0de711ab3f28e94fb24b2f14acd454"
+    },
+    ".review_metadata/group_runtime_corrected_independent_review_2026-11-05/independent_corrected_group_runtime_review.json": {
+      "actual_permission_mode": 432,
+      "bytes": 6572,
+      "git_mode": "100644",
+      "sha256": "2961ab3033456d58a0d51973acfec40ac218bb08443cc02745f21e389d059750"
+    },
+    ".review_metadata/group_runtime_corrected_independent_review_2026-11-05/independent_source_closure.json": {
+      "actual_permission_mode": 432,
+      "bytes": 12822,
+      "git_mode": "100644",
+      "sha256": "1d8f00af2dc5219bbba4aad4802433f1a6a63efb5f894aa77477b9886633050d"
+    },
+    ".review_metadata/group_runtime_current_integration_overlay/cold_closure_command_return.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1191,
+      "git_mode": "100644",
+      "sha256": "8eee9bc2427067f97f31972466b5f7f6a311ab88c84462ae80c8a37a30a2b2ae"
+    },
+    ".review_metadata/group_runtime_current_integration_overlay/cold_closure_stderr.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 0,
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/group_runtime_current_integration_overlay/cold_closure_stdout.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 168,
+      "git_mode": "100644",
+      "sha256": "d16a5d0524883d9a0e339d2bc487c9b731d5ce4b1cdcd83efc50269fa7a8db61"
+    },
+    ".review_metadata/group_runtime_current_integration_overlay/current_overlay_cold_source_closure.json": {
+      "actual_permission_mode": 432,
+      "bytes": 12590,
+      "git_mode": "100644",
+      "sha256": "f0077570e6c46fdf70fd5cc155539adefffe73ee8c0d417c9af1a5b8eee0df8b"
+    },
+    ".review_metadata/group_runtime_current_integration_overlay/current_overlay_metadata_test_receipt.json": {
+      "actual_permission_mode": 432,
+      "bytes": 49959,
+      "git_mode": "100644",
+      "sha256": "a0b7aafa5cf138e83c182cd5e23e22dc0d0112477cec56553d54e97f64640095"
+    },
+    ".review_metadata/group_runtime_current_integration_overlay/current_overlay_source_freeze.json": {
+      "actual_permission_mode": 432,
+      "bytes": 12061,
+      "git_mode": "100644",
+      "sha256": "6d6506d3b8ddfaa27e8b0e842de3a1c5a2cbac8eabb52d02df787bb484275f91"
+    },
+    ".review_metadata/group_runtime_current_integration_overlay/independent_current_integration_compatibility_review.json": {
+      "actual_permission_mode": 432,
+      "bytes": 7360,
+      "git_mode": "100644",
+      "sha256": "0a7b1acefbf8d845d2a65c9c82c87d6124a0b76542b393395e289fb11db718f6"
+    },
+    ".review_metadata/group_runtime_current_integration_overlay/metadata_tests_command_return.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1514,
+      "git_mode": "100644",
+      "sha256": "a2703c07383b87f8b60097ddab9372a1eb0a2657fa8a941041921a0a0236bbc2"
+    },
+    ".review_metadata/group_runtime_current_integration_overlay/metadata_tests_stderr.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 0,
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".review_metadata/group_runtime_current_integration_overlay/metadata_tests_stdout.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 163,
+      "git_mode": "100644",
+      "sha256": "8fd1f6ce8be4d91f850a3253067555baa3a982536693b6e8063ffe3270834dba"
+    },
+    ".review_metadata/group_runtime_current_integration_overlay/overlay_source_transfer.json": {
+      "actual_permission_mode": 432,
+      "bytes": 42902,
+      "git_mode": "100644",
+      "sha256": "1ba0f92bacad41f7367db8afd9af725b150061e6c8d7ed936605dbf86f9417c2"
+    },
+    ".review_metadata/group_runtime_current_integration_overlay/run_current_overlay_metadata_tests.py": {
+      "actual_permission_mode": 432,
+      "bytes": 5354,
+      "git_mode": "100644",
+      "sha256": "1aa24a40f12ca182fa384fccc975ebc7b5ba12d45c8bede5bd9fa8a98e7c0375"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/corrected_author_handoff.json": {
+      "actual_permission_mode": 432,
+      "bytes": 4593,
+      "git_mode": "100644",
+      "sha256": "8610764ea6f6a27fee567cf25bf4d3c198a239d61d1d1a8241786bccc09cccda"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/corrected_closed_source_and_protected_numerical_receipt.json": {
+      "actual_permission_mode": 432,
+      "bytes": 12822,
+      "git_mode": "100644",
+      "sha256": "95dc1f08f1882b2d9639eb1adc6400a2cf7d61b9eb2df4c1ca5cb0324a687a1f"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/corrected_source_freeze_for_independent_review.json": {
+      "actual_permission_mode": 432,
+      "bytes": 15019,
+      "git_mode": "100644",
+      "sha256": "fb795e40e663b1638ea0536ddf3727c6d4b4e0e36efdcf97b62f757449bb626a"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/first_corrected_author_test_receipt.json": {
+      "actual_permission_mode": 432,
+      "bytes": 48249,
+      "git_mode": "100644",
+      "sha256": "5b516c681952d9cbd183a1bc218e385130549c1201b33ab3367fd83358da1906"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/first_protected_component_proof_writer_failure.json": {
+      "actual_permission_mode": 432,
+      "bytes": 379,
+      "git_mode": "100644",
+      "sha256": "341498aa617658f0a9511734bcd65804eb84148ba32a8d5be7d596a22cb9768c"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/preserved_rejection.json": {
+      "actual_permission_mode": 432,
+      "bytes": 636,
+      "git_mode": "100644",
+      "sha256": "7f24c951a85ec67284d9411afe63b28c993f14f0f94db64937216b2de6d16f12"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/protected_component_correction_proof.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1506,
+      "git_mode": "100644",
+      "sha256": "edcac47aed31fa6f41f4f7d2ef0a0798c5002d459882d14659da0e0a3c274e99"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/second_corrected_author_test_receipt.json": {
+      "actual_permission_mode": 432,
+      "bytes": 43795,
+      "git_mode": "100644",
+      "sha256": "adc9cbc93fb3a1c8f1e149d0eac4f326119c3189853f50fe77cbb1c3c9ee6613"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_first_corrected_test/.review_metadata/group_runtime_completion/check_source_closure.py": {
+      "actual_permission_mode": 432,
+      "bytes": 3522,
+      "git_mode": "100644",
+      "sha256": "f619eed769fa2a34525230e9759f93f125f931788f0036c80b04bc3d5b0938a6"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_first_corrected_test/.review_metadata/group_runtime_completion/run_metadata_tests.py": {
+      "actual_permission_mode": 432,
+      "bytes": 5324,
+      "git_mode": "100644",
+      "sha256": "c771fdc70ec986dd3201a88c093756c0e380785f82c6b8e34e8d30a157f58f28"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_first_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_gpu_scaling.py": {
+      "actual_permission_mode": 432,
+      "bytes": 19241,
+      "git_mode": "100644",
+      "sha256": "d8333da955f810a1b683aaac93e00645818469e33dd01b63b6808541b2f81792"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_first_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py": {
+      "actual_permission_mode": 432,
+      "bytes": 66275,
+      "git_mode": "100644",
+      "sha256": "2fc25c271ec55c0aeb2523873eda71543e5f46341706f18e6bc9f2cc924a33a0"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_first_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_scaling_evidence.py": {
+      "actual_permission_mode": 432,
+      "bytes": 14653,
+      "git_mode": "100644",
+      "sha256": "7524a3a928dcf1201eed4540c5be7b7ced7064a7df8b7e0a2e793bb0fb3e0d6e"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_first_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/device_memory_limit.py": {
+      "actual_permission_mode": 432,
+      "bytes": 94544,
+      "git_mode": "100644",
+      "sha256": "3abcb3641cc799424d6585e9881befbbd3c06800e9dc4d19fed5a507fe5e06ff"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_first_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py": {
+      "actual_permission_mode": 432,
+      "bytes": 24860,
+      "git_mode": "100644",
+      "sha256": "310bcb6b4b1a18cc9d7acac62a07dfb60874bb60aed127b50b9c07227593f9f8"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_first_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_backend_image.py": {
+      "actual_permission_mode": 432,
+      "bytes": 34847,
+      "git_mode": "100644",
+      "sha256": "82898100d64f540c42c0a236acb6c20ca2808deb247b83da65927c6cb497a8e4"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_first_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/group_backend_package.py": {
+      "actual_permission_mode": 432,
+      "bytes": 29916,
+      "git_mode": "100644",
+      "sha256": "3a312803d173d767317e99efb53e56a6ba011374d8bde250db814ae1d9ddd76a"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_first_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/group_original_qualification.py": {
+      "actual_permission_mode": 432,
+      "bytes": 9109,
+      "git_mode": "100644",
+      "sha256": "057d1dd0e7b65cf011f0983da1e2f21a39266d10c0da556245ea214d385a2584"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_first_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/group_runtime.py": {
+      "actual_permission_mode": 432,
+      "bytes": 44459,
+      "git_mode": "100644",
+      "sha256": "05e600aebd81870e418315191f9699b5bd79234c7102a30da2ff27dde69b58a3"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_first_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/group_runtime_evidence.py": {
+      "actual_permission_mode": 432,
+      "bytes": 22216,
+      "git_mode": "100644",
+      "sha256": "e1606aa324a5b70334ed872ee81bc7575402912c73eee8662a90394e7119289a"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_first_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/group_runtime_launch.py": {
+      "actual_permission_mode": 432,
+      "bytes": 20679,
+      "git_mode": "100644",
+      "sha256": "d0114bc48976fb02bc6ea94cdc3b5e2b2b9f28c31a240f673dd494b76478d038"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_first_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_allocation_observation.py": {
+      "actual_permission_mode": 432,
+      "bytes": 33665,
+      "git_mode": "100644",
+      "sha256": "f614a3792f196605cd1fa4b76738ff3157f72ee6700058526c2598e45a63a50c"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_first_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_case.py": {
+      "actual_permission_mode": 432,
+      "bytes": 14137,
+      "git_mode": "100644",
+      "sha256": "5acd8a33b849e8805a6d51023d5c5661ac989b473a6135669b9ca243256e754f"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_first_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_evidence.py": {
+      "actual_permission_mode": 432,
+      "bytes": 53301,
+      "git_mode": "100644",
+      "sha256": "cc66813e5a31dd54f9c266f5a094c26c6a5753c17599b1badd97911f932c5824"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_first_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_qualification.py": {
+      "actual_permission_mode": 432,
+      "bytes": 26893,
+      "git_mode": "100644",
+      "sha256": "93a19a553a10daf894e4e573b7aacebecf0d5a1cfa0b0f13a471c19e4184eecb"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_first_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_queue.py": {
+      "actual_permission_mode": 432,
+      "bytes": 35187,
+      "git_mode": "100644",
+      "sha256": "cac5c612c641aad0bc814438f0e21c02544073632484dcba99047e2ac44aaa60"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_first_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py": {
+      "actual_permission_mode": 432,
+      "bytes": 71539,
+      "git_mode": "100644",
+      "sha256": "7b71221d25493ad5a5b07672e593a329f912ebf3ecd259f2aeede1e6da55acc6"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_first_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry.py": {
+      "actual_permission_mode": 432,
+      "bytes": 35158,
+      "git_mode": "100644",
+      "sha256": "40c117d6fd1937dcdd465381d1469f0ad687103d7b551d604d8c6e03063f9107"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_first_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py": {
+      "actual_permission_mode": 432,
+      "bytes": 73828,
+      "git_mode": "100644",
+      "sha256": "1651ea2184604082cefb97fdfe035640c4b71974ad1e6520d16ef84bdb54e0a2"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_first_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/passive_installed_slurm_observation.py": {
+      "actual_permission_mode": 432,
+      "bytes": 40346,
+      "git_mode": "100644",
+      "sha256": "97ce634c07cd7a2b045d4253938db21c844abd93f3bb7b9d4dbebfd5f33bf842"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_first_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/portable_evidence.py": {
+      "actual_permission_mode": 432,
+      "bytes": 8731,
+      "git_mode": "100644",
+      "sha256": "0ecae0ab2c21b0bbeadd47ddbd81026cb133e8f3d7f32c2148268dbfe575a4d1"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_first_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py": {
+      "actual_permission_mode": 432,
+      "bytes": 148099,
+      "git_mode": "100644",
+      "sha256": "2612e358f3e823289a92bdfe54856bdc8f0de5553db4bdcc5cd7617083cfd6aa"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_first_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/pregather_async_retry.py": {
+      "actual_permission_mode": 432,
+      "bytes": 45049,
+      "git_mode": "100644",
+      "sha256": "881c89b678782dc56568b9257a9753a78b4e06464d43e73a14f1927a5fc17695"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_first_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/short_learning.py": {
+      "actual_permission_mode": 432,
+      "bytes": 29701,
+      "git_mode": "100644",
+      "sha256": "b17d70f4e49de9f766062beb0578729fcde9d68a29060f37d718deb644cb0999"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_first_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_configured_a4500_group.py": {
+      "actual_permission_mode": 432,
+      "bytes": 25480,
+      "git_mode": "100644",
+      "sha256": "c6d387b0bff5ed4e1f0fc62273b6cb855367772580720bbddc41aa16158e9bad"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_first_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_group_backend_package.py": {
+      "actual_permission_mode": 432,
+      "bytes": 23208,
+      "git_mode": "100644",
+      "sha256": "972dbbf5a9bd054c470443c49e6f257fb97877e3f261d51f847eb0e8bc9470d1"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_first_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_group_runtime.py": {
+      "actual_permission_mode": 432,
+      "bytes": 26497,
+      "git_mode": "100644",
+      "sha256": "58663eb00ff7964980c42db9e5e43862a9ff48512940d6df46f20e4478250802"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_first_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_group_runtime_predicate_corrections.py": {
+      "actual_permission_mode": 432,
+      "bytes": 21571,
+      "git_mode": "100644",
+      "sha256": "80e42cd37dd559782ee5ed2f302e895734319273974b7f6ebb748a413ac7f423"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_first_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py": {
+      "actual_permission_mode": 432,
+      "bytes": 74056,
+      "git_mode": "100644",
+      "sha256": "66771819cf75ea89e1b6f8fef4467aece2eecf864cd0ca434cbb5c698365f210"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_first_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_active_configuration_observation.py": {
+      "actual_permission_mode": 432,
+      "bytes": 28443,
+      "git_mode": "100644",
+      "sha256": "8cc5a3544e426e3bd3e78707f6c77dc249a1d19165a593e157d2097daa07a648"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_first_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_group_binding.py": {
+      "actual_permission_mode": 432,
+      "bytes": 37127,
+      "git_mode": "100644",
+      "sha256": "28bb96d80509bf45e6f04a8a118610f2b7511b28cb25817c23c23148659b5494"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_first_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_slurm_configured_isolation.py": {
+      "actual_permission_mode": 432,
+      "bytes": 42994,
+      "git_mode": "100644",
+      "sha256": "d659dd1f21ddd2d7bb0474b4ded0ae4ea129c00365984c1fe7f84439b8eba694"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_first_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py": {
+      "actual_permission_mode": 432,
+      "bytes": 38666,
+      "git_mode": "100644",
+      "sha256": "e392dc6329cc8b5e902f3271d512cb9ee5bbc2f2fcdd6b0d85cefd981a1042b9"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_second_corrected_test/.review_metadata/group_runtime_completion/check_source_closure.py": {
+      "actual_permission_mode": 432,
+      "bytes": 3522,
+      "git_mode": "100644",
+      "sha256": "f619eed769fa2a34525230e9759f93f125f931788f0036c80b04bc3d5b0938a6"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_second_corrected_test/.review_metadata/group_runtime_completion/run_metadata_tests.py": {
+      "actual_permission_mode": 432,
+      "bytes": 5324,
+      "git_mode": "100644",
+      "sha256": "c771fdc70ec986dd3201a88c093756c0e380785f82c6b8e34e8d30a157f58f28"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_second_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_gpu_scaling.py": {
+      "actual_permission_mode": 432,
+      "bytes": 19241,
+      "git_mode": "100644",
+      "sha256": "d8333da955f810a1b683aaac93e00645818469e33dd01b63b6808541b2f81792"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_second_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py": {
+      "actual_permission_mode": 432,
+      "bytes": 66275,
+      "git_mode": "100644",
+      "sha256": "2fc25c271ec55c0aeb2523873eda71543e5f46341706f18e6bc9f2cc924a33a0"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_second_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_scaling_evidence.py": {
+      "actual_permission_mode": 432,
+      "bytes": 14653,
+      "git_mode": "100644",
+      "sha256": "7524a3a928dcf1201eed4540c5be7b7ced7064a7df8b7e0a2e793bb0fb3e0d6e"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_second_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/device_memory_limit.py": {
+      "actual_permission_mode": 432,
+      "bytes": 94544,
+      "git_mode": "100644",
+      "sha256": "3abcb3641cc799424d6585e9881befbbd3c06800e9dc4d19fed5a507fe5e06ff"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_second_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py": {
+      "actual_permission_mode": 432,
+      "bytes": 24860,
+      "git_mode": "100644",
+      "sha256": "310bcb6b4b1a18cc9d7acac62a07dfb60874bb60aed127b50b9c07227593f9f8"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_second_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_backend_image.py": {
+      "actual_permission_mode": 432,
+      "bytes": 34847,
+      "git_mode": "100644",
+      "sha256": "82898100d64f540c42c0a236acb6c20ca2808deb247b83da65927c6cb497a8e4"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_second_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/group_backend_package.py": {
+      "actual_permission_mode": 432,
+      "bytes": 29916,
+      "git_mode": "100644",
+      "sha256": "3a312803d173d767317e99efb53e56a6ba011374d8bde250db814ae1d9ddd76a"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_second_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/group_original_qualification.py": {
+      "actual_permission_mode": 432,
+      "bytes": 9109,
+      "git_mode": "100644",
+      "sha256": "057d1dd0e7b65cf011f0983da1e2f21a39266d10c0da556245ea214d385a2584"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_second_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/group_runtime.py": {
+      "actual_permission_mode": 432,
+      "bytes": 44459,
+      "git_mode": "100644",
+      "sha256": "05e600aebd81870e418315191f9699b5bd79234c7102a30da2ff27dde69b58a3"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_second_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/group_runtime_evidence.py": {
+      "actual_permission_mode": 432,
+      "bytes": 22216,
+      "git_mode": "100644",
+      "sha256": "e1606aa324a5b70334ed872ee81bc7575402912c73eee8662a90394e7119289a"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_second_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/group_runtime_launch.py": {
+      "actual_permission_mode": 432,
+      "bytes": 20679,
+      "git_mode": "100644",
+      "sha256": "d0114bc48976fb02bc6ea94cdc3b5e2b2b9f28c31a240f673dd494b76478d038"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_second_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_allocation_observation.py": {
+      "actual_permission_mode": 432,
+      "bytes": 33665,
+      "git_mode": "100644",
+      "sha256": "f614a3792f196605cd1fa4b76738ff3157f72ee6700058526c2598e45a63a50c"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_second_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_case.py": {
+      "actual_permission_mode": 432,
+      "bytes": 14137,
+      "git_mode": "100644",
+      "sha256": "5acd8a33b849e8805a6d51023d5c5661ac989b473a6135669b9ca243256e754f"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_second_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_evidence.py": {
+      "actual_permission_mode": 432,
+      "bytes": 53301,
+      "git_mode": "100644",
+      "sha256": "cc66813e5a31dd54f9c266f5a094c26c6a5753c17599b1badd97911f932c5824"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_second_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_qualification.py": {
+      "actual_permission_mode": 432,
+      "bytes": 26893,
+      "git_mode": "100644",
+      "sha256": "93a19a553a10daf894e4e573b7aacebecf0d5a1cfa0b0f13a471c19e4184eecb"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_second_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_queue.py": {
+      "actual_permission_mode": 432,
+      "bytes": 35187,
+      "git_mode": "100644",
+      "sha256": "cac5c612c641aad0bc814438f0e21c02544073632484dcba99047e2ac44aaa60"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_second_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py": {
+      "actual_permission_mode": 432,
+      "bytes": 71539,
+      "git_mode": "100644",
+      "sha256": "7b71221d25493ad5a5b07672e593a329f912ebf3ecd259f2aeede1e6da55acc6"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_second_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry.py": {
+      "actual_permission_mode": 432,
+      "bytes": 35158,
+      "git_mode": "100644",
+      "sha256": "40c117d6fd1937dcdd465381d1469f0ad687103d7b551d604d8c6e03063f9107"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_second_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py": {
+      "actual_permission_mode": 432,
+      "bytes": 73828,
+      "git_mode": "100644",
+      "sha256": "1651ea2184604082cefb97fdfe035640c4b71974ad1e6520d16ef84bdb54e0a2"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_second_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/passive_installed_slurm_observation.py": {
+      "actual_permission_mode": 432,
+      "bytes": 40346,
+      "git_mode": "100644",
+      "sha256": "97ce634c07cd7a2b045d4253938db21c844abd93f3bb7b9d4dbebfd5f33bf842"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_second_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/portable_evidence.py": {
+      "actual_permission_mode": 432,
+      "bytes": 8731,
+      "git_mode": "100644",
+      "sha256": "0ecae0ab2c21b0bbeadd47ddbd81026cb133e8f3d7f32c2148268dbfe575a4d1"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_second_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py": {
+      "actual_permission_mode": 432,
+      "bytes": 148099,
+      "git_mode": "100644",
+      "sha256": "2612e358f3e823289a92bdfe54856bdc8f0de5553db4bdcc5cd7617083cfd6aa"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_second_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/pregather_async_retry.py": {
+      "actual_permission_mode": 432,
+      "bytes": 45049,
+      "git_mode": "100644",
+      "sha256": "881c89b678782dc56568b9257a9753a78b4e06464d43e73a14f1927a5fc17695"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_second_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/short_learning.py": {
+      "actual_permission_mode": 432,
+      "bytes": 29701,
+      "git_mode": "100644",
+      "sha256": "b17d70f4e49de9f766062beb0578729fcde9d68a29060f37d718deb644cb0999"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_second_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_configured_a4500_group.py": {
+      "actual_permission_mode": 432,
+      "bytes": 25480,
+      "git_mode": "100644",
+      "sha256": "c6d387b0bff5ed4e1f0fc62273b6cb855367772580720bbddc41aa16158e9bad"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_second_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_group_backend_package.py": {
+      "actual_permission_mode": 432,
+      "bytes": 23208,
+      "git_mode": "100644",
+      "sha256": "972dbbf5a9bd054c470443c49e6f257fb97877e3f261d51f847eb0e8bc9470d1"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_second_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_group_runtime.py": {
+      "actual_permission_mode": 432,
+      "bytes": 26497,
+      "git_mode": "100644",
+      "sha256": "58663eb00ff7964980c42db9e5e43862a9ff48512940d6df46f20e4478250802"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_second_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_group_runtime_predicate_corrections.py": {
+      "actual_permission_mode": 432,
+      "bytes": 21588,
+      "git_mode": "100644",
+      "sha256": "ea8ba8e7dacea7d74b15fdb02fda9b21e55580aad9545e1e8a33f5a556ab3323"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_second_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py": {
+      "actual_permission_mode": 432,
+      "bytes": 74056,
+      "git_mode": "100644",
+      "sha256": "66771819cf75ea89e1b6f8fef4467aece2eecf864cd0ca434cbb5c698365f210"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_second_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_active_configuration_observation.py": {
+      "actual_permission_mode": 432,
+      "bytes": 28443,
+      "git_mode": "100644",
+      "sha256": "8cc5a3544e426e3bd3e78707f6c77dc249a1d19165a593e157d2097daa07a648"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_second_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_group_binding.py": {
+      "actual_permission_mode": 432,
+      "bytes": 37127,
+      "git_mode": "100644",
+      "sha256": "28bb96d80509bf45e6f04a8a118610f2b7511b28cb25817c23c23148659b5494"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_second_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_slurm_configured_isolation.py": {
+      "actual_permission_mode": 432,
+      "bytes": 42994,
+      "git_mode": "100644",
+      "sha256": "d659dd1f21ddd2d7bb0474b4ded0ae4ea129c00365984c1fe7f84439b8eba694"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_before_second_corrected_test/10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py": {
+      "actual_permission_mode": 432,
+      "bytes": 38666,
+      "git_mode": "100644",
+      "sha256": "e392dc6329cc8b5e902f3271d512cb9ee5bbc2f2fcdd6b0d85cefd981a1042b9"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_freeze_before_first_corrected_test.json": {
+      "actual_permission_mode": 432,
+      "bytes": 13046,
+      "git_mode": "100644",
+      "sha256": "cf92720f18de8cc5d33b42ce9be289efb59781e4e9d8674afa49abf24ee79784"
+    },
+    ".review_metadata/group_runtime_four_predicate_corrections/source_freeze_before_second_corrected_test.json": {
+      "actual_permission_mode": 432,
+      "bytes": 13697,
+      "git_mode": "100644",
+      "sha256": "7769ae5577b625376515f98a604adfd986524de4e84c08fa865ad7f14c5e5841"
+    },
+    ".review_metadata/group_runtime_independent_review_2026-11-05/check_independent_boundaries.py": {
+      "actual_permission_mode": 432,
+      "bytes": 13163,
+      "git_mode": "100644",
+      "sha256": "a2248e11f40bca334441c1a88daf2d8e293615fb6bc58280d92e8d54ef45ed0a"
+    },
+    ".review_metadata/group_runtime_independent_review_2026-11-05/check_independent_boundaries_full_configuration.py": {
+      "actual_permission_mode": 432,
+      "bytes": 13961,
+      "git_mode": "100644",
+      "sha256": "7b054e94ab8b86fbf69040848a0e284e2424543681c8eb8bec6498c633ba3c18"
+    },
+    ".review_metadata/group_runtime_independent_review_2026-11-05/independent_boundary_observations.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1868,
+      "git_mode": "100644",
+      "sha256": "b0ff3677ddbdff1b97be8376afa7766b4d40c81210ca645c8a52aca67435bc50"
+    },
+    ".review_metadata/group_runtime_independent_review_2026-11-05/independent_boundary_observations_full_configuration.json": {
+      "actual_permission_mode": 432,
+      "bytes": 1868,
+      "git_mode": "100644",
+      "sha256": "ba84aa63690c89588f0ad6cc3f88ae6618540b117c645e77d02c4ce11a5de76a"
+    },
+    ".review_metadata/group_runtime_independent_review_2026-11-05/independent_group_runtime_review.json": {
+      "actual_permission_mode": 432,
+      "bytes": 7637,
+      "git_mode": "100644",
+      "sha256": "b3439d522d32daaf8f960c071008637cc09c33ba46b6142b6ccf634c540498b0"
+    },
+    ".review_metadata/group_runtime_independent_review_2026-11-05/independent_source_closure.json": {
+      "actual_permission_mode": 432,
+      "bytes": 12822,
+      "git_mode": "100644",
+      "sha256": "ac532aded1dac07d24f3e1e822cc8c102efbfbaf5f32ceeae1d992ca96942177"
+    },
+    ".review_metadata/group_runtime_independent_review_2026-11-05/metadata_test_receipt.json": {
+      "actual_permission_mode": 432,
+      "bytes": 39423,
+      "git_mode": "100644",
+      "sha256": "c77b8cccaaa727ebb7f24452df542c166ca04361b2d1189b0feca76483f98c76"
+    },
+    ".review_metadata/group_runtime_independent_review_2026-11-05/rejected_source_snapshot.json": {
+      "actual_permission_mode": 432,
+      "bytes": 28320,
+      "git_mode": "100644",
+      "sha256": "0ed693a80cf0f2daf9bd59926fb0e148c530a4c7b030138c44ecd56eb34d9132"
+    },
+    ".review_metadata/group_runtime_independent_review_2026-11-05/rejected_source_snapshot/.review_metadata/group_runtime_completion/check_source_closure.py": {
+      "actual_permission_mode": 432,
+      "bytes": 3522,
+      "git_mode": "100644",
+      "sha256": "f619eed769fa2a34525230e9759f93f125f931788f0036c80b04bc3d5b0938a6"
+    },
+    ".review_metadata/group_runtime_independent_review_2026-11-05/rejected_source_snapshot/.review_metadata/group_runtime_completion/run_metadata_tests.py": {
+      "actual_permission_mode": 432,
+      "bytes": 5280,
+      "git_mode": "100644",
+      "sha256": "39f82ccbca02872ec9a1ad80e99da8edd84de963bfdb8005960cc6a509e04d9f"
+    },
+    ".review_metadata/group_runtime_independent_review_2026-11-05/rejected_source_snapshot/10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_gpu_scaling.py": {
+      "actual_permission_mode": 432,
+      "bytes": 19241,
+      "git_mode": "100644",
+      "sha256": "d8333da955f810a1b683aaac93e00645818469e33dd01b63b6808541b2f81792"
+    },
+    ".review_metadata/group_runtime_independent_review_2026-11-05/rejected_source_snapshot/10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py": {
+      "actual_permission_mode": 432,
+      "bytes": 66275,
+      "git_mode": "100644",
+      "sha256": "2fc25c271ec55c0aeb2523873eda71543e5f46341706f18e6bc9f2cc924a33a0"
+    },
+    ".review_metadata/group_runtime_independent_review_2026-11-05/rejected_source_snapshot/10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_scaling_evidence.py": {
+      "actual_permission_mode": 432,
+      "bytes": 14653,
+      "git_mode": "100644",
+      "sha256": "7524a3a928dcf1201eed4540c5be7b7ced7064a7df8b7e0a2e793bb0fb3e0d6e"
+    },
+    ".review_metadata/group_runtime_independent_review_2026-11-05/rejected_source_snapshot/10_jax_exploration_platform/scripts/atari_pixel_campaign/device_memory_limit.py": {
+      "actual_permission_mode": 432,
+      "bytes": 94544,
+      "git_mode": "100644",
+      "sha256": "3abcb3641cc799424d6585e9881befbbd3c06800e9dc4d19fed5a507fe5e06ff"
+    },
+    ".review_metadata/group_runtime_independent_review_2026-11-05/rejected_source_snapshot/10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py": {
+      "actual_permission_mode": 432,
+      "bytes": 24860,
+      "git_mode": "100644",
+      "sha256": "310bcb6b4b1a18cc9d7acac62a07dfb60874bb60aed127b50b9c07227593f9f8"
+    },
+    ".review_metadata/group_runtime_independent_review_2026-11-05/rejected_source_snapshot/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_backend_image.py": {
+      "actual_permission_mode": 432,
+      "bytes": 34847,
+      "git_mode": "100644",
+      "sha256": "82898100d64f540c42c0a236acb6c20ca2808deb247b83da65927c6cb497a8e4"
+    },
+    ".review_metadata/group_runtime_independent_review_2026-11-05/rejected_source_snapshot/10_jax_exploration_platform/scripts/atari_pixel_campaign/group_backend_package.py": {
+      "actual_permission_mode": 432,
+      "bytes": 29916,
+      "git_mode": "100644",
+      "sha256": "3a312803d173d767317e99efb53e56a6ba011374d8bde250db814ae1d9ddd76a"
+    },
+    ".review_metadata/group_runtime_independent_review_2026-11-05/rejected_source_snapshot/10_jax_exploration_platform/scripts/atari_pixel_campaign/group_original_qualification.py": {
+      "actual_permission_mode": 432,
+      "bytes": 9109,
+      "git_mode": "100644",
+      "sha256": "057d1dd0e7b65cf011f0983da1e2f21a39266d10c0da556245ea214d385a2584"
+    },
+    ".review_metadata/group_runtime_independent_review_2026-11-05/rejected_source_snapshot/10_jax_exploration_platform/scripts/atari_pixel_campaign/group_runtime.py": {
+      "actual_permission_mode": 432,
+      "bytes": 38446,
+      "git_mode": "100644",
+      "sha256": "16d5ded0bf6fa970a14497e7ffc572201a84e1a402bd6cf0de2eedc8cf6dbc9b"
+    },
+    ".review_metadata/group_runtime_independent_review_2026-11-05/rejected_source_snapshot/10_jax_exploration_platform/scripts/atari_pixel_campaign/group_runtime_evidence.py": {
+      "actual_permission_mode": 432,
+      "bytes": 20412,
+      "git_mode": "100644",
+      "sha256": "58dddffbb15b816f5a4ad8e13c317a9f94fb31b415e10abc1e9f0e846febbf64"
+    },
+    ".review_metadata/group_runtime_independent_review_2026-11-05/rejected_source_snapshot/10_jax_exploration_platform/scripts/atari_pixel_campaign/group_runtime_launch.py": {
+      "actual_permission_mode": 432,
+      "bytes": 20679,
+      "git_mode": "100644",
+      "sha256": "d0114bc48976fb02bc6ea94cdc3b5e2b2b9f28c31a240f673dd494b76478d038"
+    },
+    ".review_metadata/group_runtime_independent_review_2026-11-05/rejected_source_snapshot/10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_allocation_observation.py": {
+      "actual_permission_mode": 432,
+      "bytes": 33665,
+      "git_mode": "100644",
+      "sha256": "f614a3792f196605cd1fa4b76738ff3157f72ee6700058526c2598e45a63a50c"
+    },
+    ".review_metadata/group_runtime_independent_review_2026-11-05/rejected_source_snapshot/10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_case.py": {
+      "actual_permission_mode": 432,
+      "bytes": 14137,
+      "git_mode": "100644",
+      "sha256": "5acd8a33b849e8805a6d51023d5c5661ac989b473a6135669b9ca243256e754f"
+    },
+    ".review_metadata/group_runtime_independent_review_2026-11-05/rejected_source_snapshot/10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_evidence.py": {
+      "actual_permission_mode": 432,
+      "bytes": 53301,
+      "git_mode": "100644",
+      "sha256": "cc66813e5a31dd54f9c266f5a094c26c6a5753c17599b1badd97911f932c5824"
+    },
+    ".review_metadata/group_runtime_independent_review_2026-11-05/rejected_source_snapshot/10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_qualification.py": {
+      "actual_permission_mode": 432,
+      "bytes": 26893,
+      "git_mode": "100644",
+      "sha256": "93a19a553a10daf894e4e573b7aacebecf0d5a1cfa0b0f13a471c19e4184eecb"
+    },
+    ".review_metadata/group_runtime_independent_review_2026-11-05/rejected_source_snapshot/10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_queue.py": {
+      "actual_permission_mode": 432,
+      "bytes": 35187,
+      "git_mode": "100644",
+      "sha256": "cac5c612c641aad0bc814438f0e21c02544073632484dcba99047e2ac44aaa60"
+    },
+    ".review_metadata/group_runtime_independent_review_2026-11-05/rejected_source_snapshot/10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py": {
+      "actual_permission_mode": 432,
+      "bytes": 71539,
+      "git_mode": "100644",
+      "sha256": "7b71221d25493ad5a5b07672e593a329f912ebf3ecd259f2aeede1e6da55acc6"
+    },
+    ".review_metadata/group_runtime_independent_review_2026-11-05/rejected_source_snapshot/10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry.py": {
+      "actual_permission_mode": 432,
+      "bytes": 35158,
+      "git_mode": "100644",
+      "sha256": "40c117d6fd1937dcdd465381d1469f0ad687103d7b551d604d8c6e03063f9107"
+    },
+    ".review_metadata/group_runtime_independent_review_2026-11-05/rejected_source_snapshot/10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py": {
+      "actual_permission_mode": 432,
+      "bytes": 73828,
+      "git_mode": "100644",
+      "sha256": "1651ea2184604082cefb97fdfe035640c4b71974ad1e6520d16ef84bdb54e0a2"
+    },
+    ".review_metadata/group_runtime_independent_review_2026-11-05/rejected_source_snapshot/10_jax_exploration_platform/scripts/atari_pixel_campaign/passive_installed_slurm_observation.py": {
+      "actual_permission_mode": 432,
+      "bytes": 40346,
+      "git_mode": "100644",
+      "sha256": "97ce634c07cd7a2b045d4253938db21c844abd93f3bb7b9d4dbebfd5f33bf842"
+    },
+    ".review_metadata/group_runtime_independent_review_2026-11-05/rejected_source_snapshot/10_jax_exploration_platform/scripts/atari_pixel_campaign/portable_evidence.py": {
+      "actual_permission_mode": 432,
+      "bytes": 8731,
+      "git_mode": "100644",
+      "sha256": "0ecae0ab2c21b0bbeadd47ddbd81026cb133e8f3d7f32c2148268dbfe575a4d1"
+    },
+    ".review_metadata/group_runtime_independent_review_2026-11-05/rejected_source_snapshot/10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py": {
+      "actual_permission_mode": 432,
+      "bytes": 148099,
+      "git_mode": "100644",
+      "sha256": "2612e358f3e823289a92bdfe54856bdc8f0de5553db4bdcc5cd7617083cfd6aa"
+    },
+    ".review_metadata/group_runtime_independent_review_2026-11-05/rejected_source_snapshot/10_jax_exploration_platform/scripts/atari_pixel_campaign/pregather_async_retry.py": {
+      "actual_permission_mode": 432,
+      "bytes": 45049,
+      "git_mode": "100644",
+      "sha256": "881c89b678782dc56568b9257a9753a78b4e06464d43e73a14f1927a5fc17695"
+    },
+    ".review_metadata/group_runtime_independent_review_2026-11-05/rejected_source_snapshot/10_jax_exploration_platform/scripts/atari_pixel_campaign/short_learning.py": {
+      "actual_permission_mode": 432,
+      "bytes": 29701,
+      "git_mode": "100644",
+      "sha256": "b17d70f4e49de9f766062beb0578729fcde9d68a29060f37d718deb644cb0999"
+    },
+    ".review_metadata/group_runtime_independent_review_2026-11-05/rejected_source_snapshot/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_configured_a4500_group.py": {
+      "actual_permission_mode": 432,
+      "bytes": 25480,
+      "git_mode": "100644",
+      "sha256": "c6d387b0bff5ed4e1f0fc62273b6cb855367772580720bbddc41aa16158e9bad"
+    },
+    ".review_metadata/group_runtime_independent_review_2026-11-05/rejected_source_snapshot/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_group_backend_package.py": {
+      "actual_permission_mode": 432,
+      "bytes": 23208,
+      "git_mode": "100644",
+      "sha256": "972dbbf5a9bd054c470443c49e6f257fb97877e3f261d51f847eb0e8bc9470d1"
+    },
+    ".review_metadata/group_runtime_independent_review_2026-11-05/rejected_source_snapshot/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_group_runtime.py": {
+      "actual_permission_mode": 432,
+      "bytes": 25610,
+      "git_mode": "100644",
+      "sha256": "2ad71962018c552514ed469e9897e58a07515cf80774db3b322b38411c107fe9"
+    },
+    ".review_metadata/group_runtime_independent_review_2026-11-05/rejected_source_snapshot/10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py": {
+      "actual_permission_mode": 432,
+      "bytes": 74056,
+      "git_mode": "100644",
+      "sha256": "66771819cf75ea89e1b6f8fef4467aece2eecf864cd0ca434cbb5c698365f210"
+    },
+    ".review_metadata/group_runtime_independent_review_2026-11-05/rejected_source_snapshot/10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_active_configuration_observation.py": {
+      "actual_permission_mode": 432,
+      "bytes": 28443,
+      "git_mode": "100644",
+      "sha256": "8cc5a3544e426e3bd3e78707f6c77dc249a1d19165a593e157d2097daa07a648"
+    },
+    ".review_metadata/group_runtime_independent_review_2026-11-05/rejected_source_snapshot/10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_group_binding.py": {
+      "actual_permission_mode": 432,
+      "bytes": 34782,
+      "git_mode": "100644",
+      "sha256": "6ef48d785da7d933e48ab130aa24c4adf5cdaffddb376847f3683b116b9f5015"
+    },
+    ".review_metadata/group_runtime_independent_review_2026-11-05/rejected_source_snapshot/10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_slurm_configured_isolation.py": {
+      "actual_permission_mode": 432,
+      "bytes": 42994,
+      "git_mode": "100644",
+      "sha256": "d659dd1f21ddd2d7bb0474b4ded0ae4ea129c00365984c1fe7f84439b8eba694"
+    },
+    ".review_metadata/group_runtime_independent_review_2026-11-05/rejected_source_snapshot/10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py": {
+      "actual_permission_mode": 432,
+      "bytes": 38666,
+      "git_mode": "100644",
+      "sha256": "e392dc6329cc8b5e902f3271d512cb9ee5bbc2f2fcdd6b0d85cefd981a1042b9"
+    },
+    ".review_metadata/group_scaling_saved_before_direct_correctness_preparation/handoff.json": {
+      "actual_permission_mode": 432,
+      "bytes": 2056,
+      "git_mode": "100644",
+      "sha256": "c46fbd8464b1cd91d37073e363041ffb78f87c683037e222ceadd4bcc9e3723f"
+    },
+    ".review_metadata/independent_group_backend_package_review/corrected_author_fixtures_6783003_196.json": {
+      "actual_permission_mode": 432,
+      "bytes": 3118,
+      "git_mode": "100644",
+      "sha256": "13c7f0def67af9010d9e3d97823ee3faeb3da374182703c915a43bb37e11424e"
+    },
+    ".review_metadata/independent_group_backend_package_review/corrected_author_fixtures_6783003_196.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 4562,
+      "git_mode": "100644",
+      "sha256": "0d223f07cb6d82c4fd2821e0dd6b29899769c7c85c6608f2aa1d9f2fd1b39f65"
+    },
+    ".review_metadata/independent_group_backend_package_review/independent_controls.py": {
+      "actual_permission_mode": 432,
+      "bytes": 4273,
+      "git_mode": "100644",
+      "sha256": "918fc9a4d73147ae4dc32d34e62230e299cc5b601b056c97ef1a9d8097e64fba"
+    },
+    ".review_metadata/independent_group_backend_package_review/independent_controls_6783003_191.json": {
+      "actual_permission_mode": 432,
+      "bytes": 8459,
+      "git_mode": "100644",
+      "sha256": "36334e9bcd806fb0594a20c851ebbe82ca5d5b05c3326c3a67cf5520cdc2af33"
+    },
+    ".review_metadata/independent_group_backend_package_review/independent_controls_6783003_191.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 5548,
+      "git_mode": "100644",
+      "sha256": "45660cfc0f355c00ce5186cdbfd9a8f32299843b6d5cbbfdd5cff59aa5b67c48"
+    },
+    ".review_metadata/independent_group_backend_package_review/original_fixtures_6783003_189.json": {
+      "actual_permission_mode": 432,
+      "bytes": 3105,
+      "git_mode": "100644",
+      "sha256": "b3b6645b4dcabf0051ed5e689986fa6fbd47561122a205c890eb84f9149ee6ee"
+    },
+    ".review_metadata/independent_group_backend_package_review/original_fixtures_6783003_189.raw": {
+      "actual_permission_mode": 432,
+      "bytes": 3706,
+      "git_mode": "100644",
+      "sha256": "78066751c159268dd710498fe00819f139bbd04f92407a151c919826a2edba1d"
+    },
+    ".review_metadata/independent_group_backend_package_review/review.json": {
+      "actual_permission_mode": 432,
+      "bytes": 4693,
+      "git_mode": "100644",
+      "sha256": "8208f93d8049b6de60eaf4625337e7ae4d3bc5a48563616f7590791b0966376c"
+    },
+    ".review_metadata/independent_group_backend_package_review/run_corrected_author_fixtures.py": {
+      "actual_permission_mode": 432,
+      "bytes": 3736,
+      "git_mode": "100644",
+      "sha256": "02bc0722fc7e0ba05973ab4280b52cd288bf01202e0e631a887515774f4b8d8b"
+    },
+    ".review_metadata/independent_group_backend_package_review/run_independent_controls.py": {
+      "actual_permission_mode": 432,
+      "bytes": 3886,
+      "git_mode": "100644",
+      "sha256": "7b73f58fe1ca09087bf5b25f8366c4a67427a42557fe966466ac1214e90e275c"
+    },
+    ".review_metadata/independent_group_backend_package_review/run_original_fixtures.py": {
+      "actual_permission_mode": 432,
+      "bytes": 3723,
+      "git_mode": "100644",
+      "sha256": "79dc58e9ae6343c99faee131c31c0c52392cb0aa8f13c68c9e577a2c62fabdd4"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_gpu_scaling.py": {
+      "actual_permission_mode": 432,
+      "bytes": 19241,
+      "git_mode": "100644",
+      "sha256": "d8333da955f810a1b683aaac93e00645818469e33dd01b63b6808541b2f81792"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_scaling_evidence.py": {
+      "actual_permission_mode": 432,
+      "bytes": 14653,
+      "git_mode": "100644",
+      "sha256": "7524a3a928dcf1201eed4540c5be7b7ced7064a7df8b7e0a2e793bb0fb3e0d6e"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/group_backend_package.py": {
+      "actual_permission_mode": 432,
+      "bytes": 29916,
+      "git_mode": "100644",
+      "sha256": "3a312803d173d767317e99efb53e56a6ba011374d8bde250db814ae1d9ddd76a"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/group_original_qualification.py": {
+      "actual_permission_mode": 432,
+      "bytes": 9109,
+      "git_mode": "100644",
+      "sha256": "057d1dd0e7b65cf011f0983da1e2f21a39266d10c0da556245ea214d385a2584"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/group_runtime.py": {
+      "actual_permission_mode": 432,
+      "bytes": 44459,
+      "git_mode": "100644",
+      "sha256": "05e600aebd81870e418315191f9699b5bd79234c7102a30da2ff27dde69b58a3"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/group_runtime_evidence.py": {
+      "actual_permission_mode": 432,
+      "bytes": 22216,
+      "git_mode": "100644",
+      "sha256": "e1606aa324a5b70334ed872ee81bc7575402912c73eee8662a90394e7119289a"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/group_runtime_launch.py": {
+      "actual_permission_mode": 432,
+      "bytes": 20679,
+      "git_mode": "100644",
+      "sha256": "d0114bc48976fb02bc6ea94cdc3b5e2b2b9f28c31a240f673dd494b76478d038"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_configured_a4500_group.py": {
+      "actual_permission_mode": 432,
+      "bytes": 25480,
+      "git_mode": "100644",
+      "sha256": "c6d387b0bff5ed4e1f0fc62273b6cb855367772580720bbddc41aa16158e9bad"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_group_backend_package.py": {
+      "actual_permission_mode": 432,
+      "bytes": 23208,
+      "git_mode": "100644",
+      "sha256": "972dbbf5a9bd054c470443c49e6f257fb97877e3f261d51f847eb0e8bc9470d1"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_group_runtime.py": {
+      "actual_permission_mode": 432,
+      "bytes": 26497,
+      "git_mode": "100644",
+      "sha256": "58663eb00ff7964980c42db9e5e43862a9ff48512940d6df46f20e4478250802"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_group_runtime_predicate_corrections.py": {
+      "actual_permission_mode": 432,
+      "bytes": 21588,
+      "git_mode": "100644",
+      "sha256": "ea8ba8e7dacea7d74b15fdb02fda9b21e55580aad9545e1e8a33f5a556ab3323"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_group_binding.py": {
+      "actual_permission_mode": 432,
+      "bytes": 37127,
+      "git_mode": "100644",
+      "sha256": "28bb96d80509bf45e6f04a8a118610f2b7511b28cb25817c23c23148659b5494"
+    }
+  },
+  "scientific_credit": 0,
+  "source_additions": 8,
+  "test_additions": 4,
+  "this_manifest_is_also_published": true
+}

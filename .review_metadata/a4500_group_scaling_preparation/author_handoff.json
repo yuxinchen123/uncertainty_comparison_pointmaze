@@ -1,0 +1,42 @@
+{
+  "actual_jobs_submitted": 0,
+  "actual_units_prepared": 0,
+  "at_utc": "2026-11-02T03:11:03.594911+00:00",
+  "capacity_failure_eligibility_supported": false,
+  "existing_tracked_source_and_numerical_files_unchanged": true,
+  "final_admission_granted": false,
+  "formal_entrypoint_enabled": false,
+  "implemented": [
+    "separate whole-job1/8 versus numeric coordinator0/worker1 GPU ownership and exact original selectors",
+    "same-process current CUDA/JAX UUID/PCI/minor and actual captured mapped-driver validation",
+    "distinct resolved physical group and independently stable global seed partitions",
+    "atomic exclusive shared-file control messages and one whole-barrier deadline",
+    "unchanged selected Executor full-window calls and assigned-only sampler adapter",
+    "common-wall total-work aggregation and native saved-evidence/exact-eight completed-headroom primitives"
+  ],
+  "kind": "inactive_group_api_author_handoff",
+  "portable_admission_granted": false,
+  "remaining_before_formal_use": [
+    "independent review of this new inactive API source",
+    "a separately reviewed immutable staged launcher with actual srun-wrapper registration/wait separate from numerical worker identity, initialization/warmup and final result publication",
+    "count-specific selected correctness input and actual group qualification, including every actual physical device/source/runtime/assets scope",
+    "current configured packing/final reader support and selected-study phase bridge; existing default/final/portable refusals are unchanged",
+    "actual zero-credit group identity/control/sampler regression and separately reviewed placement/admission",
+    "full raw control-message and terminal/binary evidence review before any scientific acceptance"
+  ],
+  "schema_version": 1,
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-18-34_a4500-group-scaling_gpu-counts-1-8_gpus-per-step-1_rounds-7_minimum-updates-per-round-10_preserve-selected-configuration-and-global-seeds/.review_metadata/a4500_group_scaling_preparation/source_freeze.json",
+    "sha256": "497f0b49daa72f21a8253cbcf1b397d0bae02874d2ca05f1a1a42953fd8faa62"
+  },
+  "source_unchanged_after_freeze": true,
+  "tests": {
+    "cold_staged_helpers": 23,
+    "gpu_actions_requested": 0,
+    "job": "6783003",
+    "methods": 17,
+    "numerical_imports": 0,
+    "passed": true,
+    "step": "59"
+  }
+}
