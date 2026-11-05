@@ -1,0 +1,40 @@
+{
+  "kind": "profile_qualification_final_runtime_pin_author_handoff",
+  "source_held": true,
+  "parent": "ee4168eecb3d5d9aa6af4ebcdb4dde9c4750b536",
+  "previous_runtime": "2aa6df92f7d9da20e2fbc1d15a20df16ba10ba1e",
+  "runtime_commit": "4bb3a61cb92fe48ab5ba68fb52f70b47736a1174",
+  "runtime_publication": "ecced8f39c09bddff1e8b275a3a5640df4c41351",
+  "before": "The two request builders and the one-copy H100 starter selected the previous process runtime.",
+  "after": "Exactly those three runtime literals select the actual reviewed runtime containing the saved-JSON caller correction and explicit H100 shared-helper selector.",
+  "source_freeze": {
+    "path": "source_freeze.json",
+    "sha256": "12a8b8e595be524dcf9830d2bb9f60099bb013f305a7c086981db1589ecc6c51"
+  },
+  "author_checks": {
+    "path": "author_checks.json",
+    "sha256": "3e79c3830c75b46a2c422f41de05f29936a0440e3f5b269c09c5e7ae74db94c4",
+    "job_id": "6825983",
+    "step_id": "148",
+    "passed": true,
+    "methods": 3,
+    "seconds": 3.3274135580286384
+  },
+  "every_other_operational_source_byte_unchanged": true,
+  "actual_h100_helpers": 45,
+  "actual_a4500_helpers": 36,
+  "unchanged": [
+    "all baseline correctness, timing, original one-copy reference and genuine four-context checks",
+    "all copy counts, seeds and backend package-record references",
+    "all process, ownership, publication, protection and custody functions",
+    "the dynamic A4500 held launcher",
+    "the strict one-copy H100 transport guard",
+    "all attempted packets, old source worktrees and numerical code"
+  ],
+  "actual_packet_or_preparation_created": false,
+  "native_or_GPU_actions": false,
+  "target_qualification": false,
+  "scientific_credit": 0,
+  "admission_granted": false,
+  "independent_approval_created_by_author": false
+}

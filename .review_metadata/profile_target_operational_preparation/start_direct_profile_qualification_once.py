@@ -22,7 +22,7 @@ import time
 P = None
 R = None
 UID = 2618919
-RUNTIME = '2aa6df92f7d9da20e2fbc1d15a20df16ba10ba1e'
+RUNTIME = '4bb3a61cb92fe48ab5ba68fb52f70b47736a1174'
 SOURCE = 'd28e6735e79788f618acb0ebfde8609db1f776af'
 PREFIX = '10_jax_exploration_platform/scripts/atari_pixel_campaign/'
 ATTEMPTS = ('root_actual_controller_spawn.json', 'root_transport_popen_attempt.json',
