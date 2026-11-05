@@ -393,7 +393,7 @@ class QueueProtocolTests(unittest.TestCase):
         self.assertFalse(controller.final_requirements_met(registry, flags))
 
     def test_thirty_completed_ideas_leave_twenty_unchosen(self):
-        """The controller stops at adaptive research instead of fabricating additional ideas or training."""
+        """Initial completion leaves the real validation prerequisites due without selecting new ideas."""
         controller.tick(self.run)
         for context in ideas.REQUIRED_HARDWARE:
             while True:
@@ -403,9 +403,12 @@ class QueueProtocolTests(unittest.TestCase):
                 case, lease = claimed
                 self.finish_synthetic_case(case, lease, rejected=case["hypothesis_position"] % 2 == 0)
         state = controller.tick(self.run)
-        self.assertEqual(state["phase"], "adaptive_research_pending")
+        self.assertEqual(state["phase"], "post_initial_validation_pending")
         self.assertEqual(state["investigated_hypotheses"], 30)
         self.assertEqual(state["queue_counts"]["pending"], 0)
+        self.assertEqual(len(state["post_initial_reporting_requirements"]), 4)
+        self.assertEqual(len(state["remaining_work"]), 4)
+        self.assertTrue(all(row["state"] == "awaiting_reviewed_evidence" for row in state["remaining_work"]))
         registry = controller.read_json(self.run / "study_registry.json")
         self.assertTrue(all(entry["name"] is None for batch in registry["adaptive_batches"] for entry in batch["hypotheses"]))
 

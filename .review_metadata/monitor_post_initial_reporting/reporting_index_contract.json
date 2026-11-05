@@ -1,0 +1,51 @@
+{
+  "kind": "display_only_post_initial_evidence_index_contract",
+  "scientific_authority": false,
+  "admission_authority": false,
+  "new_scientific_approval_required": false,
+  "index_location": "next_actions.json:post_initial_reporting_evidence",
+  "top_level": {
+    "schema_version": 1,
+    "kind": "post_initial_reporting_evidence",
+    "source_commit": "the current admitted full numerical-source commit",
+    "configuration_record": {
+      "path": "an existing complete common configuration JSON inside this campaign",
+      "sha256": "the actual SHA256 of those existing bytes"
+    },
+    "common_correctness": "a list of existing plan/result/independent-review receipt triplets covering both hardware types and every initial copy count",
+    "common_confirmation": "the same coverage, for accepted seven paired rounds with at least ten complete updates per arm",
+    "kernel_profiles": "existing reviewed completed profile receipt triplets covering both hardware types",
+    "packing": "existing reviewed selected packing-point triplets covering both hardware types; the existing independent review retains the completed packing-validator summary under packing"
+  },
+  "triplet": {
+    "plan": {
+      "path": "existing measurement_plan.json",
+      "sha256": "actual SHA256"
+    },
+    "result": {
+      "path": "existing result.json",
+      "sha256": "actual SHA256"
+    },
+    "review": {
+      "path": "existing approved independent raw-result review",
+      "sha256": "actual SHA256"
+    }
+  },
+  "review_requirements": [
+    "approved and passed must be true",
+    "the existing review kind names an independent review of this evidence stage",
+    "source commit agrees with the current source",
+    "the actual result receipt occurs in the existing review",
+    "plan/result source, full configuration except copy count, hardware, typed copy count and exact independent seeds agree"
+  ],
+  "missing_index_behavior": "All four prerequisites remain visibly awaiting reviewed evidence; no scientific validation is run.",
+  "invalid_reference_behavior": "The requirement remains due and the concrete error appears in campaign_state.",
+  "packing_scope": "Only the currently enabled repeated below-ten-percent throughput boundary is displayed as complete. The optional device-memory failure protocol remains disabled and is not admitted by this change.",
+  "unchanged_behavior": [
+    "worker admission",
+    "queue selection and transitions",
+    "source and numerical gates",
+    "final raw-evidence revalidation",
+    "fifty-idea and final-training conditions"
+  ]
+}

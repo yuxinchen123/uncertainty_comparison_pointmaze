@@ -1,0 +1,146 @@
+{
+  "kind": "independent_actual_existing_reporting_metadata_joins",
+  "passed": true,
+  "job_id": "6783003",
+  "step_id": "239",
+  "uid": 2618919,
+  "host": "heartpiece",
+  "at_utc": "2026-11-04T23:39:04.464015+00:00",
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-04_monitor-post-initial-validation-reporting_common-correctness-confirmation-kernel-profiles-and-packing/.review_metadata/monitor_post_initial_reporting/source_freeze_after_independent_review_corrections.json",
+    "sha256": "0e4f4a967b282c4e2f5acd541fdec74ec5175410b0d46831b0d3fe5f7d9b07bd"
+  },
+  "results": [
+    {
+      "requirement": "common_correctness",
+      "hardware_class": "jaguar03_rtx_a4500",
+      "copies": 1,
+      "matched": true
+    },
+    {
+      "requirement": "common_confirmation",
+      "hardware_class": "jaguar03_rtx_a4500",
+      "copies": 1,
+      "matched": true
+    },
+    {
+      "requirement": "common_correctness",
+      "hardware_class": "jaguar03_rtx_a4500",
+      "copies": 2,
+      "matched": true
+    },
+    {
+      "requirement": "common_confirmation",
+      "hardware_class": "jaguar03_rtx_a4500",
+      "copies": 2,
+      "matched": true
+    },
+    {
+      "requirement": "common_correctness",
+      "hardware_class": "h100",
+      "copies": 1,
+      "matched": true
+    }
+  ],
+  "actual_metadata_joins": 5,
+  "live_campaign_writes": 0,
+  "raw_scientific_validators_invoked": 0,
+  "denied_events": [],
+  "scientific_credit": 0,
+  "gpu_or_device_or_library_or_network_or_process_actions": 0,
+  "source_files_unchanged": true,
+  "reporting_preview": [
+    {
+      "kind": "reporting_prerequisite",
+      "name": "common_correctness",
+      "description": "reviewed common correctness on both GPU types",
+      "state": "awaiting_reviewed_evidence",
+      "missing": [
+        {
+          "hardware_class": "h100",
+          "copies": 1
+        },
+        {
+          "hardware_class": "h100",
+          "copies": 2
+        },
+        {
+          "hardware_class": "jaguar03_rtx_a4500",
+          "copies": 1
+        },
+        {
+          "hardware_class": "jaguar03_rtx_a4500",
+          "copies": 2
+        }
+      ],
+      "errors": [],
+      "scientific_credit": 0,
+      "admission_authority": false
+    },
+    {
+      "kind": "reporting_prerequisite",
+      "name": "common_confirmation",
+      "description": "seven paired rounds of ten complete updates on both GPU types",
+      "state": "awaiting_reviewed_evidence",
+      "missing": [
+        {
+          "hardware_class": "h100",
+          "copies": 1
+        },
+        {
+          "hardware_class": "h100",
+          "copies": 2
+        },
+        {
+          "hardware_class": "jaguar03_rtx_a4500",
+          "copies": 1
+        },
+        {
+          "hardware_class": "jaguar03_rtx_a4500",
+          "copies": 2
+        }
+      ],
+      "errors": [],
+      "scientific_credit": 0,
+      "admission_authority": false
+    },
+    {
+      "kind": "reporting_prerequisite",
+      "name": "kernel_profiles",
+      "description": "current kernel profiles on both GPU types",
+      "state": "awaiting_reviewed_evidence",
+      "missing": [
+        {
+          "hardware_class": "h100",
+          "copies": null
+        },
+        {
+          "hardware_class": "jaguar03_rtx_a4500",
+          "copies": null
+        }
+      ],
+      "errors": [],
+      "scientific_credit": 0,
+      "admission_authority": false
+    },
+    {
+      "kind": "reporting_prerequisite",
+      "name": "packing",
+      "description": "independently repeated packing boundary with fifteen percent free memory",
+      "state": "awaiting_reviewed_evidence",
+      "missing": [
+        {
+          "hardware_class": "h100",
+          "copies": null
+        },
+        {
+          "hardware_class": "jaguar03_rtx_a4500",
+          "copies": null
+        }
+      ],
+      "errors": [],
+      "scientific_credit": 0,
+      "admission_authority": false
+    }
+  ]
+}

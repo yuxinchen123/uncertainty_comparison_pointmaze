@@ -1,0 +1,35 @@
+{
+  "kind": "independent_corrected_post_initial_monitor_reporting_source_review",
+  "passed": true,
+  "approved": true,
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-04_monitor-post-initial-validation-reporting_common-correctness-confirmation-kernel-profiles-and-packing/.review_metadata/monitor_post_initial_reporting/source_freeze_after_independent_review_corrections.json",
+    "sha256": "0e4f4a967b282c4e2f5acd541fdec74ec5175410b0d46831b0d3fe5f7d9b07bd"
+  },
+  "method_executions": 27,
+  "actual_metadata_joins": 5,
+  "compute_steps": [
+    "238",
+    "239"
+  ],
+  "private_review": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-15-38_monitor-reporting-corrected-independent-review_gpu-count-0_processor-count-1_host-memory-mib-512/private_review.json",
+    "sha256": "12da257e23e0bf27765949e4651998f5cefe529f98b852dbdda00cc1ab9e8997"
+  },
+  "actual_metadata_review": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-15-38_monitor-reporting-corrected-independent-review_gpu-count-0_processor-count-1_host-memory-mib-512/actual_metadata_review.json",
+    "sha256": "8abb721a370ad2f3268aafd535fdc6b8097e0e164e384030b8461bc268fd8d36"
+  },
+  "prior_rejected_review": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-15-28_monitor-post-initial-reporting-independent-review_gpu-count-0_processor-count-1_host-memory-mib-512/review.json",
+    "sha256": "ac0f292c7d51971ffca5d8abbaa5989a460da845a56904c57dcddc9f027fc607"
+  },
+  "all_four_previous_findings_resolved": true,
+  "frozen_source_unchanged": true,
+  "queue_admission_and_final_logic_unchanged": true,
+  "no_scientific_or_admission_authority_added": true,
+  "live_monitor_changed": false,
+  "actual_job_actions": 0,
+  "actual_gpu_library_device_network_actions": 0,
+  "at_utc": "2026-11-04T23:39:04.515309+00:00"
+}
