@@ -1,0 +1,52 @@
+{
+  "kind": "profile_qualification_request_runtime_scope_author_handoff",
+  "source_held": true,
+  "base_commit": "62a597d509355a0f159843cf8601d1e5fda9a7ba",
+  "runtime_commit": "2aa6df92f7d9da20e2fbc1d15a20df16ba10ba1e",
+  "runtime_publication": "cfd5fb82e06cc57c08c56b05d4105390570066f7",
+  "source_freeze": {
+    "path": "final_source_freeze.json",
+    "sha256": "8d4f0cfc0b6ed2e179d997aa9cacda557cd5a6b1fdcded4a0020bdd1231cf53a"
+  },
+  "before": "Both request builders and the H100 starter selected the previous runtime. The H100 starter required 44 helpers; no explicit builder check required the new parent-exit helper.",
+  "after": "Both builders and the H100 starter select the actual published runtime stated above. Builders require its exact helper root, 45 H100 or 36 A4500 helpers, and profile_target_tool_scope.py. The H100 starter requires 45 helpers.",
+  "changed_operational_paths": [
+    ".review_metadata/profile_target_operational_preparation/derive_one_copy_qualification_request.py",
+    ".review_metadata/profile_target_operational_preparation/derive_two_copy_qualification_request.py",
+    ".review_metadata/profile_target_operational_preparation/start_direct_profile_qualification_once.py"
+  ],
+  "focused_test_path": ".review_metadata/profile_qualification_request_new_scope/test_runtime_commit_and_closure.py",
+  "initial_four_metadata_methods": {
+    "path": "author_checks_before_actual_runtime_pin.json",
+    "sha256": "6e3cff2e7b79a67712a48c43c729ae213a7e00c958ab42e9c1eecc30a9505d3b",
+    "job_id": "6825983",
+    "step_id": "112",
+    "passed": true,
+    "seconds": 0.2530709350248799
+  },
+  "actual_runtime_receipts_and_added_transport_check": {
+    "path": "final_pin_checks.json",
+    "sha256": "3d559184d962af38740066036c7403e02fb130da4e35926a518fa204e7c5ba22",
+    "job_id": "6825983",
+    "step_id": "114",
+    "passed": true,
+    "seconds": 3.4038174060406163,
+    "actual_h100_helpers": 45,
+    "actual_a4500_helpers": 36
+  },
+  "unchanged": [
+    "all previous baseline correctness, timing, original-reference-one-copy, seed and four-context statements",
+    "the genuine predeclared backend input route and parser-presence argument",
+    "all H100 starter process, publication, permission and custody statements",
+    "the strict one-copy H100 transport guard",
+    "the dynamic A4500 held launcher",
+    "all frozen packets and the old d146 checkout",
+    "all numerical and captured-profile source"
+  ],
+  "separate_future_work": "A new two-copy H100 transport entry is being authored separately; this update does not broaden the one-copy guard.",
+  "actual_packet_or_unit_created": false,
+  "actual_target_qualification": false,
+  "scientific_credit": 0,
+  "admission_granted": false,
+  "independent_approval_generated_by_author": false
+}
