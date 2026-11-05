@@ -1,0 +1,13 @@
+test_abort_before_submission_restores_and_marks_units_unlaunchable (__main__.PermissionTests) ... ok
+test_ambiguous_submission_abort_refuses_and_retains_protection (__main__.PermissionTests) ... ok
+test_exact_child_release_restores_original_mode (__main__.PermissionTests) ... ok
+test_independent_no_child_terminal_route_and_no_repeat (__main__.PermissionTests) ... ok
+test_inherited_0640_is_preserved_and_changed_controller_refuses (__main__.PermissionTests) ... ok
+test_pending_unknown_and_timeout_never_restore (__main__.PermissionTests) ... ok
+test_preflight_refuses_0660_and_is_read_only_after_protection (__main__.PermissionTests) ... ok
+test_same_file_bytes_host_and_symlink_refusals (__main__.PermissionTests) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.278s
+
+OK

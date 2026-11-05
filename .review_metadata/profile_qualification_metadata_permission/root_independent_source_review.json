@@ -1,0 +1,27 @@
+{
+  "schema_version": 2,
+  "kind": "independent_metadata_permission_utility_source_review",
+  "approved": true,
+  "passed": true,
+  "independent_of_author": true,
+  "reviewer": "/root",
+  "source_sha256": "5c5eaa55d3b7aa720bc33d9652ae1cc19fa39bd3a7ea7270ee99f44d19640ba1",
+  "test_source_sha256": "06a127d82a7d585ec920ed3aae41835a9fd4d7654eedd39d54d5894ed4d45e7d",
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-12-54_profile-qualification-metadata-permission_files-2_protected-mode-0640_restored-mode-0660_gpu-actions-0/.review_metadata/profile_qualification_metadata_permission/author_source_freeze_1.json",
+    "sha256": "e45aad24cae6749729cd0e597b9e972f86f497b62432a1eaeb4d71265a351818"
+  },
+  "private_file_fixtures": 8,
+  "actual_campaign_read_only_preflight_refused": true,
+  "actual_campaign_files_unchanged": true,
+  "root_reviewed_full_source": true,
+  "actual_cpu_job": "6825983",
+  "actual_cpu_step": "89",
+  "seconds": 0.5313782589510083,
+  "actual_campaign_permission_changes": 0,
+  "standing_GPU_lock_accesses": 0,
+  "scientific_credit": 0,
+  "admission_granted": false,
+  "scope_limit": "No-submit abort marker forbids reuse through this required root preflight/workflow; it is not a new runtime check in the unchanged scheduler utility.",
+  "at_utc": "2026-11-05T21:04:12.757800+00:00"
+}
