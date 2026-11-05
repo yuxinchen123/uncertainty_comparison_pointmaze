@@ -359,7 +359,8 @@ def metadata_directory(plan, directory, role):
     profile = plan["direct_binding"]["consumer"] == "component_profile"
     expected = unit / "supervisor" if profile and role == "owner" else unit
     path = Path(directory)
-    require(role in {"owner", "inherited"} and (profile or role == "owner") and path.is_absolute() and path == expected,
+    current_child = role == "producer_guarded_child" and profile and plan.get("capture_process_protocol") == "direct-h100-owned-nsight-and-retained-descriptor-version-1"
+    require((role in {"owner", "inherited"} or current_child) and (profile or role == "owner") and path.is_absolute() and path == expected,
         "direct metadata output must be this exact selected unit, profiling supervisor or inherited-child unit")
     require(path.resolve(strict=False) == path and path.parent.resolve(strict=True) == path.parent
         and (not path.exists() or path.is_dir() and not path.is_symlink()), "direct metadata output uses an alias or non-directory")
@@ -368,7 +369,8 @@ def metadata_directory(plan, directory, role):
 
 def binding_directory(plan, metadata, directory):
     """A profiling parent can hold custody but cannot replace the actual GPU child."""
-    require(metadata["role"] == ("inherited" if plan["direct_binding"]["consumer"] == "component_profile" else "owner"),
+    profile_role = "producer_guarded_child" if plan.get("capture_process_protocol") == "direct-h100-owned-nsight-and-retained-descriptor-version-1" else "inherited"
+    require(metadata["role"] == (profile_role if plan["direct_binding"]["consumer"] == "component_profile" else "owner"),
         "only the actual inherited profiling child or selected owner may bind a device")
     path = metadata_directory(plan, directory, metadata["role"])
     require(path == unit_directory(plan), "the resolved direct device binding belongs only to the actual unit")
@@ -510,11 +512,13 @@ def collect_metadata(plan, directory, lock_fd, parent_lock_receipt=None):
 
 def live_custody(metadata, fd):
     """Recheck only this process and its proved descriptor; never reacquire the lock."""
+    if metadata.get("role") == "producer_guarded_child":
+        return adjacent("direct_profile_process").live_capture_custody(metadata, fd, sys.modules[__name__])
     current = current_process(); process = validate_process(current)
     require(process == metadata["after"]["identity"]
         and {key: val for key, val in os.environ.items() if key == "CUDA_VISIBLE_DEVICES" or key.startswith("SLURM_")}
             == metadata["environment"], "current direct process or original selector changed")
-    holder = metadata["parent_metadata"]["before"]["identity"] if metadata["role"] == "inherited" else process
+    holder = metadata["parent_metadata"]["before"]["identity"] if metadata["role"] in {"inherited", "producer_guarded_child"} else process
     value = lock_metadata(fd); validate_lock(value, holder["pid"])
     require(value == metadata["lock_after"], "the direct descriptor changed after admission")
     if metadata["role"] == "inherited":
@@ -656,7 +660,7 @@ def validate_binding(plan, metadata, value, directory=None):
     require(type(value["physical_minor"]) is int and value["physical_minor"] >= 0
         and exact(value["device"], {"path": "/dev/nvidia" + str(value["physical_minor"]), "character_device": True,
             "symlink": False, "major": 195, "minor": value["physical_minor"]}), "physical direct character device changed")
-    holder = metadata["parent_metadata"]["before"]["identity"] if metadata["role"] == "inherited" else process
+    holder = metadata["parent_metadata"]["before"]["identity"] if metadata["role"] in {"inherited", "producer_guarded_child"} else process
     for custody in (value["custody_before"], value["custody_after"]):
         require(custody["process"] == process and custody["lock"] == metadata["lock_after"], "direct window custody differs from admission")
         validate_lock(custody["lock"], holder["pid"])
@@ -671,6 +675,8 @@ def validate_binding(plan, metadata, value, directory=None):
 
 
 def validate_metadata(plan, value):
+    if value.get("role") == "producer_guarded_child":
+        return adjacent("direct_profile_process").validate_capture_metadata(plan, value, sys.modules[__name__])
     validate_plan(plan)
     require(type(value.get("schema_version")) is int and value["schema_version"] == 1 and value.get("kind") == "serval02_card1_process_metadata"
         and value.get("capability") == CAPABILITY and "capture_error" not in value, "partial or unsupported direct metadata")

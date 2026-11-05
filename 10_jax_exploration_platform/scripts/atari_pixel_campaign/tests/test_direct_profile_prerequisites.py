@@ -94,9 +94,9 @@ class DirectProfileMetadataTests(unittest.TestCase):
         self.assertEqual(plan["direct_profile_prerequisites"], self.inputs)
 
     def test_helper_union_includes_backend_and_separate_profile_observers(self):
-        """The direct closure has 29 files and stages no configured common reader."""
+        """The direct closure has 32 files and stages no configured common reader."""
         names = selected.required_helpers(False, True, direct_profile=True)
-        self.assertEqual(len(names), 29)
+        self.assertEqual(len(names), 32)
         self.assertIn("direct_backend_image.py", names)
         self.assertIn("direct_profile_prerequisites.py", names)
         self.assertIn("nsight_process_identity.py", names)
@@ -348,10 +348,15 @@ class DirectProfileBackendTests(DirectBackendImageTests):
         tree = ast.parse((SCRIPTS / "profile_selected.py").read_text())
         core = next(node for node in tree.body if isinstance(node, ast.FunctionDef) and node.name == "_capture_core")
         self.assertEqual(ast.dump(core, include_attributes=False), before["capture_core_ast"])
-        for name in ("train_optimized.py", "diagnose_gpu_execution.py", "configured_measurement.py", "common_confirmation.py",
-            "direct_common_confirmation.py", "measure_selected.py", "serval02_card1_binding.py", "nsight_process_identity.py"):
+        for name in ("train_optimized.py", "configured_measurement.py", "common_confirmation.py",
+            "direct_common_confirmation.py", "measure_selected.py", "nsight_process_identity.py"):
             raw = subprocess.check_output(["git", "-C", str(root), "show", before["base"] + ":" + backend.PREFIX + name])
             self.assertEqual(raw, (SCRIPTS / name).read_bytes())
+        old = subprocess.check_output(["git", "-C", str(root), "show", before["base"] + ":" + backend.PREFIX + "diagnose_gpu_execution.py"], text=True)
+        original = {node.name: ast.dump(node, include_attributes=False) for node in ast.parse(old).body if isinstance(node, ast.FunctionDef)}
+        current = {node.name: ast.dump(node, include_attributes=False) for node in ast.parse((SCRIPTS / "diagnose_gpu_execution.py").read_text()).body if isinstance(node, ast.FunctionDef)}
+        for name in ("core_identity", "default_configuration", "cuda_profiler", "loaded_gpu_libraries"):
+            self.assertEqual(current[name], original[name], name)
 
     def test_profile_completion_preserves_original_timestamp_meaning(self):
         """Mapped begin precedes core execution and post-copy follows its whole memory window."""

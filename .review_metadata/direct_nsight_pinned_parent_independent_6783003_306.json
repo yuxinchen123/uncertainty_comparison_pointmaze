@@ -1,0 +1,206 @@
+{
+  "kind": "independent_direct_nsight_pinned_parent_and_restore_review",
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_nsight_producer_source_freeze_author_6_pinned_parent_and_restore.json",
+    "sha256": "6911df18d1f263c8c9528aafdc994e506a5d3c1118997720ee92bfe6eb4f1433"
+  },
+  "base": "f7a2ab67106f92e7e95a87efb5863de8cfad0d5f",
+  "job_id": "6783003",
+  "step_id": "306",
+  "hostname": "heartpiece",
+  "pid": 1218581,
+  "started_at_seconds": 1793850390.8161557,
+  "finished_at_seconds": 1793850392.8425674,
+  "tests": 18,
+  "failures": 0,
+  "errors": 0,
+  "source_unchanged_before_and_after": true,
+  "protected_file_checks": {
+    "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/10_jax_exploration_platform/src/exploration_platform/atari_pixels/pixel_preprocessing.py": true,
+    "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/10_jax_exploration_platform/src/exploration_platform/atari_pixels/__init__.py": true,
+    "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/10_jax_exploration_platform/src/exploration_platform/atari_pixels/checkpointing.py": true,
+    "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/10_jax_exploration_platform/src/exploration_platform/atari_pixels/networks.py": true,
+    "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/10_jax_exploration_platform/src/exploration_platform/atari_pixels/settings.py": true,
+    "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/10_jax_exploration_platform/src/exploration_platform/atari_pixels/state.py": true,
+    "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/10_jax_exploration_platform/src/exploration_platform/atari_pixels/kernels.py": true,
+    "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/10_jax_exploration_platform/src/exploration_platform/atari_pixels/config.py": true,
+    "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/10_jax_exploration_platform/src/exploration_platform/atari_pixels/training.py": true,
+    "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/10_jax_exploration_platform/src/exploration_platform/atari_pixels/environment.py": true,
+    "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/worker_environment.sh": true,
+    "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/paired_benchmark.py": true,
+    "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py": true,
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/pixel_preprocessing.py": true,
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/__init__.py": true,
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/checkpointing.py": true,
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/networks.py": true,
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/settings.py": true,
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/state.py": true,
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/kernels.py": true,
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/config.py": true,
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/training.py": true,
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/environment.py": true,
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/scripts/atari_pixel_campaign/worker_environment.sh": true,
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/scripts/atari_pixel_campaign/paired_benchmark.py": true,
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py": true
+  },
+  "capture_core_syntax_unchanged": true,
+  "unittest_output": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_nsight_pinned_parent_independent_6783003_306_unittest.raw",
+    "sha256": "c04d10b22fe6b7d3fa50d8396a836726a4ac11da33b950bd2c07a9a81de95ac5"
+  },
+  "actual_cpu_artifacts": [
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/orphan_root_failure/actual_cpu_processes.json",
+      "sha256": "d0596d2a67547d7ba16a6edfb53739c671bdf6216f50d8d5999fb54738989eeb",
+      "size_bytes": 47
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/orphan_root_failure/cpu_regression_result.json",
+      "sha256": "f177a6922b818fcfa0eb5b18ef898d4885f891cde71866f9e837af75596c37a9",
+      "size_bytes": 7784
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/orphan_root_failure/data/unit/direct_process_failure.json",
+      "sha256": "9a63046eac1435eb21808acedf3163f79cbd4d36897b566304d5317de688cfa8",
+      "size_bytes": 245
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/orphan_root_failure/data/unit/direct_profile_process_intent.json",
+      "sha256": "b2a6efb7b720289273bc5276b8f8cd174e8a8c9924e9f58d9f5b71c6008065f8",
+      "size_bytes": 23771
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/orphan_root_failure/data/unit/executed_command.json",
+      "sha256": "7588142bf795a340c01eff0c1cc7cf9de8b649dcea6b77e0d4e936d2c9f9478d",
+      "size_bytes": 742
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/orphan_root_failure/data/unit/measurement_plan.json",
+      "sha256": "b5c4575bcb8828bb4127d1d14e8844f7cafb7035ef7799d24c3737e1d3bfce51",
+      "size_bytes": 1292
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/orphan_root_failure/data/unit/tool_descendant_cleanup_progress.json",
+      "sha256": "153ff9299b2ddc8d5197b77743cbb07b627feba6c44743416a0e49211848a053",
+      "size_bytes": 1499
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/orphan_root_failure/data/unit/tool_descendant_scope_begin.json",
+      "sha256": "8020a40a706f7f056804568600b7eb88c48b44a4a8ddb96d1a9d65dc2e8d2bb0",
+      "size_bytes": 27978
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/orphan_root_failure/data/unit/tool_descendant_scope_restored.json",
+      "sha256": "f615838aa4ec4fe91bc8951643f3ccb7c3364a64ef4024bd9c54607bc7fc9b6d",
+      "size_bytes": 592
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/orphan_root_failure/data/unit/tool_descendant_scope_terminal.json",
+      "sha256": "3236df3b436981609fed496d112d5c7f4e5a6e1b97dc3cbebb17a0ee47c782b6",
+      "size_bytes": 48798
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/orphan_root_failure/data/unit/tool_root_wait_1218583.json",
+      "sha256": "a52d553a07b323da8320da2f41933b09806e27fa172cab077d2b3f9b72ff33f6",
+      "size_bytes": 972
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/orphan_root_failure/temporary_evidence_paths.json",
+      "sha256": "6d5a0f20b4ae8aba1d87594c0255ac49b4c16d8671fff66bf5737974a7f0ebb4",
+      "size_bytes": 4376
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/orphan_root_failure/worker_stderr.raw",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/orphan_root_failure/worker_stdout.raw",
+      "sha256": "a0e8854d11c12091643dd165f796e756b1380ccce459bdf10585dbfc6451ff0d",
+      "size_bytes": 7062
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/startup_timeout/actual_cpu_processes.json",
+      "sha256": "f44b8f259817d5690551a1eff90e129999e021ab9dafbb6f429a416b1562d93c",
+      "size_bytes": 45
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/startup_timeout/cpu_regression_result.json",
+      "sha256": "91ac4f8a773ab79d024d956147157162d9116ee8c5ec2edf627570856f7928f7",
+      "size_bytes": 7495
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/startup_timeout/data/unit/direct_process_failure.json",
+      "sha256": "d69f34448cf1e1238a1f728dff09ee0ae575dd5f4a1d01bbf323b470f07b41f4",
+      "size_bytes": 278
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/startup_timeout/data/unit/direct_profile_process_intent.json",
+      "sha256": "03166d525a48deb519ad6a62bd99803538ad00810ff459f134782486c357c393",
+      "size_bytes": 23428
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/startup_timeout/data/unit/executed_command.json",
+      "sha256": "b9176544351bd51fcd69117f34a2a6282f29d8fecffc6d3a6aba95cf40e95ac5",
+      "size_bytes": 429
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/startup_timeout/data/unit/measurement_plan.json",
+      "sha256": "7ad1c507532a8e2126f9d4b8411bfefd51f3ab57124c8994128a34ab016fb8e6",
+      "size_bytes": 1292
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/startup_timeout/data/unit/profiler_process.json",
+      "sha256": "5d9a5e631ef83e742fdee82b69aa52662c8f77d75a49bba8a3d8c075b1510ab0",
+      "size_bytes": 619
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/startup_timeout/data/unit/tool_descendant_cleanup_progress.json",
+      "sha256": "20d1eb7a161a33e6c727a5060dd516a6b8ccb73e518f01d08ae02cc4c38508e4",
+      "size_bytes": 1260
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/startup_timeout/data/unit/tool_descendant_scope_begin.json",
+      "sha256": "2a0892e358e03724c13e60b8c1275609711c49ebedb89ec813f1dfa44b0a3cf3",
+      "size_bytes": 27949
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/startup_timeout/data/unit/tool_descendant_scope_restored.json",
+      "sha256": "028626122d291cd6834d77ecffeb9ec91cdabc3880f53f516959e962f2741200",
+      "size_bytes": 592
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/startup_timeout/data/unit/tool_descendant_scope_terminal.json",
+      "sha256": "394680f2f4fb92aeb5f783d245dcc03bf57e75f86ed4172f9f0b4bc03d5c4dce",
+      "size_bytes": 41070
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/startup_timeout/data/unit/tool_root_wait_1218587.json",
+      "sha256": "984f85356911c5308db8c9d90b8872ccb170d52474c5a434b9dbc3781a6e9e9a",
+      "size_bytes": 660
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/startup_timeout/temporary_evidence_paths.json",
+      "sha256": "5b62d24ea99f054fdadd437a781e5a0ab90b8f681d1cfc38b741fabbaf4c9f0c",
+      "size_bytes": 4713
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/startup_timeout/worker_stderr.raw",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/startup_timeout/worker_stdout.raw",
+      "sha256": "737ec4c55ee68ba8552db4997ea83fcfb2a18a6ce6953a073cf629a1b1f31d8f",
+      "size_bytes": 6781
+    }
+  ],
+  "approved_narrow_source_corrections": true,
+  "actual_tool_or_gpu_execution": false,
+  "standing_gpu_lock_opened": false,
+  "actual_foreign_processes_touched": 0,
+  "gpu_operations": 0,
+  "scientific_credit": 0,
+  "admission_granted": false,
+  "scope": "Only the pinned-parent and native restore corrections plus actual temporary CPU cleanup regressions. This grants no real tool, CUDA, target, profile or worker admission."
+}

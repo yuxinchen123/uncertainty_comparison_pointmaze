@@ -1,0 +1,94 @@
+{
+  "kind": "independent_approved_direct_nsight_pinned_parent_and_restore_corrections",
+  "reviewed_at_seconds": 1793850423.4699821,
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_nsight_producer_source_freeze_author_6_pinned_parent_and_restore.json",
+    "sha256": "6911df18d1f263c8c9528aafdc994e506a5d3c1118997720ee92bfe6eb4f1433"
+  },
+  "base": "f7a2ab67106f92e7e95a87efb5863de8cfad0d5f",
+  "approved": true,
+  "scope": "The exact frozen author_6 narrow source corrections, with actual temporary CPU cleanup checks. No actual tool or GPU qualification or admission.",
+  "previous_rejected_review": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_nsight_independent_rejection_author_4_release_and_kernel.json",
+    "sha256": "abb3790fc34bd77d7589f5f98018d3a75699781918ec1b60049a7730c2c4c046"
+  },
+  "execution": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_nsight_pinned_parent_independent_6783003_306.json",
+    "sha256": "cd93bef0752538cbf9c051842b4fb990c201b37dc915b444e28912587668251f",
+    "job_id": "6783003",
+    "step_id": "306",
+    "tests": 18,
+    "failures": 0,
+    "errors": 0
+  },
+  "resolved_findings": [
+    {
+      "finding": "A reused non-direct parent could introduce unrelated same-UID children.",
+      "correction": "Known parents now require retained process handles and pinned births before opening their numeric proc directory. All task/child reads stay relative to that pinned parent directory; UID, birth, cgroup, thread identity and handle liveness are checked before and after child-list access. Reused/exited/unknown parents and changed ownership/cgroup/thread identity refuse without accepting child edges."
+    },
+    {
+      "finding": "Saved native restore requests could contradict prior and actual verified state.",
+      "correction": "Prior GET, restore SET and verified GET require exact integer values/returncodes/errno and causal state equality. Native before/terminal/final counters must also join exactly. Contradictory and Boolean records refuse; a consistently previously enabled flag1 remains valid."
+    }
+  ],
+  "independent_boundaries": [
+    "Changed parent UID refuses before any thread child-list read",
+    "Changed parent cgroup refuses before any thread child-list read",
+    "Boolean native setup errno refuses",
+    "A previous enabled subreaper flag1 is causally restored and accepted"
+  ],
+  "actual_cpu_regressions": [
+    {
+      "mode": "startup_timeout",
+      "receipt": {
+        "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/startup_timeout/cpu_regression_result.json",
+        "sha256": "91ac4f8a773ab79d024d956147157162d9116ee8c5ec2edf627570856f7928f7"
+      },
+      "passed": true,
+      "independent_payload_pidfd_exit_before_temporary_lock_release": true,
+      "actual_echild": true,
+      "actual_root_returncodes": [
+        -15
+      ],
+      "native_prctl_request_counts": {
+        "PR_GET_CHILD_SUBREAPER": 4,
+        "PR_SET_CHILD_SUBREAPER": 2
+      }
+    },
+    {
+      "mode": "orphan_root_failure",
+      "receipt": {
+        "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/orphan_root_failure/cpu_regression_result.json",
+        "sha256": "f177a6922b818fcfa0eb5b18ef898d4885f891cde71866f9e837af75596c37a9"
+      },
+      "passed": true,
+      "independent_payload_pidfd_exit_before_temporary_lock_release": true,
+      "actual_echild": true,
+      "actual_root_returncodes": [
+        7
+      ],
+      "native_prctl_request_counts": {
+        "PR_GET_CHILD_SUBREAPER": 5,
+        "PR_SET_CHILD_SUBREAPER": 2
+      }
+    }
+  ],
+  "source_unchanged_before_and_after": true,
+  "all14_frozen_files_verified": true,
+  "all26_protected_files_verified": true,
+  "capture_core_syntax_unchanged": true,
+  "unresolved_findings_within_review_scope": [],
+  "remaining_requirements": [
+    "Separate reviewed final source/helper-union integration",
+    "Actual exact-source direct Nsight diagnostic with full independent raw review",
+    "Actual current CUDA/physical/backend target qualification",
+    "Separate recorded profile admission before scientific profiling"
+  ],
+  "actual_tool_or_gpu_execution": false,
+  "standing_gpu_lock_opened": false,
+  "actual_foreign_processes_touched": 0,
+  "gpu_operations": 0,
+  "scientific_credit": 0,
+  "admission_granted": false,
+  "job_submissions_releases_or_remote_actions": 0
+}

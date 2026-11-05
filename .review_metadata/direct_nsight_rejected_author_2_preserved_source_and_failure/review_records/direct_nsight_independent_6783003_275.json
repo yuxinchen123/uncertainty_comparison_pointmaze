@@ -1,0 +1,39 @@
+{
+  "kind": "independent_direct_nsight_source_failure_review",
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_nsight_producer_source_freeze_author_2.json",
+    "sha256": "f508925a1bde5623a347952ad93b7c3158ddfc7841bf95ace56e91247b42166a"
+  },
+  "base": "f7a2ab67106f92e7e95a87efb5863de8cfad0d5f",
+  "job_id": "6783003",
+  "step_id": "275",
+  "hostname": "heartpiece",
+  "pid": 1207555,
+  "started_at_seconds": 1793846591.2230852,
+  "finished_at_seconds": 1793846598.1941848,
+  "focused_tests": {
+    "count": 30,
+    "failures": 0,
+    "errors": 0,
+    "output": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_nsight_independent_6783003_275_unittest.raw",
+      "sha256": "2ea27c953be519f57e4b7d60aa8f64bd1f657a4d76d045903ceebb6fcfa421e0"
+    }
+  },
+  "source_unchanged_before_and_after": true,
+  "cpu_reproduction": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_nsight_independent_6783003_275_cpu_reproduction.json",
+    "sha256": "1b58d6e84429f14cf1810b4b90ebd7516ac1103ce16e180f7d3466ae66319db2"
+  },
+  "release_record_control": {
+    "capture_release_file_missing": true,
+    "saved_reader_accepted_missing_release": true,
+    "fixture_scope": "synthetic saved metadata only; no actual process or qualification credit"
+  },
+  "approved": false,
+  "gpu_operations": 0,
+  "actual_nsight_or_standing_lock_actions": 0,
+  "job_submissions_releases_or_remote_actions": 0,
+  "scientific_credit": 0,
+  "admission_granted": false
+}

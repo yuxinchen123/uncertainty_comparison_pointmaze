@@ -1,0 +1,71 @@
+{
+  "kind": "direct_nsight_owned_producer_author_handoff",
+  "worktree": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0",
+  "branch": "direct-h100-owned-nsight-profile-process",
+  "base": "f7a2ab67106f92e7e95a87efb5863de8cfad0d5f",
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_nsight_producer_source_freeze_author_2.json",
+    "sha256": "f508925a1bde5623a347952ad93b7c3158ddfc7841bf95ace56e91247b42166a"
+  },
+  "source_and_test_files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_process.py": "1ad032da3c0f4e1491dcdec6388903e417d425882a09094c080caf0036d512b2",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_direct_nsight_process.py": "f949b31835b86b5bea1afea4eb8968d9b6ddd711a717bc1f43774d6a1deacedc",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_prerequisites.py": "33236d5492bf444dc993ff61fb2910f0998f20d945e5403bff28a38c42d21874",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py": "e8a743f884215b5559745fe4b11af5d282b7cc8220696efe9ec025743cf546a0",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py": "f4fe5f1d5c904a773494e1e95caaf631940df18ff7077dbbd39858f27fa66a28",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py": "941f5ec35fa790f7c59e66274627c7ef198e366e48e0c462e9602881080d62f6",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_profile_prerequisites.py": "cb9b975144a404647ef553ab4f3be831b0884d232734764c7608353cf5e2b1db",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_profile_process.py": "b53115cb10ea6030ed750a8c46c800d615c87bba44cceb4bdfaede3a3cd444f3"
+  },
+  "author_receipt": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_nsight_producer_author_6783003_271.json",
+    "sha256": "b0da1fb5af7d403f959ba1245f8b47de3872a8dfa273cf0141ae857b4e2910af"
+  },
+  "author_tests_passed": 200,
+  "earlier_author_receipt": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_nsight_producer_author_6783003_264.json",
+    "sha256": "61934ced579e63d6bc97641c3a078f8ddb5160d5bc4306a6f63af6e2ffa86ada"
+  },
+  "earlier_tests_passed": 198,
+  "ownership_design": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_nsight_owned_producer_ownership_design.json",
+    "sha256": "212e824d2a32e8b44f07bbdd53f5b233a7b0ab7b08bde74c7e3887b2281e1a0d"
+  },
+  "protected_source_before": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_nsight_owned_producer_source_before.json",
+    "sha256": "8a71de196381ecf9079639038daf540bf51983d20dcc14053d1dfabc64c694d3"
+  },
+  "protected_files_unchanged": 26,
+  "capture_core_syntax_unchanged": true,
+  "before": "The reviewed preceding commit provided backend/common-proof metadata while all actual direct profile execution was disabled. Its historical profiling process code assumed process-group equality and inherited standing descriptors.",
+  "after": "New shared direct observer and a separate zero-transition diagnostic provide concrete metadata-controller, sole-producer, tool/waiter/payload paths. Only the tool producer opens the standing lock. Every child Popen closes it; waiter/payload verify only readonly known-producer fdinfo after own-UID/birth checks. Positive ancestry and process handles replace group equality. Actual root/payload waits are separate, failed waits remain recorded, and known-child cleanup keeps producer custody. Current capture routes through this observer and unchanged native CUDA/backend/core functions.",
+  "scope_limits": [
+    "No actual Nsight command, standing GPU lock or GPU operation was executed by this author.",
+    "Source and diagnostic packet remain unqualified pending independent review. No actual diagnostic packet, future PID or proof was fabricated.",
+    "Ordinary H100 profile admission remains closed until actual process/descriptor diagnostic and current-context/backend evidence are independently reviewed.",
+    "The standard-library diagnostic makes no CUDA, physical-binding, timing, profile or worker-admission claim. Whole-tool library/device activity is explicitly unquantified.",
+    "Historical paths and the original numerical source remain preserved. Root owns all actual launches, submission/release actions and final branch reconciliation."
+  ],
+  "independent_test_cwd": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests",
+  "independent_test_command": [
+    "srun",
+    "--jobid=6783003",
+    "--overlap",
+    "--exact",
+    "--ntasks=1",
+    "--cpus-per-task=1",
+    "--mem=512M",
+    "/usr/bin/python3",
+    "-B",
+    "-m",
+    "unittest",
+    "test_direct_profile_process.ActualTemporaryDescriptorTests",
+    "test_direct_profile_process.DirectSavedProcessTests",
+    "test_direct_profile_process.DirectDiagnosticSourceTests"
+  ],
+  "independent_review_pending": true,
+  "actual_gpu_execution": false,
+  "actual_tool_execution": false,
+  "scientific_credit": 0,
+  "admission_granted": false
+}

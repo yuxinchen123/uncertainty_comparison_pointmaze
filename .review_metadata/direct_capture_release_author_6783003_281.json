@@ -1,0 +1,30 @@
+{
+  "kind": "direct_capture_release_author_metadata_tests",
+  "command": [
+    "/usr/bin/python3",
+    "-B",
+    "-m",
+    "unittest",
+    "test_direct_capture_release.DirectCaptureReleaseTests"
+  ],
+  "cwd": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests",
+  "job_id": "6783003",
+  "step_id": "281",
+  "hostname": "heartpiece",
+  "pid": 1213359,
+  "started_at_seconds": 1793847506.956986,
+  "finished_at_seconds": 1793847507.5323327,
+  "source_files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_capture_release.py": "8d7623b1b5cf8bf7a8b65321a33ec1cf551bf99f63d445145a638a9011982e42",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_capture_release.py": "b18bf8c96ff4c60a072b3fa63958ff87adfbcf530c82f815aa4e211fb90cb925"
+  },
+  "source_unchanged_before_and_after": true,
+  "returncode": 0,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "21bef2f421aa86b8f020441c24e4e6f794bf4b78590d97ea4483735b9707d9a3",
+  "actual_tool_execution": false,
+  "actual_gpu_execution": false,
+  "standing_lock_opened": false,
+  "scientific_credit": 0,
+  "admission_granted": false
+}

@@ -1,0 +1,135 @@
+{
+  "kind": "corrected_direct_nsight_pinned_parent_and_native_restore_author_handoff",
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_nsight_producer_source_freeze_author_6_pinned_parent_and_restore.json",
+    "sha256": "6911df18d1f263c8c9528aafdc994e506a5d3c1118997720ee92bfe6eb4f1433"
+  },
+  "frozen_files_verified": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_process.py": true,
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_direct_nsight_process.py": true,
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_prerequisites.py": true,
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py": true,
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py": true,
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py": true,
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py": true,
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_profile_prerequisites.py": true,
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_profile_process.py": true,
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_tool_descendants.py": true,
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_capture_release.py": true,
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_capture_release.py": true,
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/direct_tool_descendants_cpu_worker.py": true,
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_tool_descendants.py": true
+  },
+  "protected_files_verified": {
+    "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/10_jax_exploration_platform/src/exploration_platform/atari_pixels/pixel_preprocessing.py": true,
+    "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/10_jax_exploration_platform/src/exploration_platform/atari_pixels/__init__.py": true,
+    "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/10_jax_exploration_platform/src/exploration_platform/atari_pixels/checkpointing.py": true,
+    "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/10_jax_exploration_platform/src/exploration_platform/atari_pixels/networks.py": true,
+    "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/10_jax_exploration_platform/src/exploration_platform/atari_pixels/settings.py": true,
+    "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/10_jax_exploration_platform/src/exploration_platform/atari_pixels/state.py": true,
+    "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/10_jax_exploration_platform/src/exploration_platform/atari_pixels/kernels.py": true,
+    "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/10_jax_exploration_platform/src/exploration_platform/atari_pixels/config.py": true,
+    "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/10_jax_exploration_platform/src/exploration_platform/atari_pixels/training.py": true,
+    "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/10_jax_exploration_platform/src/exploration_platform/atari_pixels/environment.py": true,
+    "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/worker_environment.sh": true,
+    "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/paired_benchmark.py": true,
+    "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py": true,
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/pixel_preprocessing.py": true,
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/__init__.py": true,
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/checkpointing.py": true,
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/networks.py": true,
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/settings.py": true,
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/state.py": true,
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/kernels.py": true,
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/config.py": true,
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/training.py": true,
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/environment.py": true,
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/scripts/atari_pixel_campaign/worker_environment.sh": true,
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/scripts/atari_pixel_campaign/paired_benchmark.py": true,
+    "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py": true
+  },
+  "capture_core_ast_unchanged": true,
+  "source_paths": [
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_process.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_direct_nsight_process.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_prerequisites.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_profile_prerequisites.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_profile_process.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_tool_descendants.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_capture_release.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_capture_release.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/direct_tool_descendants_cpu_worker.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_tool_descendants.py"
+  ],
+  "focused_independent_command": [
+    "/usr/bin/python3",
+    "-B",
+    "-m",
+    "unittest",
+    "test_direct_tool_descendants",
+    "test_direct_profile_process.DirectSavedProcessTests.test_saved_direct_waits_accept_positive_edges_without_process_group_equality",
+    "test_direct_profile_process.DirectSavedProcessTests.test_restore_request_value_and_native_return_types_must_match_previous_and_verified",
+    "test_direct_profile_process.DirectSavedProcessTests.test_native_counts_must_join_actual_before_and_terminal_snapshots",
+    "test_direct_profile_process.DirectSavedProcessTests.test_saved_child_list_requires_exact_before_and_after_parent_identity"
+  ],
+  "independent_command_cwd": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests",
+  "permitted_test_context": "Only exact owned CPU allocation6783003, at most512MiB; no login tests",
+  "author_execution_receipts": [
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_pinned_parent_author_6783003_296.json",
+      "sha256": "2aeb722a73dcb6a02b97db9883c1df3c5923d7a0aecca9a3154e4c83f2dff8da"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_native_records_author_6783003_297.json",
+      "sha256": "6ac91b76c74d75a225f21e41a6672445799dbf4f47545307dcc637c4ef899e22"
+    }
+  ],
+  "actual_cpu_regressions": [
+    {
+      "mode": "startup_timeout",
+      "receipt": {
+        "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_pinned_parent_actual_cpu_6783003_296/startup_timeout/cpu_regression_result.json",
+        "sha256": "d8164549f45142c55404d945286d20c0a1814eee145b78bad735b0f6b43c6eb2"
+      },
+      "passed": true,
+      "payload_exit_observed_by_independent_pidfd": true,
+      "temporary_lock_retained_until_all_descendants_exited": true,
+      "actual_echild": true
+    },
+    {
+      "mode": "orphan_root_failure",
+      "receipt": {
+        "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_pinned_parent_actual_cpu_6783003_296/orphan_root_failure/cpu_regression_result.json",
+        "sha256": "bf07589a1386a5d6f7e5a9bfed29a44cf8f0bab6e4b9db36a880a706ad194551"
+      },
+      "passed": true,
+      "payload_exit_observed_by_independent_pidfd": true,
+      "temporary_lock_retained_until_all_descendants_exited": true,
+      "actual_echild": true
+    }
+  ],
+  "prior_rejection": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_nsight_independent_rejection_author_4_release_and_kernel.json",
+    "sha256": "abb3790fc34bd77d7589f5f98018d3a75699781918ec1b60049a7730c2c4c046"
+  },
+  "rejected_source_preservation": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/preservation_manifest.json",
+    "sha256": "0845cd099eac287d9be30634eacdc83c10a264d4eae075441bbb067cde2d816e"
+  },
+  "preserved_test_argument_error": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_nsight_author_5_test_argument_failure_preserved/preservation_manifest.json",
+    "sha256": "fc3caf3d163d7f6b57d751bead35a80de07d1845c96f7edfa64a25776526247e"
+  },
+  "independent_review_required": true,
+  "independent_review_start_attempt": "followup_task was refused because the agent thread limit was reached; root can start the completed reviewer after the author turn finishes",
+  "source_uncommitted": true,
+  "actual_tool_or_gpu_execution": false,
+  "standing_gpu_lock_opened": false,
+  "scientific_credit": 0,
+  "admission_granted": false,
+  "future_integration_dependency": "Incoming direct_historical_consumer.py is not in this base; a separately reviewed common-helper union merge must include it."
+}

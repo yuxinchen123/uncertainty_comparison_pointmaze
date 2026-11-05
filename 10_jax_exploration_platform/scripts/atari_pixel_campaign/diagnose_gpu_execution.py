@@ -193,7 +193,7 @@ def preserve_trace_file(source, destination):
     return {"path": str(destination), "bytes": Path(destination).stat().st_size, "sha256": digest.hexdigest()}
 
 
-def summarize_trace(directory, nsys):
+def summarize_trace(directory, nsys, *, run_command=None):
     """Export through short local paths and require nonempty kernel/API records before success."""
     trace = Path(directory).resolve(strict=True) / "trace"
     report = trace / "capture.nsys-rep"
@@ -211,7 +211,8 @@ def summarize_trace(directory, nsys):
                    "--force-export=true", "--output=summary", "capture.nsys-rep"]
         analysis.update(command=command, working_directory=str(local))
         try:
-            process = subprocess.run(command, cwd=local, capture_output=True, text=True, timeout=180)
+            execute = subprocess.run if run_command is None else run_command
+            process = execute(command, cwd=local, capture_output=True, text=True, timeout=180)
             analysis["exit_code"] = process.returncode
             (local / "stats.stdout.log").write_text(process.stdout)
             (local / "stats.stderr.log").write_text(process.stderr)

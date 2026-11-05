@@ -1,0 +1,59 @@
+{
+  "base": "f7a2ab67106f92e7e95a87efb5863de8cfad0d5f",
+  "files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_process.py": {
+      "sha256": "1ad032da3c0f4e1491dcdec6388903e417d425882a09094c080caf0036d512b2",
+      "size_bytes": 43696
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_direct_nsight_process.py": {
+      "sha256": "f949b31835b86b5bea1afea4eb8968d9b6ddd711a717bc1f43774d6a1deacedc",
+      "size_bytes": 24504
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_prerequisites.py": {
+      "sha256": "33236d5492bf444dc993ff61fb2910f0998f20d945e5403bff28a38c42d21874",
+      "size_bytes": 33486
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py": {
+      "sha256": "e8a743f884215b5559745fe4b11af5d282b7cc8220696efe9ec025743cf546a0",
+      "size_bytes": 59758
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py": {
+      "sha256": "f4fe5f1d5c904a773494e1e95caaf631940df18ff7077dbbd39858f27fa66a28",
+      "size_bytes": 71924
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py": {
+      "sha256": "941f5ec35fa790f7c59e66274627c7ef198e366e48e0c462e9602881080d62f6",
+      "size_bytes": 54612
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_profile_prerequisites.py": {
+      "sha256": "cb9b975144a404647ef553ab4f3be831b0884d232734764c7608353cf5e2b1db",
+      "size_bytes": 28845
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_profile_process.py": {
+      "sha256": "b53115cb10ea6030ed750a8c46c800d615c87bba44cceb4bdfaede3a3cd444f3",
+      "size_bytes": 20521
+    },
+    ".review_metadata/direct_nsight_independent_6783003_275.json": {
+      "sha256": "ef9fc89f8b5996078a848748659ca538ab51d8381d9cacd1de88de8a6897c5ab",
+      "size_bytes": 1853
+    },
+    ".review_metadata/direct_nsight_independent_6783003_275_cpu_reproduction.json": {
+      "sha256": "1b58d6e84429f14cf1810b4b90ebd7516ac1103ce16e180f7d3466ae66319db2",
+      "size_bytes": 11125
+    },
+    ".review_metadata/direct_nsight_independent_6783003_275_unittest.raw": {
+      "sha256": "2ea27c953be519f57e4b7d60aa8f64bd1f657a4d76d045903ceebb6fcfa421e0",
+      "size_bytes": 6132
+    },
+    ".review_metadata/direct_nsight_independent_rejection_author_2.json": {
+      "sha256": "f8ac9d5fada8ce60807a69498f222aa1098d966e55e440b8cb579cfa8f040460",
+      "size_bytes": 4235
+    },
+    ".review_metadata/direct_nsight_producer_source_freeze_author_2.json": {
+      "sha256": "f508925a1bde5623a347952ad93b7c3158ddfc7841bf95ace56e91247b42166a",
+      "size_bytes": 1500
+    }
+  },
+  "source_unchanged": true,
+  "actual_gpu_or_tool_execution_by_author": false
+}

@@ -88,7 +88,8 @@ def required_helpers(configured=False, direct=False, common=False, owned_process
         raise ValueError("the new direct profile closure requires the separate direct target")
     if owned_processes and (not configured or direct):
         raise ValueError("owned Nsight observation is supported only by its configured A4500 profile")
-    optional = ("direct_profile_prerequisites.py", "nsight_process_identity.py") if direct_profile else (("nsight_process_identity.py",) if owned_processes else ())
+    optional = ("direct_profile_prerequisites.py", "nsight_process_identity.py", "direct_profile_process.py",
+        "direct_capture_release.py", "direct_tool_descendants.py") if direct_profile else (("nsight_process_identity.py",) if owned_processes else ())
     return tuple(dict.fromkeys(("profile_selected.py", *measurement.required_helpers(configured, direct, common, direct_profile), *optional)))
 
 
@@ -98,6 +99,15 @@ def direct_profile_reader(plan=None):
     reader = support.adjacent("direct_profile_prerequisites")
     if plan is not None:
         reader.contract(plan)
+    return reader
+
+
+def direct_process_reader(plan):
+    """Load only the explicit new direct producer/child source protocol."""
+    direct_profile_reader(plan)
+    import direct_measurement as support
+    reader = support.adjacent("direct_profile_process")
+    reader.contract(plan, Path(plan["campaign_run_dir"]) / "data" / plan["unit_id"])
     return reader
 
 
@@ -411,6 +421,10 @@ def validate_measured_baseline(directory, plan):
 
 def child_command(directory, plan, held_descriptor=None):
     """Record a CUDA-profiler-range capture that cannot silently run without Nsight."""
+    if "direct_profile_protocol" in plan:
+        if held_descriptor is not None:
+            raise ValueError("the actual direct Nsight child must not inherit the producer's standing descriptor")
+        return direct_process_reader(plan).tool_command(directory, plan)
     if owned_processes(plan):
         if held_descriptor is not None:
             raise ValueError("the configured process protocol cannot borrow a direct-card descriptor")
@@ -445,8 +459,8 @@ def stop_own_child(child):
 def capture_and_summarize(directory, plan, held_descriptor=None):
     """Retain the card lock in the caller while recording/releasing one new profiler child."""
     if "direct_binding" in plan:
-        # The historical group/descriptor assumptions below cannot admit a new profile.
         direct_profile_reader(plan).require_admission()
+        return capture_direct_owned_processes(directory, plan, held_descriptor)
     if owned_processes(plan):
         return capture_owned_processes(directory, plan)
     trace = directory / "trace"
@@ -563,7 +577,7 @@ def run_prepared(directory):
                     support.verify_qualification_inputs(plan)
                 else:
                     hardware = measurement.preflight(plan)
-                if tool_record(plan["profile_tool"]["path"]) != plan["profile_tool"]:
+                if not direct and tool_record(plan["profile_tool"]["path"]) != plan["profile_tool"]:
                     raise ValueError("the compute host's profiling tool differs from the prepared tool record")
                 validate_measured_baseline(directory, plan)
                 assets = training.verify_assets(plan["asset_record"], os.environ)
@@ -898,6 +912,73 @@ def capture_owned_child(directory, plan):
         os.close(parent)
 
 
+def capture_direct_owned_processes(directory, plan, held_descriptor):
+    """Retain sole producer custody while the new direct observer waits on its actual tool child."""
+    if type(held_descriptor) is not int or held_descriptor < 0:
+        raise ValueError("the direct tool producer must retain its actual local standing descriptor")
+    support = measurement.producer_support(plan)
+    parent_metadata = support.core().read_receipt(support.core().receipt(directory / "supervisor/direct_process_metadata.json"))
+    support.core().live_custody(parent_metadata, held_descriptor)
+    reader = direct_process_reader(plan)
+    with reader.tool_scope(directory, plan, held_descriptor) as scope:
+        for stage in ("before", "after"):
+            actual = scope.run([plan["profile_tool"]["path"], "--version"], capture_output=True, text=True, timeout=15)
+            support.core().publish(directory / ("profile_tool_version_" + stage + ".json"), {
+                "command": [plan["profile_tool"]["path"], "--version"], "returncode": actual.returncode,
+                "stdout": actual.stdout, "stderr": actual.stderr})
+            if (actual.returncode != 0 or actual.stderr != "" or actual.stdout.strip() != plan["profile_tool"]["version"]
+                    or training.file_sha256(plan["profile_tool"]["path"]) != plan["profile_tool"]["sha256"]):
+                raise ValueError("the direct profiling tool changed before or after its actual source-child capture")
+            if stage == "before":
+                reader.run_tool(directory, plan, held_descriptor, scope=scope)
+        analysis = diagnostic.summarize_trace(directory, plan["profile_tool"]["path"], run_command=scope.run)
+    support.core().live_custody(parent_metadata, held_descriptor)
+    captured = json.loads((directory / "capture_result.json").read_bytes())
+    for name, column in (("cuda_gpu_kern_sum", "Instances"), ("cuda_api_sum", "Num Calls")):
+        summary = analysis["summaries"][name]
+        if diagnostic.summary_csv_evidence(summary["path"], column) != {key: summary[key] for key in ("rows", "columns", "sha256")}:
+            raise ValueError("the actual direct profile lacks positive unchanged kernel/API summaries")
+    metadata = support.core().read_receipt(support.core().receipt(directory / "direct_process_metadata.json"))
+    process_proof = reader.validate_saved(directory, plan)
+    terminal = {"schema_version": 1, "kind": "direct_producer_guarded_profile_terminal", "process_proof": process_proof,
+        "capture_result": support.core().receipt(directory / "capture_result.json"),
+        "parent_custody": support.core().receipt(directory / "supervisor/direct_process_metadata.json"),
+        "standing_descriptor_inherited_by_child": False, **support.BOUNDARY}
+    support.core().publish(directory / "direct_profile_terminal.json", terminal)
+    result = {**captured, "completed": True, "capture_process_protocol": reader.PROTOCOL,
+        "trace_analysis_record": str(directory / "trace/analysis.json"),
+        "trace_report_sha256": training.file_sha256(directory / "trace/capture.nsys-rep"),
+        "direct_trace_process_proof": support.trace_process_proof(directory, metadata),
+        "direct_process_wait_proof": process_proof, **direct_profile_reader(plan).completed_capture_binding(directory, plan, captured)}
+    support.core().live_custody(parent_metadata, held_descriptor)
+    diagnostic.atomic_json(directory / "result.json", result)
+    diagnostic.record_progress(directory, "completed", completed=True, profile_updates=result["profile_updates"])
+
+
+def run_direct_owned_waiter(directory):
+    """Wait on the new direct source child without receiving its producer's standing descriptor."""
+    directory = Path(directory).resolve(strict=True)
+    plan = json.loads((directory / "measurement_plan.json").read_bytes())
+    verify_prepared(directory, plan)
+    return direct_process_reader(plan).run_waiter(directory, plan)
+
+
+def capture_direct_owned_child(directory):
+    """Require actual source/ancestry/producer custody before unchanged CUDA binding and learner work."""
+    directory = Path(directory).resolve(strict=True)
+    plan = json.loads((directory / "measurement_plan.json").read_bytes())
+    verify_prepared(directory, plan)
+    reader = direct_process_reader(plan)
+    reader.wait_release(directory, plan)
+    support = measurement.producer_support(plan)
+    metadata_record = reader.collect_capture_metadata(plan, directory, support.core())
+    runtime = training.enforce_runtime(plan["runtime_environment"], os.environ)
+    hardware = {"direct_process_metadata": metadata_record, "runtime_environment": runtime}
+    installed = json.loads((directory / "installed_backend.json").read_bytes())
+    _capture_core(directory, plan, hardware, installed)
+    direct_profile_reader(plan).complete_capture(directory, plan)
+
+
 def parse_arguments(argv=None):
     """Separate metadata/tool inspection, preparation, parent execution, and its private capture child."""
     parser = argparse.ArgumentParser(description=__doc__)
@@ -905,6 +986,8 @@ def parse_arguments(argv=None):
     operation.add_argument("--prepared-unit", type=Path)
     operation.add_argument("--capture-unit", type=Path)
     operation.add_argument("--owned-waiter-unit", type=Path)
+    operation.add_argument("--direct-owned-waiter-unit", type=Path, help=argparse.SUPPRESS)
+    operation.add_argument("--direct-owned-capture-unit", type=Path, help=argparse.SUPPRESS)
     operation.add_argument("--direct-waiter-unit", type=Path, help=argparse.SUPPRESS)
     operation.add_argument("--inspect-profile-tool", type=Path)
     parser.add_argument("--prepare-only", action="store_true")
@@ -930,7 +1013,8 @@ def parse_arguments(argv=None):
     args = parser.parse_args(argv)
     fields = ("source_root", "source_commit", "configuration", "runtime_environment", "asset_record", "study_registry",
               "accepted_baseline_specification", "profile_tool_record", "run_dir", "unit_id", "gpu_uuid", "hardware_class")
-    if args.prepared_unit or args.capture_unit or args.owned_waiter_unit or args.direct_waiter_unit or args.inspect_profile_tool:
+    if (args.prepared_unit or args.capture_unit or args.owned_waiter_unit or args.direct_waiter_unit
+            or args.direct_owned_waiter_unit or args.direct_owned_capture_unit or args.inspect_profile_tool):
         if args.prepare_only or any(getattr(args, name) is not None for name in (*fields, "jaxtari_source_root", "seed_start",
                                                                               "minimum_updates", "maximum_active_seconds", "python", "configured_isolation_profile", "target_qualification_record", "target_qualification_review",
                                                                               "direct_binding_profile", "direct_history_inputs", "direct_qualification_record", "direct_qualification_review", "direct_backend_image_record", "direct_confirmation_review")):
@@ -978,6 +1062,10 @@ if __name__ == "__main__":
         run_prepared(arguments.prepared_unit)
     elif arguments.owned_waiter_unit:
         raise SystemExit(run_owned_waiter(arguments.owned_waiter_unit))
+    elif arguments.direct_owned_waiter_unit:
+        raise SystemExit(run_direct_owned_waiter(arguments.direct_owned_waiter_unit))
+    elif arguments.direct_owned_capture_unit:
+        capture_direct_owned_child(arguments.direct_owned_capture_unit)
     elif arguments.capture_unit:
         if arguments.direct_held_lock_fd is not None:
             capture(arguments.capture_unit, arguments.direct_held_lock_fd)

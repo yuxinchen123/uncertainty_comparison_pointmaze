@@ -1,0 +1,58 @@
+{
+  "kind": "independent_direct_nsight_producer_rejection",
+  "reviewed_at_seconds": 1793846644.1302354,
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_nsight_producer_source_freeze_author_2.json",
+    "sha256": "f508925a1bde5623a347952ad93b7c3158ddfc7841bf95ace56e91247b42166a"
+  },
+  "base": "f7a2ab67106f92e7e95a87efb5863de8cfad0d5f",
+  "independent_execution": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_nsight_independent_6783003_275.json",
+    "sha256": "ef9fc89f8b5996078a848748659ca538ab51d8381d9cacd1de88de8a6897c5ab"
+  },
+  "focused_tests": {
+    "count": 30,
+    "failures": 0,
+    "errors": 0,
+    "output": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_nsight_independent_6783003_275_unittest.raw",
+      "sha256": "2ea27c953be519f57e4b7d60aa8f64bd1f657a4d76d045903ceebb6fcfa421e0"
+    }
+  },
+  "source_unchanged": true,
+  "approved": false,
+  "findings": [
+    {
+      "severity": "blocking",
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_process.py",
+      "lines": [
+        417,
+        435
+      ],
+      "problem": "Startup failure before full positive ancestry observation can stop only the observed Nsight root and unwind to close the sole producer descriptor while an actual owned descendant remains alive. OwnedProcesses initially holds only the root; stop does not enumerate or prove exit of unknown descendants. The processes=None branch has the same root-only behavior.",
+      "actual_cpu_evidence": "The frozen run_tool implementation launched a new Python stand-in root that spawned a new owned six-second payload. Review positively pinned the payload through the exact owned root child list, UID, source command, birth and cgroup. The source timed out before capture observation, stopped only its tracked root and returned. The caller closed a private temporary CPU lock; another descriptor acquired it while the pinned payload was alive. Payload natural exit was later independently verified. No Nsight, real standing lock or GPU operation occurred.",
+      "correction_required": "Retain sole producer custody until every actual tool descendant is proved exited, including failures before the capture claim or complete observation. Never treat root-only wait or an unobserved-descendant disclaimer as permission to release the lock. Use only positively established own identities and process handles, without process-group assumptions or foreign process queries/stops. Preserve actual failed waits and all cleanup evidence."
+    },
+    {
+      "severity": "blocking evidence completeness",
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_process.py",
+      "lines": [
+        444,
+        490
+      ],
+      "problem": "The saved-success validator never reads or binds capture_release.json. The complete provided synthetic saved fixture omits that file and validate_saved still passes. A missing or replaced pre-work release can therefore be absent from accepted process evidence.",
+      "correction_required": "Require the exact retained release reference to the immutable intent, actual claim and positive process observation before accepting any saved successful wait/profile evidence. Add missing, changed and cross-attempt release refusal fixtures."
+    }
+  ],
+  "scope_limits": [
+    "Ordinary direct H100 profile admission remains unconditionally disabled.",
+    "No actual direct tool diagnostic, CUDA context, physical target or backend qualification was performed.",
+    "The focused fixtures passing do not resolve the reproduced cleanup or saved-evidence defects."
+  ],
+  "actual_tool_or_gpu_execution": false,
+  "standing_gpu_lock_opened": false,
+  "gpu_operations": 0,
+  "scientific_credit": 0,
+  "admission_granted": false,
+  "job_submissions_releases_or_remote_actions": 0
+}

@@ -1,0 +1,41 @@
+test_exited_parent_handle_refuses_before_opening_the_numeric_proc_directory (test_direct_tool_descendants.PinnedParentChildListTests)
+An already exited process handle cannot authorize inspection of a reused numeric PID. ... ok
+test_numeric_directory_replacement_cannot_redirect_the_pinned_child_read (test_direct_tool_descendants.PinnedParentChildListTests)
+All child reads stay relative to the original parent directory rather than reopening its PID. ... ok
+test_parent_handle_exit_after_child_read_cannot_return_child_edges (test_direct_tool_descendants.PinnedParentChildListTests)
+The final retained-handle check remains required after all child bytes were read. ... ok
+test_parent_identity_change_during_child_read_cannot_return_child_edges (test_direct_tool_descendants.PinnedParentChildListTests)
+A changed birth, owner or cgroup after child access leaves scope closure unverified. ... ok
+test_pinned_live_parent_keeps_raw_birth_and_thread_identity_before_and_after (test_direct_tool_descendants.PinnedParentChildListTests)
+The saved positive read includes both actual pinned-parent and pinned-thread identities. ... ok
+test_reused_non_direct_parent_is_refused_before_reading_any_child_list (test_direct_tool_descendants.PinnedParentChildListTests)
+A same-UID PID with another birth cannot introduce its child303 into the owned scope. ... ok
+test_thread_identity_change_during_read_is_refused (test_direct_tool_descendants.PinnedParentChildListTests)
+Even an unchanged parent cannot make a reused thread's child list acceptable. ... ok
+test_unknown_parent_has_no_proc_directory_access (test_direct_tool_descendants.PinnedParentChildListTests)
+Only a previously pinned positive parent may supply another process edge. ... ok
+test_fast_failed_root_and_orphaned_payload_are_reaped_before_lock_release (test_direct_tool_descendants.RealCpuDescendantClosureTests)
+A failed root and double-forked orphan cannot escape the producer's subreaper scope. ... ok
+test_startup_timeout_cleans_actual_owned_payload_before_temporary_lock_release (test_direct_tool_descendants.RealCpuDescendantClosureTests)
+Reproduce the rejected startup path with a real different-session CPU payload. ... ok
+test_saved_direct_waits_accept_positive_edges_without_process_group_equality (test_direct_profile_process.DirectSavedProcessTests)
+The complete reader replays after process exit without querying historical PIDs. ... ok
+test_restore_request_value_and_native_return_types_must_match_previous_and_verified (test_direct_profile_process.DirectSavedProcessTests)
+Reject the reproduced SET1/GET0 contradiction and Boolean native return/value fields. ... ok
+test_native_counts_must_join_actual_before_and_terminal_snapshots (test_direct_profile_process.DirectSavedProcessTests)
+Plausible final totals cannot replace their actual before/after request counters. ... ok
+test_saved_child_list_requires_exact_before_and_after_parent_identity (test_direct_profile_process.DirectSavedProcessTests)
+Reject omitted live identity and a changed birth after reading the producer's children. ... ok
+test_boolean_native_setup_errno_is_rejected (__main__.IndependentNarrowBoundaries)
+A Boolean cannot replace a successful typed native setup return field. ... ok
+test_consistent_previously_enabled_subreaper_state_is_restored (__main__.IndependentNarrowBoundaries)
+Causal restoration keeps a prior flag1 instead of silently requiring a hard-coded flag0. ... ok
+test_wrong_parent_cgroup_refuses_before_any_thread_child_read (__main__.IndependentNarrowBoundaries)
+An already changed allocation cannot authorize reading any child edge. ... ok
+test_wrong_parent_owner_refuses_before_any_thread_child_read (__main__.IndependentNarrowBoundaries)
+An already changed owner cannot introduce or expose another process's child list. ... ok
+
+----------------------------------------------------------------------
+Ran 18 tests in 1.765s
+
+OK

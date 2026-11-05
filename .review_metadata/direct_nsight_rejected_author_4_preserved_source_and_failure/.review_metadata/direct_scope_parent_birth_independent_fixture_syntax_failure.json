@@ -1,0 +1,13 @@
+{
+  "kind": "independent_review_fixture_syntax_failure",
+  "command": "srun --jobid=6783003 --overlap --exact --ntasks=1 --cpus-per-task=1 --mem=512M /usr/bin/python3 -B .review_metadata/run_direct_scope_parent_birth_independent_control.py",
+  "returncode": 1,
+  "error": "SyntaxError: expected else after if expression; reviewer fixture contained else101 without a space. No fixture function or process control ran.",
+  "failed_fixture": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/run_direct_scope_parent_birth_independent_control_failed_syntax.py",
+    "sha256": "6a97f5b673a50a2671d7c1c8a3faace37a7736fd79a30ce9ba0fcccf129b2ce2"
+  },
+  "frozen_author_source_changed": false,
+  "gpu_operations": 0,
+  "scientific_credit": 0
+}

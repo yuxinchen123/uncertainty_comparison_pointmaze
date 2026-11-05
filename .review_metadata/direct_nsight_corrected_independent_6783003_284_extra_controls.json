@@ -1,0 +1,25 @@
+{
+  "parent_birth_control": {
+    "kind": "synthetic_parent_pid_reuse_interleaving",
+    "actual_processes_touched": 0,
+    "observations": [
+      {
+        "parent_pid": 101,
+        "actual_parent_birth_now": "99",
+        "pinned_parent_birth": "20",
+        "foreign_same_uid_child": 303
+      }
+    ],
+    "unrelated_same_uid_child_was_pinned": true,
+    "source_requires_expected_parent_birth_in_child_lists": false,
+    "scope": "A source-level interleaving control, not a claim that actual PID reuse happened in this CPU step."
+  },
+  "restore_control": {
+    "kind": "synthetic_inconsistent_restored_prctl_parameter",
+    "previous_value": 0,
+    "restore_set_value": 1,
+    "verified_get_value": 0,
+    "saved_reader_accepted": true,
+    "actual_process_control_performed": false
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "events": [
+    {
+      "at_seconds": 1793849876.9188075,
+      "birth": "80500198",
+      "kind": "pinned_positive_child",
+      "parent_pid": 1216383,
+      "pid": 1216384
+    },
+    {
+      "at_seconds": 1793849876.9734352,
+      "birth": "80500201",
+      "kind": "pinned_positive_child",
+      "parent_pid": 1216384,
+      "pid": 1216385
+    },
+    {
+      "at_seconds": 1793849877.2075224,
+      "birth": "80500201",
+      "exit_code": -15,
+      "kind": "reaped_actual_adopted_child",
+      "pid": 1216385,
+      "wait_status": 15
+    }
+  ],
+  "gpu_or_cuda_qualification": false,
+  "interventions": [
+    {
+      "at_seconds": 1793849877.2039597,
+      "birth": "80500201",
+      "pid": 1216385,
+      "signal": 15
+    },
+    {
+      "at_seconds": 1793849877.2047703,
+      "birth": "80500198",
+      "pid": 1216384,
+      "signal": 15
+    }
+  ],
+  "kind": "direct_tool_descendant_cleanup_progress",
+  "known_nodes": 2,
+  "known_roots": 1,
+  "native_process_control_only": true,
+  "phase": "kernel_closure_verified_and_native_flag_restored",
+  "producer_birth": "80500183",
+  "producer_pid": 1216383,
+  "read_errors": [],
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "standing_descriptor_must_remain_open": false,
+  "subreaper_active": false
+}
