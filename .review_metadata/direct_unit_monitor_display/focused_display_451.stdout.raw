@@ -1,0 +1,26 @@
+test_bound_registration_without_numerical_progress_is_planned (focused_direct_display_tests.DirectDisplayTests) ... ok
+test_direct_metadata_cannot_claim_a_slurm_identifier_or_other_birth (focused_direct_display_tests.DirectDisplayTests) ... ok
+test_initial_direct_worker_without_selected_plan_keeps_existing_display (focused_direct_display_tests.DirectDisplayTests) ... ok
+test_prepared_phase_names_stay_planned (focused_direct_display_tests.DirectDisplayTests) ... ok
+test_prepared_without_progress_is_visible_once_and_not_running (focused_direct_display_tests.DirectDisplayTests) ... ok
+test_running_needs_registration_progress_and_matching_actual_hardware (focused_direct_display_tests.DirectDisplayTests) ... ERROR
+test_unknown_phase_and_duplicate_owner_are_not_running (focused_direct_display_tests.DirectDisplayTests) ... ok
+
+======================================================================
+ERROR: test_running_needs_registration_progress_and_matching_actual_hardware (focused_direct_display_tests.DirectDisplayTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-05-02-03_monitor-direct-unit-display_prepared-bound-unlaunched_running-owned-registration-and-progress_gpu-count-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_monitor_direct_unit_display.py", line 83, in test_running_needs_registration_progress_and_matching_actual_hardware
+    self.assertEqual(self.displayed()["state"], "unknown")
+  File "/p/rlprojects/RND_worktrees/2026-11-05-02-03_monitor-direct-unit-display_prepared-bound-unlaunched_running-owned-registration-and-progress_gpu-count-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_monitor_direct_unit_display.py", line 57, in displayed
+    rows = monitor.unit_rows(self.run)
+  File "/p/rlprojects/RND_worktrees/2026-11-05-02-03_monitor-direct-unit-display_prepared-bound-unlaunched_running-owned-registration-and-progress_gpu-count-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/monitor.py", line 387, in unit_rows
+    measured = measurement_progress(value, result)
+  File "/p/rlprojects/RND_worktrees/2026-11-05-02-03_monitor-direct-unit-display_prepared-bound-unlaunched_running-owned-registration-and-progress_gpu-count-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/monitor.py", line 47, in measurement_progress
+    return f"{value['variant']} {value['round']}/{value['total_rounds']} rounds"
+KeyError: 'variant'
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.027s
+
+FAILED (errors=1)
