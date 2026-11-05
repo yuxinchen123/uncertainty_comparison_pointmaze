@@ -1,0 +1,37 @@
+{
+  "actual_guard_observation_invoked": false,
+  "admission_granted": false,
+  "author_review_only": true,
+  "borrowed_c1_unit_written": false,
+  "borrowed_input_unit_id": "2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3",
+  "configuration_and_tolerances_changed": false,
+  "consumed_reference_roles": 27,
+  "diagnostic_unit_id": "2026-11-04-22-37_h100-common-historical-reader-observation_copies-1_helpers-28_source-7fef1649_metadata-time-limit-seconds-900_production-time-limit-seconds-180_gpu-count-0_processor-count-1_host-memory-gib-1",
+  "full_raw_history_verification": "Only the unchanged saved-evidence guard performs its original full raw checks when root later invokes the reviewed diagnostic.",
+  "internal_large_read_lock": false,
+  "kind": "author_snapshot_wrapper_and_unchanged_observer_path_contract",
+  "large_read_lock_count": 1,
+  "observer_source": {
+    "bytes": 10979,
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-22-37_h100-common-historical-reader-observation_copies-1_helpers-28_source-7fef1649_metadata-time-limit-seconds-900_production-time-limit-seconds-180_gpu-count-0_processor-count-1_host-memory-gib-1/observe_guard_phases.py",
+    "sha256": "4b3918181151625d589755c8fa7e1fb365397db14d80d5f68fa14fce11831a63"
+  },
+  "old_child_internally_profiled": false,
+  "old_consumer_read_only_path": "The exact published current-common guard dispatches old evidence into the source-checked isolated 26-helper read-only child. That child refuses file writes, device/library/network operations and unlisted processes. No prepare(), run_prepared(), GPU/controller or registration entry is called.",
+  "outer_diagnostic_seconds": 900,
+  "outputs_outside_new_packet_permitted": false,
+  "production_historical_child_seconds": 180,
+  "production_unit_proof": false,
+  "raw_history_payload_snapshot_claimed": false,
+  "reviewed_entry": "Byte-identical observer parent() function in the wrapper process; that observer owns the real guard child and its finite900 wait/cleanup.",
+  "scientific_credit": 0,
+  "snapshot_before_and_after": true,
+  "source_before_and_after_identity_scope": "Explicit metadata/reference files plus local source/input/publication records; the snapshot does not claim full raw payload revalidation.",
+  "source_helper_files": 28,
+  "wrapper_source": {
+    "bytes": 7036,
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-22-37_h100-common-historical-reader-observation_copies-1_helpers-28_source-7fef1649_metadata-time-limit-seconds-900_production-time-limit-seconds-180_gpu-count-0_processor-count-1_host-memory-gib-1/run_guard_observation.py",
+    "sha256": "02a563ce3547fb37d2f160f9c51c0f8c2691d7ccd8be1a2fc880d7dac2eba22b"
+  },
+  "write_paths": "Wrapper save() accepts five fixed basenames inside its own fresh PACKET; all input snapshots open references with O_RDONLY|O_NOFOLLOW. The byte-identical observer writes only its own packet-local filenames."
+}
