@@ -1,0 +1,22 @@
+{
+  "command": [
+    "srun",
+    "--jobid=6825983",
+    "--overlap",
+    "--exact",
+    "--time=00:05:00",
+    "-n1",
+    "-c1",
+    "--mem=512M",
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-11-58_common-performance-verification_hardware-types-2_training-copies-1-2_paired-rounds-7_updates-per-arm-10_cpu-count-1_gpu-count-0_time-limit-seconds-300/review_actual_four_context_fact_corrected_hostname_event.py"
+  ],
+  "returncode": 0,
+  "seconds": 1.4421794270165265,
+  "source_sha256_before": "8a93a6a86a02e71365bd8d186fdfbd35c648d73ff1028ca53b1216d2d97ee4b9",
+  "source_sha256_after": "8a93a6a86a02e71365bd8d186fdfbd35c648d73ff1028ca53b1216d2d97ee4b9",
+  "actual_GPU_or_numerical_operations": 0
+}

@@ -1,0 +1,7 @@
+{
+  "kind": "local_review_orchestrator_invalid_working_directory",
+  "actual_process_started": false,
+  "actual_slurm_step_started": false,
+  "reason": "The first tool call omitted the hyphen in rollout-steps-128; process creation failed before any shell or Slurm step started.",
+  "production_or_input_changed": false
+}

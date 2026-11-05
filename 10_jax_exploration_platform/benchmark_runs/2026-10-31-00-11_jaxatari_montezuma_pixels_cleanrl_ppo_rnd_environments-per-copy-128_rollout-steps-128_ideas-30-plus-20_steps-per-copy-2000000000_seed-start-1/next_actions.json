@@ -4704,5 +4704,31 @@
     "new_idea_credit": 0,
     "additional_ideas_selected": 0,
     "final_training_started": false
+  },
+  "actual_four_context_common_prerequisite": {
+    "packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-11-58_common-performance-verification_hardware-types-2_training-copies-1-2_paired-rounds-7_updates-per-arm-10_cpu-count-1_gpu-count-0_time-limit-seconds-300",
+    "proof": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-11-58_common-performance-verification_hardware-types-2_training-copies-1-2_paired-rounds-7_updates-per-arm-10_cpu-count-1_gpu-count-0_time-limit-seconds-300/four_context_prerequisite_fact.json",
+      "sha256": "e75b78e9a9b3fd4a857c2d7c5148de15c8800ef14398c5b56b13f5c78db4d3c7"
+    },
+    "review": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-11-58_common-performance-verification_hardware-types-2_training-copies-1-2_paired-rounds-7_updates-per-arm-10_cpu-count-1_gpu-count-0_time-limit-seconds-300/independent_actual_four_context_fact_review.json",
+      "sha256": "5e19415c03e8063275422d6651c5496de9e94fc63c3f1d4d12df27e11a71298d"
+    },
+    "producer_publication": "fd66474d4cc9c79e5e15a3b6ded388c9d038a77b",
+    "ordinary_profile_admission": false,
+    "actual_GPU_qualification_started": false
+  },
+  "profile_source_qualification_implementation": {
+    "runtime_commit": "d1469fd063a44167ec56760729eb0beea7ecf7d3",
+    "runtime_publication": "87fbd790e41e2abfb7d54eeaa77a0a2d4a440d73",
+    "runtime_source_review_sha256": "34cb02a3da0df49db2a5dc40f934e18888034c8c113a852a857dc84e45991fae",
+    "H100_operational_commit": "b51b37413dbf4d4dbc3f5a0461a7bc2be716a48a",
+    "H100_operational_publication": "424ad85946a42eace23336baee5ea83ff57261f5",
+    "H100_operational_source_review_sha256": "31b806c02b90d426a61a40c65f7b488e0c5ff92db1e7176cd3cf5aa8e9f271e7",
+    "runtime_helpers_H100": 44,
+    "runtime_helpers_A4500": 35,
+    "ordinary_profile_admission": false,
+    "actual_target_units_prepared": 0
   }
 }
