@@ -1,0 +1,30 @@
+{
+  "command": [
+    "srun",
+    "--jobid=6825983",
+    "--overlap",
+    "--exact",
+    "--time=00:05:00",
+    "-n1",
+    "-c1",
+    "--mem=512M",
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "/p/rlprojects/RND_worktrees/2026-11-05-12-25_h100-profile-qualification-parser_backend-record-new-schema-presence_only-operational-command-change_gpu-actions-0/.review_metadata/h100_qualification_parser_backend_argument/test_h100_qualification_backend_presence_argument.py"
+  ],
+  "returncode": 0,
+  "seconds": 0.5263116860296577,
+  "before": {
+    "/p/rlprojects/RND_worktrees/2026-11-05-12-25_h100-profile-qualification-parser_backend-record-new-schema-presence_only-operational-command-change_gpu-actions-0/.review_metadata/profile_target_operational_preparation/derive_one_copy_qualification_request.py": "ce372d66693483270ea32c07d49c46291d5d27f684a9bc7a30daa10e2867e9c2",
+    "/p/rlprojects/RND_worktrees/2026-11-05-12-25_h100-profile-qualification-parser_backend-record-new-schema-presence_only-operational-command-change_gpu-actions-0/.review_metadata/h100_qualification_parser_backend_argument/test_h100_qualification_backend_presence_argument.py": "db20f6adc08a0daa168a31320bbbf9f18422931f21f945a3e5ecc600d96da6b0"
+  },
+  "after": {
+    "/p/rlprojects/RND_worktrees/2026-11-05-12-25_h100-profile-qualification-parser_backend-record-new-schema-presence_only-operational-command-change_gpu-actions-0/.review_metadata/profile_target_operational_preparation/derive_one_copy_qualification_request.py": "ce372d66693483270ea32c07d49c46291d5d27f684a9bc7a30daa10e2867e9c2",
+    "/p/rlprojects/RND_worktrees/2026-11-05-12-25_h100-profile-qualification-parser_backend-record-new-schema-presence_only-operational-command-change_gpu-actions-0/.review_metadata/h100_qualification_parser_backend_argument/test_h100_qualification_backend_presence_argument.py": "db20f6adc08a0daa168a31320bbbf9f18422931f21f945a3e5ecc600d96da6b0"
+  },
+  "runtime_source_modified": false,
+  "actual_qualification_preparation": false,
+  "actual_GPU_operations": 0
+}

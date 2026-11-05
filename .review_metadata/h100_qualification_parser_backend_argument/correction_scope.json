@@ -1,0 +1,11 @@
+{
+  "base_commit": "4d84a87035ee174f330144240f175b2c663d1ffc",
+  "old_deriver_sha256": "b377e523465a803a9a58657519d8b6e1aa8922c124486adf839e50448cdfda19",
+  "new_deriver_sha256": "ce372d66693483270ea32c07d49c46291d5d27f684a9bc7a30daa10e2867e9c2",
+  "reason": "The unchanged ordinary profile argument parser still requires this old-named slot before the explicit qualification branch is selected. That branch does not consume the old slot; it uses the separately declared fresh profile backend record.",
+  "command_change_only": "Add --direct-backend-image-record with exactly request.backend_image_record.path for H100, and require exactly one equal path before emitting a new request.",
+  "old_7d50_record_reused": false,
+  "runtime_helpers_changed": false,
+  "failed_actual_packet_retried": false,
+  "actual_qualification_units_created": false
+}
