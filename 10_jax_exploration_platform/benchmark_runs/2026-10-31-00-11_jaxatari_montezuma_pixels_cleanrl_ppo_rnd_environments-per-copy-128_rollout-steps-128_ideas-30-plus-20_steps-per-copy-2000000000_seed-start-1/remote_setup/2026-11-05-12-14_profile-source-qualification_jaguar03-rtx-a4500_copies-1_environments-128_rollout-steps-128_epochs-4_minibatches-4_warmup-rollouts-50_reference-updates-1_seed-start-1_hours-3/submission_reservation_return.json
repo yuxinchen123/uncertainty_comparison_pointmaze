@@ -1,0 +1,14 @@
+{
+  "automatic_retry_permitted": false,
+  "command": [
+    "scontrol",
+    "show",
+    "reservation",
+    "sl5nw_168",
+    "-o"
+  ],
+  "finished_at_utc": "2026-11-05T20:45:19.068498+00:00",
+  "inherited_SBATCH_variables_removed": [],
+  "returncode": 0,
+  "started_at_utc": "2026-11-05T20:45:18.990284+00:00"
+}

@@ -1,0 +1,28 @@
+{
+  "at_utc": "2026-11-05T20:45:18.978937+00:00",
+  "automatic_retry_permitted": false,
+  "command": [
+    "sbatch",
+    "--hold",
+    "--parsable",
+    "--no-requeue",
+    "--partition=gpu",
+    "--account=sl5nw_base",
+    "--qos=csresnolim",
+    "--nodelist=jaguar03",
+    "--nodes=1",
+    "--ntasks=1",
+    "--cpus-per-task=8",
+    "--mem=64G",
+    "--gres=gpu:nvidia_rtx_a4500:1",
+    "--time=03:00:00",
+    "--reservation=sl5nw_168",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-12-14_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3/job.sbatch"
+  ],
+  "kind": "one_profile_target_qualification_held_submission_attempt",
+  "plan": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-12-14_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3/measurement_plan.json",
+    "sha256": "38457f411f89e9348a47812d900b4578e4e2a82a5717615db6eae38f3564e743"
+  },
+  "publication": "cf036bcee1459165366553ffbc5eea57a1843c38"
+}

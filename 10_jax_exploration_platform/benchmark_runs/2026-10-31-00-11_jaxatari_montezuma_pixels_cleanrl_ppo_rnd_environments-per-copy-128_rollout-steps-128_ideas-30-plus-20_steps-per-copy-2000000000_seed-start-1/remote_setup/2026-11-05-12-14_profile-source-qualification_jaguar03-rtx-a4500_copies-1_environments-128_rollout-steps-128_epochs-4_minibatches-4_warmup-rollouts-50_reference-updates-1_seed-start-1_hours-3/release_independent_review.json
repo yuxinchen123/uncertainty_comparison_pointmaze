@@ -1,0 +1,95 @@
+{
+  "GPU_numerical_qualification": false,
+  "actual_cpu_job_id": "6825983",
+  "actual_cpu_step_id": "72",
+  "actual_target_gpu_uuid": null,
+  "admission_granted": false,
+  "approved": true,
+  "binding": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-12-14_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3/release_binding.json",
+    "sha256": "54378e782dd92f92246a2daeff1c1943df5c33f25f2873d14ab9f92f3c69a659"
+  },
+  "cached_records_only": true,
+  "case_credit": 0,
+  "check_count": 28,
+  "checks": [
+    "actual current owned CPU allocation and numeric step",
+    "unchanged independently approved release utility source",
+    "the actual fixed-ID release binding is exact and unexecuted",
+    "actual submitted identifier and prior published source are exact",
+    "binding joins the actual successful receipt and immutable capture plan",
+    "actual owned ledger snapshots and fixed source paths are exact",
+    "all three actual campaign ledger references are present in their fsync receipt",
+    "actual ledger bytes still match the fsynced submission record: /p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/submitted_jobids.txt",
+    "actual ledger bytes still match the fsynced submission record: /p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/submitted_jobids_uva.txt",
+    "actual ledger bytes still match the fsynced submission record: /p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/submissions.tsv",
+    "actual returned native identifier, command and successful no-retry return agree",
+    "exact cached held-query reference",
+    "exact cached held-query reference",
+    "exact cached held-query reference",
+    "cached query addresses only the exact owned held identifier",
+    "actual held owner, state and exact requested one-A4500/eight-CPU/three-hour shape agree",
+    "requested-resource fields are unambiguous",
+    "actual requested TRES preserve eight CPUs,64GiB,one node and one GPU",
+    "actual successful submission precedes all-ledger fsync, receipt, held query and release binding",
+    "exact recorded UTC reservation evidence",
+    "exact recorded UTC reservation evidence",
+    "exact recorded UTC reservation evidence",
+    "actual submission observed the correct active reservation and node",
+    "the actual recorded UTC reservation covered the complete requested wall time",
+    "actual per-job command records the real held submission argv",
+    "prior actual prepared binding and independent review remain unchanged",
+    "no release or final ownership envelope has been attempted",
+    "whole fixed-ID metadata review stays below five minutes"
+  ],
+  "current_physical_identity_verified": false,
+  "final_training_credit": 0,
+  "fixed_command": [
+    "scontrol",
+    "release",
+    "6826361"
+  ],
+  "fresh_final_held_query_and_reservation_required_before_root_release": true,
+  "held_query": {
+    "return": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-12-14_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3/release_preparation_query_return.json",
+      "sha256": "3f863ac67b64fa7217415ab7f9fd3a62f9d90720431345a74b91abb38633034d"
+    },
+    "stderr": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-12-14_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3/release_preparation_query_stderr.raw",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-12-14_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3/release_preparation_query_stdout.raw",
+      "sha256": "08173c3cd868ce83913019048119a22a6fe8db7ab5d1cb7094d802a558155068"
+    }
+  },
+  "idea_credit": 0,
+  "independent_of_producer": true,
+  "job_id": "6826361",
+  "kernel_device_enforcement_verified": false,
+  "kind": "independent_profile_target_qualification_release_review",
+  "new_scheduler_queries": 0,
+  "packing_credit": 0,
+  "passed": true,
+  "physical_gres_mapping_verified": false,
+  "plan": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-12-14_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3/measurement_plan.json",
+    "sha256": "38457f411f89e9348a47812d900b4578e4e2a82a5717615db6eae38f3564e743"
+  },
+  "profile_credit": 0,
+  "release_performed_by_reviewer": false,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "seconds": 0.05638390895910561,
+  "submission": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-12-14_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3/submission_receipt.json",
+    "sha256": "07e3d48b0359bc8ed63bfeb043c93cb285f7de4561d2571569a67d91e7bd40a5"
+  },
+  "submission_ledgers_fsynced": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-12-14_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3/submission_ledgers_fsynced.json",
+    "sha256": "4f50c60f13fdd2b3f960f97dc627290e4cba3f7556b5ba660ae002813e1dc454"
+  },
+  "unresolved_anomalies": [],
+  "worker_admitted": false
+}

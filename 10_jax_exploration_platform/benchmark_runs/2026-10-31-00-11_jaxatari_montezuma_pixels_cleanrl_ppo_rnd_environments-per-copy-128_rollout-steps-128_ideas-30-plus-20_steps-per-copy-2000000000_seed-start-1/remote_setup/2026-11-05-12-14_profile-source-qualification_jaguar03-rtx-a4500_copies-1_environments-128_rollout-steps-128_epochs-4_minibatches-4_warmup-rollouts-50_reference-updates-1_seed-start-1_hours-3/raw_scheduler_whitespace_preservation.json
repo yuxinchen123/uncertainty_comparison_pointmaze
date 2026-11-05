@@ -1,0 +1,23 @@
+{
+  "kind": "preserve_actual_native_scheduler_bytes",
+  "findings": [
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-12-14_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3/fresh_reservation_UTC_stdout.raw",
+      "sha256": "7f729a685f7b08aadeeba0dfa91dd6bf9568e99b27b0687af70debb8af6ac613",
+      "issue": "new blank line at EOF.",
+      "line": "6"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-12-14_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3/release_preparation_query_stdout.raw",
+      "sha256": "08173c3cd868ce83913019048119a22a6fe8db7ab5d1cb7094d802a558155068",
+      "issue": "trailing whitespace.",
+      "line": "1"
+    }
+  ],
+  "prior_staging_checks": [
+    "git add refused ignored exact bounded metadata paths; explicitly staged -f",
+    "whitespace check found original native output spaces and final blank line",
+    "first exception check omitted reservation output; no files or scheduler actions changed"
+  ],
+  "actual_bytes_edited": false
+}
