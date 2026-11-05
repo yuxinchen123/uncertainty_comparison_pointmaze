@@ -1,0 +1,37 @@
+{
+  "kind": "root_current_admission_incoming_source_check",
+  "at_utc": "2026-11-05T11:55:23.653480+00:00",
+  "integration_before": "615fae7126f355dc064648df728a3858cd5bf713",
+  "incoming_commit": "b69463d1828d6487cdb7a9a1cf90fee927a188fb",
+  "merge_base": "f7e8f5c8f0a2d1847fff4f93726fce62205c23aa",
+  "paths": [
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/probe_direct_current_admission.py",
+      "incoming_sha256": "3512c39fa9225ea5904d57b17a701e32db240aa45dc9d0bbd4c5b238c4abc965",
+      "merged_sha256": "3512c39fa9225ea5904d57b17a701e32db240aa45dc9d0bbd4c5b238c4abc965",
+      "three_way_merge": false
+    },
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py",
+      "incoming_sha256": "af72d3de3e84f7b8be08a73f90f5becf143b1d32c90083c1773b10343751361b",
+      "merged_sha256": "471cd19328975f2d362accb7fd176fa4296f30de0641c67236a3a5e91a5cab36",
+      "three_way_merge": true
+    },
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_current_admission_snapshot.py",
+      "incoming_sha256": "74659fff625e121bfe5137e185bce60fcc7ba1b97b1921eaf793fa040aba621a",
+      "merged_sha256": "74659fff625e121bfe5137e185bce60fcc7ba1b97b1921eaf793fa040aba621a",
+      "three_way_merge": false
+    }
+  ],
+  "predicted_tree": "7ae134b16136b6b5ca2215f1e6da436d69acd2a9",
+  "protected_files_verified": 662,
+  "actual_private_index_dry_runs": [
+    true,
+    true
+  ],
+  "binding_changed_function_only": "current_admission_claim",
+  "new_claim_function_matches_reviewed_candidate_ast": true,
+  "all_other_current_binding_nodes_preserved": true,
+  "source_merged_or_launched": false
+}

@@ -1,0 +1,24 @@
+{
+  "affected_context_methods": 3,
+  "central_claim_not_replayed": true,
+  "command": [
+    "srun",
+    "--jobid=6821437",
+    "--overlap",
+    "--exact",
+    "-n1",
+    "-c1",
+    "--mem=512M",
+    "--time=00:05:00",
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "/p/rlprojects/RND_worktrees/2026-11-05-03-38_direct-current-admission_reviewed-historical-copy_canonical-authority-preserved_helpers-29_gpu-count-0_processor-count-1_host-memory-mib-512/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_admission_probe_context.py"
+  ],
+  "cpu_job_id": "6821437",
+  "only_context_controls_retested": true,
+  "passed": true,
+  "reported_test_seconds": 0.0,
+  "srun_returncode": 0
+}

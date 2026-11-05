@@ -1,0 +1,21 @@
+{
+  "kind": "root_corrected_claim_source_incoming_verification",
+  "at_utc": "2026-11-05T12:04:55.933586+00:00",
+  "incoming_commit": "69f1b5075530418adbe02c1e433c5647848a61ba",
+  "integration_before": "615fae7126f355dc064648df728a3858cd5bf713",
+  "predicted_tree": "48e7f997d0a69e2b35f0026f4214604ff244214e",
+  "previous_binding_three_way_and_protected_proof": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/current_admission_snapshot_incoming_root_2026-11-05.json",
+    "sha256": "8d478428a6c3a9ee0a7aa13f4797459a2bd2a0f4f243469811ba83de858fa401"
+  },
+  "central_binding_unchanged_from_approved_af72": true,
+  "probe_only_followup_paths": [
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/probe_direct_current_admission.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_admission_probe_context.py"
+  ],
+  "actual_private_index_dry_runs": [
+    true,
+    true
+  ],
+  "independent_review_sha256": "74cb5bba2339aa270f67daf30df7d298392069d27a8623ac0697352bc568e681"
+}

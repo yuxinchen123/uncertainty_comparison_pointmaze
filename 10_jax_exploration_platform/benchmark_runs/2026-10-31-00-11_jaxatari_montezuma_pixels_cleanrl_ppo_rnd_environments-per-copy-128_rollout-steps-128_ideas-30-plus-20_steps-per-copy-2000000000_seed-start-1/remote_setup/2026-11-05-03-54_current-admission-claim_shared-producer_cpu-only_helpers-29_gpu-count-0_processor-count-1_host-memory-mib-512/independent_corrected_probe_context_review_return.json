@@ -1,0 +1,21 @@
+{
+  "argv": [
+    "srun",
+    "--jobid=6821437",
+    "--overlap",
+    "--exact",
+    "--time=00:05:00",
+    "-n1",
+    "-c1",
+    "--mem=512M",
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-03-54_current-admission-claim_shared-producer_cpu-only_helpers-29_gpu-count-0_processor-count-1_host-memory-mib-512/independent_corrected_probe_context_review.py"
+  ],
+  "returncode": 0,
+  "elapsed_seconds": 0.4197503150207922,
+  "finished_at_utc": "2026-11-05T12:02:48.674058+00:00",
+  "no_automatic_retry": true
+}

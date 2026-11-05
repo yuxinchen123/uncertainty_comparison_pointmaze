@@ -1,0 +1,14 @@
+{
+  "fixture_only": true,
+  "operational_admission": false,
+  "actual_unit_prepared": false,
+  "unchanged_original_plan": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-02-24_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/measurement_plan.json",
+    "sha256": "c486981267066f96fc9e440b131f845ffa702e2afff368c0f7741e7d2f015f0c"
+  },
+  "changed_top_level_keys": [
+    "helpers"
+  ],
+  "reason": "Read actual accepted history through a clean new helper source; never alter or reuse failed timing unit",
+  "fixture_plan_sha256": "08ea276d68adb811b9adcc99ba023407425fcf2f3fac93576611ed76f573dab9"
+}

@@ -1,0 +1,56 @@
+{
+  "accepted_snapshot_producer_unchanged": true,
+  "actual_cpu_process": {
+    "birth": "84096975",
+    "cgroup": "0::/system.slice/slurmstepd.scope/job_6821437/step_36/user/task_0\n",
+    "hostname": "slurm2",
+    "pid": 1078466,
+    "uids": [
+      2618919,
+      2618919,
+      2618919
+    ]
+  },
+  "actual_owned_cpu_job_id": "6821437",
+  "actual_real_prefix_context_rejected": true,
+  "actual_step_id": "36",
+  "approved": true,
+  "central_claim_checks_reused": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-03-54_current-admission-claim_shared-producer_cpu-only_helpers-29_gpu-count-0_processor-count-1_host-memory-mib-512/independent_claim_source_and_probe_context_block.json",
+    "sha256": "d357d65ca1989d933004118aa76e7665dd369e3a6f63e2a24040a4820e8dbe2e"
+  },
+  "central_claim_methods_repeated": false,
+  "context_output": "...\n----------------------------------------------------------------------\nRan 3 tests in 0.000s\n\nOK\n",
+  "corrected_context_methods": 3,
+  "current_canonical_source_or_gpu_host_checked_by_reviewer": false,
+  "declared_false_prefix_step": "3",
+  "elapsed_seconds": 0.03163142595440149,
+  "exact_rejection": "the current CPU process must belong to the recorded owned step",
+  "future_actual_prepared_unit_probe_required": true,
+  "genuine_claim_or_large_payloads_replayed_after_context_fix": false,
+  "independent_of_author": true,
+  "kind": "independent_shared_current_admission_claim_and_corrected_probe_source_review",
+  "legacy_claim_and_live_authority_functions_preserved": true,
+  "new_claim_source_only_function_changed": "current_admission_claim",
+  "numerical_gpu_target_remote_or_job_actions": false,
+  "old_probe_rejection_preserved": true,
+  "other28measurementhelpers_unchanged": true,
+  "passed": true,
+  "required_before_target_launch": [
+    "Publish the exact reviewed source and records.",
+    "Prepare a new unattempted unit from the reviewed clean helper commit after exact failed-controller exit.",
+    "Run --prepared-unit on that real plan and helper namespace, before binding/SSH; use its actual hash.",
+    "Verify current canonical authority and current source, own host/UID/UUID/CUDA/standing descriptor through unchanged target gates.",
+    "Never retry or rewrite the failed02-24unit."
+  ],
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "source_commit": "69f1b5075530418adbe02c1e433c5647848a61ba",
+  "source_fixture_is_actual_new_unit_proof": false,
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-03-54_current-admission-claim_shared-producer_cpu-only_helpers-29_gpu-count-0_processor-count-1_host-memory-mib-512/corrected_source_freeze.json",
+    "sha256": "4f00b2e1a7196e56063b5e13934d1d52c0ef531d43838f1879da65fbe0450aec"
+  },
+  "source_tree": "e5e68222caba8cb2a2e434d01804391dc6482512",
+  "worker_admission": false
+}
