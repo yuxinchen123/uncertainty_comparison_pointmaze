@@ -1,0 +1,106 @@
+{
+  "actual_units_or_CPU_phases_created": false,
+  "canonical_preparer": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-04-52_initial-child-identity_observations-before-refusal_selected-python-3.12_cpu-acknowledgment_cpu-count-8_total-seconds-300_gpu-count-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/prepare_direct_common_timing.py",
+    "sha256": "5a09d3228beb6ebf843e595ba9fd743d53bfcabd1bcc5f93b37704fb43fa0cb0"
+  },
+  "canonical_preparer_unchanged_from_765": true,
+  "claim_probe": {
+    "command_prefix": [
+      "srun",
+      "--jobid=6821437",
+      "--overlap",
+      "--exact",
+      "-n1",
+      "-c1",
+      "--mem=512M",
+      "--time=00:05:00",
+      "/usr/bin/python3",
+      "-I",
+      "-S",
+      "-B",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/probe_direct_current_admission.py",
+      "--prepared-unit",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-05-10_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1",
+      "--expected-plan-sha256"
+    ],
+    "command_suffix": [
+      "--check-canonical-source"
+    ],
+    "source": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/probe_direct_current_admission.py",
+      "sha256": "9c7cc12657b281e152b5c0bea68f7eb748d66c33cd372ff0058f2e191af49907"
+    },
+    "unresolved_argument_source": "Read the SHA-256 from the actual new measurement_prepared.json after successful prepare; no future hash is supplied."
+  },
+  "copied_packet_preparer_archival_only": true,
+  "corrected_controller": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-04-52_initial-child-identity_observations-before-refusal_selected-python-3.12_cpu-acknowledgment_cpu-count-8_total-seconds-300_gpu-count-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_timing_controller.py",
+    "sha256": "09a1c944116541b631e12e465f5e782641429e305e9a135da4dc8e5379f9a5b6"
+  },
+  "kind": "proposed_metadata_only_corrected_controller_commands",
+  "ordered_phases": [
+    "prepare",
+    "verify",
+    "actual prepared-unit shared claim probe",
+    "bind"
+  ],
+  "phase_commands": {
+    "bind": [
+      "srun",
+      "--jobid=6821437",
+      "--overlap",
+      "--exact",
+      "-n1",
+      "-c1",
+      "--mem=512M",
+      "--time=00:05:00",
+      "/usr/bin/python3",
+      "-I",
+      "-S",
+      "-B",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-52_initial-child-identity_observations-before-refusal_selected-python-3.12_cpu-acknowledgment_cpu-count-8_total-seconds-300_gpu-count-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/prepare_direct_common_timing.py",
+      "bind",
+      "--packet",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-05-10_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1"
+    ],
+    "prepare": [
+      "srun",
+      "--jobid=6821437",
+      "--overlap",
+      "--exact",
+      "-n1",
+      "-c1",
+      "--mem=512M",
+      "--time=00:05:00",
+      "/usr/bin/python3",
+      "-I",
+      "-S",
+      "-B",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-52_initial-child-identity_observations-before-refusal_selected-python-3.12_cpu-acknowledgment_cpu-count-8_total-seconds-300_gpu-count-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/prepare_direct_common_timing.py",
+      "prepare",
+      "--request",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-05-10_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/preparation_request.json"
+    ],
+    "verify": [
+      "srun",
+      "--jobid=6821437",
+      "--overlap",
+      "--exact",
+      "-n1",
+      "-c1",
+      "--mem=512M",
+      "--time=00:05:00",
+      "/usr/bin/python3",
+      "-I",
+      "-S",
+      "-B",
+      "/p/rlprojects/RND_worktrees/2026-11-05-04-52_initial-child-identity_observations-before-refusal_selected-python-3.12_cpu-acknowledgment_cpu-count-8_total-seconds-300_gpu-count-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/prepare_direct_common_timing.py",
+      "verify",
+      "--packet",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-05-10_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1"
+    ]
+  },
+  "remote_actions": 0,
+  "wrapper_source_commit": "e16c015ac7c9ca674f768240cad35a372eb18e87"
+}

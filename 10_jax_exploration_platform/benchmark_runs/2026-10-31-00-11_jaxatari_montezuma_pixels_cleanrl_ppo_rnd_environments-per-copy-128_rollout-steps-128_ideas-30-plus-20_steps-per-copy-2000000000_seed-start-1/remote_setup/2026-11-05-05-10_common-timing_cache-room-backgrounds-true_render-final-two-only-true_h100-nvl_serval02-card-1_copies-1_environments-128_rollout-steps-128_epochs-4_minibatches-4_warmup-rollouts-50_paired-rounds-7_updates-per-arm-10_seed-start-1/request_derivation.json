@@ -1,0 +1,62 @@
+{
+  "actual_CPU_diagnostic_review": null,
+  "actual_packet_or_data_unit_created": false,
+  "all_other_request_fields_identical": true,
+  "changed_keys": {
+    "data_unit": {
+      "after": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-05-10_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1",
+      "before": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-04-07_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1"
+    },
+    "packet": {
+      "after": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-05-10_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1",
+      "before": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-04-07_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1"
+    },
+    "unit_id": {
+      "after": "2026-11-05-05-10_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1",
+      "before": "2026-11-05-04-07_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1"
+    },
+    "wrapper_source_commit": {
+      "after": "e16c015ac7c9ca674f768240cad35a372eb18e87",
+      "before": "765480d990cff5ae556914e3b74afba0472f64ea"
+    }
+  },
+  "future_controller_child_PIDs_or_success_records_supplied": false,
+  "helper69f_and_NUM_d28_unchanged": true,
+  "initial_actual_packet_files_only": [
+    "preparation_request.json",
+    "serial_predecessor_exit_inputs.json"
+  ],
+  "kind": "proposed_fresh_timing_request_after_reviewed_CPU_identity_diagnostic",
+  "metadata_commands": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-04-52_initial-child-identity_observations-before-refusal_selected-python-3.12_cpu-acknowledgment_cpu-count-8_total-seconds-300_gpu-count-0/.review_metadata/proposed_fresh_timing_after_CPU_identity_diagnostic_2026-11-05-05-10/proposed_corrected_controller_metadata_commands.json",
+    "sha256": "4f3f79cd07e7e03f40b389e5400f5443edfc58c75e2c33f6f898c178af652f21"
+  },
+  "no_proposed_generated_standard_files_to_copy_into_actual_packet": true,
+  "original_parameters_seeds_and_7_by_10_preserved": true,
+  "original_request": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-04-07_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/preparation_request.json",
+    "sha256": "986a16a6f947aa8cd1c6a1c7a3a4ba99fbf43f0ed0f0e9616393a45882feb869"
+  },
+  "promotion_requires_actual_same_host_CPU_diagnostic_and_independent_review": true,
+  "proposed_data_unit": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-05-10_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1",
+  "proposed_packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-05-10_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1",
+  "proposed_request": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-04-52_initial-child-identity_observations-before-refusal_selected-python-3.12_cpu-acknowledgment_cpu-count-8_total-seconds-300_gpu-count-0/.review_metadata/proposed_fresh_timing_after_CPU_identity_diagnostic_2026-11-05-05-10/proposed_preparation_request.json",
+    "sha256": "807335ed348ed5c31b041fcc65450041b0640bc86e8651fb9a32d05953c85091"
+  },
+  "scientific_credit": 0,
+  "scientific_predecessor_byte_identical": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-04-52_initial-child-identity_observations-before-refusal_selected-python-3.12_cpu-acknowledgment_cpu-count-8_total-seconds-300_gpu-count-0/.review_metadata/proposed_fresh_timing_after_CPU_identity_diagnostic_2026-11-05-05-10/proposed_serial_predecessor_exit_inputs.json",
+    "sha256": "936b7b53758e6f02c0f803decccd89a3c943137bd24b60ee910e8716838e8027"
+  },
+  "separate_failed_attempt_facts": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-04-52_initial-child-identity_observations-before-refusal_selected-python-3.12_cpu-acknowledgment_cpu-count-8_total-seconds-300_gpu-count-0/.review_metadata/proposed_fresh_timing_after_CPU_identity_diagnostic_2026-11-05-05-10/proposed_separate_failed_attempt_closure_facts.json",
+    "sha256": "c95fc0920f645d18f685665aa43a2dc3850264eba010eb3bd2cb9c9bc7dd3ded"
+  },
+  "standard_files_written_once_by_reviewed_canonical_prepare": [
+    "experiment_background.md",
+    "manifest.yaml",
+    "config_resolved.yaml",
+    "command.txt"
+  ]
+}
