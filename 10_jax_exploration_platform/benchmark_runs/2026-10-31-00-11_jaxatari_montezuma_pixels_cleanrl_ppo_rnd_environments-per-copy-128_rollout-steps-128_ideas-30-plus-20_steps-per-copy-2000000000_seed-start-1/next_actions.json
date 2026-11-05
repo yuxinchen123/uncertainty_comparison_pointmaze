@@ -1316,9 +1316,9 @@
     "state": "both_copy_counts_independently_accepted_correctness_only_timing_pending"
   },
   "h100_common_timing_controller_preparation": {
-    "state": "copy_one_accepted_copy_two_requires_narrow_predecessor_reader_correction",
-    "source_commit": "d2253fa853290cb8fcd0a9212e332dd33a63f2f9",
-    "source_publication": "c903c8df108c8efd27228c338162434fc3197599",
+    "state": "copy_one_accepted_fresh_two_copy_request_promoted",
+    "source_commit": "cba869200cb31131b354c985f77b43386f90f9b9",
+    "source_publication": "76dcf89caa4dc4eadf673bcf257dcbfd30d8d8d0",
     "source_published": true,
     "helper_source_commit": "69f1b5075530418adbe02c1e433c5647848a61ba",
     "required_helpers": 29,
@@ -1446,7 +1446,21 @@
     "copy_one_actual_normal_wait_zero": true,
     "copy_one_median_speedup": 1.0653780925024645,
     "copy_one_sign_probability": 0.0078125,
-    "copy_two_actual_preparation_started": false
+    "copy_two_actual_preparation_started": false,
+    "controller_source_history": [
+      {
+        "source_commit": "d2253fa853290cb8fcd0a9212e332dd33a63f2f9",
+        "source_publication": "c903c8df108c8efd27228c338162434fc3197599",
+        "copy_one_completed_and_accepted": true
+      }
+    ],
+    "copy_two_request": {
+      "packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-07-20_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1",
+      "data_unit": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-07-20_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1",
+      "request": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-07-20_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/preparation_request.json"
+    },
+    "copy_two_actual_controller": null,
+    "copy_two_actual_child": null
   },
   "h100_common_timing_previous_attempts": [
     {
@@ -2946,7 +2960,17 @@
     "source_commit": "b431573a272ccec354cfbccb2b7528b4b846e7b9",
     "source_file_count": 287,
     "state": "RUNNING",
-    "verified_at_utc": "2026-11-05T10:53:35.736433+00:00"
+    "verified_at_utc": "2026-11-05T10:53:35.736433+00:00",
+    "new_component_reporting_observation": {
+      "job_id": "6825842",
+      "actual_owned_terminal_accounting_verified": true,
+      "actual_independent_component_review_verified": true,
+      "serialized_latest_status_contains_job_id": false,
+      "full_tick_returncode": 0,
+      "full_tick_record": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/root_full_tick_native_component_completed_2026-11-05-15-37-10_return.json",
+      "source_inspection_pending": true,
+      "current_monitor_not_stopped": true
+    }
   },
   "persistent_monitor_current_failure": {
     "corrected_source_merged_published": "79a01e851ff92ddba7d0e12eaf8164cab2028878",
@@ -4156,7 +4180,7 @@
     ]
   },
   "a4500_native_profile_process_implementation": {
-    "state": "held_exact_release_reviewed_publication_pending",
+    "state": "completed_process_component_independently_approved_formal_profiling_closed",
     "authors": [
       "correct_native_process_control",
       "implement_direct_h100_profiles/review_direct_profile_source"
@@ -4164,7 +4188,7 @@
     "independent_reviewer": "review_bound_h100_timing_launch",
     "scope": "Explicit native provider and whole-tool process ownership before version through export and handle closure; current numerical code and direct H100 worker unchanged.",
     "target_or_submission_actions_by_agents": 0,
-    "actual_qualification_pending": true,
+    "actual_qualification_pending": false,
     "source_commit": "c228cfc402b357ad9cf14ef1a7e0134eebdcf35b",
     "source_publication": "04abba4e3bf2c54be5ebfc780a019846ffaab353",
     "helper_root": "/p/rlprojects/RND_worktrees/2026-11-05-06-48_a4500-native-process-helper_source-c228cfc402b3_total-seconds-300_work-seconds-240_cleanup-seconds-60_gpu-count-0",
@@ -4231,7 +4255,17 @@
       "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-06-39_native-process-control_jaguar03_python-3.12_gpu-count-1_processor-count-1_host-memory-gib-2_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/release_independent_review.json",
       "sha256": "aa62c5d6788e6ec786052222772ce393562bf6e063c673a64f912d9c80aab158"
     },
-    "actual_release_performed": false
+    "actual_release_performed": true,
+    "never_release_again": true,
+    "actual_job_state": "COMPLETED",
+    "actual_job_exit_code": "0:0",
+    "actual_job_elapsed_seconds": 3,
+    "actual_process_component_qualified": true,
+    "gpu_numerical_qualification": false,
+    "actual_component_review": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-06-39_native-process-control_jaguar03_python-3.12_gpu-count-1_processor-count-1_host-memory-gib-2_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/independent_actual_native_component_review.json",
+      "sha256": "4264288c209606dccc15c883724ffeccaf5a480c943c5e29dd9b1c409c814da5"
+    }
   },
   "optimized_eight_a4500_runtime_implementation_history": [
     {
