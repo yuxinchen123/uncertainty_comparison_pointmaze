@@ -1,0 +1,22 @@
+{
+  "actual_launch_performed": false,
+  "commands": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-02-24_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/prospective_launch_commands.json",
+    "sha256": "028e411ca3aa12371f441ee655f228719404821f8bd8157021180af55748211f"
+  },
+  "independent_review": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-02-24_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/controller_root_independent_review.json",
+    "sha256": "51051a0fda4e8a12701f5c3857391f1924db4220cee995fbea5af41018c83f48"
+  },
+  "kind": "independent_prospective_first_copy_common_timing_launch_approval",
+  "passed": true,
+  "publication_commit": null,
+  "required_before_actual_launch": [
+    "Publish exact prepared source, packet and this independent review.",
+    "Run publication-aware default reader once with the real published commit.",
+    "Verify replacement monitor actual runtime and first full report before GPU work.",
+    "Root alone executes the reviewed single SSH command once; only producer holds standing descriptor.",
+    "Keep copy two unbound until actual first-copy timing normal wait and both exact exits."
+  ],
+  "scientific_credit": 0
+}

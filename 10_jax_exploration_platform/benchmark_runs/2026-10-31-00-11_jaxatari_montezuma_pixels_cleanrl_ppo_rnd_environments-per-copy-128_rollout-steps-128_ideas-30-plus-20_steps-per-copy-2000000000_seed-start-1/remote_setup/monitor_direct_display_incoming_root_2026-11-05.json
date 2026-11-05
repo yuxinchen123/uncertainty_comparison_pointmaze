@@ -1,0 +1,40 @@
+{
+  "kind": "root_incoming_monitor_source_verification",
+  "at_utc": "2026-11-05T10:36:17.606260+00:00",
+  "integration_before": "8eedef2b40048ad8fb6567e8703522b4a302c8cc",
+  "incoming_commit": "b431573a272ccec354cfbccb2b7528b4b846e7b9",
+  "reviewed_base": "6b7d492217140bba3d2f36b93754ecde2d020ccc",
+  "incoming_paths": 58,
+  "protected_files_verified": 662,
+  "publication_roster_sha256": "c5ea2dd6cec12a3be0373a34fa7a99e8898494e90b4be51145447bc9a0384b39",
+  "predicted_tree": "e313c6d96310f7661bf12f4b7da667c64717470b",
+  "actual_read_tree_dry_runs": [
+    {
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "private_indexes_copied_from_actual_index": true,
+  "first_attempt_failure_preserved": {
+    "command": [
+      "git",
+      "read-tree",
+      "-m",
+      "-u",
+      "--dry-run",
+      "8eedef2b40048ad8fb6567e8703522b4a302c8cc",
+      "e313c6d96310f7661bf12f4b7da667c64717470b"
+    ],
+    "returncode": 128,
+    "index_origin": "read-tree HEAD without actual working-tree stat cache",
+    "stderr_not_retained_by_initial_wrapper": true,
+    "no_merge_was_run": true
+  },
+  "scientific_authority_added": false
+}
