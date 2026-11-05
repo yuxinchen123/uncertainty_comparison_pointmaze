@@ -1,0 +1,28 @@
+{
+  "confirmation_record": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-05-49_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/result.json",
+  "direct_binding_profile": {
+    "driver": "590.48.01",
+    "gpu_count": 1,
+    "gpu_uuid": "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3",
+    "hardware_class": "h100",
+    "hostname": "serval02",
+    "kernel_device_enforcement_verified": false,
+    "lock_device": 64512,
+    "lock_inode": 23077017,
+    "lock_mode": 420,
+    "memory_mib": 95830,
+    "model": "NVIDIA H100 NVL",
+    "name": "direct-serval02-card-1-current-process-and-standing-lock-version-1",
+    "schema_version": 1,
+    "standing_lock": "/tmp/sl5nw_serval02_card1.lock",
+    "uid": 2618919,
+    "username": "sl5nw"
+  },
+  "hardware_class": "h100",
+  "runtime_environment": {
+    "JAX_DEFAULT_MATMUL_PRECISION": "highest",
+    "JAX_ENABLE_X64": "true",
+    "XLA_FLAGS": "--xla_gpu_exclude_nondeterministic_ops=true"
+  },
+  "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af"
+}

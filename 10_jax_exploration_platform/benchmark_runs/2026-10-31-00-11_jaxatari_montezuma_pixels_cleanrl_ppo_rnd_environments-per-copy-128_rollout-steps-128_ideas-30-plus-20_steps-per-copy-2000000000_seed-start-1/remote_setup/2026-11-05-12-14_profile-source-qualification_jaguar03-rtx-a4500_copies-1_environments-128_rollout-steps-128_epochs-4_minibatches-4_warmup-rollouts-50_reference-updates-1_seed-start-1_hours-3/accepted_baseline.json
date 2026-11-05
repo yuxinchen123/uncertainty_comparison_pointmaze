@@ -1,0 +1,28 @@
+{
+  "configured_isolation_profile": {
+    "cluster": "uva",
+    "configuration_service_name": "slurm",
+    "configuration_service_uid": 64030,
+    "driver": "580.159.04",
+    "gpu_count": 1,
+    "hostname": "jaguar03",
+    "installed_binary_matches_upstream_verified": false,
+    "isolation_basis": "explicit trust in the five reviewed administrator-managed UVA configuration files",
+    "kernel_device_enforcement_verified": false,
+    "memory_mib": 20470,
+    "model": "NVIDIA RTX A4500",
+    "name": "uva-jaguar03-autodetect-nvml-configured-isolation-version-1",
+    "physical_gres_mapping_verified": false,
+    "schema_version": 1,
+    "uid": 2618919,
+    "username": "sl5nw"
+  },
+  "confirmation_record": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-18-54_common_cache-room-backgrounds-true_render-final-two-only-true_confirmation_paired-rounds-7_updates-per-arm-10_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-2_jaguar03/result.json",
+  "hardware_class": "jaguar03_rtx_a4500",
+  "runtime_environment": {
+    "JAX_DEFAULT_MATMUL_PRECISION": "highest",
+    "JAX_ENABLE_X64": "true",
+    "XLA_FLAGS": "--xla_gpu_exclude_nondeterministic_ops=true"
+  },
+  "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af"
+}
