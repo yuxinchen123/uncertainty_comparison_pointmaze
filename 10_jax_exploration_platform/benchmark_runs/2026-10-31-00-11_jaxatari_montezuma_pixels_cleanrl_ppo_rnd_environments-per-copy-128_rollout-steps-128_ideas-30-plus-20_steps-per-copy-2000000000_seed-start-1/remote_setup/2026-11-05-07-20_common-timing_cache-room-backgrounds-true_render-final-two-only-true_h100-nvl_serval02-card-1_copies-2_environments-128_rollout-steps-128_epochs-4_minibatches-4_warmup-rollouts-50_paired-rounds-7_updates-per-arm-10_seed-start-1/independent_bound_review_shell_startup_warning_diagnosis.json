@@ -1,0 +1,24 @@
+{
+  "kind": "independent_bound_review_exact_shell_startup_warning_diagnosis",
+  "initial_review_source": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-07-20_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/independent_actual_bound_launch_review.py",
+    "sha256": "2355ee1520479b515bfd981829b4b81180fdff430021acf173eef069a572d08e"
+  },
+  "initial_failed_review_return": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-07-20_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/independent_actual_bound_launch_review_return.json",
+    "sha256": "a0c985c8058ce74ca4b1fc4331d3866538adc9f996569f899c0b6916ee2fff03"
+  },
+  "new_review_source": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-07-20_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/independent_actual_bound_launch_review_known_shell_warning.py",
+    "sha256": "4be6cbaae96ff0adb9276a206b38a086109f8a38047c794cdb80a204c6f32b9a"
+  },
+  "actual_warning": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-07-20_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/root_actual_readonly_predecessor_observer_stderr.raw",
+    "sha256": "b4c7df0f0246561c514f91b350b45fd17f09d22bfa9c778da3cfa0a8c55506bc",
+    "text": "/u/sl5nw/.bashrc: line 55: conda: command not found\n"
+  },
+  "actual_observer_returncode": 0,
+  "actual_observer_stdout_exactly_equals_saved_exit_observation": true,
+  "scope": "Only the reviewer blank-stderr predicate changes to require and record this one exact frozen warning. Source/identity/wait/exit gates, experiment source, plan, seeds and runtime are unchanged.",
+  "actual_phase_default_or_remote_repeats": 0
+}

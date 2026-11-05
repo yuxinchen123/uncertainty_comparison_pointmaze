@@ -1316,7 +1316,7 @@
     "state": "both_copy_counts_independently_accepted_correctness_only_timing_pending"
   },
   "h100_common_timing_controller_preparation": {
-    "state": "copy_one_accepted_fresh_two_copy_request_promoted",
+    "state": "two_copy_actual_bound_packet_independently_reviewed_pending_inner_publication",
     "source_commit": "cba869200cb31131b354c985f77b43386f90f9b9",
     "source_publication": "76dcf89caa4dc4eadf673bcf257dcbfd30d8d8d0",
     "source_published": true,
@@ -1377,7 +1377,7 @@
     "copy_one_ssh_invoked_once": true,
     "copy_one_registration_pending": false,
     "copy_one_gpu_launched": true,
-    "copy_two_unbound": true,
+    "copy_two_unbound": false,
     "copy_two_requires_actual_copy_one_timing_wait_and_exit": true,
     "startup_maximum_seconds": 30,
     "only_truly_empty_command_may_wait": true,
@@ -1446,7 +1446,7 @@
     "copy_one_actual_normal_wait_zero": true,
     "copy_one_median_speedup": 1.0653780925024645,
     "copy_one_sign_probability": 0.0078125,
-    "copy_two_actual_preparation_started": false,
+    "copy_two_actual_preparation_started": true,
     "controller_source_history": [
       {
         "source_commit": "d2253fa853290cb8fcd0a9212e332dd33a63f2f9",
@@ -1460,7 +1460,25 @@
       "request": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-07-20_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/preparation_request.json"
     },
     "copy_two_actual_controller": null,
-    "copy_two_actual_child": null
+    "copy_two_actual_child": null,
+    "copy_two_actual_preparation_passed": true,
+    "copy_two_actual_verification_passed": true,
+    "copy_two_actual_source_claim_passed": true,
+    "copy_two_actual_bind_passed": true,
+    "copy_two_gpu_launched": false,
+    "copy_two_plan_sha256": "f555f534712465995de26a0584a1853d290c5de6401a38773234b84c000cd7b5",
+    "copy_two_source_freeze": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-07-20_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/controller_source_freeze.json",
+      "sha256": "5604f0aee12bb0b1024298635f210152657041d4904952435cb4bfbb48d8fce4"
+    },
+    "copy_two_bound_review": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-07-20_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/controller_root_independent_review.json",
+      "sha256": "ff1ee6e45a58b7602184ad0b589b95296725f08e39486b5d132901d47a13a655"
+    },
+    "copy_two_fresh_prior_exit": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-07-20_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/root_exact_serial_predecessor_exit_observation.json",
+      "sha256": "c40bb04250a70d29ca0542db3958a9ffa754fd3f05ad9e3c32b531255be5499e"
+    }
   },
   "h100_common_timing_previous_attempts": [
     {

@@ -1,0 +1,49 @@
+{
+  "actual_refreshes": [
+    {
+      "key": "aces_full_site_qualification",
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/refresh_aces_site.py",
+        "--run-dir",
+        "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1",
+        "--packet",
+        "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-02-22_aces-full-site_h100_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3_torch-2.6.0-cpu"
+      ],
+      "returncode": 0,
+      "stdout": "{\n  \"state\": \"refreshed\",\n  \"job_id\": \"2274632\",\n  \"observed_state\": \"failed\",\n  \"snapshot\": \"/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-02-22_aces-full-site_h100_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3_torch-2.6.0-cpu/remote_monitor_snapshot.json\",\n  \"transport\": {\n    \"master_check\": {\n      \"performed\": false,\n      \"reason\": \"not separately checked; explicit checks belong to the hourly resource review\"\n    },\n    \"remote_returncode\": 0,\n    \"remote_stderr\": \"\",\n    \"remote_python\": \"/scratch/user/u.sl359075/envs/rnd_atari_pixels_jax/bin/python\"\n  },\n  \"no_job_action\": true\n}\n",
+      "stderr": ""
+    },
+    {
+      "key": "aces_autodetect_full_site_qualification",
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/refresh_aces_site.py",
+        "--run-dir",
+        "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1",
+        "--packet",
+        "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-05-23_aces-full-site_h100_autodetect-nvml_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3"
+      ],
+      "returncode": 0,
+      "stdout": "{\n  \"state\": \"refreshed\",\n  \"job_id\": \"2275518\",\n  \"observed_state\": \"completed\",\n  \"snapshot\": \"/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-05-23_aces-full-site_h100_autodetect-nvml_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3/remote_monitor_snapshot.json\",\n  \"transport\": {\n    \"master_check\": {\n      \"performed\": false,\n      \"reason\": \"not separately checked; explicit checks belong to the hourly resource review\"\n    },\n    \"remote_returncode\": 0,\n    \"remote_stderr\": \"\",\n    \"remote_python\": \"/scratch/user/u.sl359075/envs/rnd_atari_pixels_jax/bin/python\"\n  },\n  \"no_job_action\": true\n}\n",
+      "stderr": ""
+    },
+    {
+      "key": "aces_allocation_observation",
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/refresh_aces_allocation_observation.py",
+        "--run-dir",
+        "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1",
+        "--packet",
+        "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-23-23_ACES_allocation-observation_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-minutes-5_partition-gpu_account-158590754315_helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f"
+      ],
+      "returncode": 0,
+      "stdout": "{\n  \"state\": \"refreshed\",\n  \"job_id\": \"2274380\",\n  \"snapshot\": \"/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-23-23_ACES_allocation-observation_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-minutes-5_partition-gpu_account-158590754315_helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f/remote_monitor_snapshot.json\",\n  \"snapshot_sha256\": \"c91025481f3994b45f6f46e47e83669b97d18ee2cf0bf23aa5d9c8a3096dc036\",\n  \"observed_state\": \"completed\",\n  \"transport\": {\n    \"master_check\": {\n      \"performed\": false,\n      \"reason\": \"not separately checked; explicit checks belong to the hourly resource review\"\n    },\n    \"remote_returncode\": 0,\n    \"remote_stderr\": \"\",\n    \"remote_python\": \"/scratch/user/u.sl359075/envs/rnd_atari_pixels_jax/bin/python\"\n  },\n  \"no_job_action\": true\n}\n",
+      "stderr": ""
+    }
+  ]
+}

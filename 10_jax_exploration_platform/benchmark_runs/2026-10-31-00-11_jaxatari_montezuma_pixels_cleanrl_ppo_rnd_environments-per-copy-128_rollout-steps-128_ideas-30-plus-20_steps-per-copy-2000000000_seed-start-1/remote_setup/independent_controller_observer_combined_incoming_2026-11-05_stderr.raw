@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/independent_controller_observer_combined_incoming_2026-11-05.py", line 101, in <module>
+srun: error: slurm2: task 0: Exited with exit code 1
+    check('actual index bytes and identity still unchanged',sha(index)==index_before['sha256'] and fsidentity(index)==index_before['identity'])
+  File "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/independent_controller_observer_combined_incoming_2026-11-05.py", line 9, in check
+    if not value:raise ValueError(label)
+ValueError: actual index bytes and identity still unchanged

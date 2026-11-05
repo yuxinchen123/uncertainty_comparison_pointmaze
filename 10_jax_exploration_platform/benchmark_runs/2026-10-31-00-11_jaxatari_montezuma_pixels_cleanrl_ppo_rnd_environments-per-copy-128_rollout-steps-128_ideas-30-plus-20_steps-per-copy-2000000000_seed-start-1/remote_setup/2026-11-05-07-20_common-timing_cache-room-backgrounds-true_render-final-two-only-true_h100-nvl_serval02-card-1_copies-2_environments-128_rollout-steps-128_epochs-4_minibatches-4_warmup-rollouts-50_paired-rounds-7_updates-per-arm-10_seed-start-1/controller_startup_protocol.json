@@ -1,0 +1,20 @@
+{
+  "changed_existing_controller_functions": [
+    "check_serial_predecessor_inputs"
+  ],
+  "controller_source_commit": "cba869200cb31131b354c985f77b43386f90f9b9",
+  "controller_source_sha256": "1d8bb43df5c4c247e28bb3d588674e8d3cd7718363c62584bc57267d67af10e2",
+  "every_snapshot_requires_same_actual_owned_PID_birth_parent_affinity_and_raw_hashes": true,
+  "exact_complete_expected_raw_command_required_before_registration": true,
+  "independent_source_review": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/.review_metadata/timing_predecessor_schema/independent_request_controller_observer_review.json",
+    "sha256": "df55b20ea77ab5a4c775c2b32f286f3953655c2f06b3cf7f6489e5a93a3ce141"
+  },
+  "kind": "reviewed_bounded_child_startup_observation_protocol",
+  "maximum_startup_seconds": 30,
+  "new_scientific_or_hardware_admission": false,
+  "numerical_and_helper_source_unchanged": true,
+  "other_controller_functions_unchanged": 34,
+  "wait_only_for_truly_empty_raw_command_bytes": true,
+  "wrong_nonempty_or_changed_identity_or_exit_or_deadline_refuses": true
+}

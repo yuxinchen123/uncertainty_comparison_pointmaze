@@ -1,0 +1,14 @@
+{
+  "kind": "preserve_exact_raw_and_reviewed_controller_bytes",
+  "warnings": [
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-06-39_native-process-control_jaguar03_python-3.12_gpu-count-1_processor-count-1_host-memory-gib-2_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/release_final_query_stdout.raw:1: trailing whitespace.",
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-07-20_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/direct_qualification_controller.py:1056: new blank line at EOF.",
+    "10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/root_full_tick_native_component_completed_2026-11-05-15-37-10_stdout.raw:710: new blank line at EOF."
+  ],
+  "frozen_controller_sha256": "1d8bb43df5c4c247e28bb3d588674e8d3cd7718363c62584bc57267d67af10e2",
+  "canonical_commit": "cba869200cb31131b354c985f77b43386f90f9b9",
+  "controller_byte_equal_to_reviewed_canonical_blob": true,
+  "first_outer_whitespace_classifier_rejected_controller_final_blank_line": true,
+  "correction": "Allow only this exact reviewed controller final blank line and exact captured raw output whitespace. Do not normalize frozen bytes.",
+  "check_stdout_sha256": "5b2c4b95ef941d6b42359d567b71a783071c3b51f351b3d1ce3bf025c6636814"
+}

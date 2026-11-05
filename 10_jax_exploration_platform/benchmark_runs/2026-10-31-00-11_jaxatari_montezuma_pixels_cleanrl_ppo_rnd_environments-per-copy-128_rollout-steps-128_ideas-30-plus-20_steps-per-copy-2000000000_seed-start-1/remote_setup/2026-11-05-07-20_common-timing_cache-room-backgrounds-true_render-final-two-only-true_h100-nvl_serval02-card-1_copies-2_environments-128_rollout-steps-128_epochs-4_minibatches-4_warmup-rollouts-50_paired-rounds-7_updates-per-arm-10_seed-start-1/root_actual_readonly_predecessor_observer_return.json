@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "ssh",
+    "-o",
+    "BatchMode=yes",
+    "-o",
+    "ControlMaster=no",
+    "-o",
+    "ConnectTimeout=15",
+    "serval02",
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/.review_metadata/prior_h100_exit_observer/observe_exact_prior_h100_exits.py"
+  ],
+  "returncode": 0,
+  "source_publication": "340a4dce4f9afe7e45404ca6371ddd1259e1cc4d"
+}

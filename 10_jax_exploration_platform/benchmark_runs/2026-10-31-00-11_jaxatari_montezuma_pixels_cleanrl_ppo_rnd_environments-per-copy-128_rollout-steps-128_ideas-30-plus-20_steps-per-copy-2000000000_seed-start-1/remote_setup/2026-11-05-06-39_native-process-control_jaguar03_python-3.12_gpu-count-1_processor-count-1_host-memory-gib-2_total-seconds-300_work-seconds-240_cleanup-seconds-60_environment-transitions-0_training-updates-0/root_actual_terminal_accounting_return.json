@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "sacct",
+    "-j",
+    "6825842",
+    "--parsable2",
+    "--format=JobIDRaw,State,ExitCode,ElapsedRaw,AllocCPUS,ReqMem,AllocTRES,NodeList"
+  ],
+  "environment_overrides": {
+    "TZ": "UTC"
+  },
+  "returncode": 0,
+  "observed_at_utc": "2026-11-05T15:27:22.526844+00:00",
+  "actual_owned_job_id": "6825842"
+}

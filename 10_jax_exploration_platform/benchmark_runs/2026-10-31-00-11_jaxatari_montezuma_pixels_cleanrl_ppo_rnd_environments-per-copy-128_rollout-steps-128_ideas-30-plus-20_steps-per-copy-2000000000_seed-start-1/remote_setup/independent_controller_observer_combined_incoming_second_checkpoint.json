@@ -1,0 +1,39 @@
+{
+  "integration_head": "90ea7a898d69ee23c51fff7cfbcfd0499a768e09",
+  "predicted_merge_tree": "7c5bb5e24e74793e963e53d5bbb3bcd44ed7a8d2",
+  "stages": [
+    {
+      "after": "e43959c06e2610f20abac23c82d472e8820434c1",
+      "tree": "8c442c13316d3c4e2980201cf2526a3d9966946c"
+    },
+    {
+      "after": "cba869200cb31131b354c985f77b43386f90f9b9",
+      "tree": "7c5bb5e24e74793e963e53d5bbb3bcd44ed7a8d2"
+    }
+  ],
+  "index_before": {
+    "identity": {
+      "device": 61,
+      "inode": 5450538,
+      "mode": 436,
+      "size_bytes": 6301395,
+      "mtime_ns": 1793893322994882148
+    },
+    "sha256": "4538ac753573ae0deb13b15db8a1903b6ff4197220789eec250397062ae5d565",
+    "stage_entry_sha256": "91df083c571445bdb2cf545f2c18490f1b3260c4e8513faefbd18fdaea05a228"
+  },
+  "index_after": {
+    "identity": {
+      "device": 61,
+      "inode": 5450538,
+      "mode": 436,
+      "size_bytes": 6301395,
+      "mtime_ns": 1793893322994882148
+    },
+    "sha256": "4538ac753573ae0deb13b15db8a1903b6ff4197220789eec250397062ae5d565",
+    "stage_entry_sha256": "91df083c571445bdb2cf545f2c18490f1b3260c4e8513faefbd18fdaea05a228"
+  },
+  "all_prior_checks_passed": true,
+  "check_count": 3335,
+  "at_utc": "2026-11-05T15:48:40.261953+00:00"
+}
