@@ -1,0 +1,88 @@
+{
+  "actual_failure": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-04-19-37_nsight-process-observation_jaguar03_gpu-count-1_processor-count-1_host-memory-gib-2_time-limit-minutes-5_reservation-sl5nw_168_qos-csresnolim_tool-version-2024.7.1.84_environment-transitions-0/failure.json",
+    "sha256": "b4f5f5b5caf41a2e063eabbab0677261075ab791500592c12995b2c10693b2f2"
+  },
+  "actual_new_tool_payload_process_signal_or_gpu_operations": 0,
+  "actual_numerical_work": false,
+  "actual_parent_records": {
+    "executed_command.json": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-04-19-37_nsight-process-observation_jaguar03_gpu-count-1_processor-count-1_host-memory-gib-2_time-limit-minutes-5_reservation-sl5nw_168_qos-csresnolim_tool-version-2024.7.1.84_environment-transitions-0/executed_command.json",
+      "sha256": "7dab15d0336bd67109351e7d3030dd4b45eb9d00bbab07cd14acf36dafae9d76"
+    },
+    "profile_process_intent.json": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-04-19-37_nsight-process-observation_jaguar03_gpu-count-1_processor-count-1_host-memory-gib-2_time-limit-minutes-5_reservation-sl5nw_168_qos-csresnolim_tool-version-2024.7.1.84_environment-transitions-0/profile_process_intent.json",
+      "sha256": "897b2dacce22862c8b7e84c919c20679538077247c0458aed51796d4600eb9d8"
+    },
+    "profiler_process.json": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-04-19-37_nsight-process-observation_jaguar03_gpu-count-1_processor-count-1_host-memory-gib-2_time-limit-minutes-5_reservation-sl5nw_168_qos-csresnolim_tool-version-2024.7.1.84_environment-transitions-0/profiler_process.json",
+      "sha256": "03488ee348f64c3ebd4dc264087d6437e0fecb4c534f1253af72a655d9145258"
+    },
+    "tool_version_return.json": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-04-19-37_nsight-process-observation_jaguar03_gpu-count-1_processor-count-1_host-memory-gib-2_time-limit-minutes-5_reservation-sl5nw_168_qos-csresnolim_tool-version-2024.7.1.84_environment-transitions-0/tool_version_return.json",
+      "sha256": "b03ff251550b68fccf3380cecd46bbd3f5cd2127379304806eb63b76c64ca697"
+    }
+  },
+  "actual_tool_native_work_quantified": false,
+  "actual_tool_version_returncode": 0,
+  "build_configuration_explanation": "The selected conda-forge CPython 3.12.13 build exposes neither required API. The system CPython 3.10.12 build exposes both. HAVE_PIDFD_* sysconfig values are absent in both observations, so no specific configure setting is established. Kernel pidfd syscalls were not tested and kernel absence is not inferred.",
+  "cleanup_recorded": null,
+  "cleanup_success_verified": false,
+  "correction": "Check both required callables before any diagnostic tool hash/version/Popen. Use /usr/bin/python3 only for the separate zero-environment diagnostic; preserve the scientific interpreter and numerical code. Reject missing APIs without any PID-signal substitute.",
+  "created_at_utc": "2026-11-05T04:01:51.791795+00:00",
+  "failed_job_id": "6820154",
+  "failed_job_or_packet_reused": false,
+  "failed_unit": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-04-19-37_nsight-process-observation_jaguar03_gpu-count-1_processor-count-1_host-memory-gib-2_time-limit-minutes-5_reservation-sl5nw_168_qos-csresnolim_tool-version-2024.7.1.84_environment-transitions-0",
+  "failure_before_capture_identity_or_payload_release": true,
+  "future_scientific_profile_pidfd_support_established": false,
+  "kernel_pidfd_support_established": false,
+  "kind": "actual_nsight_diagnostic_interpreter_api_failure_diagnosis",
+  "new_identity_function": "require_process_control_apis",
+  "only_existing_identity_body_changed": "open_process_handle now calls the precise callable-API check",
+  "ordinary_profile_or_training_admission": false,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "scientific_python_unchanged": true,
+  "selected_interpreter_missing_exports": [
+    "os.pidfd_open",
+    "signal.pidfd_send_signal"
+  ],
+  "selected_interpreter_observation": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/python_process_control_selected_interpreter_2026-11-05.json",
+    "sha256": "4b2bbc6905293bc7d56c7f70f426464548e4fcef02c3e109025466dc2071d468"
+  },
+  "system_interpreter_exposes_required_apis": true,
+  "system_interpreter_observation": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/python_process_control_system_interpreter_2026-11-05.json",
+    "sha256": "e4d0d09aa3e2681592a6829074a5ff6bf65a74fc19ac61b9f170c2ede9ffe6f7"
+  },
+  "unchanged_existing_identity_functions_and_classes": [
+    "OwnedProcesses",
+    "ProcReader",
+    "claim_self",
+    "close_process_handle",
+    "commands",
+    "digest",
+    "handle_exited",
+    "make_intent",
+    "nsight_command",
+    "parent_handle",
+    "parsed_stat",
+    "parsed_uids",
+    "publish",
+    "read_json",
+    "receipt",
+    "record_root_wait",
+    "require",
+    "signal_handle",
+    "stable",
+    "validate_claim",
+    "validate_intent",
+    "validate_live_observation",
+    "validate_observation",
+    "validate_root_wait",
+    "validate_saved",
+    "validate_saved_intent",
+    "validate_snapshot"
+  ]
+}

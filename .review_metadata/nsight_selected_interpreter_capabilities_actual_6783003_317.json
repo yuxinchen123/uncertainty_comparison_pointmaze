@@ -1,0 +1,58 @@
+{
+  "build_configuration": {
+    "HAVE_PIDFD_OPEN": null,
+    "HAVE_PIDFD_SEND_SIGNAL": null,
+    "MULTIARCH": "x86_64-linux-gnu",
+    "Py_ENABLE_SHARED": 0,
+    "SOABI": "cpython-312-x86_64-linux-gnu"
+  },
+  "cgroup": "0::/system.slice/slurmstepd.scope/job_6783003/step_317/user/task_0\n",
+  "egid": 90030,
+  "euid": 2618919,
+  "flags": {
+    "dont_write_bytecode": 1,
+    "isolated": 1,
+    "no_site": 1
+  },
+  "gid": 90030,
+  "gpu_or_numerical_operations": 0,
+  "hostname": "heartpiece",
+  "implementation": "cpython",
+  "job_id": "6783003",
+  "kernel_pidfd_syscalls_executed": false,
+  "kernel_release_observed": "5.15.0-151-generic",
+  "kernel_support_inferred": false,
+  "kind": "actual_python_process_control_api_build_observation",
+  "observed_at_utc": "2026-11-05T03:54:47.071382+00:00",
+  "os_pidfd_open_callable": false,
+  "os_pidfd_open_present": false,
+  "pid": 1219818,
+  "resgid": [
+    90030,
+    90030,
+    90030
+  ],
+  "resolved_sys_executable": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python3.12",
+  "resuid": [
+    2618919,
+    2618919,
+    2618919
+  ],
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "signal_pidfd_send_signal_callable": false,
+  "signal_pidfd_send_signal_present": false,
+  "step_id": "317",
+  "sys_base_executable": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+  "sys_executable": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+  "sys_version": "3.12.13 | packaged by conda-forge | (main, Aug 11 2026, 10:27:28) [GCC 14.4.0]",
+  "tool_or_payload_launched": false,
+  "uid": 2618919,
+  "version_info": [
+    3,
+    12,
+    13,
+    "final",
+    0
+  ]
+}

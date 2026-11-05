@@ -11,7 +11,7 @@ import subprocess
 RELATIVE = "10_jax_exploration_platform/scripts/atari_pixel_campaign/"
 FILES = ("diagnose_nsight_process_tree.py", "nsight_process_identity.py")
 KIND = "nsight_process_identity_diagnostic"
-PYTHON = "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python"
+PYTHON = "/usr/bin/python3"
 ZERO = {"scientific_credit": 0, "profile_credit": 0, "case_credit": 0, "idea_credit": 0,
         "environment_credit": 0, "learner_credit": 0, "whole_tool_library_or_device_activity_quantified": False,
         "admission_granted": False, "worker_admitted": False, "physical_gres_mapping_verified": False}

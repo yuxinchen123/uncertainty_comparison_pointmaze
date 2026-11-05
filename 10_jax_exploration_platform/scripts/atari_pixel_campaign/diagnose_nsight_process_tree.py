@@ -171,11 +171,15 @@ def waiter(directory):
 
 def run(directory):
     """Launch the exact real tool once and observe its actual owned process relationship."""
+    capabilities = identity.require_process_control_apis()
     directory, plan = read_plan(directory)
     wait_for_owned_launch(directory, plan)
     identity.require(not any(os.path.lexists(directory / name) for name in (
-        "profile_process_intent.json", "capture_identity.json", "capture_actual_launch.json", "result.json", "failure.json", "trace")),
+        "process_control_capabilities.json", "profile_process_intent.json", "capture_identity.json", "capture_actual_launch.json", "result.json", "failure.json", "trace")),
         "preserve the previous diagnostic and prepare a new unit")
+    identity.publish(directory / "process_control_capabilities.json", {"python": sys.executable,
+        "sys_version": sys.version, "required_apis_callable": capabilities,
+        "kernel_support_tested_by_this_check": False, **BOUNDARY})
     tool = plan["profile_tool"]
     identity.require(identity.receipt(tool["path"])["sha256"] == tool["sha256"],
                      "the actual ordinary Nsight executable changed before any tool execution")
@@ -220,6 +224,7 @@ def run(directory):
             identity.publish(directory / "result.json", {"schema_version": 1, "kind": KIND, "completed": True,
                 "source": plan["helpers"], "plan": identity.receipt(directory / "measurement_plan.json"),
                 "tool": tool, "command": command, "observation": identity.receipt(directory / "capture_process_observation.json"),
+                "process_control_capabilities": identity.receipt(directory / "process_control_capabilities.json"),
                 "actual_capture_wait": identity.receipt(directory / "capture_actual_wait.json"),
                 "actual_nsight_wait": identity.receipt(directory / "profiler_actual_wait.json"),
                 "nsight_returncode": returned, "capture_pid": claim["pid"], "capture_start_time": claim["process_start_time"],

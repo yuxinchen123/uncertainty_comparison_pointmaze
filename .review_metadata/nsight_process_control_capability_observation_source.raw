@@ -1,0 +1,42 @@
+"""Observe the selected Python build's process-control APIs without tool, device or numerical work."""
+from datetime import datetime, timezone
+import json
+import os
+from pathlib import Path
+import signal
+import socket
+import sys
+import sysconfig
+
+
+def main():
+    """Record only this owned CPU step and the exact interpreter's exposed API/build fields."""
+    if os.environ.get("SLURM_JOB_ID") != "6783003" or not os.environ.get("SLURM_STEP_ID", "").isdigit():
+        raise ValueError("an actual numeric step of owned CPU monitor 6783003 is required")
+    path = Path(sys.argv[1])
+    names = ("HAVE_PIDFD_OPEN", "HAVE_PIDFD_SEND_SIGNAL", "SOABI", "MULTIARCH", "Py_ENABLE_SHARED")
+    value = {"schema_version": 1, "kind": "actual_python_process_control_api_build_observation",
+        "observed_at_utc": datetime.now(timezone.utc).isoformat(), "sys_version": sys.version,
+        "sys_executable": sys.executable, "resolved_sys_executable": str(Path(sys.executable).resolve()),
+        "sys_base_executable": sys._base_executable, "implementation": sys.implementation.name,
+        "version_info": list(sys.version_info), "flags": {"isolated": sys.flags.isolated,
+        "no_site": sys.flags.no_site, "dont_write_bytecode": sys.flags.dont_write_bytecode},
+        "os_pidfd_open_present": hasattr(os, "pidfd_open"), "os_pidfd_open_callable": callable(getattr(os, "pidfd_open", None)),
+        "signal_pidfd_send_signal_present": hasattr(signal, "pidfd_send_signal"),
+        "signal_pidfd_send_signal_callable": callable(getattr(signal, "pidfd_send_signal", None)),
+        "build_configuration": {name: sysconfig.get_config_var(name) for name in names},
+        "job_id": os.environ["SLURM_JOB_ID"], "step_id": os.environ["SLURM_STEP_ID"], "pid": os.getpid(),
+        "uid": os.getuid(), "euid": os.geteuid(), "gid": os.getgid(), "egid": os.getegid(),
+        "resuid": list(os.getresuid()), "resgid": list(os.getresgid()), "hostname": socket.gethostname(),
+        "cgroup": Path("/proc/self/cgroup").read_text(), "kernel_release_observed": os.uname().release,
+        "kernel_pidfd_syscalls_executed": False, "kernel_support_inferred": False,
+        "tool_or_payload_launched": False, "gpu_or_numerical_operations": 0, "scientific_credit": 0}
+    with path.open("x") as stream:
+        json.dump(value, stream, indent=2, sort_keys=True)
+        stream.write("\n"); stream.flush(); os.fsync(stream.fileno())
+    print(json.dumps(value, sort_keys=True))
+
+
+if __name__ == "__main__":
+    main()
+

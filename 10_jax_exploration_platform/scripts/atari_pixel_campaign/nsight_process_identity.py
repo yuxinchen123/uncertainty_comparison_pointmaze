@@ -178,10 +178,18 @@ class ProcReader:
         return sorted(children), rows
 
 
+def require_process_control_apis():
+    """Refuse this interpreter when either required process-descriptor API is absent or not callable."""
+    required = {"os.pidfd_open": getattr(os, "pidfd_open", None),
+                "signal.pidfd_send_signal": getattr(signal, "pidfd_send_signal", None)}
+    missing = [name for name, function in required.items() if not callable(function)]
+    require(not missing, "this Python interpreter lacks required process-control APIs: " + ", ".join(missing))
+    return {name: True for name in required}
+
+
 def open_process_handle(pid):
     """Pin this actual PID before trusting a process edge or sending a signal."""
-    require(hasattr(os, "pidfd_open") and hasattr(signal, "pidfd_send_signal"),
-            "owned process control requires Linux pidfd support")
+    require_process_control_apis()
     return os.pidfd_open(pid, 0)
 
 
