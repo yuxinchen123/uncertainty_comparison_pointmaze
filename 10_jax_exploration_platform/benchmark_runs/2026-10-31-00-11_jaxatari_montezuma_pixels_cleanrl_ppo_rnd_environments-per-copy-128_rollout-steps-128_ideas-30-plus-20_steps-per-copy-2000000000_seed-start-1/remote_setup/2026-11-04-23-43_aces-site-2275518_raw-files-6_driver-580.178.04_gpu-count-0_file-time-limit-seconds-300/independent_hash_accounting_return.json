@@ -1,0 +1,13 @@
+{
+  "automatic_retry_permitted": false,
+  "command": [
+    "sacct",
+    "-n",
+    "-P",
+    "-j",
+    "6783003.403,6783003.404,6783003.405,6783003.406,6783003.407,6783003.408",
+    "--format=JobIDRaw,State,ExitCode,ElapsedRaw,AllocTRES,NodeList"
+  ],
+  "queried_only_recorded_owned_steps": true,
+  "returncode": 0
+}

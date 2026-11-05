@@ -1,0 +1,21 @@
+{
+  "command": [
+    "ssh",
+    "-T",
+    "-o",
+    "ControlMaster=no",
+    "-o",
+    "ProxyCommand=false",
+    "-o",
+    "BatchMode=yes",
+    "-o",
+    "ConnectTimeout=15",
+    "aces",
+    "python3 -I -S -B -c '\nimport json,os,pwd,stat,sys,time\nfrom pathlib import Path\nrequest=json.loads(sys.argv[1])\nassert pwd.getpwuid(os.getuid()).pw_name==\"u.sl359075\"\npath=Path(request[\"remote_path\"])\nroot=Path(request[\"native_data_unit\"])\nassert path.is_absolute() and str(path).startswith(str(root)+\"/\") and path.resolve(strict=True)==path\nfd=os.open(path,os.O_RDONLY|os.O_NOFOLLOW)\nkeys=(\"st_dev\",\"st_ino\",\"st_size\",\"st_mtime_ns\",\"st_ctime_ns\",\"st_mode\",\"st_uid\",\"st_gid\",\"st_nlink\")\nstarted=time.monotonic()\ntry:\n    before=os.fstat(fd)\n    assert stat.S_ISREG(before.st_mode) and before.st_uid==os.getuid()\n    assert before.st_size<=request[\"maximum_permitted_bytes\"]\n    assert request[\"expected_size_bytes\"] is None or before.st_size==request[\"expected_size_bytes\"]\n    length=0\n    while True:\n        assert time.monotonic()-started<240\n        chunk=os.read(fd,1024*1024)\n        if not chunk:break\n        sys.stdout.buffer.write(chunk)\n        length+=len(chunk)\n    sys.stdout.buffer.flush()\n    after=os.fstat(fd)\n    assert path.resolve(strict=True)==path and not path.is_symlink()\n    assert length==before.st_size\n    assert all(getattr(before,k)==getattr(after,k)==getattr(path.stat(),k) for k in keys)\n    print(json.dumps({\"path\":str(path),\"bytes\":length,\"identity\":{k:getattr(after,k) for k in keys},\n        \"source_identity_unchanged\":True,\"image_executed\":False}),file=sys.stderr,flush=True)\nfinally:\n    os.close(fd)\n' '{\"remote_path\": \"/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-05-23_aces-full-site_h100_autodetect-nvml_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3/probe.log\", \"maximum_permitted_bytes\": 16777216, \"expected_size_bytes\": null, \"native_data_unit\": \"/scratch/user/u.sl359075/rnd_atari_pixels/runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-05-23_aces-full-site_h100_autodetect-nvml_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3\"}'"
+  ],
+  "expected_sha256": "35abe2e384627d2551bf2f984ac0eda5dafa46c6e0a08e440dd20c3231225d35",
+  "maximum_total_seconds": 300,
+  "no_job_action": true,
+  "role": "probe_raw_child_log",
+  "started_at_utc": "2026-11-05T08:13:02.797642+00:00"
+}

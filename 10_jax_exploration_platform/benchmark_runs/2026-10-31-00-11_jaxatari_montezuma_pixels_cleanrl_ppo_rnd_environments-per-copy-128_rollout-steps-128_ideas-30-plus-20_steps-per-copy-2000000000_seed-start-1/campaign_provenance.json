@@ -97,6 +97,47 @@
   "aces_full_site_qualification_job_id": "2274632",
   "aces_full_site_qualification_post_release_verification": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-02-22_aces-full-site_h100_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3_torch-2.6.0-cpu/post_release_monitor_verification.json",
   "aces_full_site_qualification_state": "failed_before_numerical_execution",
+  "aces_original_profile_raw_review": {
+    "case_credit": 0,
+    "current_cuda_context_device_not_recorded": true,
+    "current_selected_source_qualification": false,
+    "declared_old_profile_execution_passed": true,
+    "execution_completed_at_utc": "2026-11-02T11:11:00Z",
+    "execution_exit_code": "0:0",
+    "fetch_plan": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/aces_2275518_exact_six_file_fetch_plan_2026-11-05.json",
+      "sha256": "25112e056985f8ca2e4488b9683ca3d7a45edcd9c6bda6689e9dcd725968bda2"
+    },
+    "final_training_credit": 0,
+    "fresh_raw_fetch_performed": true,
+    "full_portable_backend_image_coverage": false,
+    "idea_credit": 0,
+    "independent_actual_review": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-23-43_aces-site-2275518_raw-files-6_driver-580.178.04_gpu-count-0_file-time-limit-seconds-300/independent_old_execution_review.json",
+      "sha256": "4ac3484db97f069a1d9fc455072679f60bfaaa9ded7820d17c7334aefa561e0a"
+    },
+    "jax_backend_package_begin_completion_not_recorded": true,
+    "job_id": "2275518",
+    "learner_tests": {
+      "passed": 48,
+      "seconds_from_actual_log": 214.05
+    },
+    "probe_complete_updates": 1,
+    "renderer": {
+      "cases": 132,
+      "checks": {
+        "cache": "passed",
+        "fused": "passed",
+        "palette": "passed"
+      },
+      "device": "cuda:0",
+      "rooms": 33,
+      "synthetic_pixel_cases": 11
+    },
+    "scientific_credit": 0,
+    "state": "old_declared_execution_independently_accepted_current_qualification_false",
+    "worker_admission": false
+  },
   "aces_real_git_staging_receipt": "remote_setup/aces_git_history_integration-535efed3d25c/remote_git_receipt.json",
   "active_a4500_worker_job_ids": [
     "6777679",
@@ -514,6 +555,7 @@
   ],
   "monitoring_cadence": "Session wakeups hourly; persistent cluster checks every twenty minutes.",
   "monitoring_verified_utc": "2026-11-05T03:58:45.941229+00:00",
+  "native_diagnostic_total_seconds": 300,
   "new_zero_credit_qualification_job_id": "6782778",
   "nsight_process_diagnostic_job_id": "6820179",
   "nsight_process_diagnostic_release_receipt_sha256": "8f75e0d1421ccd203252d6f417c20d3d2257e1d6ec729aa36bb86e44606507fa",
@@ -728,6 +770,6 @@
     "6777647"
   ],
   "superseded_monitor_job_id": "6781087",
-  "updated_utc": "2026-11-05T04:18:01.544699+00:00",
+  "updated_utc": "2026-11-05T08:37:50.446235+00:00",
   "uva_active_configuration_observation_job_id": "6781190"
 }
