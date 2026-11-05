@@ -1,0 +1,25 @@
+{
+  "base_commit": "46ea2171dbaab539bf941f59c1ff68e9b9672b83",
+  "changed_runtime_functions": [
+    "configured_profile_reader"
+  ],
+  "files": {
+    ".review_metadata/profile_h100_shared_prerequisite/run_author_cpu_check.py": {
+      "mode": 432,
+      "sha256": "8efc3eb188ccc5ed2137e9db58d19e288d9a11059f82044c580b28939cd7a363",
+      "size_bytes": 4787
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py": {
+      "mode": 432,
+      "sha256": "f80d82376f15eaee4f862e8eddf20dee470eff3976fab687a823e481f08e74dd",
+      "size_bytes": 115838
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_h100_shared_prerequisite.py": {
+      "mode": 432,
+      "sha256": "89d429c601c1d42aa56a0c6e14e19bc961a7ade6f69c07f21b489fb4ac5ee8b9",
+      "size_bytes": 5331
+    }
+  },
+  "kind": "h100_shared_prerequisite_selector_source_freeze",
+  "no_actual_target_actions": true
+}

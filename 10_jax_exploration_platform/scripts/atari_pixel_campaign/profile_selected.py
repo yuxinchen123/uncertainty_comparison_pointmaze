@@ -289,6 +289,18 @@ def configured_profile_reader(plan=None, *, selected=False):
         selected = "configured_profile_prerequisite_protocol" in plan
         if not selected:
             if relative in plan.get("helpers", {}).get("files", {}):
+                # H100 stages this helper for shared read-only proof checks, without selecting the A4500 route.
+                if (plan.get("hardware_class") == "h100" and "direct_binding" in plan
+                        and "direct_profile_protocol" in plan and "profile_target_process_control" in plan
+                        and not any(key in plan for key in ("configured_isolation",
+                            "configured_native_process_control", "native_process_control"))):
+                    qualifier = target_qualification_reader(plan)
+                    if (qualifier is None or path.resolve(strict=True) != path or path.is_symlink()
+                            or not path.is_file() or training.file_sha256(path) != plan["helpers"]["files"][relative]):
+                        raise ValueError("the shared H100 prerequisite helper lacks its exact staged target declaration")
+                    direct_profile_reader(plan)
+                    qualifier.authorize(plan)
+                    return None
                 raise ValueError("the prerequisite helper needs its explicit profile protocol")
             return None
         if ("configured_isolation" not in plan or "direct_binding" in plan

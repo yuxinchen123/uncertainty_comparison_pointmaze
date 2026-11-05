@@ -1,0 +1,24 @@
+{
+  "actual_preparation_executed": false,
+  "actual_step_id": "137",
+  "elapsed_seconds": 0.15179719601292163,
+  "gpu_operations": 0,
+  "integration_scope": "Actual frozen H100 plan and complete staged verify_prepared gate; only the new selector is replaced in the isolated module namespace. No recorded plan, staged file, source/hash gate or upstream reference is changed.",
+  "kind": "author_h100_shared_dependency_actual_plan_metadata_check",
+  "methods": 0,
+  "new_source_qualification_claimed": false,
+  "numerical_operations": 0,
+  "owned_job_id": "6825983",
+  "passed": false,
+  "read_only_git_commands": [],
+  "scientific_credit": 0,
+  "source_hashes_after": {
+    "/p/rlprojects/RND_worktrees/2026-11-05-14-33_h100-shared-prerequisite-reader_explicit-direct-role_aa-protocol-refused_gpu-actions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py": "f80d82376f15eaee4f862e8eddf20dee470eff3976fab687a823e481f08e74dd",
+    "/p/rlprojects/RND_worktrees/2026-11-05-14-33_h100-shared-prerequisite-reader_explicit-direct-role_aa-protocol-refused_gpu-actions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_h100_shared_prerequisite.py": "89d429c601c1d42aa56a0c6e14e19bc961a7ade6f69c07f21b489fb4ac5ee8b9"
+  },
+  "source_hashes_before": {
+    "/p/rlprojects/RND_worktrees/2026-11-05-14-33_h100-shared-prerequisite-reader_explicit-direct-role_aa-protocol-refused_gpu-actions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py": "f80d82376f15eaee4f862e8eddf20dee470eff3976fab687a823e481f08e74dd",
+    "/p/rlprojects/RND_worktrees/2026-11-05-14-33_h100-shared-prerequisite-reader_explicit-direct-role_aa-protocol-refused_gpu-actions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_h100_shared_prerequisite.py": "89d429c601c1d42aa56a0c6e14e19bc961a7ade6f69c07f21b489fb4ac5ee8b9"
+  },
+  "target_launches": 0
+}

@@ -1,0 +1,15 @@
+test_h100_shared_dependency_does_not_select_aa_reader (h100_shared_prerequisite_tests.SharedPrerequisiteTests.test_h100_shared_dependency_does_not_select_aa_reader)
+Actual H100 source/target and direct protocol checks precede returning no A4500 reader. ... ok
+test_missing_direct_target_or_protocol_and_mixed_roles_refuse (h100_shared_prerequisite_tests.SharedPrerequisiteTests.test_missing_direct_target_or_protocol_and_mixed_roles_refuse)
+A staged helper cannot activate missing, mixed or fabricated role declarations. ... ok
+test_original_failure_then_real_verify_prepared_gate_passes (h100_shared_prerequisite_tests.SharedPrerequisiteTests.test_original_failure_then_real_verify_prepared_gate_passes)
+The actual complete nonwriting gate passes after exactly one source-function override. ... ok
+test_shared_source_hash_and_ordinary_admission_remain_exact (h100_shared_prerequisite_tests.SharedPrerequisiteTests.test_shared_source_hash_and_ordinary_admission_remain_exact)
+Changed shared bytes and an ordinary profile without actual admission cannot pass. ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 14.590s
+
+OK
+
+{"passed": true, "methods": 4, "elapsed_seconds": 14.603550695930608}
