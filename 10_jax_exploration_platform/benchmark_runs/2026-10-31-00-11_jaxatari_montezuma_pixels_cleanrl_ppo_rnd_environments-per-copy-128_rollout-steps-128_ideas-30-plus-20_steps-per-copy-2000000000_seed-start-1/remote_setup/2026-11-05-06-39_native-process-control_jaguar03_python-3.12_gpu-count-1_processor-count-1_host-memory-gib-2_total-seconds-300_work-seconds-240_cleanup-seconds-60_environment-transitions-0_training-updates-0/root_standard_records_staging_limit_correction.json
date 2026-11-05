@@ -1,0 +1,11 @@
+{
+  "first_bookkeeping_staging_attempt": {
+    "returned": 1,
+    "error": "AssertionError",
+    "condition": "all selected files smaller than 250000 bytes",
+    "actual_next_actions_bytes": 476036
+  },
+  "correction": "Keep the 2500000-byte metadata limit used by prior bookkeeping stages; do not rerun canonical preparation or rewrite the prepared unit.",
+  "scheduler_actions": 0,
+  "numerical_actions": 0
+}

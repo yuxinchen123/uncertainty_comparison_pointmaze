@@ -1,0 +1,77 @@
+{
+  "campaign_run_dir": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1",
+  "configured_native_process_control": {
+    "configured_isolation_trust": true,
+    "hardware_class": "jaguar03_rtx_a4500",
+    "helper_hashes": {
+      "configured_native_process.py": "3b7bacf07c7a8d4eeafe74f0e5b4c8a02365ccaa32326ab430d3316d3891c54a",
+      "direct_profile_process.py": "6177930cf35114405fc6dfca0c7738c26d897eb4aa3fc0eb5adeb39c75b55f77",
+      "direct_tool_descendants.py": "8fc3e6d870611a2a9e57825b5374a73050a6c98fc3d918f336619e1cfff48889",
+      "linux_pidfd_process_control.py": "37754acfdf8f139eecc2e9bbac91ee56cc12069a77f237968fe713f8b5b81172",
+      "native_process_evidence.py": "8e67bf42ad3f348d009ca793a16fcdfd5771f08e4ff70dfd88f348496bd6a35a",
+      "nsight_process_identity.py": "1833e05b42d680194e4a8da9cd2b487d3af7529285d1a9d550edc7d3b63f6279"
+    },
+    "kernel_device_enforcement_verified": false,
+    "physical_gres_mapping_verified": false,
+    "protocol": "configured-allocation-native-process-control-version-1",
+    "schema_version": 1,
+    "standing_gpu_descriptor_held": false
+  },
+  "diagnostic_boundary": {
+    "admission_granted": false,
+    "case_credit": 0,
+    "environment_transitions": 0,
+    "idea_credit": 0,
+    "kernel_device_enforcement_verified": false,
+    "physical_gres_mapping_verified": false,
+    "profile_credit": 0,
+    "scientific_credit": 0,
+    "standing_gpu_descriptor_held": false,
+    "training_updates": 0,
+    "whole_tool_library_or_device_activity_quantified": false,
+    "worker_admitted": false
+  },
+  "diagnostic_time_budget": {
+    "cleanup_seconds": 60,
+    "schema_version": 1,
+    "total_seconds": 300,
+    "work_seconds": 240
+  },
+  "gpu_uuid": null,
+  "hardware_class": "jaguar03_rtx_a4500",
+  "helpers": {
+    "files": {
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_native_process.py": "3b7bacf07c7a8d4eeafe74f0e5b4c8a02365ccaa32326ab430d3316d3891c54a",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_configured_native_process.py": "90f4244bb08fb37998197d9000c1063d0b024455b274092a2e8793d9fbe8acc2",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_process.py": "6177930cf35114405fc6dfca0c7738c26d897eb4aa3fc0eb5adeb39c75b55f77",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_tool_descendants.py": "8fc3e6d870611a2a9e57825b5374a73050a6c98fc3d918f336619e1cfff48889",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/linux_pidfd_process_control.py": "37754acfdf8f139eecc2e9bbac91ee56cc12069a77f237968fe713f8b5b81172",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/native_process_evidence.py": "8e67bf42ad3f348d009ca793a16fcdfd5771f08e4ff70dfd88f348496bd6a35a",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py": "1833e05b42d680194e4a8da9cd2b487d3af7529285d1a9d550edc7d3b63f6279"
+    },
+    "source_commit": "c228cfc402b357ad9cf14ef1a7e0134eebdcf35b"
+  },
+  "kind": "configured_native_nsight_process_diagnostic",
+  "maximum_active_seconds": 240,
+  "native_process_control": {
+    "backend": "linux-x86-64-libc-syscall-pidfd-version-1",
+    "expected_target_contract": null,
+    "helper_hashes": {
+      "linux_pidfd_process_control.py": "37754acfdf8f139eecc2e9bbac91ee56cc12069a77f237968fe713f8b5b81172",
+      "native_process_evidence.py": "8e67bf42ad3f348d009ca793a16fcdfd5771f08e4ff70dfd88f348496bd6a35a"
+    },
+    "mode": "observe_configured_target_for_zero_credit_diagnostic",
+    "python": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+    "qualification": false,
+    "schema_version": 1
+  },
+  "packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-06-39_native-process-control_jaguar03_python-3.12_gpu-count-1_processor-count-1_host-memory-gib-2_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0",
+  "profile_tool": {
+    "path": "/sw/ubuntu2204/ebu082025/software/common/core/nsight-systems/2024.7.1/target-linux-x64/nsys",
+    "sha256": "48e4c308f538c8971b8f62c389834372d986f00f200743f1eae90918f2f04e1d",
+    "version": "NVIDIA Nsight Systems version 2024.7.1.84-247135125610v0"
+  },
+  "python": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+  "schema_version": 1,
+  "unit_id": "2026-11-05-06-39_native-process-control_jaguar03_python-3.12_gpu-count-1_processor-count-1_host-memory-gib-2_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0"
+}

@@ -4151,7 +4151,7 @@
     ]
   },
   "a4500_native_profile_process_implementation": {
-    "state": "reviewed_source_published_actual_metadata_preparation_pending",
+    "state": "actual_unit_prepared_submission_utility_correction_pending",
     "authors": [
       "correct_native_process_control",
       "implement_direct_h100_profiles/review_direct_profile_source"
@@ -4186,14 +4186,21 @@
       "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-06-39_native-process-control_jaguar03_python-3.12_gpu-count-1_processor-count-1_host-memory-gib-2_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/preparation_command.json",
       "sha256": "7363efaa69c37571c86bc036ab2e0e63eb4a2521184a1e410e37b9bf133cdcb0"
     },
-    "actual_data_prepared": false,
+    "actual_data_prepared": true,
     "actual_job_submitted": false,
     "formal_profile_admission": false,
     "scientific_credit": 0,
     "fresh_utc_reservation": {
       "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/native_process_qualification_reservation_utc_2026-11-05-14-45-12.json",
       "sha256": "d5d6dd7c1c9d19ce4a1832034c01c387ad0e33f2cd2c5e7e5db3af1095ec110d"
-    }
+    },
+    "data_unit": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-06-39_native-process-control_jaguar03_python-3.12_gpu-count-1_processor-count-1_host-memory-gib-2_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0",
+    "actual_prepare_return": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-06-39_native-process-control_jaguar03_python-3.12_gpu-count-1_processor-count-1_host-memory-gib-2_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/root_actual_prepare_return.json",
+      "sha256": "795049a158795611e58d3e0c30ead26efe77acc02acdc3b0e3a3073eb5d72011"
+    },
+    "prepared_binding_created": false,
+    "canonical_initial_input_count": 21
   },
   "optimized_eight_a4500_runtime_implementation_history": [
     {

@@ -1,0 +1,32 @@
+{
+  "argv": [
+    "srun",
+    "--jobid=6821437",
+    "--overlap",
+    "--exact",
+    "--time=00:05:00",
+    "-n1",
+    "-c1",
+    "--mem=512M",
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "/p/rlprojects/RND_worktrees/2026-11-05-06-48_a4500-native-process-helper_source-c228cfc402b3_total-seconds-300_work-seconds-240_cleanup-seconds-60_gpu-count-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_configured_native_process.py",
+    "--prepare-only",
+    "--source-root",
+    "/p/rlprojects/RND_worktrees/2026-11-05-06-48_a4500-native-process-helper_source-c228cfc402b3_total-seconds-300_work-seconds-240_cleanup-seconds-60_gpu-count-0",
+    "--run-dir",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1",
+    "--unit-id",
+    "2026-11-05-06-39_native-process-control_jaguar03_python-3.12_gpu-count-1_processor-count-1_host-memory-gib-2_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0",
+    "--profile-tool-record",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/serval02_nsight_tool_record_verified_bytes_2026-11-05.json",
+    "--python",
+    "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python"
+  ],
+  "returncode": 0,
+  "elapsed_seconds": 2.030131013947539,
+  "finished_at_utc": "2026-11-05T14:51:51.016067+00:00",
+  "actual_data_unit": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-06-39_native-process-control_jaguar03_python-3.12_gpu-count-1_processor-count-1_host-memory-gib-2_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0"
+}
