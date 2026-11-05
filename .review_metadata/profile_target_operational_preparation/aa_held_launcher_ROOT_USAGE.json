@@ -1,0 +1,59 @@
+{
+  "actual_actions_performed": false,
+  "deployment": {
+    "destination": "actual R/remote_setup/<child.unit_id>, preserving its four existing standard records",
+    "parent_standard_records": "remain in actual R/data/<parent.unit_id>; never copied over packet standards",
+    "runtime_source": "exact reviewed actual helper plan, no changing d146 runtime paths",
+    "source_files": [
+      "submit_profile_qualification_held_once.py",
+      "test_submit_profile_qualification_held_once.py"
+    ]
+  },
+  "kind": "profile_target_qualification_aa_launcher_root_usage",
+  "metadata_only_calls_after_bound_review": [
+    [
+      "/usr/bin/python3",
+      "-I",
+      "-S",
+      "-B",
+      "<actual packet>/submit_profile_qualification_held_once.py",
+      "--prepare-request",
+      "--parent-unit",
+      "<actual parent unit>",
+      "--scheduling",
+      "reservation"
+    ],
+    [
+      "/usr/bin/python3",
+      "-I",
+      "-S",
+      "-B",
+      "<actual packet>/submit_profile_qualification_held_once.py",
+      "--prepare-binding-once"
+    ]
+  ],
+  "publication": {
+    "no_future_commit_guess": true,
+    "no_network_in_utility": true,
+    "required_tracking_ref": "refs/remotes/origin/merge-atari-cleanrl",
+    "root_push_and_verify_before_action": true,
+    "source_freeze": "launcher_source_freeze.json files absolute-path to SHA map containing all immutable_artifacts inputs and mandatory source/test/prepared/static records"
+  },
+  "qualification_scope": "No scientific/profile/case/idea/packing/final/worker credit. Actual full target success plus independent raw review and a separate admission remain required. Whole-job fixture transitions are unknown, never assigned zero.",
+  "required_actual_review_files": {
+    "launcher_independent_review.json": "independent_profile_target_qualification_prepared_launcher_review, source_freeze/prepared_binding exact refs and approved/passed/independent_of_producer true",
+    "packet_static_verification.json": "passed true and prepared_binding exact ref",
+    "parent/controller_launch_independent_review.json": "independent_profile_target_qualification_controller_launch_review, actual parent/child plan refs, approved/passed/independent_of_producer true",
+    "release_independent_review.json": "independent_profile_target_qualification_release_review, fixed release binding exact ref and approved/passed/independent_of_producer true"
+  },
+  "root_only": true,
+  "root_only_action_order": [
+    "publish actual source+prepared records+genuine independent reviews",
+    "default --publication-commit <actual published commit> (no scheduler calls)",
+    "--submit-held-once --publication-commit <actual published commit> (three ledgers fsync before actual receipt; never repeat)",
+    "--prepare-release --publication-commit <actual published commit> (query exact ledger-owned held ID)",
+    "independently review and publish actual fixed-ID release binding and snapshot refs",
+    "--release-once --publication-commit <actual new published commit> (fresh exact owned held query/named reservation check; successful release receipt fsync before atomic child envelope; never repeat)"
+  ],
+  "source_freeze": "aa_held_launcher_source_freeze_1.json"
+}
