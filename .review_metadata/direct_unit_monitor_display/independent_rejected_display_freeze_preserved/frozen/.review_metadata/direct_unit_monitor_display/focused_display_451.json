@@ -1,0 +1,95 @@
+{
+  "base_commit": "6b7d492217140bba3d2f36b93754ecde2d020ccc",
+  "broad1540_checks_repeated": false,
+  "current_six_accepted_entries_retained": true,
+  "elapsed_seconds": 0.9646220810245723,
+  "errors": 1,
+  "failures": 0,
+  "focused_tests": 7,
+  "full_runtime_verification_claimed": false,
+  "gpu_operations": 0,
+  "job_id": "6783003",
+  "kind": "focused_direct_display_and_existing_reporting_metadata_checks",
+  "network_operations": 0,
+  "new_monitor_job_submitted": false,
+  "numerical_imports": [],
+  "old_monitor_stopped": false,
+  "passed": false,
+  "post_initial_reporting_requirements": [
+    {
+      "admission_authority": false,
+      "description": "reviewed common correctness on both GPU types",
+      "errors": [],
+      "kind": "reporting_prerequisite",
+      "missing": [],
+      "name": "common_correctness",
+      "scientific_credit": 0,
+      "state": "reviewed_evidence_present"
+    },
+    {
+      "admission_authority": false,
+      "description": "seven paired rounds of ten complete updates on both GPU types",
+      "errors": [],
+      "kind": "reporting_prerequisite",
+      "missing": [
+        {
+          "copies": 1,
+          "hardware_class": "h100"
+        },
+        {
+          "copies": 2,
+          "hardware_class": "h100"
+        }
+      ],
+      "name": "common_confirmation",
+      "scientific_credit": 0,
+      "state": "awaiting_reviewed_evidence"
+    },
+    {
+      "admission_authority": false,
+      "description": "current kernel profiles on both GPU types",
+      "errors": [],
+      "kind": "reporting_prerequisite",
+      "missing": [
+        {
+          "copies": null,
+          "hardware_class": "h100"
+        },
+        {
+          "copies": null,
+          "hardware_class": "jaguar03_rtx_a4500"
+        }
+      ],
+      "name": "kernel_profiles",
+      "scientific_credit": 0,
+      "state": "awaiting_reviewed_evidence"
+    },
+    {
+      "admission_authority": false,
+      "description": "independently repeated packing boundary with fifteen percent free memory",
+      "errors": [],
+      "kind": "reporting_prerequisite",
+      "missing": [
+        {
+          "copies": null,
+          "hardware_class": "h100"
+        },
+        {
+          "copies": null,
+          "hardware_class": "jaguar03_rtx_a4500"
+        }
+      ],
+      "name": "packing",
+      "scientific_credit": 0,
+      "state": "awaiting_reviewed_evidence"
+    }
+  ],
+  "preaudit_operations": "Standard-library imports and exact own CPU-step/process checks only.",
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "source_files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/monitor.py": "b3d20bc30b34d645288c683c1409729b2fc0a9846cbfe033cd6f4f338928bbe6",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_monitor_direct_unit_display.py": "3cfa593c00fbfe6091e5c6f7fa2da07ada8c19242c9a80fa9f19db4a5bc2be70"
+  },
+  "step_id": "451"
+}

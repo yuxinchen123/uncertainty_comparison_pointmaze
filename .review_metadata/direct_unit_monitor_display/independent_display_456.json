@@ -1,0 +1,113 @@
+{
+  "NUM_GPU_native_library_network_tool_operations": 0,
+  "admission_authority": false,
+  "all17frozenbytes_modes_unchanged": true,
+  "all_other_existing_monitor_function_ASTs_unchanged": true,
+  "approved": false,
+  "broad1540suite_repeated": false,
+  "checks": 12,
+  "elapsed_seconds": 0.7997526100371033,
+  "errors": 1,
+  "failures": 3,
+  "genuine_six_metadata_reporting_joins": [
+    {
+      "admission_authority": false,
+      "description": "reviewed common correctness on both GPU types",
+      "errors": [],
+      "kind": "reporting_prerequisite",
+      "missing": [],
+      "name": "common_correctness",
+      "scientific_credit": 0,
+      "state": "reviewed_evidence_present"
+    },
+    {
+      "admission_authority": false,
+      "description": "seven paired rounds of ten complete updates on both GPU types",
+      "errors": [],
+      "kind": "reporting_prerequisite",
+      "missing": [
+        {
+          "copies": 1,
+          "hardware_class": "h100"
+        },
+        {
+          "copies": 2,
+          "hardware_class": "h100"
+        }
+      ],
+      "name": "common_confirmation",
+      "scientific_credit": 0,
+      "state": "awaiting_reviewed_evidence"
+    },
+    {
+      "admission_authority": false,
+      "description": "current kernel profiles on both GPU types",
+      "errors": [],
+      "kind": "reporting_prerequisite",
+      "missing": [
+        {
+          "copies": null,
+          "hardware_class": "h100"
+        },
+        {
+          "copies": null,
+          "hardware_class": "jaguar03_rtx_a4500"
+        }
+      ],
+      "name": "kernel_profiles",
+      "scientific_credit": 0,
+      "state": "awaiting_reviewed_evidence"
+    },
+    {
+      "admission_authority": false,
+      "description": "independently repeated packing boundary with fifteen percent free memory",
+      "errors": [],
+      "kind": "reporting_prerequisite",
+      "missing": [
+        {
+          "copies": null,
+          "hardware_class": "h100"
+        },
+        {
+          "copies": null,
+          "hardware_class": "jaguar03_rtx_a4500"
+        }
+      ],
+      "name": "packing",
+      "scientific_credit": 0,
+      "state": "awaiting_reviewed_evidence"
+    }
+  ],
+  "job_id": "6783003",
+  "kind": "independent_monitor_direct_unit_display_review",
+  "monitor_deployed_or_stopped": false,
+  "observations": [
+    {
+      "case": "current_campaign_registration_mismatch",
+      "mode": "missing",
+      "progress": "reference 1/7 rounds",
+      "state": "running"
+    },
+    {
+      "case": "current_campaign_registration_mismatch",
+      "mode": "other_birth",
+      "progress": "reference 1/7 rounds",
+      "state": "running"
+    },
+    {
+      "case": "current_campaign_registration_mismatch",
+      "mode": "other_source",
+      "progress": "reference 1/7 rounds",
+      "state": "running"
+    }
+  ],
+  "passed": false,
+  "reviewer": "/root/implement_direct_h100_profiles/review_direct_profile_source",
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-02-03_monitor-direct-unit-display_prepared-bound-unlaunched_running-owned-registration-and-progress_gpu-count-0/.review_metadata/direct_unit_monitor_display/frozen_source_for_independent_review.json",
+    "sha256": "852de048d6e76161d0832f39ab21805dd5091a3ef26d57c2667846048d5e71b2"
+  },
+  "step_id": "456"
+}
