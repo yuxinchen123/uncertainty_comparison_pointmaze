@@ -92,7 +92,9 @@ def derive(args):
     require(actual_profile == common['configured_isolation' if configured else 'direct_binding']['profile'],
         'the immutable explicit profile input differs from accepted common performance')
     baseline = {'source_commit': SOURCE, 'hardware_class': args.hardware_class,
-        'runtime_environment': common['runtime_environment'], 'confirmation_record': accepted['result']['path'],
+        'runtime_environment': common['runtime_environment'],
+        'correctness_record': common['common_correctness_inputs']['result']['path'],
+        'confirmation_record': accepted['result']['path'],
         'configured_isolation_profile' if configured else 'direct_binding_profile': actual_profile}
     argv = ['--prepare-only', '--source-root', common['source_root'], '--source-commit', SOURCE,
         '--run-dir', str(run), '--unit-id', args.profile_unit_id, '--configuration', str(packet / 'configuration.json'),

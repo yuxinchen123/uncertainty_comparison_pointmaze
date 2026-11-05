@@ -1,0 +1,31 @@
+{
+  "command": [
+    "srun",
+    "--jobid=6825983",
+    "--overlap",
+    "--exact",
+    "--time=00:05:00",
+    "-n1",
+    "-c1",
+    "--mem=512M",
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "/p/rlprojects/RND_worktrees/2026-11-05-12-47_two-copy-profile-qualification_requests-seeds-1-2_original-reference-copies-1_metadata-only_gpu-actions-0/.review_metadata/two_copy_profile_qualification_request/test_two_copy_qualification_request.py"
+  ],
+  "returncode": 0,
+  "seconds": 4.122776133008301,
+  "before": {
+    "/p/rlprojects/RND_worktrees/2026-11-05-12-47_two-copy-profile-qualification_requests-seeds-1-2_original-reference-copies-1_metadata-only_gpu-actions-0/.review_metadata/profile_target_operational_preparation/derive_two_copy_qualification_request.py": "68a9c3fb8ac606dfb5d35d049a7e41133d882196633da81d8701b4ef8b772229",
+    "/p/rlprojects/RND_worktrees/2026-11-05-12-47_two-copy-profile-qualification_requests-seeds-1-2_original-reference-copies-1_metadata-only_gpu-actions-0/.review_metadata/two_copy_profile_qualification_request/test_two_copy_qualification_request.py": "024436028894faa3a13a611f5e8f8a0796fc3c56d4231f29b565595c0a69f815"
+  },
+  "after": {
+    "/p/rlprojects/RND_worktrees/2026-11-05-12-47_two-copy-profile-qualification_requests-seeds-1-2_original-reference-copies-1_metadata-only_gpu-actions-0/.review_metadata/profile_target_operational_preparation/derive_two_copy_qualification_request.py": "68a9c3fb8ac606dfb5d35d049a7e41133d882196633da81d8701b4ef8b772229",
+    "/p/rlprojects/RND_worktrees/2026-11-05-12-47_two-copy-profile-qualification_requests-seeds-1-2_original-reference-copies-1_metadata-only_gpu-actions-0/.review_metadata/two_copy_profile_qualification_request/test_two_copy_qualification_request.py": "024436028894faa3a13a611f5e8f8a0796fc3c56d4231f29b565595c0a69f815"
+  },
+  "real_qualification_requests_created": false,
+  "actual_GPU_actions": 0,
+  "actual_runtime_helpers_changed": false,
+  "test_scope": "Real small original plans/component/backend metadata and current helper layouts, with declared synthetic four-context/snapshot premises and private temporary packets only."
+}

@@ -1,0 +1,27 @@
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-05-13-01_profile-qualification-baseline_correctness-and-confirmation_copies-1-2_metadata-staging-only_gpu-actions-0/.review_metadata/profile_qualification_complete_baseline/check_canonical_metadata_staging.py", line 165, in <module>
+    records.append(run_case(copies,hardware))
+  File "/p/rlprojects/RND_worktrees/2026-11-05-13-01_profile-qualification-baseline_correctness-and-confirmation_copies-1-2_metadata-staging-only_gpu-actions-0/.review_metadata/profile_qualification_complete_baseline/check_canonical_metadata_staging.py", line 134, in run_case
+    derived=deriver.derive(args)
+  File "/p/rlprojects/RND_worktrees/2026-11-05-13-01_profile-qualification-baseline_correctness-and-confirmation_copies-1-2_metadata-staging-only_gpu-actions-0/.review_metadata/profile_target_operational_preparation/derive_one_copy_qualification_request.py", line 67, in derive
+    validated = q.require_four_contexts(proposed, proof_ref, review_ref)
+  File "/p/rlprojects/RND_worktrees/2026-11-05-11-56_profile-qualification-helper_source-d1469fd063a4_h100-helpers-44_a4500-helpers-35_gpu-count-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_qualification.py", line 355, in require_four_contexts
+    contexts = [reader.reviewed_context(files, row, plan) for row in entries]
+  File "/p/rlprojects/RND_worktrees/2026-11-05-11-56_profile-qualification-helper_source-d1469fd063a4_h100-helpers-44_a4500-helpers-35_gpu-count-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_qualification.py", line 355, in <listcomp>
+    contexts = [reader.reviewed_context(files, row, plan) for row in entries]
+  File "/p/rlprojects/RND_worktrees/2026-11-05-11-56_profile-qualification-helper_source-d1469fd063a4_h100-helpers-44_a4500-helpers-35_gpu-count-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_profile_prerequisites.py", line 229, in reviewed_context
+    receipt = source_closure(files, plan, unit)
+  File "/p/rlprojects/RND_worktrees/2026-11-05-11-56_profile-qualification-helper_source-d1469fd063a4_h100-helpers-44_a4500-helpers-35_gpu-count-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_profile_prerequisites.py", line 154, in source_closure
+    completed = subprocess.run(["git", "-C", receipt["source_root"], "cat-file", "--batch"],
+  File "/usr/lib/python3.10/subprocess.py", line 503, in run
+    with Popen(*popenargs, **kwargs) as process:
+  File "/usr/lib/python3.10/subprocess.py", line 955, in __init__
+    self.stdin = io.open(p2cwrite, 'wb', bufsize)
+  File "/p/rlprojects/RND_worktrees/2026-11-05-13-01_profile-qualification-baseline_correctness-and-confirmation_copies-1-2_metadata-staging-only_gpu-actions-0/.review_metadata/profile_qualification_complete_baseline/check_canonical_metadata_staging.py", line 87, in call
+    if any(letter in mode for letter in 'wax+'):write_allowed(actual)
+  File "/p/rlprojects/RND_worktrees/2026-11-05-13-01_profile-qualification-baseline_correctness-and-confirmation_copies-1-2_metadata-staging-only_gpu-actions-0/.review_metadata/profile_qualification_complete_baseline/check_canonical_metadata_staging.py", line 63, in write_allowed
+    require(isinstance(path,str) and (path==str(private) or path.startswith(str(private)+os.sep)),
+  File "/p/rlprojects/RND_worktrees/2026-11-05-13-01_profile-qualification-baseline_correctness-and-confirmation_copies-1-2_metadata-staging-only_gpu-actions-0/.review_metadata/profile_qualification_complete_baseline/check_canonical_metadata_staging.py", line 33, in require
+srun: error: slurm5: task 0: Exited with exit code 1
+    if not value:raise ValueError(message)
+ValueError: the staging fixture refuses a write outside its private output directory

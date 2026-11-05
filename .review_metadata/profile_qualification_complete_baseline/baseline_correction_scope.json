@@ -1,0 +1,17 @@
+{
+  "before": "The emitted baseline named only the accepted common timing record. The unchanged direct metadata reader also requires its genuine correctness record.",
+  "after": "Both builders derive correctness_record from the exact selected accepted common plan common_correctness_inputs.result.path, while keeping its independent common timing confirmation_record.",
+  "source_hashes": {
+    "derive_one_copy_qualification_request.py": {
+      "before": "ce372d66693483270ea32c07d49c46291d5d27f684a9bc7a30daa10e2867e9c2",
+      "after": "278c244e75441d7bbd56dbf76b9351cea52cad4d90dfbdea02402bf25a8c7779"
+    },
+    "derive_two_copy_qualification_request.py": {
+      "before": "68a9c3fb8ac606dfb5d35d049a7e41133d882196633da81d8701b4ef8b772229",
+      "after": "893840a8e1d875bceaec5fe4ef4a602c48f0567c5dfa6d378e222c9562b14709"
+    }
+  },
+  "runtime_helpers_modified": false,
+  "failed_packets_reused": false,
+  "initial_two_copy_tests_full_canonical_staging_claimed": false
+}

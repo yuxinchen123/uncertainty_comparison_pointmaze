@@ -1,0 +1,18 @@
+{
+  "kind": "abandoned_private_output_mapping_fixture_scope",
+  "all_canonical_staging_author_attempts_1_through_4_failed": true,
+  "no_canonical_staging_success_claimed": true,
+  "root_requested_no_more_pathlib_mapping": true,
+  "active_replacement_test": "check_complete_baseline_contract.py",
+  "active_replacement_scope": "Run actual metadata derivation with genuine inputs/validators until first output mkdir, then raise a sentinel and inspect exact baseline/count/ref contracts. No prerequisite or source validator is mocked.",
+  "retained_failure_sources": [
+    "check_canonical_metadata_staging_before_read_only_Git_pipe_allowance.py",
+    "check_canonical_metadata_staging_before_stdlib_ctypes_bootstrap.py",
+    "check_canonical_metadata_staging_before_cached_pathlib_accessor_correction.py",
+    "check_canonical_metadata_staging.py"
+  ],
+  "empty_test_packet_creation_failure": "fixture_cached_pathlib_accessor_failure.json",
+  "same_empty_owned_test_packet_removed": true,
+  "parent_or_capture_units_created_by_failed_fixtures": false,
+  "actual_GPU_actions": 0
+}

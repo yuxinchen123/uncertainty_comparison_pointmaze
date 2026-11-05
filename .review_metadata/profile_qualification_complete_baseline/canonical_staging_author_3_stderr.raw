@@ -1,0 +1,23 @@
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-05-13-01_profile-qualification-baseline_correctness-and-confirmation_copies-1-2_metadata-staging-only_gpu-actions-0/.review_metadata/profile_qualification_complete_baseline/check_canonical_metadata_staging.py", line 167, in <module>
+    records.append(run_case(copies,hardware))
+  File "/p/rlprojects/RND_worktrees/2026-11-05-13-01_profile-qualification-baseline_correctness-and-confirmation_copies-1-2_metadata-staging-only_gpu-actions-0/.review_metadata/profile_qualification_complete_baseline/check_canonical_metadata_staging.py", line 136, in run_case
+    derived=deriver.derive(args)
+  File "/p/rlprojects/RND_worktrees/2026-11-05-13-01_profile-qualification-baseline_correctness-and-confirmation_copies-1-2_metadata-staging-only_gpu-actions-0/.review_metadata/profile_target_operational_preparation/derive_one_copy_qualification_request.py", line 131, in derive
+    q.publish(packet / name, value)
+  File "/p/rlprojects/RND_worktrees/2026-11-05-11-56_profile-qualification-helper_source-d1469fd063a4_h100-helpers-44_a4500-helpers-35_gpu-count-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_qualification.py", line 108, in publish
+    require(path.parent.resolve(strict=True) == path.parent, "qualification output parent changed")
+  File "/p/rlprojects/RND_worktrees/2026-11-05-13-01_profile-qualification-baseline_correctness-and-confirmation_copies-1-2_metadata-staging-only_gpu-actions-0/.review_metadata/profile_qualification_complete_baseline/check_canonical_metadata_staging.py", line 94, in resolve
+    result=real_resolve(Path(actual),*args,**kwargs)
+  File "/usr/lib/python3.10/pathlib.py", line 1077, in resolve
+    s = self._accessor.realpath(self, strict=strict)
+  File "/usr/lib/python3.10/posixpath.py", line 393, in realpath
+    path, ok = _joinrealpath(filename[:0], filename, strict, {})
+  File "/usr/lib/python3.10/posixpath.py", line 428, in _joinrealpath
+    st = os.lstat(newpath)
+  File "/p/rlprojects/RND_worktrees/2026-11-05-13-01_profile-qualification-baseline_correctness-and-confirmation_copies-1-2_metadata-staging-only_gpu-actions-0/.review_metadata/profile_qualification_complete_baseline/check_canonical_metadata_staging.py", line 74, in lstated
+    def lstated(path,*,dir_fd=None):return stated(path,dir_fd=dir_fd,follow_symlinks=False)
+  File "/p/rlprojects/RND_worktrees/2026-11-05-13-01_profile-qualification-baseline_correctness-and-confirmation_copies-1-2_metadata-staging-only_gpu-actions-0/.review_metadata/profile_qualification_complete_baseline/check_canonical_metadata_staging.py", line 73, in stated
+    return originals['stat'](actual,follow_symlinks=follow_symlinks)
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/profile-metadata-fixture-4vfkgjun/packet'
+srun: error: slurm5: task 0: Exited with exit code 1

@@ -1,0 +1,19 @@
+{
+  "kind": "two_copy_qualification_derivation_scope",
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-12-47_two-copy-profile-qualification_requests-seeds-1-2_original-reference-copies-1_metadata-only_gpu-actions-0/.review_metadata/two_copy_profile_qualification_request/source_freeze.json",
+    "sha256": "45c2c38d06ebf7239c311c1f613e5db22e5fb5789a05b3ae729862be4f1cf1c9"
+  },
+  "before": "Only the separate existing one-copy operational request builder was available.",
+  "after": "A new standalone two-copy builder selects only the accepted common context for copies2 and seeds1,2. It retains an original one-copy equal-configuration reference with seed1 and the exact same runtime, source and backend validation. Existing one-copy operational source stays unchanged.",
+  "actual_required_inputs": {
+    "four_context_fact_sha256": "e75b78e9a9b3fd4a857c2d7c5148de15c8800ef14398c5b56b13f5c78db4d3c7",
+    "four_context_review_sha256": "5e19415c03e8063275422d6651c5496de9e94fc63c3f1d4d12df27e11a71298d",
+    "fresh_backend_record_sha256": "19e752ef9b93999e8bec28a0706947935c31f4229a3b33556597de8f86575412"
+  },
+  "independent_review_required_before_publication": true,
+  "one_copy_qualification_admits_two_copies": false,
+  "ordinary_profile_admission": false,
+  "actual_packets_created": false,
+  "test_scope": "Five CPU metadata methods use real small original/component/backend metadata and runtime helper layouts, with explicit synthetic accepted-four-context/snapshot premises and private temporary output packets."
+}

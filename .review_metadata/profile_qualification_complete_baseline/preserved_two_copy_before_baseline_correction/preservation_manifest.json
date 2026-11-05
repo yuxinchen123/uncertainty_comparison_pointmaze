@@ -1,0 +1,49 @@
+{
+  "kind": "unapproved_two_copy_source_and_prior_fixture_preservation",
+  "source_freeze_sha256": "45c2c38d06ebf7239c311c1f613e5db22e5fb5789a05b3ae729862be4f1cf1c9",
+  "approved": false,
+  "full_canonical_staging_passed": false,
+  "reason": "Actual unchanged metadata reader required correctness_record; initial five private-fixture methods did not cover canonical staging.",
+  "files": {
+    "approved_one_copy_derivation_source.py": {
+      "original_path": "/p/rlprojects/RND_worktrees/2026-11-05-12-47_two-copy-profile-qualification_requests-seeds-1-2_original-reference-copies-1_metadata-only_gpu-actions-0/.review_metadata/two_copy_profile_qualification_request/approved_one_copy_derivation_source.py",
+      "sha256": "ce372d66693483270ea32c07d49c46291d5d27f684a9bc7a30daa10e2867e9c2",
+      "size_bytes": 13625
+    },
+    "author_checks_1.json": {
+      "original_path": "/p/rlprojects/RND_worktrees/2026-11-05-12-47_two-copy-profile-qualification_requests-seeds-1-2_original-reference-copies-1_metadata-only_gpu-actions-0/.review_metadata/two_copy_profile_qualification_request/author_checks_1.json",
+      "sha256": "92ce7f263526102ce64b2b797461d3480f062adf28c87cb6fbdc177faddde5a7",
+      "size_bytes": 2142
+    },
+    "author_checks_1_stderr.raw": {
+      "original_path": "/p/rlprojects/RND_worktrees/2026-11-05-12-47_two-copy-profile-qualification_requests-seeds-1-2_original-reference-copies-1_metadata-only_gpu-actions-0/.review_metadata/two_copy_profile_qualification_request/author_checks_1_stderr.raw",
+      "sha256": "cb7b4f5a8e8d1e0b0085c2cfcb21f817dd94086e470cbd412d89cabdebcc2f20",
+      "size_bytes": 520
+    },
+    "author_checks_1_stdout.raw": {
+      "original_path": "/p/rlprojects/RND_worktrees/2026-11-05-12-47_two-copy-profile-qualification_requests-seeds-1-2_original-reference-copies-1_metadata-only_gpu-actions-0/.review_metadata/two_copy_profile_qualification_request/author_checks_1_stdout.raw",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    "derivation_scope.json": {
+      "original_path": "/p/rlprojects/RND_worktrees/2026-11-05-12-47_two-copy-profile-qualification_requests-seeds-1-2_original-reference-copies-1_metadata-only_gpu-actions-0/.review_metadata/two_copy_profile_qualification_request/derivation_scope.json",
+      "sha256": "c0e09d6efe712ff0dea2301f1f54b02996734dbc0bbc28922b045d12a9a9578c",
+      "size_bytes": 1549
+    },
+    "derive_one_copy_source_preservation.json": {
+      "original_path": "/p/rlprojects/RND_worktrees/2026-11-05-12-47_two-copy-profile-qualification_requests-seeds-1-2_original-reference-copies-1_metadata-only_gpu-actions-0/.review_metadata/two_copy_profile_qualification_request/derive_one_copy_source_preservation.json",
+      "sha256": "c7f146c1f7208731b077a4db21729cdd0f29b56b4d4c0c2929054328b75cac16",
+      "size_bytes": 754
+    },
+    "source_freeze.json": {
+      "original_path": "/p/rlprojects/RND_worktrees/2026-11-05-12-47_two-copy-profile-qualification_requests-seeds-1-2_original-reference-copies-1_metadata-only_gpu-actions-0/.review_metadata/two_copy_profile_qualification_request/source_freeze.json",
+      "sha256": "45c2c38d06ebf7239c311c1f613e5db22e5fb5789a05b3ae729862be4f1cf1c9",
+      "size_bytes": 1629
+    },
+    "test_two_copy_qualification_request.py": {
+      "original_path": "/p/rlprojects/RND_worktrees/2026-11-05-12-47_two-copy-profile-qualification_requests-seeds-1-2_original-reference-copies-1_metadata-only_gpu-actions-0/.review_metadata/two_copy_profile_qualification_request/test_two_copy_qualification_request.py",
+      "sha256": "024436028894faa3a13a611f5e8f8a0796fc3c56d4231f29b565595c0a69f815",
+      "size_bytes": 11047
+    }
+  }
+}

@@ -1,0 +1,188 @@
+{
+  "schema_version": 1,
+  "kind": "complete_profile_baseline_and_two_copy_request_publication_roster",
+  "base_commit": "b45d52cad17f80ad313cd19050aa3a8a8674fa7f",
+  "files": {
+    ".review_metadata/profile_target_operational_preparation/derive_one_copy_qualification_request.py": {
+      "sha256": "278c244e75441d7bbd56dbf76b9351cea52cad4d90dfbdea02402bf25a8c7779",
+      "size_bytes": 13718
+    },
+    ".review_metadata/profile_target_operational_preparation/derive_two_copy_qualification_request.py": {
+      "sha256": "893840a8e1d875bceaec5fe4ef4a602c48f0567c5dfa6d378e222c9562b14709",
+      "size_bytes": 14263
+    },
+    ".review_metadata/profile_qualification_complete_baseline/abandoned_mapping_fixture_scope.json": {
+      "sha256": "cda5b6366fc7d298413589611b9ff02c7c62eeaf4df579d7716ebcbd9c075dd2",
+      "size_bytes": 1078
+    },
+    ".review_metadata/profile_qualification_complete_baseline/baseline_correction_scope.json": {
+      "sha256": "c87c43246e5ec1fefd6a6d575bfa2ee4a502ff4123a8c5bfbb4acc963f39c3bd",
+      "size_bytes": 979
+    },
+    ".review_metadata/profile_qualification_complete_baseline/before_correctness_record_derive_one_copy_qualification_request.py": {
+      "sha256": "ce372d66693483270ea32c07d49c46291d5d27f684a9bc7a30daa10e2867e9c2",
+      "size_bytes": 13625
+    },
+    ".review_metadata/profile_qualification_complete_baseline/before_correctness_record_derive_two_copy_qualification_request.py": {
+      "sha256": "68a9c3fb8ac606dfb5d35d049a7e41133d882196633da81d8701b4ef8b772229",
+      "size_bytes": 14170
+    },
+    ".review_metadata/profile_qualification_complete_baseline/canonical_staging_author_1_return.json": {
+      "sha256": "ee4a13cb20065492d34a4cc992019603bb990ec3b123426b53566112952f1bb9",
+      "size_bytes": 682
+    },
+    ".review_metadata/profile_qualification_complete_baseline/canonical_staging_author_1_stderr.raw": {
+      "sha256": "933d811cb34bdb9987d6ca7d4ebff84239e1af5c91a8252e91d918c61986a820",
+      "size_bytes": 2915
+    },
+    ".review_metadata/profile_qualification_complete_baseline/canonical_staging_author_1_stdout.raw": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    ".review_metadata/profile_qualification_complete_baseline/canonical_staging_author_2_return.json": {
+      "sha256": "1831ca92e3a72aeeba83aee58520383e41542d618576c01908865e535a39fb85",
+      "size_bytes": 780
+    },
+    ".review_metadata/profile_qualification_complete_baseline/canonical_staging_author_2_stderr.raw": {
+      "sha256": "4801a54994f42f542cbab196d32979e22845b424f6b1ec1b790cd0b378086054",
+      "size_bytes": 3797
+    },
+    ".review_metadata/profile_qualification_complete_baseline/canonical_staging_author_2_stdout.raw": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    ".review_metadata/profile_qualification_complete_baseline/canonical_staging_author_3_return.json": {
+      "sha256": "a5e865a7cf30bd51bc484673a37b780d34c48ef7333ad75ac993c99a758104a4",
+      "size_bytes": 780
+    },
+    ".review_metadata/profile_qualification_complete_baseline/canonical_staging_author_3_stderr.raw": {
+      "sha256": "a17743d20c9b09d75341108f28d87c8a7b719045073e34a1ed6fd43dd3b919aa",
+      "size_bytes": 2880
+    },
+    ".review_metadata/profile_qualification_complete_baseline/canonical_staging_author_3_stdout.raw": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    ".review_metadata/profile_qualification_complete_baseline/canonical_staging_author_4_return.json": {
+      "sha256": "cd429a56331f7a30bc51b27806488f079e48fd740371f7386a72b8feac8ebbd2",
+      "size_bytes": 789
+    },
+    ".review_metadata/profile_qualification_complete_baseline/canonical_staging_author_4_stderr.raw": {
+      "sha256": "a5d57591a179ed6ea934a8b22f65e52053b294dc893e2903a598c2d9f517b981",
+      "size_bytes": 2265
+    },
+    ".review_metadata/profile_qualification_complete_baseline/canonical_staging_author_4_stdout.raw": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    ".review_metadata/profile_qualification_complete_baseline/check_canonical_metadata_staging.py": {
+      "sha256": "df4ea2de7d8790233667bb3fd0c326693bf16de7981bb23814bd486d34560eb3",
+      "size_bytes": 11997
+    },
+    ".review_metadata/profile_qualification_complete_baseline/check_canonical_metadata_staging_before_cached_pathlib_accessor_correction.py": {
+      "sha256": "2a239c42ed1a7ee27ba9d64be7f5dbab5af03ee8f0939ef1decf4790a655317f",
+      "size_bytes": 11293
+    },
+    ".review_metadata/profile_qualification_complete_baseline/check_canonical_metadata_staging_before_read_only_Git_pipe_allowance.py": {
+      "sha256": "dc8cd91adc94c46f92b744f80327e6d0041f7ab8f8be14e87b28657562f729a2",
+      "size_bytes": 11165
+    },
+    ".review_metadata/profile_qualification_complete_baseline/check_canonical_metadata_staging_before_stdlib_ctypes_bootstrap.py": {
+      "sha256": "14bc2ab529cb78d91f95c4a5d418c54fa21e4b2e71b48b10c44a8db83db5a16d",
+      "size_bytes": 10949
+    },
+    ".review_metadata/profile_qualification_complete_baseline/check_complete_baseline_contract.py": {
+      "sha256": "91aea90844ce5a5c371caffff574e92045b30fa018faf414d81fa0ba4c365ba6",
+      "size_bytes": 6986
+    },
+    ".review_metadata/profile_qualification_complete_baseline/complete_baseline_author_1_return.json": {
+      "sha256": "ce64ac1bb9ddbea73f86060c349e20ef9e9205ab6dfd376a89003ce720cc0e25",
+      "size_bytes": 719
+    },
+    ".review_metadata/profile_qualification_complete_baseline/complete_baseline_author_1_stderr.raw": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    ".review_metadata/profile_qualification_complete_baseline/complete_baseline_author_1_stdout.raw": {
+      "sha256": "8a807e6920ee71833e756380a96728d63ab654a73f5dbf660493a418c9c0d75d",
+      "size_bytes": 6235
+    },
+    ".review_metadata/profile_qualification_complete_baseline/fixture_cached_pathlib_accessor_failure.json": {
+      "sha256": "39c1be60e6d32cb20b7a12dc07fe656410a809c2ca3d565fc26f6b137869001d",
+      "size_bytes": 728
+    },
+    ".review_metadata/profile_qualification_complete_baseline/independent_baseline_source_review.py": {
+      "sha256": "8f9fef9364e9d9e850e36f6ab2b25a6aa1f052d3fdc72705c8386fcc0e3128ff",
+      "size_bytes": 6864
+    },
+    ".review_metadata/profile_qualification_complete_baseline/independent_source_review.json": {
+      "sha256": "a819a518bc2f1f7c6dd0bffe20c8e9cb0948fee4f75f3adaf4f72120ad1534fc",
+      "size_bytes": 10778
+    },
+    ".review_metadata/profile_qualification_complete_baseline/independent_source_review_corrected_fact_sha.json": {
+      "sha256": "f84531ec30b3f1c0259326868950d70b9122c27072a4660f4784178ffa42d5b2",
+      "size_bytes": 11411
+    },
+    ".review_metadata/profile_qualification_complete_baseline/local_sparse_index_staging_refusal.json": {
+      "sha256": "bf1c6118eacadc8e495e1b98c8be55cb0cbeca8070c82cf513aab57ee58e315d",
+      "size_bytes": 483
+    },
+    ".review_metadata/profile_qualification_complete_baseline/preserved_two_copy_before_baseline_correction/approved_one_copy_derivation_source.py": {
+      "sha256": "ce372d66693483270ea32c07d49c46291d5d27f684a9bc7a30daa10e2867e9c2",
+      "size_bytes": 13625
+    },
+    ".review_metadata/profile_qualification_complete_baseline/preserved_two_copy_before_baseline_correction/author_checks_1.json": {
+      "sha256": "92ce7f263526102ce64b2b797461d3480f062adf28c87cb6fbdc177faddde5a7",
+      "size_bytes": 2142
+    },
+    ".review_metadata/profile_qualification_complete_baseline/preserved_two_copy_before_baseline_correction/author_checks_1_stderr.raw": {
+      "sha256": "cb7b4f5a8e8d1e0b0085c2cfcb21f817dd94086e470cbd412d89cabdebcc2f20",
+      "size_bytes": 520
+    },
+    ".review_metadata/profile_qualification_complete_baseline/preserved_two_copy_before_baseline_correction/author_checks_1_stdout.raw": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    ".review_metadata/profile_qualification_complete_baseline/preserved_two_copy_before_baseline_correction/derivation_scope.json": {
+      "sha256": "c0e09d6efe712ff0dea2301f1f54b02996734dbc0bbc28922b045d12a9a9578c",
+      "size_bytes": 1549
+    },
+    ".review_metadata/profile_qualification_complete_baseline/preserved_two_copy_before_baseline_correction/derive_one_copy_source_preservation.json": {
+      "sha256": "c7f146c1f7208731b077a4db21729cdd0f29b56b4d4c0c2929054328b75cac16",
+      "size_bytes": 754
+    },
+    ".review_metadata/profile_qualification_complete_baseline/preserved_two_copy_before_baseline_correction/preservation_manifest.json": {
+      "sha256": "d5a9a39fe0baa61f0bde8ac951ab93dfa72bfc53d9fe7553ac07ad7a9d971332",
+      "size_bytes": 3726
+    },
+    ".review_metadata/profile_qualification_complete_baseline/preserved_two_copy_before_baseline_correction/source_freeze.json": {
+      "sha256": "45c2c38d06ebf7239c311c1f613e5db22e5fb5789a05b3ae729862be4f1cf1c9",
+      "size_bytes": 1629
+    },
+    ".review_metadata/profile_qualification_complete_baseline/preserved_two_copy_before_baseline_correction/test_two_copy_qualification_request.py": {
+      "sha256": "024436028894faa3a13a611f5e8f8a0796fc3c56d4231f29b565595c0a69f815",
+      "size_bytes": 11047
+    },
+    ".review_metadata/profile_qualification_complete_baseline/source_freeze.json": {
+      "sha256": "594d97dc0a605d6f9f89c9f58c23062e7417d570de935c23715f46de78f20216",
+      "size_bytes": 1918
+    }
+  },
+  "active_files": [
+    ".review_metadata/profile_target_operational_preparation/derive_one_copy_qualification_request.py",
+    ".review_metadata/profile_target_operational_preparation/derive_two_copy_qualification_request.py",
+    ".review_metadata/profile_qualification_complete_baseline/check_complete_baseline_contract.py"
+  ],
+  "archived_failed_mapping_fixtures_approved_for_execution": false,
+  "runtime_helpers_modified": false,
+  "independent_review": {
+    "relative_path": ".review_metadata/profile_qualification_complete_baseline/independent_source_review_corrected_fact_sha.json",
+    "sha256": "f84531ec30b3f1c0259326868950d70b9122c27072a4660f4784178ffa42d5b2"
+  },
+  "source_freeze": {
+    "relative_path": ".review_metadata/profile_qualification_complete_baseline/source_freeze.json",
+    "sha256": "594d97dc0a605d6f9f89c9f58c23062e7417d570de935c23715f46de78f20216"
+  },
+  "canonical_staging_passed": false,
+  "root_fresh_actual_stage_required_after_publication": true
+}

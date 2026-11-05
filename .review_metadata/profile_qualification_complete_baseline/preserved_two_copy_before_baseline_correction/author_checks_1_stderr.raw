@@ -1,0 +1,10 @@
+test_both_real_hardware_layouts_emit_only_two_copy_requests (__main__.TwoCopyRequest) ... ok
+test_count_one_or_boolean_seeds_refuse_before_output (__main__.TwoCopyRequest) ... ok
+test_existing_one_copy_and_runtime_files_are_unchanged (__main__.TwoCopyRequest) ... ok
+test_missing_count_two_never_uses_count_one (__main__.TwoCopyRequest) ... ok
+test_original_reference_must_remain_one_copy (__main__.TwoCopyRequest) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 3.828s
+
+OK
