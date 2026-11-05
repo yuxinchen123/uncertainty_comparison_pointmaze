@@ -1,0 +1,114 @@
+{
+  "GPU_qualification": false,
+  "actual_GPU_device_library_network_scheduler_actions": 0,
+  "actual_installed_package_or_backend_binary_reads": 0,
+  "actual_owned_cpu_checks": [
+    {
+      "job_id": "6783003",
+      "method_executions": 30,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/group_backend_package_independent_corrected_review/independent_corrected_fixtures_6783003_197.json",
+      "raw": {
+        "path": "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/group_backend_package_independent_corrected_review/independent_corrected_fixtures_6783003_197.raw",
+        "sha256": "6c8138d37c8152fe4506ee3b66ef82033a0abd01d082dd64140f22bd444d278d"
+      },
+      "sha256": "ff5d134cffbb408e2a3ea51150d50fe22b842124f8ba9d4209f5125904f224c7",
+      "step_id": "197"
+    },
+    {
+      "job_id": "6783003",
+      "method_executions": 1,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/group_backend_package_independent_corrected_review/independent_final_record_only_fixture_6783003_198.json",
+      "raw": {
+        "path": "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/group_backend_package_independent_corrected_review/independent_final_record_only_fixture_6783003_198.raw",
+        "sha256": "3ae1e0196d4394a484777dbb08090efa3ad80c0373bc1e603260806ac0b95851"
+      },
+      "sha256": "cd5132cea34475949296c3b3f0a51426b1959db6ca3999de016e1c4cadf832d0",
+      "step_id": "198"
+    }
+  ],
+  "additional_independent_test_ids": 8,
+  "admission_granted": false,
+  "approval_scope": "The corrected two-file package-image metadata component and its three reader corrections only. No group runtime, GPU qualification, scaling protocol or scientific admission is established.",
+  "approved": true,
+  "at_utc": "2026-11-02T08:35:15.659689+00:00",
+  "blocking_findings": [],
+  "caller_preconditions_and_limits": [
+    "The caller must separately validate actual owned job/step resources, worker metadata and native current CUDA/JAX physical identity before using this package helper.",
+    "No new coordinator, numerical worker, actual group prepin or complete group runtime is implemented or qualified by these tests.",
+    "All package/image fixtures are small private data files; none was loaded or executed. Controlled work totals are synthetic declarations, not measured numerical work.",
+    "Whole source/runtime/assets/independent-copy and common-wall/fixed-total scientific gates remain required outside this component."
+  ],
+  "corrected_findings_verified": [
+    "Selected Python and site-packages must share the selected environment; a coherently relabelled other environment refuses before installed-image reads.",
+    "Floating, Boolean and negative numerical PIDs refuse, including coherent final/result edits and a final-only floating PID edit.",
+    "Qualification warmup/training transition totals are819200*copies and16384*copies for1,2,8copies; explicit old one-copy totals and type substitutions refuse. Iteration1 and optimizer16 remain per-copy counters."
+  ],
+  "existing_fixture_test_ids": 22,
+  "frozen_source_after": {
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_backend_image.py": "82898100d64f540c42c0a236acb6c20ca2808deb247b83da65927c6cb497a8e4",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/10_jax_exploration_platform/scripts/atari_pixel_campaign/group_backend_package.py": "3a312803d173d767317e99efb53e56a6ba011374d8bde250db814ae1d9ddd76a",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_group_backend_package.py": "972dbbf5a9bd054c470443c49e6f257fb97877e3f261d51f847eb0e8bc9470d1"
+  },
+  "frozen_source_before": {
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_backend_image.py": "82898100d64f540c42c0a236acb6c20ca2808deb247b83da65927c6cb497a8e4",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/10_jax_exploration_platform/scripts/atari_pixel_campaign/group_backend_package.py": "3a312803d173d767317e99efb53e56a6ba011374d8bde250db814ae1d9ddd76a",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_group_backend_package.py": "972dbbf5a9bd054c470443c49e6f257fb97877e3f261d51f847eb0e8bc9470d1"
+  },
+  "group_completeness": false,
+  "independent_source_and_diff_read": true,
+  "kind": "independent_corrected_group_backend_package_source_review",
+  "method_executions_including_focused_repeat": 31,
+  "original_source_and_failed_negative_evidence_preserved": true,
+  "passed": true,
+  "review_files": {
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/group_backend_package_independent_corrected_review/controls.py": {
+      "bytes": 6798,
+      "sha256": "37a3954d6fb6445bb98b5b93c59e60dfcee1dbb102d22895e70a90b8ff3ff830"
+    },
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/group_backend_package_independent_corrected_review/controls_before_final_only_object_copy.py": {
+      "bytes": 6691,
+      "sha256": "51b23a80acfb29107480df536512c62cb0da841a7e91422d90af71375dd48022"
+    },
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/group_backend_package_independent_corrected_review/independent_corrected_fixtures_6783003_197.json": {
+      "bytes": 3178,
+      "sha256": "ff5d134cffbb408e2a3ea51150d50fe22b842124f8ba9d4209f5125904f224c7"
+    },
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/group_backend_package_independent_corrected_review/independent_corrected_fixtures_6783003_197.raw": {
+      "bytes": 6198,
+      "sha256": "6c8138d37c8152fe4506ee3b66ef82033a0abd01d082dd64140f22bd444d278d"
+    },
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/group_backend_package_independent_corrected_review/independent_final_record_only_fixture_6783003_198.json": {
+      "bytes": 3184,
+      "sha256": "cd5132cea34475949296c3b3f0a51426b1959db6ca3999de016e1c4cadf832d0"
+    },
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/group_backend_package_independent_corrected_review/independent_final_record_only_fixture_6783003_198.raw": {
+      "bytes": 316,
+      "sha256": "3ae1e0196d4394a484777dbb08090efa3ad80c0373bc1e603260806ac0b95851"
+    },
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/group_backend_package_independent_corrected_review/review_fixture_coverage_correction.json": {
+      "bytes": 746,
+      "sha256": "7b7095fb0216f18cbf4d0df2ca0ef89b2638659bc14be83f31b3a5a3a222fb46"
+    },
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/group_backend_package_independent_corrected_review/run_final_record_only_fixture.py": {
+      "bytes": 3984,
+      "sha256": "1485ca7adde127bedfe151fbd3d27b03336216d7012d7511b0f7f1794089c7d1"
+    },
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/group_backend_package_independent_corrected_review/run_independent_review.py": {
+      "bytes": 3977,
+      "sha256": "6a951d1616a2f19dbe9bb8e9809b126719f433b4b60ceebb8770de7751ab7bed"
+    },
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/group_backend_package_independent_corrected_review/run_independent_review_before_final_only_object_copy.py": {
+      "bytes": 3977,
+      "sha256": "6a951d1616a2f19dbe9bb8e9809b126719f433b4b60ceebb8770de7751ab7bed"
+    }
+  },
+  "review_fixture_correction": "The first final-only PID control shared a nested object with result. Its initial source and successful run are preserved. Only the review fixture was corrected to deep-copy final, and that exact one test passed on step198; production source did not change.",
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "source_edits_by_reviewer": 0,
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/group_backend_package_corrected_source_freeze.json",
+    "sha256": "ec10592b31a414e741b1aec876c43cf8469e517a15424463beedcde4149dba4f"
+  },
+  "unique_test_ids": 30
+}

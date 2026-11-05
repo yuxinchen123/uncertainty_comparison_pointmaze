@@ -1,0 +1,50 @@
+test_changed_owning_record_bytes_are_refused_after_capture (independent_controls.IndependentControls)
+A coherently unchanged label cannot hide modified actual synthetic package bytes. ... ok
+test_coherent_float_numerical_pid_is_refused (independent_controls.IndependentControls)
+A numerical process identity must retain an exact integer PID, even after coherent rehashing. ... FAIL
+test_duplicate_worker_and_direct_protocol_are_refused (independent_controls.IndependentControls)
+The package helper must keep its group-only worker directory and protocol boundary. ... ok
+test_qualification_counters_must_agree_with_declared_copy_count (independent_controls.IndependentControls)
+One-copy transition totals cannot prove a declared two-copy controlled qualification update. ... FAIL
+test_relabelled_python_with_another_environment_package_is_refused (independent_controls.IndependentControls)
+The reader must reconstruct the same target-environment relationship enforced before the original pin. ... FAIL
+test_wrong_worker_directory_refuses_without_binary_read (independent_controls.IndependentControls)
+The coordinator directory cannot be substituted for its reserved member. ... ok
+
+======================================================================
+FAIL: test_coherent_float_numerical_pid_is_refused (independent_controls.IndependentControls)
+A numerical process identity must retain an exact integer PID, even after coherent rehashing.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/independent_group_backend_package_review/independent_controls.py", line 24, in test_coherent_float_numerical_pid_is_refused
+    self.refusal('floating numerical execution PID',lambda:B.validate_capture(f.worker,f.plan,f.metadata,f.binding,result['loaded_gpu_libraries'],result),'A floating value is not an exact discrete process identity.')
+  File "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/independent_group_backend_package_review/independent_controls.py", line 18, in refusal
+    self.assertIsNotNone(error,name+' was accepted')
+AssertionError: unexpectedly None : floating numerical execution PID was accepted
+
+======================================================================
+FAIL: test_qualification_counters_must_agree_with_declared_copy_count (independent_controls.IndependentControls)
+One-copy transition totals cannot prove a declared two-copy controlled qualification update.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/independent_group_backend_package_review/independent_controls.py", line 37, in test_qualification_counters_must_agree_with_declared_copy_count
+    self.refusal('qualification copy count versus one-copy work totals',lambda:B.completed_work(f.worker,f.plan,result),'Either qualification must explicitly require one copy, or its full work counts must be derived from the declared count.')
+  File "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/independent_group_backend_package_review/independent_controls.py", line 18, in refusal
+    self.assertIsNotNone(error,name+' was accepted')
+AssertionError: unexpectedly None : qualification copy count versus one-copy work totals was accepted
+
+======================================================================
+FAIL: test_relabelled_python_with_another_environment_package_is_refused (independent_controls.IndependentControls)
+The reader must reconstruct the same target-environment relationship enforced before the original pin.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/independent_group_backend_package_review/independent_controls.py", line 32, in test_relabelled_python_with_another_environment_package_is_refused
+    self.refusal('different selected Python environment',lambda:B.validate_prepared(f.plan),'The selected Python is in another environment while site-packages and the actual image remain in the original one.')
+  File "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/independent_group_backend_package_review/independent_controls.py", line 18, in refusal
+    self.assertIsNotNone(error,name+' was accepted')
+AssertionError: unexpectedly None : different selected Python environment was accepted
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.153s
+
+FAILED (failures=3)

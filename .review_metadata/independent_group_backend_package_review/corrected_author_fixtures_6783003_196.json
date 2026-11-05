@@ -1,0 +1,32 @@
+{
+  "GPU_qualification": false,
+  "actual_backend_binary_reads": 0,
+  "actual_library_or_device_or_GPU_or_network_operations": 0,
+  "admission_granted": false,
+  "at_utc": "2026-11-02T08:29:16.833397+00:00",
+  "blocked_actions": [],
+  "errors": [],
+  "failures": [],
+  "group_completeness": false,
+  "job_id": "6783003",
+  "kind": "group_backend_package_corrected_author_fixture_run",
+  "only_small_synthetic_package_bytes_read": true,
+  "passed": true,
+  "raw": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/independent_group_backend_package_review/corrected_author_fixtures_6783003_196.raw",
+    "sha256": "0d223f07cb6d82c4fd2821e0dd6b29899769c7c85c6608f2aa1d9f2fd1b39f65"
+  },
+  "scientific_credit": 0,
+  "source_after": {
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_backend_image.py": "82898100d64f540c42c0a236acb6c20ca2808deb247b83da65927c6cb497a8e4",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/10_jax_exploration_platform/scripts/atari_pixel_campaign/group_backend_package.py": "3a312803d173d767317e99efb53e56a6ba011374d8bde250db814ae1d9ddd76a",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_group_backend_package.py": "972dbbf5a9bd054c470443c49e6f257fb97877e3f261d51f847eb0e8bc9470d1"
+  },
+  "source_before": {
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_backend_image.py": "82898100d64f540c42c0a236acb6c20ca2808deb247b83da65927c6cb497a8e4",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/10_jax_exploration_platform/scripts/atari_pixel_campaign/group_backend_package.py": "3a312803d173d767317e99efb53e56a6ba011374d8bde250db814ae1d9ddd76a",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_group_backend_package.py": "972dbbf5a9bd054c470443c49e6f257fb97877e3f261d51f847eb0e8bc9470d1"
+  },
+  "step_id": "196",
+  "tests": 22
+}

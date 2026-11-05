@@ -1,0 +1,49 @@
+test_actual_owner_discovery_and_external_sidecar_source_are_exact (test_group_backend_package.GroupBackendPackageTests)
+The package owner is discovered and both real prepin references remain distinct. ... ok
+test_changed_installed_image_or_owner_record_is_refused_before_capture (test_group_backend_package.GroupBackendPackageTests)
+A coherent new wheel RECORD still cannot change an already pinned package image. ... ok
+test_changed_post_package_or_mapping_bytes_are_refused (test_group_backend_package.GroupBackendPackageTests)
+A coherent final JSON rewrite cannot replace actual mapped-file evidence. ... ok
+test_changed_supplied_plan_and_coordinator_directory_are_refused (test_group_backend_package.GroupBackendPackageTests)
+The reader uses the actual frozen plan and never treats the coordinator as a worker. ... ok
+test_completion_cannot_repeat_or_precede_complete_work (test_group_backend_package.GroupBackendPackageTests)
+Final publication is exclusive and incomplete work cannot receive a final capture. ... ok
+test_controlled_qualification_transition_totals_scale_with_copies (test_group_backend_package.GroupBackendPackageTests)
+Keep one complete update per copy, with total environment transitions across every declared copy. ... ok
+test_copied_image_or_owning_record_changes_are_refused (test_group_backend_package.GroupBackendPackageTests)
+A later reader rehashes actual shared copied bytes rather than trusting their labels. ... ok
+test_duplicate_distribution_owner_is_refused (test_group_backend_package.GroupBackendPackageTests)
+Two real RECORD owners are ambiguous even when both claim the same image bytes. ... ok
+test_each_explicit_nonmeasurement_kind_requires_its_completed_fields (test_group_backend_package.GroupBackendPackageTests)
+Qualification and correctness have explicit modes and no timing or scientific credit. ... ok
+test_eighth_worker_is_distinct_and_worker_nine_is_refused (test_group_backend_package.GroupBackendPackageTests)
+An eight-card group uses its eighth reserved worker without guessing a physical card. ... ok
+test_exact_eight_mode_requires_all_eight_copies_on_one_worker (test_group_backend_package.GroupBackendPackageTests)
+A smaller measurement cannot be relabeled as exact-eight memory evidence. ... ok
+test_float_or_boolean_numerical_pid_cannot_pass_a_coherent_saved_rewrite (test_group_backend_package.GroupBackendPackageTests)
+Typed actual worker identity survives coherent final/result JSON edits. ... ok
+test_legacy_direct_or_changed_producer_preparation_is_refused (test_group_backend_package.GroupBackendPackageTests)
+A direct record or changed helper hash cannot be relabeled as the group protocol. ... ok
+test_measurement_round_trip_keeps_xla_separate_from_cuda_receipts (test_group_backend_package.GroupBackendPackageTests)
+Shared actual package bytes do not need a false entry in the CUDA receipt list. ... ok
+test_missing_or_changed_helper_and_external_record_are_refused (test_group_backend_package.GroupBackendPackageTests)
+Both staged helper declarations and the original prepin bytes remain necessary. ... ok
+test_partial_wrong_kind_boolean_or_unfinished_work_is_refused (test_group_backend_package.GroupBackendPackageTests)
+All seven windows and typed original counters must be present before completion. ... ok
+test_prior_attempt_or_dangling_marker_cannot_be_reused (test_group_backend_package.GroupBackendPackageTests)
+A recorded or dangling attempt permanently prevents another capture in that worker. ... ok
+test_qualification_counts_cannot_use_boolean_one (test_group_backend_package.GroupBackendPackageTests)
+A Boolean does not prove one complete optimizer update. ... ok
+test_selected_python_and_package_environment_cannot_be_relabelled (test_group_backend_package.GroupBackendPackageTests)
+A coherently rewritten plan must not attach another environment's image to its selected Python. ... ok
+test_selected_python_paths_must_be_exact_absolute_bin_paths (test_group_backend_package.GroupBackendPackageTests)
+Relative paths and lexical aliases cannot change the selected environment proof. ... ok
+test_wrong_actual_process_native_pid_or_gpu_is_refused (test_group_backend_package.GroupBackendPackageTests)
+Saved worker membership cannot substitute for a different current process. ... ok
+test_wrong_loaded_receipt_or_execution_process_is_refused (test_group_backend_package.GroupBackendPackageTests)
+Separate CUDA receipts and numerical execution must belong to the same real worker. ... ok
+
+----------------------------------------------------------------------
+Ran 22 tests in 0.597s
+
+OK

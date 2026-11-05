@@ -1,0 +1,51 @@
+{
+  "actual_job": "6783003",
+  "actual_pid": 1226107,
+  "actual_step": "350",
+  "actual_tool_or_gpu_or_numerical_or_scheduler_operations": 0,
+  "all34frozen_files_unchanged": true,
+  "at_utc": "2026-11-05T04:56:28.862777+00:00",
+  "cases": {
+    "claimed_compute_job_not_actual_cgroup": {
+      "accepted": true,
+      "actual_cgroup": "0::/system.slice/slurmstepd.scope/job_6783003/step_350/user/task_0\n",
+      "actual_job": "6783003",
+      "claimed_job": "987654",
+      "queried_synthetic_job": false,
+      "scope": "the real guard read only environment and the synthetic private ledger"
+    },
+    "different_prerequisite_seeds": {
+      "accepted": true,
+      "current_worker_seeds": [
+        1
+      ],
+      "prior_verified_worker_seeds": [
+        99
+      ],
+      "scope": "actual prerequisite join; full prior-result and package validation represented as successful"
+    },
+    "empty_correctness_reports": {
+      "empty_complete_iteration_report": true,
+      "empty_supplied_input_reports": true,
+      "new_reader_accepted": true,
+      "scope": "actual correctness predicate; unrelated upstream successful gates are synthetic placeholders",
+      "unchanged_standard_reader_refused": true
+    },
+    "unrelated_saved_controller": {
+      "accepted": true,
+      "controller_plan_and_source_mismatched": true,
+      "controller_uids": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "scope": "actual wrapper reader; literal per-role commands and zero waits remain internally consistent",
+      "wrapper_cgroups_unrelated": true
+    }
+  },
+  "kind": "independent_group_runtime_boundary_observations",
+  "scientific_credit": 0,
+  "source_freeze_sha256": "6a4b03ede9d6496f5f06fead6f14d2ee7fe5aa2fd1e2c129173246d03617f5f9",
+  "stdlib_bootstrap_before_audit": "ctypes imports the own-process Python API; later library operations refused"
+}

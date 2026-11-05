@@ -1,0 +1,7 @@
+{
+  "actual_tool_gpu_numerical_or_job_actions": 0,
+  "cause": "The first proof writer looked for the original profiling function in configured_gpu_scaling.py. Its actual location is profile_selected.py. No proof or handoff file was written by that failed attempt.",
+  "failure": "KeyError: _capture_core",
+  "kind": "preserved_author_proof_writer_failure",
+  "source_edits": 0
+}

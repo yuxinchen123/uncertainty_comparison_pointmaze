@@ -1,0 +1,102 @@
+{
+  "approved": false,
+  "at_utc": "2026-11-05T05:01:21.971827+00:00",
+  "author_handoff": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/group_runtime_completion/author_handoff.json",
+    "sha256": "d144ea26263338cb364a8d7af91f0ad1fc556533b5e05ab659e769831b1453b3"
+  },
+  "blocking_findings": [
+    {
+      "function": "group_runtime_evidence.verify_saved_member",
+      "observed": "The correctness reader accepts empty supplied_inputs and complete_iteration reports with passed=true; the unchanged standard correctness validator refuses the same result.",
+      "required_correction": "Reuse the unchanged standard correctness validator and retain the original grouping, field and tolerance requirements."
+    },
+    {
+      "function": "group_runtime_evidence.reviewed_member",
+      "observed": "The prior correctness prerequisite with worker seed [99] is accepted for current worker seed [1] when source, count, physical identity, configuration and package joins are supplied as successful.",
+      "required_correction": "Require the exact per-member seed row for the correctness prerequisite; no seed-agnostic exception is currently declared."
+    },
+    {
+      "function": "group_runtime_evidence.require_owned_compute",
+      "observed": "The raw-reader guard accepts environment job 987654 and numeric step 123 from a private synthetic ledger while actual current process cgroup names job 6783003 step 352. No synthetic job was queried.",
+      "required_correction": "Require the actual current kernel cgroup and owned numeric-step/process identity before any job query or raw scientific recomputation."
+    },
+    {
+      "function": "group_runtime.verify_wrapper_waits",
+      "observed": "The saved wrapper reader accepts unrelated controller job, plan, helper source, argv, cgroup, nonnumeric birth and UID [0,0,0,0], plus unrelated wrapper cgroups, when expected wrapper commands, parent PID and zero waits are internally consistent.",
+      "required_correction": "Validate the complete controller source, plan, job, argv, all UIDs, birth and cgroup, and join every expected wrapper identity and wait to actual owned job custody without equating srun-wrapper and numerical process identities."
+    }
+  ],
+  "boundary_test_context": {
+    "actual_functions_under_review_unmodified": true,
+    "full_source_derived_configurations": true,
+    "job_id": "6783003",
+    "step_id": "352",
+    "synthetic_job_queried": false,
+    "unrelated_upstream_success_gates": "explicit synthetic successful placeholders; these tests isolate the named predicates and do not claim complete forged end-to-end GPU evidence"
+  },
+  "dependency_compatibility_with_current_integration": "not yet verified; blocked source must be corrected before publication or preparation of actual units",
+  "earlier_boundary_observations_preserved": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/group_runtime_independent_review_2026-11-05/independent_boundary_observations.json",
+    "sha256": "b0ff3677ddbdff1b97be8376afa7766b4d40c81210ca645c8a52aca67435bc50"
+  },
+  "earlier_boundary_program_preserved": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/group_runtime_independent_review_2026-11-05/check_independent_boundaries.py",
+    "sha256": "a2248e11f40bca334441c1a88daf2d8e293615fb6bc58280d92e8d54ef45ed0a"
+  },
+  "existing_tests": {
+    "job_id": "6783003",
+    "passed": true,
+    "receipt": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/group_runtime_independent_review_2026-11-05/metadata_test_receipt.json",
+      "sha256": "c77b8cccaaa727ebb7f24452df542c166ca04361b2d1189b0feca76483f98c76"
+    },
+    "step_id": "345",
+    "tests_run": 51
+  },
+  "independent_boundary_observations": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/group_runtime_independent_review_2026-11-05/independent_boundary_observations_full_configuration.json",
+    "sha256": "ba84aa63690c89588f0ad6cc3f88ae6618540b117c645e77d02c4ce11a5de76a"
+  },
+  "independent_boundary_program": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/group_runtime_independent_review_2026-11-05/check_independent_boundaries_full_configuration.py",
+    "sha256": "7b054e94ab8b86fbf69040848a0e284e2424543681c8eb8bec6498c633ba3c18"
+  },
+  "kind": "independent_group_runtime_source_review",
+  "operational_status": {
+    "actual_gpu_validation": false,
+    "actual_group_jobs_submitted": 0,
+    "actual_group_units_created": 0,
+    "case_credit": 0,
+    "final_credit": 0,
+    "idea_credit": 0,
+    "ordinary_cli_admission": false,
+    "packing_credit": 0,
+    "scientific_credit": 0
+  },
+  "passed": false,
+  "preserved_component_review": "The corrected group_backend_package helper remains unchanged; this review does not revoke its separate component approval.",
+  "preserved_source_files": 34,
+  "preserved_source_snapshot": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/group_runtime_independent_review_2026-11-05/rejected_source_snapshot.json",
+    "sha256": "0ed693a80cf0f2daf9bd59926fb0e148c530a4c7b030138c44ecd56eb34d9132"
+  },
+  "review_actions": {
+    "frozen_source_edits": 0,
+    "gpu_or_device_or_tool_operations": 0,
+    "numerical_imports": 0,
+    "scheduler_queries_to_synthetic_ids": 0,
+    "source_closure_scope": "29 helper bytes and 13 protected numerical files compared with the assigned worktree HEAD by the owned-compute source-only checker; no numerical execution or new target qualification",
+    "stdlib_bootstrap_before_audit": "ctypes imported the own-process Python API; later library operations were refused"
+  },
+  "schema_version": 2,
+  "source_closure": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/group_runtime_independent_review_2026-11-05/independent_source_closure.json",
+    "sha256": "ac532aded1dac07d24f3e1e822cc8c102efbfbaf5f32ceeae1d992ca96942177"
+  },
+  "source_files_unchanged": true,
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/group_runtime_completion/source_freeze_for_independent_review.json",
+    "sha256": "6a4b03ede9d6496f5f06fead6f14d2ee7fe5aa2fd1e2c129173246d03617f5f9"
+  }
+}

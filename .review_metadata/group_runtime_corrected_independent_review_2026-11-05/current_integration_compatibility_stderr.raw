@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/group_runtime_corrected_independent_review_2026-11-05/check_current_integration_compatibility.py", line 132, in <module>
+srun: error: heartpiece: task 0: Exited with exit code 1
+    main()
+  File "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/group_runtime_corrected_independent_review_2026-11-05/check_current_integration_compatibility.py", line 115, in main
+    raise ValueError("current integration cold metadata import failed")
+ValueError: current integration cold metadata import failed

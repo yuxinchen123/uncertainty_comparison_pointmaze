@@ -1,0 +1,10 @@
+{
+  "kind": "new_group_physical_validator_explicit_adjacent_profile_check_correction",
+  "first_actual_step": "6783003.49",
+  "methods": 13,
+  "errors": 5,
+  "production_source_changed": "uva_group_binding.py only",
+  "reason": "The extracted unchanged physical checks referenced require_profile without its explicit adjacent module. Call single.require_profile with the exact existing member profile.",
+  "prior_source_bytes": "/p/rlprojects/RND_worktrees/2026-11-01-18-34_a4500-group-scaling_gpu-counts-1-8_gpus-per-step-1_rounds-7_minimum-updates-per-round-10_preserve-selected-configuration-and-global-seeds/.review_metadata/a4500_group_scaling_preparation/second_source_bytes",
+  "single_card_source_changed": false
+}

@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "/tmp/group_current_integration_metadata_sv7cj5o1/probe.py"
+  ],
+  "returncode": 1,
+  "stderr": "Traceback (most recent call last):\n  File \"/tmp/group_current_integration_metadata_sv7cj5o1/probe.py\", line 20, in <module>\n    import group_runtime as runtime\n  File \"/tmp/group_current_integration_metadata_sv7cj5o1/group_runtime.py\", line 27, in <module>\n    import configured_gpu_scaling as producer\n  File \"/tmp/group_current_integration_metadata_sv7cj5o1/configured_gpu_scaling.py\", line 20, in <module>\n    selected = group.adjacent(\"measure_selected\")\n  File \"/tmp/group_current_integration_metadata_sv7cj5o1/uva_group_binding.py\", line 32, in adjacent\n    specification.loader.exec_module(module)\n  File \"/tmp/group_current_integration_metadata_sv7cj5o1/measure_selected.py\", line 36, in <module>\n    import train_optimized as training\n  File \"/tmp/group_current_integration_metadata_sv7cj5o1/train_optimized.py\", line 40, in <module>\n    PROJECT_ROOT = SCRIPT_ROOT.parents[2]\n  File \"/usr/lib/python3.10/pathlib.py\", line 530, in __getitem__\n    raise IndexError(idx)\nIndexError: 2\n",
+  "stdout": ""
+}

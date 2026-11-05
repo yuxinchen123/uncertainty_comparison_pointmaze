@@ -1,0 +1,66 @@
+{
+  "actual_group_jobs_submitted": 0,
+  "actual_group_units_prepared": 0,
+  "actual_tool_gpu_or_numerical_actions": 0,
+  "approved": false,
+  "closed_source": {
+    "actual_numeric_step": "359",
+    "helper_count": 29,
+    "protected_numerical_files": 13,
+    "receipt": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/group_runtime_four_predicate_corrections/corrected_closed_source_and_protected_numerical_receipt.json",
+      "sha256": "95dc1f08f1882b2d9639eb1adc6400a2cf7d61b9eb2df4c1ca5cb0324a687a1f"
+    }
+  },
+  "committed": false,
+  "corrections": [
+    {
+      "after": "The real saved-member reader invokes the unchanged standard correctness predicate and requires all actual initialization, supplied-input and complete-group reports and the original full comparison length.",
+      "before": "Empty supplied-input and complete-update reports could pass the group member reader."
+    },
+    {
+      "after": "Both qualification and correctness prerequisites require exact typed global copy seeds for the actual physical member index.",
+      "before": "A reviewed physical member with prior global seed99 could satisfy current global seed1."
+    },
+    {
+      "after": "The current own-process cgroup must exactly match its own job and numeric step before any native query. A raw CPU reader may use a different historical plan job; a live producer must use its exact submitted allocation.",
+      "before": "An environment job plus a private ledger could pass while the actual process kernel cgroup belonged to another allocation."
+    },
+    {
+      "after": "The saved controller, intents, starts, exact waits and numerical steps join complete all-UID, birth, parent, command, cgroup, source and plan records. Batch wrappers and numerical processes remain distinct.",
+      "before": "Normal wrapper PIDs and zero waits could hide an unrelated controller UID, source, plan, birth and cgroup."
+    }
+  ],
+  "first_corrected_test_failure_preserved": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/group_runtime_four_predicate_corrections/first_corrected_author_test_receipt.json",
+    "sha256": "5b516c681952d9cbd183a1bc218e385130549c1201b33ab3367fd83358da1906"
+  },
+  "independent_review_required": true,
+  "kind": "group_runtime_four_predicate_corrected_author_handoff",
+  "operational_admission_granted": false,
+  "protected_component_proof": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/group_runtime_four_predicate_corrections/protected_component_correction_proof.json",
+    "sha256": "edcac47aed31fa6f41f4f7d2ef0a0798c5002d459882d14659da0e0a3c274e99"
+  },
+  "published": false,
+  "rejected_source_preservation": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/group_runtime_four_predicate_corrections/preserved_rejection.json",
+    "sha256": "7f24c951a85ec67284d9411afe63b28c993f14f0f94db64937216b2de6d16f12"
+  },
+  "scientific_credit": 0,
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/group_runtime_four_predicate_corrections/corrected_source_freeze_for_independent_review.json",
+    "sha256": "fb795e40e663b1638ea0536ddf3727c6d4b4e0e36efdcf97b62f757449bb626a"
+  },
+  "tests": {
+    "actual_numeric_step": "358",
+    "actual_owned_job": "6783003",
+    "new_test_methods": 11,
+    "passed": true,
+    "receipt": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/group_runtime_four_predicate_corrections/second_corrected_author_test_receipt.json",
+      "sha256": "adc9cbc93fb3a1c8f1e149d0eac4f326119c3189853f50fe77cbb1c3c9ee6613"
+    },
+    "tests_run": 62
+  }
+}

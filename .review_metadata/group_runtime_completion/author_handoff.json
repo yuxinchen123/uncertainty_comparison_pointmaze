@@ -1,0 +1,87 @@
+{
+  "actual_gpu_or_tool_or_numerical_operations": 0,
+  "actual_jobs_submitted": 0,
+  "author_tests": {
+    "job": "6783003",
+    "receipt": "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/group_runtime_completion/fourth_author_test_receipt.json",
+    "sha256": "e3055b57ea5b3aebb8218ec44cbb8178719b13757764506b65e1e93e6555fb5a",
+    "step": "340",
+    "tests": 51
+  },
+  "base_commit": "bef825c669d9514e3c633bb1358eb6b43e09b141",
+  "changed_source_or_test_paths": [
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_gpu_scaling.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_scaling_evidence.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/group_backend_package.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/group_original_qualification.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/group_runtime.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/group_runtime_evidence.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/group_runtime_launch.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_group_binding.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_group_runtime.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_configured_a4500_group.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_group_backend_package.py"
+  ],
+  "committed": false,
+  "implemented": [
+    "immutable source/plan preparation and both sets of five standard records",
+    "explicit one/eight whole-job held command; numeric coordinator zero GPU and workers one typed GPU each",
+    "separate source-bound srun-wrapper and numerical process records with all four UIDs, parent, birth, argv and cgroup",
+    "system-Python descriptor preflight before wrapper creation; retained partial-start custody and exact waits",
+    "original count-specific gates and one full reference update without circular prior qualification",
+    "distinct selected correctness under unchanged comparison tolerances",
+    "actual compilation-warmup training origins and seven full common-wall windows",
+    "independent actual physical member/source/count qualification and correctness inputs matched by UUID rather than scheduler order",
+    "prepared and same-process mapped backend package begin/completion plus separate CUDA/cuDNN evidence",
+    "one-shot root-facing held submit and fixed release with three fsynced ledgers and atomic owned sidecar",
+    "native terminal capture and strict saved member/group readers; exact-eight completed-headroom path stays separate"
+  ],
+  "independent_command": [
+    "srun",
+    "--jobid=6783003",
+    "--overlap",
+    "--exact",
+    "--ntasks=1",
+    "--cpus-per-task=1",
+    "--mem=512M",
+    "--time=00:10:00",
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/group_runtime_completion/run_metadata_tests.py",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/group_runtime_completion/source_freeze_for_independent_review.json",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/group_runtime_completion/independent_metadata_test_receipt.json"
+  ],
+  "kind": "configured_group_runtime_author_handoff",
+  "not_established": [
+    "independent review of this full runtime",
+    "compatibility against the latest integration helper closure after merge",
+    "any actual per-card group qualification/correctness or actual zero-GPU coordinator allocation",
+    "actual GPU process/control/sampler qualification or source/placement admission",
+    "any chosen future selected configuration, packing count, fifty-idea result or final training"
+  ],
+  "prior_failures_preserved": [
+    "first_author_test_receipt.json: one mock os.close assertion; exact first source snapshot retained",
+    "third_author_test_receipt.json: missing private fixture jobs directory; exact ten-file source reconstructed and verified against saved hashes; later preflight now refuses before native submit"
+  ],
+  "protected_source_check": {
+    "capture_core_unchanged": true,
+    "changed_only_original_gate_statements": [
+      4,
+      40
+    ],
+    "job": "6783003",
+    "numerical_files_unchanged": 13,
+    "original_gate_statements": 41,
+    "step": "341"
+  },
+  "schema_version": 2,
+  "scientific_credit": 0,
+  "source_admitted": false,
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/group_runtime_completion/source_freeze_for_independent_review.json",
+    "sha256": "6a4b03ede9d6496f5f06fead6f14d2ee7fe5aa2fd1e2c129173246d03617f5f9"
+  },
+  "worktree": "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10"
+}

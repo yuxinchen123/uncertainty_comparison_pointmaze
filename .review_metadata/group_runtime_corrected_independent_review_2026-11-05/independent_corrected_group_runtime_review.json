@@ -1,0 +1,103 @@
+{
+  "actions": {
+    "commits_or_pushes": 0,
+    "gpu_or_device_or_tool_operations": 0,
+    "integration_edits": 0,
+    "numerical_imports": 0,
+    "source_edits": 0,
+    "stdlib_bootstrap_before_audit": "ctypes initializes its own-process Python API before each audit hook; later library loads and symbols are refused.",
+    "submissions_or_releases": 0,
+    "synthetic_scheduler_queries": 0
+  },
+  "approval_scope": "Only the corrected frozen group-runtime source and metadata behavior. This is not an operational launch review, actual GPU qualification, accepted scaling result or permission to execute a group.",
+  "approved": true,
+  "author_handoff": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/group_runtime_four_predicate_corrections/corrected_author_handoff.json",
+    "sha256": "8610764ea6f6a27fee567cf25bf4d3c198a239d61d1d1a8241786bccc09cccda"
+  },
+  "blocking_findings": [],
+  "corrected_findings": [
+    {
+      "function": "group_runtime_evidence.verify_saved_member",
+      "observed": "The actual saved-member correctness branch now invokes the unchanged standard report predicate and rejects empty reports; finite typed counts, full group length and original declared fields are also retained."
+    },
+    {
+      "function": "group_runtime_evidence.reviewed_member",
+      "observed": "The actual physical member index selects the exact typed global seed row; matching index-one seed2 passes and foreign1, floating2 and Boolean values fail."
+    },
+    {
+      "function": "group_runtime_evidence.require_owned_compute and uva_group_binding.collect_metadata",
+      "observed": "The real current process kernel cgroup and all four UIDs are required before native queries. A claimed foreign job from a private synthetic ledger fails. Reader allocation remains distinct from historical GPU allocation."
+    },
+    {
+      "function": "group_runtime.verify_wrapper_waits",
+      "observed": "A complete controller/wrapper/numerical fixture passes. Source, UID, birth, job/cgroup, parent, role, exact wait, chronology and wrapper-to-numerical relabelling substitutions fail."
+    }
+  ],
+  "created_at_utc": "2026-11-05T05:30:26.128783+00:00",
+  "dependency_compatibility_with_current_integration": "Not yet reviewed by this isolated source review; frozen base bef825c669d9514e3c633bb1358eb6b43e09b141.",
+  "independent_boundaries": {
+    "cases": 25,
+    "job_id": "6783003",
+    "passed": true,
+    "program": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/group_runtime_corrected_independent_review_2026-11-05/check_corrected_boundaries.py",
+      "sha256": "f9bb08e97d93e8ce799475a98c0e759bcc777e0043c09bed2dece2dc0fb4c787"
+    },
+    "receipt": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/group_runtime_corrected_independent_review_2026-11-05/independent_corrected_boundary_receipt.json",
+      "sha256": "5aabc3cd3c42450e388f17b7c7d66ea44f0de711ab3f28e94fb24b2f14acd454"
+    },
+    "step_id": "361"
+  },
+  "kind": "independent_corrected_group_runtime_source_review",
+  "metadata_tests": {
+    "job_id": "6783003",
+    "passed": true,
+    "receipt": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/group_runtime_corrected_independent_review_2026-11-05/corrected_metadata_test_receipt.json",
+      "sha256": "15caa4a847d25b5ec69f7dc0a18212794517f7ceac80b990181ee8dbdfbf3ed8"
+    },
+    "step_id": "360",
+    "tests_run": 62
+  },
+  "operational_status": {
+    "actual_gpu_validation": false,
+    "actual_group_jobs_submitted": 0,
+    "actual_group_units_prepared": 0,
+    "case_credit": 0,
+    "final_credit": 0,
+    "idea_credit": 0,
+    "operational_admission_granted": false,
+    "packing_credit": 0,
+    "scientific_credit": 0
+  },
+  "passed": true,
+  "preserved_component_review": "The previously corrected group_backend_package bytes remain unchanged, and its separate component approval remains in effect.",
+  "previous_rejection": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/group_runtime_independent_review_2026-11-05/independent_group_runtime_review.json",
+    "sha256": "b3439d522d32daaf8f960c071008637cc09c33ba46b6142b6ccf634c540498b0"
+  },
+  "remaining_required_work": [
+    "Review the incoming patch against the fresh integration tree and its current helper dependency union before publication.",
+    "Prepare actual per-physical-card count-specific original qualification and correctness with independently reviewed raw evidence before operational group admission.",
+    "Perform actual selected-source one-card and eight-card measurements with common wall time; no actual group GPU execution is established by these metadata tests."
+  ],
+  "schema_version": 2,
+  "source_closure": {
+    "helper_count": 29,
+    "job_id": "6783003",
+    "protected_numerical_file_count": 13,
+    "receipt": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/group_runtime_corrected_independent_review_2026-11-05/independent_source_closure.json",
+      "sha256": "1d8f00af2dc5219bbba4aad4802433f1a6a63efb5f894aa77477b9886633050d"
+    },
+    "step_id": "363"
+  },
+  "source_file_count": 35,
+  "source_files_unchanged": true,
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/group_runtime_four_predicate_corrections/corrected_source_freeze_for_independent_review.json",
+    "sha256": "fb795e40e663b1638ea0536ddf3727c6d4b4e0e36efdcf97b62f757449bb626a"
+  }
+}

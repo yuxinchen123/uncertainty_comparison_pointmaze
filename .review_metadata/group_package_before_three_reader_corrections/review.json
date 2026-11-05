@@ -1,0 +1,60 @@
+{
+  "GPU_qualification": false,
+  "actual_GPU_or_library_or_network_or_scheduler_actions": 0,
+  "actual_package_binary_reads": 0,
+  "admission_granted": false,
+  "approved": false,
+  "at_utc": "2026-11-02T08:12:39.694597+00:00",
+  "findings": [
+    {
+      "function": "validate_expected / validate_prepared",
+      "problem": "A coherently relabelled selected_python from another existing private synthetic environment is accepted while site_packages and the actual prepared image remain under the original environment. The preparation-only relative environment check is not reconstructed by the readers.",
+      "required_change": "Require the exact typed absolute selected Python path, its bin directory and the selected site-packages relationship in the immutable reader, matching prepare_image; retain ordinary path checks at actual installed-file reads.",
+      "source_line": 95
+    },
+    {
+      "function": "validate_capture",
+      "problem": "A floating-point execution_identity.pid and coherently rewritten final numerical_execution are accepted because ordinary Python equality equates the float with the bound integer PID.",
+      "required_change": "Require exact integer positive PIDs and typed exact process identity fields in the result and final numerical execution join.",
+      "source_line": 395
+    },
+    {
+      "function": "completed_work qualification",
+      "problem": "A two-copy plan with seeds [1,2] is accepted with one-copy warmup and transition totals (819200 and16384). This helper does not require one-copy qualification or derive the totals from the declared copy count.",
+      "required_change": "Declare qualification as exactly one copy and enforce it here, or derive and enforce all controlled work totals from the exact qualified configuration. Future group runtime must also bind the full original configuration.",
+      "source_line": 265
+    }
+  ],
+  "group_completeness": false,
+  "independent_control_result": {
+    "actual_job_id": "6783003",
+    "actual_step_id": "191",
+    "failures": 3,
+    "passes": 3,
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/independent_group_backend_package_review/independent_controls_6783003_191.json",
+    "sha256": "36334e9bcd806fb0594a20c851ebbe82ca5d5b05c3326c3a67cf5520cdc2af33",
+    "tests": 6
+  },
+  "kind": "independent_group_backend_package_source_review",
+  "limits": [
+    "The package helper expects already validated group metadata and native CUDA binding from its caller; this review does not validate an actual allocation or native CUDA context.",
+    "No new coordinator, worker or runtime is implemented or qualified in this saved draft.",
+    "No real package prepin or captured runtime image was read. All .so fixture bytes were small private data files and were never loaded."
+  ],
+  "only_private_synthetic_package_files_read": true,
+  "original_fixture_result": {
+    "actual_job_id": "6783003",
+    "actual_step_id": "189",
+    "passed": true,
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/independent_group_backend_package_review/original_fixtures_6783003_189.json",
+    "sha256": "b3b6645b4dcabf0051ed5e689986fa6fbd47561122a205c890eb84f9149ee6ee",
+    "tests": 18
+  },
+  "scientific_credit": 0,
+  "source_edits": 0,
+  "source_files_unchanged": {
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_backend_image.py": "82898100d64f540c42c0a236acb6c20ca2808deb247b83da65927c6cb497a8e4",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/10_jax_exploration_platform/scripts/atari_pixel_campaign/group_backend_package.py": "4012dc32d3b9001a12ef8f1e129fef79a289061b01a292199af65a18b600f525",
+    "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_group_backend_package.py": "d3922d7dc3df2f21f5e346aa8670137ea85698be65fef030f982112ac1eaefee"
+  }
+}
