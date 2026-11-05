@@ -36,6 +36,12 @@ PROTOCOL = {"schema_version": 1, "capability": "genuine_accepted_direct_evidence
 IDENTITY_FIELDS = ("st_dev", "st_ino", "st_size", "st_mtime_ns", "st_ctime_ns", "st_mode", "st_uid", "st_gid", "st_nlink")
 MAXIMUM_METADATA_BYTES = 16 * 1024 * 1024
 HISTORICAL_METADATA_FIELDS = {"registry", "study_registry", "admission", "exit_observations", "exit_plan", "exit_status", "worker_stop"}
+LEGACY_DIAGNOSTIC_ANNOTATIONS = {9: {"pid": 3358345, "start_time": "39999035", "git_commit": "96b3381e336b254ca6ac1d22c9ed1857c888e0f5",
+    "sha256": "362bef4efe705373e3422b5e44e7573320bfb88d5225a264c95222a521735796"},
+    10: {"pid": 3436708, "start_time": "40378543", "git_commit": "4766ba4aac2888f925932d374c0943ecbeccf136",
+        "sha256": "310bcb6b4b1a18cc9d7acac62a07dfb60874bb60aed127b50b9c07227593f9f8"},
+    11: {"pid": 3436742, "start_time": "40378633", "git_commit": "4766ba4aac2888f925932d374c0943ecbeccf136",
+        "sha256": "310bcb6b4b1a18cc9d7acac62a07dfb60874bb60aed127b50b9c07227593f9f8"}}
 _CONSUMERS = {}
 _SOURCE_FILES = {}
 
@@ -152,11 +158,13 @@ class ValidationFiles:
             self.failed = True
             raise
 
-    def file(self, path, expected_sha256, *, keep_bytes=False):
+    def file(self, path, expected_sha256, *, keep_bytes=False, expected_size_bytes=None):
         """Read a new physical file once, or recheck all identities before reusing its digest."""
         descriptor = None
         try:
             self.check_deadline()
+            require(expected_size_bytes is None or type(expected_size_bytes) is int and expected_size_bytes >= 0,
+                "a declared evidence byte count must be an exact nonnegative integer")
             require(type(expected_sha256) is str and re.fullmatch(r"[0-9a-f]{64}", expected_sha256),
                 "every evidence file needs its already declared complete content hash")
             path = ordinary(path); name = str(path)
@@ -164,11 +172,15 @@ class ValidationFiles:
                 entry = self.physical[self.paths[name]]
                 self.check_entry(entry)
                 require(entry["sha256"] == expected_sha256, "one evidence path has conflicting expected content")
+                require(expected_size_bytes is None or expected_size_bytes == entry["bytes"] == entry["identity"]["st_size"],
+                    "a cached evidence file differs from its exact declared byte count")
                 return entry
             descriptor = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
             info = os.fstat(descriptor)
             require(stat.S_ISREG(info.st_mode) and info.st_uid == 2618919,
                 "an evidence descriptor must be an ordinary file owned by this campaign")
+            require(expected_size_bytes is None or expected_size_bytes == info.st_size,
+                "the pinned evidence descriptor differs from its exact declared byte count")
             require(not self.metadata_only or keep_bytes and info.st_size <= MAXIMUM_METADATA_BYTES,
                 "the GPU consumer can validate small reviewed references, never rehash historical payloads")
             observed = identity(info); key = (info.st_dev, info.st_ino)
@@ -177,6 +189,8 @@ class ValidationFiles:
                 entry = self.physical[key]
                 require(entry["identity"] == observed and entry["sha256"] == expected_sha256,
                     "a physical evidence alias changed identity or expected content")
+                require(expected_size_bytes is None or expected_size_bytes == entry["bytes"] == entry["identity"]["st_size"],
+                    "a physical evidence alias differs from its exact declared byte count")
                 self.check_entry(entry)
                 entry["aliases"].append(name); self.paths[name] = key
                 return entry
@@ -285,6 +299,61 @@ def compute_context(run):
         "argv": [value.decode() for value in Path("/proc/self/cmdline").read_bytes().rstrip(b"\0").split(b"\0")]}
 
 
+def validate_frozen_ledger_scope(scope, rows):
+    """Retain the original full-ledger owner checks and only three exact unrelated diagnostic annotations."""
+    require(type(rows) is list and all(type(row) is dict for row in rows), "the entire accepted frozen process ledger is required")
+    owner = scope["owner_row"]
+    require(sum(row == owner for row in rows) == 1 and sum(all(row.get(key) == owner[key]
+        for key in ("hostname", "pid", "start_time")) for row in rows) == 1,
+        "the exact accepted current owner row is missing, duplicate or substituted")
+    require(all(exact(owner.get(key), value) for key, value in scope["expected_owner_fields"].items()),
+        "the accepted owner row changed its source, helper, target or birth identity")
+    expected_helper = str(Path(scope["campaign_run_dir"]).parents[2] / PREFIX / "diagnose_gpu_execution.py")
+    for index, expected in LEGACY_DIAGNOSTIC_ANNOTATIONS.items():
+        require(index < len(rows) and rows[index] != owner, "a selected/current owner row cannot be classified as an unrelated annotation")
+        row = rows[index]
+        require(row.get("kind") == "execution_diagnostic" and row.get("context") == "h100"
+            and row.get("host") == row.get("hostname") == "serval02" and row.get("gpu_uuid") == CARD_ONE
+            and type(row.get("pid")) is int and row["pid"] == expected["pid"]
+            and row.get("start_time") == expected["start_time"] and row.get("source_commit") == NUMERICAL_SOURCE
+            and row.get("source_root") == scope["source_root"]
+            and exact(row.get("helper"), {"git_commit": expected["git_commit"], "path": expected_helper, "sha256": expected["sha256"]}),
+            "an unknown or changed ledger row cannot masquerade as one of the three exact historical diagnostic annotations")
+    return set(LEGACY_DIAGNOSTIC_ANNOTATIONS)
+
+
+def register_accepted_ledger_scope(files, inventory, plan, plan_reference, unit, binding):
+    """Bind exact genuine ledger bytes to the pertinent owner row and original accepted reader source."""
+    metadata_reference = {"path": str(unit / "direct_process_metadata.json"), "sha256": binding["metadata_sha256"]}
+    metadata = files.json(metadata_reference)
+    launch = metadata["current_launch"]; ledger = launch["process_ledger"]
+    process = metadata["after"]["identity"]
+    require(metadata.get("kind") == "serval02_card1_process_metadata"
+        and type(metadata.get("schema_version")) is int and metadata["schema_version"] == 1
+        and exact(metadata["source"], plan["helpers"])
+        and exact(metadata["before"]["identity"], process)
+        and launch["plan"] == plan_reference
+        and ledger["source_path"] == str(Path(plan["campaign_run_dir"]) / "processes.json")
+        and ledger["snapshot"]["path"] == str(unit / "direct_current_process_ledger_snapshot.json"),
+        "the ledger scope must come from the exact genuine accepted metadata/plan/source and reserved frozen ledger")
+    scope = {"reference": ledger["snapshot"], "accepted_plan": plan_reference, "accepted_metadata": metadata_reference,
+        "campaign_run_dir": plan["campaign_run_dir"], "source_root": plan["source_root"], "owner_row": launch["process_row"],
+        "expected_owner_fields": {"hostname": "serval02", "gpu_uuid": CARD_ONE, "kind": plan["kind"], "unit": plan["unit_id"],
+            "source_commit": NUMERICAL_SOURCE, "source_root": plan["source_root"], "helper_commit": ORIGINAL_HELPER_SOURCE,
+            "pid": process["pid"], "start_time": process["process_start_time"]},
+        "whole_frozen_ledger_bytes_hashed": True, "source_annotations_are_current_execution_dependencies": False}
+    validate_frozen_ledger_scope(scope, files.json(ledger["snapshot"]))
+    relative = PREFIX + "serval02_card1_binding.py"
+    source = {"path": str(Path(plan["helpers"]["source_root"]) / relative), "sha256": plan["helpers"]["files"][relative]}
+    tree = ast.parse(files.small_bytes(source))
+    function = next(node for node in tree.body if isinstance(node, ast.FunctionDef) and node.name == "launch_inputs")
+    scope["original_accepted_reader"] = {"source": source, "helper_commit": ORIGINAL_HELPER_SOURCE,
+        "function": "launch_inputs", "function_ast_sha256": digest(ast.dump(function, include_attributes=False).encode()),
+        "scope": "The original reader hashes the whole ledger and checks the exact selected row and owner uniqueness; it does not open unrelated diagnostic helper annotations."}
+    inventory.process_ledger_scopes[ledger["snapshot"]["path"]] = scope
+    return scope
+
+
 class AcceptedInventory:
     """Collect exactly declared accepted references and all historical manifest payloads."""
 
@@ -295,6 +364,7 @@ class AcceptedInventory:
         self.pending_blobs, self.resolved_logical_references = set(), []
         self.shared_metadata = {}
         self.physical_captures = {}
+        self.accepted_units, self.process_ledger_scopes, self.historical_source_annotations = {}, {}, []
         self.inline_historical_records = []
 
     def add(self, value, *, metadata=None, captured=False, physical_role=None,
@@ -303,10 +373,12 @@ class AcceptedInventory:
         reference_shape(value); path, sha = value["path"], value["sha256"]
         if shared_metadata_role is not None:
             require(shared_metadata_role in {"source_receipt_text", "qualification_reader_python", "renderer_python",
-                "cleanrl_reference_python", "accepted_test_stdout", "accepted_test_stderr", "frozen_history_json"},
+                "cleanrl_reference_python", "accepted_test_stdout", "accepted_test_stderr", "frozen_history_json",
+                "accepted_controller_stdout", "accepted_controller_stderr"},
                 "unknown shared physical metadata role")
             expected_suffixes = {"accepted_test_stdout": {".stdout"}, "accepted_test_stderr": {".stderr"},
-                "frozen_history_json": {".json"}, "source_receipt_text": {".py", ".sh"}}.get(shared_metadata_role, {".py"})
+                "frozen_history_json": {".json"}, "source_receipt_text": {".py", ".sh"},
+                "accepted_controller_stdout": {".raw"}, "accepted_controller_stderr": {".raw"}}.get(shared_metadata_role, {".py"})
             require(Path(path).suffix in expected_suffixes, "a declared shared metadata role cannot authorize a binary or driver")
             require(type(shared_declaration) is dict and set(shared_declaration) in (
                 {"authority", "reference_field"}, {"authority", "source_receipt_field", "relative_path"}),
@@ -314,6 +386,15 @@ class AcceptedInventory:
             authority = reference_shape(shared_declaration["authority"])
             require(authority["path"] in self.files.paths, "the metadata authority must already have been hashed in this validation")
             document_value = self.files.json(authority)
+            if shared_metadata_role in {"accepted_controller_stdout", "accepted_controller_stderr"}:
+                stream = shared_metadata_role.rsplit("_", 1)[1]
+                require(Path(authority["path"]).parent in self.accepted_units
+                    and Path(authority["path"]).name == "direct_controller_output_hashes.json"
+                    and shared_declaration.get("reference_field") == [stream]
+                    and path == str(Path(authority["path"]).parent / ("direct_controller_" + stream + ".raw"))
+                    and type(document_value.get("schema_version")) is int and document_value["schema_version"] == 1
+                    and document_value.get("kind") == "actual_direct_child_output_hashes_after_wait",
+                    "only the exact accepted unit's hashed stdout/stderr receipt can declare controller output metadata")
             if "reference_field" in shared_declaration:
                 fields = shared_declaration["reference_field"]
                 require(type(fields) is list and fields and all(type(item) is str for item in fields), "exact metadata declaration fields are required")
@@ -332,6 +413,11 @@ class AcceptedInventory:
                 item = source["files"][relative]
                 declared = {"path": str(Path(source["source_root"]) / relative), "sha256": item["sha256"] if type(item) is dict else item}
             require(exact(declared, value), "a shared metadata exception differs from its exact accepted field")
+            if shared_metadata_role in {"accepted_controller_stdout", "accepted_controller_stderr"}:
+                size = document_value[stream]["size_bytes"]
+                require(type(size) is int and 0 <= size <= MAXIMUM_METADATA_BYTES,
+                    "the controller output authority needs an exact bounded byte count")
+                self.files.file(path, sha, keep_bytes=True, expected_size_bytes=size)
             self.shared_metadata[(path, sha)] = {"role": shared_metadata_role, "declaration": shared_declaration}
         if captured:
             require(physical_role in {"producer_python_source", "accepted_mapped_driver_capture",
@@ -399,7 +485,27 @@ class AcceptedInventory:
                 continue
             self.visited_json.add(path)
             metadata = self.files.json(value)
-            self.references(metadata, root_kind=metadata.get("kind") if type(metadata) is dict else None)
+            if path in self.process_ledger_scopes:
+                scope = self.process_ledger_scopes[path]
+                annotations = validate_frozen_ledger_scope(scope, metadata)
+                for index, row in enumerate(metadata):
+                    if index in annotations:
+                        self.historical_source_annotations.append({"ledger": value, "row_index": index, "row": row,
+                            "source_annotation": row["helper"], "entire_ledger_bytes_hashed": True,
+                            "treated_as_current_execution_dependency": False, "executed_or_qualified_by_snapshot": False})
+                        self.references({key: item for key, item in row.items() if key != "helper"})
+                    else:
+                        self.references(row)
+            else:
+                self.references(metadata, root_kind=metadata.get("kind") if type(metadata) is dict else None)
+            if Path(path).name == "direct_controller_output_hashes.json" and Path(path).parent in self.accepted_units:
+                for stream in ("stdout", "stderr"):
+                    output = metadata[stream]
+                    require(type(output) is dict and set(output) == {"path", "sha256", "size_bytes"}
+                        and type(output["size_bytes"]) is int and 0 <= output["size_bytes"] <= MAXIMUM_METADATA_BYTES,
+                        "accepted controller output requires its exact small recorded byte count")
+                    self.add({key: output[key] for key in ("path", "sha256")}, metadata=False, shared_metadata_role="accepted_controller_" + stream,
+                        shared_declaration={"authority": value, "reference_field": [stream]})
             if isinstance(metadata, dict) and isinstance(metadata.get("files"), list) and isinstance(metadata.get("git_roots"), list):
                 mappings = metadata["files"]; seen = set()
                 for row in mappings:
@@ -511,6 +617,7 @@ def accepted_role(files, inventory, review_reference, role, qualification_review
         and exact(result.get("helpers"), plan["helpers"])
         and plan.get("hardware_class") == "h100" and binding.get("gpu_uuid") == CARD_ONE,
         "accepted evidence changed its original source, real target or exact unit")
+    inventory.accepted_units[unit] = {"plan": plan_reference, "review": review_reference}
     require(exact(result.get("runtime_environment"), plan["runtime_environment"])
         and exact(result.get("copy_seeds"), plan["copy_seeds"]),
         "accepted evidence changed its exact original runtime, assets or random streams")
@@ -617,6 +724,7 @@ def accepted_role(files, inventory, review_reference, role, qualification_review
         and manifest["schema_version"] == 1 and type(manifest.get("files")) is list and len(manifest["files"]) == 693
         and type(manifest.get("git_roots")) is list and len(manifest["git_roots"]) == 8,
         "an accepted original history must retain its complete 693 mappings and eight source declarations")
+    ledger_scope = register_accepted_ledger_scope(files, inventory, plan, plan_reference, unit, binding)
     return {"review": review_reference, "result": result_reference, "plan": plan_reference,
         "campaign_run_dir": plan["campaign_run_dir"],
         "source_commit": plan["source_commit"], "helper_commit": plan["helpers"]["source_commit"],
@@ -628,6 +736,7 @@ def accepted_role(files, inventory, review_reference, role, qualification_review
         "historical_inputs": plan["direct_binding"]["frozen_inputs"], "historical_manifest": manifest_reference,
         "asset_input": plan["inputs"]["asset_record"], "actual_asset_receipt": actual_asset_reference,
         "qualified_asset_receipt": qualified_asset_receipt,
+        "frozen_process_ledger_scope": ledger_scope,
         "raw_validation_provenance": raw_provenance}
 
 
@@ -667,11 +776,13 @@ def build_snapshot(run, inputs, producer_sha256, maximum_seconds=285):
         return {"schema_version": 1, "kind": PROOF_KIND, "complete": True, "protocol": PROTOCOL,
             "inputs": inputs, "accepted": {"qualification": qualification, "correctness": {str(key): row for key, row in by_count.items()}},
             "producer": context, "producer_source_sha256": producer_sha256, "created_at_seconds": time.time(),
-            "coverage_scope": "all explicit accepted references and all declared historical captured payloads",
+            "coverage_scope": "all accepted execution dependencies and all declared historical captured payloads; unrelated diagnostic helper annotations remain in the whole hashed frozen ledger metadata",
             "declared_files": [{"path": path, "sha256": expected} for path, expected in sorted(inventory.declared.items())],
             "historical_manifests": inventory.manifests, "logical_mapping_count": len(inventory.logical_mappings),
             "resolved_logical_references": inventory.resolved_logical_references, "file_snapshot": actual,
             "inline_historical_records": inventory.inline_historical_records,
+            "frozen_process_ledger_scopes": inventory.process_ledger_scopes,
+            "historical_source_annotations": inventory.historical_source_annotations,
             "previous_gpu_or_raw_gate_cases_reexecuted": False, "live_training_inputs_validated_by_this_snapshot": False,
             "cross_host_descriptor_identity_asserted": False, "admission_granted": False, "worker_admitted": False,
             "scientific_credit": 0, "case_credit": 0, "idea_credit": 0, "throughput_credit": 0, "packing_point_credit": 0,

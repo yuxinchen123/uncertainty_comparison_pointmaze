@@ -1,0 +1,10 @@
+test_controller_output_roles_require_exact_accepted_unit_and_field (new_scope_tests.ExactReferenceScopeTests) ... ok
+test_exact_known_annotations_preserve_owner_uniqueness (new_scope_tests.ExactReferenceScopeTests) ... ok
+test_selected_current_row_cannot_be_an_ignored_annotation (new_scope_tests.ExactReferenceScopeTests) ... ok
+test_unknown_identity_role_or_source_annotation_is_refused (new_scope_tests.ExactReferenceScopeTests) ... ok
+test_wrong_frozen_ledger_hash_is_refused_before_scope (new_scope_tests.ExactReferenceScopeTests) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.006s
+
+OK

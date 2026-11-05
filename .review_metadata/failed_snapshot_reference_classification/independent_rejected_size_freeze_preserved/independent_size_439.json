@@ -1,0 +1,102 @@
+{
+  "actual_full_snapshot": false,
+  "all18frozenbytes_modes_unchanged": true,
+  "approved": false,
+  "checks": 6,
+  "elapsed_seconds": 0.04439124697819352,
+  "errors": 0,
+  "failures": 1,
+  "freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-01-00_accepted-evidence-reference-classification_metadata-only_gpu-count-0_processor-count-1_host-memory-mib-512/.review_metadata/failed_snapshot_reference_classification/narrow_frozen_source_for_independent_review.json",
+    "sha256": "34edb1122b5f25dbed1740eda69691b56bfe6de991fdfdf1aa651b5b336cc53b"
+  },
+  "job_id": "6783003",
+  "kind": "independent_narrow_reference_scope_size_review",
+  "native_GPU_tool_operations": 0,
+  "observations": [
+    {
+      "actual_stdout_size": 6,
+      "case": "controller_wrong_typed_size",
+      "complete_snapshot_accepted": true,
+      "declared_stdout_size": 7,
+      "error": null,
+      "proof": {
+        "bytes_hashed": 460,
+        "complete": true,
+        "descriptor_identity_scope": "this CPU host and this validation only",
+        "descriptor_limits": [
+          131072,
+          131072
+        ],
+        "distinct_paths": 3,
+        "distinct_physical_files": 3,
+        "elapsed_seconds": 0.00183157401625067,
+        "maximum_open_files": 65536,
+        "maximum_seconds": 30,
+        "physical_files": [
+          {
+            "aliases": [
+              "/tmp/tmpm9q322xg/direct_controller_stdout.raw"
+            ],
+            "bytes": 6,
+            "identity": {
+              "st_ctime_ns": 1793870592115058393,
+              "st_dev": 64768,
+              "st_gid": 90030,
+              "st_ino": 7342971,
+              "st_mode": 33188,
+              "st_mtime_ns": 1793870592115058393,
+              "st_nlink": 1,
+              "st_size": 6,
+              "st_uid": 2618919
+            },
+            "sha256": "63d42d26156fcc761e57da4128e9881d5bdf3bf933f0f6e9c93d6e26b9b90ae7"
+          },
+          {
+            "aliases": [
+              "/tmp/tmpm9q322xg/direct_controller_stderr.raw"
+            ],
+            "bytes": 6,
+            "identity": {
+              "st_ctime_ns": 1793870592115058393,
+              "st_dev": 64768,
+              "st_gid": 90030,
+              "st_ino": 7342974,
+              "st_mode": 33188,
+              "st_mtime_ns": 1793870592115058393,
+              "st_nlink": 1,
+              "st_size": 6,
+              "st_uid": 2618919
+            },
+            "sha256": "7e6b710b765404cccbad9eedcff7615fc37b269d6db12cd81a58be541d93083c"
+          },
+          {
+            "aliases": [
+              "/tmp/tmpm9q322xg/direct_controller_output_hashes.json"
+            ],
+            "bytes": 448,
+            "identity": {
+              "st_ctime_ns": 1793870592115058393,
+              "st_dev": 64768,
+              "st_gid": 90030,
+              "st_ino": 7342990,
+              "st_mode": 33188,
+              "st_mtime_ns": 1793870592115058393,
+              "st_nlink": 1,
+              "st_size": 448,
+              "st_uid": 2618919
+            },
+            "sha256": "c34e40c16fe62efeb603c2c40111a7e79de936acb842b4e3c783b610895a923c"
+          }
+        ],
+        "producer_hostname": "heartpiece"
+      }
+    }
+  ],
+  "passed": false,
+  "payload_reads": 0,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "step_id": "439",
+  "worker_admission": false
+}

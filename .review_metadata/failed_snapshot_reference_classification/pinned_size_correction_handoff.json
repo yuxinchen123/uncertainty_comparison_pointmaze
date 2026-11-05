@@ -1,0 +1,47 @@
+{
+  "actual_full_snapshot_or_gpu_work": false,
+  "affected_author_check": {
+    "actual_small_stream_joins": 6,
+    "affected_methods": 1,
+    "metadata_bytes_hashed": 9156,
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-01-00_accepted-evidence-reference-classification_metadata-only_gpu-count-0_processor-count-1_host-memory-mib-512/.review_metadata/failed_snapshot_reference_classification/controller_size_checks_442.json",
+    "seconds": 0.19736152002587914,
+    "sha256": "798582e6991b231588322a5df0b55cd33a444c7b69fb4d2bffcd746cf197b2fe",
+    "step": "6783003.442"
+  },
+  "after": "ValidationFiles.file receives expected_size_bytes from the exact hashed controller field. It compares the actual pinned st_size before a new read, and the retained actual byte count/st_size on cache or alias hits. Every mismatch is caught by the existing permanent failure handler. Restoring a declaration cannot revive the instance. Empty files remain valid only at exact size0.",
+  "base_commit": "7d07da121c41c531d51cbd25b73579735212ead8",
+  "before": "The exact receipt provided a typed size but did not compare it to the actual pinned file. A declared7-byte file with6actual bytes and the correct hash could produce complete=true.",
+  "full142_resolution_repeated": false,
+  "kind": "narrow_actual_pinned_controller_size_correction_handoff",
+  "only_changed_existing_methods": [
+    "AcceptedInventory.add",
+    "ValidationFiles.file"
+  ],
+  "preserved_rejected_source": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-01-00_accepted-evidence-reference-classification_metadata-only_gpu-count-0_processor-count-1_host-memory-mib-512/.review_metadata/failed_snapshot_reference_classification/independent_rejected_size_freeze_preserved/preservation_manifest.json",
+    "sha256": "4b3db996b7125d5c53b577ff07438e5d76fde550dda4d96d9cef055260e31118"
+  },
+  "previous_block_summary": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-01-00_accepted-evidence-reference-classification_metadata-only_gpu-count-0_processor-count-1_host-memory-mib-512/.review_metadata/failed_snapshot_reference_classification/independent_size_block_summary.json",
+    "sha256": "e3ee4064cf5bc08e1fe052b7bfcc84912a54df02058b118c84da7768ae3f7461"
+  },
+  "previous_rejected_freeze_sha256": "34edb1122b5f25dbed1740eda69691b56bfe6de991fdfdf1aa651b5b336cc53b",
+  "prior_five_controls_repeated": false,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "source_sha256": "94dc00524bfc5d02ebc2f7b8f2b88444516938fe583967ea16e414a1e2e4e54a",
+  "source_unpublished": true,
+  "subcases": [
+    "new descriptor declared7actual6",
+    "cached metadata inconsistent size and permanent reuse refusal",
+    "hard-link alias inconsistent size",
+    "empty stream exactsize0",
+    "two controller authority fields with inconsistent alias sizes"
+  ],
+  "unchanged_prior_resolution_receipt": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-01-00_accepted-evidence-reference-classification_metadata-only_gpu-count-0_processor-count-1_host-memory-mib-512/.review_metadata/failed_snapshot_reference_classification/actual_reference_classification_437.json",
+    "sha256": "5fa95e5ec15f0fb6d7939a94a1efd4ea3d2fa942ff7ae194077f6aaa4526fed0"
+  },
+  "unchanged_reference_policy": "The six exact output-field roles, whole-ledger hash, selected owner/source/uniqueness checks and three exact historical diagnostic annotations remain unchanged. The original1938 capture paths still require hashing; no fallback or new ignored dependency exists."
+}
