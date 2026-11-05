@@ -1,0 +1,27 @@
+{
+  "base_commit": "4bb3a61cb92fe48ab5ba68fb52f70b47736a1174",
+  "files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_tool_scope.py": {
+      "mode": 432,
+      "sha256": "37ff07a2ddf5fe24ddca8d20371c94d48970b11667a25ea32741a072929dd297",
+      "size_bytes": 54734
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_target_tool_scope_task_exit.py": {
+      "mode": 432,
+      "sha256": "bc64d2044c9d067ddb432f03a0e3e7d19e5d0bca9c7c65db8b714b734b5a0c1e",
+      "size_bytes": 11844
+    }
+  },
+  "fixture_authored_by_separate_agent": true,
+  "kind": "known_parent_task_roster_combined_runtime_fixture_source_freeze",
+  "no_GPU_actions": true,
+  "runtime_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-15-11_profile-task-roster_known-live-parent_enumerated-thread-exit_fresh-complete-read_gpu-actions-0/.review_metadata/profile_task_roster/runtime_source_freeze_2.json",
+    "sha256": "c3d9473ea47b702fc72905188682a207fbf9fe341001d0bf1971ac9a6a637dc6"
+  },
+  "runtime_helper_counts": {
+    "h100": 45,
+    "jaguar03_rtx_a4500": 36
+  },
+  "schema_version": 1
+}

@@ -1,0 +1,39 @@
+{
+  "configured_allocation_process_custody_must_remain": false,
+  "events": [
+    {
+      "at_seconds": 1793921409.496038,
+      "birth": "88221320",
+      "kind": "pinned_positive_child",
+      "parent_pid": 1310269,
+      "pid": 1310270
+    },
+    {
+      "at_seconds": 1793921409.548763,
+      "birth": "88221320",
+      "collection_sequence": 6,
+      "discarded_child_list_valid": false,
+      "kind": "known_parent_task_roster_reconciled",
+      "observation": {
+        "path": "/tmp/tmpjv7beap4/tool_task_roster_observation_1.json",
+        "sha256": "62b968f5e05c9b272427051007f1c31d8137d9f56b52d9f2b77b46a6ef424ad8"
+      },
+      "pid": 1310270,
+      "task": 1310271
+    }
+  ],
+  "gpu_or_cuda_qualification": false,
+  "interventions": [],
+  "kind": "direct_tool_descendant_cleanup_progress",
+  "known_nodes": 1,
+  "known_roots": 1,
+  "native_process_control_only": true,
+  "phase": "kernel_closure_verified_and_native_flag_restored",
+  "producer_birth": "88221305",
+  "producer_pid": 1310269,
+  "read_errors": [],
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "standing_descriptor_must_remain_open": false,
+  "subreaper_active": false
+}

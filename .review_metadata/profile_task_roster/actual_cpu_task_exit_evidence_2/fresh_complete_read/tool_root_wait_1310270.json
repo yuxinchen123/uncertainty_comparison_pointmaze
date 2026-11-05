@@ -1,0 +1,16 @@
+{
+  "birth": "88221320",
+  "command": [
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "-c",
+    "import json,os,sys,threading,time\nready=threading.Event();finish=threading.Event();identity={}\ndef worker():\n    identity['tid']=threading.get_native_id();ready.set();finish.wait()\nthread=threading.Thread(target=worker);thread.start();ready.wait()\nprint(json.dumps({'pid':os.getpid(),'worker_tid':identity['tid']}),flush=True)\nfor line in sys.stdin.buffer:\n    if line.strip()==b'release_thread':\n        finish.set();thread.join()\n        deadline=time.monotonic()+0.2\n        while os.path.exists('/proc/self/task/'+str(identity['tid'])):\n            if time.monotonic()>=deadline:raise RuntimeError('own joined task remained visible')\n            time.sleep(0.001)\n        print(json.dumps({'pid':os.getpid(),'worker_tid':identity['tid'],'worker_joined':not thread.is_alive()}),flush=True)\n    elif line.strip()==b'finish':\n        finish.set();thread.join();break\n"
+  ],
+  "finished_at_seconds": 1793921409.5566046,
+  "kind": "actual_scoped_tool_popen_wait",
+  "pid": 1310270,
+  "returncode": 0,
+  "started_at_seconds": 1793921409.495734
+}

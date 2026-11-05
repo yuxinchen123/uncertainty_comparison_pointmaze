@@ -1,0 +1,41 @@
+{
+  "actual_job_id": "6825983",
+  "actual_process_native_GPU_or_target_operations": false,
+  "actual_step_id": "177",
+  "cases": [
+    {
+      "accepted": false,
+      "elapsed_after_pin": 2.01,
+      "error": "fresh task collection and child pins exceeded the one actual retry budget",
+      "expected": false,
+      "synthetic_pin_cost": 2.0
+    },
+    {
+      "accepted": true,
+      "elapsed_after_pin": 0.03,
+      "error": null,
+      "expected": true,
+      "synthetic_pin_cost": 0.02
+    },
+    {
+      "accepted": true,
+      "elapsed_after_pin": 0.5,
+      "error": null,
+      "expected": true,
+      "synthetic_pin_cost": 0.49
+    },
+    {
+      "accepted": false,
+      "elapsed_after_pin": 0.5001,
+      "error": "fresh task collection and child pins exceeded the one actual retry budget",
+      "expected": false,
+      "synthetic_pin_cost": 0.4901
+    }
+  ],
+  "kind": "independent_task_roster_corrected_pin_timing_source_controls",
+  "old174_gap_now_rejected": true,
+  "passed": true,
+  "scope": "Only an exact extracted method with synthetic clock/collector/pin/observer sinks. This is not an actual kernel task event or native role proof.",
+  "source_approval_pending_actual_fixture_and_saved_reader": true,
+  "source_sha256": "37ff07a2ddf5fe24ddca8d20371c94d48970b11667a25ea32741a072929dd297"
+}

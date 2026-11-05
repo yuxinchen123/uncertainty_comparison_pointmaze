@@ -1,0 +1,16 @@
+{
+  "actual_job_id": "6825983",
+  "actual_step_id": "174",
+  "actual_synthetic_clock_elapsed": 2.01,
+  "all_process_and_native_and_GPU_and_target_operations": false,
+  "kind": "independent_synthetic_pin_work_budget_and_chronology_gap",
+  "later_identity_observed_at_seconds": 12.01,
+  "recorded_bounded_retry_elapsed_seconds": 0.01,
+  "recorded_finished_at_seconds": 10.01,
+  "reproduced_gap": true,
+  "required_correction": "Measure elapsed and finish only after actual fresh child pins; retain final same-live-parent proof and bind all saved identity times inside that completed interval.",
+  "runtime_returned_success": true,
+  "source_approval": false,
+  "source_sha256": "036664a7d4ec1f76cd018a249ffa5094a1fcea21cbc3a734518233a17129c009",
+  "synthetic_scope": "An exact extracted held method executes fake collector/time/pin/metadata sinks. No actual process or directory is inspected, and this is no actual lifecycle or qualification proof."
+}

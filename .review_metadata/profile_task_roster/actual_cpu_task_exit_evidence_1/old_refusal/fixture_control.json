@@ -1,0 +1,63 @@
+{
+  "actual_fixture_completed_at_seconds": 1793921358.2560668,
+  "actual_trigger": [
+    {
+      "at_seconds": 1793921358.1785285,
+      "parent_birth": "88216186",
+      "parent_handle_live": true,
+      "parent_pid": 1310229,
+      "worker_join_acknowledged": true,
+      "worker_tid": 1310230
+    }
+  ],
+  "admission_granted": false,
+  "descriptor_events": [
+    {
+      "descriptor": 3,
+      "identity": {
+        "device": 14,
+        "inode": 12685
+      },
+      "observed_at_seconds": 1793921358.1395884,
+      "open_generation": 1,
+      "opened_pid": 1310228,
+      "operation": "pidfd_open"
+    },
+    {
+      "descriptor": 4,
+      "identity": {
+        "device": 14,
+        "inode": 12685
+      },
+      "observed_at_seconds": 1793921358.1522472,
+      "open_generation": 2,
+      "opened_pid": 1310229,
+      "operation": "pidfd_open"
+    },
+    {
+      "descriptor": 4,
+      "identity": {
+        "device": 14,
+        "inode": 12685
+      },
+      "observed_at_seconds": 1793921358.2528508,
+      "open_generation": 2,
+      "opened_pid": 1310229,
+      "operation": "close"
+    },
+    {
+      "descriptor": 3,
+      "identity": {
+        "device": 14,
+        "inode": 12685
+      },
+      "observed_at_seconds": 1793921358.2528627,
+      "open_generation": 1,
+      "opened_pid": 1310228,
+      "operation": "close"
+    }
+  ],
+  "native_provider_role_claimed": false,
+  "scientific_credit": 0,
+  "scope": "actual own CPU parent and thread only; upstream configured custody is explicitly synthetic"
+}
