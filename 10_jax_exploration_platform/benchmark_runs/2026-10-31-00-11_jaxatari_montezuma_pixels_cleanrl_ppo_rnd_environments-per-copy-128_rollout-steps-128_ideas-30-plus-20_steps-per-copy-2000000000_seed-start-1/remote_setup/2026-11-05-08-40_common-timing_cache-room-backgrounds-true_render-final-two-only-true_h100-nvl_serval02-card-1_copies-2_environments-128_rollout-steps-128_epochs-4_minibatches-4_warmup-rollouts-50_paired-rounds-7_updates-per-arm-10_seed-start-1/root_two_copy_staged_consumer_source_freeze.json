@@ -1,0 +1,56 @@
+{
+  "kind": "prepared_two_copy_exact_staged_consumer_after_raw_approval",
+  "at_utc": "2026-11-05T18:31:58.664688+00:00",
+  "files": [
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-05-49_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/independent_h100_common_timing_staged_consumer_exact_metadata_child.py",
+      "sha256": "06611d9becead71c0c352f87fa216e5edce9fdb3aa750c73e8e67f7ffac6f576",
+      "bytes": 6468
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-08-40_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/independent_h100_common_timing_raw_review.py",
+      "sha256": "f0fa52796a9ff612b11f791aa21d00a3c8a52d7ad96845e453d37a837d0cf6ed",
+      "bytes": 21078
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-08-40_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/root_two_copy_terminal_reader_source_freeze.json",
+      "sha256": "30a41159ad822d0a0bc510dcf6d1821ceac2376fa5449c8cec1c794293ba1c8d",
+      "bytes": 7769
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-08-40_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/independent_h100_common_timing_staged_consumer.py",
+      "sha256": "570e65f66b0b37125b9491caf7a29346a25f8fbf048a6f58d0f4e9478a131451",
+      "bytes": 6446
+    }
+  ],
+  "exact_replacements": [
+    {
+      "before": "2026-11-05-05-49_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1",
+      "after": "2026-11-05-08-40_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1",
+      "occurrences": 1
+    },
+    {
+      "before": "independent_h100_common_timing_raw_review_exact_metadata_child.py",
+      "after": "independent_h100_common_timing_raw_review.py",
+      "occurrences": 1
+    },
+    {
+      "before": "RAW_SOURCE_SHA='a247a3b3e05a320c0fdde513d3f94190918f80beae37b793ea9a35bc73f6519b'",
+      "after": "RAW_SOURCE_SHA='f0fa52796a9ff612b11f791aa21d00a3c8a52d7ad96845e453d37a837d0cf6ed'",
+      "occurrences": 1
+    },
+    {
+      "before": "reviewer_identity='/root/review_bound_h100_timing_launch'",
+      "after": "reviewer_identity='/root/correct_native_process_control'",
+      "occurrences": 1
+    },
+    {
+      "before": "Accepted intermediate one-copy common performance",
+      "after": "Accepted intermediate two-copy common performance",
+      "occurrences": 1
+    }
+  ],
+  "execution": false,
+  "scientific_credit": 0,
+  "unchanged_entrypoint": "U/code/direct_measurement.py::verify_saved_measurement(U,result)"
+}

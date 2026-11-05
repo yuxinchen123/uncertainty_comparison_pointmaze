@@ -1,0 +1,9 @@
+{
+  "kind": "preserved_metadata_preparation_failure",
+  "error_type": "KeyError",
+  "field": "copies",
+  "actual_schema_has_copy_seeds": true,
+  "observer_or_raw_reader_written_before_failure": false,
+  "numerical_or_gpu_operation": false,
+  "correction": "Use the actual two copy_seeds; do not invent a copies field in the immutable measurement plan."
+}
