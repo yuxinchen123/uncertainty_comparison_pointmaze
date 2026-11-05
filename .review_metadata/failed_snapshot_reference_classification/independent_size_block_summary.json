@@ -1,0 +1,38 @@
+{
+  "NUM_or_GPU_or_library_or_tool_operations": 0,
+  "actual_cpu_step": "6783003.439",
+  "actual_full_payload_snapshot": false,
+  "actual_payload_bytes_read": 0,
+  "all_eighteen_frozen_bytes_and_modes_unchanged": true,
+  "approved": false,
+  "blocking_finding": "For a real tiny own stdout file of6bytes, an exact hashed controller receipt declaring size_bytes7 and the correct actual content hash is accepted by inventory.hash_complete ascomplete=true. Typed size is projected away into path/hash with no join to actual pinned st_size/bytes.",
+  "blocking_independent_controls": 1,
+  "checks": 6,
+  "exact_source_and_failure_preservation": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-01-00_accepted-evidence-reference-classification_metadata-only_gpu-count-0_processor-count-1_host-memory-mib-512/.review_metadata/failed_snapshot_reference_classification/independent_rejected_size_freeze_preserved/preservation_manifest.json",
+    "sha256": "4b3db996b7125d5c53b577ff07438e5d76fde550dda4d96d9cef055260e31118"
+  },
+  "failure_output": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-01-00_accepted-evidence-reference-classification_metadata-only_gpu-count-0_processor-count-1_host-memory-mib-512/.review_metadata/failed_snapshot_reference_classification/independent_size_439.stdout.raw",
+    "sha256": "e2bbc3a7090e53958e6f3e39274d2286ab9070d6d705cd0864eaadcf270ea5f4"
+  },
+  "failure_receipt": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-01-00_accepted-evidence-reference-classification_metadata-only_gpu-count-0_processor-count-1_host-memory-mib-512/.review_metadata/failed_snapshot_reference_classification/independent_size_439.json",
+    "sha256": "730b3b8c28ca542f700db27020985b638e89bce5e15a352b9434279b816f14e8"
+  },
+  "kind": "independent_narrow_snapshot_reference_scope_block_review",
+  "other_source_findings": "No additional blocker assessed; existing five owner/annotation/ref controls passed. Full actual142-reference metadata-only recomputation not repeated after discovering the source blocker.",
+  "passed": false,
+  "passed_existing_scope_controls": 5,
+  "producer_sha256": "6b73c56fc9c946a1c99a57fb84d941d55d4edd31f02e784c2a7b62e98cdd28ee",
+  "profile_or_worker_admission": false,
+  "required_correction": "Retain each accepted stdout/stderr expected size from its exact already hashed receipt field and require equality with the actual pinned file bytes/identity before complete proof, including aliases and zero-length files. Add the exact wrong-typed-size6vs7 control; retain no-payload metadata resolution.",
+  "reviewed_at_seconds": 1793870629.2129211,
+  "reviewer": "/root/implement_direct_h100_profiles/review_direct_profile_source",
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-01-00_accepted-evidence-reference-classification_metadata-only_gpu-count-0_processor-count-1_host-memory-mib-512/.review_metadata/failed_snapshot_reference_classification/narrow_frozen_source_for_independent_review.json",
+    "sha256": "34edb1122b5f25dbed1740eda69691b56bfe6de991fdfdf1aa651b5b336cc53b"
+  }
+}

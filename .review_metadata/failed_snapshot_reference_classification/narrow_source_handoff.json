@@ -1,0 +1,67 @@
+{
+  "actual_full_snapshot_rerun": false,
+  "actual_metadata_only_complete_resolution": {
+    "historical_annotation_instances": 9,
+    "historical_annotation_references": 2,
+    "payload_files_opened": 0,
+    "receipt": ".review_metadata/failed_snapshot_reference_classification/actual_reference_classification_437.json",
+    "required_execution_references_resolved": 140,
+    "seconds": 2.54234272998292,
+    "sha256": "5fa95e5ec15f0fb6d7939a94a1efd4ea3d2fa942ff7ae194077f6aaa4526fed0",
+    "step": "6783003.437",
+    "total_declared_references": 142,
+    "unresolved": 0
+  },
+  "after": "All accepted execution dependencies and all declared historical captured payloads remain required. Entire genuine frozen-ledger bytes and the selected owner/source/uniqueness checks remain. Only exact nonselected execution_diagnostic rows9/10/11, with the recorded identities/commits/hashrefs, retain their helper fields as hashed historical annotations, not current execution or qualification dependencies. Unknown/selected/current-row substitutions fail. Controller stdout/stderr exceptions require the exact hashed output receipt fields and accepted unit.",
+  "base_commit": "7d07da121c41c531d51cbd25b73579735212ead8",
+  "before": "Recursive path/hash discovery promoted every old ledger annotation into an execution dependency, and did not declare exact controller stdout/stderr fields. The one real snapshot failed before payload reads.",
+  "changed_production_files": [
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/accepted_evidence_snapshot.py"
+  ],
+  "diagnostic_helper_bytes": "Both exact historical Git images were confirmed by the separate read-only Git review. They are not missing bytes; they are not code opened by the original accepted launch_inputs gate. No current helper file fallback is used.",
+  "failed_actual_attempt": "2026-11-05-00-54_accepted-direct-evidence_cpu-snapshot_maximum-check-seconds-285_cpu-step-seconds-300_processor-count-1_host-memory-mib-512_gpu-count-0",
+  "failed_actual_attempt_reused": false,
+  "focused_negative_controls": {
+    "checks": 5,
+    "passed": true,
+    "receipt": ".review_metadata/failed_snapshot_reference_classification/scope_regressions_438.json",
+    "scope": "Selected row, owner duplication, unknown annotation source/identity/role, wrong frozen-ledger hash, and wrong controller receipt field/path all refuse.",
+    "seconds": 0.03722517006099224,
+    "step": "6783003.438"
+  },
+  "future_actual_snapshot_and_review": null,
+  "gpu_actions": 0,
+  "kind": "narrow_snapshot_reference_scope_source_handoff",
+  "legacy_annotation_identities": {
+    "10": {
+      "birth": "40378543",
+      "git_commit": "4766ba4aac2888f925932d374c0943ecbeccf136",
+      "pid": 3436708,
+      "sha256": "310bcb6b4b1a18cc9d7acac62a07dfb60874bb60aed127b50b9c07227593f9f8"
+    },
+    "11": {
+      "birth": "40378633",
+      "git_commit": "4766ba4aac2888f925932d374c0943ecbeccf136",
+      "pid": 3436742,
+      "sha256": "310bcb6b4b1a18cc9d7acac62a07dfb60874bb60aed127b50b9c07227593f9f8"
+    },
+    "9": {
+      "birth": "39999035",
+      "git_commit": "96b3381e336b254ca6ac1d22c9ed1857c888e0f5",
+      "pid": 3358345,
+      "sha256": "362bef4efe705373e3422b5e44e7573320bfb88d5225a264c95222a521735796"
+    }
+  },
+  "new_test_file": "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_accepted_evidence_snapshot_reference_scope.py",
+  "original_manifest_payload_policy": "The original manifest processing loop and all1938 declared captured paths remain unchanged. Every distinct physical file still needs one complete actual byte hash; matching declared content hashes do not authorize skipping different files.",
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "source_unpublished": true,
+  "unchanged_four_dispatch_module_bytes": {
+    "direct_common_confirmation.py": "e406a76f04fba2329f15642eb0144033ac1160cef13ef94bc3ab9bf12df38662",
+    "direct_measurement.py": "db6f97ce66a808193da3b23eee1a34a871670021cc9178c44e0377d64b6742e4",
+    "measure_selected.py": "fe8725b2e641d1c60de31bdd5ae49b31745222c6cf436b7202c330741df859ab",
+    "serval02_card1_binding.py": "bb72f3dd31bfb9ffc062038a4be6b974fa3aff3feee26e558d4a4a4353424069"
+  },
+  "unchanged_other_code": "No numerical/source/tolerance/dtype/configuration or live ownership function changed. Exact29 helper set and producer/consumer CLI remain unchanged. Only this metadata snapshot module changed."
+}

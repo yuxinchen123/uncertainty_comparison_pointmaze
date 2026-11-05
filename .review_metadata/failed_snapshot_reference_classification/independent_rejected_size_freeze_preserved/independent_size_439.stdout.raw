@@ -1,0 +1,19 @@
+test_controller_output_roles_require_exact_accepted_unit_and_field (independent_controller_scope_author.ExactReferenceScopeTests) ... ok
+test_exact_known_annotations_preserve_owner_uniqueness (independent_controller_scope_author.ExactReferenceScopeTests) ... ok
+test_selected_current_row_cannot_be_an_ignored_annotation (independent_controller_scope_author.ExactReferenceScopeTests) ... ok
+test_unknown_identity_role_or_source_annotation_is_refused (independent_controller_scope_author.ExactReferenceScopeTests) ... ok
+test_wrong_frozen_ledger_hash_is_refused_before_scope (independent_controller_scope_author.ExactReferenceScopeTests) ... ok
+test_typed_wrong_recorded_controller_size_is_refused (__main__.ActualSizeBoundary) ... FAIL
+
+======================================================================
+FAIL: test_typed_wrong_recorded_controller_size_is_refused (__main__.ActualSizeBoundary)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-05-01-00_accepted-evidence-reference-classification_metadata-only_gpu-count-0_processor-count-1_host-memory-mib-512/.review_metadata/failed_snapshot_reference_classification/independent_size_review.py", line 53, in test_typed_wrong_recorded_controller_size_is_refused
+    self.assertFalse(accepted,'incorrect controller size_bytes was silently discarded before a complete hash proof')
+AssertionError: True is not false : incorrect controller size_bytes was silently discarded before a complete hash proof
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.008s
+
+FAILED (failures=1)
