@@ -1,0 +1,15 @@
+test_closure_returning_after_cleanup_expiry_is_never_labelled_within_budget (__main__.IndependentSlowClosureBoundary.test_closure_returning_after_cleanup_expiry_is_never_labelled_within_budget)
+Assume a verified but late synthetic closure; check only the producer's budget classification. ... ok
+test_exact_deadline_return_is_not_within_the_remaining_time_window (test_direct_diagnostic_late_completion.LateDiagnosticCompletionTests.test_exact_deadline_return_is_not_within_the_remaining_time_window)
+A remaining-time value of zero remains expired at the terminal classification boundary. ... ok
+test_exact_rejected_late_closure_is_inconclusive (test_direct_diagnostic_late_completion.LateDiagnosticCompletionTests.test_exact_rejected_late_closure_is_inconclusive)
+The review399 closure returning401 after deadline400 cannot claim within-budget completion. ... ok
+test_fast_verified_closure_and_custody_remain_within_budget (test_direct_diagnostic_late_completion.LateDiagnosticCompletionTests.test_fast_verified_closure_and_custody_remain_within_budget)
+The positive case keeps the final399 snapshot and closes only after verified closure. ... ok
+test_final_custody_read_crossing_deadline_is_inconclusive (test_direct_diagnostic_late_completion.LateDiagnosticCompletionTests.test_final_custody_read_crossing_deadline_is_inconclusive)
+Closure before the limit does not hide a final custody read that returns after expiry. ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.048s
+
+OK

@@ -2,6 +2,7 @@
 import hashlib
 import importlib.util
 import json
+import math
 import os
 from pathlib import Path
 import re
@@ -19,12 +20,158 @@ LOCK = "/tmp/sl5nw_serval02_card1.lock"
 OWNER = 2618919
 LOCK_IDENTITY = {"device": 64512, "inode": 23077017, "uid": OWNER, "mode": 420, "regular_file": True}
 NUMERICAL = {"jax", "jaxlib", "numpy", "torch", "flax", "optax", "scipy", "cupy", "jaxtari", "exploration_platform"}
+DIAGNOSTIC_BUDGET = {'schema_version': 1, 'work_seconds': 240, 'cleanup_seconds': 60, 'total_seconds': 300}
 
 
 def require(value, message):
     """Refuse unknown ownership or descriptor evidence before releasing the payload."""
     if not value:
         raise ValueError(message)
+
+
+def diagnostic_budget(plan):
+    """Recognize only the explicit diagnostic time budget; leave absent/default and formal paths unchanged."""
+    if 'diagnostic_time_budget' not in plan:return None
+    value = plan['diagnostic_time_budget']
+    require(plan.get('kind') == DIAGNOSTIC and type(value) is dict and set(value) == set(DIAGNOSTIC_BUDGET)
+        and all(type(value[key]) is int and value[key] == expected for key, expected in DIAGNOSTIC_BUDGET.items())
+        and type(plan.get('maximum_active_seconds')) is int and plan['maximum_active_seconds'] == 240,
+        'the direct diagnostic requires exactly 240 work, 60 cleanup and 300 total seconds')
+    return value
+
+
+def monotonic_clock_domain():
+    """Bind same-host monotonic observations to the actual public kernel boot identifier."""
+    boot = Path('/proc/sys/kernel/random/boot_id').read_text().strip()
+    require(re.fullmatch(r'[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}', boot), 'the actual clock boot identifier is invalid')
+    clock = time.get_clock_info('monotonic')
+    require(clock.monotonic is True and clock.adjustable is False, 'the diagnostic clock must be monotonic and nonadjustable')
+    return {'hostname': socket.gethostname().split('.')[0], 'boot_id': boot,
+        'clock': 'monotonic', 'implementation': clock.implementation}
+
+
+def finite_monotonic(value):
+    """Refuse Boolean, negative and nonfinite monotonic timestamps."""
+    return type(value) in (int, float) and math.isfinite(value) and value >= 0
+
+
+class DiagnosticDeadline:
+    """Reuse one actual controller origin across all work, roles and cleanup attempts."""
+    def __init__(self, origin, reference):
+        """Keep immutable origin bytes separate from this process's retained first cleanup observation."""
+        self.origin, self.reference = origin, reference
+        self.started = origin['started_monotonic']
+        self.work_end, self.total_end = self.started + 240, self.started + 300
+        self.cleanup_started, self.cleanup_end = None, None
+
+    def remaining(self, phase, *, allow_zero=False):
+        """Return remaining time on the original absolute clock, never a restarted duration."""
+        require(phase in ('work', 'total', 'cleanup'), 'an exact diagnostic deadline phase is required')
+        now = time.monotonic()
+        require(finite_monotonic(now) and now >= self.started, 'the diagnostic monotonic clock moved to another domain')
+        end = self.work_end if phase == 'work' else self.total_end if phase == 'total' else self.cleanup_end
+        require(end is not None, 'cleanup must retain its first actual start before a cleanup wait')
+        remaining = max(0., end - now)
+        if not allow_zero and remaining <= 0:raise TimeoutError('the shared diagnostic ' + phase + ' deadline expired')
+        return remaining
+
+    def begin_cleanup(self):
+        """Reserve at most sixty seconds once, capped by the original total deadline."""
+        if self.cleanup_started is None:
+            self.cleanup_started = time.monotonic()
+            require(finite_monotonic(self.cleanup_started) and self.cleanup_started >= self.started,
+                'the first diagnostic cleanup clock is invalid')
+            self.cleanup_end = min(self.total_end, self.cleanup_started + 60)
+        return self.cleanup_end
+
+    def timeout(self, requested=None, *, phase='work'):
+        """Cap one requested wait by the common absolute deadline without extending it."""
+        remaining = self.remaining(phase)
+        require(requested is None or type(requested) in (int, float) and math.isfinite(requested) and requested > 0,
+            'a requested diagnostic timeout must be a finite positive number')
+        return remaining if requested is None else min(remaining, requested)
+
+    def snapshot(self):
+        """Retain actual clock observations even after expiry, without claiming successful completion."""
+        return {'origin': self.reference, 'clock_domain': self.origin['clock_domain'],
+            'started_monotonic': self.started, 'work_end_monotonic': self.work_end,
+            'total_end_monotonic': self.total_end, 'observed_monotonic': time.monotonic(),
+            'cleanup_started_monotonic': self.cleanup_started, 'cleanup_end_monotonic': self.cleanup_end}
+
+    def verify_snapshot(self, value, *, phase, cleanup_required=False):
+        """Check retained deadline arithmetic and expiry without sampling a live clock during saved review."""
+        require(type(value) is dict and set(value) == {'origin', 'clock_domain', 'started_monotonic',
+            'work_end_monotonic', 'total_end_monotonic', 'observed_monotonic', 'cleanup_started_monotonic',
+            'cleanup_end_monotonic'} and value['origin'] == self.reference
+            and value['clock_domain'] == self.origin['clock_domain']
+            and all(finite_monotonic(value[key]) for key in ('started_monotonic', 'work_end_monotonic',
+                'total_end_monotonic', 'observed_monotonic'))
+            and value['started_monotonic'] == self.started and value['work_end_monotonic'] == self.work_end
+            and value['total_end_monotonic'] == self.total_end
+            and self.started <= value['observed_monotonic'] <= (self.work_end if phase == 'work' else self.total_end),
+            'saved diagnostic deadline changed its actual origin, domain or successful time window')
+        first, end = value['cleanup_started_monotonic'], value['cleanup_end_monotonic']
+        if first is None:
+            require(end is None and not cleanup_required, 'successful scope completion needs its actual cleanup window')
+        else:
+            require(finite_monotonic(first) and finite_monotonic(end) and self.started <= first <= value['observed_monotonic']
+                and end == min(self.total_end, first + 60) and value['observed_monotonic'] <= end,
+                'saved diagnostic cleanup restarted or exceeded its original reserved window')
+        return value
+
+
+def validate_diagnostic_origin(directory, plan, observer):
+    """Read the frozen controller origin without querying a historical live process or native state."""
+    require(diagnostic_budget(plan) is not None, 'the declared diagnostic time budget is required')
+    directory = Path(directory)
+    reference = observer.receipt(directory / 'diagnostic_controller_time_origin.json')
+    origin = observer.read_json(reference['path'])
+    expected_command = [plan['python'], '-I', '-S', '-B', str(directory / 'code/diagnose_direct_nsight_process.py'),
+        '--controller-unit', str(directory)]
+    require(type(origin) is dict and set(origin) == {'kind', 'schema_version', 'plan', 'source', 'controller',
+        'clock_domain', 'budget', 'started_monotonic', 'published_monotonic', 'published_at_seconds'}
+        and origin['kind'] == 'actual_direct_diagnostic_controller_time_origin'
+        and type(origin['schema_version']) is int and origin['schema_version'] == 1
+        and origin['plan'] == observer.receipt(directory / 'measurement_plan.json')
+        and origin['source'] == observer.receipt(directory / 'code/diagnose_direct_nsight_process.py')
+        and origin['source']['sha256'] == plan['helpers']['files'][PREFIX + 'diagnose_direct_nsight_process.py']
+        and type(origin['budget']) is dict and set(origin['budget']) == set(DIAGNOSTIC_BUDGET)
+        and all(type(origin['budget'][key]) is int and origin['budget'][key] == expected
+            for key, expected in DIAGNOSTIC_BUDGET.items()), 'the immutable diagnostic origin changed source, plan or budget')
+    observer.validate_snapshot(origin['controller'], OWNER, origin['controller']['cgroup'])
+    domain = origin['clock_domain']
+    require(origin['controller']['command'] == expected_command and type(domain) is dict
+        and set(domain) == {'hostname', 'boot_id', 'clock', 'implementation'} and domain['hostname'] == 'serval02'
+        and domain['clock'] == 'monotonic' and type(domain['implementation']) is str
+        and re.fullmatch(r'[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}', domain['boot_id'])
+        and all(finite_monotonic(origin[key]) for key in ('started_monotonic', 'published_monotonic', 'published_at_seconds'))
+        and origin['started_monotonic'] <= origin['published_monotonic'] < origin['started_monotonic'] + 240,
+        'the diagnostic controller identity or original clock is invalid')
+    return DiagnosticDeadline(origin, reference)
+
+
+def read_diagnostic_deadline(directory, plan):
+    """Require the same actual host and boot clock before a live role uses the shared deadline."""
+    if diagnostic_budget(plan) is None:return None
+    deadline = validate_diagnostic_origin(directory, plan, generic(plan))
+    require(deadline.origin['clock_domain'] == monotonic_clock_domain(), 'the diagnostic role changed host or monotonic domain')
+    deadline.remaining('work')
+    return deadline
+
+
+def publish_diagnostic_origin(directory, plan, controller, started):
+    """Create and fsync actual parent/source/clock bytes before Popen, with no future child identity."""
+    require(diagnostic_budget(plan) is not None, 'a diagnostic origin cannot be published for another protocol')
+    now = time.monotonic()
+    require(finite_monotonic(started) and started <= now < started + 240, 'actual controller startup exhausted its work deadline')
+    observer = generic(plan)
+    observer.publish(Path(directory) / 'diagnostic_controller_time_origin.json', {
+        'kind': 'actual_direct_diagnostic_controller_time_origin', 'schema_version': 1,
+        'controller': controller, 'plan': observer.receipt(Path(directory) / 'measurement_plan.json'),
+        'source': observer.receipt(Path(directory) / 'code/diagnose_direct_nsight_process.py'),
+        'budget': diagnostic_budget(plan), 'clock_domain': monotonic_clock_domain(), 'started_monotonic': started,
+        'published_monotonic': now, 'published_at_seconds': time.time()})
+    return read_diagnostic_deadline(directory, plan)
 
 
 def generic(plan):
@@ -75,15 +222,23 @@ def adjacent_helper(plan, name):
     return module
 
 
-def tool_scope(directory, plan, descriptor, *, observer=None):
+def tool_scope(directory, plan, descriptor, *, observer=None, deadline=None):
     """Establish closed child ownership before any version, capture or export tool is spawned."""
     owner = context(plan, directory)
     control = adjacent_helper(plan, "direct_tool_descendants")
     if 'native_process_control' in plan:
         require(runtime_observer(plan, observer).native_process_runtime.role == 'producer',
             'only the native producer observer may own the closed tool scope')
-    scope = control.OwnedToolScope(directory, plan, runtime_observer(plan, observer), owner,
-        lambda: descriptor_record(plan, descriptor, owner, local=True))
+    selected = runtime_observer(plan, observer)
+    if diagnostic_budget(plan) is not None:
+        deadline = deadline or (selected.native_process_runtime.deadline if 'native_process_control' in plan
+            else read_diagnostic_deadline(directory, plan))
+        require(deadline is not None, 'the diagnostic scope needs its original time budget')
+        deadline.remaining('work')
+    else:require(deadline is None, 'another protocol cannot receive a diagnostic deadline')
+    arguments = {} if deadline is None else {'deadline': deadline}
+    scope = control.OwnedToolScope(directory, plan, selected, owner,
+        lambda: descriptor_record(plan, descriptor, owner, local=True), **arguments)
     scope.standing_descriptor = descriptor
     return scope
 
@@ -103,6 +258,7 @@ def contract(plan, directory):
         path = Path(__file__).with_name(name)
         require(hashlib.sha256(path.read_bytes()).hexdigest() == plan["helpers"]["files"].get(PREFIX + name),
             "the exact direct process helper changed")
+    diagnostic_budget(plan)
     if 'native_process_control' in plan:
         adjacent_helper(plan, 'native_process_evidence').policy(plan)
     return plan
@@ -315,6 +471,8 @@ def claim_self(directory, plan):
 def wait_release(directory, plan, *, observer=None):
     """Keep the actual payload blocked until positive ancestry and producer custody are saved."""
     observer = runtime_observer(plan, observer)
+    deadline = None if diagnostic_budget(plan) is None else (observer.native_process_runtime.deadline
+        if 'native_process_control' in plan else read_diagnostic_deadline(directory, plan))
     if 'native_process_control' in plan:
         require(observer.native_process_runtime.role == 'capture', 'native release waiting requires the capture observer')
     claim = claim_self(directory, plan)
@@ -323,14 +481,18 @@ def wait_release(directory, plan, *, observer=None):
     try:
         started = time.monotonic()
         while not os.path.lexists(Path(directory) / "capture_release.json"):
-            require(not observer.handle_exited(parent) and time.monotonic() - started < 180,
+            require(not observer.handle_exited(parent) and (time.monotonic() - started < 180 if deadline is None else deadline.remaining('work') > 0),
                 "the producer disappeared or did not release this exact blocked payload")
+            if deadline is not None:deadline.remaining('work')
             time.sleep(.05)
+        if deadline is not None:deadline.remaining('work')
         observation = observer.read_json(Path(directory) / "capture_process_observation.json")
         observer.validate_observation(observation, claim, intent["capture_command"], intent["producer"])
         descriptor_record(plan, intent["producer_lock_before"]["fd"], intent["producer"], local=False)
         current = context(plan, directory)
+        if deadline is not None:deadline.remaining('work')
         adjacent_helper(plan, "direct_capture_release").acknowledge_release(directory, plan, intent, claim, current, observer)
+        if deadline is not None:deadline.remaining('work')
         return claim
     finally:
         observer.close_process_handle(parent)
@@ -339,6 +501,8 @@ def wait_release(directory, plan, *, observer=None):
 def run_waiter(directory, plan, *, observer=None):
     """Spawn and wait on exactly one payload without holding the standing GPU descriptor."""
     observer = runtime_observer(plan, observer)
+    deadline = None if diagnostic_budget(plan) is None else (observer.native_process_runtime.deadline
+        if 'native_process_control' in plan else read_diagnostic_deadline(directory, plan))
     if 'native_process_control' in plan:
         require(observer.native_process_runtime.role == 'waiter', 'native payload launching requires the waiter observer')
     current = context(plan, directory)
@@ -349,11 +513,13 @@ def run_waiter(directory, plan, *, observer=None):
     parent = producer_handle(plan, intent, observer=observer if 'native_process_control' in plan else None)
     child, interventions = None, []
     try:
+        if deadline is not None:deadline.remaining('work')
         child = subprocess.Popen(intent["capture_command"], close_fds=True, pass_fds=())
         started = time.monotonic()
         while not os.path.lexists(Path(directory) / "capture_identity.json"):
-            require(child.poll() is None and not observer.handle_exited(parent) and time.monotonic() - started < 180,
+            require(child.poll() is None and not observer.handle_exited(parent) and (time.monotonic() - started < 180 if deadline is None else deadline.remaining('work') > 0),
                 "the actual payload ended or failed to publish its own blocked identity")
+            if deadline is not None:deadline.remaining('work')
             time.sleep(.05)
         claim = validate_claim(directory, plan, intent, observer.read_json(Path(directory) / "capture_identity.json"))
         actual = observer.ProcReader().snapshot(child.pid, OWNER, current["cgroup"])
@@ -366,16 +532,20 @@ def run_waiter(directory, plan, *, observer=None):
             "producer_lock_before_wait": descriptor_record(plan, intent["producer_lock_before"]["fd"], intent["producer"], local=False)})
         while child.poll() is None:
             if observer.handle_exited(parent):
+                if deadline is not None:deadline.begin_cleanup()
                 interventions.append("the sole standing lock producer exited")
+                if deadline is not None:deadline.remaining('cleanup')
                 child.terminate()
                 try:
-                    child.wait(timeout=10)
+                    child.wait(timeout=10 if deadline is None else deadline.timeout(10, phase='cleanup'))
                 except subprocess.TimeoutExpired:
                     interventions.append("the exact owned child required SIGKILL")
-                    child.kill(); child.wait()
+                    if deadline is not None:deadline.remaining('cleanup')
+                    child.kill(); child.wait() if deadline is None else child.wait(timeout=deadline.remaining('cleanup'))
                 break
+            if deadline is not None:deadline.remaining('work')
             time.sleep(.05)
-        returned = child.wait()
+        returned = child.wait() if deadline is None else child.wait(timeout=deadline.remaining('total'))
         after = descriptor_record(plan, intent["producer_lock_before"]["fd"], intent["producer"], local=False)
         observer.publish(Path(directory) / "capture_actual_wait.json", {"schema_version": 1, "protocol": PROTOCOL,
             "challenge": intent["challenge"], "command": intent["capture_command"], "waited_pid": child.pid,
@@ -384,18 +554,21 @@ def run_waiter(directory, plan, *, observer=None):
             "producer_lock_after_wait": after, "standing_descriptor_inherited": False})
         return returned if returned >= 0 else 128 - returned
     except BaseException as error:
+        if deadline is not None:deadline.begin_cleanup()
         actual_return, cleanup_error = None, None
         try:
             if child is not None:
                 if child.poll() is None:
                     interventions.append("the exact owned payload received SIGTERM during waiter failure")
+                    if deadline is not None:deadline.remaining('cleanup')
                     child.terminate()
                     try:
-                        child.wait(timeout=10)
+                        child.wait(timeout=10 if deadline is None else deadline.timeout(10, phase='cleanup'))
                     except subprocess.TimeoutExpired:
                         interventions.append("the exact owned payload received SIGKILL after cleanup timeout")
+                        if deadline is not None:deadline.remaining('cleanup')
                         child.kill()
-                actual_return = child.wait()
+                actual_return = child.wait() if deadline is None else child.wait(timeout=deadline.remaining('cleanup'))
         except BaseException as failed_cleanup:
             cleanup_error = repr(failed_cleanup)
         observer.publish(Path(directory) / "capture_actual_wait_failure.json", {
@@ -406,11 +579,20 @@ def run_waiter(directory, plan, *, observer=None):
         raise
     finally:
         if child is not None and child.poll() is None:
-            child.terminate()
-            try:
-                child.wait(timeout=10)
-            except subprocess.TimeoutExpired:
-                child.kill(); child.wait()
+            if deadline is not None:deadline.begin_cleanup()
+            if deadline is not None and deadline.remaining('cleanup', allow_zero=True) <= 0:
+                observer.publish(Path(directory) / 'waiter_cleanup_budget_inconclusive.json', {
+                    'known_actual_popen_pid': child.pid, 'deadline': deadline.snapshot(),
+                    'completed': False, 'admission_granted': False, 'scientific_credit': 0,
+                    'producer_scope_cleanup_still_required': True})
+            else:
+                if deadline is not None:deadline.remaining('cleanup')
+                child.terminate()
+                try:
+                    child.wait(timeout=10 if deadline is None else deadline.timeout(10, phase='cleanup'))
+                except subprocess.TimeoutExpired:
+                    if deadline is not None:deadline.remaining('cleanup')
+                    child.kill(); child.wait() if deadline is None else child.wait(timeout=deadline.remaining('cleanup'))
         observer.close_process_handle(parent)
 
 
@@ -437,6 +619,7 @@ def _run_tool_in_scope(directory, plan, descriptor, scope):
     """Release the exact blocked payload only after owned startup ancestry and local custody are saved."""
     directory = Path(directory)
     observer = scope.observer
+    deadline = scope.deadline if diagnostic_budget(plan) is not None else None
     intent = make_intent(directory, plan, descriptor)
     command = intent["nsight_command"]
     observer.publish(directory / "executed_command.json", command)
@@ -453,7 +636,7 @@ def _run_tool_in_scope(directory, plan, descriptor, scope):
             processes = observer.OwnedProcesses(child.pid, root["process_start_time"], intent["producer"])
             while not all(os.path.lexists(directory / name) for name in ("capture_identity.json", "capture_actual_launch.json")):
                 scope.scan()
-                require(child.poll() is None and time.monotonic() - started < min(180, plan["maximum_active_seconds"]),
+                require(child.poll() is None and (time.monotonic() - started < min(180, plan['maximum_active_seconds']) if deadline is None else deadline.remaining('work') > 0),
                     "Nsight or its actual payload did not publish the blocked source identity")
                 time.sleep(.05)
             claim = validate_claim(directory, plan, intent, observer.read_json(directory / "capture_identity.json"))
@@ -470,10 +653,12 @@ def _run_tool_in_scope(directory, plan, descriptor, scope):
             custody = descriptor_record(plan, descriptor, intent["producer"], local=True)
             custody["observed_at_seconds"] = time.time()
             observer.publish(directory / "producer_lock_before_release.json", custody)
+            if deadline is not None:deadline.remaining('work')
             adjacent_helper(plan, "direct_capture_release").publish_release(directory, plan, intent, claim,
                 observer.receipt(directory / "capture_process_observation.json"),
                 observer.receipt(directory / "producer_lock_before_release.json"), observer)
-            returned = scope.wait(child, timeout=max(.001, plan["maximum_active_seconds"] - (time.monotonic() - started)))
+            returned = scope.wait(child, timeout=max(.001, plan['maximum_active_seconds'] - (time.monotonic() - started))
+                if deadline is None else deadline.remaining('work'))
             after = descriptor_record(plan, descriptor, intent["producer"], local=True)
             observer.publish(directory / "profiler_actual_wait.json", {"schema_version": 1, "protocol": PROTOCOL,
                 "command": command, "waited_pid": child.pid, "process_start_time": root["process_start_time"],
@@ -545,10 +730,12 @@ def validate_saved(directory, plan):
         directory, plan, intent, claim, observation, observer, work=work)
     scope = adjacent_helper(plan, "direct_tool_descendants").validate_saved_scope(directory, plan, observer,
         intent["producer"], owner["pid"], owner["process_start_time"],
-        lambda record: validate_descriptor(plan, record, intent["producer"]))
+        lambda record: validate_descriptor(plan, record, intent["producer"]),
+        **({} if diagnostic_budget(plan) is None else {'diagnostic_deadline': validate_diagnostic_origin(directory, plan, observer)}))
     native = {} if 'native_process_control' not in plan else {
         'native_process_evidence': adjacent_helper(plan, 'native_process_evidence').validate_saved(
-            directory, plan, observer, intent, observation, launch, waited)}
+            directory, plan, observer, intent, observation, launch, waited,
+            diagnostic_deadline=None if diagnostic_budget(plan) is None else validate_diagnostic_origin(directory, plan, observer))}
     return {**native, "kind": "actual_direct_nsight_payload_and_producer_waits", "passed": True,
         "capture_identity": observer.receipt(directory / "capture_identity.json"),
         "capture_wait": observer.receipt(directory / "capture_actual_wait.json"),

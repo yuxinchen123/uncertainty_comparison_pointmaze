@@ -1,0 +1,31 @@
+{
+  "Nsight_GPU_or_standing_GPU_lock_operations": false,
+  "actual_own_CPU_timer_and_fresh_own_child_only": true,
+  "admission_granted": false,
+  "broad_122_batch_repeated": false,
+  "errors": [
+    {
+      "test": "test_controller_timeout_has_no_extra_wait_or_holder_signal (test_direct_diagnostic_time_budget.OriginAndControllerTests.test_controller_timeout_has_no_extra_wait_or_holder_signal)",
+      "traceback": "Traceback (most recent call last):\n  File \"/p/rlprojects/RND_worktrees/2026-11-04-23-25_direct-native-diagnostic_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_diagnostic_time_budget.py\", line 180, in test_controller_timeout_has_no_extra_wait_or_holder_signal\n    with self.assertRaises(subprocess.TimeoutExpired):diagnostic.controller(self.directory, entry_monotonic=100.)\n                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/p/rlprojects/RND_worktrees/2026-11-04-23-25_direct-native-diagnostic_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_direct_nsight_process.py\", line 220, in controller\n    \"launch_review\": observer.receipt(directory / \"diagnostic_launch_review.json\"),\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/p/rlprojects/RND_worktrees/2026-11-04-23-25_direct-native-diagnostic_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py\", line 35, in receipt\n    require(path.is_absolute() and path.resolve(strict=True) == path and path.is_file()\n                                   ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/pathlib.py\", line 1240, in resolve\n    s = self._flavour.realpath(self, strict=strict)\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<frozen posixpath>\", line 424, in realpath\n  File \"<frozen posixpath>\", line 468, in _joinrealpath\nFileNotFoundError: [Errno 2] No such file or directory: '/tmp/tmp8v_ss1nd/data/unit/diagnostic_launch_review.json'\n"
+    }
+  ],
+  "failures": [],
+  "finished_at_seconds": 1793864715.7879965,
+  "job_id": "6783003",
+  "kind": "author_shared_total_diagnostic_budget_focused_owned_CPU_checks",
+  "passed": false,
+  "pid": 1244440,
+  "python": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+  "requested_Slurm_time": "00:05:00",
+  "requested_memory_MiB": 512,
+  "scientific_credit": 0,
+  "source_and_protected_unchanged": true,
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-23-25_direct-native-diagnostic_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0/.review_metadata/direct_diagnostic_time_budget/author_source_freeze_2.json",
+    "sha256": "0889c691f5670a68caec12f0dc6f31ce829793fcd24217e0d3fa9d296bf89f1b"
+  },
+  "started_at_seconds": 1793864715.6215563,
+  "step_id": "392",
+  "tests_run": 1,
+  "validation_timeout_seconds": 240
+}

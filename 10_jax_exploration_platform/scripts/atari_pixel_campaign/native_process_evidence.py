@@ -124,12 +124,18 @@ def capture_contract(directory, contract, observer):
 
 class Runtime:
     """Retain one explicit provider for one actual process and publish immutable role boundaries."""
-    def __init__(self, directory, plan, role, metadata, owner):
+    def __init__(self, directory, plan, role, metadata, owner, *, deadline=None):
         """Join actual context before native startup and finish self preflight before tools or parent watches."""
         import os
         policy(plan)
         self.directory, self.plan, self.role, self.metadata = Path(directory), plan, role, metadata
         self.owner, self.pid, self.completed = owner, os.getpid(), False
+        self.deadline = deadline
+        require(('diagnostic_time_budget' in plan) == (deadline is not None),
+            'native role startup must receive exactly its declared diagnostic deadline')
+        if deadline is not None:
+            require(same(deadline.origin['budget'], plan['diagnostic_time_budget']), 'native deadline budget differs from the plan')
+            deadline.remaining('work')
         self.files = role_files(directory, role)
         require(owner['pid'] == self.pid and owner['uids'] == [os.getuid()] * 4
             and not any(path.exists() for path in self.files.values()), 'native role startup must be fresh and actually owned')
@@ -155,7 +161,11 @@ class Runtime:
             'owner': owner, 'contract': contract_ref, 'provider': self.provider.evidence(),
             'started_at_seconds': started, 'published_at_seconds': time.time(),
             'scientific_credit': 0, 'admission_granted': False}
+        if deadline is not None:
+            deadline.remaining('work')
+            self.begin['diagnostic_deadline'] = deadline.snapshot()
         metadata.publish(self.files['begin'], self.begin)
+        if deadline is not None:deadline.remaining('work')
 
     def require_owner(self, plan):
         """Refuse inherited, completed or unrelated runtime observer state."""
@@ -166,6 +176,7 @@ class Runtime:
     def complete(self, references):
         """Publish success only after the caller's real waits and all retained handle closes."""
         self.require_owner(self.plan)
+        if self.deadline is not None:self.deadline.remaining('total')
         evidence = self.provider.evidence()
         require(evidence['open_handle_count'] == 0 and not evidence['native_call_failure'],
             'native completion requires every retained handle closed and no failed native calls')
@@ -174,7 +185,11 @@ class Runtime:
             'references': {name: self.metadata.receipt(self.directory / name) for name in references},
             'provider': evidence, 'completed_at_seconds': time.time(), 'completed': True,
             'scientific_credit': 0, 'admission_granted': False}
+        if self.deadline is not None:
+            value['diagnostic_deadline'] = self.deadline.snapshot()
+            self.deadline.verify_snapshot(value['diagnostic_deadline'], phase='total')
         self.metadata.publish(self.files['terminal'], value)
+        if self.deadline is not None:self.deadline.remaining('total')
         self.completed = True
         return self.metadata.receipt(self.files['terminal'])
 
@@ -183,15 +198,16 @@ class Runtime:
         self.metadata.publish(self.files['failure'], {'kind': 'actual_native_process_role_failure',
             'role': self.role, 'error_type': type(error).__name__, 'error': str(error),
             'provider': self.provider.evidence(), 'completed': False, 'scientific_credit': 0,
-            'admission_granted': False, 'terminal_previously_published': self.completed})
+            'admission_granted': False, 'terminal_previously_published': self.completed,
+            **({} if self.deadline is None else {'diagnostic_deadline': self.deadline.snapshot()})})
         return self.metadata.receipt(self.files['failure'])
 
 
-def bootstrap(directory, plan, role, metadata, owner):
+def bootstrap(directory, plan, role, metadata, owner, *, deadline=None):
     """Preserve failed startup evidence even when an immutable role begin cannot be published."""
     runtime = Runtime.__new__(Runtime)
     try:
-        Runtime.__init__(runtime, directory, plan, role, metadata, owner)
+        Runtime.__init__(runtime, directory, plan, role, metadata, owner, deadline=deadline)
         return runtime
     except BaseException as error:
         provider = getattr(runtime, 'provider', None)
@@ -395,9 +411,11 @@ def validate_calls(evidence, owner, allowed, contract):
     return {'calls': len(calls), 'ordinary_calls': ordinary, 'cleanup_calls': cleanup}
 
 
-def validate_saved(directory, plan, observer, intent, observation, launch, waited, mapping=None):
+def validate_saved(directory, plan, observer, intent, observation, launch, waited, mapping=None, diagnostic_deadline=None):
     """Read all three actual role records without loading a library or observing any historical live process."""
     policy(plan);directory = Path(directory)
+    budgeted = 'diagnostic_time_budget' in plan
+    require(budgeted == (diagnostic_deadline is not None), 'saved native roles need their exact declared deadline proof')
     owners = {'producer': intent['producer'], 'waiter': launch['waiter'], 'capture': launch['child']}
     contract_ref, unused = reference(directory / 'native_process_target_contract.json', observer, mapping)
     contract = validate_contract(read_reference(contract_ref, observer, mapping), plan, observer, mapping)
@@ -429,7 +447,7 @@ def validate_saved(directory, plan, observer, intent, observation, launch, waite
             plan['python'], '-I', '-S', '-B', str(directory / 'code/diagnose_direct_nsight_process.py'), '--producer-unit', str(directory)]
         observer.validate_snapshot(begin['owner'], owner['uids'][0], owner['cgroup'])
         require(set(begin) == {'kind', 'schema_version', 'role', 'plan', 'policy', 'owner', 'contract', 'provider',
-            'started_at_seconds', 'published_at_seconds', 'scientific_credit', 'admission_granted'}
+            'started_at_seconds', 'published_at_seconds', 'scientific_credit', 'admission_granted'} | ({'diagnostic_deadline'} if budgeted else set())
             and begin['kind'] == 'actual_native_process_role_begin'
             and owner['command'] == expected_command and observer.stable(begin['owner']) == observer.stable(owner)
             and begin['role'] == role and same(begin['policy'], policy(plan)) and same(begin['contract'], contract_ref)
@@ -437,7 +455,7 @@ def validate_saved(directory, plan, observer, intent, observation, launch, waite
             and finite_time(begin['started_at_seconds']) and finite_time(begin['published_at_seconds'])
             and begin['started_at_seconds'] <= begin['published_at_seconds'], 'native begin has different source, plan, owner or chronology')
         require(set(terminal) == {'kind', 'schema_version', 'role', 'begin', 'owner', 'references', 'provider',
-            'completed_at_seconds', 'completed', 'scientific_credit', 'admission_granted'}
+            'completed_at_seconds', 'completed', 'scientific_credit', 'admission_granted'} | ({'diagnostic_deadline'} if budgeted else set())
             and terminal['kind'] == 'actual_native_process_role_terminal'
             and terminal['completed'] is True and terminal['role'] == role and same(terminal['owner'], begin['owner'])
             and same(terminal['begin'], begin_ref) and finite_time(terminal['completed_at_seconds'])
@@ -446,6 +464,9 @@ def validate_saved(directory, plan, observer, intent, observation, launch, waite
             require(type(record['schema_version']) is int and record['schema_version'] == 1
                 and type(record['scientific_credit']) is int and record['scientific_credit'] == 0
                 and record['admission_granted'] is False, 'native records cannot grant scientific or admission credit')
+        if budgeted:
+            diagnostic_deadline.verify_snapshot(begin['diagnostic_deadline'], phase='work')
+            diagnostic_deadline.verify_snapshot(terminal['diagnostic_deadline'], phase='total')
         validate_calls(begin['provider'], owner, {owner['pid']: owner}, contract)
         require(len(begin['provider']['calls']) == 3, 'native begin must contain only its actual self preflight')
         require(begin['started_at_seconds'] <= begin['provider']['calls'][0]['started_at_seconds']
@@ -489,6 +510,7 @@ def validate_saved(directory, plan, observer, intent, observation, launch, waite
     terminal = {role: read_reference(result[role]['terminal'], observer, mapping) for role in ROLES}
     payload_ref, unused = reference(directory / 'probe_result.json', observer, mapping)
     payload = read_reference(payload_ref, observer, mapping)
+    if budgeted:diagnostic_deadline.verify_snapshot(payload['diagnostic_deadline'], phase='work')
     require(begin['waiter']['published_at_seconds'] <= begin['capture']['started_at_seconds']
         and begin['capture']['published_at_seconds'] <= payload['payload_started_at_seconds']
         <= payload['payload_finished_at_seconds'] <= terminal['capture']['completed_at_seconds']

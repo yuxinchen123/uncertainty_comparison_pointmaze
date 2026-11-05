@@ -1,0 +1,26 @@
+{
+  "Nsight_GPU_or_standing_GPU_lock_operations": false,
+  "actual_own_CPU_timer_and_fresh_own_child_only": true,
+  "admission_granted": false,
+  "broad_122_batch_repeated": false,
+  "errors": [],
+  "failures": [],
+  "finished_at_seconds": 1793864907.4111726,
+  "job_id": "6783003",
+  "kind": "author_shared_total_diagnostic_budget_focused_owned_CPU_checks",
+  "passed": true,
+  "pid": 1244800,
+  "python": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+  "requested_Slurm_time": "00:05:00",
+  "requested_memory_MiB": 512,
+  "scientific_credit": 0,
+  "source_and_protected_unchanged": true,
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-23-25_direct-native-diagnostic_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0/.review_metadata/direct_diagnostic_time_budget/author_source_freeze_4.json",
+    "sha256": "e87031b002f806ff5801f172b0cb390b8396b10492e3832b4bdb8d6e601f2515"
+  },
+  "started_at_seconds": 1793864907.181887,
+  "step_id": "394",
+  "tests_run": 2,
+  "validation_timeout_seconds": 240
+}

@@ -1,0 +1,7 @@
+test_controller_timeout_has_no_extra_wait_or_holder_signal (test_direct_diagnostic_time_budget.OriginAndControllerTests.test_controller_timeout_has_no_extra_wait_or_holder_signal)
+A late producer remains inconclusive; controller neither kills it nor adds a cleanup wait. ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.020s
+
+OK

@@ -1,0 +1,29 @@
+test_controller_timeout_has_no_extra_wait_or_holder_signal (test_direct_diagnostic_time_budget.OriginAndControllerTests.test_controller_timeout_has_no_extra_wait_or_holder_signal)
+A late producer remains inconclusive; controller neither kills it nor adds a cleanup wait. ... ERROR
+
+======================================================================
+ERROR: test_controller_timeout_has_no_extra_wait_or_holder_signal (test_direct_diagnostic_time_budget.OriginAndControllerTests.test_controller_timeout_has_no_extra_wait_or_holder_signal)
+A late producer remains inconclusive; controller neither kills it nor adds a cleanup wait.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-04-23-25_direct-native-diagnostic_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_diagnostic_time_budget.py", line 180, in test_controller_timeout_has_no_extra_wait_or_holder_signal
+    with self.assertRaises(subprocess.TimeoutExpired):diagnostic.controller(self.directory, entry_monotonic=100.)
+                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/p/rlprojects/RND_worktrees/2026-11-04-23-25_direct-native-diagnostic_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_direct_nsight_process.py", line 220, in controller
+    "launch_review": observer.receipt(directory / "diagnostic_launch_review.json"),
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/p/rlprojects/RND_worktrees/2026-11-04-23-25_direct-native-diagnostic_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py", line 35, in receipt
+    require(path.is_absolute() and path.resolve(strict=True) == path and path.is_file()
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/pathlib.py", line 1240, in resolve
+    s = self._flavour.realpath(self, strict=strict)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen posixpath>", line 424, in realpath
+  File "<frozen posixpath>", line 468, in _joinrealpath
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/tmp8v_ss1nd/data/unit/diagnostic_launch_review.json'
+
+----------------------------------------------------------------------
+Ran 1 test in 0.019s
+
+FAILED (errors=1)
+srun: error: heartpiece: task 0: Exited with exit code 1

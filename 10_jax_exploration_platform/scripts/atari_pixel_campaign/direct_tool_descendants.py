@@ -84,12 +84,16 @@ def bounded(directory, name):
 
 class OwnedToolScope:
     """Adopt orphans from a single closed tool-spawn scope and require kernel terminal proof."""
-    def __init__(self, directory, plan, observer, owner, check_descriptor, *, grace_seconds=120):
+    def __init__(self, directory, plan, observer, owner, check_descriptor, *, grace_seconds=120, deadline=None):
         """Use a fresh single-threaded producer, exact tool path and already verified standing descriptor."""
         self.directory, self.plan, self.observer = Path(directory), plan, observer
         self.owner, self.check_descriptor = owner, check_descriptor
         self.uid, self.pid, self.birth, self.cgroup = owner["uids"][0], owner["pid"], owner["process_start_time"], owner["cgroup"]
-        self.grace_seconds = grace_seconds
+        require(('diagnostic_time_budget' in plan) == (deadline is not None),
+            'a declared diagnostic scope requires its actual shared deadline')
+        self.grace_seconds, self.deadline = grace_seconds, deadline
+        self.budget_inconclusive_published = False
+        if deadline is not None:deadline.remaining('work')
         self.nodes, self.handles, self.roots, self.waits, self.events = {}, {}, {}, {}, []
         self.previous = None
         self.active, self.closed, self.failed, self.pending_command = False, False, False, None
@@ -294,6 +298,7 @@ class OwnedToolScope:
         """Verify the kernel child-subreaper and actual empty baseline before every tool spawn."""
         require(self.pid == os.getpid() and threading.active_count() == 1
             and signal.getsignal(signal.SIGCHLD) == signal.SIG_DFL, "a fresh single-threaded default-SIGCHLD producer is required")
+        if self.deadline is not None:self.deadline.remaining('work')
         descriptor_before = self.check_descriptor()
         children, rows = self.child_lists(self.pid)
         require(not children and len(rows) == 1, "the tool scope requires an actual empty producer-child baseline")
@@ -316,6 +321,7 @@ class OwnedToolScope:
             "native_bootstrap": self.native_bootstrap, "previous_subreaper": self.previous,
             "set_subreaper": changed, "verified_subreaper": verified, "single_threaded_closed_scope": True,
             "established_at_seconds": time.time(), "native_request_counts_before": self.request_counts_before}
+        if self.deadline is not None:self.baseline['diagnostic_deadline'] = self.deadline.snapshot()
         self.observer.publish(self.directory / "tool_descendant_scope_begin.json", self.baseline)
         self.progress("scope_established", force=True)
         return self
@@ -326,6 +332,7 @@ class OwnedToolScope:
         require(not keywords.get("shell", False) and keywords.get("preexec_fn") is None
             and keywords.get("executable") is None and keywords.get("pass_fds", ()) == (), "tool spawning cannot add shell, executable or descriptor overrides")
         keywords["close_fds"], keywords["pass_fds"] = True, ()
+        if self.deadline is not None:self.deadline.remaining('work')
         self.pending_command = list(command)
         try:
             child = subprocess.Popen(command, **keywords)
@@ -351,12 +358,13 @@ class OwnedToolScope:
 
     def wait(self, child, timeout):
         """Observe startup and adopted descendants while waiting on the exact actual tool root."""
-        deadline = time.monotonic() + timeout
+        deadline = time.monotonic() + (timeout if self.deadline is None else self.deadline.timeout(timeout))
         while child.poll() is None:
             self.scan()
             require(time.monotonic() < deadline, "the scoped tool root exceeded its actual active deadline")
             time.sleep(.05)
         self.scan()
+        if self.deadline is not None:self.deadline.remaining('work')
         return self.record_wait(child)
 
     def run(self, command, *, capture_output=False, timeout=None, check=False, **keywords):
@@ -365,7 +373,8 @@ class OwnedToolScope:
             require("stdout" not in keywords and "stderr" not in keywords, "capture_output cannot override explicit streams")
             keywords.update(stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         child = self.spawn(command, **keywords)
-        deadline = time.monotonic() + timeout if timeout is not None else None
+        effective = timeout if self.deadline is None else self.deadline.timeout(timeout)
+        deadline = time.monotonic() + effective if effective is not None else None
         while True:
             self.scan()
             remaining = .05 if deadline is None else min(.05, max(.001, deadline - time.monotonic()))
@@ -375,6 +384,7 @@ class OwnedToolScope:
             except subprocess.TimeoutExpired as error:
                 if deadline is not None and time.monotonic() >= deadline:
                     raise subprocess.TimeoutExpired(command, timeout, error.output, error.stderr) from error
+        if self.deadline is not None:self.deadline.remaining('work')
         returned = self.record_wait(child)
         result = subprocess.CompletedProcess(command, returned, output, errors)
         if check and returned:
@@ -409,6 +419,8 @@ class OwnedToolScope:
             key = (pid, actual["process_start_time"], int(number))
             if key in self.signals_sent:
                 continue
+            if self.deadline is not None and self.deadline.remaining('cleanup', allow_zero=True) <= 0:
+                break
             self.observer.signal_handle(handle, number)
             self.signals_sent.add(key)
             self.interventions.append({"pid": pid, "birth": actual["process_start_time"], "signal": int(number), "at_seconds": time.time()})
@@ -432,11 +444,30 @@ class OwnedToolScope:
         self.event("terminal_wait_not_echild", actual_result=repr(result))
         return None
 
+    def diagnostic_budget_status(self, *, kernel_closure_verified, snapshot=None):
+        """Record expiry from the current retained snapshot, including slow closure and custody checks."""
+        snapshot = self.deadline.snapshot() if snapshot is None else snapshot
+        end = snapshot['cleanup_end_monotonic']
+        within = end is not None and snapshot['observed_monotonic'] < min(end, snapshot['total_end_monotonic'])
+        if not within:
+            self.failed = True
+            if not self.budget_inconclusive_published:
+                self.observer.publish(self.directory / 'tool_descendant_budget_inconclusive.json', {
+                    'producer_pid': self.pid, 'producer_birth': self.birth, 'completed': False,
+                    'deadline': snapshot, 'descriptor_release_attempted': False,
+                    'kernel_closure_verified': kernel_closure_verified,
+                    'no_new_tool_or_signal_requests_after_expiry': True,
+                    'reason': 'diagnostic completion checks exceeded the reserved cleanup window',
+                    'scientific_credit': 0, 'admission_granted': False})
+                self.budget_inconclusive_published = True
+        return within and not self.budget_inconclusive_published
+
     def finish(self, failed):
         """Never return toward descriptor closure while any tool descendant may still exist."""
         if not hasattr(self, "cleanup_started"):
             self.cleanup_started = time.monotonic()
         started = self.cleanup_started
+        if self.deadline is not None:self.deadline.begin_cleanup()
         terminal = None
         requested = failed
         while terminal is None:
@@ -450,9 +481,17 @@ class OwnedToolScope:
                 verified = child_subreaper()
                 require(verified["value"] == 1, "the live producer lost its child-subreaper flag")
                 self.scan()
-                if requested or time.monotonic() - started >= self.grace_seconds:
-                    self.signal_known(signal.SIGTERM if time.monotonic() - started < self.grace_seconds else signal.SIGKILL)
+                if self.deadline is None:
+                    if requested or time.monotonic() - started >= self.grace_seconds:
+                        self.signal_known(signal.SIGTERM if time.monotonic() - started < self.grace_seconds else signal.SIGKILL)
+                else:
+                    now = time.monotonic()
+                    within_budget = self.diagnostic_budget_status(kernel_closure_verified=False)
+                    if within_budget and (requested or now >= started + 15):
+                        self.signal_known(signal.SIGTERM if now < started + 30 else signal.SIGKILL)
                 terminal = self.closure()
+                if self.deadline is not None:
+                    self.diagnostic_budget_status(kernel_closure_verified=terminal is not None)
             except BaseException as error:
                 self.failed = True
                 requested = True
@@ -467,6 +506,7 @@ class OwnedToolScope:
         except BaseException as error:
             self.failed = True
             self.read_errors.append({"kind": "standing_descriptor_terminal_check_failed", "error": repr(error)})
+        if self.deadline is not None:self.diagnostic_budget_status(kernel_closure_verified=True)
         self.closed = True
         self.terminal = {"schema_version": 1, "kind": "direct_tool_descendant_kernel_terminal_closure",
             "begin": self.observer.receipt(self.directory / "tool_descendant_scope_begin.json"),
@@ -478,6 +518,11 @@ class OwnedToolScope:
                 and not any(row["kind"].startswith("standing_descriptor") for row in self.read_errors),
             "all_historical_descendants_identified": False, "scientific_credit": 0, "gpu_or_cuda_qualification": False,
             "native_request_counts_before_restore": dict(_REQUEST_COUNTS)}
+        if self.deadline is not None:
+            final_snapshot = self.deadline.snapshot()
+            within = self.diagnostic_budget_status(kernel_closure_verified=True, snapshot=final_snapshot)
+            self.terminal['diagnostic_deadline'] = final_snapshot
+            self.terminal['within_diagnostic_budget'] = within and descriptor_at_terminal is not None
         self.observer.publish(self.directory / "tool_descendant_scope_terminal.json", self.terminal)
         restored = child_subreaper(self.previous["value"])
         actual = child_subreaper()
@@ -509,8 +554,10 @@ class OwnedToolScope:
         return False
 
 
-def validate_saved_scope(directory, plan, observer, producer, root_pid, root_birth, check_descriptor):
+def validate_saved_scope(directory, plan, observer, producer, root_pid, root_birth, check_descriptor, *, diagnostic_deadline=None):
     """Read kernel-scope closure evidence without querying any historical process or changing native state."""
+    require(('diagnostic_time_budget' in plan) == (diagnostic_deadline is not None),
+        'saved budgeted scope evidence requires its exact diagnostic origin')
     directory = Path(directory)
     begin_ref = observer.receipt(directory / "tool_descendant_scope_begin.json")
     begin = observer.read_json(begin_ref["path"])
@@ -518,6 +565,12 @@ def validate_saved_scope(directory, plan, observer, producer, root_pid, root_bir
     terminal = observer.read_json(terminal_ref["path"])
     restored_ref = observer.receipt(directory / "tool_descendant_scope_restored.json")
     restored = observer.read_json(restored_ref["path"])
+    if diagnostic_deadline is not None:
+        require(not (directory / 'tool_descendant_budget_inconclusive.json').exists()
+            and terminal.get('within_diagnostic_budget') is True,
+            'expired or unverified diagnostic cleanup cannot become successful scope evidence')
+        diagnostic_deadline.verify_snapshot(begin['diagnostic_deadline'], phase='work')
+        diagnostic_deadline.verify_snapshot(terminal['diagnostic_deadline'], phase='total', cleanup_required=True)
     observer.validate_snapshot(begin["producer"], producer["uids"][0], producer["cgroup"])
     require(observer.stable(begin["producer"]) == observer.stable(producer)
         and begin.get("actual_echild") is True and begin.get("single_threaded_closed_scope") is True,
