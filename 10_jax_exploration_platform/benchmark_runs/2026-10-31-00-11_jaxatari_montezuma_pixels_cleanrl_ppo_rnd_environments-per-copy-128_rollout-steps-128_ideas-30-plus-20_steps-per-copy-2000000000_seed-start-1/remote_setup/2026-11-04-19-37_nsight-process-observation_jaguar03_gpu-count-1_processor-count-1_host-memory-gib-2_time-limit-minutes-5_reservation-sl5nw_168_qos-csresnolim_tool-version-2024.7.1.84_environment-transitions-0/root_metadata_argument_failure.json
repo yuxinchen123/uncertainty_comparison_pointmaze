@@ -1,0 +1,8 @@
+{
+  "time": "2026-11-05T03:45:17.082319+00:00",
+  "actual_returncode": 2,
+  "actual_error": "unrecognized arguments: --packet; runner declares only --receipt and --expected-freeze",
+  "test_suite_started": false,
+  "actual_scheduler_mutations": 0,
+  "correction": "remove the unsupported --packet argument; preserve frozen runner"
+}

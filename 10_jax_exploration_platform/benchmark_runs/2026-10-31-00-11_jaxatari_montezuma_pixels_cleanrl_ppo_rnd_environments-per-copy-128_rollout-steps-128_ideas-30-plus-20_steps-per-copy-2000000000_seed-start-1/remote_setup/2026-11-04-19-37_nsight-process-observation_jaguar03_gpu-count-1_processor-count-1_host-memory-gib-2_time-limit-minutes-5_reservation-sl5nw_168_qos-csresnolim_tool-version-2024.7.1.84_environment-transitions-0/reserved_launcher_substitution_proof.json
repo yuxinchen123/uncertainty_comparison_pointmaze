@@ -1,0 +1,73 @@
+{
+  "actual_scheduler_or_tool_or_gpu_actions": 0,
+  "kind": "exact_reserved_diagnostic_launcher_literal_substitution_proof",
+  "launcher_substitutions": [
+    {
+      "after": "\"qos\": \"csresnolim\", \"reservation\": \"sl5nw_168\"",
+      "before": "\"qos\": \"normal\", \"reservation\": None",
+      "count": 1
+    },
+    {
+      "after": "\"--qos=csresnolim\", \"--reservation=sl5nw_168\", \"--nodelist=jaguar03\"",
+      "before": "\"--qos=normal\", \"--nodelist=jaguar03\"",
+      "count": 1
+    },
+    {
+      "after": "fields.get(\"QOS\") == \"csresnolim\"",
+      "before": "fields.get(\"QOS\") == \"normal\"",
+      "count": 1
+    },
+    {
+      "after": "fields.get(\"Reservation\", \"\") == \"sl5nw_168\"",
+      "before": "fields.get(\"Reservation\", \"\") in {\"\", \"(null)\", \"None\"}",
+      "count": 1
+    },
+    {
+      "after": "the exact held reserved submission command changed",
+      "before": "the exact held unreserved submission command changed",
+      "count": 1
+    }
+  ],
+  "metadata_runner_byte_identical": true,
+  "new_launcher": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-19-37_nsight-process-observation_jaguar03_gpu-count-1_processor-count-1_host-memory-gib-2_time-limit-minutes-5_reservation-sl5nw_168_qos-csresnolim_tool-version-2024.7.1.84_environment-transitions-0/launch_diagnostic_once.py",
+    "sha256": "80d65582290bb19bd4743f997034724be894c0efe88b0e5433552cb05e266e81"
+  },
+  "new_tests": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-19-37_nsight-process-observation_jaguar03_gpu-count-1_processor-count-1_host-memory-gib-2_time-limit-minutes-5_reservation-sl5nw_168_qos-csresnolim_tool-version-2024.7.1.84_environment-transitions-0/test_launch_diagnostic_once.py",
+    "sha256": "9c3bb633cafcaa7d56696375593a7212978c64fa7d989e1ea4bc3fe7bd3be343"
+  },
+  "original_reviewed_launcher": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-18-33_nsight-process-observation_jaguar03_gpu-count-1_processor-count-1_host-memory-gib-2_time-limit-minutes-5_placement-unreserved_qos-normal_tool-version-2024.7.1.84_environment-transitions-0/launch_diagnostic_once.py",
+    "sha256": "b9f781e00542e007c19b46c8fe4e2d52bdfc64c95bf5b96494eb09f7de7be967"
+  },
+  "original_reviewed_tests": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-18-33_nsight-process-observation_jaguar03_gpu-count-1_processor-count-1_host-memory-gib-2_time-limit-minutes-5_placement-unreserved_qos-normal_tool-version-2024.7.1.84_environment-transitions-0/test_launch_diagnostic_once.py",
+    "sha256": "447b271277f1a055f9015a065db26ef1cd2bad8be361378556fb55697d9c7b47"
+  },
+  "passed": true,
+  "reservation_evidence": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/own_reservation_168_exact_utc_2026-11-05-03-36.json",
+    "sha256": "65e2df90da88724751ab085f06b816c82cb8020d429f7e6b913599ba37146987"
+  },
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "staged_producers_unchanged": true,
+  "test_substitutions": [
+    {
+      "after": "TimeLimit=00:05:00 Partition=gpu Account=sl5nw_base QOS=csresnolim Reservation=sl5nw_168 ",
+      "before": "TimeLimit=00:05:00 Partition=gpu Account=sl5nw_base QOS=normal ",
+      "count": 1
+    },
+    {
+      "after": "\"ReqTRES=cpu=1,mem=2G,node=1,gres/gpu=2\", \"Reservation=synthetic_other_reservation\"))",
+      "before": "\"ReqTRES=cpu=1,mem=2G,node=1,gres/gpu=2\", \"Reservation=sl5nw_168\"))",
+      "count": 1
+    },
+    {
+      "after": "else: text = text.replace(\"Reservation=sl5nw_168\", replacement)",
+      "before": "else: text += replacement",
+      "count": 1
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "command": [
+    "scontrol",
+    "show",
+    "reservation",
+    "-o"
+  ],
+  "returncode": 0,
+  "observed_at_utc": "2026-11-05T03:34:25.327604+00:00",
+  "owner": "sl5nw",
+  "only_own_reservation_rows_retained": true,
+  "own_rows": [
+    {
+      "raw": "ReservationName=sl5nw_168 StartTime=2026-10-20T09:39:06 EndTime=2026-11-17T00:00:01 Duration=27-15:20:55 Nodes=jaguar03,puma01 NodeCnt=2 CoreCnt=192 Features=(null) PartitionName=(null) Flags=OVERLAP,IGNORE_JOBS,SPEC_NODES TRES=cpu=384 Users=sl5nw Groups=(null) Accounts=(null) Licenses=(null) State=ACTIVE BurstBuffer=(null) Watts=n/a MaxStartDelay=(null)",
+      "fields": {
+        "ReservationName": "sl5nw_168",
+        "StartTime": "2026-10-20T09:39:06",
+        "EndTime": "2026-11-17T00:00:01",
+        "Duration": "27-15:20:55",
+        "Nodes": "jaguar03,puma01",
+        "NodeCnt": "2",
+        "CoreCnt": "192",
+        "Features": "(null)",
+        "PartitionName": "(null)",
+        "Flags": "OVERLAP,IGNORE_JOBS,SPEC_NODES",
+        "TRES": "cpu=384",
+        "Users": "sl5nw",
+        "Groups": "(null)",
+        "Accounts": "(null)",
+        "Licenses": "(null)",
+        "State": "ACTIVE",
+        "BurstBuffer": "(null)",
+        "Watts": "n/a",
+        "MaxStartDelay": "(null)"
+      }
+    }
+  ],
+  "stderr": "",
+  "job_queries_or_actions": false
+}

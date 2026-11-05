@@ -1,0 +1,29 @@
+{
+  "actual_test_receipt": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-19-37_nsight-process-observation_jaguar03_gpu-count-1_processor-count-1_host-memory-gib-2_time-limit-minutes-5_reservation-sl5nw_168_qos-csresnolim_tool-version-2024.7.1.84_environment-transitions-0/launcher_root_independent_metadata_tests.json",
+    "sha256": "a4f5669130cb221c51a02eadfcea9e88aa0a6babf28895e0d29d42ead82fb037"
+  },
+  "admission_granted": false,
+  "checks": [
+    "all22frozen files hash to reviewed freeze",
+    "all17 original source/plan/mode artifacts intact",
+    "unchanged source18d observation producer and tool record",
+    "exact reserved resources agree in plan, held argv and native held checks",
+    "literal launcher substitutions independently inspected",
+    "all11 independent controls passed",
+    "default no-action and durable IDs before release retained"
+  ],
+  "kind": "root_independent_reserved_diagnostic_packet_and_launcher_review",
+  "passed": true,
+  "reviewed_at_utc": "2026-11-05T03:46:11.567434+00:00",
+  "reviewer_role": "root independent of packet author",
+  "scientific_credit": 0,
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-19-37_nsight-process-observation_jaguar03_gpu-count-1_processor-count-1_host-memory-gib-2_time-limit-minutes-5_reservation-sl5nw_168_qos-csresnolim_tool-version-2024.7.1.84_environment-transitions-0/launcher_source_freeze.json",
+    "sha256": "dace4e24570a32f7458ffe4064a8a7b5675e8377b8d392620304981113f051d5"
+  },
+  "source_substitution_proof": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-19-37_nsight-process-observation_jaguar03_gpu-count-1_processor-count-1_host-memory-gib-2_time-limit-minutes-5_reservation-sl5nw_168_qos-csresnolim_tool-version-2024.7.1.84_environment-transitions-0/reserved_launcher_substitution_proof.json",
+    "sha256": "dad4c663dd4128930ef7b8e1f6915a78d1a96d20b77d5acda543b9ccd3eccf4e"
+  }
+}

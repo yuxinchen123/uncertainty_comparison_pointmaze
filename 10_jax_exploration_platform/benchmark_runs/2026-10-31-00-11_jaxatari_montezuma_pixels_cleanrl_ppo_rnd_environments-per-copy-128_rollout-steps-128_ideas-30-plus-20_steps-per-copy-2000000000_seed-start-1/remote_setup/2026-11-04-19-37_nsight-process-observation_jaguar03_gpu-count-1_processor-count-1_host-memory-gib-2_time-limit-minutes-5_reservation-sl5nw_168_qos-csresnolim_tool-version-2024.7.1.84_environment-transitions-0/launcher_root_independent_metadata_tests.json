@@ -1,0 +1,38 @@
+{
+  "actual_scheduler_actions": 0,
+  "all_scheduler_replies_are_synthetic": true,
+  "errors": 0,
+  "failures": 0,
+  "finished_at_utc": "2026-11-05T03:45:19.937388+00:00",
+  "gpu_operations": 0,
+  "job_id": "6783003",
+  "kind": "nsight_process_diagnostic_launcher_metadata_tests",
+  "passed": true,
+  "process_id": 1218007,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "source_files_unchanged": true,
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-19-37_nsight-process-observation_jaguar03_gpu-count-1_processor-count-1_host-memory-gib-2_time-limit-minutes-5_reservation-sl5nw_168_qos-csresnolim_tool-version-2024.7.1.84_environment-transitions-0/launcher_source_freeze.json",
+    "sha256": "dace4e24570a32f7458ffe4064a8a7b5675e8377b8d392620304981113f051d5"
+  },
+  "started_at_utc": "2026-11-05T03:45:17.385638+00:00",
+  "step_id": "305",
+  "test_ids": [
+    "nsight_launcher_tests.LauncherTests.test_changed_initial_source_refuses_before_intent",
+    "nsight_launcher_tests.LauncherTests.test_dangling_submission_temporary_refuses_before_native_action",
+    "nsight_launcher_tests.LauncherTests.test_default_publication_check_has_no_scheduler_action",
+    "nsight_launcher_tests.LauncherTests.test_exact_held_owner_and_resources_refuse_substitution",
+    "nsight_launcher_tests.LauncherTests.test_failed_release_retains_attempt_without_false_ownership",
+    "nsight_launcher_tests.LauncherTests.test_one_submission_appends_and_fsyncs_all_three_ledgers_then_refuses_reuse",
+    "nsight_launcher_tests.LauncherTests.test_partial_ledger_failure_preserves_identifier_and_cannot_resubmit",
+    "nsight_launcher_tests.LauncherTests.test_reduced_publication_roster_refuses",
+    "nsight_launcher_tests.LauncherTests.test_release_needs_actual_published_binding_review",
+    "nsight_launcher_tests.LauncherTests.test_release_receipt_precedes_atomic_sidecar_and_matches_actual_runtime_reader",
+    "nsight_launcher_tests.LauncherTests.test_scheduler_removes_inherited_batch_variables"
+  ],
+  "test_output": "test_changed_initial_source_refuses_before_intent (nsight_launcher_tests.LauncherTests)\nA changed staged source cannot reach the native submission call. ... ok\ntest_dangling_submission_temporary_refuses_before_native_action (nsight_launcher_tests.LauncherTests)\nA prior partial intent remains preserved rather than being overwritten. ... ok\ntest_default_publication_check_has_no_scheduler_action (nsight_launcher_tests.LauncherTests)\nThe real private Git check is useful without any submission or query. ... ok\ntest_exact_held_owner_and_resources_refuse_substitution (nsight_launcher_tests.LauncherTests)\nOther owners, extra devices or an unexpected reservation cannot be released. ... ok\ntest_failed_release_retains_attempt_without_false_ownership (nsight_launcher_tests.LauncherTests)\nAn unsuccessful synthetic native release never produces a successful final sidecar. ... ok\ntest_one_submission_appends_and_fsyncs_all_three_ledgers_then_refuses_reuse (nsight_launcher_tests.LauncherTests)\nThe implementation writes actual private ledger files before making a held receipt. ... ok\ntest_partial_ledger_failure_preserves_identifier_and_cannot_resubmit (nsight_launcher_tests.LauncherTests)\nA synchronization failure retains the first identifier and blocks another submission. ... ok\ntest_reduced_publication_roster_refuses (nsight_launcher_tests.LauncherTests)\nA second private Git commit cannot remove a mandatory helper from the freeze. ... ok\ntest_release_needs_actual_published_binding_review (nsight_launcher_tests.LauncherTests)\nA held job is insufficient when its fixed release review does not exist. ... ok\ntest_release_receipt_precedes_atomic_sidecar_and_matches_actual_runtime_reader (nsight_launcher_tests.LauncherTests)\nThe final pair-only ownership references satisfy the unchanged diagnostic function. ... ok\ntest_scheduler_removes_inherited_batch_variables (nsight_launcher_tests.LauncherTests)\nA synthetic inherited reservation cannot override the explicit unreserved request. ... ok\n\n----------------------------------------------------------------------\nRan 11 tests in 2.546s\n\nOK\n",
+  "tests_run": 11,
+  "tool_executions": 0,
+  "uid": 2618919
+}

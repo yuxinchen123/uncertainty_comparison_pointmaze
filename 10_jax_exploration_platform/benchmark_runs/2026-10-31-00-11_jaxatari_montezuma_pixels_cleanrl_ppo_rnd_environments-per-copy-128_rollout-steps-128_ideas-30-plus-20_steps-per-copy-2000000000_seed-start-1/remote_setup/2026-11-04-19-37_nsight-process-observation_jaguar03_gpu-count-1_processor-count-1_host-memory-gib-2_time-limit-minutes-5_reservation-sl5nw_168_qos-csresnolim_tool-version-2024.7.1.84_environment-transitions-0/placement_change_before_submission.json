@@ -1,0 +1,24 @@
+{
+  "at_utc": "2026-11-05T03:46:11.571669+00:00",
+  "if_old_started": "leave it running; do not cancel or submit a second diagnostic",
+  "kind": "planned_replacement_of_unstarted_owned_unreserved_request",
+  "new_packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-19-37_nsight-process-observation_jaguar03_gpu-count-1_processor-count-1_host-memory-gib-2_time-limit-minutes-5_reservation-sl5nw_168_qos-csresnolim_tool-version-2024.7.1.84_environment-transitions-0",
+  "new_submission_permitted_before_old_exit": false,
+  "old_frozen_plan_unchanged": true,
+  "old_job_id": "6820096",
+  "old_job_retirement_conditions": [
+    "exact membership in all three own ledgers",
+    "fresh native pending state, zero elapsed, no node, exact script and owner",
+    "hold exact owned identifier once; fresh held pending proof",
+    "cancel exact identifier once only after held proof",
+    "terminal accounting confirms unstarted exit before new submission"
+  ],
+  "old_packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-18-33_nsight-process-observation_jaguar03_gpu-count-1_processor-count-1_host-memory-gib-2_time-limit-minutes-5_placement-unreserved_qos-normal_tool-version-2024.7.1.84_environment-transitions-0_actual_preparation_stderr.raw",
+  "reason": "actual reservation now includes jaguar03 and this owner; use explicit reserved request for unstarted work",
+  "reservation_end_utc": "2026-11-17T05:00:01+00:00",
+  "reservation_evidence": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/own_reservation_168_exact_utc_2026-11-05-03-36.json",
+    "sha256": "65e2df90da88724751ab085f06b816c82cb8020d429f7e6b913599ba37146987"
+  },
+  "scientific_credit": 0
+}

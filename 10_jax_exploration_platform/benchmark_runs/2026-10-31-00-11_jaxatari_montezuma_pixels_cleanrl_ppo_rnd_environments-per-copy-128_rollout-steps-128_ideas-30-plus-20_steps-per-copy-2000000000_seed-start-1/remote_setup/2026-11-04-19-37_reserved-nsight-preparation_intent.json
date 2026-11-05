@@ -1,0 +1,45 @@
+{
+  "actual_job_submission": false,
+  "actual_tool_execution": false,
+  "actual_tool_hash_rerun": false,
+  "command": [
+    "srun",
+    "--jobid=6783003",
+    "--overlap",
+    "--exact",
+    "--ntasks=1",
+    "--cpus-per-task=1",
+    "--mem=512M",
+    "--time=00:10:00",
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/.review_metadata/prepare_nsight_process_diagnostic.py",
+    "--helper-root",
+    "/p/rlprojects/RND_worktrees/2026-11-04-15-37_nsight-process-diagnostic-source_commit-18d727bda2e8c0ab48dc047a4dd89104de2b6cba",
+    "--helper-commit",
+    "18d727bda2e8c0ab48dc047a4dd89104de2b6cba",
+    "--campaign-run",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1",
+    "--unit-id",
+    "2026-11-04-19-37_nsight-process-observation_jaguar03_gpu-count-1_processor-count-1_host-memory-gib-2_time-limit-minutes-5_reservation-sl5nw_168_qos-csresnolim_tool-version-2024.7.1.84_environment-transitions-0",
+    "--tool-record",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-21-17_nsight-systems-tool-version-and-hash_existing-cpu-allocation-6783003_processor-count-1_host-memory-mib-256_gpu-count-0_shared-read-lock/tool_record.json",
+    "--reservation",
+    "sl5nw_168"
+  ],
+  "formatter": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/.review_metadata/prepare_nsight_process_diagnostic.py",
+    "sha256": "49b3ee2af74cf2ee71cfa284ac3594a2079d9fb0a35ecd1f04577d2f5ba06d8e"
+  },
+  "reservation_evidence": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/own_reservation_168_exact_utc_2026-11-05-03-36.json",
+    "sha256": "65e2df90da88724751ab085f06b816c82cb8020d429f7e6b913599ba37146987"
+  },
+  "started_at_utc": "2026-11-05T03:37:46.043390+00:00",
+  "tool_record": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-21-17_nsight-systems-tool-version-and-hash_existing-cpu-allocation-6783003_processor-count-1_host-memory-mib-256_gpu-count-0_shared-read-lock/tool_record.json",
+    "sha256": "bacba88c05986571f8f7f6322a47f11cf0d18b5982382dc8596e86c34ee909f6"
+  }
+}
