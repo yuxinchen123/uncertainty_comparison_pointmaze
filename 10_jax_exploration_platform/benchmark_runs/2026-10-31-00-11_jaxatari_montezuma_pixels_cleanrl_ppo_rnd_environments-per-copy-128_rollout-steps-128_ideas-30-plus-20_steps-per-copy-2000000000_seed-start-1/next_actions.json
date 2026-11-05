@@ -1316,7 +1316,7 @@
     "state": "both_copy_counts_independently_accepted_correctness_only_timing_pending"
   },
   "h100_common_timing_controller_preparation": {
-    "state": "running_first_common_timing_measurement",
+    "state": "all_measurement_windows_complete_final_records_pending",
     "source_commit": "d2253fa853290cb8fcd0a9212e332dd33a63f2f9",
     "source_publication": "c903c8df108c8efd27228c338162434fc3197599",
     "source_published": true,
@@ -1427,20 +1427,13 @@
       "sha256": "f65b86ebce21a4fea17a8b6db015197ef6a2ce1fb3b658806017c8dbcdddfad6"
     },
     "copy_one_current_progress": {
-      "state": "running",
+      "state": "completed",
       "record": "diagnostic",
       "pid": 386669,
-      "time": "2026-11-05T14:37:05.280287+00:00",
-      "round": 2,
-      "total_rounds": 7,
-      "variant": "candidate",
-      "seconds": 123.79451776109636,
-      "iterations": 10,
-      "copies": 1,
-      "training_transitions": 163840
+      "time": "2026-11-05T15:10:32.367389+00:00"
     },
     "copy_one_reported_correctness_passed": true,
-    "copy_one_completed_paired_rounds_observed": 1,
+    "copy_one_completed_paired_rounds_observed": 7,
     "copy_one_scientific_acceptance_pending": true
   },
   "h100_common_timing_previous_attempts": [
@@ -4151,7 +4144,7 @@
     ]
   },
   "a4500_native_profile_process_implementation": {
-    "state": "actual_unit_prepared_submission_utility_correction_pending",
+    "state": "actual_prepared_packet_reviewed_pending_single_held_submission",
     "authors": [
       "correct_native_process_control",
       "implement_direct_h100_profiles/review_direct_profile_source"
@@ -4199,8 +4192,20 @@
       "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-06-39_native-process-control_jaguar03_python-3.12_gpu-count-1_processor-count-1_host-memory-gib-2_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/root_actual_prepare_return.json",
       "sha256": "795049a158795611e58d3e0c30ead26efe77acc02acdc3b0e3a3073eb5d72011"
     },
-    "prepared_binding_created": false,
-    "canonical_initial_input_count": 21
+    "prepared_binding_created": true,
+    "canonical_initial_input_count": 21,
+    "prepared_binding": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-06-39_native-process-control_jaguar03_python-3.12_gpu-count-1_processor-count-1_host-memory-gib-2_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/prepared_launch_binding.json",
+      "sha256": "2e1e7788baa3e2ce757913ae367eec6bcc0e7cf48098b2688f52f5ea0bbb538c"
+    },
+    "launcher_source_freeze": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-06-39_native-process-control_jaguar03_python-3.12_gpu-count-1_processor-count-1_host-memory-gib-2_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/launcher_source_freeze.json",
+      "sha256": "b6aa71e7c7650f6e9d6ac7075445474f86afc4f6f2948895d26a848c48456a86"
+    },
+    "prepared_launcher_review": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-06-39_native-process-control_jaguar03_python-3.12_gpu-count-1_processor-count-1_host-memory-gib-2_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/launcher_independent_review.json",
+      "sha256": "73a650299674294209caa8d987c84c9bf1b0c2a706caee14587a41f99c24c582"
+    }
   },
   "optimized_eight_a4500_runtime_implementation_history": [
     {

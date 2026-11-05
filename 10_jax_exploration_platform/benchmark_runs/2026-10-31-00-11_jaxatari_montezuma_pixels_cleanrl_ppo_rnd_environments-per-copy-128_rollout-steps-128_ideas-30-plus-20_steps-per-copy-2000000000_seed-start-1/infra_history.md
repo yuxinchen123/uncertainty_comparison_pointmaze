@@ -673,3 +673,7 @@ The corrected profiling-process source passes 30 affected tests and 117 independ
 ## November 5: real component unit is prepared; submission waits for one publication correction
 
 The canonical A4500 component preparer returns zero in 2.030 seconds and creates the actual seven-helper unit with its standard records. The packet's 21 actual initial inputs are recorded and verified. No scheduler action occurs. Independent utility review then reproduces acceptance of a local-only commit with no remote. Preserve the initial source and reproduction; correct only actual origin-branch inclusion, with no network retry. Root will publish and verify the real tracking tip before the eventual action. Five H100 timing pairs are complete; do not interrupt or relaunch its producer.
+
+## November 5: corrected launcher and actual prepared packet pass independent review
+
+The local-only publication case is now rejected. Eight focused source checks pass, with all action and ledger logic unchanged. After source publication, root creates the real prepared binding once in 0.474 seconds. Independent review verifies 521 actual source and record checks against the 27-file packet in 0.308 seconds. Preserve the reviewer's corrected assertion failure separately; no frozen input changes. Publish the actual binding and genuine review before the single held submission. No job has been submitted at this record. All seven H100 timing pairs are complete, with final records still pending.
