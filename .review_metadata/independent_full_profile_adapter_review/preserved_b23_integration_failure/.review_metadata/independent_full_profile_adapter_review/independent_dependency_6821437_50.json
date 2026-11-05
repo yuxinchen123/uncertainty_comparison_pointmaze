@@ -1,0 +1,119 @@
+{
+  "NUM_operations": 0,
+  "actual_profile_unit_created": false,
+  "binding_sha256": "af72d3de3e84f7b8be08a73f90f5becf143b1d32c90083c1773b10343751361b",
+  "blocking_dependency_reproduced": true,
+  "elapsed_seconds": 0.15750931401271373,
+  "error": "'admission'",
+  "error_type": "KeyError",
+  "fixture_only": true,
+  "gpu_operations": 0,
+  "job": "6821437",
+  "operational_admission": false,
+  "part": "dependency",
+  "passed": true,
+  "profile_pointer": {
+    "accepted_evidence_snapshot_inputs": {
+      "proof": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-24_accepted-execution-evidence_cpu-snapshot_original-capture-paths-1938_maximum-check-seconds-285_cpu-step-seconds-300_processor-count-1_host-memory-mib-512_gpu-count-0/snapshot.json",
+        "sha256": "88791d3f7e602523c547650d41bb2147d101a3793db0d969d34872ded8388a0e"
+      },
+      "review": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-01-24_accepted-execution-evidence_cpu-snapshot_original-capture-paths-1938_maximum-check-seconds-285_cpu-step-seconds-300_processor-count-1_host-memory-mib-512_gpu-count-0/independent_snapshot_review.json",
+        "sha256": "ac50aa8d71e4e1fd7665161486cae76f7b9fa38e045af52559182037a81733db"
+      }
+    },
+    "campaign_run_dir": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1",
+    "common_plan": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-04-07_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/measurement_plan.json",
+      "sha256": "31e5dc09ec2a8050b7043d0e69842d5785c1996939e83f61aa23dc7422b5301b"
+    },
+    "configuration": {
+      "environment": {
+        "batch_layout": "flat",
+        "cache_room_backgrounds": true,
+        "combine_palette_and_sprite_drawing": false,
+        "episodic_life": true,
+        "frame_skip": 4,
+        "frame_skip_unroll": 1,
+        "fuse_pixel_preprocessing": false,
+        "max_episode_steps": 108000,
+        "noop_max": 30,
+        "num_envs": 128,
+        "render_final_two_only": true,
+        "reset_only_when_needed": true,
+        "stack_update": "concatenate",
+        "sticky_action_probability": 0.25
+      },
+      "execution": {
+        "compilation_mode": "whole_iteration",
+        "iterations_per_call": 1,
+        "report_every_iterations": 10,
+        "report_readout": "none"
+      },
+      "learner": {
+        "action_count": 18,
+        "adam_epsilon": 1e-05,
+        "anneal_learning_rate": true,
+        "associative_gae": false,
+        "associative_reward_filter": false,
+        "batch_quantity_keyed_random_generation": false,
+        "cache_target_features": false,
+        "clip_coefficient": 0.1,
+        "convolution_batching": "vmap",
+        "dense_batching": "matmul",
+        "donate_state": false,
+        "entropy_coefficient": 0.001,
+        "extrinsic_coefficient": 2.0,
+        "flat_parameters": false,
+        "flatten_update_scan": false,
+        "fuse_minibatch_image_preparation": false,
+        "fuse_network_bias_and_activation": false,
+        "fuse_optimizer": false,
+        "gae_lambda": 0.95,
+        "gamma_ext": 0.999,
+        "gamma_int": 0.99,
+        "hoist_critic": false,
+        "hoist_rollout_bonus": false,
+        "hoist_rollout_log_probabilities": false,
+        "intrinsic_coefficient": 1.0,
+        "learning_rate": 0.0001,
+        "max_gradient_norm": 0.5,
+        "moment_reduction": "two_pass",
+        "n_copies": 1,
+        "n_envs": 128,
+        "network_layout": "nchw",
+        "num_minibatches": 4,
+        "num_steps": 128,
+        "observation_warmup_iterations": 50,
+        "per_copy_intrinsic_coefficients": [],
+        "per_copy_learning_rates": [],
+        "per_copy_scalar_settings": [],
+        "pre_gather_minibatches": false,
+        "predictor_update_proportion": 0.25,
+        "recompute_network_activations": false,
+        "rollout_frame_storage": "stacked_frames",
+        "rollout_observation_storage": "float32",
+        "rollout_unroll": 1,
+        "total_timesteps": 2000000000,
+        "update_epochs": 4,
+        "update_unroll": 1,
+        "upstream_reward_filter_axis": true,
+        "value_coefficient": 0.5,
+        "warmup_keeps_initial_observation": true
+      }
+    },
+    "copy_seeds": [
+      1
+    ],
+    "historically_verified_initial_cases": 120,
+    "kind": "profile_reviewed_accepted_history",
+    "operational_admission": false,
+    "original_cases_reexecuted": false,
+    "profile_unit_id": "nonoperational_profile_claim_source_fixture",
+    "schema_version": 1,
+    "scientific_credit": 0,
+    "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af"
+  },
+  "step": "50"
+}

@@ -9,6 +9,7 @@ import argparse
 import ast
 import hashlib
 import importlib
+import importlib.util
 import json
 import math
 import os
@@ -21,12 +22,14 @@ import sys
 import time
 
 NAME = "direct_profile_prerequisites.py"
+SAVED_CONSUMERS = "direct_profile_saved_consumers.py"
 PREFIX = "10_jax_exploration_platform/scripts/atari_pixel_campaign/"
 PROTOCOL = "direct-h100-reviewed-common-profile-version-1"
 PROCESS_PROTOCOL = "direct-h100-owned-nsight-and-retained-descriptor-version-1"
 CARD_ONE = "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3"
 NUMERICAL = {"jax", "jaxlib", "numpy", "torch", "flax", "optax", "scipy", "cupy", "jaxtari", "exploration_platform"}
-LIMIT = 1024 * 1024
+INPUT_LIMIT = 1024 * 1024
+LIMIT = 32 * 1024 * 1024
 PROOF_NAME = "direct_profile_baseline_validation.json"
 
 
@@ -133,11 +136,36 @@ def require_admission():
     raise ValueError("direct H100 profiles remain disabled pending actual Nsight process/descriptor survival and current-CUDA-context qualification with independent review")
 
 
-def helper_roster():
+_SAVED_CONSUMER_MODULES = {}
+
+
+def saved_consumers(plan=None):
+    """Load only the adjacent explicitly declared read-only per-input metadata consumer."""
+    path = Path(__file__).with_name(SAVED_CONSUMERS)
+    require(path.resolve(strict=True) == path and path.is_file() and not path.is_symlink(),
+        "the explicit saved profile-consumer helper is missing")
+    raw = path.read_bytes()
+    if plan is not None:
+        require(plan["helpers"]["files"].get(PREFIX + SAVED_CONSUMERS) == digest(raw),
+            "the exact saved profile-consumer helper changed")
+    key = (str(path), digest(raw))
+    if key in _SAVED_CONSUMER_MODULES:
+        return _SAVED_CONSUMER_MODULES[key]
+    specification = importlib.util.spec_from_file_location("explicit_profile_saved_consumers", path)
+    module = importlib.util.module_from_spec(specification)
+    exec(compile(raw, str(path), "exec"), module.__dict__)
+    require(path.read_bytes() == raw, "the saved profile-consumer source changed during its actual import")
+    _SAVED_CONSUMER_MODULES[key] = module
+    return module
+
+
+def helper_roster(plan=None):
     """Derive the exact declared helper union from source literals without importing a consumer."""
+    require(plan is None or "native_process_control" not in plan,
+        "formal profiles do not yet support the separate diagnostic-only native process contract")
     names = {"profile_selected.py", "direct_measurement.py", "configured_measurement.py",
         NAME, "direct_backend_image.py", "nsight_process_identity.py", "direct_profile_process.py",
-        "direct_capture_release.py", "direct_tool_descendants.py"}
+        "direct_capture_release.py", "direct_tool_descendants.py", "profile_metadata_runtime.py", SAVED_CONSUMERS}
     for filename in ("measure_selected.py", "serval02_card1_binding.py"):
         tree = ast.parse(Path(__file__).with_name(filename).read_text())
         declarations = [node.value for node in tree.body if isinstance(node, ast.Assign)
@@ -165,11 +193,15 @@ def contract(plan):
         and all(type(seed) is int for seed in plan["copy_seeds"])
         and type(plan.get("profile_updates")) is int and plan["profile_updates"] > 0,
         "the common baseline profile must retain the actual one- or two-copy seed identities")
-    expected = helper_roster()
-    require(len(expected) == 32 and expected == set(plan["helpers"]["files"])
+    expected = helper_roster(plan)
+    require(expected == set(plan["helpers"]["files"])
         and all(plan["helpers"]["files"][relative] == digest(Path(__file__).with_name(Path(relative).name).read_bytes())
             for relative in expected),
         "the new profile requires its own exact helper closure, not the old confirmation helper")
+    reader = saved_consumers(plan)
+    reader.metadata_runtime(plan)
+    require(encoded(plan.get("direct_profile_saved_consumer_protocol")) == encoded(reader.PROTOCOL),
+        "new direct profile metadata requires the exact separate saved-consumer protocol")
     backend = plan.get("direct_backend_image", {})
     require(type(backend.get("schema_version")) is int and backend["schema_version"] == 2
         and backend.get("capability") == "prepared_owning_package_image_and_same_process_mapping_version_2",
@@ -219,8 +251,10 @@ def validate_metadata(plan):
         and type(previous.get("rounds")) is int and previous["rounds"] == 7
         and type(previous.get("iterations")) is int and previous["iterations"] == 10
         and type(previous.get("minimum_updates_per_round")) is int and previous["minimum_updates_per_round"] == 10
-        and len(previous["helpers"]["files"]) == 27 and PREFIX + "direct_common_confirmation.py" in previous["helpers"]["files"],
+        and PREFIX + "direct_common_confirmation.py" in previous["helpers"]["files"]
+        and PREFIX + "direct_historical_consumer.py" in previous["helpers"]["files"],
         "the profile needs the actual separate direct common seven-by-ten confirmation")
+    saved_consumers(plan).validate_common_metadata(previous, unit)
     require(unit == Path(previous["campaign_run_dir"]) / "data" / previous["unit_id"]
         and inputs["confirmation_plan"]["path"] == str(unit / "measurement_plan.json")
         and inputs["confirmation"]["path"] == str(unit / "result.json")
@@ -273,6 +307,11 @@ def configure(plan, baseline, review_path, qualification_path, qualification_rev
         "correctness_review": previous["common_correctness_inputs"]["review"],
         "qualification": previous["direct_qualification_inputs"]["result"],
         "qualification_review": previous["direct_qualification_inputs"]["review"]}
+    plan["direct_profile_saved_consumer_protocol"] = dict(saved_consumers().PROTOCOL)
+    runtime_path = Path(__file__).with_name("profile_metadata_runtime.py")
+    spec = importlib.util.spec_from_file_location("_profile_configuration_metadata_runtime", runtime_path)
+    module = importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+    plan["direct_profile_metadata_protocol"] = dict(module.PROTOCOL)
     validate_metadata(plan)
     return plan
 
@@ -336,42 +375,252 @@ def publish(path, raw):
         os.close(descriptor)
 
 
+def require_owned_stage(plan):
+    """Operational metadata must execute its actual own staged closure, never an ambient checkout."""
+    unit = Path(plan["campaign_run_dir"]) / "data" / plan["unit_id"]
+    require(Path(__file__).resolve(strict=True) == unit / "code" / NAME,
+        "operational profile metadata requires its exact own staged helper namespace")
+    contract(plan)
+    return unit
+
+
 def before_compute(directory, plan):
-    """Start isolated raw checks only after the caller's actual owned-compute gate passes."""
-    context = compute_context(plan)
-    validate_metadata(plan)
-    validate_current_history(plan)
-    require(not NUMERICAL.intersection(sys.modules), "baseline validation must precede numerical imports")
-    raw = encoded(plan)
-    command = ["/usr/bin/python3", "-I", "-S", "-B", str(Path(directory) / "code" / NAME), "--plan-stdin"]
+    """Start one root origin and retain actual owned-child custody across the whole metadata phase."""
+    started = time.monotonic();context = compute_context(plan)
+    reader = saved_consumers(plan);runtime = reader.metadata_runtime(plan)
+    runtime.capability()
+    origin = runtime.origin(plan, reader.process(os.getpid()), started=started)
+    budget = runtime.Budget(origin, plan);directory = Path(directory)
+    publish(directory / "direct_profile_metadata_origin.json", encoded(origin))
+    command = ["/usr/bin/python3", "-I", "-S", "-B", str(directory / "code" / NAME), "--plan-stdin"]
+    parent = reader.process(os.getpid())
+    unsigned = {"schema_version": 2, "plan": plan, "metadata_origin": origin, "parent": parent}
+    envelope = {**unsigned, "challenge": digest(encoded(unsigned))}
+    completed, scope = None, None
     try:
-        completed = subprocess.run(command, input=raw, capture_output=True, timeout=600, check=False)
+        with runtime.MetadataScope(plan, budget) as scope:
+            with runtime.work_alarm(budget):
+                require(Path(directory) == require_owned_stage(plan), "operational profile metadata directory differs from its exact plan unit")
+                validate_metadata(plan)
+                require(not NUMERICAL.intersection(sys.modules), "baseline metadata must precede numerical imports")
+                completed = scope.run(command, input=encoded(envelope), env=dict(os.environ), maximum_bytes=LIMIT)
+                require(completed.returncode == 0 and completed.stderr == b"" and len(completed.stdout) <= LIMIT,
+                    "actual isolated direct baseline metadata failed")
+                proof = reader.document(completed.stdout)
+                require(proof.get("kind") == "actual_direct_profile_baseline_validation" and proof.get("passed") is True
+                    and proof.get("plan_sha256") == digest(encoded(plan)) and proof.get("parent_pid") == os.getpid()
+                    and proof.get("metadata_origin") == origin and proof.get("prerequisites") == plan["direct_profile_prerequisites"]
+                    and proof.get("metadata_compute_context") == context and proof.get("numerical_imports") == [],
+                    "isolated metadata returned another root origin, plan, context or role")
+                child = completed.metadata_child
+                worker_owner = proof["metadata_worker_scope"]["baseline"]["owner"]
+                require(all(worker_owner[k] == child[k] for k in ("pid", "parent_pid", "process_start_time", "uids", "cgroup"))
+                    and worker_owner["command"] == child["argv"], "metadata worker scope differs from the actual Popen child")
+                runtime.validate_scope(proof["metadata_worker_scope"], budget, scope.observer, worker_owner)
+                reader.validate_bundle(plan, proof["exact_saved_consumer_bundle"])
+                require(proof.get("combination_metadata_dispatch_source_proof", {}).get("all_other_statement_syntax_unchanged") is True,
+                    "isolated profile lost its unchanged combination metadata gates")
+                budget.remaining()
+        runtime.validate_scope(scope.proof, budget, scope.observer, scope.owner)
+        with runtime.work_alarm(budget):
+            validate_completed_metadata_phase(plan, proof, scope.proof, stdout=completed.stdout)
     except BaseException as error:
-        capture_return(directory, command, None, getattr(error, "stdout", None) or b"",
-            getattr(error, "stderr", None) or b"", type(error).__name__)
+        capture_return(directory, command, None if completed is None else completed.returncode,
+            b"" if completed is None else completed.stdout, b"" if completed is None else completed.stderr,
+            {"type": type(error).__name__, "message": str(error), "metadata_origin": origin,
+                "scope": None if scope is None else scope.proof})
         raise
     capture_return(directory, command, completed.returncode, completed.stdout, completed.stderr)
-    require(len(completed.stdout) <= LIMIT and len(completed.stderr) <= LIMIT
-        and completed.returncode == 0 and completed.stderr == b"", "actual isolated direct baseline validation failed")
-    proof = json.loads(completed.stdout)
-    require(proof.get("kind") == "actual_direct_profile_baseline_validation" and proof.get("passed") is True
-        and proof.get("plan_sha256") == digest(raw) and proof.get("parent_pid") == os.getpid()
-        and proof.get("prerequisites") == plan["direct_profile_prerequisites"]
-        and proof.get("metadata_compute_context") == context and proof.get("numerical_imports") == []
-        and type(proof.get("gpu_operations")) is int and proof["gpu_operations"] == 0,
-        "the isolated direct baseline check returned another execution or plan")
-    publish(Path(directory) / PROOF_NAME, encoded(proof))
+    publish(directory / "direct_profile_metadata_outer_scope.json", encoded(scope.proof))
+    publish(directory / PROOF_NAME, encoded(proof))
     return proof
 
 
+def validate_completed_metadata_phase(plan, proof, outer, *, stdout=None):
+    """Require the new actual parent/worker/shared-origin closure; no historical proof bypass."""
+    reader = saved_consumers(plan);runtime = reader.metadata_runtime(plan)
+    require(type(proof.get("schema_version")) is int and proof["schema_version"] == 2
+        and proof.get("kind") == "actual_direct_profile_baseline_validation" and proof.get("passed") is True
+        and proof.get("plan_sha256") == digest(encoded(plan)) and proof.get("prerequisites") == plan["direct_profile_prerequisites"]
+        and proof.get("numerical_imports") == [] and type(proof.get("gpu_operations")) is int and proof["gpu_operations"] == 0
+        and type(proof.get("scientific_credit")) is int and proof["scientific_credit"] == 0
+        and proof.get("admission_granted") is False, "new profile metadata cannot use an old or changed baseline proof")
+    budget = runtime.Budget(proof["metadata_origin"], plan, verify_host=False)
+    observer = runtime.process_observer(plan)
+    owner, worker = outer["baseline"]["owner"], proof["metadata_worker_scope"]["baseline"]["owner"]
+    for actual in (owner, worker):observer.validate_snapshot(actual, 2618919, owner["cgroup"])
+    original = {key: owner[key] for key in ("pid", "parent_pid", "process_start_time", "uids", "cgroup")}
+    original.update(argv=owner["command"], hostname=budget.origin["clock_domain"]["hostname"])
+    command = ["/usr/bin/python3", "-I", "-S", "-B", str(Path(plan["campaign_run_dir"]) / "data" / plan["unit_id"] / "code" / NAME), "--plan-stdin"]
+    require(budget.origin["owner"] == original and proof["parent_pid"] == worker["parent_pid"] == owner["pid"]
+        and proof["validation_pid"] == worker["pid"] and worker["command"] == command
+        and set(outer["spawned_roots"]) == {str(worker["pid"])}
+        and outer["spawned_roots"][str(worker["pid"])]["command"] == command
+        and outer["positive_nodes"][str(worker["pid"])]["initial"]["command"] == command
+        and outer["root_waits"][str(worker["pid"])]["birth"] == worker["process_start_time"],
+        "saved metadata baseline lost its actual original owner and exact waited worker")
+    runtime.validate_scope(outer, budget, observer, owner)
+    runtime.validate_scope(proof["metadata_worker_scope"], budget, observer, worker)
+    require(type(stdout) is bytes and reader.document(stdout) == proof
+        and outer["spawned_roots"][str(worker["pid"])]["captured_output"] == {
+            "stdout": {"observed": True, "complete": True, "size_bytes": len(stdout), "sha256": digest(stdout)},
+            "stderr": {"observed": True, "complete": True, "size_bytes": 0, "sha256": digest(b"")}},
+        "saved outer metadata output differs from its actual complete child capture")
+    worker_record = {key: worker[key] for key in ("pid", "parent_pid", "process_start_time", "uids", "cgroup")}
+    worker_record.update(argv=worker["command"], hostname=budget.origin["clock_domain"]["hostname"])
+    require(all(value["request"]["metadata_origin"] == budget.origin and value["request"]["parent"] == worker_record
+            for value in proof["exact_saved_consumer_bundle"].values()),
+        "saved baseline readers did not retain this exact actual parent origin")
+    worker_roots = proof["metadata_worker_scope"]["spawned_roots"]
+    require(set(worker_roots) == {str(value["proof"]["child"]["pid"]) for value in proof["exact_saved_consumer_bundle"].values()},
+        "metadata worker root set differs from its three actual isolated readers")
+    for value in proof["exact_saved_consumer_bundle"].values():
+        waited = value["actual_child_wait"];root = worker_roots[str(value["proof"]["child"]["pid"])]
+        require(root["command"] == waited["command"] and root["captured_output"]["stdout"]["sha256"] == waited["stdout_sha256"]
+            and root["captured_output"]["stderr"]["sha256"] == waited["stderr_sha256"],
+            "saved reader output differs from its actual parent kernel scope")
+    require(type(proof.get("finished_at_seconds")) in (int,float) and math.isfinite(proof["finished_at_seconds"])
+        and proof["metadata_worker_scope"]["terminal"]["observed_at_seconds"] <= proof["finished_at_seconds"]
+        <= outer["root_waits"][str(worker["pid"])]["finished_at_seconds"], "saved metadata phase completion chronology changed")
+    reader.validate_bundle(plan, proof["exact_saved_consumer_bundle"])
+    common = validate_metadata(plan)
+    new = "accepted_evidence_snapshot_protocol" in common
+    require(type(proof.get("historically_verified_initial_cases")) is int and proof["historically_verified_initial_cases"] == 120
+        and proof.get("original_cases_reexecuted") is (not new)
+        and proof.get("historical_consumers_replayed_unchanged") is (not new)
+        and proof.get("accepted_history_reused") is new
+        and proof.get("current_confirmation_consumer_replayed_unchanged") is True,
+        "saved baseline changed its explicit historical reuse scope")
+    if new:
+        expected = {"historically_verified_initial_cases": 120, "original_cases_reexecuted": False,
+            "snapshot": common["accepted_evidence_snapshot_inputs"], "source_commit": plan["source_commit"],
+            "configuration": plan["configuration"], "copy_seeds": plan["copy_seeds"],
+            "scientific_credit": 0, "operational_admission": False}
+        require(encoded(proof.get("initial_history_fact")) == encoded(expected)
+            and type(proof.get("initial_comparisons_revalidated")) is int and proof["initial_comparisons_revalidated"] == 0,
+            "new29 baseline changed its exact reviewed historical fact or invented case replay")
+    else:
+        require(type(proof.get("initial_comparisons_revalidated")) is int and proof["initial_comparisons_revalidated"] == 120,
+            "legacy raw history did not retain its exact original120 case gate")
+    return proof
+
+
+ORIGINAL_ADMISSION_SHA256 = "4a71ef2b245ae784933c55bb2b5159aa1bb7f8f626eb94b15390e2f9a304ee7c"
+
+
+def original_admission_metadata(plan, common, *, live=False):
+    """Bind exact original source authority from reviewed history, never profile-worker approval."""
+    reader = saved_consumers()
+    unit = Path(common["campaign_run_dir"]) / "data" / common["unit_id"]
+    reader.validate_common_metadata(common, unit)
+    for key in ("campaign_run_dir", "source_root", "source_commit", "core", "paired_source", "python",
+            "configuration", "runtime_environment", "asset_record", "copy_seeds"):
+        require(encoded(plan[key]) == encoded(common[key]), "profile original admission changed exact " + key)
+    snapshot = reader.reviewed_snapshot(common, unit)
+    historical = snapshot.files.json(snapshot.qual["historical_inputs"])
+    authority = historical["admission"]
+    reference_shape(authority)
+    require(authority["sha256"] == ORIGINAL_ADMISSION_SHA256, "reviewed original source admission hash changed")
+    raw = snapshot.files.small_bytes(authority)
+    admission = reader.document(raw)
+    require(digest(raw) == ORIGINAL_ADMISSION_SHA256 and admission.get("authorized") is True
+        and admission.get("source_commit") == plan["source_commit"] and admission.get("source_root") == plan["source_root"]
+        and set(admission["contexts"]) == {"h100", "jaguar03_rtx_a4500"},
+        "reviewed frozen admission changed its original source or hardware scope")
+    canonical = {"path": str(Path(plan["campaign_run_dir"]) / "SOURCE_AND_GATES_READY.json"), "sha256": ORIGINAL_ADMISSION_SHA256}
+    if live:
+        require(read(canonical["path"])[1] == raw, "current canonical admission differs from the exact reviewed original bytes")
+    provenance = {"schema_version": 1, "kind": "reviewed_original_source_admission_for_profile_history",
+        "source_authority": authority, "snapshot": common["accepted_evidence_snapshot_inputs"],
+        "accepted_qualification": {key: snapshot.qual[key] for key in ("plan", "result", "review", "historical_inputs", "historical_manifest")},
+        "canonical_admission": canonical, "scope": "original source authorization only",
+        "profile_worker_admitted": False, "current_target_qualification": False, "scientific_credit": 0}
+    return raw, provenance
+
+
+def history_pointer(plan, common):
+    """Describe only a genuine accepted common snapshot; no new qualification or future result is created."""
+    require("accepted_evidence_snapshot_protocol" in common, "new profile history pointer requires the exact new29 reviewed fact")
+    require(plan.get("kind") == "selected_configuration_profile" and plan.get("hardware_class") == "h100"
+        and plan.get("gpu_uuid") == CARD_ONE and type(plan.get("unit_id")) is str
+        and Path(plan["unit_id"]).name == plan["unit_id"] and plan["unit_id"] not in ("", ".", ".."),
+        "the reviewed profile history needs its exact separate card-one metadata identity")
+    unused, provenance = original_admission_metadata(plan, common)
+    return {"schema_version": 1, "kind": "profile_reviewed_accepted_history",
+        "campaign_run_dir": plan["campaign_run_dir"], "profile_unit_id": plan["unit_id"],
+        "source_commit": plan["source_commit"], "configuration": plan["configuration"], "copy_seeds": plan["copy_seeds"],
+        "common_plan": reference(Path(common["campaign_run_dir"]) / "data" / common["unit_id"] / "measurement_plan.json"),
+        "accepted_evidence_snapshot_inputs": common["accepted_evidence_snapshot_inputs"],
+        "admission": {"path": str(Path(plan["campaign_run_dir"]) / "data" / plan["unit_id"] / "direct_history/admission.json"),
+            "sha256": ORIGINAL_ADMISSION_SHA256}, "admission_provenance": provenance,
+        "historically_verified_initial_cases": 120, "original_cases_reexecuted": False,
+        "scientific_credit": 0, "operational_admission": False}
+
+def prepare_history_pointer(path, plan, common_plan):
+    """Write one metadata-only profile pointer from actual existing common plan/reviewed fact bytes."""
+    path = Path(path)
+    require(path == Path(plan["campaign_run_dir"]) / "data" / plan["unit_id"] / "direct_history/inputs.json",
+        "profile history pointer must use its own exact reserved path")
+    raw, unused = original_admission_metadata(plan, common_plan, live=True)
+    value = history_pointer(plan, common_plan)
+    unit = path.parent.parent
+    require(unit.resolve(strict=True) == unit and unit.is_dir() and unit.stat().st_uid == 2618919,
+        "profile history needs its own existing ordinary unit")
+    path.parent.mkdir(exist_ok=True)
+    require(path.parent.resolve(strict=True) == path.parent and path.parent.is_dir() and path.parent.stat().st_uid == 2618919,
+        "profile history parent cannot be indirect or belong to another owner")
+    admission_path = Path(value["admission"]["path"])
+    for target, contents in ((admission_path, raw), (path, encoded(value))):
+        if target.exists():
+            require(read(target)[1] == contents, "an existing immutable profile history artifact differs")
+        else:
+            publish(target, contents)
+    return reference(path)
+
+
 def validate_current_history(plan):
-    """Run the unchanged current history validator only after actual owned-compute admission."""
-    compute_context(plan)
+    """Use the exact new29 historical fact; keep the explicit old28 raw path unchanged."""
+    compute_context(plan);common = validate_metadata(plan)
+    if "accepted_evidence_snapshot_protocol" in common:
+        require(plan["direct_binding"]["frozen_inputs"]["path"] == str(Path(plan["campaign_run_dir"]) / "data" / plan["unit_id"] / "direct_history/inputs.json"),
+            "new29 profile history pointer must use its own exact reserved unit path")
+        actual = checked_reference(plan["direct_binding"]["frozen_inputs"])
+        require(encoded(actual) == encoded(history_pointer(plan, common)), "profile history pointer changed its exact reviewed common fact")
+        original, unused = original_admission_metadata(plan, common)
+        require(read(actual["admission"]["path"])[1] == original and reference(actual["admission"]["path"]) == actual["admission"],
+            "profile history changed its exact own-unit original admission copy")
+        reader = saved_consumers(plan);unit = Path(common["campaign_run_dir"]) / "data" / common["unit_id"]
+        snapshot = reader.reviewed_snapshot(common, unit)
+        require(snapshot.qual["review"] == plan["direct_profile_prerequisites"]["qualification_review"]
+            and snapshot.correctness["review"] == plan["direct_profile_prerequisites"]["correctness_review"]
+            and snapshot.correctness["result"] == plan["direct_profile_prerequisites"]["correctness"],
+            "profile history changed its exact original qualification/correctness facts")
+        return {"historically_verified_initial_cases": 120, "original_cases_reexecuted": False,
+            "snapshot": common["accepted_evidence_snapshot_inputs"], "source_commit": plan["source_commit"],
+            "configuration": plan["configuration"], "copy_seeds": plan["copy_seeds"],
+            "scientific_credit": 0, "operational_admission": False}
     module = importlib.import_module("direct_measurement")
     unit = Path(plan["campaign_run_dir"]) / "data" / plan["unit_id"]
     require(Path(module.__file__).resolve(strict=True) == unit / "code/direct_measurement.py",
         "current history validation requires the actual staged direct helper")
     return module.core().validate_history(plan)
+
+
+def validate_profile_history(plan):
+    """Shared producer dispatch: strict new profile fact, or the unchanged explicit old28 raw path."""
+    compute_context(plan);contract(plan)
+    common = validate_metadata(plan)
+    if "accepted_evidence_snapshot_protocol" not in common:
+        require("direct_historical_consumer_protocol" in common,
+            "profile history cannot fall back from an unknown common protocol")
+        return None
+    fact = validate_current_history(plan)
+    inputs = checked_reference(plan["direct_binding"]["frozen_inputs"])
+    return {"kind": "reviewed_profile_original_source_history_fact", "inputs": plan["direct_binding"]["frozen_inputs"],
+        "admission": inputs["admission"], "admission_provenance": inputs["admission_provenance"],
+        "historically_verified_initial_cases": 120, "original_cases_reexecuted": False,
+        "accepted_history_fact": fact, "profile_worker_admitted": False, "current_target_qualification": False,
+        "scientific_credit": 0, "operational_admission": False}
 
 
 def capture_return(directory, command, returncode, stdout, stderr, error=None):
@@ -383,75 +632,71 @@ def capture_return(directory, command, returncode, stdout, stderr, error=None):
         "stdout_sha256": digest(stdout), "stderr_sha256": digest(stderr), "error": error}))
 
 
-def load_previous(previous, directory):
-    """Load only the accepted unit's unchanged staged consumers in this fresh child."""
-    code = Path(directory) / "code"
-    require(code.resolve(strict=True) == code and len(previous["helpers"]["files"]) == 27,
-        "the historical accepted confirmation must retain its exact 27-helper closure")
-    for relative, expected in previous["helpers"]["files"].items():
-        require(relative.startswith(PREFIX) and Path(relative).name == relative[len(PREFIX):],
-            "historical helper path is outside its exact source directory")
-        path = code / Path(relative).name
-        require(path.resolve(strict=True) == path and path.is_file() and digest(path.read_bytes()) == expected,
-            "the actual historical consumer closure changed")
-    sys.path.insert(0, str(code))
-    modules = {}
-    for name in ("direct_measurement", "direct_common_confirmation", "post_comparison_validation"):
-        require(name not in sys.modules, "a current helper would replace the exact historical consumer")
-        module = importlib.import_module(name)
-        require(Path(module.__file__).resolve(strict=True) == code / (name + ".py"), "historical consumer imported another source")
-        modules[name] = module
-    return modules
+def validate_actual(plan, raw, metadata_origin):
+    """Keep exact saved namespaces inside one actual shared metadata work/cleanup budget."""
+    reader = saved_consumers(plan);runtime = reader.metadata_runtime(plan)
+    budget = runtime.Budget(metadata_origin, plan)
+    with runtime.MetadataScope(plan, budget) as scope:
+        with runtime.work_alarm(budget):
+            """Keep raw consumers separate while preserving every accepted combination check."""
+            context = compute_context(plan)
+            require_owned_stage(plan)
+            previous = validate_metadata(plan)
+            inputs = plan["direct_profile_prerequisites"]
+            reader = saved_consumers(plan)
+            history_fact = validate_current_history(plan)
+            bootstrap = reader.install_profile_audit(plan, scope)
+            require(not NUMERICAL.intersection(sys.modules), "direct baseline validation initialized numerical code")
+            bundle = reader.read_all(plan, budget, scope)
+            accepted, dispatch_source_proof = reader.combine(plan, bundle)
+            review = checked_reference(inputs["confirmation_review"])
+            audit = checked_reference(review["raw_audit"])
+            require(audit.get("passed") is True and audit.get("unchanged_staged_consumer_passed") is True
+                and audit.get("result") == inputs["confirmation"] and audit.get("plan") == inputs["confirmation_plan"]
+                and audit.get("raw_window_recomputation_passed") is True,
+                "the genuine independent timing review lacks its complete actual raw audit")
+            result = checked_actual_reference(plan, inputs["confirmation"])
+            path = Path(__file__).with_name("post_comparison_validation.py")
+            expected = plan["helpers"]["files"][PREFIX + path.name]
+            require(expected == previous["helpers"]["files"][PREFIX + path.name],
+                "initial comparisons require the unchanged accepted metadata validator")
+            validation = reader.source_module("profile_initial_comparison_metadata_validator", path, expected)
+            if "accepted_evidence_snapshot_protocol" in previous:
+                require(history_fact["historically_verified_initial_cases"] == 120 and history_fact["original_cases_reexecuted"] is False,
+                    "new29 history must bind the genuine complete accepted fact")
+                initial = 120
+            else:
+                evidence = validation.Evidence()
+                registry_path = Path(plan["initial_registry_record"])
+                unit = Path(plan["campaign_run_dir"]) / "data" / plan["unit_id"]
+                require(registry_path == unit / "inputs/study_registry.json"
+                    and digest(registry_path.read_bytes()) == plan["inputs"]["study_registry"]["sha256"],
+                    "the staged initial registry changed before direct profile validation")
+                registry = read(registry_path, 64 * 1024 * 1024)[0]
+                initial = validate_initial_cases(registry, validation, evidence)
+            require(accepted["configuration"] == plan["configuration"] and accepted["paired_rounds"] == 7
+                and result["copy_seeds"] == plan["copy_seeds"] and result["execution_identity"]["finished_at_seconds"]
+                <= review["reviewed_at_seconds"], "the actual accepted timing result changed configuration, seeds or review order")
+            reader.validate_bundle(plan, bundle)
+            require(not NUMERICAL.intersection(sys.modules), "a numerical package entered the saved direct consumer")
+            proof = {"schema_version": 2, "kind": "actual_direct_profile_baseline_validation", "passed": True,
+                "plan_sha256": digest(raw), "prerequisites": inputs, "accepted_combination": accepted,
+                "parent_pid": os.getppid(), "validation_pid": os.getpid(), "finished_at_seconds": time.time(),
+                "metadata_compute_context": context, "historical_helper_commit": previous["helpers"]["source_commit"],
+                "initial_comparisons_revalidated": 0 if "accepted_evidence_snapshot_protocol" in previous else initial,
+                "initial_history_fact": history_fact, "exact_saved_consumer_bundle": bundle,
+                "combination_metadata_dispatch_source_proof": dispatch_source_proof,
+                "historical_consumers_replayed_unchanged": "accepted_evidence_snapshot_protocol" not in previous,
+                "accepted_history_reused": "accepted_evidence_snapshot_protocol" in previous,
+                "current_confirmation_consumer_replayed_unchanged": True, "metadata_origin": metadata_origin,
+                "historically_verified_initial_cases": initial,
+                "original_cases_reexecuted": "accepted_evidence_snapshot_protocol" not in previous, "stdlib_ctypes_bootstrap": bootstrap,
+                "numerical_imports": [], "gpu_operations": 0, "scientific_credit": 0, "admission_granted": False}
 
-
-def validate_actual(plan, raw):
-    """Recompute real saved correctness and paired timing under their exact original consumers."""
-    context = compute_context(plan)
-    previous = validate_metadata(plan)
-    inputs = plan["direct_profile_prerequisites"]
-    directory = Path(inputs["confirmation"]["path"]).parent
-    modules = load_previous(previous, directory)
-    common, validation = modules["direct_common_confirmation"], modules["post_comparison_validation"]
-    bootstrap = common.stdlib_ctypes_bootstrap()
-    roots = common.declared_git_roots(previous)
-    allowed_child = ["/usr/bin/python3", "-I", "-S", "-B", str(directory / "code/direct_common_confirmation.py"), "--plan-stdin"]
-    def guard(event, values):
-        """Allow only exact historical prerequisite children and declared read-only source checks."""
-        if event == "subprocess.Popen" and values[1] == allowed_child:
-            return
-        common.metadata_event_guard(event, values, roots)
-    sys.addaudithook(guard)
-    require(not NUMERICAL.intersection(sys.modules), "the direct baseline child initialized numerical code")
-    # Actual result and review-audit reads begin only here, after both owned-compute checks.
-    checked_actual_reference(plan, inputs["confirmation"]); checked_actual_reference(plan, inputs["correctness"])
-    review = checked_reference(inputs["confirmation_review"])
-    audit = checked_reference(review["raw_audit"])
-    require(audit.get("passed") is True and audit.get("unchanged_staged_consumer_passed") is True
-        and audit.get("result") == inputs["confirmation"] and audit.get("plan") == inputs["confirmation_plan"]
-        and audit.get("raw_window_recomputation_passed") is True,
-        "the genuine independent timing review lacks its complete actual raw audit")
-    result = checked_actual_reference(plan, inputs["confirmation"])
-    common.validate_pair_protocol(previous, result)
-    evidence = validation.Evidence()
-    registry_path = Path(plan["initial_registry_record"])
-    unit = Path(plan["campaign_run_dir"]) / "data" / plan["unit_id"]
-    require(registry_path == unit / "inputs/study_registry.json"
-        and digest(registry_path.read_bytes()) == plan["inputs"]["study_registry"]["sha256"],
-        "the staged initial registry changed before direct profile validation")
-    registry = read(registry_path, 64 * 1024 * 1024)[0]
-    initial = validate_initial_cases(registry, validation, evidence)
-    baseline = validation.validate_combination(plan["accepted_baseline_specification"], evidence)
-    require(baseline["configuration"] == plan["configuration"] and baseline["paired_rounds"] == 7
-        and result["copy_seeds"] == plan["copy_seeds"] and result["execution_identity"]["finished_at_seconds"]
-        <= review["reviewed_at_seconds"], "the actual accepted timing result changed configuration, seeds or review order")
-    require(not NUMERICAL.intersection(sys.modules), "a numerical package entered the saved direct consumer")
-    return {"schema_version": 1, "kind": "actual_direct_profile_baseline_validation", "passed": True,
-        "plan_sha256": digest(raw), "prerequisites": inputs, "accepted_combination": baseline,
-        "parent_pid": os.getppid(), "validation_pid": os.getpid(), "finished_at_seconds": time.time(),
-        "metadata_compute_context": context, "historical_helper_commit": previous["helpers"]["source_commit"],
-        "initial_comparisons_revalidated": initial,
-        "historical_consumers_replayed_unchanged": True, "stdlib_ctypes_bootstrap": bootstrap,
-        "numerical_imports": [], "gpu_operations": 0, "scientific_credit": 0, "admission_granted": False}
+    runtime.validate_scope(scope.proof, budget, scope.observer, scope.owner)
+    proof["metadata_worker_scope"] = scope.proof
+    proof["finished_at_seconds"] = time.time()
+    return proof
 
 
 def validate_initial_cases(registry, validation, evidence):
@@ -508,7 +753,9 @@ def completed_capture_binding(directory, plan, captured):
         and completion.get("original_capture_bytes_unchanged") is True,
         "the outer profile lacks the exact same-process post-core backend completion")
     proof = checked_reference(reference(directory / PROOF_NAME))
+    outer = checked_reference(reference(directory / "direct_profile_metadata_outer_scope.json"))
     output = (directory / "direct_profile_baseline_stdout.raw").read_bytes()
+    validate_completed_metadata_phase(plan, proof, outer, stdout=output)
     errors = (directory / "direct_profile_baseline_stderr.raw").read_bytes()
     returned = read(directory / "direct_profile_baseline_return.json")[0]
     supervisor = read(directory / "supervisor/direct_process_metadata.json")[0]
@@ -523,21 +770,28 @@ def completed_capture_binding(directory, plan, captured):
         and returned.get("stdout_sha256") == digest(output) and returned.get("stderr_sha256") == digest(errors)
         and errors == b"" and json.loads(output) == proof,
         "actual isolated accepted-baseline validation was not completed before this parent's capture")
+    saved_consumers(plan).validate_bundle(plan, proof["exact_saved_consumer_bundle"])
+    require(proof.get("combination_metadata_dispatch_source_proof", {}).get("all_other_statement_syntax_unchanged") is True,
+        "the saved profile baseline omitted its exact metadata-dispatch source proof")
     return {"direct_profile_backend_completion": reference(directory / "direct_profile_backend_completion.json"),
         "direct_profile_baseline_validation": reference(directory / PROOF_NAME)}
 
 
 def main():
-    """Expose only the private fresh metadata-validation child, with no numerical operation."""
+    """Accept only the owned parent's same-origin bounded metadata envelope."""
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--plan-stdin", action="store_true", required=True)
-    parser.parse_args()
-    raw = sys.stdin.buffer.read(LIMIT + 1)
-    require(len(raw) <= LIMIT, "profile metadata exceeds its declared bound")
-    plan = json.loads(raw)
-    # This is deliberately before metadata validation, imports or any raw-result access.
-    compute_context(plan)
-    print(json.dumps(validate_actual(plan, raw), allow_nan=False))
+    parser.add_argument("--plan-stdin", action="store_true", required=True);parser.parse_args()
+    raw = sys.stdin.buffer.read(INPUT_LIMIT + 1)
+    require(0 < len(raw) <= INPUT_LIMIT, "profile metadata envelope exceeds its exact input bound")
+    reader = saved_consumers();envelope = reader.document(raw)
+    require(type(envelope) is dict and set(envelope) == {"schema_version", "plan", "metadata_origin", "parent", "challenge"}
+        and type(envelope["schema_version"]) is int and envelope["schema_version"] == 2,
+        "new profile metadata requires its exact actual root envelope")
+    plan = envelope["plan"];compute_context(plan)
+    unsigned = {k: v for k, v in envelope.items() if k != "challenge"}
+    require(envelope["challenge"] == digest(encoded(unsigned)) and envelope["parent"] == reader.process(os.getppid())
+        and envelope["metadata_origin"]["owner"] == envelope["parent"], "metadata envelope parent or original budget changed")
+    print(json.dumps(validate_actual(plan, encoded(plan), envelope["metadata_origin"]), allow_nan=False))
 
 
 if __name__ == "__main__":

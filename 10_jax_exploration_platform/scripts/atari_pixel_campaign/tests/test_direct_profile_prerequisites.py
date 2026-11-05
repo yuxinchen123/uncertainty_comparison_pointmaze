@@ -16,10 +16,12 @@ from unittest.mock import patch
 SCRIPTS = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(SCRIPTS))
 import direct_profile_prerequisites as profile
+import direct_profile_saved_consumers as saved
 import direct_backend_image as backend
 import profile_selected as selected
 import direct_measurement as direct
 import measure_selected as measurement
+import profile_metadata_runtime as metadata_runtime
 from test_direct_backend_image import DirectBackendImageTests
 
 
@@ -44,15 +46,21 @@ class DirectProfileMetadataTests(unittest.TestCase):
         self.previous = {"kind": "selected_configuration_measurement", "mode": "confirmation", "hardware_class": "h100",
             "gpu_uuid": profile.CARD_ONE, "direct_binding": {"profile": {"synthetic_only": True}},
             "rounds": 7, "iterations": 10, "minimum_updates_per_round": 10,
-            "helpers": {"source_commit": "a" * 40, "files": {profile.PREFIX + name: "7" * 64
-                for name in measurement.required_helpers(False, True, True, True)}},
+            "helpers": {"source_commit": "a" * 40, "files": {profile.PREFIX + name: hashlib.sha256((SCRIPTS / name).read_bytes()).hexdigest()
+                for name in measurement.required_helpers(False, True, True, True) if name != "accepted_evidence_snapshot.py"}},
             "source_root": "/synthetic/frozen", "source_commit": "d" * 40, "core": {}, "paired_source": {},
             "python": "/synthetic/python", "campaign_run_dir": str(self.run), "unit_id": "confirmation",
             "configuration": self.configuration, "reference_configuration": {"synthetic_reference": True},
             "runtime_environment": {"synthetic_runtime": True}, "asset_record": {"synthetic_assets": True}, "copy_seeds": [1],
             "common_correctness_inputs": {"result": self.inputs["correctness"], "review": self.inputs["correctness_review"]},
+            "direct_historical_consumer_protocol": ast.literal_eval(next(node.value for node in ast.parse(
+                (SCRIPTS/'direct_common_confirmation.py').read_bytes()).body if isinstance(node,ast.Assign)
+                and any(isinstance(target,ast.Name) and target.id=='HISTORICAL_PROTOCOL' for target in node.targets))),
             "direct_qualification_inputs": {"result": self.inputs["qualification"], "review": self.inputs["qualification_review"]},
             "direct_backend_image": {"expected": previous_expected}}
+        previous_code = previous_unit / "code"; previous_code.mkdir()
+        for relative in self.previous["helpers"]["files"]:
+            (previous_code / Path(relative).name).write_bytes((SCRIPTS / Path(relative).name).read_bytes())
         self.inputs["confirmation_plan"] = self.write(previous_unit / "measurement_plan.json", self.previous)
         self.review = {"schema_version": 1, "kind": "independent_actual_direct_common_configuration_confirmation_review",
             "approved": True, "passed": True, "independent_of_producer": True, "unresolved_anomalies": [],
@@ -72,8 +80,10 @@ class DirectProfileMetadataTests(unittest.TestCase):
             "kind": "selected_configuration_profile", "unit_id": "profile", "profile_updates": 1,
             "direct_profile_protocol": profile.PROTOCOL, "capture_process_protocol": profile.PROCESS_PROTOCOL,
             "helpers": {"files": {profile.PREFIX + name: hashlib.sha256((SCRIPTS / name).read_bytes()).hexdigest()
-                for name in selected.required_helpers(False, True, direct_profile=True)}},
+                for name in (Path(relative).name for relative in profile.helper_roster())}},
             "direct_backend_image": {"schema_version": 2, "capability": backend.CAPABILITY, "expected": self.expected},
+            "direct_profile_saved_consumer_protocol": copy.deepcopy(saved.PROTOCOL),
+            "direct_profile_metadata_protocol": copy.deepcopy(metadata_runtime.PROTOCOL),
             "inputs": {"accepted_confirmation": self.inputs["confirmation"]},
             "accepted_baseline_specification": {"correctness_record": self.inputs["correctness"]["path"],
                 "confirmation_record": self.inputs["confirmation"]["path"]}, "direct_profile_prerequisites": self.inputs}
@@ -94,9 +104,9 @@ class DirectProfileMetadataTests(unittest.TestCase):
         self.assertEqual(plan["direct_profile_prerequisites"], self.inputs)
 
     def test_helper_union_includes_backend_and_separate_profile_observers(self):
-        """The direct closure has 32 files and stages no configured common reader."""
+        """The unchanged launcher remains closed while the new metadata adapter declares its extra helper."""
         names = selected.required_helpers(False, True, direct_profile=True)
-        self.assertEqual(len(names), 32)
+        self.assertEqual(len(names), 34)
         self.assertIn("direct_backend_image.py", names)
         self.assertIn("direct_profile_prerequisites.py", names)
         self.assertIn("nsight_process_identity.py", names)
@@ -105,6 +115,7 @@ class DirectProfileMetadataTests(unittest.TestCase):
             with self.subTest(arguments=arguments), self.assertRaises(ValueError):selected.required_helpers(*arguments)
         self.assertEqual(len(selected.required_helpers()), 17)
         self.assertIn("nsight_process_identity.py", selected.required_helpers(True, False, True, True))
+        self.assertEqual(len(profile.helper_roster()), 34)
         self.assertEqual(profile.helper_roster(), set(self.plan["helpers"]["files"]))
         changed = copy.deepcopy(self.plan); changed["helpers"]["files"].pop(profile.PREFIX + "ideas.py")
         with self.assertRaises(ValueError):profile.contract(changed)
@@ -213,8 +224,12 @@ class DirectProfileMetadataTests(unittest.TestCase):
     def test_fresh_no_site_child_without_owned_context_refuses_missing_real_results(self):
         """The actual isolated entrypoint rejects an unallocated process before its absent result paths."""
         environment = {key: value for key, value in os.environ.items() if not key.startswith("SLURM_")}
+        parent=saved.process(os.getpid())
+        unsigned={"schema_version":2,"plan":self.plan,"parent":parent,
+            "metadata_origin":metadata_runtime.origin(self.plan,parent)}
+        envelope={**unsigned,"challenge":profile.digest(profile.encoded(unsigned))}
         completed = subprocess.run(["/usr/bin/python3", "-I", "-S", "-B", str(SCRIPTS / profile.NAME), "--plan-stdin"],
-            input=profile.encoded(self.plan), capture_output=True, env=environment, timeout=30, check=False)
+            input=profile.encoded(envelope), capture_output=True, env=environment, timeout=30, check=False)
         self.assertNotEqual(completed.returncode, 0)
         self.assertEqual(completed.stdout, b"")
         self.assertIn(b"owned compute, never a login node", completed.stderr)
@@ -224,8 +239,10 @@ class DirectProfileMetadataTests(unittest.TestCase):
         """A failed child creates only exact failed stdout/stderr/return evidence."""
         completed = SimpleNamespace(returncode=1, stdout=b"failed metadata child", stderr=b"synthetic error")
         with patch.object(profile, "compute_context", return_value={}), patch.object(profile, "validate_metadata"), \
-            patch.object(profile, "validate_current_history"), \
-            patch.object(profile.subprocess, "run", return_value=completed):
+            patch.object(profile,"require_owned_stage",return_value=self.unit), \
+            patch.object(profile, "saved_consumers", return_value=saved), \
+            patch.object(saved,"metadata_runtime",return_value=metadata_runtime), \
+            patch.object(metadata_runtime.MetadataScope,"run",return_value=completed):
             with self.assertRaises(ValueError):profile.before_compute(self.unit, self.plan)
         self.assertEqual((self.unit / "direct_profile_baseline_stdout.raw").read_bytes(), completed.stdout)
         self.assertEqual(profile.read(self.unit / "direct_profile_baseline_return.json")[0]["returncode"], 1)
@@ -235,10 +252,40 @@ class DirectProfileMetadataTests(unittest.TestCase):
         """A child claiming another plan cannot publish an accepted baseline proof."""
         completed = SimpleNamespace(returncode=0, stdout=b'{"passed":true}', stderr=b"")
         with patch.object(profile, "compute_context", return_value={}), patch.object(profile, "validate_metadata"), \
-            patch.object(profile, "validate_current_history"), \
-            patch.object(profile.subprocess, "run", return_value=completed):
+            patch.object(profile,"require_owned_stage",return_value=self.unit), \
+            patch.object(profile, "saved_consumers", return_value=saved), \
+            patch.object(saved,"metadata_runtime",return_value=metadata_runtime), \
+            patch.object(metadata_runtime.MetadataScope,"run",return_value=completed):
             with self.assertRaises(ValueError):profile.before_compute(self.unit, self.plan)
         self.assertFalse((self.unit / profile.PROOF_NAME).exists())
+
+    def test_saved_old_schema_cannot_bypass_current_metadata_closure(self):
+        """A historical success label is refused before any absent result or outer proof is read."""
+        for version in (None,1,True):
+            proof={"kind":"actual_direct_profile_baseline_validation","passed":True}
+            if version is not None:proof['schema_version']=version
+            with self.subTest(version=version),patch.object(profile,'checked_reference',side_effect=AssertionError('saved payload read')):
+                with self.assertRaisesRegex(ValueError,'old or changed baseline'):
+                    profile.validate_completed_metadata_phase(self.plan,proof,{})
+
+    def test_new29_history_pointer_cannot_open_a_result_path(self):
+        """Reserved own-unit pointer shape precedes a corresponding history file read."""
+        previous=copy.deepcopy(self.previous);previous['accepted_evidence_snapshot_protocol']={'synthetic_only':True}
+        changed=copy.deepcopy(self.plan);changed['direct_binding']['frozen_inputs']=self.inputs['confirmation']
+        with patch.object(profile,'compute_context',return_value={}),patch.object(profile,'validate_metadata',return_value=previous),\
+                patch.object(profile,'checked_reference',side_effect=AssertionError('result file read')):
+            with self.assertRaisesRegex(ValueError,'reserved unit path'):profile.validate_current_history(changed)
+
+    def test_explicit_old28_profile_still_reaches_original_raw_gate(self):
+        """The old protocol returns only a dispatch sentinel; it cannot manufacture history success."""
+        with patch.object(profile,'compute_context',return_value={'synthetic_context_premise':True}),\
+                patch.object(profile,'validate_current_history',side_effect=AssertionError('old raw gate was replaced')):
+            self.assertIsNone(profile.validate_profile_history(self.plan))
+        binding=direct.core();fake=SimpleNamespace(adjacent=lambda name:SimpleNamespace(validate_profile_history=lambda actual:None))
+        options={'frozen_inputs':{'path':'/synthetic/old28/inputs.json','sha256':'0'*64}}
+        with patch.object(binding,'source_identity',return_value={}),patch.object(binding,'validate_plan',return_value=options),\
+                patch.object(binding,'adjacent',return_value=fake),patch.object(binding,'read_receipt',side_effect=ValueError('original raw gate reached')):
+            with self.assertRaisesRegex(ValueError,'original raw gate reached'):binding.validate_history(self.plan)
 
     def test_post_core_backend_completion_preserves_the_raw_numerical_capture(self):
         """The separate wrapper adds actual backend evidence without editing the core result."""
@@ -262,15 +309,21 @@ class DirectProfileMetadataTests(unittest.TestCase):
         self.write(supervisor / "direct_process_metadata.json", {"after": {"identity": {"pid": 42}}})
         proof = {"kind": "actual_direct_profile_baseline_validation", "passed": True,
             "plan_sha256": profile.digest((self.unit / "measurement_plan.json").read_bytes()),
-            "prerequisites": self.inputs, "parent_pid": 42, "finished_at_seconds": .5}
+            "prerequisites": self.inputs, "parent_pid": 42, "finished_at_seconds": .5,
+            "exact_saved_consumer_bundle": {"synthetic_unrelated_completed_reader_prerequisite": True},
+            "combination_metadata_dispatch_source_proof": {"all_other_statement_syntax_unchanged": True}}
         self.write(self.unit / profile.PROOF_NAME, proof)
+        self.write(self.unit / "direct_profile_metadata_outer_scope.json", {"synthetic_upstream_closed_scope_fixture":True})
         output = profile.encoded(proof)
         (self.unit / "direct_profile_baseline_stdout.raw").write_bytes(output)
         (self.unit / "direct_profile_baseline_stderr.raw").write_bytes(b"")
         self.write(self.unit / "direct_profile_baseline_return.json", {"command": ["/usr/bin/python3", "-I", "-S", "-B",
             str(self.unit / "code" / profile.NAME), "--plan-stdin"], "returncode": 0, "error": None,
             "stdout_sha256": profile.digest(output), "stderr_sha256": profile.digest(b"")})
-        with patch.object(profile, "compute_context", return_value={}):
+        # This wrapper-only fixture supplies a successful upstream proof; the new reader has separate source/proof tests.
+        with patch.object(profile, "compute_context", return_value={}), patch.object(profile, "saved_consumers", return_value=saved), \
+                patch.object(profile,"validate_completed_metadata_phase",return_value=proof), \
+                patch.object(saved, "validate_bundle", return_value=proof["exact_saved_consumer_bundle"]):
             binding = profile.completed_capture_binding(self.unit, self.plan, capture)
         self.assertEqual(binding["direct_profile_backend_completion"], profile.reference(self.unit / "direct_profile_backend_completion.json"))
         with patch.object(profile, "compute_context", return_value={}):
@@ -316,6 +369,142 @@ class DirectProfileMetadataTests(unittest.TestCase):
         for raw in (b'{"x":1,"x":2}', b'{"x":NaN}'):
             path.write_bytes(raw)
             with self.assertRaises(ValueError):profile.read(path)
+
+
+class ProfileHistoryIntegrationTests(unittest.TestCase):
+    """Synthetic preparation upstream reviews; genuine original admission bytes; no worker eligibility."""
+    @classmethod
+    def setUpClass(cls):
+        root=SCRIPTS.parents[2]
+        peer=json.loads((root/'.review_metadata/independent_full_profile_adapter_review/independent_dependency_6821437_50.json').read_bytes())
+        cls.actual_common_ref=peer['profile_pointer']['common_plan']
+        raw=Path(cls.actual_common_ref['path']).read_bytes()
+        if hashlib.sha256(raw).hexdigest()!=cls.actual_common_ref['sha256']:raise ValueError('immutable common metadata changed')
+        cls.actual_common=json.loads(raw)
+        observed=json.loads((root/'.review_metadata/future_profile_history_integration/original_authority_6821437_52.json').read_bytes())
+        cls.original_raw=Path(observed['provenance']['source_authority']['path']).read_bytes()
+        if hashlib.sha256(cls.original_raw).hexdigest()!=profile.ORIGINAL_ADMISSION_SHA256:raise ValueError('original4a71bytes changed')
+        cls.actual_provenance=observed['provenance']
+        path=Path('/p/rlprojects/RND_worktrees/2026-11-05-04-02_common-timing-helper_source-69f1b507_helpers-29_numerical-source-d28e6735_gpu-count-0')/'10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py'
+        if hashlib.sha256(path.read_bytes()).hexdigest()!='af72d3de3e84f7b8be08a73f90f5becf143b1d32c90083c1773b10343751361b':raise ValueError('published69fsource changed')
+        import importlib.util
+        spec=importlib.util.spec_from_file_location('published_69f_source_only_compatibility',path)
+        cls.published_binding=importlib.util.module_from_spec(spec);spec.loader.exec_module(cls.published_binding)
+
+    def setUp(self):
+        self.temp=tempfile.TemporaryDirectory();self.addCleanup(self.temp.cleanup)
+        self.root=Path(self.temp.name);self.run=self.root/'campaign';self.unit=self.run/'data/profile_fixture'
+        self.unit.mkdir(parents=True);(self.run/'slurm').mkdir()
+        (self.run/'slurm/submitted_jobids_uva.txt').write_text(os.environ['SLURM_JOB_ID']+'\n')
+        (self.run/'SOURCE_AND_GATES_READY.json').write_bytes(self.original_raw)
+        self.common=copy.deepcopy(self.actual_common);self.common.update(campaign_run_dir=str(self.run),unit_id='common_fixture')
+        common_unit=self.run/'data/common_fixture';(common_unit/'code').mkdir(parents=True)
+        for relative in self.common['helpers']['files']:
+            (common_unit/'code'/Path(relative).name).write_bytes((Path(self.actual_common_ref['path']).parent/'code'/Path(relative).name).read_bytes())
+        expected=json.loads(Path(self.actual_common['direct_backend_image']['expected']['path']).read_bytes())
+        self.write(common_unit/'direct_backend_image_expected.json',expected)
+        self.common['direct_backend_image']['expected']=profile.reference(common_unit/'direct_backend_image_expected.json')
+        self.common_ref=self.write(common_unit/'measurement_plan.json',self.common)
+        # This is a synthetic current-source prepin premise, not a new actual
+        # target preparation or package observation. Keep accepted image bytes
+        # identical while declaring the current exact producer source.
+        current_expected=copy.deepcopy(expected)
+        current_expected['producer_source_sha256']=hashlib.sha256((SCRIPTS/'direct_backend_image.py').read_bytes()).hexdigest()
+        expected_path=self.unit/'direct_backend_image_expected.json';self.write(expected_path,current_expected)
+        confirmation={'path':str(common_unit/'result.json'),'sha256':'6'*64}
+        self.review={'schema_version':1,'kind':'independent_actual_direct_common_configuration_confirmation_review',
+            'approved':True,'passed':True,'independent_of_producer':True,'unresolved_anomalies':[],
+            'reviewer_identity':'synthetic upstream review premise ONLY; no actual timing/review/credit',
+            'decision':'accepted','raw_window_recomputation_passed':True,'paired_rounds':7,'updates_per_arm_per_round':10,
+            'reviewed_at_seconds':5.,'admission_granted':False,'worker_admitted':False,
+            'result':confirmation,'plan':self.common_ref,'source_commit':self.common['source_commit'],
+            'helper_commit':self.common['helpers']['source_commit'],'configuration':self.common['configuration'],
+            'reference_configuration':self.common['reference_configuration'],'copies':1,'copy_seeds':[1],'gpu_uuid':profile.CARD_ONE,
+            'raw_audit':{'path':str(self.root/'ABSENT_synthetic_scientific_audit.json'),'sha256':'7'*64}}
+        review_path=self.root/'synthetic_review.json';self.write(review_path,self.review)
+        profile_path=self.root/'direct_profile.json';self.write(profile_path,direct.core().PROFILE)
+        baseline={'source_commit':self.common['source_commit'],'hardware_class':'h100','runtime_environment':self.common['runtime_environment'],
+            'direct_binding_profile':direct.core().PROFILE,'correctness_record':self.common['common_correctness_inputs']['result']['path'],
+            'confirmation_record':confirmation['path']}
+        registry={'initial_matched_copy_counts':[1,2],'initial_ideas':[{'name':'synthetic upstream summary '+str(index),
+            'results':{context:[{'copies':copies,'implementation_distinct':True,'result_path':'/synthetic/absent/result.json',
+                'measurement_valid':True,'correctness_passed':True} for copies in (1,2)] for context in ('h100','jaguar03_rtx_a4500')}} for index in range(30)]}
+        paths={}
+        for name,value in (('configuration',self.common['configuration']),('runtime_environment',self.common['runtime_environment']),
+                ('asset_record',self.common['asset_record']),('study_registry',registry),('accepted_baseline_specification',baseline),
+                ('profile_tool_record',{'path':'/synthetic/Nsight_NOT_EXECUTED','version':'synthetic_fixture_only','sha256':'8'*64})):
+            paths[name]=self.root/(name+'.json');self.write(paths[name],value)
+        self.args=SimpleNamespace(**paths,configured_isolation_profile=None,direct_binding_profile=profile_path,
+            hardware_class='h100',gpu_uuid=profile.CARD_ONE,seed_start=1,maximum_active_seconds=30.,
+            source_root=Path(self.common['source_root']),source_commit=self.common['source_commit'],run_dir=self.run,
+            direct_confirmation_review=review_path,direct_history_inputs=self.unit/'direct_history/inputs.json',
+            direct_backend_image_record=expected_path,direct_qualification_record=Path(self.common['direct_qualification_inputs']['result']['path']),
+            direct_qualification_review=Path(self.common['direct_qualification_inputs']['review']['path']),
+            minimum_updates=1,unit_id='profile_fixture',python=Path(self.common['python']),jaxtari_source_root=None)
+        self.provenance=copy.deepcopy(self.actual_provenance)
+        self.provenance['canonical_admission']={'path':str(self.run/'SOURCE_AND_GATES_READY.json'),'sha256':profile.ORIGINAL_ADMISSION_SHA256}
+        self.provenance['synthetic_upstream_fact_fixture_only']=True
+
+    def write(self,path,value):
+        path.write_bytes(profile.encoded(value));return profile.reference(path)
+
+    def prepared_fixture(self):
+        """Call real prepare/configure/stage functions; only unavailable upstream eligibility is synthetic."""
+        roster=selected.required_helpers(False,True,direct_profile=True)
+        helpers={'source_root':str(SCRIPTS.parents[2]),'source_commit':'27f9b5c9276de2405c9aa7225b2c4c6b99e5c50d',
+            'files':{profile.PREFIX+name:hashlib.sha256((SCRIPTS/name).read_bytes()).hexdigest() for name in roster}}
+        original=profile.configure_binding;events=[]
+        def bound(plan,target,history,backend_record):
+            events.append('binding')
+            self.assertTrue(Path(history).is_file())
+            self.assertEqual((Path(history).parent/'admission.json').read_bytes(),self.original_raw)
+            return original(plan,target,history,backend_record)
+        def authority(plan,common,*,live=False):
+            events.append('authority-live' if live else 'authority-frozen')
+            return self.original_raw,copy.deepcopy(self.provenance)
+        with patch.object(profile,'require_admission',return_value=None),patch.object(selected,'helper_receipt',return_value=helpers),\
+                patch.object(profile,'original_admission_metadata',side_effect=authority),patch.object(profile,'configure_binding',side_effect=bound):
+            directory=selected.prepare(self.args)
+        self.assertEqual(directory,self.unit)
+        self.assertLess(events.index('authority-live'),events.index('binding'))
+        plan=json.loads((self.unit/'measurement_plan.json').read_bytes())
+        self.assertEqual(len(plan['helpers']['files']),34)
+        self.assertEqual({p.name for p in (self.unit/'code').iterdir()},set(roster))
+        self.assertFalse(Path(self.review['result']['path']).exists())
+        self.assertFalse(Path(self.review['raw_audit']['path']).exists())
+        return plan
+
+    def test_actual_prepare_caller_history_admission_and_published_claim(self):
+        plan=self.prepared_fixture()
+        pointer=profile.checked_reference(plan['direct_binding']['frozen_inputs'])
+        self.assertEqual(pointer['admission']['path'],str(self.unit/'direct_history/admission.json'))
+        self.assertFalse(pointer['admission_provenance']['profile_worker_admitted'])
+        claim=self.published_binding.current_admission_claim(plan)
+        self.assertEqual(claim['frozen_admission'],pointer['admission'])
+        self.published_binding.check_live_admission(claim)
+        with self.assertRaises(ValueError):profile.require_admission()
+
+    def test_shared_profile_dispatch_and_original_live_admission_failures(self):
+        plan=self.prepared_fixture();binding=direct.core()
+        snap=SimpleNamespace(qual={'review':self.common['direct_qualification_inputs']['review']},
+            correctness={'review':self.common['common_correctness_inputs']['review'],'result':self.common['common_correctness_inputs']['result']})
+        reader=profile.saved_consumers(plan)
+        with patch.object(profile,'original_admission_metadata',return_value=(self.original_raw,self.provenance)),\
+                patch.object(reader,'reviewed_snapshot',return_value=snap),patch.object(binding,'source_identity',return_value={'synthetic_upstream_source_premise_only':True}):
+            history=binding.validate_history(plan)
+        self.assertEqual(history['kind'],'reviewed_profile_original_source_history_fact')
+        self.assertFalse(history['profile_worker_admitted']);self.assertFalse(history['original_cases_reexecuted'])
+        claim=self.published_binding.current_admission_claim(plan)
+        canonical=self.run/'SOURCE_AND_GATES_READY.json';canonical.write_text('{}\n')
+        with self.assertRaisesRegex(ValueError,'canonical'):self.published_binding.check_live_admission(claim)
+        canonical.write_bytes(self.original_raw)
+        admission=self.unit/'direct_history/admission.json';admission.write_text('{}\n')
+        with self.assertRaises(ValueError):self.published_binding.check_live_admission(claim)
+
+    def test_closed_prepare_has_no_history_side_effect(self):
+        with self.assertRaisesRegex(ValueError,'remain disabled'):selected.prepare(self.args)
+        self.assertFalse(self.args.direct_history_inputs.exists())
+        self.assertFalse((self.unit/'measurement_plan.json').exists())
 
 
 class DirectProfileBackendTests(DirectBackendImageTests):

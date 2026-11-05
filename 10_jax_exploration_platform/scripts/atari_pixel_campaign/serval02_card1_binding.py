@@ -199,6 +199,11 @@ def snapshot_exit_history(exit_plan, observations, stop, status):
 
 def validate_history(plan):
     """Rederive the full initial study and exit before any new direct contact."""
+    if "direct_profile_protocol" in plan:
+        validate_plan(plan); source_identity(plan)
+        profile_history = adjacent("direct_measurement").adjacent("direct_profile_prerequisites").validate_profile_history(plan)
+        if profile_history is not None:
+            return profile_history
     if "accepted_evidence_snapshot_protocol" in plan:
         validate_plan(plan); source_identity(plan)
         return adjacent("direct_measurement").adjacent("accepted_evidence_snapshot").history(plan)
@@ -293,9 +298,26 @@ def current_process():
 def current_admission_claim(plan):
     """Reference the frozen copy separately from the current canonical-file check."""
     inputs = read_receipt(plan["direct_binding"]["frozen_inputs"])
-    frozen = inputs["admission"]
-    require(frozen["sha256"] == ORIGINAL_ADMISSION_SHA256
-        and Path(frozen["path"]).is_relative_to(unit_directory(plan) / "direct_history"), "current admission needs the exact frozen original copy")
+    if "accepted_evidence_snapshot_protocol" in plan:
+        selected = adjacent("direct_measurement").adjacent("accepted_evidence_snapshot").consume(plan)
+        historical = selected.files.json(selected.qual["historical_inputs"])
+        frozen = historical["admission"]
+        qualified_unit = Path(selected.qual["plan"]["path"]).parent
+        declared = {value["path"]: value["sha256"] for value in selected.proof["declared_files"]}
+        require(type(frozen) is dict and set(frozen) == {"path", "sha256"}
+            and qualified_unit.parent == Path(plan["campaign_run_dir"]) / "data"
+            and frozen["path"] == str(qualified_unit / "direct_history/admission.json")
+            and frozen["sha256"] == ORIGINAL_ADMISSION_SHA256
+            and declared.get(frozen["path"]) == ORIGINAL_ADMISSION_SHA256,
+            "reviewed history must retain the exact qualified original admission and complete CPU-proof coverage")
+        admission = selected.files.json(frozen)
+        require(admission.get("authorized") is True and admission.get("source_root") == plan["source_root"]
+            and admission.get("source_commit") == SOURCE_COMMIT,
+            "the reviewed original admission changed its authority or exact numerical source")
+    else:
+        frozen = inputs["admission"]
+        require(frozen["sha256"] == ORIGINAL_ADMISSION_SHA256
+            and Path(frozen["path"]).is_relative_to(unit_directory(plan) / "direct_history"), "current admission needs the exact frozen original copy")
     return {"schema_version": 1, "kind": "current_direct_admission_matches_frozen_original",
         "canonical_path": str(Path(plan["campaign_run_dir"]) / "SOURCE_AND_GATES_READY.json"),
         "frozen_admission": frozen, "source_root": plan["source_root"], "source_commit": SOURCE_COMMIT}

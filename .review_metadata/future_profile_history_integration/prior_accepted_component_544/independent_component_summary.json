@@ -1,0 +1,55 @@
+{
+  "NUM13_profile_selected_capture_core_process_backend_bytes_preserved": true,
+  "actual_independent_CPU_steps": [
+    "6821437.2",
+    "6821437.3"
+  ],
+  "approved_component_only": true,
+  "author14check_original_allocation": "6783003 beforehandover; originalreceipt remainsunaltered",
+  "current_target_qualification": false,
+  "exact_changed_functions": [
+    "validate_common_metadata",
+    "source_roster",
+    "source_closure"
+  ],
+  "final_affected_metadata_checks": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-22-42_direct-profile-saved-consumers_original-helpers-26_common-helpers-28_profile-admission-disabled_gpu-count-0_processor-count-1_host-memory-mib-512/.review_metadata/direct_profile_saved_consumers_29/independent_component_3.json",
+    "sha256": "de41d040d92d7fb750b10117bf9bed64e257938567d81fa56bbf1a536b9f7f14"
+  },
+  "formal_profile_admission": false,
+  "full_adapter_complete": false,
+  "kind": "independent_saved_future_profile_metadata_component_summary",
+  "native_formal_profile_support": false,
+  "no_saved_raw_replay_or_GPU_or_native_library_or_remote_or_job_action": true,
+  "passed": true,
+  "prior_source_and_old_roster_checks": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-22-42_direct-profile-saved-consumers_original-helpers-26_common-helpers-28_profile-admission-disabled_gpu-count-0_processor-count-1_host-memory-mib-512/.review_metadata/direct_profile_saved_consumers_29/independent_component_2.json",
+    "sha256": "7248c07f8888d5f7502103c1f6e4e70e29816e79dc5fcf79c4e1e684faada042"
+  },
+  "remaining_unapproved_work": [
+    "exact common-reader namespace and per-input forwardproof",
+    "replace inherited600second waits with reviewed shared<=300second owned-child lifecycle",
+    "target/source/backend/process actual qualification and separate formaladmission"
+  ],
+  "require_admission_unconditional_refusal": true,
+  "reviewed_at_seconds": 1793876637.5401304,
+  "reviewer": "/root/implement_direct_h100_profiles/review_direct_profile_source",
+  "reviewer_harness_failures_preserved": [
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-22-42_direct-profile-saved-consumers_original-helpers-26_common-helpers-28_profile-admission-disabled_gpu-count-0_processor-count-1_host-memory-mib-512/.review_metadata/direct_profile_saved_consumers_29/independent_component_initial_guard_refusal.json",
+      "sha256": "db0e41add4236b3e7c6b31ca59b14257251577dce7e9392ca16a01f14c03a628"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-22-42_direct-profile-saved-consumers_original-helpers-26_common-helpers-28_profile-admission-disabled_gpu-count-0_processor-count-1_host-memory-mib-512/.review_metadata/direct_profile_saved_consumers_29/independent_component_missing_json_namespace.json",
+      "sha256": "6d62cb154b7af80e1d54f6b4cf7e83dce40640ca5426b87fb1275d9747e613da"
+    }
+  ],
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-22-42_direct-profile-saved-consumers_original-helpers-26_common-helpers-28_profile-admission-disabled_gpu-count-0_processor-count-1_host-memory-mib-512/.review_metadata/direct_profile_saved_consumers_29/source_freeze.json",
+    "sha256": "544aac434c68be4f31e4627029f124c15963544a96835a63c8d7cc5694c23c18"
+  },
+  "successful_scope": "Old26/old28 exact source rosters and unchanged3function/protected-hash checks passed onstep2; six affected new29/ambiguous-literal/typed-role tests passed onstep3. No old scientific result was opened.",
+  "worker_admission": false
+}
