@@ -1,0 +1,19 @@
+{
+  "admission_granted": false,
+  "case_credit": 0,
+  "environment_credit": 0,
+  "idea_credit": 0,
+  "kernel_support_tested_by_this_check": false,
+  "learner_credit": 0,
+  "physical_gres_mapping_verified": false,
+  "profile_credit": 0,
+  "python": "/usr/bin/python3",
+  "required_apis_callable": {
+    "os.pidfd_open": true,
+    "signal.pidfd_send_signal": true
+  },
+  "scientific_credit": 0,
+  "sys_version": "3.10.12 (main, May 27 2025, 17:12:29) [GCC 11.4.0]",
+  "whole_tool_library_or_device_activity_quantified": false,
+  "worker_admitted": false
+}

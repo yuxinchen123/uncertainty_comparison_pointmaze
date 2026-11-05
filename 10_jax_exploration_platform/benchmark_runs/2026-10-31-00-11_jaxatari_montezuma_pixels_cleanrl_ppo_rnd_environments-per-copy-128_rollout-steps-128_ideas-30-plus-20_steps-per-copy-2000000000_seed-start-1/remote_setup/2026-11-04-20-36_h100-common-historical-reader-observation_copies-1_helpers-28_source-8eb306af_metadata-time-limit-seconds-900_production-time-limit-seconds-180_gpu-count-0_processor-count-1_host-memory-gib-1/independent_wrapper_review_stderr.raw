@@ -1,0 +1,19 @@
+test_changed_bytes_and_symlink_inputs_are_refused (independent_snapshot_fixture_only.SnapshotWrapperTests)
+A changed file or replacement path cannot be treated as the earlier input. ... ok
+test_changed_input_during_observer_is_refused_and_recorded (independent_snapshot_fixture_only.SnapshotWrapperTests)
+A temporary metadata mutation cannot be accepted as unchanged input. ... ok
+test_normal_synthetic_observer_keeps_inputs_and_records_zero_credit (independent_snapshot_fixture_only.SnapshotWrapperTests)
+The wrapper reports unchanged metadata and no production-unit proof. ... ok
+test_observer_failure_still_records_after_snapshot_and_reraises (independent_snapshot_fixture_only.SnapshotWrapperTests)
+A synthetic observer failure is preserved after the required final input snapshot. ... ok
+test_output_names_are_local_and_never_reused (independent_snapshot_fixture_only.SnapshotWrapperTests)
+Only fixed new output names are writable and an earlier result is preserved. ... ok
+test_oversized_metadata_is_refused_before_reading (independent_snapshot_fixture_only.SnapshotWrapperTests)
+A sparse oversized fixture stays outside the explicit metadata-only snapshot scope. ... ok
+test_snapshot_reads_without_rewriting_the_input (independent_snapshot_fixture_only.SnapshotWrapperTests)
+Hashing retains the input's exact bytes, inode and modification time. ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.033s
+
+OK

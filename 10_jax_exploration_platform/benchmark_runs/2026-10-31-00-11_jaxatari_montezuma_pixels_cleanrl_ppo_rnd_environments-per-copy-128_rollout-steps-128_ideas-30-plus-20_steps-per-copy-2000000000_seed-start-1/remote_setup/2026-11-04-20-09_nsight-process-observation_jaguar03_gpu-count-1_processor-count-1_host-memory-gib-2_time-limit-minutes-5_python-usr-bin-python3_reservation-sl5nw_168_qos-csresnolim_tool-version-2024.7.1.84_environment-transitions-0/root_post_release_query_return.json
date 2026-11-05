@@ -1,0 +1,14 @@
+{
+  "automatic_retry_permitted": false,
+  "command": [
+    "scontrol",
+    "show",
+    "job",
+    "-o",
+    "6820179"
+  ],
+  "finished_at_utc": "2026-11-05T04:36:00.132371+00:00",
+  "inherited_SBATCH_variables_removed": [],
+  "returncode": 0,
+  "started_at_utc": "2026-11-05T04:36:00.050159+00:00"
+}

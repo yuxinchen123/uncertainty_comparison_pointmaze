@@ -1,0 +1,241 @@
+{
+  "admission_granted": false,
+  "borrowed_input_unit_id": "2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3",
+  "candidate_configuration": {
+    "environment": {
+      "batch_layout": "flat",
+      "cache_room_backgrounds": true,
+      "combine_palette_and_sprite_drawing": false,
+      "episodic_life": true,
+      "frame_skip": 4,
+      "frame_skip_unroll": 1,
+      "fuse_pixel_preprocessing": false,
+      "max_episode_steps": 108000,
+      "noop_max": 30,
+      "num_envs": 128,
+      "render_final_two_only": true,
+      "reset_only_when_needed": true,
+      "stack_update": "concatenate",
+      "sticky_action_probability": 0.25
+    },
+    "execution": {
+      "compilation_mode": "whole_iteration",
+      "iterations_per_call": 1,
+      "report_every_iterations": 10,
+      "report_readout": "none"
+    },
+    "learner": {
+      "action_count": 18,
+      "adam_epsilon": 1e-05,
+      "anneal_learning_rate": true,
+      "associative_gae": false,
+      "associative_reward_filter": false,
+      "batch_quantity_keyed_random_generation": false,
+      "cache_target_features": false,
+      "clip_coefficient": 0.1,
+      "convolution_batching": "vmap",
+      "dense_batching": "matmul",
+      "donate_state": false,
+      "entropy_coefficient": 0.001,
+      "extrinsic_coefficient": 2.0,
+      "flat_parameters": false,
+      "flatten_update_scan": false,
+      "fuse_minibatch_image_preparation": false,
+      "fuse_network_bias_and_activation": false,
+      "fuse_optimizer": false,
+      "gae_lambda": 0.95,
+      "gamma_ext": 0.999,
+      "gamma_int": 0.99,
+      "hoist_critic": false,
+      "hoist_rollout_bonus": false,
+      "hoist_rollout_log_probabilities": false,
+      "intrinsic_coefficient": 1.0,
+      "learning_rate": 0.0001,
+      "max_gradient_norm": 0.5,
+      "moment_reduction": "two_pass",
+      "n_copies": 1,
+      "n_envs": 128,
+      "network_layout": "nchw",
+      "num_minibatches": 4,
+      "num_steps": 128,
+      "observation_warmup_iterations": 50,
+      "per_copy_intrinsic_coefficients": [],
+      "per_copy_learning_rates": [],
+      "per_copy_scalar_settings": [],
+      "pre_gather_minibatches": false,
+      "predictor_update_proportion": 0.25,
+      "recompute_network_activations": false,
+      "rollout_frame_storage": "stacked_frames",
+      "rollout_observation_storage": "float32",
+      "rollout_unroll": 1,
+      "total_timesteps": 2000000000,
+      "update_epochs": 4,
+      "update_unroll": 1,
+      "upstream_reward_filter_axis": true,
+      "value_coefficient": 0.5,
+      "warmup_keeps_initial_observation": true
+    }
+  },
+  "copy_seeds": [
+    1
+  ],
+  "diagnostic_unit_id": "2026-11-04-20-36_h100-common-historical-reader-observation_copies-1_helpers-28_source-8eb306af_metadata-time-limit-seconds-900_production-time-limit-seconds-180_gpu-count-0_processor-count-1_host-memory-gib-1",
+  "exact_helper_source": {
+    "files": {
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/collect_worker_exit_receipts.py": "bcf3355b756a54251c1d03ed0494cd9e0ee2c6dba5398da1a94e168807ae058f",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py": "2fc25c271ec55c0aeb2523873eda71543e5f46341706f18e6bc9f2cc924a33a0",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/controller.py": "1c06dbf51a135fea5b32bdf4fa6feadcd597dcdd269559fb3ecdc8b58414f12a",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/device_memory_limit.py": "3abcb3641cc799424d6585e9881befbbd3c06800e9dc4d19fed5a507fe5e06ff",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py": "310bcb6b4b1a18cc9d7acac62a07dfb60874bb60aed127b50b9c07227593f9f8",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_backend_image.py": "82898100d64f540c42c0a236acb6c20ca2808deb247b83da65927c6cb497a8e4",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_confirmation.py": "db4bda6431df2964bb5d297a6395dd5ec1709da6fd8ec4583677629387e2b025",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_historical_consumer.py": "7683a8185a077b5522764ba2a6f04e621186e7ef70d21e6ea90cb1862d7f2fb6",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py": "05ae4baa2c3acb75821302bd03426cda98c60283453a9fea6202b0d00e4d0362",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_allocation_observation.py": "f614a3792f196605cd1fa4b76738ff3157f72ee6700058526c2598e45a63a50c",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_case.py": "5acd8a33b849e8805a6d51023d5c5661ac989b473a6135669b9ca243256e754f",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_evidence.py": "cc66813e5a31dd54f9c266f5a094c26c6a5753c17599b1badd97911f932c5824",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_qualification.py": "93a19a553a10daf894e4e573b7aacebecf0d5a1cfa0b0f13a471c19e4184eecb",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_queue.py": "cac5c612c641aad0bc814438f0e21c02544073632484dcba99047e2ac44aaa60",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py": "7b71221d25493ad5a5b07672e593a329f912ebf3ecd259f2aeede1e6da55acc6",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py": "df811a5d51a7ef2f747bc32d1545c8286552675dfc8b859e7d0600eef4c920c5",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry.py": "40c117d6fd1937dcdd465381d1469f0ad687103d7b551d604d8c6e03063f9107",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py": "a1ef9d787cb7387be88a078eac6d3bae9c853d3ceb3ac6a6aeb471e71e3aff4d",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/passive_installed_slurm_observation.py": "97ce634c07cd7a2b045d4253938db21c844abd93f3bb7b9d4dbebfd5f33bf842",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/portable_evidence.py": "0ecae0ab2c21b0bbeadd47ddbd81026cb133e8f3d7f32c2148268dbfe575a4d1",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py": "2612e358f3e823289a92bdfe54856bdc8f0de5553db4bdcc5cd7617083cfd6aa",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/pregather_async_retry.py": "881c89b678782dc56568b9257a9753a78b4e06464d43e73a14f1927a5fc17695",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py": "e0d7c640086480bc6c5e6a5d867db5544a1a5fb111e63e20fe3aba50e1b5afa7",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/short_learning.py": "b17d70f4e49de9f766062beb0578729fcde9d68a29060f37d718deb644cb0999",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py": "66771819cf75ea89e1b6f8fef4467aece2eecf864cd0ca434cbb5c698365f210",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_active_configuration_observation.py": "8cc5a3544e426e3bd3e78707f6c77dc249a1d19165a593e157d2097daa07a648",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_slurm_configured_isolation.py": "d659dd1f21ddd2d7bb0474b4ded0ae4ea129c00365984c1fe7f84439b8eba694",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py": "e392dc6329cc8b5e902f3271d512cb9ee5bbc2f2fcdd6b0d85cefd981a1042b9"
+    },
+    "source_commit": "8eb306af9f68aed5ab5cc0d01f75b35a1f234078",
+    "source_root": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute"
+  },
+  "observer": {
+    "event_limit": 512,
+    "old_reader_subprocess_internally_profiled": false,
+    "production_per_child_timeout_seconds": 180,
+    "source": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-20-36_h100-common-historical-reader-observation_copies-1_helpers-28_source-8eb306af_metadata-time-limit-seconds-900_production-time-limit-seconds-180_gpu-count-0_processor-count-1_host-memory-gib-1/observe_guard_phases.py",
+      "sha256": "4b3918181151625d589755c8fa7e1fb365397db14d80d5f68fa14fce11831a63"
+    },
+    "targets": {
+      "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_confirmation.py": [
+        "validate_actual",
+        "qualification_reuse_evidence"
+      ],
+      "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_historical_consumer.py": [
+        "request",
+        "current_closure",
+        "selected_records",
+        "old_closure"
+      ],
+      "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py": [
+        "verify_qualification_inputs",
+        "verify_saved_sources"
+      ],
+      "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py": [
+        "validate_history"
+      ],
+      "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py": [
+        "verify_assets"
+      ]
+    },
+    "timeout_seconds": 900,
+    "trace_byte_limit": 131072
+  },
+  "original_numerical_source": "d28e6735e79788f618acb0ebfde8609db1f776af",
+  "read_only_borrowed_identity_scope": "Read genuine existing immutable inputs only. No production unit, admission or timing proof.",
+  "reference_configuration": {
+    "environment": {
+      "batch_layout": "flat",
+      "cache_room_backgrounds": false,
+      "combine_palette_and_sprite_drawing": false,
+      "episodic_life": true,
+      "frame_skip": 4,
+      "frame_skip_unroll": 1,
+      "fuse_pixel_preprocessing": false,
+      "max_episode_steps": 108000,
+      "noop_max": 30,
+      "num_envs": 128,
+      "render_final_two_only": false,
+      "reset_only_when_needed": true,
+      "stack_update": "concatenate",
+      "sticky_action_probability": 0.25
+    },
+    "execution": {
+      "compilation_mode": "whole_iteration",
+      "iterations_per_call": 1,
+      "report_every_iterations": 10,
+      "report_readout": "none"
+    },
+    "learner": {
+      "action_count": 18,
+      "adam_epsilon": 1e-05,
+      "anneal_learning_rate": true,
+      "associative_gae": false,
+      "associative_reward_filter": false,
+      "batch_quantity_keyed_random_generation": false,
+      "cache_target_features": false,
+      "clip_coefficient": 0.1,
+      "convolution_batching": "vmap",
+      "dense_batching": "matmul",
+      "donate_state": false,
+      "entropy_coefficient": 0.001,
+      "extrinsic_coefficient": 2.0,
+      "flat_parameters": false,
+      "flatten_update_scan": false,
+      "fuse_minibatch_image_preparation": false,
+      "fuse_network_bias_and_activation": false,
+      "fuse_optimizer": false,
+      "gae_lambda": 0.95,
+      "gamma_ext": 0.999,
+      "gamma_int": 0.99,
+      "hoist_critic": false,
+      "hoist_rollout_bonus": false,
+      "hoist_rollout_log_probabilities": false,
+      "intrinsic_coefficient": 1.0,
+      "learning_rate": 0.0001,
+      "max_gradient_norm": 0.5,
+      "moment_reduction": "two_pass",
+      "n_copies": 1,
+      "n_envs": 128,
+      "network_layout": "nchw",
+      "num_minibatches": 4,
+      "num_steps": 128,
+      "observation_warmup_iterations": 50,
+      "per_copy_intrinsic_coefficients": [],
+      "per_copy_learning_rates": [],
+      "per_copy_scalar_settings": [],
+      "pre_gather_minibatches": false,
+      "predictor_update_proportion": 0.25,
+      "recompute_network_activations": false,
+      "rollout_frame_storage": "stacked_frames",
+      "rollout_observation_storage": "float32",
+      "rollout_unroll": 1,
+      "total_timesteps": 2000000000,
+      "update_epochs": 4,
+      "update_unroll": 1,
+      "upstream_reward_filter_axis": true,
+      "value_coefficient": 0.5,
+      "warmup_keeps_initial_observation": true
+    }
+  },
+  "registered": false,
+  "runtime_environment": {
+    "JAX_DEFAULT_MATMUL_PRECISION": "highest",
+    "JAX_ENABLE_X64": "true",
+    "XLA_FLAGS": "--xla_gpu_exclude_nondeterministic_ops=true"
+  },
+  "scientific_credit": 0,
+  "snapshots": {
+    "metadata_refs": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-20-36_h100-common-historical-reader-observation_copies-1_helpers-28_source-8eb306af_metadata-time-limit-seconds-900_production-time-limit-seconds-180_gpu-count-0_processor-count-1_host-memory-gib-1/consumed_input_references.json",
+      "sha256": "eb69f8e881d4155e812cb1da9b8e952d67fa72569bf28c478a9d53ea602f9a39"
+    },
+    "raw_history_payloads_recomputed_by_snapshot": false
+  }
+}

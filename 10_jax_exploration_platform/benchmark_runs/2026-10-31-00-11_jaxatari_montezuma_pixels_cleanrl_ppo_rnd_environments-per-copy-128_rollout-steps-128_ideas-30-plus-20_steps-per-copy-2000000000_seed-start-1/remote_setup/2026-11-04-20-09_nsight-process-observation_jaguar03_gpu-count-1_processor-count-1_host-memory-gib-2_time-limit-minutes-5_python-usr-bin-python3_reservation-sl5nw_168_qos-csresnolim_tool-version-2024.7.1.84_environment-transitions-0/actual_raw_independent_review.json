@@ -1,0 +1,29 @@
+{
+  "admission_granted": false,
+  "checks": [
+    "exact regular file: /p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/nsight_process_observation_6820179_actual_raw_independent.py"
+  ],
+  "checks_passed": 1,
+  "error": "AssertionError('bounded owned CPU context before review')",
+  "kind": "independent_actual_nsight_process_diagnostic_raw_review",
+  "passed": false,
+  "raw_files": {
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/nsight_process_observation_6820179_actual_raw_independent.py": {
+      "bytes": 25795,
+      "mode": "0o660",
+      "sha256": "628d2d6aa6599923a056f825d9e0de0172f525aa65aa79ea06223559f6896757"
+    }
+  },
+  "review_cpu_job_id": "6783003",
+  "review_cpu_step_id": "343",
+  "review_finished_at_utc": "2026-11-05T04:43:19.937415+00:00",
+  "review_pid": 1223997,
+  "review_program": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/nsight_process_observation_6820179_actual_raw_independent.py",
+    "sha256": "628d2d6aa6599923a056f825d9e0de0172f525aa65aa79ea06223559f6896757"
+  },
+  "review_started_at_utc": "2026-11-05T04:43:19.936599+00:00",
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "traceback": "Traceback (most recent call last):\n  File \"/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/nsight_process_observation_6820179_actual_raw_independent.py\", line 361, in <module>\n    payload = main()\n  File \"/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/nsight_process_observation_6820179_actual_raw_independent.py\", line 113, in main\n    check(os.environ.get('SLURM_JOB_ID') == '6783003'\n  File \"/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/nsight_process_observation_6820179_actual_raw_independent.py\", line 29, in check\n    raise AssertionError(name)\nAssertionError: bounded owned CPU context before review\n"
+}
