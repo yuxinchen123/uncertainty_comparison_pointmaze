@@ -12,7 +12,8 @@ from pathlib import Path
 import subprocess
 import re
 
-RUNTIME = 'd1469fd063a44167ec56760729eb0beea7ecf7d3'
+# Root supplies the real independently reviewed new runtime commit before publication.
+RUNTIME = '2aa6df92f7d9da20e2fbc1d15a20df16ba10ba1e'
 PREFIX = '10_jax_exploration_platform/scripts/atari_pixel_campaign/'
 SOURCE = 'd28e6735e79788f618acb0ebfde8609db1f776af'
 
@@ -24,6 +25,8 @@ def require(value, message):
 
 def runtime(root):
     """Load only the actual immutable published runtime helper snapshot."""
+    require(type(RUNTIME) is str and re.fullmatch(r'[0-9a-f]{40}', RUNTIME) is not None,
+        'the actual reviewed profile scope runtime commit has not been pinned')
     root = Path(root).resolve(strict=True)
     commit = subprocess.check_output(['git', '-C', str(root), 'rev-parse', 'HEAD'], text=True).strip()
     require(commit == RUNTIME, 'select a dedicated clean runtime checkout at the exact reviewed commit')
@@ -65,6 +68,11 @@ def derive(args):
         (args.helper_root / PREFIX / 'profile_selected.py').read_bytes()).hexdigest()}}}, 'profile_selected')
     helper = profile.helper_receipt(configured=configured, direct=not configured, owned_processes=configured,
         direct_profile=not configured, configured_native=configured, configured_prerequisites=configured, profile_target=True)
+    require(helper.get('source_commit') == RUNTIME
+        and helper.get('source_root') == str(args.helper_root.resolve(strict=True))
+        and type(helper.get('files')) is dict and len(helper['files']) == (36 if configured else 45)
+        and PREFIX + 'profile_target_tool_scope.py' in helper['files'],
+        'the exact reviewed profile scope helper source or complete target closure differs')
     proposed = {**common, 'helpers': helper, 'inputs': {**common['inputs'], 'accepted_confirmation': accepted['result']}}
     validated = q.require_four_contexts(proposed, proof_ref, review_ref)
     metadata = q.adjacent(proposed, 'configured_profile_prerequisites')

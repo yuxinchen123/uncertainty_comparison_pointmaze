@@ -22,7 +22,7 @@ import time
 P = None
 R = None
 UID = 2618919
-RUNTIME = 'd1469fd063a44167ec56760729eb0beea7ecf7d3'
+RUNTIME = '2aa6df92f7d9da20e2fbc1d15a20df16ba10ba1e'
 SOURCE = 'd28e6735e79788f618acb0ebfde8609db1f776af'
 PREFIX = '10_jax_exploration_platform/scripts/atari_pixel_campaign/'
 ATTEMPTS = ('root_actual_controller_spawn.json', 'root_transport_popen_attempt.json',
@@ -212,7 +212,7 @@ def verify(configuration, publication):
         and child['hardware_class'] == 'h100' and child['copy_seeds'] == [1]
         and type(child['copy_seeds'][0]) is int and child['configuration']['learner']['n_copies'] == 1,
         'the reviewed one-copy H100 controller/capture plans changed')
-    require(child['helpers']['source_commit'] == RUNTIME and len(child['helpers']['files']) == 44,
+    require(child['helpers']['source_commit'] == RUNTIME and len(child['helpers']['files']) == 45,
         'the exact reviewed H100 runtime helper closure is required')
     child_directory = pathlib.Path(parent['profile_unit'])
     for relative, sha256 in child['helpers']['files'].items():

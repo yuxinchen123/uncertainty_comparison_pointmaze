@@ -1,0 +1,25 @@
+{
+  "actual_new_runtime_commit_supplied": false,
+  "actual_packet_or_unit_created": false,
+  "admission_granted": false,
+  "bootstrap": "own-process standard-library ctypes initialization before guard; no later native load or numerical/device operations",
+  "cgroup": "0::/system.slice/slurmstepd.scope/job_6825983/step_112/user/task_0\n",
+  "errors": 0,
+  "failures": 0,
+  "hostname": "slurm5",
+  "job_id": "6825983",
+  "kind": "profile_qualification_deriver_scope_metadata_checks",
+  "passed": true,
+  "pid": 1299144,
+  "scientific_credit": 0,
+  "seconds": 0.2530709350248799,
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-13-46_profile-qualification-request_runtime-source-not-yet-pinned_h100-helpers-45_a4500-helpers-36_training-copies-1-2_gpu-actions-0/.review_metadata/profile_qualification_request_new_scope/author_source_freeze_before_actual_runtime_pin.json",
+    "sha256": "2121ce6108bef5603479fbe631f5babce43e078c497625dc87bc4d135f6db178"
+  },
+  "step_id": "112",
+  "target_qualification": false,
+  "tests_run": 4,
+  "uid": 2618919,
+  "upstream_premises": "synthetic metadata fixtures only"
+}

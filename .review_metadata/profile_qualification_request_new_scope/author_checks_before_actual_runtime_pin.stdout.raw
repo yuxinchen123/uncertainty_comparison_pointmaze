@@ -1,0 +1,13 @@
+test_all_four_request_entries_reach_unchanged_context_gate (exact_deriver_metadata_checks.RuntimeSourceAndClosureTests)
+Exact new source/root/45-or-36 receipt reaches the existing gate without writing a packet. ... ok
+test_every_existing_science_and_request_statement_remains_exact (exact_deriver_metadata_checks.RuntimeSourceAndClosureTests)
+Only the runtime pin and two explicit guards differ from the actual published builders. ... ok
+test_missing_real_runtime_pin_refuses_before_git_or_path_reads (exact_deriver_metadata_checks.RuntimeSourceAndClosureTests)
+An unknown commit cannot fall through to the old runtime or any source loader. ... ok
+test_old_or_incomplete_helper_receipts_refuse_before_context_gate (exact_deriver_metadata_checks.RuntimeSourceAndClosureTests)
+Old counts, absent new scope and wrong immutable source/root refuse without any packet write. ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.253s
+
+OK
