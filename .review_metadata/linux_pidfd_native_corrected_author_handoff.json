@@ -1,0 +1,85 @@
+{
+  "actual_cpu_proofs": {
+    "actual_exhausted_ordinary_limit_child_cleanup": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-20-48_linux-pidfd-native-process-control_selected-python-3.12_process-handles-only_no-environment-transitions/.review_metadata/linux_pidfd_corrected_actual_cpu_6783003_362/actual_exhausted_ordinary_limit_child_cleanup.json",
+      "sha256": "380930f7c49129033a5e02d07ff413c44824e5856d2afc12486d5ede11f6d0b8"
+    },
+    "actual_exhausted_ordinary_limit_close": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-20-48_linux-pidfd-native-process-control_selected-python-3.12_process-handles-only_no-environment-transitions/.review_metadata/linux_pidfd_corrected_actual_cpu_6783003_362/actual_exhausted_ordinary_limit_close.json",
+      "sha256": "f2550c17815e2ee6c3ce2766efd1ff4f186de069b2c6f3a606f5b57ea961708c"
+    },
+    "actual_self_preflight": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-20-48_linux-pidfd-native-process-control_selected-python-3.12_process-handles-only_no-environment-transitions/.review_metadata/linux_pidfd_corrected_actual_cpu_6783003_362/actual_self_preflight.json",
+      "sha256": "ab7a9de20d0f23c84457045c22854d21a95dc0590e35a3cfca807aee47047aef"
+    },
+    "actual_temporary_owned_child": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-20-48_linux-pidfd-native-process-control_selected-python-3.12_process-handles-only_no-environment-transitions/.review_metadata/linux_pidfd_corrected_actual_cpu_6783003_362/actual_temporary_owned_child.json",
+      "sha256": "ca9ec72ba1db41caeb81c6342f01b8f70e82f977b5e64f4143db6f26cbf86a94"
+    },
+    "synthetic_unsupported_kernel_response": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-20-48_linux-pidfd-native-process-control_selected-python-3.12_process-handles-only_no-environment-transitions/.review_metadata/linux_pidfd_corrected_actual_cpu_6783003_362/synthetic_unsupported_kernel_response.json",
+      "sha256": "fa3010a7c7441250163e6d7c088f5bd485f366b2d2932c8e193efde0b793edbb"
+    }
+  },
+  "actual_target_qualification": false,
+  "admission_granted": false,
+  "author_execution": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-20-48_linux-pidfd-native-process-control_selected-python-3.12_process-handles-only_no-environment-transitions/.review_metadata/linux_pidfd_corrected_author_6783003_362.json",
+    "sha256": "47ce0ea47b71b494a8df478dea041213bd8e7456318131c4c3860cca247586b9"
+  },
+  "author_tests_passed": 33,
+  "base": "dcc4614a6cc96a7710eeb1ee48220fed4d58c9c4",
+  "capture_core_unchanged": true,
+  "corrections": [
+    {
+      "after": "Ordinary calls have a fixed limit. Each successfully opened descriptor reserves exactly one TERM, KILL and close record. Reserved calls require the opened descriptor, exact allowed argument shape and unused per-descriptor operation. New opens and signal-zero calls still refuse at the ordinary limit. Failed-open validation also uses its reserved close.",
+      "before": "One global call count could consume the last record in pidfd_open and reject the required close."
+    },
+    {
+      "after": "The canonical declared path must equal the actual /proc/self/exe link. Stable kernel device/inode must equal the descriptor-hashed executable device/inode, with executable permission and unchanged before/after kernel link/identity.",
+      "before": "The selected executable contract hashed sys.executable without joining it to the kernel-held running image."
+    }
+  ],
+  "evidence_bound": "At most MAX_CALLS ordinary calls plus three cleanup records for each successful ordinary pidfd_open; no unrestricted cleanup-call category.",
+  "existing_plan_helper_launcher_or_admission_changed": false,
+  "independent_rejection": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-20-48_linux-pidfd-native-process-control_selected-python-3.12_process-handles-only_no-environment-transitions/.review_metadata/linux_pidfd_native_independent_354.json",
+    "sha256": "718658b5dbe2a93967d389b8f88ab834196a35871e33a3851e051561a4b7282b"
+  },
+  "independent_source_approval": false,
+  "kind": "corrected_unwired_native_pidfd_provider_source_handoff",
+  "next_required": "Independent corrected-source and real CPU boundary review, then separately reviewed integration and actual target qualification before any operational use.",
+  "operationally_wired": false,
+  "rejected_source_preservation": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-20-48_linux-pidfd-native-process-control_selected-python-3.12_process-handles-only_no-environment-transitions/.review_metadata/linux_pidfd_native_rejected_author_2_preserved_before_corrections/preservation_manifest.json",
+    "sha256": "72c63438542643b95bdc487ee0846ba48d7a55aae662fc2b000005418329a8c7"
+  },
+  "scientific_credit": 0,
+  "source_bytes_held_for_independent_review": true,
+  "source_files": [
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/linux_pidfd_process_control.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_linux_pidfd_process_control.py"
+  ],
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-20-48_linux-pidfd-native-process-control_selected-python-3.12_process-handles-only_no-environment-transitions/.review_metadata/linux_pidfd_native_corrected_source_freeze_author_2.json",
+    "sha256": "16abb944415412b692a26a43601b6c3577d4e83a14f5f45e09611335f0a0aff4"
+  },
+  "standing_gpu_lock_opened": false,
+  "test_program": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-20-48_linux-pidfd-native-process-control_selected-python-3.12_process-handles-only_no-environment-transitions/.review_metadata/run_linux_pidfd_native_corrected_author_tests.py",
+    "sha256": "8bfc298a8c522409bb46c25a715dbc5c214eef03cadaf569caea7d985ec7658c"
+  },
+  "tool_or_gpu_work": false,
+  "unchanged_default_process_control_functions": [
+    "ProcReader",
+    "close_process_handle",
+    "handle_exited",
+    "open_process_handle",
+    "require_process_control_apis",
+    "signal_handle"
+  ],
+  "unchanged_numerical_files": 13,
+  "unchanged_protected_files": 26,
+  "worktree": "/p/rlprojects/RND_worktrees/2026-11-04-20-48_linux-pidfd-native-process-control_selected-python-3.12_process-handles-only_no-environment-transitions"
+}

@@ -1,0 +1,103 @@
+{
+  "kind": "native_pidfd_provider_source_and_architecture_author_handoff",
+  "worktree": "/p/rlprojects/RND_worktrees/2026-11-04-20-48_linux-pidfd-native-process-control_selected-python-3.12_process-handles-only_no-environment-transitions",
+  "base": "dcc4614a6cc96a7710eeb1ee48220fed4d58c9c4",
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-20-48_linux-pidfd-native-process-control_selected-python-3.12_process-handles-only_no-environment-transitions/.review_metadata/linux_pidfd_native_source_freeze_author_2.json",
+    "sha256": "69679c24324b306d3bbd1bc92188767b37846848f988dac642a2fb307ae20fb1"
+  },
+  "source_files": [
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/linux_pidfd_process_control.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_linux_pidfd_process_control.py"
+  ],
+  "capability_observation": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-20-48_linux-pidfd-native-process-control_selected-python-3.12_process-handles-only_no-environment-transitions/.review_metadata/selected_python_native_pidfd_capabilities_6783003_347.json",
+    "sha256": "bdc485671d30103cab3697b1cbb6c32b77f8575533d84ac6e642c83a33409c11"
+  },
+  "author_execution": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-20-48_linux-pidfd-native-process-control_selected-python-3.12_process-handles-only_no-environment-transitions/.review_metadata/linux_pidfd_author_6783003_351.json",
+    "sha256": "109ff22ac46e948bcf0ad7bf97a500719204e155c02be7cca1f16b53c6856d57"
+  },
+  "actual_cpu_proofs": {
+    "actual_self_preflight": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-20-48_linux-pidfd-native-process-control_selected-python-3.12_process-handles-only_no-environment-transitions/.review_metadata/linux_pidfd_actual_cpu_6783003_351/actual_self_preflight.json",
+      "sha256": "1c9232bf0925d0d3bbf894ba485704f5e6a0d9ba627e099e8be775a5e6017d71"
+    },
+    "actual_temporary_owned_child": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-20-48_linux-pidfd-native-process-control_selected-python-3.12_process-handles-only_no-environment-transitions/.review_metadata/linux_pidfd_actual_cpu_6783003_351/actual_temporary_owned_child.json",
+      "sha256": "1e08e82606869cd793594ce46437bc740e607a327c93044a2e539a9389865fc2"
+    },
+    "synthetic_unsupported_kernel_response": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-20-48_linux-pidfd-native-process-control_selected-python-3.12_process-handles-only_no-environment-transitions/.review_metadata/linux_pidfd_actual_cpu_6783003_351/synthetic_unsupported_kernel_response.json",
+      "sha256": "af398e1896b021edf2401aefd9f4a96d4f8a003e860287ab69afc2fe860c1832"
+    }
+  },
+  "test_command": [
+    "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+    "-I",
+    "-S",
+    "-B",
+    "/p/rlprojects/RND_worktrees/2026-11-04-20-48_linux-pidfd-native-process-control_selected-python-3.12_process-handles-only_no-environment-transitions/.review_metadata/run_linux_pidfd_native_author_second_tests.py"
+  ],
+  "test_context": "Exact owned CPU allocation6783003; one CPU and512MiB; no login tests",
+  "tests_passed": 27,
+  "test_scope": "Ten native-provider cases plus seventeen existing default process-identity cases. Real own-self and one fresh own-child syscall tests; synthetic ENOSYS labelled separately.",
+  "first_verifier_failure": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-20-48_linux-pidfd-native-process-control_selected-python-3.12_process-handles-only_no-environment-transitions/.review_metadata/linux_pidfd_author_1_preserved_source_and_verifier_failure/preservation_manifest.json",
+    "sha256": "23a722a2a882faafd2a791608d862f761bfac699274435e5e949d1172c606e93"
+  },
+  "architecture_findings": [
+    "run_prepared verifies sys.executable against plan.python and records installed JAXtari and GPU package metadata from that interpreter before numerical capture. Swapping the entire profile supervisor to systemPython would report the wrong environment.",
+    "The selected condaPython3.12.13 lacks both Python pidfd exports. Its actual libc2.35 also lacks pidfd_open/pidfd_send_signal symbols; the observed public x86_64 syscall declarations and syscall/close symbols provide a narrow process-control option.",
+    "The new explicit provider verifies exact ABI, typed contract fields, pinned public headers, actual mapped libc symbol image/offsets and selected executable bytes. Before managing children it opens its own pidfd, sends signal0 and closes the descriptor with actual integer return/errno records.",
+    "OwnedProcesses accepts an optional provider argument; the current wrappers remain byte-identical defaults. NativeProcessObserver delegates only the four process-control operations and preserves identity readers. No os/signal globals are changed.",
+    "There is no numeric-PID signal fallback. Missing/changed metadata, unsupported kernel replies, malformed arguments, unknown/reused descriptors and inherited or unready provider state refuse.",
+    "No existing plan, prepared helper closure, direct helper, launcher, selected numerical Python/package path or numerical source was changed. The provider is not currently selected by any operational plan."
+  ],
+  "zero_transition_diagnostic_preparation_proposal": {
+    "prepared_or_launched": false,
+    "use_existing_option": [
+      "--python",
+      "/usr/bin/python3"
+    ],
+    "reason": "The diagnostic payload is standard-library-only with zero environment transitions and does not need the selected numerical environment. Actual fresh source/tool/launch/exit records and exact process/descriptor review remain necessary.",
+    "preparation_argv_template": [
+      "/usr/bin/python3",
+      "-I",
+      "-S",
+      "-B",
+      "REVIEWED_SOURCE_ROOT/10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_direct_nsight_process.py",
+      "--prepare-only",
+      "--source-root",
+      "REVIEWED_SOURCE_ROOT",
+      "--run-dir",
+      "EXISTING_CAMPAIGN",
+      "--profile-tool-record",
+      "ACTUAL_TARGET_TOOL_RECORD",
+      "--python",
+      "/usr/bin/python3",
+      "--unit-id",
+      "FRESH_LITERAL_UNIT_NAME"
+    ]
+  },
+  "remaining_before_ordinary_use": [
+    "Independent source and actual CPU evidence review",
+    "Reviewed explicit plan/backend record and staged helper union plus saved-evidence reader; keep current APIs as default",
+    "Actual target native process-control preflight and full direct closed-scope/tool process/descriptor qualification",
+    "Existing full numerical/current CUDA/physical/backend target qualification and separate recorded profile admission"
+  ],
+  "not_proven": [
+    "Actual serval02 native provider capability",
+    "Actual native-provider full orphan tool-scope regression",
+    "Actual Nsight or GPU behavior",
+    "Ordinary profile admission"
+  ],
+  "all26_protected_files_verified": true,
+  "capture_core_source_bytes_unchanged": true,
+  "default_wrapper_and_ProcReader_source_bytes_unchanged": true,
+  "commits_pushes_branches_or_remote_actions": 0,
+  "tool_gpu_or_standing_lock_actions": 0,
+  "scientific_credit": 0,
+  "admission_granted": false
+}

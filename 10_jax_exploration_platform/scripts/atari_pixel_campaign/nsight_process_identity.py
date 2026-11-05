@@ -212,9 +212,10 @@ def close_process_handle(descriptor):
 
 class OwnedProcesses:
     """Hold pinned identities for positively observed descendants, without global PID scans."""
-    def __init__(self, root_pid, root_birth, parent, reader=None):
+    def __init__(self, root_pid, root_birth, parent, reader=None, *, process_control=None):
         """Start from the actual new Popen PID, never from a claimed arbitrary ancestor."""
         self.reader = reader or ProcReader()
+        self.process_control = process_control
         self.owner_uid = parent["uids"][0]
         self.cgroup = parent["cgroup"]
         self.root_pid, self.root_birth = root_pid, root_birth
@@ -223,16 +224,21 @@ class OwnedProcesses:
         self.pin(root_pid, parent["pid"], root_birth)
         self.root_initial = self.nodes[root_pid]
 
+    def process_call(self, name, *arguments):
+        """Keep current Python wrappers as the default; use only an explicitly supplied provider."""
+        function = globals()[name] if self.process_control is None else getattr(self.process_control, name)
+        return function(*arguments)
+
     def pin(self, pid, parent_pid, birth=None):
         """Pin and recheck a candidate from an observed owned-parent child list."""
         require(pid not in self.handles and len(self.handles) < MAX_PROCESSES, "duplicate or oversized owned process tree")
-        descriptor = open_process_handle(pid)
+        descriptor = self.process_call("open_process_handle", pid)
         try:
             current = self.reader.snapshot(pid, self.owner_uid, self.cgroup)
             require(current["parent_pid"] == parent_pid and (birth is None or current["process_start_time"] == birth)
-                    and not handle_exited(descriptor), "the owned process edge or birth changed")
+                    and not self.process_call("handle_exited", descriptor), "the owned process edge or birth changed")
         except BaseException:
-            close_process_handle(descriptor)
+            self.process_call("close_process_handle", descriptor)
             raise
         self.handles[pid], self.nodes[pid] = descriptor, current
         return current
@@ -243,7 +249,7 @@ class OwnedProcesses:
         root = self.reader.snapshot(self.root_pid, self.owner_uid, self.cgroup)
         invariant = ("pid", "parent_pid", "process_start_time", "uids", "cgroup")
         require(all(root[key] == self.root_initial[key] for key in invariant)
-                and not handle_exited(self.handles[self.root_pid]),
+                and not self.process_call("handle_exited", self.handles[self.root_pid]),
                 "the pinned Nsight root identity changed before release")
         self.nodes[self.root_pid] = root
         pending = [(self.root_pid, 0)]
@@ -273,7 +279,7 @@ class OwnedProcesses:
         # Raw thread-child lists give positive edges only; they do not prove whole-tree completeness.
         for pid, before in self.nodes.items():
             after = self.reader.snapshot(pid, self.owner_uid, self.cgroup)
-            require(stable(before) == stable(after) and not handle_exited(self.handles[pid]),
+            require(stable(before) == stable(after) and not self.process_call("handle_exited", self.handles[pid]),
                     "an owned process identity or edge changed before release")
         return {"schema_version": 1, "protocol": PROTOCOL, "root_pid": self.root_pid,
                 "root_start_time": self.root_birth, "parent": self.parent, "nodes": self.nodes,
@@ -286,22 +292,22 @@ class OwnedProcesses:
         """Stop pinned observed descendants, then wait on the actual owned Popen process."""
         signals = []
         for pid, descriptor in reversed(list(self.handles.items())):
-            if not handle_exited(descriptor):
+            if not self.process_call("handle_exited", descriptor):
                 try:
-                    signal_handle(descriptor, signal.SIGTERM)
+                    self.process_call("signal_handle", descriptor, signal.SIGTERM)
                 except ProcessLookupError:
-                    require(handle_exited(descriptor), "a signalled owned handle has an unexplained state")
+                    require(self.process_call("handle_exited", descriptor), "a signalled owned handle has an unexplained state")
                 signals.append({"pid": pid, "process_start_time": self.nodes[pid]["process_start_time"], "signal": int(signal.SIGTERM)})
         deadline = time.monotonic() + timeout
         for pid, descriptor in reversed(list(self.handles.items())):
             remaining = max(0, int((deadline - time.monotonic()) * 1000))
-            if not handle_exited(descriptor, remaining):
+            if not self.process_call("handle_exited", descriptor, remaining):
                 try:
-                    signal_handle(descriptor, signal.SIGKILL)
+                    self.process_call("signal_handle", descriptor, signal.SIGKILL)
                 except ProcessLookupError:
-                    require(handle_exited(descriptor), "a killed owned handle has an unexplained state")
+                    require(self.process_call("handle_exited", descriptor), "a killed owned handle has an unexplained state")
                 signals.append({"pid": pid, "process_start_time": self.nodes[pid]["process_start_time"], "signal": int(signal.SIGKILL)})
-                require(handle_exited(descriptor, 10000), "a pinned owned process did not exit after SIGKILL")
+                require(self.process_call("handle_exited", descriptor, 10000), "a pinned owned process did not exit after SIGKILL")
         returncode = child.wait()
         return {"signals": signals, "waited_popen_pid": child.pid, "popen_returncode": returncode,
                 "known_pinned_processes_exited": True, "unobserved_descendant_exit_not_claimed": True}
@@ -309,7 +315,7 @@ class OwnedProcesses:
     def close(self):
         """Release only this observer's own process descriptors."""
         for descriptor in self.handles.values():
-            close_process_handle(descriptor)
+            self.process_call("close_process_handle", descriptor)
         self.handles.clear()
 
 

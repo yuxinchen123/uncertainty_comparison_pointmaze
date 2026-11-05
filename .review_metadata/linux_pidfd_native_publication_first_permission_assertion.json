@@ -1,0 +1,12 @@
+{
+  "correction": "Record exact actual permissions without changing files; verify actual 0660 as observed and normal Git non-executable mode separately.",
+  "failed_assertion": "The author wrapper assumed file permissions were 0600 or 0644. Actual existing source and metadata use 0660. Git mode is still 100644.",
+  "kind": "preserved_author_publication_permission_assertion_failure",
+  "preserved_path_list": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-20-48_linux-pidfd-native-process-control_selected-python-3.12_process-handles-only_no-environment-transitions/.review_metadata/linux_pidfd_native_publication_first_paths_before_permission_correction.txt",
+    "sha256": "fa15a7ba7ff09263ff74d6654ccde363e3d9eaa38cd197ba4036af2b1b66ef27"
+  },
+  "source_modified": false,
+  "stage": "before staging or commit",
+  "staged_paths": 0
+}

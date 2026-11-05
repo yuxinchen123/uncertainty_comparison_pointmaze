@@ -1,0 +1,182 @@
+{
+  "actual_target": "own reviewer process only",
+  "close_error": "ValueError('native process-control call evidence exceeded its explicit bound')",
+  "descriptor": 3,
+  "descriptor_target": {
+    "device": 14,
+    "fdinfo_sha256": "a966d8aabbff39addb0da842d6792003fe14e1eccdd5994652c74fa8fc2e8085",
+    "inode": 12829,
+    "pid": 1226443,
+    "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t12829\nPid:\t1226443\nNSpid:\t1226443\n"
+  },
+  "explicit_fixture_only_close_completed": true,
+  "native_evidence": {
+    "bootstrap": {
+      "gpu_or_cuda_qualification": false,
+      "pid": 1226443,
+      "symbols": {
+        "close": {
+          "actual_mapping": "1540770b7000-15407724c000 r-xp 00028000 fd:00 6040223                    /usr/lib/x86_64-linux-gnu/libc.so.6",
+          "actual_pointer": 23366620299088,
+          "image": {
+            "mode": 493,
+            "path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+            "sha256": "6813de4f45796f58134ca3f06b3179344ddfea192cad73ea0af35375b1b66e76",
+            "size_bytes": 2220400,
+            "uid": 0
+          },
+          "symbol_file_offset": 1134416
+        },
+        "syscall": {
+          "actual_mapping": "1540770b7000-15407724c000 r-xp 00028000 fd:00 6040223                    /usr/lib/x86_64-linux-gnu/libc.so.6",
+          "actual_pointer": 23366620338288,
+          "image": {
+            "mode": 493,
+            "path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+            "sha256": "6813de4f45796f58134ca3f06b3179344ddfea192cad73ea0af35375b1b66e76",
+            "size_bytes": 2220400,
+            "uid": 0
+          },
+          "symbol_file_offset": 1173616
+        }
+      },
+      "sys_executable": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+      "sys_version": "3.12.13 | packaged by conda-forge | (main, Aug 11 2026, 10:27:28) [GCC 14.4.0]"
+    },
+    "calls": [
+      {
+        "arguments": {
+          "flags": 0,
+          "pid": 1226443,
+          "syscall": 434
+        },
+        "errno": 0,
+        "finished_at_seconds": 1793855199.7700083,
+        "name": "pidfd_open",
+        "phase": "self_preflight",
+        "producer_pid": 1226443,
+        "result": 3,
+        "sequence": 0,
+        "started_at_seconds": 1793855199.7699857
+      },
+      {
+        "arguments": {
+          "fd": 3,
+          "flags": 0,
+          "siginfo": null,
+          "signal": 0,
+          "syscall": 424
+        },
+        "errno": 0,
+        "finished_at_seconds": 1793855199.7703526,
+        "name": "pidfd_send_signal",
+        "phase": "self_preflight",
+        "producer_pid": 1226443,
+        "result": 0,
+        "sequence": 1,
+        "started_at_seconds": 1793855199.7703428
+      },
+      {
+        "arguments": {
+          "fd": 3
+        },
+        "errno": 0,
+        "finished_at_seconds": 1793855199.7704322,
+        "name": "close",
+        "phase": "self_preflight",
+        "producer_pid": 1226443,
+        "result": 0,
+        "sequence": 2,
+        "started_at_seconds": 1793855199.7704248
+      },
+      {
+        "arguments": {
+          "flags": 0,
+          "pid": 1226443,
+          "syscall": 434
+        },
+        "errno": 0,
+        "finished_at_seconds": 1793855199.7705088,
+        "name": "pidfd_open",
+        "phase": "owned_process",
+        "producer_pid": 1226443,
+        "result": 3,
+        "sequence": 3,
+        "started_at_seconds": 1793855199.7705023
+      }
+    ],
+    "contract": {
+      "abi": {
+        "byteorder": "little",
+        "int_bytes": 4,
+        "long_bytes": 8,
+        "machine": "x86_64",
+        "platform": "linux",
+        "pointer_bytes": 8
+      },
+      "headers": {
+        "/usr/include/unistd.h": {
+          "mode": 420,
+          "path": "/usr/include/unistd.h",
+          "sha256": "99eb4050035a1a816090762770f0843c728666745d7e727e64dc347d8a99ac28",
+          "size_bytes": 44967,
+          "uid": 0
+        },
+        "/usr/include/x86_64-linux-gnu/asm/unistd_64.h": {
+          "mode": 420,
+          "path": "/usr/include/x86_64-linux-gnu/asm/unistd_64.h",
+          "sha256": "9f1c975001d7cd39af3a2c14d518d80b0aaaab8bec3ad12b5e56419bdc8cafbe",
+          "size_bytes": 9687,
+          "uid": 0
+        }
+      },
+      "kind": "linux-x86-64-libc-syscall-pidfd-version-1",
+      "selected_python": {
+        "mode": 493,
+        "path": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python3.12",
+        "sha256": "c889543c0e008c1362b69c711330cac598833a790dc0c48c5ee4a8567d3f3b51",
+        "size_bytes": 31301856,
+        "uid": 2618919
+      },
+      "symbols": {
+        "close": {
+          "image": {
+            "mode": 493,
+            "path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+            "sha256": "6813de4f45796f58134ca3f06b3179344ddfea192cad73ea0af35375b1b66e76",
+            "size_bytes": 2220400,
+            "uid": 0
+          },
+          "symbol_file_offset": 1134416
+        },
+        "syscall": {
+          "image": {
+            "mode": 493,
+            "path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+            "sha256": "6813de4f45796f58134ca3f06b3179344ddfea192cad73ea0af35375b1b66e76",
+            "size_bytes": 2220400,
+            "uid": 0
+          },
+          "symbol_file_offset": 1173616
+        }
+      },
+      "syscall_numbers": {
+        "pidfd_open": 434,
+        "pidfd_send_signal": 424
+      }
+    },
+    "gpu_or_cuda_qualification": false,
+    "kind": "linux-x86-64-libc-syscall-pidfd-version-1",
+    "native_call_failure": false,
+    "numeric_pid_signal_fallback": false,
+    "open_handle_count": 1,
+    "preflight_call_count": 3,
+    "preflight_passed": true,
+    "python_exports_changed": false,
+    "scientific_credit": 0
+  },
+  "source_sha256": "a0ef3aba6876ffbbb525a8d36df0d3eea8e8e301580ea4fd4eb5c28046fae65b",
+  "still_retained_before_fixture_cleanup": true,
+  "synthetic_evidence_limit": true,
+  "target_pid": 1226443
+}
