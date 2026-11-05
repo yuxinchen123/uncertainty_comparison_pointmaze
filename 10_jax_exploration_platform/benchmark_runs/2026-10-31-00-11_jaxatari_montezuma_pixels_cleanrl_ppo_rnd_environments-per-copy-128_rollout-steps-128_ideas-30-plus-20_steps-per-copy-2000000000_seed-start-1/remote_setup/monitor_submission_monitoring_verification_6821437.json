@@ -1,0 +1,19 @@
+{
+  "kind": "same_turn_monitoring_verification_for_held_submission",
+  "job_id": "6821437",
+  "at_utc": "2026-11-05T10:49:10.152786+00:00",
+  "session_task": {
+    "id": "5ac3653c-dbcd-4e44-8f17-a49d58eaafe2",
+    "cadence_seconds": 3600,
+    "expires_at_utc": "2026-11-12T09:20:00Z",
+    "next_run_at_utc": "2026-11-05T11:27:02.622836989Z",
+    "listed_in_submission_turn": true
+  },
+  "persistent_monitor": {
+    "job_id": "6783003",
+    "cadence_seconds": 1200,
+    "actual_owned_step_474_passed_during_submission_turn": true,
+    "replacement_not_yet_adopted": true
+  },
+  "session_twenty_minute_task_created": false
+}
