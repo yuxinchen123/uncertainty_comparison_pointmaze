@@ -1,0 +1,21 @@
+{
+  "actual_guard_invoked": false,
+  "command": [
+    "srun",
+    "--jobid=6783003",
+    "--overlap",
+    "--exact",
+    "--ntasks=1",
+    "--cpus-per-task=1",
+    "--mem=1G",
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "/p/rlprojects/RND_worktrees/2026-11-04-22-30_historical-common-reader_exact-source-8eb306af_git-inspection-function-b181e171_helpers-28_gpu-count-0/.review_metadata/exact_historical_common_helper_closure_git_inspection/run_cold_helper_contract_checks.py"
+  ],
+  "finished_at_seconds": 1793860351.9283361,
+  "returncode": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "4299848718b648e124e246cd12156a3e7df90984a17584865a62dcd7e7d8a871"
+}
