@@ -4095,5 +4095,26 @@
     "profile_credit": 0,
     "actual_target_qualification": false,
     "next_action": "Finish genuine common H100 timing, native process policy/target qualification and separately reviewed profiling admission before launch."
+  },
+  "fresh_timing_after_empty_startup_wait_preparation": {
+    "state": "request_published_before_metadata_phases",
+    "packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-05-49_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1",
+    "data_unit": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-05-49_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1",
+    "request": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-05-49_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/preparation_request.json",
+    "source_commit": "d2253fa853290cb8fcd0a9212e332dd33a63f2f9",
+    "source_publication": "c903c8df108c8efd27228c338162434fc3197599",
+    "helper_source_commit": "69f1b5075530418adbe02c1e433c5647848a61ba",
+    "ordered_metadata_phases": [
+      "prepare",
+      "verify",
+      "current_admission_claim_probe",
+      "bind"
+    ],
+    "source_review": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-05-32_empty-command-startup_wait-seconds-30_preserve-owner-birth-parent-affinity_exact-argv-before-registration_gpu-count-0/.review_metadata/empty_command_startup/independent_source_review.json",
+      "sha256": "8b4f58210ba5557b5b0ae71d7f6d069839814444c883909748ca256f19e69a42"
+    },
+    "all_prior_attempts_failed_and_closed": true,
+    "metadata_phases_completed": []
   }
 }

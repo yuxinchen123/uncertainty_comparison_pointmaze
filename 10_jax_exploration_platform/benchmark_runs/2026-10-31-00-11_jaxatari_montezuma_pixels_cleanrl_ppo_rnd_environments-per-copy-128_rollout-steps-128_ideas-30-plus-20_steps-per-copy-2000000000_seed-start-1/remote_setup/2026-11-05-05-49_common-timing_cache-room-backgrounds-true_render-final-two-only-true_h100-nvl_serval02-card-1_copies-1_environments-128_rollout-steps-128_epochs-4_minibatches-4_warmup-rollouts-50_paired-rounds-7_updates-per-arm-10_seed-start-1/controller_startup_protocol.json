@@ -1,0 +1,16 @@
+{
+  "kind": "reviewed_bounded_child_startup_observation_protocol",
+  "controller_source_commit": "d2253fa853290cb8fcd0a9212e332dd33a63f2f9",
+  "controller_source_sha256": "8e567998fc5209f5ff4370338fe62bf78391b7c5637adf989572b42486adcb0e",
+  "maximum_startup_seconds": 30,
+  "wait_only_for_truly_empty_raw_command_bytes": true,
+  "every_snapshot_requires_same_actual_owned_PID_birth_parent_affinity_and_raw_hashes": true,
+  "exact_complete_expected_raw_command_required_before_registration": true,
+  "wrong_nonempty_or_changed_identity_or_exit_or_deadline_refuses": true,
+  "independent_source_review": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-05-32_empty-command-startup_wait-seconds-30_preserve-owner-birth-parent-affinity_exact-argv-before-registration_gpu-count-0/.review_metadata/empty_command_startup/independent_source_review.json",
+    "sha256": "8b4f58210ba5557b5b0ae71d7f6d069839814444c883909748ca256f19e69a42"
+  },
+  "numerical_and_helper_source_unchanged": true,
+  "new_scientific_or_hardware_admission": false
+}
