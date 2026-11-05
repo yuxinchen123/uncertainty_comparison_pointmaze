@@ -1,0 +1,23 @@
+{
+  "command": [
+    "srun",
+    "--jobid=6825983",
+    "--overlap",
+    "--exact",
+    "--time=00:05:00",
+    "-n1",
+    "-c1",
+    "--mem=512M",
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "/p/rlprojects/RND_worktrees/2026-11-05-13-01_profile-qualification-baseline_correctness-and-confirmation_copies-1-2_metadata-staging-only_gpu-actions-0/.review_metadata/profile_qualification_complete_baseline/check_canonical_metadata_staging.py"
+  ],
+  "returncode": 1,
+  "seconds": 2.786420939024538,
+  "source_sha256": "2a239c42ed1a7ee27ba9d64be7f5dbab5af03ee8f0939ef1decf4790a655317f",
+  "actual_GPU_or_numerical_operations": 0,
+  "actual_campaign_units_created": false,
+  "stdlib_bootstrap": "ctypes own-process Python API handle initialization before the audit hook"
+}

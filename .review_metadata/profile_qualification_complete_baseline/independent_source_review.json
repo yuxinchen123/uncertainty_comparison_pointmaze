@@ -1,0 +1,139 @@
+{
+  "active_files": {
+    ".review_metadata/profile_qualification_complete_baseline/check_complete_baseline_contract.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-13-01_profile-qualification-baseline_correctness-and-confirmation_copies-1-2_metadata-staging-only_gpu-actions-0/.review_metadata/profile_qualification_complete_baseline/check_complete_baseline_contract.py",
+      "sha256": "91aea90844ce5a5c371caffff574e92045b30fa018faf414d81fa0ba4c365ba6",
+      "size_bytes": 6986
+    },
+    ".review_metadata/profile_target_operational_preparation/derive_one_copy_qualification_request.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-13-01_profile-qualification-baseline_correctness-and-confirmation_copies-1-2_metadata-staging-only_gpu-actions-0/.review_metadata/profile_target_operational_preparation/derive_one_copy_qualification_request.py",
+      "sha256": "278c244e75441d7bbd56dbf76b9351cea52cad4d90dfbdea02402bf25a8c7779",
+      "size_bytes": 13718
+    },
+    ".review_metadata/profile_target_operational_preparation/derive_two_copy_qualification_request.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-13-01_profile-qualification-baseline_correctness-and-confirmation_copies-1-2_metadata-staging-only_gpu-actions-0/.review_metadata/profile_target_operational_preparation/derive_two_copy_qualification_request.py",
+      "sha256": "893840a8e1d875bceaec5fe4ef4a602c48f0567c5dfa6d378e222c9562b14709",
+      "size_bytes": 14263
+    }
+  },
+  "actual_job_id": "6825983",
+  "actual_output_directories_created": 0,
+  "actual_step_id": "92",
+  "admission_granted": false,
+  "approved": true,
+  "at_utc": "2026-11-05T21:07:08.498653+00:00",
+  "canonical_staging_passed": false,
+  "check_count": 27,
+  "checks": [
+    "current exact ownedCPU",
+    "exact held sourcefreeze",
+    "exact active source .review_metadata/profile_target_operational_preparation/derive_one_copy_qualification_request.py",
+    "exact active source .review_metadata/profile_target_operational_preparation/derive_two_copy_qualification_request.py",
+    "exact active source .review_metadata/profile_qualification_complete_baseline/check_complete_baseline_contract.py",
+    "only genuine correctness_record field added to onecopy producer",
+    "only genuine correctness_record field added to twocopy producer",
+    "runtime/helper/NUM tree unchanged in authorworktree",
+    "genuine fourcontext fact",
+    "genuine independent factreview",
+    "genuine fresh backendrecord",
+    "four genuine metadata boundary cases passed without staging",
+    "exact real two-copy predicate positive h100",
+    "strict two-copy typed count/seed negative h100 ([1], 1)",
+    "strict two-copy typed count/seed negative h100 ([True, 2], 2)",
+    "strict two-copy typed count/seed negative h100 ([1.0, 2], 2)",
+    "strict two-copy typed count/seed negative h100 ([1, 2], 2.0)",
+    "strict two-copy typed count/seed negative h100 ([1, 2], True)",
+    "exact real two-copy predicate positive jaguar03_rtx_a4500",
+    "strict two-copy typed count/seed negative jaguar03_rtx_a4500 ([1], 1)",
+    "strict two-copy typed count/seed negative jaguar03_rtx_a4500 ([True, 2], 2)",
+    "strict two-copy typed count/seed negative jaguar03_rtx_a4500 ([1.0, 2], 2)",
+    "strict two-copy typed count/seed negative jaguar03_rtx_a4500 ([1, 2], 2.0)",
+    "strict two-copy typed count/seed negative jaguar03_rtx_a4500 ([1, 2], True)",
+    "held bytes unchanged after .review_metadata/profile_target_operational_preparation/derive_one_copy_qualification_request.py",
+    "held bytes unchanged after .review_metadata/profile_target_operational_preparation/derive_two_copy_qualification_request.py",
+    "held bytes unchanged after .review_metadata/profile_qualification_complete_baseline/check_complete_baseline_contract.py"
+  ],
+  "filesystem_mapping_used": false,
+  "four_context_fact_sha256": "e75b78e9a9b3fd4a857c2d7c5148de15c8800ef14398c5b13f5c78db4d3c7",
+  "four_context_review_sha256": "5e19415c03e8063275422d6651c5496de9e94fc63c3f1d4d12df27e11a71298d",
+  "fresh_backend_record_sha256": "19e752ef9b93999e8bec28a0706947935c31f4229a3b33556597de8f86575412",
+  "genuine_context_cases": [
+    {
+      "GPU_qualification_or_admission": false,
+      "canonical_preparation_executed": false,
+      "complete_baseline_contract_passed": true,
+      "confirmation_record": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-05-49_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/result.json",
+      "copies": 1,
+      "copy_seeds": [
+        1
+      ],
+      "correctness_record": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/result.json",
+      "genuine_prerequisite_validators_executed": true,
+      "hardware_class": "h100",
+      "original_reference_copies": 1,
+      "output_creation_prevented": true
+    },
+    {
+      "GPU_qualification_or_admission": false,
+      "canonical_preparation_executed": false,
+      "complete_baseline_contract_passed": true,
+      "confirmation_record": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-08-40_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/result.json",
+      "copies": 2,
+      "copy_seeds": [
+        1,
+        2
+      ],
+      "correctness_record": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/result.json",
+      "genuine_prerequisite_validators_executed": true,
+      "hardware_class": "h100",
+      "original_reference_copies": 1,
+      "output_creation_prevented": true
+    },
+    {
+      "GPU_qualification_or_admission": false,
+      "canonical_preparation_executed": false,
+      "complete_baseline_contract_passed": true,
+      "confirmation_record": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-18-54_common_cache-room-backgrounds-true_render-final-two-only-true_confirmation_paired-rounds-7_updates-per-arm-10_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-2_jaguar03/result.json",
+      "copies": 1,
+      "copy_seeds": [
+        1
+      ],
+      "correctness_record": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-15-09_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_jaguar03_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1/result.json",
+      "genuine_prerequisite_validators_executed": true,
+      "hardware_class": "jaguar03_rtx_a4500",
+      "original_reference_copies": 1,
+      "output_creation_prevented": true
+    },
+    {
+      "GPU_qualification_or_admission": false,
+      "canonical_preparation_executed": false,
+      "complete_baseline_contract_passed": true,
+      "confirmation_record": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-18-54_common_cache-room-backgrounds-true_render-final-two-only-true_confirmation_paired-rounds-7_updates-per-arm-10_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3_jaguar03/result.json",
+      "copies": 2,
+      "copy_seeds": [
+        1,
+        2
+      ],
+      "correctness_record": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-15-09_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_jaguar03_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1/result.json",
+      "genuine_prerequisite_validators_executed": true,
+      "hardware_class": "jaguar03_rtx_a4500",
+      "original_reference_copies": 1,
+      "output_creation_prevented": true
+    }
+  ],
+  "independent_of_author": true,
+  "independent_typed_two_copy_negative_cases": 10,
+  "kind": "independent_profile_qualification_complete_baseline_operational_source_review",
+  "no_prerequisite_validator_mocked": true,
+  "passed": true,
+  "root_fresh_actual_canonical_preparation_required": true,
+  "runtime_helpers_or_NUM_changed": false,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "seconds": 10.234937308938242,
+  "sentinel_only_at_first_output_mkdir": true,
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-13-01_profile-qualification-baseline_correctness-and-confirmation_copies-1-2_metadata-staging-only_gpu-actions-0/.review_metadata/profile_qualification_complete_baseline/source_freeze.json",
+    "sha256": "594d97dc0a605d6f9f89c9f58c23062e7417d570de935c23715f46de78f20216"
+  }
+}

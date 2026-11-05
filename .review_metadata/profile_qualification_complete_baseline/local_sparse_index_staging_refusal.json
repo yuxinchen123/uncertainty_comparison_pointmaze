@@ -1,0 +1,7 @@
+{
+  "kind": "local_detached_author_index_sparse_path_refusal",
+  "commit_created": false,
+  "reason": "The new bounded review directory was outside the initial sparse checkout definition. Git add staged only the two expected operational sources and refused the new metadata paths.",
+  "correction": "Expand only the local worktree sparse paths or use explicit --sparse staging for the reviewed allowlist. No integration index or HEAD was touched.",
+  "source_bytes_changed": false
+}

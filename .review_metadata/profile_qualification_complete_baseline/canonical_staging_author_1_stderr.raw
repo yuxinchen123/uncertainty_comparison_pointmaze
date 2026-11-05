@@ -1,0 +1,23 @@
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-05-13-01_profile-qualification-baseline_correctness-and-confirmation_copies-1-2_metadata-staging-only_gpu-actions-0/.review_metadata/profile_qualification_complete_baseline/check_canonical_metadata_staging.py", line 164, in <module>
+    records.append(run_case(copies,hardware))
+  File "/p/rlprojects/RND_worktrees/2026-11-05-13-01_profile-qualification-baseline_correctness-and-confirmation_copies-1-2_metadata-staging-only_gpu-actions-0/.review_metadata/profile_qualification_complete_baseline/check_canonical_metadata_staging.py", line 133, in run_case
+    derived=deriver.derive(args)
+  File "/p/rlprojects/RND_worktrees/2026-11-05-13-01_profile-qualification-baseline_correctness-and-confirmation_copies-1-2_metadata-staging-only_gpu-actions-0/.review_metadata/profile_target_operational_preparation/derive_one_copy_qualification_request.py", line 62, in derive
+    profile = q.adjacent({'helpers': {'files': {PREFIX + 'profile_selected.py': hashlib.sha256(
+  File "/p/rlprojects/RND_worktrees/2026-11-05-11-56_profile-qualification-helper_source-d1469fd063a4_h100-helpers-44_a4500-helpers-35_gpu-count-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_qualification.py", line 133, in adjacent
+    exec(compile(raw, str(path), "exec"), module.__dict__)
+  File "/p/rlprojects/RND_worktrees/2026-11-05-11-56_profile-qualification-helper_source-d1469fd063a4_h100-helpers-44_a4500-helpers-35_gpu-count-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py", line 31, in <module>
+    import measure_selected as measurement
+  File "/p/rlprojects/RND_worktrees/2026-11-05-11-56_profile-qualification-helper_source-d1469fd063a4_h100-helpers-44_a4500-helpers-35_gpu-count-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py", line 34, in <module>
+srun: error: slurm5: task 0: Exited with exit code 1
+    import diagnose_gpu_execution as diagnostic
+  File "/p/rlprojects/RND_worktrees/2026-11-05-11-56_profile-qualification-helper_source-d1469fd063a4_h100-helpers-44_a4500-helpers-35_gpu-count-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py", line 10, in <module>
+    import ctypes
+  File "/usr/lib/python3.10/ctypes/__init__.py", line 464, in <module>
+    pythonapi = PyDLL(None)
+  File "/usr/lib/python3.10/ctypes/__init__.py", line 374, in __init__
+    self._handle = _dlopen(self._name, mode)
+  File "/p/rlprojects/RND_worktrees/2026-11-05-13-01_profile-qualification-baseline_correctness-and-confirmation_copies-1-2_metadata-staging-only_gpu-actions-0/.review_metadata/profile_qualification_complete_baseline/check_canonical_metadata_staging.py", line 107, in audit
+    raise ValueError('no native-library, network or nonmetadata process operation')
+ValueError: no native-library, network or nonmetadata process operation

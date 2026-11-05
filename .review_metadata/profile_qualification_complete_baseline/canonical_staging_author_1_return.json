@@ -1,0 +1,22 @@
+{
+  "command": [
+    "srun",
+    "--jobid=6825983",
+    "--overlap",
+    "--exact",
+    "--time=00:05:00",
+    "-n1",
+    "-c1",
+    "--mem=512M",
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "/p/rlprojects/RND_worktrees/2026-11-05-13-01_profile-qualification-baseline_correctness-and-confirmation_copies-1-2_metadata-staging-only_gpu-actions-0/.review_metadata/profile_qualification_complete_baseline/check_canonical_metadata_staging.py"
+  ],
+  "returncode": 1,
+  "seconds": 0.4648690279573202,
+  "source_sha256": "14bc2ab529cb78d91f95c4a5d418c54fa21e4b2e71b48b10c44a8db83db5a16d",
+  "actual_GPU_or_numerical_operations": 0,
+  "actual_campaign_units_created": false
+}

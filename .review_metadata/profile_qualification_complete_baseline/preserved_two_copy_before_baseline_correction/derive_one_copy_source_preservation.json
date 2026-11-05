@@ -1,0 +1,9 @@
+{
+  "relative_path": ".review_metadata/profile_target_operational_preparation/derive_one_copy_qualification_request.py",
+  "actual_approved_derivation_commit": "64cd23b17bef1fc355516972e052d9bfe06ce2cf",
+  "actual_approved_derivation_sha256": "ce372d66693483270ea32c07d49c46291d5d27f684a9bc7a30daa10e2867e9c2",
+  "worktree_base_commit": "cf036bcee1459165366553ffbc5eea57a1843c38",
+  "worktree_original_one_copy_sha256": "b377e523465a803a9a58657519d8b6e1aa8922c124486adf839e50448cdfda19",
+  "changes_to_existing_one_copy_source": 0,
+  "setup_note": "The initial sparse worktree had no initialized files. A private read-tree populated the declared sparse paths; the first mkdir failed before source creation. No integration index or source was changed."
+}
