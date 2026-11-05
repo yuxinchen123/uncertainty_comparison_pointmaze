@@ -1,0 +1,13 @@
+{
+  "kind": "author_test_expected_error_message_mismatch",
+  "runtime_check_failed": false,
+  "positive_complete_synthetic_verify_passed": true,
+  "changed_plan_correctly_refused_by_publication_check": true,
+  "test_expected_message": "bytes changed",
+  "actual_message": "a launch input was not published with these exact bytes",
+  "preserved_test": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-11-30_common-performance-prerequisite-fact_contexts-4_paired-rounds-7_updates-per-arm-10_profile-qualification-operational-preparation_gpu-actions-0/.review_metadata/profile_target_operational_preparation/preserved_test_before_changed_input_message_correction.py",
+    "sha256": "54c373c04c5c67cc153cbd8fb301b22e32452b970384ac10bb4f6d9d847bcba5"
+  },
+  "production_source_changes": 0
+}

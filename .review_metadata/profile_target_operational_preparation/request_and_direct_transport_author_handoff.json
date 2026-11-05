@@ -1,0 +1,28 @@
+{
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-11-30_common-performance-prerequisite-fact_contexts-4_paired-rounds-7_updates-per-arm-10_profile-qualification-operational-preparation_gpu-actions-0/.review_metadata/profile_target_operational_preparation/request_and_direct_transport_source_freeze_1.json",
+    "sha256": "fd264f64ddaec08cf5452e606a5769c9f44045ec1d610aaabaf4edead9aeae10"
+  },
+  "author_tests": [
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-11-30_common-performance-prerequisite-fact_contexts-4_paired-rounds-7_updates-per-arm-10_profile-qualification-operational-preparation_gpu-actions-0/.review_metadata/profile_target_operational_preparation/request_transport_author_checks_1.json",
+      "sha256": "944a2433477eecb2666e06772302314abbf21dee64dd3f5d4d79ae848fa72204"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-11-30_common-performance-prerequisite-fact_contexts-4_paired-rounds-7_updates-per-arm-10_profile-qualification-operational-preparation_gpu-actions-0/.review_metadata/profile_target_operational_preparation/request_transport_author_checks_2.json",
+      "sha256": "f10a6d307e8a059b1c17d08a5777215af48af81e9162e3883e4e0ac19423f4a1"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-11-30_common-performance-prerequisite-fact_contexts-4_paired-rounds-7_updates-per-arm-10_profile-qualification-operational-preparation_gpu-actions-0/.review_metadata/profile_target_operational_preparation/request_transport_checks_2_failure_diagnosis.json",
+      "sha256": "e53bad2ee055a09c265cd11f6025cdec66006b251d61140f9e83ada05a734674"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-11-30_common-performance-prerequisite-fact_contexts-4_paired-rounds-7_updates-per-arm-10_profile-qualification-operational-preparation_gpu-actions-0/.review_metadata/profile_target_operational_preparation/request_transport_author_checks_3.json",
+      "sha256": "47bd5d3efa2a8eb22227caa306a8a2cb38bcd1e61a1211a8358016dc8c083416"
+    }
+  ],
+  "test_scope": "Five initial methods passed; a new positive-publication test passed, but its negative refusal message assertion was corrected after preservation; affected positive/negative fixture and new configuration default test then passed. No real process/test custody replay or target action.",
+  "all_source_held": true,
+  "required_independent_review": true,
+  "required_actual_unit_launch_review_later": true
+}

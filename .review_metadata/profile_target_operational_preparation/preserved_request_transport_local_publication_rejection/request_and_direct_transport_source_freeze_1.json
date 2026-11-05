@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "kind": "profile_target_operational_request_and_direct_transport_source_freeze",
+  "base_commit": "d1469fd063a44167ec56760729eb0beea7ecf7d3",
+  "files": {
+    "derive_one_copy_qualification_request.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-11-30_common-performance-prerequisite-fact_contexts-4_paired-rounds-7_updates-per-arm-10_profile-qualification-operational-preparation_gpu-actions-0/.review_metadata/profile_target_operational_preparation/derive_one_copy_qualification_request.py",
+      "sha256": "20331a6fc9625d604436c21ed03de3c06732f109044f728c9a16ba2dbb54bb9e",
+      "size_bytes": 13149
+    },
+    "start_direct_profile_qualification_once.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-11-30_common-performance-prerequisite-fact_contexts-4_paired-rounds-7_updates-per-arm-10_profile-qualification-operational-preparation_gpu-actions-0/.review_metadata/profile_target_operational_preparation/start_direct_profile_qualification_once.py",
+      "sha256": "ebe770e0e54669224ca7539d53f8bc32622e88e90fc52618b33a3eda124f1fe1",
+      "size_bytes": 22280
+    },
+    "prepare_direct_transport_configuration.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-11-30_common-performance-prerequisite-fact_contexts-4_paired-rounds-7_updates-per-arm-10_profile-qualification-operational-preparation_gpu-actions-0/.review_metadata/profile_target_operational_preparation/prepare_direct_transport_configuration.py",
+      "sha256": "32136e5da65bafba536f170b5530e3033dbd5ce28aecf9a6c084347b5677e435",
+      "size_bytes": 6712
+    },
+    "test_qualification_request_and_direct_transport.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-11-30_common-performance-prerequisite-fact_contexts-4_paired-rounds-7_updates-per-arm-10_profile-qualification-operational-preparation_gpu-actions-0/.review_metadata/profile_target_operational_preparation/test_qualification_request_and_direct_transport.py",
+      "sha256": "e69819ea4a0d4d99cbfba3cdbeb38d7197f68bb058febfb1085a1d483c44de7d",
+      "size_bytes": 16317
+    },
+    "four_context_fact_request_actual_refs.json": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-11-30_common-performance-prerequisite-fact_contexts-4_paired-rounds-7_updates-per-arm-10_profile-qualification-operational-preparation_gpu-actions-0/.review_metadata/profile_target_operational_preparation/four_context_fact_request_actual_refs.json",
+      "sha256": "d7e356a5c7d8e6b0ccd1aa34a46835e80e365de963efd0e37a12944a2f3ba9d2",
+      "size_bytes": 7201
+    },
+    "operational_preparation_recipe.json": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-11-30_common-performance-prerequisite-fact_contexts-4_paired-rounds-7_updates-per-arm-10_profile-qualification-operational-preparation_gpu-actions-0/.review_metadata/profile_target_operational_preparation/operational_preparation_recipe.json",
+      "sha256": "55313b447580a211e136a0b62b6aee03997c12ed6f6c5afff5274dcdbbf11b17",
+      "size_bytes": 14655
+    }
+  },
+  "scope": "Separate operational metadata only. The two common-fact producer files and future A4500 utility are excluded.",
+  "runtime_helper_closure_changed": false,
+  "actual_fact_produced": false,
+  "actual_runtime_prepared": false,
+  "actual_target_actions": 0
+}

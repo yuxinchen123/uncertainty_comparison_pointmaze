@@ -1,0 +1,14 @@
+{
+  "kind": "independent_reviewer_fixture_failure",
+  "source_before": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-11-30_common-performance-prerequisite-fact_contexts-4_paired-rounds-7_updates-per-arm-10_profile-qualification-operational-preparation_gpu-actions-0/.review_metadata/profile_target_operational_preparation/independent_request_transport_review_1_before_reviewer_indentation_correction.py",
+    "sha256": "21bd1761e5ee022e91ab3fc786165e12bc836da8083f46a4b89c66995935f250"
+  },
+  "actual_job_id": "6825983",
+  "actual_step_id": null,
+  "error": "IndentationError in copied private-Git-only test method; production source unchanged",
+  "author_source_held": true,
+  "target_operations": 0,
+  "step_identity_not_captured": true,
+  "correction": "An unverified step number was removed; exact step identity was not captured by the first failing recorder."
+}

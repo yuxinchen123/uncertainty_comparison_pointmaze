@@ -1,0 +1,26 @@
+test_actual_controller_command_preserves_source_and_selector (__main__.OperationalChecks) ... ok
+test_changed_transport_source_and_duplicate_json_refuse (__main__.OperationalChecks) ... ok
+test_complete_synthetic_transport_checks_and_changed_plan_refuse (__main__.OperationalChecks)
+Exercise every actual metadata check with explicit synthetic review/Git premises. ... FAIL
+test_default_request_deriver_never_prepares_or_writes (__main__.OperationalChecks) ... ok
+test_proven_custody_functions_are_exact (__main__.OperationalChecks) ... ok
+test_request_uses_actual_component_plan_not_result_fields (__main__.OperationalChecks) ... ok
+
+======================================================================
+FAIL: test_complete_synthetic_transport_checks_and_changed_plan_refuse (__main__.OperationalChecks)
+Exercise every actual metadata check with explicit synthetic review/Git premises.
+----------------------------------------------------------------------
+ValueError: a launch input was not published with these exact bytes
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-05-11-30_common-performance-prerequisite-fact_contexts-4_paired-rounds-7_updates-per-arm-10_profile-qualification-operational-preparation_gpu-actions-0/.review_metadata/profile_target_operational_preparation/test_qualification_request_and_direct_transport.py", line 132, in test_complete_synthetic_transport_checks_and_changed_plan_refuse
+    with self.assertRaisesRegex(ValueError,'bytes changed'):
+AssertionError: "bytes changed" does not match "a launch input was not published with these exact bytes"
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.544s
+
+FAILED (failures=1)
+srun: error: slurm5: task 0: Exited with exit code 1

@@ -1,0 +1,41 @@
+{
+  "actual_job_id": "6825983",
+  "actual_packet_review_required_before_launch": true,
+  "actual_private_git_checks": [
+    "missing_origin",
+    "missing_tracking_ref",
+    "included_parent_accepted",
+    "local_only_descendant_refused",
+    "fresh_tracking_tip_accepted",
+    "tracked_ancestor_accepted",
+    "wrong_origin_refused",
+    "wrong_fetch_mapping_refused",
+    "multiple_origin_urls_refused"
+  ],
+  "actual_runtime_prepared": false,
+  "actual_step_id": "49",
+  "actual_target_launch_permitted_by_this_source_review": false,
+  "admission_granted": false,
+  "all_prior_custody_functions_unchanged": true,
+  "approved": true,
+  "existing_seven_source_checks_reused": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-11-30_common-performance-prerequisite-fact_contexts-4_paired-rounds-7_updates-per-arm-10_profile-qualification-operational-preparation_gpu-actions-0/.review_metadata/profile_target_operational_preparation/independent_request_transport_initial_review.json",
+    "sha256": "da09e0353ae0df0c40fcb16e77e766c1a24c6d8bb71c554c04d3366385f5a8b1"
+  },
+  "fact_produced": false,
+  "independent_of_author": true,
+  "kind": "independent_operational_request_transport_corrected_source_review",
+  "new_algorithm_independence_claimed": false,
+  "passed": true,
+  "prior_algorithm_independent_approval_reused": true,
+  "runtime_helpers_changed": false,
+  "schema_version": 1,
+  "scope": "Only request builder, transport configuration and H root transport; excludes the reviewer-authored fact producer and any later actual fact/output review",
+  "seconds": 0.7794665390392765,
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-11-30_common-performance-prerequisite-fact_contexts-4_paired-rounds-7_updates-per-arm-10_profile-qualification-operational-preparation_gpu-actions-0/.review_metadata/profile_target_operational_preparation/request_and_direct_transport_source_freeze_2.json",
+    "sha256": "094ccd75dfe0f1948d4c1085a2894b28cec0b454b9ba80d2db49f1fdfbc420ee"
+  },
+  "target_operations": 0,
+  "three_affected_methods_passed": 3
+}
