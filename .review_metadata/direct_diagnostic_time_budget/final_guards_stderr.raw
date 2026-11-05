@@ -1,0 +1,25 @@
+test_complete_budgeted_roles_and_payload_are_accepted_without_native_calls (test_direct_diagnostic_budget_boundaries.NativeBudgetRoleTests.test_complete_budgeted_roles_and_payload_are_accepted_without_native_calls)
+All three retained snapshots and payload time remain within the same synthetic predecessor budget. ... ok
+test_late_terminal_or_changed_clock_domain_refuses (test_direct_diagnostic_budget_boundaries.NativeBudgetRoleTests.test_late_terminal_or_changed_clock_domain_refuses)
+A native terminal cannot exceed300 seconds or substitute a different boot's clock. ... ok
+test_payload_after_work_deadline_refuses_even_with_updated_hash (test_direct_diagnostic_budget_boundaries.NativeBudgetRoleTests.test_payload_after_work_deadline_refuses_even_with_updated_hash)
+A fresh payload hash cannot permit work after240 seconds on the shared clock. ... ok
+test_late_existing_release_is_refused_before_acknowledgment (test_direct_diagnostic_budget_boundaries.ReleaseBoundaryTests.test_late_existing_release_is_refused_before_acknowledgment)
+An already present release cannot bypass the final work-deadline check after the wait loop. ... ok
+test_late_payload_does_not_publish_or_complete (test_direct_diagnostic_budget_boundaries.ReleaseBoundaryTests.test_late_payload_does_not_publish_or_complete)
+A late release return cannot start payload work or create a successful native terminal. ... ok
+test_preparation_records_one_total_budget_in_both_default_and_native_metadata (test_direct_diagnostic_time_budget.DeadlineArithmeticTests.test_preparation_records_one_total_budget_in_both_default_and_native_metadata)
+Mock only Git publication; verify actual temporary preparation output without starting a process or tool. ... ok
+test_controller_timeout_has_no_extra_wait_or_holder_signal (test_direct_diagnostic_time_budget.OriginAndControllerTests.test_controller_timeout_has_no_extra_wait_or_holder_signal)
+A late producer remains inconclusive; controller neither kills it nor adds a cleanup wait. ... ok
+test_actual_own_controller_alarm_returns_promptly_and_restores_handler (test_direct_diagnostic_time_budget.ActualControllerTimerTests.test_actual_own_controller_alarm_returns_promptly_and_restores_handler)
+The controller's total timer interrupts its own wait without signalling any other process. ... ok
+test_a_slow_owned_snapshot_cannot_send_a_signal_after_cleanup_expiry (test_direct_diagnostic_time_budget.DeadlineArithmeticTests.test_a_slow_owned_snapshot_cannot_send_a_signal_after_cleanup_expiry)
+Recheck the shared clock after positive identity validation and before the actual pidfd signal. ... ok
+test_actual_owned_cpu_cleanup_uses_one_synthetic_early_work_deadline (test_direct_diagnostic_time_budget.ActualControllerTimerTests.test_actual_owned_cpu_cleanup_uses_one_synthetic_early_work_deadline)
+Use the real cleanup code with a five-second remaining work budget and a temporary CPU lock. ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 5.614s
+
+OK

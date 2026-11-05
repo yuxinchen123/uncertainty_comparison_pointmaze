@@ -1,0 +1,57 @@
+{
+  "actual_process_control_or_GPU_descriptor_operations": 0,
+  "admission_granted": false,
+  "closure_monotonic": 399.0,
+  "completed_within_budget": false,
+  "custody_monotonic": 401.0,
+  "scientific_credit": 0,
+  "synthetic_time_closure_custody_only": true,
+  "terminal": {
+    "actual_root_waits": {},
+    "all_historical_descendants_identified": false,
+    "all_tool_descendants_exited_before_descriptor_release": true,
+    "begin": {
+      "path": "/tmp/tmpv1g3rfl1/tool_descendant_scope_begin.json",
+      "sha256": "8eba39c652b38ea5edfb139ec039e4bc909d662a070f2071fabadfd345198e00"
+    },
+    "diagnostic_deadline": {
+      "cleanup_end_monotonic": 400.0,
+      "cleanup_started_monotonic": 350.0,
+      "clock_domain": {
+        "boot_id": "11111111-1111-1111-1111-111111111111",
+        "clock": "monotonic",
+        "hostname": "serval02",
+        "implementation": "explicit synthetic monotonic clock"
+      },
+      "observed_monotonic": 401.0,
+      "origin": {
+        "path": "/explicit/synthetic/origin.json",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "started_monotonic": 100.0,
+      "total_end_monotonic": 400.0,
+      "work_end_monotonic": 340.0
+    },
+    "events": [],
+    "gpu_or_cuda_qualification": false,
+    "interventions": [],
+    "kind": "direct_tool_descendant_kernel_terminal_closure",
+    "native_request_counts_before_restore": {
+      "PR_GET_CHILD_SUBREAPER": 0,
+      "PR_SET_CHILD_SUBREAPER": 0
+    },
+    "positive_nodes": {},
+    "producer_birth": "10",
+    "producer_pid": 100,
+    "read_errors": [],
+    "schema_version": 1,
+    "scientific_credit": 0,
+    "standing_descriptor_at_terminal": {
+      "explicit_synthetic_verified_custody": true
+    },
+    "terminal": {
+      "explicit_synthetic_verified_kernel_closure": true
+    },
+    "within_diagnostic_budget": false
+  }
+}

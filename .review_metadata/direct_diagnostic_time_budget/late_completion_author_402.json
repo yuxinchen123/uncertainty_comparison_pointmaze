@@ -1,0 +1,25 @@
+{
+  "Slurm_time": "00:05:00",
+  "actual_PIDFD_prctl_GPU_or_standing_lock_operations": false,
+  "admission_granted": false,
+  "broad53_or122_batches_repeated": false,
+  "errors": [],
+  "failures": [],
+  "finished_at_seconds": 1793866310.738772,
+  "job_id": "6783003",
+  "kind": "author_late_kernel_closure_and_final_custody_deadline_classification",
+  "outer_validation_seconds": 60,
+  "passed": true,
+  "pid": 1246182,
+  "requested_memory_MiB": 512,
+  "scientific_credit": 0,
+  "source_and_protected_unchanged": true,
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-23-25_direct-native-diagnostic_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0/.review_metadata/direct_diagnostic_time_budget/late_completion_source_freeze.json",
+    "sha256": "ca727b26b0394425922de07674470be635dfa6d8c3a80186e673e574f089e6f1"
+  },
+  "started_at_seconds": 1793866310.5377965,
+  "step_id": "402",
+  "synthetic_clocks_and_process_control_only": true,
+  "tests_run": 9
+}

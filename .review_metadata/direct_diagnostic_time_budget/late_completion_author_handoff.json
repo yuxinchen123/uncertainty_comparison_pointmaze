@@ -1,0 +1,61 @@
+{
+  "actual_PIDFD_prctl_Nsight_GPU_or_standing_GPU_lock_operations": false,
+  "actual_target_launched": false,
+  "admission_granted": false,
+  "after": "Recheck current retained budget status after closure and final custody verification. Compute terminal within_diagnostic_budget from the final snapshot observed time strictly before cleanup/total expiry, no earlier inconclusive state and verified final custody. Late verified closure may complete safe release only after proof but is failed/inconclusive and never labelled within budget.",
+  "author_execution": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-23-25_direct-native-diagnostic_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0/.review_metadata/direct_diagnostic_time_budget/late_completion_author_402.json",
+    "sha256": "a55db3b5427d72719a817a17a4cee376416a9f7cf9ef622bad82a72d7cc4ee09"
+  },
+  "base": "6de847f417a969a197a26355471ff17118eb1de8",
+  "before": "Terminal within_diagnostic_budget used only the earlier budget_inconclusive_published flag, so slow closure could cross the limit after the last loop check.",
+  "broad53_or122_batches_repeated": false,
+  "changed_existing_source_paths": [
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_tool_descendants.py"
+  ],
+  "covered": [
+    "exact399 late closure350-to401/deadline400",
+    "closure399 followed by final custody401",
+    "exact400 boundary classified expired",
+    "positive closure399/custody399",
+    "unknown cleanup retains descriptor without signals",
+    "identity read crossing signal deadline",
+    "unchanged single cleanup reservation and shared work deadline",
+    "pure saved snapshot expiry/domain checks"
+  ],
+  "elapsed_seconds": 0.2009754180908203,
+  "kind": "author_corrected_final_diagnostic_completion_classification_handoff",
+  "new_test_path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_diagnostic_late_completion.py",
+  "next_step": "Independent targeted source/late-closure/custody review before publication or any actual target diagnostic.",
+  "other8_frozen_paths_unchanged": true,
+  "preserved_rejected_review": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-23-25_direct-native-diagnostic_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0/.review_metadata/direct_diagnostic_time_budget/independent_399.json",
+    "sha256": "d18ce31e432084497f79d80ff0c35aabfc47e29112bd582f1e9afca9465b6ffb"
+  },
+  "preserved_rejected_source": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-23-25_direct-native-diagnostic_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0/.review_metadata/direct_diagnostic_time_budget/independent_rejected_freeze_6_preserved/preservation_manifest.json",
+    "sha256": "03cdcde9a70d16e5681668a649038ead76e16e88d3738985954bd9be404add86"
+  },
+  "previous_blocked_review_with_18_passing_checks": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-23-25_direct-native-diagnostic_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0/.review_metadata/direct_diagnostic_time_budget/independent_399.json",
+    "sha256": "d18ce31e432084497f79d80ff0c35aabfc47e29112bd582f1e9afca9465b6ffb"
+  },
+  "previous_review_pass_count": 18,
+  "resources": {
+    "CPU_count": 1,
+    "Slurm_time": "00:05:00",
+    "memory_MiB": 512,
+    "outer_timeout_seconds": 60,
+    "owned_job_id": "6783003"
+  },
+  "scientific_credit": 0,
+  "source_committed_pushed_or_merged": false,
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-23-25_direct-native-diagnostic_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0/.review_metadata/direct_diagnostic_time_budget/late_completion_source_freeze.json",
+    "sha256": "ca727b26b0394425922de07674470be635dfa6d8c3a80186e673e574f089e6f1"
+  },
+  "source_held_for_independent_review": true,
+  "tests_passed": 9,
+  "unchanged_protected_files": 34,
+  "worktree": "/p/rlprojects/RND_worktrees/2026-11-04-23-25_direct-native-diagnostic_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0"
+}

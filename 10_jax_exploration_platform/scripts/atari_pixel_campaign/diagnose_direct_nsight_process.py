@@ -41,6 +41,26 @@ def producer_interruptions():
             signal.signal(number, handler)
 
 
+@contextmanager
+def controller_total_limit(deadline):
+    """Interrupt this descriptor-free controller at its original total limit, without signalling its producer."""
+    if deadline is None:
+        yield
+        return
+    previous = signal.getsignal(signal.SIGALRM)
+    direct.require(signal.getitimer(signal.ITIMER_REAL) == (0., 0.), 'a diagnostic controller cannot replace another real timer')
+    def expired(number, frame):
+        """End the controller check while preserving unknown producer custody for its own cleanup."""
+        raise TimeoutError('the diagnostic controller exhausted its original 300-second total budget')
+    signal.signal(signal.SIGALRM, expired)
+    signal.setitimer(signal.ITIMER_REAL, deadline.remaining('total'))
+    try:
+        yield
+    finally:
+        signal.setitimer(signal.ITIMER_REAL, 0.)
+        signal.signal(signal.SIGALRM, previous)
+
+
 def metadata_guard():
     """Forbid numerical imports and Python device/library/network operations in every role."""
     direct.require(not any(name.split(".")[0] in direct.NUMERICAL for name in sys.modules),
@@ -79,7 +99,8 @@ def native_role(directory, plan, role):
         intent = direct.validate_intent(directory, plan, observer.read_json(directory / 'direct_profile_process_intent.json'))
         direct.require(current['command'] == intent['waiter_command' if role == 'waiter' else 'capture_command'],
             'native child startup requires its exact current staged source role')
-    return direct.adjacent_helper(plan, 'native_process_evidence').bootstrap(directory, plan, role, observer, current)
+    return direct.adjacent_helper(plan, 'native_process_evidence').bootstrap(directory, plan, role, observer, current,
+        deadline=direct.read_diagnostic_deadline(directory, plan))
 
 
 def read_plan(directory):
@@ -102,6 +123,7 @@ def read_plan(directory):
             and hashlib.sha256(path.read_bytes()).hexdigest() == plan["helpers"]["files"][direct.PREFIX + name],
             "the direct process diagnostic source changed")
     direct.contract(plan, directory)
+    direct.require(direct.diagnostic_budget(plan) is not None, 'new diagnostic execution requires the declared total time budget')
     return directory, plan
 
 
@@ -167,54 +189,72 @@ def append_producer(directory, plan, producer):
     return row
 
 
-def controller(directory):
+def controller(directory, *, entry_monotonic=None):
     """Launch and wait on one registered tool producer without ever holding its GPU lock."""
+    started = time.monotonic() if entry_monotonic is None else entry_monotonic
     directory, plan = read_plan(directory)
     observer = direct.generic(plan)
     current = direct.context(plan, directory)
     no_lock = direct.no_standing_descriptor()
-    launch_review(directory, plan)
-    direct.require(not any(os.path.lexists(directory / name) for name in ("controller_spawn.json", "controller_wait.json", "failure.json")),
+    direct.require(not any(os.path.lexists(directory / name) for name in ("controller_spawn.json", "controller_wait.json", "failure.json", "diagnostic_controller_time_origin.json")),
         "this controller attempt already exists; prepare a new unit")
-    command = [plan["python"], "-I", "-S", "-B", str(directory / "code" / NAME), "--producer-unit", str(directory)]
-    child = None
-    with (directory / "producer_stdout.raw").open("xb") as output, (directory / "producer_stderr.raw").open("xb") as errors:
-        try:
-            child = subprocess.Popen(command, stdout=output, stderr=errors, close_fds=True, pass_fds=())
-            actual = observer.ProcReader().snapshot(child.pid, direct.OWNER, current["cgroup"])
-            direct.require(actual["parent_pid"] == current["pid"] and actual["command"] == command,
-                "the actual controller Popen producer changed source")
-            observer.publish(directory / "controller_spawn.json", {"kind": "actual_direct_diagnostic_producer_popen",
-                "controller": current, "producer": actual, "command": command, "close_fds": True, "pass_fds": [],
-                "controller_no_standing_descriptor": no_lock, "plan": observer.receipt(directory / "measurement_plan.json")})
-            row = append_producer(directory, plan, actual)
-            observer.publish(directory / "producer_release.json", {"controller_spawn": observer.receipt(directory / "controller_spawn.json"),
-                "ledger_append": observer.receipt(directory / "diagnostic_process_ledger_append.json"), "producer_row": row,
-                "launch_review": observer.receipt(directory / "diagnostic_launch_review.json")})
-            returned = child.wait(timeout=plan["maximum_active_seconds"] + 300)
-            after = observer.ProcReader().snapshot(os.getpid(), direct.OWNER, current["cgroup"])
-            direct.require(observer.stable(after) == observer.stable(current), "the actual metadata controller changed during its wait")
-            observer.publish(directory / "controller_wait.json", {"kind": "actual_direct_diagnostic_producer_wait",
-                "waited_pid": child.pid, "returncode": returned, "exited_normally": returned >= 0,
-                "command": command, "interventions": [], "launch": observer.receipt(directory / "controller_spawn.json"),
-                "controller_after": after, "controller_no_standing_descriptor_after": direct.no_standing_descriptor()})
-            direct.require(returned == 0, "the actual diagnostic tool producer failed; preserve its raw output and wait")
-        finally:
-            if child is not None and child.poll() is None:
-                child.terminate()
-                try:
-                    cleanup_return = child.wait(timeout=180)
-                    observer.publish(directory / "controller_cleanup_wait.json", {
-                        "producer_pid": child.pid, "actual_returncode": cleanup_return,
-                        "interventions": ["the exact producer received SIGTERM during controller failure"],
-                        "controller_owns_standing_descriptor": False, **ZERO})
-                except subprocess.TimeoutExpired:
-                    observer.publish(directory / "controller_cleanup_unverified.json", {
-                        "producer_pid": child.pid, "producer_left_running": True,
-                        "reason": "the sole descriptor owner has not finished its own tool cleanup",
-                        "controller_owns_standing_descriptor": False, **ZERO})
-    observer.publish(directory / "controller_output_hashes.json", {"stdout": observer.receipt(directory / "producer_stdout.raw"),
-        "stderr": observer.receipt(directory / "producer_stderr.raw"), "wait": observer.receipt(directory / "controller_wait.json")})
+    deadline = None if direct.diagnostic_budget(plan) is None else direct.publish_diagnostic_origin(directory, plan, current, started)
+    with controller_total_limit(deadline):
+        launch_review(directory, plan)
+        command = [plan["python"], "-I", "-S", "-B", str(directory / "code" / NAME), "--producer-unit", str(directory)]
+        child = None
+        with (directory / "producer_stdout.raw").open("xb") as output, (directory / "producer_stderr.raw").open("xb") as errors:
+            try:
+                if deadline is not None:deadline.remaining('work')
+                child = subprocess.Popen(command, stdout=output, stderr=errors, close_fds=True, pass_fds=())
+                actual = observer.ProcReader().snapshot(child.pid, direct.OWNER, current["cgroup"])
+                direct.require(actual["parent_pid"] == current["pid"] and actual["command"] == command,
+                    "the actual controller Popen producer changed source")
+                observer.publish(directory / "controller_spawn.json", {"kind": "actual_direct_diagnostic_producer_popen",
+                    "controller": current, "producer": actual, "command": command, "close_fds": True, "pass_fds": [],
+                    "controller_no_standing_descriptor": no_lock, "plan": observer.receipt(directory / "measurement_plan.json"),
+                    **({} if deadline is None else {'diagnostic_origin': deadline.reference, 'spawn_observed_monotonic': time.monotonic()})})
+                row = append_producer(directory, plan, actual)
+                observer.publish(directory / "producer_release.json", {"controller_spawn": observer.receipt(directory / "controller_spawn.json"),
+                    "ledger_append": observer.receipt(directory / "diagnostic_process_ledger_append.json"), "producer_row": row,
+                    "launch_review": observer.receipt(directory / "diagnostic_launch_review.json"),
+                    **({} if deadline is None else {'diagnostic_origin': deadline.reference})})
+                returned = child.wait(timeout=plan['maximum_active_seconds'] + 300 if deadline is None else deadline.remaining('total'))
+                if deadline is not None:deadline.remaining('total')
+                after = observer.ProcReader().snapshot(os.getpid(), direct.OWNER, current["cgroup"])
+                direct.require(observer.stable(after) == observer.stable(current), "the actual metadata controller changed during its wait")
+                observer.publish(directory / "controller_wait.json", {"kind": "actual_direct_diagnostic_producer_wait",
+                    "waited_pid": child.pid, "returncode": returned, "exited_normally": returned >= 0,
+                    "command": command, "interventions": [], "launch": observer.receipt(directory / "controller_spawn.json"),
+                    "controller_after": after, "controller_no_standing_descriptor_after": direct.no_standing_descriptor(),
+                    **({} if deadline is None else {'diagnostic_deadline': deadline.snapshot()})})
+                direct.require(returned == 0, "the actual diagnostic tool producer failed; preserve its raw output and wait")
+            finally:
+                if child is not None and child.poll() is None:
+                    if deadline is not None:
+                        observer.publish(directory / 'controller_budget_inconclusive.json', {
+                            'producer_pid': child.pid, 'producer_left_running': True, 'completed': False,
+                            'deadline': deadline.snapshot(), 'producer_signal_sent': False,
+                            'reason': 'the sole descriptor owner has not proved complete cleanup within the shared budget',
+                            'controller_owns_standing_descriptor': False, **ZERO})
+                    else:
+                        child.terminate()
+                        try:
+                            cleanup_return = child.wait(timeout=180)
+                            observer.publish(directory / "controller_cleanup_wait.json", {
+                                "producer_pid": child.pid, "actual_returncode": cleanup_return,
+                                "interventions": ["the exact producer received SIGTERM during controller failure"],
+                                "controller_owns_standing_descriptor": False, **ZERO})
+                        except subprocess.TimeoutExpired:
+                            observer.publish(directory / "controller_cleanup_unverified.json", {
+                                "producer_pid": child.pid, "producer_left_running": True,
+                                "reason": "the sole descriptor owner has not finished its own tool cleanup",
+                                "controller_owns_standing_descriptor": False, **ZERO})
+        if deadline is not None:deadline.remaining('total')
+        observer.publish(directory / "controller_output_hashes.json", {"stdout": observer.receipt(directory / "producer_stdout.raw"),
+            "stderr": observer.receipt(directory / "producer_stderr.raw"), "wait": observer.receipt(directory / "controller_wait.json")})
+    
+        if deadline is not None:deadline.remaining('total')
 
 
 def producer_release(directory, plan):
@@ -222,12 +262,23 @@ def producer_release(directory, plan):
     observer = direct.generic(plan)
     current = direct.context(plan, directory)
     direct.no_standing_descriptor()
+    deadline = direct.read_diagnostic_deadline(directory, plan)
+    if deadline is not None:
+        parent = observer.ProcReader().snapshot(current['parent_pid'], direct.OWNER, current['cgroup'])
+        direct.require(observer.stable(parent) == observer.stable(deadline.origin['controller']),
+            'the producer actual parent does not match the durable clock origin')
     started = time.monotonic()
     while not os.path.lexists(Path(directory) / "producer_release.json"):
-        direct.require(time.monotonic() - started < 180, "the actual controller did not publish this producer release")
+        direct.require((time.monotonic() - started < 180 if deadline is None else deadline.remaining('work') > 0), "the actual controller did not publish this producer release")
         time.sleep(.05)
+    if deadline is not None:deadline.remaining('work')
     release = observer.read_json(Path(directory) / "producer_release.json")
     spawn = observer.read_json(Path(directory) / "controller_spawn.json")
+    if deadline is not None:
+        direct.require(release.get('diagnostic_origin') == spawn.get('diagnostic_origin') == deadline.reference
+            and direct.finite_monotonic(spawn.get('spawn_observed_monotonic'))
+            and deadline.origin['published_monotonic'] <= spawn['spawn_observed_monotonic'] < deadline.work_end,
+            'actual producer registration must bind the same prior controller origin')
     direct.require(release["controller_spawn"] == observer.receipt(Path(directory) / "controller_spawn.json")
         and release["ledger_append"] == observer.receipt(Path(directory) / "diagnostic_process_ledger_append.json")
         and release["launch_review"] == observer.receipt(Path(directory) / "diagnostic_launch_review.json")
@@ -251,6 +302,7 @@ def produce_with_owned_descriptor(directory, *, runtime=None):
     directory, plan = read_plan(directory)
     observer = direct.runtime_observer(plan, runtime.observer if runtime is not None else None)
     current = producer_release(directory, plan)
+    deadline = runtime.deadline if runtime is not None else direct.read_diagnostic_deadline(directory, plan)
     direct.require(not any(os.path.lexists(directory / name) for name in (
         "direct_profile_process_intent.json", "result.json", "failure.json", "trace", "capture_identity.json")),
         "this actual producer attempt already exists; never reuse it")
@@ -265,14 +317,15 @@ def produce_with_owned_descriptor(directory, *, runtime=None):
         direct.descriptor_record(plan, descriptor, current, local=True)
         tool = plan["profile_tool"]
         direct.require(observer.receipt(tool["path"])["sha256"] == tool["sha256"], "the recorded actual profiling tool changed")
-        with (direct.tool_scope(directory, plan, descriptor) if runtime is None else
-                direct.tool_scope(directory, plan, descriptor, observer=observer)) as scope:
-            actual = scope.run([tool["path"], "--version"], capture_output=True, timeout=15, check=False)
+        with (direct.tool_scope(directory, plan, descriptor) if deadline is None else
+                direct.tool_scope(directory, plan, descriptor, observer=observer if runtime is not None else None, deadline=deadline)) as scope:
+            actual = scope.run([tool['path'], '--version'], capture_output=True, timeout=15 if deadline is None else deadline.timeout(15), check=False)
             observer.publish(directory / "tool_version_return.json", {"command": [tool["path"], "--version"],
                 "returncode": actual.returncode, "stdout": actual.stdout.decode(), "stderr": actual.stderr.decode()})
             direct.require(actual.returncode == 0 and actual.stderr == b"" and actual.stdout.decode().strip() == tool["version"]
                 and observer.receipt(tool["path"])["sha256"] == tool["sha256"], "the actual Nsight version or bytes changed")
             direct.run_tool(directory, plan, descriptor, scope=scope)
+        if deadline is not None:deadline.remaining('total')
         diagnostic = observer.read_json(directory / "probe_result.json")
         direct.require(diagnostic.get("completed") is True and all(diagnostic.get(key) == value for key, value in ZERO.items()),
             "the actual metadata payload did not complete as a zero-transition diagnostic")
@@ -303,13 +356,17 @@ def probe(directory, *, runtime=None):
     directory, plan = read_plan(directory)
     observer = direct.generic(plan)
     claim = direct.wait_release(directory, plan, observer=runtime.observer if runtime is not None else None)
+    deadline = runtime.deadline if runtime is not None else direct.read_diagnostic_deadline(directory, plan)
+    if deadline is not None:deadline.remaining('work')
     started = time.time()
     observer.publish(directory / "probe_result.json", {"kind": "actual_direct_standard_library_process_payload",
         "completed": True, "pid": claim["pid"], "process_start_time": claim["process_start_time"],
         "numerical_modules": sorted(direct.NUMERICAL.intersection(sys.modules)), "cuda_profiler_api_called": False,
         "standing_descriptor_inherited": False, "payload_started_at_seconds": started,
-        "payload_finished_at_seconds": time.time(), **ZERO})
+        "payload_finished_at_seconds": time.time(), **ZERO,
+        **({} if deadline is None else {'diagnostic_deadline': deadline.snapshot()})})
 
+    if deadline is not None:deadline.remaining('work')
     if runtime is not None:runtime.complete(('capture_release_observed.json', 'probe_result.json'))
 
 
@@ -337,7 +394,7 @@ def prepare(arguments):
         "hardware_class": "h100", "gpu_uuid": direct.GPU, "campaign_run_dir": str(run), "unit_id": arguments.unit_id,
         "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af", "python": str(arguments.python.absolute()),
         "helpers": {"source_root": str(root), "source_commit": commit, "files": files}, "profile_tool": tool,
-        "maximum_active_seconds": 300, "diagnostic_boundary": ZERO,
+        "maximum_active_seconds": 240, 'diagnostic_time_budget': dict(direct.DIAGNOSTIC_BUDGET), "diagnostic_boundary": ZERO,
         "preparation_scope": "metadata only; no launch review, C2 exit evidence, process, tool run or qualification is fabricated"}
     if getattr(arguments, 'native_process_control', False):
         plan['native_process_control'] = direct.adjacent_helper(plan, 'native_process_evidence').declaration(plan)
@@ -350,7 +407,9 @@ def prepare(arguments):
             stream.write((SCRIPTS / name).read_bytes()); stream.flush(); os.fsync(stream.fileno())
     observer.publish(directory / "measurement_plan.json", plan)
     observer.publish(directory / "manifest.yaml", plan)
-    observer.publish(directory / "config_resolved.yaml", {"gpu_uuid": direct.GPU, **ZERO})
+    observer.publish(directory / "config_resolved.yaml", {"gpu_uuid": direct.GPU, **ZERO,
+        'maximum_active_seconds': plan['maximum_active_seconds'], 'diagnostic_time_budget': plan['diagnostic_time_budget'],
+        **({} if 'native_process_control' not in plan else {'native_process_control': plan['native_process_control']})})
     observer.publish(directory / "measurement_prepared.json", {"plan_sha256": observer.receipt(directory / "measurement_plan.json")["sha256"]})
     command = [plan["python"], "-I", "-S", "-B", str(directory / "code" / NAME), "--controller-unit", str(directory)]
     with (directory / "command.txt").open("x") as stream:
@@ -359,8 +418,9 @@ def prepare(arguments):
     with (directory / "experiment_background.md").open("x") as stream:
         stream.write("## Purpose\n\nObserve the actual direct Nsight process relationship and sole-producer standing descriptor through exact waits. "
             "The standard-library payload executes zero environment transitions and zero training updates.\n\n"
-            "## Key hyperparameters\n\nOne approved serval02 card 1 target; a five-minute active tool limit. "
-            "No environment, learner, policy seed, or hyperparameter experiment runs.\n\n"
+            "## Key hyperparameters\n\nOne approved serval02 card 1 target; a 300-second total diagnostic limit. "
+            "No environment, learner, policy seed, or hyperparameter experiment runs. "
+            "The complete diagnostic has one 300-second total budget: at most 240 seconds of work and 60 seconds of cleanup.\n\n"
             "## Code and config changes\n\nThe root transport and metadata controller hold no standing descriptor. "
             "One tool producer acquires the existing card lock. The tool, waiter and payload receive no copy. "
             "The payload records readonly metadata about its exact known producer. "
@@ -372,6 +432,7 @@ def prepare(arguments):
 
 def main():
     """Separate metadata preparation, descriptor-free controller, sole producer and stdlib payload."""
+    entry_monotonic = time.monotonic()
     parser = argparse.ArgumentParser(description=__doc__)
     operation = parser.add_mutually_exclusive_group(required=True)
     for name in ("controller-unit", "producer-unit", "direct-owned-waiter-unit", "direct-owned-capture-unit"):
@@ -403,7 +464,7 @@ def main():
             direct.adjacent_helper(plan, 'direct_tool_descendants').prepare_native_control()
         metadata_guard()
         if args.controller_unit:
-            controller(args.controller_unit)
+            controller(args.controller_unit, entry_monotonic=entry_monotonic)
         elif args.producer_unit:
             producer(args.producer_unit, runtime=runtime)
         elif args.direct_owned_waiter_unit:

@@ -1,0 +1,53 @@
+test_a_slow_owned_snapshot_cannot_send_a_signal_after_cleanup_expiry (test_direct_diagnostic_time_budget.DeadlineArithmeticTests.test_a_slow_owned_snapshot_cannot_send_a_signal_after_cleanup_expiry)
+Recheck the shared clock after positive identity validation and before the actual pidfd signal. ... ok
+test_cleanup_end_is_retained_once_and_capped_by_original_total (test_direct_diagnostic_time_budget.DeadlineArithmeticTests.test_cleanup_end_is_retained_once_and_capped_by_original_total)
+Repeated cleanup checks cannot turn a sixty-second reservation into a fresh wait. ... ok
+test_common_work_limit_is_not_restarted_by_each_tool (test_direct_diagnostic_time_budget.DeadlineArithmeticTests.test_common_work_limit_is_not_restarted_by_each_tool)
+A later version/capture request receives only time left from the same original start. ... ok
+test_expired_cleanup_keeps_descriptor_and_does_not_signal_or_report_success (test_direct_diagnostic_time_budget.DeadlineArithmeticTests.test_expired_cleanup_keeps_descriptor_and_does_not_signal_or_report_success)
+Stop this synthetic fixture after one loop, before the real source's continued custody observation. ... ok
+test_policy_is_diagnostic_only_and_strictly_typed (test_direct_diagnostic_time_budget.DeadlineArithmeticTests.test_policy_is_diagnostic_only_and_strictly_typed)
+A Boolean duration or formal plan cannot acquire the diagnostic's shared budget. ... ok
+test_preparation_records_one_total_budget_in_both_default_and_native_metadata (test_direct_diagnostic_time_budget.DeadlineArithmeticTests.test_preparation_records_one_total_budget_in_both_default_and_native_metadata)
+Mock only Git publication; verify actual temporary preparation output without starting a process or tool. ... ok
+test_saved_snapshot_refuses_extended_domain_or_cleanup_window (test_direct_diagnostic_time_budget.DeadlineArithmeticTests.test_saved_snapshot_refuses_extended_domain_or_cleanup_window)
+Saved arithmetic cannot extend a deadline or borrow another boot's clock. ... ok
+test_scope_wait_uses_existing_absolute_work_end (test_direct_diagnostic_time_budget.DeadlineArithmeticTests.test_scope_wait_uses_existing_absolute_work_end)
+A request for another300 seconds cannot extend a scope already near its240-second work end. ... ok
+test_origin_is_durable_before_popen_and_has_no_future_producer_identity (test_direct_diagnostic_time_budget.OriginAndControllerTests.test_origin_is_durable_before_popen_and_has_no_future_producer_identity)
+The real publisher writes only verified parent/source/clock fields before any child exists. ... ok
+test_live_role_refuses_a_different_host_or_boot_domain (test_direct_diagnostic_time_budget.OriginAndControllerTests.test_live_role_refuses_a_different_host_or_boot_domain)
+A child cannot reuse correct origin bytes with a different current monotonic domain. ... ok
+test_controller_timeout_has_no_extra_wait_or_holder_signal (test_direct_diagnostic_time_budget.OriginAndControllerTests.test_controller_timeout_has_no_extra_wait_or_holder_signal)
+A late producer remains inconclusive; controller neither kills it nor adds a cleanup wait. ... ok
+test_actual_own_controller_alarm_returns_promptly_and_restores_handler (test_direct_diagnostic_time_budget.ActualControllerTimerTests.test_actual_own_controller_alarm_returns_promptly_and_restores_handler)
+The controller's total timer interrupts its own wait without signalling any other process. ... ok
+test_actual_owned_cpu_cleanup_uses_one_synthetic_early_work_deadline (test_direct_diagnostic_time_budget.ActualControllerTimerTests.test_actual_owned_cpu_cleanup_uses_one_synthetic_early_work_deadline)
+Use the real cleanup code with a five-second remaining work budget and a temporary CPU lock. ... ok
+test_late_existing_release_is_refused_before_acknowledgment (test_direct_diagnostic_budget_boundaries.ReleaseBoundaryTests.test_late_existing_release_is_refused_before_acknowledgment)
+An already present release cannot bypass the final work-deadline check after the wait loop. ... ok
+test_late_payload_does_not_publish_or_complete (test_direct_diagnostic_budget_boundaries.ReleaseBoundaryTests.test_late_payload_does_not_publish_or_complete)
+A late release return cannot start payload work or create a successful native terminal. ... ok
+test_complete_budgeted_roles_and_payload_are_accepted_without_native_calls (test_direct_diagnostic_budget_boundaries.NativeBudgetRoleTests.test_complete_budgeted_roles_and_payload_are_accepted_without_native_calls)
+All three retained snapshots and payload time remain within the same synthetic predecessor budget. ... ok
+test_late_terminal_or_changed_clock_domain_refuses (test_direct_diagnostic_budget_boundaries.NativeBudgetRoleTests.test_late_terminal_or_changed_clock_domain_refuses)
+A native terminal cannot exceed300 seconds or substitute a different boot's clock. ... ok
+test_payload_after_work_deadline_refuses_even_with_updated_hash (test_direct_diagnostic_budget_boundaries.NativeBudgetRoleTests.test_payload_after_work_deadline_refuses_even_with_updated_hash)
+A fresh payload hash cannot permit work after240 seconds on the shared clock. ... ok
+test_closure_returning_after_cleanup_expiry_is_never_labelled_within_budget (__main__.IndependentSlowClosureBoundary.test_closure_returning_after_cleanup_expiry_is_never_labelled_within_budget)
+Assume a verified but late synthetic closure; check only the producer's budget classification. ... FAIL
+
+======================================================================
+FAIL: test_closure_returning_after_cleanup_expiry_is_never_labelled_within_budget (__main__.IndependentSlowClosureBoundary.test_closure_returning_after_cleanup_expiry_is_never_labelled_within_budget)
+Assume a verified but late synthetic closure; check only the producer's budget classification.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-04-23-25_direct-native-diagnostic_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0/.review_metadata/direct_diagnostic_time_budget/run_independent_review.py", line 108, in test_closure_returning_after_cleanup_expiry_is_never_labelled_within_budget
+    self.assertFalse(terminal['within_diagnostic_budget'],
+AssertionError: True is not false : closure completed after the shared deadline but the producer labelled its terminal within budget
+
+----------------------------------------------------------------------
+Ran 19 tests in 5.656s
+
+FAILED (failures=1)
+srun: error: heartpiece: task 0: Exited with exit code 1

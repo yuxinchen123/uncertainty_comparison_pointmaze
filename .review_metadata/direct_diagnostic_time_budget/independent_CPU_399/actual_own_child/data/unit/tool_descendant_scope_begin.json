@@ -1,0 +1,245 @@
+{
+  "actual_echild": true,
+  "diagnostic_deadline": {
+    "cleanup_end_monotonic": null,
+    "cleanup_started_monotonic": null,
+    "clock_domain": {
+      "boot_id": "971d5a32-c6ed-40e8-8923-7943eb5783b1",
+      "clock": "monotonic",
+      "hostname": "heartpiece",
+      "implementation": "clock_gettime(CLOCK_MONOTONIC)"
+    },
+    "observed_monotonic": 820973.998588125,
+    "origin": {
+      "path": "/tmp/tmp5j71_lak/explicit_synthetic_cpu_budget_origin.json",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "started_monotonic": 820738.243144649,
+    "total_end_monotonic": 821038.243144649,
+    "work_end_monotonic": 820978.243144649
+  },
+  "established_at_seconds": 1793865848.9352388,
+  "native_bootstrap": {
+    "external_shared_library_loaded": false,
+    "gpu_or_cuda_qualification": false,
+    "scope": "own-process Linux child-subreaper flag only",
+    "symbol": "prctl",
+    "target": null
+  },
+  "native_request_counts_before": {
+    "PR_GET_CHILD_SUBREAPER": 0,
+    "PR_SET_CHILD_SUBREAPER": 0
+  },
+  "own_child_lists": [
+    {
+      "parent_read_identity": {
+        "after": {
+          "cgroup": "0::/system.slice/slurmstepd.scope/job_6783003/step_399/user/task_0\n",
+          "pid": 1245937,
+          "pidfd_live": true,
+          "process_start_time": "82097301",
+          "stat": "1245937 (python) R 1245930 1245930 1245923 0 -1 4194304 52569 0 0 0 61 29 0 0 20 0 1 0 82097301 41832448 7593 536870912 94202637910016 94202640337693 140722164205680 0 0 0 0 16781312 2 0 0 0 17 9 0 0 0 0 0 94202641763056 94202643744496 94202822615040 140722164208942 140722164209289 140722164209289 140722164215747 0\n",
+          "status": "Name:\tpython\nUmask:\t0022\nState:\tR (running)\nTgid:\t1245937\nNgid:\t0\nPid:\t1245937\nPPid:\t1245930\nTracerPid:\t0\nUid:\t2618919\t2618919\t2618919\t2618919\nGid:\t90030\t90030\t90030\t90030\nFDSize:\t64\nGroups:\t90030 90113 \nNStgid:\t1245937\nNSpid:\t1245937\nNSpgid:\t1245930\nNSsid:\t1245923\nVmPeak:\t  102048 kB\nVmSize:\t   40852 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t   92188 kB\nVmRSS:\t   30372 kB\nRssAnon:\t   18340 kB\nRssFile:\t   12032 kB\nRssShmem:\t       0 kB\nVmData:\t   19824 kB\nVmStk:\t     136 kB\nVmExe:\t    2372 kB\nVmLib:\t    7160 kB\nVmPTE:\t     116 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t1\nThreads:\t1\nSigQ:\t0/641640\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000000000\nSigIgn:\t0000000001001000\nSigCgt:\t0000000000000002\nCapInh:\t0000000000000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tthread vulnerable\nSpeculationIndirectBranch:\tconditional enabled\nCpus_allowed:\t00,00000200\nCpus_allowed_list:\t9\nMems_allowed:\t00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000003\nMems_allowed_list:\t0-1\nvoluntary_ctxt_switches:\t460\nnonvoluntary_ctxt_switches:\t28\n",
+          "uids": [
+            2618919,
+            2618919,
+            2618919,
+            2618919
+          ]
+        },
+        "before": {
+          "cgroup": "0::/system.slice/slurmstepd.scope/job_6783003/step_399/user/task_0\n",
+          "pid": 1245937,
+          "pidfd_live": true,
+          "process_start_time": "82097301",
+          "stat": "1245937 (python) R 1245930 1245930 1245923 0 -1 4194304 52569 0 0 0 61 29 0 0 20 0 1 0 82097301 41832448 7593 536870912 94202637910016 94202640337693 140722164205680 0 0 0 0 16781312 2 0 0 0 17 9 0 0 0 0 0 94202641763056 94202643744496 94202822615040 140722164208942 140722164209289 140722164209289 140722164215747 0\n",
+          "status": "Name:\tpython\nUmask:\t0022\nState:\tR (running)\nTgid:\t1245937\nNgid:\t0\nPid:\t1245937\nPPid:\t1245930\nTracerPid:\t0\nUid:\t2618919\t2618919\t2618919\t2618919\nGid:\t90030\t90030\t90030\t90030\nFDSize:\t64\nGroups:\t90030 90113 \nNStgid:\t1245937\nNSpid:\t1245937\nNSpgid:\t1245930\nNSsid:\t1245923\nVmPeak:\t  102048 kB\nVmSize:\t   40852 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t   92188 kB\nVmRSS:\t   30372 kB\nRssAnon:\t   18340 kB\nRssFile:\t   12032 kB\nRssShmem:\t       0 kB\nVmData:\t   19824 kB\nVmStk:\t     136 kB\nVmExe:\t    2372 kB\nVmLib:\t    7160 kB\nVmPTE:\t     116 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t1\nThreads:\t1\nSigQ:\t0/641640\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000000000\nSigIgn:\t0000000001001000\nSigCgt:\t0000000000000002\nCapInh:\t0000000000000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tthread vulnerable\nSpeculationIndirectBranch:\tconditional enabled\nCpus_allowed:\t00,00000200\nCpus_allowed_list:\t9\nMems_allowed:\t00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000003\nMems_allowed_list:\t0-1\nvoluntary_ctxt_switches:\t460\nnonvoluntary_ctxt_switches:\t28\n",
+          "uids": [
+            2618919,
+            2618919,
+            2618919,
+            2618919
+          ]
+        },
+        "expected_birth": "82097301",
+        "expected_pid": 1245937,
+        "pidfd_live_after": true,
+        "pidfd_live_before": true,
+        "proc_directory_device": 23,
+        "proc_directory_inode": 8436430
+      },
+      "raw": "",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "thread_stat_after": "1245937 (python) R 1245930 1245930 1245923 0 -1 4194304 52569 0 0 0 61 29 0 0 20 0 1 0 82097301 41832448 7593 536870912 94202637910016 94202640337693 140722164205680 0 0 0 0 16781312 2 0 0 0 17 9 0 0 0 0 0 94202641763056 94202643744496 94202822615040 140722164208942 140722164209289 140722164209289 140722164215747 0\n",
+      "thread_stat_before": "1245937 (python) R 1245930 1245930 1245923 0 -1 4194304 52569 0 0 0 61 29 0 0 20 0 1 0 82097301 41832448 7593 536870912 94202637910016 94202640337693 140722164205680 0 0 0 0 16781312 2 0 0 0 17 9 0 0 0 0 0 94202641763056 94202643744496 94202822615040 140722164208942 140722164209289 140722164209289 140722164215747 0\n",
+      "tid": 1245937
+    }
+  ],
+  "previous_subreaper": {
+    "errno": 0,
+    "request": "PR_GET_CHILD_SUBREAPER",
+    "returncode": 0,
+    "value": 0
+  },
+  "producer": {
+    "cgroup": "0::/system.slice/slurmstepd.scope/job_6783003/step_399/user/task_0\n",
+    "cmdline": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python\u0000-I\u0000-S\u0000-B\u0000/p/rlprojects/RND_worktrees/2026-11-04-23-25_direct-native-diagnostic_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/direct_diagnostic_budget_cpu_worker.py\u0000/tmp/tmp5j71_lak\u0000startup_timeout\u0000",
+    "cmdline_sha256": "e429b1efac6c2aab2a249f1c18d49dda4da9c8ae56bee804d0774c36e178e491",
+    "command": [
+      "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+      "-I",
+      "-S",
+      "-B",
+      "/p/rlprojects/RND_worktrees/2026-11-04-23-25_direct-native-diagnostic_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/direct_diagnostic_budget_cpu_worker.py",
+      "/tmp/tmp5j71_lak",
+      "startup_timeout"
+    ],
+    "executable": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python3.12",
+    "observed_at_seconds": 1793865848.1797984,
+    "parent_pid": 1245930,
+    "pid": 1245937,
+    "process_group": 1245930,
+    "process_start_time": "82097301",
+    "session": 1245923,
+    "stat_after": "1245937 (python) R 1245930 1245930 1245923 0 -1 4194304 4851 0 0 0 13 5 0 0 20 0 1 0 82097301 41639936 7455 536870912 94202637910016 94202640337693 140722164205680 0 0 0 0 16781312 2 0 0 0 17 9 0 0 0 0 0 94202641763056 94202643744496 94202822615040 140722164208942 140722164209289 140722164209289 140722164215747 0\n",
+    "stat_before": "1245937 (python) R 1245930 1245930 1245923 0 -1 4194304 4850 0 0 0 13 5 0 0 20 0 1 0 82097301 41639936 7455 536870912 94202637910016 94202640337693 140722164205680 0 0 0 0 16781312 2 0 0 0 17 9 0 0 0 0 0 94202641763056 94202643744496 94202822615040 140722164208942 140722164209289 140722164209289 140722164215747 0\n",
+    "status": "Name:\tpython\nUmask:\t0022\nState:\tR (running)\nTgid:\t1245937\nNgid:\t0\nPid:\t1245937\nPPid:\t1245930\nTracerPid:\t0\nUid:\t2618919\t2618919\t2618919\t2618919\nGid:\t90030\t90030\t90030\t90030\nFDSize:\t64\nGroups:\t90030 90113 \nNStgid:\t1245937\nNSpid:\t1245937\nNSpgid:\t1245930\nNSsid:\t1245923\nVmPeak:\t   40664 kB\nVmSize:\t   40664 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t   29820 kB\nVmRSS:\t   29820 kB\nRssAnon:\t   18148 kB\nRssFile:\t   11672 kB\nRssShmem:\t       0 kB\nVmData:\t   19808 kB\nVmStk:\t     136 kB\nVmExe:\t    2372 kB\nVmLib:\t    7068 kB\nVmPTE:\t     116 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t1\nThreads:\t1\nSigQ:\t0/641640\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000000000\nSigIgn:\t0000000001001000\nSigCgt:\t0000000000000002\nCapInh:\t0000000000000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tthread vulnerable\nSpeculationIndirectBranch:\tconditional enabled\nCpus_allowed:\t00,00000200\nCpus_allowed_list:\t9\nMems_allowed:\t00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000003\nMems_allowed_list:\t0-1\nvoluntary_ctxt_switches:\t183\nnonvoluntary_ctxt_switches:\t14\n",
+    "status_after": "Name:\tpython\nUmask:\t0022\nState:\tR (running)\nTgid:\t1245937\nNgid:\t0\nPid:\t1245937\nPPid:\t1245930\nTracerPid:\t0\nUid:\t2618919\t2618919\t2618919\t2618919\nGid:\t90030\t90030\t90030\t90030\nFDSize:\t64\nGroups:\t90030 90113 \nNStgid:\t1245937\nNSpid:\t1245937\nNSpgid:\t1245930\nNSsid:\t1245923\nVmPeak:\t   40664 kB\nVmSize:\t   40664 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t   29820 kB\nVmRSS:\t   29820 kB\nRssAnon:\t   18148 kB\nRssFile:\t   11672 kB\nRssShmem:\t       0 kB\nVmData:\t   19808 kB\nVmStk:\t     136 kB\nVmExe:\t    2372 kB\nVmLib:\t    7068 kB\nVmPTE:\t     116 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t1\nThreads:\t1\nSigQ:\t0/641640\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000000000\nSigIgn:\t0000000001001000\nSigCgt:\t0000000000000002\nCapInh:\t0000000000000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tthread vulnerable\nSpeculationIndirectBranch:\tconditional enabled\nCpus_allowed:\t00,00000200\nCpus_allowed_list:\t9\nMems_allowed:\t00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000003\nMems_allowed_list:\t0-1\nvoluntary_ctxt_switches:\t183\nnonvoluntary_ctxt_switches:\t14\n",
+    "uids": [
+      2618919,
+      2618919,
+      2618919,
+      2618919
+    ]
+  },
+  "set_subreaper": {
+    "errno": 0,
+    "request": "PR_SET_CHILD_SUBREAPER",
+    "returncode": 0,
+    "value": 1
+  },
+  "single_threaded_closed_scope": true,
+  "standing_descriptor_before": {
+    "fd": 3,
+    "fd_stat": {
+      "device": 64768,
+      "inode": 7342997,
+      "mode": 420,
+      "regular_file": true,
+      "uid": 2618919
+    },
+    "fd_target": "/tmp/tmp5j71_lak/temporary_cpu_lock",
+    "fdinfo": "pos:\t0\nflags:\t02100002\nmnt_id:\t30\nino:\t7342997\nlock:\t1: FLOCK  ADVISORY  WRITE 1245937 fd:00:7342997 0 EOF\n",
+    "fdinfo_sha256": "035bc69a2d199a1453d4cf3b69e48b255b633e350b0bba0b826de44129c26ddb",
+    "local_to_producer": true,
+    "path": "/tmp/tmp5j71_lak/temporary_cpu_lock",
+    "path_stat": {
+      "device": 64768,
+      "inode": 7342997,
+      "mode": 420,
+      "regular_file": true,
+      "uid": 2618919
+    },
+    "path_symlink": false,
+    "producer": {
+      "cgroup": "0::/system.slice/slurmstepd.scope/job_6783003/step_399/user/task_0\n",
+      "cmdline": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python\u0000-I\u0000-S\u0000-B\u0000/p/rlprojects/RND_worktrees/2026-11-04-23-25_direct-native-diagnostic_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/direct_diagnostic_budget_cpu_worker.py\u0000/tmp/tmp5j71_lak\u0000startup_timeout\u0000",
+      "cmdline_sha256": "e429b1efac6c2aab2a249f1c18d49dda4da9c8ae56bee804d0774c36e178e491",
+      "command": [
+        "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+        "-I",
+        "-S",
+        "-B",
+        "/p/rlprojects/RND_worktrees/2026-11-04-23-25_direct-native-diagnostic_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/direct_diagnostic_budget_cpu_worker.py",
+        "/tmp/tmp5j71_lak",
+        "startup_timeout"
+      ],
+      "executable": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python3.12",
+      "observed_at_seconds": 1793865848.1797984,
+      "parent_pid": 1245930,
+      "pid": 1245937,
+      "process_group": 1245930,
+      "process_start_time": "82097301",
+      "session": 1245923,
+      "stat_after": "1245937 (python) R 1245930 1245930 1245923 0 -1 4194304 4851 0 0 0 13 5 0 0 20 0 1 0 82097301 41639936 7455 536870912 94202637910016 94202640337693 140722164205680 0 0 0 0 16781312 2 0 0 0 17 9 0 0 0 0 0 94202641763056 94202643744496 94202822615040 140722164208942 140722164209289 140722164209289 140722164215747 0\n",
+      "stat_before": "1245937 (python) R 1245930 1245930 1245923 0 -1 4194304 4850 0 0 0 13 5 0 0 20 0 1 0 82097301 41639936 7455 536870912 94202637910016 94202640337693 140722164205680 0 0 0 0 16781312 2 0 0 0 17 9 0 0 0 0 0 94202641763056 94202643744496 94202822615040 140722164208942 140722164209289 140722164209289 140722164215747 0\n",
+      "status": "Name:\tpython\nUmask:\t0022\nState:\tR (running)\nTgid:\t1245937\nNgid:\t0\nPid:\t1245937\nPPid:\t1245930\nTracerPid:\t0\nUid:\t2618919\t2618919\t2618919\t2618919\nGid:\t90030\t90030\t90030\t90030\nFDSize:\t64\nGroups:\t90030 90113 \nNStgid:\t1245937\nNSpid:\t1245937\nNSpgid:\t1245930\nNSsid:\t1245923\nVmPeak:\t   40664 kB\nVmSize:\t   40664 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t   29820 kB\nVmRSS:\t   29820 kB\nRssAnon:\t   18148 kB\nRssFile:\t   11672 kB\nRssShmem:\t       0 kB\nVmData:\t   19808 kB\nVmStk:\t     136 kB\nVmExe:\t    2372 kB\nVmLib:\t    7068 kB\nVmPTE:\t     116 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t1\nThreads:\t1\nSigQ:\t0/641640\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000000000\nSigIgn:\t0000000001001000\nSigCgt:\t0000000000000002\nCapInh:\t0000000000000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tthread vulnerable\nSpeculationIndirectBranch:\tconditional enabled\nCpus_allowed:\t00,00000200\nCpus_allowed_list:\t9\nMems_allowed:\t00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000003\nMems_allowed_list:\t0-1\nvoluntary_ctxt_switches:\t183\nnonvoluntary_ctxt_switches:\t14\n",
+      "status_after": "Name:\tpython\nUmask:\t0022\nState:\tR (running)\nTgid:\t1245937\nNgid:\t0\nPid:\t1245937\nPPid:\t1245930\nTracerPid:\t0\nUid:\t2618919\t2618919\t2618919\t2618919\nGid:\t90030\t90030\t90030\t90030\nFDSize:\t64\nGroups:\t90030 90113 \nNStgid:\t1245937\nNSpid:\t1245937\nNSpgid:\t1245930\nNSsid:\t1245923\nVmPeak:\t   40664 kB\nVmSize:\t   40664 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t   29820 kB\nVmRSS:\t   29820 kB\nRssAnon:\t   18148 kB\nRssFile:\t   11672 kB\nRssShmem:\t       0 kB\nVmData:\t   19808 kB\nVmStk:\t     136 kB\nVmExe:\t    2372 kB\nVmLib:\t    7068 kB\nVmPTE:\t     116 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t1\nThreads:\t1\nSigQ:\t0/641640\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000000000\nSigIgn:\t0000000001001000\nSigCgt:\t0000000000000002\nCapInh:\t0000000000000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tthread vulnerable\nSpeculationIndirectBranch:\tconditional enabled\nCpus_allowed:\t00,00000200\nCpus_allowed_list:\t9\nMems_allowed:\t00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000003\nMems_allowed_list:\t0-1\nvoluntary_ctxt_switches:\t183\nnonvoluntary_ctxt_switches:\t14\n",
+      "uids": [
+        2618919,
+        2618919,
+        2618919,
+        2618919
+      ]
+    },
+    "producer_after": {
+      "cgroup": "0::/system.slice/slurmstepd.scope/job_6783003/step_399/user/task_0\n",
+      "cmdline": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python\u0000-I\u0000-S\u0000-B\u0000/p/rlprojects/RND_worktrees/2026-11-04-23-25_direct-native-diagnostic_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/direct_diagnostic_budget_cpu_worker.py\u0000/tmp/tmp5j71_lak\u0000startup_timeout\u0000",
+      "cmdline_sha256": "e429b1efac6c2aab2a249f1c18d49dda4da9c8ae56bee804d0774c36e178e491",
+      "command": [
+        "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+        "-I",
+        "-S",
+        "-B",
+        "/p/rlprojects/RND_worktrees/2026-11-04-23-25_direct-native-diagnostic_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/direct_diagnostic_budget_cpu_worker.py",
+        "/tmp/tmp5j71_lak",
+        "startup_timeout"
+      ],
+      "executable": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python3.12",
+      "observed_at_seconds": 1793865848.9330416,
+      "parent_pid": 1245930,
+      "pid": 1245937,
+      "process_group": 1245930,
+      "process_start_time": "82097301",
+      "session": 1245923,
+      "stat_after": "1245937 (python) R 1245930 1245930 1245923 0 -1 4194304 52569 0 0 0 60 29 0 0 20 0 1 0 82097301 41832448 7593 536870912 94202637910016 94202640337693 140722164205680 0 0 0 0 16781312 2 0 0 0 17 9 0 0 0 0 0 94202641763056 94202643744496 94202822615040 140722164208942 140722164209289 140722164209289 140722164215747 0\n",
+      "stat_before": "1245937 (python) R 1245930 1245930 1245923 0 -1 4194304 52569 0 0 0 60 29 0 0 20 0 1 0 82097301 41832448 7593 536870912 94202637910016 94202640337693 140722164205680 0 0 0 0 16781312 2 0 0 0 17 9 0 0 0 0 0 94202641763056 94202643744496 94202822615040 140722164208942 140722164209289 140722164209289 140722164215747 0\n",
+      "status": "Name:\tpython\nUmask:\t0022\nState:\tR (running)\nTgid:\t1245937\nNgid:\t0\nPid:\t1245937\nPPid:\t1245930\nTracerPid:\t0\nUid:\t2618919\t2618919\t2618919\t2618919\nGid:\t90030\t90030\t90030\t90030\nFDSize:\t64\nGroups:\t90030 90113 \nNStgid:\t1245937\nNSpid:\t1245937\nNSpgid:\t1245930\nNSsid:\t1245923\nVmPeak:\t  102048 kB\nVmSize:\t   40852 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t   92188 kB\nVmRSS:\t   30372 kB\nRssAnon:\t   18340 kB\nRssFile:\t   12032 kB\nRssShmem:\t       0 kB\nVmData:\t   19824 kB\nVmStk:\t     136 kB\nVmExe:\t    2372 kB\nVmLib:\t    7160 kB\nVmPTE:\t     116 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t1\nThreads:\t1\nSigQ:\t0/641640\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000000000\nSigIgn:\t0000000001001000\nSigCgt:\t0000000000000002\nCapInh:\t0000000000000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tthread vulnerable\nSpeculationIndirectBranch:\tconditional enabled\nCpus_allowed:\t00,00000200\nCpus_allowed_list:\t9\nMems_allowed:\t00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000003\nMems_allowed_list:\t0-1\nvoluntary_ctxt_switches:\t459\nnonvoluntary_ctxt_switches:\t28\n",
+      "status_after": "Name:\tpython\nUmask:\t0022\nState:\tR (running)\nTgid:\t1245937\nNgid:\t0\nPid:\t1245937\nPPid:\t1245930\nTracerPid:\t0\nUid:\t2618919\t2618919\t2618919\t2618919\nGid:\t90030\t90030\t90030\t90030\nFDSize:\t64\nGroups:\t90030 90113 \nNStgid:\t1245937\nNSpid:\t1245937\nNSpgid:\t1245930\nNSsid:\t1245923\nVmPeak:\t  102048 kB\nVmSize:\t   40852 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t   92188 kB\nVmRSS:\t   30372 kB\nRssAnon:\t   18340 kB\nRssFile:\t   12032 kB\nRssShmem:\t       0 kB\nVmData:\t   19824 kB\nVmStk:\t     136 kB\nVmExe:\t    2372 kB\nVmLib:\t    7160 kB\nVmPTE:\t     116 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t1\nThreads:\t1\nSigQ:\t0/641640\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000000000\nSigIgn:\t0000000001001000\nSigCgt:\t0000000000000002\nCapInh:\t0000000000000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tthread vulnerable\nSpeculationIndirectBranch:\tconditional enabled\nCpus_allowed:\t00,00000200\nCpus_allowed_list:\t9\nMems_allowed:\t00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000003\nMems_allowed_list:\t0-1\nvoluntary_ctxt_switches:\t459\nnonvoluntary_ctxt_switches:\t28\n",
+      "uids": [
+        2618919,
+        2618919,
+        2618919,
+        2618919
+      ]
+    },
+    "producer_before": {
+      "cgroup": "0::/system.slice/slurmstepd.scope/job_6783003/step_399/user/task_0\n",
+      "cmdline": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python\u0000-I\u0000-S\u0000-B\u0000/p/rlprojects/RND_worktrees/2026-11-04-23-25_direct-native-diagnostic_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/direct_diagnostic_budget_cpu_worker.py\u0000/tmp/tmp5j71_lak\u0000startup_timeout\u0000",
+      "cmdline_sha256": "e429b1efac6c2aab2a249f1c18d49dda4da9c8ae56bee804d0774c36e178e491",
+      "command": [
+        "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+        "-I",
+        "-S",
+        "-B",
+        "/p/rlprojects/RND_worktrees/2026-11-04-23-25_direct-native-diagnostic_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/direct_diagnostic_budget_cpu_worker.py",
+        "/tmp/tmp5j71_lak",
+        "startup_timeout"
+      ],
+      "executable": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python3.12",
+      "observed_at_seconds": 1793865848.9326952,
+      "parent_pid": 1245930,
+      "pid": 1245937,
+      "process_group": 1245930,
+      "process_start_time": "82097301",
+      "session": 1245923,
+      "stat_after": "1245937 (python) R 1245930 1245930 1245923 0 -1 4194304 52569 0 0 0 60 29 0 0 20 0 1 0 82097301 41832448 7593 536870912 94202637910016 94202640337693 140722164205680 0 0 0 0 16781312 2 0 0 0 17 9 0 0 0 0 0 94202641763056 94202643744496 94202822615040 140722164208942 140722164209289 140722164209289 140722164215747 0\n",
+      "stat_before": "1245937 (python) R 1245930 1245930 1245923 0 -1 4194304 52569 0 0 0 60 29 0 0 20 0 1 0 82097301 41832448 7593 536870912 94202637910016 94202640337693 140722164205680 0 0 0 0 16781312 2 0 0 0 17 9 0 0 0 0 0 94202641763056 94202643744496 94202822615040 140722164208942 140722164209289 140722164209289 140722164215747 0\n",
+      "status": "Name:\tpython\nUmask:\t0022\nState:\tR (running)\nTgid:\t1245937\nNgid:\t0\nPid:\t1245937\nPPid:\t1245930\nTracerPid:\t0\nUid:\t2618919\t2618919\t2618919\t2618919\nGid:\t90030\t90030\t90030\t90030\nFDSize:\t64\nGroups:\t90030 90113 \nNStgid:\t1245937\nNSpid:\t1245937\nNSpgid:\t1245930\nNSsid:\t1245923\nVmPeak:\t  102048 kB\nVmSize:\t   40852 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t   92188 kB\nVmRSS:\t   30372 kB\nRssAnon:\t   18340 kB\nRssFile:\t   12032 kB\nRssShmem:\t       0 kB\nVmData:\t   19824 kB\nVmStk:\t     136 kB\nVmExe:\t    2372 kB\nVmLib:\t    7160 kB\nVmPTE:\t     116 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t1\nThreads:\t1\nSigQ:\t0/641640\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000000000\nSigIgn:\t0000000001001000\nSigCgt:\t0000000000000002\nCapInh:\t0000000000000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tthread vulnerable\nSpeculationIndirectBranch:\tconditional enabled\nCpus_allowed:\t00,00000200\nCpus_allowed_list:\t9\nMems_allowed:\t00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000003\nMems_allowed_list:\t0-1\nvoluntary_ctxt_switches:\t459\nnonvoluntary_ctxt_switches:\t28\n",
+      "status_after": "Name:\tpython\nUmask:\t0022\nState:\tR (running)\nTgid:\t1245937\nNgid:\t0\nPid:\t1245937\nPPid:\t1245930\nTracerPid:\t0\nUid:\t2618919\t2618919\t2618919\t2618919\nGid:\t90030\t90030\t90030\t90030\nFDSize:\t64\nGroups:\t90030 90113 \nNStgid:\t1245937\nNSpid:\t1245937\nNSpgid:\t1245930\nNSsid:\t1245923\nVmPeak:\t  102048 kB\nVmSize:\t   40852 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t   92188 kB\nVmRSS:\t   30372 kB\nRssAnon:\t   18340 kB\nRssFile:\t   12032 kB\nRssShmem:\t       0 kB\nVmData:\t   19824 kB\nVmStk:\t     136 kB\nVmExe:\t    2372 kB\nVmLib:\t    7160 kB\nVmPTE:\t     116 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t1\nThreads:\t1\nSigQ:\t0/641640\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000000000\nSigIgn:\t0000000001001000\nSigCgt:\t0000000000000002\nCapInh:\t0000000000000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tthread vulnerable\nSpeculationIndirectBranch:\tconditional enabled\nCpus_allowed:\t00,00000200\nCpus_allowed_list:\t9\nMems_allowed:\t00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000003\nMems_allowed_list:\t0-1\nvoluntary_ctxt_switches:\t459\nnonvoluntary_ctxt_switches:\t28\n",
+      "uids": [
+        2618919,
+        2618919,
+        2618919,
+        2618919
+      ]
+    },
+    "read_by_pid": 1245937
+  },
+  "verified_subreaper": {
+    "errno": 0,
+    "request": "PR_GET_CHILD_SUBREAPER",
+    "returncode": 0,
+    "value": 1
+  }
+}
