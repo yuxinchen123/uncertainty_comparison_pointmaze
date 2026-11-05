@@ -92,6 +92,14 @@ def checked_reference(value):
     return read(value["path"])[0]
 
 
+def accepted_snapshot_support(plan):
+    """Load only the explicitly declared adjacent accepted-history metadata reader."""
+    import direct_measurement as support
+    module = support.adjacent("accepted_evidence_snapshot")
+    module.require_plan(plan)
+    return module
+
+
 def contract(plan):
     """Limit this helper to the exact direct common seven-by-ten comparison."""
     require(plan.get("kind") == "selected_configuration_measurement" and plan.get("mode") == "confirmation"
@@ -112,15 +120,20 @@ def contract(plan):
         and type(backend["expected"]["path"]) is str and Path(backend["expected"]["path"]).is_absolute()
         and type(backend["expected"]["sha256"]) is str
         and re.fullmatch(r"[0-9a-f]{64}", backend["expected"]["sha256"])
-        and len(plan["helpers"]["files"]) == 28
+        and len(plan["helpers"]["files"]) == (29 if "accepted_evidence_snapshot_protocol" in plan else 28)
         and plan["helpers"]["files"].get(PREFIX + "direct_backend_image.py") ==
             digest(Path(__file__).with_name("direct_backend_image.py").read_bytes()),
-        "direct common confirmation requires its exact new backend record and all 28 helpers")
-    historical = Path(__file__).with_name(HISTORICAL_NAME)
-    require(encoded(plan.get("direct_historical_consumer_protocol")) == encoded(HISTORICAL_PROTOCOL)
-        and historical.resolve(strict=True) == historical and historical.is_file()
-        and plan["helpers"]["files"].get(PREFIX + HISTORICAL_NAME) == digest(historical.read_bytes()),
-        "the explicit current read-only historical consumer protocol and source are required")
+        "direct common confirmation requires its exact backend record and complete declared helper set")
+    if "accepted_evidence_snapshot_protocol" in plan:
+        require("direct_historical_consumer_protocol" not in plan,
+            "accepted history and repeated historical raw recomputation cannot be mixed")
+        accepted_snapshot_support(plan)
+    else:
+        historical = Path(__file__).with_name(HISTORICAL_NAME)
+        require(encoded(plan.get("direct_historical_consumer_protocol")) == encoded(HISTORICAL_PROTOCOL)
+            and historical.resolve(strict=True) == historical and historical.is_file()
+            and plan["helpers"]["files"].get(PREFIX + HISTORICAL_NAME) == digest(historical.read_bytes()),
+            "the explicit current read-only historical consumer protocol and source are required")
     inputs = plan.get("common_correctness_inputs")
     require(isinstance(inputs, dict) and set(inputs) == {"result", "review"},
         "actual direct common correctness and genuine independent review are required")
@@ -144,7 +157,8 @@ def contract(plan):
     require(digest(Path(__file__).read_bytes()) == plan["helpers"]["files"].get(PREFIX + NAME),
         "the exact optional direct prerequisite helper must be staged")
     global _ACTIVE_HISTORICAL_SOURCE_SHA256
-    _ACTIVE_HISTORICAL_SOURCE_SHA256 = plan["helpers"]["files"][PREFIX + HISTORICAL_NAME]
+    _ACTIVE_HISTORICAL_SOURCE_SHA256 = (None if "accepted_evidence_snapshot_protocol" in plan
+        else plan["helpers"]["files"][PREFIX + HISTORICAL_NAME])
     return inputs
 
 
@@ -323,6 +337,8 @@ def qualification_reader_extension(original_path, current_path):
 def validate_actual(plan, plan_sha256):
     """Read actual direct correctness and terminal raw gates in this isolated metadata child."""
     inputs = contract(plan)
+    if "accepted_evidence_snapshot_protocol" in plan:
+        return accepted_snapshot_support(plan).common_validation(plan, plan_sha256)
     import direct_measurement as support
     import post_comparison_validation as validation
     import diagnose_gpu_execution as diagnostic
@@ -464,7 +480,18 @@ def request(plan, raw=None, directory=None):
         and type(proof.get("parent_pid")) is int and proof["parent_pid"] == os.getpid()
         and proof.get("numerical_imports") == [] and type(proof.get("gpu_operations")) is int and proof["gpu_operations"] == 0,
         "the isolated correctness child returned another plan or parent")
-    validate_repository_configuration_proof(proof.get("repository_configuration_validation"))
+    if "accepted_evidence_snapshot_protocol" in plan:
+        require(proof.get("kind") == "reviewed_accepted_direct_common_correctness_validation"
+            and proof.get("accepted_evidence_snapshot_inputs") == plan["accepted_evidence_snapshot_inputs"]
+            and proof.get("historical_raw_gates_recomputed") is False
+            and proof.get("cpu_snapshot_reused_as_reviewed_historical_fact") is True
+            and proof.get("gpu_time_historical_byte_equality_asserted") is False
+            and proof.get("repository_configuration_validation") == {
+                "kind": "reviewed_historical_cpu_snapshot_no_repository_commands",
+                "repository_commands_executed": 0, "current_live_source_validation_performed_elsewhere": True},
+            "the metadata child did not retain the declared complete accepted historical fact")
+    else:
+        validate_repository_configuration_proof(proof.get("repository_configuration_validation"))
     validate_bootstrap_record(proof.get("stdlib_ctypes_bootstrap"))
     return proof
 
@@ -517,7 +544,9 @@ def result_binding(directory, plan):
         and captured["returncode"] == 0 and captured.get("error") is None
         and captured.get("stdout_sha256") == digest(stdout) and captured.get("stderr_sha256") == digest(stderr)
         and stderr == b"" and json.loads(stdout) == proof, "the actual metadata child result changed")
-    require(proof.get("kind") == "isolated_direct_common_correctness_validation" and proof.get("passed") is True
+    expected_kind = ("reviewed_accepted_direct_common_correctness_validation" if "accepted_evidence_snapshot_protocol" in plan
+        else "isolated_direct_common_correctness_validation")
+    require(proof.get("kind") == expected_kind and proof.get("passed") is True
         and proof.get("plan_sha256") == digest((Path(directory) / "measurement_plan.json").read_bytes())
         and proof.get("common_correctness_inputs") == plan["common_correctness_inputs"], "common correctness validation no longer binds this plan")
     validate_bootstrap_record(proof.get("stdlib_ctypes_bootstrap"))
@@ -901,10 +930,14 @@ def main():
     require(len(raw) <= LIMIT, "direct common confirmation plan exceeds its metadata bound")
     plan = json.loads(raw)
     context = metadata_compute_context(plan)
-    roots.update(declared_git_roots(plan))
+    if "accepted_evidence_snapshot_protocol" not in plan:
+        roots.update(declared_git_roots(plan))
     sys.path.insert(0, str(Path(__file__).absolute().parent))
     proof = validate_actual(plan, digest(raw))
-    proof["repository_configuration_validation"] = finish_repository_configurations()
+    proof["repository_configuration_validation"] = ({
+        "kind": "reviewed_historical_cpu_snapshot_no_repository_commands", "repository_commands_executed": 0,
+        "current_live_source_validation_performed_elsewhere": True} if "accepted_evidence_snapshot_protocol" in plan
+        else finish_repository_configurations())
     proof["metadata_compute_context"] = context
     proof["stdlib_ctypes_bootstrap"] = bootstrap
     print(json.dumps(proof, allow_nan=False))

@@ -658,6 +658,8 @@ def validate_test_collection(plan, tests, stdout):
 
 def verify_qualification_inputs(plan):
     """Refuse a missing, changed, unrelated or unreviewed actual full-original qualification."""
+    if "accepted_evidence_snapshot_protocol" in plan:
+        return adjacent("accepted_evidence_snapshot").qualification(plan)
     if "common_correctness_inputs" in plan:
         return historical_support(plan).request(plan, "qualification")
     identity = core()

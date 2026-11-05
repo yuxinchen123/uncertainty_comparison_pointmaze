@@ -199,6 +199,9 @@ def snapshot_exit_history(exit_plan, observations, stop, status):
 
 def validate_history(plan):
     """Rederive the full initial study and exit before any new direct contact."""
+    if "accepted_evidence_snapshot_protocol" in plan:
+        validate_plan(plan); source_identity(plan)
+        return adjacent("direct_measurement").adjacent("accepted_evidence_snapshot").history(plan)
     options = validate_plan(plan); unit = unit_directory(plan); source_identity(plan)
     inputs = read_receipt(options["frozen_inputs"])
     names = {"admission", "registry", "evidence_manifest", "exit_plan", "exit_observations", "worker_stop", "exit_status"}

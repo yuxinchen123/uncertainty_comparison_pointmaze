@@ -1,0 +1,86 @@
+{
+  "actual_execution_source": "Pin this exact reviewed old-compatible candidate commit as private29 source after publication; merged integration bytes are not substituted into the reviewed candidate.",
+  "candidate_parent": "7fef164909b5eb8b31636da7ae0c653282388203",
+  "current_integration": "52246031938017a018b75fd162b25af9b16f9a89",
+  "independent_review_sha256": "d74c0358afb3ccfb1003c0efca5f793e4898291557da3916dfd045ec4fdeeb2a",
+  "kind": "reviewed_old_compatible_snapshot_candidate_incoming_source_comparison",
+  "merge_rule": "Three-way merge the reviewed patch relative to its parent. Never replace whole older source files. Preserve newer unrelated integration functions and modules. Root alone performs merge/publication.",
+  "no_source_edits_or_test_repetition_after_review": true,
+  "review_source_sha256": "fba1d30a0580a06750f1641683613a4ad3a08fa93389f467e1fd723a7ab48428",
+  "schema_version": 1,
+  "source_paths": [
+    {
+      "candidate_sha256": "fba1d30a0580a06750f1641683613a4ad3a08fa93389f467e1fd723a7ab48428",
+      "current_integration_exists": false,
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/accepted_evidence_snapshot.py"
+    },
+    {
+      "added_functions": [
+        "accepted_snapshot_support"
+      ],
+      "candidate_sha256": "e406a76f04fba2329f15642eb0144033ac1160cef13ef94bc3ab9bf12df38662",
+      "current_integration_sha256": "0653f2a8b9ab51ef3037d47be74b0773051205f5fb949ff64ad9f4d17726b749",
+      "different_functions": [
+        "contract",
+        "main",
+        "request",
+        "result_binding",
+        "validate_actual"
+      ],
+      "integration_functions_to_preserve": {},
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_confirmation.py"
+    },
+    {
+      "added_functions": [],
+      "candidate_sha256": "db6f97ce66a808193da3b23eee1a34a871670021cc9178c44e0377d64b6742e4",
+      "current_integration_sha256": "a926bf592f19f3921ee5ec5b139e03fef04270dda0238bae1be2b01c1574f300",
+      "different_functions": [
+        "validate_capture_wait",
+        "validate_profile_terminal",
+        "verify_observer_helpers",
+        "verify_qualification_inputs",
+        "verify_saved_measurement"
+      ],
+      "integration_functions_to_preserve": {
+        "validate_capture_wait": "81fba5e603c7ee7724b1b6d0701b642f9fa4c8e30f69fa15463eb00a37c108aa",
+        "validate_profile_terminal": "899879d6fd5dd015aa80b66ce4e7e7231ed66c5de5f280ebb86486d73e10ceef",
+        "verify_observer_helpers": "c77f493264a234813cc8ade40e2ac562e61758d2113a728021ccd9835fe33a64",
+        "verify_saved_measurement": "05646a1edee497c0380d73115f49c8f6e5d0a59e1bd9fa38d71642a1b5d2f647"
+      },
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py"
+    },
+    {
+      "added_functions": [],
+      "candidate_sha256": "fe8725b2e641d1c60de31bdd5ae49b31745222c6cf436b7202c330741df859ab",
+      "current_integration_sha256": "a1ef9d787cb7387be88a078eac6d3bae9c853d3ceb3ac6a6aeb471e71e3aff4d",
+      "different_functions": [
+        "parse_arguments",
+        "prepare",
+        "required_helpers"
+      ],
+      "integration_functions_to_preserve": {},
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py"
+    },
+    {
+      "added_functions": [],
+      "candidate_sha256": "bb72f3dd31bfb9ffc062038a4be6b974fa3aff3feee26e558d4a4a4353424069",
+      "current_integration_sha256": "941f5ec35fa790f7c59e66274627c7ef198e366e48e0c462e9602881080d62f6",
+      "different_functions": [
+        "binding_directory",
+        "live_custody",
+        "metadata_directory",
+        "validate_binding",
+        "validate_history",
+        "validate_metadata"
+      ],
+      "integration_functions_to_preserve": {
+        "binding_directory": "44aab9ff8e95f95486a3b12228860f5716b6e6a0b908fbc4557ac3c469140cea",
+        "live_custody": "1a26e60b40b95114c95b19631d1430898f77eafe98cff72fcf559474211ae7f0",
+        "metadata_directory": "099fb4c08b57c43fb9560f75618690c2e271bcf50411d87835b311e1c1782cb3",
+        "validate_binding": "4c0a563ae58d9cb7cc208e3d4f0d993d565cc5a4ba30c58806a4e2f812e8d53b",
+        "validate_metadata": "e7f9909704fe609cd2e98037da29e4e1c60c2317ee241c17945c77606d238ada"
+      },
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py"
+    }
+  ]
+}

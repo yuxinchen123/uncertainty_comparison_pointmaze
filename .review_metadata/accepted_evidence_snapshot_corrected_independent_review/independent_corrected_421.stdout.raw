@@ -1,0 +1,33 @@
+test_boolean_schema_and_seed_substitutions_are_refused (__main__.IndependentBoundaryChecks)
+Equal-looking Boolean counters cannot replace exact schemas or independent seeds. ... ok
+test_cold_exact_twenty_nine_helper_staging_and_changed_bytes_refusal (__main__.IndependentBoundaryChecks)
+A fresh staged namespace contains exactly the intended source set before any raw snapshot exists. ... ok
+test_cpu_descriptor_identities_are_not_asserted_on_other_hosts (__main__.IndependentBoundaryChecks)
+A complete explicitly synthetic CPU fact is not compared to a worker host's device numbers. ... ok
+test_invalid_metadata_cache_stays_failed_after_parent_path_restoration (__main__.IndependentBoundaryChecks)
+A failed alias check must permanently invalidate the same retained metadata cache. ... ok
+test_nonregular_file_is_refused_before_open (__main__.IndependentBoundaryChecks)
+The ordinary-file boundary must reject a FIFO before opening a special file. ... ok
+test_original_reader_bodies_and_all_live_functions_are_unchanged (__main__.IndependentBoundaryChecks)
+Only explicit new dispatches change; actual compute, binding, backend and numerical source remain intact. ... ok
+test_real_owned_compute_context_rejects_forged_job_environment (__main__.IndependentBoundaryChecks)
+The current kernel cgroup and all UIDs must match the declared job and step. ... ok
+test_unmapped_historical_node_driver_has_no_live_path_fallback (__main__.IndependentBoundaryChecks)
+A missing captured driver reference must not become a read of today's node-local path. ... ok
+test_deadline_and_direct_identity_refusals_cannot_be_revived (__main__.NewNarrowBoundaries) ... ok
+test_exact_source_and_reference_fields_are_required_not_suffixes (__main__.NewNarrowBoundaries) ... ok
+test_post_open_special_file_refused_before_any_read_and_closed (__main__.NewNarrowBoundaries) ... ok
+test_real_accepted_Q_C1_C2_asset_schema_and_negative_raw_receipt (__main__.NewNarrowBoundaries) ... FAIL
+
+======================================================================
+FAIL: test_real_accepted_Q_C1_C2_asset_schema_and_negative_raw_receipt (__main__.NewNarrowBoundaries)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-04-23-24_accepted-evidence-snapshot_original-helpers-26_common-helpers-29_validation-seconds-300_hash-physical-files-once_gpu-count-0_processor-count-1_host-memory-mib-512/.review_metadata/accepted_evidence_snapshot_corrected_independent_review/run_independent_corrected_checks.py", line 109, in test_real_accepted_Q_C1_C2_asset_schema_and_negative_raw_receipt
+    self.assertLess(files.bytes_hashed, 4 * 1024 * 1024)
+AssertionError: 25399720 not less than 4194304
+
+----------------------------------------------------------------------
+Ran 12 tests in 2.963s
+
+FAILED (failures=1)
