@@ -1,0 +1,24 @@
+{
+  "gpu_or_cuda_qualification": false,
+  "native_prctl_request_counts": {
+    "PR_GET_CHILD_SUBREAPER": 4,
+    "PR_SET_CHILD_SUBREAPER": 2
+  },
+  "native_process_control_only": true,
+  "restore": {
+    "errno": 0,
+    "request": "PR_SET_CHILD_SUBREAPER",
+    "returncode": 0,
+    "value": 0
+  },
+  "terminal": {
+    "path": "/tmp/tmps8w10pps/data/unit/tool_descendant_scope_terminal.json",
+    "sha256": "0c1972da201c8cc48043b68bc2864720012e176c397f0548e300bc838be17eaa"
+  },
+  "verified": {
+    "errno": 0,
+    "request": "PR_GET_CHILD_SUBREAPER",
+    "returncode": 0,
+    "value": 0
+  }
+}

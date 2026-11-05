@@ -1,0 +1,222 @@
+{
+  "kind": "linux-x86-64-libc-syscall-pidfd-version-1",
+  "contract": {
+    "kind": "linux-x86-64-libc-syscall-pidfd-version-1",
+    "abi": {
+      "platform": "linux",
+      "machine": "x86_64",
+      "byteorder": "little",
+      "long_bytes": 8,
+      "int_bytes": 4,
+      "pointer_bytes": 8
+    },
+    "syscall_numbers": {
+      "pidfd_open": 434,
+      "pidfd_send_signal": 424
+    },
+    "headers": {
+      "/usr/include/unistd.h": {
+        "path": "/usr/include/unistd.h",
+        "sha256": "99eb4050035a1a816090762770f0843c728666745d7e727e64dc347d8a99ac28",
+        "size_bytes": 44967,
+        "uid": 0,
+        "mode": 420,
+        "device": 64768,
+        "inode": 6039378
+      },
+      "/usr/include/x86_64-linux-gnu/asm/unistd_64.h": {
+        "path": "/usr/include/x86_64-linux-gnu/asm/unistd_64.h",
+        "sha256": "9f1c975001d7cd39af3a2c14d518d80b0aaaab8bec3ad12b5e56419bdc8cafbe",
+        "size_bytes": 9687,
+        "uid": 0,
+        "mode": 420,
+        "device": 64768,
+        "inode": 7874122
+      }
+    },
+    "symbols": {
+      "syscall": {
+        "image": {
+          "path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+          "sha256": "6813de4f45796f58134ca3f06b3179344ddfea192cad73ea0af35375b1b66e76",
+          "size_bytes": 2220400,
+          "uid": 0,
+          "mode": 493,
+          "device": 64768,
+          "inode": 6040223
+        },
+        "symbol_file_offset": 1173616
+      },
+      "close": {
+        "image": {
+          "path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+          "sha256": "6813de4f45796f58134ca3f06b3179344ddfea192cad73ea0af35375b1b66e76",
+          "size_bytes": 2220400,
+          "uid": 0,
+          "mode": 493,
+          "device": 64768,
+          "inode": 6040223
+        },
+        "symbol_file_offset": 1134416
+      }
+    },
+    "selected_python": {
+      "path": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python3.12",
+      "sha256": "c889543c0e008c1362b69c711330cac598833a790dc0c48c5ee4a8567d3f3b51",
+      "size_bytes": 31301856,
+      "uid": 2618919,
+      "mode": 493,
+      "device": 55,
+      "inode": 4269399,
+      "actual_running_image_path": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python3.12"
+    }
+  },
+  "bootstrap": {
+    "symbols": {
+      "syscall": {
+        "image": {
+          "path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+          "sha256": "6813de4f45796f58134ca3f06b3179344ddfea192cad73ea0af35375b1b66e76",
+          "size_bytes": 2220400,
+          "uid": 0,
+          "mode": 493,
+          "device": 64768,
+          "inode": 6040223
+        },
+        "symbol_file_offset": 1173616,
+        "actual_pointer": 23294785464432,
+        "actual_mapping": "152fbd5a4000-152fbd739000 r-xp 00028000 fd:00 6040223                    /usr/lib/x86_64-linux-gnu/libc.so.6"
+      },
+      "close": {
+        "image": {
+          "path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+          "sha256": "6813de4f45796f58134ca3f06b3179344ddfea192cad73ea0af35375b1b66e76",
+          "size_bytes": 2220400,
+          "uid": 0,
+          "mode": 493,
+          "device": 64768,
+          "inode": 6040223
+        },
+        "symbol_file_offset": 1134416,
+        "actual_pointer": 23294785425232,
+        "actual_mapping": "152fbd5a4000-152fbd739000 r-xp 00028000 fd:00 6040223                    /usr/lib/x86_64-linux-gnu/libc.so.6"
+      }
+    },
+    "sys_executable": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+    "sys_version": "3.12.13 | packaged by conda-forge | (main, Aug 11 2026, 10:27:28) [GCC 14.4.0]",
+    "pid": 1239721,
+    "gpu_or_cuda_qualification": false
+  },
+  "preflight_passed": true,
+  "preflight_call_count": 3,
+  "calls": [
+    {
+      "sequence": 0,
+      "name": "pidfd_open",
+      "phase": "self_preflight",
+      "arguments": {
+        "syscall": 434,
+        "pid": 1239721,
+        "flags": 0
+      },
+      "result": 3,
+      "errno": 0,
+      "started_at_seconds": 1793861450.0954223,
+      "finished_at_seconds": 1793861450.0954459,
+      "producer_pid": 1239721,
+      "call_budget": "ordinary"
+    },
+    {
+      "sequence": 1,
+      "name": "pidfd_send_signal",
+      "phase": "self_preflight",
+      "arguments": {
+        "syscall": 424,
+        "fd": 3,
+        "signal": 0,
+        "siginfo": null,
+        "flags": 0
+      },
+      "result": 0,
+      "errno": 0,
+      "started_at_seconds": 1793861450.095804,
+      "finished_at_seconds": 1793861450.0958142,
+      "producer_pid": 1239721,
+      "call_budget": "ordinary"
+    },
+    {
+      "sequence": 2,
+      "name": "close",
+      "phase": "self_preflight",
+      "arguments": {
+        "fd": 3
+      },
+      "result": 0,
+      "errno": 0,
+      "started_at_seconds": 1793861450.0958953,
+      "finished_at_seconds": 1793861450.0959022,
+      "producer_pid": 1239721,
+      "call_budget": "reserved_descriptor_cleanup"
+    }
+  ],
+  "open_handle_count": 0,
+  "native_call_failure": false,
+  "descriptor_events": [
+    {
+      "event_sequence": 0,
+      "operation": "pidfd_open",
+      "descriptor": 3,
+      "call_sequence": 0,
+      "open_generation": 0,
+      "opened_pid": 1239721,
+      "identity": {
+        "device": 14,
+        "inode": 12829,
+        "pid": 1239721,
+        "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t12829\nPid:\t1239721\nNSpid:\t1239721\n",
+        "fdinfo_sha256": "8aef506cb3716376a39eedfdb63330bd8f68b57cce2ab6802f885b188780d8df"
+      },
+      "observed_at_seconds": 1793861450.0957189
+    },
+    {
+      "event_sequence": 1,
+      "operation": "pidfd_send_signal",
+      "descriptor": 3,
+      "call_sequence": 1,
+      "open_generation": 0,
+      "opened_pid": 1239721,
+      "identity": {
+        "device": 14,
+        "inode": 12829,
+        "pid": 1239721,
+        "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t12829\nPid:\t1239721\nNSpid:\t1239721\n",
+        "fdinfo_sha256": "8aef506cb3716376a39eedfdb63330bd8f68b57cce2ab6802f885b188780d8df"
+      },
+      "observed_at_seconds": 1793861450.0958018
+    },
+    {
+      "event_sequence": 2,
+      "operation": "close",
+      "descriptor": 3,
+      "call_sequence": 2,
+      "open_generation": 0,
+      "opened_pid": 1239721,
+      "identity": {
+        "device": 14,
+        "inode": 12829,
+        "pid": 1239721,
+        "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t12829\nPid:\t1239721\nNSpid:\t1239721\n",
+        "fdinfo_sha256": "8aef506cb3716376a39eedfdb63330bd8f68b57cce2ab6802f885b188780d8df"
+      },
+      "observed_at_seconds": 1793861450.0958936
+    }
+  ],
+  "ordinary_call_count": 2,
+  "ordinary_call_limit": 4096,
+  "reserved_cleanup_call_count": 1,
+  "maximum_cleanup_records_per_open": 3,
+  "numeric_pid_signal_fallback": false,
+  "python_exports_changed": false,
+  "gpu_or_cuda_qualification": false,
+  "scientific_credit": 0
+}

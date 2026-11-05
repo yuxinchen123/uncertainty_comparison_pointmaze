@@ -1,0 +1,27 @@
+{
+  "actual_own_self_and_fresh_own_CPU_children_only": true,
+  "admission_granted": false,
+  "errors": [],
+  "failures": [],
+  "finished_at_seconds": 1793861793.8409474,
+  "historical_python_source_tests": 1,
+  "historical_source_returncode": 0,
+  "hostname": "heartpiece",
+  "job_id": "6783003",
+  "kind": "author_native_direct_diagnostic_integration_owned_CPU_tests",
+  "passed": true,
+  "pid": 1240463,
+  "python": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+  "scientific_credit": 0,
+  "selected_python_tests": 119,
+  "source_and_protected_unchanged": true,
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-22-37_direct-native-process-diagnostic_selected-python-3.12_contract-observation-only_environment-transitions-0/.review_metadata/native_direct_diagnostic_integration/author_source_freeze_3.json",
+    "sha256": "855023b94a9ffe64df2ce72168ea5afcafd20e4ce97417f9bff06df774d6b690"
+  },
+  "started_at_seconds": 1793861780.2248466,
+  "step_id": "378",
+  "sys_version": "3.12.13 | packaged by conda-forge | (main, Aug 11 2026, 10:27:28) [GCC 14.4.0]",
+  "tests_run": 120,
+  "tool_or_GPU_or_standing_GPU_lock_action": false
+}

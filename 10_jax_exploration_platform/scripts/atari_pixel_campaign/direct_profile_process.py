@@ -44,6 +44,20 @@ def generic(plan):
     return module
 
 
+
+def runtime_observer(plan, observer=None):
+    """Require an explicitly started observer for native live calls; keep pure saved/default reads unchanged."""
+    if 'native_process_control' not in plan:
+        require(observer is None, 'the default observer cannot receive an undeclared native runtime')
+        return generic(plan)
+    evidence = adjacent_helper(plan, 'native_process_evidence')
+    evidence.policy(plan)
+    require(observer is not None and getattr(observer, 'native_process_runtime', None) is not None,
+        'the explicit native diagnostic requires its previously bootstrapped process observer')
+    observer.native_process_runtime.require_owner(plan)
+    return observer
+
+
 def adjacent_helper(plan, name):
     """Load one exact new process-control or release helper from this staged closure."""
     path = Path(__file__).with_name(name + ".py")
@@ -61,11 +75,14 @@ def adjacent_helper(plan, name):
     return module
 
 
-def tool_scope(directory, plan, descriptor):
+def tool_scope(directory, plan, descriptor, *, observer=None):
     """Establish closed child ownership before any version, capture or export tool is spawned."""
     owner = context(plan, directory)
     control = adjacent_helper(plan, "direct_tool_descendants")
-    scope = control.OwnedToolScope(directory, plan, generic(plan), owner,
+    if 'native_process_control' in plan:
+        require(runtime_observer(plan, observer).native_process_runtime.role == 'producer',
+            'only the native producer observer may own the closed tool scope')
+    scope = control.OwnedToolScope(directory, plan, runtime_observer(plan, observer), owner,
         lambda: descriptor_record(plan, descriptor, owner, local=True))
     scope.standing_descriptor = descriptor
     return scope
@@ -86,6 +103,8 @@ def contract(plan, directory):
         path = Path(__file__).with_name(name)
         require(hashlib.sha256(path.read_bytes()).hexdigest() == plan["helpers"]["files"].get(PREFIX + name),
             "the exact direct process helper changed")
+    if 'native_process_control' in plan:
+        adjacent_helper(plan, 'native_process_evidence').policy(plan)
     return plan
 
 
@@ -236,9 +255,9 @@ def make_intent(directory, plan, descriptor):
     return value
 
 
-def producer_handle(plan, intent):
+def producer_handle(plan, intent, *, observer=None):
     """Pin the known sole descriptor owner before any payload waits for release."""
-    observer = generic(plan)
+    observer = runtime_observer(plan, observer)
     holder = intent["producer"]
     descriptor = observer.open_process_handle(holder["pid"])
     try:
@@ -246,7 +265,7 @@ def producer_handle(plan, intent):
         require(observer.stable(current) == observer.stable(holder) and not observer.handle_exited(descriptor),
             "the exact sole lock producer is no longer alive")
     except BaseException:
-        os.close(descriptor)
+        observer.close_process_handle(descriptor)
         raise
     return descriptor
 
@@ -293,12 +312,14 @@ def claim_self(directory, plan):
     return value
 
 
-def wait_release(directory, plan):
+def wait_release(directory, plan, *, observer=None):
     """Keep the actual payload blocked until positive ancestry and producer custody are saved."""
-    observer = generic(plan)
+    observer = runtime_observer(plan, observer)
+    if 'native_process_control' in plan:
+        require(observer.native_process_runtime.role == 'capture', 'native release waiting requires the capture observer')
     claim = claim_self(directory, plan)
     intent = observer.read_json(Path(directory) / "direct_profile_process_intent.json")
-    parent = producer_handle(plan, intent)
+    parent = producer_handle(plan, intent, observer=observer if 'native_process_control' in plan else None)
     try:
         started = time.monotonic()
         while not os.path.lexists(Path(directory) / "capture_release.json"):
@@ -312,18 +333,20 @@ def wait_release(directory, plan):
         adjacent_helper(plan, "direct_capture_release").acknowledge_release(directory, plan, intent, claim, current, observer)
         return claim
     finally:
-        os.close(parent)
+        observer.close_process_handle(parent)
 
 
-def run_waiter(directory, plan):
+def run_waiter(directory, plan, *, observer=None):
     """Spawn and wait on exactly one payload without holding the standing GPU descriptor."""
-    observer = generic(plan)
+    observer = runtime_observer(plan, observer)
+    if 'native_process_control' in plan:
+        require(observer.native_process_runtime.role == 'waiter', 'native payload launching requires the waiter observer')
     current = context(plan, directory)
     waiter_no_lock = no_standing_descriptor()
     intent = validate_intent(directory, plan, observer.read_json(Path(directory) / "direct_profile_process_intent.json"))
     require(current["command"] == intent["waiter_command"] and not NUMERICAL.intersection(sys.modules),
         "the actual direct metadata waiter changed source or imported a numerical runtime")
-    parent = producer_handle(plan, intent)
+    parent = producer_handle(plan, intent, observer=observer if 'native_process_control' in plan else None)
     child, interventions = None, []
     try:
         child = subprocess.Popen(intent["capture_command"], close_fds=True, pass_fds=())
@@ -388,28 +411,32 @@ def run_waiter(directory, plan):
                 child.wait(timeout=10)
             except subprocess.TimeoutExpired:
                 child.kill(); child.wait()
-        os.close(parent)
+        observer.close_process_handle(parent)
 
 
-def run_tool(directory, plan, descriptor, *, scope=None):
+def run_tool(directory, plan, descriptor, *, scope=None, observer=None):
     """Return only after closed tool descendants have exited, including startup failures."""
     if plan.get("kind") != DIAGNOSTIC:
         from direct_profile_prerequisites import require_admission
         require_admission()
     if scope is None:
-        with tool_scope(directory, plan, descriptor) as owned:
+        with (tool_scope(directory, plan, descriptor) if observer is None else
+                tool_scope(directory, plan, descriptor, observer=observer)) as owned:
             claim = _run_tool_in_scope(directory, plan, descriptor, owned)
         validate_saved(directory, plan)
         return claim
     require(scope.active and scope.pid == os.getpid() and scope.standing_descriptor == descriptor,
         "the actual sole producer must own this active closed tool scope")
+    if 'native_process_control' in plan:
+        require(runtime_observer(plan, scope.observer).native_process_runtime.role == 'producer',
+            'the native tool call must reuse its actual producer provider')
     return _run_tool_in_scope(directory, plan, descriptor, scope)
 
 
 def _run_tool_in_scope(directory, plan, descriptor, scope):
     """Release the exact blocked payload only after owned startup ancestry and local custody are saved."""
     directory = Path(directory)
-    observer = generic(plan)
+    observer = scope.observer
     intent = make_intent(directory, plan, descriptor)
     command = intent["nsight_command"]
     observer.publish(directory / "executed_command.json", command)
@@ -519,7 +546,10 @@ def validate_saved(directory, plan):
     scope = adjacent_helper(plan, "direct_tool_descendants").validate_saved_scope(directory, plan, observer,
         intent["producer"], owner["pid"], owner["process_start_time"],
         lambda record: validate_descriptor(plan, record, intent["producer"]))
-    return {"kind": "actual_direct_nsight_payload_and_producer_waits", "passed": True,
+    native = {} if 'native_process_control' not in plan else {
+        'native_process_evidence': adjacent_helper(plan, 'native_process_evidence').validate_saved(
+            directory, plan, observer, intent, observation, launch, waited)}
+    return {**native, "kind": "actual_direct_nsight_payload_and_producer_waits", "passed": True,
         "capture_identity": observer.receipt(directory / "capture_identity.json"),
         "capture_wait": observer.receipt(directory / "capture_actual_wait.json"),
         "root_wait": observer.receipt(directory / "profiler_actual_wait.json"),

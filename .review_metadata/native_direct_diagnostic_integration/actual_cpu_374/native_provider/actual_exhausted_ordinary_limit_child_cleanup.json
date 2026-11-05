@@ -1,0 +1,417 @@
+{
+  "parent": {
+    "pid": 1239616,
+    "parent_pid": 1239610,
+    "process_group": 1239616,
+    "session": 1239609,
+    "process_start_time": "81649786",
+    "uids": [
+      2618919,
+      2618919,
+      2618919,
+      2618919
+    ],
+    "cgroup": "0::/system.slice/slurmstepd.scope/job_6783003/step_374/user/task_0\n",
+    "command": [
+      "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+      "-I",
+      "-S",
+      "-B",
+      ".review_metadata/native_direct_diagnostic_integration/run_author_tests.py"
+    ],
+    "executable": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python3.12",
+    "stat_before": "1239616 (python) R 1239610 1239616 1239609 0 -1 4194560 270607 827 0 0 259 129 0 0 20 0 1 0 81649786 50569216 9987 1073741824 94470804037632 94470806465309 140721874283360 0 0 0 0 16781312 2 0 0 0 17 9 0 0 0 0 0 94470807890672 94470809872112 94471268196352 140721874290792 140721874290928 140721874290928 140721874296771 0\n",
+    "stat_after": "1239616 (python) R 1239610 1239616 1239609 0 -1 4194560 270613 827 0 0 259 129 0 0 20 0 1 0 81649786 50569216 9987 1073741824 94470804037632 94470806465309 140721874283360 0 0 0 0 16781312 2 0 0 0 17 9 0 0 0 0 0 94470807890672 94470809872112 94471268196352 140721874290792 140721874290928 140721874290928 140721874296771 0\n",
+    "status": "Name:\tpython\nUmask:\t0022\nState:\tR (running)\nTgid:\t1239616\nNgid:\t0\nPid:\t1239616\nPPid:\t1239610\nTracerPid:\t0\nUid:\t2618919\t2618919\t2618919\t2618919\nGid:\t90030\t90030\t90030\t90030\nFDSize:\t64\nGroups:\t90030 90113 \nNStgid:\t1239616\nNSpid:\t1239616\nNSpgid:\t1239616\nNSsid:\t1239609\nVmPeak:\t  111548 kB\nVmSize:\t   49384 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t  100928 kB\nVmRSS:\t   39948 kB\nRssAnon:\t   26912 kB\nRssFile:\t   13036 kB\nRssShmem:\t       0 kB\nVmData:\t   27432 kB\nVmStk:\t     136 kB\nVmExe:\t    2372 kB\nVmLib:\t    7716 kB\nVmPTE:\t     128 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t1\nThreads:\t1\nSigQ:\t0/641640\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000000000\nSigIgn:\t0000000001001000\nSigCgt:\t0000000000000002\nCapInh:\t0000000000000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tthread vulnerable\nSpeculationIndirectBranch:\tconditional enabled\nCpus_allowed:\t00,00000200\nCpus_allowed_list:\t9\nMems_allowed:\t00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000003\nMems_allowed_list:\t0-1\nvoluntary_ctxt_switches:\t747\nnonvoluntary_ctxt_switches:\t86\n",
+    "status_after": "Name:\tpython\nUmask:\t0022\nState:\tR (running)\nTgid:\t1239616\nNgid:\t0\nPid:\t1239616\nPPid:\t1239610\nTracerPid:\t0\nUid:\t2618919\t2618919\t2618919\t2618919\nGid:\t90030\t90030\t90030\t90030\nFDSize:\t64\nGroups:\t90030 90113 \nNStgid:\t1239616\nNSpid:\t1239616\nNSpgid:\t1239616\nNSsid:\t1239609\nVmPeak:\t  111548 kB\nVmSize:\t   49384 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t  100928 kB\nVmRSS:\t   39948 kB\nRssAnon:\t   26912 kB\nRssFile:\t   13036 kB\nRssShmem:\t       0 kB\nVmData:\t   27432 kB\nVmStk:\t     136 kB\nVmExe:\t    2372 kB\nVmLib:\t    7716 kB\nVmPTE:\t     128 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t1\nThreads:\t1\nSigQ:\t0/641640\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000000000\nSigIgn:\t0000000001001000\nSigCgt:\t0000000000000002\nCapInh:\t0000000000000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tthread vulnerable\nSpeculationIndirectBranch:\tconditional enabled\nCpus_allowed:\t00,00000200\nCpus_allowed_list:\t9\nMems_allowed:\t00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000003\nMems_allowed_list:\t0-1\nvoluntary_ctxt_switches:\t747\nnonvoluntary_ctxt_switches:\t86\n",
+    "cmdline": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python\u0000-I\u0000-S\u0000-B\u0000.review_metadata/native_direct_diagnostic_integration/run_author_tests.py\u0000",
+    "cmdline_sha256": "84994462d5c5f894040d0cd90ced0072d8d0294a62fde7d40f39d2fb69153a5c",
+    "observed_at_seconds": 1793861378.6291184
+  },
+  "child": {
+    "pid": 1239629,
+    "parent_pid": 1239616,
+    "process_group": 1239616,
+    "session": 1239609,
+    "process_start_time": "81650369",
+    "uids": [
+      2618919,
+      2618919,
+      2618919,
+      2618919
+    ],
+    "cgroup": "0::/system.slice/slurmstepd.scope/job_6783003/step_374/user/task_0\n",
+    "command": [
+      "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+      "-I",
+      "-S",
+      "-B",
+      "-c",
+      "import signal,sys;signal.signal(signal.SIGTERM,signal.SIG_IGN);print('ready',flush=True);sys.stdin.readline()"
+    ],
+    "executable": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python3.12",
+    "stat_before": "1239629 (python) R 1239616 1239616 1239609 0 -1 4194304 1063 0 0 0 1 0 0 0 20 0 1 0 81650369 19259392 2359 1073741824 94251853144064 94251855571741 140732628908304 0 0 0 0 16797696 2 0 0 0 17 9 0 0 0 0 0 94251856997104 94251858978544 94252616339456 140732628915496 140732628915671 140732628915671 140732628922307 0\n",
+    "stat_after": "1239629 (python) R 1239616 1239616 1239609 0 -1 4194304 1063 0 0 0 1 0 0 0 20 0 1 0 81650369 19259392 2359 1073741824 94251853144064 94251855571741 140732628908304 0 0 0 0 16797696 2 0 0 0 17 9 0 0 0 0 0 94251856997104 94251858978544 94252616339456 140732628915496 140732628915671 140732628915671 140732628922307 0\n",
+    "status": "Name:\tpython\nUmask:\t0022\nState:\tR (running)\nTgid:\t1239629\nNgid:\t0\nPid:\t1239629\nPPid:\t1239616\nTracerPid:\t0\nUid:\t2618919\t2618919\t2618919\t2618919\nGid:\t90030\t90030\t90030\t90030\nFDSize:\t64\nGroups:\t90030 90113 \nNStgid:\t1239629\nNSpid:\t1239629\nNSpgid:\t1239616\nNSsid:\t1239609\nVmPeak:\t   18808 kB\nVmSize:\t   18808 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t    9436 kB\nVmRSS:\t    9436 kB\nRssAnon:\t    3580 kB\nRssFile:\t    5856 kB\nRssShmem:\t       0 kB\nVmData:\t    6680 kB\nVmStk:\t     136 kB\nVmExe:\t    2372 kB\nVmLib:\t    2304 kB\nVmPTE:\t      76 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t1\nThreads:\t1\nSigQ:\t0/641640\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000000000\nSigIgn:\t0000000001005000\nSigCgt:\t0000000000000002\nCapInh:\t0000000000000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tthread vulnerable\nSpeculationIndirectBranch:\tconditional enabled\nCpus_allowed:\t00,00000200\nCpus_allowed_list:\t9\nMems_allowed:\t00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000003\nMems_allowed_list:\t0-1\nvoluntary_ctxt_switches:\t15\nnonvoluntary_ctxt_switches:\t4\n",
+    "status_after": "Name:\tpython\nUmask:\t0022\nState:\tR (running)\nTgid:\t1239629\nNgid:\t0\nPid:\t1239629\nPPid:\t1239616\nTracerPid:\t0\nUid:\t2618919\t2618919\t2618919\t2618919\nGid:\t90030\t90030\t90030\t90030\nFDSize:\t64\nGroups:\t90030 90113 \nNStgid:\t1239629\nNSpid:\t1239629\nNSpgid:\t1239616\nNSsid:\t1239609\nVmPeak:\t   18808 kB\nVmSize:\t   18808 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t    9436 kB\nVmRSS:\t    9436 kB\nRssAnon:\t    3580 kB\nRssFile:\t    5856 kB\nRssShmem:\t       0 kB\nVmData:\t    6680 kB\nVmStk:\t     136 kB\nVmExe:\t    2372 kB\nVmLib:\t    2304 kB\nVmPTE:\t      76 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t1\nThreads:\t1\nSigQ:\t0/641640\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000000000\nSigIgn:\t0000000001005000\nSigCgt:\t0000000000000002\nCapInh:\t0000000000000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tthread vulnerable\nSpeculationIndirectBranch:\tconditional enabled\nCpus_allowed:\t00,00000200\nCpus_allowed_list:\t9\nMems_allowed:\t00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000003\nMems_allowed_list:\t0-1\nvoluntary_ctxt_switches:\t15\nnonvoluntary_ctxt_switches:\t4\n",
+    "cmdline": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python\u0000-I\u0000-S\u0000-B\u0000-c\u0000import signal,sys;signal.signal(signal.SIGTERM,signal.SIG_IGN);print('ready',flush=True);sys.stdin.readline()\u0000",
+    "cmdline_sha256": "0e3bf74ddbc485e192b6372bcce0a8f28395a69af13f8ed7618373168eeef474",
+    "observed_at_seconds": 1793861378.6519551
+  },
+  "returncode": -9,
+  "evidence": {
+    "kind": "linux-x86-64-libc-syscall-pidfd-version-1",
+    "contract": {
+      "kind": "linux-x86-64-libc-syscall-pidfd-version-1",
+      "abi": {
+        "platform": "linux",
+        "machine": "x86_64",
+        "byteorder": "little",
+        "long_bytes": 8,
+        "int_bytes": 4,
+        "pointer_bytes": 8
+      },
+      "syscall_numbers": {
+        "pidfd_open": 434,
+        "pidfd_send_signal": 424
+      },
+      "headers": {
+        "/usr/include/unistd.h": {
+          "path": "/usr/include/unistd.h",
+          "sha256": "99eb4050035a1a816090762770f0843c728666745d7e727e64dc347d8a99ac28",
+          "size_bytes": 44967,
+          "uid": 0,
+          "mode": 420,
+          "device": 64768,
+          "inode": 6039378
+        },
+        "/usr/include/x86_64-linux-gnu/asm/unistd_64.h": {
+          "path": "/usr/include/x86_64-linux-gnu/asm/unistd_64.h",
+          "sha256": "9f1c975001d7cd39af3a2c14d518d80b0aaaab8bec3ad12b5e56419bdc8cafbe",
+          "size_bytes": 9687,
+          "uid": 0,
+          "mode": 420,
+          "device": 64768,
+          "inode": 7874122
+        }
+      },
+      "symbols": {
+        "syscall": {
+          "image": {
+            "path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+            "sha256": "6813de4f45796f58134ca3f06b3179344ddfea192cad73ea0af35375b1b66e76",
+            "size_bytes": 2220400,
+            "uid": 0,
+            "mode": 493,
+            "device": 64768,
+            "inode": 6040223
+          },
+          "symbol_file_offset": 1173616
+        },
+        "close": {
+          "image": {
+            "path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+            "sha256": "6813de4f45796f58134ca3f06b3179344ddfea192cad73ea0af35375b1b66e76",
+            "size_bytes": 2220400,
+            "uid": 0,
+            "mode": 493,
+            "device": 64768,
+            "inode": 6040223
+          },
+          "symbol_file_offset": 1134416
+        }
+      },
+      "selected_python": {
+        "path": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python3.12",
+        "sha256": "c889543c0e008c1362b69c711330cac598833a790dc0c48c5ee4a8567d3f3b51",
+        "size_bytes": 31301856,
+        "uid": 2618919,
+        "mode": 493,
+        "device": 55,
+        "inode": 4269399,
+        "actual_running_image_path": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python3.12"
+      }
+    },
+    "bootstrap": {
+      "symbols": {
+        "syscall": {
+          "image": {
+            "path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+            "sha256": "6813de4f45796f58134ca3f06b3179344ddfea192cad73ea0af35375b1b66e76",
+            "size_bytes": 2220400,
+            "uid": 0,
+            "mode": 493,
+            "device": 64768,
+            "inode": 6040223
+          },
+          "symbol_file_offset": 1173616,
+          "actual_pointer": 22833817856112,
+          "actual_mapping": "14c4698ac000-14c469a41000 r-xp 00028000 fd:00 6040223                    /usr/lib/x86_64-linux-gnu/libc.so.6"
+        },
+        "close": {
+          "image": {
+            "path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+            "sha256": "6813de4f45796f58134ca3f06b3179344ddfea192cad73ea0af35375b1b66e76",
+            "size_bytes": 2220400,
+            "uid": 0,
+            "mode": 493,
+            "device": 64768,
+            "inode": 6040223
+          },
+          "symbol_file_offset": 1134416,
+          "actual_pointer": 22833817816912,
+          "actual_mapping": "14c4698ac000-14c469a41000 r-xp 00028000 fd:00 6040223                    /usr/lib/x86_64-linux-gnu/libc.so.6"
+        }
+      },
+      "sys_executable": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+      "sys_version": "3.12.13 | packaged by conda-forge | (main, Aug 11 2026, 10:27:28) [GCC 14.4.0]",
+      "pid": 1239616,
+      "gpu_or_cuda_qualification": false
+    },
+    "preflight_passed": true,
+    "preflight_call_count": 3,
+    "calls": [
+      {
+        "sequence": 0,
+        "name": "pidfd_open",
+        "phase": "self_preflight",
+        "arguments": {
+          "syscall": 434,
+          "pid": 1239616,
+          "flags": 0
+        },
+        "result": 3,
+        "errno": 0,
+        "started_at_seconds": 1793861378.6282194,
+        "finished_at_seconds": 1793861378.6282427,
+        "producer_pid": 1239616,
+        "call_budget": "ordinary"
+      },
+      {
+        "sequence": 1,
+        "name": "pidfd_send_signal",
+        "phase": "self_preflight",
+        "arguments": {
+          "syscall": 424,
+          "fd": 3,
+          "signal": 0,
+          "siginfo": null,
+          "flags": 0
+        },
+        "result": 0,
+        "errno": 0,
+        "started_at_seconds": 1793861378.6285868,
+        "finished_at_seconds": 1793861378.6285965,
+        "producer_pid": 1239616,
+        "call_budget": "ordinary"
+      },
+      {
+        "sequence": 2,
+        "name": "close",
+        "phase": "self_preflight",
+        "arguments": {
+          "fd": 3
+        },
+        "result": 0,
+        "errno": 0,
+        "started_at_seconds": 1793861378.6286876,
+        "finished_at_seconds": 1793861378.6286945,
+        "producer_pid": 1239616,
+        "call_budget": "reserved_descriptor_cleanup"
+      },
+      {
+        "sequence": 3,
+        "name": "pidfd_open",
+        "phase": "owned_process",
+        "arguments": {
+          "syscall": 434,
+          "pid": 1239629,
+          "flags": 0
+        },
+        "result": 3,
+        "errno": 0,
+        "started_at_seconds": 1793861378.6520255,
+        "finished_at_seconds": 1793861378.6520476,
+        "producer_pid": 1239616,
+        "call_budget": "ordinary"
+      },
+      {
+        "sequence": 4,
+        "name": "pidfd_send_signal",
+        "phase": "owned_process",
+        "arguments": {
+          "syscall": 424,
+          "fd": 3,
+          "signal": 15,
+          "siginfo": null,
+          "flags": 0
+        },
+        "result": 0,
+        "errno": 0,
+        "started_at_seconds": 1793861378.6523182,
+        "finished_at_seconds": 1793861378.6523314,
+        "producer_pid": 1239616,
+        "call_budget": "reserved_descriptor_cleanup"
+      },
+      {
+        "sequence": 5,
+        "name": "pidfd_send_signal",
+        "phase": "owned_process",
+        "arguments": {
+          "syscall": 424,
+          "fd": 3,
+          "signal": 9,
+          "siginfo": null,
+          "flags": 0
+        },
+        "result": 0,
+        "errno": 0,
+        "started_at_seconds": 1793861378.6525154,
+        "finished_at_seconds": 1793861378.6525228,
+        "producer_pid": 1239616,
+        "call_budget": "reserved_descriptor_cleanup"
+      },
+      {
+        "sequence": 6,
+        "name": "close",
+        "phase": "owned_process",
+        "arguments": {
+          "fd": 3
+        },
+        "result": 0,
+        "errno": 0,
+        "started_at_seconds": 1793861378.6538696,
+        "finished_at_seconds": 1793861378.6538804,
+        "producer_pid": 1239616,
+        "call_budget": "reserved_descriptor_cleanup"
+      }
+    ],
+    "open_handle_count": 0,
+    "native_call_failure": false,
+    "descriptor_events": [
+      {
+        "event_sequence": 0,
+        "operation": "pidfd_open",
+        "descriptor": 3,
+        "call_sequence": 0,
+        "open_generation": 0,
+        "opened_pid": 1239616,
+        "identity": {
+          "device": 14,
+          "inode": 12829,
+          "pid": 1239616,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t12829\nPid:\t1239616\nNSpid:\t1239616\n",
+          "fdinfo_sha256": "058885c1a55cc48829dcee19ecb6ece879003629e333758894bebd483ab6bcaa"
+        },
+        "observed_at_seconds": 1793861378.6285036
+      },
+      {
+        "event_sequence": 1,
+        "operation": "pidfd_send_signal",
+        "descriptor": 3,
+        "call_sequence": 1,
+        "open_generation": 0,
+        "opened_pid": 1239616,
+        "identity": {
+          "device": 14,
+          "inode": 12829,
+          "pid": 1239616,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t12829\nPid:\t1239616\nNSpid:\t1239616\n",
+          "fdinfo_sha256": "058885c1a55cc48829dcee19ecb6ece879003629e333758894bebd483ab6bcaa"
+        },
+        "observed_at_seconds": 1793861378.6285846
+      },
+      {
+        "event_sequence": 2,
+        "operation": "close",
+        "descriptor": 3,
+        "call_sequence": 2,
+        "open_generation": 0,
+        "opened_pid": 1239616,
+        "identity": {
+          "device": 14,
+          "inode": 12829,
+          "pid": 1239616,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t12829\nPid:\t1239616\nNSpid:\t1239616\n",
+          "fdinfo_sha256": "058885c1a55cc48829dcee19ecb6ece879003629e333758894bebd483ab6bcaa"
+        },
+        "observed_at_seconds": 1793861378.6286862
+      },
+      {
+        "event_sequence": 3,
+        "operation": "pidfd_open",
+        "descriptor": 3,
+        "call_sequence": 3,
+        "open_generation": 3,
+        "opened_pid": 1239629,
+        "identity": {
+          "device": 14,
+          "inode": 12829,
+          "pid": 1239629,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t12829\nPid:\t1239629\nNSpid:\t1239629\n",
+          "fdinfo_sha256": "960481250808c29a9791628f35d5a8780d029249e3ad8d193ac7c1ba4087251f"
+        },
+        "observed_at_seconds": 1793861378.6522167
+      },
+      {
+        "event_sequence": 4,
+        "operation": "pidfd_send_signal",
+        "descriptor": 3,
+        "call_sequence": 4,
+        "open_generation": 3,
+        "opened_pid": 1239629,
+        "identity": {
+          "device": 14,
+          "inode": 12829,
+          "pid": 1239629,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t12829\nPid:\t1239629\nNSpid:\t1239629\n",
+          "fdinfo_sha256": "960481250808c29a9791628f35d5a8780d029249e3ad8d193ac7c1ba4087251f"
+        },
+        "observed_at_seconds": 1793861378.652316
+      },
+      {
+        "event_sequence": 5,
+        "operation": "pidfd_send_signal",
+        "descriptor": 3,
+        "call_sequence": 5,
+        "open_generation": 3,
+        "opened_pid": 1239629,
+        "identity": {
+          "device": 14,
+          "inode": 12829,
+          "pid": 1239629,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t12829\nPid:\t1239629\nNSpid:\t1239629\n",
+          "fdinfo_sha256": "960481250808c29a9791628f35d5a8780d029249e3ad8d193ac7c1ba4087251f"
+        },
+        "observed_at_seconds": 1793861378.6525137
+      },
+      {
+        "event_sequence": 6,
+        "operation": "close",
+        "descriptor": 3,
+        "call_sequence": 6,
+        "open_generation": 3,
+        "opened_pid": 1239629,
+        "identity": {
+          "device": 14,
+          "inode": 12829,
+          "pid": -1,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t12829\nPid:\t-1\nNSpid:\t-1\n",
+          "fdinfo_sha256": "ac0a6f9980b3cbdab3a9889efdfcc0264d3515e6ce2b692011039d76efef2b75"
+        },
+        "observed_at_seconds": 1793861378.6538658
+      }
+    ],
+    "ordinary_call_count": 3,
+    "ordinary_call_limit": 3,
+    "reserved_cleanup_call_count": 4,
+    "maximum_cleanup_records_per_open": 3,
+    "numeric_pid_signal_fallback": false,
+    "python_exports_changed": false,
+    "gpu_or_cuda_qualification": false,
+    "scientific_credit": 0
+  },
+  "environment_transitions": 0,
+  "gpu_operations": 0,
+  "standing_gpu_lock_opened": false
+}

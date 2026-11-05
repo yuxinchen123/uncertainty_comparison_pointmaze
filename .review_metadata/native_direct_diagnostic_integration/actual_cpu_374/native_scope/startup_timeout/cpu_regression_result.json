@@ -1,0 +1,14 @@
+{
+  "kind": "actual_cpu_temporary_lock_descendant_cleanup",
+  "mode": "startup_timeout",
+  "nsight_executed": false,
+  "standing_gpu_lock_opened": false,
+  "gpu_operations": 0,
+  "environment_transitions": 0,
+  "scientific_credit": 0,
+  "admission_granted": false,
+  "expected_startup_failure": {
+    "type": "ValueError",
+    "message": "Nsight or its actual payload did not publish the blocked source identity"
+  }
+}

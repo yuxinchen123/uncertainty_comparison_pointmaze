@@ -1,0 +1,11 @@
+[
+  "/usr/bin/python3.10",
+  "-I",
+  "-S",
+  "-B",
+  "-c",
+  "import json,os,pathlib,subprocess,sys,time;p=subprocess.Popen([sys.argv[1],'-I','-S','-B','-c',sys.argv[3]],close_fds=True,pass_fds=());pathlib.Path(sys.argv[2]).write_text(json.dumps({'root_pid':os.getpid(),'payload_pid':p.pid}));time.sleep(6)",
+  "/usr/bin/python3.10",
+  "/tmp/tmppuu4ju60/actual_cpu_processes.json",
+  "import os,time;os.setsid();time.sleep(6)"
+]

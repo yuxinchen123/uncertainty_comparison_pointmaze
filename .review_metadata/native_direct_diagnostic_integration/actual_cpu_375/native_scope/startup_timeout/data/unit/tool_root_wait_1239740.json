@@ -1,0 +1,19 @@
+{
+  "birth": "81658302",
+  "command": [
+    "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+    "-I",
+    "-S",
+    "-B",
+    "-c",
+    "import json,os,pathlib,subprocess,sys,time;p=subprocess.Popen([sys.argv[1],'-I','-S','-B','-c',sys.argv[3]],close_fds=True,pass_fds=());pathlib.Path(sys.argv[2]).write_text(json.dumps({'root_pid':os.getpid(),'payload_pid':p.pid}));time.sleep(6)",
+    "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+    "/tmp/tmp52dr4joc/actual_cpu_processes.json",
+    "import os,time;os.setsid();time.sleep(6)"
+  ],
+  "finished_at_seconds": 1793861458.2702131,
+  "kind": "actual_scoped_tool_popen_wait",
+  "pid": 1239740,
+  "returncode": -15,
+  "started_at_seconds": 1793861457.9625025
+}

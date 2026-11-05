@@ -1,0 +1,41 @@
+{
+  "actual_native_process_operations": 0,
+  "admission_granted": false,
+  "checks_bounded_seconds": 30,
+  "corrected_source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-22-37_direct-native-process-diagnostic_selected-python-3.12_contract-observation-only_environment-transitions-0/.review_metadata/native_direct_diagnostic_integration/fdinfo_correction_source_freeze.json",
+    "sha256": "08d01eea45353d77fbd4982e242763e38a42aa67cf9bb9fa86237fe085f7bbcf"
+  },
+  "findings": [
+    {
+      "accepted_invalid_input": false,
+      "name": "raw_fdinfo_inode_summary_mismatch",
+      "receipt": {
+        "path": "/p/rlprojects/RND_worktrees/2026-11-04-22-37_direct-native-process-diagnostic_selected-python-3.12_contract-observation-only_environment-transitions-0/.review_metadata/native_direct_diagnostic_integration/fdinfo_exact_381_author_actual_cpu_383/raw_fdinfo_inode_boundary.json",
+        "sha256": "744a231622530e4cd61df816b99af56c06099304a0e2d4109e65fc21bc54faad"
+      }
+    },
+    {
+      "accepted_invalid_input": false,
+      "name": "raw_fdinfo_close_on_exec_missing",
+      "receipt": {
+        "path": "/p/rlprojects/RND_worktrees/2026-11-04-22-37_direct-native-process-diagnostic_selected-python-3.12_contract-observation-only_environment-transitions-0/.review_metadata/native_direct_diagnostic_integration/fdinfo_exact_381_author_actual_cpu_383/raw_fdinfo_close_on_exec_boundary.json",
+        "sha256": "c88c115869a365d55af2851b69b00be653f300e20c3d28e3a5a1179614550fe7"
+      }
+    }
+  ],
+  "finished_at_seconds": 1793862773.222404,
+  "independent_review_claimed": false,
+  "job_id": "6783003",
+  "kind": "author_exact_rejected_381_saved_fdinfo_mutations",
+  "original_class_source_sha256": "34f06f2787d6ebe8148956625e94b91f1f7dc465390e15cead46475ac377bdaa",
+  "original_review_program": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-22-37_direct-native-process-diagnostic_selected-python-3.12_contract-observation-only_environment-transitions-0/.review_metadata/native_direct_diagnostic_integration/run_independent_review.py",
+    "sha256": "87c35ecd0ccbbec133bd42b8811e12049d7f59ba61d4f61d98efedbe710ff505"
+  },
+  "passed": true,
+  "scientific_credit": 0,
+  "started_at_seconds": 1793862773.2063076,
+  "step_id": "383",
+  "tests_run": 2
+}

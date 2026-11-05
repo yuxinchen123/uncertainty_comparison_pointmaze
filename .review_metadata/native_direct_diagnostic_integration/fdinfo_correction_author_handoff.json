@@ -1,0 +1,65 @@
+{
+  "actual_target_Nsight_GPU_or_standing_GPU_lock_work": false,
+  "admission_granted": false,
+  "base": "4f9d610f45c3bbd28bbad26c082dd5ba54b91642",
+  "broad_122_case_batch_repeated": false,
+  "corrections": [
+    {
+      "after": "Identical pure parsers in both source modules refuse malformed or duplicate kernel fields, require complete bounded ASCII text and canonical decimal ino/Pid plus octal flags, join raw ino to actual/asserted fstat inode, preserve known positive-Pid or -1 rules, and require O_CLOEXEC.",
+      "before": "Live and saved readers read Pid but did not join retained raw ino and flags to inode and close-on-exec summaries."
+    },
+    {
+      "after": "Live descriptor identity checks os.get_inheritable is False before and after the bounded stable-inode fdinfo read, then retains actual False and parsed flags. The saved reader requires exact integer flags, the False Boolean and matching raw flags/inode/Pid for every generation.",
+      "before": "Live noninheritance was checked but its relationship to saved raw flags was not represented."
+    }
+  ],
+  "default_and_formal_paths_unchanged": true,
+  "exact_regression_test_count": 2,
+  "exact_regressions_elapsed_seconds": 0.01609635353088379,
+  "exact_rejected_mutations_author_execution": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-22-37_direct-native-process-diagnostic_selected-python-3.12_contract-observation-only_environment-transitions-0/.review_metadata/native_direct_diagnostic_integration/fdinfo_exact_381_author_383.json",
+    "sha256": "ac98cc4cc23bd55d6610db4532626161f5dac352f1f6d947270662dfbae18201"
+  },
+  "focused_author_execution": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-22-37_direct-native-process-diagnostic_selected-python-3.12_contract-observation-only_environment-transitions-0/.review_metadata/native_direct_diagnostic_integration/fdinfo_correction_author_6783003_382.json",
+    "sha256": "c4b91f7594bac571682c1fed31e792bff7f0792685cb9bf5f4111dc80eae7946"
+  },
+  "focused_elapsed_seconds": 6.025694131851196,
+  "focused_test_count": 29,
+  "kind": "author_corrected_native_raw_fdinfo_join_handoff",
+  "new_units_jobs_or_remote_launches": 0,
+  "next_step": "Independent corrected-source and focused CPU review. Actual target process qualification and separate formal profiling admission remain required.",
+  "preserved_rejected_review": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-22-37_direct-native-process-diagnostic_selected-python-3.12_contract-observation-only_environment-transitions-0/.review_metadata/native_direct_diagnostic_integration/independent_381.json",
+    "sha256": "a16f98e06384da44c55ee4845c149a884477a65e6f2c2900f7c5b3235d3486e6"
+  },
+  "preserved_rejected_source": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-22-37_direct-native-process-diagnostic_selected-python-3.12_contract-observation-only_environment-transitions-0/.review_metadata/native_direct_diagnostic_integration/independent_rejected_freeze_5_preserved/preservation_manifest.json",
+    "sha256": "ba87cb0e129439ad2be2d36a9507d9af5bf9cd5e9ca224382e6a530ed168c69b"
+  },
+  "previous_full_author_execution": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-22-37_direct-native-process-diagnostic_selected-python-3.12_contract-observation-only_environment-transitions-0/.review_metadata/native_direct_diagnostic_integration/author_6783003_380.json",
+    "sha256": "1d5da166728960ee2885902dd2d8ce25a3bc86fdb2952374fa51a136473374a0"
+  },
+  "producer_and_diagnostic_wiring_unchanged_since_rejected_freeze": true,
+  "scientific_credit": 0,
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-22-37_direct-native-process-diagnostic_selected-python-3.12_contract-observation-only_environment-transitions-0/.review_metadata/native_direct_diagnostic_integration/fdinfo_correction_source_freeze.json",
+    "sha256": "08d01eea45353d77fbd4982e242763e38a42aa67cf9bb9fa86237fe085f7bbcf"
+  },
+  "source_held_for_independent_review": true,
+  "source_publication": false,
+  "tests_include": [
+    "both exact381 saved-metadata mutations",
+    "duplicate valid and malformed ino/Pid/flags fields",
+    "strict raw/expected numeric types",
+    "saved flags and noninheritance summaries",
+    "positive real own-fdinfo/fstat/CLOEXEC values",
+    "live fdinfo inode/flags/duplicate/typed field refusals",
+    "saved role graph",
+    "actual native own-child startup and orphan cleanup",
+    "ordinary-budget reserved close/TERM/KILL behavior"
+  ],
+  "unchanged_protected_files": 34,
+  "worktree": "/p/rlprojects/RND_worktrees/2026-11-04-22-37_direct-native-process-diagnostic_selected-python-3.12_contract-observation-only_environment-transitions-0"
+}
