@@ -1,0 +1,115 @@
+{
+  "actual_diagnostic_started": false,
+  "actual_focused_metadata_tests": {
+    "errors": 0,
+    "failures": 0,
+    "gpu_or_scientific_actions": 0,
+    "job_id": "6783003",
+    "kind": "actual_named_phase_observer_metadata_tests",
+    "passed": true,
+    "raw_stdout_sha256": "5242c1d90b6fd163c42eefc89f3e7ffeea30e71310a9215fba46703f41431931",
+    "source_sha256": "4b3918181151625d589755c8fa7e1fb365397db14d80d5f68fa14fce11831a63",
+    "step_id": "277",
+    "tests_run": 5
+  },
+  "at_utc": "2026-11-05T02:46:27.507678+00:00",
+  "diagnostic_timeout_seconds": 900,
+  "files": {
+    "command.txt": {
+      "bytes": 879,
+      "sha256": "fc02ed0d72f7838a7b0fcad145823cc27c6f6306745f19afe021212976badcfa"
+    },
+    "config_resolved.yaml": {
+      "bytes": 7315,
+      "sha256": "203a39105cfa7f8a08feee4edbc759220f6a36efdddccbcc657181a9f912dd51"
+    },
+    "diagnostic_source_and_inputs_freeze.json": {
+      "bytes": 2671,
+      "sha256": "b2c9464e83839775c36bb4277ac7ed10e62b1d418c143ffc1349f4ae08ed86d8"
+    },
+    "experiment_background.md": {
+      "bytes": 1753,
+      "sha256": "0e25ae42c82f21b37451ec83e9ae4b493a27feba1748a3db4e177a328dfa2cbc"
+    },
+    "first_metadata_tests_without_saved_step.json": {
+      "bytes": 693,
+      "sha256": "7fd65381540b27a96ce9b2cf46131a8c4d95549db1b2f3312ac1ebc6e590df64"
+    },
+    "manifest.yaml": {
+      "bytes": 4764,
+      "sha256": "af072ba54d43b22d78ee46d2463636cb7fea7aae46620c51616624e8aefbc2b3"
+    },
+    "observe_guard_phases.py": {
+      "bytes": 10979,
+      "sha256": "4b3918181151625d589755c8fa7e1fb365397db14d80d5f68fa14fce11831a63"
+    },
+    "phase_observer_metadata_tests.json": {
+      "bytes": 382,
+      "sha256": "693c09d10806f701a2474294ed3a4851a72e6fd627433f7466af2c3da02878ac"
+    },
+    "phase_observer_metadata_tests_stdout.raw": {
+      "bytes": 1011,
+      "sha256": "5072222141e2b6e083423a0f71d962c7a9c71eaf157989194b0c88682fa233d7"
+    },
+    "phase_observer_root_corrections_tests.json": {
+      "bytes": 382,
+      "sha256": "a5b5745786c2f81eca47077cf96bd413f732a0ddce8b3cb47db30f7f8c2914e6"
+    },
+    "phase_observer_root_corrections_tests_stdout.raw": {
+      "bytes": 917,
+      "sha256": "5242c1d90b6fd163c42eefc89f3e7ffeea30e71310a9215fba46703f41431931"
+    },
+    "source_before_function_name_filter_optimization/observe_guard_phases.py": {
+      "bytes": 9427,
+      "sha256": "ba55a176ccc77c1442f7f1a5d3fbc50025f3325e000dd532611c95db71a6a81c"
+    },
+    "source_before_function_name_filter_optimization/test_observe_guard_phases.py": {
+      "bytes": 4869,
+      "sha256": "b1c829cba314a8cb872401a798a6b6d92094c27df780577a3a42f6c878c72c55"
+    },
+    "source_before_root_review_corrections/diagnostic_source_and_inputs_freeze.json": {
+      "bytes": 2671,
+      "sha256": "b2c9464e83839775c36bb4277ac7ed10e62b1d418c143ffc1349f4ae08ed86d8"
+    },
+    "source_before_root_review_corrections/observe_guard_phases.py": {
+      "bytes": 9558,
+      "sha256": "6ae4e8d1ccc2fc08c559ea36725a972658da58709dc340ef74e174d1db6d830e"
+    },
+    "source_before_root_review_corrections/phase_observer_metadata_tests.json": {
+      "bytes": 382,
+      "sha256": "693c09d10806f701a2474294ed3a4851a72e6fd627433f7466af2c3da02878ac"
+    },
+    "source_before_root_review_corrections/phase_observer_metadata_tests_stdout.raw": {
+      "bytes": 1011,
+      "sha256": "5072222141e2b6e083423a0f71d962c7a9c71eaf157989194b0c88682fa233d7"
+    },
+    "source_before_root_review_corrections/test_observe_guard_phases.py": {
+      "bytes": 6102,
+      "sha256": "89ecfad06e71010cccdc925243abd1bde41f9e2f658f01a25146cb56479a642a"
+    },
+    "test_observe_guard_phases.py": {
+      "bytes": 11909,
+      "sha256": "5277012f74f0b2eeb51acd1d135ea4284b921b670b4617eca2cd21e0a7bfb2b1"
+    },
+    "unregistered_guard_input_plan.json": {
+      "bytes": 24971,
+      "sha256": "d132690ce5e50d460a97142bf569efdfa8d65049dd944d173008dda8c0c706f7"
+    }
+  },
+  "input_sha256": "d132690ce5e50d460a97142bf569efdfa8d65049dd944d173008dda8c0c706f7",
+  "kind": "corrected_distinct_zero_credit_metadata_phase_observation_freeze",
+  "previous_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-18-39_h100-common-guard-phase-observation_copies-1_helpers-27_metadata-time-limit-seconds-900_production-time-limit-seconds-180_gpu-count-0_processor-count-1_host-memory-gib-1/diagnostic_source_and_inputs_freeze.json",
+    "sha256": "b2c9464e83839775c36bb4277ac7ed10e62b1d418c143ffc1349f4ae08ed86d8"
+  },
+  "production_guard_qualified": false,
+  "production_guard_source_edited": false,
+  "production_timeout_seconds_unchanged": 180,
+  "root_review_corrections": [
+    "Preserve SystemExit None/zero/nonzero while marking normal completion correctly.",
+    "After actual Popen, identity or receipt exceptions terminate and wait only the exact owned child and save actual failure/wait before re-raising.",
+    "Distinguish an observed child identity from a successfully saved identity receipt."
+  ],
+  "scientific_credit": 0,
+  "source_sha256": "4b3918181151625d589755c8fa7e1fb365397db14d80d5f68fa14fce11831a63"
+}

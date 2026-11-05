@@ -1,0 +1,140 @@
+{
+  "actual_shared_next_actions_written": false,
+  "checks": [
+    {
+      "copies": 1,
+      "hardware_class": "jaguar03_rtx_a4500",
+      "passed": true,
+      "requirement": "common_correctness"
+    },
+    {
+      "copies": 1,
+      "hardware_class": "h100",
+      "passed": true,
+      "requirement": "common_correctness"
+    },
+    {
+      "copies": 2,
+      "hardware_class": "jaguar03_rtx_a4500",
+      "passed": true,
+      "requirement": "common_correctness"
+    },
+    {
+      "copies": 2,
+      "hardware_class": "h100",
+      "passed": true,
+      "requirement": "common_correctness"
+    },
+    {
+      "copies": 1,
+      "hardware_class": "jaguar03_rtx_a4500",
+      "passed": true,
+      "requirement": "common_confirmation"
+    },
+    {
+      "copies": 2,
+      "hardware_class": "jaguar03_rtx_a4500",
+      "passed": true,
+      "requirement": "common_confirmation"
+    }
+  ],
+  "configuration_record": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-13-16_unconfirmed-common-configuration_cache-room-backgrounds-true_render-final-two-only-true_policy-copies-1-2_environments-per-copy-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1/candidate_cache-room-backgrounds-true_render-final-two-only-true_policy-copies-1_seed-start-1.json",
+    "sha256": "44c8b0a49638030ffdb9d0823d9831e3f12537c488adcfc5237b4bbedee9c15a"
+  },
+  "created_at_utc": "2026-11-05T02:33:11.441897+00:00",
+  "failures": [],
+  "job_id": "6783003",
+  "kind": "display_only_post_initial_reporting_index_join_check",
+  "new_admission_authority": false,
+  "next_actions_after": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/next_actions.json",
+    "sha256": "d650c8c1584fb162e0867f8ea75631c6df11f8727ee2caf7b6e5c41d54f77dc0"
+  },
+  "next_actions_before": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/next_actions.json",
+    "sha256": "d650c8c1584fb162e0867f8ea75631c6df11f8727ee2caf7b6e5c41d54f77dc0"
+  },
+  "next_actions_unchanged_during_check": true,
+  "passed": true,
+  "proposal": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-18-29_pixel-study-monitor_source-commit-6b7d492217140bba3d2f36b93754ecde2d020ccc_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/proposed_post_initial_reporting_evidence.json",
+    "sha256": "bdf85b9eb9ee8e4778a5d5401bd9cc986dfd5626080215363896de9588e28f37"
+  },
+  "requirements": [
+    {
+      "admission_authority": false,
+      "description": "reviewed common correctness on both GPU types",
+      "errors": [],
+      "kind": "reporting_prerequisite",
+      "missing": [],
+      "name": "common_correctness",
+      "scientific_credit": 0,
+      "state": "reviewed_evidence_present"
+    },
+    {
+      "admission_authority": false,
+      "description": "seven paired rounds of ten complete updates on both GPU types",
+      "errors": [],
+      "kind": "reporting_prerequisite",
+      "missing": [
+        {
+          "copies": 1,
+          "hardware_class": "h100"
+        },
+        {
+          "copies": 2,
+          "hardware_class": "h100"
+        }
+      ],
+      "name": "common_confirmation",
+      "scientific_credit": 0,
+      "state": "awaiting_reviewed_evidence"
+    },
+    {
+      "admission_authority": false,
+      "description": "current kernel profiles on both GPU types",
+      "errors": [],
+      "kind": "reporting_prerequisite",
+      "missing": [
+        {
+          "copies": null,
+          "hardware_class": "h100"
+        },
+        {
+          "copies": null,
+          "hardware_class": "jaguar03_rtx_a4500"
+        }
+      ],
+      "name": "kernel_profiles",
+      "scientific_credit": 0,
+      "state": "awaiting_reviewed_evidence"
+    },
+    {
+      "admission_authority": false,
+      "description": "independently repeated packing boundary with fifteen percent free memory",
+      "errors": [],
+      "kind": "reporting_prerequisite",
+      "missing": [
+        {
+          "copies": null,
+          "hardware_class": "h100"
+        },
+        {
+          "copies": null,
+          "hardware_class": "jaguar03_rtx_a4500"
+        }
+      ],
+      "name": "packing",
+      "scientific_credit": 0,
+      "state": "awaiting_reviewed_evidence"
+    }
+  ],
+  "requirements_match_expected_remaining_work": true,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "scientific_evidence_recomputed": false,
+  "source_commit": "6b7d492217140bba3d2f36b93754ecde2d020ccc",
+  "step_id": "262",
+  "temporary_in_memory_display_actions_only": true
+}

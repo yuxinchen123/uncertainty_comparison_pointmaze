@@ -1,0 +1,2435 @@
+{
+  "time": "2026-11-04 18:35:27 PT",
+  "jobs": [
+    [
+      "6783003",
+      "RUNNING",
+      "heartpiece",
+      "gres/gpu:0",
+      "heartpiece"
+    ]
+  ],
+  "units": [
+    {
+      "run": "2026-10-31-10-16_gather-minibatches_allocator-cuda-async_copies-2_environments-128_rollout-steps-128_rounds-7_updates-per-round-1_seed-start-1",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6778016",
+      "state": "completed",
+      "progress": "7 rounds complete",
+      "age_seconds": 377790.8706753254
+    },
+    {
+      "run": "2026-11-01-00-57_jaguar03-a4500_checkpoint-restart_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-40_seed-11_copies-1_environments-1_rollout-steps-2_updates-7_epochs-1_minibatches-1_observation-warmup-0_group-size-3_report-period-4",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6780569",
+      "state": "completed",
+      "progress": "checks passed",
+      "age_seconds": 325314.2072556019
+    },
+    {
+      "run": "2026-11-01-05-16_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_fixture-rounds-7_calls-per-round-10",
+      "pool": "unknown",
+      "gpu": [],
+      "slurm_job_id": "",
+      "state": "superseded",
+      "progress": "superseded before submission; 0 completed fixtures",
+      "age_seconds": 307044.68677425385
+    },
+    {
+      "run": "2026-11-01-05-29_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10",
+      "pool": "unknown",
+      "gpu": [],
+      "slurm_job_id": "",
+      "state": "superseded",
+      "progress": "superseded before submission; 0 completed fixtures",
+      "age_seconds": 306247.4498305321
+    },
+    {
+      "run": "2026-11-01-06-53_device-memory-capture-diagnostic_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-20_qos-csresnolim_blas-threads-1_fixture-rounds-7_calls-per-round-10_ownership-cgroup-v2_process-uids-4",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6781128",
+      "state": "failed",
+      "progress": "correctness command exited 1",
+      "age_seconds": 300651.81183195114
+    },
+    {
+      "run": "2026-11-01-07-42_uva-active-configuration-observation_jaguar03_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5_qos-csresnolim",
+      "pool": "jaguar03",
+      "gpu": [],
+      "slurm_job_id": "6781190",
+      "state": "completed",
+      "progress": "0",
+      "age_seconds": 297320.9264984131
+    },
+    {
+      "run": "2026-11-01-08-35_pixel-study-monitor_source-commit-fb3071f3772ed836144f5876dbdda1113a5339d5_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0",
+      "pool": "unknown",
+      "gpu": [],
+      "slurm_job_id": "",
+      "state": "running",
+      "progress": "0; no record for 4882 min",
+      "age_seconds": 292973.84982299805
+    },
+    {
+      "run": "2026-11-01-10-00_passive-installed-slurm-observation_jaguar03_gpu-count-0_processor-count-1_host-memory-gib-2_time-limit-minutes-5_qos-csresnolim",
+      "pool": "jaguar03",
+      "gpu": [],
+      "slurm_job_id": "6781903",
+      "state": "completed",
+      "progress": "0",
+      "age_seconds": 288709.61019825935
+    },
+    {
+      "run": "2026-11-01-12-36_full-original-qualification_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-3_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_driver-580.159.04",
+      "pool": "UVA gpu",
+      "gpu": [],
+      "slurm_job_id": "",
+      "state": "failed",
+      "progress": "ValueError('pytest collection used an unrelated root directory'); selected hardware names a different job",
+      "age_seconds": 277429.8562505245,
+      "selected_owned_job": false,
+      "selected_unit_name": "2026-11-01-12-36_full-original-qualification_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-3_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_driver-580.159.04"
+    },
+    {
+      "run": "2026-11-01-13-50_original-qualification_explicit-pytest-root_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-3_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1",
+      "pool": "UVA gpu",
+      "gpu": [],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "0; selected hardware names a different job",
+      "age_seconds": 273729.28082323074,
+      "selected_owned_job": false,
+      "selected_unit_name": "2026-11-01-13-50_original-qualification_explicit-pytest-root_jaguar03_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-hours-3_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1"
+    },
+    {
+      "run": "2026-11-01-14-02_pixel-study-monitor_source-commit-31fd9fe7cd96343741e8b48a18019efee9b4ac5c_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0",
+      "pool": "unknown",
+      "gpu": [],
+      "slurm_job_id": "",
+      "state": "planned",
+      "progress": "submission recorded; execution not observed",
+      "age_seconds": 275565.9445319176
+    },
+    {
+      "run": "2026-11-01-14-53_full-original-direct-qualification_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830",
+      "pool": "serval02",
+      "gpu": [],
+      "slurm_job_id": "",
+      "state": "failed",
+      "progress": "ValueError('the imported numerical helper differs from its recorded source: ideas')",
+      "age_seconds": 266574.002076149
+    },
+    {
+      "run": "2026-11-01-15-09_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_jaguar03_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6782946",
+      "state": "completed",
+      "progress": "0",
+      "age_seconds": 262890.64478302,
+      "selected_owned_job": true,
+      "selected_unit_name": "2026-11-01-15-09_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_jaguar03_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1"
+    },
+    {
+      "run": "2026-11-01-15-09_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_jaguar03_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6782947",
+      "state": "completed",
+      "progress": "0",
+      "age_seconds": 262658.68089580536,
+      "selected_owned_job": true,
+      "selected_unit_name": "2026-11-01-15-09_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_jaguar03_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1"
+    },
+    {
+      "run": "2026-11-01-15-21_pixel-study-monitor_source-commit-7fd40de24201b5e1efce398f49549db26c1e94d9_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0",
+      "pool": "unknown",
+      "gpu": [],
+      "slurm_job_id": "",
+      "state": "planned",
+      "progress": "submission recorded; execution not observed",
+      "age_seconds": 270788.8412208557
+    },
+    {
+      "run": "2026-11-01-16-33_pixel-study-monitor-recovery_source-commit-79a01e851ff92ddba7d0e12eaf8164cab2028878_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0",
+      "pool": "unknown",
+      "gpu": [],
+      "slurm_job_id": "",
+      "state": "planned",
+      "progress": "submission recorded; execution not observed",
+      "age_seconds": 266452.6085252762
+    },
+    {
+      "run": "2026-11-01-17-17_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "0",
+      "age_seconds": 257910.7462925911
+    },
+    {
+      "run": "2026-11-01-18-54_common_cache-room-backgrounds-true_render-final-two-only-true_confirmation_paired-rounds-7_updates-per-arm-10_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-2_jaguar03",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6783295",
+      "state": "completed",
+      "progress": "7 rounds complete",
+      "age_seconds": 253757.70443558693,
+      "selected_owned_job": true,
+      "selected_unit_name": "2026-11-01-18-54_common_cache-room-backgrounds-true_render-final-two-only-true_confirmation_paired-rounds-7_updates-per-arm-10_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-2_jaguar03"
+    },
+    {
+      "run": "2026-11-01-18-54_common_cache-room-backgrounds-true_render-final-two-only-true_confirmation_paired-rounds-7_updates-per-arm-10_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3_jaguar03",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6783296",
+      "state": "completed",
+      "progress": "7 rounds complete",
+      "age_seconds": 252714.2611362934,
+      "selected_owned_job": true,
+      "selected_unit_name": "2026-11-01-18-54_common_cache-room-backgrounds-true_render-final-two-only-true_confirmation_paired-rounds-7_updates-per-arm-10_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3_jaguar03"
+    },
+    {
+      "run": "2026-11-01-20-53_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "0",
+      "age_seconds": 245026.48872995377
+    },
+    {
+      "run": "2026-11-01-21-31_selected-common-a4500-kernel-profile_cache-backgrounds-true_render-final-two-only-true_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_capture-updates-1_seed-start-1_hours-2",
+      "pool": "UVA gpu",
+      "gpu": [
+        "RTX A4500 requested"
+      ],
+      "slurm_job_id": "6783807",
+      "state": "failed",
+      "progress": "ValueError('the recorded capture process is not this live Nsight child')",
+      "age_seconds": 245002.32665085793,
+      "selected_owned_job": true,
+      "selected_unit_name": "2026-11-01-21-31_selected-common-a4500-kernel-profile_cache-backgrounds-true_render-final-two-only-true_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_capture-updates-1_seed-start-1_hours-2"
+    },
+    {
+      "run": "2026-11-01-21-31_selected-common-a4500-kernel-profile_cache-backgrounds-true_render-final-two-only-true_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_capture-updates-1_seed-start-1_hours-3",
+      "pool": "UVA gpu",
+      "gpu": [
+        "RTX A4500 requested"
+      ],
+      "slurm_job_id": "6783808",
+      "state": "failed",
+      "progress": "ValueError('the recorded capture process is not this live Nsight child')",
+      "age_seconds": 245001.01377153397,
+      "selected_owned_job": true,
+      "selected_unit_name": "2026-11-01-21-31_selected-common-a4500-kernel-profile_cache-backgrounds-true_render-final-two-only-true_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_capture-updates-1_seed-start-1_hours-3"
+    },
+    {
+      "run": "2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "0",
+      "age_seconds": 235355.56353354454
+    },
+    {
+      "run": "2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "0",
+      "age_seconds": 6933.097320795059
+    },
+    {
+      "run": "2026-11-04-15-37_nsight-process-observation_jaguar03_gpu-count-1_processor-count-1_host-memory-gib-2_time-limit-minutes-5_placement-unreserved_tool-version-2024.7.1.84_environment-transitions-0",
+      "pool": "unknown",
+      "gpu": [],
+      "slurm_job_id": "",
+      "state": "running",
+      "progress": "prepared not submitted; no record for 171 min",
+      "age_seconds": 10279.439934015274
+    },
+    {
+      "run": "2026-11-04-18-29_pixel-study-monitor_source-commit-6b7d492217140bba3d2f36b93754ecde2d020ccc_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0",
+      "pool": "unknown",
+      "gpu": [],
+      "slurm_job_id": "",
+      "state": "planned",
+      "progress": "not submitted; 0 completed fixtures",
+      "age_seconds": 364.46968626976013
+    },
+    {
+      "run": "2026-11-04-18-33_nsight-process-observation_jaguar03_gpu-count-1_processor-count-1_host-memory-gib-2_time-limit-minutes-5_placement-unreserved_qos-normal_tool-version-2024.7.1.84_environment-transitions-0",
+      "pool": "unknown",
+      "gpu": [],
+      "slurm_job_id": "",
+      "state": "running",
+      "progress": "prepared not submitted",
+      "age_seconds": 97.54988121986389
+    },
+    {
+      "run": "aces_reference_copies_1_source_d28e6735e797",
+      "pool": "ac049",
+      "gpu": [
+        "NVIDIA H100 PCIe"
+      ],
+      "slurm_job_id": "2271806",
+      "state": "completed",
+      "progress": "7 rounds complete",
+      "age_seconds": 406287.2813243866
+    },
+    {
+      "run": "allocator_region_before_initialization_bytes-9663676416_batch_rollout_intrinsic_rewards_copies-2_environments-128_rollout-steps-128_seed-start-1_original-updates-per-round-1_helpers-44eb38d01669",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777971",
+      "state": "completed",
+      "progress": "7 rounds complete",
+      "age_seconds": 385285.92116713524
+    },
+    {
+      "run": "backend_metadata_verification",
+      "pool": "unknown",
+      "gpu": [],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "checks passed",
+      "age_seconds": 394984.46679377556
+    },
+    {
+      "run": "configuration_files_683483470f28",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777337",
+      "state": "completed",
+      "progress": "checks passed",
+      "age_seconds": 410395.9232223034
+    },
+    {
+      "run": "deltaai_original_pixel_real_game_copies-1_environments-2_rollout-2_updates-2",
+      "pool": "gh040.hsn.cm.delta.internal.ncsa.edu",
+      "gpu": [
+        "NVIDIA GH200 120GB"
+      ],
+      "slurm_job_id": "3493790",
+      "state": "completed",
+      "progress": "1 round complete",
+      "age_seconds": 414059.2461588383
+    },
+    {
+      "run": "cache room backgrounds (1 copy)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; accepted; +1.3%",
+      "age_seconds": 399260.6364324093
+    },
+    {
+      "run": "cache room backgrounds (2 copies)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; accepted; +0.9%",
+      "age_seconds": 397095.8671576977
+    },
+    {
+      "run": "cache room backgrounds (1 copy)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777611",
+      "state": "completed",
+      "progress": "7/7 pairs; accepted; +11.1%",
+      "age_seconds": 399742.95484757423
+    },
+    {
+      "run": "cache room backgrounds (2 copies)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777686",
+      "state": "completed",
+      "progress": "7/7 pairs; accepted; +8.7%",
+      "age_seconds": 396835.4956650734
+    },
+    {
+      "run": "render final two game states (1 copy)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; accepted; +5.8%",
+      "age_seconds": 395992.10901618004
+    },
+    {
+      "run": "render final two game states (2 copies)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; accepted; +2.7%",
+      "age_seconds": 393202.5269603729
+    },
+    {
+      "run": "render final two game states (1 copy)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777642",
+      "state": "completed",
+      "progress": "7/7 pairs; accepted; +68.9%",
+      "age_seconds": 399177.8532676697
+    },
+    {
+      "run": "render final two game states (2 copies)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777682",
+      "state": "completed",
+      "progress": "7/7 pairs; accepted; +49.2%",
+      "age_seconds": 396473.5307788849
+    },
+    {
+      "run": "unroll four frame game loop (1 copy)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; inconclusive; +0.4%",
+      "age_seconds": 391751.6790442467
+    },
+    {
+      "run": "unroll four frame game loop (2 copies)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; accepted; +0.1%",
+      "age_seconds": 389303.43408226967
+    },
+    {
+      "run": "unroll four frame game loop (1 copy)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777644",
+      "state": "completed",
+      "progress": "7/7 pairs; accepted; +1.2%",
+      "age_seconds": 398998.5154695511
+    },
+    {
+      "run": "unroll four frame game loop (2 copies)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777679",
+      "state": "completed",
+      "progress": "7/7 pairs; accepted; +0.4%",
+      "age_seconds": 397105.2949180603
+    },
+    {
+      "run": "nested policy environment batching (1 copy)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; inconclusive; +0.0%",
+      "age_seconds": 387937.7803659439
+    },
+    {
+      "run": "nested policy environment batching (2 copies)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; inconclusive; +0.1%",
+      "age_seconds": 385543.4169332981
+    },
+    {
+      "run": "nested policy environment batching (1 copy)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777646",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -2.0%",
+      "age_seconds": 398976.96729040146
+    },
+    {
+      "run": "nested policy environment batching (2 copies)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777680",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -0.0%",
+      "age_seconds": 396995.72720837593
+    },
+    {
+      "run": "fuse pixel preprocessing (1 copy)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -0.2%",
+      "age_seconds": 384213.27313280106
+    },
+    {
+      "run": "fuse pixel preprocessing (2 copies)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -0.1%",
+      "age_seconds": 381881.4977426529
+    },
+    {
+      "run": "fuse pixel preprocessing (1 copy)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777611",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -1.4%",
+      "age_seconds": 398968.6509563923
+    },
+    {
+      "run": "fuse pixel preprocessing (2 copies)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777684",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -1.1%",
+      "age_seconds": 396178.46943187714
+    },
+    {
+      "run": "combine palette and sprite drawing (1 copy)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; inconclusive; +0.0%",
+      "age_seconds": 380592.5138993263
+    },
+    {
+      "run": "combine palette and sprite drawing (2 copies)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; inconclusive; +0.0%",
+      "age_seconds": 378296.8209311962
+    },
+    {
+      "run": "combine palette and sprite drawing (1 copy)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777643",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -0.0%",
+      "age_seconds": 398400.19658207893
+    },
+    {
+      "run": "combine palette and sprite drawing (2 copies)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777679",
+      "state": "completed",
+      "progress": "7/7 pairs; inconclusive; +0.0%",
+      "age_seconds": 395868.29977941513
+    },
+    {
+      "run": "store rollout observations as bytes (1 copy)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; inconclusive; +0.1%",
+      "age_seconds": 377029.1144094467
+    },
+    {
+      "run": "store rollout observations as bytes (2 copies)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; inconclusive; +0.2%",
+      "age_seconds": 374744.36493325233
+    },
+    {
+      "run": "store rollout observations as bytes (1 copy)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777611",
+      "state": "completed",
+      "progress": "7/7 pairs; accepted; +0.4%",
+      "age_seconds": 398177.56295251846
+    },
+    {
+      "run": "store rollout observations as bytes (2 copies)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777681",
+      "state": "completed",
+      "progress": "7/7 pairs; accepted; +0.3%",
+      "age_seconds": 395757.2978143692
+    },
+    {
+      "run": "reconstruct stacks from individual frames (1 copy)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; inconclusive; +0.0%",
+      "age_seconds": 373456.6033477783
+    },
+    {
+      "run": "reconstruct stacks from individual frames (2 copies)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; inconclusive; +0.2%",
+      "age_seconds": 371251.70933175087
+    },
+    {
+      "run": "reconstruct stacks from individual frames (1 copy)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777645",
+      "state": "completed",
+      "progress": "7/7 pairs; accepted; +0.3%",
+      "age_seconds": 398125.8702042103
+    },
+    {
+      "run": "reconstruct stacks from individual frames (2 copies)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777681",
+      "state": "completed",
+      "progress": "7/7 pairs; accepted; +0.4%",
+      "age_seconds": 397019.30279278755
+    },
+    {
+      "run": "circular frame stack (1 copy)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; inconclusive; +0.0%",
+      "age_seconds": 370073.7797241211
+    },
+    {
+      "run": "circular frame stack (2 copies)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -0.0%",
+      "age_seconds": 367828.12654447556
+    },
+    {
+      "run": "circular frame stack (1 copy)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777682",
+      "state": "completed",
+      "progress": "7/7 pairs; inconclusive; +0.0%",
+      "age_seconds": 397485.2599840164
+    },
+    {
+      "run": "circular frame stack (2 copies)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777683",
+      "state": "completed",
+      "progress": "7/7 pairs; inconclusive; +0.0%",
+      "age_seconds": 396951.16541194916
+    },
+    {
+      "run": "fuse minibatch image preparation (1 copy)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -0.3%",
+      "age_seconds": 366651.6134893894
+    },
+    {
+      "run": "fuse minibatch image preparation (2 copies)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -0.0%",
+      "age_seconds": 364479.44352674484
+    },
+    {
+      "run": "fuse minibatch image preparation (1 copy)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777684",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -0.6%",
+      "age_seconds": 397434.6251823902
+    },
+    {
+      "run": "fuse minibatch image preparation (2 copies)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777685",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -0.8%",
+      "age_seconds": 396884.87686252594
+    },
+    {
+      "run": "donate training buffers (1 copy)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -0.0%",
+      "age_seconds": 363236.1458084583
+    },
+    {
+      "run": "donate training buffers (2 copies)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -0.1%",
+      "age_seconds": 360912.03347444534
+    },
+    {
+      "run": "donate training buffers (1 copy)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777680",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -0.0%",
+      "age_seconds": 396235.1993267536
+    },
+    {
+      "run": "donate training buffers (2 copies)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777683",
+      "state": "completed",
+      "progress": "7/7 pairs; inconclusive; +0.0%",
+      "age_seconds": 395699.9698500633
+    },
+    {
+      "run": "recompute network activations (1 copy)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -1.8%",
+      "age_seconds": 359707.02132201195
+    },
+    {
+      "run": "recompute network activations (2 copies)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -5.0%",
+      "age_seconds": 357520.5556330681
+    },
+    {
+      "run": "recompute network activations (1 copy)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777685",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -6.2%",
+      "age_seconds": 396103.78713703156
+    },
+    {
+      "run": "recompute network activations (2 copies)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777686",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -12.7%",
+      "age_seconds": 395553.3377354145
+    },
+    {
+      "run": "channels last convolutions (1 copy)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -0.0%",
+      "age_seconds": 356325.46745204926
+    },
+    {
+      "run": "channels last convolutions (2 copies)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; inconclusive; +0.0%",
+      "age_seconds": 354028.14249658585
+    },
+    {
+      "run": "channels last convolutions (1 copy)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777682",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -0.2%",
+      "age_seconds": 395729.56117630005
+    },
+    {
+      "run": "channels last convolutions (2 copies)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777680",
+      "state": "completed",
+      "progress": "7/7 pairs; inconclusive; +0.1%",
+      "age_seconds": 394989.79265642166
+    },
+    {
+      "run": "group independent convolutions (1 copy)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -0.3%",
+      "age_seconds": 352832.9801506996
+    },
+    {
+      "run": "group independent convolutions (2 copies)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -0.0%",
+      "age_seconds": 350615.66694808006
+    },
+    {
+      "run": "group independent convolutions (1 copy)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777684",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -0.1%",
+      "age_seconds": 395439.37949323654
+    },
+    {
+      "run": "group independent convolutions (2 copies)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777685",
+      "state": "completed",
+      "progress": "7/7 pairs; inconclusive; +0.0%",
+      "age_seconds": 394842.23404479027
+    },
+    {
+      "run": "einsum independent dense layers (1 copy)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -0.0%",
+      "age_seconds": 349342.6587872505
+    },
+    {
+      "run": "einsum independent dense layers (2 copies)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -0.0%",
+      "age_seconds": 347044.9376642704
+    },
+    {
+      "run": "einsum independent dense layers (1 copy)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777679",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -0.0%",
+      "age_seconds": 395126.92802524567
+    },
+    {
+      "run": "einsum independent dense layers (2 copies)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777681",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -0.0%",
+      "age_seconds": 394495.7334866524
+    },
+    {
+      "run": "fuse network bias and activation (1 copy)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -19.1%",
+      "age_seconds": 345672.6391425133
+    },
+    {
+      "run": "fuse network bias and activation (2 copies)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -0.1%",
+      "age_seconds": 343339.43403315544
+    },
+    {
+      "run": "fuse network bias and activation (1 copy)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777682",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -2.9%",
+      "age_seconds": 394983.7250864506
+    },
+    {
+      "run": "fuse network bias and activation (2 copies)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6778004",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -2.4%",
+      "age_seconds": 379813.27127194405
+    },
+    {
+      "run": "cache frozen training target features (1 copy)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; inconclusive; +0.4%",
+      "age_seconds": 342049.5845553875
+    },
+    {
+      "run": "cache frozen training target features (2 copies)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; accepted; +0.5%",
+      "age_seconds": 339753.4681286812
+    },
+    {
+      "run": "cache frozen training target features (1 copy)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777686",
+      "state": "completed",
+      "progress": "7/7 pairs; accepted; +1.7%",
+      "age_seconds": 394779.2703509331
+    },
+    {
+      "run": "cache frozen training target features (2 copies)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6778004",
+      "state": "completed",
+      "progress": "7/7 pairs; accepted; +5.2%",
+      "age_seconds": 379825.1208679676
+    },
+    {
+      "run": "batch rollout intrinsic rewards (1 copy)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -0.1%",
+      "age_seconds": 338511.34783649445
+    },
+    {
+      "run": "batch rollout intrinsic rewards (2 copies)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -0.0%",
+      "age_seconds": 336346.7389667034
+    },
+    {
+      "run": "batch rollout intrinsic rewards (1 copy)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777679",
+      "state": "completed",
+      "progress": "7/7 pairs; inconclusive; +0.1%",
+      "age_seconds": 394383.1439318657
+    },
+    {
+      "run": "batch rollout intrinsic rewards (2 copies)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6778004",
+      "state": "completed",
+      "progress": "7/7 pairs; accepted; +0.5%",
+      "age_seconds": 379828.3652923107
+    },
+    {
+      "run": "flat parameter and optimizer buffers (1 copy)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; inconclusive; +0.0%",
+      "age_seconds": 335192.1182522774
+    },
+    {
+      "run": "flat parameter and optimizer buffers (2 copies)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; accepted; +0.3%",
+      "age_seconds": 333030.25439858437
+    },
+    {
+      "run": "flat parameter and optimizer buffers (1 copy)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777682",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -0.3%",
+      "age_seconds": 394228.0899415016
+    },
+    {
+      "run": "flat parameter and optimizer buffers (2 copies)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777685",
+      "state": "completed",
+      "progress": "7/7 pairs; inconclusive; +0.3%",
+      "age_seconds": 393576.3852710724
+    },
+    {
+      "run": "fuse gradient clipping and adam (1 copy)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -0.6%",
+      "age_seconds": 331742.94791030884
+    },
+    {
+      "run": "fuse gradient clipping and adam (2 copies)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; accepted; +0.2%",
+      "age_seconds": 329559.9902844429
+    },
+    {
+      "run": "fuse gradient clipping and adam (1 copy)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777686",
+      "state": "completed",
+      "progress": "7/7 pairs; inconclusive; +0.0%",
+      "age_seconds": 394003.40300774574
+    },
+    {
+      "run": "fuse gradient clipping and adam (2 copies)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777683",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -0.1%",
+      "age_seconds": 393457.27771663666
+    },
+    {
+      "run": "single sixteen minibatch scan (1 copy)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; inconclusive; +0.1%",
+      "age_seconds": 328395.4332332611
+    },
+    {
+      "run": "single sixteen minibatch scan (2 copies)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -0.1%",
+      "age_seconds": 326224.22916817665
+    },
+    {
+      "run": "single sixteen minibatch scan (1 copy)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777681",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -0.0%",
+      "age_seconds": 393714.05775523186
+    },
+    {
+      "run": "single sixteen minibatch scan (2 copies)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777684",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -0.0%",
+      "age_seconds": 393249.36913847923
+    },
+    {
+      "run": "unroll minibatch update loop (1 copy)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; accepted; +0.6%",
+      "age_seconds": 324915.7898840904
+    },
+    {
+      "run": "unroll minibatch update loop (2 copies)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; inconclusive; +0.0%",
+      "age_seconds": 322621.10853362083
+    },
+    {
+      "run": "unroll minibatch update loop (1 copy)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777680",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -0.1%",
+      "age_seconds": 393282.8765590191
+    },
+    {
+      "run": "unroll minibatch update loop (2 copies)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6778004",
+      "state": "completed",
+      "progress": "7/7 pairs; accepted; +0.1%",
+      "age_seconds": 379810.48987078667
+    },
+    {
+      "run": "gather epoch minibatches in advance (1 copy)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -0.3%",
+      "age_seconds": 321329.25478601456
+    },
+    {
+      "run": "gather epoch minibatches in advance (2 copies)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; accepted; +0.2%",
+      "age_seconds": 319035.57071352005
+    },
+    {
+      "run": "gather epoch minibatches in advance (1 copy)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777685",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -0.6%",
+      "age_seconds": 392800.9250855446
+    },
+    {
+      "run": "gather epoch minibatches in advance (2 copies)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6778302",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -1.8%",
+      "age_seconds": 373372.5331737995
+    },
+    {
+      "run": "associative advantage scan (1 copy)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -0.2%",
+      "age_seconds": 317752.08355402946
+    },
+    {
+      "run": "associative advantage scan (2 copies)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; inconclusive; +0.1%",
+      "age_seconds": 315446.98544073105
+    },
+    {
+      "run": "associative advantage scan (1 copy)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777679",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -0.0%",
+      "age_seconds": 392677.6621785164
+    },
+    {
+      "run": "associative advantage scan (2 copies)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777682",
+      "state": "completed",
+      "progress": "7/7 pairs; inconclusive; +0.0%",
+      "age_seconds": 392045.4600329399
+    },
+    {
+      "run": "separate rollout and update compilation (1 copy)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -0.1%",
+      "age_seconds": 314157.164393425
+    },
+    {
+      "run": "separate rollout and update compilation (2 copies)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -0.1%",
+      "age_seconds": 311854.1355407238
+    },
+    {
+      "run": "separate rollout and update compilation (1 copy)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777680",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -0.4%",
+      "age_seconds": 392518.9128127098
+    },
+    {
+      "run": "separate rollout and update compilation (2 copies)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777684",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -0.4%",
+      "age_seconds": 391999.62018322945
+    },
+    {
+      "run": "unroll policy rollout loop (1 copy)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; inconclusive; +0.1%",
+      "age_seconds": 310361.9384801388
+    },
+    {
+      "run": "unroll policy rollout loop (2 copies)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; inconclusive; +0.0%",
+      "age_seconds": 307850.9367003441
+    },
+    {
+      "run": "unroll policy rollout loop (1 copy)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777681",
+      "state": "completed",
+      "progress": "7/7 pairs; inconclusive; +0.3%",
+      "age_seconds": 391864.72103118896
+    },
+    {
+      "run": "unroll policy rollout loop (2 copies)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777686",
+      "state": "completed",
+      "progress": "7/7 pairs; accepted; +0.2%",
+      "age_seconds": 390702.9117846489
+    },
+    {
+      "run": "group complete training iterations (1 copy)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -0.4%",
+      "age_seconds": 305355.22322392464
+    },
+    {
+      "run": "group complete training iterations (2 copies)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; inconclusive; +0.0%",
+      "age_seconds": 298906.35598254204
+    },
+    {
+      "run": "group complete training iterations (1 copy)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777682",
+      "state": "completed",
+      "progress": "7/7 pairs; accepted; +0.1%",
+      "age_seconds": 390820.3302438259
+    },
+    {
+      "run": "group complete training iterations (2 copies)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777684",
+      "state": "completed",
+      "progress": "7/7 pairs; inconclusive; +0.0%",
+      "age_seconds": 389778.8203701973
+    },
+    {
+      "run": "batch quantity keyed random generation (1 copy)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; accepted; +0.2%",
+      "age_seconds": 297627.17738986015
+    },
+    {
+      "run": "batch quantity keyed random generation (2 copies)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -0.0%",
+      "age_seconds": 295346.39585900307
+    },
+    {
+      "run": "batch quantity keyed random generation (1 copy)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777681",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -0.0%",
+      "age_seconds": 391088.68462371826
+    },
+    {
+      "run": "batch quantity keyed random generation (2 copies)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777685",
+      "state": "completed",
+      "progress": "7/7 pairs; inconclusive; +0.0%",
+      "age_seconds": 390537.60688853264
+    },
+    {
+      "run": "accumulate scheduled reports on device (1 copy)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; inconclusive; +0.1%",
+      "age_seconds": 292181.6304781437
+    },
+    {
+      "run": "accumulate scheduled reports on device (2 copies)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; accepted; +0.1%",
+      "age_seconds": 283398.4518659115
+    },
+    {
+      "run": "accumulate scheduled reports on device (1 copy)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777683",
+      "state": "completed",
+      "progress": "7/7 pairs; inconclusive; +0.0%",
+      "age_seconds": 390073.1678750515
+    },
+    {
+      "run": "accumulate scheduled reports on device (2 copies)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777681",
+      "state": "completed",
+      "progress": "7/7 pairs; inconclusive; +0.1%",
+      "age_seconds": 388263.06715011597
+    },
+    {
+      "run": "combine running statistic reductions (1 copy)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; inconclusive; +0.0%",
+      "age_seconds": 282128.4098370075
+    },
+    {
+      "run": "combine running statistic reductions (2 copies)",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -0.0%",
+      "age_seconds": 279846.44033026695
+    },
+    {
+      "run": "combine running statistic reductions (1 copy)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777682",
+      "state": "completed",
+      "progress": "7/7 pairs; rejected; -0.1%",
+      "age_seconds": 390027.30280566216
+    },
+    {
+      "run": "combine running statistic reductions (2 copies)",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777686",
+      "state": "completed",
+      "progress": "7/7 pairs; inconclusive; +0.0%",
+      "age_seconds": 389437.60419392586
+    },
+    {
+      "run": "isolated_capacity_batch_rollout_intrinsic_rewards_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_seed-start-1_updates-per-round-10_helpers-332bff2faf89",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777918",
+      "state": "completed",
+      "progress": "7 rounds complete",
+      "age_seconds": 388457.4542300701
+    },
+    {
+      "run": "isolated_capacity_original_reference_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_seed-start-1_updates-per-round-10_helpers-332bff2faf89",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777917",
+      "state": "completed",
+      "progress": "7 rounds complete",
+      "age_seconds": 388447.310174942
+    },
+    {
+      "run": "isolated_capacity_unroll_minibatch_update_loop_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_seed-start-1_updates-per-round-10_helpers-332bff2faf89",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777919",
+      "state": "completed",
+      "progress": "7 rounds complete",
+      "age_seconds": 388426.12823057175
+    },
+    {
+      "run": "jaguar03_diagnostic_determinism-disabled_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_timed-rounds-2_updates-per-round-2_traced-updates-1_seed-1_source-d28e6735e797_helper-4766ba4aac28",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "0",
+      "age_seconds": 401416.16083431244
+    },
+    {
+      "run": "jaguar03_diagnostic_determinism-enabled_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_timed-rounds-2_updates-per-round-2_traced-updates-1_seed-1_source-d28e6735e797_helper-4766ba4aac28",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "0",
+      "age_seconds": 402526.4448418617
+    },
+    {
+      "run": "jaguar03_optimized_training_checks_6f55596a4b69",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777946",
+      "state": "completed",
+      "progress": "checks passed",
+      "age_seconds": 389419.4250392914
+    },
+    {
+      "run": "jaguar03_pixel_gates_1d488ab23e11",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777341",
+      "state": "completed",
+      "progress": "checks passed",
+      "age_seconds": 409779.66578149796
+    },
+    {
+      "run": "jaguar03_pixel_gates_683483470f28",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777336",
+      "state": "completed",
+      "progress": "checks passed",
+      "age_seconds": 410188.0719611645
+    },
+    {
+      "run": "jaguar03_pixel_gates_d28e6735e797",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777360",
+      "state": "completed",
+      "progress": "checks passed",
+      "age_seconds": 409507.0393514633
+    },
+    {
+      "run": "jaguar03_pixel_reference_copies_1",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777242",
+      "state": "completed",
+      "progress": "7 rounds complete",
+      "age_seconds": 411316.2798116207
+    },
+    {
+      "run": "jaguar03_pixel_reference_copies_2_source_1d488ab23e11",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777343",
+      "state": "completed",
+      "progress": "7 rounds complete",
+      "age_seconds": 408712.6676156521
+    },
+    {
+      "run": "jaguar03_pixel_smoke",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777088",
+      "state": "completed",
+      "progress": "1 round complete",
+      "age_seconds": 413771.19529891014
+    },
+    {
+      "run": "jaguar03_rendering_1d488ab23e11",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777342",
+      "state": "failed",
+      "progress": "correctness command exited 1",
+      "age_seconds": 409932.1204032898
+    },
+    {
+      "run": "jaguar03_rendering_683483470f28",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777335",
+      "state": "failed",
+      "progress": "correctness command exited 1",
+      "age_seconds": 410367.93857359886
+    },
+    {
+      "run": "jaguar03_rendering_d28e6735e797",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777359",
+      "state": "completed",
+      "progress": "checks passed",
+      "age_seconds": 409683.38685011864
+    },
+    {
+      "run": "original_reference_scaling_component_gpus-1_policies-per-gpu-1_environments-per-policy-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_rounds-7_updates-per-round-10_seed-start-1",
+      "pool": "jaguar03",
+      "gpu": [
+        "1\u00d7 RTX A4500"
+      ],
+      "slurm_job_id": "6777974",
+      "state": "completed",
+      "progress": "7 rounds complete",
+      "age_seconds": 383537.4322524071
+    },
+    {
+      "run": "original_reference_scaling_component_gpus-8_policies-per-gpu-1_environments-per-policy-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_rounds-7_updates-per-round-10_seed-start-1",
+      "pool": "jaguar03",
+      "gpu": [
+        "8\u00d7 RTX A4500"
+      ],
+      "slurm_job_id": "6777975",
+      "state": "completed",
+      "progress": "7 rounds complete",
+      "age_seconds": 382755.6623778343
+    },
+    {
+      "run": "serval02_convolution-backend-channels-last-control_copies-1_environments-per-copy-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_timed-rounds-2_updates-per-round-2_traced-updates-1_seed-1_source-d28e6735e797_helper-4766ba4aac28",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "0",
+      "age_seconds": 401655.6233818531
+    },
+    {
+      "run": "serval02_determinism-disabled-control_copies-1_environments-per-copy-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_timed-rounds-2_updates-per-round-2_traced-updates-1_seed-1_source-d28e6735e797_helper-4766ba4aac28",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "0",
+      "age_seconds": 402227.8502008915
+    },
+    {
+      "run": "serval02_pixel_benchmark_copies_1",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7 rounds complete",
+      "age_seconds": 412087.6195485592
+    },
+    {
+      "run": "serval02_pixel_benchmark_copies_2_source_1d488ab23e11",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "7 rounds complete",
+      "age_seconds": 405704.8595557213
+    },
+    {
+      "run": "serval02_pixel_gates_copies_1_source_1d488ab23e11",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "checks passed",
+      "age_seconds": 409394.4364285469
+    },
+    {
+      "run": "serval02_pixel_gates_copies_1_source_683483470f28",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "failed",
+      "progress": "correctness command exited 2",
+      "age_seconds": 410328.9233956337
+    },
+    {
+      "run": "serval02_pixel_gates_copies_1_source_d28e6735e797",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "checks passed",
+      "age_seconds": 405027.78984475136
+    },
+    {
+      "run": "serval02_pixel_rendering_copies_1_source_1d488ab23e11",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "failed",
+      "progress": "correctness command exited 1",
+      "age_seconds": 409862.7924442291
+    },
+    {
+      "run": "serval02_pixel_rendering_copies_1_source_683483470f28",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "failed",
+      "progress": "correctness command exited 1",
+      "age_seconds": 410233.4109425545
+    },
+    {
+      "run": "serval02_pixel_rendering_copies_1_source_d28e6735e797",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "checks passed",
+      "age_seconds": 404864.44172644615
+    },
+    {
+      "run": "serval02_pixel_smoke_copies_1",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "1 round complete",
+      "age_seconds": 413692.3538298607
+    },
+    {
+      "run": "serval02_pixel_training-checks_copies_1_source_660346abd510",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "checks passed",
+      "age_seconds": 395432.0548877716
+    },
+    {
+      "run": "serval02_reference_execution_diagnostic_copies-1_environments-per-copy-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_timed-rounds-2_updates-per-round-2_traced-updates-1_seed-1_source-d28e6735e797_helper-96b3381e336b",
+      "pool": "serval02",
+      "gpu": [
+        "NVIDIA H100 NVL"
+      ],
+      "slurm_job_id": "",
+      "state": "completed",
+      "progress": "0",
+      "age_seconds": 404196.30588006973
+    },
+    {
+      "run": "temporary_correctness_cache_after_fixed_inputs_batch_rollout_intrinsic_rewards_copies-2_environments-128_rollout-steps-128_seed-start-1_original-updates-per-round-1_helpers-ad3f70a5ef67",
+      "pool": "jaguar03",
+      "gpu": [
+        "NVIDIA RTX A4500"
+      ],
+      "slurm_job_id": "6777949",
+      "state": "failed",
+      "progress": "JaxRuntimeError(\"RESOURCE_EXHAUSTED: Out of memory while trying to allocate 8.52GiB. [tf-allocator-allocation-error=''] [executable_name='jit_iteration']\")",
+      "age_seconds": 387522.554441452
+    }
+  ],
+  "campaign": {
+    "phase": "post_initial_validation_pending",
+    "queued": 0,
+    "retried": 0,
+    "repaired_unstarted": 0,
+    "queue_counts": {
+      "pending": 0,
+      "running": 0,
+      "completed": 120,
+      "failed": 0
+    },
+    "investigated_hypotheses": 30,
+    "initial_remaining": [],
+    "remaining_work": [
+      {
+        "kind": "reporting_prerequisite",
+        "name": "common_confirmation",
+        "description": "seven paired rounds of ten complete updates on both GPU types",
+        "state": "awaiting_reviewed_evidence",
+        "missing": [
+          {
+            "hardware_class": "h100",
+            "copies": 1
+          },
+          {
+            "hardware_class": "h100",
+            "copies": 2
+          }
+        ],
+        "errors": [],
+        "scientific_credit": 0,
+        "admission_authority": false
+      },
+      {
+        "kind": "reporting_prerequisite",
+        "name": "kernel_profiles",
+        "description": "current kernel profiles on both GPU types",
+        "state": "awaiting_reviewed_evidence",
+        "missing": [
+          {
+            "hardware_class": "h100",
+            "copies": null
+          },
+          {
+            "hardware_class": "jaguar03_rtx_a4500",
+            "copies": null
+          }
+        ],
+        "errors": [],
+        "scientific_credit": 0,
+        "admission_authority": false
+      },
+      {
+        "kind": "reporting_prerequisite",
+        "name": "packing",
+        "description": "independently repeated packing boundary with fifteen percent free memory",
+        "state": "awaiting_reviewed_evidence",
+        "missing": [
+          {
+            "hardware_class": "h100",
+            "copies": null
+          },
+          {
+            "hardware_class": "jaguar03_rtx_a4500",
+            "copies": null
+          }
+        ],
+        "errors": [],
+        "scientific_credit": 0,
+        "admission_authority": false
+      }
+    ],
+    "pending_implementations": [],
+    "time": "2026-11-05T02:35:24.897900+00:00",
+    "authorization_error": null,
+    "final_verification_error": null,
+    "post_initial_reporting_requirements": [
+      {
+        "kind": "reporting_prerequisite",
+        "name": "common_correctness",
+        "description": "reviewed common correctness on both GPU types",
+        "state": "reviewed_evidence_present",
+        "missing": [],
+        "errors": [],
+        "scientific_credit": 0,
+        "admission_authority": false
+      },
+      {
+        "kind": "reporting_prerequisite",
+        "name": "common_confirmation",
+        "description": "seven paired rounds of ten complete updates on both GPU types",
+        "state": "awaiting_reviewed_evidence",
+        "missing": [
+          {
+            "hardware_class": "h100",
+            "copies": 1
+          },
+          {
+            "hardware_class": "h100",
+            "copies": 2
+          }
+        ],
+        "errors": [],
+        "scientific_credit": 0,
+        "admission_authority": false
+      },
+      {
+        "kind": "reporting_prerequisite",
+        "name": "kernel_profiles",
+        "description": "current kernel profiles on both GPU types",
+        "state": "awaiting_reviewed_evidence",
+        "missing": [
+          {
+            "hardware_class": "h100",
+            "copies": null
+          },
+          {
+            "hardware_class": "jaguar03_rtx_a4500",
+            "copies": null
+          }
+        ],
+        "errors": [],
+        "scientific_credit": 0,
+        "admission_authority": false
+      },
+      {
+        "kind": "reporting_prerequisite",
+        "name": "packing",
+        "description": "independently repeated packing boundary with fifteen percent free memory",
+        "state": "awaiting_reviewed_evidence",
+        "missing": [
+          {
+            "hardware_class": "h100",
+            "copies": null
+          },
+          {
+            "hardware_class": "jaguar03_rtx_a4500",
+            "copies": null
+          }
+        ],
+        "errors": [],
+        "scientific_credit": 0,
+        "admission_authority": false
+      }
+    ],
+    "next_action": "complete reviewed common correctness, seven paired rounds of ten updates, current profiles and repeated packing on both GPU types"
+  },
+  "final_training": {
+    "state": "disabled",
+    "reason": "no explicit prepared final submission policy",
+    "units": []
+  },
+  "site_validation": {
+    "schema_version": 1,
+    "kind": "site_validation_monitoring",
+    "observed_at_utc": "2026-11-05T02:35:25.129272+00:00",
+    "sites": [
+      {
+        "packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-14-48_h100-nvl-slurm-site-validation_hosts-serval06-serval07-serval08-serval09_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1",
+        "observed_at_utc": "2026-11-05T02:35:25.129272+00:00",
+        "job_id": "6778886",
+        "identity": {
+          "submission_sha256": "a6e9cd5e39cf9f74be81f238f111a1bf1d2447521bc0fd5e3722ec5565688fff",
+          "plan_sha256": "2a5a9d18f736e399ceaf4b6f2808bc00ee7e2d34a70b178625a6832ef1bba35e",
+          "job_script_sha256": "632a6e000832b09e0a1ef0a4e109b99435c22493f9985c213b423ee2d393cbcb"
+        },
+        "submission_receipt": {
+          "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-14-48_h100-nvl-slurm-site-validation_hosts-serval06-serval07-serval08-serval09_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1/submission_receipt.json",
+          "sha256": "a6e9cd5e39cf9f74be81f238f111a1bf1d2447521bc0fd5e3722ec5565688fff"
+        },
+        "failure.json": {
+          "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-14-48_h100-nvl-slurm-site-validation_hosts-serval06-serval07-serval08-serval09_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1/failure.json",
+          "sha256": "094083c5305b4ba2cd8e2a60d4a2e8da956ab52bc9a39c9e55d2252e4a21df0e"
+        },
+        "row": {
+          "kind": "site_validation",
+          "run": "H100 NVL site validation",
+          "pool": "UVA",
+          "gpu": [
+            "H100 NVL requested"
+          ],
+          "state": "failed",
+          "slurm_job_id": "6778886",
+          "progress": "site failed: every recorded Slurm job/step allocation must name this exact physical GPU",
+          "workers_permitted": false,
+          "campaign_claims_permitted": false,
+          "scientific_hypothesis_credit": 0,
+          "requested_gpu": "NVIDIA H100 NVL",
+          "observed_gpu": null,
+          "gpu_uuid": null,
+          "driver": null,
+          "allocation_records": []
+        }
+      },
+      {
+        "packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-16-27_h100-nvl-slurm-site-validation_allocation-observations_admission-copies-4_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1",
+        "observed_at_utc": "2026-11-05T02:35:25.129272+00:00",
+        "job_id": "6779137",
+        "identity": {
+          "submission_sha256": "deda2f747fc5bfa7896527be9be2b6b060adb454623f375cf9ac8d08be50dc10",
+          "plan_sha256": "1f2b76206c333e4a03140ac497cae9b1a8fce07eb3e177fa8e2c5fd8f788ed32",
+          "job_script_sha256": "e1dca553142806bc32820553af6c4b182b44e7e159c631866492bfe484301099"
+        },
+        "submission_receipt": {
+          "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-16-27_h100-nvl-slurm-site-validation_allocation-observations_admission-copies-4_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1/submission_receipt.json",
+          "sha256": "deda2f747fc5bfa7896527be9be2b6b060adb454623f375cf9ac8d08be50dc10"
+        },
+        "failure.json": {
+          "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-16-27_h100-nvl-slurm-site-validation_allocation-observations_admission-copies-4_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1/failure.json",
+          "sha256": "5f22c420511a87279634005438711c81422ba44ab3d32a629b9a6348702a68d7"
+        },
+        "row": {
+          "kind": "site_validation",
+          "run": "H100 NVL site validation",
+          "pool": "serval08",
+          "gpu": [
+            "NVIDIA H100 NVL"
+          ],
+          "state": "failed",
+          "slurm_job_id": "6779137",
+          "progress": "site failed: every recorded Slurm job/step allocation must name this exact physical GPU",
+          "workers_permitted": false,
+          "campaign_claims_permitted": false,
+          "scientific_hypothesis_credit": 0,
+          "requested_gpu": "NVIDIA H100 NVL",
+          "observed_gpu": "NVIDIA H100 NVL",
+          "gpu_uuid": "GPU-f3f58504-9006-31ac-f01e-d6d2a085ff2a",
+          "driver": "580.159.04",
+          "allocation_records": [
+            {
+              "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-16-27_h100-nvl-slurm-site-validation_allocation-observations_admission-copies-4_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1/allocation_observation.json",
+              "sha256": "264a3af3ee6d3323b09cd652590ce1b41643f971b8d9d357ce320e77f30ac39e"
+            },
+            {
+              "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-16-27_h100-nvl-slurm-site-validation_allocation-observations_admission-copies-4_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1/allocation_details.json",
+              "sha256": "a42435044c29cf229737a09f4d673b19dd7d2d870e7cf847f59438ef6463975b"
+            }
+          ]
+        }
+      }
+    ],
+    "allocation_observations": [
+      {
+        "packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-17-37_h100-nvl_allocation-observation_hosts-serval06-to-serval09_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-5_resource-source-job-6779137",
+        "observed_at_utc": "2026-11-05T02:35:25.129272+00:00",
+        "job_id": "6779358",
+        "identity": {
+          "submission_sha256": "9085ca83fd64183267ef5646876dc94057f2f94124b35c296ba9cdd0c2593e08",
+          "plan_sha256": "4a878f8eedb24cc8efa2090988a2429d8eeffd942fed90f5226f6e43f04f778a",
+          "job_script_sha256": "607761e8e0de982384211fbf0bab982c2b5e0d5b44064045b287b82f03fd162e"
+        },
+        "submission_receipt": {
+          "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-17-37_h100-nvl_allocation-observation_hosts-serval06-to-serval09_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-5_resource-source-job-6779137/submission_receipt.json",
+          "sha256": "9085ca83fd64183267ef5646876dc94057f2f94124b35c296ba9cdd0c2593e08"
+        },
+        "result.json": {
+          "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-10-31-17-37_h100-nvl_allocation-observation_hosts-serval06-to-serval09_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-5_resource-source-job-6779137/result.json",
+          "sha256": "fdecee225325a05a3ade7bf4622bded2cd5588225cf0c01332bd6bd25118c923"
+        },
+        "row": {
+          "kind": "allocation_observation",
+          "run": "H100 NVL allocation observation",
+          "pool": "UVA gpu/sl5nw",
+          "gpu": [
+            "NVIDIA H100 NVL"
+          ],
+          "state": "completed",
+          "slurm_job_id": "6779358",
+          "progress": "serval06; metadata collected; qualification required; zero case and idea credit",
+          "workers_permitted": false,
+          "campaign_claims_permitted": false,
+          "scientific_hypothesis_credit": 0,
+          "metadata_collected": true,
+          "qualification_verified": false,
+          "compatibility_verified": false,
+          "mapping_accepted": false,
+          "data_unit_name": "2026-10-31-17-37_h100-nvl_allocation-observation_hosts-serval06-to-serval09_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-5_resource-source-job-6779137",
+          "observed_host": "serval06",
+          "observed_gpu": "NVIDIA H100 NVL",
+          "gpu_uuid": "GPU-1e26dd69-95b9-ca39-f605-8879ef522daa",
+          "driver": "580.159.04",
+          "display_state": "COLLECTED"
+        }
+      }
+    ],
+    "terminal_accounting": {},
+    "anomalies": {
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-14-48_h100-nvl-slurm-site-validation_hosts-serval06-serval07-serval08-serval09_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1": {
+        "job_id": "6778886",
+        "reason": "site failed: every recorded Slurm job/step allocation must name this exact physical GPU",
+        "observed_at_utc": "2026-11-05T02:35:25.129272+00:00"
+      },
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-16-27_h100-nvl-slurm-site-validation_allocation-observations_admission-copies-4_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1": {
+        "job_id": "6779137",
+        "reason": "site failed: every recorded Slurm job/step allocation must name this exact physical GPU",
+        "observed_at_utc": "2026-11-05T02:35:25.129272+00:00"
+      }
+    }
+  },
+  "allocation_observations": [
+    {
+      "packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-17-37_h100-nvl_allocation-observation_hosts-serval06-to-serval09_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-5_resource-source-job-6779137",
+      "observed_at_utc": "2026-11-05T02:35:25.129272+00:00",
+      "job_id": "6779358",
+      "identity": {
+        "submission_sha256": "9085ca83fd64183267ef5646876dc94057f2f94124b35c296ba9cdd0c2593e08",
+        "plan_sha256": "4a878f8eedb24cc8efa2090988a2429d8eeffd942fed90f5226f6e43f04f778a",
+        "job_script_sha256": "607761e8e0de982384211fbf0bab982c2b5e0d5b44064045b287b82f03fd162e"
+      },
+      "submission_receipt": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-17-37_h100-nvl_allocation-observation_hosts-serval06-to-serval09_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-5_resource-source-job-6779137/submission_receipt.json",
+        "sha256": "9085ca83fd64183267ef5646876dc94057f2f94124b35c296ba9cdd0c2593e08"
+      },
+      "result.json": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-10-31-17-37_h100-nvl_allocation-observation_hosts-serval06-to-serval09_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-5_resource-source-job-6779137/result.json",
+        "sha256": "fdecee225325a05a3ade7bf4622bded2cd5588225cf0c01332bd6bd25118c923"
+      },
+      "row": {
+        "kind": "allocation_observation",
+        "run": "H100 NVL allocation observation",
+        "pool": "UVA gpu/sl5nw",
+        "gpu": [
+          "NVIDIA H100 NVL"
+        ],
+        "state": "completed",
+        "slurm_job_id": "6779358",
+        "progress": "serval06; metadata collected; qualification required; zero case and idea credit",
+        "workers_permitted": false,
+        "campaign_claims_permitted": false,
+        "scientific_hypothesis_credit": 0,
+        "metadata_collected": true,
+        "qualification_verified": false,
+        "compatibility_verified": false,
+        "mapping_accepted": false,
+        "data_unit_name": "2026-10-31-17-37_h100-nvl_allocation-observation_hosts-serval06-to-serval09_gpu-count-1_processor-count-8_host-memory-gib-64_time-limit-minutes-5_resource-source-job-6779137",
+        "observed_host": "serval06",
+        "observed_gpu": "NVIDIA H100 NVL",
+        "gpu_uuid": "GPU-1e26dd69-95b9-ca39-f605-8879ef522daa",
+        "driver": "580.159.04",
+        "display_state": "COLLECTED"
+      }
+    }
+  ],
+  "aces_allocation_observations": [
+    {
+      "packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-23-23_ACES_allocation-observation_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-minutes-5_partition-gpu_account-158590754315_helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f",
+      "row": {
+        "kind": "allocation_observation",
+        "cluster": "aces",
+        "run": "ACES allocation observation",
+        "pool": "ACES gpu/u.sl359075",
+        "gpu": [
+          "H100"
+        ],
+        "state": "unknown",
+        "slurm_job_id": "2274380",
+        "progress": "remote status unknown: ACES remote status requires a fresh observation; last snapshot 2026-11-02 00:09:09 PT",
+        "metadata_collected": false,
+        "qualification_verified": false,
+        "mapping_accepted": false,
+        "compatibility_verified": false,
+        "workers_permitted": false,
+        "campaign_claims_permitted": false,
+        "scientific_hypothesis_credit": 0,
+        "data_unit_name": "2026-10-31-23-23_ACES_allocation-observation_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-minutes-5_partition-gpu_account-158590754315_helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f"
+      }
+    }
+  ],
+  "aces_full_site_checks": [
+    {
+      "packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-02-22_aces-full-site_h100_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3_torch-2.6.0-cpu",
+      "row": {
+        "kind": "aces_full_site",
+        "cluster": "aces",
+        "run": "ACES original pixel full-site check",
+        "pool": "ACES gpu/u.sl359075",
+        "gpu": [
+          "H100 PCIe requested"
+        ],
+        "state": "unknown",
+        "slurm_job_id": "",
+        "data_unit_name": "2026-11-01-02-22_aces-full-site_h100_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3_torch-2.6.0-cpu",
+        "qualification_verified": false,
+        "scientific_case_credit": 0,
+        "initial_case_credit": 0,
+        "final_training_credit": 0,
+        "progress": "H100 PCIe requested; remote site status unknown: ACES full-site status is stale or from the future; refresh its exact owned ID",
+        "workers_permitted": false,
+        "campaign_claims_permitted": false,
+        "scientific_hypothesis_credit": 0,
+        "comparison_credit": 0,
+        "idea_credit": 0,
+        "admission_credit": 0
+      }
+    },
+    {
+      "packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-05-23_aces-full-site_h100_autodetect-nvml_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3",
+      "row": {
+        "kind": "aces_full_site",
+        "cluster": "aces",
+        "run": "ACES original pixel full-site check",
+        "pool": "ACES gpu/u.sl359075",
+        "gpu": [
+          "H100 PCIe requested"
+        ],
+        "state": "unknown",
+        "slurm_job_id": "",
+        "data_unit_name": "2026-11-01-05-23_aces-full-site_h100_autodetect-nvml_driver-580.178.04_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-hours-3",
+        "qualification_verified": false,
+        "scientific_case_credit": 0,
+        "initial_case_credit": 0,
+        "final_training_credit": 0,
+        "progress": "H100 PCIe requested; remote site status unknown: ACES full-site status is stale or from the future; refresh its exact owned ID",
+        "workers_permitted": false,
+        "campaign_claims_permitted": false,
+        "scientific_hypothesis_credit": 0,
+        "comparison_credit": 0,
+        "idea_credit": 0,
+        "admission_credit": 0
+      }
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+test_identity_failure_reaps_only_its_actual_child (__main__.RootCorrectionTests)
+A failed identity read leaves no blocked own metadata child alive. ... ok
+test_nonzero_system_exit_is_preserved_and_marked_failed (__main__.RootCorrectionTests)
+A failed guard exit cannot become a successful diagnostic marker. ... ok
+test_normal_metadata_child_receives_input_and_waits_normally (__main__.RootCorrectionTests)
+Successful metadata observation still retains its exact normal wait. ... ok
+test_receipt_failure_reaps_child_and_keeps_unsaved_identity_flag (__main__.RootCorrectionTests)
+A failed child receipt is distinct from a saved child identity. ... ok
+test_success_system_exit_is_preserved_and_marked_normal (__main__.RootCorrectionTests)
+Both successful SystemExit forms keep their original exception and marker. ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.018s
+
+OK

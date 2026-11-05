@@ -1,0 +1,100 @@
+{
+  "actual_first_full_report_review_required_after_start": true,
+  "cadence_seconds": 1200,
+  "campaign_run_dir": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1",
+  "cpu_allocation_policy": {
+    "accepted_allocated_logical_cpus": [
+      1,
+      2
+    ],
+    "requested_and_allocated_gpus": 0,
+    "requested_and_allocated_memory": "2G",
+    "requested_and_allocated_nodes": 1,
+    "requested_cpus": 1,
+    "two_requires_actual_node_threads_per_core": 2
+  },
+  "created_at_utc": "2026-11-05T02:29:21.708566+00:00",
+  "data_unit": {
+    "name": "2026-11-04-18-29_pixel-study-monitor_source-commit-6b7d492217140bba3d2f36b93754ecde2d020ccc_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0",
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-04-18-29_pixel-study-monitor_source-commit-6b7d492217140bba3d2f36b93754ecde2d020ccc_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0"
+  },
+  "duration_cap_proof": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-18-29_pixel-study-monitor_source-commit-6b7d492217140bba3d2f36b93754ecde2d020ccc_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/duration_cap_proof.json",
+    "sha256": "409e313fd228cb07edd9011921eb509ac47704ce581861a211d96f51ad5cbffd"
+  },
+  "final_training_credit": 0,
+  "gpu_uuid": null,
+  "helper_commit": "6b7d492217140bba3d2f36b93754ecde2d020ccc",
+  "job_id": null,
+  "job_script": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-18-29_pixel-study-monitor_source-commit-6b7d492217140bba3d2f36b93754ecde2d020ccc_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/monitor.sbatch",
+    "sha256": "98c55a1739d468551531805afeec95e81b26eb06170f0532d55b0bc958e599b8"
+  },
+  "job_shape": {
+    "account": "sl5nw_base",
+    "cpus_per_task": 1,
+    "gpus_per_node": 0,
+    "host_memory_gib": 2,
+    "interval_seconds": 1200,
+    "nodes": 1,
+    "ntasks": 1,
+    "partition": "nolim",
+    "qos": "normal",
+    "requeue": false,
+    "time": "7-00:00:00"
+  },
+  "kind": "persistent_pixel_study_monitor_replacement",
+  "old_monitor_job_id": "6783003",
+  "prelaunch_full_candidate_available": true,
+  "prelaunch_full_candidate_executed": false,
+  "required_submission_row": [
+    "<exact_returned_job_id>",
+    "monitor",
+    "6b7d492217140bba3d2f36b93754ecde2d020ccc",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-18-29_pixel-study-monitor_source-commit-6b7d492217140bba3d2f36b93754ecde2d020ccc_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/monitor.sbatch"
+  ],
+  "reservation": null,
+  "resource_basis": {
+    "current_monitor_plan": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-16-33_pixel-study-monitor-recovery_source-commit-79a01e851ff92ddba7d0e12eaf8164cab2028878_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/monitor_replacement_plan.json",
+      "sha256": "18376135e3c342c9be628a1ab8cf022a34a7942ab76f2e986ae9553b4f3dcb69"
+    },
+    "current_monitor_runtime": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-16-33_pixel-study-monitor-recovery_source-commit-79a01e851ff92ddba7d0e12eaf8164cab2028878_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/runtime_allocation.json",
+      "sha256": "ef82f6b08ffc84ab98653662b52ee5522492e70ef0429bfae40083a7762ee245"
+    },
+    "standing_monitor_basis": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-18-29_pixel-study-monitor_source-commit-6b7d492217140bba3d2f36b93754ecde2d020ccc_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/standing_monitor_basis.json",
+      "sha256": "4d6e236740757f002af8fe96482e0913f308eae0a58fce250f5cde1a823cb284"
+    }
+  },
+  "schema_version": 1,
+  "scientific_case_credit": 0,
+  "scientific_hypothesis_credit": 0,
+  "source": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-18-29_pixel-study-monitor_source-commit-6b7d492217140bba3d2f36b93754ecde2d020ccc_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/source_snapshot/6b7d492217140bba3d2f36b93754ecde2d020ccc/10_jax_exploration_platform",
+  "source_file_count": 286,
+  "source_manifest": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-18-29_pixel-study-monitor_source-commit-6b7d492217140bba3d2f36b93754ecde2d020ccc_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/source_snapshot.json",
+    "sha256": "9370d0fe512615f6c005eabf2157779a3d8e440926ffd4be75e4c3bbd5778987"
+  },
+  "state": "prepared, not submitted; full candidate proof pending",
+  "submission_command": [
+    "sbatch",
+    "--parsable",
+    "--hold",
+    "--no-requeue",
+    "--account=sl5nw_base",
+    "--partition=nolim",
+    "--qos=normal",
+    "--nodes=1",
+    "--ntasks=1",
+    "--cpus-per-task=1",
+    "--mem=2G",
+    "--gpus-per-node=0",
+    "--time=7-00:00:00",
+    "--job-name=pixel_study_monitor",
+    "--output=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/jobs/monitor_%j.log",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-18-29_pixel-study-monitor_source-commit-6b7d492217140bba3d2f36b93754ecde2d020ccc_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/monitor.sbatch"
+  ],
+  "worker_admission": false
+}

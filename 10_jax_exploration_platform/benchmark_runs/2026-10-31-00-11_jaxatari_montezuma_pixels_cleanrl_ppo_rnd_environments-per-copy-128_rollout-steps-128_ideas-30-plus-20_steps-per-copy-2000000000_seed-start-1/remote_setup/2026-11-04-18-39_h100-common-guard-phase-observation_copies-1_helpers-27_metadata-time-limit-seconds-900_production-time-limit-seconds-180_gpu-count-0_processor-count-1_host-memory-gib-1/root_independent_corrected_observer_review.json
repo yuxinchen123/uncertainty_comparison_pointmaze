@@ -1,0 +1,16 @@
+{
+  "kind": "root_independent_metadata_phase_observer_review",
+  "approved": true,
+  "passed": true,
+  "at_utc": "2026-11-05T02:49:36.634108+00:00",
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-18-39_h100-common-guard-phase-observation_copies-1_helpers-27_metadata-time-limit-seconds-900_production-time-limit-seconds-180_gpu-count-0_processor-count-1_host-memory-gib-1/diagnostic_source_and_inputs_freeze_after_root_review.json",
+    "sha256": "a291df9162f8ddd0a2ba5de2ec398e758e93bccec08d62ee5b21149a6538f181"
+  },
+  "corrected_system_exit_and_exact_owned_child_cleanup_reviewed": true,
+  "guard_source_and_input_unchanged": true,
+  "diagnostic_only_timeout_seconds": 900,
+  "production_timeout_seconds_unchanged": 180,
+  "no_production_qualification_or_admission_authority": true,
+  "scientific_credit": 0
+}

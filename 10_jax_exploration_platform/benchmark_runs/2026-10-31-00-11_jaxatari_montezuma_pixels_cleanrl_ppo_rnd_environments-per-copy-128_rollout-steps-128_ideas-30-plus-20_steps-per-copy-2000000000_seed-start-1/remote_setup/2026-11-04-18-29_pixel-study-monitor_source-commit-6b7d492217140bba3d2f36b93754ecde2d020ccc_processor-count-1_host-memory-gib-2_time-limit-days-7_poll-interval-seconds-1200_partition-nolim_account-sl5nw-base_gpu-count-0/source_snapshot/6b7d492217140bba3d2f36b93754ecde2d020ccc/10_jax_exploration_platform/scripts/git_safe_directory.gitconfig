@@ -1,0 +1,5 @@
+# Read by run_training.py through GIT_CONFIG_GLOBAL, for its own git calls only: a worker under a
+# collaborator account (git 2.34 on the compute nodes) refuses a repository it does not own unless
+# a global config names it safe, and that version ignores the setting on the command line.
+[safe]
+	directory = /p/rlprojects/RND

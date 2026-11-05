@@ -1,0 +1,17 @@
+{
+  "kind": "preserved_initial_phase_observer_metadata_tests",
+  "tests_run": 6,
+  "failures": 0,
+  "errors": 0,
+  "returncode": 0,
+  "owned_job_id": "6783003",
+  "actual_step_id": null,
+  "step_identity_not_saved_by_initial_test_entry": true,
+  "raw_output_not_saved": true,
+  "source_files": {
+    "observe_guard_phases.py": "ba55a176ccc77c1442f7f1a5d3fbc50025f3325e000dd532611c95db71a6a81c",
+    "test_observe_guard_phases.py": "b1c829cba314a8cb872401a798a6b6d92094c27df780577a3a42f6c878c72c55"
+  },
+  "new_source_change_requires_fresh_tests": "Filter function name before building a path, so untargeted calls add minimal timing overhead.",
+  "at_utc": "2026-11-05T02:41:52.946640+00:00"
+}

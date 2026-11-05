@@ -1,0 +1,1734 @@
+{
+  "archive": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-18-29_pixel-study-monitor_source-commit-6b7d492217140bba3d2f36b93754ecde2d020ccc_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/source_git_archive.tar",
+    "sha256": "c5a1b2745df804e205ee2d7bfa9f6ad0d59ac4349e0d1da9eea113fa5d9ecede"
+  },
+  "clean_detached_source_root": "/p/rlprojects/RND_worktrees/2026-11-04-18-27_pixel-study-monitor-source_commit-6b7d492217140bba3d2f36b93754ecde2d020ccc",
+  "files": {
+    "10_jax_exploration_platform/scripts/README.md": {
+      "bytes": 2053,
+      "git_blob": "63d50336ff29a1c77ed6eabccf6c8ccac289c82d",
+      "git_mode": "100644",
+      "sha256": "9bd613ea92317bb049e1c17d35de6c7dc2fbc2cc38e845c8bda1826e55e3c965"
+    },
+    "10_jax_exploration_platform/scripts/aggregate_run.py": {
+      "bytes": 7125,
+      "git_blob": "073e30895b9d331f18dbbd89b2c517fea195bcaa",
+      "git_mode": "100644",
+      "sha256": "060b254838f7219b062436f64b0cbf2fe7e2d4287479e4039fb2a66fe7bba446"
+    },
+    "10_jax_exploration_platform/scripts/aggregate_selected_run.py": {
+      "bytes": 5791,
+      "git_blob": "3feade2cbaaf0f26848aab4e801f0550cb7205aa",
+      "git_mode": "100644",
+      "sha256": "3d6aee6df88d116e79e35ebf1c1fc3149364532ca9cf68981aae774d92ae2282"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/aces_allocation_observation.py": {
+      "bytes": 30024,
+      "git_blob": "c8bd5b78e2b9ad8422ee4e3c04b797eeaa7262c1",
+      "git_mode": "100644",
+      "sha256": "ac20f6d83029e2f092fc4e6e42c907536ab358f6abca7cf0ebce71c5635d84e2"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/aces_site_monitor.py": {
+      "bytes": 18092,
+      "git_blob": "7d6d040e337a3f680de6122e136cf3087a1a0cc8",
+      "git_mode": "100644",
+      "sha256": "a54ae7f242d6494fa46c2489b1a68dbaacbfd6a02467e9093d3df7305164f9b4"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/aces_slurm_autodetect_qualification.py": {
+      "bytes": 22809,
+      "git_blob": "dfd99249a6a60d948875d25956b6f2641fb19e94",
+      "git_mode": "100644",
+      "sha256": "f4d4f70897a165977e6aab529b00873f5ddaee2f214e2d8507f3bb68332d066a"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/aces_slurm_qualification.py": {
+      "bytes": 28183,
+      "git_blob": "188179ef7c876ef7c37ec06f602eccb9a8276c73",
+      "git_mode": "100644",
+      "sha256": "8c06ad6a325bc19e875e48e9f72ddb550b68d6541223e2699a9f395685f5b9ad"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/aces_slurm_site_validation.py": {
+      "bytes": 48100,
+      "git_blob": "055c0878b85a723e2ce32eeb1304b2945266d38d",
+      "git_mode": "100644",
+      "sha256": "9166ba2bf26d5573d9ee7e85f20dbf8a8d155e4b3084d1989ef99964e8841092"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/aces_source_admission.py": {
+      "bytes": 8342,
+      "git_blob": "ed26a75875c95fd03f11c5c813a85d1252d8ab55",
+      "git_mode": "100644",
+      "sha256": "85e868dd7a88485fb9b9d09d1555c27b117d0888060da63e7538660f94aa3929"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/admit_measurements.py": {
+      "bytes": 17479,
+      "git_blob": "04a414cf78077d8700587a129481db214b84c0f9",
+      "git_mode": "100644",
+      "sha256": "43f9859f4386518cc68ae68f4db7474417bce44ca83a2c2cd46e01be48e5d0b0"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/advance_adaptive_research.py": {
+      "bytes": 56502,
+      "git_blob": "2931abe014518af2fb5100b580180e16c044066a",
+      "git_mode": "100644",
+      "sha256": "67585e04f972ac91ffbc4e8278d3f7776e373d1be268e92102a988c24b6af410"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/check_rendering.py": {
+      "bytes": 7254,
+      "git_blob": "3b5062bc8fed3b9fe6875aef55d785fad60fe8e0",
+      "git_mode": "100644",
+      "sha256": "79e21acb6d1166b8cad73a9e8eab6c360a9655fbaba628dbedd8307c511da81e"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/collect_worker_exit_receipts.py": {
+      "bytes": 16028,
+      "git_blob": "dd23917ca7c4c22347c61d25b6104f3d3e277363",
+      "git_mode": "100644",
+      "sha256": "bcf3355b756a54251c1d03ed0494cd9e0ee2c6dba5398da1a94e168807ae058f"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/common_confirmation.py": {
+      "bytes": 18576,
+      "git_blob": "5625b607303c9af767df80bb920031b53f6f0148",
+      "git_mode": "100644",
+      "sha256": "80c4ef75d73ad2ba1cff6dad3aba6a64694cd0882c4ac570e9e41f8dea6a54dd"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_measurement.py": {
+      "bytes": 67765,
+      "git_blob": "03d57824b25bf6947ae5945586559e30d873aaa1",
+      "git_mode": "100644",
+      "sha256": "bde06959eb37322f3d9f8a82ab7457b24c7082a1176f06ff89f4e44f8dbdce0f"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/controller.py": {
+      "bytes": 59692,
+      "git_blob": "144aa22a113f9a94007665b375c5e72ff6f136b1",
+      "git_mode": "100644",
+      "sha256": "4456daec36ca451eb7fc1cdc414f0ec5dea7fe7e26c49ed46d669943a739336a"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/deployed_training_admission.py": {
+      "bytes": 11727,
+      "git_blob": "7aed0549e47dd01a3c58a3b698df7bea9fbf36fc",
+      "git_mode": "100644",
+      "sha256": "3c04b8dbcc9b5125084c814e6634ae68eb4c7b9946e3614a494e3b6b00089874"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/device_memory_capture_regression.py": {
+      "bytes": 60447,
+      "git_blob": "6838cf28df5cd1633af0d3fd80c6ac2e567906f0",
+      "git_mode": "100644",
+      "sha256": "5ebdee14f4ccff227d62c5fd500283ac770442cb094633edd00b979e944daa9c"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/device_memory_limit.py": {
+      "bytes": 94544,
+      "git_blob": "efdca53aa3ae5bec75e7edccbd14b74c01fddc6c",
+      "git_mode": "100644",
+      "sha256": "3abcb3641cc799424d6585e9881befbbd3c06800e9dc4d19fed5a507fe5e06ff"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_allocator_region.py": {
+      "bytes": 17498,
+      "git_blob": "59bd6a4151e347600764c8f0dd2714e14d2f57bc",
+      "git_mode": "100644",
+      "sha256": "1bf47967fff49dd16e832f28f27ea26d20747ecec2b34dda2fdc139a7fd25b85"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_correctness_cache.py": {
+      "bytes": 19204,
+      "git_blob": "b0035b0ef3348d783456cfc9d89c60aa694a9e78",
+      "git_mode": "100644",
+      "sha256": "e3b7f68e28a6771c268b49b01b319a1cc6f317570366a4dbeab2fcd27e3f9035"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py": {
+      "bytes": 24860,
+      "git_blob": "893dc9cd23e8637910469e9ab08059168931c62e",
+      "git_mode": "100644",
+      "sha256": "310bcb6b4b1a18cc9d7acac62a07dfb60874bb60aed127b50b9c07227593f9f8"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_nsight_process_tree.py": {
+      "bytes": 16294,
+      "git_blob": "c30a1ac782e7f4b475838137ac2552b282ef6d0f",
+      "git_mode": "100644",
+      "sha256": "1f1e45268e2f9779fe9974dfaae367efb38d17b2408963210af6235792242c1f"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_pregather_allocator.py": {
+      "bytes": 22928,
+      "git_blob": "623bb893e1b11c9a38bbf09fee5ca81e86e3b822",
+      "git_mode": "100644",
+      "sha256": "24866fdf0089e8ef6bd19cc9a4d2869f6ecf28e0f4de814b8467f99b17eb63ba"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_backend_image.py": {
+      "bytes": 37512,
+      "git_blob": "750a069116f883f8ffef845e87e95f2148c23276",
+      "git_mode": "100644",
+      "sha256": "55756b454c477635e22b2852dc9dbb002db257830f0dc9071b1018f4d3f350b7"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_confirmation.py": {
+      "bytes": 47156,
+      "git_blob": "d2ed2c04562800e0426333834b3c48aadb4acba4",
+      "git_mode": "100644",
+      "sha256": "e2be3083b7d312d0441318dfff135bd18d2c89b03bc067f55a83f6d49486747e"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py": {
+      "bytes": 59178,
+      "git_blob": "57372b465c0b1a479a8c43ae2871e0dd8411f156",
+      "git_mode": "100644",
+      "sha256": "1e435c2d9551b09067025ffd01ee7cd0afe685a70424e659f69c698c1371b987"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_prerequisites.py": {
+      "bytes": 33457,
+      "git_blob": "395511c5a5378e15a712b5ed9fe74393057e5f49",
+      "git_mode": "100644",
+      "sha256": "637c159c6d8dfbda8271da3c82d8ec606761b1edfdbf18d90898bce77fbb3cdd"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/final_training_monitor.py": {
+      "bytes": 11980,
+      "git_blob": "bdcafed34480a386be6abf84e19f3cc72fd37388",
+      "git_mode": "100644",
+      "sha256": "64317fdde1549a05df8d4afee7d80ee0e74f1d1ee4303b4ac1545bfa9fc3e826"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_allocation_observation.py": {
+      "bytes": 33665,
+      "git_blob": "f142befc51a6a748634c770eea1331edcdc88e7b",
+      "git_mode": "100644",
+      "sha256": "f614a3792f196605cd1fa4b76738ff3157f72ee6700058526c2598e45a63a50c"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_case.py": {
+      "bytes": 14137,
+      "git_blob": "d6dfe49736a8d560a8d78c33e4f86837d1a25813",
+      "git_mode": "100644",
+      "sha256": "5acd8a33b849e8805a6d51023d5c5661ac989b473a6135669b9ca243256e754f"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_evidence.py": {
+      "bytes": 53301,
+      "git_blob": "7beb41b84616a909e88407929f05ed61d4e9eccb",
+      "git_mode": "100644",
+      "sha256": "cc66813e5a31dd54f9c266f5a094c26c6a5753c17599b1badd97911f932c5824"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_qualification.py": {
+      "bytes": 26893,
+      "git_blob": "d3acb1003f1431310bc6b06038cb716a759f2087",
+      "git_mode": "100644",
+      "sha256": "93a19a553a10daf894e4e573b7aacebecf0d5a1cfa0b0f13a471c19e4184eecb"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_queue.py": {
+      "bytes": 35187,
+      "git_blob": "f531c0d803cd70e9408732aff276b0e00e32e499",
+      "git_mode": "100644",
+      "sha256": "cac5c612c641aad0bc814438f0e21c02544073632484dcba99047e2ac44aaa60"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/h100_nvl_slurm_site_validation.py": {
+      "bytes": 71539,
+      "git_blob": "ba5bb257048628ac1161b3fc973ce604aa471f2b",
+      "git_mode": "100644",
+      "sha256": "7b71221d25493ad5a5b07672e593a329f912ebf3ecd259f2aeede1e6da55acc6"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py": {
+      "bytes": 27714,
+      "git_blob": "a35e4ad455d162b679ea2733d8f7ec0ee1ee822c",
+      "git_mode": "100644",
+      "sha256": "df811a5d51a7ef2f747bc32d1545c8286552675dfc8b859e7d0600eef4c920c5"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry.py": {
+      "bytes": 35158,
+      "git_blob": "c7454b6d853cea21b6eb28293a4b62594dc9a2a7",
+      "git_mode": "100644",
+      "sha256": "40c117d6fd1937dcdd465381d1469f0ad687103d7b551d604d8c6e03063f9107"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/infrastructure_retry_worker.py": {
+      "bytes": 21161,
+      "git_blob": "de36b9adb7ff4e5a70228ab25aa422943abe8d55",
+      "git_mode": "100644",
+      "sha256": "8dc0b1d77229ef17825a6b6f6b0aa8b097058f183748e11c5edc3bc4848a14f2"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/launch_a4500_diagnostics.py": {
+      "bytes": 20427,
+      "git_blob": "46c01cc2070fd9e580ca318ada7099b779d763fa",
+      "git_mode": "100644",
+      "sha256": "6b79ad7dc5dc7d31b10ad20d023606d7361bdc59b0e76fb8def88288ef1d361c"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/launch_capacity_diagnoses.py": {
+      "bytes": 16699,
+      "git_blob": "d4987ef408465e5b5bfc4246b3424af978bfface",
+      "git_mode": "100644",
+      "sha256": "139b4103d94978eb698163acc436e67b577ab29a161e60223a4298b77c0baa85"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/launch_deployed_training.py": {
+      "bytes": 58070,
+      "git_blob": "e4915c3ab7b8ca73f1aebfbfcdce3f42c477e594",
+      "git_mode": "100644",
+      "sha256": "15470dc4298685b6e5fc4c6ecaf9d38422571cc29765eb7443df5fce87912a35"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/launch_diagnostic.py": {
+      "bytes": 24493,
+      "git_blob": "e270a931518adf82e4b40d07cd1794a4e6a36c18",
+      "git_mode": "100644",
+      "sha256": "4dd0bf6f4ea63866b9c3ab88949432e1a870d24805478f5b3c0048dd2d88f059"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/launch_direct.py": {
+      "bytes": 6862,
+      "git_blob": "e61082e4a36dc08ee837c4ce9f261aef1c1739e6",
+      "git_mode": "100644",
+      "sha256": "04980346988e9fab8ebbfb376275528529950f63639264a7c683a167bb484411"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/launch_final_training.py": {
+      "bytes": 66808,
+      "git_blob": "c621bb723b1b9210473733b3caf1ec97b0f519d9",
+      "git_mode": "100644",
+      "sha256": "c0ed988c76b573fe062b728f5bd0603a84f45c4cf7d5968f2db82db831c013c5"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/launch_queue.py": {
+      "bytes": 16672,
+      "git_blob": "e4543acce7131fbadb7598fb70d1937a01fd99fd",
+      "git_mode": "100644",
+      "sha256": "6f6a1e6d25622ddfa6680da0cfa37f460a8fce1231b82e78d4226da1df094a8d"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/learning_latency_component.py": {
+      "bytes": 46092,
+      "git_blob": "1c141e0e518204c135c1462b08e722eca688cab0",
+      "git_mode": "100644",
+      "sha256": "a8f4443ca16b48171a2806a9023450d6e0e866589cfe63b3db7ff2dabd70a187"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_gpu_scaling.py": {
+      "bytes": 42881,
+      "git_blob": "c214dd9b1b33df202398889cdd69013dc0c53d17",
+      "git_mode": "100644",
+      "sha256": "a2dd1df94cb6e95e9218ff4bbbccf9b16dc786568e097e9bac00a3ac71f9a36b"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py": {
+      "bytes": 74159,
+      "git_blob": "18f382b5aa5abd93e53daca21a7f174773cfdddc",
+      "git_mode": "100644",
+      "sha256": "39a6376ba5e2d42848cc04d6d84131a7670debaf4fe147b50f50a706b6823a76"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/monitor.py": {
+      "bytes": 74955,
+      "git_blob": "06127990962608a31edd69e11ab7cd2aea8c3cde",
+      "git_mode": "100644",
+      "sha256": "dea8682097e23b4c6ecaff4801914017a7fb7e04672d4ece1cfb3f46de62ea84"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py": {
+      "bytes": 37441,
+      "git_blob": "e1ccdd8a86eb54c0d160ab887ca064630ea29f89",
+      "git_mode": "100644",
+      "sha256": "f9c6ec46592677203a08053f1ccfd9d4b191cf7b3c06d6acab41e39203968092"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/paired_benchmark.py": {
+      "bytes": 37009,
+      "git_blob": "d955b6bf730a844699ed6ea77e30a086af69ef6c",
+      "git_mode": "100644",
+      "sha256": "c3e39d8e5d2549c3e2682e196861095780b30740a49821b2077da620386f2916"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/passive_installed_slurm_observation.py": {
+      "bytes": 40346,
+      "git_blob": "e589107fba5769392fb22e0d726171036a1e18b4",
+      "git_mode": "100644",
+      "sha256": "97ce634c07cd7a2b045d4253938db21c844abd93f3bb7b9d4dbebfd5f33bf842"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/portable_evidence.py": {
+      "bytes": 8731,
+      "git_blob": "b16be3db3ed5bf2b45e13b0c06d8cb2e3ee72779",
+      "git_mode": "100644",
+      "sha256": "0ecae0ab2c21b0bbeadd47ddbd81026cb133e8f3d7f32c2148268dbfe575a4d1"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/post_comparison_validation.py": {
+      "bytes": 148099,
+      "git_blob": "422662e8be10c6cbf2c4120b8090181c21922f2d",
+      "git_mode": "100644",
+      "sha256": "2612e358f3e823289a92bdfe54856bdc8f0de5553db4bdcc5cd7617083cfd6aa"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/pregather_async_retry.py": {
+      "bytes": 45049,
+      "git_blob": "3df8080c8a55521c27fcebf9a3c62c3aee56f1db",
+      "git_mode": "100644",
+      "sha256": "881c89b678782dc56568b9257a9753a78b4e06464d43e73a14f1927a5fc17695"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/prepare_portable_evidence.py": {
+      "bytes": 18056,
+      "git_blob": "4e5e1666684845ae4d11b6e3e43ba392b787654f",
+      "git_mode": "100644",
+      "sha256": "56a8bb77bf294094ba74baf523d1598c9602523fe032027b5e1a2051f1360fac"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py": {
+      "bytes": 66682,
+      "git_blob": "a7162aeebd025617ba8cb6d6967e2257c4f59399",
+      "git_mode": "100644",
+      "sha256": "74a0ca9d5d9f9a0297de14d144007167969a6db044ea57669d6f554d7a5a558f"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/queue_worker.py": {
+      "bytes": 16337,
+      "git_blob": "18fb70f83554ec61da4ffefdfc156e278ba6d1de",
+      "git_mode": "100644",
+      "sha256": "7025f5a5cd204c445e3c7d0964c1c93d0018fef409b49957d9332d898e8bb391"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/refresh_aces_allocation_observation.py": {
+      "bytes": 20410,
+      "git_blob": "fc099bff8bfacb730972e437643dc68f6695d3cf",
+      "git_mode": "100644",
+      "sha256": "a96082f1d66827ccb4552aa01860abef00bab4d8b77e0a76a75744809cbdee79"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/refresh_aces_site.py": {
+      "bytes": 13576,
+      "git_blob": "769bae76e8acebb0eef72322ccd06131a6bf2940",
+      "git_mode": "100644",
+      "sha256": "edeb3d8dea4856b157c654ee258391fb5f71311487cee600b4c577ba3e18e5ea"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/run_case.py": {
+      "bytes": 9747,
+      "git_blob": "82287564f6e09bab26a8ef8b05ffc445cb27d857",
+      "git_mode": "100644",
+      "sha256": "d0fc717a16a5de7d40c1f14bd2f2091a44722e7888150ea3975951d12ee92a5d"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/run_checks.py": {
+      "bytes": 2109,
+      "git_blob": "aa621c3d0ca71124f054eea0ad8ab8f0a7825696",
+      "git_mode": "100644",
+      "sha256": "d1e7188f75dc221a0caee4f0e7218b8cc5b7b5387a90ce0f8346daa9aeb3ea63"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/run_infrastructure_retry.py": {
+      "bytes": 14539,
+      "git_blob": "93176914b301f75866f155b1e962422888f34738",
+      "git_mode": "100644",
+      "sha256": "fbcffc51d2c5df18672f9cfac57ee38c6c8aa1fa4d11b3d385a621ea068d94de"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/run_original_scaling_component.py": {
+      "bytes": 5736,
+      "git_blob": "f86d9091d1f0c8e97214d432727961f5d7e21c54",
+      "git_mode": "100644",
+      "sha256": "f6f3a24a2424c4c93b85753cd3c0013617a9e877cf394cbb2c047b6eea3c15bb"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/run_passive_installed_slurm_observation.py": {
+      "bytes": 23293,
+      "git_blob": "9c76367b84a72cb1793d0ee62fb581ca8cf69b6f",
+      "git_mode": "100644",
+      "sha256": "6fb870494ea065c1c66cf37a4141e2b766b74b0bb7cbd2cff931047770b7b011"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/run_pregather_async_retry.py": {
+      "bytes": 9824,
+      "git_blob": "9787c807c5b87a7e6974242a62969ba7213c1005",
+      "git_mode": "100644",
+      "sha256": "8ad515150ac6aad5b2d0ca3eb35553706643a6d8bdbd24561fcba7bec04ba1c9"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/run_unit.py": {
+      "bytes": 12730,
+      "git_blob": "3c88fe4693c904a12d4a4f3e7c24c15ef84b9fe0",
+      "git_mode": "100644",
+      "sha256": "d879e539ca21afd49f071b14a6f729b9dcbda09e1836db80999cc9fb462a35d8"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py": {
+      "bytes": 53870,
+      "git_blob": "8ef7e7ecb5cd4f6e3180fd8e590d14a29e83ede1",
+      "git_mode": "100644",
+      "sha256": "e0d7c640086480bc6c5e6a5d867db5544a1a5fb111e63e20fe3aba50e1b5afa7"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/setup_assets.py": {
+      "bytes": 2378,
+      "git_blob": "e92ca1e2a1617229f4fd2e60999cefb001d7b30d",
+      "git_mode": "100644",
+      "sha256": "865197dad1234ab3a0c51783eb57df0bac09d55e780e6dea09deb93bea6d6d0f"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/short_learning.py": {
+      "bytes": 29701,
+      "git_blob": "4e14df4412d888c19e53a2ea634f1ce839adabe5",
+      "git_mode": "100644",
+      "sha256": "b17d70f4e49de9f766062beb0578729fcde9d68a29060f37d718deb644cb0999"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/submit_uva.py": {
+      "bytes": 9291,
+      "git_blob": "90048d7b7b6756de5dfd1f73435af32950c357df",
+      "git_mode": "100644",
+      "sha256": "33afed486f9a9298d5b3cc310ee981ce1070a673be144647c9d438a3bf9cb5c0"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/common_confirmation_import_order_probe.py": {
+      "bytes": 8121,
+      "git_blob": "391c8d0910e8bb4a804120be4e249555666ef7db",
+      "git_mode": "100644",
+      "sha256": "78ea56157143ed437dd1bd3eac5e96f89992cb3034e9f8d44df42af2166396cd"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/direct_metadata_import_order_probe.py": {
+      "bytes": 5150,
+      "git_blob": "fabfab4d798cd8348a238e12108f86c789a7dfc2",
+      "git_mode": "100644",
+      "sha256": "1c89cbef8a1ca9febc1971c461f06a55b75ac07d0b8f899eb75477f944d18cb0"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/final_phase_fixtures.py": {
+      "bytes": 29348,
+      "git_blob": "6ee70589db0e446aef574be91878e80abf1e17e3",
+      "git_mode": "100644",
+      "sha256": "c08a1a250e7705ae58e9dee092e4aec6c64597a137b4872870f6d3508a2cc5fd"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/fixtures/actual_processes_host_and_hostname_2026_11_02.json": {
+      "bytes": 18292,
+      "git_blob": "014b313ee856ca97daae8b65875f15f75f25c420",
+      "git_mode": "100644",
+      "sha256": "0043557ba522366c13c0ceeef047bf9fed258ab652aac4a575c5cb90a6084668"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/fixtures/qualification_pytest_root/original_tests_failed_6782640.json": {
+      "bytes": 51113,
+      "git_blob": "aa3bac3e00f23089abceaa9c5fc4036a6b259c89",
+      "git_mode": "100644",
+      "sha256": "5c44c6868a10bceffa0cd59b2b20d6c157c33bbbd881e054f8847cd7911ca9ab"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/fixtures/uva_owned_checkpoint_allocation_6780569.json": {
+      "bytes": 4627,
+      "git_blob": "6636275fdf4b35673afcdb6ad7f9e0746bd2d517",
+      "git_mode": "100644",
+      "sha256": "3a2a63b28228da22e04946d2e4fa717aead3a392123fbf3e12cf42ef092c7b85"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/fixtures/uva_owned_cpu_numeric_step_6780635_50.json": {
+      "bytes": 7895,
+      "git_blob": "548c1f73948152ff8a5adfd02342e015419e42db",
+      "git_mode": "100644",
+      "sha256": "041551ef9c6c3e9cc495be561e44b4d84c628baf10f019615f2453249aa78eb3"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/gpu_train_optimized_restart.py": {
+      "bytes": 13744,
+      "git_blob": "9cf4f3daf7a87538960c2a50993b20eb4dbd3d00",
+      "git_mode": "100644",
+      "sha256": "7c412d2e33dbc6820a15357028ae013023dc40dc6c02df361a2fb30d15d3dbff"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_a4500_diagnostics.py": {
+      "bytes": 10625,
+      "git_blob": "7ccea7d06709d69b10ec1dbcd2e1ae10a17fbd06",
+      "git_mode": "100644",
+      "sha256": "fcf202aa3be766b9523da142963724719c9cc75642b5db11f55af36e1f03073e"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_aces_allocation_observation.py": {
+      "bytes": 22207,
+      "git_blob": "0d65495ebc4367426fe8392dd4fa568a442a0d19",
+      "git_mode": "100644",
+      "sha256": "41826c9b0d07e4ce0ae3115927ca7c9c4c953c5675815d27a8fb548dc9c98513"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_aces_site_monitor.py": {
+      "bytes": 16396,
+      "git_blob": "240f347da780802a392f29278011b2cdce796d4a",
+      "git_mode": "100644",
+      "sha256": "c455aa4610819f361f3a3836d7d5aa74baf5095bd8115b776213e5e55db174c8"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_aces_slurm_autodetect_qualification.py": {
+      "bytes": 17574,
+      "git_blob": "e742adca41237159e83410af02efcf352cddce17",
+      "git_mode": "100644",
+      "sha256": "5124df66aaaaa1bfe8b072a32478c12e5769cc8e0cecf2522a0069504d8b998a"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_aces_slurm_qualification.py": {
+      "bytes": 12482,
+      "git_blob": "0682607787ba9e9d30bbc26626df5e2811511694",
+      "git_mode": "100644",
+      "sha256": "434caa324d2f3a5b9cf9b620eccf002c4e0b3bfba0dcf447a702b2f5f56267ba"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_aces_slurm_site_validation.py": {
+      "bytes": 19359,
+      "git_blob": "dc87e28ce3ada75419f7af312afef4f51a41d735",
+      "git_mode": "100644",
+      "sha256": "5b900a290901d60e000a6fcc12211d0387c161e6f558eb3f781322b65af0a4b2"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_aces_source_admission.py": {
+      "bytes": 15390,
+      "git_blob": "e86c063f2658808c7193d8eee53ab1959020eaf1",
+      "git_mode": "100644",
+      "sha256": "d8ccb97a5d1e4bc06d9c999f284386c55807e0c6ca535560d8966cfa0e1012c6"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_admit_measurements.py": {
+      "bytes": 13172,
+      "git_blob": "788b6abceb5367efe3f82e1dac01720567d7b885",
+      "git_mode": "100644",
+      "sha256": "c9563b84d59953b56cdec20f7a9411fde98e46adf4bc6ebffdb9d32a17b7163a"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_advance_adaptive_research.py": {
+      "bytes": 42973,
+      "git_blob": "6e41633e63f3e66ac6655e532c161d0ecc7b2e67",
+      "git_mode": "100644",
+      "sha256": "8e36d4c5691a6781a9c3ad4f48f18d221875de06cebee1f149288fd2901abf06"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_checkpoint_continuation.py": {
+      "bytes": 18438,
+      "git_blob": "c0a2362100e533d88d95b7d800f75836f4f93f62",
+      "git_mode": "100644",
+      "sha256": "530e33c7d1252b8f07879895c01c3c17b0d45620632a0ffba84f621628b82592"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_checkpoint_deadline.py": {
+      "bytes": 15039,
+      "git_blob": "98c1612ea718586e09dd00538f100768223d37a4",
+      "git_mode": "100644",
+      "sha256": "c7b3a325d720b9a5d1c9fc9ff52c0bdd1f42358a2d9c838e7d59627a8064815c"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_checkpoint_transaction.py": {
+      "bytes": 12730,
+      "git_blob": "8579b94939e5cfa70e5d9934ad09413d7715b897",
+      "git_mode": "100644",
+      "sha256": "dcb0d06fb1651cc623a42bb97728dbde6763d15048b84bcd740612b255325f80"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_collect_worker_exit_receipts.py": {
+      "bytes": 14351,
+      "git_blob": "6391ae34b7de3f80f8e7b61bbbba6be496baa321",
+      "git_mode": "100644",
+      "sha256": "db4bff85d5cc95c8d35e483303552f1e1e9e8d33b06e858f7a2d3c2450f86566"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_common_confirmation.py": {
+      "bytes": 17914,
+      "git_blob": "398a087600b58974d4e8b234655b282289b7aa3b",
+      "git_mode": "100644",
+      "sha256": "f22eefefb281d78566ab2eec9556e8d941ba6a3723baf87884d1da127a05881e"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_common_confirmation_preparation.py": {
+      "bytes": 4909,
+      "git_blob": "755b4b097a632d277a3f7b2539848977dd7c6a5e",
+      "git_mode": "100644",
+      "sha256": "2beb0b1b64bf208fcbce7e183ffd96124696b24b44753752c67abec08eb35482"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_configured_measurement.py": {
+      "bytes": 60158,
+      "git_blob": "84779341483fdcba9b8bd5e473166115855b54e6",
+      "git_mode": "100644",
+      "sha256": "23b96c13ed832b399e065ba76c8254acd73e345f3032785e37df8b5cc941cde0"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_deployed_training_admission.py": {
+      "bytes": 13005,
+      "git_blob": "2a378b1c6b921df347c7828b658205283f5c3ddf",
+      "git_mode": "100644",
+      "sha256": "61d9da102b99c72585d552213d240a1fb067071083576131b28a1c8356500520"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_device_memory_capture_regression.py": {
+      "bytes": 35556,
+      "git_blob": "df0294dd32eb1007d12d6505dcc5da2d19fa3646",
+      "git_mode": "100644",
+      "sha256": "f7dadd729afac493313402e1a627a81b2dd791ea4a0dcb31008e2dc5cff047cd"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_device_memory_limit.py": {
+      "bytes": 52456,
+      "git_blob": "a679461f1a5da31be807c6a9b96ff2dedfb84f15",
+      "git_mode": "100644",
+      "sha256": "c6e10e26e53b464fe65fb32b5222f6b3810c4ee927e06818c1a939feff2de319"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_diagnose_allocator_region.py": {
+      "bytes": 9236,
+      "git_blob": "a9095875750b77ba4d9eda19d80e26511d39b859",
+      "git_mode": "100644",
+      "sha256": "d219feb0a16748e660b2433e676d01f33a76203f089e8261f12fb501c15f40a1"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_diagnose_correctness_cache.py": {
+      "bytes": 9782,
+      "git_blob": "6eafd358595d334c188f77c8b1d8575470e0f03e",
+      "git_mode": "100644",
+      "sha256": "7e14ac065cc015d6866568c9f40f3bdc7984753be64311b29393767172e1c32b"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_diagnose_pregather_allocator.py": {
+      "bytes": 16429,
+      "git_blob": "a673fae1fc250bd743fa914a67eb8855da51f57c",
+      "git_mode": "100644",
+      "sha256": "a76d484e0554642422eb8c9514358557594b30a1edfecd0ac94643f386b07192"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_backend_image.py": {
+      "bytes": 20618,
+      "git_blob": "3b8b42ded302e7fa44b5a0cf7bc83b60feb74629",
+      "git_mode": "100644",
+      "sha256": "e594005d2c892399aac1bde69df901a4e44262f76c3c80ffc0ded4c6da348b5e"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_common_confirmation.py": {
+      "bytes": 47426,
+      "git_blob": "7d85dfa73c1e510bf1c8589bfffa5a97131ab3f3",
+      "git_mode": "100644",
+      "sha256": "5562cd191260005b2b5d8eadb03414169319980c8773dcf666b3941e65312b4d"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_measurement.py": {
+      "bytes": 25024,
+      "git_blob": "5060a109f63a7eff5ec2c3311b17fc0fc31da275",
+      "git_mode": "100644",
+      "sha256": "2ea8ffcc73bdf97380ee1d56da0c98ccdbd059e18b49f4fec8f115bf954e3ebc"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_metadata_import_provenance.py": {
+      "bytes": 3951,
+      "git_blob": "ccdae5fb46206a90e56a7ab9879bd1bdc72e0d38",
+      "git_mode": "100644",
+      "sha256": "8d2fb4046f789fb9e5fea5e9245c0657fc3a02a73023d85562a20b5adb21f186"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_profile_prerequisites.py": {
+      "bytes": 28874,
+      "git_blob": "f0f8df556da39ac9ade3e0c7df178585ed0ab7df",
+      "git_mode": "100644",
+      "sha256": "85c2ebcf14bb9a6a7b61b923d83a7d0669d9c7cdd58a53f7166e825ca38bd9ed"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_qualification_reader.py": {
+      "bytes": 8066,
+      "git_blob": "79b92199c1e92175c00e4d2636ad475eac57f6cc",
+      "git_mode": "100644",
+      "sha256": "c5bfa6ef0cb5db36139fc4dfc41537d08d3f7b053b65ac325014f437fac505bb"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_final_phase_deployment.py": {
+      "bytes": 9308,
+      "git_blob": "2ba1e55140fcdef2c66ef2a0c5e42aecd0472dcb",
+      "git_mode": "100644",
+      "sha256": "7656f832e7aa0166548ab80910307e56f85c014aa2425b8be9546369c8e18a7a"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_final_phase_evidence.py": {
+      "bytes": 46062,
+      "git_blob": "70163b7109c08a30aeb0e2b3051fef279620befa",
+      "git_mode": "100644",
+      "sha256": "7df3dd244ca2ee8125c414a1a47cbed81e9eb2ef7e52b1caa6aaa3b9587007e9"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_final_readiness.py": {
+      "bytes": 14403,
+      "git_blob": "52e2fb8ba94bf69cdeda787a4ee8d6f9e57e8293",
+      "git_mode": "100644",
+      "sha256": "dd36a2185801af848e3fb3ebdd40cfebf18b49dec9d898eb95f5531171496d64"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_final_training_monitor.py": {
+      "bytes": 15903,
+      "git_blob": "dbf2447168341d11de7a0bc3a00e88780b6d3ba8",
+      "git_mode": "100644",
+      "sha256": "6c95e1f3ad123638fc2dd6bb0445a150890144a14fe0af7a9e63490f76eac9a7"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_final_training_scheduler_state.py": {
+      "bytes": 5590,
+      "git_blob": "a5f73943623ace0cdbf0f92991379d9cfdd77742",
+      "git_mode": "100644",
+      "sha256": "5d8360caff03835f42e269b98b8e9acf05af51dfdd94000331c3dd61ee5e0ca5"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_h100_nvl_allocation_observation.py": {
+      "bytes": 30749,
+      "git_blob": "724abde3857737147a6f709dfccfc5908b21ddc4",
+      "git_mode": "100644",
+      "sha256": "9a0907bcb98fe8048d657b296a7b7e2c6e3367515df945d6a13f4e8d5f3677ee"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_h100_nvl_slurm_historical_evidence.py": {
+      "bytes": 38530,
+      "git_blob": "9dac5b7188e81f61480240899bf42e9436dbf6d0",
+      "git_mode": "100644",
+      "sha256": "0821a0b602acad3376ed3b64f7e94c20139f403c33a1197350620d97fdd989dd"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_h100_nvl_slurm_integration.py": {
+      "bytes": 26108,
+      "git_blob": "2ebb9728891d28fe22dae6d87b791b66f311c350",
+      "git_mode": "100644",
+      "sha256": "655f3733ef2bf30761a60cd03c30d0dc4fa2df708e89d3980319592b94ad770c"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_h100_nvl_slurm_qualification.py": {
+      "bytes": 26112,
+      "git_blob": "f2da57974f0e9d2b2be0dd2b43de6780ee9dcff0",
+      "git_mode": "100644",
+      "sha256": "3293da005c5972db64a7425d98d34ffbf5761c4067cc927b06fab5e7fd4c30cd"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_h100_nvl_slurm_queue.py": {
+      "bytes": 36119,
+      "git_blob": "cbca85e4aa8a0ec98a7d1cc829860853efef3625",
+      "git_mode": "100644",
+      "sha256": "ca110a5b17fbcc62cf807c6d1ce90bfa8e6394dfedc8be0ebb826b6cd5b833fa"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_h100_nvl_slurm_schema3_evidence.py": {
+      "bytes": 15990,
+      "git_blob": "5d80aa13a70bdd94a474d00db4ddfebeeff76402",
+      "git_mode": "100644",
+      "sha256": "1276d881c7dbb8f3e06f65c664e5a59d1853b7c13eb594d257b0c6649a0d8a85"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_h100_nvl_slurm_site_validation.py": {
+      "bytes": 45914,
+      "git_blob": "7f7aa4b0e6efd5e9868500d77da6dd133ccaa76a",
+      "git_mode": "100644",
+      "sha256": "3f8aed04179e07fc0bae584075bf1e215c72a401ad1dae2baf22b62134cab215"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_infrastructure_retry.py": {
+      "bytes": 45697,
+      "git_blob": "495f22241ef6b2639b4b4e808a86305357179f0c",
+      "git_mode": "100644",
+      "sha256": "428a64e84bc32f66c274fdb668bd503267796b60c79b47dcce55bcaf1aa7f9f9"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_launch_capacity_diagnoses.py": {
+      "bytes": 7635,
+      "git_blob": "7474eb8a2fed9b12c19f2c6a39ab787559d3fd20",
+      "git_mode": "100644",
+      "sha256": "2324c678d9316608b7293f412258e6eba5805e2f43c67fe57cbc6b62cbe61212"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_launch_deployed_training.py": {
+      "bytes": 45612,
+      "git_blob": "abb43541eac28d03c9d3b615b67bdb6443bfef4a",
+      "git_mode": "100644",
+      "sha256": "0f3999c31561975748275d502e146c60b0fd88cdf60cb74a00805117aafa542b"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_launch_direct.py": {
+      "bytes": 3410,
+      "git_blob": "02517d90be69d254fe51b3408d32ff36030b6d33",
+      "git_mode": "100644",
+      "sha256": "46610cfe4b1c727729ea631b35da4ef804da1591f10ddfea38cc79443765c7a2"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_launch_final_training.py": {
+      "bytes": 55113,
+      "git_blob": "e1a0e8c7de429f05dddbe2201f1efff03c61b4f6",
+      "git_mode": "100644",
+      "sha256": "f01db983e1f1387fadc07af626e2e6fe31aa4980a9e97ebec14574a44eff0ec2"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_launch_queue.py": {
+      "bytes": 12412,
+      "git_blob": "fdade75c379834d48598f2cdf63735574c6c9db1",
+      "git_mode": "100644",
+      "sha256": "0f2d28cdfcc0a6da33415db2bcb97f13aaab9d5c8bc2ee2fff5da78b53730af0"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_learning_latency_component.py": {
+      "bytes": 35024,
+      "git_blob": "ef7a59d636e04f2269edf40bd4c3c0dee21c70de",
+      "git_mode": "100644",
+      "sha256": "34e170b45686ef208a76d0d9d4c2092bd616ce17232270a351cb763425be60af"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_measure_gpu_scaling.py": {
+      "bytes": 19583,
+      "git_blob": "d01294491de22d4814d204aed99594d93fb5f1be",
+      "git_mode": "100644",
+      "sha256": "2b30b4b437efc3ee8a81cd98285b5f1d7781a1a6ffaad24d0eaae07d7173bf67"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_measure_selected.py": {
+      "bytes": 27897,
+      "git_blob": "dbf8f5771cf4b0bde617d19e31b5974c28e758c3",
+      "git_mode": "100644",
+      "sha256": "10fce613ebec3fff04832b266fd26687ab34551fd0691905a413211696abf12c"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_measurement_windows.py": {
+      "bytes": 7989,
+      "git_blob": "4abada5aab29ccfcab9909486ac2055759ef302e",
+      "git_mode": "100644",
+      "sha256": "4c6dcf0e504493e0943509cbbafba192bcbaa9fd1b41047413d53e0f20921854"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_monitor.py": {
+      "bytes": 19801,
+      "git_blob": "e45ec52a71c01d5dde57f7894b6d480a52c5e058",
+      "git_mode": "100644",
+      "sha256": "5f22cbbac6bce72f1ca1b4b748a66b15765678e0447f30d7fa03472dcdf6ab66"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_monitor_aces_allocation_observation.py": {
+      "bytes": 19659,
+      "git_blob": "29de4e092f30fcbf8d8a5c271876c3180136a747",
+      "git_mode": "100644",
+      "sha256": "88416c3b5c0bd8e84fe7af69861ead61d308c0beb2d16daf98815321f2af4d21"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_monitor_allocation_observation.py": {
+      "bytes": 19645,
+      "git_blob": "3cd6ba60e21bffdcd778068a12823af0982b8e86",
+      "git_mode": "100644",
+      "sha256": "737c308660c8675ba31630e735e34ae85907f72d657226636da49fd2103249f9"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_monitor_process_hostname.py": {
+      "bytes": 5154,
+      "git_blob": "18a10361345d5cd6f560ec4d21b3338ef31fab00",
+      "git_mode": "100644",
+      "sha256": "ca07a26d2658bee02c27a7c90ba658fc02e8d69b5acaf9efa199679788326183"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_monitor_selected_unit_jobs.py": {
+      "bytes": 16555,
+      "git_blob": "3b1b86b3b844f87bc61182b340165c69b607b8a3",
+      "git_mode": "100644",
+      "sha256": "01544a6f71434636c18a9f30abebe7f931f8a551815ba7a764eb1b8a186848ba"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_monitor_site_validation.py": {
+      "bytes": 18610,
+      "git_blob": "c9068edbbefdb4e69c7a91489c235c245c25f803",
+      "git_mode": "100644",
+      "sha256": "524a515978a016198d18628c505584426492a4d8c496f61380815c97072813bd"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_nsight_diagnostic_preparation.py": {
+      "bytes": 11175,
+      "git_blob": "b83f7cc6da4fff818ca49b4a0a2d2e6fafc69b38",
+      "git_mode": "100644",
+      "sha256": "a904800fb00b8ec4902ad4ffdc1de5cd48e60a519e0390e1d98e60b446c50245"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_nsight_process_diagnostic.py": {
+      "bytes": 8363,
+      "git_blob": "bef49ace5ac5fdcc1e2cc544ab67f7c7cd53ad80",
+      "git_mode": "100644",
+      "sha256": "5b008b7f5abdec024f371e87559d81676aa9c839cde948b65a822e7fcbbb2c0e"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_nsight_process_identity.py": {
+      "bytes": 13674,
+      "git_blob": "12186d9db395e0789bf82ed0c28d7a2435d916da",
+      "git_mode": "100644",
+      "sha256": "f0d7784770fab215b30bead3ba4d67f3d8f98a42758065a2ba93c48a04d52797"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_original_scaling_component.py": {
+      "bytes": 5364,
+      "git_blob": "37a6e93a011f772d109493cc00c13fbdd8159fb5",
+      "git_mode": "100644",
+      "sha256": "b611e3f721ff065330f24b3bbc595914d1883029ea5c1064a52fb8a61689b7b4"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_passive_installed_slurm_observation.py": {
+      "bytes": 36067,
+      "git_blob": "69d8d4bd1eb1b96a74b2ecd39d1bb6006408eebb",
+      "git_mode": "100644",
+      "sha256": "a77d6ee305cf47a2348d69d5ef8a2eebaac1dd30461d8f792c5bcb1ce6c8ed5c"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_portable_evidence.py": {
+      "bytes": 20894,
+      "git_blob": "1321e95d868d6833ab56f81e129cb328046dc7ae",
+      "git_mode": "100644",
+      "sha256": "dffe728d01c20ac7bdf24dd81ad77992dfe94df9d55c83fe3b8b12ea54cafc67"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_post_comparison_validation.py": {
+      "bytes": 39012,
+      "git_blob": "6c3a33efb4dfdf043794a1656b159142acd103fd",
+      "git_mode": "100644",
+      "sha256": "78fa78d13bf4072f7e21032782bac625efc600667ab7af7ab099e91955aa5002"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_post_initial_phase_reporting.py": {
+      "bytes": 20137,
+      "git_blob": "cf28053e72c1ac899bd9f42abe3f0c5e658bf4ba",
+      "git_mode": "100644",
+      "sha256": "610c5351f60060f9dfc41f1daf5786ec87ea11e17f41d082221936be4c1767da"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_pregather_async_retry.py": {
+      "bytes": 34647,
+      "git_blob": "70d40683633fc96f4d7beeaf5a2b8d957612fedd",
+      "git_mode": "100644",
+      "sha256": "6295208730b18c17069142693dec59df8918ad2b6c8dee9e03451ed233e54b18"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_prepare_portable_evidence.py": {
+      "bytes": 17256,
+      "git_blob": "4339439be18550e63628bce84da2de563402d57e",
+      "git_mode": "100644",
+      "sha256": "b02a819fde74307c0b130e4730d23675c35056852d414ea0e1316de3bbc8a371"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_common_confirmation_helpers.py": {
+      "bytes": 11371,
+      "git_blob": "35f9f5d151e5da6dfba76747131dacc29dbf5b82",
+      "git_mode": "100644",
+      "sha256": "139816aba5b3ad33c60a5ecd5318368456538d2282d8dcfe301a5280b3a84006"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_owned_processes.py": {
+      "bytes": 19163,
+      "git_blob": "d4f84d640b080c4bb8bf7556086a50dd9b5407ed",
+      "git_mode": "100644",
+      "sha256": "f0a15a086622703ade3340de87eb0798c52b002f5985cf75aeb39cae89239246"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_selected.py": {
+      "bytes": 21225,
+      "git_blob": "e811872eb1e1baf3a0f022fb5f768e4b85a606f6",
+      "git_mode": "100644",
+      "sha256": "3f762def603521897e10114a89c3a414fffc9e22286245db8f15eff708816aab"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_qualification_helper_dependencies.py": {
+      "bytes": 10370,
+      "git_blob": "166b513397f5f370a67cdc150ac2de20c7c2ff52",
+      "git_mode": "100644",
+      "sha256": "a50d16fdcb3887bfe69aa2582ca54ea897e5ea3b8131d7e90076c2e309c59975"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_qualification_pytest_root.py": {
+      "bytes": 9603,
+      "git_blob": "0157a0f9b3b0656d9b2637d1d6af2aa13cfe0c54",
+      "git_mode": "100644",
+      "sha256": "36a13e4687dbf387454e538dfb06d87a3fe7937317b673a04fc90d37ffd00e2e"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_queue.py": {
+      "bytes": 31057,
+      "git_blob": "eba68781bf3bb1fc345405cb9ce5c1913131259e",
+      "git_mode": "100644",
+      "sha256": "3d8876571e7b8b016f9936bf244855f7cc657ab6705ff183eafc98d5f60f9f18"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_reference_environment.py": {
+      "bytes": 8251,
+      "git_blob": "996bd0f9ddbfa9b008149875ec10b49bf82db9ba",
+      "git_mode": "100644",
+      "sha256": "76de1645c6fe3ceabd78032761341e988248ba88fde51b67c6eaff1d601ec6f4"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_reference_execution.py": {
+      "bytes": 11265,
+      "git_blob": "6e6461b21740a0b48ae2713892b19772dd5b8046",
+      "git_mode": "100644",
+      "sha256": "de661cbad766e73c74df71c90ea292c2ee48863f3caa6766859080d023b1f90c"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_refresh_aces_allocation_observation.py": {
+      "bytes": 16852,
+      "git_blob": "aed50394b35ea9ecf52f370a8df3946989d2eade",
+      "git_mode": "100644",
+      "sha256": "2827a3dd45b235cbcce9525b91c926e94d572201a86790a73afe956d9ffac156"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_refresh_aces_site.py": {
+      "bytes": 9164,
+      "git_blob": "cfed400884c3af7d4502d4270517e75764a78fac",
+      "git_mode": "100644",
+      "sha256": "e94c14dbe840fdab9d7d26bfafdb797a3ddfdaf71ca9a3d40c221e1bccf2df95"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_retry_validator_dependencies.py": {
+      "bytes": 14679,
+      "git_blob": "d1747355971bce0a1de66983d35fa8ed700a95fb",
+      "git_mode": "100644",
+      "sha256": "61ba76971788680959fac1bb402c0a0a2795382358a0bf941a855e8739903906"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_run_passive_installed_slurm_observation.py": {
+      "bytes": 18538,
+      "git_blob": "0eebe8d9d0062aa1e7d8ada124a56fbf706d925d",
+      "git_mode": "100644",
+      "sha256": "c2d327b4b3aa9a9b0b0b5155f21e1abaee9af9eb7d5017f8c41ede39df3021b5"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_serval02_card1_binding.py": {
+      "bytes": 45393,
+      "git_blob": "4b261fee5cfcd0a086dab12c31a240f273cd7e27",
+      "git_mode": "100644",
+      "sha256": "f5b93a2bd1b33103a95713a514c12d48f9ddff0b19e42480b8fb12cbd47c5148"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_submit_training_checks.py": {
+      "bytes": 2792,
+      "git_blob": "ecfc0327b1e8505d6abf872d7cc95a84f884e734",
+      "git_mode": "100644",
+      "sha256": "c02bd67b32ce3e1a04181329a70c9a2c06d1e447fee95d6aa768c9e7183a0d00"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_trace_summary.py": {
+      "bytes": 11448,
+      "git_blob": "80276cde882a60d21c393de1975c978c410b41ee",
+      "git_mode": "100644",
+      "sha256": "fe193f3e2efbb05bb68166aebab2f1dc3277f231fb5409f7331d2b3d3a459057"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_train_deployed.py": {
+      "bytes": 23137,
+      "git_blob": "cbe82eb6987e9dfee67e44c954df19500ca6efa7",
+      "git_mode": "100644",
+      "sha256": "022226091337843ca052983da84ced423f7d9b1881f92a1754cfa330c478418c"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_train_optimized.py": {
+      "bytes": 25459,
+      "git_blob": "7a8cd79663b2786346c1ac845270e65a6d4b5725",
+      "git_mode": "100644",
+      "sha256": "7cc7a9bbce394ea5aab17104e810a3729e4abd484a0fffec4574e292e4d0ec51"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_uva_active_configuration_observation.py": {
+      "bytes": 25064,
+      "git_blob": "b9ce802d3cd6ae5ffbe794488d22a141c13bca56",
+      "git_mode": "100644",
+      "sha256": "0d60189b40b02b9422680950007d5cb70d0591e3abc716491c2693915e6560e4"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_uva_cgroup_v2_ownership.py": {
+      "bytes": 21752,
+      "git_blob": "b8a811543cae44f3e4aed31d3395495c48273bdf",
+      "git_mode": "100644",
+      "sha256": "779c8262bf981cca607b2f60c02e78f49bdc1cbb1a9617a5c897e6a0870a7aa4"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_uva_slurm_configured_isolation.py": {
+      "bytes": 30436,
+      "git_blob": "6b3f056abfe2c4c8261494a836c1004c9cdebca0",
+      "git_mode": "100644",
+      "sha256": "e8777ac04a75f2e7f80638586493d8a182fb6f3a7706835e8ff17cc72dc758e2"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_validate_deployed_training_completion.py": {
+      "bytes": 27033,
+      "git_blob": "b48e2329502558d5903a6b64c218031cfdbf9282",
+      "git_mode": "100644",
+      "sha256": "1b1de46fa7423acaafcd8f2dc72a5c2d2e9233265b3e71d0b22c687f3596b519"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_validate_training_deployment.py": {
+      "bytes": 35322,
+      "git_blob": "1ae7da24ce9154fe62b128f19089ca3fa39b9c61",
+      "git_mode": "100644",
+      "sha256": "0560a4823ed10cb28d3318a6a7a648f347837d1616fc29c64adbe70138882b79"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/train_deployed.py": {
+      "bytes": 15063,
+      "git_blob": "ba5f1bad1b44a164168f5ed0ed88233d5a2a454b",
+      "git_mode": "100644",
+      "sha256": "fc08e56bff0a86bed88d8442607809fe71ccb9580efb89a5d3f5df968e61d0e5"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/train_optimized.py": {
+      "bytes": 74056,
+      "git_blob": "b0fb7f9def78b44b7c1f4a997d40cffc26d66903",
+      "git_mode": "100644",
+      "sha256": "66771819cf75ea89e1b6f8fef4467aece2eecf864cd0ca434cbb5c698365f210"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_active_configuration_observation.py": {
+      "bytes": 28443,
+      "git_blob": "7e3d9d0cd8781eca9db8c9bcc8bf94856f86db7c",
+      "git_mode": "100644",
+      "sha256": "8cc5a3544e426e3bd3e78707f6c77dc249a1d19165a593e157d2097daa07a648"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_slurm_configured_isolation.py": {
+      "bytes": 42994,
+      "git_blob": "f2fef8c6d2b25f629d6a19602c275f80b4249ff2",
+      "git_mode": "100644",
+      "sha256": "d659dd1f21ddd2d7bb0474b4ded0ae4ea129c00365984c1fe7f84439b8eba694"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_deployed_training_completion.py": {
+      "bytes": 32332,
+      "git_blob": "d70d7cd072a8c001f119d1c94e0ed06b0260a654",
+      "git_mode": "100644",
+      "sha256": "e64dce2ee7ce59e4ae136b68d004e623789a64ba81163291b818401e04209f61"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/validate_training_deployment.py": {
+      "bytes": 38666,
+      "git_blob": "83e653bfe1d015680efdcda1039ee60f456195aa",
+      "git_mode": "100644",
+      "sha256": "e392dc6329cc8b5e902f3271d512cb9ee5bbc2f2fcdd6b0d85cefd981a1042b9"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/worker_environment.sh": {
+      "bytes": 782,
+      "git_blob": "b51c5e4bda3e97a2306588c791d87d2f0967de96",
+      "git_mode": "100644",
+      "sha256": "61de3a987d6494fba948083e32ba13e97f30f53e980797c72c1508e726818955"
+    },
+    "10_jax_exploration_platform/scripts/create_platform_jax_env.sh": {
+      "bytes": 2249,
+      "git_blob": "d0cff6e6034335d8b24d9b7186e662aa935cd21c",
+      "git_mode": "100644",
+      "sha256": "5f46ac59aad99cd41ba789683b9856e86b247b0acac11382db5f1b967079b465"
+    },
+    "10_jax_exploration_platform/scripts/experiment_configuration.py": {
+      "bytes": 10251,
+      "git_blob": "d8514150aadc377d40269da16612ffb33c14f49d",
+      "git_mode": "100644",
+      "sha256": "94c9cb312baac539605f84c273b43b1bac432c42da2eeac0427d315cd581c88c"
+    },
+    "10_jax_exploration_platform/scripts/git_safe_directory.gitconfig": {
+      "bytes": 326,
+      "git_blob": "0509a3404d65f6ecaa401c7e348894af2dfe02a1",
+      "git_mode": "100644",
+      "sha256": "7e4095b24c3096c6bdf716e074e6ff016538c6055b657f8513c3917e5effe4bf"
+    },
+    "10_jax_exploration_platform/scripts/grid_initialization_campaign/audit_confirmation_integrity.py": {
+      "bytes": 9184,
+      "git_blob": "493fed2e6bff3c3f86cb382b01e4e5402625bccb",
+      "git_mode": "100644",
+      "sha256": "3a5dffead2c287b058f52d0db7a5679f574f65a013309c32a4848faf85f987da"
+    },
+    "10_jax_exploration_platform/scripts/grid_initialization_campaign/benchmark.py": {
+      "bytes": 16699,
+      "git_blob": "8946d96f05b279a979ad89984761f543edff343b",
+      "git_mode": "100644",
+      "sha256": "c0c16bb2a820d693b66fd2860f091cc15a886e39f6de0d08d3d673e29c1b5e2d"
+    },
+    "10_jax_exploration_platform/scripts/grid_initialization_campaign/build_report.py": {
+      "bytes": 2036,
+      "git_blob": "f8bb348173ed6dc6558b3b329ea1e2b7a0d9510e",
+      "git_mode": "100644",
+      "sha256": "e1527a27451f2f2ffa6cd15bad068f3dd9d603efb744c295a778895e342bbb4f"
+    },
+    "10_jax_exploration_platform/scripts/grid_initialization_campaign/campaign.py": {
+      "bytes": 25981,
+      "git_blob": "d5cdff0b3e5f83fdf11261da44c1513061975099",
+      "git_mode": "100644",
+      "sha256": "9a8814c88cbddc3eda4392a012956628a446dc30110182aa01dc65a355ad9293"
+    },
+    "10_jax_exploration_platform/scripts/grid_initialization_campaign/check_training_records.py": {
+      "bytes": 2026,
+      "git_blob": "b8db82276b458a7b1b29132ccf3f2c49b17a678a",
+      "git_mode": "100644",
+      "sha256": "d01700cf53db74a1a24556ee4b4526dc335f25c3cec265854c2019ce76eed475"
+    },
+    "10_jax_exploration_platform/scripts/grid_initialization_campaign/common.py": {
+      "bytes": 5100,
+      "git_blob": "5ef1ffecc932f2ec014536ca91b6c994850958c8",
+      "git_mode": "100644",
+      "sha256": "a5e5291fbf06133beca33cc36f2528b34c438f87236ea17c1153d472ec7be068"
+    },
+    "10_jax_exploration_platform/scripts/grid_initialization_campaign/ideas.py": {
+      "bytes": 8023,
+      "git_blob": "0022da19d98675ee7246432a8902da82eb6ce739",
+      "git_mode": "100644",
+      "sha256": "6abb072a9b8d93e43f661463e3612ded5fbbeb99c2f025d1e27fb57c3e8a8741"
+    },
+    "10_jax_exploration_platform/scripts/grid_initialization_campaign/initial_field_archive.py": {
+      "bytes": 10037,
+      "git_blob": "7a807b4834f974d2c5ddc8149dd2be0e9ed7ba89",
+      "git_mode": "100644",
+      "sha256": "96707dace044dec93c5c8c0e69b5e7ee9e0b83a532152d7eb99fce20e3c20a5e"
+    },
+    "10_jax_exploration_platform/scripts/grid_initialization_campaign/monitor.py": {
+      "bytes": 13138,
+      "git_blob": "7e1ae91c75f54e8b3e6b419bce662fdf2c925b40",
+      "git_mode": "100644",
+      "sha256": "ed63b84cec1051d1db3c0765030080a5638d353132420e12649f7fd0950bd321"
+    },
+    "10_jax_exploration_platform/scripts/grid_initialization_campaign/performance_report.py": {
+      "bytes": 8857,
+      "git_blob": "638990cb54f04f38549084fa323b04247c641259",
+      "git_mode": "100644",
+      "sha256": "46c93507e8f01f167957f548ab9addbdbfff2434531ea2cc76a41f0e65311190"
+    },
+    "10_jax_exploration_platform/scripts/grid_initialization_campaign/probe_tabular_repeatability.py": {
+      "bytes": 13427,
+      "git_blob": "1f8adb18d94fdab92a5f9dae2b556dea7a33c7fd",
+      "git_mode": "100644",
+      "sha256": "989810640c149f1ec19fe04bb0dadfbde80993a902250e5efa58d09626365685"
+    },
+    "10_jax_exploration_platform/scripts/grid_initialization_campaign/report.py": {
+      "bytes": 80896,
+      "git_blob": "ea34c6b9ca09d1555ceb54751d19a1df0ce100b5",
+      "git_mode": "100644",
+      "sha256": "1b463e8aabb4a855af9489e390cd8e696ee2735f9f1016434f6dc4d28e3afef6"
+    },
+    "10_jax_exploration_platform/scripts/grid_initialization_campaign/requirements_rendering.txt": {
+      "bytes": 16,
+      "git_blob": "0a8d4d4d50ed103bf2df123016cfb5950f567209",
+      "git_mode": "100644",
+      "sha256": "35862353935b3121f5702c4e6c292fc8f796c7c169cc0be9a6b7c7bc8acaaf64"
+    },
+    "10_jax_exploration_platform/scripts/grid_initialization_campaign/run_checks.py": {
+      "bytes": 3073,
+      "git_blob": "da5c8df2229d8f2e8dd3cec63f0731fd80e549ee",
+      "git_mode": "100644",
+      "sha256": "e4e93022cbffe448d04d3c8134d3098b31a27e034b284278bf72076a5b3e2dfd"
+    },
+    "10_jax_exploration_platform/scripts/grid_initialization_campaign/run_extra_checks.py": {
+      "bytes": 1655,
+      "git_blob": "04181d51ff6f4d3e7924799a4240e85baf09e537",
+      "git_mode": "100644",
+      "sha256": "3700441cb0acdf446fbb9ce0ecdcba42b118b6981997b43f6b1f630ed3bff953"
+    },
+    "10_jax_exploration_platform/scripts/grid_initialization_campaign/run_monitor_checks.py": {
+      "bytes": 1282,
+      "git_blob": "17a62e15ac2a22023fe85692ca1a82da2d03f1e2",
+      "git_mode": "100644",
+      "sha256": "264b55b19bb8e8e0da939c6a0a487e9c2df6080f13903b48e1bd782ca88edfe7"
+    },
+    "10_jax_exploration_platform/scripts/grid_initialization_campaign/run_report.py": {
+      "bytes": 2076,
+      "git_blob": "d9037964bfa55d23d63935a1c2c59505fe055302",
+      "git_mode": "100644",
+      "sha256": "161b8f6d5739b19f495f5004dc8c42bb68de6d8acdbd9094e669d582c02f1155"
+    },
+    "10_jax_exploration_platform/scripts/grid_initialization_campaign/submit.py": {
+      "bytes": 20710,
+      "git_blob": "77bf210509127a8612bf33b9287f262c7f273db3",
+      "git_mode": "100644",
+      "sha256": "9621d7d4719ab6257a7ab5497c7f78c61c7b4d225e850df45c05c85d8575a0e8"
+    },
+    "10_jax_exploration_platform/scripts/grid_initialization_campaign/tests/test_benchmark_registry.py": {
+      "bytes": 5321,
+      "git_blob": "0cf7ebdad39de3c44f24a5d206b264f39b4fbbca",
+      "git_mode": "100644",
+      "sha256": "e57d120f9f87b04de1f512eea48b743c1ec93bf27743c0ccb5bc54eb7e028844"
+    },
+    "10_jax_exploration_platform/scripts/grid_initialization_campaign/tests/test_concurrent_benchmark_records.py": {
+      "bytes": 2923,
+      "git_blob": "33f84361b95e11c450c7bcec50fd78fa5eb22550",
+      "git_mode": "100644",
+      "sha256": "4a35c6f4e8d03af1343485c64e1becca816c091b5d3cc0045fe9cfa081027125"
+    },
+    "10_jax_exploration_platform/scripts/grid_initialization_campaign/tests/test_initial_field_archive.py": {
+      "bytes": 16592,
+      "git_blob": "eb9f8ef2a62449ed22bd628d0c956db7b548c0b9",
+      "git_mode": "100644",
+      "sha256": "13b192fde8af8107cad8e883ec86a3a9aeaa4744991d60c55c8328d6e7f56985"
+    },
+    "10_jax_exploration_platform/scripts/grid_initialization_campaign/tests/test_performance_report.py": {
+      "bytes": 4918,
+      "git_blob": "d491bd4148ac10931bc1a0221389d928786640bf",
+      "git_mode": "100644",
+      "sha256": "011dc38d6d31eed432ce84fd051e00dc17aed0d518b73172554905dbee915853"
+    },
+    "10_jax_exploration_platform/scripts/grid_initialization_campaign/tests/test_report_jobs.py": {
+      "bytes": 9353,
+      "git_blob": "01e172f5b40c376f221fd5951dfc3bf74d59bd29",
+      "git_mode": "100644",
+      "sha256": "b44268051a9c4c88c4141763b4eedfff906da28ec5f100f750188e02bf35f3e0"
+    },
+    "10_jax_exploration_platform/scripts/grid_initialization_campaign/tests/test_reservation_admission.py": {
+      "bytes": 7395,
+      "git_blob": "2c56e1797e42e9990811261041caf05dd1599e2f",
+      "git_mode": "100644",
+      "sha256": "12471af420330098e0844ee18bf2038b7cd99938254691e18aa8092f1a55b894"
+    },
+    "10_jax_exploration_platform/scripts/grid_initialization_campaign/tests/test_submission_limits.py": {
+      "bytes": 12444,
+      "git_blob": "ef6114c32c683c7afd18b39fc1cb29b1ab8e4756",
+      "git_mode": "100644",
+      "sha256": "6d932aee3e0e5009ffdcd22668a1c14a9f6232f64ba0706c832942ef606477cd"
+    },
+    "10_jax_exploration_platform/scripts/grid_initialization_campaign/tests/test_worker_records.py": {
+      "bytes": 1630,
+      "git_blob": "9d0d47d24bd85113b0580cb641ab4fe8650331fd",
+      "git_mode": "100644",
+      "sha256": "b40f66d97553c069ddf3c8d0b8ac81998ecbd345311f691431dca99618d7968d"
+    },
+    "10_jax_exploration_platform/scripts/grid_initialization_campaign/train_unit.py": {
+      "bytes": 16612,
+      "git_blob": "408765f519a5df72c9ee43a7a738a56e899e89a3",
+      "git_mode": "100644",
+      "sha256": "6381726bcc3d416033f434e31ecf1b1e8c584b0c13fc7a7ebce9e3b165184df3"
+    },
+    "10_jax_exploration_platform/scripts/grid_initialization_campaign/worker.py": {
+      "bytes": 6487,
+      "git_blob": "40d3870b52931983ed698e38e197a1f4bc69c3db",
+      "git_mode": "100644",
+      "sha256": "56a61170076af5a1126e6670fa3afd2361cdd62b0e0e2f13d366663d367a34bb"
+    },
+    "10_jax_exploration_platform/scripts/monitor_selected_run.py": {
+      "bytes": 3713,
+      "git_blob": "ed07e286d4e9d33dd497591bf743f98dd4c6a41a",
+      "git_mode": "100644",
+      "sha256": "759650d9876b8a6080ab6536aae01897e53994d9551d92cd46000680caa17f6b"
+    },
+    "10_jax_exploration_platform/scripts/plot_episode_curves.py": {
+      "bytes": 4553,
+      "git_blob": "8c18c27f4751b0a3bcd3b43cf8ddf132ded6463a",
+      "git_mode": "100644",
+      "sha256": "e8283c444897006506e0c39224aa233ce6cc77edb7869a2b8eaf1565ff80c51a"
+    },
+    "10_jax_exploration_platform/scripts/refresh_corrected_report.sh": {
+      "bytes": 399,
+      "git_blob": "88f5c75d0ab2c7e1f7efd26791590b8d44d38401",
+      "git_mode": "100755",
+      "sha256": "816cdcaedbb0f26d49b1786f6fc74283384fe0cbc0394d55641e7b27640f97c1"
+    },
+    "10_jax_exploration_platform/scripts/report_contents.py": {
+      "bytes": 8634,
+      "git_blob": "1d7bcc681779d48abc0bfb4d0ec43b337e1b02d6",
+      "git_mode": "100644",
+      "sha256": "ecf5dda57aa648314fc938fe5f12f7f2ca5bcf60edb9ede0b236eae846a0fc4b"
+    },
+    "10_jax_exploration_platform/scripts/run_training.py": {
+      "bytes": 44442,
+      "git_blob": "c5fcd816ae6e2eca85a9fb532dc202e03251e210",
+      "git_mode": "100644",
+      "sha256": "0ae23eee847382cb1ec963722b95152cba2b5bd4d232b06bbf5f7a099e7ace7e"
+    },
+    "10_jax_exploration_platform/scripts/summarize_episode_records.py": {
+      "bytes": 8389,
+      "git_blob": "cf163e5bb866b6f76bd84e3551435461f42e6307",
+      "git_mode": "100644",
+      "sha256": "e724de090c605039d9d9a6158992f83216f11462492e3c51d7806b0817546cc1"
+    },
+    "10_jax_exploration_platform/scripts/summarize_speed_ideas.py": {
+      "bytes": 3754,
+      "git_blob": "2fff5678292f1877e887099c5e96f125c91adffa",
+      "git_mode": "100644",
+      "sha256": "5f08be0934de65ec4ba9a38266183e0d0c770709cc268860b05c47bbe0b73b0d"
+    },
+    "10_jax_exploration_platform/scripts/write_corrected_report.py": {
+      "bytes": 7967,
+      "git_blob": "b2c7e3aed4c2f2ce8fe7ff07e0b40a42aa56eeb7",
+      "git_mode": "100644",
+      "sha256": "b98ffb1cd16fc421c7decc77cdaa835c51ed1d004c73e9a6c77ef341b4dd1081"
+    },
+    "10_jax_exploration_platform/scripts/write_decline_study_tables.py": {
+      "bytes": 20080,
+      "git_blob": "1d139c5722777f3e373d2be129da023264a36229",
+      "git_mode": "100644",
+      "sha256": "5c6eff1e5dbd31563393215006ac417c52084b4a0210676254b65fb8c12b1978"
+    },
+    "10_jax_exploration_platform/scripts/write_reward_component_figures.py": {
+      "bytes": 13828,
+      "git_blob": "96c5c69f2ff869d11ac1df84f5907c7a23a7ca75",
+      "git_mode": "100644",
+      "sha256": "e7aedbe09e1ac7f5555efe0f121fbbf1a858b49cdb8b9657227fa75b11aecef0"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/README.md": {
+      "bytes": 1452,
+      "git_blob": "6910c87d5f95d649f9e4c2de783adcb9fdf2e0ad",
+      "git_mode": "100644",
+      "sha256": "2094ecf3112d8f3c05127fb388131261edbbbdf41bcf8448d43ffd0c22cc7ea5"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/__init__.py": {
+      "bytes": 627,
+      "git_blob": "062cb1c458331660aedab3597a3039abd224d803",
+      "git_mode": "100644",
+      "sha256": "8f36e98870ca0ffe74a039404de8f42d748925da7920841fb751b4fe2f872b53"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/agents/README.md": {
+      "bytes": 74,
+      "git_blob": "d83eb693ebf70c7679859a12b50f9f8ddbace4b6",
+      "git_mode": "100644",
+      "sha256": "3bdbff88659bd17873a2ab9415dd7409521d593ee25c7dbf717d11d598c5317f"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/agents/__init__.py": {
+      "bytes": 84,
+      "git_blob": "9df65980643048c4da1eb9b3ebb4e058232cf889",
+      "git_mode": "100644",
+      "sha256": "adbe7e838c8899b4c6d7964582b329b5eaec68b94c055cf67c09e24828709135"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/agents/ppo/README.md": {
+      "bytes": 1447,
+      "git_blob": "463030f62a4d9f48302904a436e99a79dbf1b6f7",
+      "git_mode": "100644",
+      "sha256": "4ba41e7ce3a87910a85455d977c86b82d1f6ae4462a892467386d6a719794706"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/agents/ppo/SWEEP.md": {
+      "bytes": 4320,
+      "git_blob": "8b73c62d7228789db2df3fd2953d003942c99664",
+      "git_mode": "100644",
+      "sha256": "90639695e4cc1ea2bd81289910fbf4247cd5b72d4ac3825e07eff4bdc52458f1"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/agents/ppo/__init__.py": {
+      "bytes": 69,
+      "git_blob": "b9363f22f9a5a05a17c954f768a4686727c08fd9",
+      "git_mode": "100644",
+      "sha256": "c06f8e4f56c6fdd4f04e0c9a93aebd862ae3d420e4311f96ee4f98a7cf9d7522"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/agents/ppo/config.py": {
+      "bytes": 7807,
+      "git_blob": "6e8ca685973d3b76dcadbbb3094fd8dd231b6b9f",
+      "git_mode": "100644",
+      "sha256": "3d86251c56a4268034fb8c8635afe9db9b05a2856f359c128df2c21e96fae0f6"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/agents/ppo/losses.py": {
+      "bytes": 3962,
+      "git_blob": "54cf5107f2ba5a9728913595e5f51cc08a9cbd6e",
+      "git_mode": "100644",
+      "sha256": "96efdcb73170bf1165b9726bd3c33d7c1760b8e5c8a95fb96e94b21b64500be5"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/agents/ppo/networks.py": {
+      "bytes": 4353,
+      "git_blob": "30e141bd492a3cd1b021fbe57f3a6457cd6ba726",
+      "git_mode": "100644",
+      "sha256": "a005e5a8ca10cd27e843ae9f09f59b4e9a3cd46d24045770e97ca4dbab4f8c29"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/agents/ppo/presets.py": {
+      "bytes": 3385,
+      "git_blob": "dc2f226e054b26f6e212114d70a4c8577f415e92",
+      "git_mode": "100644",
+      "sha256": "c098a1e7d369dc3ad12853ea75de624a46ea0440e7ca4b8e7173dd361a28f8c0"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/agents/ppo/update.py": {
+      "bytes": 12621,
+      "git_blob": "5eb050453defc2948355956007384c1e9520e53a",
+      "git_mode": "100644",
+      "sha256": "d1fb93fdb331bc45254222809ec4ab9d4bc0d672b9936064f3d19e0cf2b22b03"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/__init__.py": {
+      "bytes": 151,
+      "git_blob": "daf0e475c0d110997216b961f0432ea05febecce",
+      "git_mode": "100644",
+      "sha256": "4692ca9941cece84d6cbea0c19b9344a0dfe5d32f3a1a9d93ad7cd93fe135de2"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/checkpointing.py": {
+      "bytes": 1181,
+      "git_blob": "ab5c05941539d870e547f9b662fc3f46e7781095",
+      "git_mode": "100644",
+      "sha256": "f156b27e0c5d275db7e472f8659ca46d594624a8f573d43eee5383cdaf9f17fb"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/config.py": {
+      "bytes": 8559,
+      "git_blob": "f775f78ce2e2045b3aa1505728bacf40fe3610d2",
+      "git_mode": "100644",
+      "sha256": "8b3643fba5e3382f612507416f2204500966592a6872bb286dea1935c5f32218"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/environment.py": {
+      "bytes": 23242,
+      "git_blob": "801e016a2f539ab851d4528cfbc861fb137757e1",
+      "git_mode": "100644",
+      "sha256": "aa0ad31c8fbd04c67fb9742ea103e9262dfe9cc5b6e719889c50454537b1c8b7"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/kernels.py": {
+      "bytes": 3736,
+      "git_blob": "70aab9f5ab213b9721743799ed060e80d2acc146",
+      "git_mode": "100644",
+      "sha256": "dd895f5d95f6d39c79dce277254af9a19ac49112fcec0b16a5ba096a8082e8ff"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/networks.py": {
+      "bytes": 10533,
+      "git_blob": "57184ab6af081710a12f3db37b0d9c60c692c426",
+      "git_mode": "100644",
+      "sha256": "ee65436eda5fab6ae2f8c303eaf3c072b5cdfa1f6d86cfc310dfa4974c98a5bd"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/pixel_preprocessing.py": {
+      "bytes": 5018,
+      "git_blob": "59565d844fe81852731f4db553cef35191ab9061",
+      "git_mode": "100644",
+      "sha256": "8a9f30f36ef7b07fa0ae513d1aee442a9964c2f8da179203b031c7aca8735188"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/settings.py": {
+      "bytes": 1302,
+      "git_blob": "1e9811032b012ce2924f0c6802314118d2a8b26d",
+      "git_mode": "100644",
+      "sha256": "17f20c6dd84c99eb435337b4446418cdcda3f426514d228996f40de4220c6f26"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/state.py": {
+      "bytes": 6960,
+      "git_blob": "ace2f8d617db4a21998018f3f958527a4957ccf1",
+      "git_mode": "100644",
+      "sha256": "9fcf0b6bb09bbf70dc88cd28952a6fa50969371f0d8aa66739c91ced1fe887f4"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/training.py": {
+      "bytes": 32717,
+      "git_blob": "fb83197978002f4461d25b85f9693bbbcd591879",
+      "git_mode": "100644",
+      "sha256": "5b868d95c8e0f5798330e38fcf7d9a6981838881333bafe73465c1af070a5100"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/bonuses/README.md": {
+      "bytes": 1811,
+      "git_blob": "683f52b6ea4e09193ec1faf2d08b30b4cf1811f8",
+      "git_mode": "100644",
+      "sha256": "05d9efcb2a6c39c02f4f6887ba5532ccc72cfb47667e18997784050641b71aa9"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/bonuses/__init__.py": {
+      "bytes": 79,
+      "git_blob": "1cc3316994f288eb299ebef9dfac924314a88a36",
+      "git_mode": "100644",
+      "sha256": "7ea6b199d73f9bc499f5211717026df266f7b5a5607822c1f8f793a4a53cb103"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/bonuses/none.py": {
+      "bytes": 2202,
+      "git_blob": "c041341af3d45fe3eea53ff5284c2bbe0bcd328f",
+      "git_mode": "100644",
+      "sha256": "370fe08f4d11f89a331774e9f6f51bed285dd7c4a8bd8f1001203c5ab0794e3b"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/bonuses/protocol.py": {
+      "bytes": 2428,
+      "git_blob": "dab457ae4c8f5f9a1a18cb925200147bfc2c82b5",
+      "git_mode": "100644",
+      "sha256": "6d72c78e8e1519a81581642876c19b8cf0fb35412754f640b720563ad8756a6e"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/bonuses/registry.py": {
+      "bytes": 2680,
+      "git_blob": "5c0169dcd39a1f4279456eba67fb1a13bcd54512",
+      "git_mode": "100644",
+      "sha256": "cc4718ef894342ba05fb46cef069ac86c085c653939a0a06fa970846a2d01fd6"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/bonuses/rnd/README.md": {
+      "bytes": 1104,
+      "git_blob": "465115d3801df6c221c7dc8748fda1ed94bd0947",
+      "git_mode": "100644",
+      "sha256": "844b39030edbefde99427335492ad30d245d5523e96d0c6fade01a0d847a4b77"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/bonuses/rnd/__init__.py": {
+      "bytes": 59,
+      "git_blob": "1e0df31da54669dba7410c3982945814cef3e561",
+      "git_mode": "100644",
+      "sha256": "cfefd4d0a1ef5db0f364b8cd88673df7e04f187f9bdc50ac4cf96c123e2a7243"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/bonuses/rnd/config.py": {
+      "bytes": 390,
+      "git_blob": "2d9b71274b8c55432e2bfca5c269b1e27cae23f7",
+      "git_mode": "100644",
+      "sha256": "2c3e41556f99a661c1f470cd482c7d2594a88a15211a56a2557c534bbddbd231"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/bonuses/rnd/implementation.py": {
+      "bytes": 3556,
+      "git_blob": "6b3744a71825c889ac6ebaf9c3629b990d1b4ba7",
+      "git_mode": "100644",
+      "sha256": "d6acca7b105c3994799cf71e901130e982d51ae01025dad929a60f181a9bd4fd"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/bonuses/rnd/networks.py": {
+      "bytes": 2340,
+      "git_blob": "b0a36aa1793a607ee7edaa01ca27a627c9b7ce4e",
+      "git_mode": "100644",
+      "sha256": "c58f22dc454dbeb4b7b81be90e0ab6fee3c0dac5a03920af46c1cdb7b3138cc6"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/bonuses/visit_count/README.md": {
+      "bytes": 1454,
+      "git_blob": "8b940454af7e3b932b5ba38e947ef8c92def4753",
+      "git_mode": "100644",
+      "sha256": "087b24ea274fcd49aef34562be4bd3d437c66f38543295728a4d0a5c9c4f787e"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/bonuses/visit_count/__init__.py": {
+      "bytes": 66,
+      "git_blob": "5eb168041cc049d85660e1e125a6ac94e6b30f70",
+      "git_mode": "100644",
+      "sha256": "94cd71bdd9638aa17d7f8206f9fbfc21d36ad3b146f7cbd3feda0812401cf5f1"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/bonuses/visit_count/config.py": {
+      "bytes": 587,
+      "git_blob": "bb07981b8f69980fb3ed71658c23c093f92535b4",
+      "git_mode": "100644",
+      "sha256": "67ebb77b5e30e01c3023a97def23674f1672ef68ccab211b48d240d16eb598e7"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/bonuses/visit_count/implementation.py": {
+      "bytes": 4979,
+      "git_blob": "711d07a5f17f6f396d292b914086c86c2fbc5b3d",
+      "git_mode": "100644",
+      "sha256": "e8d9cdb3484737400137e4d4ee276357cad34bfa6a8aef78208b4be854071f18"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/bonuses/visit_count/reference.py": {
+      "bytes": 3295,
+      "git_blob": "355f00c60381c4438b23dcf186db0329f143ba6d",
+      "git_mode": "100644",
+      "sha256": "de8cc5fdee65c973b2cdfe36cde2ad430742c50195d1cb4741b847ff64235505"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/bonuses/visit_count/spec.md": {
+      "bytes": 4483,
+      "git_blob": "8bc594a9e09c905a5fc551288e1ac380912dfa35",
+      "git_mode": "100644",
+      "sha256": "842fe8a2448e5b61fe0acebff235d65e8a7830dba5134884fc0d56f954928b33"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/envs/README.md": {
+      "bytes": 1123,
+      "git_blob": "da0550e2f91c8e65e5aa41723e218e66074fbd08",
+      "git_mode": "100644",
+      "sha256": "bb1b57f78ea524d9f8fc3cee751cb83a2c672988b3d9da4a53e1f0fed9a624fc"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/envs/__init__.py": {
+      "bytes": 35,
+      "git_blob": "3282483ef8939c26b0a6db31499a6434446e924e",
+      "git_mode": "100644",
+      "sha256": "884e5519c8e429dd1eaba9cdaaa091470b5ee76a84e87c6db1a9c493e3d1be1e"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/envs/antmaze/README.md": {
+      "bytes": 316,
+      "git_blob": "47a42c9a50128f46086aea21123f0dfc89074cb0",
+      "git_mode": "100644",
+      "sha256": "10e2c5e2070c3b445dc6ad645aa6b199a1710c31da8c99ba523695c673cf737a"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/envs/antmaze/__init__.py": {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/envs/antmaze/am_common.py": {
+      "bytes": 7796,
+      "git_blob": "5e0f902bb43f2c17b07d3c9a8d5198b0c6baa059",
+      "git_mode": "100644",
+      "sha256": "2a9df74f1c8c54ec4e850b1dfafd933ca2623c0db2c9958dc52ec2df5999b87d"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/envs/antmaze/assets/ant.xml": {
+      "bytes": 4934,
+      "git_blob": "ee4d679981c136b949ce278f39ddbd16e42e5de3",
+      "git_mode": "100644",
+      "sha256": "cd5f83ef0ea35b0969e65d360c5bacd5b74ccaef6b27e4433b5168c605e3e2be"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/envs/antmaze/mjx_antmaze.py": {
+      "bytes": 9818,
+      "git_blob": "1d52d3ca1af078e9d73464265d3fa06de68b9a9f",
+      "git_mode": "100644",
+      "sha256": "ba551762ff7a26326690774d108c535e77f0154a1ede328b96013b3e2d843e2f"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/envs/antmaze/spec.md": {
+      "bytes": 7127,
+      "git_blob": "6fba25a3fdbf0723738851f79050c1b696c71bf7",
+      "git_mode": "100644",
+      "sha256": "3b9c8ac68408efb4aa5c024b826243ce842dfb40ee78cab76d1618ae24b1cf05"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/envs/atari_montezuma/__init__.py": {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/envs/atari_montezuma/jax_montezuma.py": {
+      "bytes": 10700,
+      "git_blob": "3ed746c79e7d3e06e3b527ae1b0ea7358ee5711a",
+      "git_mode": "100644",
+      "sha256": "383577567657149718ffbb246f60d9a59278723c80813304a046f1ff1617b86d"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/envs/atari_montezuma/spec.md": {
+      "bytes": 4894,
+      "git_blob": "15f4214f155b0a35300244acb4edaf1eccfba4a6",
+      "git_mode": "100644",
+      "sha256": "aa42e67340ab3b16cc0c90dcb20ce0a6f8286d18b342877b92fbf8653fef4135"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/envs/pointmaze/README.md": {
+      "bytes": 701,
+      "git_blob": "66ac2811ef1e09e71638adf76ca82beb235567e7",
+      "git_mode": "100644",
+      "sha256": "c9850bd14637ed89549e5a788bbdca2bfe21e7d6e379a72355da8df915f063fe"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/envs/pointmaze/__init__.py": {
+      "bytes": 87,
+      "git_blob": "f3ef5060d93ef70ea834f55dc3e1a0ce5b754469",
+      "git_mode": "100644",
+      "sha256": "1511cd3dd677ad9eeb24a8ce2ba7b2691fea027d6d9df8e6702ec54259a42743"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/envs/pointmaze/jax_pointmaze.py": {
+      "bytes": 11528,
+      "git_blob": "218ac42b05bd0119634645b974e5d980067d65e1",
+      "git_mode": "100644",
+      "sha256": "483351840ae49e8f4468b4d8df1d6ff55b957c68b5f29f62b37528622d00c008"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/envs/pointmaze/pm_common.py": {
+      "bytes": 8121,
+      "git_blob": "bfb9c07556b75be3e186e25fd820b0959cbcca91",
+      "git_mode": "100644",
+      "sha256": "5d35697e8cfefb1988046bd49a24e37b0fb7810d341d79be708b45b20cb82a46"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/evaluation/README.md": {
+      "bytes": 108,
+      "git_blob": "d4c3e6e82fda467ef7cafcefc414c7c59f64f628",
+      "git_mode": "100644",
+      "sha256": "ef84417e251ad6444afd3f26b854b57f985b0a65b67e3825b81bcf4439dc5314"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/evaluation/__init__.py": {
+      "bytes": 77,
+      "git_blob": "83c79ab65d33b44f8b3ba1fcbc1215d1cffb9f63",
+      "git_mode": "100644",
+      "sha256": "7f76161fe1bdd03171a24e497dacef771f32b1b0f568dd9c0c913e49cc6915e6"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/evaluation/coverage.py": {
+      "bytes": 484,
+      "git_blob": "7e729cbfcc8805bed8c5667a2fe731cf85e231aa",
+      "git_mode": "100644",
+      "sha256": "ca06683409385ad19a40b79d8450db480bac745c26294bd4177bc3730fc01f85"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/grid_initialization/config.py": {
+      "bytes": 5499,
+      "git_blob": "3f29f7d0cf24ab1bf933ecbc2679251228b4ec82",
+      "git_mode": "100644",
+      "sha256": "4b13b0df90bed3f3dae0209113e23ebe932cde69c7e0a5d421dae16392c19d43"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/grid_initialization/environments.py": {
+      "bytes": 5000,
+      "git_blob": "357f3ead401d52625501b5f3281f4441524d751c",
+      "git_mode": "100644",
+      "sha256": "223280305e0322159d02fa555c4668bfa8138b359d06782edf41b5e17bf1ffd6"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/grid_initialization/fields.py": {
+      "bytes": 9500,
+      "git_blob": "acbdb0c9bdbfd6b1770951ca635f5f681eb59897",
+      "git_mode": "100644",
+      "sha256": "8760208c90650a92634f4cef18e37867e9d13a08aa0159921791976ed6c25403"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/grid_initialization/training.py": {
+      "bytes": 24827,
+      "git_blob": "f1210a64237338a6c9a89220bf797a66b46ce2f9",
+      "git_mode": "100644",
+      "sha256": "f9780781bf9c0a4ae3e3138adaa0a8586eff5ad1fc90088b4b9813966476be97"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/networks.py": {
+      "bytes": 2314,
+      "git_blob": "a859e2068e7020ee53e68ff58f95069025e7df85",
+      "git_mode": "100644",
+      "sha256": "4d2533e6d35001260af516d9551a39b632f5e5c26d9df85e0fafe4d54f3b6393"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/statistics.py": {
+      "bytes": 2271,
+      "git_blob": "ccee86ad09025d17b43ed1d5e6c6f2771970f24d",
+      "git_mode": "100644",
+      "sha256": "4a62cec14de94bb2fb556705b28a01ab5a175763c7e1369cce3fe1bbf7322d4b"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/training/README.md": {
+      "bytes": 1015,
+      "git_blob": "49ceeccd76ec95f5be93ecee3675d5315b19fbde",
+      "git_mode": "100644",
+      "sha256": "edb82e61c8ef7452e171758d684109faa970502a48ca8e13564785e19bf1fa95"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/training/__init__.py": {
+      "bytes": 85,
+      "git_blob": "1d18df0a56a8aa46a918a766500aeb8578befdb3",
+      "git_mode": "100644",
+      "sha256": "2c3c9d4e6f3736b74831918857c985ba0702079c9b18827ecae61fe5640532ca"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/training/blocks.py": {
+      "bytes": 1250,
+      "git_blob": "8eb3c8db520069c7de6c72646134f2e544e35b99",
+      "git_mode": "100644",
+      "sha256": "88f8d331b9f6858c6fbdcffaf1a5b976c3e07d424056d5a02099318943a520c0"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/training/compose.py": {
+      "bytes": 5179,
+      "git_blob": "29b1b7306dba55161eeaa7852fbd0218c38f2385",
+      "git_mode": "100644",
+      "sha256": "8f7f2900b5a80bac468498ceb197eb246b5eac5b6ddd0c48c987dbf5b74f38ec"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/training/diagnostics.py": {
+      "bytes": 6692,
+      "git_blob": "94b697fa984c2f6958a80777cd4f0dfe3a75c618",
+      "git_mode": "100644",
+      "sha256": "60dfef9c2897dc58362b0e9c02af4072458872c51bfc420db6dc4fd1d5ae693e"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/training/runner.py": {
+      "bytes": 8778,
+      "git_blob": "70c12aa0c762ecbf0bb64857fc828bc37d5c34c7",
+      "git_mode": "100644",
+      "sha256": "8f38845212b8f705153e71c3bf013666dd9aa461a52b7b11f1b937e6c341a296"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/training/state.py": {
+      "bytes": 4629,
+      "git_blob": "b8d0bbf09814dcbaf9fdeedf438d08e8966cf8ac",
+      "git_mode": "100644",
+      "sha256": "0c0d605af712a18503cfb622c5b25ad5c37c67f16e6023be6ee177529ffbc002"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/training/sweep.py": {
+      "bytes": 6854,
+      "git_blob": "4e188b86e3d56a1900d1a461cf0db2c991282fd2",
+      "git_mode": "100644",
+      "sha256": "fa33182754e94347669bc7bf7ef6175f4b40b9819fa9f6f528fc621f65cb63f4"
+    },
+    "10_jax_exploration_platform/src/exploration_platform/training/train_step.py": {
+      "bytes": 21117,
+      "git_blob": "dd51bbed70c86c0d2c0ee1aff4b0e20fed2354ce",
+      "git_mode": "100644",
+      "sha256": "5b9dfabdaef6d2957c4bcac26e869e7ae940b2302f07e44c460a8bd972af3fc9"
+    }
+  },
+  "kind": "complete_committed_monitor_source_archive",
+  "schema_version": 1,
+  "source_commit": "6b7d492217140bba3d2f36b93754ecde2d020ccc",
+  "source_prefixes": [
+    "10_jax_exploration_platform/src",
+    "10_jax_exploration_platform/scripts"
+  ],
+  "source_root": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-18-29_pixel-study-monitor_source-commit-6b7d492217140bba3d2f36b93754ecde2d020ccc_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/source_snapshot/6b7d492217140bba3d2f36b93754ecde2d020ccc",
+  "working_tree_bytes_used": false
+}

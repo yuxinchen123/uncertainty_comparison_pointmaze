@@ -1,0 +1,73 @@
+{
+  "actual_diagnostic_started": false,
+  "actual_metadata_tests": {
+    "errors": 0,
+    "failures": 0,
+    "job_id": "6783003",
+    "step_id": "274",
+    "tests_run": 6
+  },
+  "at_utc": "2026-11-05T02:42:17.449935+00:00",
+  "diagnostic_timeout_seconds": 900,
+  "exact_unchanged_guard_input_sha256": "d132690ce5e50d460a97142bf569efdfa8d65049dd944d173008dda8c0c706f7",
+  "files": {
+    "command.txt": {
+      "bytes": 879,
+      "sha256": "fc02ed0d72f7838a7b0fcad145823cc27c6f6306745f19afe021212976badcfa"
+    },
+    "config_resolved.yaml": {
+      "bytes": 7315,
+      "sha256": "203a39105cfa7f8a08feee4edbc759220f6a36efdddccbcc657181a9f912dd51"
+    },
+    "experiment_background.md": {
+      "bytes": 1753,
+      "sha256": "0e25ae42c82f21b37451ec83e9ae4b493a27feba1748a3db4e177a328dfa2cbc"
+    },
+    "first_metadata_tests_without_saved_step.json": {
+      "bytes": 693,
+      "sha256": "7fd65381540b27a96ce9b2cf46131a8c4d95549db1b2f3312ac1ebc6e590df64"
+    },
+    "manifest.yaml": {
+      "bytes": 4764,
+      "sha256": "af072ba54d43b22d78ee46d2463636cb7fea7aae46620c51616624e8aefbc2b3"
+    },
+    "observe_guard_phases.py": {
+      "bytes": 9558,
+      "sha256": "6ae4e8d1ccc2fc08c559ea36725a972658da58709dc340ef74e174d1db6d830e"
+    },
+    "phase_observer_metadata_tests.json": {
+      "bytes": 382,
+      "sha256": "693c09d10806f701a2474294ed3a4851a72e6fd627433f7466af2c3da02878ac"
+    },
+    "phase_observer_metadata_tests_stdout.raw": {
+      "bytes": 1011,
+      "sha256": "5072222141e2b6e083423a0f71d962c7a9c71eaf157989194b0c88682fa233d7"
+    },
+    "source_before_function_name_filter_optimization/observe_guard_phases.py": {
+      "bytes": 9427,
+      "sha256": "ba55a176ccc77c1442f7f1a5d3fbc50025f3325e000dd532611c95db71a6a81c"
+    },
+    "source_before_function_name_filter_optimization/test_observe_guard_phases.py": {
+      "bytes": 4869,
+      "sha256": "b1c829cba314a8cb872401a798a6b6d92094c27df780577a3a42f6c878c72c55"
+    },
+    "test_observe_guard_phases.py": {
+      "bytes": 6102,
+      "sha256": "89ecfad06e71010cccdc925243abd1bde41f9e2f658f01a25146cb56479a642a"
+    },
+    "unregistered_guard_input_plan.json": {
+      "bytes": 24971,
+      "sha256": "d132690ce5e50d460a97142bf569efdfa8d65049dd944d173008dda8c0c706f7"
+    }
+  },
+  "guard_or_production_source_edited": false,
+  "helper_files_unchanged": 27,
+  "instrumented_function_count": 10,
+  "kind": "frozen_distinct_zero_credit_metadata_phase_observation",
+  "maximum_events": 512,
+  "maximum_trace_bytes": 131072,
+  "production_guard_qualified": false,
+  "production_timeout_seconds_unchanged": 180,
+  "scientific_credit": 0,
+  "source_commit": "cc9972dd6a8bfba39ba439883cbc821b93c55e3d"
+}

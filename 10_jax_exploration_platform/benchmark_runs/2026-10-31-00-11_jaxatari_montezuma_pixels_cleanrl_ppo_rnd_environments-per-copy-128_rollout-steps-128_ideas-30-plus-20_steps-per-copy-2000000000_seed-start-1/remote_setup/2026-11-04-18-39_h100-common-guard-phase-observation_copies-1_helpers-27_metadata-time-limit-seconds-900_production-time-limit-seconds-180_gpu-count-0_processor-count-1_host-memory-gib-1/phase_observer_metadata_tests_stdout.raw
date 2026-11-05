@@ -1,0 +1,17 @@
+test_byte_limit_stops_before_oversized_write (__main__.PhaseObservationTests)
+No trace line can exceed the declared total byte bound. ... ok
+test_declared_function_has_only_identity_and_timing_fields (__main__.PhaseObservationTests)
+A real entry/return pair records no argument or result contents. ... ok
+test_event_limit_stops_instead_of_growing_trace (__main__.PhaseObservationTests)
+A too-small declared event budget fails explicitly. ... ok
+test_nested_entries_retain_distinct_actual_pairs (__main__.PhaseObservationTests)
+Nested high-level validators retain separate durations and call identities. ... ok
+test_other_functions_in_declared_source_are_unobserved (__main__.PhaseObservationTests)
+The observer does not collect a trace of unrelated code. ... ok
+test_same_function_name_in_foreign_source_is_unobserved (__main__.PhaseObservationTests)
+A matching name alone cannot join another source file. ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.009s
+
+OK

@@ -1,0 +1,12 @@
+{
+  "command": [
+    "squeue",
+    "--jobs=6783003,6820096",
+    "--noheader",
+    "--format=%i|%T|%N|%C|%m|%R"
+  ],
+  "returncode": 0,
+  "at_utc": "2026-11-05T02:44:05.619941+00:00",
+  "stdout": "6820096|PENDING||1|2G|(Priority)\n6783003|RUNNING|heartpiece|2|2G|heartpiece\n",
+  "stderr": ""
+}

@@ -1,0 +1,50 @@
+{
+  "account": "sl5nw_base",
+  "campaign_run_dir": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1",
+  "component_only": true,
+  "cpu_allocation_policy": {
+    "accepted_allocated_logical_cpus": [
+      1,
+      2
+    ],
+    "requested_and_allocated_gpus": 0,
+    "requested_and_allocated_memory": "2G",
+    "requested_and_allocated_nodes": 1,
+    "requested_cpus": 1,
+    "two_requires_actual_node_threads_per_core": 2
+  },
+  "cpus_per_task": 1,
+  "duration_cap_proof": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-18-29_pixel-study-monitor_source-commit-6b7d492217140bba3d2f36b93754ecde2d020ccc_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/duration_cap_proof.json",
+    "sha256": "409e313fd228cb07edd9011921eb509ac47704ce581861a211d96f51ad5cbffd"
+  },
+  "final_training_credit": 0,
+  "gpu_uuid": null,
+  "gpus_per_node": 0,
+  "host_memory_gib": 2,
+  "interval_seconds": 1200,
+  "job_id": null,
+  "monitor_command": [
+    "/usr/bin/python3",
+    "-B",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-18-29_pixel-study-monitor_source-commit-6b7d492217140bba3d2f36b93754ecde2d020ccc_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/source_snapshot/6b7d492217140bba3d2f36b93754ecde2d020ccc/10_jax_exploration_platform/scripts/atari_pixel_campaign/monitor.py",
+    "--run-dir",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1",
+    "--loop",
+    "--interval",
+    "1200"
+  ],
+  "nodes": 1,
+  "ntasks": 1,
+  "old_monitor_job_id": "6783003",
+  "partition": "nolim",
+  "python": "/usr/bin/python3",
+  "qos": "normal",
+  "requeue": false,
+  "reservation": null,
+  "scientific_case_credit": 0,
+  "scientific_hypothesis_credit": 0,
+  "source_commit": "6b7d492217140bba3d2f36b93754ecde2d020ccc",
+  "time": "7-00:00:00",
+  "worker_admission": false
+}
