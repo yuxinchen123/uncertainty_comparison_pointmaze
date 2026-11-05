@@ -1316,7 +1316,7 @@
     "state": "both_copy_counts_independently_accepted_correctness_only_timing_pending"
   },
   "h100_common_timing_controller_preparation": {
-    "state": "fresh_bound_and_independently_reviewed_waiting_exact_transport",
+    "state": "actual_inner_and_transport_reviewed_outer_publication_before_once_SSH",
     "source_commit": "e16c015ac7c9ca674f768240cad35a372eb18e87",
     "source_published": true,
     "source_publication": "e98de74ff9f461a6a088ee88e09e3dd19fb538c6",
@@ -1381,7 +1381,16 @@
       "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-05-10_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/previous_failed_timing_preparation_state.json",
       "sha256": "63d92172e7022463b334eb4a0a0f82d8bebc7485814f1748281ac8758abf954f"
     },
-    "next_action": "Publish actual reviewed inner unit; derive and independently review exact outer transport from proven starter with only actual publication literal changed, then one root SSH."
+    "next_action": "Verify actual outer publication, protect exact owned metadata files, then execute the one reviewed root SSH.",
+    "copy_one_inner_publication": "59bc8eebb93d132f5e83ddfb72c5687b779b116b",
+    "copy_one_transport_independent_review": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-05-10_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/root_transport_independent_literal_review.json",
+      "sha256": "d3de5e7721857e994cb62960bdf194ea2dadfac3cf0b54b8c49e354e58c505c4"
+    },
+    "copy_one_transport_starter": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-05-10_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/root_start_controller_once.py",
+      "sha256": "15a5a51a546d660c7f15827ff61680410cfa14817022c597a5e6bb5486cba3a5"
+    }
   },
   "h100_common_timing_previous_attempts": [
     {
