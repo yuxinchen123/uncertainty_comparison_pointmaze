@@ -1,0 +1,96 @@
+{
+  "kind": "corrected_direct_nsight_scope_and_release_author_handoff",
+  "worktree": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0",
+  "branch": "direct-h100-owned-nsight-profile-process",
+  "base": "f7a2ab67106f92e7e95a87efb5863de8cfad0d5f",
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_nsight_producer_source_freeze_author_4_release_and_kernel.json",
+    "sha256": "aa16852710105c6e5adb55375906203780e8b508376eb90910fedc75c7d98f3a"
+  },
+  "source_and_test_files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_process.py": "cad3f2afae600e8addf96d7cbc8d5e12f21cd358342989cee65da0c88f6fd061",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_direct_nsight_process.py": "a0849694cf8eb327293d0e9cb2cf59205017359f4e9568089cf8a87f8dd83cd8",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_prerequisites.py": "772d610250c80df36a2a09a86ec6714b69317cce3f4b1ed3cebbab060e87a7c3",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py": "7b492bbcd2a7598e992adfa58cbe136e538e3581f59f14fad7b7d842884abeaf",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py": "36a60d5e4d5536413600c5d36d39fd107a031f434048d83e38ed209b375f62e9",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py": "941f5ec35fa790f7c59e66274627c7ef198e366e48e0c462e9602881080d62f6",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py": "0f2cba5aa8dfae67552f131998dfc8784d849fc1a2683764d63d4fda8b6a3d12",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_profile_prerequisites.py": "c7b2b8d266bafe018e4df9be89f9057b2ece1b71c0666d192ebe940c2ff1a874",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_profile_process.py": "ab81376eb5e47b6d9e9584381efde3c44e9be4d0952e2ff9f1340876d2998dff",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_tool_descendants.py": "ba6b69d8a946c6d8b669fd0f8b1f3659515e2b213b7247dffd46600a8c947663",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_capture_release.py": "8d7623b1b5cf8bf7a8b65321a33ec1cf551bf99f63d445145a638a9011982e42",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_capture_release.py": "b18bf8c96ff4c60a072b3fa63958ff87adfbcf530c82f815aa4e211fb90cb925",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/direct_tool_descendants_cpu_worker.py": "b5083dabdedaed99dcf8e55820d6484c748ae7864d1dcb6c9792ae5f608211d7",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_tool_descendants.py": "0d3813599cfe4aef7244eb64c493d2875b88e882ff1447ad821f3621b2aac900"
+  },
+  "protected_files_unchanged": 26,
+  "capture_core_syntax_unchanged": true,
+  "rejected_source_snapshot": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_nsight_rejected_author_2_preserved_source_and_failure",
+  "rejection": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_nsight_independent_rejection_author_2.json",
+    "sha256": "f8ac9d5fada8ce60807a69498f222aa1098d966e55e440b8cb579cfa8f040460"
+  },
+  "passing_author_receipt": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_corrections_author_6783003_283.json",
+    "sha256": "7b95a0c0b4d164da89e449aaaa05c9eb0f5cb8c2ca6c4001604130525d0629ee"
+  },
+  "focused_cases_passed": 39,
+  "actual_cpu_regression_proofs": [
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_actual_cpu_6783003_283/startup_timeout/cpu_regression_result.json",
+      "sha256": "9a815323afc46df6538f788d0ddc3d234a4528e45bbe8c63deed4047fa53b99b"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_actual_cpu_6783003_283/orphan_root_failure/cpu_regression_result.json",
+      "sha256": "28a4119bdfc9548e6c80f3233a4b072d108d6d82ecf4123b517eac5a78c4fdce"
+    }
+  ],
+  "earlier_corrected_kernel_run": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_corrections_author_6783003_282.json",
+    "sha256": "5298bd52f7679658141448d7b91019d69359806f99f326dca7d84e4954e00593"
+  },
+  "leaf_release_author_receipt": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_capture_release_author_6783003_281.json",
+    "sha256": "838792e9755a40fe86ffc01006193515829ec7edb2048433f2a09c44117b044b"
+  },
+  "before": {
+    "startup_cleanup": "An early failure stopped the observed root and could return while its unobserved payload remained alive.",
+    "saved_reader": "The reader could accept a complete synthetic record without capture_release.json."
+  },
+  "after": {
+    "startup_cleanup": "Before any version/capture/export tool, the producer establishes a closed single-threaded child-subreaper scope and an actual empty own-child/ECHILD baseline. Positive own/adopted child discovery and pinned handles continue through startup and cleanup. Exact real Popen/adopted waits, fresh empty own-child lists and terminal ECHILD are mandatory before restoring native state or returning toward descriptor close. Unknown cleanup and interruptions retain the holder.",
+    "saved_reader": "A retained pre-work release binds exact intent, actual claim, observation, producer custody, source and plan. The child retains exact release bytes and a finite-timestamp acknowledgment before imports/work. Saved success requires actual release, raw acknowledgment bytes, all joins and work chronology, plus kernel-scope closure."
+  },
+  "scope_limits": [
+    "Actual Nsight, GPU and standing-lock execution remain unperformed by the author.",
+    "The real CPU regressions use private temporary locks and created own processes only. Native prctl calls are separately counted process control, not CUDA qualification.",
+    "No current source admission or scientific credit is granted. Root must independently review source and actual tool/current-context/backend evidence before any capture admission.",
+    "All rejected source and step275 evidence remain separate; the CPU fixes do not relabel that rejection successful."
+  ],
+  "independent_test_cwd": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests",
+  "independent_test_command": [
+    "srun",
+    "--jobid=6783003",
+    "--overlap",
+    "--exact",
+    "--ntasks=1",
+    "--cpus-per-task=1",
+    "--mem=512M",
+    "/usr/bin/python3",
+    "-B",
+    "-m",
+    "unittest",
+    "test_direct_tool_descendants",
+    "test_direct_capture_release.DirectCaptureReleaseTests",
+    "test_direct_profile_process.DirectSavedProcessTests"
+  ],
+  "independent_review_pending": true,
+  "protocol_references": [
+    "https://man7.org/linux/man-pages/man2/PR_SET_CHILD_SUBREAPER.2const.html",
+    "https://man7.org/linux/man-pages/man2/waitpid.2.html"
+  ],
+  "actual_tool_or_gpu_execution": false,
+  "standing_gpu_lock_opened": false,
+  "scientific_credit": 0,
+  "admission_granted": false
+}

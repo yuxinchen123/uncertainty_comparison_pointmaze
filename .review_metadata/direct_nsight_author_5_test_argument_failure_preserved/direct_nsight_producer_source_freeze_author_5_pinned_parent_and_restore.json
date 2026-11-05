@@ -1,0 +1,31 @@
+{
+  "base": "f7a2ab67106f92e7e95a87efb5863de8cfad0d5f",
+  "files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_process.py": "cad3f2afae600e8addf96d7cbc8d5e12f21cd358342989cee65da0c88f6fd061",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_direct_nsight_process.py": "a0849694cf8eb327293d0e9cb2cf59205017359f4e9568089cf8a87f8dd83cd8",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_prerequisites.py": "772d610250c80df36a2a09a86ec6714b69317cce3f4b1ed3cebbab060e87a7c3",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py": "7b492bbcd2a7598e992adfa58cbe136e538e3581f59f14fad7b7d842884abeaf",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py": "36a60d5e4d5536413600c5d36d39fd107a031f434048d83e38ed209b375f62e9",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py": "941f5ec35fa790f7c59e66274627c7ef198e366e48e0c462e9602881080d62f6",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py": "0f2cba5aa8dfae67552f131998dfc8784d849fc1a2683764d63d4fda8b6a3d12",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_profile_prerequisites.py": "c7b2b8d266bafe018e4df9be89f9057b2ece1b71c0666d192ebe940c2ff1a874",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_profile_process.py": "356b036c51e9b435c8bf72d52ac852346837525754471f6f2cd7ebb2bdea40e1",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_tool_descendants.py": "ac9244771625883c3f65be93ccde8017538732020d9525d0173601416ae64342",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_capture_release.py": "8d7623b1b5cf8bf7a8b65321a33ec1cf551bf99f63d445145a638a9011982e42",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_capture_release.py": "b18bf8c96ff4c60a072b3fa63958ff87adfbcf530c82f815aa4e211fb90cb925",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/direct_tool_descendants_cpu_worker.py": "b5083dabdedaed99dcf8e55820d6484c748ae7864d1dcb6c9792ae5f608211d7",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_tool_descendants.py": "0710f44ab5ac87c42f4ff501eb72a40d7ee4daf4e05f28c314ff361133388369"
+  },
+  "protected_files": 26,
+  "capture_core_unchanged": true,
+  "actual_tool_or_gpu_execution": false,
+  "admission_granted": false,
+  "rejected_source_preserved": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/preservation_manifest.json",
+    "sha256": "0845cd099eac287d9be30634eacdc83c10a264d4eae075441bbb067cde2d816e"
+  },
+  "corrections": [
+    "Pinned process handle plus pinned proc-directory birth, UID, cgroup and liveness before and after child-list reads",
+    "Typed prior, restore and verified native values and causal request counter snapshots"
+  ]
+}

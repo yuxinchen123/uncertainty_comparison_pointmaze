@@ -1,0 +1,65 @@
+test_real_child_does_not_inherit_the_temporary_producer_descriptor (test_direct_profile_process.ActualTemporaryDescriptorTests)
+The actual Popen close_fds rule keeps a parent's private lock out of its child. ... ok
+test_real_readonly_producer_inspection_does_not_duplicate_its_descriptor (test_direct_profile_process.ActualTemporaryDescriptorTests)
+Inspect only this test's known owned child and wait on its exact Popen return. ... ok
+test_real_temporary_owner_fdinfo_is_valid_only_while_exclusive_flock_is_held (test_direct_profile_process.ActualTemporaryDescriptorTests)
+The production reader validates actual local kernel FLOCK bytes on a CPU fixture. ... ok
+test_actual_root_and_payload_waits_are_required_independently (test_direct_profile_process.DirectSavedProcessTests)
+A successful Nsight primary never replaces a failed, signalled or different payload. ... ok
+test_actual_waiter_publishes_its_own_zero_and_failed_payload_returns (test_direct_profile_process.DirectSavedProcessTests)
+The actual source child return remains distinct from the outer tool's status. ... ok
+test_both_raw_user_snapshots_and_exact_types_are_required (test_direct_profile_process.DirectSavedProcessTests)
+A later user change or Boolean user identifier cannot authorize release. ... ok
+test_changed_standing_inode_or_holder_and_wrong_claim_source_are_rejected (test_direct_profile_process.DirectSavedProcessTests)
+The descriptor and source-child evidence remain exact after normal waits. ... ok
+test_cleanup_uses_only_pinned_handles_and_actual_popen_wait (test_direct_profile_process.DirectSavedProcessTests)
+Never select a signal target from a process group or an unproved PID. ... ok
+test_different_process_groups_and_sessions_pass_with_real_edges (test_direct_profile_process.DirectSavedProcessTests)
+A new session is valid only with an independently proved positive ancestry path. ... ok
+test_early_payload_exit_preserves_actual_failure_wait_without_a_success_claim (test_direct_profile_process.DirectSavedProcessTests)
+A child ending before its source claim still has a saved real Popen return. ... ok
+test_existing_or_dangling_temporary_and_final_artifacts_refuse (test_direct_profile_process.DirectSavedProcessTests)
+Retain every final or partial attempt, including a dangling temporary alias. ... ok
+test_exit_or_reuse_during_recheck_refuses (test_direct_profile_process.DirectSavedProcessTests)
+Even an initially valid edge cannot outlive its pinned identity. ... ok
+test_foreign_user_refuses_before_command_inspection (test_direct_profile_process.DirectSavedProcessTests)
+Do not retain a foreign descendant command even if a child list names its PID. ... ok
+test_launcher_image_transition_preserves_the_pinned_identity (test_direct_profile_process.DirectSavedProcessTests)
+Allow an observed executable transition without inventing the installed Nsight tree. ... ok
+test_launcher_transition_cannot_change_its_birth_or_user (test_direct_profile_process.DirectSavedProcessTests)
+A permitted executable change never permits another process or user. ... ok
+test_mismatched_parent_edge_refuses (test_direct_profile_process.DirectSavedProcessTests)
+A child-list candidate must independently report the same actual parent. ... ok
+test_missing_claimed_pid_never_causes_arbitrary_proc_inspection (test_direct_profile_process.DirectSavedProcessTests)
+Search only observed owned descendants, rather than walking up a claimed foreign PID. ... ok
+test_other_allocation_refuses_before_command_inspection (test_direct_profile_process.DirectSavedProcessTests)
+An actual PID from another cgroup cannot authorize a capture. ... ok
+test_publication_is_invisible_until_complete_bytes_are_fsynced (test_direct_profile_process.DirectSavedProcessTests)
+A polling peer can never read an empty or partial final JSON file. ... ok
+test_saved_command_and_user_raw_bytes_are_checked (test_direct_profile_process.DirectSavedProcessTests)
+Reject changed summaries under unchanged raw process observations. ... ok
+test_saved_direct_waits_accept_positive_edges_without_process_group_equality (test_direct_profile_process.DirectSavedProcessTests)
+The complete reader replays after process exit without querying historical PIDs. ... ok
+test_saved_edge_requires_original_raw_child_list (test_direct_profile_process.DirectSavedProcessTests)
+Coherent summary fields cannot replace actual positive kernel child-list evidence. ... ok
+test_saved_edges_threads_and_births_require_exact_identity_types (test_direct_profile_process.DirectSavedProcessTests)
+Floating PIDs and noncanonical birth strings cannot compare equal to real integer identities. ... ok
+test_saved_pid_alias_or_boolean_identity_refuses (test_direct_profile_process.DirectSavedProcessTests)
+Keep canonical PID strings and exact integer identity types. ... ok
+test_standing_descriptor_passage_and_controller_ownership_are_rejected (test_direct_profile_process.DirectSavedProcessTests)
+Only the actual producer may hold the GPU descriptor, even in a synthetic fixture. ... ok
+test_wrong_capture_birth_or_source_command_refuses (test_direct_profile_process.DirectSavedProcessTests)
+A reused PID or another Python entry cannot receive release. ... ok
+test_all_new_tool_and_payload_launches_close_the_standing_descriptor (test_direct_profile_process.DirectDiagnosticSourceTests)
+The controller, producer and waiter pass no GPU descriptor to another process. ... ok
+test_current_profile_admission_stays_closed_with_real_runner_source_present (test_direct_profile_process.DirectDiagnosticSourceTests)
+The new source route does not replace actual process and CUDA qualification. ... ok
+test_new_diagnostic_is_rejected_by_formal_profile_and_backend_contracts (test_direct_profile_process.DirectDiagnosticSourceTests)
+A zero-transition tool fixture cannot acquire ordinary measurement or profile credit. ... ok
+test_numerical_files_and_native_cuda_functions_remain_unchanged (test_direct_profile_process.DirectDiagnosticSourceTests)
+Only declared process/custody branches differ from the frozen disabled-source base. ... ok
+
+----------------------------------------------------------------------
+Ran 30 tests in 0.869s
+
+OK

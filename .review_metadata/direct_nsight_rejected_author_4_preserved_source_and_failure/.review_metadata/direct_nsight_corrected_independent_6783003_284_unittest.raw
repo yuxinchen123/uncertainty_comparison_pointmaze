@@ -1,0 +1,83 @@
+test_fast_failed_root_and_orphaned_payload_are_reaped_before_lock_release (test_direct_tool_descendants.RealCpuDescendantClosureTests)
+A failed root and double-forked orphan cannot escape the producer's subreaper scope. ... ok
+test_startup_timeout_cleans_actual_owned_payload_before_temporary_lock_release (test_direct_tool_descendants.RealCpuDescendantClosureTests)
+Reproduce the rejected startup path with a real different-session CPU payload. ... ok
+test_ack_reads_the_actual_release_file_once_and_keeps_the_same_raw_bytes (test_direct_capture_release.DirectCaptureReleaseTests)
+Exact observed bytes cannot be replaced by a second read or JSON serialization. ... ok
+test_ack_wrong_child_source_plan_and_prework_flags_are_rejected (test_direct_capture_release.DirectCaptureReleaseTests)
+Every child acknowledgment preserves exact actor and source joins. ... ok
+test_changed_release_bytes_refuse_even_when_json_values_are_unchanged (test_direct_capture_release.DirectCaptureReleaseTests)
+Whitespace changes after child observation change the actual retained release hash. ... ok
+test_changed_retained_raw_bytes_are_rejected (test_direct_capture_release.DirectCaptureReleaseTests)
+The raw acknowledgment file must match the actual release byte for byte. ... ok
+test_complete_release_and_ack_bind_exact_actual_bytes_and_prework_time (test_direct_capture_release.DirectCaptureReleaseTests)
+The accepted record identifies all three retained artifacts and the actual child time. ... ok
+test_cross_attempt_release_and_substituted_source_refs_are_rejected (test_direct_capture_release.DirectCaptureReleaseTests)
+A different attempt or copied source cannot stand in for the actual release. ... ok
+test_duplicate_nonfinite_alias_and_oversized_metadata_are_rejected (test_direct_capture_release.DirectCaptureReleaseTests)
+No ambiguous JSON or substituted file kind can become release evidence. ... ok
+test_finite_typed_chronology_covers_release_ack_and_actual_payload_window (test_direct_capture_release.DirectCaptureReleaseTests)
+Boolean times, backdated events and work before acknowledgment never pass. ... ok
+test_prior_complete_or_partial_publication_is_preserved (test_direct_capture_release.DirectCaptureReleaseTests)
+New evidence cannot overwrite a prior complete or partial attempt. ... ok
+test_producer_and_current_child_only_publish_their_respective_records (test_direct_capture_release.DirectCaptureReleaseTests)
+Metadata controllers and unrelated child snapshots cannot create a valid acknowledgment. ... ok
+test_release_requires_preceding_full_process_and_local_producer_custody (test_direct_capture_release.DirectCaptureReleaseTests)
+No stale observation or readonly child's descriptor may authorize the release. ... ok
+test_reserved_refs_are_checked_before_attempting_any_other_result_read (test_direct_capture_release.DirectCaptureReleaseTests)
+A mistaken release reference to result.json is rejected before it is opened. ... ok
+test_saved_reader_requires_release_ack_and_raw_files_independently (test_direct_capture_release.DirectCaptureReleaseTests)
+Missing pre-work artifacts cannot be inferred from successful later waits. ... ok
+test_actual_root_and_payload_waits_are_required_independently (test_direct_profile_process.DirectSavedProcessTests)
+A successful Nsight primary never replaces a failed, signalled or different payload. ... ok
+test_actual_waiter_publishes_its_own_zero_and_failed_payload_returns (test_direct_profile_process.DirectSavedProcessTests)
+The actual source child return remains distinct from the outer tool's status. ... ok
+test_both_raw_user_snapshots_and_exact_types_are_required (test_direct_profile_process.DirectSavedProcessTests)
+A later user change or Boolean user identifier cannot authorize release. ... ok
+test_changed_standing_inode_or_holder_and_wrong_claim_source_are_rejected (test_direct_profile_process.DirectSavedProcessTests)
+The descriptor and source-child evidence remain exact after normal waits. ... ok
+test_cleanup_uses_only_pinned_handles_and_actual_popen_wait (test_direct_profile_process.DirectSavedProcessTests)
+Never select a signal target from a process group or an unproved PID. ... ok
+test_different_process_groups_and_sessions_pass_with_real_edges (test_direct_profile_process.DirectSavedProcessTests)
+A new session is valid only with an independently proved positive ancestry path. ... ok
+test_early_payload_exit_preserves_actual_failure_wait_without_a_success_claim (test_direct_profile_process.DirectSavedProcessTests)
+A child ending before its source claim still has a saved real Popen return. ... ok
+test_existing_or_dangling_temporary_and_final_artifacts_refuse (test_direct_profile_process.DirectSavedProcessTests)
+Retain every final or partial attempt, including a dangling temporary alias. ... ok
+test_exit_or_reuse_during_recheck_refuses (test_direct_profile_process.DirectSavedProcessTests)
+Even an initially valid edge cannot outlive its pinned identity. ... ok
+test_foreign_user_refuses_before_command_inspection (test_direct_profile_process.DirectSavedProcessTests)
+Do not retain a foreign descendant command even if a child list names its PID. ... ok
+test_launcher_image_transition_preserves_the_pinned_identity (test_direct_profile_process.DirectSavedProcessTests)
+Allow an observed executable transition without inventing the installed Nsight tree. ... ok
+test_launcher_transition_cannot_change_its_birth_or_user (test_direct_profile_process.DirectSavedProcessTests)
+A permitted executable change never permits another process or user. ... ok
+test_mismatched_parent_edge_refuses (test_direct_profile_process.DirectSavedProcessTests)
+A child-list candidate must independently report the same actual parent. ... ok
+test_missing_claimed_pid_never_causes_arbitrary_proc_inspection (test_direct_profile_process.DirectSavedProcessTests)
+Search only observed owned descendants, rather than walking up a claimed foreign PID. ... ok
+test_other_allocation_refuses_before_command_inspection (test_direct_profile_process.DirectSavedProcessTests)
+An actual PID from another cgroup cannot authorize a capture. ... ok
+test_publication_is_invisible_until_complete_bytes_are_fsynced (test_direct_profile_process.DirectSavedProcessTests)
+A polling peer can never read an empty or partial final JSON file. ... ok
+test_saved_command_and_user_raw_bytes_are_checked (test_direct_profile_process.DirectSavedProcessTests)
+Reject changed summaries under unchanged raw process observations. ... ok
+test_saved_direct_waits_accept_positive_edges_without_process_group_equality (test_direct_profile_process.DirectSavedProcessTests)
+The complete reader replays after process exit without querying historical PIDs. ... ok
+test_saved_edge_requires_original_raw_child_list (test_direct_profile_process.DirectSavedProcessTests)
+Coherent summary fields cannot replace actual positive kernel child-list evidence. ... ok
+test_saved_edges_threads_and_births_require_exact_identity_types (test_direct_profile_process.DirectSavedProcessTests)
+Floating PIDs and noncanonical birth strings cannot compare equal to real integer identities. ... ok
+test_saved_pid_alias_or_boolean_identity_refuses (test_direct_profile_process.DirectSavedProcessTests)
+Keep canonical PID strings and exact integer identity types. ... ok
+test_saved_success_requires_the_actual_release_and_exact_prework_acknowledgment (test_direct_profile_process.DirectSavedProcessTests)
+Reproduce missing release refusal and reject substituted release/acknowledgment bytes. ... ok
+test_standing_descriptor_passage_and_controller_ownership_are_rejected (test_direct_profile_process.DirectSavedProcessTests)
+Only the actual producer may hold the GPU descriptor, even in a synthetic fixture. ... ok
+test_wrong_capture_birth_or_source_command_refuses (test_direct_profile_process.DirectSavedProcessTests)
+A reused PID or another Python entry cannot receive release. ... ok
+
+----------------------------------------------------------------------
+Ran 39 tests in 2.489s
+
+OK

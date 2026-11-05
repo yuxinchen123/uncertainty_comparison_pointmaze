@@ -1,0 +1,79 @@
+{
+  "files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_process.py": {
+      "sha256": "cad3f2afae600e8addf96d7cbc8d5e12f21cd358342989cee65da0c88f6fd061",
+      "size_bytes": 46150
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_direct_nsight_process.py": {
+      "sha256": "a0849694cf8eb327293d0e9cb2cf59205017359f4e9568089cf8a87f8dd83cd8",
+      "size_bytes": 24978
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_prerequisites.py": {
+      "sha256": "772d610250c80df36a2a09a86ec6714b69317cce3f4b1ed3cebbab060e87a7c3",
+      "size_bytes": 33553
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py": {
+      "sha256": "7b492bbcd2a7598e992adfa58cbe136e538e3581f59f14fad7b7d842884abeaf",
+      "size_bytes": 59833
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py": {
+      "sha256": "36a60d5e4d5536413600c5d36d39fd107a031f434048d83e38ed209b375f62e9",
+      "size_bytes": 72766
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py": {
+      "sha256": "941f5ec35fa790f7c59e66274627c7ef198e366e48e0c462e9602881080d62f6",
+      "size_bytes": 54612
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py": {
+      "sha256": "0f2cba5aa8dfae67552f131998dfc8784d849fc1a2683764d63d4fda8b6a3d12",
+      "size_bytes": 24951
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_profile_prerequisites.py": {
+      "sha256": "c7b2b8d266bafe018e4df9be89f9057b2ece1b71c0666d192ebe940c2ff1a874",
+      "size_bytes": 29470
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_profile_process.py": {
+      "sha256": "356b036c51e9b435c8bf72d52ac852346837525754471f6f2cd7ebb2bdea40e1",
+      "size_bytes": 29954
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_tool_descendants.py": {
+      "sha256": "ac9244771625883c3f65be93ccde8017538732020d9525d0173601416ae64342",
+      "size_bytes": 39422
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_capture_release.py": {
+      "sha256": "8d7623b1b5cf8bf7a8b65321a33ec1cf551bf99f63d445145a638a9011982e42",
+      "size_bytes": 17646
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_capture_release.py": {
+      "sha256": "b18bf8c96ff4c60a072b3fa63958ff87adfbcf530c82f815aa4e211fb90cb925",
+      "size_bytes": 14894
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/direct_tool_descendants_cpu_worker.py": {
+      "sha256": "b5083dabdedaed99dcf8e55820d6484c748ae7864d1dcb6c9792ae5f608211d7",
+      "size_bytes": 8024
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_tool_descendants.py": {
+      "sha256": "0710f44ab5ac87c42f4ff501eb72a40d7ee4daf4e05f28c314ff361133388369",
+      "size_bytes": 10690
+    },
+    ".review_metadata/direct_nsight_producer_source_freeze_author_5_pinned_parent_and_restore.json": {
+      "sha256": "881b09b5a1b154ed9238195776014e885e06946a18a8ea120452f8ab115e8f8d",
+      "size_bytes": 3109
+    },
+    ".review_metadata/direct_tool_scope_pinned_parent_author_6783003_296.json": {
+      "sha256": "2aeb722a73dcb6a02b97db9883c1df3c5923d7a0aecca9a3154e4c83f2dff8da",
+      "size_bytes": 1601
+    },
+    ".review_metadata/direct_tool_scope_pinned_parent_author_6783003_296_stdout.raw": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    ".review_metadata/direct_tool_scope_pinned_parent_author_6783003_296_stderr.raw": {
+      "sha256": "6ac1c1a2cc0d45c582262c3d5cfa44213c1a80b25adbf8ea0389e65cae03795b",
+      "size_bytes": 6407
+    }
+  },
+  "reason": "Test-only adjacent helper argument included .py although the loader appends that suffix; three new saved-record tests did not reach the source reader. All actualCPU and parent identity tests passed.",
+  "actual_tool_or_gpu_execution": false,
+  "admission_granted": false
+}

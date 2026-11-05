@@ -147,6 +147,9 @@ def verify_observer_helpers(plan, unit):
     names = (*helper_names(), "measure_selected.py")
     if plan["direct_binding"]["consumer"] == "component_profile":
         names += ("profile_selected.py",)
+        if plan.get("capture_process_protocol") == "direct-h100-owned-nsight-and-retained-descriptor-version-1":
+            names += ("direct_profile_process.py", "direct_profile_prerequisites.py", "direct_backend_image.py", "nsight_process_identity.py",
+                "direct_capture_release.py", "direct_tool_descendants.py")
     for name in names:
         relative = identity.PREFIX + name
         raw = subprocess.check_output(["git", "-C", str(root), "show", value["source_commit"] + ":" + relative])
@@ -488,6 +491,8 @@ def validate_waiter_chain(plan, directory, process_record, descriptor, *, live):
 def validate_capture_wait(directory, metadata):
     identity = core(); directory = Path(directory)
     plan = identity.read_receipt(identity.receipt(directory / "measurement_plan.json"))
+    if metadata.get("role") == "producer_guarded_child":
+        return adjacent("direct_profile_process").validate_saved(directory, plan)
     launch, waiter = validate_waiter_chain(plan, directory, metadata["after"], metadata["lock_after"]["fd"], live=False)
     value = identity.read_receipt(identity.receipt(directory / "direct_capture_wait_return.json"))
     require(type(value.get("schema_version")) is int and value["schema_version"] == 1
@@ -855,6 +860,8 @@ def validate_backend_capture(directory, binding, loaded):
 
 def validate_profile_terminal(directory, metadata, result):
     identity = core(); directory = Path(directory); process = metadata["after"]["identity"]
+    if metadata.get("role") == "producer_guarded_child":
+        return adjacent("direct_profile_process").validate_profile_terminal(directory, metadata, result, sys.modules[__name__])
     value = identity.read_receipt(identity.receipt(directory / "direct_profile_terminal.json"))
     owner = identity.read_receipt(identity.receipt(directory / "profiler_process.json"))
     plan = identity.read_receipt(identity.receipt(directory / "measurement_plan.json"))

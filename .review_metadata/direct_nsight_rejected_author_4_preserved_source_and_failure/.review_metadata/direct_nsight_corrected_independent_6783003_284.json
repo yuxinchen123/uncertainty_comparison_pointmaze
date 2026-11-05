@@ -1,0 +1,179 @@
+{
+  "kind": "independent_corrected_direct_nsight_review",
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_nsight_producer_source_freeze_author_4_release_and_kernel.json",
+    "sha256": "aa16852710105c6e5adb55375906203780e8b508376eb90910fedc75c7d98f3a"
+  },
+  "base": "f7a2ab67106f92e7e95a87efb5863de8cfad0d5f",
+  "job_id": "6783003",
+  "step_id": "284",
+  "hostname": "heartpiece",
+  "pid": 1215335,
+  "started_at_seconds": 1793849032.58985,
+  "finished_at_seconds": 1793849035.173639,
+  "focused_tests": 39,
+  "failures": 0,
+  "errors": 0,
+  "source_unchanged_before_and_after": true,
+  "unittest_output": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_nsight_corrected_independent_6783003_284_unittest.raw",
+    "sha256": "66a2372c47c2c5b4e79c4a41b7cf72b964f2471b6cfeea88849730c28018efca"
+  },
+  "extra_controls": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_nsight_corrected_independent_6783003_284_extra_controls.json",
+    "sha256": "5629b7f7389851943710dd091c4992dd4f6804cc91232ad468643b95962be2f8"
+  },
+  "actual_cpu_artifacts": [
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/orphan_root_failure/actual_cpu_processes.json",
+      "sha256": "fd408adde8492f1b5467bd0f47c2d4519fbadfc280b23570c90c64b28d1557c6",
+      "size_bytes": 47
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/orphan_root_failure/cpu_regression_result.json",
+      "sha256": "28ad24a04d61c84e772daa620de024b30ce3663d3c6427b3c36f8b3281ddac84",
+      "size_bytes": 2178
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/orphan_root_failure/data/unit/direct_process_failure.json",
+      "sha256": "9a63046eac1435eb21808acedf3163f79cbd4d36897b566304d5317de688cfa8",
+      "size_bytes": 245
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/orphan_root_failure/data/unit/direct_profile_process_intent.json",
+      "sha256": "59cc242c29c8d512806a65d61a41688e2557ef31664520ccbba53be4dcd8760e",
+      "size_bytes": 23769
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/orphan_root_failure/data/unit/executed_command.json",
+      "sha256": "ad6f66af13fcc658443c747c858ef4fc45cf9c2f3d1dda9b14a81964c5440cab",
+      "size_bytes": 742
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/orphan_root_failure/data/unit/measurement_plan.json",
+      "sha256": "1be1cedec8062779e6e12d8b18fb9b217de0a0181a040261cf8850d72c83accf",
+      "size_bytes": 1292
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/orphan_root_failure/data/unit/tool_descendant_cleanup_progress.json",
+      "sha256": "9935d0b6621af0c1bd75bb352f1bf18d1676a599bc5ee9de032fc08b06b225d2",
+      "size_bytes": 1500
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/orphan_root_failure/data/unit/tool_descendant_scope_begin.json",
+      "sha256": "ef8c6aa341b55a7cc38e7476f5c1c96251d2fb234622235a1e2adbedfb8cb592",
+      "size_bytes": 22462
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/orphan_root_failure/data/unit/tool_descendant_scope_restored.json",
+      "sha256": "c6b09db75f14b2fe15bb98fc94c769f0ad55eeb0e8d7a1059b8ade60189cecad",
+      "size_bytes": 592
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/orphan_root_failure/data/unit/tool_descendant_scope_terminal.json",
+      "sha256": "b1aa50bd9cb0d5167fb6d9ce5073695e10618bca6fae3d35b5eac7545df8df6a",
+      "size_bytes": 44447
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/orphan_root_failure/data/unit/tool_root_wait_1215337.json",
+      "sha256": "d2f2a908e027fd822e482013a2e78635c4235e0183e41d49df7cc7c329da2ead",
+      "size_bytes": 972
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/orphan_root_failure/temporary_evidence_paths.json",
+      "sha256": "502a70c52e894633601a0ccc2b1cc3bfc50927732a9b4fa77ad2b04a234125c3",
+      "size_bytes": 4145
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/orphan_root_failure/worker_stderr.raw",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/orphan_root_failure/worker_stdout.raw",
+      "sha256": "5371045a8d71cf86a322f400b36b364d5efe5da33f0c0399740f3c9cb2cb0874",
+      "size_bytes": 1902
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/startup_timeout/actual_cpu_processes.json",
+      "sha256": "822154c3108545552702b6b32d0c81d165d1a74ae4031d439b05c83d83d7afdc",
+      "size_bytes": 45
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/startup_timeout/cpu_regression_result.json",
+      "sha256": "fecef214bc76d47d40bf3b59aabc6848e3bc56d38a2e53d5a5be846fc2e5c8e1",
+      "size_bytes": 1889
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/startup_timeout/data/unit/direct_process_failure.json",
+      "sha256": "d69f34448cf1e1238a1f728dff09ee0ae575dd5f4a1d01bbf323b470f07b41f4",
+      "size_bytes": 278
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/startup_timeout/data/unit/direct_profile_process_intent.json",
+      "sha256": "0b64b06c616e2a9c35879ab23502a13e4041603ba02411f9deda6731b8ebfbb8",
+      "size_bytes": 23419
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/startup_timeout/data/unit/executed_command.json",
+      "sha256": "faa6a69657fd50b89de6e253c60bbe954000f8485dd98e9bb4c1beb3e43d4a8b",
+      "size_bytes": 429
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/startup_timeout/data/unit/measurement_plan.json",
+      "sha256": "5cc614eea25e0aa24fe69b55cfe494b4b15602601ca12b19e80329efa020fc37",
+      "size_bytes": 1292
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/startup_timeout/data/unit/profiler_process.json",
+      "sha256": "ef42a80b136b6aa2311dd466318b2d2dc926056af0bacdff4b3fd6372d142ddd",
+      "size_bytes": 619
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/startup_timeout/data/unit/tool_descendant_cleanup_progress.json",
+      "sha256": "0264ed32d388d24eea85e124549da27cec32fd9fa32d4a8bc54f8e8d35293493",
+      "size_bytes": 1260
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/startup_timeout/data/unit/tool_descendant_scope_begin.json",
+      "sha256": "2dcf54a01144e303b540213e0bb62ce3d9a8a03311a1f26e3da7514b3c1b9120",
+      "size_bytes": 22425
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/startup_timeout/data/unit/tool_descendant_scope_restored.json",
+      "sha256": "777b58ad37f326f188fbabb663d7557df22fb50c130220d5e4cfbb63721724df",
+      "size_bytes": 592
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/startup_timeout/data/unit/tool_descendant_scope_terminal.json",
+      "sha256": "5a2c4e7005fb175f87b17f28fabe8bb93adab43ecbe8f07a207a2094b3367da9",
+      "size_bytes": 35458
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/startup_timeout/data/unit/tool_root_wait_1215341.json",
+      "sha256": "78b058ef5b905d12a1a236d417534443a8b66e09dc5348db8fce7417bad3a08b",
+      "size_bytes": 660
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/startup_timeout/temporary_evidence_paths.json",
+      "sha256": "2f9c9ef569c742299b49bf7b5e36478d364c8c4e7b6f0dfc20fdb6a779445340",
+      "size_bytes": 4461
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/startup_timeout/worker_stderr.raw",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/startup_timeout/worker_stdout.raw",
+      "sha256": "355ca7d3e3df2df963fa37b77493f1ab44d6a448c6b2f22327ea5a31208823c9",
+      "size_bytes": 1621
+    }
+  ],
+  "actual_tool_or_gpu_execution": false,
+  "standing_gpu_lock_opened": false,
+  "gpu_operations": 0,
+  "scientific_credit": 0,
+  "admission_granted": false,
+  "approved": false
+}

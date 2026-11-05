@@ -1,0 +1,41 @@
+{
+  "kind": "direct_capture_release_helper_author_handoff",
+  "files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_capture_release.py": "8d7623b1b5cf8bf7a8b65321a33ec1cf551bf99f63d445145a638a9011982e42",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_capture_release.py": "b18bf8c96ff4c60a072b3fa63958ff87adfbcf530c82f815aa4e211fb90cb925"
+  },
+  "test_receipt": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_capture_release_author_6783003_281.json",
+    "sha256": "838792e9755a40fe86ffc01006193515829ec7edb2048433f2a09c44117b044b"
+  },
+  "focused_tests_passed": 13,
+  "source_unchanged_during_tests": true,
+  "apis": {
+    "publish_release": "Returns the exact reference dictionary {path, sha256} for capture_release.json. Requires current producer os.getpid, positive observation reference, and producer_lock_before_release.json reference.",
+    "acknowledge_release": "Returns the exact reference dictionary {path, sha256} for capture_release_observed.json. Writes capture_release_observed.raw first from one actual pinned capture_release.json read; no numerical modules may be loaded. actual_process must be the actual current child snapshot.",
+    "validate_saved_release": "Returns capture_release, capture_release_observed, capture_release_observed_bytes reference dictionaries, capture_release_observed_at_seconds, prework_chronology_verified=true, scientific_credit=0 and admission_granted=false. Optional work is an execution-identity mapping with pid, process_start_time, started_at_seconds, finished_at_seconds."
+  },
+  "required_timestamps": [
+    "intent.created_at_seconds",
+    "claim.claimed_at_seconds",
+    "observation.observed_at_seconds",
+    "producer_lock_before_release.observed_at_seconds"
+  ],
+  "required_sidecar": "producer_lock_before_release.json contains the actual local producer descriptor snapshot plus observed_at_seconds. Its eight existing raw lock fields must match intent.producer_lock_before; the main observer retains direct.validate_descriptor verification.",
+  "observer_api": [
+    "stable",
+    "validate_snapshot",
+    "validate_observation"
+  ],
+  "scope": [
+    "Only the two new source/test files were edited.",
+    "No parent source file, original numerical file, rejected snapshot, experiment packet or admission record changed.",
+    "Fixtures used only labelled temporary metadata and synthetic proc records; they launched no tool or payload process, sent no signal and opened no GPU or standing lock. The test runner used the approved existing CPU step.",
+    "No commit was created; parent owns integration, freeze and independent review."
+  ],
+  "actual_tool_execution": false,
+  "actual_gpu_execution": false,
+  "standing_lock_opened": false,
+  "scientific_credit": 0,
+  "admission_granted": false
+}

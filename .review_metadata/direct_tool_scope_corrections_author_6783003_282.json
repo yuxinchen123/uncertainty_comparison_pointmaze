@@ -1,0 +1,29 @@
+{
+  "command": [
+    "/usr/bin/python3",
+    "-B",
+    "-m",
+    "unittest",
+    "test_direct_tool_descendants",
+    "test_direct_capture_release"
+  ],
+  "job_id": "6783003",
+  "step_id": "282",
+  "hostname": "heartpiece",
+  "pid": 1214157,
+  "started_at_seconds": 1793848394.4371238,
+  "finished_at_seconds": 1793848395.9913561,
+  "returncode": 0,
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_nsight_producer_source_freeze_author_3_kernel_focus.json",
+    "sha256": "65126168bd322b908029b165a2175cef78cb92ad7817415a8c6b0c3089479ee8"
+  },
+  "source_unchanged_before_and_after": true,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "b033b4de376c3d9f8ea3ac3971da2c14a9c82bfb32c2b53740b69e25ae8a7cef",
+  "actual_tool_or_gpu_execution": false,
+  "native_process_control_tested": true,
+  "standing_gpu_lock_opened": false,
+  "scientific_credit": 0,
+  "admission_granted": false
+}

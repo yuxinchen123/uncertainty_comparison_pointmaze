@@ -1,0 +1,26 @@
+{
+  "kind": "independent_non_direct_parent_reuse_interleaving_control",
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_nsight_producer_source_freeze_author_4_release_and_kernel.json",
+    "sha256": "aa16852710105c6e5adb55375906203780e8b508376eb90910fedc75c7d98f3a"
+  },
+  "job_id": "6783003",
+  "step_id": "286",
+  "hostname": "heartpiece",
+  "reviewed_at_seconds": 1793849108.113004,
+  "synthetic_interleaving": [
+    {
+      "known_non_direct_parent": 102,
+      "known_parent_birth": "30",
+      "actual_parent_birth_now": "99",
+      "interleaving": "waiter exits; its still-live tool parent101 reaps it; PID102 is reused before child-list read",
+      "new_same_uid_same_cgroup_child": 303
+    }
+  ],
+  "unrelated_same_uid_child_was_pinned": true,
+  "actual_processes_or_device_files_touched": 0,
+  "source_unchanged": true,
+  "gpu_operations": 0,
+  "scientific_credit": 0,
+  "note": "This corrects the first abbreviated control to place PID reuse below the tool root, where a different process can reap the known parent concurrently. No actual PID reuse or foreign process operation occurred."
+}

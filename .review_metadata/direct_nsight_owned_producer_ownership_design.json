@@ -1,0 +1,64 @@
+{
+  "kind": "direct_nsight_owned_producer_ownership_design",
+  "status": "draft_for_root_review_no_diagnostic_packet_or_launch",
+  "base": "f7a2ab67106f92e7e95a87efb5863de8cfad0d5f",
+  "worktree": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0",
+  "authorized_hostname": "serval02",
+  "authorized_gpu_uuid": "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3",
+  "standing_lock": "/tmp/sl5nw_serval02_card1.lock",
+  "ownership": [
+    {
+      "role": "root transport",
+      "standing_descriptor": "never opens or receives it",
+      "action": "Starts only the existing metadata controller after root reviews the source and packet."
+    },
+    {
+      "role": "metadata controller",
+      "standing_descriptor": "never opens or receives it",
+      "action": "Spawns exactly one tool producer, records actual PID and birth, and performs its exact Popen wait with raw output capture."
+    },
+    {
+      "role": "admitted tool producer",
+      "standing_descriptor": "sole opener and exclusive FLOCK holder",
+      "action": "Checks the exact existing approved lock inode and owner, acquires it without blocking or changing it, and keeps its descriptor open until its actual Nsight and owned payload waits are complete. Records local actual fdinfo/FLOCK before and after."
+    },
+    {
+      "role": "Nsight primary metadata waiter",
+      "standing_descriptor": "not inherited; close_fds=True and no standing descriptor in pass_fds",
+      "action": "Starts one exact standard-library payload, records actual child birth and source, and waits on that exact Popen child."
+    },
+    {
+      "role": "standard-library payload",
+      "standing_descriptor": "not inherited and never opened",
+      "action": "Publishes its actual source, PID, birth and owned ancestry before release. Reads only the known own-UID producer identity and its declared fdinfo after UID/birth checks. Performs zero environment or training transitions."
+    }
+  ],
+  "process_identity": "Use the existing generic positive child-list ancestry and PID-handle primitives only. Do not reuse configured A4500 policy or assume process-group/session equality. Retain actual Popen returns separately for metadata controller, producer/Nsight and waiter/payload.",
+  "descriptor_evidence": "Producer local before/after records bind the actual fixed path/device/inode/mode/UID and exclusive FLOCK holder PID/birth. Payload and waiter do not hold a duplicate. Readonly proc evidence never becomes an independent GPU lock.",
+  "diagnostic": {
+    "kind": "distinct direct tool/process/descriptor observation",
+    "environment_transitions": 0,
+    "training_updates": 0,
+    "standard_library_payload_only": true,
+    "cuda_qualification": false,
+    "timing_credit": 0,
+    "profile_credit": 0,
+    "scientific_credit": 0,
+    "admission_granted": false,
+    "actual_processes": null,
+    "actual_tool_execution": false,
+    "actual_submission": false
+  },
+  "required_before_any_root_launch": [
+    "Root reviews source and the exact standard packet.",
+    "Root verifies actual active C2 producer/controller exits without stopping it.",
+    "Root verifies the original source and standing lock remain unchanged.",
+    "Actual tool path/version/hash come from real target metadata; no future PID, tool result or binding is invented."
+  ],
+  "required_before_actual_learner_profile": [
+    "The actual tool/process/descriptor diagnostic completes and is independently reviewed.",
+    "A separately reviewed real current-CUDA-context, UUID/PCI/minor and backend-image qualification succeeds.",
+    "Root publishes a separate admission change. Current direct profile admission remains unconditionally disabled."
+  ],
+  "failure_rule": "Missing or changed identity, descriptor or wait evidence remains a failed zero-credit diagnostic. Never infer unknown descendant exit, child CUDA context, physical binding, or library qualification. Never signal a process group or inspect unrelated processes."
+}

@@ -136,7 +136,8 @@ def require_admission():
 def helper_roster():
     """Derive the exact declared helper union from source literals without importing a consumer."""
     names = {"profile_selected.py", "direct_measurement.py", "configured_measurement.py",
-        NAME, "direct_backend_image.py", "nsight_process_identity.py"}
+        NAME, "direct_backend_image.py", "nsight_process_identity.py", "direct_profile_process.py",
+        "direct_capture_release.py", "direct_tool_descendants.py"}
     for filename in ("measure_selected.py", "serval02_card1_binding.py"):
         tree = ast.parse(Path(__file__).with_name(filename).read_text())
         declarations = [node.value for node in tree.body if isinstance(node, ast.Assign)
@@ -165,7 +166,7 @@ def contract(plan):
         and type(plan.get("profile_updates")) is int and plan["profile_updates"] > 0,
         "the common baseline profile must retain the actual one- or two-copy seed identities")
     expected = helper_roster()
-    require(len(expected) == 29 and expected == set(plan["helpers"]["files"])
+    require(len(expected) == 32 and expected == set(plan["helpers"]["files"])
         and all(plan["helpers"]["files"][relative] == digest(Path(__file__).with_name(Path(relative).name).read_bytes())
             for relative in expected),
         "the new profile requires its own exact helper closure, not the old confirmation helper")

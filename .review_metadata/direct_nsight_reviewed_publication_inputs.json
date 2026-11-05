@@ -1,0 +1,2019 @@
+{
+  "kind": "exact_reviewed_direct_nsight_source_and_text_record_publication_inputs",
+  "base": "f7a2ab67106f92e7e95a87efb5863de8cfad0d5f",
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_nsight_producer_source_freeze_author_6_pinned_parent_and_restore.json",
+    "sha256": "6911df18d1f263c8c9528aafdc994e506a5d3c1118997720ee92bfe6eb4f1433"
+  },
+  "independent_approval": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_nsight_pinned_parent_and_restore_independent_approved.json",
+    "sha256": "23046cf0e6700de00bd93d3e8a8caff33171af77afa3966f40e710ece438f355"
+  },
+  "source_files": 14,
+  "payload_files": 285,
+  "payload_bytes": 3320477,
+  "maximum_file_bytes": 72766,
+  "files": [
+    {
+      "path": ".review_metadata/direct_capture_release_author_6783003_281.json",
+      "mode": "100644",
+      "git_blob": "c4a489801a3ab228ddf54e80be216995a0d638fe",
+      "sha256": "838792e9755a40fe86ffc01006193515829ec7edb2048433f2a09c44117b044b",
+      "size_bytes": 1341
+    },
+    {
+      "path": ".review_metadata/direct_capture_release_author_6783003_281_stderr.raw",
+      "mode": "100644",
+      "git_blob": "552618ab1a6a2cedab5d8799854cb1b559d3c569",
+      "sha256": "21bef2f421aa86b8f020441c24e4e6f794bf4b78590d97ea4483735b9707d9a3",
+      "size_bytes": 112
+    },
+    {
+      "path": ".review_metadata/direct_capture_release_author_6783003_281_stdout.raw",
+      "mode": "100644",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    {
+      "path": ".review_metadata/direct_capture_release_author_handoff.json",
+      "mode": "100644",
+      "git_blob": "d35971b4a851b85bcd3f74d1f0a5aeec0de24751",
+      "sha256": "5be0d0aea193144fb531324ff3985dd74b35598f6d7ef270154281b259b72a85",
+      "size_bytes": 2953
+    },
+    {
+      "path": ".review_metadata/direct_nsight_author_5_test_argument_failure_preserved/10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_direct_nsight_process.py",
+      "mode": "100644",
+      "git_blob": "5b62522cf83aae4a68dfa1477490c3b1cd492d32",
+      "sha256": "a0849694cf8eb327293d0e9cb2cf59205017359f4e9568089cf8a87f8dd83cd8",
+      "size_bytes": 24978
+    },
+    {
+      "path": ".review_metadata/direct_nsight_author_5_test_argument_failure_preserved/10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py",
+      "mode": "100644",
+      "git_blob": "7f7070e349cc1b2b12d3b73a88058eb9592c2fb1",
+      "sha256": "0f2cba5aa8dfae67552f131998dfc8784d849fc1a2683764d63d4fda8b6a3d12",
+      "size_bytes": 24951
+    },
+    {
+      "path": ".review_metadata/direct_nsight_author_5_test_argument_failure_preserved/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_capture_release.py",
+      "mode": "100644",
+      "git_blob": "a975c92d3e0f0b4eedae539d65ad552572b55482",
+      "sha256": "8d7623b1b5cf8bf7a8b65321a33ec1cf551bf99f63d445145a638a9011982e42",
+      "size_bytes": 17646
+    },
+    {
+      "path": ".review_metadata/direct_nsight_author_5_test_argument_failure_preserved/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py",
+      "mode": "100644",
+      "git_blob": "5f89ab8112d707ba98b1c6c44508d42c644d9df4",
+      "sha256": "7b492bbcd2a7598e992adfa58cbe136e538e3581f59f14fad7b7d842884abeaf",
+      "size_bytes": 59833
+    },
+    {
+      "path": ".review_metadata/direct_nsight_author_5_test_argument_failure_preserved/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_prerequisites.py",
+      "mode": "100644",
+      "git_blob": "55701dd5ce18a9a3a4eb32b79e377fae20a45cbd",
+      "sha256": "772d610250c80df36a2a09a86ec6714b69317cce3f4b1ed3cebbab060e87a7c3",
+      "size_bytes": 33553
+    },
+    {
+      "path": ".review_metadata/direct_nsight_author_5_test_argument_failure_preserved/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_process.py",
+      "mode": "100644",
+      "git_blob": "e546507e688be227f065d5051251f58633623807",
+      "sha256": "cad3f2afae600e8addf96d7cbc8d5e12f21cd358342989cee65da0c88f6fd061",
+      "size_bytes": 46150
+    },
+    {
+      "path": ".review_metadata/direct_nsight_author_5_test_argument_failure_preserved/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_tool_descendants.py",
+      "mode": "100644",
+      "git_blob": "e8eec7b9fc3a95379dea65893005b2613dba4bdf",
+      "sha256": "ac9244771625883c3f65be93ccde8017538732020d9525d0173601416ae64342",
+      "size_bytes": 39422
+    },
+    {
+      "path": ".review_metadata/direct_nsight_author_5_test_argument_failure_preserved/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py",
+      "mode": "100644",
+      "git_blob": "a11136ec910846f00d3bacd042b3cbed7d88dcae",
+      "sha256": "36a60d5e4d5536413600c5d36d39fd107a031f434048d83e38ed209b375f62e9",
+      "size_bytes": 72766
+    },
+    {
+      "path": ".review_metadata/direct_nsight_author_5_test_argument_failure_preserved/10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py",
+      "mode": "100644",
+      "git_blob": "aed83f8344fa22970579216227ff93093edb094f",
+      "sha256": "941f5ec35fa790f7c59e66274627c7ef198e366e48e0c462e9602881080d62f6",
+      "size_bytes": 54612
+    },
+    {
+      "path": ".review_metadata/direct_nsight_author_5_test_argument_failure_preserved/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/direct_tool_descendants_cpu_worker.py",
+      "mode": "100644",
+      "git_blob": "e25ed1a52b093df5f4e1fc2d32eb890d2ba90436",
+      "sha256": "b5083dabdedaed99dcf8e55820d6484c748ae7864d1dcb6c9792ae5f608211d7",
+      "size_bytes": 8024
+    },
+    {
+      "path": ".review_metadata/direct_nsight_author_5_test_argument_failure_preserved/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_capture_release.py",
+      "mode": "100644",
+      "git_blob": "26d06980c5e363c21388105cd26741f06d4f8e83",
+      "sha256": "b18bf8c96ff4c60a072b3fa63958ff87adfbcf530c82f815aa4e211fb90cb925",
+      "size_bytes": 14894
+    },
+    {
+      "path": ".review_metadata/direct_nsight_author_5_test_argument_failure_preserved/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_profile_prerequisites.py",
+      "mode": "100644",
+      "git_blob": "2667dbbb606556b95a4e885e4654405e6ef62dc1",
+      "sha256": "c7b2b8d266bafe018e4df9be89f9057b2ece1b71c0666d192ebe940c2ff1a874",
+      "size_bytes": 29470
+    },
+    {
+      "path": ".review_metadata/direct_nsight_author_5_test_argument_failure_preserved/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_profile_process.py",
+      "mode": "100644",
+      "git_blob": "79fe8b9c0458b89701af78024305290894536e69",
+      "sha256": "356b036c51e9b435c8bf72d52ac852346837525754471f6f2cd7ebb2bdea40e1",
+      "size_bytes": 29954
+    },
+    {
+      "path": ".review_metadata/direct_nsight_author_5_test_argument_failure_preserved/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_tool_descendants.py",
+      "mode": "100644",
+      "git_blob": "38ddd7ab6bf2a031d017a1ca9f00b4cad220f201",
+      "sha256": "0710f44ab5ac87c42f4ff501eb72a40d7ee4daf4e05f28c314ff361133388369",
+      "size_bytes": 10690
+    },
+    {
+      "path": ".review_metadata/direct_nsight_author_5_test_argument_failure_preserved/direct_nsight_producer_source_freeze_author_5_pinned_parent_and_restore.json",
+      "mode": "100644",
+      "git_blob": "7a1efacf5878f2f0d0b550ea15e84336c20f9290",
+      "sha256": "881b09b5a1b154ed9238195776014e885e06946a18a8ea120452f8ab115e8f8d",
+      "size_bytes": 3109
+    },
+    {
+      "path": ".review_metadata/direct_nsight_author_5_test_argument_failure_preserved/direct_tool_scope_pinned_parent_author_6783003_296.json",
+      "mode": "100644",
+      "git_blob": "8318486c122db9e523bcd63a9c2399aaf41e96e9",
+      "sha256": "2aeb722a73dcb6a02b97db9883c1df3c5923d7a0aecca9a3154e4c83f2dff8da",
+      "size_bytes": 1601
+    },
+    {
+      "path": ".review_metadata/direct_nsight_author_5_test_argument_failure_preserved/direct_tool_scope_pinned_parent_author_6783003_296_stderr.raw",
+      "mode": "100644",
+      "git_blob": "bab6e4c7b6a82ed00ac4ab0b39e5641938d0c17e",
+      "sha256": "6ac1c1a2cc0d45c582262c3d5cfa44213c1a80b25adbf8ea0389e65cae03795b",
+      "size_bytes": 6407
+    },
+    {
+      "path": ".review_metadata/direct_nsight_author_5_test_argument_failure_preserved/direct_tool_scope_pinned_parent_author_6783003_296_stdout.raw",
+      "mode": "100644",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    {
+      "path": ".review_metadata/direct_nsight_author_5_test_argument_failure_preserved/preservation_manifest.json",
+      "mode": "100644",
+      "git_blob": "ccc721e631b72ef60669daca77ed070b5794e8b7",
+      "sha256": "fc3caf3d163d7f6b57d751bead35a80de07d1845c96f7edfa64a25776526247e",
+      "size_bytes": 4126
+    },
+    {
+      "path": ".review_metadata/direct_nsight_corrected_independent_6783003_284.json",
+      "mode": "100644",
+      "git_blob": "0860ce6551b101f114587ae1c0f5c02622c2c8ab",
+      "sha256": "22dfeafec7a6286cd470d4aff167080d1d0ad1947da4eed55afcb4c73b7a987d",
+      "size_bytes": 13164
+    },
+    {
+      "path": ".review_metadata/direct_nsight_corrected_independent_6783003_284_extra_controls.json",
+      "mode": "100644",
+      "git_blob": "87f54b63d84fed0fe024aa6932f05937dc4fff76",
+      "sha256": "5629b7f7389851943710dd091c4992dd4f6804cc91232ad468643b95962be2f8",
+      "size_bytes": 797
+    },
+    {
+      "path": ".review_metadata/direct_nsight_corrected_independent_6783003_284_unittest.raw",
+      "mode": "100644",
+      "git_blob": "7f0929c9ce506172c40ecbf933b271cfec8d0642",
+      "sha256": "66a2372c47c2c5b4e79c4a41b7cf72b964f2471b6cfeea88849730c28018efca",
+      "size_bytes": 7973
+    },
+    {
+      "path": ".review_metadata/direct_nsight_corrected_scope_release_author_handoff.json",
+      "mode": "100644",
+      "git_blob": "beb2e01a0122d4c70fb422a901000c597128b929",
+      "sha256": "41d103e40ddbe69fc0c9619ab1a747d8a8a35476eb8551965f64d62b13375873",
+      "size_bytes": 8168
+    },
+    {
+      "path": ".review_metadata/direct_nsight_independent_6783003_275.json",
+      "mode": "100644",
+      "git_blob": "158f382d44a0fb87585631558646e9af498e9df9",
+      "sha256": "ef9fc89f8b5996078a848748659ca538ab51d8381d9cacd1de88de8a6897c5ab",
+      "size_bytes": 1853
+    },
+    {
+      "path": ".review_metadata/direct_nsight_independent_6783003_275_cpu_reproduction.json",
+      "mode": "100644",
+      "git_blob": "bb3e6650115a4ee35a33d032415861198c6f164b",
+      "sha256": "1b58d6e84429f14cf1810b4b90ebd7516ac1103ce16e180f7d3466ae66319db2",
+      "size_bytes": 11125
+    },
+    {
+      "path": ".review_metadata/direct_nsight_independent_6783003_275_unittest.raw",
+      "mode": "100644",
+      "git_blob": "c1f8c446f4f356a06b57ae59d5d36bc5bbb3f3f7",
+      "sha256": "2ea27c953be519f57e4b7d60aa8f64bd1f657a4d76d045903ceebb6fcfa421e0",
+      "size_bytes": 6132
+    },
+    {
+      "path": ".review_metadata/direct_nsight_independent_rejection_author_2.json",
+      "mode": "100644",
+      "git_blob": "5a85ef6be87d7f97e1039b25bc19146c59712ce1",
+      "sha256": "f8ac9d5fada8ce60807a69498f222aa1098d966e55e440b8cb579cfa8f040460",
+      "size_bytes": 4235
+    },
+    {
+      "path": ".review_metadata/direct_nsight_independent_rejection_author_4_release_and_kernel.json",
+      "mode": "100644",
+      "git_blob": "b14015a4a07cc5145a6b84705d885eae8bf0c220",
+      "sha256": "abb3790fc34bd77d7589f5f98018d3a75699781918ec1b60049a7730c2c4c046",
+      "size_bytes": 12034
+    },
+    {
+      "path": ".review_metadata/direct_nsight_owned_producer_author_handoff.json",
+      "mode": "100644",
+      "git_blob": "90ca21152b87e9b984fa27d278720048eabdec13",
+      "sha256": "33a87f7a6ae0ca085ff7949b9a70b88e1101f188c30dd219dcb8ce410c8d3bb7",
+      "size_bytes": 5903
+    },
+    {
+      "path": ".review_metadata/direct_nsight_owned_producer_ownership_design.json",
+      "mode": "100644",
+      "git_blob": "bd666c0ad3bfe5393442805206b37299a085e374",
+      "sha256": "212e824d2a32e8b44f07bbdd53f5b233a7b0ab7b08bde74c7e3887b2281e1a0d",
+      "size_bytes": 4046
+    },
+    {
+      "path": ".review_metadata/direct_nsight_owned_producer_source_before.json",
+      "mode": "100644",
+      "git_blob": "5dbb04e05412f1c5ddd546b3116cbcfbac47ef62",
+      "sha256": "8a71de196381ecf9079639038daf540bf51983d20dcc14053d1dfabc64c694d3",
+      "size_bytes": 26667
+    },
+    {
+      "path": ".review_metadata/direct_nsight_pinned_parent_and_restore_author_handoff.json",
+      "mode": "100644",
+      "git_blob": "753147a080b4a92cdfd4bf335e1ae34dcf632ea0",
+      "sha256": "7f1f4c95afd8b2997ceedf7746ee044dc679d4d3b38bd515616965bfda65412c",
+      "size_bytes": 12931
+    },
+    {
+      "path": ".review_metadata/direct_nsight_pinned_parent_and_restore_independent_approved.json",
+      "mode": "100644",
+      "git_blob": "e1e434365a76429fd6810c5e146bfcbb959120d2",
+      "sha256": "23046cf0e6700de00bd93d3e8a8caff33171af77afa3966f40e710ece438f355",
+      "size_bytes": 5102
+    },
+    {
+      "path": ".review_metadata/direct_nsight_pinned_parent_independent_6783003_306.json",
+      "mode": "100644",
+      "git_blob": "b4737492aaadfb168c09511f1cd4b373103d0497",
+      "sha256": "cd93bef0752538cbf9c051842b4fb990c201b37dc915b444e28912587668251f",
+      "size_bytes": 18736
+    },
+    {
+      "path": ".review_metadata/direct_nsight_pinned_parent_independent_6783003_306_unittest.raw",
+      "mode": "100644",
+      "git_blob": "1092d54361a7a488c31a2f58084602d8ba0d409b",
+      "sha256": "c04d10b22fe6b7d3fa50d8396a836726a4ac11da33b950bd2c07a9a81de95ac5",
+      "size_bytes": 3887
+    },
+    {
+      "path": ".review_metadata/direct_nsight_producer_author_6783003_264.json",
+      "mode": "100644",
+      "git_blob": "cdc828b691655ba0de622078eccb78c539c72870",
+      "sha256": "61934ced579e63d6bc97641c3a078f8ddb5160d5bc4306a6f63af6e2ffa86ada",
+      "size_bytes": 1493
+    },
+    {
+      "path": ".review_metadata/direct_nsight_producer_author_6783003_264_stderr.raw",
+      "mode": "100644",
+      "git_blob": "c4fa2880311cd8cb01c4cf39b98ae6abd720b8b5",
+      "sha256": "66b886159ae24049de9da3067f35d8f1bf53e957ce33de4b4e65073e44676e5b",
+      "size_bytes": 34443
+    },
+    {
+      "path": ".review_metadata/direct_nsight_producer_author_6783003_264_stdout.raw",
+      "mode": "100644",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    {
+      "path": ".review_metadata/direct_nsight_producer_author_6783003_271.json",
+      "mode": "100644",
+      "git_blob": "08642b39a7f0394ccb4cdf8b8f0bbb4b7508b098",
+      "sha256": "b0da1fb5af7d403f959ba1245f8b47de3872a8dfa273cf0141ae857b4e2910af",
+      "size_bytes": 1494
+    },
+    {
+      "path": ".review_metadata/direct_nsight_producer_author_6783003_271_stderr.raw",
+      "mode": "100644",
+      "git_blob": "0830d66e7c3e7f3756fe797d19f6fe6c534d75a0",
+      "sha256": "da18c445dca8100fbe87ee1b4ffc79caad377367a4d13542653b66abe391dd84",
+      "size_bytes": 34445
+    },
+    {
+      "path": ".review_metadata/direct_nsight_producer_author_6783003_271_stdout.raw",
+      "mode": "100644",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    {
+      "path": ".review_metadata/direct_nsight_producer_source_freeze_author_1.json",
+      "mode": "100644",
+      "git_blob": "9124eceded7e200a9027f7df670c1fb981e49f4f",
+      "sha256": "84bf85c8a868748a3697054674aa77b093ad54141fdff09357c53bddf5c3bde3",
+      "size_bytes": 1500
+    },
+    {
+      "path": ".review_metadata/direct_nsight_producer_source_freeze_author_2.json",
+      "mode": "100644",
+      "git_blob": "dbfb662fc063d74d09e17df7e1d441d1235bdd11",
+      "sha256": "f508925a1bde5623a347952ad93b7c3158ddfc7841bf95ace56e91247b42166a",
+      "size_bytes": 1500
+    },
+    {
+      "path": ".review_metadata/direct_nsight_producer_source_freeze_author_3_kernel_focus.json",
+      "mode": "100644",
+      "git_blob": "669fbf67c1be078e9ad2288e725a60381d1f2932",
+      "sha256": "65126168bd322b908029b165a2175cef78cb92ad7817415a8c6b0c3089479ee8",
+      "size_bytes": 2490
+    },
+    {
+      "path": ".review_metadata/direct_nsight_producer_source_freeze_author_4_release_and_kernel.json",
+      "mode": "100644",
+      "git_blob": "888e79aa202d3a4176fc2450738a32699e090c25",
+      "sha256": "aa16852710105c6e5adb55375906203780e8b508376eb90910fedc75c7d98f3a",
+      "size_bytes": 2490
+    },
+    {
+      "path": ".review_metadata/direct_nsight_producer_source_freeze_author_5_pinned_parent_and_restore.json",
+      "mode": "100644",
+      "git_blob": "7a1efacf5878f2f0d0b550ea15e84336c20f9290",
+      "sha256": "881b09b5a1b154ed9238195776014e885e06946a18a8ea120452f8ab115e8f8d",
+      "size_bytes": 3109
+    },
+    {
+      "path": ".review_metadata/direct_nsight_producer_source_freeze_author_6_pinned_parent_and_restore.json",
+      "mode": "100644",
+      "git_blob": "574828c3f00596abd5b96a62c1b8bad15bc386ed",
+      "sha256": "6911df18d1f263c8c9528aafdc994e506a5d3c1118997720ee92bfe6eb4f1433",
+      "size_bytes": 3502
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_2_preserved_source_and_failure/10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_direct_nsight_process.py",
+      "mode": "100644",
+      "git_blob": "bd7926ee4d05a43e91a925b328f8f7bfa6e5c913",
+      "sha256": "f949b31835b86b5bea1afea4eb8968d9b6ddd711a717bc1f43774d6a1deacedc",
+      "size_bytes": 24504
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_2_preserved_source_and_failure/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py",
+      "mode": "100644",
+      "git_blob": "4a4befd49d63a2a1c1877f0743ba1e01b9d36e7d",
+      "sha256": "e8a743f884215b5559745fe4b11af5d282b7cc8220696efe9ec025743cf546a0",
+      "size_bytes": 59758
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_2_preserved_source_and_failure/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_prerequisites.py",
+      "mode": "100644",
+      "git_blob": "87c837af28792040d007ab838a13bf6eedbca7e8",
+      "sha256": "33236d5492bf444dc993ff61fb2910f0998f20d945e5403bff28a38c42d21874",
+      "size_bytes": 33486
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_2_preserved_source_and_failure/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_process.py",
+      "mode": "100644",
+      "git_blob": "0619b1bef8af2acc229f48740e3c062bf0990552",
+      "sha256": "1ad032da3c0f4e1491dcdec6388903e417d425882a09094c080caf0036d512b2",
+      "size_bytes": 43696
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_2_preserved_source_and_failure/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py",
+      "mode": "100644",
+      "git_blob": "e5882e8f9049821964c486cf17555f108cab00d7",
+      "sha256": "f4fe5f1d5c904a773494e1e95caaf631940df18ff7077dbbd39858f27fa66a28",
+      "size_bytes": 71924
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_2_preserved_source_and_failure/10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py",
+      "mode": "100644",
+      "git_blob": "aed83f8344fa22970579216227ff93093edb094f",
+      "sha256": "941f5ec35fa790f7c59e66274627c7ef198e366e48e0c462e9602881080d62f6",
+      "size_bytes": 54612
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_2_preserved_source_and_failure/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_profile_prerequisites.py",
+      "mode": "100644",
+      "git_blob": "0d0872f10dede2e1fd1d307c84b3998770397953",
+      "sha256": "cb9b975144a404647ef553ab4f3be831b0884d232734764c7608353cf5e2b1db",
+      "size_bytes": 28845
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_2_preserved_source_and_failure/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_profile_process.py",
+      "mode": "100644",
+      "git_blob": "ead8a1a4f6af32f87035878ef6d9deef846e4b55",
+      "sha256": "b53115cb10ea6030ed750a8c46c800d615c87bba44cceb4bdfaede3a3cd444f3",
+      "size_bytes": 20521
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_2_preserved_source_and_failure/additional_evidence_manifest.json",
+      "mode": "100644",
+      "git_blob": "760c8a3237cf629ba560df0df75f5af14a6b10ec",
+      "sha256": "62d897d97dbb0babf8984519075cf7ad74b3722297a08c47fd0799926cd9b01b",
+      "size_bytes": 2152
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_2_preserved_source_and_failure/preservation_manifest.json",
+      "mode": "100644",
+      "git_blob": "6f5e2bd8870c5f7bc29b2f1c4d1371cd36f930ed",
+      "sha256": "5093ed20f2e0bfefb33697e515cdbc8a61a178bb6cf0df5d92fcd1b37dc48e5c",
+      "size_bytes": 2823
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_2_preserved_source_and_failure/review_records/direct_nsight_independent_6783003_275.json",
+      "mode": "100644",
+      "git_blob": "158f382d44a0fb87585631558646e9af498e9df9",
+      "sha256": "ef9fc89f8b5996078a848748659ca538ab51d8381d9cacd1de88de8a6897c5ab",
+      "size_bytes": 1853
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_2_preserved_source_and_failure/review_records/direct_nsight_independent_6783003_275_cpu_reproduction.json",
+      "mode": "100644",
+      "git_blob": "bb3e6650115a4ee35a33d032415861198c6f164b",
+      "sha256": "1b58d6e84429f14cf1810b4b90ebd7516ac1103ce16e180f7d3466ae66319db2",
+      "size_bytes": 11125
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_2_preserved_source_and_failure/review_records/direct_nsight_independent_6783003_275_unittest.raw",
+      "mode": "100644",
+      "git_blob": "c1f8c446f4f356a06b57ae59d5d36bc5bbb3f3f7",
+      "sha256": "2ea27c953be519f57e4b7d60aa8f64bd1f657a4d76d045903ceebb6fcfa421e0",
+      "size_bytes": 6132
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_2_preserved_source_and_failure/review_records/direct_nsight_independent_rejection_author_2.json",
+      "mode": "100644",
+      "git_blob": "5a85ef6be87d7f97e1039b25bc19146c59712ce1",
+      "sha256": "f8ac9d5fada8ce60807a69498f222aa1098d966e55e440b8cb579cfa8f040460",
+      "size_bytes": 4235
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_2_preserved_source_and_failure/review_records/direct_nsight_owned_producer_author_handoff.json",
+      "mode": "100644",
+      "git_blob": "90ca21152b87e9b984fa27d278720048eabdec13",
+      "sha256": "33a87f7a6ae0ca085ff7949b9a70b88e1101f188c30dd219dcb8ce410c8d3bb7",
+      "size_bytes": 5903
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_2_preserved_source_and_failure/review_records/direct_nsight_owned_producer_ownership_design.json",
+      "mode": "100644",
+      "git_blob": "bd666c0ad3bfe5393442805206b37299a085e374",
+      "sha256": "212e824d2a32e8b44f07bbdd53f5b233a7b0ab7b08bde74c7e3887b2281e1a0d",
+      "size_bytes": 4046
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_2_preserved_source_and_failure/review_records/direct_nsight_owned_producer_source_before.json",
+      "mode": "100644",
+      "git_blob": "5dbb04e05412f1c5ddd546b3116cbcfbac47ef62",
+      "sha256": "8a71de196381ecf9079639038daf540bf51983d20dcc14053d1dfabc64c694d3",
+      "size_bytes": 26667
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_2_preserved_source_and_failure/review_records/direct_nsight_producer_author_6783003_264.json",
+      "mode": "100644",
+      "git_blob": "cdc828b691655ba0de622078eccb78c539c72870",
+      "sha256": "61934ced579e63d6bc97641c3a078f8ddb5160d5bc4306a6f63af6e2ffa86ada",
+      "size_bytes": 1493
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_2_preserved_source_and_failure/review_records/direct_nsight_producer_author_6783003_264_stderr.raw",
+      "mode": "100644",
+      "git_blob": "c4fa2880311cd8cb01c4cf39b98ae6abd720b8b5",
+      "sha256": "66b886159ae24049de9da3067f35d8f1bf53e957ce33de4b4e65073e44676e5b",
+      "size_bytes": 34443
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_2_preserved_source_and_failure/review_records/direct_nsight_producer_author_6783003_264_stdout.raw",
+      "mode": "100644",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_2_preserved_source_and_failure/review_records/direct_nsight_producer_author_6783003_271.json",
+      "mode": "100644",
+      "git_blob": "08642b39a7f0394ccb4cdf8b8f0bbb4b7508b098",
+      "sha256": "b0da1fb5af7d403f959ba1245f8b47de3872a8dfa273cf0141ae857b4e2910af",
+      "size_bytes": 1494
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_2_preserved_source_and_failure/review_records/direct_nsight_producer_author_6783003_271_stderr.raw",
+      "mode": "100644",
+      "git_blob": "0830d66e7c3e7f3756fe797d19f6fe6c534d75a0",
+      "sha256": "da18c445dca8100fbe87ee1b4ffc79caad377367a4d13542653b66abe391dd84",
+      "size_bytes": 34445
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_2_preserved_source_and_failure/review_records/direct_nsight_producer_author_6783003_271_stdout.raw",
+      "mode": "100644",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_2_preserved_source_and_failure/review_records/direct_nsight_producer_source_freeze_author_2.json",
+      "mode": "100644",
+      "git_blob": "dbfb662fc063d74d09e17df7e1d441d1235bdd11",
+      "sha256": "f508925a1bde5623a347952ad93b7c3158ddfc7841bf95ace56e91247b42166a",
+      "size_bytes": 1500
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_2_preserved_source_and_failure/review_records/run_direct_nsight_independent_failure_review.py",
+      "mode": "100644",
+      "git_blob": "0c2b659c2523add4ba8f9b7803440e93c71e0b46",
+      "sha256": "36fb192aef3175b23bb4df9d7597dabae7181a7cdb6e0c6ec4d350d8cc1463c0",
+      "size_bytes": 9592
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_2_preserved_source_and_failure/review_records/run_direct_nsight_producer_author_tests.py",
+      "mode": "100644",
+      "git_blob": "cce5db1a707f0133e665b7cdd818bdcc2a7bd01f",
+      "sha256": "4e07e01ecbd27b36685f9c9677c35878392beb41459da76ea13a3aa0b42d4128",
+      "size_bytes": 2185
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/.review_metadata/direct_h100_profile_source_freeze_2026-11-04_author_4.json",
+      "mode": "100644",
+      "git_blob": "c8d05593e8ad0f6e7936db52a93e994571b8799c",
+      "sha256": "81a3b1f2c7804f055c0cdf608d646dafd058d0869c2a418680e57d424ea1b87a",
+      "size_bytes": 928
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/.review_metadata/direct_nsight_corrected_independent_6783003_284.json",
+      "mode": "100644",
+      "git_blob": "0860ce6551b101f114587ae1c0f5c02622c2c8ab",
+      "sha256": "22dfeafec7a6286cd470d4aff167080d1d0ad1947da4eed55afcb4c73b7a987d",
+      "size_bytes": 13164
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/.review_metadata/direct_nsight_corrected_independent_6783003_284_extra_controls.json",
+      "mode": "100644",
+      "git_blob": "87f54b63d84fed0fe024aa6932f05937dc4fff76",
+      "sha256": "5629b7f7389851943710dd091c4992dd4f6804cc91232ad468643b95962be2f8",
+      "size_bytes": 797
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/.review_metadata/direct_nsight_corrected_independent_6783003_284_unittest.raw",
+      "mode": "100644",
+      "git_blob": "7f0929c9ce506172c40ecbf933b271cfec8d0642",
+      "sha256": "66a2372c47c2c5b4e79c4a41b7cf72b964f2471b6cfeea88849730c28018efca",
+      "size_bytes": 7973
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/.review_metadata/direct_nsight_independent_rejection_author_4_release_and_kernel.json",
+      "mode": "100644",
+      "git_blob": "b14015a4a07cc5145a6b84705d885eae8bf0c220",
+      "sha256": "abb3790fc34bd77d7589f5f98018d3a75699781918ec1b60049a7730c2c4c046",
+      "size_bytes": 12034
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/.review_metadata/direct_nsight_producer_source_freeze_author_4_release_and_kernel.json",
+      "mode": "100644",
+      "git_blob": "888e79aa202d3a4176fc2450738a32699e090c25",
+      "sha256": "aa16852710105c6e5adb55375906203780e8b508376eb90910fedc75c7d98f3a",
+      "size_bytes": 2490
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/.review_metadata/direct_scope_parent_birth_independent_6783003_286.json",
+      "mode": "100644",
+      "git_blob": "6650720d8356ee27b4053f482385a5eab63c19b5",
+      "sha256": "b6e4c4ed0125e5e8d1b69e215a9b74943a7f957bfd94bb03d70166a09b426235",
+      "size_bytes": 1256
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/.review_metadata/direct_scope_parent_birth_independent_fixture_syntax_failure.json",
+      "mode": "100644",
+      "git_blob": "5da5f63d4f6abf759270c29cd69234ee0ec4f69e",
+      "sha256": "e2d67388578d20a6e8603a2f2d0ef2e6080fd8b3e559a6029e89497866ab1793",
+      "size_bytes": 860
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/orphan_root_failure/actual_cpu_processes.json",
+      "mode": "100644",
+      "git_blob": "8b9174c939463b8523a4bd90aab88014de9bc9e8",
+      "sha256": "fd408adde8492f1b5467bd0f47c2d4519fbadfc280b23570c90c64b28d1557c6",
+      "size_bytes": 47
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/orphan_root_failure/cpu_regression_result.json",
+      "mode": "100644",
+      "git_blob": "3a02ae8dd9f9f98eecd6cf9406a6be850bd2bdd1",
+      "sha256": "28ad24a04d61c84e772daa620de024b30ce3663d3c6427b3c36f8b3281ddac84",
+      "size_bytes": 2178
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/orphan_root_failure/data/unit/direct_process_failure.json",
+      "mode": "100644",
+      "git_blob": "f603281ab0aefd7bce8a6d74068de3f1008de100",
+      "sha256": "9a63046eac1435eb21808acedf3163f79cbd4d36897b566304d5317de688cfa8",
+      "size_bytes": 245
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/orphan_root_failure/data/unit/direct_profile_process_intent.json",
+      "mode": "100644",
+      "git_blob": "9e08bea804e417804b3d3d280e3cd7695ceaa4a2",
+      "sha256": "59cc242c29c8d512806a65d61a41688e2557ef31664520ccbba53be4dcd8760e",
+      "size_bytes": 23769
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/orphan_root_failure/data/unit/executed_command.json",
+      "mode": "100644",
+      "git_blob": "067b5b80701dfb5922d24fdd757f89a500933271",
+      "sha256": "ad6f66af13fcc658443c747c858ef4fc45cf9c2f3d1dda9b14a81964c5440cab",
+      "size_bytes": 742
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/orphan_root_failure/data/unit/measurement_plan.json",
+      "mode": "100644",
+      "git_blob": "c16ad70ad8b12d596159c70200b80fcb7379b67c",
+      "sha256": "1be1cedec8062779e6e12d8b18fb9b217de0a0181a040261cf8850d72c83accf",
+      "size_bytes": 1292
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/orphan_root_failure/data/unit/tool_descendant_cleanup_progress.json",
+      "mode": "100644",
+      "git_blob": "437bc64ff52ee2b8d085b840558875e100d9cb36",
+      "sha256": "9935d0b6621af0c1bd75bb352f1bf18d1676a599bc5ee9de032fc08b06b225d2",
+      "size_bytes": 1500
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/orphan_root_failure/data/unit/tool_descendant_scope_begin.json",
+      "mode": "100644",
+      "git_blob": "9e7aa4c43b7ee83728430d650cafbdcf0e38fca7",
+      "sha256": "ef8c6aa341b55a7cc38e7476f5c1c96251d2fb234622235a1e2adbedfb8cb592",
+      "size_bytes": 22462
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/orphan_root_failure/data/unit/tool_descendant_scope_restored.json",
+      "mode": "100644",
+      "git_blob": "3ebc08886fd31864ded600abb0b78c5d4bc19a25",
+      "sha256": "c6b09db75f14b2fe15bb98fc94c769f0ad55eeb0e8d7a1059b8ade60189cecad",
+      "size_bytes": 592
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/orphan_root_failure/data/unit/tool_descendant_scope_terminal.json",
+      "mode": "100644",
+      "git_blob": "9eebf1d97576a8b19d49ad162388c4cfb0cdaee7",
+      "sha256": "b1aa50bd9cb0d5167fb6d9ce5073695e10618bca6fae3d35b5eac7545df8df6a",
+      "size_bytes": 44447
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/orphan_root_failure/data/unit/tool_root_wait_1215337.json",
+      "mode": "100644",
+      "git_blob": "2359343811d76385a85f38ce440fc09f33ea513d",
+      "sha256": "d2f2a908e027fd822e482013a2e78635c4235e0183e41d49df7cc7c329da2ead",
+      "size_bytes": 972
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/orphan_root_failure/temporary_evidence_paths.json",
+      "mode": "100644",
+      "git_blob": "23d6023fca76b281f35dfa42449210679fb6aab8",
+      "sha256": "502a70c52e894633601a0ccc2b1cc3bfc50927732a9b4fa77ad2b04a234125c3",
+      "size_bytes": 4145
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/orphan_root_failure/worker_stderr.raw",
+      "mode": "100644",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/orphan_root_failure/worker_stdout.raw",
+      "mode": "100644",
+      "git_blob": "5d845b7faa2f527a7c448bd013e5a2fed4827831",
+      "sha256": "5371045a8d71cf86a322f400b36b364d5efe5da33f0c0399740f3c9cb2cb0874",
+      "size_bytes": 1902
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/startup_timeout/actual_cpu_processes.json",
+      "mode": "100644",
+      "git_blob": "a00669a61843d26b5edb2f3657cb5e5e6f6cdbcd",
+      "sha256": "822154c3108545552702b6b32d0c81d165d1a74ae4031d439b05c83d83d7afdc",
+      "size_bytes": 45
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/startup_timeout/cpu_regression_result.json",
+      "mode": "100644",
+      "git_blob": "9bcb19248d86a6e10ac9cff5d53210b01e673ba9",
+      "sha256": "fecef214bc76d47d40bf3b59aabc6848e3bc56d38a2e53d5a5be846fc2e5c8e1",
+      "size_bytes": 1889
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/startup_timeout/data/unit/direct_process_failure.json",
+      "mode": "100644",
+      "git_blob": "045f4aa43174043c3c7a00f31891a940b57ba863",
+      "sha256": "d69f34448cf1e1238a1f728dff09ee0ae575dd5f4a1d01bbf323b470f07b41f4",
+      "size_bytes": 278
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/startup_timeout/data/unit/direct_profile_process_intent.json",
+      "mode": "100644",
+      "git_blob": "761f17bcdca9200b90b9b68b1798d31ca9dc3bf4",
+      "sha256": "0b64b06c616e2a9c35879ab23502a13e4041603ba02411f9deda6731b8ebfbb8",
+      "size_bytes": 23419
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/startup_timeout/data/unit/executed_command.json",
+      "mode": "100644",
+      "git_blob": "072b5ad34671d0df761df142138529cb44e88c26",
+      "sha256": "faa6a69657fd50b89de6e253c60bbe954000f8485dd98e9bb4c1beb3e43d4a8b",
+      "size_bytes": 429
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/startup_timeout/data/unit/measurement_plan.json",
+      "mode": "100644",
+      "git_blob": "df215608856b0a4cf1f49e1b2d333f13040bda3e",
+      "sha256": "5cc614eea25e0aa24fe69b55cfe494b4b15602601ca12b19e80329efa020fc37",
+      "size_bytes": 1292
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/startup_timeout/data/unit/profiler_process.json",
+      "mode": "100644",
+      "git_blob": "f9d19395120049b8f72fba79833e6f131d47a1cd",
+      "sha256": "ef42a80b136b6aa2311dd466318b2d2dc926056af0bacdff4b3fd6372d142ddd",
+      "size_bytes": 619
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/startup_timeout/data/unit/tool_descendant_cleanup_progress.json",
+      "mode": "100644",
+      "git_blob": "468e9a4e35cb0d4fb4042cb7524d3359587c1b6a",
+      "sha256": "0264ed32d388d24eea85e124549da27cec32fd9fa32d4a8bc54f8e8d35293493",
+      "size_bytes": 1260
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/startup_timeout/data/unit/tool_descendant_scope_begin.json",
+      "mode": "100644",
+      "git_blob": "5d953ed3a0f855970acc231f1ef7a2f99a8c974d",
+      "sha256": "2dcf54a01144e303b540213e0bb62ce3d9a8a03311a1f26e3da7514b3c1b9120",
+      "size_bytes": 22425
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/startup_timeout/data/unit/tool_descendant_scope_restored.json",
+      "mode": "100644",
+      "git_blob": "02df45cb439ca2b4c9e593c017bc58656f977fc9",
+      "sha256": "777b58ad37f326f188fbabb663d7557df22fb50c130220d5e4cfbb63721724df",
+      "size_bytes": 592
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/startup_timeout/data/unit/tool_descendant_scope_terminal.json",
+      "mode": "100644",
+      "git_blob": "9fafb5235e6fd5a81e0c9064699040c34ce00ef5",
+      "sha256": "5a2c4e7005fb175f87b17f28fabe8bb93adab43ecbe8f07a207a2094b3367da9",
+      "size_bytes": 35458
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/startup_timeout/data/unit/tool_root_wait_1215341.json",
+      "mode": "100644",
+      "git_blob": "3a9a1c394cebf3d17fd684794d8a82d4d40a9fce",
+      "sha256": "78b058ef5b905d12a1a236d417534443a8b66e09dc5348db8fce7417bad3a08b",
+      "size_bytes": 660
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/startup_timeout/temporary_evidence_paths.json",
+      "mode": "100644",
+      "git_blob": "33ae0f5e2ef2a433f33eac5b01c26d893a512350",
+      "sha256": "2f9c9ef569c742299b49bf7b5e36478d364c8c4e7b6f0dfc20fdb6a779445340",
+      "size_bytes": 4461
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/startup_timeout/worker_stderr.raw",
+      "mode": "100644",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/.review_metadata/direct_tool_scope_independent_cpu_6783003_284/startup_timeout/worker_stdout.raw",
+      "mode": "100644",
+      "git_blob": "5b2005cf6d3d04d448f3d062f4fbdfe7912328ab",
+      "sha256": "355ca7d3e3df2df963fa37b77493f1ab44d6a448c6b2f22327ea5a31208823c9",
+      "size_bytes": 1621
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/.review_metadata/run_direct_nsight_independent_failure_review.py",
+      "mode": "100644",
+      "git_blob": "0c2b659c2523add4ba8f9b7803440e93c71e0b46",
+      "sha256": "36fb192aef3175b23bb4df9d7597dabae7181a7cdb6e0c6ec4d350d8cc1463c0",
+      "size_bytes": 9592
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/.review_metadata/run_direct_scope_parent_birth_independent_control_failed_syntax.py",
+      "mode": "100644",
+      "git_blob": "8c4672a32396db134eb42e5b7382a46743192ab1",
+      "sha256": "6a97f5b673a50a2671d7c1c8a3faace37a7736fd79a30ce9ba0fcccf129b2ce2",
+      "size_bytes": 3649
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_direct_nsight_process.py",
+      "mode": "100644",
+      "git_blob": "5b62522cf83aae4a68dfa1477490c3b1cd492d32",
+      "sha256": "a0849694cf8eb327293d0e9cb2cf59205017359f4e9568089cf8a87f8dd83cd8",
+      "size_bytes": 24978
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py",
+      "mode": "100644",
+      "git_blob": "7f7070e349cc1b2b12d3b73a88058eb9592c2fb1",
+      "sha256": "0f2cba5aa8dfae67552f131998dfc8784d849fc1a2683764d63d4fda8b6a3d12",
+      "size_bytes": 24951
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_capture_release.py",
+      "mode": "100644",
+      "git_blob": "a975c92d3e0f0b4eedae539d65ad552572b55482",
+      "sha256": "8d7623b1b5cf8bf7a8b65321a33ec1cf551bf99f63d445145a638a9011982e42",
+      "size_bytes": 17646
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py",
+      "mode": "100644",
+      "git_blob": "5f89ab8112d707ba98b1c6c44508d42c644d9df4",
+      "sha256": "7b492bbcd2a7598e992adfa58cbe136e538e3581f59f14fad7b7d842884abeaf",
+      "size_bytes": 59833
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_prerequisites.py",
+      "mode": "100644",
+      "git_blob": "55701dd5ce18a9a3a4eb32b79e377fae20a45cbd",
+      "sha256": "772d610250c80df36a2a09a86ec6714b69317cce3f4b1ed3cebbab060e87a7c3",
+      "size_bytes": 33553
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_process.py",
+      "mode": "100644",
+      "git_blob": "e546507e688be227f065d5051251f58633623807",
+      "sha256": "cad3f2afae600e8addf96d7cbc8d5e12f21cd358342989cee65da0c88f6fd061",
+      "size_bytes": 46150
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_tool_descendants.py",
+      "mode": "100644",
+      "git_blob": "8568b4e795992dde0f4438f148094dbdd9d80d69",
+      "sha256": "ba6b69d8a946c6d8b669fd0f8b1f3659515e2b213b7247dffd46600a8c947663",
+      "size_bytes": 32559
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py",
+      "mode": "100644",
+      "git_blob": "a11136ec910846f00d3bacd042b3cbed7d88dcae",
+      "sha256": "36a60d5e4d5536413600c5d36d39fd107a031f434048d83e38ed209b375f62e9",
+      "size_bytes": 72766
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py",
+      "mode": "100644",
+      "git_blob": "aed83f8344fa22970579216227ff93093edb094f",
+      "sha256": "941f5ec35fa790f7c59e66274627c7ef198e366e48e0c462e9602881080d62f6",
+      "size_bytes": 54612
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/direct_tool_descendants_cpu_worker.py",
+      "mode": "100644",
+      "git_blob": "e25ed1a52b093df5f4e1fc2d32eb890d2ba90436",
+      "sha256": "b5083dabdedaed99dcf8e55820d6484c748ae7864d1dcb6c9792ae5f608211d7",
+      "size_bytes": 8024
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_capture_release.py",
+      "mode": "100644",
+      "git_blob": "26d06980c5e363c21388105cd26741f06d4f8e83",
+      "sha256": "b18bf8c96ff4c60a072b3fa63958ff87adfbcf530c82f815aa4e211fb90cb925",
+      "size_bytes": 14894
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_profile_prerequisites.py",
+      "mode": "100644",
+      "git_blob": "2667dbbb606556b95a4e885e4654405e6ef62dc1",
+      "sha256": "c7b2b8d266bafe018e4df9be89f9057b2ece1b71c0666d192ebe940c2ff1a874",
+      "size_bytes": 29470
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_profile_process.py",
+      "mode": "100644",
+      "git_blob": "ba944f3bed8d4cbff142ade324f287ad8a458226",
+      "sha256": "ab81376eb5e47b6d9e9584381efde3c44e9be4d0952e2ff9f1340876d2998dff",
+      "size_bytes": 24872
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_tool_descendants.py",
+      "mode": "100644",
+      "git_blob": "780a2ee04dc99a9ad5b7502da6ad2f6d54be2f4c",
+      "sha256": "0d3813599cfe4aef7244eb64c493d2875b88e882ff1447ad821f3621b2aac900",
+      "size_bytes": 3262
+    },
+    {
+      "path": ".review_metadata/direct_nsight_rejected_author_4_preserved_source_and_failure/preservation_manifest.json",
+      "mode": "100644",
+      "git_blob": "c41ac0013dfbd532d5f0a71a6e28909d0eb705d0",
+      "sha256": "0845cd099eac287d9be30634eacdc83c10a264d4eae075441bbb067cde2d816e",
+      "size_bytes": 12102
+    },
+    {
+      "path": ".review_metadata/direct_scope_parent_birth_independent_6783003_286.json",
+      "mode": "100644",
+      "git_blob": "6650720d8356ee27b4053f482385a5eab63c19b5",
+      "sha256": "b6e4c4ed0125e5e8d1b69e215a9b74943a7f957bfd94bb03d70166a09b426235",
+      "size_bytes": 1256
+    },
+    {
+      "path": ".review_metadata/direct_scope_parent_birth_independent_fixture_syntax_failure.json",
+      "mode": "100644",
+      "git_blob": "5da5f63d4f6abf759270c29cd69234ee0ec4f69e",
+      "sha256": "e2d67388578d20a6e8603a2f2d0ef2e6080fd8b3e559a6029e89497866ab1793",
+      "size_bytes": 860
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_actual_cpu_6783003_283/orphan_root_failure/actual_cpu_processes.json",
+      "mode": "100644",
+      "git_blob": "19fc73ad1c025e742898a7a68374b6cc4df01936",
+      "sha256": "ccc2d7c36e626b93dae19ccb024fb4a7faea9ad781bfd91cc38469b6ef36fda5",
+      "size_bytes": 47
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_actual_cpu_6783003_283/orphan_root_failure/cpu_regression_result.json",
+      "mode": "100644",
+      "git_blob": "0c1b30ce8d5fbca24cd3f235c6efc757b2df3b17",
+      "sha256": "28a4119bdfc9548e6c80f3233a4b072d108d6d82ecf4123b517eac5a78c4fdce",
+      "size_bytes": 2179
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_actual_cpu_6783003_283/orphan_root_failure/data/unit/direct_process_failure.json",
+      "mode": "100644",
+      "git_blob": "f603281ab0aefd7bce8a6d74068de3f1008de100",
+      "sha256": "9a63046eac1435eb21808acedf3163f79cbd4d36897b566304d5317de688cfa8",
+      "size_bytes": 245
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_actual_cpu_6783003_283/orphan_root_failure/data/unit/direct_profile_process_intent.json",
+      "mode": "100644",
+      "git_blob": "c2a3a375787a1efbdb3db87d637a0678ce1b5777",
+      "sha256": "f65dc875c649969113ca53d8d94d39e06264fc75493e48c8160cafba91199870",
+      "size_bytes": 23770
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_actual_cpu_6783003_283/orphan_root_failure/data/unit/executed_command.json",
+      "mode": "100644",
+      "git_blob": "2ef187190e2b2637cd995ef4124cb9672f5a5de2",
+      "sha256": "a4b8e6e7ab1f0b2a68d9b94865088c5d73325cd0fffd3159aaf42d8dd250165a",
+      "size_bytes": 742
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_actual_cpu_6783003_283/orphan_root_failure/data/unit/measurement_plan.json",
+      "mode": "100644",
+      "git_blob": "f1b78cf3544d0495750ff9061667106724066384",
+      "sha256": "ac2f793734f9d2b5cb4a73abdb539a0703af362c11f345477b53d6d118990470",
+      "size_bytes": 1292
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_actual_cpu_6783003_283/orphan_root_failure/data/unit/tool_descendant_cleanup_progress.json",
+      "mode": "100644",
+      "git_blob": "a425ecd0db6d0aab756df861dbc1a3d38e04dfa3",
+      "sha256": "85aa45bb7e1a198d936738c454fbc47c31f21fd1121288e94a610ef700f4a9ae",
+      "size_bytes": 1500
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_actual_cpu_6783003_283/orphan_root_failure/data/unit/tool_descendant_scope_begin.json",
+      "mode": "100644",
+      "git_blob": "e478d937407ecb47062c3919a0b07998d025424b",
+      "sha256": "25c4a6c995bf30c9c2024b598ecf58347dc94d1d4e69bc3760618325caf77ffe",
+      "size_bytes": 22462
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_actual_cpu_6783003_283/orphan_root_failure/data/unit/tool_descendant_scope_restored.json",
+      "mode": "100644",
+      "git_blob": "65024688560e29a93741703998643feb9d9df6d7",
+      "sha256": "d1771558663d0917c0e821b86dc11f0ada7193f1b2a26cb6c48fb83aee6a93d4",
+      "size_bytes": 592
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_actual_cpu_6783003_283/orphan_root_failure/data/unit/tool_descendant_scope_terminal.json",
+      "mode": "100644",
+      "git_blob": "bb379ee5b2d1960495772bbd9ec8ddb2efc309c2",
+      "sha256": "ded180c5474740f8eecba80d4c980835bac55d6fd68b036eb84cf4acf37c19f6",
+      "size_bytes": 44450
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_actual_cpu_6783003_283/orphan_root_failure/data/unit/tool_root_wait_1214724.json",
+      "mode": "100644",
+      "git_blob": "6db88585f33b0c559cc13ef1711806542f940de4",
+      "sha256": "684622537b69d84fbb22ecc8ab6f4502a9683dd42c4010fc6db6bb6606d1cd69",
+      "size_bytes": 973
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_actual_cpu_6783003_283/orphan_root_failure/temporary_evidence_paths.json",
+      "mode": "100644",
+      "git_blob": "7ac30486389b45f99e432e42d87826f4730246de",
+      "sha256": "019f56e151807557264db26228e846369b6d5eec83e01476d638c035630f38b6",
+      "size_bytes": 4090
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_actual_cpu_6783003_283/orphan_root_failure/worker_stderr.raw",
+      "mode": "100644",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_actual_cpu_6783003_283/orphan_root_failure/worker_stdout.raw",
+      "mode": "100644",
+      "git_blob": "99e03775a076f1ab37350c9373c911994163cb33",
+      "sha256": "da9f070b160ce7dbfdc969b34f23eb099f5fb29fafaa853665b650a9ce200d07",
+      "size_bytes": 1903
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_actual_cpu_6783003_283/startup_timeout/actual_cpu_processes.json",
+      "mode": "100644",
+      "git_blob": "3d42d95a7e586036232224e5e1544bb540a21887",
+      "sha256": "9a9df5bddffe75485d9e83e5f2acd55de8c3e1f9e12e117c9677d495da0ad09b",
+      "size_bytes": 45
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_actual_cpu_6783003_283/startup_timeout/cpu_regression_result.json",
+      "mode": "100644",
+      "git_blob": "d32f2bf3e4bf20e66cffd58a68df0faddcc24e88",
+      "sha256": "9a815323afc46df6538f788d0ddc3d234a4528e45bbe8c63deed4047fa53b99b",
+      "size_bytes": 1889
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_actual_cpu_6783003_283/startup_timeout/data/unit/direct_process_failure.json",
+      "mode": "100644",
+      "git_blob": "045f4aa43174043c3c7a00f31891a940b57ba863",
+      "sha256": "d69f34448cf1e1238a1f728dff09ee0ae575dd5f4a1d01bbf323b470f07b41f4",
+      "size_bytes": 278
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_actual_cpu_6783003_283/startup_timeout/data/unit/direct_profile_process_intent.json",
+      "mode": "100644",
+      "git_blob": "4fbbfd698e319f1b2817a79c59b77ecf8f86f466",
+      "sha256": "f4acde45bb62e0840bd11640c4b529d4004fee95e71d566f25a11ca2944ecc4e",
+      "size_bytes": 23419
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_actual_cpu_6783003_283/startup_timeout/data/unit/executed_command.json",
+      "mode": "100644",
+      "git_blob": "2bd321e701286afd1bf4607d4d9f15aeb21fe19f",
+      "sha256": "f3ad0d969f5ccb0588d8e762f09a1f47bd0650783016386686fa8aa86cd1dae2",
+      "size_bytes": 429
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_actual_cpu_6783003_283/startup_timeout/data/unit/measurement_plan.json",
+      "mode": "100644",
+      "git_blob": "c4c43df9436355563d6a2d04ef1a4811fc3d15fc",
+      "sha256": "caf3a78cd8eb41ee26c6863ce7cb6c18fa71128e0ba19f5efd10bd8884bda1cb",
+      "size_bytes": 1292
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_actual_cpu_6783003_283/startup_timeout/data/unit/profiler_process.json",
+      "mode": "100644",
+      "git_blob": "979fcab8de0a1eb9d9a60a8ffd37b3cda3b91e48",
+      "sha256": "a5a6dd2f928e74ffe40026347099f29cd7aa43218f8ab9005aeee6dbc8ea1ef1",
+      "size_bytes": 619
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_actual_cpu_6783003_283/startup_timeout/data/unit/tool_descendant_cleanup_progress.json",
+      "mode": "100644",
+      "git_blob": "5d752b79d728712d9810afa293e7c0d9f89a8b61",
+      "sha256": "e6458a5786e2da6a24e8139454eb143f63635a97857d0fd2b462376527479a32",
+      "size_bytes": 1261
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_actual_cpu_6783003_283/startup_timeout/data/unit/tool_descendant_scope_begin.json",
+      "mode": "100644",
+      "git_blob": "bc4e36a21d9b2a1fa1a170e047c2f9959418a4d7",
+      "sha256": "093784f73c6b58bdc36eda355b89c5bfe64ba76f1011504d987dc0ad0dbfcaee",
+      "size_bytes": 22425
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_actual_cpu_6783003_283/startup_timeout/data/unit/tool_descendant_scope_restored.json",
+      "mode": "100644",
+      "git_blob": "8fc38a573afc1f11e51060ed69a9552b78dd46ff",
+      "sha256": "fa760ca260b5805a3092a365ad6931b5323e643a69695beca1e95ab26271f232",
+      "size_bytes": 592
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_actual_cpu_6783003_283/startup_timeout/data/unit/tool_descendant_scope_terminal.json",
+      "mode": "100644",
+      "git_blob": "9f5b06a3310d12712daff78dba8ce62b4ea3a29a",
+      "sha256": "6bd4c66713347bc5946f0bb29abd3c73b986be6847c755f19ef956882b7de68f",
+      "size_bytes": 35454
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_actual_cpu_6783003_283/startup_timeout/data/unit/tool_root_wait_1214730.json",
+      "mode": "100644",
+      "git_blob": "89b1f51a7e2adbe18cb693f0f740f709ade7bc55",
+      "sha256": "8668548ce83dae872adc78bb14b25b9ab2a69f7b86d1052ebf4b8123cc62f4bc",
+      "size_bytes": 660
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_actual_cpu_6783003_283/startup_timeout/temporary_evidence_paths.json",
+      "mode": "100644",
+      "git_blob": "31d5e1ace84932695302f02b07df728f2c4c0b22",
+      "sha256": "ef515d73003d34feb5996a904c5657fdd62e0b11b35ca96e192a01fa8d1d0b7c",
+      "size_bytes": 4401
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_actual_cpu_6783003_283/startup_timeout/worker_stderr.raw",
+      "mode": "100644",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_actual_cpu_6783003_283/startup_timeout/worker_stdout.raw",
+      "mode": "100644",
+      "git_blob": "584deb75b04272f66d06b437044396eccc9c0dd1",
+      "sha256": "44df06cd283377cb30a75543c9d3cb3c5a80705dc022346f30ca70761411db2f",
+      "size_bytes": 1621
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_corrections_author_6783003_282.json",
+      "mode": "100644",
+      "git_blob": "37381fb461e1ffd056d14db1f4fbf2ebefd013ab",
+      "sha256": "5298bd52f7679658141448d7b91019d69359806f99f326dca7d84e4954e00593",
+      "size_bytes": 1090
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_corrections_author_6783003_282_stderr.raw",
+      "mode": "100644",
+      "git_blob": "abf8f18be891c0084aee58ca8a58364493fabc6d",
+      "sha256": "b033b4de376c3d9f8ea3ac3971da2c14a9c82bfb32c2b53740b69e25ae8a7cef",
+      "size_bytes": 131
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_corrections_author_6783003_282_stdout.raw",
+      "mode": "100644",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_corrections_author_6783003_283.json",
+      "mode": "100644",
+      "git_blob": "aa2a58920331a66a51eed487148ba26145b8134a",
+      "sha256": "7b95a0c0b4d164da89e449aaaa05c9eb0f5cb8c2ca6c4001604130525d0629ee",
+      "size_bytes": 1181
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_corrections_author_6783003_283_stderr.raw",
+      "mode": "100644",
+      "git_blob": "27c0d77f57f508addb5355c38c4ab3345765e9aa",
+      "sha256": "4af4b0bd314470cb09733e8fba6fdb87ce4cf5a6749fd85f0c728a2df8f7273e",
+      "size_bytes": 138
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_corrections_author_6783003_283_stdout.raw",
+      "mode": "100644",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_independent_cpu_6783003_284/orphan_root_failure/actual_cpu_processes.json",
+      "mode": "100644",
+      "git_blob": "8b9174c939463b8523a4bd90aab88014de9bc9e8",
+      "sha256": "fd408adde8492f1b5467bd0f47c2d4519fbadfc280b23570c90c64b28d1557c6",
+      "size_bytes": 47
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_independent_cpu_6783003_284/orphan_root_failure/cpu_regression_result.json",
+      "mode": "100644",
+      "git_blob": "3a02ae8dd9f9f98eecd6cf9406a6be850bd2bdd1",
+      "sha256": "28ad24a04d61c84e772daa620de024b30ce3663d3c6427b3c36f8b3281ddac84",
+      "size_bytes": 2178
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_independent_cpu_6783003_284/orphan_root_failure/data/unit/direct_process_failure.json",
+      "mode": "100644",
+      "git_blob": "f603281ab0aefd7bce8a6d74068de3f1008de100",
+      "sha256": "9a63046eac1435eb21808acedf3163f79cbd4d36897b566304d5317de688cfa8",
+      "size_bytes": 245
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_independent_cpu_6783003_284/orphan_root_failure/data/unit/direct_profile_process_intent.json",
+      "mode": "100644",
+      "git_blob": "9e08bea804e417804b3d3d280e3cd7695ceaa4a2",
+      "sha256": "59cc242c29c8d512806a65d61a41688e2557ef31664520ccbba53be4dcd8760e",
+      "size_bytes": 23769
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_independent_cpu_6783003_284/orphan_root_failure/data/unit/executed_command.json",
+      "mode": "100644",
+      "git_blob": "067b5b80701dfb5922d24fdd757f89a500933271",
+      "sha256": "ad6f66af13fcc658443c747c858ef4fc45cf9c2f3d1dda9b14a81964c5440cab",
+      "size_bytes": 742
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_independent_cpu_6783003_284/orphan_root_failure/data/unit/measurement_plan.json",
+      "mode": "100644",
+      "git_blob": "c16ad70ad8b12d596159c70200b80fcb7379b67c",
+      "sha256": "1be1cedec8062779e6e12d8b18fb9b217de0a0181a040261cf8850d72c83accf",
+      "size_bytes": 1292
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_independent_cpu_6783003_284/orphan_root_failure/data/unit/tool_descendant_cleanup_progress.json",
+      "mode": "100644",
+      "git_blob": "437bc64ff52ee2b8d085b840558875e100d9cb36",
+      "sha256": "9935d0b6621af0c1bd75bb352f1bf18d1676a599bc5ee9de032fc08b06b225d2",
+      "size_bytes": 1500
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_independent_cpu_6783003_284/orphan_root_failure/data/unit/tool_descendant_scope_begin.json",
+      "mode": "100644",
+      "git_blob": "9e7aa4c43b7ee83728430d650cafbdcf0e38fca7",
+      "sha256": "ef8c6aa341b55a7cc38e7476f5c1c96251d2fb234622235a1e2adbedfb8cb592",
+      "size_bytes": 22462
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_independent_cpu_6783003_284/orphan_root_failure/data/unit/tool_descendant_scope_restored.json",
+      "mode": "100644",
+      "git_blob": "3ebc08886fd31864ded600abb0b78c5d4bc19a25",
+      "sha256": "c6b09db75f14b2fe15bb98fc94c769f0ad55eeb0e8d7a1059b8ade60189cecad",
+      "size_bytes": 592
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_independent_cpu_6783003_284/orphan_root_failure/data/unit/tool_descendant_scope_terminal.json",
+      "mode": "100644",
+      "git_blob": "9eebf1d97576a8b19d49ad162388c4cfb0cdaee7",
+      "sha256": "b1aa50bd9cb0d5167fb6d9ce5073695e10618bca6fae3d35b5eac7545df8df6a",
+      "size_bytes": 44447
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_independent_cpu_6783003_284/orphan_root_failure/data/unit/tool_root_wait_1215337.json",
+      "mode": "100644",
+      "git_blob": "2359343811d76385a85f38ce440fc09f33ea513d",
+      "sha256": "d2f2a908e027fd822e482013a2e78635c4235e0183e41d49df7cc7c329da2ead",
+      "size_bytes": 972
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_independent_cpu_6783003_284/orphan_root_failure/temporary_evidence_paths.json",
+      "mode": "100644",
+      "git_blob": "23d6023fca76b281f35dfa42449210679fb6aab8",
+      "sha256": "502a70c52e894633601a0ccc2b1cc3bfc50927732a9b4fa77ad2b04a234125c3",
+      "size_bytes": 4145
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_independent_cpu_6783003_284/orphan_root_failure/worker_stderr.raw",
+      "mode": "100644",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_independent_cpu_6783003_284/orphan_root_failure/worker_stdout.raw",
+      "mode": "100644",
+      "git_blob": "5d845b7faa2f527a7c448bd013e5a2fed4827831",
+      "sha256": "5371045a8d71cf86a322f400b36b364d5efe5da33f0c0399740f3c9cb2cb0874",
+      "size_bytes": 1902
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_independent_cpu_6783003_284/startup_timeout/actual_cpu_processes.json",
+      "mode": "100644",
+      "git_blob": "a00669a61843d26b5edb2f3657cb5e5e6f6cdbcd",
+      "sha256": "822154c3108545552702b6b32d0c81d165d1a74ae4031d439b05c83d83d7afdc",
+      "size_bytes": 45
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_independent_cpu_6783003_284/startup_timeout/cpu_regression_result.json",
+      "mode": "100644",
+      "git_blob": "9bcb19248d86a6e10ac9cff5d53210b01e673ba9",
+      "sha256": "fecef214bc76d47d40bf3b59aabc6848e3bc56d38a2e53d5a5be846fc2e5c8e1",
+      "size_bytes": 1889
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_independent_cpu_6783003_284/startup_timeout/data/unit/direct_process_failure.json",
+      "mode": "100644",
+      "git_blob": "045f4aa43174043c3c7a00f31891a940b57ba863",
+      "sha256": "d69f34448cf1e1238a1f728dff09ee0ae575dd5f4a1d01bbf323b470f07b41f4",
+      "size_bytes": 278
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_independent_cpu_6783003_284/startup_timeout/data/unit/direct_profile_process_intent.json",
+      "mode": "100644",
+      "git_blob": "761f17bcdca9200b90b9b68b1798d31ca9dc3bf4",
+      "sha256": "0b64b06c616e2a9c35879ab23502a13e4041603ba02411f9deda6731b8ebfbb8",
+      "size_bytes": 23419
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_independent_cpu_6783003_284/startup_timeout/data/unit/executed_command.json",
+      "mode": "100644",
+      "git_blob": "072b5ad34671d0df761df142138529cb44e88c26",
+      "sha256": "faa6a69657fd50b89de6e253c60bbe954000f8485dd98e9bb4c1beb3e43d4a8b",
+      "size_bytes": 429
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_independent_cpu_6783003_284/startup_timeout/data/unit/measurement_plan.json",
+      "mode": "100644",
+      "git_blob": "df215608856b0a4cf1f49e1b2d333f13040bda3e",
+      "sha256": "5cc614eea25e0aa24fe69b55cfe494b4b15602601ca12b19e80329efa020fc37",
+      "size_bytes": 1292
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_independent_cpu_6783003_284/startup_timeout/data/unit/profiler_process.json",
+      "mode": "100644",
+      "git_blob": "f9d19395120049b8f72fba79833e6f131d47a1cd",
+      "sha256": "ef42a80b136b6aa2311dd466318b2d2dc926056af0bacdff4b3fd6372d142ddd",
+      "size_bytes": 619
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_independent_cpu_6783003_284/startup_timeout/data/unit/tool_descendant_cleanup_progress.json",
+      "mode": "100644",
+      "git_blob": "468e9a4e35cb0d4fb4042cb7524d3359587c1b6a",
+      "sha256": "0264ed32d388d24eea85e124549da27cec32fd9fa32d4a8bc54f8e8d35293493",
+      "size_bytes": 1260
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_independent_cpu_6783003_284/startup_timeout/data/unit/tool_descendant_scope_begin.json",
+      "mode": "100644",
+      "git_blob": "5d953ed3a0f855970acc231f1ef7a2f99a8c974d",
+      "sha256": "2dcf54a01144e303b540213e0bb62ce3d9a8a03311a1f26e3da7514b3c1b9120",
+      "size_bytes": 22425
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_independent_cpu_6783003_284/startup_timeout/data/unit/tool_descendant_scope_restored.json",
+      "mode": "100644",
+      "git_blob": "02df45cb439ca2b4c9e593c017bc58656f977fc9",
+      "sha256": "777b58ad37f326f188fbabb663d7557df22fb50c130220d5e4cfbb63721724df",
+      "size_bytes": 592
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_independent_cpu_6783003_284/startup_timeout/data/unit/tool_descendant_scope_terminal.json",
+      "mode": "100644",
+      "git_blob": "9fafb5235e6fd5a81e0c9064699040c34ce00ef5",
+      "sha256": "5a2c4e7005fb175f87b17f28fabe8bb93adab43ecbe8f07a207a2094b3367da9",
+      "size_bytes": 35458
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_independent_cpu_6783003_284/startup_timeout/data/unit/tool_root_wait_1215341.json",
+      "mode": "100644",
+      "git_blob": "3a9a1c394cebf3d17fd684794d8a82d4d40a9fce",
+      "sha256": "78b058ef5b905d12a1a236d417534443a8b66e09dc5348db8fce7417bad3a08b",
+      "size_bytes": 660
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_independent_cpu_6783003_284/startup_timeout/temporary_evidence_paths.json",
+      "mode": "100644",
+      "git_blob": "33ae0f5e2ef2a433f33eac5b01c26d893a512350",
+      "sha256": "2f9c9ef569c742299b49bf7b5e36478d364c8c4e7b6f0dfc20fdb6a779445340",
+      "size_bytes": 4461
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_independent_cpu_6783003_284/startup_timeout/worker_stderr.raw",
+      "mode": "100644",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_independent_cpu_6783003_284/startup_timeout/worker_stdout.raw",
+      "mode": "100644",
+      "git_blob": "5b2005cf6d3d04d448f3d062f4fbdfe7912328ab",
+      "sha256": "355ca7d3e3df2df963fa37b77493f1ab44d6a448c6b2f22327ea5a31208823c9",
+      "size_bytes": 1621
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_native_records_author_6783003_297.json",
+      "mode": "100644",
+      "git_blob": "6c2bdacdb4a7941ff400d6c45f6505c5fd126d40",
+      "sha256": "6ac91b76c74d75a225f21e41a6672445799dbf4f47545307dcc637c4ef899e22",
+      "size_bytes": 1565
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_native_records_author_6783003_297_stderr.raw",
+      "mode": "100644",
+      "git_blob": "a977b645f10a622ff7d35aaf4895b3705afc0e3a",
+      "sha256": "f3dc1573f3f26290e44d93d605c6092174a37edfd0511bb5fc95b7bb0e1dbf7e",
+      "size_bytes": 102
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_native_records_author_6783003_297_stdout.raw",
+      "mode": "100644",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_actual_cpu_6783003_296/orphan_root_failure/actual_cpu_processes.json",
+      "mode": "100644",
+      "git_blob": "dde5ddf8cf4380a36f0cfcf45d71d8007581cb03",
+      "sha256": "91dfd80c90cf29de93d52a01d51fdee947cc836970c7d7075ff2467a05419999",
+      "size_bytes": 47
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_actual_cpu_6783003_296/orphan_root_failure/cpu_regression_result.json",
+      "mode": "100644",
+      "git_blob": "8b1aff599a5bedc64377cad1a6b9a81e39117788",
+      "sha256": "bf07589a1386a5d6f7e5a9bfed29a44cf8f0bab6e4b9db36a880a706ad194551",
+      "size_bytes": 7782
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_actual_cpu_6783003_296/orphan_root_failure/data/unit/direct_process_failure.json",
+      "mode": "100644",
+      "git_blob": "f603281ab0aefd7bce8a6d74068de3f1008de100",
+      "sha256": "9a63046eac1435eb21808acedf3163f79cbd4d36897b566304d5317de688cfa8",
+      "size_bytes": 245
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_actual_cpu_6783003_296/orphan_root_failure/data/unit/direct_profile_process_intent.json",
+      "mode": "100644",
+      "git_blob": "b67c4311606837f193684a146b2fe4c43f4abf4e",
+      "sha256": "6f9dd493b40031bd9e95f5c5d648c697c04f91ff17599f35a8dcc14b00c82248",
+      "size_bytes": 23766
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_actual_cpu_6783003_296/orphan_root_failure/data/unit/executed_command.json",
+      "mode": "100644",
+      "git_blob": "fd11b44da30cc6145525e62f830e1fc779ae2476",
+      "sha256": "7bd868b350a992e2f2545f5fc50518ce3b55d467e3ed8f8c3e88320bf7b67773",
+      "size_bytes": 742
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_actual_cpu_6783003_296/orphan_root_failure/data/unit/measurement_plan.json",
+      "mode": "100644",
+      "git_blob": "16fbb179d49d9e71d92e756ec7af3f0ef9c3a148",
+      "sha256": "2fa5a0e47f16154b0f4562dab8088ab68158e407f9977f873328b9c5b0f197f7",
+      "size_bytes": 1292
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_actual_cpu_6783003_296/orphan_root_failure/data/unit/tool_descendant_cleanup_progress.json",
+      "mode": "100644",
+      "git_blob": "fa2c4f638928116b3152813f2a3e1debd91a4a6b",
+      "sha256": "e4188fcac7d9a81e7ddf79cda89aac201471f58f120edb06c73499f543416093",
+      "size_bytes": 1501
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_actual_cpu_6783003_296/orphan_root_failure/data/unit/tool_descendant_scope_begin.json",
+      "mode": "100644",
+      "git_blob": "c812c5e716d68d6193d348342bbf9ec05fcc3526",
+      "sha256": "ca3022b6e0a55677da78c4b522028ffe0c32c641a32ea4ec17beb7047093405f",
+      "size_bytes": 27969
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_actual_cpu_6783003_296/orphan_root_failure/data/unit/tool_descendant_scope_restored.json",
+      "mode": "100644",
+      "git_blob": "d86399c374e9e0660cb8bc7b64580f1958d3c348",
+      "sha256": "9b2a6b5678389c41c6918f17cc6ea8cbe51e633b80d7c4268676378519d8fe79",
+      "size_bytes": 592
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_actual_cpu_6783003_296/orphan_root_failure/data/unit/tool_descendant_scope_terminal.json",
+      "mode": "100644",
+      "git_blob": "7826613f0b30a258c7cd9ec7c7f3aaa4dd624b1f",
+      "sha256": "f6102f312b273df79057bdbf480a1be396d6f9850b115bc5d79dc0a45a12df3b",
+      "size_bytes": 50053
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_actual_cpu_6783003_296/orphan_root_failure/data/unit/tool_root_wait_1216380.json",
+      "mode": "100644",
+      "git_blob": "47ad1d620f8c8736a21a08742e6f79d9b8590f05",
+      "sha256": "e8ce72c9e458a3b0ce2be319ca64859da974672280a1d37b126cc2cffb3e116e",
+      "size_bytes": 973
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_actual_cpu_6783003_296/orphan_root_failure/temporary_evidence_paths.json",
+      "mode": "100644",
+      "git_blob": "d02a8ce9a74b323b0a7c99e90936b31f87ebe3e4",
+      "sha256": "7e41cf492908c9895a48a2f8e567b965a0b8f5b171d842c52f2d6cf5ffa39990",
+      "size_bytes": 4244
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_actual_cpu_6783003_296/orphan_root_failure/worker_stderr.raw",
+      "mode": "100644",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_actual_cpu_6783003_296/orphan_root_failure/worker_stdout.raw",
+      "mode": "100644",
+      "git_blob": "edbd73bdfe1ead583f4b21d9574f5a59455c61d3",
+      "sha256": "a9b4c037a6246a9a71a1819e746c1e285c9e58dc8e697aee0991fbc97e11f3d6",
+      "size_bytes": 7060
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_actual_cpu_6783003_296/startup_timeout/actual_cpu_processes.json",
+      "mode": "100644",
+      "git_blob": "ab3debdc86a5a184369a3baac06d7cd4e7735ec3",
+      "sha256": "ee67f2f4fb621060331e136265b1cbac0e5a867d96dff2a0c4fcfab1c683058b",
+      "size_bytes": 45
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_actual_cpu_6783003_296/startup_timeout/cpu_regression_result.json",
+      "mode": "100644",
+      "git_blob": "a8dccdd2f5c362c4ed3c7146b3427cc586a004bc",
+      "sha256": "d8164549f45142c55404d945286d20c0a1814eee145b78bad735b0f6b43c6eb2",
+      "size_bytes": 7494
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_actual_cpu_6783003_296/startup_timeout/data/unit/direct_process_failure.json",
+      "mode": "100644",
+      "git_blob": "045f4aa43174043c3c7a00f31891a940b57ba863",
+      "sha256": "d69f34448cf1e1238a1f728dff09ee0ae575dd5f4a1d01bbf323b470f07b41f4",
+      "size_bytes": 278
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_actual_cpu_6783003_296/startup_timeout/data/unit/direct_profile_process_intent.json",
+      "mode": "100644",
+      "git_blob": "a24e0a87e66edec8d1bbf61916c5076365714ff4",
+      "sha256": "0db998a5997173028046b2ee0773a8344545fa8ab2b3ea6224d0871b490b7637",
+      "size_bytes": 23432
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_actual_cpu_6783003_296/startup_timeout/data/unit/executed_command.json",
+      "mode": "100644",
+      "git_blob": "759202680661c8f0ece44b183181460ab48cb3b1",
+      "sha256": "a9e62f5a9e3d17c4c5973d0c73cd3350493541e4cba56aa0fcf4c23b40b8e1c4",
+      "size_bytes": 429
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_actual_cpu_6783003_296/startup_timeout/data/unit/measurement_plan.json",
+      "mode": "100644",
+      "git_blob": "5d6b5f807c8c2464634de2f74e41d5ddbad3f702",
+      "sha256": "181ca1b16bc9cb1524a1650560a8e7f9b0802105b9ba333f588473bf73c6aa0f",
+      "size_bytes": 1292
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_actual_cpu_6783003_296/startup_timeout/data/unit/profiler_process.json",
+      "mode": "100644",
+      "git_blob": "dda7051643b5cb893dd348fc6d70e465dc09a471",
+      "sha256": "216a60074a3c0c4a26c30f0c7cb6f23154ccb10ba07383124794cb7ccda6188d",
+      "size_bytes": 619
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_actual_cpu_6783003_296/startup_timeout/data/unit/tool_descendant_cleanup_progress.json",
+      "mode": "100644",
+      "git_blob": "4d4f537b33cc5aa7c8f557c3937194b78ec3122d",
+      "sha256": "30611783b7ada96cf4a60edbb647e1ac470b57a3b39ca214087fc76cf108c3cf",
+      "size_bytes": 1261
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_actual_cpu_6783003_296/startup_timeout/data/unit/tool_descendant_scope_begin.json",
+      "mode": "100644",
+      "git_blob": "1888352f45f9b003b02963ba4f3fc38023d1714e",
+      "sha256": "f2594d80a74be7e3af3c1bc1a256df9601195dd81ca401c0c2c5ea9748359366",
+      "size_bytes": 27956
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_actual_cpu_6783003_296/startup_timeout/data/unit/tool_descendant_scope_restored.json",
+      "mode": "100644",
+      "git_blob": "ae714b140d5578bfa2468bb61ebc94283b1fb1a3",
+      "sha256": "55e752b5ab4b1d773861d0efad4742dc460bafe4a746e35829a720901cbd2a65",
+      "size_bytes": 592
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_actual_cpu_6783003_296/startup_timeout/data/unit/tool_descendant_scope_terminal.json",
+      "mode": "100644",
+      "git_blob": "39dae2d4af97615e1a2a3bb44b60d2a0528d0d21",
+      "sha256": "23ec78cafadb405ff5cb60900164fc513076dc188d2d3a06225dd866269593c5",
+      "size_bytes": 41069
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_actual_cpu_6783003_296/startup_timeout/data/unit/tool_root_wait_1216384.json",
+      "mode": "100644",
+      "git_blob": "c3c970d0ec7ed24f4cced778cefb0ba3e4838a2d",
+      "sha256": "6dcc17d09b65a9dcf5d1efce0d46bc2b358410bea39016a23e3d53457582140b",
+      "size_bytes": 659
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_actual_cpu_6783003_296/startup_timeout/temporary_evidence_paths.json",
+      "mode": "100644",
+      "git_blob": "5740911547b38c5c45e5ee72dc8843074b033053",
+      "sha256": "df359c6652f8f065264fecb1d442e8eeaf1086801b617776c82b39723d0574f6",
+      "size_bytes": 4569
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_actual_cpu_6783003_296/startup_timeout/worker_stderr.raw",
+      "mode": "100644",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_actual_cpu_6783003_296/startup_timeout/worker_stdout.raw",
+      "mode": "100644",
+      "git_blob": "6b58a2ab39e3befac2f357c822fd8b3868edbdfd",
+      "sha256": "f3a093261dca59388b5f1dc0ee07711e8fc6ce13c5ad964afecd845ca51ee36d",
+      "size_bytes": 6780
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_author_6783003_296.json",
+      "mode": "100644",
+      "git_blob": "8318486c122db9e523bcd63a9c2399aaf41e96e9",
+      "sha256": "2aeb722a73dcb6a02b97db9883c1df3c5923d7a0aecca9a3154e4c83f2dff8da",
+      "size_bytes": 1601
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_author_6783003_296_stderr.raw",
+      "mode": "100644",
+      "git_blob": "bab6e4c7b6a82ed00ac4ab0b39e5641938d0c17e",
+      "sha256": "6ac1c1a2cc0d45c582262c3d5cfa44213c1a80b25adbf8ea0389e65cae03795b",
+      "size_bytes": 6407
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_author_6783003_296_stdout.raw",
+      "mode": "100644",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/orphan_root_failure/actual_cpu_processes.json",
+      "mode": "100644",
+      "git_blob": "5ff4d15e4686084df2b7372af4b751a430527b52",
+      "sha256": "d0596d2a67547d7ba16a6edfb53739c671bdf6216f50d8d5999fb54738989eeb",
+      "size_bytes": 47
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/orphan_root_failure/cpu_regression_result.json",
+      "mode": "100644",
+      "git_blob": "2cfec9a654c4e0f1385824747f45cd94e801db88",
+      "sha256": "f177a6922b818fcfa0eb5b18ef898d4885f891cde71866f9e837af75596c37a9",
+      "size_bytes": 7784
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/orphan_root_failure/data/unit/direct_process_failure.json",
+      "mode": "100644",
+      "git_blob": "f603281ab0aefd7bce8a6d74068de3f1008de100",
+      "sha256": "9a63046eac1435eb21808acedf3163f79cbd4d36897b566304d5317de688cfa8",
+      "size_bytes": 245
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/orphan_root_failure/data/unit/direct_profile_process_intent.json",
+      "mode": "100644",
+      "git_blob": "ad41d6ebae995bb43b426b3e24f4c4e7579a375c",
+      "sha256": "b2a6efb7b720289273bc5276b8f8cd174e8a8c9924e9f58d9f5b71c6008065f8",
+      "size_bytes": 23771
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/orphan_root_failure/data/unit/executed_command.json",
+      "mode": "100644",
+      "git_blob": "f82e31082956a8c30bae8482737e9c4ae41617e1",
+      "sha256": "7588142bf795a340c01eff0c1cc7cf9de8b649dcea6b77e0d4e936d2c9f9478d",
+      "size_bytes": 742
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/orphan_root_failure/data/unit/measurement_plan.json",
+      "mode": "100644",
+      "git_blob": "bd7d3318df14e29b1759ab749c52c510186af50a",
+      "sha256": "b5c4575bcb8828bb4127d1d14e8844f7cafb7035ef7799d24c3737e1d3bfce51",
+      "size_bytes": 1292
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/orphan_root_failure/data/unit/tool_descendant_cleanup_progress.json",
+      "mode": "100644",
+      "git_blob": "6231c9e4009cc36cd0352f38c68e94449633479e",
+      "sha256": "153ff9299b2ddc8d5197b77743cbb07b627feba6c44743416a0e49211848a053",
+      "size_bytes": 1499
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/orphan_root_failure/data/unit/tool_descendant_scope_begin.json",
+      "mode": "100644",
+      "git_blob": "69e5143c4b0306d2d9757ebb05ada3df40ca91b7",
+      "sha256": "8020a40a706f7f056804568600b7eb88c48b44a4a8ddb96d1a9d65dc2e8d2bb0",
+      "size_bytes": 27978
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/orphan_root_failure/data/unit/tool_descendant_scope_restored.json",
+      "mode": "100644",
+      "git_blob": "8f6e98887b01a23294e2f771dc09a669f1dd3ba9",
+      "sha256": "f615838aa4ec4fe91bc8951643f3ccb7c3364a64ef4024bd9c54607bc7fc9b6d",
+      "size_bytes": 592
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/orphan_root_failure/data/unit/tool_descendant_scope_terminal.json",
+      "mode": "100644",
+      "git_blob": "bc5d2f170fead53b6fc637b490d72872c687e268",
+      "sha256": "3236df3b436981609fed496d112d5c7f4e5a6e1b97dc3cbebb17a0ee47c782b6",
+      "size_bytes": 48798
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/orphan_root_failure/data/unit/tool_root_wait_1218583.json",
+      "mode": "100644",
+      "git_blob": "2cee0fc2da142768752e928499ecabfd2eb576b5",
+      "sha256": "a52d553a07b323da8320da2f41933b09806e27fa172cab077d2b3f9b72ff33f6",
+      "size_bytes": 972
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/orphan_root_failure/temporary_evidence_paths.json",
+      "mode": "100644",
+      "git_blob": "ba5185258b5d2e89a3574239536881fc44904632",
+      "sha256": "6d5a0f20b4ae8aba1d87594c0255ac49b4c16d8671fff66bf5737974a7f0ebb4",
+      "size_bytes": 4376
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/orphan_root_failure/worker_stderr.raw",
+      "mode": "100644",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/orphan_root_failure/worker_stdout.raw",
+      "mode": "100644",
+      "git_blob": "21c6d5a150eef65bf09d588f97a50009a6ad7e54",
+      "sha256": "a0e8854d11c12091643dd165f796e756b1380ccce459bdf10585dbfc6451ff0d",
+      "size_bytes": 7062
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/startup_timeout/actual_cpu_processes.json",
+      "mode": "100644",
+      "git_blob": "58493e8479abea7a91478ed2a4913753e1951f88",
+      "sha256": "f44b8f259817d5690551a1eff90e129999e021ab9dafbb6f429a416b1562d93c",
+      "size_bytes": 45
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/startup_timeout/cpu_regression_result.json",
+      "mode": "100644",
+      "git_blob": "e827c2da2b81e959f54555ac0fa77891bb555161",
+      "sha256": "91ac4f8a773ab79d024d956147157162d9116ee8c5ec2edf627570856f7928f7",
+      "size_bytes": 7495
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/startup_timeout/data/unit/direct_process_failure.json",
+      "mode": "100644",
+      "git_blob": "045f4aa43174043c3c7a00f31891a940b57ba863",
+      "sha256": "d69f34448cf1e1238a1f728dff09ee0ae575dd5f4a1d01bbf323b470f07b41f4",
+      "size_bytes": 278
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/startup_timeout/data/unit/direct_profile_process_intent.json",
+      "mode": "100644",
+      "git_blob": "a83c4db98c7a3138267b1bb9cbb8305f8ca98f14",
+      "sha256": "03166d525a48deb519ad6a62bd99803538ad00810ff459f134782486c357c393",
+      "size_bytes": 23428
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/startup_timeout/data/unit/executed_command.json",
+      "mode": "100644",
+      "git_blob": "3d3e4daf2070b0c5fa0fa6ede658a51f316cd98c",
+      "sha256": "b9176544351bd51fcd69117f34a2a6282f29d8fecffc6d3a6aba95cf40e95ac5",
+      "size_bytes": 429
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/startup_timeout/data/unit/measurement_plan.json",
+      "mode": "100644",
+      "git_blob": "3167951e33989b7c9c3246b900e66f7d8ec9ead6",
+      "sha256": "7ad1c507532a8e2126f9d4b8411bfefd51f3ab57124c8994128a34ab016fb8e6",
+      "size_bytes": 1292
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/startup_timeout/data/unit/profiler_process.json",
+      "mode": "100644",
+      "git_blob": "4b5b2f6269d979862edb27c2b39c682e5ce534c2",
+      "sha256": "5d9a5e631ef83e742fdee82b69aa52662c8f77d75a49bba8a3d8c075b1510ab0",
+      "size_bytes": 619
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/startup_timeout/data/unit/tool_descendant_cleanup_progress.json",
+      "mode": "100644",
+      "git_blob": "295a2d6565b8232138f3efdbbfdd0a127c846b5d",
+      "sha256": "20d1eb7a161a33e6c727a5060dd516a6b8ccb73e518f01d08ae02cc4c38508e4",
+      "size_bytes": 1260
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/startup_timeout/data/unit/tool_descendant_scope_begin.json",
+      "mode": "100644",
+      "git_blob": "c48bcc175d853951fb76ebf32b5453194ae9c15e",
+      "sha256": "2a0892e358e03724c13e60b8c1275609711c49ebedb89ec813f1dfa44b0a3cf3",
+      "size_bytes": 27949
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/startup_timeout/data/unit/tool_descendant_scope_restored.json",
+      "mode": "100644",
+      "git_blob": "7671c2f5bc4a5e3b80400b0cb4c70904073607e2",
+      "sha256": "028626122d291cd6834d77ecffeb9ec91cdabc3880f53f516959e962f2741200",
+      "size_bytes": 592
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/startup_timeout/data/unit/tool_descendant_scope_terminal.json",
+      "mode": "100644",
+      "git_blob": "d7964ac94f601d04d6235f2b5e80e3078e19191b",
+      "sha256": "394680f2f4fb92aeb5f783d245dcc03bf57e75f86ed4172f9f0b4bc03d5c4dce",
+      "size_bytes": 41070
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/startup_timeout/data/unit/tool_root_wait_1218587.json",
+      "mode": "100644",
+      "git_blob": "209364bb1acd8e5027c325979900df02ef497b75",
+      "sha256": "984f85356911c5308db8c9d90b8872ccb170d52474c5a434b9dbc3781a6e9e9a",
+      "size_bytes": 660
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/startup_timeout/temporary_evidence_paths.json",
+      "mode": "100644",
+      "git_blob": "f7618a7c9df9f29618f4bed9bde0f5abdd5865c1",
+      "sha256": "5b62d24ea99f054fdadd437a781e5a0ab90b8f681d1cfc38b741fabbaf4c9f0c",
+      "size_bytes": 4713
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/startup_timeout/worker_stderr.raw",
+      "mode": "100644",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    {
+      "path": ".review_metadata/direct_tool_scope_pinned_parent_independent_actual_cpu_6783003_306/startup_timeout/worker_stdout.raw",
+      "mode": "100644",
+      "git_blob": "c03896d6af66c2ff024ad6fd999afe4848f0b1d5",
+      "sha256": "737ec4c55ee68ba8552db4997ea83fcfb2a18a6ce6953a073cf629a1b1f31d8f",
+      "size_bytes": 6781
+    },
+    {
+      "path": ".review_metadata/run_direct_capture_release_author_tests.py",
+      "mode": "100644",
+      "git_blob": "6ff118aab5583f25dff423079446c07b90896271",
+      "sha256": "802b3b5f9c41d86a8deb7449f6fa967ca315c7281def0171c277ffa850bb3a98",
+      "size_bytes": 2138
+    },
+    {
+      "path": ".review_metadata/run_direct_nsight_corrected_independent_review.py",
+      "mode": "100644",
+      "git_blob": "b04abfa9ab91dcdd91bd0ae097538bdca51a9d8d",
+      "sha256": "e3b9fd04e07b867a7d4e9a38bb7c4f015dd089125898673db22a526c575f5941",
+      "size_bytes": 6246
+    },
+    {
+      "path": ".review_metadata/run_direct_nsight_independent_failure_review.py",
+      "mode": "100644",
+      "git_blob": "0c2b659c2523add4ba8f9b7803440e93c71e0b46",
+      "sha256": "36fb192aef3175b23bb4df9d7597dabae7181a7cdb6e0c6ec4d350d8cc1463c0",
+      "size_bytes": 9592
+    },
+    {
+      "path": ".review_metadata/run_direct_nsight_pinned_parent_independent_review.py",
+      "mode": "100644",
+      "git_blob": "37bae298d552c8c15c3e5966e8626a8ca537a53b",
+      "sha256": "df1fcce517c8cf3d861b313edd8706033d7bfae9fe6e344ed3bc806273a2c0ff",
+      "size_bytes": 8341
+    },
+    {
+      "path": ".review_metadata/run_direct_nsight_producer_author_tests.py",
+      "mode": "100644",
+      "git_blob": "cce5db1a707f0133e665b7cdd818bdcc2a7bd01f",
+      "sha256": "4e07e01ecbd27b36685f9c9677c35878392beb41459da76ea13a3aa0b42d4128",
+      "size_bytes": 2185
+    },
+    {
+      "path": ".review_metadata/run_direct_scope_parent_birth_independent_control.py",
+      "mode": "100644",
+      "git_blob": "1fa088a49985f2c220035b20de6162261e637b3a",
+      "sha256": "bf8470a4f5f72606914a7afb28fa9f980d8271844b85a22c1b997e3eb2270e5a",
+      "size_bytes": 3650
+    },
+    {
+      "path": ".review_metadata/run_direct_scope_parent_birth_independent_control_failed_syntax.py",
+      "mode": "100644",
+      "git_blob": "8c4672a32396db134eb42e5b7382a46743192ab1",
+      "sha256": "6a97f5b673a50a2671d7c1c8a3faace37a7736fd79a30ce9ba0fcccf129b2ce2",
+      "size_bytes": 3649
+    },
+    {
+      "path": ".review_metadata/run_direct_tool_scope_corrections_author_tests.py",
+      "mode": "100644",
+      "git_blob": "553b417e997b7b7fa846bcabd0737a0b2798794e",
+      "sha256": "a90a242fd66b99a99047fe9d31612d4993da80ac4a95b7ee8b982190d22f4b2f",
+      "size_bytes": 2041
+    },
+    {
+      "path": ".review_metadata/run_direct_tool_scope_native_records_author_tests.py",
+      "mode": "100644",
+      "git_blob": "f1e824a658f8eea61a07b1ab05ba72782c701bb8",
+      "sha256": "c2e507cd9bd8a8595fcd2f58b2d22f6520689ebdbc256971fdd38d15aeaa0686",
+      "size_bytes": 2526
+    },
+    {
+      "path": ".review_metadata/run_direct_tool_scope_pinned_parent_author_tests.py",
+      "mode": "100644",
+      "git_blob": "9226783ac0e6422c26e31b74d777478bb24741ac",
+      "sha256": "daf6bc6a5ec766937685a3b9be31913f091824db3ec30b64f16abf6314a636c0",
+      "size_bytes": 2556
+    },
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_direct_nsight_process.py",
+      "mode": "100644",
+      "git_blob": "5b62522cf83aae4a68dfa1477490c3b1cd492d32",
+      "sha256": "a0849694cf8eb327293d0e9cb2cf59205017359f4e9568089cf8a87f8dd83cd8",
+      "size_bytes": 24978
+    },
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py",
+      "mode": "100644",
+      "git_blob": "7f7070e349cc1b2b12d3b73a88058eb9592c2fb1",
+      "sha256": "0f2cba5aa8dfae67552f131998dfc8784d849fc1a2683764d63d4fda8b6a3d12",
+      "size_bytes": 24951
+    },
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_capture_release.py",
+      "mode": "100644",
+      "git_blob": "a975c92d3e0f0b4eedae539d65ad552572b55482",
+      "sha256": "8d7623b1b5cf8bf7a8b65321a33ec1cf551bf99f63d445145a638a9011982e42",
+      "size_bytes": 17646
+    },
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py",
+      "mode": "100644",
+      "git_blob": "5f89ab8112d707ba98b1c6c44508d42c644d9df4",
+      "sha256": "7b492bbcd2a7598e992adfa58cbe136e538e3581f59f14fad7b7d842884abeaf",
+      "size_bytes": 59833
+    },
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_prerequisites.py",
+      "mode": "100644",
+      "git_blob": "55701dd5ce18a9a3a4eb32b79e377fae20a45cbd",
+      "sha256": "772d610250c80df36a2a09a86ec6714b69317cce3f4b1ed3cebbab060e87a7c3",
+      "size_bytes": 33553
+    },
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_process.py",
+      "mode": "100644",
+      "git_blob": "e546507e688be227f065d5051251f58633623807",
+      "sha256": "cad3f2afae600e8addf96d7cbc8d5e12f21cd358342989cee65da0c88f6fd061",
+      "size_bytes": 46150
+    },
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_tool_descendants.py",
+      "mode": "100644",
+      "git_blob": "e8eec7b9fc3a95379dea65893005b2613dba4bdf",
+      "sha256": "ac9244771625883c3f65be93ccde8017538732020d9525d0173601416ae64342",
+      "size_bytes": 39422
+    },
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py",
+      "mode": "100644",
+      "git_blob": "a11136ec910846f00d3bacd042b3cbed7d88dcae",
+      "sha256": "36a60d5e4d5536413600c5d36d39fd107a031f434048d83e38ed209b375f62e9",
+      "size_bytes": 72766
+    },
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py",
+      "mode": "100644",
+      "git_blob": "aed83f8344fa22970579216227ff93093edb094f",
+      "sha256": "941f5ec35fa790f7c59e66274627c7ef198e366e48e0c462e9602881080d62f6",
+      "size_bytes": 54612
+    },
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/direct_tool_descendants_cpu_worker.py",
+      "mode": "100644",
+      "git_blob": "e25ed1a52b093df5f4e1fc2d32eb890d2ba90436",
+      "sha256": "b5083dabdedaed99dcf8e55820d6484c748ae7864d1dcb6c9792ae5f608211d7",
+      "size_bytes": 8024
+    },
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_capture_release.py",
+      "mode": "100644",
+      "git_blob": "26d06980c5e363c21388105cd26741f06d4f8e83",
+      "sha256": "b18bf8c96ff4c60a072b3fa63958ff87adfbcf530c82f815aa4e211fb90cb925",
+      "size_bytes": 14894
+    },
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_profile_prerequisites.py",
+      "mode": "100644",
+      "git_blob": "2667dbbb606556b95a4e885e4654405e6ef62dc1",
+      "sha256": "c7b2b8d266bafe018e4df9be89f9057b2ece1b71c0666d192ebe940c2ff1a874",
+      "size_bytes": 29470
+    },
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_profile_process.py",
+      "mode": "100644",
+      "git_blob": "03d2ad487d527dddc45b0b4bb4f45f678a11dbb5",
+      "sha256": "829aa2375da6425493a95fd49976a439cdff36f715270a3261f05d7bff3859a5",
+      "size_bytes": 29951
+    },
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_tool_descendants.py",
+      "mode": "100644",
+      "git_blob": "38ddd7ab6bf2a031d017a1ca9f00b4cad220f201",
+      "sha256": "0710f44ab5ac87c42f4ff501eb72a40d7ee4daf4e05f28c314ff361133388369",
+      "size_bytes": 10690
+    }
+  ],
+  "this_roster_not_self_hashed": true,
+  "all_payload_utf8_without_nul": true,
+  "all26_protected_files_verified": true,
+  "capture_core_ast_unchanged": true,
+  "actual_tool_or_gpu_execution": false,
+  "admission_granted": false
+}

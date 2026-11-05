@@ -1,0 +1,62 @@
+...........EEE
+======================================================================
+ERROR: test_restore_request_value_and_native_return_types_must_match_previous_and_verified (test_direct_profile_process.DirectSavedProcessTests)
+Reject the reproduced SET1/GET0 contradiction and Boolean native return/value fields.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_profile_process.py", line 279, in test_restore_request_value_and_native_return_types_must_match_previous_and_verified
+    unit, validate = self.scope_reader_fixture()
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_profile_process.py", line 269, in scope_reader_fixture
+    helper = direct.adjacent_helper(plan, "direct_tool_descendants.py")
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_process.py", line 50, in adjacent_helper
+    require(path.resolve(strict=True) == path and path.is_file()
+  File "/usr/lib/python3.10/pathlib.py", line 1077, in resolve
+    s = self._accessor.realpath(self, strict=strict)
+  File "/usr/lib/python3.10/posixpath.py", line 396, in realpath
+    path, ok = _joinrealpath(filename[:0], filename, strict, {})
+  File "/usr/lib/python3.10/posixpath.py", line 431, in _joinrealpath
+    st = os.lstat(newpath)
+FileNotFoundError: [Errno 2] No such file or directory: '/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_tool_descendants.py.py'
+
+======================================================================
+ERROR: test_native_counts_must_join_actual_before_and_terminal_snapshots (test_direct_profile_process.DirectSavedProcessTests)
+Plausible final totals cannot replace their actual before/after request counters.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_profile_process.py", line 291, in test_native_counts_must_join_actual_before_and_terminal_snapshots
+    unit, validate = self.scope_reader_fixture()
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_profile_process.py", line 269, in scope_reader_fixture
+    helper = direct.adjacent_helper(plan, "direct_tool_descendants.py")
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_process.py", line 50, in adjacent_helper
+    require(path.resolve(strict=True) == path and path.is_file()
+  File "/usr/lib/python3.10/pathlib.py", line 1077, in resolve
+    s = self._accessor.realpath(self, strict=strict)
+  File "/usr/lib/python3.10/posixpath.py", line 396, in realpath
+    path, ok = _joinrealpath(filename[:0], filename, strict, {})
+  File "/usr/lib/python3.10/posixpath.py", line 431, in _joinrealpath
+    st = os.lstat(newpath)
+FileNotFoundError: [Errno 2] No such file or directory: '/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_tool_descendants.py.py'
+
+======================================================================
+ERROR: test_saved_child_list_requires_exact_before_and_after_parent_identity (test_direct_profile_process.DirectSavedProcessTests)
+Reject omitted live identity and a changed birth after reading the producer's children.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_profile_process.py", line 311, in test_saved_child_list_requires_exact_before_and_after_parent_identity
+    unit, validate = self.scope_reader_fixture()
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_profile_process.py", line 269, in scope_reader_fixture
+    helper = direct.adjacent_helper(plan, "direct_tool_descendants.py")
+  File "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_process.py", line 50, in adjacent_helper
+    require(path.resolve(strict=True) == path and path.is_file()
+  File "/usr/lib/python3.10/pathlib.py", line 1077, in resolve
+    s = self._accessor.realpath(self, strict=strict)
+  File "/usr/lib/python3.10/posixpath.py", line 396, in realpath
+    path, ok = _joinrealpath(filename[:0], filename, strict, {})
+  File "/usr/lib/python3.10/posixpath.py", line 431, in _joinrealpath
+    st = os.lstat(newpath)
+FileNotFoundError: [Errno 2] No such file or directory: '/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_tool_descendants.py.py'
+
+----------------------------------------------------------------------
+Ran 14 tests in 1.154s
+
+FAILED (errors=3)

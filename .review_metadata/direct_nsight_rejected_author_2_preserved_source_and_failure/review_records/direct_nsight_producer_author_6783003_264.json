@@ -1,0 +1,37 @@
+{
+  "command": [
+    "/usr/bin/python3",
+    "-B",
+    "-m",
+    "unittest",
+    "test_direct_profile_process.ActualTemporaryDescriptorTests",
+    "test_direct_profile_process.DirectSavedProcessTests",
+    "test_direct_profile_process.DirectDiagnosticSourceTests",
+    "test_direct_profile_prerequisites.DirectProfileMetadataTests",
+    "test_direct_profile_prerequisites.DirectProfileBackendTests",
+    "test_profile_selected",
+    "test_profile_owned_processes",
+    "test_profile_common_confirmation_helpers",
+    "test_direct_common_confirmation",
+    "test_direct_measurement"
+  ],
+  "job_id": "6783003",
+  "step_id": "264",
+  "hostname": "heartpiece",
+  "pid": 1203590,
+  "started_at_seconds": 1793846040.647766,
+  "finished_at_seconds": 1793846097.1539128,
+  "returncode": 0,
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-49_direct-h100-nsight-owned-processes_standing-descriptor_survival-diagnostic_training-transitions-0/.review_metadata/direct_nsight_producer_source_freeze_author_1.json",
+    "sha256": "84bf85c8a868748a3697054674aa77b093ad54141fdff09357c53bddf5c3bde3"
+  },
+  "source_unchanged_before_and_after": true,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "66b886159ae24049de9da3067f35d8f1bf53e957ce33de4b4e65073e44676e5b",
+  "actual_nsight_execution": false,
+  "actual_gpu_execution": false,
+  "environment_transitions": 0,
+  "scientific_credit": 0,
+  "admission_granted": false
+}

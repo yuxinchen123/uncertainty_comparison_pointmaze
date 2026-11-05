@@ -1,0 +1,58 @@
+{
+  "kind": "actual_cpu_temporary_lock_descendant_cleanup",
+  "mode": "startup_timeout",
+  "nsight_executed": false,
+  "standing_gpu_lock_opened": false,
+  "gpu_operations": 0,
+  "environment_transitions": 0,
+  "scientific_credit": 0,
+  "admission_granted": false,
+  "expected_startup_failure": {
+    "type": "ValueError",
+    "message": "Nsight or its actual payload did not publish the blocked source identity"
+  },
+  "payload_exit_observed_by_independent_pidfd": true,
+  "temporary_lock_retained_until_all_descendants_exited": true,
+  "kernel_terminal": {
+    "actual_echild": true,
+    "all_actual_tool_roots_waited": true,
+    "all_pinned_handles_exited": true,
+    "errno": 10,
+    "fresh_own_child_lists": [
+      {
+        "raw": "",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "tid": 1215340
+      }
+    ],
+    "observed_at_seconds": 1793849033.4177938
+  },
+  "actual_root_waits": {
+    "1215341": {
+      "birth": "80415819",
+      "command": [
+        "/usr/bin/python3.10",
+        "-I",
+        "-S",
+        "-B",
+        "-c",
+        "import json,os,pathlib,subprocess,sys,time;p=subprocess.Popen([sys.argv[1],'-I','-S','-B','-c',sys.argv[3]],close_fds=True,pass_fds=());pathlib.Path(sys.argv[2]).write_text(json.dumps({'root_pid':os.getpid(),'payload_pid':p.pid}));time.sleep(6)",
+        "/usr/bin/python3.10",
+        "/tmp/tmptxz0owxm/actual_cpu_processes.json",
+        "import os,time;os.setsid();time.sleep(6)"
+      ],
+      "finished_at_seconds": 1793849033.4161148,
+      "kind": "actual_scoped_tool_popen_wait",
+      "pid": 1215341,
+      "returncode": -15,
+      "started_at_seconds": 1793849033.1342735
+    }
+  },
+  "actual_processes": {
+    "root_pid": 1215341,
+    "payload_pid": 1215342
+  },
+  "holder_checks": 4,
+  "temporary_lock_reacquired_only_after_verified_descendant_exit": true,
+  "passed": true
+}
