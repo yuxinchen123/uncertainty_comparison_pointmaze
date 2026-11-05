@@ -1,0 +1,62 @@
+{
+  "admission_granted": false,
+  "check_count": 11,
+  "checked_at_utc": "2026-11-05T09:02:29.849458+00:00",
+  "checks": [
+    {
+      "name": "exact clean reviewed commit",
+      "passed": true
+    },
+    {
+      "name": "new immutable identity and helper source",
+      "passed": true
+    },
+    {
+      "name": "exact seven reviewed staged source files",
+      "passed": true
+    },
+    {
+      "name": "only reviewed native saved-reader helper changed",
+      "passed": true
+    },
+    {
+      "name": "all original numerical and diagnostic controls unchanged",
+      "passed": true
+    },
+    {
+      "name": "native policy unchanged except exact reviewed helper hashes",
+      "passed": true
+    },
+    {
+      "name": "plan preparation receipt and manifest exact",
+      "passed": true
+    },
+    {
+      "name": "resolved budget and policy exact",
+      "passed": true
+    },
+    {
+      "name": "literal approved direct SSH with exact staged controller",
+      "passed": true
+    },
+    {
+      "name": "metadata preparation zero and target runtime absent",
+      "passed": true
+    },
+    {
+      "name": "all standard records present",
+      "passed": true
+    }
+  ],
+  "failed_prior_attempt_remains_failed": true,
+  "independent_packet_review": false,
+  "kind": "metadata_only_reviewed_saved_schema_diagnostic_packet_validation",
+  "no_remote_or_tool_or_gpu_or_lock_action": true,
+  "passed": true,
+  "scientific_credit": 0,
+  "source_independent_approval": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-00-51_native-saved-scope-records_raw-stat-status-command-hash_environment-transitions-0/.review_metadata/native_saved_scope_records/independent_focused_429.json",
+    "sha256": "fd2835544e4f54bdfda39c1b6270aef33210b6a2dfc4afb5d5b909fd086ab284"
+  },
+  "source_publication_still_required_before_launch": true
+}
