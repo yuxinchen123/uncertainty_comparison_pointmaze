@@ -1,0 +1,33 @@
+{
+  "kind": "owned_cpu_monitor_allocation",
+  "job_id": "6825983",
+  "hostname": "slurm5",
+  "uid": 2618919,
+  "pid": 1272573,
+  "cgroup": "0::/system.slice/slurmstepd.scope/job_6825983/step_batch/user/task_0\n",
+  "command": [
+    "scontrol",
+    "show",
+    "job",
+    "6825983",
+    "-o"
+  ],
+  "returncode": 0,
+  "stdout": "JobId=6825983 JobName=pixel_study_monitor UserId=sl5nw(2618919) GroupId=collaborator(90030) MCS_label=N/A Priority=811 Nice=0 Account=sl5nw_base QOS=normal JobState=RUNNING Reason=None Dependency=(null) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:02 TimeLimit=7-00:00:00 TimeMin=N/A SubmitTime=2026-11-05T17:49:04 EligibleTime=2026-11-05T17:57:15 AccrueTime=2026-11-05T17:57:15 StartTime=2026-11-05T17:57:27 EndTime=2026-11-12T17:57:27 Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-11-05T17:57:27 Scheduler=Backfill Partition=nolim AllocNode:Sid=slurm2:1115465 ReqNodeList=(null) ExcNodeList=(null) NodeList=slurm5 BatchHost=slurm5 NumNodes=1 NumCPUs=2 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=1,mem=2G,node=1,billing=309 AllocTRES=cpu=2,mem=2G,node=1,billing=311 Socks/Node=* NtasksPerN:B:S:C=0:0:*:1 CoreSpec=* MinCPUsNode=1 MinMemoryNode=2G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-09-25_pixel-study-monitor_source-commit-548cbcaef4c1fc28f80817ec9ba93f1e6b2fee4e_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/monitor.sbatch WorkDir=/p/rlprojects/RND StdErr=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/jobs/monitor_6825983.log StdIn=/dev/null StdOut=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/jobs/monitor_6825983.log Power= TresPerNode=gres/gpu:0 TresPerTask=cpu:1 \n",
+  "stderr": "",
+  "node_observation": {
+    "command": [
+      "scontrol",
+      "show",
+      "node",
+      "slurm5",
+      "-o"
+    ],
+    "returncode": 0,
+    "stdout": "NodeName=slurm5 Arch=x86_64 CoresPerSocket=12  CPUAlloc=22 CPUEfctv=22 CPUTot=24 CPULoad=10.15 AvailableFeatures=haswell ActiveFeatures=haswell Gres=(null) NodeAddr=slurm5 NodeHostName=slurm5 Version=23.11.6 OS=Linux 5.15.0-194-generic #204-Ubuntu SMP Wed Sep 2 13:09:23 UTC 2026  RealMemory=256000 AllocMem=116736 FreeMem=226864 Sockets=1 Boards=1 CoreSpecCount=1 CPUSpecList=22-23 MemSpecLimit=4000 State=ALLOCATED ThreadsPerCore=2 TmpDisk=0 Weight=1 Owner=N/A MCS_label=N/A Partitions=nolim  BootTime=2026-10-26T18:26:36 SlurmdStartTime=2026-10-26T20:00:54 LastBusyTime=2026-11-04T02:49:54 ResumeAfterTime=None CfgTRES=cpu=22,mem=250G,billing=38444 AllocTRES=cpu=22,mem=114G CapWatts=n/a CurrentWatts=0 AveWatts=0 ExtSensorsJoules=n/a ExtSensorsWatts=0 ExtSensorsTemp=n/a\n",
+    "stderr": ""
+  },
+  "observed_at_utc": "2026-11-05T17:57:29.135090+00:00",
+  "scientific_hypothesis_credit": 0,
+  "worker_admission": false
+}
