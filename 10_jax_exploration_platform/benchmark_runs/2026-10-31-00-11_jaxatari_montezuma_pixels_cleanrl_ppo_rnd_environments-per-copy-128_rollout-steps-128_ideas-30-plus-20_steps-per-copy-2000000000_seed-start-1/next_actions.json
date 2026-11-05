@@ -4822,7 +4822,16 @@
       "metadata_files_current_mode": "0640",
       "restoration_required": true,
       "restore_on_same_host_only": "portal05",
-      "next_action": "independent actual-identifier release review and publication, then one exact release; never submit again"
+      "next_action": "independent complete-publication readiness proof before the first actual native release; no resubmit or binding change",
+      "failed_publication_preflight": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-14-44_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-4bb3a61cb92f/root_actual_release_return.json",
+        "sha256": "b01c20fc058f2503485bbf821006b86868489c62e01e3720a05fd033396fee4e",
+        "returncode": 1,
+        "no_native_release_command_reached": true,
+        "cause": "two exact unit-local identifier snapshots were omitted from the first release publication",
+        "original_failed_records_preserved": true,
+        "complete_publication": "4fcaf5c1cf92e31e5efc33b61f5f55f0da8c0746"
+      }
     },
     "h100": {
       "packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-14-01_profile-source-qualification_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-2aa6df92f7d9",
