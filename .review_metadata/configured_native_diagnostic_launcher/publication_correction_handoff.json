@@ -1,0 +1,31 @@
+{
+  "actual_scheduler_actions": 0,
+  "affected_six_tests": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-14-48_configured-native-diagnostic-once-launcher_late-prepared-binding_root-only_gpu-actions-0/.review_metadata/configured_native_diagnostic_launcher/author_checks_6821437_116.json",
+    "sha256": "843540ab9f91fff3facb629138f0ae600510ec4f479919f1f3076356c07e06f9"
+  },
+  "all_existing_functions_unchanged_except_required_publication_predicate_call": true,
+  "existing_function_scope": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-14-48_configured-native-diagnostic-once-launcher_late-prepared-binding_root-only_gpu-actions-0/.review_metadata/configured_native_diagnostic_launcher/publication_scope_6821437_118.json",
+    "sha256": "a00003a6a5868eb096fbb0b62e354a641a5f78d4b363ab62f3ed3a08b2b25b3f"
+  },
+  "first_review": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-14-48_configured-native-diagnostic-once-launcher_late-prepared-binding_root-only_gpu-actions-0/.review_metadata/configured_native_diagnostic_launcher/independent_initial_launcher_publication_review.json",
+    "sha256": "ad4f96de515b3333fa3d7a71f12fcf7698585c7be9068174dcd2c580bb05641d"
+  },
+  "formal_profile_admission": false,
+  "kind": "configured_native_launcher_publication_correction_handoff",
+  "no_fetch_network_authentication_or_retry": true,
+  "origin_url": "git@github.com:yuxinchen123/uncertainty_comparison_pointmaze.git",
+  "preserved_independent_rejection": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-14-48_configured-native-diagnostic-once-launcher_late-prepared-binding_root-only_gpu-actions-0/.review_metadata/configured_native_diagnostic_launcher/independent_preserved_local_only_publication_rejection/preservation_manifest.json",
+    "sha256": "95c62f0cdc0819b70042ca062f5fbf283e880631fc172a534a822180d739f396"
+  },
+  "required_tracking_ref": "refs/remotes/origin/merge-atari-cleanrl",
+  "root_separately_pushes_and_verifies_tracking_tip_before_actual_actions": true,
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-14-48_configured-native-diagnostic-once-launcher_late-prepared-binding_root-only_gpu-actions-0/.review_metadata/configured_native_diagnostic_launcher/author_source_freeze_3.json",
+    "sha256": "8958f74e258114bc4c833b0e601a6af1f444ba826ad2effd7b4deacb467a386c"
+  },
+  "source_is_held": true
+}

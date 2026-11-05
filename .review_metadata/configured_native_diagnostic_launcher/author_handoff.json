@@ -1,0 +1,40 @@
+{
+  "actual_prepared_binding_created": false,
+  "actual_prepared_plan_available": false,
+  "actual_receipt_kinds": [
+    "owned_configured_native_process_diagnostic_submission",
+    "owned_configured_native_process_diagnostic_release"
+  ],
+  "actual_scheduler_actions": 0,
+  "affected_corrected_fixture": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-14-48_configured-native-diagnostic-once-launcher_late-prepared-binding_root-only_gpu-actions-0/.review_metadata/configured_native_diagnostic_launcher/author_checks_6821437_114.json",
+    "sha256": "9d0e8b2926e1d410076ac59c77067ed1d76f5f2efc71a102a277699211f62805"
+  },
+  "diagnostic_kind": "configured_native_nsight_process_diagnostic",
+  "first_batch": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-14-48_configured-native-diagnostic-once-launcher_late-prepared-binding_root-only_gpu-actions-0/.review_metadata/configured_native_diagnostic_launcher/author_checks_6821437_112.json",
+    "sha256": "685132c6d8844ec89dd8cfb9e82ce697886a8dfb8530553d889ae2bc6e736581"
+  },
+  "first_failure_preservation": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-14-48_configured-native-diagnostic-once-launcher_late-prepared-binding_root-only_gpu-actions-0/.review_metadata/configured_native_diagnostic_launcher/preserved_first_author_fixture_failure_112/preservation_manifest.json",
+    "sha256": "9ea3a2a668a45d031f888fd79117d68ece4e25ca4dd671d61a28766426a8a498"
+  },
+  "formal_profile_admission": false,
+  "independent_review_pending": true,
+  "kind": "configured_native_diagnostic_root_only_launcher_author_handoff",
+  "metadata_fixture": "schema/diagnose_configured_native_process_approved.py",
+  "scientific_credit": 0,
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-14-48_configured-native-diagnostic-once-launcher_late-prepared-binding_root-only_gpu-actions-0/.review_metadata/configured_native_diagnostic_launcher/author_source_freeze_2.json",
+    "sha256": "4f4970fe9de26a128798368893570ab142344eb31e86e53c45add566851f793d"
+  },
+  "source_scope": [
+    "launch_diagnostic_once.py",
+    "test_launch_diagnostic_once.py"
+  ],
+  "source_unchanged_from_first_batch": true,
+  "tests_passed": {
+    "affected_fixture_after_correction": 1,
+    "first_batch_unchanged_methods": 16
+  }
+}

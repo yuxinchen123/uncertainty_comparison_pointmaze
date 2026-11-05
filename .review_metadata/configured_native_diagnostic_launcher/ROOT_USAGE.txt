@@ -1,0 +1,80 @@
+SOURCE STATUS
+This directory contains source only, for root to deploy after independent source approval.
+No real06:39 packet/unit, prepared binding or job is created here. Tests use private
+synthetic repositories and replace every scheduler call. The actual native diagnostic
+module is copied only as a small AST metadata-reader fixture; it is never imported.
+
+ROOT PREPARATION AFTER SOURCE PUBLICATION
+Use the canonical metadata-only diagnose_configured_native_process.py preparer from
+the actual clean published source checkout, and the literal approved06:39 name in
+launch_diagnostic_once.py:PACKET_NAME. Root chooses/records the real source commit.
+Keep the approved union immutable.
+
+Deploy launch_diagnostic_once.py, test_launch_diagnostic_once.py and the exact small
+schema/diagnose_configured_native_process_approved.py fixture into the new packet.
+The fixture must equal the approved diagnostic source; no live target import occurs.
+
+Canonical initial inventory (exact21):
+- unit/code/: all7HELPERS explicitly listed by the launcher;
+- unit/: measurement_plan.json, measurement_prepared.json, manifest.yaml,
+  config_resolved.yaml, command.txt, experiment_background.md;
+- packet/: job.sbatch, manifest.yaml, config_resolved.yaml, command.txt,
+  experiment_background.md, progress.json, source_checksums.sha256,
+  held_submission_command.json.
+The four shared packet standard records must be exact copies of the canonical unit.
+Use the exact job.sbatch bytes from expected_job_script(), and exact held command
+from prepared_records(). These contain explicit one typed A4500/one CPU/2GiB/five
+minutes/gpu/sl5nw_base/csresnolim/sl5nw_168/jaguar03/no-requeue resource flags.
+source_checksums.sha256 covers exactly7helper files +actualplan+prepared receipt.
+Write immutable_artifacts.json as {"files":{absolute_path:{"sha256":actual,
+"bytes":actual_integer,"mode":actual_octal_mode}}}; it contains exactly21 inputs.
+No prepared-plan digest, source commit, device identity or scheduler ID is guessed.
+
+ROOT PURE METADATA BINDING (NO SCHEDULER ACTION)
+Run the deployed utility with --prepare-binding-once (no publication argument).
+It verifies actual canonical plan/declarations/budget/zero-credit shape, exact staged
+helper bytes against actual plan source commit's Git blobs, standard records,
+wrapper, checksum closure and full immutable inventory. It publishes one immutable
+prepared_launch_binding.json. This operation creates no job and makes no claim of
+publication or actual qualification. A repeated/partial binding is refused.
+
+REVIEW/PUBLISH THE ACTUAL PREPARED PACKET
+Write packet_static_verification.json containing passed:true and prepared_binding
+as an exact pair {path,sha256}. Freeze all21initial inputs plus immutable_artifacts,
+prepared_launch_binding, packet_static_verification, the two launcher/test sources
+and schema fixture in launcher_source_freeze.json:{"files":{absolute_path:sha256}}.
+The independent actual prepared review must be launcher_independent_review.json:
+{"kind":"independent_configured_native_diagnostic_prepared_launcher_review",
+ "passed":true,"source_freeze":{path,sha256},"prepared_binding":{path,sha256},...}.
+Root publishes every frozen byte, the source freeze and that genuine review in the
+actual integration Git commit before invoking any scheduler operation.
+
+ROOT ACTIONS, ONE AT A TIME
+Default --publication-commit ACTUAL40SHA is only a no-action Git/metadata check.
+--submit-held-once --publication-commit ACTUAL40SHA performs one held submission.
+The exact real returned ID and row are fsynced to all3campaign ledgers BEFORE the
+submission receipt. A partial attempt is retained and forbids another submission.
+--prepare-release --publication-commit ACTUAL40SHA requires the unique existing
+owned submission and queries ONLY that real identifier; it records the fixed
+['scontrol','release',actual_ID] binding in release_binding.json.
+A separate genuine release_independent_review.json must bind that exact file via
+{"passed":true,"binding":{path,sha256},...}; root publishes it with submission,
+ledger fsync record, binding and original source packet.
+--release-once --publication-commit NEW_ACTUAL40SHA makes one fresh exact owned
+held query, writes one release intent, and executes that fixed release ONCE.
+The successful release receipt is fsynced before atomic owned_launch_inputs.json.
+The latter uses exact canonical new runtime receipt kinds and pair-only references.
+
+No utility operation grants scientific/profile/idea/packing/final/worker admission.
+Actual target process qualification and independent raw review remain separate.
+Root verifies both session and persistent monitoring in the real submission turn.
+
+CORRECTED PUBLICATION REQUIREMENT
+For every default/submit/prepare-release/release check, the supplied full commit must
+be an ancestor of the existing local refs/remotes/origin/merge-atari-cleanrl tip.
+The exact configured remote.origin.url is
+git@github.com:yuxinchen123/uncertainty_comparison_pointmaze.git and exact fetch
+mapping is +refs/heads/*:refs/remotes/origin/*. The utility performs no fetch,
+authentication, network query or retry. Root separately pushes and verifies the
+actual origin-tracking tip before each real action. Private tests only simulate
+this local tracking metadata; they do not contact or push to any remote.

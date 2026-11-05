@@ -1,0 +1,34 @@
+{
+  "actual_packet_binding_created": false,
+  "actual_prepared_plan_available": false,
+  "actual_scheduler_actions": 0,
+  "files": {
+    "accepted_20_09_launcher.py": {
+      "bytes": 20544,
+      "mode": "0o660",
+      "sha256": "80d65582290bb19bd4743f997034724be894c0efe88b0e5433552cb05e266e81"
+    },
+    "accepted_20_09_tests.py": {
+      "bytes": 18341,
+      "mode": "0o660",
+      "sha256": "9c3bb633cafcaa7d56696375593a7212978c64fa7d989e1ea4bc3fe7bd3be343"
+    },
+    "launch_diagnostic_once.py": {
+      "bytes": 34327,
+      "mode": "0o660",
+      "sha256": "847d9482a5c1aaf74b5b3d4020ef99849d447673892e4f8f33ad7ba844ecf337"
+    },
+    "schema/diagnose_configured_native_process_approved.py": {
+      "bytes": 22125,
+      "mode": "0o660",
+      "sha256": "90f4244bb08fb37998197d9000c1063d0b024455b274092a2e8793d9fbe8acc2"
+    },
+    "test_launch_diagnostic_once.py": {
+      "bytes": 30024,
+      "mode": "0o660",
+      "sha256": "4f3ed0ac4db20b98541d752eaa2a8bca3a3f1651ca133b200a18f48430cdefc3"
+    }
+  },
+  "kind": "configured_native_diagnostic_launcher_source_freeze",
+  "scientific_credit": 0
+}

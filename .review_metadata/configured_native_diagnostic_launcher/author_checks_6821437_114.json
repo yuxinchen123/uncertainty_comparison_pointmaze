@@ -1,0 +1,77 @@
+{
+  "actual_prepared_binding_or_job_created": false,
+  "actual_scheduler_actions": 0,
+  "errors": [],
+  "failures": [],
+  "finished_at_seconds": 1793890329.2507918,
+  "hostname": "slurm2",
+  "job_id": "6821437",
+  "kind": "configured_native_diagnostic_launcher_author_checks",
+  "passed": true,
+  "pid": 1096068,
+  "private_local_git_only": true,
+  "scientific_credit": 0,
+  "source_after": {
+    "accepted_20_09_launcher.py": {
+      "bytes": 20544,
+      "mode": "0o660",
+      "sha256": "80d65582290bb19bd4743f997034724be894c0efe88b0e5433552cb05e266e81"
+    },
+    "accepted_20_09_tests.py": {
+      "bytes": 18341,
+      "mode": "0o660",
+      "sha256": "9c3bb633cafcaa7d56696375593a7212978c64fa7d989e1ea4bc3fe7bd3be343"
+    },
+    "launch_diagnostic_once.py": {
+      "bytes": 32627,
+      "mode": "0o660",
+      "sha256": "4527654c602eb7527ddc40a1aa253c30abf937999cec964f71531e926ef07979"
+    },
+    "schema/diagnose_configured_native_process_approved.py": {
+      "bytes": 22125,
+      "mode": "0o660",
+      "sha256": "90f4244bb08fb37998197d9000c1063d0b024455b274092a2e8793d9fbe8acc2"
+    },
+    "test_launch_diagnostic_once.py": {
+      "bytes": 26777,
+      "mode": "0o660",
+      "sha256": "490f5b720235d38365b9fb6e20ab83681cf3a0d0d6589f6132c9ae630c285a83"
+    }
+  },
+  "source_before": {
+    "accepted_20_09_launcher.py": {
+      "bytes": 20544,
+      "mode": "0o660",
+      "sha256": "80d65582290bb19bd4743f997034724be894c0efe88b0e5433552cb05e266e81"
+    },
+    "accepted_20_09_tests.py": {
+      "bytes": 18341,
+      "mode": "0o660",
+      "sha256": "9c3bb633cafcaa7d56696375593a7212978c64fa7d989e1ea4bc3fe7bd3be343"
+    },
+    "launch_diagnostic_once.py": {
+      "bytes": 32627,
+      "mode": "0o660",
+      "sha256": "4527654c602eb7527ddc40a1aa253c30abf937999cec964f71531e926ef07979"
+    },
+    "schema/diagnose_configured_native_process_approved.py": {
+      "bytes": 22125,
+      "mode": "0o660",
+      "sha256": "90f4244bb08fb37998197d9000c1063d0b024455b274092a2e8793d9fbe8acc2"
+    },
+    "test_launch_diagnostic_once.py": {
+      "bytes": 26777,
+      "mode": "0o660",
+      "sha256": "490f5b720235d38365b9fb6e20ab83681cf3a0d0d6589f6132c9ae630c285a83"
+    }
+  },
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-14-48_configured-native-diagnostic-once-launcher_late-prepared-binding_root-only_gpu-actions-0/.review_metadata/configured_native_diagnostic_launcher/author_source_freeze_2.json",
+    "sha256": "4f4970fe9de26a128798368893570ab142344eb31e86e53c45add566851f793d"
+  },
+  "source_unchanged": true,
+  "started_at_seconds": 1793890328.2959871,
+  "step_id": "114",
+  "synthetic_scheduler_only": true,
+  "tests_run": 1
+}

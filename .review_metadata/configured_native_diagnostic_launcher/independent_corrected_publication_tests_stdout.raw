@@ -1,0 +1,15 @@
+test_origin_tracking_included_commit_allows_metadata_check_without_network (independent_corrected_configured_launcher_tests.LauncherTests) ... ok
+test_absent_origin_refuses_publication (independent_corrected_configured_launcher_tests.LauncherTests) ... ok
+test_absent_origin_tracking_refuses_publication (independent_corrected_configured_launcher_tests.LauncherTests) ... ok
+test_local_only_new_commit_refuses_until_included_in_exact_tracking_history (independent_corrected_configured_launcher_tests.LauncherTests) ... ok
+test_stale_origin_tracking_history_refuses_new_publication (independent_corrected_configured_launcher_tests.LauncherTests) ... ok
+test_different_origin_or_branch_mapping_refuses_publication (independent_corrected_configured_launcher_tests.LauncherTests) ... ok
+test_default_publication_check_has_no_scheduler_action (independent_corrected_configured_launcher_tests.LauncherTests)
+The real private Git check is useful without any submission or query. ... ok
+test_release_receipt_precedes_atomic_sidecar_and_matches_actual_runtime_reader (independent_corrected_configured_launcher_tests.LauncherTests)
+The final durable pair-only receipts satisfy the actual new canonical metadata reader. ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 2.261s
+
+OK

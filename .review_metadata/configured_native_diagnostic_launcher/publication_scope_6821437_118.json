@@ -1,0 +1,39 @@
+{
+  "actual_scheduler_actions": 0,
+  "all_existing_functions_preserved_except_one_publication_predicate_call": true,
+  "functions_verified": [
+    "require",
+    "now",
+    "ordinary_bytes",
+    "reference",
+    "document",
+    "new_path",
+    "publish",
+    "same",
+    "expected_initial_paths",
+    "expected_job_script",
+    "prepared_records",
+    "prepare_binding_once",
+    "checked_packet",
+    "check_publication",
+    "actor",
+    "scheduler",
+    "identifier",
+    "submission_row",
+    "append_member",
+    "owned_submission",
+    "submit_held_once",
+    "query_held",
+    "prepare_release",
+    "release_once",
+    "main"
+  ],
+  "kind": "configured_native_launcher_narrow_publication_scope",
+  "passed": true,
+  "slurm_job_id": "6821437",
+  "slurm_step_id": "118",
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-14-48_configured-native-diagnostic-once-launcher_late-prepared-binding_root-only_gpu-actions-0/.review_metadata/configured_native_diagnostic_launcher/author_source_freeze_3.json",
+    "sha256": "8958f74e258114bc4c833b0e601a6af1f444ba826ad2effd7b4deacb467a386c"
+  }
+}

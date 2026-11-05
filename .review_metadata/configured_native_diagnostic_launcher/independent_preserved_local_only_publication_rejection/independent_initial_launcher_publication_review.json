@@ -1,0 +1,36 @@
+{
+  "kind": "independent_configured_native_launcher_initial_review",
+  "slurm_job_id": "6821437",
+  "slurm_step_id": "115",
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-14-48_configured-native-diagnostic-once-launcher_late-prepared-binding_root-only_gpu-actions-0/.review_metadata/configured_native_diagnostic_launcher/author_source_freeze_2.json",
+    "sha256": "4f4970fe9de26a128798368893570ab142344eb31e86e53c45add566851f793d"
+  },
+  "selected_author_tests": [
+    "test_default_publication_check_has_no_scheduler_action",
+    "test_changed_initial_source_refuses_before_intent",
+    "test_all_three_ledger_fsyncs_precede_submission_receipt",
+    "test_owned_membership_checked_before_query_even_with_decimal_foreign_id",
+    "test_release_receipt_precedes_atomic_sidecar_and_matches_actual_runtime_reader",
+    "test_failed_release_retains_attempt_without_false_ownership",
+    "test_late_binding_has_only_actual_source_and_plan_and_cannot_be_reused",
+    "test_exact_held_owner_and_resources_refuse_substitution"
+  ],
+  "tests_run": 8,
+  "errors": 0,
+  "failures": 0,
+  "selected_tests_passed": true,
+  "publication_reproduction": {
+    "private_local_commit": "3aa09c27e3d421e3d8d35c870fc1918b01e336b7",
+    "configured_remotes": [],
+    "remote_tracking_refs": [],
+    "local_only_commit_accepted_as_publication": true,
+    "actual_scheduler_actions": 0,
+    "actual_campaign_files_changed": false
+  },
+  "elapsed_seconds": 3.433124297996983,
+  "approved": false,
+  "reason": "The publication check accepts an exact local-only commit even when the repository has no configured remote or remote-tracking history. Exact bytes in a local commit alone do not prove publication.",
+  "actual_scheduler_actions": 0,
+  "target_or_profile_admission": false
+}

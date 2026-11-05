@@ -1,0 +1,18 @@
+test_default_publication_check_has_no_scheduler_action (independent_frozen_configured_launcher_tests.LauncherTests)
+The real private Git check is useful without any submission or query. ... ok
+test_changed_initial_source_refuses_before_intent (independent_frozen_configured_launcher_tests.LauncherTests)
+A changed staged source cannot reach the native submission call. ... ok
+test_all_three_ledger_fsyncs_precede_submission_receipt (independent_frozen_configured_launcher_tests.LauncherTests) ... ok
+test_owned_membership_checked_before_query_even_with_decimal_foreign_id (independent_frozen_configured_launcher_tests.LauncherTests) ... ok
+test_release_receipt_precedes_atomic_sidecar_and_matches_actual_runtime_reader (independent_frozen_configured_launcher_tests.LauncherTests)
+The final durable pair-only receipts satisfy the actual new canonical metadata reader. ... ok
+test_failed_release_retains_attempt_without_false_ownership (independent_frozen_configured_launcher_tests.LauncherTests)
+An unsuccessful synthetic native release never produces a successful final sidecar. ... ok
+test_late_binding_has_only_actual_source_and_plan_and_cannot_be_reused (independent_frozen_configured_launcher_tests.LauncherTests) ... ok
+test_exact_held_owner_and_resources_refuse_substitution (independent_frozen_configured_launcher_tests.LauncherTests)
+Other owners, extra devices or an unexpected reservation cannot be released. ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 3.213s
+
+OK
