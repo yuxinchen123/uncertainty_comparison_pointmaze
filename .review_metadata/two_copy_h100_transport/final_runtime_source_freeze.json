@@ -1,0 +1,34 @@
+{
+  "actual_runtime_commit": "4bb3a61cb92fe48ab5ba68fb52f70b47736a1174",
+  "files": {
+    ".review_metadata/profile_target_operational_preparation/prepare_direct_two_copy_transport_configuration.py": {
+      "mode": 432,
+      "sha256": "aa73fa2e3f867cd0e282112a46c73a2a3faa381efae22b002e62197bb35fbb51",
+      "size_bytes": 7240
+    },
+    ".review_metadata/profile_target_operational_preparation/start_direct_two_copy_profile_qualification_once.py": {
+      "mode": 432,
+      "sha256": "ef82825e2a86ee2d7ff9927465b20fdd6fa55265a8d9e378c640f92d5cb3f4e6",
+      "size_bytes": 23438
+    },
+    ".review_metadata/two_copy_h100_transport/test_two_copy_h100_transport.py": {
+      "mode": 432,
+      "sha256": "2b281b566f83684a48737f7babaf5afc5c9cdc5c5f9f2d7b6eebb3962ed9236c",
+      "size_bytes": 11904
+    }
+  },
+  "kind": "two_copy_direct_transport_final_runtime_source_freeze",
+  "no_target_actions": true,
+  "one_copy_sources": {
+    "prepare_direct_transport_configuration.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-14-38_profile-qualification-request_runtime-source-4bb3a61cb92f_h100-helpers-45_a4500-helpers-36_training-copies-1-2_gpu-actions-0/.review_metadata/profile_target_operational_preparation/prepare_direct_transport_configuration.py",
+      "sha256": "32136e5da65bafba536f170b5530e3033dbd5ce28aecf9a6c084347b5677e435",
+      "size_bytes": 6712
+    },
+    "start_direct_profile_qualification_once.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-14-38_profile-qualification-request_runtime-source-4bb3a61cb92f_h100-helpers-45_a4500-helpers-36_training-copies-1-2_gpu-actions-0/.review_metadata/profile_target_operational_preparation/start_direct_profile_qualification_once.py",
+      "sha256": "111e023d76dfbcfc4e8fada6001d03ea58a4abf510a4ff8b04aa1b82558e8497",
+      "size_bytes": 22957
+    }
+  }
+}

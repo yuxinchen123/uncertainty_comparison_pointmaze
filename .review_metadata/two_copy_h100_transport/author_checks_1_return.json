@@ -1,0 +1,23 @@
+{
+  "command": [
+    "srun",
+    "--jobid=6825983",
+    "--overlap",
+    "--exact",
+    "--time=00:05:00",
+    "-n1",
+    "-c1",
+    "--mem=512M",
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "/p/rlprojects/RND_worktrees/2026-11-05-13-54_h100-two-copy-qualification-transport_seeds-1-2_reference-copies-1_runtime-2aa6df92_helpers-45_gpu-actions-0/.review_metadata/two_copy_h100_transport/test_two_copy_h100_transport.py"
+  ],
+  "returncode": 0,
+  "seconds": 1.7092388439923525,
+  "test_sha256": "33db96bb0d0a4f8ed2272360330804fe3f6e4be2033a965c3f9d05586e72a279",
+  "actual_GPU_or_remote_actions": 0,
+  "actual_packet_or_logs_created": false,
+  "upstream_publication_and_reviews_in_metadata_fixture": "explicitly synthetic; no target qualification or admission"
+}

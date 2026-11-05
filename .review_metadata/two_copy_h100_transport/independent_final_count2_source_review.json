@@ -1,0 +1,82 @@
+{
+  "actual_cpu_job_id": "6825983",
+  "actual_cpu_step_id": "156",
+  "actual_prepared_transport_review_still_required": true,
+  "admission_granted": false,
+  "approved": true,
+  "check_count": 35,
+  "checks": [
+    "exact current owned CPU allocation and numeric step",
+    "exact current owned CPU cgroup",
+    "the held final three-file source freeze is exact",
+    "held file bytes and mode: .review_metadata/profile_target_operational_preparation/prepare_direct_two_copy_transport_configuration.py",
+    "held file bytes and mode: .review_metadata/profile_target_operational_preparation/start_direct_two_copy_profile_qualification_once.py",
+    "held file bytes and mode: .review_metadata/two_copy_h100_transport/test_two_copy_h100_transport.py",
+    "actual held one-copy source reference: start_direct_profile_qualification_once.py",
+    "actual held one-copy source reference: prepare_direct_transport_configuration.py",
+    "one explicit original-reference-one-copy guard",
+    "all source bytes beyond explicit count/seed/reference/filename changes remain exact: start_direct_profile_qualification_once.py",
+    "one explicit original-reference-one-copy guard",
+    "all source bytes beyond explicit count/seed/reference/filename changes remain exact: prepare_direct_transport_configuration.py",
+    "one exact changed count/reference predicate",
+    "one exact changed count/reference predicate",
+    "strict actual transport count/seed predicate: (2, [1, 2])",
+    "strict actual transport count/seed predicate: (1, [1])",
+    "strict actual transport count/seed predicate: (2.0, [1, 2])",
+    "strict actual transport count/seed predicate: (True, [1, 2])",
+    "strict actual transport count/seed predicate: (2, [True, 2])",
+    "strict actual transport count/seed predicate: (2, [1.0, 2])",
+    "strict actual transport count/seed predicate: (2, [1, 1])",
+    "strict actual transport count/seed predicate: (2, [2, 1])",
+    "strict actual transport count/seed predicate: (2, [1, 2, 3])",
+    "strict actual original-reference predicate: (1, [1])",
+    "strict actual original-reference predicate: (True, [1])",
+    "strict actual original-reference predicate: (1.0, [1])",
+    "strict actual original-reference predicate: (2, [1])",
+    "strict actual original-reference predicate: (1, [True])",
+    "strict actual original-reference predicate: (1, [1.0])",
+    "strict actual original-reference predicate: (1, [2])",
+    "four independently executed focused metadata methods pass",
+    "held file bytes and mode: .review_metadata/profile_target_operational_preparation/prepare_direct_two_copy_transport_configuration.py",
+    "held file bytes and mode: .review_metadata/profile_target_operational_preparation/start_direct_two_copy_profile_qualification_once.py",
+    "held file bytes and mode: .review_metadata/two_copy_h100_transport/test_two_copy_h100_transport.py",
+    "whole independent metadata review below five minutes"
+  ],
+  "focused_methods": 4,
+  "hostname": "slurm5",
+  "independent_of_new_count_specific_changes_author": true,
+  "independent_of_producer": true,
+  "kind": "independent_two_copy_profile_qualification_transport_source_review",
+  "new_independent_algorithm_approval_claimed": false,
+  "no_actual_packet_log_or_target_created": true,
+  "one_copy_source_references": {
+    "prepare_direct_transport_configuration.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-14-38_profile-qualification-request_runtime-source-4bb3a61cb92f_h100-helpers-45_a4500-helpers-36_training-copies-1-2_gpu-actions-0/.review_metadata/profile_target_operational_preparation/prepare_direct_transport_configuration.py",
+      "sha256": "32136e5da65bafba536f170b5530e3033dbd5ce28aecf9a6c084347b5677e435",
+      "size_bytes": 6712
+    },
+    "start_direct_profile_qualification_once.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-14-38_profile-qualification-request_runtime-source-4bb3a61cb92f_h100-helpers-45_a4500-helpers-36_training-copies-1-2_gpu-actions-0/.review_metadata/profile_target_operational_preparation/start_direct_profile_qualification_once.py",
+      "sha256": "111e023d76dfbcfc4e8fada6001d03ea58a4abf510a4ff8b04aa1b82558e8497",
+      "size_bytes": 22957
+    }
+  },
+  "passed": true,
+  "prior_independent_algorithm_review": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-02-24_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/independent_corrected_root_transport_retention_review.json",
+    "sha256": "e0c1b534f43cff08dfa70c8c4c70bb1fb646720577d033c92fceda65f6684d38"
+  },
+  "review_scope": "New count, seed, original-reference and entry filename changes only; unchanged custody and process algorithms reuse their prior independent approval.",
+  "reviewer_previously_authored_custody_algorithm_and_one_copy_runtime_pin": true,
+  "runtime_commit": "4bb3a61cb92fe48ab5ba68fb52f70b47736a1174",
+  "scheduler_native_or_GPU_actions": 0,
+  "scientific_credit": 0,
+  "seconds": 1.0197921840008348,
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-13-54_h100-two-copy-qualification-transport_seeds-1-2_reference-copies-1_runtime-2aa6df92_helpers-45_gpu-actions-0/.review_metadata/two_copy_h100_transport/final_runtime_source_freeze.json",
+    "sha256": "764aeaae6018103a9f8264f192ff7a815f41695066133b3b055d8df3afd3595e"
+  },
+  "synthetic_metadata_premises": "Complete publication/review/Git fixtures are explicitly synthetic; no actual prepared packet is consumed.",
+  "target_qualification": false,
+  "typed_predicate_cases": 16
+}

@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "kind": "separate_two_copy_h100_metadata_transport_source_freeze",
+  "base_commit": "cfd5fb82e06cc57c08c56b05d4105390570066f7",
+  "runtime_commit": "2aa6df92f7d9da20e2fbc1d15a20df16ba10ba1e",
+  "actual_reviewed_one_copy_author_commit": "ee4168eecb3d5d9aa6af4ebcdb4dde9c4750b536",
+  "files": {
+    ".review_metadata/profile_target_operational_preparation/start_direct_two_copy_profile_qualification_once.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-13-54_h100-two-copy-qualification-transport_seeds-1-2_reference-copies-1_runtime-2aa6df92_helpers-45_gpu-actions-0/.review_metadata/profile_target_operational_preparation/start_direct_two_copy_profile_qualification_once.py",
+      "sha256": "d58ea96e003574874f573ac0b4fcaeb7a8651473f534332ad3d7fd4a2bd1902c",
+      "size_bytes": 23438
+    },
+    ".review_metadata/profile_target_operational_preparation/prepare_direct_two_copy_transport_configuration.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-13-54_h100-two-copy-qualification-transport_seeds-1-2_reference-copies-1_runtime-2aa6df92_helpers-45_gpu-actions-0/.review_metadata/profile_target_operational_preparation/prepare_direct_two_copy_transport_configuration.py",
+      "sha256": "aa73fa2e3f867cd0e282112a46c73a2a3faa381efae22b002e62197bb35fbb51",
+      "size_bytes": 7240
+    },
+    ".review_metadata/two_copy_h100_transport/test_two_copy_h100_transport.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-13-54_h100-two-copy-qualification-transport_seeds-1-2_reference-copies-1_runtime-2aa6df92_helpers-45_gpu-actions-0/.review_metadata/two_copy_h100_transport/test_two_copy_h100_transport.py",
+      "sha256": "33db96bb0d0a4f8ed2272360330804fe3f6e4be2033a965c3f9d05586e72a279",
+      "size_bytes": 11880
+    }
+  },
+  "H100_helpers": 45,
+  "selected_copies": 2,
+  "copy_seeds": [
+    1,
+    2
+  ],
+  "original_reference_copies": 1,
+  "existing_one_copy_or_runtime_files_modified": false,
+  "actual_packet_log_remote_GPU_actions": 0,
+  "process_custody_cleanup_functions_unchanged": true,
+  "actual_target_qualification_established": false
+}
