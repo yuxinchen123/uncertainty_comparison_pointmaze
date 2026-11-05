@@ -1,0 +1,17 @@
+{
+  "kind": "preserved_independent_release_reviewer_failure",
+  "passed": false,
+  "error": "KeyError: started_at_utc",
+  "cause": "The reviewer requested a start timestamp from the return record. The actual start timestamp belongs to the separate intent record.",
+  "failed_source_sha256": "94c2675bb1e0c71b6ffb8bcdf7b5685b980b0cec078aeacd28b1112937b8c68e",
+  "actual_cpu_job_id": "6825983",
+  "actual_cpu_step_id": null,
+  "step_identity_note": "The failed tool output did not print a numeric step; no step is inferred.",
+  "tool_exit_code": 1,
+  "release_review_written": false,
+  "actual_job_id": "6826559",
+  "scheduler_queries_or_actions": 0,
+  "permission_changes": 0,
+  "target_operations": 0,
+  "admission_granted": false
+}
