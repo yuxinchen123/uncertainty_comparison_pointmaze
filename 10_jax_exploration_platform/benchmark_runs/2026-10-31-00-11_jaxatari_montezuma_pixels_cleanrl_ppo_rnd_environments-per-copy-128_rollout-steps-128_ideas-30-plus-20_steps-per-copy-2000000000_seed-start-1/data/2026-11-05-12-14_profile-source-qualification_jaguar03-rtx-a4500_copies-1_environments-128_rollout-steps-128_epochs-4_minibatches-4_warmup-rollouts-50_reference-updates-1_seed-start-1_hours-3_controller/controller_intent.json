@@ -1,0 +1,60 @@
+{
+  "admission_granted": false,
+  "case_credit": 0,
+  "child_plan": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-12-14_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3/measurement_plan.json",
+    "sha256": "38457f411f89e9348a47812d900b4578e4e2a82a5717615db6eae38f3564e743"
+  },
+  "command": [
+    "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-12-14_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3/code/profile_selected.py",
+    "--prepared-unit",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-12-14_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3"
+  ],
+  "controller": {
+    "affinity": [
+      0,
+      1,
+      2,
+      3,
+      112,
+      113,
+      114,
+      115
+    ],
+    "command": [
+      "/usr/bin/python3",
+      "-I",
+      "-S",
+      "-B",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-12-14_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_controller/code/profile_target_qualification.py",
+      "--prepared-unit",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-12-14_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_controller"
+    ],
+    "command_bytes_hex": "2f7573722f62696e2f707974686f6e33002d49002d53002d42002f702f726c70726f6a656374732f524e445f776f726b74726565732f6d657267652d61746172692d636c65616e726c2f31305f6a61785f6578706c6f726174696f6e5f706c6174666f726d2f62656e63686d61726b5f72756e732f323032362d31302d33312d30302d31315f6a617861746172695f6d6f6e74657a756d615f706978656c735f636c65616e726c5f70706f5f726e645f656e7669726f6e6d656e74732d7065722d636f70792d3132385f726f6c6c6f75742d73746570732d3132385f69646561732d33302d706c75732d32305f73746570732d7065722d636f70792d323030303030303030305f736565642d73746172742d312f646174612f323032362d31312d30352d31322d31345f70726f66696c652d736f757263652d7175616c696669636174696f6e5f6a616775617230332d7274782d61343530305f636f706965732d315f656e7669726f6e6d656e74732d3132385f726f6c6c6f75742d73746570732d3132385f65706f6368732d345f6d696e69626174636865732d345f7761726d75702d726f6c6c6f7574732d35305f7265666572656e63652d757064617465732d315f736565642d73746172742d315f686f7572732d335f636f6e74726f6c6c65722f636f64652f70726f66696c655f7461726765745f7175616c696669636174696f6e2e7079002d2d70726570617265642d756e6974002f702f726c70726f6a656374732f524e445f776f726b74726565732f6d657267652d61746172692d636c65616e726c2f31305f6a61785f6578706c6f726174696f6e5f706c6174666f726d2f62656e63686d61726b5f72756e732f323032362d31302d33312d30302d31315f6a617861746172695f6d6f6e74657a756d615f706978656c735f636c65616e726c5f70706f5f726e645f656e7669726f6e6d656e74732d7065722d636f70792d3132385f726f6c6c6f75742d73746570732d3132385f69646561732d33302d706c75732d32305f73746570732d7065722d636f70792d323030303030303030305f736565642d73746172742d312f646174612f323032362d31312d30352d31322d31345f70726f66696c652d736f757263652d7175616c696669636174696f6e5f6a616775617230332d7274782d61343530305f636f706965732d315f656e7669726f6e6d656e74732d3132385f726f6c6c6f75742d73746570732d3132385f65706f6368732d345f6d696e69626174636865732d345f7761726d75702d726f6c6c6f7574732d35305f7265666572656e63652d757064617465732d315f736565642d73746172742d315f686f7572732d335f636f6e74726f6c6c657200",
+    "command_sha256": "9219de01723318794086000482fcd879d641c436fdd35e581a6f6ea4dd5c1adc",
+    "hostname": "jaguar03",
+    "observed_at_utc": "2026-11-05T20:50:20.187339+00:00",
+    "parent_pid": 2501804,
+    "pid": 2501811,
+    "process_start_time": "87209598",
+    "stat": "2501811 (python3) R 2501804 2501811 2501803 0 -1 4194560 4264 0 0 0 6 1 0 0 20 0 1 0 87209598 33730560 5896 68719476736 94124199194624 94124202030925 140735220538384 0 0 0 0 16781312 2 0 0 0 17 2 0 0 0 0 0 94124204402704 94124204686840 94125199310848 140735220544248 140735220545243 140735220545243 140735220551655 0\n",
+    "stat_sha256": "091d8ba45cfe9029e27ef7d5d9e0aa9439d8a8f6fbdbdcfa332136d9c0739ffc",
+    "uid": 2618919,
+    "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+    "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+  },
+  "final_training_credit": 0,
+  "idea_credit": 0,
+  "measurement_valid": false,
+  "packing_point_credit": 0,
+  "plan": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-12-14_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_controller/measurement_plan.json",
+    "sha256": "1ad6a4fbfc44adb6ae8f2b5408cbcbf3e12733e8623c5d3341a18e5a30e675b4"
+  },
+  "profile_credit": 0,
+  "scientific_credit": 0,
+  "standing_gpu_descriptor_held": false,
+  "throughput_credit": 0,
+  "worker_admitted": false
+}

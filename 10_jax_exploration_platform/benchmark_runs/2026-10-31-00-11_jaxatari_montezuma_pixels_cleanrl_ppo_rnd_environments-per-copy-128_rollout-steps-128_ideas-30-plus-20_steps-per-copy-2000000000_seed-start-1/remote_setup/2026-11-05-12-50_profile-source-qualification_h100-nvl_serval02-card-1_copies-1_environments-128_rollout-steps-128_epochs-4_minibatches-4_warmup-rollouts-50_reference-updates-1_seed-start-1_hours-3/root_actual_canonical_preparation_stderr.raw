@@ -1,0 +1,15 @@
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-05-11-56_profile-qualification-helper_source-d1469fd063a4_h100-helpers-44_a4500-helpers-35_gpu-count-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_qualification.py", line 839, in <module>
+    main()
+  File "/p/rlprojects/RND_worktrees/2026-11-05-11-56_profile-qualification-helper_source-d1469fd063a4_h100-helpers-44_a4500-helpers-35_gpu-count-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_qualification.py", line 834, in main
+    result = prepare(args.request) if args.request is not None else controller(args.prepared_unit)
+  File "/p/rlprojects/RND_worktrees/2026-11-05-11-56_profile-qualification-helper_source-d1469fd063a4_h100-helpers-44_a4500-helpers-35_gpu-count-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_qualification.py", line 651, in prepare
+    result = profile.prepare(args)
+  File "/p/rlprojects/RND_worktrees/2026-11-05-11-56_profile-qualification-helper_source-d1469fd063a4_h100-helpers-44_a4500-helpers-35_gpu-count-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py", line 546, in prepare
+    reader.configure(plan, baseline, args.direct_confirmation_review,
+  File "/p/rlprojects/RND_worktrees/2026-11-05-11-56_profile-qualification-helper_source-d1469fd063a4_h100-helpers-44_a4500-helpers-35_gpu-count-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_prerequisites.py", line 365, in configure
+    validate_metadata(plan)
+  File "/p/rlprojects/RND_worktrees/2026-11-05-11-56_profile-qualification-helper_source-d1469fd063a4_h100-helpers-44_a4500-helpers-35_gpu-count-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_prerequisites.py", line 317, in validate_metadata
+    require(baseline["correctness_record"] == inputs["correctness"]["path"]
+KeyError: 'correctness_record'
+srun: error: slurm5: task 0: Exited with exit code 1

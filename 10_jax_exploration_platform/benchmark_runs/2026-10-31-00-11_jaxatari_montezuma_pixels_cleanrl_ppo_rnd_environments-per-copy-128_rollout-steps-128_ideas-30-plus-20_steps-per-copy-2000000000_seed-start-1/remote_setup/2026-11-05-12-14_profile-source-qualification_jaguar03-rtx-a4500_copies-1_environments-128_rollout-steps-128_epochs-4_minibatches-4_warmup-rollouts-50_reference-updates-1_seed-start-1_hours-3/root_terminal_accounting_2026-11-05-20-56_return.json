@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "sacct",
+    "-j",
+    "6826361",
+    "--parsable2",
+    "--noheader",
+    "--format=JobIDRaw,State,ExitCode,Start,End,Elapsed,NodeList,AllocTRES"
+  ],
+  "returncode": 0,
+  "TZ": "UTC",
+  "at_utc": "2026-11-05T20:54:26.073963+00:00"
+}
