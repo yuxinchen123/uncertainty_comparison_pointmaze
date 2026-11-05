@@ -1,0 +1,19 @@
+{
+  "kind": "informational_running_benchmark_progress_observation",
+  "read_at_utc": "2026-11-05T18:38:34.799737+00:00",
+  "source_path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-08-40_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/progress.json",
+  "source_sha256_at_read": "a68f1a2481406c4369be00cdfbaccfcbc67545b43bd5ee7c594448dd77e3eee2",
+  "progress": {
+    "time": "2026-11-05T18:33:44.244228+00:00",
+    "state": "running",
+    "round": 4,
+    "total_rounds": 7,
+    "variant": "candidate",
+    "seconds": 438.54628671193495,
+    "iterations": 10,
+    "copies": 2
+  },
+  "result_exists_at_read": false,
+  "result_accepted": false,
+  "source_path_is_mutable_progress": true
+}

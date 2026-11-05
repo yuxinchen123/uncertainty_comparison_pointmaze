@@ -713,3 +713,6 @@ The fresh persistent full tick returns zero, while its serialized latest status 
 
 
 2026-11-05T18:34:41.639239+00:00 — Prepare the actual two-copy H100 terminal observer and raw-first/saved-reader checks while its unchanged benchmark runs. Independent source-only reviews pass 83 and 61 checks on the new CPU allocation, including a safe consumer default. The observer changes only the actual registered controller and child process identities; two-copy throughput arithmetic divides aggregate rate by two. No terminal observer, result reader, acceptance or GPU action has run. The later observation requires the real result and normal zero waits; the unchanged staged consumer requires prior genuine raw approval.
+
+
+2026-11-05T18:38:34.825430+00:00 — Hourly full check on current monitor 6825983 passed in 3.434 seconds after the three reviewed exact owned ACES refreshes. The two-copy H100 benchmark is still running and has reached round four of seven; no complete result or timing acceptance exists yet. Published terminal observer/raw-first/staged-consumer preparations e82f5021 remain unexecuted pending actual completion and normal waits.
