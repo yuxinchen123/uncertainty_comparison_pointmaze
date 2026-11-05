@@ -1,0 +1,15 @@
+{
+  "kind": "superseded_independent_source_review",
+  "at_utc": "2026-11-05T21:05:41.600893+00:00",
+  "superseded_review": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-12-54_profile-qualification-metadata-permission_files-2_protected-mode-0640_restored-mode-0660_gpu-actions-0/.review_metadata/profile_qualification_metadata_permission/root_independent_source_review.json",
+    "sha256": "ee931022f8e6545d500405ba59c489e60253ac161ab9b251e0abc53f2b206afc"
+  },
+  "source_freeze": "e45aad24cae6749729cd0e597b9e972f86f497b62432a1eaeb4d71265a351818",
+  "operational_use_permitted": false,
+  "finding": "journal packet need not equal declared controller child packet; abort marker could be written to wrong packet",
+  "correction": "support exactly one actual controller bound to its canonical child packet; wrong packet/multiple controllers refuse before chmod",
+  "actual_campaign_permission_actions": 0,
+  "actual_new_job_submissions": 0,
+  "preserve_prior_review_bytes": true
+}

@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-05-12-54_profile-qualification-metadata-permission_files-2_protected-mode-0640_restored-mode-0660_gpu-actions-0/.review_metadata/profile_qualification_metadata_permission/metadata_permission_once.py", line 274, in <module>
+    if __name__=='__main__':main()
+  File "/p/rlprojects/RND_worktrees/2026-11-05-12-54_profile-qualification-metadata-permission_files-2_protected-mode-0640_restored-mode-0660_gpu-actions-0/.review_metadata/profile_qualification_metadata_permission/metadata_permission_once.py", line 265, in main
+    require(all(row['mode']==0o640 for row in files),'preflight refuses launch: protect both exact owned metadata files to0640 before submission/release')
+  File "/p/rlprojects/RND_worktrees/2026-11-05-12-54_profile-qualification-metadata-permission_files-2_protected-mode-0640_restored-mode-0660_gpu-actions-0/.review_metadata/profile_qualification_metadata_permission/metadata_permission_once.py", line 23, in require
+    if not value:raise ValueError(message)
+ValueError: preflight refuses launch: protect both exact owned metadata files to0640 before submission/release
