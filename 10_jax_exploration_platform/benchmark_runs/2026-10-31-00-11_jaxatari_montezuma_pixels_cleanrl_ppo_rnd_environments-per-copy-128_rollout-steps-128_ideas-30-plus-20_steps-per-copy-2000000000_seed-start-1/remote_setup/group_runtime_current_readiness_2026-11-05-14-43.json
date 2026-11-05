@@ -1,0 +1,92 @@
+{
+  "created_at_utc": "2026-11-05T14:38:44.281106+00:00",
+  "kind": "group_runtime_current_source_readiness_correction",
+  "prior_task_record": {
+    "actual_corrected_backend_package_independently_approved": true,
+    "actual_job_submitted": false,
+    "default_operational_launch_disabled": true,
+    "runtime_gaps": [
+      "zero GPU coordinator plus actual allocated TRES",
+      "one GPU worker identities and distinct physical bindings",
+      "schema two package and group evidence joins",
+      "actual post-compilation warmup training origin counters",
+      "common wall-time reports and strict result reader"
+    ],
+    "scientific_credit": 0,
+    "state": "author_implementing_missing_runtime",
+    "worktree": "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10"
+  },
+  "source_publication": "14be1d3fa22bca00cfc3bf37f53485b75596c9cd",
+  "independent_review": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-01-22-50_a4500-group-scaling_coordinator-gpus-0_worker-gpus-1_group-gpus-1-8_environments-128_rollout-steps-128_warmup-rollouts-50_rounds-7_updates-per-round-10/.review_metadata/group_runtime_corrected_independent_review_2026-11-05/independent_corrected_group_runtime_review.json",
+    "sha256": "2961ab3033456d58a0d51973acfec40ac218bb08443cc02745f21e389d059750"
+  },
+  "incoming_review": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/group_runtime_incoming_root_2026-11-05-06-35.json",
+    "sha256": "9fe47ed0cbd38969be68c0eb4cd73aec462bb837ff17491ef20e7954ee067355"
+  },
+  "source_files": [
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/group_runtime.py",
+      "sha256": "05e600aebd81870e418315191f9699b5bd79234c7102a30da2ff27dde69b58a3",
+      "bytes": 44459,
+      "matches_published_group_source": true
+    },
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/group_runtime_launch.py",
+      "sha256": "d0114bc48976fb02bc6ea94cdc3b5e2b2b9f28c31a240f673dd494b76478d038",
+      "bytes": 20679,
+      "matches_published_group_source": true
+    },
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/group_runtime_evidence.py",
+      "sha256": "e1606aa324a5b70334ed872ee81bc7575402912c73eee8662a90394e7119289a",
+      "bytes": 22216,
+      "matches_published_group_source": true
+    },
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/group_backend_package.py",
+      "sha256": "3a312803d173d767317e99efb53e56a6ba011374d8bde250db814ae1d9ddd76a",
+      "bytes": 29916,
+      "matches_published_group_source": true
+    },
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/group_original_qualification.py",
+      "sha256": "057d1dd0e7b65cf011f0983da1e2f21a39266d10c0da556245ea214d385a2584",
+      "bytes": 9109,
+      "matches_published_group_source": true
+    },
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/uva_group_binding.py",
+      "sha256": "28bb96d80509bf45e6f04a8a118610f2b7511b28cb25817c23c23148659b5494",
+      "bytes": 37127,
+      "matches_published_group_source": true
+    },
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_gpu_scaling.py",
+      "sha256": "d8333da955f810a1b683aaac93e00645818469e33dd01b63b6808541b2f81792",
+      "bytes": 19241,
+      "matches_published_group_source": true
+    },
+    {
+      "path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_scaling_evidence.py",
+      "sha256": "7524a3a928dcf1201eed4540c5be7b7ced7064a7df8b7e0a2e793bb0fb3e0d6e",
+      "bytes": 14653,
+      "matches_published_group_source": true
+    }
+  ],
+  "inspection_only": true,
+  "new_tests_or_gpu_operations": 0,
+  "controller_and_coordinator_python": "/usr/bin/python3",
+  "worker_python": "exact plan-selected scientific Python",
+  "current_source_implemented": true,
+  "operational_admission_granted": false,
+  "actual_group_units": 0,
+  "scientific_credit": 0,
+  "remaining_required_work": [
+    "Select the actual future optimized configuration and copies per card after common performance, profiles and packing.",
+    "Obtain actual count-specific per-card qualification and correctness with independent raw review.",
+    "Publish an independent exact-plan operational launch review.",
+    "Measure one-card and eight-card common-wall-time comparisons, with stable global seeds and distinct verified physical devices."
+  ]
+}
