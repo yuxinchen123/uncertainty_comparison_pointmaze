@@ -338,6 +338,8 @@ def check_serial_predecessor_inputs(request, input_reference):
     inputs = document(input_reference["path"])
     names = {"schema_version", "kind", "predecessor_unit", "plan", "result", "terminal", "wait",
         "outcome", "metadata", "controller_spawn", "exit_observation"}
+    if request["serial_order"] == 2:
+        names.add("timing_review")
     require(set(inputs) == names and type(inputs["schema_version"]) is int and inputs["schema_version"] == 1
         and inputs["kind"] == "actual_owned_direct_serial_predecessor_exit_inputs"
         and inputs["predecessor_unit"] == request["serial_predecessor_unit"],
@@ -351,9 +353,24 @@ def check_serial_predecessor_inputs(request, input_reference):
         "metadata": previous / "direct_process_metadata.json", "controller_spawn": previous_packet / "root_actual_controller_spawn.json"}
     for name, path in expected_paths.items():
         require(inputs[name] == receipt(path), "an actual prior process record changed: " + name)
-    for name in ("result", "exit_observation"):
-        require(receipt(inputs[name]["path"]) == inputs[name], "an actual prior result or exit observation changed")
-    prior_plan, prior_result = document(inputs["plan"]["path"]), document(inputs["result"]["path"])
+    timing_result_raw = None
+    if request["serial_order"] == 2:
+        require(inputs["result"]["path"] == str(previous / "result.json")
+            and type(inputs["timing_review"]) is dict and set(inputs["timing_review"]) == {"path", "sha256"}
+            and inputs["timing_review"]["path"] == str(previous_packet / "independent_actual_common_timing_review.json")
+            and receipt(inputs["timing_review"]["path"]) == inputs["timing_review"],
+            "the timing predecessor requires its genuine exact independent accepted review")
+        timing_result_raw = ordinary_bytes(previous / "result.json", bound=64 * 1024 * 1024)
+        require(inputs["result"] == {"path": str(previous / "result.json"), "sha256": digest(timing_result_raw)},
+            "the actual timing predecessor result changed")
+        require(receipt(inputs["exit_observation"]["path"]) == inputs["exit_observation"],
+            "an actual prior exit observation changed")
+    else:
+        for name in ("result", "exit_observation"):
+            require(receipt(inputs[name]["path"]) == inputs[name], "an actual prior result or exit observation changed")
+    prior_plan = document(inputs["plan"]["path"])
+    prior_result = json.loads(timing_result_raw) if timing_result_raw is not None else document(inputs["result"]["path"])
+    del timing_result_raw
     metadata = document(inputs["metadata"]["path"])["after"]["identity"]
     terminal, wait = document(inputs["terminal"]["path"]), document(inputs["wait"]["path"])
     outcome, spawn = document(inputs["outcome"]["path"]), document(inputs["controller_spawn"]["path"])
@@ -434,11 +451,85 @@ def check_serial_predecessor_inputs(request, input_reference):
             and prior_plan['configuration']['learner']['n_copies'] == 1
             and len(prior_plan['helpers']['files']) == 29
             and inputs['result']['path'] == str(previous / 'result.json')
-            and prior_result.get('completed') is True
+            and type(prior_result.get('schema_version')) is int and prior_result['schema_version'] == 1
+            and prior_result.get('measurement_mode') == 'confirmation'
+            and prior_result.get('measurement_valid') is True and prior_result.get('decision') == 'accepted'
+            and prior_result.get('correctness_attempted') is True and prior_result.get('correctness_passed') is True
+            and prior_result.get('implementation_distinct') is True and prior_result.get('contaminated') is False
+            and prior_result.get('completed', True) is True
+            and prior_result.get('source_commit') == SOURCE_COMMIT
+            and type(prior_result.get('copies')) is int and prior_result['copies'] == 1
+            and type(prior_result.get('copy_seeds')) is list and prior_result['copy_seeds'] == [1]
+            and all(type(seed) is int for seed in prior_result['copy_seeds'])
+            and prior_result.get('helpers') == prior_plan['helpers']
+            and prior_result.get('runtime_environment') == prior_plan['runtime_environment']
+            and prior_result.get('reference') == prior_plan['reference_configuration']
+            and prior_result.get('candidate') == prior_plan['configuration']
+            and prior_result.get('hardware_class') == 'h100' and prior_result.get('hostname') == HOST
+            and type(prior_result.get('paired_rounds')) is int and prior_result['paired_rounds'] == 7
+            and type(prior_result.get('protocol')) is dict
+            and set(prior_result['protocol']) == {'rounds', 'requested_minimum_updates_per_round', 'actual_updates_per_round'}
+            and all(type(prior_result['protocol'][key]) is int and prior_result['protocol'][key] == value
+                for key, value in (('rounds', 7), ('requested_minimum_updates_per_round', 10), ('actual_updates_per_round', 10)))
             and prior_plan['helpers'] == document(UNIT / 'measurement_plan.json')['helpers']
             and prior_plan['accepted_evidence_snapshot_inputs'] == request['accepted_evidence_snapshot_inputs']
             and prior_plan['direct_qualification_inputs'] == request['direct_qualification_inputs'],
             'second-copy timing must follow actual first-copy timing with the same reviewed source and snapshot')
+        review = document(inputs['timing_review']['path'])
+        require(review.get('kind') == 'independent_actual_direct_common_configuration_confirmation_review'
+            and review.get('approved') is True and review.get('passed') is True and review.get('independent_of_producer') is True
+            and review.get('unresolved_anomalies') == [] and review.get('decision') == 'accepted'
+            and review.get('raw_window_recomputation_passed') is True
+            and review.get('result') == inputs['result'] and review.get('plan') == inputs['plan']
+            and review.get('terminal_process') == inputs['terminal']
+            and review.get('source_commit') == SOURCE_COMMIT and review.get('helper_commit') == request['helper_source_commit']
+            and review.get('configuration') == prior_plan['configuration']
+            and review.get('reference_configuration') == prior_plan['reference_configuration']
+            and type(review.get('copies')) is int and review['copies'] == 1
+            and type(review.get('copy_seeds')) is list and review['copy_seeds'] == [1]
+            and all(type(seed) is int for seed in review['copy_seeds']) and review.get('gpu_uuid') == GPU_UUID
+            and type(review.get('paired_rounds')) is int and review['paired_rounds'] == 7
+            and type(review.get('updates_per_arm_per_round')) is int and review['updates_per_arm_per_round'] == 10
+            and type(review.get('normal_actual_child_returncode')) is int and review['normal_actual_child_returncode'] == 0
+            and review.get('actual_controller_and_numerical_child_exits_verified') is True
+            and review.get('admission_granted') is False and review.get('worker_admitted') is False,
+            'the timing predecessor lacks its exact independently accepted source/configuration/seed/terminal review')
+        for name in ('exit_observation', 'unchanged_staged_consumer'):
+            value = review.get(name)
+            require(type(value) is dict and set(value) == {'path', 'sha256'} and receipt(value['path']) == value,
+                'an actual accepted timing review evidence reference changed')
+        accepted_exit = document(review['exit_observation']['path'])
+        require(accepted_exit.get('kind') == 'actual_current_h100_controller_and_child_exit_observation'
+            and accepted_exit.get('host') == HOST and type(accepted_exit.get('uid')) is int and accepted_exit['uid'] == UID
+            and accepted_exit.get('all_original_processes_ended') is True
+            and type(accepted_exit.get('signals_sent')) is int and accepted_exit['signals_sent'] == 0
+            and type(accepted_exit.get('gpu_or_standing_lock_operations')) is int and accepted_exit['gpu_or_standing_lock_operations'] == 0
+            and accepted_exit.get('global_process_enumeration') is False
+            and type(accepted_exit.get('observations')) is list and len(accepted_exit['observations']) == 2,
+            'the independently accepted timing exit evidence lost its actual two-process read-only scope')
+        accepted_identities = set()
+        for row in accepted_exit['observations']:
+            require(type(row.get('pid')) is int and row['pid'] > 0
+                and type(row.get('expected_birth_counter')) is str
+                and row.get('proc_entry_absent') is True and row.get('original_process_ended') is True,
+                'the accepted timing exit evidence did not observe an exact original process absent')
+            accepted_identities.add((row['pid'], row['expected_birth_counter']))
+        require(accepted_identities == set(expected.values())
+            and datetime.fromisoformat(accepted_exit['observed_at_utc']) >= datetime.fromisoformat(wait['finished_at_utc'])
+            and type(review.get('reviewed_at_seconds')) in (int, float)
+            and float('-inf') < review['reviewed_at_seconds'] < float('inf')
+            and review['reviewed_at_seconds'] >= datetime.fromisoformat(accepted_exit['observed_at_utc']).timestamp(),
+            'the accepted timing review or old exit evidence does not follow this exact successful wait')
+        consumer = document(review['unchanged_staged_consumer']['path'])
+        require(consumer.get('kind') == 'exact_staged_direct_common_timing_saved_consumer_result'
+            and consumer.get('passed') is True and consumer.get('result') == inputs['result'] and consumer.get('plan') == inputs['plan']
+            and consumer.get('entry_point') == 'verify_saved_measurement'
+            and consumer.get('source_helper_commit') == request['helper_source_commit']
+            and type(consumer.get('source_helper_count')) is int and consumer['source_helper_count'] == 29
+            and consumer.get('numerical_imports') == []
+            and type(consumer.get('gpu_device_or_library_operations_requested_by_audit')) is int
+            and consumer['gpu_device_or_library_operations_requested_by_audit'] == 0,
+            'the genuine unchanged staged timing consumer did not accept this exact predecessor')
         timing_support(prior_plan, previous, 'direct_common_confirmation').validate_pair_protocol(prior_plan, prior_result)
         reference = json.loads(json.dumps(request['reference_configuration']))
         candidate = json.loads(json.dumps(request['configuration']))

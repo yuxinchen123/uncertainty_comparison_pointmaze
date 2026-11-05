@@ -1,0 +1,38 @@
+test_actual_accepted_exit_evidence_is_separate_from_new_observation (test_timing_predecessor_actual_schema.ActualTimingPredecessorSchemaTests) ... ok
+test_foreign_source_helper_seed_and_configuration_are_refused (test_timing_predecessor_actual_schema.ActualTimingPredecessorSchemaTests) ... ok
+test_genuine_actual_schema_without_completed_is_accepted (test_timing_predecessor_actual_schema.ActualTimingPredecessorSchemaTests) ... ok
+test_genuine_review_and_unchanged_consumer_joins_are_required (test_timing_predecessor_actual_schema.ActualTimingPredecessorSchemaTests) ... ok
+test_other_functions_and_original_correctness_branch_are_preserved (test_timing_predecessor_actual_schema.ActualTimingPredecessorSchemaTests) ... ok
+test_partial_incomplete_or_unaccepted_result_is_refused (test_timing_predecessor_actual_schema.ActualTimingPredecessorSchemaTests) ... ok
+test_seven_alternating_full_ten_update_rounds_are_required (test_timing_predecessor_actual_schema.ActualTimingPredecessorSchemaTests) ... ok
+test_absent_roles_keep_real_current_observer_identity_and_utc (test_observe_exact_prior_h100_exits.PriorExitObserverTests)
+Synthetic absence rows retain the literal expected identities and actual CPU observer fields. ... ok
+test_actual_own_cpu_proc_namespace_is_readable (test_observe_exact_prior_h100_exits.PriorExitObserverTests)
+Validate only this real CPU observer process, without reading either target PID. ... ok
+test_birth_change_during_read_remains_unknown (test_observe_exact_prior_h100_exits.PriorExitObserverTests)
+A changing positive identity is refused instead of reclassified as a completed original process. ... ok
+test_foreign_directory_owner_refuses_before_any_status_read (test_observe_exact_prior_h100_exits.PriorExitObserverTests)
+A present PID under another owner is left unverified without reading its process files. ... ok
+test_missing_or_duplicate_user_identifier_fields_remain_unknown (test_observe_exact_prior_h100_exits.PriorExitObserverTests)
+Incomplete or duplicated owner fields cannot prove absence or reuse. ... ok
+test_present_same_birth_is_not_an_exit (test_observe_exact_prior_h100_exits.PriorExitObserverTests)
+A still-present exact own identity cannot become an absence row. ... ok
+test_reused_own_birth_is_reported_without_claiming_absence (test_observe_exact_prior_h100_exits.PriorExitObserverTests)
+An owned reused PID proves a different birth while remaining unacceptable to the absent-only reader. ... ok
+test_source_contains_no_process_actions_or_global_enumeration (test_observe_exact_prior_h100_exits.PriorExitObserverTests)
+The standalone observer has no signal, tool, GPU, lock or process-enumeration API call. ... ok
+test_unavailable_proc_root_is_unknown (test_observe_exact_prior_h100_exits.PriorExitObserverTests)
+A missing namespace cannot be mistaken for two absent prior processes. ... ok
+test_unknown_role_and_runtime_arguments_refuse (test_observe_exact_prior_h100_exits.PriorExitObserverTests)
+Only the literal two roles and argument-free runtime operation are supported. ... ok
+test_wrong_host_refuses_before_prior_identity_reads (test_observe_exact_prior_h100_exits.PriorExitObserverTests)
+A local CPU invocation cannot emit a target-host exit proof. ... ok
+test_no_global_size_limit_change_and_exact_changed_function (__main__.AdditionalControls) ... ok
+test_observer_only_absent_rows_satisfy_old_controller_schema (__main__.AdditionalControls) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 12.720s
+
+OK
+
+{"approved": true, "review": "/p/rlprojects/RND_worktrees/2026-11-05-07-20_h100-timing-predecessor_actual-confirmation-schema_two-copy-request_read-only-exits_gpu-actions-0/.review_metadata/timing_predecessor_schema/independent_request_controller_observer_review.json", "sha256": "df55b20ea77ab5a4c775c2b32f286f3953655c2f06b3cf7f6489e5a93a3ce141", "checks": 115, "methods": 20, "seconds": 12.868414042983204, "job_id": "6821437", "step_id": "138"}
