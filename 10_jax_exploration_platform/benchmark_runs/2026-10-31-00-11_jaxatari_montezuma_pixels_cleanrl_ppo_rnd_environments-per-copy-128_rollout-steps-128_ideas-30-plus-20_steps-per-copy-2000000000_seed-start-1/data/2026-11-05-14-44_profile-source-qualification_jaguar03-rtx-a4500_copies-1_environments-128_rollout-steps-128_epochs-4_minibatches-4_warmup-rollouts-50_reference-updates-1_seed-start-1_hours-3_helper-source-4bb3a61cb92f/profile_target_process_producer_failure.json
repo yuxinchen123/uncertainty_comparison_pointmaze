@@ -1,0 +1,1594 @@
+{
+  "admission_granted": false,
+  "completed": false,
+  "diagnostic_deadline": {
+    "cleanup_end_monotonic": 880881.859903177,
+    "cleanup_started_monotonic": 880281.859903177,
+    "clock_domain": {
+      "boot_id": "f235449c-a49a-4813-9eb1-67a7f839cb27",
+      "clock": "monotonic",
+      "hostname": "jaguar03",
+      "implementation": "clock_gettime(CLOCK_MONOTONIC)"
+    },
+    "observed_monotonic": 880282.127619567,
+    "origin": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-44_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-4bb3a61cb92f/profile_target_process_time_origin.json",
+      "sha256": "b432536d4036ee08910b7e43321ce6decc9f254e9b557211bd393b18c36913a9"
+    },
+    "started_monotonic": 880261.827487561,
+    "total_end_monotonic": 891061.827487561,
+    "work_end_monotonic": 890461.827487561
+  },
+  "error": "[Errno 2] No such file or directory: '2511842'",
+  "error_type": "FileNotFoundError",
+  "kind": "actual_profile_target_process_role_failure",
+  "provider": {
+    "bootstrap": {
+      "gpu_or_cuda_qualification": false,
+      "pid": 2511708,
+      "symbols": {
+        "close": {
+          "actual_mapping": "147673aaf000-147673c44000 r-xp 00028000 fd:02 22807009                   /usr/lib/x86_64-linux-gnu/libc.so.6",
+          "actual_pointer": 22498980249424,
+          "image": {
+            "device": 64770,
+            "inode": 22807009,
+            "mode": 493,
+            "path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+            "sha256": "6813de4f45796f58134ca3f06b3179344ddfea192cad73ea0af35375b1b66e76",
+            "size_bytes": 2220400,
+            "uid": 0
+          },
+          "symbol_file_offset": 1134416
+        },
+        "syscall": {
+          "actual_mapping": "147673aaf000-147673c44000 r-xp 00028000 fd:02 22807009                   /usr/lib/x86_64-linux-gnu/libc.so.6",
+          "actual_pointer": 22498980288624,
+          "image": {
+            "device": 64770,
+            "inode": 22807009,
+            "mode": 493,
+            "path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+            "sha256": "6813de4f45796f58134ca3f06b3179344ddfea192cad73ea0af35375b1b66e76",
+            "size_bytes": 2220400,
+            "uid": 0
+          },
+          "symbol_file_offset": 1173616
+        }
+      },
+      "sys_executable": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+      "sys_version": "3.12.13 | packaged by conda-forge | (main, Aug 11 2026, 10:27:28) [GCC 14.4.0]"
+    },
+    "calls": [
+      {
+        "arguments": {
+          "flags": 0,
+          "pid": 2511708,
+          "syscall": 434
+        },
+        "call_budget": "ordinary",
+        "errno": 0,
+        "finished_at_seconds": 1793919986.0484478,
+        "name": "pidfd_open",
+        "phase": "self_preflight",
+        "producer_pid": 2511708,
+        "result": 62,
+        "sequence": 0,
+        "started_at_seconds": 1793919986.0484364
+      },
+      {
+        "arguments": {
+          "fd": 62,
+          "flags": 0,
+          "siginfo": null,
+          "signal": 0,
+          "syscall": 424
+        },
+        "call_budget": "ordinary",
+        "errno": 0,
+        "finished_at_seconds": 1793919986.048917,
+        "name": "pidfd_send_signal",
+        "phase": "self_preflight",
+        "producer_pid": 2511708,
+        "result": 0,
+        "sequence": 1,
+        "started_at_seconds": 1793919986.0489082
+      },
+      {
+        "arguments": {
+          "fd": 62
+        },
+        "call_budget": "reserved_descriptor_cleanup",
+        "errno": 0,
+        "finished_at_seconds": 1793919986.0490117,
+        "name": "close",
+        "phase": "self_preflight",
+        "producer_pid": 2511708,
+        "result": 0,
+        "sequence": 2,
+        "started_at_seconds": 1793919986.049007
+      },
+      {
+        "arguments": {
+          "flags": 0,
+          "pid": 2511708,
+          "syscall": 434
+        },
+        "call_budget": "ordinary",
+        "errno": 0,
+        "finished_at_seconds": 1793920004.0697544,
+        "name": "pidfd_open",
+        "phase": "owned_process",
+        "producer_pid": 2511708,
+        "result": 180,
+        "sequence": 3,
+        "started_at_seconds": 1793920004.0697286
+      },
+      {
+        "arguments": {
+          "flags": 0,
+          "pid": 2511761,
+          "syscall": 434
+        },
+        "call_budget": "ordinary",
+        "errno": 0,
+        "finished_at_seconds": 1793920004.1751363,
+        "name": "pidfd_open",
+        "phase": "owned_process",
+        "producer_pid": 2511708,
+        "result": 182,
+        "sequence": 4,
+        "started_at_seconds": 1793920004.1751215
+      },
+      {
+        "arguments": {
+          "flags": 0,
+          "pid": 2511765,
+          "syscall": 434
+        },
+        "call_budget": "ordinary",
+        "errno": 0,
+        "finished_at_seconds": 1793920004.3307643,
+        "name": "pidfd_open",
+        "phase": "owned_process",
+        "producer_pid": 2511708,
+        "result": 183,
+        "sequence": 5,
+        "started_at_seconds": 1793920004.3307524
+      },
+      {
+        "arguments": {
+          "flags": 0,
+          "pid": 2511775,
+          "syscall": 434
+        },
+        "call_budget": "ordinary",
+        "errno": 0,
+        "finished_at_seconds": 1793920004.6486158,
+        "name": "pidfd_open",
+        "phase": "owned_process",
+        "producer_pid": 2511708,
+        "result": 184,
+        "sequence": 6,
+        "started_at_seconds": 1793920004.6486
+      },
+      {
+        "arguments": {
+          "flags": 0,
+          "pid": 2511786,
+          "syscall": 434
+        },
+        "call_budget": "ordinary",
+        "errno": 0,
+        "finished_at_seconds": 1793920004.7579021,
+        "name": "pidfd_open",
+        "phase": "owned_process",
+        "producer_pid": 2511708,
+        "result": 185,
+        "sequence": 7,
+        "started_at_seconds": 1793920004.7578835
+      },
+      {
+        "arguments": {
+          "flags": 0,
+          "pid": 2511788,
+          "syscall": 434
+        },
+        "call_budget": "ordinary",
+        "errno": 0,
+        "finished_at_seconds": 1793920004.8134823,
+        "name": "pidfd_open",
+        "phase": "owned_process",
+        "producer_pid": 2511708,
+        "result": 186,
+        "sequence": 8,
+        "started_at_seconds": 1793920004.8134732
+      },
+      {
+        "arguments": {
+          "flags": 0,
+          "pid": 2511789,
+          "syscall": 434
+        },
+        "call_budget": "ordinary",
+        "errno": 0,
+        "finished_at_seconds": 1793920004.8160045,
+        "name": "pidfd_open",
+        "phase": "owned_process",
+        "producer_pid": 2511708,
+        "result": 187,
+        "sequence": 9,
+        "started_at_seconds": 1793920004.8159924
+      },
+      {
+        "arguments": {
+          "flags": 0,
+          "pid": 2511790,
+          "syscall": 434
+        },
+        "call_budget": "ordinary",
+        "errno": 0,
+        "finished_at_seconds": 1793920004.8164454,
+        "name": "pidfd_open",
+        "phase": "owned_process",
+        "producer_pid": 2511708,
+        "result": 188,
+        "sequence": 10,
+        "started_at_seconds": 1793920004.8164341
+      },
+      {
+        "arguments": {
+          "flags": 0,
+          "pid": 2511795,
+          "syscall": 434
+        },
+        "call_budget": "ordinary",
+        "errno": 0,
+        "finished_at_seconds": 1793920005.1018722,
+        "name": "pidfd_open",
+        "phase": "owned_process",
+        "producer_pid": 2511708,
+        "result": 189,
+        "sequence": 11,
+        "started_at_seconds": 1793920005.1018515
+      },
+      {
+        "arguments": {
+          "flags": 0,
+          "pid": 2511799,
+          "syscall": 434
+        },
+        "call_budget": "ordinary",
+        "errno": 0,
+        "finished_at_seconds": 1793920005.1621382,
+        "name": "pidfd_open",
+        "phase": "owned_process",
+        "producer_pid": 2511708,
+        "result": 190,
+        "sequence": 12,
+        "started_at_seconds": 1793920005.162127
+      },
+      {
+        "arguments": {
+          "flags": 0,
+          "pid": 2511803,
+          "syscall": 434
+        },
+        "call_budget": "ordinary",
+        "errno": 0,
+        "finished_at_seconds": 1793920005.222318,
+        "name": "pidfd_open",
+        "phase": "owned_process",
+        "producer_pid": 2511708,
+        "result": 191,
+        "sequence": 13,
+        "started_at_seconds": 1793920005.2223067
+      },
+      {
+        "arguments": {
+          "flags": 0,
+          "pid": 2511807,
+          "syscall": 434
+        },
+        "call_budget": "ordinary",
+        "errno": 0,
+        "finished_at_seconds": 1793920005.281487,
+        "name": "pidfd_open",
+        "phase": "owned_process",
+        "producer_pid": 2511708,
+        "result": 192,
+        "sequence": 14,
+        "started_at_seconds": 1793920005.2814765
+      },
+      {
+        "arguments": {
+          "flags": 0,
+          "pid": 2511815,
+          "syscall": 434
+        },
+        "call_budget": "ordinary",
+        "errno": 0,
+        "finished_at_seconds": 1793920005.736074,
+        "name": "pidfd_open",
+        "phase": "owned_process",
+        "producer_pid": 2511708,
+        "result": 193,
+        "sequence": 15,
+        "started_at_seconds": 1793920005.7360604
+      },
+      {
+        "arguments": {
+          "flags": 0,
+          "pid": 2511819,
+          "syscall": 434
+        },
+        "call_budget": "ordinary",
+        "errno": 0,
+        "finished_at_seconds": 1793920005.7955303,
+        "name": "pidfd_open",
+        "phase": "owned_process",
+        "producer_pid": 2511708,
+        "result": 194,
+        "sequence": 16,
+        "started_at_seconds": 1793920005.795516
+      },
+      {
+        "arguments": {
+          "flags": 0,
+          "pid": 2511830,
+          "syscall": 434
+        },
+        "call_budget": "ordinary",
+        "errno": 0,
+        "finished_at_seconds": 1793920005.854257,
+        "name": "pidfd_open",
+        "phase": "owned_process",
+        "producer_pid": 2511708,
+        "result": 195,
+        "sequence": 17,
+        "started_at_seconds": 1793920005.8542476
+      },
+      {
+        "arguments": {
+          "fd": 195
+        },
+        "call_budget": "reserved_descriptor_cleanup",
+        "errno": 0,
+        "finished_at_seconds": 1793920005.8545144,
+        "name": "close",
+        "phase": "owned_process",
+        "producer_pid": 2511708,
+        "result": 0,
+        "sequence": 18,
+        "started_at_seconds": 1793920005.8545063
+      },
+      {
+        "arguments": {
+          "flags": 0,
+          "pid": 2511841,
+          "syscall": 434
+        },
+        "call_budget": "ordinary",
+        "errno": 0,
+        "finished_at_seconds": 1793920005.9115472,
+        "name": "pidfd_open",
+        "phase": "owned_process",
+        "producer_pid": 2511708,
+        "result": 195,
+        "sequence": 19,
+        "started_at_seconds": 1793920005.9115336
+      },
+      {
+        "arguments": {
+          "flags": 0,
+          "pid": 2511845,
+          "syscall": 434
+        },
+        "call_budget": "ordinary",
+        "errno": 0,
+        "finished_at_seconds": 1793920005.92887,
+        "name": "pidfd_open",
+        "phase": "owned_process",
+        "producer_pid": 2511708,
+        "result": 181,
+        "sequence": 20,
+        "started_at_seconds": 1793920005.9288628
+      },
+      {
+        "arguments": {
+          "fd": 181,
+          "flags": 0,
+          "siginfo": null,
+          "signal": 15,
+          "syscall": 424
+        },
+        "call_budget": "reserved_descriptor_cleanup",
+        "errno": 0,
+        "finished_at_seconds": 1793920005.9306555,
+        "name": "pidfd_send_signal",
+        "phase": "owned_process",
+        "producer_pid": 2511708,
+        "result": 0,
+        "sequence": 21,
+        "started_at_seconds": 1793920005.9306414
+      },
+      {
+        "arguments": {
+          "fd": 188,
+          "flags": 0,
+          "siginfo": null,
+          "signal": 15,
+          "syscall": 424
+        },
+        "call_budget": "reserved_descriptor_cleanup",
+        "errno": 0,
+        "finished_at_seconds": 1793920005.9314947,
+        "name": "pidfd_send_signal",
+        "phase": "owned_process",
+        "producer_pid": 2511708,
+        "result": 0,
+        "sequence": 22,
+        "started_at_seconds": 1793920005.931488
+      },
+      {
+        "arguments": {
+          "fd": 187,
+          "flags": 0,
+          "siginfo": null,
+          "signal": 15,
+          "syscall": 424
+        },
+        "call_budget": "reserved_descriptor_cleanup",
+        "errno": 0,
+        "finished_at_seconds": 1793920005.9318268,
+        "name": "pidfd_send_signal",
+        "phase": "owned_process",
+        "producer_pid": 2511708,
+        "result": 0,
+        "sequence": 23,
+        "started_at_seconds": 1793920005.9318156
+      },
+      {
+        "arguments": {
+          "fd": 186,
+          "flags": 0,
+          "siginfo": null,
+          "signal": 15,
+          "syscall": 424
+        },
+        "call_budget": "reserved_descriptor_cleanup",
+        "errno": 0,
+        "finished_at_seconds": 1793920005.9321384,
+        "name": "pidfd_send_signal",
+        "phase": "owned_process",
+        "producer_pid": 2511708,
+        "result": 0,
+        "sequence": 24,
+        "started_at_seconds": 1793920005.932132
+      },
+      {
+        "arguments": {
+          "fd": 184,
+          "flags": 0,
+          "siginfo": null,
+          "signal": 15,
+          "syscall": 424
+        },
+        "call_budget": "reserved_descriptor_cleanup",
+        "errno": 0,
+        "finished_at_seconds": 1793920005.9325256,
+        "name": "pidfd_send_signal",
+        "phase": "owned_process",
+        "producer_pid": 2511708,
+        "result": 0,
+        "sequence": 25,
+        "started_at_seconds": 1793920005.932516
+      },
+      {
+        "arguments": {
+          "fd": 183,
+          "flags": 0,
+          "siginfo": null,
+          "signal": 15,
+          "syscall": 424
+        },
+        "call_budget": "reserved_descriptor_cleanup",
+        "errno": 0,
+        "finished_at_seconds": 1793920005.9329653,
+        "name": "pidfd_send_signal",
+        "phase": "owned_process",
+        "producer_pid": 2511708,
+        "result": 0,
+        "sequence": 26,
+        "started_at_seconds": 1793920005.932951
+      },
+      {
+        "arguments": {
+          "fd": 182
+        },
+        "call_budget": "reserved_descriptor_cleanup",
+        "errno": 0,
+        "finished_at_seconds": 1793920006.1779346,
+        "name": "close",
+        "phase": "owned_process",
+        "producer_pid": 2511708,
+        "result": 0,
+        "sequence": 27,
+        "started_at_seconds": 1793920006.1779273
+      },
+      {
+        "arguments": {
+          "fd": 183
+        },
+        "call_budget": "reserved_descriptor_cleanup",
+        "errno": 0,
+        "finished_at_seconds": 1793920006.1780324,
+        "name": "close",
+        "phase": "owned_process",
+        "producer_pid": 2511708,
+        "result": 0,
+        "sequence": 28,
+        "started_at_seconds": 1793920006.178027
+      },
+      {
+        "arguments": {
+          "fd": 184
+        },
+        "call_budget": "reserved_descriptor_cleanup",
+        "errno": 0,
+        "finished_at_seconds": 1793920006.1781209,
+        "name": "close",
+        "phase": "owned_process",
+        "producer_pid": 2511708,
+        "result": 0,
+        "sequence": 29,
+        "started_at_seconds": 1793920006.1781163
+      },
+      {
+        "arguments": {
+          "fd": 185
+        },
+        "call_budget": "reserved_descriptor_cleanup",
+        "errno": 0,
+        "finished_at_seconds": 1793920006.178208,
+        "name": "close",
+        "phase": "owned_process",
+        "producer_pid": 2511708,
+        "result": 0,
+        "sequence": 30,
+        "started_at_seconds": 1793920006.1782029
+      },
+      {
+        "arguments": {
+          "fd": 186
+        },
+        "call_budget": "reserved_descriptor_cleanup",
+        "errno": 0,
+        "finished_at_seconds": 1793920006.1782944,
+        "name": "close",
+        "phase": "owned_process",
+        "producer_pid": 2511708,
+        "result": 0,
+        "sequence": 31,
+        "started_at_seconds": 1793920006.1782897
+      },
+      {
+        "arguments": {
+          "fd": 187
+        },
+        "call_budget": "reserved_descriptor_cleanup",
+        "errno": 0,
+        "finished_at_seconds": 1793920006.1783805,
+        "name": "close",
+        "phase": "owned_process",
+        "producer_pid": 2511708,
+        "result": 0,
+        "sequence": 32,
+        "started_at_seconds": 1793920006.1783757
+      },
+      {
+        "arguments": {
+          "fd": 188
+        },
+        "call_budget": "reserved_descriptor_cleanup",
+        "errno": 0,
+        "finished_at_seconds": 1793920006.1784644,
+        "name": "close",
+        "phase": "owned_process",
+        "producer_pid": 2511708,
+        "result": 0,
+        "sequence": 33,
+        "started_at_seconds": 1793920006.17846
+      },
+      {
+        "arguments": {
+          "fd": 189
+        },
+        "call_budget": "reserved_descriptor_cleanup",
+        "errno": 0,
+        "finished_at_seconds": 1793920006.1785483,
+        "name": "close",
+        "phase": "owned_process",
+        "producer_pid": 2511708,
+        "result": 0,
+        "sequence": 34,
+        "started_at_seconds": 1793920006.1785438
+      },
+      {
+        "arguments": {
+          "fd": 190
+        },
+        "call_budget": "reserved_descriptor_cleanup",
+        "errno": 0,
+        "finished_at_seconds": 1793920006.1786327,
+        "name": "close",
+        "phase": "owned_process",
+        "producer_pid": 2511708,
+        "result": 0,
+        "sequence": 35,
+        "started_at_seconds": 1793920006.1786282
+      },
+      {
+        "arguments": {
+          "fd": 191
+        },
+        "call_budget": "reserved_descriptor_cleanup",
+        "errno": 0,
+        "finished_at_seconds": 1793920006.1787143,
+        "name": "close",
+        "phase": "owned_process",
+        "producer_pid": 2511708,
+        "result": 0,
+        "sequence": 36,
+        "started_at_seconds": 1793920006.1787097
+      },
+      {
+        "arguments": {
+          "fd": 192
+        },
+        "call_budget": "reserved_descriptor_cleanup",
+        "errno": 0,
+        "finished_at_seconds": 1793920006.1787956,
+        "name": "close",
+        "phase": "owned_process",
+        "producer_pid": 2511708,
+        "result": 0,
+        "sequence": 37,
+        "started_at_seconds": 1793920006.1787908
+      },
+      {
+        "arguments": {
+          "fd": 193
+        },
+        "call_budget": "reserved_descriptor_cleanup",
+        "errno": 0,
+        "finished_at_seconds": 1793920006.1788766,
+        "name": "close",
+        "phase": "owned_process",
+        "producer_pid": 2511708,
+        "result": 0,
+        "sequence": 38,
+        "started_at_seconds": 1793920006.178872
+      },
+      {
+        "arguments": {
+          "fd": 194
+        },
+        "call_budget": "reserved_descriptor_cleanup",
+        "errno": 0,
+        "finished_at_seconds": 1793920006.1789582,
+        "name": "close",
+        "phase": "owned_process",
+        "producer_pid": 2511708,
+        "result": 0,
+        "sequence": 39,
+        "started_at_seconds": 1793920006.1789534
+      },
+      {
+        "arguments": {
+          "fd": 195
+        },
+        "call_budget": "reserved_descriptor_cleanup",
+        "errno": 0,
+        "finished_at_seconds": 1793920006.1790397,
+        "name": "close",
+        "phase": "owned_process",
+        "producer_pid": 2511708,
+        "result": 0,
+        "sequence": 40,
+        "started_at_seconds": 1793920006.179035
+      },
+      {
+        "arguments": {
+          "fd": 181
+        },
+        "call_budget": "reserved_descriptor_cleanup",
+        "errno": 0,
+        "finished_at_seconds": 1793920006.179122,
+        "name": "close",
+        "phase": "owned_process",
+        "producer_pid": 2511708,
+        "result": 0,
+        "sequence": 41,
+        "started_at_seconds": 1793920006.1791172
+      },
+      {
+        "arguments": {
+          "fd": 180
+        },
+        "call_budget": "reserved_descriptor_cleanup",
+        "errno": 0,
+        "finished_at_seconds": 1793920006.1792076,
+        "name": "close",
+        "phase": "owned_process",
+        "producer_pid": 2511708,
+        "result": 0,
+        "sequence": 42,
+        "started_at_seconds": 1793920006.1792023
+      }
+    ],
+    "contract": {
+      "abi": {
+        "byteorder": "little",
+        "int_bytes": 4,
+        "long_bytes": 8,
+        "machine": "x86_64",
+        "platform": "linux",
+        "pointer_bytes": 8
+      },
+      "headers": {
+        "/usr/include/unistd.h": {
+          "device": 64770,
+          "inode": 22849273,
+          "mode": 420,
+          "path": "/usr/include/unistd.h",
+          "sha256": "99eb4050035a1a816090762770f0843c728666745d7e727e64dc347d8a99ac28",
+          "size_bytes": 44967,
+          "uid": 0
+        },
+        "/usr/include/x86_64-linux-gnu/asm/unistd_64.h": {
+          "device": 64770,
+          "inode": 23364666,
+          "mode": 420,
+          "path": "/usr/include/x86_64-linux-gnu/asm/unistd_64.h",
+          "sha256": "9f1c975001d7cd39af3a2c14d518d80b0aaaab8bec3ad12b5e56419bdc8cafbe",
+          "size_bytes": 9687,
+          "uid": 0
+        }
+      },
+      "kind": "linux-x86-64-libc-syscall-pidfd-version-1",
+      "selected_python": {
+        "actual_running_image_path": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python3.12",
+        "device": 55,
+        "inode": 4269399,
+        "mode": 493,
+        "path": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python3.12",
+        "sha256": "c889543c0e008c1362b69c711330cac598833a790dc0c48c5ee4a8567d3f3b51",
+        "size_bytes": 31301856,
+        "uid": 2618919
+      },
+      "symbols": {
+        "close": {
+          "image": {
+            "device": 64770,
+            "inode": 22807009,
+            "mode": 493,
+            "path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+            "sha256": "6813de4f45796f58134ca3f06b3179344ddfea192cad73ea0af35375b1b66e76",
+            "size_bytes": 2220400,
+            "uid": 0
+          },
+          "symbol_file_offset": 1134416
+        },
+        "syscall": {
+          "image": {
+            "device": 64770,
+            "inode": 22807009,
+            "mode": 493,
+            "path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+            "sha256": "6813de4f45796f58134ca3f06b3179344ddfea192cad73ea0af35375b1b66e76",
+            "size_bytes": 2220400,
+            "uid": 0
+          },
+          "symbol_file_offset": 1173616
+        }
+      },
+      "syscall_numbers": {
+        "pidfd_open": 434,
+        "pidfd_send_signal": 424
+      }
+    },
+    "descriptor_events": [
+      {
+        "call_sequence": 0,
+        "descriptor": 62,
+        "event_sequence": 0,
+        "identity": {
+          "device": 14,
+          "fdinfo_sha256": "39425461a0838c1f80ce976417b4384fc706124098c98e465d806aad50ea8239",
+          "flags": 524290,
+          "inheritable": false,
+          "inode": 15506,
+          "pid": 2511708,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t15506\nPid:\t2511708\nNSpid:\t2511708\n"
+        },
+        "observed_at_seconds": 1793919986.0487998,
+        "open_generation": 0,
+        "opened_pid": 2511708,
+        "operation": "pidfd_open"
+      },
+      {
+        "call_sequence": 1,
+        "descriptor": 62,
+        "event_sequence": 1,
+        "identity": {
+          "device": 14,
+          "fdinfo_sha256": "39425461a0838c1f80ce976417b4384fc706124098c98e465d806aad50ea8239",
+          "flags": 524290,
+          "inheritable": false,
+          "inode": 15506,
+          "pid": 2511708,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t15506\nPid:\t2511708\nNSpid:\t2511708\n"
+        },
+        "observed_at_seconds": 1793919986.0489063,
+        "open_generation": 0,
+        "opened_pid": 2511708,
+        "operation": "pidfd_send_signal"
+      },
+      {
+        "call_sequence": 2,
+        "descriptor": 62,
+        "event_sequence": 2,
+        "identity": {
+          "device": 14,
+          "fdinfo_sha256": "39425461a0838c1f80ce976417b4384fc706124098c98e465d806aad50ea8239",
+          "flags": 524290,
+          "inheritable": false,
+          "inode": 15506,
+          "pid": 2511708,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t15506\nPid:\t2511708\nNSpid:\t2511708\n"
+        },
+        "observed_at_seconds": 1793919986.0490055,
+        "open_generation": 0,
+        "opened_pid": 2511708,
+        "operation": "close"
+      },
+      {
+        "call_sequence": 3,
+        "descriptor": 180,
+        "event_sequence": 3,
+        "identity": {
+          "device": 14,
+          "fdinfo_sha256": "39425461a0838c1f80ce976417b4384fc706124098c98e465d806aad50ea8239",
+          "flags": 524290,
+          "inheritable": false,
+          "inode": 15506,
+          "pid": 2511708,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t15506\nPid:\t2511708\nNSpid:\t2511708\n"
+        },
+        "observed_at_seconds": 1793920004.0700252,
+        "open_generation": 3,
+        "opened_pid": 2511708,
+        "operation": "pidfd_open"
+      },
+      {
+        "call_sequence": 4,
+        "descriptor": 182,
+        "event_sequence": 4,
+        "identity": {
+          "device": 14,
+          "fdinfo_sha256": "fd1af87d5947b18c37fd37100a460c616bf651dbe068cd6c925b3636294e1ebe",
+          "flags": 524290,
+          "inheritable": false,
+          "inode": 15506,
+          "pid": 2511761,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t15506\nPid:\t2511761\nNSpid:\t2511761\n"
+        },
+        "observed_at_seconds": 1793920004.17531,
+        "open_generation": 4,
+        "opened_pid": 2511761,
+        "operation": "pidfd_open"
+      },
+      {
+        "call_sequence": 5,
+        "descriptor": 183,
+        "event_sequence": 5,
+        "identity": {
+          "device": 14,
+          "fdinfo_sha256": "ce58a009c5b41987b849becc2f306365ae6a1650019b84a73aebcc9e06cd60ef",
+          "flags": 524290,
+          "inheritable": false,
+          "inode": 15506,
+          "pid": 2511765,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t15506\nPid:\t2511765\nNSpid:\t2511765\n"
+        },
+        "observed_at_seconds": 1793920004.3308995,
+        "open_generation": 5,
+        "opened_pid": 2511765,
+        "operation": "pidfd_open"
+      },
+      {
+        "call_sequence": 6,
+        "descriptor": 184,
+        "event_sequence": 6,
+        "identity": {
+          "device": 14,
+          "fdinfo_sha256": "9a8b8bf9b5eaa80300fe0573f1166f51eb1939e2b5e38d624295d540f8f094ef",
+          "flags": 524290,
+          "inheritable": false,
+          "inode": 15506,
+          "pid": 2511775,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t15506\nPid:\t2511775\nNSpid:\t2511775\n"
+        },
+        "observed_at_seconds": 1793920004.6487577,
+        "open_generation": 6,
+        "opened_pid": 2511775,
+        "operation": "pidfd_open"
+      },
+      {
+        "call_sequence": 7,
+        "descriptor": 185,
+        "event_sequence": 7,
+        "identity": {
+          "device": 14,
+          "fdinfo_sha256": "7278496fc042f648831b2be71d2a1682173a98fe94050abbf3faf0d36ae5626c",
+          "flags": 524290,
+          "inheritable": false,
+          "inode": 15506,
+          "pid": 2511786,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t15506\nPid:\t2511786\nNSpid:\t2511786\n"
+        },
+        "observed_at_seconds": 1793920004.758044,
+        "open_generation": 7,
+        "opened_pid": 2511786,
+        "operation": "pidfd_open"
+      },
+      {
+        "call_sequence": 8,
+        "descriptor": 186,
+        "event_sequence": 8,
+        "identity": {
+          "device": 14,
+          "fdinfo_sha256": "8d6bd5db60dd089014b94fd28b1da858f9b60226a65b16a51b222cac25207af1",
+          "flags": 524290,
+          "inheritable": false,
+          "inode": 15506,
+          "pid": 2511788,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t15506\nPid:\t2511788\nNSpid:\t2511788\n"
+        },
+        "observed_at_seconds": 1793920004.8135884,
+        "open_generation": 8,
+        "opened_pid": 2511788,
+        "operation": "pidfd_open"
+      },
+      {
+        "call_sequence": 9,
+        "descriptor": 187,
+        "event_sequence": 9,
+        "identity": {
+          "device": 14,
+          "fdinfo_sha256": "d67cdc4f22ce1da0f919b11fb4f5e3ea398423e327f888cc4ae44800c18daf0a",
+          "flags": 524290,
+          "inheritable": false,
+          "inode": 15506,
+          "pid": 2511789,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t15506\nPid:\t2511789\nNSpid:\t2511789\n"
+        },
+        "observed_at_seconds": 1793920004.81615,
+        "open_generation": 9,
+        "opened_pid": 2511789,
+        "operation": "pidfd_open"
+      },
+      {
+        "call_sequence": 10,
+        "descriptor": 188,
+        "event_sequence": 10,
+        "identity": {
+          "device": 14,
+          "fdinfo_sha256": "860a25d4284cf5137bee838694ac726c8b75533de55b7200c24103d28d27a511",
+          "flags": 524290,
+          "inheritable": false,
+          "inode": 15506,
+          "pid": 2511790,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t15506\nPid:\t2511790\nNSpid:\t2511790\n"
+        },
+        "observed_at_seconds": 1793920004.8166099,
+        "open_generation": 10,
+        "opened_pid": 2511790,
+        "operation": "pidfd_open"
+      },
+      {
+        "call_sequence": 11,
+        "descriptor": 189,
+        "event_sequence": 11,
+        "identity": {
+          "device": 14,
+          "fdinfo_sha256": "d36aaf6cbcc5eec93939c7a376c66084b572a888dd94db0b7bcff2f9e0cdfc0e",
+          "flags": 524290,
+          "inheritable": false,
+          "inode": 15506,
+          "pid": 2511795,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t15506\nPid:\t2511795\nNSpid:\t2511795\n"
+        },
+        "observed_at_seconds": 1793920005.1020236,
+        "open_generation": 11,
+        "opened_pid": 2511795,
+        "operation": "pidfd_open"
+      },
+      {
+        "call_sequence": 12,
+        "descriptor": 190,
+        "event_sequence": 12,
+        "identity": {
+          "device": 14,
+          "fdinfo_sha256": "0cda157d5fa2815cf96188a9c43db02bbbfc48e9041ac009af2e27122c8a9b04",
+          "flags": 524290,
+          "inheritable": false,
+          "inode": 15506,
+          "pid": 2511799,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t15506\nPid:\t2511799\nNSpid:\t2511799\n"
+        },
+        "observed_at_seconds": 1793920005.16224,
+        "open_generation": 12,
+        "opened_pid": 2511799,
+        "operation": "pidfd_open"
+      },
+      {
+        "call_sequence": 13,
+        "descriptor": 191,
+        "event_sequence": 13,
+        "identity": {
+          "device": 14,
+          "fdinfo_sha256": "a9a78b4a9c4193b7c225d00f2800ece6158a2149afbca4a48e6dd7bc57ee05ee",
+          "flags": 524290,
+          "inheritable": false,
+          "inode": 15506,
+          "pid": 2511803,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t15506\nPid:\t2511803\nNSpid:\t2511803\n"
+        },
+        "observed_at_seconds": 1793920005.2224195,
+        "open_generation": 13,
+        "opened_pid": 2511803,
+        "operation": "pidfd_open"
+      },
+      {
+        "call_sequence": 14,
+        "descriptor": 192,
+        "event_sequence": 14,
+        "identity": {
+          "device": 14,
+          "fdinfo_sha256": "b5c01cfd5285be817a6c48c23cef4c229da19311701886cf524ed5a4a3a0056b",
+          "flags": 524290,
+          "inheritable": false,
+          "inode": 15506,
+          "pid": 2511807,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t15506\nPid:\t2511807\nNSpid:\t2511807\n"
+        },
+        "observed_at_seconds": 1793920005.2815886,
+        "open_generation": 14,
+        "opened_pid": 2511807,
+        "operation": "pidfd_open"
+      },
+      {
+        "call_sequence": 15,
+        "descriptor": 193,
+        "event_sequence": 15,
+        "identity": {
+          "device": 14,
+          "fdinfo_sha256": "a1b28c1fffcc8adfa982cfa94f19d80b08e2ab0171893a0d34697801776cc89b",
+          "flags": 524290,
+          "inheritable": false,
+          "inode": 15506,
+          "pid": 2511815,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t15506\nPid:\t2511815\nNSpid:\t2511815\n"
+        },
+        "observed_at_seconds": 1793920005.736178,
+        "open_generation": 15,
+        "opened_pid": 2511815,
+        "operation": "pidfd_open"
+      },
+      {
+        "call_sequence": 16,
+        "descriptor": 194,
+        "event_sequence": 16,
+        "identity": {
+          "device": 14,
+          "fdinfo_sha256": "db8f0ab711501558b861f948d672cb05ae01ccb32b7fe459c7fd4d62f25ae763",
+          "flags": 524290,
+          "inheritable": false,
+          "inode": 15506,
+          "pid": 2511819,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t15506\nPid:\t2511819\nNSpid:\t2511819\n"
+        },
+        "observed_at_seconds": 1793920005.7956781,
+        "open_generation": 16,
+        "opened_pid": 2511819,
+        "operation": "pidfd_open"
+      },
+      {
+        "call_sequence": 17,
+        "descriptor": 195,
+        "event_sequence": 17,
+        "identity": {
+          "device": 14,
+          "fdinfo_sha256": "73cc32614ea731ebade46837337f6d3a3f8a6b17bd8cec94a58657230f11a27c",
+          "flags": 524290,
+          "inheritable": false,
+          "inode": 15506,
+          "pid": 2511830,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t15506\nPid:\t2511830\nNSpid:\t2511830\n"
+        },
+        "observed_at_seconds": 1793920005.8543584,
+        "open_generation": 17,
+        "opened_pid": 2511830,
+        "operation": "pidfd_open"
+      },
+      {
+        "call_sequence": 18,
+        "descriptor": 195,
+        "event_sequence": 18,
+        "identity": {
+          "device": 14,
+          "fdinfo_sha256": "628c91a3955ad329711986a4f4a9fcf6891b2b7d934afe8049603d9ef343bd2d",
+          "flags": 524290,
+          "inheritable": false,
+          "inode": 15506,
+          "pid": -1,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t15506\nPid:\t-1\nNSpid:\t-1\n"
+        },
+        "observed_at_seconds": 1793920005.8545022,
+        "open_generation": 17,
+        "opened_pid": 2511830,
+        "operation": "close"
+      },
+      {
+        "call_sequence": 19,
+        "descriptor": 195,
+        "event_sequence": 19,
+        "identity": {
+          "device": 14,
+          "fdinfo_sha256": "4231822c8e60567121e090ea67001e8330f7d5856248f6e18aef82596f785499",
+          "flags": 524290,
+          "inheritable": false,
+          "inode": 15506,
+          "pid": 2511841,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t15506\nPid:\t2511841\nNSpid:\t2511841\n"
+        },
+        "observed_at_seconds": 1793920005.9116824,
+        "open_generation": 19,
+        "opened_pid": 2511841,
+        "operation": "pidfd_open"
+      },
+      {
+        "call_sequence": 20,
+        "descriptor": 181,
+        "event_sequence": 20,
+        "identity": {
+          "device": 14,
+          "fdinfo_sha256": "48236187f670a8a96b28f81d4307a675a1276b8114715f735482451a0a35f7e6",
+          "flags": 524290,
+          "inheritable": false,
+          "inode": 15506,
+          "pid": 2511845,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t15506\nPid:\t2511845\nNSpid:\t2511845\n"
+        },
+        "observed_at_seconds": 1793920005.9289544,
+        "open_generation": 20,
+        "opened_pid": 2511845,
+        "operation": "pidfd_open"
+      },
+      {
+        "call_sequence": 21,
+        "descriptor": 181,
+        "event_sequence": 21,
+        "identity": {
+          "device": 14,
+          "fdinfo_sha256": "48236187f670a8a96b28f81d4307a675a1276b8114715f735482451a0a35f7e6",
+          "flags": 524290,
+          "inheritable": false,
+          "inode": 15506,
+          "pid": 2511845,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t15506\nPid:\t2511845\nNSpid:\t2511845\n"
+        },
+        "observed_at_seconds": 1793920005.9306378,
+        "open_generation": 20,
+        "opened_pid": 2511845,
+        "operation": "pidfd_send_signal"
+      },
+      {
+        "call_sequence": 22,
+        "descriptor": 188,
+        "event_sequence": 22,
+        "identity": {
+          "device": 14,
+          "fdinfo_sha256": "860a25d4284cf5137bee838694ac726c8b75533de55b7200c24103d28d27a511",
+          "flags": 524290,
+          "inheritable": false,
+          "inode": 15506,
+          "pid": 2511790,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t15506\nPid:\t2511790\nNSpid:\t2511790\n"
+        },
+        "observed_at_seconds": 1793920005.9314845,
+        "open_generation": 10,
+        "opened_pid": 2511790,
+        "operation": "pidfd_send_signal"
+      },
+      {
+        "call_sequence": 23,
+        "descriptor": 187,
+        "event_sequence": 23,
+        "identity": {
+          "device": 14,
+          "fdinfo_sha256": "d67cdc4f22ce1da0f919b11fb4f5e3ea398423e327f888cc4ae44800c18daf0a",
+          "flags": 524290,
+          "inheritable": false,
+          "inode": 15506,
+          "pid": 2511789,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t15506\nPid:\t2511789\nNSpid:\t2511789\n"
+        },
+        "observed_at_seconds": 1793920005.9318128,
+        "open_generation": 9,
+        "opened_pid": 2511789,
+        "operation": "pidfd_send_signal"
+      },
+      {
+        "call_sequence": 24,
+        "descriptor": 186,
+        "event_sequence": 24,
+        "identity": {
+          "device": 14,
+          "fdinfo_sha256": "8d6bd5db60dd089014b94fd28b1da858f9b60226a65b16a51b222cac25207af1",
+          "flags": 524290,
+          "inheritable": false,
+          "inode": 15506,
+          "pid": 2511788,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t15506\nPid:\t2511788\nNSpid:\t2511788\n"
+        },
+        "observed_at_seconds": 1793920005.9321294,
+        "open_generation": 8,
+        "opened_pid": 2511788,
+        "operation": "pidfd_send_signal"
+      },
+      {
+        "call_sequence": 25,
+        "descriptor": 184,
+        "event_sequence": 25,
+        "identity": {
+          "device": 14,
+          "fdinfo_sha256": "9a8b8bf9b5eaa80300fe0573f1166f51eb1939e2b5e38d624295d540f8f094ef",
+          "flags": 524290,
+          "inheritable": false,
+          "inode": 15506,
+          "pid": 2511775,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t15506\nPid:\t2511775\nNSpid:\t2511775\n"
+        },
+        "observed_at_seconds": 1793920005.932513,
+        "open_generation": 6,
+        "opened_pid": 2511775,
+        "operation": "pidfd_send_signal"
+      },
+      {
+        "call_sequence": 26,
+        "descriptor": 183,
+        "event_sequence": 26,
+        "identity": {
+          "device": 14,
+          "fdinfo_sha256": "ce58a009c5b41987b849becc2f306365ae6a1650019b84a73aebcc9e06cd60ef",
+          "flags": 524290,
+          "inheritable": false,
+          "inode": 15506,
+          "pid": 2511765,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t15506\nPid:\t2511765\nNSpid:\t2511765\n"
+        },
+        "observed_at_seconds": 1793920005.9329479,
+        "open_generation": 5,
+        "opened_pid": 2511765,
+        "operation": "pidfd_send_signal"
+      },
+      {
+        "call_sequence": 27,
+        "descriptor": 182,
+        "event_sequence": 27,
+        "identity": {
+          "device": 14,
+          "fdinfo_sha256": "628c91a3955ad329711986a4f4a9fcf6891b2b7d934afe8049603d9ef343bd2d",
+          "flags": 524290,
+          "inheritable": false,
+          "inode": 15506,
+          "pid": -1,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t15506\nPid:\t-1\nNSpid:\t-1\n"
+        },
+        "observed_at_seconds": 1793920006.1779234,
+        "open_generation": 4,
+        "opened_pid": 2511761,
+        "operation": "close"
+      },
+      {
+        "call_sequence": 28,
+        "descriptor": 183,
+        "event_sequence": 28,
+        "identity": {
+          "device": 14,
+          "fdinfo_sha256": "628c91a3955ad329711986a4f4a9fcf6891b2b7d934afe8049603d9ef343bd2d",
+          "flags": 524290,
+          "inheritable": false,
+          "inode": 15506,
+          "pid": -1,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t15506\nPid:\t-1\nNSpid:\t-1\n"
+        },
+        "observed_at_seconds": 1793920006.1780243,
+        "open_generation": 5,
+        "opened_pid": 2511765,
+        "operation": "close"
+      },
+      {
+        "call_sequence": 29,
+        "descriptor": 184,
+        "event_sequence": 29,
+        "identity": {
+          "device": 14,
+          "fdinfo_sha256": "628c91a3955ad329711986a4f4a9fcf6891b2b7d934afe8049603d9ef343bd2d",
+          "flags": 524290,
+          "inheritable": false,
+          "inode": 15506,
+          "pid": -1,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t15506\nPid:\t-1\nNSpid:\t-1\n"
+        },
+        "observed_at_seconds": 1793920006.1781135,
+        "open_generation": 6,
+        "opened_pid": 2511775,
+        "operation": "close"
+      },
+      {
+        "call_sequence": 30,
+        "descriptor": 185,
+        "event_sequence": 30,
+        "identity": {
+          "device": 14,
+          "fdinfo_sha256": "628c91a3955ad329711986a4f4a9fcf6891b2b7d934afe8049603d9ef343bd2d",
+          "flags": 524290,
+          "inheritable": false,
+          "inode": 15506,
+          "pid": -1,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t15506\nPid:\t-1\nNSpid:\t-1\n"
+        },
+        "observed_at_seconds": 1793920006.1782,
+        "open_generation": 7,
+        "opened_pid": 2511786,
+        "operation": "close"
+      },
+      {
+        "call_sequence": 31,
+        "descriptor": 186,
+        "event_sequence": 31,
+        "identity": {
+          "device": 14,
+          "fdinfo_sha256": "628c91a3955ad329711986a4f4a9fcf6891b2b7d934afe8049603d9ef343bd2d",
+          "flags": 524290,
+          "inheritable": false,
+          "inode": 15506,
+          "pid": -1,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t15506\nPid:\t-1\nNSpid:\t-1\n"
+        },
+        "observed_at_seconds": 1793920006.178287,
+        "open_generation": 8,
+        "opened_pid": 2511788,
+        "operation": "close"
+      },
+      {
+        "call_sequence": 32,
+        "descriptor": 187,
+        "event_sequence": 32,
+        "identity": {
+          "device": 14,
+          "fdinfo_sha256": "628c91a3955ad329711986a4f4a9fcf6891b2b7d934afe8049603d9ef343bd2d",
+          "flags": 524290,
+          "inheritable": false,
+          "inode": 15506,
+          "pid": -1,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t15506\nPid:\t-1\nNSpid:\t-1\n"
+        },
+        "observed_at_seconds": 1793920006.1783726,
+        "open_generation": 9,
+        "opened_pid": 2511789,
+        "operation": "close"
+      },
+      {
+        "call_sequence": 33,
+        "descriptor": 188,
+        "event_sequence": 33,
+        "identity": {
+          "device": 14,
+          "fdinfo_sha256": "628c91a3955ad329711986a4f4a9fcf6891b2b7d934afe8049603d9ef343bd2d",
+          "flags": 524290,
+          "inheritable": false,
+          "inode": 15506,
+          "pid": -1,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t15506\nPid:\t-1\nNSpid:\t-1\n"
+        },
+        "observed_at_seconds": 1793920006.1784573,
+        "open_generation": 10,
+        "opened_pid": 2511790,
+        "operation": "close"
+      },
+      {
+        "call_sequence": 34,
+        "descriptor": 189,
+        "event_sequence": 34,
+        "identity": {
+          "device": 14,
+          "fdinfo_sha256": "628c91a3955ad329711986a4f4a9fcf6891b2b7d934afe8049603d9ef343bd2d",
+          "flags": 524290,
+          "inheritable": false,
+          "inode": 15506,
+          "pid": -1,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t15506\nPid:\t-1\nNSpid:\t-1\n"
+        },
+        "observed_at_seconds": 1793920006.178541,
+        "open_generation": 11,
+        "opened_pid": 2511795,
+        "operation": "close"
+      },
+      {
+        "call_sequence": 35,
+        "descriptor": 190,
+        "event_sequence": 35,
+        "identity": {
+          "device": 14,
+          "fdinfo_sha256": "628c91a3955ad329711986a4f4a9fcf6891b2b7d934afe8049603d9ef343bd2d",
+          "flags": 524290,
+          "inheritable": false,
+          "inode": 15506,
+          "pid": -1,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t15506\nPid:\t-1\nNSpid:\t-1\n"
+        },
+        "observed_at_seconds": 1793920006.1786256,
+        "open_generation": 12,
+        "opened_pid": 2511799,
+        "operation": "close"
+      },
+      {
+        "call_sequence": 36,
+        "descriptor": 191,
+        "event_sequence": 36,
+        "identity": {
+          "device": 14,
+          "fdinfo_sha256": "628c91a3955ad329711986a4f4a9fcf6891b2b7d934afe8049603d9ef343bd2d",
+          "flags": 524290,
+          "inheritable": false,
+          "inode": 15506,
+          "pid": -1,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t15506\nPid:\t-1\nNSpid:\t-1\n"
+        },
+        "observed_at_seconds": 1793920006.1787071,
+        "open_generation": 13,
+        "opened_pid": 2511803,
+        "operation": "close"
+      },
+      {
+        "call_sequence": 37,
+        "descriptor": 192,
+        "event_sequence": 37,
+        "identity": {
+          "device": 14,
+          "fdinfo_sha256": "628c91a3955ad329711986a4f4a9fcf6891b2b7d934afe8049603d9ef343bd2d",
+          "flags": 524290,
+          "inheritable": false,
+          "inode": 15506,
+          "pid": -1,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t15506\nPid:\t-1\nNSpid:\t-1\n"
+        },
+        "observed_at_seconds": 1793920006.1787887,
+        "open_generation": 14,
+        "opened_pid": 2511807,
+        "operation": "close"
+      },
+      {
+        "call_sequence": 38,
+        "descriptor": 193,
+        "event_sequence": 38,
+        "identity": {
+          "device": 14,
+          "fdinfo_sha256": "628c91a3955ad329711986a4f4a9fcf6891b2b7d934afe8049603d9ef343bd2d",
+          "flags": 524290,
+          "inheritable": false,
+          "inode": 15506,
+          "pid": -1,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t15506\nPid:\t-1\nNSpid:\t-1\n"
+        },
+        "observed_at_seconds": 1793920006.1788695,
+        "open_generation": 15,
+        "opened_pid": 2511815,
+        "operation": "close"
+      },
+      {
+        "call_sequence": 39,
+        "descriptor": 194,
+        "event_sequence": 39,
+        "identity": {
+          "device": 14,
+          "fdinfo_sha256": "628c91a3955ad329711986a4f4a9fcf6891b2b7d934afe8049603d9ef343bd2d",
+          "flags": 524290,
+          "inheritable": false,
+          "inode": 15506,
+          "pid": -1,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t15506\nPid:\t-1\nNSpid:\t-1\n"
+        },
+        "observed_at_seconds": 1793920006.1789503,
+        "open_generation": 16,
+        "opened_pid": 2511819,
+        "operation": "close"
+      },
+      {
+        "call_sequence": 40,
+        "descriptor": 195,
+        "event_sequence": 40,
+        "identity": {
+          "device": 14,
+          "fdinfo_sha256": "628c91a3955ad329711986a4f4a9fcf6891b2b7d934afe8049603d9ef343bd2d",
+          "flags": 524290,
+          "inheritable": false,
+          "inode": 15506,
+          "pid": -1,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t15506\nPid:\t-1\nNSpid:\t-1\n"
+        },
+        "observed_at_seconds": 1793920006.1790323,
+        "open_generation": 19,
+        "opened_pid": 2511841,
+        "operation": "close"
+      },
+      {
+        "call_sequence": 41,
+        "descriptor": 181,
+        "event_sequence": 41,
+        "identity": {
+          "device": 14,
+          "fdinfo_sha256": "628c91a3955ad329711986a4f4a9fcf6891b2b7d934afe8049603d9ef343bd2d",
+          "flags": 524290,
+          "inheritable": false,
+          "inode": 15506,
+          "pid": -1,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t15506\nPid:\t-1\nNSpid:\t-1\n"
+        },
+        "observed_at_seconds": 1793920006.1791148,
+        "open_generation": 20,
+        "opened_pid": 2511845,
+        "operation": "close"
+      },
+      {
+        "call_sequence": 42,
+        "descriptor": 180,
+        "event_sequence": 42,
+        "identity": {
+          "device": 14,
+          "fdinfo_sha256": "39425461a0838c1f80ce976417b4384fc706124098c98e465d806aad50ea8239",
+          "flags": 524290,
+          "inheritable": false,
+          "inode": 15506,
+          "pid": 2511708,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t15506\nPid:\t2511708\nNSpid:\t2511708\n"
+        },
+        "observed_at_seconds": 1793920006.1792,
+        "open_generation": 3,
+        "opened_pid": 2511708,
+        "operation": "close"
+      }
+    ],
+    "gpu_or_cuda_qualification": false,
+    "kind": "linux-x86-64-libc-syscall-pidfd-version-1",
+    "maximum_cleanup_records_per_open": 3,
+    "native_call_failure": false,
+    "numeric_pid_signal_fallback": false,
+    "open_handle_count": 0,
+    "ordinary_call_count": 19,
+    "ordinary_call_limit": 4096,
+    "preflight_call_count": 3,
+    "preflight_passed": true,
+    "python_exports_changed": false,
+    "reserved_cleanup_call_count": 24,
+    "scientific_credit": 0
+  },
+  "role": "producer",
+  "scientific_credit": 0,
+  "terminal_previously_published": false
+}

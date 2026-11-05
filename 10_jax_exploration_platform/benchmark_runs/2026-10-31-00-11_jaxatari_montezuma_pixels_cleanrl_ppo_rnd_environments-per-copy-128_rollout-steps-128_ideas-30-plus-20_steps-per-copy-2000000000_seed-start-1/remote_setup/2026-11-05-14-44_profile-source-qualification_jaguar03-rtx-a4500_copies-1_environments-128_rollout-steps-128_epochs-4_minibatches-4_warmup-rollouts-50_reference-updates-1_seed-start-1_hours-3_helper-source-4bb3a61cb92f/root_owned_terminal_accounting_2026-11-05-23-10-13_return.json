@@ -1,0 +1,13 @@
+{
+  "command": [
+    "sacct",
+    "-j",
+    "6826574",
+    "--parsable2",
+    "--format=JobIDRaw,State,ExitCode,Start,End,Elapsed,NodeList,AllocTRES",
+    "--noheader"
+  ],
+  "returncode": 0,
+  "seconds": 0.2002532419282943,
+  "at_utc": "2026-11-05T23:10:13.795241+00:00"
+}

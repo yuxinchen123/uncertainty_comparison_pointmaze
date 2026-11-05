@@ -1,0 +1,17 @@
+{
+  "state": "refreshed",
+  "job_id": "2274380",
+  "snapshot": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-10-31-23-23_ACES_allocation-observation_gpu-count-1_processor-count-8_host-memory-gib-32_time-limit-minutes-5_partition-gpu_account-158590754315_helper-commit-11ceab5c640b484d18ca40e05785bbf55c6de86f/remote_monitor_snapshot.json",
+  "snapshot_sha256": "a16e190dc1264520ba5d9d38a122407230aa33ba4c14014f59baf9e36023587b",
+  "observed_state": "completed",
+  "transport": {
+    "master_check": {
+      "performed": false,
+      "reason": "not separately checked; explicit checks belong to the hourly resource review"
+    },
+    "remote_returncode": 0,
+    "remote_stderr": "",
+    "remote_python": "/scratch/user/u.sl359075/envs/rnd_atari_pixels_jax/bin/python"
+  },
+  "no_job_action": true
+}

@@ -1,0 +1,183 @@
+{
+  "configured_allocation_process_custody_must_remain": false,
+  "events": [
+    {
+      "at_seconds": 1793920004.1755126,
+      "birth": "88028011",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2511708,
+      "pid": 2511761
+    },
+    {
+      "at_seconds": 1793920004.3311188,
+      "birth": "88028026",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2511708,
+      "pid": 2511765
+    },
+    {
+      "at_seconds": 1793920004.6489465,
+      "birth": "88028055",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2511708,
+      "pid": 2511775
+    },
+    {
+      "at_seconds": 1793920004.7582266,
+      "birth": "88028068",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2511765,
+      "pid": 2511786
+    },
+    {
+      "at_seconds": 1793920004.8137712,
+      "birth": "88028074",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2511765,
+      "pid": 2511788
+    },
+    {
+      "at_seconds": 1793920004.816421,
+      "birth": "88028075",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2511788,
+      "pid": 2511789
+    },
+    {
+      "at_seconds": 1793920004.8168774,
+      "birth": "88028075",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2511788,
+      "pid": 2511790
+    },
+    {
+      "at_seconds": 1793920005.1022074,
+      "birth": "88028102",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2511789,
+      "pid": 2511795
+    },
+    {
+      "at_seconds": 1793920005.1624198,
+      "birth": "88028108",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2511789,
+      "pid": 2511799
+    },
+    {
+      "at_seconds": 1793920005.2226021,
+      "birth": "88028114",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2511789,
+      "pid": 2511803
+    },
+    {
+      "at_seconds": 1793920005.2817676,
+      "birth": "88028120",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2511789,
+      "pid": 2511807
+    },
+    {
+      "at_seconds": 1793920005.7363777,
+      "birth": "88028167",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2511789,
+      "pid": 2511815
+    },
+    {
+      "at_seconds": 1793920005.7959425,
+      "birth": "88028169",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2511789,
+      "pid": 2511819
+    },
+    {
+      "at_seconds": 1793920005.8545196,
+      "kind": "positive_child_disappeared_before_pin",
+      "parent_pid": 2511789,
+      "pid": 2511830
+    },
+    {
+      "at_seconds": 1793920005.911945,
+      "birth": "88028182",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2511789,
+      "pid": 2511841
+    },
+    {
+      "at_seconds": 1793920005.9291,
+      "birth": "88028185",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2511789,
+      "pid": 2511845
+    },
+    {
+      "at_seconds": 1793920006.0785983,
+      "birth": "88028074",
+      "exit_code": -15,
+      "kind": "reaped_actual_adopted_child",
+      "pid": 2511788,
+      "wait_status": 15
+    },
+    {
+      "at_seconds": 1793920006.148842,
+      "birth": "88028055",
+      "exit_code": 0,
+      "kind": "reaped_actual_adopted_child",
+      "pid": 2511775,
+      "wait_status": 0
+    }
+  ],
+  "gpu_or_cuda_qualification": false,
+  "interventions": [
+    {
+      "at_seconds": 1793920005.9306583,
+      "birth": "88028185",
+      "pid": 2511845,
+      "signal": 15
+    },
+    {
+      "at_seconds": 1793920005.931497,
+      "birth": "88028075",
+      "pid": 2511790,
+      "signal": 15
+    },
+    {
+      "at_seconds": 1793920005.9318287,
+      "birth": "88028075",
+      "pid": 2511789,
+      "signal": 15
+    },
+    {
+      "at_seconds": 1793920005.9321404,
+      "birth": "88028074",
+      "pid": 2511788,
+      "signal": 15
+    },
+    {
+      "at_seconds": 1793920005.932528,
+      "birth": "88028055",
+      "pid": 2511775,
+      "signal": 15
+    },
+    {
+      "at_seconds": 1793920005.9329672,
+      "birth": "88028026",
+      "pid": 2511765,
+      "signal": 15
+    }
+  ],
+  "kind": "direct_tool_descendant_cleanup_progress",
+  "known_nodes": 15,
+  "known_roots": 2,
+  "native_process_control_only": true,
+  "phase": "kernel_closure_verified_and_native_flag_restored",
+  "producer_birth": "88026033",
+  "producer_pid": 2511708,
+  "read_errors": [],
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "standing_descriptor_must_remain_open": false,
+  "subreaper_active": false
+}

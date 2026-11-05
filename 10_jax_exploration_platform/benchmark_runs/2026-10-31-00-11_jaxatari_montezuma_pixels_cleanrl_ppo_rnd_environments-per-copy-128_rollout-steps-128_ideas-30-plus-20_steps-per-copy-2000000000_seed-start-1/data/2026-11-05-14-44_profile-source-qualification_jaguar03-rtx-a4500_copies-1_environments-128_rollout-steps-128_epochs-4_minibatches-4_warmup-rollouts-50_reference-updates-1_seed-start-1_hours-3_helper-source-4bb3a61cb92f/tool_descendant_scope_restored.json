@@ -1,0 +1,24 @@
+{
+  "gpu_or_cuda_qualification": false,
+  "native_prctl_request_counts": {
+    "PR_GET_CHILD_SUBREAPER": 7,
+    "PR_SET_CHILD_SUBREAPER": 2
+  },
+  "native_process_control_only": true,
+  "restore": {
+    "errno": 0,
+    "request": "PR_SET_CHILD_SUBREAPER",
+    "returncode": 0,
+    "value": 0
+  },
+  "terminal": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-44_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-4bb3a61cb92f/tool_descendant_scope_terminal.json",
+    "sha256": "7f68705563038d2d2020f4f093364a5976d0f5d1eeeee6a18db97c141592c87e"
+  },
+  "verified": {
+    "errno": 0,
+    "request": "PR_GET_CHILD_SUBREAPER",
+    "returncode": 0,
+    "value": 0
+  }
+}

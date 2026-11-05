@@ -994,14 +994,24 @@
     }
   ],
   "profile_source_qualification_current": {
-    "updated_at_utc": "2026-11-05T22:35:45.190368+00:00",
-    "a4500_job": "6826559",
+    "updated_at_utc": "2026-11-05T23:16:23.774090+00:00",
+    "a4500_job": "6826574",
     "a4500_state": "FAILED",
-    "h100_state": "FAILED",
-    "runtime_source": "2aa6df92f7d9da20e2fbc1d15a20df16ba10ba1e",
+    "h100_state": "PREPARED_NOT_LAUNCHED_HELD_FOR_SHARED_SOURCE_CORRECTION",
+    "runtime_source": "4bb3a61cb92fe48ab5ba68fb52f70b47736a1174",
     "ordinary_profiles_admitted": false,
     "scientific_credit": 0,
-    "source_correction_publication": "eea62aed7885f8fdc384fe88132d945afa6c1944",
     "metadata_files_restored_same_host_original_bytes": true
+  },
+  "session_wakeup_current": {
+    "created_at": "2026-11-05T23:14:55.340394975Z",
+    "cron": "27 * * * *",
+    "expires_at": "2026-11-12T23:15:00Z",
+    "id": "e247c5b9-70ac-4a41-8657-2bb74ebcce40",
+    "name": "RND study hourly continuation and task-directory correction",
+    "next_run_at": "2026-11-05T23:27:00Z",
+    "recurring": true,
+    "session_id": "01a1909f-d7d3-75d1-8af8-fc80199cfae2",
+    "timezone": "UTC"
   }
 }
