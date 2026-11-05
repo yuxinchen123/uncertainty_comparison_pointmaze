@@ -1,0 +1,17 @@
+{
+  "kind": "preserved_independent_release_reviewer_schema_failure",
+  "passed": false,
+  "error": "KeyError: one_attempt",
+  "cause": "This actual root wrapper records automatic_retry_permitted=false and at_utc. The copied reviewer expected the previous wrapper's one_attempt and started_at_utc fields.",
+  "source_sha256": "bf5b6dcf8ed79dec01878ce319750a522d51470f914f4d07cf622d225ed56977",
+  "actual_cpu_job_id": "6825983",
+  "actual_cpu_step_id": null,
+  "step_identity_note": "The failed tool output did not print the numeric step; none is inferred.",
+  "actual_target_job_id": "6826574",
+  "release_review_written": false,
+  "actual_records_changed": false,
+  "scheduler_queries_or_actions": 0,
+  "permission_changes": 0,
+  "target_operations": 0,
+  "admission_granted": false
+}
