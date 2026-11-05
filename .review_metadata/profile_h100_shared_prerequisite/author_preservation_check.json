@@ -1,0 +1,30 @@
+{
+  "actual_failed_metadata": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-14-33_h100-shared-prerequisite-reader_explicit-direct-role_aa-protocol-refused_gpu-actions-0/.review_metadata/profile_h100_shared_prerequisite/actual_h100_failure_references.json",
+    "sha256": "2fc685f45bd8235e89235882cf25feab8db49a048818410e95ede240ad636be6",
+    "size_bytes": 14007
+  },
+  "all_other_profile_function_ASTs_unchanged": true,
+  "changed_functions": [
+    "configured_profile_reader"
+  ],
+  "cpu_check": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-14-33_h100-shared-prerequisite-reader_explicit-direct-role_aa-protocol-refused_gpu-actions-0/.review_metadata/profile_h100_shared_prerequisite/author_cpu_check.json",
+    "sha256": "5b8d1e793b675ef843fd2017a2ff0cb51122c7b10a2ca1092669a4d5af0ad60f",
+    "size_bytes": 4062
+  },
+  "helper_counts": {
+    "h100": 45,
+    "jaguar03_rtx_a4500": 36
+  },
+  "kind": "author_h100_shared_reader_source_preservation",
+  "no_numerical_source_or_capture_core_edits": true,
+  "passed": true,
+  "prior_A4500_saved_JSON_fix_unchanged": true,
+  "source_base": "46ea2171dbaab539bf941f59c1ff68e9b9672b83",
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-14-33_h100-shared-prerequisite-reader_explicit-direct-role_aa-protocol-refused_gpu-actions-0/.review_metadata/profile_h100_shared_prerequisite/final_source_freeze.json",
+    "sha256": "2cd01950f72ab29512650c8e1cfadb82e8d9db3363cc6b52bbc621bd0ad155af",
+    "size_bytes": 937
+  }
+}

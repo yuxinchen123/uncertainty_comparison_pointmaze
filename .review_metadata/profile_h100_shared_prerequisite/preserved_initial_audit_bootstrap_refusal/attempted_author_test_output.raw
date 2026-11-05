@@ -1,0 +1,30 @@
+setUpClass (h100_shared_prerequisite_tests.SharedPrerequisiteTests) ... ERROR
+
+======================================================================
+ERROR: setUpClass (h100_shared_prerequisite_tests.SharedPrerequisiteTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-05-14-33_h100-shared-prerequisite-reader_explicit-direct-role_aa-protocol-refused_gpu-actions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_h100_shared_prerequisite.py", line 35, in setUpClass
+    spec.loader.exec_module(cls.module)
+  File "<frozen importlib._bootstrap_external>", line 999, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-01_profile-source-qualification_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-2aa6df92f7d9/code/profile_selected.py", line 31, in <module>
+    import measure_selected as measurement
+  File "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-01_profile-source-qualification_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-2aa6df92f7d9/code/measure_selected.py", line 34, in <module>
+    import diagnose_gpu_execution as diagnostic
+  File "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-01_profile-source-qualification_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-2aa6df92f7d9/code/diagnose_gpu_execution.py", line 10, in <module>
+    import ctypes
+  File "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/ctypes/__init__.py", line 472, in <module>
+    pythonapi = PyDLL(None)
+                ^^^^^^^^^^^
+  File "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/ctypes/__init__.py", line 379, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/p/rlprojects/RND_worktrees/2026-11-05-14-33_h100-shared-prerequisite-reader_explicit-direct-role_aa-protocol-refused_gpu-actions-0/.review_metadata/profile_h100_shared_prerequisite/run_author_cpu_check.py", line 24, in audit
+    raise AssertionError("CPU fixture refused operation: " + event)
+AssertionError: CPU fixture refused operation: ctypes.dlopen
+
+----------------------------------------------------------------------
+Ran 0 tests in 0.146s
+
+FAILED (errors=1)

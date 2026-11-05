@@ -1,0 +1,38 @@
+test_h100_shared_dependency_does_not_select_aa_reader (h100_shared_prerequisite_tests.SharedPrerequisiteTests.test_h100_shared_dependency_does_not_select_aa_reader)
+Actual H100 source/target and direct protocol checks precede returning no A4500 reader. ... ok
+test_missing_direct_target_or_protocol_and_mixed_roles_refuse (h100_shared_prerequisite_tests.SharedPrerequisiteTests.test_missing_direct_target_or_protocol_and_mixed_roles_refuse)
+A staged helper cannot activate missing, mixed or fabricated role declarations. ... ok
+test_original_failure_then_real_verify_prepared_gate_passes (h100_shared_prerequisite_tests.SharedPrerequisiteTests.test_original_failure_then_real_verify_prepared_gate_passes)
+The actual complete nonwriting gate passes after exactly one source-function override. ... FAIL
+test_shared_source_hash_and_ordinary_admission_remain_exact (h100_shared_prerequisite_tests.SharedPrerequisiteTests.test_shared_source_hash_and_ordinary_admission_remain_exact)
+Changed shared bytes and an ordinary profile without actual admission cannot pass. ... ok
+
+======================================================================
+FAIL: test_original_failure_then_real_verify_prepared_gate_passes (h100_shared_prerequisite_tests.SharedPrerequisiteTests.test_original_failure_then_real_verify_prepared_gate_passes)
+The actual complete nonwriting gate passes after exactly one source-function override.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-05-14-33_h100-shared-prerequisite-reader_explicit-direct-role_aa-protocol-refused_gpu-actions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_h100_shared_prerequisite.py", line 50, in test_original_failure_then_real_verify_prepared_gate_passes
+    self.assertIsNone(self.module.verify_prepared(self.unit, self.plan))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-01_profile-source-qualification_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-2aa6df92f7d9/code/profile_selected.py", line 621, in verify_prepared
+    if diagnostic.core_identity(Path(plan["source_root"]), plan["source_commit"]) != plan["core"]:
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-01_profile-source-qualification_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-2aa6df92f7d9/code/diagnose_gpu_execution.py", line 54, in core_identity
+    branch = subprocess.run(["git", "-C", str(root), "symbolic-ref", "--quiet", "HEAD"],
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/subprocess.py", line 548, in run
+    with Popen(*popenargs, **kwargs) as process:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/subprocess.py", line 1026, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+  File "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/subprocess.py", line 1823, in _execute_child
+    sys.audit("subprocess.Popen", executable, args, cwd, env)
+  File "/p/rlprojects/RND_worktrees/2026-11-05-14-33_h100-shared-prerequisite-reader_explicit-direct-role_aa-protocol-refused_gpu-actions-0/.review_metadata/profile_h100_shared_prerequisite/run_author_cpu_check.py", line 29, in audit
+    raise AssertionError("CPU fixture refused non-source subprocess")
+AssertionError: CPU fixture refused non-source subprocess
+
+----------------------------------------------------------------------
+Ran 4 tests in 14.117s
+
+FAILED (failures=1)
