@@ -325,7 +325,7 @@
   ],
   "bounded_accepted_evidence_reuse_preparation": {
     "actual_complete_proof_exists": false,
-    "actual_full_bounded_snapshot_run": true,
+    "actual_full_bounded_snapshot_run": false,
     "actual_snapshot_attempt": {
       "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-00-54_accepted-direct-evidence_cpu-snapshot_maximum-check-seconds-285_cpu-step-seconds-300_processor-count-1_host-memory-mib-512_gpu-count-0/snapshot_attempt.json",
       "sha256": "980e9cbf10ca21f6750af8d9b2206b1b7e0c02b4f5ce7ee3c6078e903383acfc"
@@ -341,6 +341,7 @@
       "sha256": "b3dad6457ec693a569ce39a6110398198fd188a26ef6789d201f371adc782223"
     },
     "all_original_manifest_captured_paths_still_required": 1938,
+    "all_references_metadata_resolved": true,
     "already_accepted_gpu_cases_will_not_be_repeated": true,
     "author_focused_passed": 7,
     "author_focused_step": "6783003.417",
@@ -357,19 +358,32 @@
     "cpu_device_inode_fields_not_asserted_equal_on_gpu_host": true,
     "current_mutable_helper_fallback_forbidden": true,
     "each_distinct_physical_payload_must_be_hashed_once": true,
+    "failed_attempts": [
+      {
+        "elapsed_seconds": 3.234370228019543,
+        "never_reuse": true,
+        "packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-00-54_accepted-direct-evidence_cpu-snapshot_maximum-check-seconds-285_cpu-step-seconds-300_processor-count-1_host-memory-mib-512_gpu-count-0",
+        "return": {
+          "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-00-54_accepted-direct-evidence_cpu-snapshot_maximum-check-seconds-285_cpu-step-seconds-300_processor-count-1_host-memory-mib-512_gpu-count-0/snapshot_return.json",
+          "sha256": "b3dad6457ec693a569ce39a6110398198fd188a26ef6789d201f371adc782223"
+        },
+        "state": "FAILED_unmapped_reference_no_complete_proof"
+      }
+    ],
     "first_independent_rejection": {
       "path": "/p/rlprojects/RND_worktrees/2026-11-04-23-24_accepted-evidence-snapshot_original-helpers-26_common-helpers-29_validation-seconds-300_hash-physical-files-once_gpu-count-0_processor-count-1_host-memory-mib-512/.review_metadata/accepted_evidence_snapshot_independent_review/independent_primary_review_summary.json",
       "sha256": "5457072b1f7ff1e523d083f3b9fcf7ee0c4dbbe9e1b5bc6e041dcabb06e53dba"
     },
     "helper_count": 29,
     "helper_source_base": "7fef164909b5eb8b31636da7ae0c653282388203",
+    "historical_annotation_reference_count": 2,
     "incoming_root_review": {
       "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/accepted_snapshot_incoming_root_2026-11-05.json",
       "sha256": "4637db78acb4176e2ff93befb6890b376367ea912f9b1c761907cce63586ce32"
     },
     "independent_source_review": {
-      "path": "/p/rlprojects/RND_worktrees/2026-11-04-23-24_accepted-evidence-snapshot_original-helpers-26_common-helpers-29_validation-seconds-300_hash-physical-files-once_gpu-count-0_processor-count-1_host-memory-mib-512/.review_metadata/accepted_evidence_snapshot_corrected_independent_review/independent_corrected_review_summary.json",
-      "sha256": "d74c0358afb3ccfb1003c0efca5f793e4898291557da3916dfd045ec4fdeeb2a"
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-01-00_accepted-evidence-reference-classification_metadata-only_gpu-count-0_processor-count-1_host-memory-mib-512/.review_metadata/failed_snapshot_reference_classification/independent_pinned_size_444.json",
+      "sha256": "a770e41ee224522eeeff03f41a6cd1f66c76efe662b4a9958ad6bc69f70ccd62"
     },
     "live_current_gpu_source_assets_backend_numerical_gates_retained": true,
     "matching_declared_content_hash_does_not_skip_another_file": true,
@@ -377,13 +391,16 @@
     "metadata_only_classification_step": "6783003.432",
     "numerical_source_unchanged": true,
     "original_qualification_and_history_bodies_retained": true,
-    "packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-00-54_accepted-direct-evidence_cpu-snapshot_maximum-check-seconds-285_cpu-step-seconds-300_processor-count-1_host-memory-mib-512_gpu-count-0",
+    "packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-01-24_accepted-execution-evidence_cpu-snapshot_original-capture-paths-1938_maximum-check-seconds-285_cpu-step-seconds-300_processor-count-1_host-memory-mib-512_gpu-count-0",
     "pending_reference_count": 142,
-    "private_source_commit": "7d07da121c41c531d51cbd25b73579735212ead8",
+    "private_source_commit": "f7e8f5c8f0a2d1847fff4f93726fce62205c23aa",
+    "producer_sha256": "94dc00524bfc5d02ebc2f7b8f2b88444516938fe583967ea16e414a1e2e4e54a",
     "production_files": 5,
+    "required_execution_reference_count": 140,
     "required_references_already_resolved": 134,
     "source_publication": "cb2735b8c3712e2fa4f4573fa210e302584d9af2",
-    "state": "all_pending_references_classified_six_controller_logs_two_unrelated_historical_annotations_narrow_fix_authoring",
+    "source_publication_local_merge": "cd9ae085143a2fc50a6ba2a83c12d806e8ef2e8d",
+    "state": "corrected_scope_and_pinned_sizes_independently_approved_fresh_packet_prepared",
     "unrelated_old_diagnostic_helper_annotations": 2,
     "unresolved_controller_log_references": 6,
     "whole_frozen_ledger_hash_and_selected_owner_checks_retained": true,
@@ -1278,6 +1295,19 @@
       }
     ],
     "state": "both_copy_counts_independently_accepted_correctness_only_timing_pending"
+  },
+  "h100_common_timing_controller_preparation": {
+    "actual_units_prepared": false,
+    "author": "correct_native_process_control",
+    "copy_two_requires_actual_copy_one_timing_wait_and_exit": true,
+    "independent_reviewer": "timing_controller_independent",
+    "original_process_and_publication_functions_unchanged": 25,
+    "required_helpers": 29,
+    "required_mode": "confirmation",
+    "rounds": 7,
+    "source_published": false,
+    "state": "first_frozen_source_rejected_serial_order_count_join_narrow_correction_in_progress",
+    "updates_per_arm": 10
   },
   "h100_current_observation": "The first einsum independent dense layers case completed all seven valid timing pairs;29of60 H100 and60of60 A4500 comparisons are complete. The two-policy case is active under the original sourceD28 supervisor on serval02 card1. No Slurm H100 worker or final training copy has started.",
   "h100_driver_580_qualification": {
@@ -3297,6 +3327,30 @@
     "timezone": "UTC"
   },
   "session_twenty_minute_wakeups_enabled": false,
+  "session_wakeup_cadence_seconds": 3600,
+  "session_wakeup_schedule": {
+    "created_at": "2026-11-05T09:27:02.622836989Z",
+    "every_seconds": 3600,
+    "expires_at": "2026-11-12T09:20:00Z",
+    "id": "5ac3653c-dbcd-4e44-8f17-a49d58eaafe2",
+    "name": "RND study hourly continuation with short checks",
+    "next_run_at": "2026-11-05T10:27:02.622836989Z",
+    "prompt": "Continue the authorized RND Montezuma pixel merge and fifty-idea study without permission questions. Read the latest saved plan /u/sl5nw/.claude/plans/2026-10-31-00-02_rnd-merge-atari-infrastructure-optimization.md through149 and every newer section. Actual records override this prompt. Integration=/p/rlprojects/RND_worktrees/merge-atari-cleanrl. Campaign is integration/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1 (called campaign below). Read campaign_state.json,next_actions.json,processes.json,campaign_provenance.json,every data/*/progress.json,20_mins_monitoring/latest_report.md, collaborator problems/open and actual agent receipts. Old monitor can wrongly label prepared units running; exact native rows and exact staged readers govern. Empty queue is not completion.\n\nLatest user: NO20-minute SESSION monitor. Keep hourly session wakeups and optional one-shot estimates near expected completion; these are estimates, not completion events. Separate persistent cluster monitor remains1200seconds. Each VALIDATION CHECK<=300seconds; split/remove redundant work preserving correctness. New owned CPU steps --time=00:05:00. Never run superseded900/1800/2100metadata checks. GPU benchmarks/training have separately authorized long walltimes.\n\nRoot alone submits/releases/remote GPU launches. Query ONLY exact IDs from matching separate campaign UVA/ACES/DeltaAI ledgers. No foreign/all-user queries, blanket cancel, duplicate/reused attempted packet/binding/submission/release or other sessions'work. Never numerical experiments on login nodes. Independently review/publish source+standard records BEFORE launch, fsync real returned IDs/exact rows BEFORE release. Preserve failures; no invented hashes/PIDs/physical identity. Fouractive slots inclroot; followup_task STARTS idleagents, send_message doesnot. Share plain-language progress during work.\n\nCurrent published integration around f70aabbb (read fresh HEAD). User wants ONE main GitHub development branch AFTER all study/training/reports finish. All19remote heads were included; one repository remote/defaultdevelopment. No repeatmerges or activebranch deletion. Newwork local/detached; reviewed changes through merge-atari-cleanrl. Finalcleanup verifies all retiring refs included/no remainingwork, preserves immutable worktrees/history/evidence, retains one mainbranch. No forcepush/repository deletion. Original /p/rlprojects/RND lastsafecef3073; preserveALLdirty/untracked/PDF/index/submodule/fivehistoricalbytes. Any originalupdate requires freshdisjoint/incomingignored-untrackedcollisions/all-byte/private-index proof. Neverstash/reset/overwrite/commitothers. Never alter frozen imported/hashed private sources.\n\nScience: original CleanRL PPO+RND on native JAXtari pixel recreation, NOT exact Arcade Learning Environment. Float32networks/Adam,float64statistics,highest matrixprecision/deterministic,nohalf/TF32. Perindependentcopy128environments,128rolloutsteps,4epochs,4minibatches,50normalizationwarmups,ALLoriginalconfig/update/RNG. Independentparams/target/predictor/Adam/stats/game/randomstates. Sharedactualhparams;scalarpercopysupporttestedseparately. Protect numericald28e6735e79788f618acb0ebfde8609db1f776af at /p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673 and SOURCE_AND_GATES_READY SHA4a71ef2b245ae784933c55bb2b5159aa1bb7f8f626eb94b15390e2f9a304ee7c.\nInitial30ALL120complete (60H100+60A4500;28accepted37inconclusive55rejected;zeroactive/failedformal). Onlyroom-backgroundcache/final2frame rendering passall4contexts. All25originalworker/supervisor/childexits proved; NEVERrestart3567981/last1108742/originalA4500/sixthretry orrerun frozenexitcollector afternewledgerentries. Preserve646payloads/1,309,199,145bytes/693mappings; no binaryGitadd. Commoncorrectness4/4accepted. A4500common timing6783295/6783296 accepted7alternatingpairs10FULLupdates/arm,speedups1.81742665/1.56444101. H100common timing0/2,adaptive0/20,finaltraining0 atwriting. NeverrepeatacceptedGPUcases.\n\nDirectH100ONLYserval02physicalcard1 UUIDGPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3,lock/tmp/sl5nw_serval02_card1.lock. Nevercard0/serval05/others. Soleproducerownsstandingdescriptor;root/controllerneverdo. Originalqualificationprivate0a880984b4a03a2ff7335337cc18576628bc9fc1/26+D28 accepted. Newdirectpaths retainbackend schema2 preparedMETADATA/RECORD/image+mappedbegin/completion/sharedactualbytes/currentCUDAUUIDPCIminor/source/software/assets/numericalgates. Oldfailedqualificationsstayfailed.\n\nActual native process component NOW ACCEPTED, NOTunwired: sourceba1d6cfec7ba772cd07c8833f4252e7b923aaf5e published442a0dd8, fresh01-01processdiagnostic packet publishedfd10d4a8. Exact basename2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0. Actualrootreturn0in9.49seconds; independent434 recomputed unchangedstageddirect.validate_saved and exactlymatchedsavedproof. ReviewSHA3f4173e5b8d52624e10f90e66095df0c2c0587ecc4beb7b07c8c2874709ae788. All7helpers/nativeCPUexe/libc/CLOEXEC/generations/33producer+5callsperchildrole/UIDbirthcgroups/source/ancestry/releaseack/normalwaits/ECHILDemptychildren/FLOCKcustody/300sharedbudgetpassed. ZEROenvironment/learner/CUDA/numerical/profile/worker/sciencecredit. DoNOTrerun acceptedcomponent. Formalprofile nativeadmission remainsCLOSED pending separate reviewed targetcontract/producer integration. Preserve old00-46FAILEDKeyErrorcmdline; independent425provedcleanupbutnotpass. Fix was strict separate scope-record reader, fullancestry/ownerreadersunchanged. Old00-40transportfailedLOCALProxyCommand=false beforetarget; neverreuse.\nIMPORTANT: directserval02SSH uses reviewednormalroute BatchMode=yes ControlMaster=no ConnectTimeout=15, NOProxyCommandoverride. ProxyCommand=false belongsONLYto existing-onlyACES/DeltaAI routes.\n\nPRIMARYCURRENT: bounded accepted-evidence snapshot to avoid replayingoldrawgates/repeatedGBreads. Source7d07da121c41c531d51cbd25b73579735212ead8 mergedcb2735b8 bythreeway withnewer unrelatedfunctions preserved (70paths/662protected/twoprivateindexdryruns/tree700326ad). Exactprivate29source; preserve original55qualification/history/live/13NUM and strictsource/config/seeds/runtime/assets/backend/physical gates. One actual00-54snapshotattempt published11f94d66 FAILED1in3.234seconds, no snapshot.json: metadataresolver lacked6exactcontrollerstdout/stderrroles plus2old unrelateddiagnostichelperannotations. Preservefailedattempt/neverreuse. No completeproof exists.\nAll142pendingreferences metadata-classified432/437:140required+2annotations, zero unresolved undernewcandidate. Original accepted launch_inputs hasheswholefrozenledger andchecksoneexactcurrentrow/uniquehostPIDbirth/source; it doesNOTexecuteold diagnosticrows9-11helpercode. Their Gitimages bothfound inexactrecordedcommits96b3381e/4766ba4a, no mutablefallback. Narrownewsourcein worktree2026-11-05-01-00* changes ONLYaccepted_evidence_snapshot.py plusfocusedtests: exactcontrollerhashedreceipt/stdout/stderrtypedsizefields, narrowlybound nonselecteddiagnosticannotations retainedashashedmetadata; wholeledgerhash/currentowner/source/uniqueness andall1938declaredcapturedpaths retained.\nFirst narrowfreeze34edb112 producer6b73c56f BLOCKED439: typedsize projectedaway, actual6bytes withdeclared7accepted. Exact18files/failurepreserved (blocke3ee4064,manifest4b3db996). Authorreview_corrected_eight_card_runtime is correcting expectedsize vs ACTUALpinnedsize fornew/alias/cachehit/zero streams, permanentfailurestate. NO edit/rebase duringreview. Focusedaffectedsizechecks+actualsmall6streamjoins; no broadrerun/fullpayloadread. Independentreviewer implement_direct_h100_profiles/review_direct_profile_source mustapprove correctedfreeze, then exactcommit/incomingcheck/publication+freshstandardpacket BEFOREONEactual285second snapshot underownedCPU300limit/nonblockinglarge-readlock. Source7d07/privateoldhelpersstayimmutable.\nHashEVERYdistinctphysicalfileonce; sameexpectedSHAcannot skipanotherfile. KeepFD/dev/inode/size/mtime/ctime/mode/uid+aliases; refusechanged/incomplete/failedinputs. Proof requirescompletecoverage+normalend+actualownedprocess/source/context, THENgenuineindependentreview withoutrehashingallpayloads. CPUinodefacts scopedtoCPU; GPUconsumer usesexactreviewedproof/manifest/config/seedrefs andNEVERassertsCPUinode==GPU orGPU-timehistoricalbyteequality. Livelearner/assets/backend/CUDA gates separateunchanged. No alreadyacceptedGPUrerun/no weaker tolerances.\n\nParallel missingH100TIMINGcontroller: agentcorrect_native_process_control implementing NEW direct_common_timing_controller.py and preparer in W2026-11-05-01-16_direct-common-timing_controller-helpers-29_... basefd10. All25 provenprocess/publicationASTs retained; only5admission/rosterfuncs changed. Genericlegacy stagedfilename direct_qualification_controller.py/test_direct_qualification_controller.py compatibility isexplicitcanonical\u2192stagedmapping; NEWoperations strictlyconfirmation+29+actualreviewedCPUproof+Q/percountC/source/config/runtime/assets/seeds/backend/normalpredecessorwait+exits, so oldcorrectness/26cannotbypass. Separateprepare/verify/bind; realcold metadatachild under180seconds beforeNUM. Actualunits NOTprepared; sourcefixturesonly, twofixtureassertionsbeingcorrected/preserved. Needreview/publish, actualcompleteproof, genuinecold29metadata proof, newpercountpackets/controllers. Copy2unbounduntilcopy1actualtimingnormal0+bothprocessesexit. DoNOTinventfuturehash/PID/acceptedunit; pin actualcorrectedsnapshotproducer/source. Usefullconfig n_copies, not --copies (packingonly).\n\nBeforeANY20adaptivechoices: accepted common timingBOTHGPUs7alternatingpairs10FULLupdates,actualcurrentkernelprofiles+packing. Then20DISTINCTprofile-derivedideas in4SEQUENTIALbatches5;implement/testEVERYideaBOTHGPUs,verifycombo/reprofileEACHbatch. Futureprofileadapter in22-42worktree stillunpublished: per-inputexactstagedreaders/helperunion correcting old27vsnewcommon29 andambientmodule problem. Nativepolicycurrentlydiagnostic-only; separateactualtargetcontract/review/admissionbeforeformalprofile. No fakefuturecommonresult.\nPackingdoublesuntilaggregategain<10%,independentboundaryrepeat/selectsmaller,>=15%ACTUALfreeGPUmemory. Optimized8A4500source merged14be after84metadata/currentdependencychecks; defaultoperationsdisabled,no actualscaling. NeedzeroGPUcoordinator--gres=none+actualTRES,oneGPUworkers/distinctsameprocessUUIDPCIminor/own-only/commonwall/stableglobalseeds/truepostwarmuporigins/exactpercardsource-countqualificationcorrectness. Compare1vs8cards samecopies/card AND8totalcopies1cardvs8cards1eachwherefit. Smallerfailure/throughputstopcannotexclude8; N/Aexact8copymemoryproof. GenericOOM/partial/diagnostic/originalreferenceprobesZEROformalcredit. OptionalmemoryprotocolDISABLED;readplan58\u201373, instrumentedcompletiononly/measurement_validfalse/freshordinaryremeasurement. Formalcapacityactualselected128envnextdoublingfailure+healthyctx/reviewedassignment/intactsampler/sharedmappeddriverbackendBYTESportableverified+freshFULL7x10fittingrepeat15%free. Tinycheckpoint6780569fixturesonly,neverrepeat.\n\nNewfinaloperationalpaths schema2exactsource/config/seeds;schema1explicit historicalreadonlyonly. Completed50rawproofONLYexactownedcompute immutable registry/ledger/raw/source/config/process/time THENindependentreview;loginreviewedbytesonly. Sharedhelpersretainedifeitherfeature;testboth/onlyeach/neither/portabletarget/exact8reader. AFTERall50:11pairs20FULLupdatesselectedpacking+actualsyncperupdatelatency/scheduledreadout/unchangedaccumulation; shortlearningBOTH>=128FULLupdates/arm originalwarmup/config/full2Banneal,finite/actualpolicy+predictorlearning/frozentarget/countersRNG/fullupdateepisodediagnostics/strictsameimplreplay/independentcomparativereview. ObservermatchesactualExecutorindependentclones; onlypredeclaredfloat32rewardmoments unchangedfields/tolerances;18action/33roombins/unknowns/exact128lanes/boundarylabels;learning_equivalence_established=false. No identicalfreetrajectorydemand/inventedratios/tolerancechanges/equivfromzeroreward.\nALL50/confirmation/learning/scaling/finaltargetqualification/packing BEFOREoptimized-only2Brequested/copy=122070FULLupdates=1,999,994,880actual/copy=15,624,960/env+6400warmup/env. Noaddedseedreps. Fulldurablecheckpoints<=1200secondsMEASURED/verifiedcontinuouscontinuation.\n\nPersistentCPUmonitor6783003 RUNNINGheartpiece exact79a01e851ff92ddba7d0e12eaf8164cab2028878,1requested/2logicalTPC2,TOTAL2GiB,0GPU,Requeue0Restarts0,1200seconds,expiresNov9 00:58:28UTC. Onlythisallocationforboundedmetadata. Oneheavyreader<=1GiB underqueue/cpu_monitor_large_artifact_read.lock, allotherchecks<=512MiB andparentTOTAL2GiB. NoNUM/GPU/device/libraryloadsinaudits; explicitownprocessbootstrapdeclaredbeforehook. Preparedreplacement6bpacket/launcherreviewedbutunsubmitted; nooldstopuntilnewactualruntime/source/archive/allocation/PID/cgroup/logFD/FIRSTFULLreportindependentreviewedthenfresholdauxstepdrain. Lastfull435Nov5 09:10passed120complete0active/failed afterall3exactACESrefreshes. Oldmonitorprogressonlyfornewunits.\nExistingACES/DeltaAImastersonly:ControlMaster=no ProxyCommand=false BatchMode=yes,skipclosed/noauthretry. BothopenlastEXPLICIT08:38UTC; noexplicitcheckbeforedatednextnotbefore09:38 inexactrecord,consultnewer. Currentfullrefreshes09:10all0, noextra-mastercheck. MIT<=3TOTALattempts,0used. BeforeANYACESsiterowread reviewedrefresh_aces_site.py exactcampaign/packet,metadata2274380viarefresh_aces_allocation_observation.py. Neverrepeat2275518submission/release/Requeue0update; itCOMPLETED0Nov2ac045. Olddeclaredexecutionrawreview411passed314checks,6exactfilesfetchedonce/hashsteps403\u2013408,2actualdriverbytes192MBoutsideGit. ButOLDprofilelacks currentCUDAcontext/JAXowningpackagebegin-completion/fullportablebackendcoverage; currentselected/source/profile/workerqualificationFALSE,zeroallstudycredit. Old2274632FAILED. Futureactualfullsite+independentraw/capturedbytes review THENseparateplacementchange; selectedsourcequalifiesseparately. Physicalmapping/kernel-enforcementfalse/configuredtrustexplicit. UVA6779358metadataonly;580siteunsubmittedneedsreview/currentadapter. Preservefailedsites/oldmemorydiagnostic/passivezeroquals; neverslurmd/privateenv/globalUID64030trust. Reservation sl5nw_168 ACTIVEthroughNov17 05:00:01UTC, freshUTCcheckbeforecontinuations.\nRegenerateaggregate+compileddevelopmentreport onownedcompute atmeaningfulphaseboundaries; retain120case2813b6b/17panels67pages840pairs/PDF1de7948a andold104. Inspectproblems/appendinfra_history+concretebefore-afterplan. Printplain table runorjob|pool|gpu|state|progress,lines<100,noIDcolumn; actualTRAINING/WAITING/HELD/FINISHED/PLANNED counts,failuresunderFINISHED,remotesUNKNOWNwhenunverified. Renewtask/cluster monitorbeforeexpiry. EndONLYall50/final2Bcopies/reports/one-main-branchcleanupcomplete oruserexplicitstop.",
+    "record": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/hourly_wakeup_actual_native_and_snapshot_state_2026-11-05.json",
+      "sha256": "f292dbb5c8e15b7ab2c70a1d873c7a5ef1f4c7f8e27d0bdba0693e9e203a455d"
+    },
+    "recurring": true,
+    "session_id": "01a1909f-d7d3-75d1-8af8-fc80199cfae2",
+    "timezone": "UTC"
+  },
+  "session_wakeup_schedule_history": [
+    {
+      "new_id": "5ac3653c-dbcd-4e44-8f17-a49d58eaafe2",
+      "previous_id": "1fa35ddd-3a3b-494b-80d3-c714bd303525",
+      "reason": "Refresh actual accepted native component and bounded snapshot/controller corrections; hourly cadence retained."
+    }
+  ],
   "session_wakeup_schedule_previous_records": [
     {
       "changed_at_utc": "2026-11-05T05:26:22.358Z",
@@ -3358,6 +3412,10 @@
       "reason": "Refresh current source progress and user five-minute check limit while retaining hourly cadence."
     }
   ],
+  "session_wakeup_schedule_record": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/hourly_wakeup_actual_native_and_snapshot_state_2026-11-05.json",
+    "sha256": "f292dbb5c8e15b7ab2c70a1d873c7a5ef1f4c7f8e27d0bdba0693e9e203a455d"
+  },
   "session_wakeup_user_instruction": "No twenty-minute session monitor. Wake near expected job completion or after a long wait.",
   "standing_metadata_path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/campaign_provenance.json",
   "status_checked_at": "2026-11-04T23:49:01.293419+00:00",

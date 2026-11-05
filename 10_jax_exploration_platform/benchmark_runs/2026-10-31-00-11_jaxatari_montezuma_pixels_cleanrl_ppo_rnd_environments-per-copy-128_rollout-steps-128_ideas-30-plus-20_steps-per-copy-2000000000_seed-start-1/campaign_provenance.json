@@ -204,9 +204,9 @@
   "configured_producer_helper_commit": "43eade68238a8d010ad1d1ea681e348022a00060",
   "configured_profile_actual_qualification": false,
   "correctness_cache_diagnosis_job_id": "6777949",
-  "cron_id": "1fa35ddd-3a3b-494b-80d3-c714bd303525",
-  "cron_monitor_expires_at": "2026-11-12T07:00:00Z",
-  "cron_monitor_id": "1fa35ddd-3a3b-494b-80d3-c714bd303525",
+  "cron_id": "5ac3653c-dbcd-4e44-8f17-a49d58eaafe2",
+  "cron_monitor_expires_at": "2026-11-12T09:20:00Z",
+  "cron_monitor_id": "5ac3653c-dbcd-4e44-8f17-a49d58eaafe2",
   "cron_verified_active": true,
   "cron_verified_utc": "2026-11-05T05:26:22.358Z",
   "current_branch_integrated_commit": "79a01e851ff92ddba7d0e12eaf8164cab2028878",
@@ -555,7 +555,7 @@
       "reason": "Current full check390 verifies current running monitor; preserve old terminal fields under their historical record."
     }
   ],
-  "monitoring_cadence": "Session wakeups hourly; persistent cluster checks every twenty minutes.",
+  "monitoring_cadence": "hourly session wakeups; persistent cluster monitor every twenty minutes",
   "monitoring_verified_utc": "2026-11-05T03:58:45.941229+00:00",
   "native_diagnostic_total_seconds": 300,
   "native_process_component_actual_review": {
@@ -709,8 +709,8 @@
     }
   ],
   "session_wakeup_schedule_record": {
-    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/hourly_wakeup_five_minute_checks_2026-11-05.json",
-    "sha256": "187d735c81d64081566ff854333e56005cf398e70a7bfb487b6953784206b01c"
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/hourly_wakeup_actual_native_and_snapshot_state_2026-11-05.json",
+    "sha256": "f292dbb5c8e15b7ab2c70a1d873c7a5ef1f4c7f8e27d0bdba0693e9e203a455d"
   },
   "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
   "source_root": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",

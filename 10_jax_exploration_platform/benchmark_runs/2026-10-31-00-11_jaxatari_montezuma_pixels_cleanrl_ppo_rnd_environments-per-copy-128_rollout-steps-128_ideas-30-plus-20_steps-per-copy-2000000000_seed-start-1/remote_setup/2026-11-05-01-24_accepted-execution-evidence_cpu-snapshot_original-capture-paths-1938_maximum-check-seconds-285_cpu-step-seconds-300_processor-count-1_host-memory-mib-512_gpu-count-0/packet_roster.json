@@ -1,0 +1,44 @@
+{
+  "actual_invocation_attempted": false,
+  "actual_source_commit": "f7e8f5c8f0a2d1847fff4f93726fce62205c23aa",
+  "files": {
+    "capture_inventory.json": {
+      "bytes": 1376000,
+      "sha256": "2f6fe68e2a5d2f9758b2e5cb45d7136c6e7070735f733227258a9ce6739b441b"
+    },
+    "command.txt": {
+      "bytes": 1947,
+      "sha256": "2af467862bbff785e59e3a4dada1b846d31a2e1b7a04bcd5248c4ff2fe4a299e"
+    },
+    "config_resolved.yaml": {
+      "bytes": 4021,
+      "sha256": "6eb6a2029296c7bb0f9259bd3f5719e4505bcad7a98389d59334aa2a4dd915de"
+    },
+    "experiment_background.md": {
+      "bytes": 1877,
+      "sha256": "a370b137ded9140d6b7591ade164c957f7a524c895489e906fb9f868dfa6362d"
+    },
+    "inputs.json": {
+      "bytes": 2321,
+      "sha256": "9a69ba96aaeb5560fced8e6299674cf9ffa548d1466a062e7bbd8bb1e45c5c0f"
+    },
+    "invocation_template.json": {
+      "bytes": 5723,
+      "sha256": "edc5e5b2732910a71b20b8dcdde44e27002c1e013eea2b149a4bd849d5fc2a67"
+    },
+    "manifest.yaml": {
+      "bytes": 4930,
+      "sha256": "09e136ea48aea6ebc0cbbbeb5d80956df2e531c6f1c6ba7ff944d38cc22c125a"
+    }
+  },
+  "future_snapshot_review": null,
+  "future_snapshot_sha256": null,
+  "kind": "fresh_unattempted_pinned_bounded_cpu_snapshot_packet_roster",
+  "local_packet_path": "/p/rlprojects/RND_worktrees/2026-11-05-01-00_accepted-evidence-reference-classification_metadata-only_gpu-count-0_processor-count-1_host-memory-mib-512/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-01-24_accepted-execution-evidence_cpu-snapshot_original-capture-paths-1938_maximum-check-seconds-285_cpu-step-seconds-300_processor-count-1_host-memory-mib-512_gpu-count-0",
+  "packet_path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-01-24_accepted-execution-evidence_cpu-snapshot_original-capture-paths-1938_maximum-check-seconds-285_cpu-step-seconds-300_processor-count-1_host-memory-mib-512_gpu-count-0",
+  "schema_version": 1,
+  "source_review": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-01-00_accepted-evidence-reference-classification_metadata-only_gpu-count-0_processor-count-1_host-memory-mib-512/.review_metadata/failed_snapshot_reference_classification/independent_pinned_size_444.json",
+    "sha256": "a770e41ee224522eeeff03f41a6cd1f66c76efe662b4a9958ad6bc69f70ccd62"
+  }
+}

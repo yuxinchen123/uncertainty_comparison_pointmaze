@@ -1,0 +1,48 @@
+{
+  "actual_invocation_attempted": false,
+  "actual_snapshot_review": null,
+  "actual_snapshot_sha256": null,
+  "actual_step_id": null,
+  "capture_inventory": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-01-24_accepted-execution-evidence_cpu-snapshot_original-capture-paths-1938_maximum-check-seconds-285_cpu-step-seconds-300_processor-count-1_host-memory-mib-512_gpu-count-0/capture_inventory.json",
+    "sha256": "2f6fe68e2a5d2f9758b2e5cb45d7136c6e7070735f733227258a9ce6739b441b"
+  },
+  "description": "One fresh bounded CPU proof of accepted execution dependencies and all original captured history paths, followed by a separate actual independent review.",
+  "historical_annotation_scope": "All accepted execution dependencies and all1938 original declared captured paths remain required. Whole frozen-ledger bytes/hash and exact selected-owner/source/uniqueness checks remain. Only the exact nonselected execution_diagnostic helper annotations at rows9/10/11 retain their recorded identities/commits/hashrefs as hashed historical metadata; those helper annotations are not executed or treated as current qualification dependencies. Unknown or selected/current-row substitutions fail. Exact controller stdout/stderr fields remain required through their hashed accepted-unit output receipts.",
+  "inputs": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-01-24_accepted-execution-evidence_cpu-snapshot_original-capture-paths-1938_maximum-check-seconds-285_cpu-step-seconds-300_processor-count-1_host-memory-mib-512_gpu-count-0/inputs.json",
+    "sha256": "9a69ba96aaeb5560fced8e6299674cf9ffa548d1466a062e7bbd8bb1e45c5c0f"
+  },
+  "kind": "prepared_single_use_accepted_execution_evidence_cpu_snapshot_template",
+  "output_path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-01-24_accepted-execution-evidence_cpu-snapshot_original-capture-paths-1938_maximum-check-seconds-285_cpu-step-seconds-300_processor-count-1_host-memory-mib-512_gpu-count-0",
+  "packet_path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-01-24_accepted-execution-evidence_cpu-snapshot_original-capture-paths-1938_maximum-check-seconds-285_cpu-step-seconds-300_processor-count-1_host-memory-mib-512_gpu-count-0",
+  "prepared_only": true,
+  "producer": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-01-00_accepted-evidence-reference-classification_metadata-only_gpu-count-0_processor-count-1_host-memory-mib-512/10_jax_exploration_platform/scripts/atari_pixel_campaign/accepted_evidence_snapshot.py",
+    "sha256": "94dc00524bfc5d02ebc2f7b8f2b88444516938fe583967ea16e414a1e2e4e54a"
+  },
+  "run_id": "2026-11-05-01-24_accepted-execution-evidence_cpu-snapshot_original-capture-paths-1938_maximum-check-seconds-285_cpu-step-seconds-300_processor-count-1_host-memory-mib-512_gpu-count-0",
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "source_base_commit": "7d07da121c41c531d51cbd25b73579735212ead8",
+  "source_commit": "f7e8f5c8f0a2d1847fff4f93726fce62205c23aa",
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-01-00_accepted-evidence-reference-classification_metadata-only_gpu-count-0_processor-count-1_host-memory-mib-512/.review_metadata/failed_snapshot_reference_classification/pinned_size_frozen_source_for_independent_review.json",
+    "sha256": "1febe93dc21dbdf49e96234d0b8a663baa7e4f19d7cd6cccf86179d59dfce054"
+  },
+  "source_review": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-01-00_accepted-evidence-reference-classification_metadata-only_gpu-count-0_processor-count-1_host-memory-mib-512/.review_metadata/failed_snapshot_reference_classification/independent_pinned_size_444.json",
+    "sha256": "a770e41ee224522eeeff03f41a6cd1f66c76efe662b4a9958ad6bc69f70ccd62"
+  },
+  "submission": {
+    "gpu_count": 0,
+    "host_memory_mib": 512,
+    "kind": "owned_existing_numeric_cpu_step",
+    "maximum_snapshot_seconds": 285,
+    "maximum_step_seconds": 300,
+    "owned_allocation": "6783003",
+    "requested_cpus": 1,
+    "requeue": false
+  },
+  "worker_admission": false
+}
