@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "srun",
+    "--jobid=6821437",
+    "--overlap",
+    "--exact",
+    "--time=00:05:00",
+    "-n1",
+    "-c1",
+    "--mem=512M",
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "/p/rlprojects/RND_worktrees/2026-11-05-05-32_empty-command-startup_wait-seconds-30_preserve-owner-birth-parent-affinity_exact-argv-before-registration_gpu-count-0/.review_metadata/empty_command_startup/independent_source_review.py"
+  ],
+  "returncode": 0,
+  "elapsed_seconds": 2.1663734189933166
+}

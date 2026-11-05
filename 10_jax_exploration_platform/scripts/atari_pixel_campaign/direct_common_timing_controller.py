@@ -629,6 +629,86 @@ def child_identity_observation(observed, command, affinity, parent_pid, popen_pi
         **BOUNDARY}
 
 
+def wait_for_exact_child_startup(child, initial, command, affinity, parent_pid, expected_uid, unit,
+                                 *, started_monotonic, maximum_seconds=30., clock=time.monotonic,
+                                 sleeper=time.sleep, observer=None):
+    """Wait only for empty raw argv, retaining exact identity and a fixed thirty-second bound."""
+    require(type(maximum_seconds) in (int, float) and 0 < maximum_seconds <= 30,
+        "the empty-command startup allowance must be positive and no more than thirty seconds")
+    require(type(started_monotonic) in (int, float) and 0 <= started_monotonic < float("inf"),
+        "the actual startup monotonic origin is required")
+    require(type(command) is list and command and all(type(value) is str and value for value in command),
+        "startup requires one exact nonempty expected command")
+    observer = read_process if observer is None else observer
+    deadline = started_monotonic + maximum_seconds
+    expected_raw = b"\0".join(value.encode("utf-8") for value in command) + b"\0"
+    observations, ready, failure = [], None, None
+    current = initial
+    birth = initial["process_start_time"]
+    try:
+        while True:
+            observed = clock()
+            require(type(observed) in (int, float) and started_monotonic <= observed < float("inf"),
+                "the startup observation clock is invalid")
+            require(len(observations) < 4096, "the bounded startup observation count was exceeded")
+            raw = bytes.fromhex(current["command_bytes_hex"])
+            decoded = [value.decode("utf-8", errors="strict") for value in raw.rstrip(b"\0").split(b"\0")] if raw else []
+            ownership = bool(re.fullmatch(r"Uid:\s*" + str(expected_uid) + r"\s+" + str(expected_uid)
+                + r"\s+" + str(expected_uid) + r"\s+" + str(expected_uid) + r"\s*", current["uid_bytes"]))
+            predicates = {"all_four_uids_match": ownership and type(current["uid"]) is int and current["uid"] == expected_uid
+                    and digest(current["uid_bytes"].encode()) == current["uid_sha256"],
+                "popen_pid_matches": type(current["pid"]) is int and current["pid"] == child.pid,
+                "birth_matches_first_observation": type(birth) is str and re.fullmatch(r"[1-9][0-9]*", birth) is not None
+                    and current["process_start_time"] == birth,
+                "parent_pid_matches": type(current["parent_pid"]) is int and current["parent_pid"] == parent_pid,
+                "inherited_affinity_matches": current["affinity"] == affinity,
+                "raw_command_matches_decoded_record": decoded == current["command"] and digest(raw) == current["command_sha256"]}
+            row = {"observed_monotonic": observed, "observed_at_utc": now(), "observed_child": current,
+                "identity_predicates": predicates, "raw_command_is_empty": raw == b"",
+                "expected_command_matches": current["command"] == command,
+                "expected_raw_command_matches": raw == expected_raw, "actual_popen_returncode": None}
+            observations.append(row)
+            require(observed <= deadline, "the empty-command startup deadline expired")
+            require(all(predicates.values()), "actual child identity changed during empty-command startup")
+            returned = child.poll()
+            row["actual_popen_returncode"] = returned
+            require(returned is None, "the exact child exited before positive startup identity")
+            require(clock() <= deadline, "the empty-command startup deadline expired during observation")
+            if current["command"] == command:
+                require(raw == expected_raw, "nonempty raw child command differs from the exact expected bytes")
+                ready = current
+                break
+            require(raw == b"" and current["command"] == [],
+                "unexpected nonempty child command cannot wait or register")
+            remaining = deadline - clock()
+            require(remaining > 0, "the empty-command startup deadline expired")
+            sleeper(min(.01, remaining))
+            after_poll = child.poll()
+            row["after_empty_poll"] = {"observed_monotonic": clock(), "actual_popen_returncode": after_poll}
+            require(after_poll is None, "the exact child exited while its raw command was empty")
+            current = observer(child.pid, expected_uid)
+    except BaseException as error:
+        failure = {"type": type(error).__name__, "error": str(error), "at_utc": now()}
+        raise
+    finally:
+        finished = clock()
+        if ready is not None and finished > deadline:
+            ready = None
+            failure = {"type": "TimeoutError", "error": "exact command completed after the startup deadline", "at_utc": now()}
+        publish(Path(unit) / "direct_controller_startup_observation_sequence.json", {
+            "schema_version": 1, "kind": "bounded_empty_raw_command_startup_observations",
+            "started_monotonic": started_monotonic, "deadline_monotonic": deadline,
+            "maximum_wait_seconds": maximum_seconds, "finished_monotonic": finished,
+            "actual_popen_pid": child.pid, "initial_birth": birth, "expected_parent_pid": parent_pid,
+            "expected_command": command, "expected_affinity": affinity, "expected_uid": expected_uid,
+            "observations": observations, "exact_command_observed": ready is not None,
+            "registration_performed_by_this_observer": False, "failure": failure,
+            "historical_failure_cause_for_other_attempts_established": False, **BOUNDARY})
+    if ready is None:
+        raise TimeoutError("exact command completed after the startup deadline")
+    return ready
+
+
 def supervise(plan, command, unit, environment, *, expected_uid, cpu_count,
               registration_hostname, seconds=10800, after_spawn=None, launch_lock=None, prelaunch_check=None):
     """Common real-process mechanism; tests use only private CPU fixture paths.
@@ -667,9 +747,12 @@ def supervise(plan, command, unit, environment, *, expected_uid, cpu_count,
             child = subprocess.Popen(command, env=environment, cwd=unit, stdin=subprocess.DEVNULL,
                 stdout=stdout, stderr=stderr, shell=False, close_fds=True)
             # Popen has returned a real PID; nothing below invents a future identity.
+            startup_started = time.monotonic()
             child_identity = read_process(child.pid, expected_uid)
             publish(unit / "direct_controller_initial_child_observation.json",
                 child_identity_observation(child_identity, command, selected_affinity, os.getpid(), child.pid))
+            child_identity = wait_for_exact_child_startup(child, child_identity, command, selected_affinity,
+                os.getpid(), expected_uid, unit, started_monotonic=startup_started)
             require(child_identity["parent_pid"] == os.getpid() and child_identity["command"] == command
                     and child_identity["affinity"] == selected_affinity, "actual child parent, argv or inherited CPU affinity differs")
             spawn = {"schema_version": 1, "kind": "actual_direct_qualification_popen_return",

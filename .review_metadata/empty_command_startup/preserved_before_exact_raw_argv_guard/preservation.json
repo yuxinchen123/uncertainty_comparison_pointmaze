@@ -1,0 +1,19 @@
+{
+  "files": {
+    "/p/rlprojects/RND_worktrees/2026-11-05-05-32_empty-command-startup_wait-seconds-30_preserve-owner-birth-parent-affinity_exact-argv-before-registration_gpu-count-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_timing_controller.py": {
+      "mode": "0o660",
+      "preserved": "/p/rlprojects/RND_worktrees/2026-11-05-05-32_empty-command-startup_wait-seconds-30_preserve-owner-birth-parent-affinity_exact-argv-before-registration_gpu-count-0/.review_metadata/empty_command_startup/preserved_before_exact_raw_argv_guard/direct_common_timing_controller.py",
+      "sha256": "947cfe2b9aab2ad06ec654fcbae262e92087f69cf5c473e0de8e7a42651f472a"
+    },
+    "/p/rlprojects/RND_worktrees/2026-11-05-05-32_empty-command-startup_wait-seconds-30_preserve-owner-birth-parent-affinity_exact-argv-before-registration_gpu-count-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_empty_command_startup.py": {
+      "mode": "0o660",
+      "preserved": "/p/rlprojects/RND_worktrees/2026-11-05-05-32_empty-command-startup_wait-seconds-30_preserve-owner-birth-parent-affinity_exact-argv-before-registration_gpu-count-0/.review_metadata/empty_command_startup/preserved_before_exact_raw_argv_guard/test_empty_command_startup.py",
+      "sha256": "49825fcfc62e51a56683b67e03458d146dfe71e58f7d99f2b895e74154ed3294"
+    }
+  },
+  "preserved_before_edit": true,
+  "prior_actual_test_returncode": 0,
+  "prior_author_methods": 9,
+  "reason": "Add exact complete raw command bytes; existing rstrip parser can hide an extra empty trailing argument.",
+  "reported_test_seconds": 0.186
+}

@@ -1,0 +1,39 @@
+{
+  "NUM_or_GPU_actions": false,
+  "actual_step_ids_not_captured_by_test_entry": true,
+  "complete_original_launch_reproduced_by_CPU_fixture": false,
+  "isolated_selected_interpreter_flags": [
+    "-I",
+    "-S",
+    "-B"
+  ],
+  "kind": "focused_author_empty_only_startup_guard_checks",
+  "original_startup_flags_CPU_fixture_run": false,
+  "owned_CPU_job_id": "6821437",
+  "reason_original_flags_not_run": "Python startup hooks before an audit were not qualified as free of numerical or GPU work; the real original-flags same-host transition is already independently recorded.",
+  "runs": [
+    {
+      "methods": 9,
+      "reported_seconds": 0.186,
+      "returncode": 0,
+      "scope": "initial empty/exact, wrong argv, all identity changes, exit, timeout/late exact, false empty, actual isolated selected-Python child"
+    },
+    {
+      "methods": 2,
+      "reported_seconds": 0.026,
+      "returncode": 0,
+      "scope": "only new complete raw-argv guard and matching positive after peer static finding"
+    },
+    {
+      "methods": 1,
+      "reported_seconds": 0.184,
+      "returncode": 0,
+      "scope": "original controller predicates/lifecycle outside explicit startup observer and saved observations remain AST-identical"
+    }
+  ],
+  "scientific_credit": 0,
+  "test_only_syntax_failure_preserved": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-05-32_empty-command-startup_wait-seconds-30_preserve-owner-birth-parent-affinity_exact-argv-before-registration_gpu-count-0/.review_metadata/empty_command_startup/test_only_syntax_failure.json",
+    "sha256": "dda747aef7d6b64d3d75514d71ab9e374f8efdad79d358d56bcde398b0c5a87c"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "kind": "preserved_author_test_only_syntax_failure",
+  "source_sha256": "d6e554b1c10d3818790498753bf96c11f449af8802dd43fdf3235f9b82458b03",
+  "error": "An accidental standalone plus character in the test transformer caused SyntaxError before tests ran.",
+  "actual_srun_returncode": 1,
+  "methods_run": 0,
+  "production_controller_unchanged": true
+}

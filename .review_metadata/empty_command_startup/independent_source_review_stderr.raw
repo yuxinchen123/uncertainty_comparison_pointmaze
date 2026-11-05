@@ -1,0 +1,16 @@
+test_actual_selected_python_isolated_CPU_child_passes_exact_guard_and_wait (independent_final_empty_startup_tests.EmptyCommandStartupTests) ... ok
+test_each_changed_identity_refuses_before_registration (independent_final_empty_startup_tests.EmptyCommandStartupTests) ... ok
+test_empty_then_exact_retains_first_empty_and_requires_positive_identity (independent_final_empty_startup_tests.EmptyCommandStartupTests) ... ok
+test_empty_then_wrong_command_refuses (independent_final_empty_startup_tests.EmptyCommandStartupTests) ... ok
+test_empty_timeout_and_late_exact_both_refuse (independent_final_empty_startup_tests.EmptyCommandStartupTests) ... ok
+test_exit_while_empty_precedes_another_proc_read (independent_final_empty_startup_tests.EmptyCommandStartupTests) ... ok
+test_false_empty_raw_bytes_and_more_than_thirty_seconds_refuse (independent_final_empty_startup_tests.EmptyCommandStartupTests) ... ok
+test_initial_exact_never_polls_another_observation_or_sleeps (independent_final_empty_startup_tests.EmptyCommandStartupTests) ... ok
+test_trailing_empty_argument_is_not_hidden_by_decoding (independent_final_empty_startup_tests.EmptyCommandStartupTests) ... ok
+test_unexpected_nonempty_command_refuses_without_wait (independent_final_empty_startup_tests.EmptyCommandStartupTests) ... ok
+test_existing_controller_checks_and_functions_are_unchanged (independent_final_initial_preservation_tests.InitialChildIdentityTests) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.292s
+
+OK
