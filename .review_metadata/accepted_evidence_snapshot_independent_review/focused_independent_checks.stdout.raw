@@ -1,0 +1,83 @@
+test_boolean_schema_and_seed_substitutions_are_refused (__main__.IndependentBoundaryChecks)
+Equal-looking Boolean counters cannot replace exact schemas or independent seeds. ... ok
+test_cold_exact_twenty_nine_helper_staging_and_changed_bytes_refusal (__main__.IndependentBoundaryChecks)
+A fresh staged namespace contains exactly the intended source set before any raw snapshot exists. ... ok
+test_cpu_descriptor_identities_are_not_asserted_on_other_hosts (__main__.IndependentBoundaryChecks)
+A complete explicitly synthetic CPU fact is not compared to a worker host's device numbers. ... ok
+test_invalid_metadata_cache_stays_failed_after_parent_path_restoration (__main__.IndependentBoundaryChecks)
+A failed alias check must permanently invalidate the same retained metadata cache. ... FAIL
+test_nonregular_file_is_refused_before_open (__main__.IndependentBoundaryChecks)
+The ordinary-file boundary must reject a FIFO before opening a special file. ... FAIL
+test_original_reader_bodies_and_all_live_functions_are_unchanged (__main__.IndependentBoundaryChecks)
+Only explicit new dispatches change; actual compute, binding, backend and numerical source remain intact. ... ok
+test_real_accepted_small_metadata_schemas_without_payload_hashes (__main__.IndependentBoundaryChecks)
+Inspect genuine Q/C1/C2 schema joins only; do not run inventory completion or old raw consumers. ... test_real_owned_compute_context_rejects_forged_job_environment (__main__.IndependentBoundaryChecks)
+The current kernel cgroup and all UIDs must match the declared job and step. ... ok
+test_unmapped_historical_node_driver_has_no_live_path_fallback (__main__.IndependentBoundaryChecks)
+A missing captured driver reference must not become a read of today's node-local path. ... FAIL
+
+======================================================================
+ERROR: test_real_accepted_small_metadata_schemas_without_payload_hashes (__main__.IndependentBoundaryChecks) (role='1')
+Inspect genuine Q/C1/C2 schema joins only; do not run inventory completion or old raw consumers.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-04-23-24_accepted-evidence-snapshot_original-helpers-26_common-helpers-29_validation-seconds-300_hash-physical-files-once_gpu-count-0_processor-count-1_host-memory-mib-512/.review_metadata/accepted_evidence_snapshot_independent_review/run_focused_independent_checks.py", line 214, in test_real_accepted_small_metadata_schemas_without_payload_hashes
+    value = S.accepted_role(files, inventory, INPUTS['small_review_references'][key],
+  File "/p/rlprojects/RND_worktrees/2026-11-04-23-24_accepted-evidence-snapshot_original-helpers-26_common-helpers-29_validation-seconds-300_hash-physical-files-once_gpu-count-0_processor-count-1_host-memory-mib-512/10_jax_exploration_platform/scripts/atari_pixel_campaign/accepted_evidence_snapshot.py", line 438, in accepted_role
+    require(exact(result.get("runtime_environment"), plan["runtime_environment"])
+  File "/p/rlprojects/RND_worktrees/2026-11-04-23-24_accepted-evidence-snapshot_original-helpers-26_common-helpers-29_validation-seconds-300_hash-physical-files-once_gpu-count-0_processor-count-1_host-memory-mib-512/10_jax_exploration_platform/scripts/atari_pixel_campaign/accepted_evidence_snapshot.py", line 46, in require
+    raise ValueError(message)
+ValueError: accepted evidence changed its exact original runtime, assets or random streams
+
+======================================================================
+ERROR: test_real_accepted_small_metadata_schemas_without_payload_hashes (__main__.IndependentBoundaryChecks) (role='2')
+Inspect genuine Q/C1/C2 schema joins only; do not run inventory completion or old raw consumers.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-04-23-24_accepted-evidence-snapshot_original-helpers-26_common-helpers-29_validation-seconds-300_hash-physical-files-once_gpu-count-0_processor-count-1_host-memory-mib-512/.review_metadata/accepted_evidence_snapshot_independent_review/run_focused_independent_checks.py", line 214, in test_real_accepted_small_metadata_schemas_without_payload_hashes
+    value = S.accepted_role(files, inventory, INPUTS['small_review_references'][key],
+  File "/p/rlprojects/RND_worktrees/2026-11-04-23-24_accepted-evidence-snapshot_original-helpers-26_common-helpers-29_validation-seconds-300_hash-physical-files-once_gpu-count-0_processor-count-1_host-memory-mib-512/10_jax_exploration_platform/scripts/atari_pixel_campaign/accepted_evidence_snapshot.py", line 438, in accepted_role
+    require(exact(result.get("runtime_environment"), plan["runtime_environment"])
+  File "/p/rlprojects/RND_worktrees/2026-11-04-23-24_accepted-evidence-snapshot_original-helpers-26_common-helpers-29_validation-seconds-300_hash-physical-files-once_gpu-count-0_processor-count-1_host-memory-mib-512/10_jax_exploration_platform/scripts/atari_pixel_campaign/accepted_evidence_snapshot.py", line 46, in require
+    raise ValueError(message)
+ValueError: accepted evidence changed its exact original runtime, assets or random streams
+
+======================================================================
+FAIL: test_invalid_metadata_cache_stays_failed_after_parent_path_restoration (__main__.IndependentBoundaryChecks)
+A failed alias check must permanently invalidate the same retained metadata cache.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-04-23-24_accepted-evidence-snapshot_original-helpers-26_common-helpers-29_validation-seconds-300_hash-physical-files-once_gpu-count-0_processor-count-1_host-memory-mib-512/.review_metadata/accepted_evidence_snapshot_independent_review/run_focused_independent_checks.py", line 101, in test_invalid_metadata_cache_stays_failed_after_parent_path_restoration
+    self.assertFalse(accepted_after_refusal, 'the same failed metadata cache was accepted again')
+AssertionError: True is not false : the same failed metadata cache was accepted again
+
+======================================================================
+FAIL: test_nonregular_file_is_refused_before_open (__main__.IndependentBoundaryChecks)
+The ordinary-file boundary must reject a FIFO before opening a special file.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-04-23-24_accepted-evidence-snapshot_original-helpers-26_common-helpers-29_validation-seconds-300_hash-physical-files-once_gpu-count-0_processor-count-1_host-memory-mib-512/.review_metadata/accepted_evidence_snapshot_independent_review/run_focused_independent_checks.py", line 110, in test_nonregular_file_is_refused_before_open
+    files.file(path, '0' * 64)
+  File "/p/rlprojects/RND_worktrees/2026-11-04-23-24_accepted-evidence-snapshot_original-helpers-26_common-helpers-29_validation-seconds-300_hash-physical-files-once_gpu-count-0_processor-count-1_host-memory-mib-512/10_jax_exploration_platform/scripts/atari_pixel_campaign/accepted_evidence_snapshot.py", line 153, in file
+    descriptor = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+  File "/usr/lib/python3.10/unittest/mock.py", line 1114, in __call__
+    return self._mock_call(*args, **kwargs)
+  File "/usr/lib/python3.10/unittest/mock.py", line 1118, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+  File "/usr/lib/python3.10/unittest/mock.py", line 1173, in _execute_mock_call
+    raise effect
+AssertionError: nonregular path reached os.open
+
+======================================================================
+FAIL: test_unmapped_historical_node_driver_has_no_live_path_fallback (__main__.IndependentBoundaryChecks)
+A missing captured driver reference must not become a read of today's node-local path.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-04-23-24_accepted-evidence-snapshot_original-helpers-26_common-helpers-29_validation-seconds-300_hash-physical-files-once_gpu-count-0_processor-count-1_host-memory-mib-512/.review_metadata/accepted_evidence_snapshot_independent_review/run_focused_independent_checks.py", line 117, in test_unmapped_historical_node_driver_has_no_live_path_fallback
+    with self.assertRaises(ValueError):
+AssertionError: ValueError not raised
+
+----------------------------------------------------------------------
+Ran 9 tests in 2.379s
+
+FAILED (failures=3, errors=2)

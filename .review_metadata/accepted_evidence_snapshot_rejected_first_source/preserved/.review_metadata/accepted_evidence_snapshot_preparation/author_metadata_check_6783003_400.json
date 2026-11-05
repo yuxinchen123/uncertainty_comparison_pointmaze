@@ -1,0 +1,26 @@
+{
+  "actual_historical_payload_snapshot_run": false,
+  "checks_run": 34,
+  "elapsed_seconds": 2.7985748880309984,
+  "errors": 0,
+  "failures": 0,
+  "gpu_operations": 0,
+  "job_id": "6783003",
+  "kind": "accepted_evidence_snapshot_author_metadata_check",
+  "network_operations": 0,
+  "numerical_imports": [],
+  "passed": true,
+  "pid": 1246061,
+  "preaudit_operations": "Standard-library imports and exact own process/CPU-step identity checks only.",
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "source_files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/accepted_evidence_snapshot.py": "9ee151905e93caa0edf258cc34d03b8e2b896a86efd782466951cfcca1ced9e0",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_confirmation.py": "e406a76f04fba2329f15642eb0144033ac1160cef13ef94bc3ab9bf12df38662",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py": "db6f97ce66a808193da3b23eee1a34a871670021cc9178c44e0377d64b6742e4",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py": "fe8725b2e641d1c60de31bdd5ae49b31745222c6cf436b7202c330741df859ab",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/serval02_card1_binding.py": "bb72f3dd31bfb9ffc062038a4be6b974fa3aff3feee26e558d4a4a4353424069",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_accepted_evidence_snapshot.py": "ab412324f014027f3d4e949190ab5890bb2f56c538819e1a3d5954c226eeead5"
+  },
+  "step_id": "400"
+}

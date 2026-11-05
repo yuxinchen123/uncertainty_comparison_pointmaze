@@ -194,7 +194,7 @@ def required_helpers(configured=False, direct=False, common=False, backend_image
         import direct_measurement as support
         names = (*HELPERS, *support.helper_names())
         if common:
-            names += ("direct_common_confirmation.py", "direct_historical_consumer.py")
+            names += ("direct_common_confirmation.py", "direct_historical_consumer.py", "accepted_evidence_snapshot.py")
         if backend_image:
             names += ("direct_backend_image.py",)
         return tuple(dict.fromkeys(names))
@@ -270,6 +270,11 @@ def prepare(args):
     correctness_record = getattr(args, "common_correctness_record", None)
     correctness_review = getattr(args, "common_correctness_review", None)
     common = correctness_record is not None or correctness_review is not None
+    snapshot_record = getattr(args, "accepted_evidence_snapshot", None)
+    snapshot_review = getattr(args, "accepted_evidence_snapshot_review", None)
+    if (common and direct and (snapshot_record is None or snapshot_review is None)
+            or (snapshot_record is not None or snapshot_review is not None) and not (common and direct)):
+        raise ValueError("new direct common confirmation requires its actual complete CPU snapshot and independent review")
     if common and (correctness_record is None or correctness_review is None or configured == direct
             or args.mode != "confirmation" or qualification or direct_qualification or getattr(args, "final_confirmation", False)):
         raise ValueError("common confirmation requires both actual correctness records and one explicit intermediate target")
@@ -349,10 +354,16 @@ def prepare(args):
     if common and direct:
         import direct_measurement as direct_support
         import direct_common_confirmation as prerequisite
-        historical = direct_support.historical_support(plan)
-        plan["direct_historical_consumer_protocol"] = dict(historical.PROTOCOL)
+        snapshot = direct_support.adjacent("accepted_evidence_snapshot")
+        snapshot.configure(plan, snapshot_record, snapshot_review)
         plan["common_correctness_inputs"] = {"result": prerequisite.reference(correctness_record),
             "review": prerequisite.reference(correctness_review)}
+        if args.direct_qualification_record is None or args.direct_qualification_review is None:
+            raise ValueError("the separately accepted original qualification remains required")
+        plan["direct_qualification_inputs"] = {"result": prerequisite.reference(args.direct_qualification_record),
+            "review": prerequisite.reference(args.direct_qualification_review)}
+        snapshot.stage_history_inputs(plan, args.direct_history_inputs)
+        direct_support.adjacent("direct_backend_image").configure_plan(plan, backend_record)
     if configured:
         import configured_measurement as support
         profile, profile_input = read_document(args.configured_isolation_profile)
@@ -367,6 +378,9 @@ def prepare(args):
     if direct:
         import direct_measurement as support
         profile, profile_input = read_document(args.direct_binding_profile)
+        if "accepted_evidence_snapshot_protocol" in plan:
+            plan["inputs"]["direct_binding_profile"] = profile_input
+            plan["inputs"]["direct_history_inputs"] = support.core().receipt(args.direct_history_inputs)
         support.configure_plan(plan, profile, args.direct_history_inputs, "selected_measurement",
             backend_image_record=backend_record)
         plan["inputs"]["direct_binding_profile"] = profile_input
@@ -967,6 +981,8 @@ def parse_arguments(argv=None):
     parser.add_argument("--target-qualification-review", type=Path)
     parser.add_argument("--common-correctness-record", type=Path)
     parser.add_argument("--common-correctness-review", type=Path)
+    parser.add_argument("--accepted-evidence-snapshot", type=Path)
+    parser.add_argument("--accepted-evidence-snapshot-review", type=Path)
     parser.add_argument("--direct-binding-profile", type=Path)
     parser.add_argument("--direct-backend-image-record", type=Path)
     parser.add_argument("--direct-history-inputs", type=Path)
@@ -1005,7 +1021,7 @@ def parse_arguments(argv=None):
                 "completed_study_proof", "completed_study_review", "completed_study_manifest", "completed_study_manifest_sha256",
                 "configured_isolation_profile", "target_qualification_record", "target_qualification_review", "cleanrl_source_root", "qualification_software_result",
                 "direct_binding_profile", "direct_backend_image_record", "direct_history_inputs", "direct_qualification_record", "direct_qualification_review",
-                "common_correctness_record", "common_correctness_review", *memory_options)):
+                "common_correctness_record", "common_correctness_review", "accepted_evidence_snapshot", "accepted_evidence_snapshot_review", *memory_options)):
             parser.error("--prepared-unit executes its recorded plan and cannot take preparation overrides")
         if args.instrumented_child:
             # The private child entry is meaningful only inside this exact declared prepared protocol.

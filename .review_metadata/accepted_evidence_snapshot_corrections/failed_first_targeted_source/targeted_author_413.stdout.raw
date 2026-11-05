@@ -1,0 +1,41 @@
+test_actual_correctness_asset_schema_and_negative_asset_receipt (test_accepted_evidence_snapshot_corrections.CorrectedBoundaryTests) ... ERROR
+test_fifo_is_refused_before_open_and_post_open_kind_is_checked_before_read (test_accepted_evidence_snapshot_corrections.CorrectedBoundaryTests) ... ok
+test_metadata_reuse_failure_remains_failed_after_path_restoration (test_accepted_evidence_snapshot_corrections.CorrectedBoundaryTests) ... ok
+test_unmapped_historical_driver_has_no_original_path_fallback (test_accepted_evidence_snapshot_corrections.CorrectedBoundaryTests) ... ERROR
+test_complete_original_qualification_and_history_bodies_are_retained (test_accepted_evidence_snapshot.CurrentPlanTests) ... ok
+test_numerical_compute_function_is_byte_syntax_unchanged (test_accepted_evidence_snapshot.CurrentPlanTests) ... ok
+
+======================================================================
+ERROR: test_actual_correctness_asset_schema_and_negative_asset_receipt (test_accepted_evidence_snapshot_corrections.CorrectedBoundaryTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-04-23-24_accepted-evidence-snapshot_original-helpers-26_common-helpers-29_validation-seconds-300_hash-physical-files-once_gpu-count-0_processor-count-1_host-memory-mib-512/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_accepted_evidence_snapshot_corrections.py", line 81, in test_actual_correctness_asset_schema_and_negative_asset_receipt
+    qualification = snapshot.accepted_role(files, inventory, ordered["qualification"]["review"], "qualification")
+  File "/p/rlprojects/RND_worktrees/2026-11-04-23-24_accepted-evidence-snapshot_original-helpers-26_common-helpers-29_validation-seconds-300_hash-physical-files-once_gpu-count-0_processor-count-1_host-memory-mib-512/10_jax_exploration_platform/scripts/atari_pixel_campaign/accepted_evidence_snapshot.py", line 552, in accepted_role
+    inventory.references(review); inventory.references(result); inventory.references(plan)
+  File "/p/rlprojects/RND_worktrees/2026-11-04-23-24_accepted-evidence-snapshot_original-helpers-26_common-helpers-29_validation-seconds-300_hash-physical-files-once_gpu-count-0_processor-count-1_host-memory-mib-512/10_jax_exploration_platform/scripts/atari_pixel_campaign/accepted_evidence_snapshot.py", line 354, in references
+    self.references(item, key)
+  File "/p/rlprojects/RND_worktrees/2026-11-04-23-24_accepted-evidence-snapshot_original-helpers-26_common-helpers-29_validation-seconds-300_hash-physical-files-once_gpu-count-0_processor-count-1_host-memory-mib-512/10_jax_exploration_platform/scripts/atari_pixel_campaign/accepted_evidence_snapshot.py", line 348, in references
+    self.add({"path": str(Path(value["source_root"]) / relative), "sha256": sha}, metadata=False,
+  File "/p/rlprojects/RND_worktrees/2026-11-04-23-24_accepted-evidence-snapshot_original-helpers-26_common-helpers-29_validation-seconds-300_hash-physical-files-once_gpu-count-0_processor-count-1_host-memory-mib-512/10_jax_exploration_platform/scripts/atari_pixel_campaign/accepted_evidence_snapshot.py", line 308, in add
+    require(Path(path).suffix == expected_suffix, "a declared shared metadata role cannot authorize a binary or driver")
+  File "/p/rlprojects/RND_worktrees/2026-11-04-23-24_accepted-evidence-snapshot_original-helpers-26_common-helpers-29_validation-seconds-300_hash-physical-files-once_gpu-count-0_processor-count-1_host-memory-mib-512/10_jax_exploration_platform/scripts/atari_pixel_campaign/accepted_evidence_snapshot.py", line 46, in require
+    raise ValueError(message)
+ValueError: a declared shared metadata role cannot authorize a binary or driver
+
+======================================================================
+ERROR: test_unmapped_historical_driver_has_no_original_path_fallback (test_accepted_evidence_snapshot_corrections.CorrectedBoundaryTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-04-23-24_accepted-evidence-snapshot_original-helpers-26_common-helpers-29_validation-seconds-300_hash-physical-files-once_gpu-count-0_processor-count-1_host-memory-mib-512/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_accepted_evidence_snapshot_corrections.py", line 73, in test_unmapped_historical_driver_has_no_original_path_fallback
+    inventory.resolve_blobs()
+  File "/p/rlprojects/RND_worktrees/2026-11-04-23-24_accepted-evidence-snapshot_original-helpers-26_common-helpers-29_validation-seconds-300_hash-physical-files-once_gpu-count-0_processor-count-1_host-memory-mib-512/10_jax_exploration_platform/scripts/atari_pixel_campaign/accepted_evidence_snapshot.py", line 394, in resolve_blobs
+    require((original, expected) in self.shared_metadata,
+  File "/p/rlprojects/RND_worktrees/2026-11-04-23-24_accepted-evidence-snapshot_original-helpers-26_common-helpers-29_validation-seconds-300_hash-physical-files-once_gpu-count-0_processor-count-1_host-memory-mib-512/10_jax_exploration_platform/scripts/atari_pixel_campaign/accepted_evidence_snapshot.py", line 46, in require
+    raise ValueError(message)
+ValueError: a historical logical file lacks its captured path/hash mapping and explicit shared metadata role
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.629s
+
+FAILED (errors=2)

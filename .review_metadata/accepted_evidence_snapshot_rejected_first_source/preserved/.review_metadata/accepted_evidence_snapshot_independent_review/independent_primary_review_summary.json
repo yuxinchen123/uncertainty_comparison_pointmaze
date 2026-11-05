@@ -1,0 +1,139 @@
+{
+  "actual_cpu_step": "6783003.410",
+  "actual_full_payload_hash_or_snapshot_performed": false,
+  "approved": false,
+  "author_34_case_batch_repeated": false,
+  "blocking_findings": [
+    {
+      "name": "invalid_metadata_cache_is_reusable_after_temporary_path_failure",
+      "reproduction": "A real temporary parent directory was moved, replaced briefly with a symlink, then restored. The first reuse correctly refused the alias, but failed remained false and the same cache later produced complete=true.",
+      "required": "Permanently poison the cache on any failed deadline, descriptor or path identity check, including begin/check paths; restoration must not make a failed cache reusable.",
+      "source": "accepted_evidence_snapshot.py:ValidationFiles.begin_metadata_reuse/check_entry"
+    },
+    {
+      "name": "nonregular_path_reaches_open_before_file_kind_refusal",
+      "reproduction": "A real owned FIFO reached os.open; the independent mock intercepted the open before any special file was opened. ordinary() does not check regular-file kind despite its docstring.",
+      "required": "Refuse nonregular/device paths before opening, while retaining O_NOFOLLOW and post-open regular-file and identity checks.",
+      "source": "accepted_evidence_snapshot.py:ordinary/ValidationFiles.file"
+    },
+    {
+      "name": "unresolved_historical_driver_uses_original_node_path",
+      "reproduction": "A declared historical /usr/lib/.../libcuda.so.590.48.01 with no capture mapping was accepted into the physical read set by fallback. No driver bytes were opened by this test.",
+      "required": "Refuse missing historical-driver capture mapping instead of reading the current node-local path.",
+      "source": "accepted_evidence_snapshot.py:AcceptedInventory.resolve_blobs"
+    },
+    {
+      "name": "correctness_asset_record_schema_assumption_is_wrong",
+      "reproduction": "Genuine Q metadata passed, but genuine C1 and C2 result schemas lack asset_record. Runtime and seed equality both pass; the unconditional result.get(asset_record)==plan.asset_record gate fails.",
+      "required": "Preserve genuine old results. Bind correctness assets through the actual accepted raw audit asset_receipt and exact plan/qualification asset references; do not simply drop the gate.",
+      "source": "accepted_evidence_snapshot.py:accepted_role line438"
+    }
+  ],
+  "cpu_receipt": {
+    "bytes": 2431,
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-23-24_accepted-evidence-snapshot_original-helpers-26_common-helpers-29_validation-seconds-300_hash-physical-files-once_gpu-count-0_processor-count-1_host-memory-mib-512/.review_metadata/accepted_evidence_snapshot_independent_review/focused_independent_review.json",
+    "sha256": "f9c17083e67581734eccbece00419da1ec13ed8d465a692d4cb2fa0e13202f19"
+  },
+  "elapsed_seconds": 2.4767676499905065,
+  "focused_checks": 9,
+  "fresh_genuine_common_child_runtime_proved": false,
+  "frozen_source": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-23-24_accepted-evidence-snapshot_original-helpers-26_common-helpers-29_validation-seconds-300_hash-physical-files-once_gpu-count-0_processor-count-1_host-memory-mib-512/.review_metadata/accepted_evidence_snapshot_preparation/frozen_source_for_independent_review.json",
+    "sha256": "4844cad5abb7f5e9d2a91308b3900ac3ad76390440f9b68bb717eb5bcab5e33a"
+  },
+  "gpu_operations": 0,
+  "independent_of_author": true,
+  "independent_program": {
+    "bytes": 15224,
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-23-24_accepted-evidence-snapshot_original-helpers-26_common-helpers-29_validation-seconds-300_hash-physical-files-once_gpu-count-0_processor-count-1_host-memory-mib-512/.review_metadata/accepted_evidence_snapshot_independent_review/run_focused_independent_checks.py",
+    "sha256": "ff0ba3535420387c1e6e98fdf4395277574f75292510105fc1727fac3642572c"
+  },
+  "kind": "independent_primary_accepted_evidence_snapshot_source_block_review",
+  "network_operations": 0,
+  "numerical_imports": [],
+  "old_raw_gates_reexecuted": false,
+  "passed": false,
+  "passed_scope_checks": [
+    "Strict Boolean-versus-integer schema, copy count and seed substitutions were refused.",
+    "Actual kernel cgroup/all UID ownership passes and forged job environment is refused.",
+    "A cold exactly29-helper namespace passes source checks and changed staged bytes are refused.",
+    "CPU descriptor identities remain historical facts and are not compared across hosts.",
+    "The entire original55 qualification body and complete old history body remain present.",
+    "All other actual live functions in the four changed integration modules are AST-identical.",
+    "All13 original numerical/source files match their existing exact hashes.",
+    "Frozen14 source/evidence bytes and modes remained unchanged during the CPU check."
+  ],
+  "raw_test_output": {
+    "bytes": 8674,
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-23-24_accepted-evidence-snapshot_original-helpers-26_common-helpers-29_validation-seconds-300_hash-physical-files-once_gpu-count-0_processor-count-1_host-memory-mib-512/.review_metadata/accepted_evidence_snapshot_independent_review/focused_independent_checks.stdout.raw",
+    "sha256": "71315481201511d98214e1b79eb34586f7c5f0aefa416f2f859461d3c388fea5"
+  },
+  "real_small_schema_inspection": [
+    {
+      "asset_record_equality": false,
+      "copy_seeds_equal": true,
+      "plan": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/measurement_plan.json",
+        "sha256": "503d308d2401ab713e0cf50dd3665b2e001ef5f07305fd76053f0439b6938060"
+      },
+      "plan_has_asset_record": true,
+      "result": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/result.json",
+        "sha256": "12371d5105dd64fee3458a252ae46c3138ff4f2af732017d76e7473ebdf940c4"
+      },
+      "result_has_asset_record": false,
+      "review": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-02-00-06_h100-common-correctness_raw-review_copies-1-2_source-0a880984_helpers-26_before-seven-paired-rounds-ten-updates_gpu-count-0/copies_1_terminal_review/independent_actual_review.json",
+        "sha256": "22f4ec55120c987fe8d44b55e6427ab75e25db61785e29d7cb6bdcbc55df8818"
+      },
+      "role": "1",
+      "runtime_environment_equal": true
+    },
+    {
+      "asset_record_equality": false,
+      "copy_seeds_equal": true,
+      "plan": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/measurement_plan.json",
+        "sha256": "03ce65d2eaf2182f029bfbbc526aaa64259101044000a846a5745ba66ba15406"
+      },
+      "plan_has_asset_record": true,
+      "result": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/result.json",
+        "sha256": "13977a20526e668ed6378d830c4cce97ed2a74714eac9174908179eed2dc36dc"
+      },
+      "result_has_asset_record": false,
+      "review": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-02-00-06_h100-common-correctness_raw-review_copies-1-2_source-0a880984_helpers-26_before-seven-paired-rounds-ten-updates_gpu-count-0/copies_2_terminal_review/independent_actual_review.json",
+        "sha256": "b0aa9a0953a4079e592dd86c4c692c0b09b3958c891760a26103c7e3a7fa1bf6"
+      },
+      "role": "2",
+      "runtime_environment_equal": true
+    },
+    {
+      "asset_record_equality": true,
+      "copy_seeds_equal": true,
+      "plan": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-20-53_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/measurement_plan.json",
+        "sha256": "1d2d93a2277669b54cc4641753b112a487757f620d96b5d5fdfa38cc6f6e451b"
+      },
+      "plan_has_asset_record": true,
+      "result": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-20-53_original-qualification_h100-nvl_serval02-card-1_driver-590.48.01_gpu-count-1_processor-count-8_policies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-1_memory-mib-95830/direct_qualification_result.json",
+        "sha256": "76eef4e18c06fef8d86fa704d3f9f00b8ebd78b34ab50e5083fcb0d4ee9bb318"
+      },
+      "result_has_asset_record": true,
+      "review": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-21-27_original-h100-qualification-raw-review_source-0a880984_helpers-26_backend-schema-2_raw-statements-53_gpu-count-0/terminal_full_review/independent_actual_review.json",
+        "sha256": "8c61ec70059475a479a2e0b395bdc6cd2d5cb2a0e062ae05ef51e066c4a4d01a"
+      },
+      "role": "qualification",
+      "runtime_environment_equal": true
+    }
+  ],
+  "reviewed_at_utc": "2026-11-05T08:24:09.986379+00:00",
+  "reviewer": "/root/prepare_fresh_historical_probe",
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "why_no_genuine_fresh_child": "No complete genuine CPU snapshot exists yet; this review checked the cold staged namespace and actual new dispatch source, without inventing a positive historical proof.",
+  "worker_admission": false
+}

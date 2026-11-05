@@ -1,0 +1,65 @@
+{
+  "actual_cpu": {
+    "argv": [
+      "/usr/bin/python3",
+      "-I",
+      "-S",
+      "-B",
+      "/p/rlprojects/RND_worktrees/2026-11-04-23-24_accepted-evidence-snapshot_original-helpers-26_common-helpers-29_validation-seconds-300_hash-physical-files-once_gpu-count-0_processor-count-1_host-memory-mib-512/.review_metadata/accepted_evidence_snapshot_independent_review/run_focused_independent_checks.py"
+    ],
+    "hostname": "heartpiece",
+    "job_id": "6783003",
+    "parent_pid": 1246464,
+    "pid": 1246470,
+    "process_start_time": "82201744",
+    "step_id": "410",
+    "uids": [
+      2618919,
+      2618919,
+      2618919,
+      2618919
+    ]
+  },
+  "actual_full_snapshot_or_raw_gate_replay": false,
+  "approved": false,
+  "author_34_case_batch_repeated": false,
+  "checks_run": 9,
+  "cold_twenty_nine_helper_namespace_checked": true,
+  "elapsed_seconds": 2.4767676499905065,
+  "errors": 2,
+  "failures": 3,
+  "fresh_genuine_common_child_executed": false,
+  "gpu_operations": 0,
+  "kind": "independent_focused_accepted_evidence_snapshot_source_review",
+  "network_operations": 0,
+  "numerical_imports": [],
+  "observations": [
+    {
+      "case": "permanent_metadata_failure",
+      "failed_flag_after_refusal": false,
+      "same_cache_accepted_after_restoration": true
+    },
+    {
+      "case": "real_small_metadata_schema",
+      "copy_seeds": [
+        1
+      ],
+      "declared_large_payloads_not_read": 61,
+      "passed": true,
+      "review": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-21-27_original-h100-qualification-raw-review_source-0a880984_helpers-26_backend-schema-2_raw-statements-53_gpu-count-0/terminal_full_review/independent_actual_review.json",
+        "sha256": "8c61ec70059475a479a2e0b395bdc6cd2d5cb2a0e062ae05ef51e066c4a4d01a"
+      },
+      "role": "qualification",
+      "small_metadata_bytes_read": 8876427,
+      "small_physical_files_read": 8
+    }
+  ],
+  "passed": false,
+  "reviewer": "/root/prepare_fresh_historical_probe",
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "source_freeze_sha256": "4844cad5abb7f5e9d2a91308b3900ac3ad76390440f9b68bb717eb5bcab5e33a",
+  "source_freeze_unchanged": true,
+  "worker_admission": false
+}
