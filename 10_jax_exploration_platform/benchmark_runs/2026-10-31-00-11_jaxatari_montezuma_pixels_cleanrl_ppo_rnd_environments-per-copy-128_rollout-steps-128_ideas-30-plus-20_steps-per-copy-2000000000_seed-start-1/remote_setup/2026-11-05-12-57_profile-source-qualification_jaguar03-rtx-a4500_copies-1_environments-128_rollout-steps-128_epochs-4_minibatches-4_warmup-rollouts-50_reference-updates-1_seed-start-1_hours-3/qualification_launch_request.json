@@ -1,0 +1,48 @@
+{
+  "actual_job_id": null,
+  "actual_release_performed": false,
+  "admission_granted": false,
+  "case_credit": 0,
+  "child_plan": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-12-57_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3/measurement_plan.json",
+    "sha256": "17551b6dbefa860ac2715f58b04a780588ae0b74effecb9db768c5a76e17f5bf"
+  },
+  "child_unit": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-12-57_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3",
+  "controller_launch_review": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-12-57_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_controller/controller_launch_independent_review.json",
+    "sha256": "7c3d4643a700efaeef436d1b963f4103a85e23de73cb6d14502b5a962a35881f"
+  },
+  "final_training_credit": 0,
+  "idea_credit": 0,
+  "kernel_device_enforcement_verified": false,
+  "kind": "profile_target_qualification_aa_launch_request",
+  "packing_credit": 0,
+  "parent_plan": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-12-57_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_controller/measurement_plan.json",
+    "sha256": "425126475f461807fb721c3ae2e71ca2cf7981092d992398b8f4def309489f9d"
+  },
+  "parent_unit": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-12-57_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_controller",
+  "physical_gres_mapping_verified": false,
+  "prepared_child_binding": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-12-57_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_controller/prepared_child_binding.json",
+    "sha256": "6fcf5bdaf6f367a7f809ede104c56b106662629b025dfefc15309c4560ecdab9"
+  },
+  "profile_credit": 0,
+  "resources": {
+    "account": "sl5nw_base",
+    "gres": "gpu:nvidia_rtx_a4500:1",
+    "host_memory_gib": 64,
+    "node": "jaguar03",
+    "nodes": 1,
+    "partition": "gpu",
+    "qos": "csresnolim",
+    "requested_cpus": 8,
+    "requeue": false,
+    "reservation": "sl5nw_168",
+    "tasks": 1,
+    "wall_seconds": 10800
+  },
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "worker_admitted": false
+}
