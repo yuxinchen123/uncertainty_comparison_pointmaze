@@ -1,0 +1,15 @@
+{
+  "automatic_retry_permitted": false,
+  "command": [
+    "sacct",
+    "-n",
+    "-P",
+    "-j",
+    "6820096",
+    "--format=JobIDRaw,State,ElapsedRaw,NodeList,ExitCode"
+  ],
+  "finished_at_utc": "2026-11-05T03:47:37.537506+00:00",
+  "inherited_SBATCH_variables_removed": [],
+  "returncode": 0,
+  "started_at_utc": "2026-11-05T03:47:37.405971+00:00"
+}

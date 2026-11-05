@@ -510,6 +510,8 @@
   "monitoring_cadence": "every_twenty_minutes",
   "monitoring_verified_utc": "2026-11-04T23:49:01.293419+00:00",
   "new_zero_credit_qualification_job_id": "6782778",
+  "nsight_process_diagnostic_job_id": "6820154",
+  "nsight_process_diagnostic_state": "HELD; exact release review pending",
   "operational_record_corrections": [
     {
       "at_utc": "2026-11-01T16:28:55.406669+00:00",
@@ -625,6 +627,9 @@
   ],
   "replacement_monitor_job_id": "6783003",
   "replacement_monitor_released": true,
+  "reservation_end_at_utc": "2026-11-17T05:00:01Z",
+  "reservation_name": "sl5nw_168",
+  "retired_unstarted_nsight_process_diagnostic_job_id": "6820096",
   "reviewed_backend_and_monitor_source_commit": "0a880984b4a03a2ff7335337cc18576628bc9fc1",
   "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
   "source_root": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
@@ -692,6 +697,6 @@
     "6777647"
   ],
   "superseded_monitor_job_id": "6781087",
-  "updated_utc": "2026-11-05T03:04:42.729736+00:00",
+  "updated_utc": "2026-11-05T03:49:10.732957+00:00",
   "uva_active_configuration_observation_job_id": "6781190"
 }
