@@ -1,0 +1,55 @@
+{
+  "actual_historical_metadata_compatibility": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-07-34_a4500-profile-preparation_common-gpu-types-2_copies-1-2_reviewed-native-process-contract_admission-closed_gpu-operations-0/.review_metadata/configured_profile_prerequisites/actual_historical_metadata_3.json",
+    "sha256": "cfd085828942e2dfdb1c69925782762eb14b4ae4c7a56580976216b9e724341d"
+  },
+  "added_strict_joins": [
+    "identical source_root/core/paired_source receipts",
+    "encoded integer seed arrays",
+    "exact result.json path",
+    "strict integer paired-round/update review counters"
+  ],
+  "approved": false,
+  "changed_scope": [
+    "configured_profile_prerequisites.py",
+    "profile_selected.py metadata preparation/helper routing only",
+    "tests/test_configured_profile_prerequisites.py"
+  ],
+  "focused_author_checks": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-07-34_a4500-profile-preparation_common-gpu-types-2_copies-1-2_reviewed-native-process-contract_admission-closed_gpu-operations-0/.review_metadata/configured_profile_prerequisites/focused_author_3.json",
+    "sha256": "6896705b78604fb853158a7eeddf9fdf5ae0c9445f9b5da37062f72a77b3b914"
+  },
+  "independent_review_pending": true,
+  "kind": "configured_profile_prerequisites_author_handoff",
+  "no_actual_preparation_or_target_action": true,
+  "parent": "90ea7a898d69ee23c51fff7cfbcfd0499a768e09",
+  "preserved_first_rejection": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-07-34_a4500-profile-preparation_common-gpu-types-2_copies-1-2_reviewed-native-process-contract_admission-closed_gpu-operations-0/.review_metadata/configured_profile_prerequisites/preserved_first_typed_review_rejection/preservation_manifest.json",
+    "sha256": "388428e40444e6bdef14521c7be34029c494a4eeba4bd718fb5770d4111be3de"
+  },
+  "preserved_previous_source_and_passing_receipts": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-07-34_a4500-profile-preparation_common-gpu-types-2_copies-1-2_reviewed-native-process-contract_admission-closed_gpu-operations-0/.review_metadata/configured_profile_prerequisites/preserved_second_source_before_stricter_receipt_joins/preservation_manifest.json",
+    "sha256": "c1eb06abac04f2ce85ba6f1a55a1587efec084405c0279e79b345534a1812b20"
+  },
+  "proposal": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-07-34_a4500-profile-preparation_common-gpu-types-2_copies-1-2_reviewed-native-process-contract_admission-closed_gpu-operations-0/.review_metadata/configured_profile_prerequisites/preparation_inputs_proposal.json",
+    "sha256": "6cabcdd123fb949e404ba557a4a7a3eff0ef48810d1639473f95b7fc32115bdc"
+  },
+  "remaining_operation_admission": "closed; source metadata approval cannot replace actual qualification or both-GPU common performance",
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-07-34_a4500-profile-preparation_common-gpu-types-2_copies-1-2_reviewed-native-process-contract_admission-closed_gpu-operations-0/.review_metadata/configured_profile_prerequisites/source_freeze_3.json",
+    "sha256": "6bd5bea67787e3f09de1bc36eb4f192a0b8ab4f748ac56aa3b66eba4e3341e6d"
+  },
+  "unchanged": [
+    "13 numerical files",
+    "_capture_core AST",
+    "unconditional configured profile execution admission",
+    "all private historical helper/source and result bytes",
+    "H100 direct profile path"
+  ],
+  "unchanged_prior_focused_checks": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-07-34_a4500-profile-preparation_common-gpu-types-2_copies-1-2_reviewed-native-process-contract_admission-closed_gpu-operations-0/.review_metadata/configured_profile_prerequisites/focused_author_2.json",
+    "sha256": "b1970ae2a7c1b53c4caebe37248faf917dcb18e54f86c7ea8f1695016c04a197"
+  },
+  "worktree": "/p/rlprojects/RND_worktrees/2026-11-05-07-34_a4500-profile-preparation_common-gpu-types-2_copies-1-2_reviewed-native-process-contract_admission-closed_gpu-operations-0"
+}

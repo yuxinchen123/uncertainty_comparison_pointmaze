@@ -1,0 +1,23 @@
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-05-07-34_a4500-profile-preparation_common-gpu-types-2_copies-1-2_reviewed-native-process-contract_admission-closed_gpu-operations-0/.review_metadata/configured_profile_prerequisites/independent_corrected_preparation_review.py", line 20, in <module>
+    spec=importlib.util.spec_from_file_location('independent_profile_prerequisite_tests',S/'tests/test_configured_profile_prerequisites.py');tests=importlib.util.module_from_spec(spec);spec.loader.exec_module(tests)
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/p/rlprojects/RND_worktrees/2026-11-05-07-34_a4500-profile-preparation_common-gpu-types-2_copies-1-2_reviewed-native-process-contract_admission-closed_gpu-operations-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_configured_profile_prerequisites.py", line 23, in <module>
+    PROFILE_SPEC.loader.exec_module(PROFILE)
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/p/rlprojects/RND_worktrees/2026-11-05-07-34_a4500-profile-preparation_common-gpu-types-2_copies-1-2_reviewed-native-process-contract_admission-closed_gpu-operations-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py", line 31, in <module>
+    import measure_selected as measurement
+  File "/p/rlprojects/RND_worktrees/2026-11-05-07-34_a4500-profile-preparation_common-gpu-types-2_copies-1-2_reviewed-native-process-contract_admission-closed_gpu-operations-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py", line 34, in <module>
+srun: error: slurm2: task 0: Exited with exit code 1
+    import diagnose_gpu_execution as diagnostic
+  File "/p/rlprojects/RND_worktrees/2026-11-05-07-34_a4500-profile-preparation_common-gpu-types-2_copies-1-2_reviewed-native-process-contract_admission-closed_gpu-operations-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_gpu_execution.py", line 10, in <module>
+    import ctypes
+  File "/usr/lib/python3.10/ctypes/__init__.py", line 464, in <module>
+    pythonapi = PyDLL(None)
+  File "/usr/lib/python3.10/ctypes/__init__.py", line 374, in __init__
+    self._handle = _dlopen(self._name, mode)
+  File "/p/rlprojects/RND_worktrees/2026-11-05-07-34_a4500-profile-preparation_common-gpu-types-2_copies-1-2_reviewed-native-process-contract_admission-closed_gpu-operations-0/.review_metadata/configured_profile_prerequisites/independent_corrected_preparation_review.py", line 17, in guard
+    if event in {'subprocess.Popen','os.system','os.posix_spawn','ctypes.dlopen','ctypes.dlsym','socket.connect'}:raise RuntimeError('independent metadata review forbids '+event)
+RuntimeError: independent metadata review forbids ctypes.dlopen

@@ -1,0 +1,13 @@
+test_each_context_keeps_its_original_review_schema_without_result_reads (author_configured_profile_tests.MetadataPrerequisiteTests)
+All four synthetic reviewed schemas join without opening any result payload. ... ok
+test_full_four_context_metadata_fact_still_grants_no_operation_or_numerical_admission (author_configured_profile_tests.MetadataPrerequisiteTests)
+Complete synthetic reviews pass only with explicit unchanged snapshot/source premises. ... ok
+test_numerical_receipts_and_seed_integer_types_remain_exact (author_configured_profile_tests.MetadataPrerequisiteTests)
+A commit label cannot substitute changed numerical receipts or Boolean random seeds. ... ok
+test_wrong_copy_type_source_counts_candidate_and_consumer_are_refused (author_configured_profile_tests.MetadataPrerequisiteTests)
+Distinct context, exact complete updates, candidate and original consumer remain mandatory. ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.050s
+
+OK

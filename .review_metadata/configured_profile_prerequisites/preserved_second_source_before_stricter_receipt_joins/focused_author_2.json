@@ -1,0 +1,25 @@
+{
+  "GPU_or_target_operations": false,
+  "capture_core_unchanged": true,
+  "changed_existing_functions": [
+    "helper_receipt",
+    "required_helpers",
+    "accepted_confirmation_common_reader",
+    "prepare",
+    "verify_prepared",
+    "validate_measured_baseline",
+    "run_prepared",
+    "run_configured_native_prepared",
+    "parse_arguments"
+  ],
+  "errors": 0,
+  "execution_gate_unchanged": true,
+  "failures": 0,
+  "job_id": "6821437",
+  "passed": true,
+  "seconds": 0.3493054799037054,
+  "source_freeze_sha256": "9d238cf5f29f61a94a55d448fe36f915fe177ca30ebb3142605236e44544a212",
+  "step_id": "154",
+  "synthetic_reviews_not_actual_qualification": true,
+  "tests": 9
+}

@@ -1,0 +1,6 @@
+import json
+from pathlib import Path
+r=Path('/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1')
+n=json.loads((r/'next_actions.json').read_text())
+for ref in [*n['common_a4500_confirmation_preparation']['independent_reviews'].values(), *[{'path':str(p)} for p in (r/'remote_setup').glob('2026-11-05-05-49*/independent_actual_common_timing_review.json')]]:
+ review=json.loads(Path(ref['path']).read_text());result=json.loads(Path(review['result']['path']).read_text());plan=json.loads(Path(review['plan']['path']).read_text());print(review['copies'],plan['hardware_class'],'resultkeys',list(result));print('planrounds', {k:plan.get(k) for k in ('mode','rounds','iterations','minimum_updates_per_round','copy_seeds')});print('resultfields',{k:result.get(k) for k in ('measurement_mode','measurement_valid','decision','correctness_passed','implementation_distinct','iterations','copy_seeds')});print('target',plan.get('target_qualification_inputs'));print('correctness',plan.get('common_correctness_inputs'))
