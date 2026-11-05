@@ -1,0 +1,338 @@
+{
+  "admission_granted": false,
+  "contract": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-01_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-2aa6df92f7d9/profile_target_process_contract.json",
+    "sha256": "87bf18cf33f5381d838eab5fa3e3f79d384ad42f5729e33c43d71e36a3ecda49"
+  },
+  "diagnostic_deadline": {
+    "cleanup_end_monotonic": null,
+    "cleanup_started_monotonic": null,
+    "clock_domain": {
+      "boot_id": "f235449c-a49a-4813-9eb1-67a7f839cb27",
+      "clock": "monotonic",
+      "hostname": "jaguar03",
+      "implementation": "clock_gettime(CLOCK_MONOTONIC)"
+    },
+    "observed_monotonic": 877011.986142805,
+    "origin": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-01_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-2aa6df92f7d9/profile_target_process_time_origin.json",
+      "sha256": "1eaf6fac5e822310d73b7a4787dde07c43d277aa7d4481399c05846d48b739ba"
+    },
+    "started_monotonic": 876991.183305752,
+    "total_end_monotonic": 887791.183305752,
+    "work_end_monotonic": 887191.183305752
+  },
+  "kind": "actual_profile_target_process_role_begin",
+  "owner": {
+    "cgroup": "0::/system.slice/slurmstepd.scope/job_6826559/step_0/user/task_0\n",
+    "cmdline": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python\u0000/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-01_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-2aa6df92f7d9/code/profile_selected.py\u0000--capture-unit\u0000/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-01_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-2aa6df92f7d9\u0000",
+    "cmdline_sha256": "97e911d9bdb8ec81a39e20f86d708b22002ca509ddf9991a6feac1febac29343",
+    "command": [
+      "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-01_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-2aa6df92f7d9/code/profile_selected.py",
+      "--capture-unit",
+      "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-01_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-2aa6df92f7d9"
+    ],
+    "executable": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python3.12",
+    "observed_at_seconds": 1793916735.897887,
+    "parent_pid": 2506755,
+    "pid": 2506815,
+    "process_group": 2506755,
+    "process_start_time": "87701059",
+    "session": 2506755,
+    "stat_after": "2506815 (python) R 2506755 2506755 2506755 0 -1 4194304 31179 15169 1 12 63 13 8 12 20 0 4 0 87701059 495456256 26764 68719476736 94198431596544 94198434024221 140733151148688 0 0 0 0 16781312 2 0 0 0 17 112 0 0 0 0 0 94198435449584 94198437431024 94198439751680 140733151157811 140733151158852 140733151158852 140733151166403 0\n",
+    "stat_before": "2506815 (python) R 2506755 2506755 2506755 0 -1 4194304 31178 15169 1 12 63 13 8 12 20 0 4 0 87701059 495456256 26764 68719476736 94198431596544 94198434024221 140733151148688 0 0 0 0 16781312 2 0 0 0 17 112 0 0 0 0 0 94198435449584 94198437431024 94198439751680 140733151157811 140733151158852 140733151158852 140733151166403 0\n",
+    "status": "Name:\tpython\nUmask:\t0000\nState:\tR (running)\nTgid:\t2506815\nNgid:\t0\nPid:\t2506815\nPPid:\t2506755\nTracerPid:\t0\nUid:\t2618919\t2618919\t2618919\t2618919\nGid:\t90030\t90030\t90030\t90030\nFDSize:\t128\nGroups:\t90030 90113 \nNStgid:\t2506815\nNSpid:\t2506815\nNSpgid:\t2506755\nNSsid:\t2506755\nVmPeak:\t  500232 kB\nVmSize:\t  483844 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t  107076 kB\nVmRSS:\t  107056 kB\nRssAnon:\t   87488 kB\nRssFile:\t   19568 kB\nRssShmem:\t       0 kB\nVmData:\t  224976 kB\nVmStk:\t     140 kB\nVmExe:\t    2372 kB\nVmLib:\t   22372 kB\nVmPTE:\t     356 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t1\nThreads:\t4\nSigQ:\t0/4127023\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000000000\nSigIgn:\t0000000081001000\nSigCgt:\t0000000100000002\nCapInh:\t0000000000000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tthread vulnerable\nSpeculationIndirectBranch:\tconditional enabled\nCpus_allowed:\t00000000,00000000,00000000,000f0000,00000000,00000000,0000000f\nCpus_allowed_list:\t0-3,112-115\nMems_allowed:\t00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000003\nMems_allowed_list:\t0-1\nvoluntary_ctxt_switches:\t816\nnonvoluntary_ctxt_switches:\t23\n",
+    "status_after": "Name:\tpython\nUmask:\t0000\nState:\tR (running)\nTgid:\t2506815\nNgid:\t0\nPid:\t2506815\nPPid:\t2506755\nTracerPid:\t0\nUid:\t2618919\t2618919\t2618919\t2618919\nGid:\t90030\t90030\t90030\t90030\nFDSize:\t128\nGroups:\t90030 90113 \nNStgid:\t2506815\nNSpid:\t2506815\nNSpgid:\t2506755\nNSsid:\t2506755\nVmPeak:\t  500232 kB\nVmSize:\t  483844 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t  107076 kB\nVmRSS:\t  107056 kB\nRssAnon:\t   87488 kB\nRssFile:\t   19568 kB\nRssShmem:\t       0 kB\nVmData:\t  224976 kB\nVmStk:\t     140 kB\nVmExe:\t    2372 kB\nVmLib:\t   22372 kB\nVmPTE:\t     356 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t1\nThreads:\t4\nSigQ:\t0/4127023\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000000000\nSigIgn:\t0000000081001000\nSigCgt:\t0000000100000002\nCapInh:\t0000000000000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tthread vulnerable\nSpeculationIndirectBranch:\tconditional enabled\nCpus_allowed:\t00000000,00000000,00000000,000f0000,00000000,00000000,0000000f\nCpus_allowed_list:\t0-3,112-115\nMems_allowed:\t00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000003\nMems_allowed_list:\t0-1\nvoluntary_ctxt_switches:\t816\nnonvoluntary_ctxt_switches:\t23\n",
+    "uids": [
+      2618919,
+      2618919,
+      2618919,
+      2618919
+    ]
+  },
+  "plan": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-01_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-2aa6df92f7d9/measurement_plan.json",
+    "sha256": "1d9155de7a337a929dcee2fb2516b37cad2d287c1bd4afa2def762321169d7a4"
+  },
+  "policy": {
+    "admission_granted": false,
+    "backend": "linux-x86-64-libc-syscall-pidfd-version-1",
+    "hardware_class": "jaguar03_rtx_a4500",
+    "helper_hashes": {
+      "configured_native_process.py": "3b7bacf07c7a8d4eeafe74f0e5b4c8a02365ccaa32326ab430d3316d3891c54a",
+      "direct_profile_process.py": "6177930cf35114405fc6dfca0c7738c26d897eb4aa3fc0eb5adeb39c75b55f77",
+      "direct_tool_descendants.py": "8fc3e6d870611a2a9e57825b5374a73050a6c98fc3d918f336619e1cfff48889",
+      "linux_pidfd_process_control.py": "37754acfdf8f139eecc2e9bbac91ee56cc12069a77f237968fe713f8b5b81172",
+      "native_process_evidence.py": "8e67bf42ad3f348d009ca793a16fcdfd5771f08e4ff70dfd88f348496bd6a35a",
+      "nsight_process_identity.py": "1833e05b42d680194e4a8da9cd2b487d3af7529285d1a9d550edc7d3b63f6279",
+      "profile_target_direct_process.py": "57b9800daf78cc7e18ef4641e170b3564827b65d135742f5e63c311ac652b9cb",
+      "profile_target_process.py": "97b59cabc6cec404e4ecab56de289d18f57e63103d1ca1d00d424ff4e921d02a",
+      "profile_target_qualification.py": "5a43a52541c26777538ca98010887438fa3ec8433b4b27030dfd0e0e3b05e021",
+      "profile_target_tool_scope.py": "d93a1c775a303e78861e340543babf2ea2a308cfccdbec2c9ac5e684cc91efd4"
+    },
+    "prior_abi_baseline": {
+      "diagnostic_plan": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-06-39_native-process-control_jaguar03_python-3.12_gpu-count-1_processor-count-1_host-memory-gib-2_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/measurement_plan.json",
+        "sha256": "838029f3574739a0f64e6d15defaa813fb692b176358b6500bd3061f17789ecf"
+      },
+      "diagnostic_result": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-06-39_native-process-control_jaguar03_python-3.12_gpu-count-1_processor-count-1_host-memory-gib-2_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/result.json",
+        "sha256": "b2c972d4b540de311245e2957f9c64f38d6136282092191569cff9b97ec24970"
+      },
+      "independent_review": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-06-39_native-process-control_jaguar03_python-3.12_gpu-count-1_processor-count-1_host-memory-gib-2_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/independent_actual_native_component_review.json",
+        "sha256": "4264288c209606dccc15c883724ffeccaf5a480c943c5e29dd9b1c409c814da5"
+      },
+      "target_contract": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-06-39_native-process-control_jaguar03_python-3.12_gpu-count-1_processor-count-1_host-memory-gib-2_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/native_process_target_contract.json",
+        "sha256": "237f6aaec50129a830f2521ce307feac59a1e461cdc7abf7b39b232b15d61fdc"
+      }
+    },
+    "prior_component_qualifies_current_adapter": false,
+    "protocol": "profile-target-native-process-control-version-1",
+    "python": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+    "schema_version": 1,
+    "scientific_credit": 0,
+    "time_budget": {
+      "cleanup_seconds": 600,
+      "schema_version": 1,
+      "total_seconds": 10800,
+      "work_seconds": 10200
+    },
+    "usage": "qualification"
+  },
+  "provider": {
+    "bootstrap": {
+      "gpu_or_cuda_qualification": false,
+      "pid": 2506815,
+      "symbols": {
+        "close": {
+          "actual_mapping": "1469cb5d4000-1469cb769000 r-xp 00028000 fd:02 22807009                   /usr/lib/x86_64-linux-gnu/libc.so.6",
+          "actual_pointer": 22444616978256,
+          "image": {
+            "device": 64770,
+            "inode": 22807009,
+            "mode": 493,
+            "path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+            "sha256": "6813de4f45796f58134ca3f06b3179344ddfea192cad73ea0af35375b1b66e76",
+            "size_bytes": 2220400,
+            "uid": 0
+          },
+          "symbol_file_offset": 1134416
+        },
+        "syscall": {
+          "actual_mapping": "1469cb5d4000-1469cb769000 r-xp 00028000 fd:02 22807009                   /usr/lib/x86_64-linux-gnu/libc.so.6",
+          "actual_pointer": 22444617017456,
+          "image": {
+            "device": 64770,
+            "inode": 22807009,
+            "mode": 493,
+            "path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+            "sha256": "6813de4f45796f58134ca3f06b3179344ddfea192cad73ea0af35375b1b66e76",
+            "size_bytes": 2220400,
+            "uid": 0
+          },
+          "symbol_file_offset": 1173616
+        }
+      },
+      "sys_executable": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+      "sys_version": "3.12.13 | packaged by conda-forge | (main, Aug 11 2026, 10:27:28) [GCC 14.4.0]"
+    },
+    "calls": [
+      {
+        "arguments": {
+          "flags": 0,
+          "pid": 2506815,
+          "syscall": 434
+        },
+        "call_budget": "ordinary",
+        "errno": 0,
+        "finished_at_seconds": 1793916736.0401201,
+        "name": "pidfd_open",
+        "phase": "self_preflight",
+        "producer_pid": 2506815,
+        "result": 69,
+        "sequence": 0,
+        "started_at_seconds": 1793916736.0401099
+      },
+      {
+        "arguments": {
+          "fd": 69,
+          "flags": 0,
+          "siginfo": null,
+          "signal": 0,
+          "syscall": 424
+        },
+        "call_budget": "ordinary",
+        "errno": 0,
+        "finished_at_seconds": 1793916736.0405595,
+        "name": "pidfd_send_signal",
+        "phase": "self_preflight",
+        "producer_pid": 2506815,
+        "result": 0,
+        "sequence": 1,
+        "started_at_seconds": 1793916736.040552
+      },
+      {
+        "arguments": {
+          "fd": 69
+        },
+        "call_budget": "reserved_descriptor_cleanup",
+        "errno": 0,
+        "finished_at_seconds": 1793916736.0406904,
+        "name": "close",
+        "phase": "self_preflight",
+        "producer_pid": 2506815,
+        "result": 0,
+        "sequence": 2,
+        "started_at_seconds": 1793916736.0406837
+      }
+    ],
+    "contract": {
+      "abi": {
+        "byteorder": "little",
+        "int_bytes": 4,
+        "long_bytes": 8,
+        "machine": "x86_64",
+        "platform": "linux",
+        "pointer_bytes": 8
+      },
+      "headers": {
+        "/usr/include/unistd.h": {
+          "device": 64770,
+          "inode": 22849273,
+          "mode": 420,
+          "path": "/usr/include/unistd.h",
+          "sha256": "99eb4050035a1a816090762770f0843c728666745d7e727e64dc347d8a99ac28",
+          "size_bytes": 44967,
+          "uid": 0
+        },
+        "/usr/include/x86_64-linux-gnu/asm/unistd_64.h": {
+          "device": 64770,
+          "inode": 23364666,
+          "mode": 420,
+          "path": "/usr/include/x86_64-linux-gnu/asm/unistd_64.h",
+          "sha256": "9f1c975001d7cd39af3a2c14d518d80b0aaaab8bec3ad12b5e56419bdc8cafbe",
+          "size_bytes": 9687,
+          "uid": 0
+        }
+      },
+      "kind": "linux-x86-64-libc-syscall-pidfd-version-1",
+      "selected_python": {
+        "actual_running_image_path": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python3.12",
+        "device": 55,
+        "inode": 4269399,
+        "mode": 493,
+        "path": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python3.12",
+        "sha256": "c889543c0e008c1362b69c711330cac598833a790dc0c48c5ee4a8567d3f3b51",
+        "size_bytes": 31301856,
+        "uid": 2618919
+      },
+      "symbols": {
+        "close": {
+          "image": {
+            "device": 64770,
+            "inode": 22807009,
+            "mode": 493,
+            "path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+            "sha256": "6813de4f45796f58134ca3f06b3179344ddfea192cad73ea0af35375b1b66e76",
+            "size_bytes": 2220400,
+            "uid": 0
+          },
+          "symbol_file_offset": 1134416
+        },
+        "syscall": {
+          "image": {
+            "device": 64770,
+            "inode": 22807009,
+            "mode": 493,
+            "path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+            "sha256": "6813de4f45796f58134ca3f06b3179344ddfea192cad73ea0af35375b1b66e76",
+            "size_bytes": 2220400,
+            "uid": 0
+          },
+          "symbol_file_offset": 1173616
+        }
+      },
+      "syscall_numbers": {
+        "pidfd_open": 434,
+        "pidfd_send_signal": 424
+      }
+    },
+    "descriptor_events": [
+      {
+        "call_sequence": 0,
+        "descriptor": 69,
+        "event_sequence": 0,
+        "identity": {
+          "device": 14,
+          "fdinfo_sha256": "3df721c86c5208878370419776fa529e5fc86edbef1a246eface8bed7c2d2d2b",
+          "flags": 524290,
+          "inheritable": false,
+          "inode": 15506,
+          "pid": 2506815,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t15506\nPid:\t2506815\nNSpid:\t2506815\n"
+        },
+        "observed_at_seconds": 1793916736.0404453,
+        "open_generation": 0,
+        "opened_pid": 2506815,
+        "operation": "pidfd_open"
+      },
+      {
+        "call_sequence": 1,
+        "descriptor": 69,
+        "event_sequence": 1,
+        "identity": {
+          "device": 14,
+          "fdinfo_sha256": "3df721c86c5208878370419776fa529e5fc86edbef1a246eface8bed7c2d2d2b",
+          "flags": 524290,
+          "inheritable": false,
+          "inode": 15506,
+          "pid": 2506815,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t15506\nPid:\t2506815\nNSpid:\t2506815\n"
+        },
+        "observed_at_seconds": 1793916736.04055,
+        "open_generation": 0,
+        "opened_pid": 2506815,
+        "operation": "pidfd_send_signal"
+      },
+      {
+        "call_sequence": 2,
+        "descriptor": 69,
+        "event_sequence": 2,
+        "identity": {
+          "device": 14,
+          "fdinfo_sha256": "3df721c86c5208878370419776fa529e5fc86edbef1a246eface8bed7c2d2d2b",
+          "flags": 524290,
+          "inheritable": false,
+          "inode": 15506,
+          "pid": 2506815,
+          "raw_fdinfo": "pos:\t0\nflags:\t02000002\nmnt_id:\t15\nino:\t15506\nPid:\t2506815\nNSpid:\t2506815\n"
+        },
+        "observed_at_seconds": 1793916736.040682,
+        "open_generation": 0,
+        "opened_pid": 2506815,
+        "operation": "close"
+      }
+    ],
+    "gpu_or_cuda_qualification": false,
+    "kind": "linux-x86-64-libc-syscall-pidfd-version-1",
+    "maximum_cleanup_records_per_open": 3,
+    "native_call_failure": false,
+    "numeric_pid_signal_fallback": false,
+    "open_handle_count": 0,
+    "ordinary_call_count": 2,
+    "ordinary_call_limit": 4096,
+    "preflight_call_count": 3,
+    "preflight_passed": true,
+    "python_exports_changed": false,
+    "reserved_cleanup_call_count": 1,
+    "scientific_credit": 0
+  },
+  "published_at_seconds": 1793916736.0467072,
+  "role": "capture",
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "started_at_seconds": 1793916735.933565
+}

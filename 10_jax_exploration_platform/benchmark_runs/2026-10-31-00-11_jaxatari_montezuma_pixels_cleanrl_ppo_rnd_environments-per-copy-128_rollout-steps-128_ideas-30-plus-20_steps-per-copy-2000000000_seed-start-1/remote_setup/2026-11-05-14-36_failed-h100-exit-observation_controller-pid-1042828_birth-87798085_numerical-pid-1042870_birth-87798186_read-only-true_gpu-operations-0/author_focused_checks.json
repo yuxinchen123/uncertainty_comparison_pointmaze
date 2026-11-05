@@ -1,0 +1,24 @@
+{
+  "actual_job_id": "6825983",
+  "actual_own_proc_read": false,
+  "actual_process_actions": false,
+  "actual_step_id": "146",
+  "actual_target_proc_or_remote_access": false,
+  "kind": "failed_h100_exit_observer_author_focused_fixture_check",
+  "log_sha256": "9c4cd4a2a1b8d44b001c556fb57f3f280946fed72cd294f4e365d571e598abd7",
+  "methods": [
+    "test_absent_roles_keep_real_current_observer_identity_and_utc",
+    "test_present_same_birth_is_not_an_exit",
+    "test_reused_own_birth_is_reported_without_claiming_absence",
+    "test_source_contains_no_process_actions_or_global_enumeration"
+  ],
+  "passed": true,
+  "scope": "Four private synthetic proc filesystem fixtures only. No actual target or local live PID is read.",
+  "seconds": 0.012686085072346032,
+  "signals_GPU_standing_lock_operations": 0,
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-14-36_failed-h100-exit-observation_controller-pid-1042828_birth-87798085_numerical-pid-1042870_birth-87798186_read-only-true_gpu-operations-0/source_and_test_freeze.json",
+    "sha256": "d1c364434f5ef9d7bf6470077a1d5e1684d6cf3115120cd691318312c8a98b52"
+  },
+  "tests_run": 4
+}

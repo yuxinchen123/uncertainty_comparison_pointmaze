@@ -1,0 +1,13 @@
+test_absent_roles_keep_real_current_observer_identity_and_utc (independent_exact_exit_fixture.PriorExitObserverTests)
+Synthetic absence rows retain the literal expected identities and actual CPU observer fields. ... ok
+test_present_same_birth_is_not_an_exit (independent_exact_exit_fixture.PriorExitObserverTests)
+A still-present exact own identity cannot become an absence row. ... ok
+test_reused_own_birth_is_reported_without_claiming_absence (independent_exact_exit_fixture.PriorExitObserverTests)
+An owned reused PID proves a different birth while remaining unacceptable to the absent-only reader. ... ok
+test_unknown_role_and_runtime_arguments_refuse (independent_exact_exit_fixture.PriorExitObserverTests)
+Only the literal two roles and argument-free runtime operation are supported. ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.004s
+
+OK

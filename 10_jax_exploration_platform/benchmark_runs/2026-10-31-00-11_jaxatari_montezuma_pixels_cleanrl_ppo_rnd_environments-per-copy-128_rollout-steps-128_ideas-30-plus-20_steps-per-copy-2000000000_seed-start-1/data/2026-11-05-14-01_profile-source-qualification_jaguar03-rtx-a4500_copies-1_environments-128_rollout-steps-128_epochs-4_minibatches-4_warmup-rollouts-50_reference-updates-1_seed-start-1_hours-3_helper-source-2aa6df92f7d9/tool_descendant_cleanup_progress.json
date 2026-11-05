@@ -1,0 +1,258 @@
+{
+  "configured_allocation_process_custody_must_remain": false,
+  "events": [
+    {
+      "at_seconds": 1793916732.4018066,
+      "birth": "87700833",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2506671,
+      "pid": 2506727
+    },
+    {
+      "at_seconds": 1793916732.650438,
+      "birth": "87700858",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2506671,
+      "pid": 2506731
+    },
+    {
+      "at_seconds": 1793916732.9260285,
+      "birth": "87700886",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2506731,
+      "pid": 2506739
+    },
+    {
+      "at_seconds": 1793916732.978097,
+      "birth": "87700886",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2506671,
+      "pid": 2506741
+    },
+    {
+      "at_seconds": 1793916733.0850651,
+      "birth": "87700901",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2506731,
+      "pid": 2506752
+    },
+    {
+      "at_seconds": 1793916733.139119,
+      "birth": "87700905",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2506731,
+      "pid": 2506754
+    },
+    {
+      "at_seconds": 1793916733.1408794,
+      "birth": "87700906",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2506754,
+      "pid": 2506755
+    },
+    {
+      "at_seconds": 1793916733.1411333,
+      "birth": "87700906",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2506754,
+      "pid": 2506756
+    },
+    {
+      "at_seconds": 1793916733.5944254,
+      "birth": "87700950",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2506755,
+      "pid": 2506761
+    },
+    {
+      "at_seconds": 1793916733.650793,
+      "birth": "87700957",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2506755,
+      "pid": 2506765
+    },
+    {
+      "at_seconds": 1793916733.706895,
+      "birth": "87700963",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2506755,
+      "pid": 2506769
+    },
+    {
+      "at_seconds": 1793916733.7629063,
+      "birth": "87700969",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2506755,
+      "pid": 2506773
+    },
+    {
+      "at_seconds": 1793916734.2217126,
+      "birth": "87701016",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2506755,
+      "pid": 2506777
+    },
+    {
+      "at_seconds": 1793916734.2785003,
+      "birth": "87701021",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2506755,
+      "pid": 2506785
+    },
+    {
+      "at_seconds": 1793916734.4035063,
+      "birth": "87701031",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2506755,
+      "pid": 2506800
+    },
+    {
+      "at_seconds": 1793916734.4676354,
+      "birth": "87701038",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2506755,
+      "pid": 2506811
+    },
+    {
+      "at_seconds": 1793916734.698098,
+      "birth": "87701059",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2506755,
+      "pid": 2506815
+    },
+    {
+      "at_seconds": 1793916734.9331307,
+      "birth": "87701084",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2506815,
+      "pid": 2506819
+    },
+    {
+      "at_seconds": 1793916734.994286,
+      "birth": "87701090",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2506815,
+      "pid": 2506823
+    },
+    {
+      "at_seconds": 1793916735.0569854,
+      "birth": "87701096",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2506815,
+      "pid": 2506827
+    },
+    {
+      "at_seconds": 1793916735.120593,
+      "birth": "87701102",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2506815,
+      "pid": 2506831
+    },
+    {
+      "at_seconds": 1793916735.1335201,
+      "birth": "87701102",
+      "discarded_child_list_valid": false,
+      "kind": "known_pinned_parent_exit_reconciled",
+      "observation": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-01_profile-source-qualification_jaguar03-rtx-a4500_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-2aa6df92f7d9/tool_parent_exit_observation_1.json",
+        "sha256": "f2b4540d5fb0de421577147956f498988366ba8a882ff9c2aa088ba1afd128be"
+      },
+      "pid": 2506831
+    },
+    {
+      "at_seconds": 1793916735.6622598,
+      "birth": "87701157",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2506815,
+      "pid": 2506835
+    },
+    {
+      "at_seconds": 1793916735.7247994,
+      "birth": "87701163",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2506815,
+      "pid": 2506843
+    },
+    {
+      "at_seconds": 1793916735.788709,
+      "birth": "87701170",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2506815,
+      "pid": 2506854
+    },
+    {
+      "at_seconds": 1793916735.849941,
+      "birth": "87701176",
+      "kind": "pinned_positive_child",
+      "parent_pid": 2506815,
+      "pid": 2506865
+    },
+    {
+      "at_seconds": 1793916736.2283144,
+      "birth": "87700886",
+      "exit_code": 0,
+      "kind": "reaped_actual_adopted_child",
+      "pid": 2506741,
+      "wait_status": 0
+    },
+    {
+      "at_seconds": 1793916736.2910912,
+      "birth": "87700905",
+      "exit_code": -15,
+      "kind": "reaped_actual_adopted_child",
+      "pid": 2506754,
+      "wait_status": 15
+    }
+  ],
+  "gpu_or_cuda_qualification": false,
+  "interventions": [
+    {
+      "at_seconds": 1793916736.1321137,
+      "birth": "87701059",
+      "pid": 2506815,
+      "signal": 15
+    },
+    {
+      "at_seconds": 1793916736.1337125,
+      "birth": "87700906",
+      "pid": 2506756,
+      "signal": 15
+    },
+    {
+      "at_seconds": 1793916736.1340988,
+      "birth": "87700906",
+      "pid": 2506755,
+      "signal": 15
+    },
+    {
+      "at_seconds": 1793916736.1345282,
+      "birth": "87700905",
+      "pid": 2506754,
+      "signal": 15
+    },
+    {
+      "at_seconds": 1793916736.1350021,
+      "birth": "87700886",
+      "pid": 2506741,
+      "signal": 15
+    },
+    {
+      "at_seconds": 1793916736.1356127,
+      "birth": "87700858",
+      "pid": 2506731,
+      "signal": 15
+    }
+  ],
+  "kind": "direct_tool_descendant_cleanup_progress",
+  "known_nodes": 25,
+  "known_roots": 2,
+  "native_process_control_only": true,
+  "phase": "kernel_closure_verified_and_native_flag_restored",
+  "producer_birth": "87698995",
+  "producer_pid": 2506671,
+  "read_errors": [],
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "standing_descriptor_must_remain_open": false,
+  "subreaper_active": false
+}

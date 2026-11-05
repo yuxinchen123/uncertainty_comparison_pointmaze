@@ -1,0 +1,127 @@
+{
+  "actual_popen_pid": 1042870,
+  "admission_granted": false,
+  "case_credit": 0,
+  "controller_holds_standing_descriptor": false,
+  "deadline_monotonic": 878011.892402965,
+  "exact_command_ready": true,
+  "expected_command": [
+    "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-01_profile-source-qualification_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-2aa6df92f7d9/code/profile_selected.py",
+    "--prepared-unit",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-01_profile-source-qualification_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-2aa6df92f7d9"
+  ],
+  "expected_parent_pid": 1042828,
+  "failure": null,
+  "final_training_credit": 0,
+  "finished_monotonic": 877981.943983193,
+  "historical_failure_cause_inferred": false,
+  "idea_credit": 0,
+  "kind": "actual_profile_target_empty_only_startup",
+  "maximum_seconds": 30,
+  "measurement_valid": false,
+  "observations": [
+    {
+      "actual_popen_returncode": null,
+      "expected_raw_command": false,
+      "observed_monotonic": 877981.893132939,
+      "predicates": {
+        "affinity": true,
+        "birth": true,
+        "parent": true,
+        "pid": true,
+        "raw_decode": true,
+        "raw_hash": true,
+        "uid": true
+      },
+      "process": {
+        "affinity": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "command": [],
+        "command_bytes_hex": "",
+        "command_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "hostname": "serval02",
+        "observed_at_utc": "2026-11-05T22:23:21.267120+00:00",
+        "parent_pid": 1042828,
+        "pid": 1042870,
+        "process_start_time": "87798186",
+        "stat": "1042870 (python) D 1042828 1042870 1042870 0 -1 4194304 1 0 0 0 0 0 0 0 20 0 1 0 87798186 7028736 0 18446744073709551615 0 0 140723381119748 0 0 0 0 0 0 1 0 0 17 3 0 0 0 0 0 0 0 94749725093888 140723381119748 0 0 0 0\n",
+        "stat_sha256": "8c73b4f5f75aec221a820d07cca2764a367eca76964eca966edd99f130587c58",
+        "uid": 2618919,
+        "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+        "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+      },
+      "raw_command_empty": true
+    },
+    {
+      "actual_popen_returncode": null,
+      "expected_raw_command": true,
+      "observed_monotonic": 877981.943941876,
+      "predicates": {
+        "affinity": true,
+        "birth": true,
+        "parent": true,
+        "pid": true,
+        "raw_decode": true,
+        "raw_hash": true,
+        "uid": true
+      },
+      "process": {
+        "affinity": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "command": [
+          "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+          "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-01_profile-source-qualification_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-2aa6df92f7d9/code/profile_selected.py",
+          "--prepared-unit",
+          "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-01_profile-source-qualification_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-2aa6df92f7d9"
+        ],
+        "command_bytes_hex": "2f702f726c70726f6a656374732f524e442f2e76656e76732f61746172695f706978656c735f6a61782f62696e2f707974686f6e002f702f726c70726f6a656374732f524e445f776f726b74726565732f6d657267652d61746172692d636c65616e726c2f31305f6a61785f6578706c6f726174696f6e5f706c6174666f726d2f62656e63686d61726b5f72756e732f323032362d31302d33312d30302d31315f6a617861746172695f6d6f6e74657a756d615f706978656c735f636c65616e726c5f70706f5f726e645f656e7669726f6e6d656e74732d7065722d636f70792d3132385f726f6c6c6f75742d73746570732d3132385f69646561732d33302d706c75732d32305f73746570732d7065722d636f70792d323030303030303030305f736565642d73746172742d312f646174612f323032362d31312d30352d31342d30315f70726f66696c652d736f757263652d7175616c696669636174696f6e5f683130302d6e766c5f73657276616c30322d636172642d315f636f706965732d315f656e7669726f6e6d656e74732d3132385f726f6c6c6f75742d73746570732d3132385f65706f6368732d345f6d696e69626174636865732d345f7761726d75702d726f6c6c6f7574732d35305f7265666572656e63652d757064617465732d315f736565642d73746172742d315f686f7572732d335f68656c7065722d736f757263652d3261613664663932663764392f636f64652f70726f66696c655f73656c65637465642e7079002d2d70726570617265642d756e6974002f702f726c70726f6a656374732f524e445f776f726b74726565732f6d657267652d61746172692d636c65616e726c2f31305f6a61785f6578706c6f726174696f6e5f706c6174666f726d2f62656e63686d61726b5f72756e732f323032362d31302d33312d30302d31315f6a617861746172695f6d6f6e74657a756d615f706978656c735f636c65616e726c5f70706f5f726e645f656e7669726f6e6d656e74732d7065722d636f70792d3132385f726f6c6c6f75742d73746570732d3132385f69646561732d33302d706c75732d32305f73746570732d7065722d636f70792d323030303030303030305f736565642d73746172742d312f646174612f323032362d31312d30352d31342d30315f70726f66696c652d736f757263652d7175616c696669636174696f6e5f683130302d6e766c5f73657276616c30322d636172642d315f636f706965732d315f656e7669726f6e6d656e74732d3132385f726f6c6c6f75742d73746570732d3132385f65706f6368732d345f6d696e69626174636865732d345f7761726d75702d726f6c6c6f7574732d35305f7265666572656e63652d757064617465732d315f736565642d73746172742d315f686f7572732d335f68656c7065722d736f757263652d32616136646639326637643900",
+        "command_sha256": "c4987c80580b10fc709aad16f79da0452180084bfccbc336d0b4a167e3dda87e",
+        "hostname": "serval02",
+        "observed_at_utc": "2026-11-05T22:23:21.317908+00:00",
+        "parent_pid": 1042828,
+        "pid": 1042870,
+        "process_start_time": "87798186",
+        "stat": "1042870 (python) D 1042828 1042870 1042870 0 -1 4194304 16 0 2 0 0 0 0 0 20 0 1 0 87798186 7303168 0 18446744073709551615 94749719252992 94749721680669 140723381113296 0 0 0 0 0 0 1 0 0 17 0 0 0 0 0 0 94749723106032 94749725087472 94749745012736 140723381119748 140723381120802 140723381120802 140723381120963 0\n",
+        "stat_sha256": "f49ad04957da9f9e18daa15b02cf58569f2ff9f2ad746a854b41f40d268f8ec5",
+        "uid": 2618919,
+        "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+        "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+      },
+      "raw_command_empty": false
+    }
+  ],
+  "observed_birth": "87798186",
+  "packing_point_credit": 0,
+  "profile_credit": 0,
+  "scientific_credit": 0,
+  "selected_affinity": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "started_monotonic": 877981.892402965,
+  "throughput_credit": 0,
+  "worker_admitted": false
+}

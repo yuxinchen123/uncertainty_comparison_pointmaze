@@ -1,0 +1,54 @@
+{
+  "actual_controller_identity": {
+    "birth": "87798085",
+    "hostname": "serval02",
+    "pid": 1042828,
+    "uid": 2618919
+  },
+  "actual_failed_wait": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-01_profile-source-qualification_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-2aa6df92f7d9_controller/controller_wait.json",
+    "sha256": "adfe6171c5785256917aeeff38a3ea062213f38d7978a5973baa5b27a85cceec",
+    "size_bytes": 5712
+  },
+  "actual_numerical_identity": {
+    "birth": "87798186",
+    "hostname": "serval02",
+    "parent_pid": 1042828,
+    "pid": 1042870,
+    "uid": 2618919
+  },
+  "actual_spawn": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-01_profile-source-qualification_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-2aa6df92f7d9_controller/controller_spawn.json",
+    "sha256": "4761ee4615e1f6149c9f9936c1b4339d891cd24968950808b80b5494f74c3c3d",
+    "size_bytes": 11763
+  },
+  "actual_target_observer_invocations": 0,
+  "all_function_source_texts_equal": true,
+  "changed_runtime_constants": [
+    "IDENTITIES"
+  ],
+  "created_at_utc": "2026-11-05T22:36:36.311889+00:00",
+  "kind": "failed_h100_exact_exit_observer_identity_derivation",
+  "observed_actual_process_exits": false,
+  "original_wait_remains_returncode_1": true,
+  "prior_cpu_fixture_receipt": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-07-23_prior-h100-exit-observation_controller-pid-386202_birth-84810007_numerical-pid-386669_birth-84815419_read-only-true_gpu-operations-0/author_cpu_136.json",
+    "sha256": "1340a6602fda7070446ca55a0ba33e80f239650232d91e1d08f80557538fcc5d",
+    "size_bytes": 656
+  },
+  "publication_required_before_root_only_target_invocation": true,
+  "remote_GPU_signals_or_lock_operations": 0,
+  "return_contract": "Absent-only successful main return is preserved. A verified owned different birth is reported as original exited but never mislabeled absent; main still returns1 unless both exact PIDs are absent.",
+  "schema_version": 1,
+  "source_lineage": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-07-23_prior-h100-exit-observation_controller-pid-386202_birth-84810007_numerical-pid-386669_birth-84815419_read-only-true_gpu-operations-0/observe_exact_prior_h100_exits.py",
+    "sha256": "87bdf73927b03341ebe6b5b3d3600e8b77e62820b7f8c07f78c9ff5936ba9540",
+    "size_bytes": 7117
+  },
+  "source_parent_test": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-07-23_prior-h100-exit-observation_controller-pid-386202_birth-84810007_numerical-pid-386669_birth-84815419_read-only-true_gpu-operations-0/test_observe_exact_prior_h100_exits.py",
+    "sha256": "298000d29521f7d6debd2a4cda3eb1baa95e08e9de2eb328c1434a0081c6c3d5",
+    "size_bytes": 7910
+  },
+  "unchanged_exact_function_count": 9
+}

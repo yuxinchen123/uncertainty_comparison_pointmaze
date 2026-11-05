@@ -1,0 +1,57 @@
+{
+  "admission_granted": false,
+  "capability": "profile_qualification_owning_package_and_same_process_mapped_image_version_2",
+  "created_at_seconds": 1793909306.7124903,
+  "distribution": {
+    "metadata": {
+      "path": "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/jax_cuda12_pjrt-0.11.0.dist-info/METADATA",
+      "sha256": "a4ab9346404e0cf42a00dd9e877218d1e19f7871a59c361a1d7fc934b4ed2ab3"
+    },
+    "name": "jax-cuda12-pjrt",
+    "record": {
+      "path": "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/jax_cuda12_pjrt-0.11.0.dist-info/RECORD",
+      "sha256": "9eda8d59208f7bd8e709472f28559ff1debcc39c8e40f45caa60cc72d72a39ee"
+    },
+    "record_entry": {
+      "hash": "sha256=zteYiXJhGyX73H31FFMQJlbCCcBXVrUoYCqodcENHwg",
+      "relative_path": "jax_plugins/xla_cuda12/xla_cuda_plugin.so",
+      "size_bytes": 473181472
+    },
+    "version": "0.11.0"
+  },
+  "gpu_operations": 0,
+  "image": {
+    "path": "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages/jax_plugins/xla_cuda12/xla_cuda_plugin.so",
+    "sha256": "ced7988972611b25fbdc7df51453102656c209c05756b528602aa875c10d1f08",
+    "size_bytes": 473181472
+  },
+  "kind": "prepared_profile_qualification_backend_package_image",
+  "numerical_imports": [],
+  "observed_file_identity": {
+    "device_major": 0,
+    "device_minor": 62,
+    "inode": 4236833
+  },
+  "observer": {
+    "hostname": "slurm5",
+    "pid": 1285570,
+    "process_start_time": "87006408",
+    "uid": 2618919,
+    "uid_bytes": "Uid:\t2618919\t2618919\t2618919\t2618919\n",
+    "uid_sha256": "2e890123862d8c893dc4a41562d79b13b00f3e559be846e1114b8a5a82ac66d1"
+  },
+  "observing_python": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+  "producer_sources": {
+    "direct_backend_image.py": "55756b454c477635e22b2852dc9dbb002db257830f0dc9071b1018f4d3f350b7",
+    "profile_qualification_backend.py": "c0dbeac088fdbcd150b1d818ff9fd34fec8b067b2560fb8ba9e6cf65ab666c09"
+  },
+  "python_image": {
+    "path": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python3.12",
+    "sha256": "c889543c0e008c1362b69c711330cac598833a790dc0c48c5ee4a8567d3f3b51",
+    "size_bytes": 31301856
+  },
+  "schema_version": 2,
+  "scientific_credit": 0,
+  "selected_python": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+  "site_packages": "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/site-packages"
+}

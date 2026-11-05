@@ -1,0 +1,13 @@
+test_absent_roles_keep_real_current_observer_identity_and_utc (held_failed_H_observer_tests.PriorExitObserverTests)
+Synthetic absence rows retain the literal expected identities and actual CPU observer fields. ... ok
+test_present_same_birth_is_not_an_exit (held_failed_H_observer_tests.PriorExitObserverTests)
+A still-present exact own identity cannot become an absence row. ... ok
+test_reused_own_birth_is_reported_without_claiming_absence (held_failed_H_observer_tests.PriorExitObserverTests)
+An owned reused PID proves a different birth while remaining unacceptable to the absent-only reader. ... ok
+test_source_contains_no_process_actions_or_global_enumeration (held_failed_H_observer_tests.PriorExitObserverTests)
+The standalone observer has no signal, tool, GPU, lock or process-enumeration API call. ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.007s
+
+OK

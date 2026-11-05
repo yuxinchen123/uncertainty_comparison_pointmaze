@@ -1,0 +1,68 @@
+{
+  "AA_failure_not_a_blocker_for_attempting_this_exact_H_runtime_qualification": true,
+  "AA_in_memory_PID_key_failure_applies_to_H_direct_route": false,
+  "H_direct_observation_route_uses_published_canonical_JSON": true,
+  "actual_H_target_qualification_established": false,
+  "actual_job_id": "6825983",
+  "actual_step_id": "134",
+  "approved": true,
+  "check_count": 21,
+  "checks": [
+    "exact owned CPU context",
+    "real H explicit policy selects direct target facade",
+    "actual runtime2aa6",
+    "actual staged helper pinned profile_selected.py",
+    "actual staged helper pinned profile_target_process.py",
+    "actual staged helper pinned profile_target_direct_process.py",
+    "actual staged helper pinned nsight_process_identity.py",
+    "new H plan excluded from AA configured route",
+    "real preparation dispatch has separate AA/H paths",
+    "H dispatch reaches direct target producer",
+    "explicit profile target owns H facade",
+    "direct source passes exact producer observer and descriptor to H facade",
+    "H validator argument is canonical JSON read",
+    "H validator argument is canonical JSON read",
+    "H validator argument is canonical JSON read",
+    "known canonical local observation",
+    "H validator argument is canonical JSON read",
+    "H producer wrapper delegates to exact owned scope body",
+    "H producer validates saved JSON after publish",
+    "H capture canonical local observation comes from exact saved JSON",
+    "AA failing boundary exists only in separate configured function"
+  ],
+  "files": {
+    "nsight_process_identity.py": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-01_profile-source-qualification_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-2aa6df92f7d9/code/nsight_process_identity.py",
+      "sha256": "1833e05b42d680194e4a8da9cd2b487d3af7529285d1a9d550edc7d3b63f6279"
+    },
+    "profile_selected.py": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-01_profile-source-qualification_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-2aa6df92f7d9/code/profile_selected.py",
+      "sha256": "bd96ba3a5b0fa5b5cf99adbba5e6862fa6048654e13ebb0fd4724222243a424c"
+    },
+    "profile_target_direct_process.py": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-01_profile-source-qualification_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-2aa6df92f7d9/code/profile_target_direct_process.py",
+      "sha256": "57b9800daf78cc7e18ef4641e170b3564827b65d135742f5e63c311ac652b9cb"
+    },
+    "profile_target_process.py": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-01_profile-source-qualification_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-2aa6df92f7d9/code/profile_target_process.py",
+      "sha256": "97b59cabc6cec404e4ecab56de289d18f57e63103d1ca1d00d424ff4e921d02a"
+    }
+  },
+  "independent_of_producer": true,
+  "kind": "independent_actual_h100_canonical_observation_boundary_review",
+  "passed": true,
+  "plan": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-01_profile-source-qualification_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-2aa6df92f7d9/measurement_plan.json",
+    "sha256": "ed8fb070f45b17170dee4b5274d5d053715fea359bf5109c63fc4ebe24907c59"
+  },
+  "remote_GPU_native_process_chmod_or_job_actions": false,
+  "reviewed_at_utc": "2026-11-05T22:21:52.191620+00:00",
+  "reviewer_hostname": "slurm5",
+  "reviewer_pid": 1302594,
+  "reviewer_uid": 2618919,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "scope": "Source/control-flow analysis only; no actual H process was executed. Any H acceptance remains exact runtime2aa6/H only.",
+  "seconds": 0.2683895439840853,
+  "worker_or_profile_admission_granted": false
+}
