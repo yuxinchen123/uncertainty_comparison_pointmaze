@@ -1,0 +1,24 @@
+{
+  "admission_granted": false,
+  "cgroup": "0::/system.slice/slurmstepd.scope/job_6825983/step_103/user/task_0\n",
+  "elapsed_seconds": 0.43010819307528436,
+  "errors": 1,
+  "failures": 2,
+  "hostname": "slurm5",
+  "job_id": "6825983",
+  "kind": "controlled_own_cpu_parent_exit_fixture_checks",
+  "native_provider_bootstrap": false,
+  "own_process_libc_prctl_bootstrap": true,
+  "passed": false,
+  "pid": 1298424,
+  "scientific_credit": 0,
+  "scope": "real own CPU children and own-process child-subreaper control; no GPU, Nsight or numerical code",
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-13-23_profile-tool-scope_pinned-parent-exit_fresh-producer-child-proof_unknown-parents-refused_gpu-actions-0/.review_metadata/profile_parent_exit_fixture/author_source_freeze_1.json",
+    "sha256": "ed5d34ea37534670c206f6ba4fea0949dedaa657dcc21970bea4fbf5bea148a5"
+  },
+  "step_id": "103",
+  "tests_run": 3,
+  "uid": 2618919,
+  "upstream_custody_premise": "explicitly synthetic; no target qualification or admission"
+}

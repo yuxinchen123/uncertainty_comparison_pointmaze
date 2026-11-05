@@ -1,0 +1,44 @@
+test_live_unknown_birth_and_cgroup_refusals_remain (own_cpu_parent_exit_fixture.ParentExitTests)
+Known live, unpinned and changed-generation/owner-context inputs cannot become exit proof. ... ERROR
+test_new_scope_reconciles_actual_adoption_and_normal_waits (own_cpu_parent_exit_fixture.ParentExitTests)
+Only positive retained generation exit is reconciled with a fresh producer child list. ... FAIL
+test_old_scope_reproduces_exact_final_parent_exit_refusal (own_cpu_parent_exit_fixture.ParentExitTests)
+The unchanged old helper refuses the deterministic real own-parent exit. ... FAIL
+
+======================================================================
+ERROR: test_live_unknown_birth_and_cgroup_refusals_remain (own_cpu_parent_exit_fixture.ParentExitTests)
+Known live, unpinned and changed-generation/owner-context inputs cannot become exit proof.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-05-13-23_profile-tool-scope_pinned-parent-exit_fresh-producer-child-proof_unknown-parents-refused_gpu-actions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_target_tool_scope_parent_exit.py", line 160, in test_live_unknown_birth_and_cgroup_refusals_remain
+    with self.scope(True) as scope:
+  File "/p/rlprojects/RND_worktrees/2026-11-05-13-23_profile-tool-scope_pinned-parent-exit_fresh-producer-child-proof_unknown-parents-refused_gpu-actions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_tool_descendants.py", line 563, in __exit__
+    raise RuntimeError("the tool scope required cleanup intervention or lost evidence; retain zero-credit raw records")
+RuntimeError: the tool scope required cleanup intervention or lost evidence; retain zero-credit raw records
+
+======================================================================
+FAIL: test_new_scope_reconciles_actual_adoption_and_normal_waits (own_cpu_parent_exit_fixture.ParentExitTests)
+Only positive retained generation exit is reconciled with a fresh producer child list.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-05-13-23_profile-tool-scope_pinned-parent-exit_fresh-producer-child-proof_unknown-parents-refused_gpu-actions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_target_tool_scope_parent_exit.py", line 141, in test_new_scope_reconciles_actual_adoption_and_normal_waits
+    try:grandchild=self.exit_between_identity_reads(scope,True)
+  File "/p/rlprojects/RND_worktrees/2026-11-05-13-23_profile-tool-scope_pinned-parent-exit_fresh-producer-child-proof_unknown-parents-refused_gpu-actions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_target_tool_scope_parent_exit.py", line 123, in exit_between_identity_reads
+    self.assertEqual(len(trigger),1)
+AssertionError: 0 != 1
+
+======================================================================
+FAIL: test_old_scope_reproduces_exact_final_parent_exit_refusal (own_cpu_parent_exit_fixture.ParentExitTests)
+The unchanged old helper refuses the deterministic real own-parent exit.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-05-13-23_profile-tool-scope_pinned-parent-exit_fresh-producer-child-proof_unknown-parents-refused_gpu-actions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_target_tool_scope_parent_exit.py", line 133, in test_old_scope_reproduces_exact_final_parent_exit_refusal
+    try:self.exit_between_identity_reads(scope,False)
+  File "/p/rlprojects/RND_worktrees/2026-11-05-13-23_profile-tool-scope_pinned-parent-exit_fresh-producer-child-proof_unknown-parents-refused_gpu-actions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_target_tool_scope_parent_exit.py", line 122, in exit_between_identity_reads
+    with self.assertRaisesRegex(ValueError,'known parent exited before its child lists could be accepted'):scope.scan()
+AssertionError: ValueError not raised
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.430s
+
+FAILED (failures=2, errors=1)

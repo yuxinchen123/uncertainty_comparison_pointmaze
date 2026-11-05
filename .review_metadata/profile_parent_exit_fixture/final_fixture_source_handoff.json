@@ -1,0 +1,21 @@
+{
+  "kind": "controlled_own_cpu_parent_exit_fixture_final_source_handoff",
+  "source_held": true,
+  "test_path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_target_tool_scope_parent_exit.py",
+  "test_sha256": "58e565aac53636c00bcd3c24296214394e45408657ca2688b3b1b6b3f0e5e2b0",
+  "corrected_runtime_freeze": {
+    "path": "../profile_parent_exit_scope/runtime_source_freeze_saved_joins.json",
+    "sha256": "f867af82a50eaffc3af112e944a3571106549a1578cb0f9b943c0b0813d179ae"
+  },
+  "previous_actual_lifecycle_checks": "author_handoff_initial_runtime.json",
+  "previous_actual_positive_metadata": "actual_positive_cpu_fixture_metadata",
+  "change_after_actual_lifecycle_checks": "Record each future actual standard-library pidfd open generation and successful close with its actual same-descriptor inode, device and clock; supply the new required post-close fixture clock to the pure reader.",
+  "changed_fixture_branches_executed": false,
+  "reason_no_lifecycle_repeat": "Root requested only saved-metadata boundary controls after the reader-only correction; all prior lifecycle records are retained without change.",
+  "historical_close_times_added": false,
+  "native_provider_role_claimed": false,
+  "target_qualification_claimed": false,
+  "scientific_credit": 0,
+  "admission_granted": false,
+  "next_required_action": "Independent source and saved-metadata review, followed by separate fresh full source target qualifications on both GPU types."
+}

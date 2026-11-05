@@ -23,7 +23,7 @@ PROFILE = 'selected_configuration_profile'
 PROTOCOL = 'profile-target-native-process-control-version-1'
 HELPERS = ('linux_pidfd_process_control.py', NAME, 'native_process_evidence.py',
     'nsight_process_identity.py', 'direct_tool_descendants.py', 'direct_profile_process.py',
-    'configured_native_process.py', 'profile_target_qualification.py', 'profile_target_direct_process.py')
+    'configured_native_process.py', 'profile_target_qualification.py', 'profile_target_direct_process.py', 'profile_target_tool_scope.py')
 BUDGET = {'schema_version': 1, 'work_seconds': 240, 'cleanup_seconds': 60, 'total_seconds': 300}
 QUALIFICATION_BUDGET = {'schema_version': 1, 'work_seconds': 10200, 'cleanup_seconds': 600, 'total_seconds': 10800}
 ROLES = ('producer', 'waiter', 'capture')
@@ -415,7 +415,7 @@ def tool_scope(directory, plan, observer, owner, deadline=None, descriptor=None,
     else:
         require(descriptor is None and check_descriptor is None, 'AA cannot inherit or fabricate a standing H100 descriptor')
         callback, custody = lambda: custody_record(directory, plan, observer, owner), 'configured_allocation_process'
-    return adjacent(plan, 'direct_tool_descendants').OwnedToolScope(directory, plan, observer, owner,
+    return adjacent(plan, 'profile_target_tool_scope').create_scope(directory, plan, observer, owner,
         callback, grace_seconds=budget(plan)['cleanup_seconds'], deadline=deadline, custody_kind=custody)
 
 
@@ -918,7 +918,7 @@ def validate_saved(directory, plan, observer, intent, observation, launch, waite
     contract = observer.read_json(directory / 'profile_target_process_contract.json')
     check_contract(plan, contract['contract'], observer)
     root = observer.read_json(directory / 'profiler_process.json')
-    scope = adjacent(plan, 'direct_tool_descendants').validate_saved_scope(directory, plan, observer,
+    scope = adjacent(plan, 'profile_target_tool_scope').validate_saved_scope(directory, plan, observer,
         parent, root['pid'], root['process_start_time'], custody, diagnostic_deadline=deadline)
     roles = validate_roles(directory, plan, observer, intent, observation, launch, waited, diagnostic_deadline=deadline)
     return {'kind': 'saved_profile_target_process_proof', 'closed_tool_scope': scope,

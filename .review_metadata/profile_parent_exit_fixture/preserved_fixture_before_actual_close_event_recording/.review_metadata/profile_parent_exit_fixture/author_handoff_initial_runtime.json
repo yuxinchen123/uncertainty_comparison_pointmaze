@@ -1,0 +1,36 @@
+{
+  "kind": "controlled_own_cpu_parent_exit_fixture_author_handoff",
+  "test_path": "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_target_tool_scope_parent_exit.py",
+  "test_sha256": "f67abfda9e6975702f6feecccab7895df6f8b19d386fa2a3bc69f904c587bb06",
+  "source_held": true,
+  "actual_old_refusal_and_negative_cases": {
+    "path": "author_focused_checks_2.json",
+    "sha256": "5af26e7113b08d51ecab829033669346f1f90f58be41bf98a7a0fa45cb1a59ed",
+    "job_id": "6825983",
+    "step_id": "104",
+    "passed_methods": [
+      "test_old_scope_reproduces_exact_final_parent_exit_refusal",
+      "test_live_unknown_birth_and_cgroup_refusals_remain"
+    ],
+    "remaining_failure": "The positive test passed the in-memory integer-keyed terminal to a saved JSON reader; preserved and corrected only in that test."
+  },
+  "actual_preserved_positive_case": {
+    "path": "author_focused_checks_4.json",
+    "sha256": "5db62d064e6e3e1dadd636c32097fdb6897543ac3df03fde43083c27cbe53ee1",
+    "job_id": "6825983",
+    "step_id": "106",
+    "elapsed_seconds": 0.19414412195328623,
+    "small_actual_metadata_directory": "actual_positive_cpu_fixture_metadata",
+    "passed": true
+  },
+  "preserved_test_failures": [
+    "preserved_first_fixture_wiring_failure",
+    "preserved_second_fixture_saved_shape_failure"
+  ],
+  "process_scope": "Real positively owned CPU children, actual standard-library pidfds and own-process child-subreaper control only.",
+  "upstream_custody_premise": "Explicitly synthetic configured-allocation custody; no actual GPU descriptor, native-provider role or target qualification is claimed.",
+  "runtime_edits_by_fixture_author": false,
+  "scientific_credit": 0,
+  "admission_granted": false,
+  "next_required_action": "Wait for the independently reviewed saved-reader correction and run only the affected positive saved-reader case against its held runtime."
+}

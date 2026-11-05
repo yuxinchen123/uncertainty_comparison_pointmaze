@@ -1,0 +1,24 @@
+test_live_unknown_birth_and_cgroup_refusals_remain (own_cpu_parent_exit_fixture.ParentExitTests)
+Known live, unpinned and changed-generation/owner-context inputs cannot become exit proof. ... ok
+test_new_scope_reconciles_actual_adoption_and_normal_waits (own_cpu_parent_exit_fixture.ParentExitTests)
+Only positive retained generation exit is reconciled with a fresh producer child list. ... ERROR
+test_old_scope_reproduces_exact_final_parent_exit_refusal (own_cpu_parent_exit_fixture.ParentExitTests)
+The unchanged old helper refuses the deterministic real own-parent exit. ... ok
+
+======================================================================
+ERROR: test_new_scope_reconciles_actual_adoption_and_normal_waits (own_cpu_parent_exit_fixture.ParentExitTests)
+Only positive retained generation exit is reconciled with a fresh producer child list.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-05-13-23_profile-tool-scope_pinned-parent-exit_fresh-producer-child-proof_unknown-parents-refused_gpu-actions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_target_tool_scope_parent_exit.py", line 155, in test_new_scope_reconciles_actual_adoption_and_normal_waits
+    self.adapter.validate_parent_exit_record(row,scope.terminal,self.owner,
+  File "/p/rlprojects/RND_worktrees/2026-11-05-13-23_profile-tool-scope_pinned-parent-exit_fresh-producer-child-proof_unknown-parents-refused_gpu-actions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_tool_scope.py", line 201, in validate_parent_exit_record
+    require(type(pid) is int and pid!=producer['pid'] and str(pid) in terminal['positive_nodes'],
+  File "/p/rlprojects/RND_worktrees/2026-11-05-13-23_profile-tool-scope_pinned-parent-exit_fresh-producer-child-proof_unknown-parents-refused_gpu-actions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_tool_scope.py", line 29, in require
+    if not value:raise ValueError(message)
+ValueError: only a positively pinned nonproducer may have an exit outcome
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.441s
+
+FAILED (errors=1)

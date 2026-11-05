@@ -113,7 +113,7 @@ def tool_scope(directory, plan, descriptor, *, observer=None, deadline=None):
     deadline = deadline or selected.native_process_runtime.deadline
     require(deadline is not None, "the target scope requires its original absolute budget")
     deadline.remaining("work")
-    scope = adjacent_helper(plan, "direct_tool_descendants").OwnedToolScope(directory, plan, selected, owner,
+    scope = adjacent_helper(plan, "profile_target_tool_scope").create_scope(directory, plan, selected, owner,
         lambda: descriptor_record(plan, descriptor, owner, local=True), deadline=deadline,
         custody_kind="standing_gpu_descriptor")
     scope.standing_descriptor = descriptor
@@ -132,7 +132,7 @@ def contract(plan, directory):
         and "profile_target_process_control" in plan and "native_process_control" not in plan
         and plan.get("direct_profile_protocol") == "direct-h100-reviewed-common-profile-version-1",
         "an unrelated producer cannot use direct process observations")
-    for name in ("profile_target_direct_process.py", "nsight_process_identity.py", "profile_target_release.py", "direct_tool_descendants.py"):
+    for name in ("profile_target_direct_process.py", "nsight_process_identity.py", "profile_target_release.py", "direct_tool_descendants.py", "profile_target_tool_scope.py"):
         path = Path(__file__).with_name(name)
         require(hashlib.sha256(path.read_bytes()).hexdigest() == plan["helpers"]["files"].get(PREFIX + name),
             "the exact direct process helper changed")
@@ -548,7 +548,7 @@ def validate_saved(directory, plan):
     work = observer.read_json(directory / "capture_result.json")["execution_identity"]
     release = adjacent_helper(plan, "profile_target_release").validate_saved_release(
         directory, plan, intent, claim, observation, observer, work=work)
-    scope = adjacent_helper(plan, "direct_tool_descendants").validate_saved_scope(directory, plan, observer,
+    scope = adjacent_helper(plan, "profile_target_tool_scope").validate_saved_scope(directory, plan, observer,
         intent["producer"], owner["pid"], owner["process_start_time"],
         lambda record: validate_descriptor(plan, record, intent["producer"]),
         **({} if diagnostic_budget(plan) is None else {'diagnostic_deadline': validate_diagnostic_origin(directory, plan, observer)}))

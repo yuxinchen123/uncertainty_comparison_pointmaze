@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "kind": "complete_profile_parent_exit_scope_source_freeze",
+  "base_commit": "a508b6b29a0ddc3b73bb39c90edb9edd1dcd3db0",
+  "files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_tool_scope.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-13-23_profile-tool-scope_pinned-parent-exit_fresh-producer-child-proof_unknown-parents-refused_gpu-actions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_tool_scope.py",
+      "sha256": "d93a1c775a303e78861e340543babf2ea2a308cfccdbec2c9ac5e684cc91efd4",
+      "size_bytes": 21192
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_process.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-13-23_profile-tool-scope_pinned-parent-exit_fresh-producer-child-proof_unknown-parents-refused_gpu-actions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_process.py",
+      "sha256": "97b59cabc6cec404e4ecab56de289d18f57e63103d1ca1d00d424ff4e921d02a",
+      "size_bytes": 63233
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_direct_process.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-13-23_profile-tool-scope_pinned-parent-exit_fresh-producer-child-proof_unknown-parents-refused_gpu-actions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_target_direct_process.py",
+      "sha256": "57b9800daf78cc7e18ef4641e170b3564827b65d135742f5e63c311ac652b9cb",
+      "size_bytes": 48550
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_target_tool_scope_parent_exit.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-13-23_profile-tool-scope_pinned-parent-exit_fresh-producer-child-proof_unknown-parents-refused_gpu-actions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_target_tool_scope_parent_exit.py",
+      "sha256": "58e565aac53636c00bcd3c24296214394e45408657ca2688b3b1b6b3f0e5e2b0",
+      "size_bytes": 12246
+    }
+  },
+  "runtime_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-13-23_profile-tool-scope_pinned-parent-exit_fresh-producer-child-proof_unknown-parents-refused_gpu-actions-0/.review_metadata/profile_parent_exit_scope/runtime_source_freeze_saved_joins.json",
+    "sha256": "f867af82a50eaffc3af112e944a3571106549a1578cb0f9b943c0b0813d179ae"
+  },
+  "independent_review": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-13-23_profile-tool-scope_pinned-parent-exit_fresh-producer-child-proof_unknown-parents-refused_gpu-actions-0/.review_metadata/profile_parent_exit_scope/independent_review_records/independent_corrected_saved_reader_review.json",
+    "sha256": "fc1c3e2808a869ff301b83b9fd3db3cc826dc477872278841592da37a82edf09"
+  },
+  "real_lifecycle_reused_no_repeat": true,
+  "future_fixture_close_recording_not_reexecuted": true,
+  "saved_reader_close_premises_synthetic_in_cpu_controls": true,
+  "actual_GPU_source_qualification": false,
+  "next_required_actual_runtime_pins": {
+    "h100_helpers": 45,
+    "a4500_helpers": 36,
+    "actual_source_commit": null
+  },
+  "old_component_helpers_modified": false,
+  "NUM_or_capture_core_modified": false
+}
