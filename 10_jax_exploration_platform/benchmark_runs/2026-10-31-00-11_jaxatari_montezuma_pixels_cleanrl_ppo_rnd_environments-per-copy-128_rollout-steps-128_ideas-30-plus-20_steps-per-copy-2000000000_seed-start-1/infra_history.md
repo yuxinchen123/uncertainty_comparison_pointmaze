@@ -704,3 +704,9 @@ The fresh persistent full tick returns zero, while its serialized latest status 
 
 
 2026-11-05T17:34:40Z — H100 two-copy correctness passed with zero float32/float64 errors and no failure; timing remains pending. Reporting fix was published as 4d3de78a; actual clean source548 produced one candidate monitor packet with353source files and391frozen artifacts. Candidate full report passed and now includes completed native diagnostic6825842 and actual H100process545091. No new monitor identifier/submission/runtime exists yet; old6821437 remains active pending independent packet/launcher and actual replacement runtime/full-report proofs.
+
+
+2026-11-05T18:08:34.171945+00:00 — New CPU monitor6825983 onslurm5 passed actual runtime/firstFULL fdd1b355,353source/391static,1requested2logicalTPC2/2GiB/0GPU/1200seconds. Proof64b62 published before canonical adoption83f4. Root checked exact old/new states and fresh old steps with onlybatch/noaux, then stopped only6821437once; accounting CANCELLED by2618919 exit0:0. New fulltick3.534seconds passed. Old step-state format token was unsupported; only the separately checked job-state rows supplied RUNNING. Preserved4.66MB actual H100 progresssnapshot outsideGit with reviewedhash. All future metadata uses6825983.
+
+
+2026-11-05T18:26:58.120370+00:00 — The new monitor 6825983 remains running on slurm5. The old monitor 6821437 was stopped once only after actual replacement review and a fresh absence of auxiliary steps. Terminal accounting is CANCELLED by 2618919. The post-handover full report passed in 3.534 seconds. List verification confirms hourly task a3fbe0e9-8db3-4bac-b1d0-cc97a9f71016 and estimated completion check f49a1f83-7e38-4f47-afdc-c81396572e8f for 19:20 UTC. Canonical session aliases now reference that actual current task, preserving earlier values. The H100 two-copy benchmark is running; the latest observed reference window is round 3 of 7. No two-copy result is accepted.

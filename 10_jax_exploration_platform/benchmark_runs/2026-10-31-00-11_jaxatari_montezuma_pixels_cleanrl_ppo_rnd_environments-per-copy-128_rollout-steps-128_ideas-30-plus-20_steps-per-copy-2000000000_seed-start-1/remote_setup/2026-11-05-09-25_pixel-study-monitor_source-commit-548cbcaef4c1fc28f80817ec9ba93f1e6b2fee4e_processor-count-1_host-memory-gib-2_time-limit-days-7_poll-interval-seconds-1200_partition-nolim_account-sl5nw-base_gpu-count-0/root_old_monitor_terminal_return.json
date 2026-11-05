@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "sacct",
+    "-n",
+    "-P",
+    "-j",
+    "6821437",
+    "--format=JobIDRaw,State,ExitCode,ElapsedRaw,NodeList"
+  ],
+  "returncode": 0,
+  "at_utc": "2026-11-05T18:10:27.217939+00:00"
+}

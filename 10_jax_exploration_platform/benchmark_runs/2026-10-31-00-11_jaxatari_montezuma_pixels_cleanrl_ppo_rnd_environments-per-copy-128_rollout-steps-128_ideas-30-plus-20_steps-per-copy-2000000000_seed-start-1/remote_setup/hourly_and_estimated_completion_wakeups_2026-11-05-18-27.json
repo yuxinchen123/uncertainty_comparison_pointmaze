@@ -1,0 +1,36 @@
+{
+  "kind": "verified_hourly_session_and_estimated_completion_wakeups",
+  "verified_at_utc": "2026-11-05T18:26:58.120370+00:00",
+  "jobs": [
+    {
+      "created_at": "2026-11-05T18:18:55.133923092Z",
+      "cron": "27 * * * *",
+      "expires_at": "2026-11-12T18:10:00Z",
+      "id": "a3fbe0e9-8db3-4bac-b1d0-cc97a9f71016",
+      "name": "RND study hourly execution and owned-job checks",
+      "next_run_at": "2026-11-05T18:27:00Z",
+      "recurring": true,
+      "session_id": "01a1909f-d7d3-75d1-8af8-fc80199cfae2",
+      "timezone": "UTC",
+      "prompt_bytes": 13492
+    },
+    {
+      "created_at": "2026-11-05T18:19:42.835522045Z",
+      "expires_at": "2026-11-05T20:20:00Z",
+      "id": "f49a1f83-7e38-4f47-afdc-c81396572e8f",
+      "name": "H100 two-copy timing estimated completion check",
+      "next_run_at": "2026-11-05T19:20:00Z",
+      "recurring": false,
+      "session_id": "01a1909f-d7d3-75d1-8af8-fc80199cfae2",
+      "timezone": "UTC",
+      "prompt_bytes": 4108
+    }
+  ],
+  "session_twenty_minute_wakeups_enabled": false,
+  "persistent_slurm_interval_seconds": 1200,
+  "estimated_completion_is_instant_notification": false,
+  "old_tasks_deleted_after_replacement_list_verification": [
+    "76c624c1-4606-41a8-9444-550aa15624b9",
+    "4e980261-8e5b-452c-9257-ec43434481d7"
+  ]
+}

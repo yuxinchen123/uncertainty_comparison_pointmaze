@@ -1,0 +1,21 @@
+{
+  "kind": "one_exact_old_monitor_stop_after_verified_replacement_and_fresh_auxiliary_step_drain",
+  "at_utc": "2026-11-05T18:08:34.138652+00:00",
+  "old_job_id": "6821437",
+  "new_current_job_id": "6825983",
+  "new_runtime_review_sha256": "fdd1b355390d57f08739fddb7655670a1d25682b01724ca81af96f414b21f099",
+  "adoption_publication": "83f4a1442dac0449d59772a29d4927edca41751e",
+  "fresh_old_steps": [
+    [
+      "6821437.batch",
+      "%T",
+      "slurm2"
+    ]
+  ],
+  "actual_auxiliary_step_count": 0,
+  "command": [
+    "scancel",
+    "6821437"
+  ],
+  "automatic_retry_permitted": false
+}
