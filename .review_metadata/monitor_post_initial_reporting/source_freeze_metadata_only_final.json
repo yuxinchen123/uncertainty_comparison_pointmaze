@@ -1,0 +1,76 @@
+{
+  "kind": "post_initial_monitor_reporting_source_freeze",
+  "schema_version": 1,
+  "base_commit": "2973bf70402aaf78337f9fea0a19764c58e35fad",
+  "files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/controller.py": {
+      "sha256": "175dbee009d75e0b48a1f521dfacb7774188aa41ba1e6664b850440fd0cd470d",
+      "bytes": 58314
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_queue.py": {
+      "sha256": "3d8876571e7b8b016f9936bf244855f7cc657ab6705ff183eafc98d5f60f9f18",
+      "bytes": 31057
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_post_initial_phase_reporting.py": {
+      "sha256": "c8fb0fe1105f179029ffa6f597b8f01b5fade2bce4452e9550b0cef83bd6bb2a",
+      "bytes": 16389
+    }
+  },
+  "unchanged_existing_controller_functions": [
+    "utc_now",
+    "read_json",
+    "atomic_json",
+    "queue_lock",
+    "layout",
+    "content_digest",
+    "verify_source",
+    "reference_environment_settings",
+    "execution_defaults",
+    "validate_execution",
+    "reference_execution_settings",
+    "execution_arms",
+    "ready_specification",
+    "immutable_case",
+    "compatible_updates_per_round",
+    "case_states",
+    "enqueue_case",
+    "attempt_paths",
+    "retry_failed",
+    "process_start_time",
+    "process_matches",
+    "scientific_case_complete",
+    "validate_attempt_completion",
+    "h100_nvl_slurm_validation_module",
+    "recover_local_claim",
+    "recover_legacy_claim",
+    "index_completed",
+    "investigated_at_counts",
+    "recover_unstarted_claims",
+    "final_validation_allocation",
+    "final_requirements_met",
+    "main"
+  ],
+  "queue_and_final_validation_prefix_ast_unchanged": true,
+  "protected_numerical_paths_unchanged": [
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/worker_environment.sh",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/__init__.py",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/checkpointing.py",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/config.py",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/environment.py",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/kernels.py",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/networks.py",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/pixel_preprocessing.py",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/settings.py",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/state.py",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/training.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/paired_benchmark.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py"
+  ],
+  "scientific_recomputation_performed": false,
+  "live_monitor_changed": false,
+  "job_actions": 0,
+  "preserved_previous_source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-04_monitor-post-initial-validation-reporting_common-correctness-confirmation-kernel-profiles-and-packing/.review_metadata/monitor_post_initial_reporting/source_freeze_exact_plan_result_binding.json",
+    "sha256": "484d12ac77dbae79047f76bf55dc2d975a0c43075f5e7e97e5726a078e5a9132"
+  }
+}

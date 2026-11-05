@@ -1,0 +1,108 @@
+{
+  "kind": "post_initial_monitor_reporting_author_handoff",
+  "at_utc": "2026-11-04T23:24:59.216916+00:00",
+  "worktree": "/p/rlprojects/RND_worktrees/2026-11-04-15-04_monitor-post-initial-validation-reporting_common-correctness-confirmation-kernel-profiles-and-packing",
+  "branch": "monitor-post-initial-validation-reporting",
+  "base_commit": "2973bf70402aaf78337f9fea0a19764c58e35fad",
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-04_monitor-post-initial-validation-reporting_common-correctness-confirmation-kernel-profiles-and-packing/.review_metadata/monitor_post_initial_reporting/source_freeze_metadata_only_final.json",
+    "sha256": "428cc5c11ec419475c572248ab41334104a72ee64a4752de7e575b873d7e67cd"
+  },
+  "source_paths": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/controller.py": {
+      "sha256": "175dbee009d75e0b48a1f521dfacb7774188aa41ba1e6664b850440fd0cd470d",
+      "bytes": 58314
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_queue.py": {
+      "sha256": "3d8876571e7b8b016f9936bf244855f7cc657ab6705ff183eafc98d5f60f9f18",
+      "bytes": 31057
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_post_initial_phase_reporting.py": {
+      "sha256": "c8fb0fe1105f179029ffa6f597b8f01b5fade2bce4452e9550b0cef83bd6bb2a",
+      "bytes": 16389
+    }
+  },
+  "reviewable_patch": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-04_monitor-post-initial-validation-reporting_common-correctness-confirmation-kernel-profiles-and-packing/.review_metadata/monitor_post_initial_reporting/reviewable_source.patch",
+    "sha256": "4a102dcf83d2a5cd6601b2d946e879a10368b748d47d8cdd445e774b0faafc7b"
+  },
+  "author_metadata_tests": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-04_monitor-post-initial-validation-reporting_common-correctness-confirmation-kernel-profiles-and-packing/.review_metadata/monitor_post_initial_reporting/author_6783003_227.json",
+    "sha256": "9f7149c03a2bc2b51849e974b9a0cf6a5056bcb5b67abf3df35b07e885f28c94"
+  },
+  "actual_existing_a4500_metadata_joins": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-04_monitor-post-initial-validation-reporting_common-correctness-confirmation-kernel-profiles-and-packing/.review_metadata/monitor_post_initial_reporting/actual_metadata_6783003_228.json",
+    "sha256": "b4e1182ddadea48e6adf1c138071fbbcdddf180bb3d301809038f3e626532764"
+  },
+  "unique_author_methods": 17,
+  "actual_existing_metadata_joins": 4,
+  "old_controller_functions_unchanged": {
+    "utc_now": "b5552defe03210c1d91df03ab3615479c56e9524f44266490902af516e6a4be8",
+    "read_json": "ba82c65b0e22decf2494f3d6c9019ae088c49d26e841fd01f4c992394d6e274c",
+    "atomic_json": "ca49b2014495d3f8811720a5c994a2b62121bc9e6b0eebfedf5744762eb925b6",
+    "queue_lock": "d3301b83e24fa6d42de6356bc8a1de198d50d207446715fa34d934ddec8feb93",
+    "layout": "83d4ea194c7d0621b04e5a65eb6bcaf4bdd972f550ea154fc9c0783f6c81e098",
+    "content_digest": "1b07f73923f64277c1174652dbc8ed1179efe9210d6e0b603880c5b8cb646ae7",
+    "verify_source": "e07364aa9e3c333d9456e27bb55d5bdbe3aed50057a723d2199ac0015f4a0d8e",
+    "reference_environment_settings": "b798ef4167a7bfaf67b439a1be477de03b23b6f2a04eedd776ca746512486c6f",
+    "execution_defaults": "dc17c56c430f327ea6ac38f29bc46b3ca47f7e2ec77dce7e8b58582503ccbead",
+    "validate_execution": "017cdda507e8b2afdcb303fb5b024bf1415d815944dd3707cc3af39437d5bbe0",
+    "reference_execution_settings": "8112ccf89d3baaaa450e61606ee20ddff1731c900c1972cdc5dda62916621ae7",
+    "execution_arms": "c9f57ca0f1e4266ace95956d9fdeb62b54bedec22a49fed4d304283967435cc4",
+    "ready_specification": "6398f7210ec38afb31a4b8b3b4097ce7eda494b1e170cdbb5de0b501a2cb1fce",
+    "immutable_case": "764ae002d46a433f719dfbb1495116a30d3e3074f0547088f5a8820a8a9c5b62",
+    "compatible_updates_per_round": "06ca74b643498468d42121c3c7371533fc55b30fc33ee838717f0c75bd6219b3",
+    "case_states": "a7446e8a6a730d1a46098277c9fe25b4ad62ecdf59064ad4fb455669adf38cf2",
+    "enqueue_case": "8f5197ec45dade16e128d526cb3582d59b99b1ef50af287d9560007e274c4d6e",
+    "attempt_paths": "ad8e4d019ee4c4c546795ffbad34c623232ad93e2a46ca61a8e727fdfb46657d",
+    "retry_failed": "f9b7e38c2367391a64018aec3430a8ab5c89918cfe94b41af5253dacdd36fa1d",
+    "process_start_time": "47073a87cbed2fe09f80612d4bda5a5c3dc1d1d8869f88dbea0ac5d19710af41",
+    "process_matches": "1d9cefb845d18e62ff8eff7b5cb458c5b6e96388fa666a8d274853584ebb37ea",
+    "scientific_case_complete": "7ea2b8b7a06fef6d9de63d816c4d8777bddfa354a7d89a985ef7fd6d6374ef84",
+    "validate_attempt_completion": "77f127d3741001436e3929a6744c34b588c994d0a3cc53990f99e042aa167a68",
+    "h100_nvl_slurm_validation_module": "36286c1e5d353494c6f3fb16d70f4c3370e2ca6e25c2c6daa0a6915669f5c73e",
+    "recover_local_claim": "d688ef7ec9b8bb4f392b62302b5052ddc939ac2f77f12d3bde0310b9eef293da",
+    "recover_legacy_claim": "b51abf936c464ce8d0f6c18c675555f7478ed414ea41a5b5c2769add2daa86c9",
+    "index_completed": "e4bfc55d5291fb9dbaa45dcb9ef962b18c00a12dc22f93f0c95d477965e6e8cb",
+    "investigated_at_counts": "1d318197118d8e9bcb2873c52842dd0237b6df61b82f28316de1ee08e45a6a8a",
+    "recover_unstarted_claims": "07f705f9eeca960dbd52e5d252baff9e9ca0e019bc555c527261bb3ddc118057",
+    "final_validation_allocation": "955a2aca1eee6cdd64bf3dac54625e5a8ff46ee035be9dd0067f13dd64ddb247",
+    "final_requirements_met": "7de542091aa618a1cbe85a2b71a15153f1d585b3f230a2546375ebd2705f2228",
+    "main": "07afc4f4a0ff06c5c4271bf0f718ff358f54ddb4c2602f34a9557e96e0f33a89"
+  },
+  "queue_and_final_validation_prefix_ast_unchanged": true,
+  "protected_numerical_paths_unchanged": [
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/worker_environment.sh",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/__init__.py",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/checkpointing.py",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/config.py",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/environment.py",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/kernels.py",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/networks.py",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/pixel_preprocessing.py",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/settings.py",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/state.py",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/training.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/paired_benchmark.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py"
+  ],
+  "metadata_index_contract": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-04_monitor-post-initial-validation-reporting_common-correctness-confirmation-kernel-profiles-and-packing/.review_metadata/monitor_post_initial_reporting/reporting_index_contract.json",
+    "sha256": "684da0ca271a8dee5b7333328eb984a67f9e783c128577b28b82311302a7494e"
+  },
+  "preserved_initial_size_cap_failure": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-15-04_monitor-post-initial-validation-reporting_common-correctness-confirmation-kernel-profiles-and-packing/.review_metadata/monitor_post_initial_reporting/actual_metadata_size_failure.json",
+    "sha256": "99c76fc348d320cd45de3b6428034b3d87c7721a4a2d7be46df55925acdf0306"
+  },
+  "no_new_scientific_approval_procedure": true,
+  "scientific_authority": false,
+  "admission_authority": false,
+  "actual_campaign_writes": 0,
+  "live_monitor_changed": false,
+  "job_actions": 0,
+  "GPU_or_library_or_device_or_network_actions": 0,
+  "git_diff_check_returncode": 0,
+  "commit_merge_or_push_performed": false,
+  "independent_review_still_required": true,
+  "deployment_still_requires_one_reviewed_frozen_monitor_and_actual_runtime_full_report_verification": true
+}

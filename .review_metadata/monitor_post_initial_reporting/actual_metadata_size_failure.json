@@ -1,0 +1,14 @@
+{
+  "kind": "read_only_reporting_metadata_join_failure",
+  "at_utc": "2026-11-04T23:18:04.768049+00:00",
+  "returncode": 1,
+  "error": "ValueError: reporting evidence exceeded its size bound or changed its recorded bytes",
+  "owned_cpu_job_id": "6783003",
+  "step_id": null,
+  "step_identifier_not_recorded_before_error": true,
+  "confirmed_two_copy_timing_result_bytes": 17856153,
+  "original_limit_bytes": 16777216,
+  "actual_campaign_writes": 0,
+  "scientific_recomputation": false,
+  "source_before_failure": "source_freeze_before_author_tests.json"
+}

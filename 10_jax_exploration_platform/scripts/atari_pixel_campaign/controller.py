@@ -19,6 +19,7 @@ import os
 from pathlib import Path
 import re
 import socket
+import stat
 import subprocess
 import sys
 import uuid
@@ -654,6 +655,201 @@ def final_requirements_met(registry, flags, *, run_dir=None, source_commit=None)
     return True
 
 
+POST_INITIAL_REPORT_REQUIREMENTS = (
+    ("common_correctness", "reviewed common correctness on both GPU types"),
+    ("common_confirmation", "seven paired rounds of ten complete updates on both GPU types"),
+    ("kernel_profiles", "current kernel profiles on both GPU types"),
+    ("packing", "independently repeated packing boundary with fifteen percent free memory"),
+)
+REPORTING_METADATA_LIMIT_BYTES = 32 * 2 ** 20
+
+
+def reporting_evidence_document(run_dir, reference):
+    """Read one exact small JSON receipt for display, without recomputing scientific evidence."""
+    # Display indexes refer to existing campaign metadata, never arbitrary files or device paths.
+    if (not isinstance(reference, dict) or set(reference) != {"path", "sha256"}
+            or not isinstance(reference["path"], str) or not isinstance(reference["sha256"], str)
+            or not re.fullmatch(r"[0-9a-f]{64}", reference["sha256"])):
+        raise ValueError("a reporting reference must contain its exact path and SHA256")
+    path = Path(reference["path"])
+    if path.suffix != ".json" or not path.is_absolute():
+        raise ValueError("reporting evidence must be an ordinary JSON path inside this campaign")
+    try:
+        resolved, campaign = path.resolve(strict=True), Path(run_dir).resolve(strict=True)
+    except RuntimeError as error:
+        raise ValueError("reporting evidence path resolution failed: " + str(error)) from error
+    if resolved != path or not path.is_relative_to(campaign):
+        raise ValueError("reporting evidence must be an ordinary JSON path inside this campaign")
+    descriptor = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+    try:
+        if not stat.S_ISREG(os.fstat(descriptor).st_mode):
+            raise ValueError("reporting evidence must be an ordinary JSON file")
+        with os.fdopen(os.dup(descriptor), "rb") as stream:
+            raw = stream.read(REPORTING_METADATA_LIMIT_BYTES + 1)
+        if len(raw) > REPORTING_METADATA_LIMIT_BYTES or hashlib.sha256(raw).hexdigest() != reference["sha256"]:
+            raise ValueError("reporting evidence exceeded its size bound or changed its recorded bytes")
+    finally:
+        os.close(descriptor)
+    return json.loads(raw)
+
+
+def reporting_configuration(configuration):
+    """Compare complete recorded configurations while allowing the declared policy-copy count."""
+    if (not isinstance(configuration, dict) or not isinstance(configuration.get("learner"), dict)
+            or type(configuration["learner"].get("n_copies")) is not int
+            or configuration["learner"]["n_copies"] < 1):
+        raise ValueError("reporting evidence lacks a typed positive independent-copy count")
+    # Before: learner.n_copies is 1 or 2; after: only this count is removed for cross-count matching.
+    result = {**configuration, "learner": dict(configuration["learner"])}
+    result["learner"].pop("n_copies")
+    return result
+
+
+def reporting_receipt_in_document(document, reference):
+    """Require the actual reviewed result receipt inside an existing independent review."""
+    if isinstance(document, dict):
+        return document == reference or any(reporting_receipt_in_document(value, reference)
+                                            for value in document.values())
+    if isinstance(document, list):
+        return any(reporting_receipt_in_document(value, reference) for value in document)
+    return False
+
+
+def reporting_reviewed_unit(run_dir, entry, requirement, source, configuration, seed_start):
+    """Join existing plan, result and approved-review bytes for phase reporting only."""
+    if not isinstance(entry, dict) or set(entry) != {"plan", "result", "review"}:
+        raise ValueError("a reporting entry needs its actual plan, result and independent review")
+    plan_path, result_path = Path(entry["plan"]["path"]), Path(entry["result"]["path"])
+    if (plan_path.name != "measurement_plan.json" or result_path.name != "result.json"
+            or plan_path.parent != result_path.parent or result_path.parent.parent != Path(run_dir) / "data"):
+        raise ValueError("the reporting plan and result must belong to the same direct campaign data unit")
+    plan, result, review = [reporting_evidence_document(run_dir, entry[name])
+                            for name in ("plan", "result", "review")]
+    if not all(isinstance(document, dict) for document in (plan, result, review)):
+        raise ValueError("reporting plan, result and independent review must be JSON objects")
+    if plan.get("campaign_run_dir") != str(run_dir) or plan.get("unit_id") != result_path.parent.name:
+        raise ValueError("the reporting plan identifies another campaign or data unit")
+    reporting_configuration(plan.get("configuration"))
+    context, copies = plan.get("hardware_class"), plan.get("configuration", {}).get("learner", {}).get("n_copies")
+    selected = result.get("candidate") if requirement in {"common_correctness", "common_confirmation"} else result.get("configuration")
+    if (context not in REQUIRED_HARDWARE or type(copies) is not int or copies < 1
+            or plan.get("source_commit") != source or result.get("source_commit") != source
+            or result.get("hardware_class") != context or type(result.get("copies")) is not int
+            or result["copies"] != copies or selected != plan.get("configuration")
+            or reporting_configuration(selected) != configuration):
+        raise ValueError("reviewed reporting evidence changed its source, configuration, hardware or copies")
+    seeds = list(range(seed_start, seed_start + copies))
+    if (plan.get("copy_seeds") != seeds or result.get("copy_seeds") != seeds
+            or any(type(value) is not int for value in plan["copy_seeds"] + result["copy_seeds"])):
+        raise ValueError("reviewed reporting evidence changed its independent policy seeds")
+
+    # Existing independent approvals must bind the actual result, rather than a producer-only status label.
+    word = {"common_correctness": "correctness", "common_confirmation": "confirmation",
+            "kernel_profiles": "profile", "packing": "packing"}[requirement]
+    kind = review.get("kind", "")
+    source_only = (any(review.get(name) is True for name in ("source_only", "preparation_only", "metadata_only"))
+                   or isinstance(kind, str) and any(marker in kind.lower() for marker in
+                       ("source_review", "source_only", "preparation", "metadata_only", "formatter", "fixture", "diagnostic")))
+    validation_denied = any(name in review and review[name] is not True for name in
+        ("actual_scientific_validation_performed", "actual_raw_validation_performed",
+         "actual_result_validation_performed", "exact_staged_saved_consumer_passed"))
+    if (review.get("approved") is not True or review.get("passed") is not True
+            or review.get("source_commit") != source or not isinstance(kind, str)
+            or "independent" not in kind or word not in kind
+            or source_only or validation_denied
+            or not reporting_receipt_in_document(review, entry["result"])):
+        raise ValueError("an exact matching independent result approval is not available for this report")
+    if requirement == "common_correctness":
+        if (plan.get("kind") != "selected_configuration_measurement" or plan.get("mode") != "correctness"
+                or result.get("measurement_mode") != "correctness"
+                or result.get("correctness_attempted") is not True or result.get("correctness_passed") is not True
+                or result.get("implementation_distinct") is not True):
+            raise ValueError("common correctness reporting needs the completed distinct-candidate check")
+    elif requirement == "common_confirmation":
+        rounds = result.get("rounds", [])
+        if (plan.get("kind") != "selected_configuration_measurement" or plan.get("mode") != "confirmation"
+                or result.get("measurement_mode") != "confirmation" or result.get("measurement_valid") is not True
+                or result.get("correctness_passed") is not True or result.get("decision") != "accepted"
+                or type(result.get("paired_rounds")) is not int or result["paired_rounds"] != 7
+                or type(plan.get("rounds")) is not int or plan["rounds"] != 7
+                or type(plan.get("minimum_updates_per_round")) is not int or plan["minimum_updates_per_round"] != 10
+                or type(plan.get("iterations")) is not int or plan["iterations"] < 10
+                or not isinstance(rounds, list) or len(rounds) != 7
+                or any(type(row.get(arm, {}).get("iterations")) is not int
+                       or row[arm]["iterations"] != plan["iterations"]
+                       for row in rounds for arm in ("reference", "candidate"))):
+            raise ValueError("common confirmation reporting needs seven paired rounds of ten full updates")
+    elif requirement == "kernel_profiles":
+        if (plan.get("kind") != "selected_configuration_profile" or result.get("completed") is not True
+                or type(result.get("profile_updates")) is not int or result["profile_updates"] < 1):
+            raise ValueError("kernel profile reporting needs an actual completed selected-configuration profile")
+    else:
+        packing = review.get("packing", {})
+        fitting = [row for row in packing.get("points", []) + packing.get("confirmation", [])
+                   if row.get("copies") == copies]
+        if (plan.get("kind") != "selected_configuration_measurement" or plan.get("mode") != "packing-point"
+                or result.get("measurement_mode") != "packing-point" or result.get("completed") is not True
+                or packing.get("complete") is not True or packing.get("source_commit") != source
+                or packing.get("hardware_class") != context or type(packing.get("selected_copies")) is not int
+                or packing["selected_copies"] != copies or packing.get("configuration") != selected
+                or not isinstance(packing.get("confirmation"), list) or not packing["confirmation"]
+                or len(fitting) < 2 or any(type(row.get("free_memory_fraction")) not in (int, float)
+                    or not math.isfinite(row["free_memory_fraction"]) or not .15 <= row["free_memory_fraction"] <= 1
+                    for row in fitting)
+                or packing.get("stop_reason") != "confirmed_doubling_gain_below_ten_percent"):
+            raise ValueError("packing reporting needs the independently reviewed completed repeated boundary")
+    return context, copies
+
+
+def post_initial_reporting_requirements(run_dir, source_commit, copy_counts, seed_start=1):
+    """List unfinished prerequisites from optional reviewed metadata without granting any authority."""
+    action_path = Path(run_dir) / "next_actions.json"
+    configuration, index, index_error = None, None, None
+    try:
+        if action_path.exists():
+            actions = read_json(action_path)
+        elif action_path.is_symlink():
+            raise ValueError("the optional reporting actions path is a dangling or cyclic symbolic link")
+        else:
+            actions = {}
+        if not isinstance(actions, dict):
+            raise ValueError("optional reporting actions must be a JSON object")
+        index = actions.get("post_initial_reporting_evidence")
+    except (OSError, RuntimeError, TypeError, ValueError) as error:
+        index_error = f"{type(error).__name__}: {error}"
+    if index is not None:
+        try:
+            if (not isinstance(index, dict) or type(index.get("schema_version")) is not int
+                    or index["schema_version"] != 1 or index.get("kind") != "post_initial_reporting_evidence"
+                    or index.get("source_commit") != source_commit):
+                raise ValueError("the reporting index does not match the current source")
+            configuration = reporting_configuration(reporting_evidence_document(run_dir, index["configuration_record"]))
+        except (KeyError, TypeError, ValueError, OSError) as error:
+            index_error = f"{type(error).__name__}: {error}"
+
+    # Before: no queue cases remain; after: four named requirements remain visible until their reviewed coverage exists.
+    required_pairs = {(context, copies) for context in REQUIRED_HARDWARE for copies in copy_counts}
+    requirements = []
+    for name, description in POST_INITIAL_REPORT_REQUIREMENTS:
+        covered, errors = set(), [index_error] if index_error else []
+        entries = index.get(name, []) if isinstance(index, dict) and configuration is not None else []
+        if not isinstance(entries, list) or len(entries) > 64:
+            entries = []
+            errors.append("reporting evidence must be a bounded list of actual reviewed units")
+        for entry in entries:
+            try:
+                covered.add(reporting_reviewed_unit(run_dir, entry, name, source_commit, configuration, seed_start))
+            except (AttributeError, KeyError, TypeError, ValueError, OSError) as error:
+                errors.append(f"{type(error).__name__}: {error}")
+        missing = (sorted(required_pairs - covered) if name in {"common_correctness", "common_confirmation"}
+                   else [(context, None) for context in REQUIRED_HARDWARE if not any(pair[0] == context for pair in covered)])
+        requirements.append({"kind": "reporting_prerequisite", "name": name, "description": description,
+            "state": "reviewed_evidence_present" if not missing and not errors else "awaiting_reviewed_evidence",
+            "missing": [{"hardware_class": context, "copies": copies} for context, copies in missing],
+            "errors": errors, "scientific_credit": 0, "admission_authority": False})
+    return requirements
+
+
 def tick(run_dir):
     """Advance metadata, retry eligible infrastructure failures, and report the next unmet stage."""
     run_dir = Path(run_dir).resolve()
@@ -733,13 +929,20 @@ def tick(run_dir):
             except (ArithmeticError, AttributeError, IndexError, KeyError, TypeError, ValueError,
                     OSError, subprocess.SubprocessError) as error:
                 final_error = f"{type(error).__name__}: {error}"
+        reporting_requirements = []
+        if initial_complete and len(completed) < 50:
+            reporting_requirements = post_initial_reporting_requirements(
+                run_dir, ready["source_commit"] if ready is not None else registry["reference_commit"],
+                initial_counts, ready.get("seed_start", 1) if ready is not None else 1)
+        unmet_reporting = [row for row in reporting_requirements if row["state"] != "reviewed_evidence_present"]
         if final_ready:
             phase = "ready_for_final"
         elif initial_complete:
             active_adaptive = any(read_json(path)["hypothesis_position"] >= 31
                                   for name in ("pending", "running", "failed")
                                   for path in (run_dir / "queue" / name).glob("*.json"))
-            phase = ("adaptive_benchmarks" if active_adaptive else "adaptive_research_pending"
+            phase = ("adaptive_benchmarks" if active_adaptive else "post_initial_validation_pending" if unmet_reporting
+                     else "adaptive_research_pending"
                      if len(completed) < 50 else "final_verification_pending")
         elif ready is None:
             phase = "waiting_for_parent_source_and_gates"
@@ -754,6 +957,7 @@ def tick(run_dir):
                            "state": name}
                           for name in ("pending", "running", "failed")
                           for case in (read_json(path) for path in sorted((run_dir / "queue" / name).glob("*.json")))]
+        remaining_work.extend(unmet_reporting)
         state = {"phase": phase, "queued": queued, "retried": retried, "repaired_unstarted": repaired,
                  "queue_counts": counts,
                  "investigated_hypotheses": len(completed), "initial_remaining": remaining,
@@ -761,7 +965,10 @@ def tick(run_dir):
                  "pending_implementations": unavailable, "time": utc_now(),
                  "authorization_error": authorization_error,
                  "final_verification_error": final_error,
+                 "post_initial_reporting_requirements": reporting_requirements,
                  "next_action": ("parent chooses five hypotheses from profiles" if phase == "adaptive_research_pending"
+                                 else "complete reviewed common correctness, seven paired rounds of ten updates, current profiles and repeated packing on both GPU types"
+                                 if phase == "post_initial_validation_pending"
                                  else "revalidate final evidence: " + final_error
                                  if phase == "final_verification_pending" and final_error
                                  else "verify all final requirements before launching training" if phase == "ready_for_final"

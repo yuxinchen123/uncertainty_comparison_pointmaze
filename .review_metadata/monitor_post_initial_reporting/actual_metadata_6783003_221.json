@@ -1,0 +1,128 @@
+{
+  "kind": "actual_existing_a4500_reporting_metadata_join",
+  "passed": true,
+  "job_id": "6783003",
+  "step_id": "221",
+  "results": [
+    {
+      "requirement": "common_correctness",
+      "copies": 1,
+      "matched": true
+    },
+    {
+      "requirement": "common_confirmation",
+      "copies": 1,
+      "matched": true
+    },
+    {
+      "requirement": "common_correctness",
+      "copies": 2,
+      "matched": true
+    },
+    {
+      "requirement": "common_confirmation",
+      "copies": 2,
+      "matched": true
+    }
+  ],
+  "actual_campaign_writes": 0,
+  "scientific_recomputation": false,
+  "scientific_credit": 0,
+  "raw_scientific_validators_invoked": 0,
+  "GPU_library_device_network_process_actions": 0,
+  "denied_events": [],
+  "missing_index_current_preview": [
+    {
+      "kind": "reporting_prerequisite",
+      "name": "common_correctness",
+      "description": "reviewed common correctness on both GPU types",
+      "state": "awaiting_reviewed_evidence",
+      "missing": [
+        {
+          "hardware_class": "h100",
+          "copies": 1
+        },
+        {
+          "hardware_class": "h100",
+          "copies": 2
+        },
+        {
+          "hardware_class": "jaguar03_rtx_a4500",
+          "copies": 1
+        },
+        {
+          "hardware_class": "jaguar03_rtx_a4500",
+          "copies": 2
+        }
+      ],
+      "errors": [],
+      "scientific_credit": 0,
+      "admission_authority": false
+    },
+    {
+      "kind": "reporting_prerequisite",
+      "name": "common_confirmation",
+      "description": "seven paired rounds of ten complete updates on both GPU types",
+      "state": "awaiting_reviewed_evidence",
+      "missing": [
+        {
+          "hardware_class": "h100",
+          "copies": 1
+        },
+        {
+          "hardware_class": "h100",
+          "copies": 2
+        },
+        {
+          "hardware_class": "jaguar03_rtx_a4500",
+          "copies": 1
+        },
+        {
+          "hardware_class": "jaguar03_rtx_a4500",
+          "copies": 2
+        }
+      ],
+      "errors": [],
+      "scientific_credit": 0,
+      "admission_authority": false
+    },
+    {
+      "kind": "reporting_prerequisite",
+      "name": "kernel_profiles",
+      "description": "current kernel profiles on both GPU types",
+      "state": "awaiting_reviewed_evidence",
+      "missing": [
+        {
+          "hardware_class": "h100",
+          "copies": null
+        },
+        {
+          "hardware_class": "jaguar03_rtx_a4500",
+          "copies": null
+        }
+      ],
+      "errors": [],
+      "scientific_credit": 0,
+      "admission_authority": false
+    },
+    {
+      "kind": "reporting_prerequisite",
+      "name": "packing",
+      "description": "independently repeated packing boundary with fifteen percent free memory",
+      "state": "awaiting_reviewed_evidence",
+      "missing": [
+        {
+          "hardware_class": "h100",
+          "copies": null
+        },
+        {
+          "hardware_class": "jaguar03_rtx_a4500",
+          "copies": null
+        }
+      ],
+      "errors": [],
+      "scientific_credit": 0,
+      "admission_authority": false
+    }
+  ]
+}
