@@ -1,0 +1,20 @@
+{
+  "actual_runtime_commit": "4bb3a61cb92fe48ab5ba68fb52f70b47736a1174",
+  "actual_target_actions": false,
+  "kind": "two_copy_transport_final_runtime_derivation",
+  "no_one_copy_source_edits": true,
+  "old_f028_preserved_manifest": "/p/rlprojects/RND_worktrees/2026-11-05-13-54_h100-two-copy-qualification-transport_seeds-1-2_reference-copies-1_runtime-2aa6df92_helpers-45_gpu-actions-0/.review_metadata/two_copy_h100_transport/preserved_runtime_2aa6_unreviewed/preservation_manifest.json",
+  "one_copy_sources": {
+    "prepare_direct_transport_configuration.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-14-38_profile-qualification-request_runtime-source-4bb3a61cb92f_h100-helpers-45_a4500-helpers-36_training-copies-1-2_gpu-actions-0/.review_metadata/profile_target_operational_preparation/prepare_direct_transport_configuration.py",
+      "sha256": "32136e5da65bafba536f170b5530e3033dbd5ce28aecf9a6c084347b5677e435",
+      "size_bytes": 6712
+    },
+    "start_direct_profile_qualification_once.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-14-38_profile-qualification-request_runtime-source-4bb3a61cb92f_h100-helpers-45_a4500-helpers-36_training-copies-1-2_gpu-actions-0/.review_metadata/profile_target_operational_preparation/start_direct_profile_qualification_once.py",
+      "sha256": "111e023d76dfbcfc4e8fada6001d03ea58a4abf510a4ff8b04aa1b82558e8497",
+      "size_bytes": 22957
+    }
+  },
+  "published_tracking_commit_observed": "ecdec2e003a401598d262fc2c90a56e9b5f6b266"
+}

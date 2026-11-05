@@ -1,0 +1,9 @@
+{
+  "approved_source_modified": false,
+  "attempt": "explicit git add -f exact source and metadata paths",
+  "cause": "The existing sparse-checkout patterns exclude the new two-copy metadata directory. Git refused those paths and no commit ran.",
+  "correction": "Use --sparse with the same explicitly allowlisted paths, then verify the entire private index before commit.",
+  "integration_modified": false,
+  "kind": "private_detached_author_sparse_staging_refusal",
+  "returncode": 1
+}
