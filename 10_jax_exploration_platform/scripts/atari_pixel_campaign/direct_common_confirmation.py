@@ -712,8 +712,9 @@ def source_inspection_git(command, roots):
             and all(character.isalnum() or character in "_./-" for character in value)
     arguments = command[3:]
     allowed = arguments == REPOSITORY_CONFIGURATION_QUERY or arguments in (["rev-parse", "HEAD"], ["rev-parse", "--show-toplevel"],
-        ["symbolic-ref", "--quiet", "HEAD"], ["status", "--porcelain", "--untracked-files=all"])
-    if len(arguments) == 2 and arguments[0] == "show":
+        ["rev-parse", "--abbrev-ref", "HEAD"], ["symbolic-ref", "--quiet", "HEAD"],
+        ["status", "--porcelain", "--untracked-files=all"], ["status", "--porcelain=v1", "-uall"])
+    if len(arguments) == 2 and (arguments[0] == "show" or arguments[0] == "rev-parse" and ":" in arguments[1]):
         revision, separator, path = arguments[1].partition(":")
         allowed = bool(separator and re.fullmatch(r"[0-9a-f]{40}", revision) and relative(path) and not path.endswith("/"))
     elif len(arguments) == 3 and arguments[:2] == ["cat-file", "blob"]:

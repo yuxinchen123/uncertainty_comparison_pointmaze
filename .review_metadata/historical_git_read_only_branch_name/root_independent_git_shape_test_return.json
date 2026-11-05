@@ -1,0 +1,22 @@
+{
+  "command": [
+    "srun",
+    "--jobid=6783003",
+    "--overlap",
+    "--exact",
+    "--ntasks=1",
+    "--cpus-per-task=1",
+    "--mem=512M",
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "/p/rlprojects/RND_worktrees/2026-11-04-21-02_historical-git-source-inspection_rev-parse-abbrev-ref-HEAD_source-c28d3bc1_helpers-28_gpu-count-0/.review_metadata/historical_git_read_only_branch_name/run_focused_git_shape_tests.py"
+  ],
+  "started_at_utc": "2026-11-05T05:14:36.907779+00:00",
+  "finished_at_utc": "2026-11-05T05:14:37.263304+00:00",
+  "returncode": 0,
+  "source_freeze_sha256": "34205b1f2703e2fa0c97998b93ee2567dab24fb4a99b69127efa3870bc537df9",
+  "stdout_sha256": "346bebb687319398ecb69a5ba4c0ca4c25ec39567aa4876d708cb544f9a8ebef",
+  "stderr_sha256": "55392187dbb82ac487f6f1d0db4c2bc985f14e0f68ea48711b36cf4115622691"
+}
