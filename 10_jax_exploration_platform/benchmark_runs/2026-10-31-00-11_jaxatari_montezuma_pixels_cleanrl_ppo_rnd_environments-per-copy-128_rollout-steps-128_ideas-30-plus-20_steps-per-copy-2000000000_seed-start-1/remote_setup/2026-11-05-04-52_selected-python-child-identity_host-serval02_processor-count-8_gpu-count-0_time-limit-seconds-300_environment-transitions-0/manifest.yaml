@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "run_id": "2026-11-05-04-52_selected-python-child-identity_host-serval02_processor-count-8_gpu-count-0_time-limit-seconds-300_environment-transitions-0",
+  "description": "Record the initial identity of a CPU child started with the selected scientific Python interpreter. This diagnoses the refused H100 startup without running the learner or using a GPU.",
+  "state": "reviewed_prepared_single_root_execution_after_publication",
+  "artifacts": {
+    "actual_process_records": "diagnostic output in this directory",
+    "root_command": "command.txt"
+  },
+  "git": {
+    "commit": "e16c015ac7c9ca674f768240cad35a372eb18e87",
+    "source_root": "/p/rlprojects/RND_worktrees/2026-11-05-04-52_initial-child-identity_observations-before-refusal_selected-python-3.12_cpu-acknowledgment_cpu-count-8_total-seconds-300_gpu-count-0",
+    "reviewed_source_files_unchanged": true
+  },
+  "source_publication_receipt": "root_actual_source_publication_verification.json"
+}

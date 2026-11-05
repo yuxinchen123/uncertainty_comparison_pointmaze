@@ -1,0 +1,36 @@
+{
+  "one_shot_ssh_argv": [
+    "ssh",
+    "-o",
+    "BatchMode=yes",
+    "-o",
+    "ControlMaster=no",
+    "-o",
+    "ConnectTimeout=15",
+    "serval02",
+    "/usr/bin/env -i PATH=/usr/local/bin:/usr/bin:/bin LANG=C.UTF-8 TZ=UTC PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1 /usr/bin/python3 -I -S -B -c 'import os,socket; assert socket.gethostname().split(\".\")[0]==\"serval02\" and os.getresuid()==(2618919,2618919,2618919); os.execve('\"'\"'/usr/bin/python3'\"'\"',['\"'\"'/usr/bin/python3'\"'\"', '\"'\"'-I'\"'\"', '\"'\"'-S'\"'\"', '\"'\"'-B'\"'\"', '\"'\"'/p/rlprojects/RND_worktrees/2026-11-05-04-52_initial-child-identity_observations-before-refusal_selected-python-3.12_cpu-acknowledgment_cpu-count-8_total-seconds-300_gpu-count-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_initial_child_identity.py'\"'\"', '\"'\"'--execute'\"'\"', '\"'\"'--run-dir'\"'\"', '\"'\"'/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-04-52_selected-python-child-identity_host-serval02_processor-count-8_gpu-count-0_time-limit-seconds-300_environment-transitions-0'\"'\"', '\"'\"'--expected-source-sha256'\"'\"', '\"'\"'7bf77224f16f57ee092933d5030060e49915388a780c93036b4ad052f4d13d76'\"'\"', '\"'\"'--expected-controller-sha256'\"'\"', '\"'\"'09a1c944116541b631e12e465f5e782641429e305e9a135da4dc8e5379f9a5b6'\"'\"', '\"'\"'--expected-python-sha256'\"'\"', '\"'\"'c889543c0e008c1362b69c711330cac598833a790dc0c48c5ee4a8567d3f3b51'\"'\"'],{'\"'\"'PATH'\"'\"': '\"'\"'/usr/local/bin:/usr/bin:/bin'\"'\"', '\"'\"'LANG'\"'\"': '\"'\"'C.UTF-8'\"'\"', '\"'\"'TZ'\"'\"': '\"'\"'UTC'\"'\"', '\"'\"'PYTHONNOUSERSITE'\"'\"': '\"'\"'1'\"'\"', '\"'\"'PYTHONDONTWRITEBYTECODE'\"'\"': '\"'\"'1'\"'\"'})'"
+  ],
+  "actual_diagnostic_argv": [
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "/p/rlprojects/RND_worktrees/2026-11-05-04-52_initial-child-identity_observations-before-refusal_selected-python-3.12_cpu-acknowledgment_cpu-count-8_total-seconds-300_gpu-count-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_initial_child_identity.py",
+    "--execute",
+    "--run-dir",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-04-52_selected-python-child-identity_host-serval02_processor-count-8_gpu-count-0_time-limit-seconds-300_environment-transitions-0",
+    "--expected-source-sha256",
+    "7bf77224f16f57ee092933d5030060e49915388a780c93036b4ad052f4d13d76",
+    "--expected-controller-sha256",
+    "09a1c944116541b631e12e465f5e782641429e305e9a135da4dc8e5379f9a5b6",
+    "--expected-python-sha256",
+    "c889543c0e008c1362b69c711330cac598833a790dc0c48c5ee4a8567d3f3b51"
+  ],
+  "remote_precheck": "exactserval02 andallthreeownerUIDs beforeexec; diagnostic additionally validatesallfourUIDs",
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-04-52_initial-child-identity_observations-before-refusal_selected-python-3.12_cpu-acknowledgment_cpu-count-8_total-seconds-300_gpu-count-0/.review_metadata/initial_child_identity_observation/source_freeze.json",
+    "sha256": "be50e46ead3cf30827967a84e3ba2b83e40333b948d4f5123a75dd5977f4dfd1"
+  },
+  "executed": false,
+  "repeat_after_attempt_forbidden": true
+}

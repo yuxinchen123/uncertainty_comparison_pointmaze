@@ -1,0 +1,163 @@
+{
+  "actual_diagnostic_argv": [
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "/p/rlprojects/RND_worktrees/2026-11-05-04-52_initial-child-identity_observations-before-refusal_selected-python-3.12_cpu-acknowledgment_cpu-count-8_total-seconds-300_gpu-count-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_initial_child_identity.py",
+    "--execute",
+    "--run-dir",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-04-52_selected-python-child-identity_host-serval02_processor-count-8_gpu-count-0_time-limit-seconds-300_environment-transitions-0",
+    "--expected-source-sha256",
+    "25876e545a9791b15c0ec649882da3a4accc9bcc56788e4f7a28911f0ad763ba",
+    "--expected-controller-sha256",
+    "09a1c944116541b631e12e465f5e782641429e305e9a135da4dc8e5379f9a5b6",
+    "--expected-python-sha256",
+    "c889543c0e008c1362b69c711330cac598833a790dc0c48c5ee4a8567d3f3b51"
+  ],
+  "actual_owned_cpu_context": {
+    "hostname": "slurm2",
+    "job_id": "6821437",
+    "pid": 1083786,
+    "step_id": "65"
+  },
+  "actual_source_publication": null,
+  "actual_ssh_argv": [
+    "ssh",
+    "-o",
+    "BatchMode=yes",
+    "-o",
+    "ControlMaster=no",
+    "-o",
+    "ConnectTimeout=15",
+    "serval02",
+    "/usr/bin/env -i PATH=/usr/local/bin:/usr/bin:/bin LANG=C.UTF-8 TZ=UTC PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1 /usr/bin/python3 -I -S -B -c 'import os,socket; assert socket.gethostname().split(\".\")[0]==\"serval02\" and os.getresuid()==(2618919,2618919,2618919); os.execve('\"'\"'/usr/bin/python3'\"'\"',['\"'\"'/usr/bin/python3'\"'\"', '\"'\"'-I'\"'\"', '\"'\"'-S'\"'\"', '\"'\"'-B'\"'\"', '\"'\"'/p/rlprojects/RND_worktrees/2026-11-05-04-52_initial-child-identity_observations-before-refusal_selected-python-3.12_cpu-acknowledgment_cpu-count-8_total-seconds-300_gpu-count-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_initial_child_identity.py'\"'\"', '\"'\"'--execute'\"'\"', '\"'\"'--run-dir'\"'\"', '\"'\"'/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-04-52_selected-python-child-identity_host-serval02_processor-count-8_gpu-count-0_time-limit-seconds-300_environment-transitions-0'\"'\"', '\"'\"'--expected-source-sha256'\"'\"', '\"'\"'25876e545a9791b15c0ec649882da3a4accc9bcc56788e4f7a28911f0ad763ba'\"'\"', '\"'\"'--expected-controller-sha256'\"'\"', '\"'\"'09a1c944116541b631e12e465f5e782641429e305e9a135da4dc8e5379f9a5b6'\"'\"', '\"'\"'--expected-python-sha256'\"'\"', '\"'\"'c889543c0e008c1362b69c711330cac598833a790dc0c48c5ee4a8567d3f3b51'\"'\"'],{'\"'\"'PATH'\"'\"': '\"'\"'/usr/local/bin:/usr/bin:/bin'\"'\"', '\"'\"'LANG'\"'\"': '\"'\"'C.UTF-8'\"'\"', '\"'\"'TZ'\"'\"': '\"'\"'UTC'\"'\"', '\"'\"'PYTHONNOUSERSITE'\"'\"': '\"'\"'1'\"'\"', '\"'\"'PYTHONDONTWRITEBYTECODE'\"'\"': '\"'\"'1'\"'\"'})'"
+  ],
+  "actual_target_execution": false,
+  "approved_for_single_root_execution_after_publication": true,
+  "checks": [
+    "exact current owned CPU review step",
+    "actual independent reviewer UID",
+    "ordinary bounded exact input: proposed_one_shot_command.json",
+    "ordinary bounded exact input: proposed_one_shot_command.json",
+    "exact root-held corrected command proposal",
+    "ordinary bounded exact input: corrected_source_freeze.json",
+    "proposal binds corrected freeze path and bytes, preserving earlier freeze",
+    "ordinary bounded exact input: corrected_source_freeze.json",
+    "ordinary bounded exact input: independent_source_review.json",
+    "genuine final-byte independent source review",
+    "ordinary bounded exact input: independent_source_review.json",
+    "source review passed without claiming actual target execution",
+    "ordinary bounded exact input: diagnose_initial_child_identity.py",
+    "exact held source/test before root command admission: diagnose_initial_child_identity.py",
+    "ordinary bounded exact input: direct_common_timing_controller.py",
+    "exact held source/test before root command admission: direct_common_timing_controller.py",
+    "ordinary bounded exact input: test_initial_child_identity.py",
+    "exact held source/test before root command admission: test_initial_child_identity.py",
+    "exact corrected source/controller/selected-image hashes and one diagnostic output path",
+    "exact one direct serval02 SSH without retries or other host",
+    "exact fixed clean environment and isolated system-Python host/owner precheck",
+    "remote code only checks exact host and owner then execs exact diagnostic argv/environment",
+    "proposal is unattempted and forbids retry",
+    "standard command record is exact reviewed single SSH argv",
+    "ordinary bounded exact input: manifest.yaml",
+    "ordinary bounded exact input: config_resolved.yaml",
+    "ordinary bounded exact input: experiment_background.md",
+    "ordinary bounded exact input: command.txt",
+    "ordinary bounded exact input: config_resolved.yaml",
+    "standard exact eight-CPU nonexclusive zero-GPU resource declaration",
+    "config matches every exact proposed source hash",
+    "zero transitions, scientific/timing credit, standing-lock or metadata-permission operations",
+    "isolated diagnostic differs from historical scientific startup and grants no retrospective cause",
+    "diagnostic remains unattempted: diagnostic_origin.json",
+    "diagnostic remains unattempted: immediate_child_observation.json",
+    "diagnostic remains unattempted: acknowledged_child_observation.json",
+    "diagnostic remains unattempted: diagnostic_result.json",
+    "diagnostic remains unattempted: root_actual_execution_return.json",
+    "ordinary bounded exact input: proposed_one_shot_command.json",
+    "command/source review input unchanged: proposed_one_shot_command.json",
+    "ordinary bounded exact input: corrected_source_freeze.json",
+    "command/source review input unchanged: corrected_source_freeze.json",
+    "ordinary bounded exact input: independent_source_review.json",
+    "command/source review input unchanged: independent_source_review.json",
+    "ordinary bounded exact input: diagnose_initial_child_identity.py",
+    "command/source review input unchanged: diagnose_initial_child_identity.py",
+    "ordinary bounded exact input: direct_common_timing_controller.py",
+    "command/source review input unchanged: direct_common_timing_controller.py",
+    "ordinary bounded exact input: test_initial_child_identity.py",
+    "command/source review input unchanged: test_initial_child_identity.py",
+    "ordinary bounded exact input: manifest.yaml",
+    "command/source review input unchanged: manifest.yaml",
+    "ordinary bounded exact input: config_resolved.yaml",
+    "command/source review input unchanged: config_resolved.yaml",
+    "ordinary bounded exact input: experiment_background.md",
+    "command/source review input unchanged: experiment_background.md",
+    "ordinary bounded exact input: command.txt",
+    "command/source review input unchanged: command.txt",
+    "ordinary bounded exact input: independent_source_review.json"
+  ],
+  "corrected_source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-04-52_initial-child-identity_observations-before-refusal_selected-python-3.12_cpu-acknowledgment_cpu-count-8_total-seconds-300_gpu-count-0/.review_metadata/initial_child_identity_observation/corrected_source_freeze.json",
+    "sha256": "63c3186658242633d913b8302c1b0dae38adb8ee72faf311c64b693d324665cc"
+  },
+  "elapsed_seconds": 0.02338187408167869,
+  "inputs": {
+    "/p/rlprojects/RND_worktrees/2026-11-05-04-52_initial-child-identity_observations-before-refusal_selected-python-3.12_cpu-acknowledgment_cpu-count-8_total-seconds-300_gpu-count-0/.review_metadata/initial_child_identity_observation/corrected_source_freeze.json": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-04-52_initial-child-identity_observations-before-refusal_selected-python-3.12_cpu-acknowledgment_cpu-count-8_total-seconds-300_gpu-count-0/.review_metadata/initial_child_identity_observation/corrected_source_freeze.json",
+      "sha256": "63c3186658242633d913b8302c1b0dae38adb8ee72faf311c64b693d324665cc"
+    },
+    "/p/rlprojects/RND_worktrees/2026-11-05-04-52_initial-child-identity_observations-before-refusal_selected-python-3.12_cpu-acknowledgment_cpu-count-8_total-seconds-300_gpu-count-0/.review_metadata/initial_child_identity_observation/independent_source_review.json": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-04-52_initial-child-identity_observations-before-refusal_selected-python-3.12_cpu-acknowledgment_cpu-count-8_total-seconds-300_gpu-count-0/.review_metadata/initial_child_identity_observation/independent_source_review.json",
+      "sha256": "db15bd9b3ce07c9913473aebc3e3756e7d027f5e25ca02be1eb903cd5825702f"
+    },
+    "/p/rlprojects/RND_worktrees/2026-11-05-04-52_initial-child-identity_observations-before-refusal_selected-python-3.12_cpu-acknowledgment_cpu-count-8_total-seconds-300_gpu-count-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_initial_child_identity.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-04-52_initial-child-identity_observations-before-refusal_selected-python-3.12_cpu-acknowledgment_cpu-count-8_total-seconds-300_gpu-count-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_initial_child_identity.py",
+      "sha256": "25876e545a9791b15c0ec649882da3a4accc9bcc56788e4f7a28911f0ad763ba"
+    },
+    "/p/rlprojects/RND_worktrees/2026-11-05-04-52_initial-child-identity_observations-before-refusal_selected-python-3.12_cpu-acknowledgment_cpu-count-8_total-seconds-300_gpu-count-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_timing_controller.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-04-52_initial-child-identity_observations-before-refusal_selected-python-3.12_cpu-acknowledgment_cpu-count-8_total-seconds-300_gpu-count-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_timing_controller.py",
+      "sha256": "09a1c944116541b631e12e465f5e782641429e305e9a135da4dc8e5379f9a5b6"
+    },
+    "/p/rlprojects/RND_worktrees/2026-11-05-04-52_initial-child-identity_observations-before-refusal_selected-python-3.12_cpu-acknowledgment_cpu-count-8_total-seconds-300_gpu-count-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_initial_child_identity.py": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-05-04-52_initial-child-identity_observations-before-refusal_selected-python-3.12_cpu-acknowledgment_cpu-count-8_total-seconds-300_gpu-count-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_initial_child_identity.py",
+      "sha256": "4b3312a8e2437b0bc776ead943bb3237ad45bdce0d1e788e124203d4a1089e5d"
+    },
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-04-52_selected-python-child-identity_host-serval02_processor-count-8_gpu-count-0_time-limit-seconds-300_environment-transitions-0/command.txt": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-04-52_selected-python-child-identity_host-serval02_processor-count-8_gpu-count-0_time-limit-seconds-300_environment-transitions-0/command.txt",
+      "sha256": "cd7ff26000a9909798e90c58d46e005b51c6f89454366bfb81db480dadc0161d"
+    },
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-04-52_selected-python-child-identity_host-serval02_processor-count-8_gpu-count-0_time-limit-seconds-300_environment-transitions-0/config_resolved.yaml": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-04-52_selected-python-child-identity_host-serval02_processor-count-8_gpu-count-0_time-limit-seconds-300_environment-transitions-0/config_resolved.yaml",
+      "sha256": "c1a3f583f937fb33967f876fe971eba0a3bf5b348a14f15c84089c740e0ce333"
+    },
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-04-52_selected-python-child-identity_host-serval02_processor-count-8_gpu-count-0_time-limit-seconds-300_environment-transitions-0/experiment_background.md": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-04-52_selected-python-child-identity_host-serval02_processor-count-8_gpu-count-0_time-limit-seconds-300_environment-transitions-0/experiment_background.md",
+      "sha256": "13061e18a6dd8dcb8317ef7900ad449f7374aa10cd0bbbfc4b1be4be90502e65"
+    },
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-04-52_selected-python-child-identity_host-serval02_processor-count-8_gpu-count-0_time-limit-seconds-300_environment-transitions-0/manifest.yaml": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-04-52_selected-python-child-identity_host-serval02_processor-count-8_gpu-count-0_time-limit-seconds-300_environment-transitions-0/manifest.yaml",
+      "sha256": "783b4ab326a627822ed6822ccf5dd4a997d70bdba3ae922915194a1f7181ebb6"
+    },
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-04-52_selected-python-child-identity_host-serval02_processor-count-8_gpu-count-0_time-limit-seconds-300_environment-transitions-0/proposed_one_shot_command.json": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-04-52_selected-python-child-identity_host-serval02_processor-count-8_gpu-count-0_time-limit-seconds-300_environment-transitions-0/proposed_one_shot_command.json",
+      "sha256": "cb60c54dc8695da888650dc87874ff92965909d489484d021e2b5540f6bbcc16"
+    }
+  },
+  "kind": "independent_cpu_selected_interpreter_diagnostic_one_shot_command_review",
+  "original_failure_cause_established": false,
+  "passed": true,
+  "required_before_actual_once_SSH": [
+    "Publish exact reviewed source, standard records, source review and this command review.",
+    "Verify actual clean source commit and exact proposed hashes immediately before one attempt; record actual intent, stdout/stderr and return.",
+    "Do not repeat this packet after an attempt; preserve all actual observations and waits, including failure.",
+    "This isolated-startup CPU diagnostic does not qualify numerical timing, a GPU or the historical failure cause."
+  ],
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "scientific_or_operational_worker_admission": false,
+  "source_review": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-04-52_initial-child-identity_observations-before-refusal_selected-python-3.12_cpu-acknowledgment_cpu-count-8_total-seconds-300_gpu-count-0/.review_metadata/initial_child_identity_observation/independent_source_review.json",
+    "sha256": "db15bd9b3ce07c9913473aebc3e3756e7d027f5e25ca02be1eb903cd5825702f"
+  },
+  "standing_gpu_lock_or_metadata_permission_changes": false
+}

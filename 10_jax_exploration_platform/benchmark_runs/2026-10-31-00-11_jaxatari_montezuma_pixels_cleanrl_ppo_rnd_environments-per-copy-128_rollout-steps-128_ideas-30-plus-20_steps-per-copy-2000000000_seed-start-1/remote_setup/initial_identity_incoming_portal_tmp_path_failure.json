@@ -1,0 +1,6 @@
+{
+  "returncode": 2,
+  "error": "Owned compute could not read /tmp/rnd_review_initial_identity_incoming.py because /tmp is host-local. The review script did not start.",
+  "correction": "Copy exact source to campaign shared storage and invoke one fresh owned CPU step.",
+  "gpu_actions": 0
+}

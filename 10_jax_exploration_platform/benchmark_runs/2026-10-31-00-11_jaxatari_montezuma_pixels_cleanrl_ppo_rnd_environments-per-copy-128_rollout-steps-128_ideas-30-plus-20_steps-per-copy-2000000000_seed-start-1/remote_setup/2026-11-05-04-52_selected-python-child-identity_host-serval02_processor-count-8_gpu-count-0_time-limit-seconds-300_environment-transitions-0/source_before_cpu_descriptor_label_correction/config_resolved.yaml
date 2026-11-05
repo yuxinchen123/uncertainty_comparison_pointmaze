@@ -1,0 +1,33 @@
+{
+  "kind": "selected_python_initial_child_identity_cpu_diagnostic",
+  "host": "serval02",
+  "cpu_count": 8,
+  "cpu_affinity_exclusive": false,
+  "gpu_count": 0,
+  "maximum_wall_seconds": 300,
+  "python": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+  "first_observation_and_each_predicate_saved": true,
+  "acknowledged_observation_separate": true,
+  "original_identity_requirements_unchanged": true,
+  "environment_transitions": 0,
+  "learner_updates": 0,
+  "scientific_credit": 0,
+  "timing_credit": 0,
+  "standing_gpu_lock_operations": 0,
+  "root_metadata_permission_changes": 0,
+  "source_freeze_pending": false,
+  "executed": false,
+  "source_sha256": "7bf77224f16f57ee092933d5030060e49915388a780c93036b4ad052f4d13d76",
+  "controller_sha256": "09a1c944116541b631e12e465f5e782641429e305e9a135da4dc8e5379f9a5b6",
+  "selected_executable_sha256": "c889543c0e008c1362b69c711330cac598833a790dc0c48c5ee4a8567d3f3b51",
+  "source_root": "/p/rlprojects/RND_worktrees/2026-11-05-04-52_initial-child-identity_observations-before-refusal_selected-python-3.12_cpu-acknowledgment_cpu-count-8_total-seconds-300_gpu-count-0",
+  "source_freeze_sha256": "be50e46ead3cf30827967a84e3ba2b83e40333b948d4f5123a75dd5977f4dfd1",
+  "isolated_startup_flags": [
+    "-I",
+    "-S",
+    "-B"
+  ],
+  "original_scientific_startup_flags": [],
+  "full_original_launch_reproduced": false,
+  "historical_failure_cause_established": false
+}

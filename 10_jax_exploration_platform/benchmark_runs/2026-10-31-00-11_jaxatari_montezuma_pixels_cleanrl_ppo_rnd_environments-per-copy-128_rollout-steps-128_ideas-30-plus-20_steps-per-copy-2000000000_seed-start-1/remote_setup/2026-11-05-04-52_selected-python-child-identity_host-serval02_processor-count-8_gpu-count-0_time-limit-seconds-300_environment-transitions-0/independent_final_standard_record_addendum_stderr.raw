@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-04-52_selected-python-child-identity_host-serval02_processor-count-8_gpu-count-0_time-limit-seconds-300_environment-transitions-0/independent_final_standard_record_addendum.py", line 50, in <module>
+srun: error: slurm2: task 0: Exited with exit code 1
+    require(set(changed)==set(freeze["files"]) and len(changed)==3,"actual source commit changes only three reviewed source/test paths")
+  File "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-04-52_selected-python-child-identity_host-serval02_processor-count-8_gpu-count-0_time-limit-seconds-300_environment-transitions-0/independent_final_standard_record_addendum.py", line 17, in require
+    assert value,text
+AssertionError: actual source commit changes only three reviewed source/test paths
