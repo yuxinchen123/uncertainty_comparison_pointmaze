@@ -1,0 +1,40 @@
+{
+  "actual_job_id": "6783003",
+  "actual_packet_or_timing_unit_prepared": false,
+  "actual_pid": 1250126,
+  "actual_step_id": "443",
+  "elapsed_seconds": 2.3565159189747646,
+  "errors": [],
+  "failures": [
+    {
+      "test": "test_copy_two_cannot_use_first_serial_position (__main__.IndependentTimingBoundaryTests)",
+      "traceback": "Traceback (most recent call last):\n  File \"/p/rlprojects/RND_worktrees/2026-11-05-01-16_direct-common-timing_controller-helpers-29_copies-1-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/.review_metadata/direct_common_timing_controller_independent/review_frozen_timing.py\", line 77, in test_copy_two_cannot_use_first_serial_position\n    with self.assertRaises(ValueError):\nAssertionError: ValueError not raised\n"
+    }
+  ],
+  "frozen_files_before": {
+    "/p/rlprojects/RND_worktrees/2026-11-05-01-16_direct-common-timing_controller-helpers-29_copies-1-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_timing_controller.py": {
+      "mode": 432,
+      "sha256": "e159db9bd3c2cbffef2e6322489aa3ce5799f7ff6d416ab55d01934491fb6b9e"
+    },
+    "/p/rlprojects/RND_worktrees/2026-11-05-01-16_direct-common-timing_controller-helpers-29_copies-1-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/prepare_direct_common_timing.py": {
+      "mode": 432,
+      "sha256": "cbd70618dd97d8bc49ea6b280938e776e6d7d8ed0980d8cfe0f3f2044fb5400e"
+    },
+    "/p/rlprojects/RND_worktrees/2026-11-05-01-16_direct-common-timing_controller-helpers-29_copies-1-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_common_timing_controller.py": {
+      "mode": 432,
+      "sha256": "f3eae137cb10c4680bccfc61b7c807f390f5bec0ee9c0f788f42a7bacc49bb08"
+    }
+  },
+  "frozen_files_unchanged": true,
+  "gpu_operations": 0,
+  "handoff_sha256": "ec83df3d7d772848ec9810e8a79bad1932ccec7af3ddc87136d576272db12ac0",
+  "kind": "independent_frozen_common_timing_controller_review",
+  "native_process_control_operations": 0,
+  "numerical_imports": [],
+  "original_numerical_files_verified_unchanged": 13,
+  "passed": false,
+  "remote_actions": 0,
+  "scientific_credit": 0,
+  "source_freeze_sha256": "1bbdf561344c8a00852794436b7c74fa32f3f80465607b81d1a5cd93d75ea327",
+  "tests_run": 7
+}
