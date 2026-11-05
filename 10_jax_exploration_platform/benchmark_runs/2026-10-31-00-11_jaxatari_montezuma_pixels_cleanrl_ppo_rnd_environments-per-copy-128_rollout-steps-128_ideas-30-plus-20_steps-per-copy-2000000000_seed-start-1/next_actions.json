@@ -1316,7 +1316,7 @@
     "state": "both_copy_counts_independently_accepted_correctness_only_timing_pending"
   },
   "h100_common_timing_controller_preparation": {
-    "state": "two_copy_actual_bound_packet_independently_reviewed_pending_inner_publication",
+    "state": "two_copy_inner_published_outer_reviewed_pending_publication_and_one_ssh",
     "source_commit": "cba869200cb31131b354c985f77b43386f90f9b9",
     "source_publication": "76dcf89caa4dc4eadf673bcf257dcbfd30d8d8d0",
     "source_published": true,
@@ -1478,7 +1478,13 @@
     "copy_two_fresh_prior_exit": {
       "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-07-20_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/root_exact_serial_predecessor_exit_observation.json",
       "sha256": "c40bb04250a70d29ca0542db3958a9ffa754fd3f05ad9e3c32b531255be5499e"
-    }
+    },
+    "copy_two_inner_publication": "6e13f552930e3836cb2fd95e125496a1ad82435c",
+    "copy_two_transport_review": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-07-20_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/root_transport_independent_literal_review.json",
+      "sha256": "5c563a329d12eb0a0764370d0153f4d427563618fe3b2aa3949c6fecba1b05cd"
+    },
+    "copy_two_publication_default_passed": true
   },
   "h100_common_timing_previous_attempts": [
     {
