@@ -1316,7 +1316,7 @@
     "state": "both_copy_counts_independently_accepted_correctness_only_timing_pending"
   },
   "h100_common_timing_controller_preparation": {
-    "state": "fresh_bounded_startup_unit_bound_reviewed_waiting_transport",
+    "state": "bounded_startup_transport_reviewed_outer_publication_before_once_SSH",
     "source_commit": "d2253fa853290cb8fcd0a9212e332dd33a63f2f9",
     "source_publication": "c903c8df108c8efd27228c338162434fc3197599",
     "source_published": true,
@@ -1382,7 +1382,12 @@
       "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-05-49_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/previous_failed_timing_preparation_state.json",
       "sha256": "9842e601d594eae015352aadb69711e0573ba8c3c87b9d3df953103580e925ef"
     },
-    "next_action": "Publish actual inner packet; derive and review exact once transport with real inner commit, then root launch once."
+    "next_action": "Verify actual outer bytes, protect sameowned metadata files, execute reviewed one SSH once.",
+    "copy_one_inner_publication": "c88f4b1a4111919066f80cb81701041b00b43bad",
+    "copy_one_transport_independent_review": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-05-49_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/root_transport_independent_literal_review.json",
+      "sha256": "70334826a19823ae87a308df2b5053a85543db36baa6dae69522972e106dd8b2"
+    }
   },
   "h100_common_timing_previous_attempts": [
     {
