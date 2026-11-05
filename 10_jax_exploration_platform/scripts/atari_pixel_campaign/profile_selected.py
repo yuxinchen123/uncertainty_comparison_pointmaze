@@ -1290,7 +1290,8 @@ def capture_configured_native_processes(directory, plan, active, scope, deadline
                 raise ValueError("the scoped capture launch differs from the actual source-bound child")
             observation = processes.observe(claim["pid"], claim["process_start_time"], intent["capture_command"])
             observer.publish(directory / "capture_process_observation.json", observation)
-            observer.validate_observation(observation, claim, intent["capture_command"], intent["parent"])
+            observer.validate_observation(observer.read_json(directory / "capture_process_observation.json"),
+                claim, intent["capture_command"], intent["parent"])
             deadline.remaining("work")
             observer.publish(directory / "capture_release.json", {**owner, "capture_identity": claim,
                 "process_observation": observer.receipt(directory / "capture_process_observation.json")})

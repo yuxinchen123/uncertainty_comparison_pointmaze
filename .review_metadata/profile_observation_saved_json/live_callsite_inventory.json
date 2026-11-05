@@ -1,0 +1,16 @@
+{
+  "already_serialized_live_paths": [
+    "profile_selected.capture_owned_processes",
+    "profile_target_direct_process._run_tool_in_scope"
+  ],
+  "frozen_failed_runtime_commit": "2aa6df92f7d9da20e2fbc1d15a20df16ba10ba1e",
+  "kind": "saved_observation_callsite_inventory",
+  "new_runtime_change_only": "profile_selected.capture_configured_native_processes",
+  "no_old_packet_reused": true,
+  "other_callers": "saved readers or explicit JSON-loaded records; diagnostic live producer publishes and then reads its record before final validation",
+  "unchanged_strict_reader": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-14-20_profile-observation_saved-json-canonical-process-keys_gpu-actions-0/10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py",
+    "sha256": "1833e05b42d680194e4a8da9cd2b487d3af7529285d1a9d550edc7d3b63f6279",
+    "size_bytes": 40306
+  }
+}

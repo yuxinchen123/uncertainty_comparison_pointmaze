@@ -1,0 +1,21 @@
+{
+  "base_commit": "ef00da972d4a5c28b6a71a71da6f9c7d31aea18f",
+  "changed_runtime_functions": [
+    "capture_configured_native_processes"
+  ],
+  "files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py": {
+      "mode": 432,
+      "sha256": "df2fbee36493492b112792a1695235feb6a586fdb481d73f311e0915b2ddd09b",
+      "size_bytes": 114821
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_profile_observation_saved_json.py": {
+      "mode": 432,
+      "sha256": "dbfb7f6bb3ac9103d7a8d5773df02d013736c51781b2f5235094820d52c4bbe4",
+      "size_bytes": 8707
+    }
+  },
+  "gpu_actions": false,
+  "kind": "profile_observation_saved_json_source_freeze",
+  "protected_reader_unchanged": true
+}
