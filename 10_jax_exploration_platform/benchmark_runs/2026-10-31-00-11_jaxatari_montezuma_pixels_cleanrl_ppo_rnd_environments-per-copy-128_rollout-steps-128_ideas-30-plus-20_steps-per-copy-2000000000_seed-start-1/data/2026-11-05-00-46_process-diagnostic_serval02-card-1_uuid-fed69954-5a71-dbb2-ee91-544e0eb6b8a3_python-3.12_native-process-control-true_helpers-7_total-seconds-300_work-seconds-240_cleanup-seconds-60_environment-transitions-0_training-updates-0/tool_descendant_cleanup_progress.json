@@ -1,0 +1,119 @@
+{
+  "events": [
+    {
+      "at_seconds": 1793868570.06702,
+      "birth": "82915069",
+      "kind": "pinned_positive_child",
+      "parent_pid": 231197,
+      "pid": 231247
+    },
+    {
+      "at_seconds": 1793868570.5698967,
+      "birth": "82915119",
+      "kind": "pinned_positive_child",
+      "parent_pid": 231197,
+      "pid": 231257
+    },
+    {
+      "at_seconds": 1793868570.755539,
+      "birth": "82915136",
+      "kind": "pinned_positive_child",
+      "parent_pid": 231257,
+      "pid": 231265
+    },
+    {
+      "at_seconds": 1793868570.757492,
+      "birth": "82915137",
+      "kind": "pinned_positive_child",
+      "parent_pid": 231265,
+      "pid": 231266
+    },
+    {
+      "at_seconds": 1793868570.759494,
+      "birth": "82915137",
+      "kind": "pinned_positive_child",
+      "parent_pid": 231266,
+      "pid": 231267
+    },
+    {
+      "at_seconds": 1793868571.0431232,
+      "birth": "82915162",
+      "kind": "pinned_positive_child",
+      "parent_pid": 231257,
+      "pid": 231278
+    },
+    {
+      "at_seconds": 1793868571.2772348,
+      "birth": "82915190",
+      "kind": "pinned_positive_child",
+      "parent_pid": 231257,
+      "pid": 231283
+    },
+    {
+      "at_seconds": 1793868571.3395927,
+      "birth": "82915192",
+      "kind": "pinned_positive_child",
+      "parent_pid": 231283,
+      "pid": 231284
+    },
+    {
+      "at_seconds": 1793868571.3401444,
+      "birth": "82915192",
+      "kind": "pinned_positive_child",
+      "parent_pid": 231283,
+      "pid": 231285
+    },
+    {
+      "at_seconds": 1793868572.3980567,
+      "birth": "82915296",
+      "kind": "pinned_positive_child",
+      "parent_pid": 231284,
+      "pid": 231291
+    },
+    {
+      "at_seconds": 1793868573.6374633,
+      "birth": "82915423",
+      "kind": "pinned_positive_child",
+      "parent_pid": 231267,
+      "pid": 231306
+    },
+    {
+      "at_seconds": 1793868574.8014998,
+      "birth": "82915190",
+      "exit_code": 0,
+      "kind": "reaped_actual_adopted_child",
+      "pid": 231283,
+      "wait_status": 0
+    },
+    {
+      "at_seconds": 1793868574.8017237,
+      "birth": "82915137",
+      "exit_code": 0,
+      "kind": "reaped_actual_adopted_child",
+      "pid": 231267,
+      "wait_status": 0
+    },
+    {
+      "at_seconds": 1793868574.801927,
+      "birth": "82915192",
+      "exit_code": 0,
+      "kind": "reaped_actual_adopted_child",
+      "pid": 231285,
+      "wait_status": 0
+    }
+  ],
+  "gpu_or_cuda_qualification": false,
+  "interventions": [],
+  "kind": "direct_tool_descendant_cleanup_progress",
+  "known_nodes": 11,
+  "known_roots": 2,
+  "native_process_control_only": true,
+  "phase": "kernel_closure_verified_and_native_flag_restored",
+  "producer_birth": "82914794",
+  "producer_pid": 231197,
+  "read_errors": [],
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "standing_descriptor_must_remain_open": false,
+  "subreaper_active": false
+}

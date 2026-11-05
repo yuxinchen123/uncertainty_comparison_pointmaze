@@ -1,0 +1,41 @@
+{
+  "admission_granted": false,
+  "case_credit": 0,
+  "completed": true,
+  "cuda_profiler_api_called": false,
+  "cuda_qualification_established": false,
+  "diagnostic_deadline": {
+    "cleanup_end_monotonic": null,
+    "cleanup_started_monotonic": null,
+    "clock_domain": {
+      "boot_id": "06ea96f3-66bd-4b28-bd18-2ca6b8fb6658",
+      "clock": "monotonic",
+      "hostname": "serval02",
+      "implementation": "clock_gettime(CLOCK_MONOTONIC)"
+    },
+    "observed_monotonic": 829153.818366015,
+    "origin": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-00-46_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/diagnostic_controller_time_origin.json",
+      "sha256": "bdb2251bf290c375d7da68c2ffeef9e5b15abfac9f7a82c70d57cd167aa90251"
+    },
+    "started_monotonic": 829147.793920561,
+    "total_end_monotonic": 829447.793920561,
+    "work_end_monotonic": 829387.793920561
+  },
+  "environment_transitions": 0,
+  "idea_credit": 0,
+  "kind": "actual_direct_standard_library_process_payload",
+  "numerical_modules": [],
+  "payload_finished_at_seconds": 1793868573.1924179,
+  "payload_started_at_seconds": 1793868573.1923687,
+  "physical_binding_established": false,
+  "pid": 231291,
+  "process_start_time": "82915296",
+  "profile_credit": 0,
+  "scientific_credit": 0,
+  "standing_descriptor_inherited": false,
+  "timing_credit": 0,
+  "training_updates": 0,
+  "whole_tool_library_or_device_activity_quantified": false,
+  "worker_admitted": false
+}

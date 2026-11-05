@@ -346,13 +346,24 @@
     },
     "helper_count": 29,
     "helper_source_base": "7fef164909b5eb8b31636da7ae0c653282388203",
+    "incoming_root_review": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/accepted_snapshot_incoming_root_2026-11-05.json",
+      "sha256": "4637db78acb4176e2ff93befb6890b376367ea912f9b1c761907cce63586ce32"
+    },
+    "independent_source_review": {
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-23-24_accepted-evidence-snapshot_original-helpers-26_common-helpers-29_validation-seconds-300_hash-physical-files-once_gpu-count-0_processor-count-1_host-memory-mib-512/.review_metadata/accepted_evidence_snapshot_corrected_independent_review/independent_corrected_review_summary.json",
+      "sha256": "d74c0358afb3ccfb1003c0efca5f793e4898291557da3916dfd045ec4fdeeb2a"
+    },
     "live_current_gpu_source_assets_backend_numerical_gates_retained": true,
     "matching_declared_content_hash_does_not_skip_another_file": true,
     "maximum_wall_seconds_per_check": 300,
     "numerical_source_unchanged": true,
     "original_qualification_and_history_bodies_retained": true,
+    "packet": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-00-54_accepted-direct-evidence_cpu-snapshot_maximum-check-seconds-285_cpu-step-seconds-300_processor-count-1_host-memory-mib-512_gpu-count-0",
+    "private_source_commit": "7d07da121c41c531d51cbd25b73579735212ead8",
     "production_files": 5,
-    "state": "corrected_source_frozen_author_seven_focused_pass_independent_review_running",
+    "source_publication": "cb2735b8c3712e2fa4f4573fa210e302584d9af2",
+    "state": "reviewed_source_published_standard_actual_snapshot_packet_prepared",
     "worker_may_consume_independently_reviewed_cpu_proof": true
   },
   "checkpoint_gpu_validation": {
@@ -1910,7 +1921,14 @@
     "submission_and_release_verified_same_execution_turn": true
   },
   "native_direct_process_diagnostic_source": {
-    "actual_target_diagnostic_run": false,
+    "actual_failure_review": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-00-46_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/independent_actual_native_failure_review_425.json",
+      "sha256": "f1acc57d00866d39f173a868cbf64b613083c1052971dacffa21ab591ff4d318"
+    },
+    "actual_native_contract_observation_recorded": true,
+    "actual_target_diagnostic_run": true,
+    "actual_target_elapsed_seconds": 13.125831771991216,
+    "actual_target_returncode": 1,
     "attempt_history": [
       {
         "actual_ssh_returncode": 255,
@@ -1966,7 +1984,7 @@
     },
     "source_commit": "39c93b44af70f9dfa63f38cde93f78b3604cc365",
     "source_publication": "535d6c4951dffa778348c5c474a69f076020914c",
-    "status": "fresh_corrected_direct_transport_packet_independently_approved_not_launched",
+    "status": "actual_target_failed_saved_reader_key_cmdline_cleanup_independently_verified_fix_pending",
     "total_budget_seconds": 300,
     "unit": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-00-46_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0",
     "user_total_check_limit_seconds": 300,

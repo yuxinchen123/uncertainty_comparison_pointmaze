@@ -1,0 +1,38 @@
+{
+  "actual_invocation_attempted": false,
+  "actual_snapshot_review": null,
+  "actual_snapshot_sha256": null,
+  "actual_step_id": null,
+  "description": "Hash each distinct physical captured historical evidence file once, then independently review the complete bounded CPU proof before any worker consumes it. No prior GPU case or original raw-gate batch is repeated.",
+  "inputs": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-00-54_accepted-direct-evidence_cpu-snapshot_maximum-check-seconds-285_cpu-step-seconds-300_processor-count-1_host-memory-mib-512_gpu-count-0/inputs.json",
+    "sha256": "9a69ba96aaeb5560fced8e6299674cf9ffa548d1466a062e7bbd8bb1e45c5c0f"
+  },
+  "kind": "prepared_single_use_accepted_evidence_cpu_snapshot_template",
+  "output_path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-00-54_accepted-direct-evidence_cpu-snapshot_maximum-check-seconds-285_cpu-step-seconds-300_processor-count-1_host-memory-mib-512_gpu-count-0",
+  "packet_path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-00-54_accepted-direct-evidence_cpu-snapshot_maximum-check-seconds-285_cpu-step-seconds-300_processor-count-1_host-memory-mib-512_gpu-count-0",
+  "prepared_only": true,
+  "producer": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-23-24_accepted-evidence-snapshot_original-helpers-26_common-helpers-29_validation-seconds-300_hash-physical-files-once_gpu-count-0_processor-count-1_host-memory-mib-512/10_jax_exploration_platform/scripts/atari_pixel_campaign/accepted_evidence_snapshot.py",
+    "sha256": "fba1d30a0580a06750f1641683613a4ad3a08fa93389f467e1fd723a7ab48428"
+  },
+  "run_id": "2026-11-05-00-54_accepted-direct-evidence_cpu-snapshot_maximum-check-seconds-285_cpu-step-seconds-300_processor-count-1_host-memory-mib-512_gpu-count-0",
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "source_commit": "7d07da121c41c531d51cbd25b73579735212ead8",
+  "source_review": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-23-24_accepted-evidence-snapshot_original-helpers-26_common-helpers-29_validation-seconds-300_hash-physical-files-once_gpu-count-0_processor-count-1_host-memory-mib-512/.review_metadata/accepted_evidence_snapshot_corrected_independent_review/independent_corrected_review_summary.json",
+    "sha256": "d74c0358afb3ccfb1003c0efca5f793e4898291557da3916dfd045ec4fdeeb2a"
+  },
+  "submission": {
+    "gpu_count": 0,
+    "host_memory_mib": 512,
+    "kind": "owned_existing_numeric_cpu_step",
+    "maximum_snapshot_seconds": 285,
+    "maximum_step_seconds": 300,
+    "owned_allocation": "6783003",
+    "requested_cpus": 1,
+    "requeue": false
+  },
+  "worker_admission": false
+}

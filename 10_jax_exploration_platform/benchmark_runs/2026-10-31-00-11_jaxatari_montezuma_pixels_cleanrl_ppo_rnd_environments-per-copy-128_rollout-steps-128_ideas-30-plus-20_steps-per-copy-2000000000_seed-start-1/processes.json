@@ -225,5 +225,28 @@
     "source_root": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
     "start_time": "56774003",
     "unit": "2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3"
+  },
+  {
+    "gpu_uuid": "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3",
+    "helper_commit": "0a880984b4a03a2ff7335337cc18576628bc9fc1",
+    "hostname": "serval02",
+    "kind": "selected_configuration_measurement",
+    "pid": 3892092,
+    "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+    "source_root": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+    "start_time": "79633156",
+    "unit": "2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3"
+  },
+  {
+    "kind": "direct_nsight_process_descriptor_diagnostic",
+    "hostname": "serval02",
+    "pid": 231197,
+    "start_time": "82914794",
+    "unit": "2026-11-05-00-46_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0",
+    "source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+    "helper_commit": "39c93b44af70f9dfa63f38cde93f78b3604cc365",
+    "gpu_uuid": "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3",
+    "producer_owns_standing_descriptor": true,
+    "controller_owns_standing_descriptor": false
   }
 ]

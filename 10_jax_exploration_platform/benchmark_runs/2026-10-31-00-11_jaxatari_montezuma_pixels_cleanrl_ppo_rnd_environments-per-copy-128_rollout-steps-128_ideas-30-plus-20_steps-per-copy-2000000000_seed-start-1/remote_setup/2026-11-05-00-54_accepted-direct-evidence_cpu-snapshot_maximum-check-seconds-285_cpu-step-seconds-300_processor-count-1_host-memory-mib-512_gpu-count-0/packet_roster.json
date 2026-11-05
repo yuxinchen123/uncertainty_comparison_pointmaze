@@ -1,0 +1,33 @@
+{
+  "actual_invocation_attempted": false,
+  "files": {
+    "command.txt": {
+      "bytes": 1941,
+      "sha256": "6b0fd5088d6af7f84d4cae1d74bbb0a124bfb794155c6b2d533e00172ae57816"
+    },
+    "config_resolved.yaml": {
+      "bytes": 3278,
+      "sha256": "270d1bb7e82185bd8d56696e3ca92ea77c6762b9aca9769c074a16352ce0f26c"
+    },
+    "experiment_background.md": {
+      "bytes": 1532,
+      "sha256": "0b7ffdfff24a9fe5c5c44095f7fdd9595449b54a87cd95115423603d7e74f790"
+    },
+    "inputs.json": {
+      "bytes": 2321,
+      "sha256": "9a69ba96aaeb5560fced8e6299674cf9ffa548d1466a062e7bbd8bb1e45c5c0f"
+    },
+    "invocation_template.json": {
+      "bytes": 4992,
+      "sha256": "cda8548f576036bf6c8fceb8dff81e7f669ed21c0fd56d9eb9e07c51e3975a84"
+    },
+    "manifest.yaml": {
+      "bytes": 3307,
+      "sha256": "781ffad1513a4f41f3aecc733800c6b057142f27eb429fe50f4c2b1acf00cbff"
+    }
+  },
+  "kind": "prepared_bounded_cpu_snapshot_packet_template_roster",
+  "local_packet_path": "/p/rlprojects/RND_worktrees/2026-11-04-23-24_accepted-evidence-snapshot_original-helpers-26_common-helpers-29_validation-seconds-300_hash-physical-files-once_gpu-count-0_processor-count-1_host-memory-mib-512/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-00-54_accepted-direct-evidence_cpu-snapshot_maximum-check-seconds-285_cpu-step-seconds-300_processor-count-1_host-memory-mib-512_gpu-count-0",
+  "packet_path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-00-54_accepted-direct-evidence_cpu-snapshot_maximum-check-seconds-285_cpu-step-seconds-300_processor-count-1_host-memory-mib-512_gpu-count-0",
+  "schema_version": 1
+}
