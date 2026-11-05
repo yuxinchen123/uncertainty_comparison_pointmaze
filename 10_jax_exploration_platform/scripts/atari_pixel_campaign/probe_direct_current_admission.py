@@ -35,6 +35,13 @@ def git(root, *arguments):
     return subprocess.check_output(["git", "-C", str(root), *arguments])
 
 
+def owned_step_path(cgroup, job, step):
+    """Match complete consecutive job and step path components, never prefixes."""
+    expected = "/job_" + job + "/step_" + step + "/"
+    return any(expected in entry.split(":", 2)[2].rstrip("/") + "/"
+        for entry in cgroup.splitlines() if len(entry.split(":", 2)) == 3)
+
+
 def probe(path, expected_hash, *, fixture=False, canonical_source=False):
     """Execute the actual shared claim producer with exact new helper bytes."""
     plan, reference = read(path)
@@ -45,7 +52,7 @@ def probe(path, expected_hash, *, fixture=False, canonical_source=False):
         and job in (campaign / "slurm/submitted_jobids_uva.txt").read_text().split(),
         "the claim probe requires an exact owned numerical CPU step")
     cgroup = Path("/proc/self/cgroup").read_text()
-    require("job_" + job in cgroup and "step_" + step in cgroup,
+    require(owned_step_path(cgroup, job, step),
         "the current CPU process must belong to the recorded owned step")
     helper = plan["helpers"]; root = Path(helper["source_root"])
     require(git(root, "rev-parse", "HEAD").decode().strip() == helper["source_commit"]
