@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "ssh",
+    "-o",
+    "BatchMode=yes",
+    "-o",
+    "ControlMaster=no",
+    "-o",
+    "ConnectTimeout=15",
+    "serval02",
+    "/usr/bin/python3 -I -S -B -c 'import pathlib,json,hashlib,sys,os,socket,datetime\np=pathlib.Path(sys.argv[1]);b=p.read_bytes();assert hashlib.sha256(b).hexdigest()==sys.argv[2];x=json.loads(b)\nassert socket.gethostname().split('\"'\"'.'\"'\"')[0]=='\"'\"'serval02'\"'\"' and os.getuid()==os.geteuid()==2618919 and x['\"'\"'uid'\"'\"']==2618919\npid=x['\"'\"'actual_pid'\"'\"'];birth=x['\"'\"'actual_birth_counter'\"'\"'];q=pathlib.Path('\"'\"'/proc'\"'\"')/str(pid)\nr={'\"'\"'kind'\"'\"':'\"'\"'exact_owned_failed_startup_controller_exit_observation'\"'\"','\"'\"'at_utc'\"'\"':datetime.datetime.now(datetime.timezone.utc).isoformat(),'\"'\"'host'\"'\"':'\"'\"'serval02'\"'\"','\"'\"'pid'\"'\"':pid,'\"'\"'expected_birth_counter'\"'\"':birth,'\"'\"'spawn_sha256'\"'\"':sys.argv[2],'\"'\"'read_only'\"'\"':True,'\"'\"'process_signals_sent'\"'\"':0}\ntry:s=q.stat()\nexcept FileNotFoundError:r.update({'\"'\"'process_directory_exists'\"'\"':False,'\"'\"'actual_predecessor_ended'\"'\"':True})\nelse:\n if s.st_uid!=2618919:r.update({'\"'\"'process_directory_exists'\"'\"':True,'\"'\"'recorded_owner_matches'\"'\"':False,'\"'\"'actual_predecessor_ended'\"'\"':False,'\"'\"'no_further_process_files_read'\"'\"':True})\n else:\n  raw=(q/'\"'\"'stat'\"'\"').read_text();f=raw.rsplit('\"'\"')'\"'\"',1)[1].split();same=f[19]==birth;r.update({'\"'\"'process_directory_exists'\"'\"':True,'\"'\"'recorded_owner_matches'\"'\"':True,'\"'\"'recorded_birth_matches'\"'\"':same,'\"'\"'actual_predecessor_ended'\"'\"':(not same or f[0]=='\"'\"'Z'\"'\"'),'\"'\"'matching_process_state'\"'\"':f[0] if same else None})\nprint(json.dumps(r,sort_keys=True))\n' /p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-02-24_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/root_actual_controller_spawn.json 18fd3beb71d825df56238aee01bf30e8039f717340ddb8c6bb1222e8a3695479"
+  ],
+  "at_utc": "2026-11-05T11:30:11.946891+00:00",
+  "observation_only_not_a_launch_retry": true
+}

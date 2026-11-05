@@ -1,0 +1,40 @@
+{
+  "kind": "actual_owned_metadata_permission_restore_after_failed_startup_without_numerical_child",
+  "at_utc": "2026-11-05T11:30:57.003610+00:00",
+  "actual_controller_pid": 321183,
+  "actual_controller_birth_counter": "83855111",
+  "controller_exit_observation": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-02-24_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/root_failed_startup_controller_exit_observation.json",
+    "sha256": "910cc1fa72594408c1e13f877049f6f5f1489ec77dbf9c794df9e301404a332e"
+  },
+  "actual_child_started": false,
+  "current_unit_process_ledger_rows": 0,
+  "files": [
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/queue/metadata.lock",
+      "device": 76,
+      "inode": 4329110,
+      "uid": 2618919,
+      "old_mode": 432,
+      "protected_mode": 416,
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "restored_mode": 432,
+      "same_inode_and_bytes": true
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/processes.lock",
+      "device": 76,
+      "inode": 4304699,
+      "uid": 2618919,
+      "old_mode": 432,
+      "protected_mode": 416,
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "restored_mode": 432,
+      "same_inode_and_bytes": true
+    }
+  ],
+  "restored": true,
+  "standing_gpu_lock_touched": false
+}
