@@ -1,0 +1,216 @@
+test_changed_configuration_during_query_is_refused (repository_configuration_tests.RepositoryConfigurationTests)
+The actual files are rehashed after the query before any status is allowed. ... ok
+test_changed_pinned_configuration_is_refused_before_another_query (repository_configuration_tests.RepositoryConfigurationTests)
+A later changed file identity or digest cannot replace the first observed source configuration. ... ok
+test_every_other_git_inspection_checks_configuration_first (repository_configuration_tests.RepositoryConfigurationTests)
+Existing byte, tree and dirty-source checks are preserved after the new refusal. ... ok
+test_exact_configuration_query_is_allowed_without_recursion (repository_configuration_tests.RepositoryConfigurationTests)
+The configuration query itself reads keys only and grants no status permission. ... ok
+test_final_configuration_recheck_refuses_mutation (repository_configuration_tests.RepositoryConfigurationTests)
+A changed source configuration cannot produce a successful validation proof. ... ok
+test_matching_filter_include_or_any_query_error_is_refused (repository_configuration_tests.RepositoryConfigurationTests)
+Configured keys and every other return/output meaning remain unverified. ... ok
+test_only_native_empty_no_match_return_is_allowed (repository_configuration_tests.RepositoryConfigurationTests)
+Native return one without output or errors pins the exact configuration inputs. ... ok
+test_returned_configuration_proof_is_explicit_and_nonempty (repository_configuration_tests.RepositoryConfigurationTests)
+A missing or changed trust/refusal statement cannot disappear from the returned child proof. ... ok
+test_child_request_leaves_parent_paths_and_public_modules_unchanged (existing_configuration_controls_0.DirectCommonConfirmationTests)
+The parent dispatches only the declared no-site interpreter and changes no import paths. ... ok
+test_cli_requires_both_actual_records_and_refuses_final_or_prepared_overrides (existing_configuration_controls_0.DirectCommonConfirmationTests)
+Preparation options cannot silently change the frozen protocol. ... usage: check_repository_filter_refusal.py [-h] [--prepared-unit PREPARED_UNIT]
+                                          [--record-device-memory-limit]
+                                          [--memory-limit-allocation-kind {direct,slurm}]
+                                          [--memory-limit-cluster {uva,aces}]
+                                          [--memory-limit-owned-job-ledger MEMORY_LIMIT_OWNED_JOB_LEDGER]
+                                          [--memory-limit-ownership-profile {uva_slurm_cgroup_v2_process_uid_ownership}]
+                                          [--cleanrl-source-root CLEANRL_SOURCE_ROOT]
+                                          [--qualification-software-result QUALIFICATION_SOFTWARE_RESULT]
+                                          [--configured-isolation-profile CONFIGURED_ISOLATION_PROFILE]
+                                          [--target-qualification]
+                                          [--target-qualification-record TARGET_QUALIFICATION_RECORD]
+                                          [--target-qualification-review TARGET_QUALIFICATION_REVIEW]
+                                          [--common-correctness-record COMMON_CORRECTNESS_RECORD]
+                                          [--common-correctness-review COMMON_CORRECTNESS_REVIEW]
+                                          [--direct-binding-profile DIRECT_BINDING_PROFILE]
+                                          [--direct-backend-image-record DIRECT_BACKEND_IMAGE_RECORD]
+                                          [--direct-history-inputs DIRECT_HISTORY_INPUTS]
+                                          [--direct-target-qualification]
+                                          [--direct-qualification-record DIRECT_QUALIFICATION_RECORD]
+                                          [--direct-qualification-review DIRECT_QUALIFICATION_REVIEW]
+                                          [--prepare-only]
+                                          [--mode {correctness,confirmation,packing-point,learning-check}]
+                                          [--source-root SOURCE_ROOT]
+                                          [--source-commit SOURCE_COMMIT]
+                                          [--configuration CONFIGURATION]
+                                          [--reference-configuration REFERENCE_CONFIGURATION]
+                                          [--runtime-environment RUNTIME_ENVIRONMENT]
+                                          [--asset-record ASSET_RECORD]
+                                          [--jaxtari-source-root JAXTARI_SOURCE_ROOT]
+                                          [--run-dir RUN_DIR]
+                                          [--unit-id UNIT_ID]
+                                          [--gpu-uuid GPU_UUID]
+                                          [--hardware-class {h100,jaguar03_rtx_a4500}]
+                                          [--seed-start SEED_START]
+                                          [--copies COPIES] [--rounds ROUNDS]
+                                          [--minimum-updates-per-round MINIMUM_UPDATES_PER_ROUND]
+                                          [--final-confirmation]
+                                          [--completed-study-proof COMPLETED_STUDY_PROOF]
+                                          [--completed-study-review COMPLETED_STUDY_REVIEW]
+                                          [--completed-study-manifest COMPLETED_STUDY_MANIFEST]
+                                          [--completed-study-manifest-sha256 COMPLETED_STUDY_MANIFEST_SHA256]
+                                          [--python PYTHON]
+check_repository_filter_refusal.py: error: reviewed common correctness requires exactly one intermediate configured or direct confirmation
+usage: check_repository_filter_refusal.py [-h] [--prepared-unit PREPARED_UNIT]
+                                          [--record-device-memory-limit]
+                                          [--memory-limit-allocation-kind {direct,slurm}]
+                                          [--memory-limit-cluster {uva,aces}]
+                                          [--memory-limit-owned-job-ledger MEMORY_LIMIT_OWNED_JOB_LEDGER]
+                                          [--memory-limit-ownership-profile {uva_slurm_cgroup_v2_process_uid_ownership}]
+                                          [--cleanrl-source-root CLEANRL_SOURCE_ROOT]
+                                          [--qualification-software-result QUALIFICATION_SOFTWARE_RESULT]
+                                          [--configured-isolation-profile CONFIGURED_ISOLATION_PROFILE]
+                                          [--target-qualification]
+                                          [--target-qualification-record TARGET_QUALIFICATION_RECORD]
+                                          [--target-qualification-review TARGET_QUALIFICATION_REVIEW]
+                                          [--common-correctness-record COMMON_CORRECTNESS_RECORD]
+                                          [--common-correctness-review COMMON_CORRECTNESS_REVIEW]
+                                          [--direct-binding-profile DIRECT_BINDING_PROFILE]
+                                          [--direct-backend-image-record DIRECT_BACKEND_IMAGE_RECORD]
+                                          [--direct-history-inputs DIRECT_HISTORY_INPUTS]
+                                          [--direct-target-qualification]
+                                          [--direct-qualification-record DIRECT_QUALIFICATION_RECORD]
+                                          [--direct-qualification-review DIRECT_QUALIFICATION_REVIEW]
+                                          [--prepare-only]
+                                          [--mode {correctness,confirmation,packing-point,learning-check}]
+                                          [--source-root SOURCE_ROOT]
+                                          [--source-commit SOURCE_COMMIT]
+                                          [--configuration CONFIGURATION]
+                                          [--reference-configuration REFERENCE_CONFIGURATION]
+                                          [--runtime-environment RUNTIME_ENVIRONMENT]
+                                          [--asset-record ASSET_RECORD]
+                                          [--jaxtari-source-root JAXTARI_SOURCE_ROOT]
+                                          [--run-dir RUN_DIR]
+                                          [--unit-id UNIT_ID]
+                                          [--gpu-uuid GPU_UUID]
+                                          [--hardware-class {h100,jaguar03_rtx_a4500}]
+                                          [--seed-start SEED_START]
+                                          [--copies COPIES] [--rounds ROUNDS]
+                                          [--minimum-updates-per-round MINIMUM_UPDATES_PER_ROUND]
+                                          [--final-confirmation]
+                                          [--completed-study-proof COMPLETED_STUDY_PROOF]
+                                          [--completed-study-review COMPLETED_STUDY_REVIEW]
+                                          [--completed-study-manifest COMPLETED_STUDY_MANIFEST]
+                                          [--completed-study-manifest-sha256 COMPLETED_STUDY_MANIFEST_SHA256]
+                                          [--python PYTHON]
+check_repository_filter_refusal.py: error: --prepared-unit executes its recorded plan and cannot take preparation overrides
+usage: check_repository_filter_refusal.py [-h] [--prepared-unit PREPARED_UNIT]
+                                          [--record-device-memory-limit]
+                                          [--memory-limit-allocation-kind {direct,slurm}]
+                                          [--memory-limit-cluster {uva,aces}]
+                                          [--memory-limit-owned-job-ledger MEMORY_LIMIT_OWNED_JOB_LEDGER]
+                                          [--memory-limit-ownership-profile {uva_slurm_cgroup_v2_process_uid_ownership}]
+                                          [--cleanrl-source-root CLEANRL_SOURCE_ROOT]
+                                          [--qualification-software-result QUALIFICATION_SOFTWARE_RESULT]
+                                          [--configured-isolation-profile CONFIGURED_ISOLATION_PROFILE]
+                                          [--target-qualification]
+                                          [--target-qualification-record TARGET_QUALIFICATION_RECORD]
+                                          [--target-qualification-review TARGET_QUALIFICATION_REVIEW]
+                                          [--common-correctness-record COMMON_CORRECTNESS_RECORD]
+                                          [--common-correctness-review COMMON_CORRECTNESS_REVIEW]
+                                          [--direct-binding-profile DIRECT_BINDING_PROFILE]
+                                          [--direct-backend-image-record DIRECT_BACKEND_IMAGE_RECORD]
+                                          [--direct-history-inputs DIRECT_HISTORY_INPUTS]
+                                          [--direct-target-qualification]
+                                          [--direct-qualification-record DIRECT_QUALIFICATION_RECORD]
+                                          [--direct-qualification-review DIRECT_QUALIFICATION_REVIEW]
+                                          [--prepare-only]
+                                          [--mode {correctness,confirmation,packing-point,learning-check}]
+                                          [--source-root SOURCE_ROOT]
+                                          [--source-commit SOURCE_COMMIT]
+                                          [--configuration CONFIGURATION]
+                                          [--reference-configuration REFERENCE_CONFIGURATION]
+                                          [--runtime-environment RUNTIME_ENVIRONMENT]
+                                          [--asset-record ASSET_RECORD]
+                                          [--jaxtari-source-root JAXTARI_SOURCE_ROOT]
+                                          [--run-dir RUN_DIR]
+                                          [--unit-id UNIT_ID]
+                                          [--gpu-uuid GPU_UUID]
+                                          [--hardware-class {h100,jaguar03_rtx_a4500}]
+                                          [--seed-start SEED_START]
+                                          [--copies COPIES] [--rounds ROUNDS]
+                                          [--minimum-updates-per-round MINIMUM_UPDATES_PER_ROUND]
+                                          [--final-confirmation]
+                                          [--completed-study-proof COMPLETED_STUDY_PROOF]
+                                          [--completed-study-review COMPLETED_STUDY_REVIEW]
+                                          [--completed-study-manifest COMPLETED_STUDY_MANIFEST]
+                                          [--completed-study-manifest-sha256 COMPLETED_STUDY_MANIFEST_SHA256]
+                                          [--python PYTHON]
+check_repository_filter_refusal.py: error: reviewed common correctness requires exactly one intermediate configured or direct confirmation
+ok
+test_cold_actual_25_26_28_module_sets_and_unsupported_guard_without_backend (existing_configuration_controls_0.DirectCommonConfirmationTests)
+Every admitted sibling set imports without numerical, network or device operations. ... ERROR
+test_default_direct_and_new_helper_closures_stay_separate (existing_configuration_controls_0.DirectCommonConfirmationTests)
+Add only the new direct dependency while retaining default and A4500 closures. ... ok
+test_different_parent_raw_plan_and_boolean_gpu_claim_are_rejected (existing_configuration_controls_0.DirectCommonConfirmationTests)
+A successful child response must describe this exact parent and plan. ... ok
+test_equal_or_extra_candidate_change_and_wrong_seeds_are_rejected (existing_configuration_controls_0.DirectCommonConfirmationTests)
+Only the independently checked two environment changes are permitted. ... ok
+test_failed_and_malformed_child_return_preserves_raw_without_success_proof (existing_configuration_controls_0.DirectCommonConfirmationTests)
+Retain both nonzero and invalid successful output before refusing the worker. ... ok
+test_final_configured_capacity_and_wrong_mode_are_rejected (existing_configuration_controls_0.DirectCommonConfirmationTests)
+No opt-in field can authorize a different or later protocol. ... ok
+test_intermediate_contract_accepts_both_explicit_copy_counts (existing_configuration_controls_0.DirectCommonConfirmationTests)
+The two accepted copy configurations retain their exact seed lists. ... ok
+test_missing_backend_old_schema_and_helper_subset_are_rejected (existing_configuration_controls_0.DirectCommonConfirmationTests)
+The new guard cannot make a historical direct closure operational. ... ok
+test_saved_proof_requires_same_actual_parent_and_precedes_numeric_work (existing_configuration_controls_0.DirectCommonConfirmationTests)
+The saved result cannot claim another worker's or later validation. ... ok
+test_staged_helper_bytes_and_reference_hashes_are_required (existing_configuration_controls_0.DirectCommonConfirmationTests)
+A different helper or changed saved bytes do not substitute for the frozen records. ... ok
+test_success_captures_raw_child_before_publishing_proof_and_cannot_repeat (existing_configuration_controls_0.DirectCommonConfirmationTests)
+Keep one durable actual validation attempt and its exact raw successful return. ... ok
+test_timeout_preserves_partial_output_and_attempt (existing_configuration_controls_0.DirectCommonConfirmationTests)
+A timed-out child never becomes a successful prerequisite or starts a repeat. ... ok
+test_window_types_and_incomplete_prerequisites_are_rejected (existing_configuration_controls_0.DirectCommonConfirmationTests)
+Boolean counters, a reduced window and one missing record cannot pass. ... ok
+test_boolean_counts_or_new_admission_are_refused (existing_configuration_controls_1.ReturnedProofIdentityTests)
+Boolean zero and scientific or operational credit are different meanings. ... ok
+test_changed_child_parent_or_challenge_is_refused (existing_configuration_controls_1.ReturnedProofIdentityTests)
+A correct-looking result from another process or request cannot substitute. ... ok
+test_changed_old_or_current_sources_are_refused (existing_configuration_controls_1.ReturnedProofIdentityTests)
+Neither a different original helper nor another current closure is accepted. ... ok
+test_exact_synthetic_identity_is_recognized (existing_configuration_controls_1.ReturnedProofIdentityTests)
+Only the supplied expected metadata identities match this synthetic fixture. ... ok
+test_declared_read_only_git_is_allowed (existing_configuration_controls_1.ReadOnlyAuditTests)
+Source checks may inspect one exact declared local root. ... ok
+test_later_native_library_loads_and_numerical_imports_are_refused (existing_configuration_controls_1.ReadOnlyAuditTests)
+The explicit earlier ctypes bootstrap grants no later library access. ... ok
+test_process_execution_and_file_metadata_mutation_are_refused (existing_configuration_controls_1.ReadOnlyAuditTests)
+Alternate process APIs and metadata writes grant no historical read-only capability. ... ok
+test_python_child_is_forbidden_inside_historical_replay (existing_configuration_controls_1.ReadOnlyAuditTests)
+The old reader cannot become a second launcher. ... ok
+test_substituted_actual_git_executable_and_external_diff_are_refused (existing_configuration_controls_1.ReadOnlyAuditTests)
+Exact-looking arguments cannot conceal another executable or an external Git command. ... ok
+test_writes_and_changed_roots_are_refused (existing_configuration_controls_1.ReadOnlyAuditTests)
+Neither a filesystem mutation nor a foreign Git root is a permitted read. ... ok
+
+======================================================================
+ERROR: test_cold_actual_25_26_28_module_sets_and_unsupported_guard_without_backend (existing_configuration_controls_0.DirectCommonConfirmationTests)
+Every admitted sibling set imports without numerical, network or device operations.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_common_confirmation.py", line 198, in test_cold_actual_25_26_28_module_sets_and_unsupported_guard_without_backend
+    from test_configured_measurement import ISOLATED_IMPORT_PROBE
+ModuleNotFoundError: No module named 'test_configured_measurement'
+
+----------------------------------------------------------------------
+Ran 33 tests in 0.332s
+
+FAILED (errors=1)
+Traceback (most recent call last):
+  File "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/check_repository_filter_refusal.py", line 135, in <module>
+    main()
+  File "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/check_repository_filter_refusal.py", line 119, in main
+    assert result.wasSuccessful()
+AssertionError
+srun: error: heartpiece: task 0: Exited with exit code 1

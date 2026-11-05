@@ -1,0 +1,114 @@
+{
+  "at_utc": "2026-11-05T03:02:11.851302+00:00",
+  "base_commit": "cc9972dd6a8bfba39ba439883cbc821b93c55e3d",
+  "branch_created": false,
+  "cache_enabled": false,
+  "current_common_helper_count": 28,
+  "current_metadata_dispatch": "Explicit current-common-only capability routes qualification and correctness saved reads into the exact old source namespace. Original old qualification function body remains verbatim after the new opt-in dispatch; its exact metadata-only syntax addition is separately declared and independently reviewed.",
+  "detached": true,
+  "diagnosis": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-18-39_h100-common-guard-phase-observation_copies-1_helpers-27_metadata-time-limit-seconds-900_production-time-limit-seconds-180_gpu-count-0_processor-count-1_host-memory-gib-1/actual_phase_diagnosis.json",
+    "sha256": "dd2849430b1de868def683b8d95920b7acb993f1fe3ef421ec8d7a3f82b0edde"
+  },
+  "gpu_or_controller_or_timing_actions": 0,
+  "kind": "strict_direct_common_historical_consumer_bridge_design",
+  "new_helper": "direct_historical_consumer.py",
+  "old_consumer_execution": "Fresh isolated standard-library child, closed loader of exact old twenty-six staged source files, all prior source/code/Git/configuration/runtime/assets/UUID/backend/memory/reward-tolerance gates retained.",
+  "operational_old_unit_bypass": false,
+  "optional_cache_design": "Separate proposal only; never replace old consumer globals or skip a changed stat or byte. Pin every actual unique raw file and manifest hash, retain ordinary canonical path/inode/device/owner/mode/size/mtime/ctime identity, recheck each access and reject any change. No production cache is enabled in this first bridge.",
+  "optional_future_digest_cache_helper_count": 29,
+  "ordinary_historical_helper_count": 26,
+  "production_metadata_timeout_seconds_unchanged": 180,
+  "protected_numerical_files_before": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py": "df811a5d51a7ef2f747bc32d1545c8286552675dfc8b859e7d0600eef4c920c5",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/paired_benchmark.py": "c3e39d8e5d2549c3e2682e196861095780b30740a49821b2077da620386f2916",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/__init__.py": "4692ca9941cece84d6cbea0c19b9344a0dfe5d32f3a1a9d93ad7cd93fe135de2",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/checkpointing.py": "f156b27e0c5d275db7e472f8659ca46d594624a8f573d43eee5383cdaf9f17fb",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/config.py": "8b3643fba5e3382f612507416f2204500966592a6872bb286dea1935c5f32218",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/environment.py": "aa0ad31c8fbd04c67fb9742ea103e9262dfe9cc5b6e719889c50454537b1c8b7",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/kernels.py": "dd895f5d95f6d39c79dce277254af9a19ac49112fcec0b16a5ba096a8082e8ff",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/networks.py": "ee65436eda5fab6ae2f8c303eaf3c072b5cdfa1f6d86cfc310dfa4974c98a5bd",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/pixel_preprocessing.py": "8a9f30f36ef7b07fa0ae513d1aee442a9964c2f8da179203b031c7aca8735188",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/settings.py": "17f20c6dd84c99eb435337b4446418cdcda3f426514d228996f40de4220c6f26",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/state.py": "9fcf0b6bb09bbf70dc88cd28952a6fa50969371f0d8aa66739c91ced1fe887f4",
+    "10_jax_exploration_platform/src/exploration_platform/atari_pixels/training.py": "5b868d95c8e0f5798330e38fcf7d9a6981838881333bafe73465c1af070a5100"
+  },
+  "source_checkout_commands": [
+    {
+      "command": [
+        "git",
+        "-c",
+        "core.hooksPath=/dev/null",
+        "clone",
+        "--shared",
+        "--no-hardlinks",
+        "--no-checkout",
+        "/p/rlprojects/RND_worktrees/merge-atari-cleanrl",
+        "/p/rlprojects/RND_worktrees/2026-11-04-19-02_direct-common-historical-consumer_source-cc9972dd6a8b_original-helpers-26_common-helpers-28_read-only-owned-compute"
+      ],
+      "returncode": 0,
+      "stderr": "Cloning into '/p/rlprojects/RND_worktrees/2026-11-04-19-02_direct-common-historical-consumer_source-cc9972dd6a8b_original-helpers-26_common-helpers-28_read-only-owned-compute'...\ndone.\n",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "git",
+        "-c",
+        "core.hooksPath=/dev/null",
+        "-C",
+        "/p/rlprojects/RND_worktrees/2026-11-04-19-02_direct-common-historical-consumer_source-cc9972dd6a8b_original-helpers-26_common-helpers-28_read-only-owned-compute",
+        "sparse-checkout",
+        "init",
+        "--cone"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "git",
+        "-c",
+        "core.hooksPath=/dev/null",
+        "-C",
+        "/p/rlprojects/RND_worktrees/2026-11-04-19-02_direct-common-historical-consumer_source-cc9972dd6a8b_original-helpers-26_common-helpers-28_read-only-owned-compute",
+        "sparse-checkout",
+        "set",
+        "10_jax_exploration_platform/src",
+        "10_jax_exploration_platform/scripts",
+        "10_jax_exploration_platform/tests"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "git",
+        "-c",
+        "core.hooksPath=/dev/null",
+        "-C",
+        "/p/rlprojects/RND_worktrees/2026-11-04-19-02_direct-common-historical-consumer_source-cc9972dd6a8b_original-helpers-26_common-helpers-28_read-only-owned-compute",
+        "checkout",
+        "--quiet",
+        "--detach",
+        "cc9972dd6a8bfba39ba439883cbc821b93c55e3d"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": ""
+    }
+  ],
+  "source_edited_before_design": false,
+  "source_or_old_results_modified": false,
+  "source_scope": [
+    "direct_historical_consumer.py",
+    "direct_common_confirmation.py",
+    "direct_measurement.py",
+    "measure_selected.py",
+    "tests/test_direct_historical_consumer.py",
+    "tests/test_direct_common_confirmation.py",
+    "tests/test_measure_selected.py"
+  ],
+  "worktree": "/p/rlprojects/RND_worktrees/2026-11-04-19-02_direct-common-historical-consumer_source-cc9972dd6a8b_original-helpers-26_common-helpers-28_read-only-owned-compute"
+}

@@ -1,0 +1,246 @@
+{
+  "actual_commands_executed": 0,
+  "actual_job": "6783003",
+  "actual_step": "319",
+  "admission_granted": false,
+  "checks": [
+    {
+      "allowed": true,
+      "exception": null,
+      "name": "exact Python form and fixed environment",
+      "passed": true
+    },
+    {
+      "allowed": false,
+      "exception": "only the exact active read-only historical child may start",
+      "name": "substituted Python executable",
+      "passed": true
+    },
+    {
+      "allowed": false,
+      "exception": "source-inspection subprocesses require plain arguments and no working-directory override",
+      "name": "tuple arguments",
+      "passed": true
+    },
+    {
+      "allowed": false,
+      "exception": "source-inspection subprocesses require plain arguments and no working-directory override",
+      "name": "Python working directory override",
+      "passed": true
+    },
+    {
+      "allowed": false,
+      "exception": "the actual executable must match the declared source-inspection Git",
+      "name": "Python extra argument",
+      "passed": true
+    },
+    {
+      "allowed": false,
+      "exception": "the actual executable must match the declared source-inspection Git",
+      "name": "Python changed script",
+      "passed": true
+    },
+    {
+      "allowed": false,
+      "exception": "source-inspection subprocesses require the exact isolated metadata environment",
+      "name": "Python missing environment",
+      "passed": true
+    },
+    {
+      "allowed": false,
+      "exception": "source-inspection subprocesses require the exact isolated metadata environment",
+      "name": "changed environment PATH",
+      "passed": true
+    },
+    {
+      "allowed": false,
+      "exception": "source-inspection subprocesses require the exact isolated metadata environment",
+      "name": "changed environment LD_PRELOAD",
+      "passed": true
+    },
+    {
+      "allowed": false,
+      "exception": "source-inspection subprocesses require the exact isolated metadata environment",
+      "name": "changed environment PYTHONPATH",
+      "passed": true
+    },
+    {
+      "allowed": false,
+      "exception": "source-inspection subprocesses require the exact isolated metadata environment",
+      "name": "changed environment GIT_CONFIG_PARAMETERS",
+      "passed": true
+    },
+    {
+      "allowed": false,
+      "exception": "source-inspection subprocesses require the exact isolated metadata environment",
+      "name": "changed environment GIT_CONFIG_COUNT",
+      "passed": true
+    },
+    {
+      "allowed": false,
+      "exception": "source-inspection subprocesses require the exact isolated metadata environment",
+      "name": "changed environment GIT_DIR",
+      "passed": true
+    },
+    {
+      "allowed": false,
+      "exception": "source-inspection subprocesses require the exact isolated metadata environment",
+      "name": "changed environment GIT_EXTERNAL_DIFF",
+      "passed": true
+    },
+    {
+      "allowed": false,
+      "exception": "source-inspection subprocesses require the exact isolated metadata environment",
+      "name": "changed environment GIT_INDEX_FILE",
+      "passed": true
+    },
+    {
+      "allowed": false,
+      "exception": "source-inspection subprocesses require the exact isolated metadata environment",
+      "name": "changed environment GIT_CONFIG_VALUE_0",
+      "passed": true
+    },
+    {
+      "allowed": true,
+      "exception": null,
+      "name": "exact Git form and fixed environment",
+      "passed": true
+    },
+    {
+      "allowed": false,
+      "exception": "the actual executable must match the declared source-inspection Git",
+      "name": "substituted Git executable",
+      "passed": true
+    },
+    {
+      "allowed": false,
+      "exception": "source-inspection subprocesses require plain arguments and no working-directory override",
+      "name": "Git working directory override",
+      "passed": true
+    },
+    {
+      "allowed": false,
+      "exception": "unlisted Git source-inspection arguments are forbidden",
+      "name": "refused Git arguments ['diff', '--ext-diff']",
+      "passed": true
+    },
+    {
+      "allowed": false,
+      "exception": "unlisted Git source-inspection arguments are forbidden",
+      "name": "refused Git arguments ['show', '--output=/another/output', 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:source.py']",
+      "passed": true
+    },
+    {
+      "allowed": false,
+      "exception": "unlisted Git source-inspection arguments are forbidden",
+      "name": "refused Git arguments ['status', '--porcelain', '--untracked-files=all', '--', '--output=/another/output']",
+      "passed": true
+    },
+    {
+      "allowed": false,
+      "exception": "unlisted Git source-inspection arguments are forbidden",
+      "name": "refused Git arguments ['show', 'HEAD:source.py']",
+      "passed": true
+    },
+    {
+      "allowed": false,
+      "exception": "unlisted Git source-inspection arguments are forbidden",
+      "name": "refused Git arguments ['show', 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:../source.py']",
+      "passed": true
+    },
+    {
+      "allowed": false,
+      "exception": "unlisted Git source-inspection arguments are forbidden",
+      "name": "refused Git arguments ['ls-tree', '-rz', 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', '--', ':(attr:filter)source.py']",
+      "passed": true
+    },
+    {
+      "allowed": true,
+      "exception": null,
+      "name": "allowed Git arguments ['rev-parse', 'HEAD']",
+      "passed": true
+    },
+    {
+      "allowed": true,
+      "exception": null,
+      "name": "allowed Git arguments ['rev-parse', '--show-toplevel']",
+      "passed": true
+    },
+    {
+      "allowed": true,
+      "exception": null,
+      "name": "allowed Git arguments ['symbolic-ref', '--quiet', 'HEAD']",
+      "passed": true
+    },
+    {
+      "allowed": true,
+      "exception": null,
+      "name": "allowed Git arguments ['cat-file', 'blob', 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa']",
+      "passed": true
+    },
+    {
+      "allowed": true,
+      "exception": null,
+      "name": "allowed Git arguments ['ls-tree', '-rz', 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', '--', 'plain_source/']",
+      "passed": true
+    },
+    {
+      "allowed": true,
+      "exception": null,
+      "name": "allowed Git arguments ['ls-tree', '-r', '--name-only', 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', '--', 'plain_source/']",
+      "passed": true
+    },
+    {
+      "allowed": true,
+      "exception": null,
+      "name": "allowed Git arguments ['status', '--porcelain', '--untracked-files=all']",
+      "passed": true
+    },
+    {
+      "allowed": true,
+      "exception": null,
+      "name": "allowed Git arguments ['status', '--porcelain', '--', 'plain_source/']",
+      "passed": true
+    }
+  ],
+  "fixed_child_environment": {
+    "GIT_ALLOW_PROTOCOL": "",
+    "GIT_ATTR_NOSYSTEM": "1",
+    "GIT_CONFIG_COUNT": "7",
+    "GIT_CONFIG_GLOBAL": "/dev/null",
+    "GIT_CONFIG_KEY_0": "core.fsmonitor",
+    "GIT_CONFIG_KEY_1": "core.hooksPath",
+    "GIT_CONFIG_KEY_2": "core.untrackedCache",
+    "GIT_CONFIG_KEY_3": "core.preloadIndex",
+    "GIT_CONFIG_KEY_4": "protocol.allow",
+    "GIT_CONFIG_KEY_5": "gc.auto",
+    "GIT_CONFIG_KEY_6": "maintenance.auto",
+    "GIT_CONFIG_NOSYSTEM": "1",
+    "GIT_CONFIG_SYSTEM": "/dev/null",
+    "GIT_CONFIG_VALUE_0": "false",
+    "GIT_CONFIG_VALUE_1": "/dev/null",
+    "GIT_CONFIG_VALUE_2": "false",
+    "GIT_CONFIG_VALUE_3": "false",
+    "GIT_CONFIG_VALUE_4": "never",
+    "GIT_CONFIG_VALUE_5": "0",
+    "GIT_CONFIG_VALUE_6": "false",
+    "GIT_NO_LAZY_FETCH": "1",
+    "GIT_NO_REPLACE_OBJECTS": "1",
+    "GIT_OPTIONAL_LOCKS": "0",
+    "GIT_PAGER": "",
+    "GIT_TERMINAL_PROMPT": "0",
+    "LANG": "C.UTF-8",
+    "LC_ALL": "C.UTF-8",
+    "PAGER": "",
+    "PATH": "/usr/bin",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "SLURM_JOB_ID": "6783003",
+    "SLURM_STEP_ID": "319",
+    "TERM": "dumb"
+  },
+  "kind": "independent_corrected_subprocess_boundary_metadata_checks",
+  "parent_environment_unchanged": true,
+  "passed": true,
+  "saved_scientific_evidence_recomputed": false,
+  "scientific_credit": 0
+}

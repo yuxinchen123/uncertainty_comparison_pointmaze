@@ -1,0 +1,110 @@
+{
+  "actual_old_source_import_fixture": {
+    "actual_step": "6783003.293",
+    "receipt": {
+      "bytes": 18242,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/author_actual_old_source_namespace_stdout.raw",
+      "sha256": "248fa3e3ff66ebb49f0663f19a1a9dde9c9c8856bc008dadad247fcc524feddd"
+    },
+    "saved_scientific_evidence_recomputed": false,
+    "source_count": 26
+  },
+  "admission_granted": false,
+  "base_commit": "cc9972dd6a8bfba39ba439883cbc821b93c55e3d",
+  "created_at_seconds": 1793849843.1472726,
+  "current_common_helper_count": 28,
+  "detached": true,
+  "earlier_failed_fixture_runs": [
+    {
+      "actual_step": "6783003.289",
+      "errors": 20,
+      "failures": 1,
+      "reason": "Older common fixture still expected twenty-seven helpers and former direct reader mock; runner excluded two exact existing cold fixture subprocess shapes.",
+      "stderr": {
+        "bytes": 53692,
+        "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/author_focused_initial_stderr.raw",
+        "sha256": "5843e9ff460a9816e9679a258b661ff8d0da5a109bb78113a92db709c4ec450c"
+      },
+      "stdout": {
+        "bytes": 3259,
+        "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/author_focused_initial_stdout.raw",
+        "sha256": "9135770e3bfc817259291161bbf6153da59b17837d4153aef697871ac8b4ef8f"
+      },
+      "tests_run": 61
+    },
+    {
+      "actual_step": "6783003.291",
+      "errors": 1,
+      "failures": 0,
+      "reason": "Synthetic old plan fixture had not saved its later backend preparation input.",
+      "stderr": {
+        "bytes": 24051,
+        "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/author_focused_corrected_stderr.raw",
+        "sha256": "91bcf2d25406d1f63fc0d96cb16ffcaea8e1343eb7988dcbdf439e0c1362cbe5"
+      },
+      "stdout": {
+        "bytes": 3584,
+        "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/author_focused_corrected_stdout.raw",
+        "sha256": "26b92754a421169ea51ac7be3c0e59679864fc08b91b0b3ce25eb0670dc5f649"
+      },
+      "tests_run": 61
+    }
+  ],
+  "focused_metadata_tests": {
+    "actual_step": "6783003.292",
+    "receipt": {
+      "bytes": 3583,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/author_focused_source_and_fixture_corrections_stdout.raw",
+      "sha256": "88904e1a614d3595f5f781eaa0560eff06f3512e3a26010df8557acca0523ebb"
+    },
+    "stderr": {
+      "bytes": 22340,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/author_focused_source_and_fixture_corrections_stderr.raw",
+      "sha256": "350296db6e09d2b5f23921dfdbff93bb105f0d9d50901fc5ada0a61144a6c0d3"
+    },
+    "tests_run": 62
+  },
+  "future_profile_union_review_required": true,
+  "gpu_or_controller_or_timing_actions": 0,
+  "independent_review_complete": false,
+  "kind": "author_strict_historical_consumer_source_and_metadata_receipts",
+  "old_historical_helper_count": 26,
+  "optional_digest_cache_enabled": false,
+  "passed": true,
+  "production_metadata_time_limit_seconds": 180,
+  "protected_source_comparison": {
+    "actual_step": "6783003.294",
+    "current_qualification_body_statements": 56,
+    "entire_original_body_retained": true,
+    "entire_qualification_reader_ast_unchanged": false,
+    "numerical_file_count": 13,
+    "original_qualification_body_statements": 55,
+    "receipt": {
+      "bytes": 5734,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/author_protected_source_scope_stdout.raw",
+      "sha256": "adbb30115f3492f35b9a9524e274e4b539cf24beef86adad417a02d8d987b412"
+    },
+    "unchanged_execution_function_count": 12
+  },
+  "qualification_established": false,
+  "saved_scientific_evidence_recomputed": false,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "source_paths": [
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_historical_consumer.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_confirmation.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_historical_consumer.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_common_confirmation.py"
+  ],
+  "source_sha256": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_confirmation.py": "2fb5026b7b8cb7ca2fd9de864bf5b594484725bad6a062525bd4bae4fe12aa54",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_historical_consumer.py": "561be815e7a6bf3912072788cdf070248fc3b673c7c03facb2a77b45954a2ede",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py": "05ae4baa2c3acb75821302bd03426cda98c60283453a9fea6202b0d00e4d0362",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py": "a1ef9d787cb7387be88a078eac6d3bae9c853d3ceb3ac6a6aeb471e71e3aff4d",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_common_confirmation.py": "6cb1c8e7d1432ddaad64c3339eb1fc2d4adb3926b5920cc06661c154eaa3b8d0",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_historical_consumer.py": "05547190d12a8f28297fdf9acc2ee6a0bb8dadce046d367e1427bc46e992d11c"
+  },
+  "worktree": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute"
+}

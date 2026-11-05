@@ -1,0 +1,254 @@
+test_identity_failure_reaps_the_exact_metadata_child (historical_metadata_tests_0.ActualOwnChildCleanupTests)
+The actual helper child receives no fake plan before its failed identity check. ... ok
+test_ambient_module_with_same_name_is_refused_before_loading (historical_metadata_tests_0.ClosedOldNamespaceTests)
+A pre-existing current module is never reused as an old global. ... ok
+test_buffer_substitution_is_refused (historical_metadata_tests_0.ClosedOldNamespaceTests)
+The closed loader refuses source bytes that differ from its declared SHA256. ... ok
+test_late_staged_source_substitution_is_refused (historical_metadata_tests_0.ClosedOldNamespaceTests)
+A staged helper changed after closure pinning is refused before its code executes. ... ok
+test_numerical_import_finder_refuses_gpu_and_array_packages (historical_metadata_tests_0.ClosedOldNamespaceTests)
+The old namespace cannot initialize a numerical or GPU package. ... ok
+test_old_adjacent_style_import_observes_only_the_exact_old_source (historical_metadata_tests_0.ClosedOldNamespaceTests)
+An already reserved old name executes its pinned bytes when its file is inspected. ... ok
+test_transitive_import_keeps_a_separate_exact_old_global (historical_metadata_tests_0.ClosedOldNamespaceTests)
+An old helper importing another old helper cannot receive a current value. ... ok
+test_an_old_gate_change_is_not_hidden_by_the_dispatch (historical_metadata_tests_0.DependencyAndReaderSyntaxTests)
+A changed original statement remains a hard source-contract failure. ... ok
+test_incomplete_or_ambiguous_target_union_is_refused (historical_metadata_tests_0.DependencyAndReaderSyntaxTests)
+A common flag cannot omit its backend or select two target policies. ... ok
+test_new_common_stages_historical_dependency_and_ordinary_does_not (historical_metadata_tests_0.DependencyAndReaderSyntaxTests)
+The explicit common capability stages exactly its complete two-file addition. ... ok
+test_original_qualification_reader_body_is_retained_after_one_statement (historical_metadata_tests_0.DependencyAndReaderSyntaxTests)
+The new metadata dispatch adds no removal or rewrite of an old reader gate. ... ok
+test_boolean_schema_is_not_integer_schema (historical_metadata_tests_0.HistoricalProtocolTests)
+Boolean equality cannot substitute for an integer capability version. ... ok
+test_cache_or_extra_helper_is_not_silently_enabled (historical_metadata_tests_0.HistoricalProtocolTests)
+A future twenty-nine-file cache needs a separate reviewed protocol. ... ok
+test_duplicate_or_nonfinite_process_metadata_is_refused (historical_metadata_tests_0.HistoricalProtocolTests)
+Input keys and finite numeric meaning remain exact across process messages. ... ok
+test_exact_current_protocol_is_recognized (historical_metadata_tests_0.HistoricalProtocolTests)
+The synthetic current role requires all twenty-eight declared files. ... ok
+test_final_or_other_target_never_uses_historical_operational_bypass (historical_metadata_tests_0.HistoricalProtocolTests)
+Neither final admission nor another physical target receives this capability. ... ok
+test_old_registered_helper_count_cannot_bypass_current_protocol (historical_metadata_tests_0.HistoricalProtocolTests)
+An old twenty-six-helper unit remains an old read-only input only. ... ok
+test_declared_read_only_git_is_allowed (historical_metadata_tests_0.ReadOnlyAuditTests)
+Source checks may inspect one exact declared local root. ... ok
+test_later_native_library_loads_and_numerical_imports_are_refused (historical_metadata_tests_0.ReadOnlyAuditTests)
+The explicit earlier ctypes bootstrap grants no later library access. ... ok
+test_process_execution_and_file_metadata_mutation_are_refused (historical_metadata_tests_0.ReadOnlyAuditTests)
+Alternate process APIs and metadata writes grant no historical read-only capability. ... ok
+test_python_child_is_forbidden_inside_historical_replay (historical_metadata_tests_0.ReadOnlyAuditTests)
+The old reader cannot become a second launcher. ... ok
+test_substituted_actual_git_executable_and_external_diff_are_refused (historical_metadata_tests_0.ReadOnlyAuditTests)
+Exact-looking arguments cannot conceal another executable or an external Git command. ... ok
+test_writes_and_changed_roots_are_refused (historical_metadata_tests_0.ReadOnlyAuditTests)
+Neither a filesystem mutation nor a foreign Git root is a permitted read. ... ok
+test_boolean_counts_or_new_admission_are_refused (historical_metadata_tests_0.ReturnedProofIdentityTests)
+Boolean zero and scientific or operational credit are different meanings. ... ok
+test_changed_child_parent_or_challenge_is_refused (historical_metadata_tests_0.ReturnedProofIdentityTests)
+A correct-looking result from another process or request cannot substitute. ... ok
+test_changed_old_or_current_sources_are_refused (historical_metadata_tests_0.ReturnedProofIdentityTests)
+Neither a different original helper nor another current closure is accepted. ... ok
+test_exact_synthetic_identity_is_recognized (historical_metadata_tests_0.ReturnedProofIdentityTests)
+Only the supplied expected metadata identities match this synthetic fixture. ... ok
+test_changed_runtime_or_loaded_library_bytes_are_refused (historical_metadata_tests_1.DirectActualSemanticTests)
+The later plan and actual installed image must retain the checked bytes. ... ok
+test_coherently_rehashed_wrong_review_labels_types_and_unknowns (historical_metadata_tests_1.DirectActualSemanticTests)
+Approved labels cannot disagree with real source, process, configuration or zero credit. ... ok
+test_complete_synthetic_direct_review_and_raw_joins (historical_metadata_tests_1.DirectActualSemanticTests)
+Every actual-label join succeeds for matching explicit synthetic inputs. ... ok
+test_rehashed_raw_unknown_failed_or_changed_terminal_identity (historical_metadata_tests_1.DirectActualSemanticTests)
+A real approval label cannot substitute for unchanged raw terminal gates. ... ok
+test_child_request_leaves_parent_paths_and_public_modules_unchanged (historical_metadata_tests_1.DirectCommonConfirmationTests)
+The parent dispatches only the declared no-site interpreter and changes no import paths. ... ok
+test_cli_requires_both_actual_records_and_refuses_final_or_prepared_overrides (historical_metadata_tests_1.DirectCommonConfirmationTests)
+Preparation options cannot silently change the frozen protocol. ... usage: run_focused_metadata_checks.py [-h] [--prepared-unit PREPARED_UNIT]
+                                      [--record-device-memory-limit]
+                                      [--memory-limit-allocation-kind {direct,slurm}]
+                                      [--memory-limit-cluster {uva,aces}]
+                                      [--memory-limit-owned-job-ledger MEMORY_LIMIT_OWNED_JOB_LEDGER]
+                                      [--memory-limit-ownership-profile {uva_slurm_cgroup_v2_process_uid_ownership}]
+                                      [--cleanrl-source-root CLEANRL_SOURCE_ROOT]
+                                      [--qualification-software-result QUALIFICATION_SOFTWARE_RESULT]
+                                      [--configured-isolation-profile CONFIGURED_ISOLATION_PROFILE]
+                                      [--target-qualification]
+                                      [--target-qualification-record TARGET_QUALIFICATION_RECORD]
+                                      [--target-qualification-review TARGET_QUALIFICATION_REVIEW]
+                                      [--common-correctness-record COMMON_CORRECTNESS_RECORD]
+                                      [--common-correctness-review COMMON_CORRECTNESS_REVIEW]
+                                      [--direct-binding-profile DIRECT_BINDING_PROFILE]
+                                      [--direct-backend-image-record DIRECT_BACKEND_IMAGE_RECORD]
+                                      [--direct-history-inputs DIRECT_HISTORY_INPUTS]
+                                      [--direct-target-qualification]
+                                      [--direct-qualification-record DIRECT_QUALIFICATION_RECORD]
+                                      [--direct-qualification-review DIRECT_QUALIFICATION_REVIEW]
+                                      [--prepare-only]
+                                      [--mode {correctness,confirmation,packing-point,learning-check}]
+                                      [--source-root SOURCE_ROOT]
+                                      [--source-commit SOURCE_COMMIT]
+                                      [--configuration CONFIGURATION]
+                                      [--reference-configuration REFERENCE_CONFIGURATION]
+                                      [--runtime-environment RUNTIME_ENVIRONMENT]
+                                      [--asset-record ASSET_RECORD]
+                                      [--jaxtari-source-root JAXTARI_SOURCE_ROOT]
+                                      [--run-dir RUN_DIR] [--unit-id UNIT_ID]
+                                      [--gpu-uuid GPU_UUID]
+                                      [--hardware-class {h100,jaguar03_rtx_a4500}]
+                                      [--seed-start SEED_START]
+                                      [--copies COPIES] [--rounds ROUNDS]
+                                      [--minimum-updates-per-round MINIMUM_UPDATES_PER_ROUND]
+                                      [--final-confirmation]
+                                      [--completed-study-proof COMPLETED_STUDY_PROOF]
+                                      [--completed-study-review COMPLETED_STUDY_REVIEW]
+                                      [--completed-study-manifest COMPLETED_STUDY_MANIFEST]
+                                      [--completed-study-manifest-sha256 COMPLETED_STUDY_MANIFEST_SHA256]
+                                      [--python PYTHON]
+run_focused_metadata_checks.py: error: reviewed common correctness requires exactly one intermediate configured or direct confirmation
+usage: run_focused_metadata_checks.py [-h] [--prepared-unit PREPARED_UNIT]
+                                      [--record-device-memory-limit]
+                                      [--memory-limit-allocation-kind {direct,slurm}]
+                                      [--memory-limit-cluster {uva,aces}]
+                                      [--memory-limit-owned-job-ledger MEMORY_LIMIT_OWNED_JOB_LEDGER]
+                                      [--memory-limit-ownership-profile {uva_slurm_cgroup_v2_process_uid_ownership}]
+                                      [--cleanrl-source-root CLEANRL_SOURCE_ROOT]
+                                      [--qualification-software-result QUALIFICATION_SOFTWARE_RESULT]
+                                      [--configured-isolation-profile CONFIGURED_ISOLATION_PROFILE]
+                                      [--target-qualification]
+                                      [--target-qualification-record TARGET_QUALIFICATION_RECORD]
+                                      [--target-qualification-review TARGET_QUALIFICATION_REVIEW]
+                                      [--common-correctness-record COMMON_CORRECTNESS_RECORD]
+                                      [--common-correctness-review COMMON_CORRECTNESS_REVIEW]
+                                      [--direct-binding-profile DIRECT_BINDING_PROFILE]
+                                      [--direct-backend-image-record DIRECT_BACKEND_IMAGE_RECORD]
+                                      [--direct-history-inputs DIRECT_HISTORY_INPUTS]
+                                      [--direct-target-qualification]
+                                      [--direct-qualification-record DIRECT_QUALIFICATION_RECORD]
+                                      [--direct-qualification-review DIRECT_QUALIFICATION_REVIEW]
+                                      [--prepare-only]
+                                      [--mode {correctness,confirmation,packing-point,learning-check}]
+                                      [--source-root SOURCE_ROOT]
+                                      [--source-commit SOURCE_COMMIT]
+                                      [--configuration CONFIGURATION]
+                                      [--reference-configuration REFERENCE_CONFIGURATION]
+                                      [--runtime-environment RUNTIME_ENVIRONMENT]
+                                      [--asset-record ASSET_RECORD]
+                                      [--jaxtari-source-root JAXTARI_SOURCE_ROOT]
+                                      [--run-dir RUN_DIR] [--unit-id UNIT_ID]
+                                      [--gpu-uuid GPU_UUID]
+                                      [--hardware-class {h100,jaguar03_rtx_a4500}]
+                                      [--seed-start SEED_START]
+                                      [--copies COPIES] [--rounds ROUNDS]
+                                      [--minimum-updates-per-round MINIMUM_UPDATES_PER_ROUND]
+                                      [--final-confirmation]
+                                      [--completed-study-proof COMPLETED_STUDY_PROOF]
+                                      [--completed-study-review COMPLETED_STUDY_REVIEW]
+                                      [--completed-study-manifest COMPLETED_STUDY_MANIFEST]
+                                      [--completed-study-manifest-sha256 COMPLETED_STUDY_MANIFEST_SHA256]
+                                      [--python PYTHON]
+run_focused_metadata_checks.py: error: --prepared-unit executes its recorded plan and cannot take preparation overrides
+usage: run_focused_metadata_checks.py [-h] [--prepared-unit PREPARED_UNIT]
+                                      [--record-device-memory-limit]
+                                      [--memory-limit-allocation-kind {direct,slurm}]
+                                      [--memory-limit-cluster {uva,aces}]
+                                      [--memory-limit-owned-job-ledger MEMORY_LIMIT_OWNED_JOB_LEDGER]
+                                      [--memory-limit-ownership-profile {uva_slurm_cgroup_v2_process_uid_ownership}]
+                                      [--cleanrl-source-root CLEANRL_SOURCE_ROOT]
+                                      [--qualification-software-result QUALIFICATION_SOFTWARE_RESULT]
+                                      [--configured-isolation-profile CONFIGURED_ISOLATION_PROFILE]
+                                      [--target-qualification]
+                                      [--target-qualification-record TARGET_QUALIFICATION_RECORD]
+                                      [--target-qualification-review TARGET_QUALIFICATION_REVIEW]
+                                      [--common-correctness-record COMMON_CORRECTNESS_RECORD]
+                                      [--common-correctness-review COMMON_CORRECTNESS_REVIEW]
+                                      [--direct-binding-profile DIRECT_BINDING_PROFILE]
+                                      [--direct-backend-image-record DIRECT_BACKEND_IMAGE_RECORD]
+                                      [--direct-history-inputs DIRECT_HISTORY_INPUTS]
+                                      [--direct-target-qualification]
+                                      [--direct-qualification-record DIRECT_QUALIFICATION_RECORD]
+                                      [--direct-qualification-review DIRECT_QUALIFICATION_REVIEW]
+                                      [--prepare-only]
+                                      [--mode {correctness,confirmation,packing-point,learning-check}]
+                                      [--source-root SOURCE_ROOT]
+                                      [--source-commit SOURCE_COMMIT]
+                                      [--configuration CONFIGURATION]
+                                      [--reference-configuration REFERENCE_CONFIGURATION]
+                                      [--runtime-environment RUNTIME_ENVIRONMENT]
+                                      [--asset-record ASSET_RECORD]
+                                      [--jaxtari-source-root JAXTARI_SOURCE_ROOT]
+                                      [--run-dir RUN_DIR] [--unit-id UNIT_ID]
+                                      [--gpu-uuid GPU_UUID]
+                                      [--hardware-class {h100,jaguar03_rtx_a4500}]
+                                      [--seed-start SEED_START]
+                                      [--copies COPIES] [--rounds ROUNDS]
+                                      [--minimum-updates-per-round MINIMUM_UPDATES_PER_ROUND]
+                                      [--final-confirmation]
+                                      [--completed-study-proof COMPLETED_STUDY_PROOF]
+                                      [--completed-study-review COMPLETED_STUDY_REVIEW]
+                                      [--completed-study-manifest COMPLETED_STUDY_MANIFEST]
+                                      [--completed-study-manifest-sha256 COMPLETED_STUDY_MANIFEST_SHA256]
+                                      [--python PYTHON]
+run_focused_metadata_checks.py: error: reviewed common correctness requires exactly one intermediate configured or direct confirmation
+ok
+test_cold_actual_25_26_28_module_sets_and_unsupported_guard_without_backend (historical_metadata_tests_1.DirectCommonConfirmationTests)
+Every admitted sibling set imports without numerical, network or device operations. ... ok
+test_default_direct_and_new_helper_closures_stay_separate (historical_metadata_tests_1.DirectCommonConfirmationTests)
+Add only the new direct dependency while retaining default and A4500 closures. ... ok
+test_different_parent_raw_plan_and_boolean_gpu_claim_are_rejected (historical_metadata_tests_1.DirectCommonConfirmationTests)
+A successful child response must describe this exact parent and plan. ... ok
+test_equal_or_extra_candidate_change_and_wrong_seeds_are_rejected (historical_metadata_tests_1.DirectCommonConfirmationTests)
+Only the independently checked two environment changes are permitted. ... ok
+test_failed_and_malformed_child_return_preserves_raw_without_success_proof (historical_metadata_tests_1.DirectCommonConfirmationTests)
+Retain both nonzero and invalid successful output before refusing the worker. ... ok
+test_final_configured_capacity_and_wrong_mode_are_rejected (historical_metadata_tests_1.DirectCommonConfirmationTests)
+No opt-in field can authorize a different or later protocol. ... ok
+test_intermediate_contract_accepts_both_explicit_copy_counts (historical_metadata_tests_1.DirectCommonConfirmationTests)
+The two accepted copy configurations retain their exact seed lists. ... ok
+test_missing_backend_old_schema_and_helper_subset_are_rejected (historical_metadata_tests_1.DirectCommonConfirmationTests)
+The new guard cannot make a historical direct closure operational. ... ok
+test_saved_proof_requires_same_actual_parent_and_precedes_numeric_work (historical_metadata_tests_1.DirectCommonConfirmationTests)
+The saved result cannot claim another worker's or later validation. ... ok
+test_staged_helper_bytes_and_reference_hashes_are_required (historical_metadata_tests_1.DirectCommonConfirmationTests)
+A different helper or changed saved bytes do not substitute for the frozen records. ... ok
+test_success_captures_raw_child_before_publishing_proof_and_cannot_repeat (historical_metadata_tests_1.DirectCommonConfirmationTests)
+Keep one durable actual validation attempt and its exact raw successful return. ... ok
+test_timeout_preserves_partial_output_and_attempt (historical_metadata_tests_1.DirectCommonConfirmationTests)
+A timed-out child never becomes a successful prerequisite or starts a repeat. ... ok
+test_window_types_and_incomplete_prerequisites_are_rejected (historical_metadata_tests_1.DirectCommonConfirmationTests)
+Boolean counters, a reduced window and one missing record cannot pass. ... ok
+test_actual_current_owned_cpu_context_is_metadata_only (historical_metadata_tests_1.DirectPairAndContextTests)
+The current numeric CPU step records its own context without a scheduler query. ... ok
+test_alternating_complete_pairs_and_changed_orders_or_work (historical_metadata_tests_1.DirectPairAndContextTests)
+Keep actual compile-warm origins while requiring seven matched ten-update advances. ... ok
+test_login_node_without_compute_allocation_is_refused (historical_metadata_tests_1.DirectPairAndContextTests)
+An ordinary login process cannot recompute raw scientific prerequisites. ... ok
+test_actual_published_declaration_contains_exactly_eight_original_sources (historical_metadata_tests_1.ExactHistoryNamespaceTests) ... ok
+test_all_current_prior_and_qualification_root_names_and_commits_match (historical_metadata_tests_1.ExactHistoryNamespaceTests) ... ok
+test_changed_pinned_declaration_is_refused_before_mapping_or_query (historical_metadata_tests_1.ExactHistoryNamespaceTests) ... ok
+test_coherently_rehashed_unlisted_original_name_is_refused_in_each_unit (historical_metadata_tests_1.ExactHistoryNamespaceTests) ... ok
+test_wrong_commit_duplicate_and_traversal_are_refused_after_rehash (historical_metadata_tests_1.ExactHistoryNamespaceTests) ... ok
+test_actual_python_or_git_executable_must_match_the_declared_arguments (historical_metadata_tests_1.MetadataEventRefusalTests)
+A different audit executable is refused even when its arguments are exact. ... ok
+test_all_gpu_device_names_and_standing_lock_are_refused (historical_metadata_tests_1.MetadataEventRefusalTests) ... ok
+test_child_environment_removes_overrides_without_changing_the_parent (historical_metadata_tests_1.MetadataEventRefusalTests)
+Only isolated children receive the fixed Git/Python environment and two owned step fields. ... ok
+test_ctypes_process_handle_load_and_symbol_events_are_all_refused (historical_metadata_tests_1.MetadataEventRefusalTests) ... ok
+test_fresh_interpreter_real_main_import_order_bootstraps_only_stdlib_then_refuses_later_ctypes (historical_metadata_tests_1.MetadataEventRefusalTests)
+Start with no ctypes; reach real later imports and a private missing-result stop. ... ok
+test_missing_or_changed_stdlib_bootstrap_proof_is_rejected (historical_metadata_tests_1.MetadataEventRefusalTests) ... ok
+test_only_exact_readonly_git_roots_can_pass_the_predicate (historical_metadata_tests_1.MetadataEventRefusalTests) ... ok
+test_only_the_exact_actual_source_inspection_git_forms_are_allowed (historical_metadata_tests_1.MetadataEventRefusalTests)
+Source inspection needs no arbitrary options, external programs or output files. ... ok
+test_changed_numerical_bytes_or_execution_function_are_rejected (historical_metadata_tests_1.QualificationReuseTests)
+Rehashed helper receipts cannot authorize changed numerical execution. ... ok
+test_complete_source_scope_retains_thirteen_files_and_original_execution (historical_metadata_tests_1.QualificationReuseTests)
+Only unchanged code and a real-shaped raw53 contract can satisfy this source check. ... ok
+test_old_raw50_or_extra_removed_gate_is_rejected_after_coherent_rehash (historical_metadata_tests_1.QualificationReuseTests)
+A review label cannot weaken the current55/raw53 source contract. ... ok
+test_placeholder_or_changed_prepared_backend_is_refused (historical_metadata_tests_1.QualificationReuseTests)
+Reuse requires raw-first review and the same actual prepared package record. ... ok
+
+----------------------------------------------------------------------
+Ran 66 tests in 3.424s
+
+OK

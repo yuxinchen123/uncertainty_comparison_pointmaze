@@ -1,0 +1,371 @@
+{
+  "actual_process": {
+    "all_uids": [
+      2618919,
+      2618919,
+      2618919,
+      2618919
+    ],
+    "birth_counter": "80701854",
+    "cgroup": "0::/system.slice/slurmstepd.scope/job_6783003/step_327/user/task_0\n",
+    "command": [
+      "/usr/bin/python3",
+      "-I",
+      "-S",
+      "-B",
+      ".review_metadata/direct_common_historical_consumer/check_repository_filter_refusal.py"
+    ],
+    "parent_pid": 1220832,
+    "pid": 1220838
+  },
+  "actual_step_id": "327",
+  "actual_temporary_repository_cases": [
+    {
+      "actual_audited_commands": [
+        [
+          "git",
+          "-C",
+          "/tmp/author_git_filter_refusal_538b_y4g",
+          "status",
+          "--porcelain",
+          "--untracked-files=all"
+        ],
+        [
+          "git",
+          "-C",
+          "/tmp/author_git_filter_refusal_538b_y4g",
+          "config",
+          "--null",
+          "--includes",
+          "--name-only",
+          "--get-regexp",
+          "^(filter\\.|include\\.|includeif\\.)"
+        ],
+        [
+          "git",
+          "-C",
+          "/tmp/author_git_filter_refusal_538b_y4g",
+          "config",
+          "--null",
+          "--includes",
+          "--name-only",
+          "--get-regexp",
+          "^(filter\\.|include\\.|includeif\\.)"
+        ]
+      ],
+      "configuration_validation": {
+        "filters_and_includes_refused": true,
+        "kind": "same_user_pinned_repository_configuration_and_mutation_detection",
+        "repositories": {
+          "/tmp/author_git_filter_refusal_538b_y4g": {
+            "configured_filters_or_includes": false,
+            "inputs": {
+              "/tmp/author_git_filter_refusal_538b_y4g/.git": {
+                "device": 64768,
+                "directory": true,
+                "gid": 90030,
+                "inode": 7342968,
+                "mode": 16877,
+                "uid": 2618919
+              },
+              "/tmp/author_git_filter_refusal_538b_y4g/.git/commondir": {
+                "exists": false
+              },
+              "/tmp/author_git_filter_refusal_538b_y4g/.git/config": {
+                "exists": true,
+                "identity": {
+                  "st_ctime_ns": 1793851893582923997,
+                  "st_dev": 64768,
+                  "st_gid": 90030,
+                  "st_ino": 7342992,
+                  "st_mode": 33188,
+                  "st_mtime_ns": 1793851893582923997,
+                  "st_nlink": 1,
+                  "st_size": 92,
+                  "st_uid": 2618919
+                },
+                "sha256": "cfe7ba1238c9a78be7535d7c63bcaf5a4d5011d46b07c9b45d3bbf7d6c312dfe"
+              },
+              "/tmp/author_git_filter_refusal_538b_y4g/.git/config.worktree": {
+                "exists": false
+              }
+            },
+            "matched_key_names": [],
+            "query": [
+              "git",
+              "-C",
+              "/tmp/author_git_filter_refusal_538b_y4g",
+              "config",
+              "--null",
+              "--includes",
+              "--name-only",
+              "--get-regexp",
+              "^(filter\\.|include\\.|includeif\\.)"
+            ],
+            "returncode": 1,
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        "scope": "Pinned same-user source/configuration trust and mutation detection; no kernel-enforced file immutability."
+      },
+      "kind": "ordinary_dirty_source",
+      "marker_calls": 0,
+      "passed": true,
+      "refusal": null,
+      "setup": [
+        {
+          "command": [
+            "git",
+            "-C",
+            "/tmp/author_git_filter_refusal_538b_y4g",
+            "init",
+            "--quiet"
+          ],
+          "returncode": 0
+        },
+        {
+          "command": [
+            "git",
+            "-C",
+            "/tmp/author_git_filter_refusal_538b_y4g",
+            "add",
+            "--",
+            "tracked.txt"
+          ],
+          "returncode": 0
+        }
+      ],
+      "status_refused_before_execution": false,
+      "status_returncode": 0,
+      "status_stdout_sha256": "0642d1ea89d4c77e98f810e8043c02464cd2f6bb2bf41d045df3f576509467f1"
+    },
+    {
+      "actual_audited_commands": [
+        [
+          "git",
+          "-C",
+          "/tmp/author_git_filter_refusal_u65sktts",
+          "status",
+          "--porcelain",
+          "--untracked-files=all"
+        ],
+        [
+          "git",
+          "-C",
+          "/tmp/author_git_filter_refusal_u65sktts",
+          "config",
+          "--null",
+          "--includes",
+          "--name-only",
+          "--get-regexp",
+          "^(filter\\.|include\\.|includeif\\.)"
+        ]
+      ],
+      "configuration_validation": null,
+      "kind": "clean_filter",
+      "marker_calls": 0,
+      "passed": true,
+      "refusal": "repository filters, includes or unverified configuration query forbid source inspection: {\"nonempty_key_count\": 1, \"returncode\": 0, \"stderr_sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"stdout_sha256\": \"0eefdb12e2c9030125f705be68edc6cd6eba206283479f8de6d4e346c257614e\"}",
+      "setup": [
+        {
+          "command": [
+            "git",
+            "-C",
+            "/tmp/author_git_filter_refusal_u65sktts",
+            "init",
+            "--quiet"
+          ],
+          "returncode": 0
+        },
+        {
+          "command": [
+            "git",
+            "-C",
+            "/tmp/author_git_filter_refusal_u65sktts",
+            "add",
+            "--",
+            "tracked.txt"
+          ],
+          "returncode": 0
+        }
+      ],
+      "status_refused_before_execution": true,
+      "status_returncode": null,
+      "status_stdout_sha256": null
+    },
+    {
+      "actual_audited_commands": [
+        [
+          "git",
+          "-C",
+          "/tmp/author_git_filter_refusal_rvpgfb_8",
+          "status",
+          "--porcelain",
+          "--untracked-files=all"
+        ],
+        [
+          "git",
+          "-C",
+          "/tmp/author_git_filter_refusal_rvpgfb_8",
+          "config",
+          "--null",
+          "--includes",
+          "--name-only",
+          "--get-regexp",
+          "^(filter\\.|include\\.|includeif\\.)"
+        ]
+      ],
+      "configuration_validation": null,
+      "kind": "process_filter",
+      "marker_calls": 0,
+      "passed": true,
+      "refusal": "repository filters, includes or unverified configuration query forbid source inspection: {\"nonempty_key_count\": 1, \"returncode\": 0, \"stderr_sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"stdout_sha256\": \"c5c642cc74d6187906bfddfcb9ce8eba9e4e17ac2329f25df9bb80665a3fcf8d\"}",
+      "setup": [
+        {
+          "command": [
+            "git",
+            "-C",
+            "/tmp/author_git_filter_refusal_rvpgfb_8",
+            "init",
+            "--quiet"
+          ],
+          "returncode": 0
+        },
+        {
+          "command": [
+            "git",
+            "-C",
+            "/tmp/author_git_filter_refusal_rvpgfb_8",
+            "add",
+            "--",
+            "tracked.txt"
+          ],
+          "returncode": 0
+        }
+      ],
+      "status_refused_before_execution": true,
+      "status_returncode": null,
+      "status_stdout_sha256": null
+    },
+    {
+      "actual_audited_commands": [
+        [
+          "git",
+          "-C",
+          "/tmp/author_git_filter_refusal_s567_479",
+          "status",
+          "--porcelain",
+          "--untracked-files=all"
+        ],
+        [
+          "git",
+          "-C",
+          "/tmp/author_git_filter_refusal_s567_479",
+          "config",
+          "--null",
+          "--includes",
+          "--name-only",
+          "--get-regexp",
+          "^(filter\\.|include\\.|includeif\\.)"
+        ]
+      ],
+      "configuration_validation": null,
+      "kind": "included_filter",
+      "marker_calls": 0,
+      "passed": true,
+      "refusal": "repository filters, includes or unverified configuration query forbid source inspection: {\"nonempty_key_count\": 2, \"returncode\": 0, \"stderr_sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"stdout_sha256\": \"638436268f373fd93fb901f8106192201b6fdfe5e35a741da0114ba4277cfca7\"}",
+      "setup": [
+        {
+          "command": [
+            "git",
+            "-C",
+            "/tmp/author_git_filter_refusal_s567_479",
+            "init",
+            "--quiet"
+          ],
+          "returncode": 0
+        },
+        {
+          "command": [
+            "git",
+            "-C",
+            "/tmp/author_git_filter_refusal_s567_479",
+            "add",
+            "--",
+            "tracked.txt"
+          ],
+          "returncode": 0
+        }
+      ],
+      "status_refused_before_execution": true,
+      "status_returncode": null,
+      "status_stdout_sha256": null
+    },
+    {
+      "actual_audited_commands": [
+        [
+          "git",
+          "-C",
+          "/tmp/author_git_filter_refusal_n7iet65i",
+          "status",
+          "--porcelain",
+          "--untracked-files=all"
+        ]
+      ],
+      "configuration_validation": null,
+      "kind": "same_size_configuration_mutation",
+      "marker_calls": 0,
+      "passed": true,
+      "refusal": "pinned repository configuration changed",
+      "setup": [
+        {
+          "command": [
+            "git",
+            "-C",
+            "/tmp/author_git_filter_refusal_n7iet65i",
+            "init",
+            "--quiet"
+          ],
+          "returncode": 0
+        },
+        {
+          "command": [
+            "git",
+            "-C",
+            "/tmp/author_git_filter_refusal_n7iet65i",
+            "add",
+            "--",
+            "tracked.txt"
+          ],
+          "returncode": 0
+        }
+      ],
+      "status_refused_before_execution": true,
+      "status_returncode": null,
+      "status_stdout_sha256": null
+    }
+  ],
+  "admission_granted": false,
+  "focused_tests_run": 24,
+  "gpu_operations": 0,
+  "kind": "actual_temporary_repository_filter_refusal_and_focused_metadata_checks",
+  "numerical_imports": [],
+  "optional_digest_cache_enabled": false,
+  "parent_environment_unchanged": true,
+  "passed": true,
+  "production_child_time_limit_seconds": 180,
+  "qualification_established": false,
+  "saved_scientific_evidence_recomputed": false,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "scope": "Temporary fixtures only; pinned same-user configuration trust and mutation detection, with no kernel-enforced immutability claim.",
+  "source_sha256": {
+    "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/check_repository_filter_refusal.py": "f1bb55c23df1f9ee3d5e36b6df3068a7f93d7adcc721a8f6031f93fe4109c269",
+    "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_confirmation.py": "db4bda6431df2964bb5d297a6395dd5ec1709da6fd8ec4583677629387e2b025",
+    "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_historical_consumer.py": "7683a8185a077b5522764ba2a6f04e621186e7ef70d21e6ea90cb1862d7f2fb6",
+    "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_common_confirmation.py": "2c0d9a092fb406896f310ca7ecf78a2457a99d84cdaa9b53ffe39dbbf936449d",
+    "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_historical_consumer.py": "1389a6f70b356c66aef8e035d0ffe505e7258d09c72f3dcbdce708b2e75eadea",
+    "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_repository_configuration.py": "c4ae79f99b558c03e83de2ce2289b2094840bc1052ee8c296c22e1558883ed9c"
+  }
+}

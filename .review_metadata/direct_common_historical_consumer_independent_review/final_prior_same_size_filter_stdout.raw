@@ -1,0 +1,92 @@
+{
+  "actual_job": "6783003",
+  "actual_step": "328",
+  "admission_granted": false,
+  "attributes": "tracked.txt filter=independent_benign_filter\n",
+  "audit_accepted_exact_command": false,
+  "campaign_or_production_source_changed": false,
+  "exact_allowed_command": [
+    "git",
+    "-C",
+    "/tmp/independent_git_local_filter_t3apqvxa",
+    "status",
+    "--porcelain",
+    "--untracked-files=all"
+  ],
+  "exact_fixed_environment": {
+    "GIT_ALLOW_PROTOCOL": "",
+    "GIT_ATTR_NOSYSTEM": "1",
+    "GIT_CONFIG_COUNT": "7",
+    "GIT_CONFIG_GLOBAL": "/dev/null",
+    "GIT_CONFIG_KEY_0": "core.fsmonitor",
+    "GIT_CONFIG_KEY_1": "core.hooksPath",
+    "GIT_CONFIG_KEY_2": "core.untrackedCache",
+    "GIT_CONFIG_KEY_3": "core.preloadIndex",
+    "GIT_CONFIG_KEY_4": "protocol.allow",
+    "GIT_CONFIG_KEY_5": "gc.auto",
+    "GIT_CONFIG_KEY_6": "maintenance.auto",
+    "GIT_CONFIG_NOSYSTEM": "1",
+    "GIT_CONFIG_SYSTEM": "/dev/null",
+    "GIT_CONFIG_VALUE_0": "false",
+    "GIT_CONFIG_VALUE_1": "/dev/null",
+    "GIT_CONFIG_VALUE_2": "false",
+    "GIT_CONFIG_VALUE_3": "false",
+    "GIT_CONFIG_VALUE_4": "never",
+    "GIT_CONFIG_VALUE_5": "0",
+    "GIT_CONFIG_VALUE_6": "false",
+    "GIT_NO_LAZY_FETCH": "1",
+    "GIT_NO_REPLACE_OBJECTS": "1",
+    "GIT_OPTIONAL_LOCKS": "0",
+    "GIT_PAGER": "",
+    "GIT_TERMINAL_PROMPT": "0",
+    "LANG": "C.UTF-8",
+    "LC_ALL": "C.UTF-8",
+    "PAGER": "",
+    "PATH": "/usr/bin",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "SLURM_JOB_ID": "6783003",
+    "SLURM_STEP_ID": "328",
+    "TERM": "dumb"
+  },
+  "filter_source": "\"\"\"Write a temporary marker and preserve filter input bytes unchanged.\"\"\"\nimport json\nimport os\nfrom pathlib import Path\nimport sys\nraw = sys.stdin.buffer.read()\nwith Path(__file__).with_name('marker_events.jsonl').open('a') as stream:\n    stream.write(json.dumps({'pid':os.getpid(),'argv':sys.argv,'input_hex':raw.hex()})+'\\n')\nsys.stdout.buffer.write(raw)\n",
+  "fixture_commands": [
+    {
+      "command": [
+        "git",
+        "-C",
+        "/tmp/independent_git_local_filter_t3apqvxa",
+        "init",
+        "--quiet"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "git",
+        "-C",
+        "/tmp/independent_git_local_filter_t3apqvxa",
+        "add",
+        "--",
+        "tracked.txt"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": ""
+    }
+  ],
+  "git_config": "[core]\n\trepositoryformatversion = 0\n\tfilemode = true\n\tbare = false\n\tlogallrefupdates = true\n\n[filter \"independent_benign_filter\"]\n\tclean = /usr/bin/python3 -I -S -B /tmp/independent_git_local_filter_t3apqvxa/benign_clean_filter.py\n",
+  "kind": "independent_prior_same_size_filter_shape_refused_before_status",
+  "marker_events": [],
+  "marker_existed_before_status": false,
+  "marker_exists_after_status": false,
+  "numerical_imports": [],
+  "parent_environment_unchanged": true,
+  "refusal": "repository filters, includes or unverified configuration query forbid source inspection: {\"nonempty_key_count\": 1, \"returncode\": 0, \"stderr_sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"stdout_sha256\": \"1d57a4eeaa821c92be5b72dbfc912d68f68fdc4251f70a64106f00dd3770588d\"}",
+  "saved_scientific_evidence_recomputed": false,
+  "scientific_credit": 0,
+  "scope": "Two temporary setup Git commands and the configuration query ran; status was refused before execution and the clean filter never ran. All fixture writes stayed in its temporary directory.",
+  "status_command_executed": false,
+  "temporary_fixture_root": "/tmp/independent_git_local_filter_t3apqvxa"
+}

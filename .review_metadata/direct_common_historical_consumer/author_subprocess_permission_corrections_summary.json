@@ -1,0 +1,97 @@
+{
+  "admission_granted": false,
+  "all_previous_25_frozen_files_preserved": true,
+  "corrections": {
+    "actual_executable_field": "The actual subprocess audit executable equals its pinned declared Python executable or the original git token. Git has only /usr/bin in its fixed child PATH. Plain list/string arguments and no working-directory override are required.",
+    "child_environment": "A fixed dictionary retains only the two owned Slurm job/step fields. It removes inherited Git, Python and dynamic-loader overrides, fixes PATH=/usr/bin, disables all transport/lazy fetch/replacement objects/prompts/pagers/optional locks, and explicitly disables hooks/fsmonitor/untracked cache/preloaded index/automatic maintenance through environment Git configuration.",
+    "git_arguments": "Only exact rev-parse HEAD/--show-toplevel, symbolic-ref --quiet HEAD, show 40-hex-commit:plain-file, cat-file blob 40-hex, ls-tree -rz or -r --name-only with a literal commit and -- plain paths, and exact porcelain status forms. No diff, ext-diff, filters, arbitrary trailing options, output files or pathspec programs.",
+    "parent_environment": "Unchanged; only isolated child main processes replace their own environment. Current source-inspection Git calls receive a separate exact dictionary."
+  },
+  "created_at_seconds": 1793850720.9134274,
+  "current_common_helper_count": 28,
+  "focused_metadata_tests": {
+    "actual_step": "6783003.310",
+    "receipt": {
+      "bytes": 3583,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/author_subprocess_exact_arguments_stdout.raw",
+      "sha256": "66230b6f38495cc8042fbc5abc6ed156822b8e8b4f1329c05485917a611c1792"
+    },
+    "stderr": {
+      "bytes": 23194,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/author_subprocess_exact_arguments_stderr.raw",
+      "sha256": "dc2ddb60a1ad54b5192b481dbecbf47758b214f92080162d9b29beb82e4a4d41"
+    },
+    "tests_run": 66
+  },
+  "gpu_or_controller_or_timing_actions": 0,
+  "independent_corrected_review_complete": false,
+  "independent_rejection": {
+    "bytes": 7723,
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer_independent_review/independent_source_review.json",
+    "sha256": "341db775acca625237a9f027a4a3337b123947b7a1e59cdf8e703e6c9255a105"
+  },
+  "kind": "author_subprocess_permission_corrections_after_independent_rejection",
+  "old_helper_count": 26,
+  "optional_digest_cache_enabled": false,
+  "passed": true,
+  "preservation": {
+    "bytes": 14477,
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/preservation.json",
+    "sha256": "1f7c7ff1d9e396ff8f2ad8cafde19d42b4b1901188fbf1bbdb680ef9fbb8725a"
+  },
+  "previous_rejected_freeze": {
+    "bytes": 12982,
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/before_subprocess_permission_corrections/source_and_metadata_freeze.json",
+    "sha256": "fbd84dd9fe7be09f22402a1701614d898b3a080cf726b2438e15d11077d518d5"
+  },
+  "production_metadata_time_limit_seconds": 180,
+  "protected_source_scope": {
+    "actual_step": "6783003.312",
+    "execution_functions_unchanged": 12,
+    "new_reader_body_statements": 56,
+    "numerical_files_unchanged": 13,
+    "old_reader_body_statements": 55,
+    "original_body_entirely_retained": true,
+    "receipt": {
+      "bytes": 5734,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/author_subprocess_corrections_protected_scope_stdout.raw",
+      "sha256": "a66528c1ee6e6923600384cbd4068c80dd09fff3709369e41237b1c276756f06"
+    }
+  },
+  "qualification_established": false,
+  "real_old_source_namespace": {
+    "actual_modules_loaded": 26,
+    "actual_step": "6783003.313",
+    "receipt": {
+      "bytes": 19243,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/author_subprocess_final_old_namespace_stdout.raw",
+      "sha256": "43c4e33838e02fa9ded0b7920bc1c95f478c16581f0a02c504df47cd10fa9e62"
+    },
+    "saved_scientific_evidence_recomputed": false,
+    "stderr": {
+      "bytes": 0,
+      "path": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/.review_metadata/direct_common_historical_consumer/author_subprocess_final_old_namespace_stderr.raw",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "saved_scientific_evidence_recomputed": false,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "source_paths": [
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_historical_consumer.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_confirmation.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_historical_consumer.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_common_confirmation.py"
+  ],
+  "source_sha256": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_confirmation.py": "092790c5444f0e1313dc42416b25403c67b30ef53d73234ba6e88b0bf5c12cca",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_historical_consumer.py": "5470ef2638177e6a0a56597ef85553f7cf3603df81e86d4c14e037a66b7ddd03",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py": "05ae4baa2c3acb75821302bd03426cda98c60283453a9fea6202b0d00e4d0362",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py": "a1ef9d787cb7387be88a078eac6d3bae9c853d3ceb3ac6a6aeb471e71e3aff4d",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_common_confirmation.py": "0c4b69eff2269a804f9ae2b9eb243984c0fa3d219acefe40df0b243d91729bff",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_historical_consumer.py": "d19d7a2f859b810204596c4e16a04fdc318eeaa9a08fdb7bd42435d6f0d359a0"
+  },
+  "worktree": "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute"
+}

@@ -1,0 +1,19 @@
+test_changed_configuration_during_query_is_refused (repository_configuration_tests.RepositoryConfigurationTests)
+The actual files are rehashed after the query before any status is allowed. ... ok
+test_changed_pinned_configuration_is_refused_before_another_query (repository_configuration_tests.RepositoryConfigurationTests)
+A later changed file identity or digest cannot replace the first observed source configuration. ... ok
+test_every_other_git_inspection_checks_configuration_first (repository_configuration_tests.RepositoryConfigurationTests)
+Existing byte, tree and dirty-source checks are preserved after the new refusal. ... ok
+test_exact_configuration_query_is_allowed_without_recursion (repository_configuration_tests.RepositoryConfigurationTests)
+The configuration query itself reads keys only and grants no status permission. ... ok
+test_final_configuration_recheck_refuses_mutation (repository_configuration_tests.RepositoryConfigurationTests)
+A changed source configuration cannot produce a successful validation proof. ... ok
+test_matching_filter_include_or_any_query_error_is_refused (repository_configuration_tests.RepositoryConfigurationTests)
+Configured keys and every other return/output meaning remain unverified. ... ok
+test_only_native_empty_no_match_return_is_allowed (repository_configuration_tests.RepositoryConfigurationTests)
+Native return one without output or errors pins the exact configuration inputs. ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.011s
+
+OK

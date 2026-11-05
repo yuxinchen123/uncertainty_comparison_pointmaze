@@ -40,6 +40,7 @@ class DirectCommonConfirmationTests(unittest.TestCase):
             "direct_backend_image": {"schema_version": 2,
                 "capability": "prepared_owning_package_image_and_same_process_mapping_version_2",
                 "expected": {"path": str(self.unit / "synthetic_backend_expected.json"), "sha256": "e" * 64}},
+            "direct_historical_consumer_protocol": copy.deepcopy(common.HISTORICAL_PROTOCOL),
             "common_correctness_inputs": {"result": {"path": str(self.unit / "prior.json"), "sha256": "b" * 64},
                 "review": {"path": str(self.unit / "review.json"), "sha256": "c" * 64}}}
         (self.unit / "measurement_plan.json").write_bytes(common.encoded(self.plan))
@@ -50,6 +51,9 @@ class DirectCommonConfirmationTests(unittest.TestCase):
         return {"schema_version": 1, "kind": "isolated_direct_common_correctness_validation", "passed": True,
             "plan_sha256": common.digest(raw), "common_correctness_inputs": self.plan["common_correctness_inputs"],
             "parent_pid": os.getpid(), "validation_pid": 12, "finished_at_seconds": 1., "numerical_imports": [], "gpu_operations": 0,
+            "repository_configuration_validation": {"kind": "same_user_pinned_repository_configuration_and_mutation_detection",
+                "repositories": {"/synthetic/source": {"synthetic": True}}, "filters_and_includes_refused": True,
+                "scope": "Pinned same-user source/configuration trust and mutation detection; no kernel-enforced file immutability."},
             "stdlib_ctypes_bootstrap": common.stdlib_ctypes_bootstrap()}
 
     def completed(self, proof=None):
@@ -172,8 +176,9 @@ class DirectCommonConfirmationTests(unittest.TestCase):
         baseline = measurement.required_helpers(False, True, False, True)
         self.assertEqual(len(historical), 25)
         self.assertEqual(len(baseline), 26)
-        self.assertEqual(set(measurement.required_helpers(False, True, True, True)), {*baseline, common.NAME})
-        self.assertEqual(len(measurement.required_helpers(False, True, True, True)), 27)
+        self.assertEqual(set(measurement.required_helpers(False, True, True, True)),
+            {*baseline, common.NAME, common.HISTORICAL_NAME})
+        self.assertEqual(len(measurement.required_helpers(False, True, True, True)), 28)
         with self.assertRaises(ValueError):measurement.required_helpers(False, True, True)
         self.assertEqual(len(measurement.required_helpers()), 16)
         self.assertEqual(len(measurement.required_helpers(True, False, True)), 21)
@@ -188,12 +193,12 @@ class DirectCommonConfirmationTests(unittest.TestCase):
                 ["--mode", "confirmation", "--final-confirmation", "--configured-isolation-profile", "/missing", "--common-correctness-record", "/missing", "--common-correctness-review", "/missing"]):
             with self.subTest(extra=extra), self.assertRaises(SystemExit):measurement.parse_arguments(extra)
 
-    def test_cold_actual_25_26_27_module_sets_and_unsupported_guard_without_backend(self):
+    def test_cold_actual_25_26_28_module_sets_and_unsupported_guard_without_backend(self):
         """Every admitted sibling set imports without numerical, network or device operations."""
         from test_configured_measurement import ISOLATED_IMPORT_PROBE
         rosters = (measurement.required_helpers(False, True),
             measurement.required_helpers(False, True, False, True), measurement.required_helpers(False, True, True, True))
-        self.assertEqual([len(names) for names in rosters], [25, 26, 27])
+        self.assertEqual([len(names) for names in rosters], [25, 26, 28])
         for names in rosters:
             with self.subTest(count=len(names)), tempfile.TemporaryDirectory() as temporary:
                 folder = Path(temporary) / "data/unit/code"; folder.mkdir(parents=True)
@@ -245,6 +250,7 @@ class DirectActualSemanticTests(unittest.TestCase):
         backend_record = self.unit / "synthetic_backend_preparation.json"
         self.write(backend_record, {"synthetic": True})
         self.plan["inputs"] = self.previous["inputs"] = {"direct_backend_image_record": common.reference(backend_record)}
+        self.write(self.prior / "measurement_plan.json", self.previous)
         self.package = {"selected_python": "/synthetic/python", "site_packages": "/synthetic/site-packages",
             "image": {"synthetic": True}, "distribution": {"synthetic": True}, "producer_source_sha256": "f" * 64}
         self.reuse = {"source_contract": {"path": str(self.unit / "synthetic_qualification_source_contract.json"), "sha256": "e" * 64}}
@@ -280,8 +286,12 @@ class DirectActualSemanticTests(unittest.TestCase):
         identity = SimpleNamespace(exact=exact, validate_plan=unittest.mock.Mock(),
             require_profile=unittest.mock.Mock(), receipt=lambda p: {"path": str(p),
                 "sha256": common.digest(Path(p).read_bytes())})
-        self.consumer = unittest.mock.Mock(return_value=(self.previous, self.binding))
-        self.support = SimpleNamespace(core=lambda: identity, verify_saved_measurement=self.consumer,
+        self.consumer = unittest.mock.Mock(side_effect=lambda plan, operation: {"proof": {
+            "old_plan": common.reference(self.prior / "measurement_plan.json"),
+            "old_inputs": plan["common_correctness_inputs"],
+            "old_consumer_return_sha256": common.digest(common.encoded([self.previous, self.binding]))}})
+        self.support = SimpleNamespace(core=lambda: identity,
+            historical_support=lambda plan: SimpleNamespace(request=self.consumer),
             backend_support=lambda plan: SimpleNamespace(expected_for_plan=lambda p: self.package))
         self.validation = SimpleNamespace(correctness=unittest.mock.Mock(), configuration=unittest.mock.Mock(),
             execution_identity=unittest.mock.Mock())
@@ -364,6 +374,13 @@ class QualificationReuseTests(unittest.TestCase):
         files = {}
         for name in measurement.required_helpers(False, True, False, True):
             shutil.copyfile(SCRIPTS / name, self.code / name)
+            if name == "direct_measurement.py":
+                # Before: current metadata dispatch plus original reader. After: synthetic old reader only.
+                path = self.code / name
+                raw = path.read_text()
+                dispatch = '    if "common_correctness_inputs" in plan:\n        return historical_support(plan).request(plan, "qualification")\n'
+                self.assertEqual(raw.count(dispatch), 1)
+                path.write_text(raw.replace(dispatch, "", 1))
             files[common.PREFIX + name] = common.digest((self.code / name).read_bytes())
         numerical = self.root / "synthetic_numerical_source"; numerical.mkdir()
         core, paired = {}, {}
@@ -424,7 +441,8 @@ class QualificationReuseTests(unittest.TestCase):
         """Only unchanged code and a real-shaped raw53 contract can satisfy this source check."""
         proof = common.qualification_reuse_evidence(self.support, self.plan)
         self.assertEqual(len(proof["protected_numerical_files"]), 13)
-        self.assertEqual(len(proof["protected_function_syntax"]), 13)
+        self.assertEqual(len(proof["protected_function_syntax"]), 12)
+        self.assertTrue(proof["qualification_reader_metadata_extension"]["entire_original_body_retained"])
         self.assertFalse(proof["numerical_work_changed"])
 
     def test_old_raw50_or_extra_removed_gate_is_rejected_after_coherent_rehash(self):
@@ -565,9 +583,72 @@ class MetadataEventRefusalTests(unittest.TestCase):
             with self.subTest(wrong=wrong), self.assertRaises(ValueError):common.validate_bootstrap_record(wrong)
 
     def test_only_exact_readonly_git_roots_can_pass_the_predicate(self):
-        common.metadata_event_guard("subprocess.Popen", ("git", ["git", "-C", "/known", "status"]), {"/known"})
+        environment = common.metadata_environment({})
+        with patch.object(common, "verify_repository_configuration", return_value={}):
+            common.metadata_event_guard("subprocess.Popen", ("git",
+                ["git", "-C", "/known", "status", "--porcelain", "--untracked-files=all"], None, environment), {"/known"})
         for command in (["git", "-C", "/unlisted", "status"], ["git", "-C", "/known", "fetch"], ["nvidia-smi"]):
-            with self.subTest(command=command), self.assertRaises(ValueError):common.metadata_event_guard("subprocess.Popen", (command[0], command), {"/known"})
+            with self.subTest(command=command), self.assertRaises(ValueError):
+                common.metadata_event_guard("subprocess.Popen", (command[0], command, None, environment), {"/known"})
+
+    def test_actual_python_or_git_executable_must_match_the_declared_arguments(self):
+        """A different audit executable is refused even when its arguments are exact."""
+        historical = SCRIPTS / common.HISTORICAL_NAME
+        command = ["/usr/bin/python3", "-I", "-S", "-B", str(historical), "--read-only-stdin"]
+        environment = common.metadata_environment({})
+        with patch.object(common, "_ACTIVE_HISTORICAL_SOURCE_SHA256", common.digest(historical.read_bytes())):
+            common.metadata_event_guard("subprocess.Popen", (command[0], command, None, environment), set())
+            with self.assertRaises(ValueError):
+                common.metadata_event_guard("subprocess.Popen", ("/another/executable", command, None, environment), set())
+            with self.assertRaises(ValueError):
+                common.metadata_event_guard("subprocess.Popen", (command[0], tuple(command), None, environment), set())
+            with self.assertRaises(ValueError):
+                common.metadata_event_guard("subprocess.Popen", (command[0], command, "/another/directory", environment), set())
+        git = ["git", "-C", "/known", "rev-parse", "HEAD"]
+        with self.assertRaises(ValueError):
+            common.metadata_event_guard("subprocess.Popen", ("/another/executable", git, None, environment), {"/known"})
+
+    def test_only_the_exact_actual_source_inspection_git_forms_are_allowed(self):
+        """Source inspection needs no arbitrary options, external programs or output files."""
+        valid = (["rev-parse", "HEAD"], ["rev-parse", "--show-toplevel"], ["symbolic-ref", "--quiet", "HEAD"],
+            ["show", "a" * 40 + ":src/file.py"], ["cat-file", "blob", "b" * 40],
+            ["ls-tree", "-rz", "a" * 40, "--", "src"],
+            ["ls-tree", "-r", "--name-only", "a" * 40, "--", "src/"],
+            ["status", "--porcelain", "--untracked-files=all"],
+            ["status", "--porcelain", "--untracked-files=all", "--", "src/file.py"],
+            ["status", "--porcelain", "--", "src/file.py"])
+        for arguments in valid:
+            with self.subTest(arguments=arguments):
+                common.source_inspection_git(["git", "-C", "/known", *arguments], {"/known"})
+        invalid = (["diff", "--ext-diff"], ["diff", "--output=/tmp/output"], ["status"],
+            ["show", "a" * 40 + ":src/file.py", "--output=/tmp/output"], ["show", "--textconv", "a" * 40 + ":src/file.py"],
+            ["show", "HEAD:src/file.py"], ["show", "a" * 40 + ":../private"],
+            ["ls-tree", "-rz", "a" * 40, "--", ":(attr:secret)"],
+            ["status", "--porcelain", "--untracked-files=all", "--", "../private"], ["cat-file", "--filters", "a" * 40])
+        for arguments in invalid:
+            with self.subTest(arguments=arguments), self.assertRaises(ValueError):
+                common.source_inspection_git(["git", "-C", "/known", *arguments], {"/known"})
+
+    def test_child_environment_removes_overrides_without_changing_the_parent(self):
+        """Only isolated children receive the fixed Git/Python environment and two owned step fields."""
+        original = {"SLURM_JOB_ID": "6783003", "SLURM_STEP_ID": "123", "PATH": "/another/bin",
+            "GIT_CONFIG_PARAMETERS": "unsafe", "GIT_CONFIG_COUNT": "99", "GIT_EXTERNAL_DIFF": "/another/tool",
+            "GIT_DIR": "/another/repository", "LD_PRELOAD": "/another/library.so", "PYTHONPATH": "/another/python",
+            "JAX_ENABLE_X64": "true"}
+        before = dict(original)
+        environment = common.metadata_environment(original)
+        self.assertEqual(original, before)
+        self.assertEqual(environment["PATH"], "/usr/bin")
+        self.assertEqual(environment["SLURM_JOB_ID"], "6783003")
+        self.assertEqual(environment["SLURM_STEP_ID"], "123")
+        self.assertFalse(set(original).intersection(environment) - {"PATH", "SLURM_JOB_ID", "SLURM_STEP_ID", "GIT_CONFIG_COUNT"})
+        common.require_metadata_environment(environment)
+        with patch.dict(os.environ, environment, clear=True):
+            common.require_metadata_environment(None)
+        for changed in ({**environment, "PATH": "/another/bin"}, {**environment, "LD_PRELOAD": "/another/library.so"},
+                {**environment, "GIT_CONFIG_VALUE_0": "/another/program"}, {**environment, "GIT_ALLOW_PROTOCOL": "file"}):
+            with self.subTest(changed=changed), self.assertRaises(ValueError):
+                common.require_metadata_environment(changed)
 
     def test_fresh_interpreter_real_main_import_order_bootstraps_only_stdlib_then_refuses_later_ctypes(self):
         """Start with no ctypes; reach real later imports and a private missing-result stop."""

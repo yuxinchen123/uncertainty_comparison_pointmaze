@@ -1,0 +1,53 @@
+{
+  "actual_process": {
+    "all_uids": [
+      2618919,
+      2618919,
+      2618919,
+      2618919
+    ],
+    "birth_counter": "80457944",
+    "cgroup": "0::/system.slice/slurmstepd.scope/job_6783003/step_289/user/task_0\n",
+    "command": [
+      "/usr/bin/python3",
+      "-I",
+      "-S",
+      "-B",
+      ".review_metadata/direct_common_historical_consumer/run_focused_metadata_checks.py"
+    ],
+    "parent_pid": 1215900,
+    "pid": 1215906
+  },
+  "actual_step_id": "289",
+  "admission_granted": false,
+  "digest_cache": "disabled",
+  "errors": 20,
+  "failures": 1,
+  "finished_at_seconds": 1793849456.3562515,
+  "gpu_operations": 0,
+  "historical_saved_evidence_verified": false,
+  "job_id": "6783003",
+  "kind": "synthetic_historical_consumer_focused_metadata_checks",
+  "numerical_imports": [],
+  "passed": false,
+  "production_child_time_limit_seconds": 180,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "source_sha256": {
+    "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_confirmation.py": "2fb5026b7b8cb7ca2fd9de864bf5b594484725bad6a062525bd4bae4fe12aa54",
+    "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_historical_consumer.py": "fb6fa855ca93477d68733f6103e75b0bfc515cec00cffc530d64421de8b7d01b",
+    "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_measurement.py": "05ae4baa2c3acb75821302bd03426cda98c60283453a9fea6202b0d00e4d0362",
+    "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/10_jax_exploration_platform/scripts/atari_pixel_campaign/measure_selected.py": "a1ef9d787cb7387be88a078eac6d3bae9c853d3ceb3ac6a6aeb471e71e3aff4d",
+    "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_common_confirmation.py": "ec0a229b34ac09d42dee567e3b08866447451db2a52137379f1ac259ba16db9f",
+    "/p/rlprojects/RND_worktrees/2026-11-04-19-22_direct-common-historical-consumer_linked-detached_original-helpers-26_common-helpers-28_read-only-owned-compute/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_historical_consumer.py": "4d6fcaae09b8d150db60c2c948ad024684b3d100b984f05bc0ced151f055205c"
+  },
+  "started_at_seconds": 1793849454.7859952,
+  "stdlib_ctypes_bootstrap": {
+    "bootstrap_scope": "stdlib ctypes own-process Python API handle only",
+    "later_library_loads_and_symbol_calls_refused": true,
+    "module_path": "/usr/lib/python3.10/ctypes/__init__.py",
+    "own_process_python_api_initialized_before_validation_audit": true,
+    "python_api_target": null
+  },
+  "tests_run": 61
+}
