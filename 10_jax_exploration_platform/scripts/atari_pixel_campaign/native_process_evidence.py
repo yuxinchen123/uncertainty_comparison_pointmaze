@@ -41,12 +41,31 @@ def declaration(plan):
 
 def policy(plan):
     """Permit this first native integration only in the explicit zero-credit direct diagnostic."""
+    if 'configured_native_process_control' in plan:
+        return configured_adapter(plan).policy(plan)
     require(plan.get('kind') == DIAGNOSTIC and 'native_process_control' in plan
         and same(plan['native_process_control'], declaration(plan)),
         'native target observation is diagnostic only; formal work needs a separately reviewed contract and admission')
     require(all(type(value) is str and re.fullmatch('[0-9a-f]{64}', value)
         for value in plan['native_process_control']['helper_hashes'].values()), 'native helper hashes must be exact')
     return plan['native_process_control']
+
+
+def configured_adapter(plan):
+    """Load only the exact opt-in configured-allocation policy from this staged namespace."""
+    path = Path(__file__).with_name('configured_native_process.py')
+    require(path.resolve(strict=True) == path and path.is_file()
+        and hashlib.sha256(path.read_bytes()).hexdigest()
+        == plan['helpers']['files'].get(PREFIX + path.name), 'the configured native policy helper changed')
+    name = 'explicit_configured_native_policy_' + hashlib.sha256(str(path).encode()).hexdigest()
+    if name not in sys.modules:
+        specification = importlib.util.spec_from_file_location(name, path)
+        module = importlib.util.module_from_spec(specification)
+        specification.loader.exec_module(module)
+        sys.modules[name] = module
+    module = sys.modules[name]
+    require(Path(module.__file__).resolve(strict=True) == path, 'the configured native policy namespace changed')
+    return module
 
 
 def parse_pidfd_fdinfo(raw, expected_inode, expected_pid=None):
@@ -146,6 +165,8 @@ class Runtime:
         module = load_provider(plan)
         started = time.time()
         contract, unused = module.current_contract()
+        if 'configured_native_process_control' in plan:
+            configured_adapter(plan).check_contract(plan, contract, metadata)
         self.provider = module.NativePidfdProvider(contract)
         self.observer = module.NativeProcessObserver(metadata, self.provider)
         self.observer.native_process_runtime = self
@@ -462,7 +483,9 @@ def validate_saved(directory, plan, observer, intent, observation, launch, waite
     policy(plan);directory = Path(directory)
     budgeted = 'diagnostic_time_budget' in plan
     require(budgeted == (diagnostic_deadline is not None), 'saved native roles need their exact declared deadline proof')
-    owners = {'producer': intent['producer'], 'waiter': launch['waiter'], 'capture': launch['child']}
+    configured = configured_adapter(plan) if 'configured_native_process_control' in plan else None
+    owners = {'producer': intent['parent'] if configured else intent['producer'],
+        'waiter': launch['waiter'], 'capture': launch['child']}
     contract_ref, unused = reference(directory / 'native_process_target_contract.json', observer, mapping)
     contract = validate_contract(read_reference(contract_ref, observer, mapping), plan, observer, mapping)
     scope_ref, unused = reference(directory / 'tool_descendant_scope_terminal.json', observer, mapping)
@@ -489,7 +512,7 @@ def validate_saved(directory, plan, observer, intent, observation, launch, waite
         terminal_ref, unused = reference(paths['terminal'], observer, mapping)
         terminal = read_reference(terminal_ref, observer, mapping)
         owner = owners[role];observer.validate_snapshot(owner, owner['uids'][0], owner['cgroup'])
-        expected_command = intent['capture_command'] if role == 'capture' else intent['waiter_command'] if role == 'waiter' else [
+        expected_command = intent['capture_command'] if role == 'capture' else intent['waiter_command'] if role == 'waiter' else configured.producer_command(directory, plan) if configured else [
             plan['python'], '-I', '-S', '-B', str(directory / 'code/diagnose_direct_nsight_process.py'), '--producer-unit', str(directory)]
         observer.validate_snapshot(begin['owner'], owner['uids'][0], owner['cgroup'])
         require(set(begin) == {'kind', 'schema_version', 'role', 'plan', 'policy', 'owner', 'contract', 'provider',
@@ -519,6 +542,7 @@ def validate_saved(directory, plan, observer, intent, observation, launch, waite
             and begin['provider']['calls'][-1]['finished_at_seconds'] <= begin['published_at_seconds'],
             'native self preflight must occur inside the recorded actual startup window')
         role_allowed = allowed if role == 'producer' else {owner['pid']: owner, owners['producer']['pid']: owners['producer']}
+        if configured and role == 'waiter':role_allowed[owners['capture']['pid']] = owners['capture']
         counts = validate_calls(terminal['provider'], owner, role_allowed, contract)
         opened = [call['arguments']['pid'] for call in terminal['provider']['calls'] if call['name'] == 'pidfd_open']
         if role == 'producer':
@@ -528,11 +552,23 @@ def validate_saved(directory, plan, observer, intent, observation, launch, waite
                 if str(record['pid']) in terminal_scope['positive_nodes']),
                 'native evidence omits the separate scope and ancestry handles')
         else:
-            require(opened == [owner['pid'], owners['producer']['pid']],
+            expected_opened = [owner['pid'], owners['producer']['pid']]
+            if configured and role == 'waiter':expected_opened.append(owners['capture']['pid'])
+            require(opened == expected_opened,
                 'native child evidence must contain its self preflight and exact known-producer watcher')
-            require(all(event['identity']['pid'] == event['opened_pid']
-                for event in terminal['provider']['descriptor_events']),
-                'a successful native child cannot retain an exited known producer')
+            for event in terminal['provider']['descriptor_events']:
+                exited_capture_close = configured and role == 'waiter' and event['opened_pid'] == owners['capture']['pid']
+                if exited_capture_close:
+                    require(event['operation'] in ('pidfd_open', 'close')
+                        and (event['identity']['pid'] == event['opened_pid'] or event['operation'] == 'close' and event['identity']['pid'] == -1)
+                        and (event['operation'] != 'close' or type(waited.get('returncode')) is int and waited['returncode'] == 0
+                            and waited.get('exited_normally') is True and waited.get('interventions') == []
+                            and finite_time(waited.get('actual_wait_finished_at_seconds'))
+                            and waited['actual_wait_finished_at_seconds'] <= event['observed_at_seconds']),
+                        'an exited configured capture handle requires its actual successful prior Popen wait')
+                else:
+                    require(event['identity']['pid'] == event['opened_pid'],
+                        'a successful native child cannot retain an exited known producer')
         require(not any(call['name'] == 'pidfd_send_signal' and call['arguments']['signal'] in (15, 9)
             for call in terminal['provider']['calls']), 'successful native diagnostic evidence cannot hide cleanup intervention')
         require(terminal['provider']['calls'][-1]['finished_at_seconds'] <= terminal['completed_at_seconds'],
@@ -540,7 +576,7 @@ def validate_saved(directory, plan, observer, intent, observation, launch, waite
         require(same(terminal['provider']['calls'][:3], begin['provider']['calls'])
             and same(terminal['provider']['descriptor_events'][:3], begin['provider']['descriptor_events']),
             'native terminal changed its frozen self preflight')
-        required = ('tool_descendant_scope_terminal.json', 'tool_descendant_scope_restored.json', 'profiler_actual_wait.json') if role == 'producer' else (
+        required = configured.completion_references(plan, role) if configured else ('tool_descendant_scope_terminal.json', 'tool_descendant_scope_restored.json', 'profiler_actual_wait.json') if role == 'producer' else (
             ('capture_actual_launch.json', 'capture_actual_wait.json') if role == 'waiter' else ('capture_release_observed.json', 'probe_result.json'))
         require(set(terminal['references']) == set(required), 'native role did not retain all required actual completion records')
         for name, ref in terminal['references'].items():
@@ -554,7 +590,7 @@ def validate_saved(directory, plan, observer, intent, observation, launch, waite
         'the producer native provider must precede its first tool scope')
     begin = {role: read_reference(result[role]['begin'], observer, mapping) for role in ROLES}
     terminal = {role: read_reference(result[role]['terminal'], observer, mapping) for role in ROLES}
-    payload_ref, unused = reference(directory / 'probe_result.json', observer, mapping)
+    payload_ref, unused = reference(directory / ('native_capture_payload_timing.json' if configured else 'probe_result.json'), observer, mapping)
     payload = read_reference(payload_ref, observer, mapping)
     if budgeted:diagnostic_deadline.verify_snapshot(payload['diagnostic_deadline'], phase='work')
     require(begin['waiter']['published_at_seconds'] <= begin['capture']['started_at_seconds']

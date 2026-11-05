@@ -1,0 +1,40 @@
+{
+  "actual_target_qualification": false,
+  "author_checks": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-06-20_a4500-native-process-control_python-3.12_total-seconds-300_work-seconds-240_cleanup-seconds-60_admission-closed/.review_metadata/profile_selected_native_slice/five_author_checks_6821437_108.json",
+    "sha256": "86682a9d99209ccbc6dd7144aa8560c375e7b06d83747bdd6db16124f47fd0d4",
+    "size_bytes": 5597
+  },
+  "completion_requirements": [
+    "independent union source/test review",
+    "root source publication",
+    "fresh A4500 selected-Python native zero-environment process qualification and independent actual raw review",
+    "separate reviewed formal profile admission; current guard remains closed"
+  ],
+  "formal_profile_admission": false,
+  "independent_reviewer": "/root/review_bound_h100_timing_launch",
+  "kind": "configured_native_profile_slice_author_handoff",
+  "owned_paths": [
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py",
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_configured_native_profile_plumbing.py"
+  ],
+  "preserved_published_e206_baseline": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-06-20_a4500-native-process-control_python-3.12_total-seconds-300_work-seconds-240_cleanup-seconds-60_admission-closed/.review_metadata/profile_selected_native_slice/profile_selected_published_e206.py",
+    "sha256": "f73918863bcde274c833ad08702936714a2a4cde7ea875e32d319201150f4c57",
+    "size_bytes": 73227
+  },
+  "scientific_credit": 0,
+  "slice_source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-06-20_a4500-native-process-control_python-3.12_total-seconds-300_work-seconds-240_cleanup-seconds-60_admission-closed/.review_metadata/profile_selected_native_slice/source_freeze_author_1.json",
+    "sha256": "5e5325ed5bdc28f2573dad66b4b1328392f07d28a24ec11d68396884f7a16d0d",
+    "size_bytes": 1533
+  },
+  "source_still_held": true,
+  "tests_are_metadata_only": true,
+  "union_source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-06-20_a4500-native-process-control_python-3.12_total-seconds-300_work-seconds-240_cleanup-seconds-60_admission-closed/.review_metadata/configured_native_process/corrected_union_source_freeze.json",
+    "sha256": "36524765c7fba07fad274b0ee170d03df05ead3ea2a1217ffbbfb22ecd84dd39",
+    "size_bytes": 2770
+  },
+  "upstream_and_tool_success_premises_are_synthetic": true
+}

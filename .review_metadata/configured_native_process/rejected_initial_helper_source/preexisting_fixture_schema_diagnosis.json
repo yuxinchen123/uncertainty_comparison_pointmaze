@@ -1,0 +1,16 @@
+{
+  "kind": "preexisting_saved_role_fixture_schema_diagnosis",
+  "base_commit": "ba07a961eeb00f368db70416fd69a9a9313df9b9",
+  "source_checks": {
+    "native_process_evidence.py::validate_scope_snapshot": true,
+    "nsight_process_identity.py::ProcReader": true,
+    "tests/test_native_process_role_evidence.py exactbytes": true
+  },
+  "actual_failure_step": "6821437.101",
+  "actual_error": "saved scoped process requires its exact bounded stat/status schema",
+  "cause": "The old fixture places ancestry snapshots directly into positive_nodes.initial; the already-existing scope reader requires the distinct scope snapshot fields state and command_raw_sha256 and refuses ancestry-only cmdline and executable fields.",
+  "production_reader_weakened": false,
+  "old_fixture_edited": false,
+  "new_configured_four_role_reader_controls_passed": "6821437.102",
+  "scientific_credit": 0
+}

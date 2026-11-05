@@ -1,0 +1,43 @@
+{
+  "kind": "configured_native_author_helper_source_freeze",
+  "base": "ba07a961eeb00f368db70416fd69a9a9313df9b9",
+  "scope": "source-only; no target qualification or admission; profile author slice excluded",
+  "files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_native_process.py": {
+      "sha256": "2092ba878d2d736c7cc39bf4add7749243f0fbf990cfe2fc231f982eb00a8d5d",
+      "mode": "0o660"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/diagnose_configured_native_process.py": {
+      "sha256": "4112b0eaf75f3ccd8b9f8de3c8c29b1eda8c83a02e0a1b0e51e3cc016a27d521",
+      "mode": "0o660"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/native_process_evidence.py": {
+      "sha256": "13101d9ea594ea3b65eabfe1b7227fa396ded5731e471494233059b644d4511a",
+      "mode": "0o660"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/nsight_process_identity.py": {
+      "sha256": "1833e05b42d680194e4a8da9cd2b487d3af7529285d1a9d550edc7d3b63f6279",
+      "mode": "0o660"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_tool_descendants.py": {
+      "sha256": "8fc3e6d870611a2a9e57825b5374a73050a6c98fc3d918f336619e1cfff48889",
+      "mode": "0o660"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/linux_pidfd_process_control.py": {
+      "sha256": "37754acfdf8f139eecc2e9bbac91ee56cc12069a77f237968fe713f8b5b81172",
+      "mode": "0o660"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_process.py": {
+      "sha256": "6177930cf35114405fc6dfca0c7738c26d897eb4aa3fc0eb5adeb39c75b55f77",
+      "mode": "0o660"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_configured_native_process.py": {
+      "sha256": "ccbac9a86e39def2e746b79c619ee17b6b62e3bd8ce09b52e1dc9f752ef58539",
+      "mode": "0o660"
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_configured_native_saved_roles.py": {
+      "sha256": "e1cb0477e17730552eeda91d9bd44fda11ce069941e85e031798f5f9cd5c0090",
+      "mode": "0o660"
+    }
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "actual_owned_CPU_context": {
+    "hostname": "slurm2",
+    "job_id": "6821437",
+    "pid": 1092838,
+    "step_id": "103"
+  },
+  "approved": false,
+  "checks": [
+    "current exact owned CPU job/step/owner",
+    "exact held helper freeze before corrections",
+    "actual held source/test bytes: configured_native_process.py",
+    "actual held source/test bytes: diagnose_configured_native_process.py",
+    "actual held source/test bytes: native_process_evidence.py",
+    "actual held source/test bytes: nsight_process_identity.py",
+    "actual held source/test bytes: direct_tool_descendants.py",
+    "actual held source/test bytes: linux_pidfd_process_control.py",
+    "actual held source/test bytes: direct_profile_process.py",
+    "actual held source/test bytes: test_configured_native_process.py",
+    "concrete metadata fixture reproduces formal producer startup flags that differ from original prepared command",
+    "critical shared ownership reader missing from qualification helper set",
+    "configured waiter gained capture handle but retains live-only descriptor-event condition after child wait",
+    "new diagnostic closes capture handle after actual child wait",
+    "new diagnostic has no explicit signal-to-scope-cleanup context"
+  ],
+  "elapsed_seconds": 0.012795654009096324,
+  "findings": [
+    {
+      "problem": "Future profile producer command adds isolated flags despite original selected profile package-discovery command.",
+      "required_correction": "Keep isolated flags for diagnostic only; preserve original formal profile producer command and numerical child startup."
+    },
+    {
+      "problem": "Configured shared qualification helper hashes omit nsight_process_identity.py, the live ownership/ancestry reader.",
+      "required_correction": "Bind that shared critical reader in configured declaration and diagnostic/profile qualification comparison; stage unique helper names."
+    },
+    {
+      "problem": "New waiter closes capture pidfd after successful child wait, while its saved-role validator requires all descriptor events to retain a live PID.",
+      "required_correction": "Allow only the configured capture-handle close to show exited PID after its actual successful wait timestamp. Self/producer handles remain live-only; other native failures remain failures."
+    },
+    {
+      "problem": "Diagnostic default SIGTERM/SIGINT bypass Python scope cleanup.",
+      "required_correction": "Establish the existing reviewed signal-to-cleanup behavior before tool scope, preserving exact waits/ECHILD and truthful interrupted failure."
+    },
+    {
+      "problem": "New diagnostic preparation emits only a paragraph for the experiment background.",
+      "required_correction": "Generate the standard Purpose, Key hyperparameters, Code and config changes, and Git state sections with actual source and zero-credit scope."
+    }
+  ],
+  "kind": "independent_held_configured_native_helper_static_findings",
+  "no_tool_or_GPU_or_NUM_or_native_operation": true,
+  "raw_formal_profile_command_fixture": [
+    "/synthetic/selected/python",
+    "-I",
+    "-S",
+    "-B",
+    "/synthetic/nonoperational/unit/code/profile_selected.py",
+    "--prepared-unit",
+    "/synthetic/nonoperational/unit"
+  ],
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "scope": "static source and nonoperational command fixture; profile author slice excluded; no native syscall or target work",
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-05-06-20_a4500-native-process-control_python-3.12_total-seconds-300_work-seconds-240_cleanup-seconds-60_admission-closed/.review_metadata/configured_native_process/author_helper_source_freeze_2.json",
+    "sha256": "b124b587b9a3e3f56a4150be0d9d11c43233a6e6e34f2a438c2920668108c4de"
+  }
+}

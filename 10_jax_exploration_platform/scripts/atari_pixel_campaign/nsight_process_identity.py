@@ -1,5 +1,6 @@
 """Observe only the new Nsight process and its owned descendants before numerical work."""
 import hashlib
+import importlib.util
 import json
 import os
 from pathlib import Path
@@ -7,7 +8,9 @@ import re
 import select
 import signal
 import stat
+import sys
 import time
+from types import SimpleNamespace
 
 PROTOCOL = "nsight-owned-descendant-observation-version-1"
 MAX_PROCESSES = 32
@@ -408,8 +411,9 @@ def validate_observation(value, claim, expected_command, parent):
 
 def commands(directory, plan):
     """Record the exact waiter and capture source commands without changing learner settings."""
-    if plan.get("kind") == "nsight_process_identity_diagnostic":
-        entry = str(Path(directory) / "code/diagnose_nsight_process_tree.py")
+    if plan.get("kind") in ("nsight_process_identity_diagnostic", "configured_native_nsight_process_diagnostic"):
+        name = "diagnose_configured_native_process.py" if plan['kind'] == 'configured_native_nsight_process_diagnostic' else "diagnose_nsight_process_tree.py"
+        entry = str(Path(directory) / "code" / name)
         return ([plan["python"], "-I", "-S", "-B", entry, "--waiter-unit", str(directory)],
                 [plan["python"], "-I", "-S", "-B", entry, "--probe-unit", str(directory)])
     entry = str(Path(directory) / "code/profile_selected.py")
@@ -430,7 +434,7 @@ def validate_saved_intent(directory, plan, intent):
     """Reconstruct source, command and owned-step scope without inspecting historical PIDs."""
     directory = Path(directory)
     waiter, capture = commands(directory, plan)
-    entry_name = "diagnose_nsight_process_tree.py" if plan.get("kind") == "nsight_process_identity_diagnostic" else "profile_selected.py"
+    entry_name = "diagnose_configured_native_process.py" if plan.get('kind') == 'configured_native_nsight_process_diagnostic' else "diagnose_nsight_process_tree.py" if plan.get("kind") == "nsight_process_identity_diagnostic" else "profile_selected.py"
     require(intent.get("protocol") == PROTOCOL and type(intent.get("schema_version")) is int
             and intent["schema_version"] == 1 and type(intent.get("challenge")) is str
             and re.fullmatch(r"[0-9a-f]{64}", intent["challenge"])
@@ -467,7 +471,7 @@ def make_intent(directory, plan, command):
     parent = ProcReader().snapshot(os.getpid(), os.getuid())
     waiter, capture = commands(directory, plan)
     # This entropy is an attempt identifier, not an environment or learner RNG draw.
-    entry_name = "diagnose_nsight_process_tree.py" if plan.get("kind") == "nsight_process_identity_diagnostic" else "profile_selected.py"
+    entry_name = "diagnose_configured_native_process.py" if plan.get('kind') == 'configured_native_nsight_process_diagnostic' else "diagnose_nsight_process_tree.py" if plan.get("kind") == "nsight_process_identity_diagnostic" else "profile_selected.py"
     value = {"schema_version": 1, "protocol": PROTOCOL, "challenge": os.urandom(32).hex(),
              "plan": receipt(directory / "measurement_plan.json"),
              "source": receipt(directory / "code" / entry_name), "parent": parent,
@@ -627,6 +631,21 @@ def validate_saved(directory, plan, result):
             "the captured numerical result belongs to another process or omitted its actual wait")
     require(result.get("profiler_actual_wait") == receipt(directory / "profiler_actual_wait.json"),
             "the numerical result omitted the actual original Nsight wait")
+    if 'configured_native_process_control' in plan:
+        path = Path(__file__).with_name('configured_native_process.py')
+        require(path.resolve(strict=True) == path and receipt(path)['sha256'] == plan['helpers']['files'].get(
+            '10_jax_exploration_platform/scripts/atari_pixel_campaign/' + path.name), 'the saved native allocation reader changed')
+        name = 'saved_configured_native_' + hashlib.sha256(str(path).encode()).hexdigest()
+        if name not in sys.modules:
+            spec = importlib.util.spec_from_file_location(name, path)
+            module = importlib.util.module_from_spec(spec);spec.loader.exec_module(module);sys.modules[name] = module
+        reader = sys.modules[name]
+        require(Path(reader.__file__).resolve(strict=True) == path, 'the saved configured reader namespace changed')
+        metadata = SimpleNamespace(receipt=receipt, read_json=read_json, validate_snapshot=validate_snapshot,
+            stable=stable, parsed_uids=parsed_uids, MAX_BYTES=MAX_BYTES)
+        proof = reader.validate_saved(directory, plan, metadata, intent, observation, launch, waited,
+            reader.saved_deadline(directory, plan, metadata))
+        require(result.get('configured_native_process_proof') == proof, 'the result omitted its exact native role and terminal scope proof')
     return {"capture_identity": receipt(directory / "capture_identity.json"),
             "process_observation": receipt(directory / "capture_process_observation.json"),
             "capture_wait": receipt(directory / "capture_actual_wait.json"), "capture_pid": rebuilt["capture"]["pid"]}
