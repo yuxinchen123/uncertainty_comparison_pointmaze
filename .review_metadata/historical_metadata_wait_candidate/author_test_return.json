@@ -1,0 +1,19 @@
+{
+  "returncode": 0,
+  "command": [
+    "srun",
+    "--jobid=6783003",
+    "--overlap",
+    "--exact",
+    "-n1",
+    "-c1",
+    "--mem=512M",
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "/p/rlprojects/RND_worktrees/2026-11-04-22-50_historical-metadata-wait_candidate-child-seconds-900_candidate-guard-seconds-1800_admitted-seconds-180_gpu-count-0/.review_metadata/historical_metadata_wait_candidate/run_existing_historical_metadata_tests.py"
+  ],
+  "stdout_sha256": "332ddf1a30039e5730b34c455d201dfe7f91f526afe137ec2d0f7fc872f4e48a",
+  "stderr_sha256": "9ce3b16e9dd45b85a57cda76338d404af155aafa08816e3708f490c0a9cc09ac"
+}

@@ -447,7 +447,7 @@ def request(plan, raw=None, directory=None):
     executable = Path(directory) / "code" / NAME if directory is not None else Path(__file__).absolute()
     command = ["/usr/bin/python3", "-I", "-S", "-B", str(executable), "--plan-stdin"]
     try:
-        result = subprocess.run(command, input=raw, capture_output=True, timeout=180, check=False,
+        result = subprocess.run(command, input=raw, capture_output=True, timeout=1800, check=False,
             env=metadata_environment(os.environ))
     except BaseException as error:
         if directory is not None:

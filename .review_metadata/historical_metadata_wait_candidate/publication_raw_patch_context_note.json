@@ -1,0 +1,8 @@
+{
+  "kind": "recorded_raw_git_patch_context_whitespace",
+  "first_check_refused": true,
+  "only_exception_path": ".review_metadata/historical_metadata_wait_candidate/exact_two_constant_patch.diff",
+  "reason": "The exact raw Git patch contains blank context lines represented by one space. Preserve its frozen original bytes; check every actual source and other record normally.",
+  "source_bytes_changed_to_address_this_note": false,
+  "frozen_evidence_changed": false
+}

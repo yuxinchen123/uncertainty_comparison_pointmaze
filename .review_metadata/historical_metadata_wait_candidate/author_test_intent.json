@@ -1,0 +1,27 @@
+{
+  "command": [
+    "srun",
+    "--jobid=6783003",
+    "--overlap",
+    "--exact",
+    "-n1",
+    "-c1",
+    "--mem=512M",
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "/p/rlprojects/RND_worktrees/2026-11-04-22-50_historical-metadata-wait_candidate-child-seconds-900_candidate-guard-seconds-1800_admitted-seconds-180_gpu-count-0/.review_metadata/historical_metadata_wait_candidate/run_existing_historical_metadata_tests.py"
+  ],
+  "source_files": {
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_historical_consumer.py": {
+      "sha256": "c6ade4959e040f9b47a34b65b48889ebd28dc4a3d76f896db3b64f3bac7c7685",
+      "bytes": 24121
+    },
+    "10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_confirmation.py": {
+      "sha256": "0653f2a8b9ab51ef3037d47be74b0773051205f5fb949ff64ad9f4d17726b749",
+      "bytes": 62623
+    }
+  },
+  "actual_genuine_guard_invoked": false
+}

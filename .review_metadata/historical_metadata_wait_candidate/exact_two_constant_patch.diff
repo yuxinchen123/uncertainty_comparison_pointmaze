@@ -1,0 +1,26 @@
+diff --git a/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_confirmation.py b/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_confirmation.py
+index 6e69a6d9..6a422d2b 100644
+--- a/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_confirmation.py
++++ b/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_common_confirmation.py
+@@ -447,7 +447,7 @@ def request(plan, raw=None, directory=None):
+     executable = Path(directory) / "code" / NAME if directory is not None else Path(__file__).absolute()
+     command = ["/usr/bin/python3", "-I", "-S", "-B", str(executable), "--plan-stdin"]
+     try:
+-        result = subprocess.run(command, input=raw, capture_output=True, timeout=180, check=False,
++        result = subprocess.run(command, input=raw, capture_output=True, timeout=1800, check=False,
+             env=metadata_environment(os.environ))
+     except BaseException as error:
+         if directory is not None:
+diff --git a/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_historical_consumer.py b/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_historical_consumer.py
+index ec0b2aaf..7b2de9ed 100644
+--- a/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_historical_consumer.py
++++ b/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_historical_consumer.py
+@@ -24,7 +24,7 @@ PROTOCOL = {"schema_version": 1, "capability": "exact_old_staged_direct_consumer
+     "digest_cache": "disabled", "operational_admission": False}
+ LIMIT = 1024 * 1024
+ DOCUMENT_LIMIT = 64 * 1024 * 1024
+-WAIT_SECONDS = 180
++WAIT_SECONDS = 900
+ 
+ 
+ def require(condition, message):

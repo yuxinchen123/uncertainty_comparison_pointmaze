@@ -24,7 +24,7 @@ PROTOCOL = {"schema_version": 1, "capability": "exact_old_staged_direct_consumer
     "digest_cache": "disabled", "operational_admission": False}
 LIMIT = 1024 * 1024
 DOCUMENT_LIMIT = 64 * 1024 * 1024
-WAIT_SECONDS = 180
+WAIT_SECONDS = 900
 
 
 def require(condition, message):
