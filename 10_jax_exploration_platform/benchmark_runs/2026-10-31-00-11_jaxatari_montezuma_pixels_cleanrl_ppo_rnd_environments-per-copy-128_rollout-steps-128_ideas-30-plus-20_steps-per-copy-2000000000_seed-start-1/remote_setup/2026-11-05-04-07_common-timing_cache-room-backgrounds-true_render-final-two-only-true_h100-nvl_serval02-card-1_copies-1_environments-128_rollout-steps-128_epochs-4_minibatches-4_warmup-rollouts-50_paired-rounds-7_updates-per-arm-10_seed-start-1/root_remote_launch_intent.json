@@ -1,0 +1,21 @@
+{
+  "kind": "one_actual_fresh_current_claim_checked_timing_transport_attempt",
+  "at_utc": "2026-11-05T12:29:51.659207+00:00",
+  "argv": [
+    "ssh",
+    "-o",
+    "BatchMode=yes",
+    "-o",
+    "ControlMaster=no",
+    "-o",
+    "ConnectTimeout=15",
+    "serval02",
+    "/usr/bin/env -i PATH=/usr/local/bin:/usr/bin:/bin LANG=C.UTF-8 TZ=UTC CUDA_VISIBLE_DEVICES=GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3 PYTHONDONTWRITEBYTECODE=1 PYTHONNOUSERSITE=1 /usr/bin/python3 -I -S -B /p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-04-07_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/root_start_controller_once.py"
+  ],
+  "outer_publication": "cc32823eefd9ead6eaba9604c958588f233a365b",
+  "inner_publication": "61b57745832bb640ff5c66019edf0a4aca34ced4",
+  "automatic_retry_permitted": false,
+  "standing_gpu_lock_touched": false,
+  "actual_controller_pid": null,
+  "actual_numerical_child_pid": null
+}

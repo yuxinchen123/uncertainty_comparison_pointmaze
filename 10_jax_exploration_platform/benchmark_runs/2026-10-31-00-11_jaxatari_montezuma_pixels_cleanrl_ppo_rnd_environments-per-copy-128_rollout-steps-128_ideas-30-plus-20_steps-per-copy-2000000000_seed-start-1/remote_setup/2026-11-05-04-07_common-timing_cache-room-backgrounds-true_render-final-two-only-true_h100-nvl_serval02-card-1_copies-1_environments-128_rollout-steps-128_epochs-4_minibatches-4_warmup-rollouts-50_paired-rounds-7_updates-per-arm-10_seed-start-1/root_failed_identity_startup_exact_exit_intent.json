@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "ssh",
+    "-o",
+    "BatchMode=yes",
+    "-o",
+    "ControlMaster=no",
+    "-o",
+    "ConnectTimeout=15",
+    "serval02",
+    "/usr/bin/env -i PATH=/usr/bin:/bin LANG=C.UTF-8 /usr/bin/python3 -I -S -B -c 'import os,json,pathlib,datetime\nassert os.uname().nodename.split('\"'\"'.'\"'\"')[0]=='\"'\"'serval02'\"'\"' and os.getuid()==2618919\nrows=[]\nfor pid,birth in [(351185,'\"'\"'84237458'\"'\"'),(351650,'\"'\"'84242978'\"'\"')]:\n p=pathlib.Path('\"'\"'/proc'\"'\"')/str(pid)\n try:\n  stat=(p/'\"'\"'stat'\"'\"').read_text(); current=stat[stat.rfind('\"'\"')'\"'\"')+2:].split()[19]\n except FileNotFoundError:\n  rows.append({'\"'\"'pid'\"'\"':pid,'\"'\"'expected_birth_counter'\"'\"':birth,'\"'\"'proc_entry_absent'\"'\"':True,'\"'\"'original_process_ended'\"'\"':True});continue\n rows.append({'\"'\"'pid'\"'\"':pid,'\"'\"'expected_birth_counter'\"'\"':birth,'\"'\"'proc_entry_absent'\"'\"':False,'\"'\"'current_birth_matches'\"'\"':current==birth,'\"'\"'original_process_ended'\"'\"':current!=birth})\nv={'\"'\"'kind'\"'\"':'\"'\"'exact_owned_failed_controller_and_child_exit_observation'\"'\"','\"'\"'at_utc'\"'\"':datetime.datetime.now(datetime.timezone.utc).isoformat(),'\"'\"'host'\"'\"':os.uname().nodename,'\"'\"'uid'\"'\"':os.getuid(),'\"'\"'observations'\"'\"':rows,'\"'\"'all_original_processes_ended'\"'\"':all(x['\"'\"'original_process_ended'\"'\"'] for x in rows),'\"'\"'signals_sent'\"'\"':0,'\"'\"'standing_gpu_lock_operations'\"'\"':0,'\"'\"'global_process_enumeration'\"'\"':False}\nprint(json.dumps(v));assert v['\"'\"'all_original_processes_ended'\"'\"']\n'"
+  ],
+  "at_utc": "2026-11-05T12:45:34.982098+00:00",
+  "read_only": true
+}
