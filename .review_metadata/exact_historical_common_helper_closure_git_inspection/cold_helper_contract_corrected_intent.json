@@ -1,0 +1,18 @@
+{
+  "command": [
+    "srun",
+    "--jobid=6783003",
+    "--overlap",
+    "--exact",
+    "--ntasks=1",
+    "--cpus-per-task=1",
+    "--mem=1G",
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "/p/rlprojects/RND_worktrees/2026-11-04-22-30_historical-common-reader_exact-source-8eb306af_git-inspection-function-b181e171_helpers-28_gpu-count-0/.review_metadata/exact_historical_common_helper_closure_git_inspection/run_cold_helper_contract_checks.py"
+  ],
+  "started_at_seconds": 1793860351.2754,
+  "actual_guard_invoked": false
+}

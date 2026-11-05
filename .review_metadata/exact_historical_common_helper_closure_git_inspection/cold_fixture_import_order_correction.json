@@ -1,0 +1,12 @@
+{
+  "actual_guard_invoked": false,
+  "correction": "Load this module only through unchanged support.historical_support(plan), then retain that returned module for process metadata.",
+  "failed_cpu_step": "6783003.370",
+  "failed_source": {
+    "path": "/p/rlprojects/RND_worktrees/2026-11-04-22-30_historical-common-reader_exact-source-8eb306af_git-inspection-function-b181e171_helpers-28_gpu-count-0/.review_metadata/exact_historical_common_helper_closure_git_inspection/rejected_cold_fixture_import_order_source.py",
+    "sha256": "f7d7454a3e20d45604380a4f7dca7fefaa9e1221d8feb998c4f926ecc0ec4e1d"
+  },
+  "kind": "fixture_only_verified_import_order_correction",
+  "production_source_changed": false,
+  "reason": "The fixture directly imported the historical module without its required verified-loader executed-source marker. The unchanged loader correctly refused it."
+}

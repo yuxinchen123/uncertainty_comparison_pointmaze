@@ -1,0 +1,43 @@
+{
+  "base_commit": "8eb306af9f68aed5ab5cc0d01f75b35a1f234078",
+  "commands": [
+    [
+      "srun",
+      "--jobid=6783003",
+      "--overlap",
+      "--exact",
+      "--ntasks=1",
+      "--cpus-per-task=1",
+      "--mem=1G",
+      "/usr/bin/python3",
+      "-I",
+      "-S",
+      "-B",
+      "/p/rlprojects/RND_worktrees/2026-11-04-22-30_historical-common-reader_exact-source-8eb306af_git-inspection-function-b181e171_helpers-28_gpu-count-0/.review_metadata/historical_git_read_only_branch_name/run_focused_git_shape_tests.py"
+    ],
+    [
+      "srun",
+      "--jobid=6783003",
+      "--overlap",
+      "--exact",
+      "--ntasks=1",
+      "--cpus-per-task=1",
+      "--mem=1G",
+      "/usr/bin/python3",
+      "-I",
+      "-S",
+      "-B",
+      "/p/rlprojects/RND_worktrees/2026-11-04-22-30_historical-common-reader_exact-source-8eb306af_git-inspection-function-b181e171_helpers-28_gpu-count-0/.review_metadata/exact_historical_common_helper_closure_git_inspection/run_cold_helper_contract_checks.py"
+    ]
+  ],
+  "genuine_guard_invocation_permitted": false,
+  "gpus": 0,
+  "host_memory_gib": 1,
+  "kind": "source_only_historical_common_helper_cpu_fixtures",
+  "requested_cpus": 1,
+  "scientific_credit": 0,
+  "source_change": "Only the exact previously approved source_inspection_git function is copied into the retained old common closure.",
+  "source_test_inputs": {
+    "source_change_contract_sha256": "37525c5b438e6dcbed0b6cf049c95addeb34d7d547ba1dd327c3aa5b5f54fc07"
+  }
+}
