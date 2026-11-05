@@ -1,0 +1,18 @@
+{
+  "command": [
+    "ssh",
+    "-o",
+    "BatchMode=yes",
+    "-o",
+    "ControlMaster=no",
+    "-o",
+    "ConnectTimeout=15",
+    "serval02",
+    "/usr/bin/python3 -I -S -B /p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-14-36_failed-h100-exit-observation_controller-pid-1042828_birth-87798085_numerical-pid-1042870_birth-87798186_read-only-true_gpu-operations-0/observe_exact_prior_h100_exits.py"
+  ],
+  "publication": "ecdec2e003a401598d262fc2c90a56e9b5f6b266",
+  "source_sha256": "3469cf9bd006f8d1a6b7f95879df2da2b6ec9e2e1ff28f4a3959ca7872b89de8",
+  "review_sha256": "51a3f566de024395160c60ad61176eed97a75c318adad5137913cd4b52c84e8f",
+  "automatic_retry_permitted": false,
+  "at_utc": "2026-11-05T22:39:54.985093+00:00"
+}

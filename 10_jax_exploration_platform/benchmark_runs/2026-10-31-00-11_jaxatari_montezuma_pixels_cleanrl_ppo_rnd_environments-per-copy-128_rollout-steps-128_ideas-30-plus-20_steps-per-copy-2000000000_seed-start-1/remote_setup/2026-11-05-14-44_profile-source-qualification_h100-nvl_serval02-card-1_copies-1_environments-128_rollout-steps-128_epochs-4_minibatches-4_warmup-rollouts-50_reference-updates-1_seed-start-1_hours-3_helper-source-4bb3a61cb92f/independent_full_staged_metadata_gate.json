@@ -1,0 +1,106 @@
+{
+  "actual_job_id": "6825983",
+  "actual_selected_python": "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python",
+  "actual_step_id": "158",
+  "actual_target_qualification": false,
+  "admission_granted": false,
+  "error": null,
+  "independent_of_producer": true,
+  "kind": "independent_actual_full_staged_profile_metadata_gate",
+  "numerical_GPU_native_tool_network_operations": false,
+  "own_process_stdlib_bootstrap": {
+    "before_audit_hook": true,
+    "handle_name": null,
+    "module": "/p/rlprojects/RND/.venvs/atari_pixels_jax/lib/python3.12/ctypes/__init__.py"
+  },
+  "passed": true,
+  "plan": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-44_profile-source-qualification_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-4bb3a61cb92f/measurement_plan.json",
+    "sha256": "4953e5a2f75f6c49d586a7facdc75fa63cc2f3dfec98f792e446b5ffa9f05fef"
+  },
+  "plan_or_source_hash_checks_overridden": false,
+  "read_only_source_git_commands": [
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "rev-parse",
+      "HEAD"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "symbolic-ref",
+      "--quiet",
+      "HEAD"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "status",
+      "--porcelain",
+      "--untracked-files=all",
+      "--",
+      "10_jax_exploration_platform/src/exploration_platform/atari_pixels",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/worker_environment.sh"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "ls-tree",
+      "-rz",
+      "d28e6735e79788f618acb0ebfde8609db1f776af",
+      "--",
+      "10_jax_exploration_platform/src/exploration_platform/atari_pixels",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/worker_environment.sh"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "rev-parse",
+      "HEAD"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "status",
+      "--porcelain",
+      "--untracked-files=all",
+      "--",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/paired_benchmark.py",
+      "10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "show",
+      "d28e6735e79788f618acb0ebfde8609db1f776af:10_jax_exploration_platform/scripts/atari_pixel_campaign/paired_benchmark.py"
+    ],
+    [
+      "git",
+      "-C",
+      "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+      "show",
+      "d28e6735e79788f618acb0ebfde8609db1f776af:10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py"
+    ]
+  ],
+  "reviewed_at_utc": "2026-11-05T22:51:54.685968+00:00",
+  "reviewer_hostname": "slurm5",
+  "reviewer_pid": 1306643,
+  "reviewer_uid": 2618919,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "seconds": 13.008005355950445,
+  "source_or_function_overrides": false,
+  "staged_entrypoint": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-44_profile-source-qualification_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-4bb3a61cb92f/code/profile_selected.py",
+    "sha256": "f80d82376f15eaee4f862e8eddf20dee470eff3976fab687a823e481f08e74dd"
+  },
+  "unit": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-14-44_profile-source-qualification_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_reference-updates-1_seed-start-1_hours-3_helper-source-4bb3a61cb92f"
+}
