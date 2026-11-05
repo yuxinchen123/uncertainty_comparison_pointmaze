@@ -1,0 +1,13 @@
+{
+  "kind": "preserved_private_stat_refresh_review_failure",
+  "prior_failure": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-18-21_reporting-incoming-source-review_root-5c03ca865b1b_author-05f65ec2e9f7_paths-76_gpu-count-0_host-memory-mib-512_private-index/failure.json",
+    "sha256": "8f3511368f08bacbf0fb9a1191d094aade767327fadc474c1051c0abeb6fb0c1"
+  },
+  "cause_established": false,
+  "initial_reviewer_did_not_save_exact_stdout_paths": true,
+  "correction": "Capture actual raw refresh paths; each must be currently dirty and disjoint from incoming; newly dirty paths must be explicitly declared dynamic outputs. No source, collision or real-index condition is removed.",
+  "source_bytes_edited": false,
+  "root_head": "5c03ca865b1bd706d683c3e1b3a85fb751d944ad",
+  "at_utc": "2026-11-05T02:23:03.606189+00:00"
+}

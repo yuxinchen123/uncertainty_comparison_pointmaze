@@ -1,0 +1,84 @@
+{
+  "actual_private_index_dry_run_passed": true,
+  "actual_private_three_way_index_merge_passed": true,
+  "all_metadata_only_path_identities_and_stats_unchanged": true,
+  "author_commit": "05f65ec2e9f706858234e6c8a0e9255a326fc22f",
+  "author_parent": "2973bf70402aaf78337f9fea0a19764c58e35fad",
+  "branch_or_working_tree_modified": false,
+  "captured_binary_contents_opened_or_rehashed": false,
+  "commands": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-18-32_reporting-incoming-source-review_live-output-stat-refresh_recorded-current-dirty-paths_paths-76_gpu-count-0_host-memory-mib-512_private-index/git_metadata_commands.json",
+    "sha256": "ed3fa293052209a7f8de7784e86194f0046ef7a500fd915d60860569e5b49896"
+  },
+  "current_committed_overlap": [],
+  "current_static_source_text_or_symlink_paths": 494,
+  "current_static_workspace_proof": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-18-32_reporting-incoming-source-review_live-output-stat-refresh_recorded-current-dirty-paths_paths-76_gpu-count-0_host-memory-mib-512_private-index/workspace_static_content_before.json",
+    "sha256": "bfb945156b59ec86ab8ad1641cbbb05fa87a0417ff409dcd137c9b20e954929b"
+  },
+  "dirty_overlap": [],
+  "dirty_paths_after": 7,
+  "dirty_paths_before": 7,
+  "dynamic_outputs": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-18-32_reporting-incoming-source-review_live-output-stat-refresh_recorded-current-dirty-paths_paths-76_gpu-count-0_host-memory-mib-512_private-index/separate_dynamic_outputs.json",
+    "sha256": "6e13eafad4283d984bb27d20bf8f39258b36f552bf2c6d121abdc4f1bb1b19e0"
+  },
+  "finished_at": "2026-11-04T21:24:07.543189-05:00",
+  "ignored_paths_after": 20545,
+  "ignored_paths_before": 20534,
+  "ignored_untracked_collisions": [],
+  "incoming_blobs": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-18-32_reporting-incoming-source-review_live-output-stat-refresh_recorded-current-dirty-paths_paths-76_gpu-count-0_host-memory-mib-512_private-index/exact_incoming_blobs.json",
+    "sha256": "c26650966061d0c5747386196c900d45ab3fe4822d9591460f0d8533366d0101"
+  },
+  "incoming_paths": 76,
+  "kind": "independent_post_initial_reporting_incoming_source_review",
+  "live_output_bytes_never_change_claimed": false,
+  "metadata_only_non_source_paths": 698,
+  "metadata_only_path_proof": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-18-32_reporting-incoming-source-review_live-output-stat-refresh_recorded-current-dirty-paths_paths-76_gpu-count-0_host-memory-mib-512_private-index/workspace_metadata_only_before.json",
+    "sha256": "261cf4c707a480d8dc06594ee17a67aacb7f8c09d81374f007c18c16a6606efe"
+  },
+  "numerical_imports_or_scientific_audits": 0,
+  "own_review_directory_is_the_only_working_tree_write": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-18-32_reporting-incoming-source-review_live-output-stat-refresh_recorded-current-dirty-paths_paths-76_gpu-count-0_host-memory-mib-512_private-index",
+  "passed": true,
+  "per_process_address_space_limit_bytes": 536870912,
+  "predicted_merge_tree": "3dc69323a29d3470b37e93a84a6e8f0747cb4b25",
+  "protected_imported_hashed_source_files": 626,
+  "protected_sources_unchanged": true,
+  "real_index_after": {
+    "ctime_ns": 1793845194945912701,
+    "device": 55,
+    "inode": 4779563,
+    "kind": "regular",
+    "mode": 436,
+    "mtime_ns": 1793845194925912659,
+    "path": "/p/rlprojects/RND/.git/worktrees/merge-atari-cleanrl/index",
+    "sha256": "929a58ad43b4495342011d70e570357f51935e8a43c963e727e78b35296dbac2",
+    "size": 4449813,
+    "uid": 2618919
+  },
+  "real_index_before": {
+    "ctime_ns": 1793845194945912701,
+    "device": 55,
+    "inode": 4779563,
+    "kind": "regular",
+    "mode": 436,
+    "mtime_ns": 1793845194925912659,
+    "path": "/p/rlprojects/RND/.git/worktrees/merge-atari-cleanrl/index",
+    "sha256": "929a58ad43b4495342011d70e570357f51935e8a43c963e727e78b35296dbac2",
+    "size": 4449813,
+    "uid": 2618919
+  },
+  "real_merge_performed": false,
+  "remote_actions": 0,
+  "root_head": "5c03ca865b1bd706d683c3e1b3a85fb751d944ad",
+  "slurm_commands_or_actions": 0,
+  "source_proof": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-18-32_reporting-incoming-source-review_live-output-stat-refresh_recorded-current-dirty-paths_paths-76_gpu-count-0_host-memory-mib-512_private-index/protected_static_sources.json",
+    "sha256": "64718cfc6ab601547a68d31959c99a0e4872ab5f6e44b4e5bb7741e1e3b56985"
+  },
+  "started_at": "2026-11-04T21:23:04.061540-05:00",
+  "untracked_paths_after": 1310,
+  "untracked_paths_before": 1310
+}

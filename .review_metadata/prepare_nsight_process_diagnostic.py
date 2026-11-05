@@ -47,6 +47,7 @@ def prepare(root, commit, run, name, tool_path, *, reservation=None, unreserved=
                              else "The caller explicitly selected reservation " + reservation + ".")
     reservation_arguments = [] if unreserved else ["--reservation=" + reservation]
     reservation_directive = "" if unreserved else "#SBATCH --reservation=" + reservation + "\n"
+    qos = "normal" if unreserved else "csresnolim"
     checked(re.fullmatch(r"[0-9a-f]{40}", commit) and root.is_absolute() and root.resolve(strict=True) == root,
             "an exact published helper root and full commit are required")
     checked(git(root, "rev-parse", "HEAD").decode().strip() == commit
@@ -72,7 +73,7 @@ def prepare(root, commit, run, name, tool_path, *, reservation=None, unreserved=
         "files": {RELATIVE + filename: hashlib.sha256(raw).hexdigest() for filename, raw in raw_files.items()}}
     plan = {"schema_version": 1, "kind": KIND, "unit_id": name, "campaign_run_dir": str(run), "packet": str(packet),
         "python": PYTHON, "helpers": helpers, "profile_tool": tool, "gpu_uuid": None, "job_id": None,
-        "resources": {"partition": "gpu", "account": "sl5nw_base", "qos": "csresnolim", "reservation": reservation,
+        "resources": {"partition": "gpu", "account": "sl5nw_base", "qos": qos, "reservation": reservation,
             "node": "jaguar03", "nodes": 1, "tasks": 1, "requested_cpus": 1, "host_memory_gib": 2,
             "gres": "gpu:nvidia_rtx_a4500:1", "wall_seconds": 300, "requeue": False},
         "work": {"learner_updates": 0, "warmup_rollouts": 0, "cuda_profiler_api_calls_by_payload": 0,
@@ -112,7 +113,7 @@ def prepare(root, commit, run, name, tool_path, *, reservation=None, unreserved=
         "exec " + shlex.join(launch) + "\n").encode()
     script = put(packet / "job.sbatch", shell)
     held = ["sbatch", "--hold", "--parsable", "--no-requeue", "--partition=gpu", "--account=sl5nw_base",
-        "--qos=csresnolim", *reservation_arguments, "--nodelist=jaguar03", "--nodes=1", "--ntasks=1",
+        "--qos=" + qos, *reservation_arguments, "--nodelist=jaguar03", "--nodes=1", "--ntasks=1",
         "--cpus-per-task=1", "--mem=2G", "--gres=gpu:nvidia_rtx_a4500:1", "--time=00:05:00", str(packet / "job.sbatch")]
     put(packet / "held_submission_command.json", held)
     checked_files = [*sorted((unit / "code").iterdir()), unit / "measurement_plan.json", unit / "measurement_prepared.json"]

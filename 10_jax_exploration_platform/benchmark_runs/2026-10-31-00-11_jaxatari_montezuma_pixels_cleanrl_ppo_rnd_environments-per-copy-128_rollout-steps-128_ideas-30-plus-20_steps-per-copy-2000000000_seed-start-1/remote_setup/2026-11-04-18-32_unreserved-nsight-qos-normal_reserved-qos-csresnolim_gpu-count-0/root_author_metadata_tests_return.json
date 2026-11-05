@@ -1,0 +1,25 @@
+{
+  "command": [
+    "srun",
+    "--jobid=6783003",
+    "--overlap",
+    "--exact",
+    "--ntasks=1",
+    "--cpus-per-task=1",
+    "--mem=512M",
+    "/usr/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests",
+    "-p",
+    "test_nsight_diagnostic_preparation.py",
+    "-v"
+  ],
+  "returncode": 0,
+  "at_utc": "2026-11-05T02:30:23.156888+00:00"
+}

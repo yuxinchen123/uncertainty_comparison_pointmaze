@@ -51,7 +51,10 @@ class PreparationTests(unittest.TestCase):
         self.assertIsNone(plan["job_id"]); self.assertIsNone(plan["gpu_uuid"])
         self.assertEqual(plan["work"]["learner_updates"], 0)
         self.assertIsNone(plan["resources"]["reservation"])
+        self.assertEqual(plan["resources"]["qos"], "normal")
         command = json.loads((packet / "held_submission_command.json").read_text())
+        self.assertIn("--qos=normal", command)
+        self.assertNotIn("--qos=csresnolim", command)
         for argument in ("--hold", "--no-requeue", "--cpus-per-task=1", "--mem=2G", "--time=00:05:00",
                          "--gres=gpu:nvidia_rtx_a4500:1", "--nodelist=jaguar03"):
             self.assertIn(argument, command)
@@ -85,12 +88,15 @@ class PreparationTests(unittest.TestCase):
         packet, unit = Path(result["packet"]), Path(result["unit"])
         plan = json.loads((unit / "measurement_plan.json").read_text())
         self.assertEqual(plan["resources"]["reservation"], reservation)
+        self.assertEqual(plan["resources"]["qos"], "csresnolim")
         for directory in (packet, unit):
             for name in ("manifest.yaml", "config_resolved.yaml"):
                 self.assertEqual(json.loads((directory / name).read_text()), plan)
             self.assertIn("explicitly selected reservation " + reservation,
                           (directory / "experiment_background.md").read_text())
         command = json.loads((packet / "held_submission_command.json").read_text())
+        self.assertIn("--qos=csresnolim", command)
+        self.assertNotIn("--qos=normal", command)
         self.assertEqual([argument for argument in command if argument.startswith("--reservation")],
                          ["--reservation=" + reservation])
         script = (packet / "job.sbatch").read_text()

@@ -1,0 +1,12 @@
+{
+  "kind": "frozen_review_records_whitespace_warning_preserved",
+  "at_utc": "2026-11-05T02:19:30.980237+00:00",
+  "initial_commit_not_attempted_due_to_whole_record_check": true,
+  "capture_check_returncode": 2,
+  "capture_check_stdout": ".review_metadata/monitor_post_initial_reporting/independent_reviews/2026-11-04-15-38_monitor-reporting-corrected-independent-review_gpu-count-0_processor-count-1_host-memory-mib-512/private_review_stderr.raw:56: new blank line at EOF.\n.review_metadata/monitor_post_initial_reporting/reviewable_source.patch:15: trailing whitespace.\n+ \n.review_metadata/monitor_post_initial_reporting/reviewable_source.patch:16: trailing whitespace.\n+ \n.review_metadata/monitor_post_initial_reporting/reviewable_source.patch:240: trailing whitespace.\n+ \n.review_metadata/monitor_post_initial_reporting/reviewable_source.patch:260: trailing whitespace.\n+ \n.review_metadata/monitor_post_initial_reporting/reviewable_source_after_independent_review_corrections.patch:210: trailing whitespace.\n+ \n.review_metadata/monitor_post_initial_reporting/reviewable_source_after_independent_review_corrections.patch:211: trailing whitespace.\n+ \n.review_metadata/monitor_post_initial_reporting/reviewable_source_after_independent_review_corrections.patch:258: trailing whitespace.\n+ \n.review_metadata/monitor_post_initial_reporting/reviewable_source_after_independent_review_corrections.patch:278: trailing whitespace.\n+ \n",
+  "capture_check_stderr": "",
+  "actual_three_source_paths_check_returncode": 0,
+  "frozen_record_bytes_not_trimmed": true,
+  "staged_exact_hashes_verified": true,
+  "reason": "Frozen raw unittest output and source patch snapshots retain original whitespace. The three actual source files have no whitespace error."
+}

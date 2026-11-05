@@ -1,0 +1,77 @@
+{
+  "admission_granted": false,
+  "binding": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-01-23-06_common_cache-room-backgrounds-true_render-final-two-only-true_correctness_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_seed-start-1_hours-3/direct_device_binding.json",
+    "sha256": "3c2d28689a03154627fc2f6a1b0405cc0d217e67e585324cc0923991d0e03064"
+  },
+  "case_credit": 0,
+  "confidential_computing_query": {
+    "command": [
+      "nvidia-smi",
+      "conf-compute",
+      "-f",
+      "-i",
+      "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stdout": "CC status: OFF\n",
+    "stdout_sha256": "9726187297120819b9e8e110d690c63e2b02b20b18fbf376e0ac151145dd71ca"
+  },
+  "idea_credit": 0,
+  "kernel_device_enforcement_verified": false,
+  "kind": "direct_bound_h100_startup_checks",
+  "mode_query": {
+    "command": [
+      "nvidia-smi",
+      "-i",
+      "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3",
+      "--query-gpu=uuid,mig.mode.current,memory.used",
+      "--format=csv,noheader,nounits"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stdout": "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3, Disabled, 563\n",
+    "stdout_sha256": "0f8e1bb1092b0e8b609477b295ea0853774cfe56a95f8746b72718b6abca0f8a"
+  },
+  "packing_point_credit": 0,
+  "passed": true,
+  "pre_context_occupancy_observed": false,
+  "process_query": {
+    "capture_error": null,
+    "command": [
+      "nvidia-smi",
+      "-i",
+      "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3",
+      "--query-compute-apps=gpu_uuid,pid,used_gpu_memory",
+      "--format=csv,noheader,nounits"
+    ],
+    "complete": true,
+    "finished_at_seconds": 1793837700.0641544,
+    "gpu_uuid": "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3",
+    "other_active_compute_rows": 0,
+    "own": {
+      "bytes": 580911104,
+      "gpu_uuid": "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3",
+      "pid": 3892092
+    },
+    "own_pid": 3892092,
+    "returncode": 0,
+    "row_count": 1,
+    "started_at_seconds": 1793837700.0377693,
+    "stderr": "",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3, 3892092, 554\n",
+    "stdout_bytes": 55,
+    "stdout_sha256": "7a01b749d7ae6151bba84dc971bbb3b679cec76740578c3882a983a574a10ebf",
+    "valid": true
+  },
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "site_qualification_credit": 0,
+  "startup_memory_observed": false,
+  "throughput_credit": 0,
+  "uva_configuration_service_trust_used": false,
+  "worker_admitted": false
+}

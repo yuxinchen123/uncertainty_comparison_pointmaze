@@ -1,0 +1,45 @@
+{
+  "actual_scheduler_actions": 0,
+  "actual_tool_executions": 0,
+  "errors": 0,
+  "failures": 0,
+  "finished_at_utc": "2026-11-05T02:31:12.257002+00:00",
+  "independent_source_review": "The only formatter change selects normal for an explicitly unreserved request and csresnolim for an explicit reservation. The resolved plan and held command use the same selected value. Six added assertions check both plan values and both command inclusions and exclusions. The actual recorded association permits both; csresnolim requires a reservation. Producer source and numerical work are unchanged.",
+  "job_id": "6783003",
+  "kind": "independent_nsight_reservation_dependent_qos_metadata_review",
+  "numerical_imports": false,
+  "passed": true,
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "source_after": {
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/.review_metadata/prepare_nsight_process_diagnostic.py": "49b3ee2af74cf2ee71cfa284ac3594a2079d9fb0a35ecd1f04577d2f5ba06d8e",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_nsight_diagnostic_preparation.py": "dd6a1859410419550bb8e03166b7699bd390a7be6f337ebb247589a46f4ef790"
+  },
+  "source_before": {
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/.review_metadata/prepare_nsight_process_diagnostic.py": "49b3ee2af74cf2ee71cfa284ac3594a2079d9fb0a35ecd1f04577d2f5ba06d8e",
+    "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_nsight_diagnostic_preparation.py": "dd6a1859410419550bb8e03166b7699bd390a7be6f337ebb247589a46f4ef790"
+  },
+  "source_freeze": {
+    "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-04-18-32_unreserved-nsight-qos-normal_reserved-qos-csresnolim_gpu-count-0/source_freeze.json",
+    "sha256": "8b7abd5698e94da9ec85d165562db913cc3fd64abca57f57a3876c633df88dfe"
+  },
+  "started_at_utc": "2026-11-05T02:31:11.827430+00:00",
+  "step_id": "259",
+  "test_ids": [
+    "independent_nsight_placement_tests.CommandPlacementTests.test_cli_passes_an_explicit_unreserved_choice",
+    "independent_nsight_placement_tests.CommandPlacementTests.test_cli_passes_the_explicit_reservation_name",
+    "independent_nsight_placement_tests.CommandPlacementTests.test_cli_rejects_both_choices",
+    "independent_nsight_placement_tests.CommandPlacementTests.test_cli_requires_one_explicit_choice",
+    "independent_nsight_placement_tests.PreparationTests.test_conflicting_selection_refuses_before_source_reads_or_output",
+    "independent_nsight_placement_tests.PreparationTests.test_dirty_source_refuses_before_any_packet_creation",
+    "independent_nsight_placement_tests.PreparationTests.test_explicit_reservation_matches_plan_script_and_held_command",
+    "independent_nsight_placement_tests.PreparationTests.test_invalid_reservation_names_refuse_before_source_reads_or_output",
+    "independent_nsight_placement_tests.PreparationTests.test_missing_selection_refuses_before_source_reads_or_output",
+    "independent_nsight_placement_tests.PreparationTests.test_partial_or_previously_prepared_unit_is_never_reused",
+    "independent_nsight_placement_tests.PreparationTests.test_real_preparation_has_all_standards_null_ids_and_one_bounded_held_command",
+    "independent_nsight_placement_tests.PreparationTests.test_unreserved_selection_requires_an_exact_boolean"
+  ],
+  "test_output": "test_cli_passes_an_explicit_unreserved_choice (independent_nsight_placement_tests.CommandPlacementTests)\nThe unreserved CLI branch passes None plus the explicit true selection. ... ok\ntest_cli_passes_the_explicit_reservation_name (independent_nsight_placement_tests.CommandPlacementTests)\nThe reserved CLI branch retains the exact caller-supplied name. ... ok\ntest_cli_rejects_both_choices (independent_nsight_placement_tests.CommandPlacementTests)\nMutually exclusive CLI flags cannot produce an ambiguous packet. ... ok\ntest_cli_requires_one_explicit_choice (independent_nsight_placement_tests.CommandPlacementTests)\nNo-choice CLI calls stop before preparing output. ... ok\ntest_conflicting_selection_refuses_before_source_reads_or_output (independent_nsight_placement_tests.PreparationTests)\nA caller cannot ask for both a reservation and an unreserved job. ... ok\ntest_dirty_source_refuses_before_any_packet_creation (independent_nsight_placement_tests.PreparationTests)\nAn uncommitted source change cannot enter the executable staging closure. ... ok\ntest_explicit_reservation_matches_plan_script_and_held_command (independent_nsight_placement_tests.PreparationTests)\nAn explicitly supplied name is retained everywhere without using an old default. ... ok\ntest_invalid_reservation_names_refuse_before_source_reads_or_output (independent_nsight_placement_tests.PreparationTests)\nReservation text cannot inject another argument or a batch directive. ... ok\ntest_missing_selection_refuses_before_source_reads_or_output (independent_nsight_placement_tests.PreparationTests)\nNo API default can silently restore an expired reservation. ... ok\ntest_partial_or_previously_prepared_unit_is_never_reused (independent_nsight_placement_tests.PreparationTests)\nA second preparation refuses rather than replacing any old artifact. ... ok\ntest_real_preparation_has_all_standards_null_ids_and_one_bounded_held_command (independent_nsight_placement_tests.PreparationTests)\nA fresh private packet binds exact Git bytes and contains no future launch identity. ... ok\ntest_unreserved_selection_requires_an_exact_boolean (independent_nsight_placement_tests.PreparationTests)\nInteger or string values cannot stand in for an explicit Boolean selection. ... ok\n\n----------------------------------------------------------------------\nRan 12 tests in 0.429s\n\nOK\n",
+  "tests_run": 12,
+  "uid": 2618919
+}

@@ -1,0 +1,91 @@
+Merge made by the 'ort' strategy.
+ .../direct_h100_profile_author_6783003_236.json    |  27 +
+ ...rect_h100_profile_author_6783003_236_stderr.raw |  61 ++
+ ...rect_h100_profile_author_6783003_236_stdout.raw |   0
+ .../direct_h100_profile_author_6783003_237.json    |  27 +
+ ...rect_h100_profile_author_6783003_237_stderr.raw |  61 ++
+ ...rect_h100_profile_author_6783003_237_stdout.raw |   0
+ .../direct_h100_profile_author_6783003_240.json    |  27 +
+ ...rect_h100_profile_author_6783003_240_stderr.raw |  61 ++
+ ...rect_h100_profile_author_6783003_240_stdout.raw |   0
+ .../direct_h100_profile_author_6783003_243.json    |  27 +
+ ...rect_h100_profile_author_6783003_243_stderr.raw |  61 ++
+ ...rect_h100_profile_author_6783003_243_stdout.raw |   0
+ .../direct_h100_profile_author_6783003_246.json    |  27 +
+ ...rect_h100_profile_author_6783003_246_stderr.raw |  61 ++
+ ...rect_h100_profile_author_6783003_246_stdout.raw |   0
+ .../direct_h100_profile_author_handoff.json        |  74 +++
+ ...h100_profile_existing_metadata_6783003_241.json |  30 +
+ ...rofile_existing_metadata_6783003_241_stderr.raw | 641 +++++++++++++++++++++
+ ...rofile_existing_metadata_6783003_241_stdout.raw |   0
+ ...h100_profile_existing_metadata_6783003_242.json |  30 +
+ ...rofile_existing_metadata_6783003_242_stderr.raw | 411 +++++++++++++
+ ...rofile_existing_metadata_6783003_242_stdout.raw |   0
+ ...h100_profile_existing_metadata_6783003_247.json |  30 +
+ ...rofile_existing_metadata_6783003_247_stderr.raw | 411 +++++++++++++
+ ...rofile_existing_metadata_6783003_247_stdout.raw |   0
+ .../direct_h100_profile_first_test_failure.json    |   9 +
+ ...ct_h100_profile_git_ignore_staging_refusal.json |   7 +
+ ...irect_h100_profile_independent_6783003_248.json |  28 +
+ ...00_profile_independent_6783003_248_unittest.raw | 322 +++++++++++
+ ...t_h100_profile_independent_review_author_6.json |  83 +++
+ ...profile_independent_static_review_author_5.json |  69 +++
+ ...irect_h100_profile_protected_source_before.json |  33 ++
+ ...ect_h100_profile_reviewed_commit_allowlist.json |  57 ++
+ ..._profile_source_freeze_2026-11-04_author_2.json |  12 +
+ ..._profile_source_freeze_2026-11-04_author_3.json |  12 +
+ ..._profile_source_freeze_2026-11-04_author_4.json |  12 +
+ ..._profile_source_freeze_2026-11-04_author_5.json |  12 +
+ ..._profile_source_freeze_2026-11-04_author_6.json |  12 +
+ .../run_direct_h100_profile_author_tests.py        |  19 +
+ ..._direct_h100_profile_existing_metadata_tests.py |  19 +
+ ...run_direct_h100_profile_independent_author_6.py | 109 ++++
+ .../atari_pixel_campaign/direct_backend_image.py   |  50 +-
+ .../atari_pixel_campaign/direct_measurement.py     |  11 +-
+ .../direct_profile_prerequisites.py                | 543 +++++++++++++++++
+ .../atari_pixel_campaign/profile_selected.py       |  90 ++-
+ .../tests/test_direct_profile_prerequisites.py     | 382 ++++++++++++
+ 46 files changed, 3931 insertions(+), 27 deletions(-)
+ create mode 100644 .review_metadata/direct_h100_profile_author_6783003_236.json
+ create mode 100644 .review_metadata/direct_h100_profile_author_6783003_236_stderr.raw
+ create mode 100644 .review_metadata/direct_h100_profile_author_6783003_236_stdout.raw
+ create mode 100644 .review_metadata/direct_h100_profile_author_6783003_237.json
+ create mode 100644 .review_metadata/direct_h100_profile_author_6783003_237_stderr.raw
+ create mode 100644 .review_metadata/direct_h100_profile_author_6783003_237_stdout.raw
+ create mode 100644 .review_metadata/direct_h100_profile_author_6783003_240.json
+ create mode 100644 .review_metadata/direct_h100_profile_author_6783003_240_stderr.raw
+ create mode 100644 .review_metadata/direct_h100_profile_author_6783003_240_stdout.raw
+ create mode 100644 .review_metadata/direct_h100_profile_author_6783003_243.json
+ create mode 100644 .review_metadata/direct_h100_profile_author_6783003_243_stderr.raw
+ create mode 100644 .review_metadata/direct_h100_profile_author_6783003_243_stdout.raw
+ create mode 100644 .review_metadata/direct_h100_profile_author_6783003_246.json
+ create mode 100644 .review_metadata/direct_h100_profile_author_6783003_246_stderr.raw
+ create mode 100644 .review_metadata/direct_h100_profile_author_6783003_246_stdout.raw
+ create mode 100644 .review_metadata/direct_h100_profile_author_handoff.json
+ create mode 100644 .review_metadata/direct_h100_profile_existing_metadata_6783003_241.json
+ create mode 100644 .review_metadata/direct_h100_profile_existing_metadata_6783003_241_stderr.raw
+ create mode 100644 .review_metadata/direct_h100_profile_existing_metadata_6783003_241_stdout.raw
+ create mode 100644 .review_metadata/direct_h100_profile_existing_metadata_6783003_242.json
+ create mode 100644 .review_metadata/direct_h100_profile_existing_metadata_6783003_242_stderr.raw
+ create mode 100644 .review_metadata/direct_h100_profile_existing_metadata_6783003_242_stdout.raw
+ create mode 100644 .review_metadata/direct_h100_profile_existing_metadata_6783003_247.json
+ create mode 100644 .review_metadata/direct_h100_profile_existing_metadata_6783003_247_stderr.raw
+ create mode 100644 .review_metadata/direct_h100_profile_existing_metadata_6783003_247_stdout.raw
+ create mode 100644 .review_metadata/direct_h100_profile_first_test_failure.json
+ create mode 100644 .review_metadata/direct_h100_profile_git_ignore_staging_refusal.json
+ create mode 100644 .review_metadata/direct_h100_profile_independent_6783003_248.json
+ create mode 100644 .review_metadata/direct_h100_profile_independent_6783003_248_unittest.raw
+ create mode 100644 .review_metadata/direct_h100_profile_independent_review_author_6.json
+ create mode 100644 .review_metadata/direct_h100_profile_independent_static_review_author_5.json
+ create mode 100644 .review_metadata/direct_h100_profile_protected_source_before.json
+ create mode 100644 .review_metadata/direct_h100_profile_reviewed_commit_allowlist.json
+ create mode 100644 .review_metadata/direct_h100_profile_source_freeze_2026-11-04_author_2.json
+ create mode 100644 .review_metadata/direct_h100_profile_source_freeze_2026-11-04_author_3.json
+ create mode 100644 .review_metadata/direct_h100_profile_source_freeze_2026-11-04_author_4.json
+ create mode 100644 .review_metadata/direct_h100_profile_source_freeze_2026-11-04_author_5.json
+ create mode 100644 .review_metadata/direct_h100_profile_source_freeze_2026-11-04_author_6.json
+ create mode 100644 .review_metadata/run_direct_h100_profile_author_tests.py
+ create mode 100644 .review_metadata/run_direct_h100_profile_existing_metadata_tests.py
+ create mode 100644 .review_metadata/run_direct_h100_profile_independent_author_6.py
+ create mode 100644 10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_prerequisites.py
+ create mode 100644 10_jax_exploration_platform/scripts/atari_pixel_campaign/tests/test_direct_profile_prerequisites.py
