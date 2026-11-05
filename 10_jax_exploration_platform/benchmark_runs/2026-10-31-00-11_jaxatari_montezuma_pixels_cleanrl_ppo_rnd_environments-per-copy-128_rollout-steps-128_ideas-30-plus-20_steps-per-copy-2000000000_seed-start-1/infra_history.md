@@ -701,3 +701,6 @@ The fresh persistent full tick returns zero, while its serialized latest status 
 
 
 2026-11-05T17:11:32Z — Fresh two-copy controller543087/birth85900187 and numerical child545091/birth85908834 launched and registered once after actual inner401f and outer3079 publications. Startup review5cb80736 passes178 checks; same-child empty-to-exact command observed within0.0767seconds. Both owned metadata lock permissions restored0660 after registration on the same files. Producer setup only; no timing result accepted. Fresh full monitor3.835seconds passed; hourly wakeup and separate18:20estimated-completion task verified. Old failed07:20 remains separate and must never be reused.
+
+
+2026-11-05T17:34:40Z — H100 two-copy correctness passed with zero float32/float64 errors and no failure; timing remains pending. Reporting fix was published as 4d3de78a; actual clean source548 produced one candidate monitor packet with353source files and391frozen artifacts. Candidate full report passed and now includes completed native diagnostic6825842 and actual H100process545091. No new monitor identifier/submission/runtime exists yet; old6821437 remains active pending independent packet/launcher and actual replacement runtime/full-report proofs.

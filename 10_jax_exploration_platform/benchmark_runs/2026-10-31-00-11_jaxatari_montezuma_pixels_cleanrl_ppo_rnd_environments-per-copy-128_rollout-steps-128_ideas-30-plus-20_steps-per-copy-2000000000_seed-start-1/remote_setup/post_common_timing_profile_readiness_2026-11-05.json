@@ -1,0 +1,224 @@
+{
+  "accepted_common_contexts": [
+    {
+      "accepted_review": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-20-35_common-a4500-confirmation-independent-raw-audit_copies-1_job-6783295_gpu-count-0_closed-historical-source-approvals_explicit-UTC-accounting/review.json",
+        "sha256": "c949d41603813be5344bd8d39a3a6ea357fb8cc45211e0e3cb9b5af80783794f"
+      },
+      "copies": 1,
+      "gpu_type": "RTX A4500"
+    },
+    {
+      "accepted_review": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-20-37_common-a4500-confirmation-independent-raw-audit_copies-2_job-6783296_gpu-count-0_closed-historical-source-approvals_explicit-UTC-accounting/review.json",
+        "sha256": "6bd2243057e95c295279e725e17c9bca622f1e95061b5737643f842541fdc306"
+      },
+      "copies": 2,
+      "gpu_type": "RTX A4500"
+    },
+    {
+      "accepted_review": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-05-49_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-1_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/independent_actual_common_timing_review.json",
+        "sha256": "901a5805d7f768cd3b3159fe7e478fffdbee36280c2144f195ada1b3471bdf22"
+      },
+      "copies": 1,
+      "gpu_type": "H100 NVL"
+    }
+  ],
+  "actual_profile_preparations_or_remote_or_gpu_or_tool_actions": 0,
+  "allocation": "6821437",
+  "at_utc": "2026-11-05T17:31:32.492266+00:00",
+  "capture_core_unchanged_from_reviewed_direct_source": true,
+  "closed_gates": {
+    "A4500": {
+      "effect": "Unconditional refusal; new four-context metadata may be prepared only after genuine proof/review, but verify_prepared still refuses execution.",
+      "file": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py",
+      "function": "require_reviewed_profile_process_admission"
+    },
+    "H100": {
+      "effect": "Unconditional refusal of profile preparation/execution/acceptance pending actual process/descriptor/current-context qualification and independent review.",
+      "file": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_prerequisites.py",
+      "function": "require_admission"
+    }
+  },
+  "kind": "independent_current_profile_readiness_after_three_common_contexts",
+  "missing_common_context": {
+    "copies": 2,
+    "gpu_type": "H100 NVL",
+    "startup_review": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-08-40_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1/independent_actual_startup_registration_review.json",
+      "sha256": "5cb80736948f4764581c86cd4610d6b05f232e4f525e8095ff78b0be4dd9849d"
+    },
+    "state": "Registered producer; no terminal result or independent scientific review yet.",
+    "unit": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-08-40_common-timing_cache-room-backgrounds-true_render-final-two-only-true_h100-nvl_serval02-card-1_copies-2_environments-128_rollout-steps-128_epochs-4_minibatches-4_warmup-rollouts-50_paired-rounds-7_updates-per-arm-10_seed-start-1"
+  },
+  "next_required_steps": [
+    "Accept H100 two-copy result only after complete seven alternating ten-update pairs, actual normal wait and both exits, independent raw-first approval, and the unchanged staged scientific consumer.",
+    "Freeze the four genuine context references and review that new metadata proof. Existing configured_profile_prerequisites.validate/configure_plan consume it; this module has no proof-generation CLI. Reuse88791/ac50 through its exact old reader; never repeat the original exit collector or large historical payload audit.",
+    "Bind each future producer to the exact reviewed published helper closure, selected Python, tool image and existing accepted process-component target contract. The A4500 current package/JAXtari/image metadata must match its original accepted target before tools; actual current CUDA identity and loaded-image gates remain required.",
+    "Independently qualify and review the new full-profile producer and whole-tool interval for its actual target, including current same-process UUID/PCI/minor, driver/backend bytes, own-only memory observation, exact waits and full cleanup. Existing zero-environment component success alone supplies no numerical profiling admission.",
+    "Record and publish a separate narrowly reviewed operational admission change before any formal producer is launched; neither current unconditional gate is opened by this receipt. Root alone prepares/submits/launches fresh units with actual IDs and bindings."
+  ],
+  "operational_admission_granted": false,
+  "process_components": {
+    "H100 NVL": {
+      "review": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-01-01_process-diagnostic_serval02-card-1_uuid-fed69954-5a71-dbb2-ee91-544e0eb6b8a3_python-3.12_native-process-control-true_helpers-7_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/independent_actual_native_success_review_434.json",
+        "sha256": "3f4173e5b8d52624e10f90e66095df0c2c0587ecc4beb7b07c8c2874709ae788"
+      },
+      "scope": "Accepted zero-environment process component already exists. Do not rerun it; current-CUDA/profile-producer qualification and formal admission remain absent."
+    },
+    "RTX A4500": {
+      "review": {
+        "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-06-39_native-process-control_jaguar03_python-3.12_gpu-count-1_processor-count-1_host-memory-gib-2_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/independent_actual_native_component_review.json",
+        "sha256": "4264288c209606dccc15c883724ffeccaf5a480c943c5e29dd9b1c409c814da5"
+      },
+      "scope": "Accepted zero-environment native process component; no numerical profile or worker admission."
+    }
+  },
+  "producer_cli_after_real_fourth_review": {
+    "A4500_additional_arguments": [
+      "--hardware-class jaguar03_rtx_a4500",
+      "--configured-isolation-profile",
+      "--configured-native-process-qualification",
+      "--configured-native-process-review",
+      "--configured-profile-prerequisite-proof",
+      "--configured-profile-prerequisite-review"
+    ],
+    "A4500_gpu_uuid": "Omit --gpu-uuid: physical binding must remain unresolved until the actual owned numeric step.",
+    "A4500_maximum_active_seconds": 240,
+    "A4500_native_result": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/data/2026-11-05-06-39_native-process-control_jaguar03_python-3.12_gpu-count-1_processor-count-1_host-memory-gib-2_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/result.json",
+      "sha256": "b2c972d4b540de311245e2957f9c64f38d6136282092191569cff9b97ec24970"
+    },
+    "A4500_native_review": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-05-06-39_native-process-control_jaguar03_python-3.12_gpu-count-1_processor-count-1_host-memory-gib-2_total-seconds-300_work-seconds-240_cleanup-seconds-60_environment-transitions-0_training-updates-0/independent_actual_native_component_review.json",
+      "sha256": "4264288c209606dccc15c883724ffeccaf5a480c943c5e29dd9b1c409c814da5"
+    },
+    "H100_accepted_confirmation_review": "Use the actual per-count independently accepted review; H100 two-copy review does not exist yet.",
+    "H100_additional_arguments": [
+      "--hardware-class h100",
+      "--gpu-uuid GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3",
+      "--direct-binding-profile",
+      "--direct-history-inputs",
+      "--direct-qualification-record",
+      "--direct-qualification-review",
+      "--direct-backend-image-record",
+      "--direct-confirmation-review"
+    ],
+    "copies": "Use the matching genuinely accepted one-copy or two-copy configuration; retain global seeds[1] or[1,2].",
+    "fixed_source_commit": "d28e6735e79788f618acb0ebfde8609db1f776af",
+    "fixed_source_root": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673",
+    "missing_future_paths": "New per-count baseline/input files, four-context proof/review, fresh unit, clean frozen profile helper root and separate admission records have not been created.",
+    "not_a_runnable_preparation_command": true,
+    "operation": "--prepare-only",
+    "run_dir": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1",
+    "shared_arguments": [
+      "--source-root",
+      "--source-commit",
+      "--configuration",
+      "--runtime-environment",
+      "--asset-record",
+      "--study-registry",
+      "--accepted-baseline-specification",
+      "--profile-tool-record",
+      "--run-dir",
+      "--unit-id",
+      "--seed-start",
+      "--minimum-updates",
+      "--maximum-active-seconds",
+      "--python"
+    ],
+    "source": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py"
+  },
+  "protected_numerical_files_verified": [
+    {
+      "path": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/scripts/atari_pixel_campaign/worker_environment.sh",
+      "sha256": "61de3a987d6494fba948083e32ba13e97f30f53e980797c72c1508e726818955"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/__init__.py",
+      "sha256": "4692ca9941cece84d6cbea0c19b9344a0dfe5d32f3a1a9d93ad7cd93fe135de2"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/checkpointing.py",
+      "sha256": "f156b27e0c5d275db7e472f8659ca46d594624a8f573d43eee5383cdaf9f17fb"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/config.py",
+      "sha256": "8b3643fba5e3382f612507416f2204500966592a6872bb286dea1935c5f32218"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/environment.py",
+      "sha256": "aa0ad31c8fbd04c67fb9742ea103e9262dfe9cc5b6e719889c50454537b1c8b7"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/kernels.py",
+      "sha256": "dd895f5d95f6d39c79dce277254af9a19ac49112fcec0b16a5ba096a8082e8ff"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/networks.py",
+      "sha256": "ee65436eda5fab6ae2f8c303eaf3c072b5cdfa1f6d86cfc310dfa4974c98a5bd"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/pixel_preprocessing.py",
+      "sha256": "8a9f30f36ef7b07fa0ae513d1aee442a9964c2f8da179203b031c7aca8735188"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/settings.py",
+      "sha256": "17f20c6dd84c99eb435337b4446418cdcda3f426514d228996f40de4220c6f26"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/state.py",
+      "sha256": "9fcf0b6bb09bbf70dc88cd28952a6fa50969371f0d8aa66739c91ced1fe887f4"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/src/exploration_platform/atari_pixels/training.py",
+      "sha256": "5b868d95c8e0f5798330e38fcf7d9a6981838881333bafe73465c1af070a5100"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/scripts/atari_pixel_campaign/paired_benchmark.py",
+      "sha256": "c3e39d8e5d2549c3e2682e196861095780b30740a49821b2077da620386f2916"
+    },
+    {
+      "path": "/p/rlprojects/RND_worktrees/atari-cleanrl-source-d28e673/10_jax_exploration_platform/scripts/atari_pixel_campaign/ideas.py",
+      "sha256": "df811a5d51a7ef2f747bc32d1545c8286552675dfc8b859e7d0600eef4c920c5"
+    }
+  ],
+  "published_sources": {
+    "configured_native_process.py": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_native_process.py",
+      "sha256": "3b7bacf07c7a8d4eeafe74f0e5b4c8a02365ccaa32326ab430d3316d3891c54a"
+    },
+    "configured_profile_prerequisites.py": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/configured_profile_prerequisites.py",
+      "sha256": "7342746a6555e2533310f3afbb0fa65516f2a45b13ab3726d787a3d0289c043d"
+    },
+    "direct_profile_prerequisites.py": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_prerequisites.py",
+      "sha256": "d4161aefdd5502069837880220ae1a0ba992f8143ccc5ef2a93ef9018c4c7a69"
+    },
+    "direct_profile_process.py": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_process.py",
+      "sha256": "6177930cf35114405fc6dfca0c7738c26d897eb4aa3fc0eb5adeb39c75b55f77"
+    },
+    "direct_profile_saved_consumers.py": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/direct_profile_saved_consumers.py",
+      "sha256": "7aa272304ef90856748e51f9ffe5225c4660fac5050ae306622185fa40c3e5fb"
+    },
+    "profile_selected.py": {
+      "path": "/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/scripts/atari_pixel_campaign/profile_selected.py",
+      "sha256": "afc673ee79a533a3394ff1babe7434d64ac6e2bc04c1e4b5458db1d2e0855676"
+    }
+  },
+  "schema_version": 1,
+  "scientific_credit": 0,
+  "source_commits": {
+    "a4500_preparation": "e9ce620d096920469ca4856ae61abf455d41eb8d",
+    "direct_profile_history_and_budget": "e2066e8cdb95fa0041148bb8b84f1840aee35c43",
+    "frozen_current_scientific_helpers": "69f1b5075530418adbe02c1e433c5647848a61ba",
+    "numerical": "d28e6735e79788f618acb0ebfde8609db1f776af"
+  },
+  "source_or_process_tests_run": 0,
+  "step": "200"
+}

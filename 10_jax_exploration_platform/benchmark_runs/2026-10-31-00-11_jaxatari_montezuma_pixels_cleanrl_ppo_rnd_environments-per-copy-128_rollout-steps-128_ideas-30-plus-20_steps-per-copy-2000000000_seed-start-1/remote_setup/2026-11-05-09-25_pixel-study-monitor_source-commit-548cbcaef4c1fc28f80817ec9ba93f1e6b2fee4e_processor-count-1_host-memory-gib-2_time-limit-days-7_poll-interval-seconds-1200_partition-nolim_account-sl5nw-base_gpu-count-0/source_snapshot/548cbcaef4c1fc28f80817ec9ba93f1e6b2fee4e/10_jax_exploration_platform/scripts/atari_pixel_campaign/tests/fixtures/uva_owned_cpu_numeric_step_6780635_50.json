@@ -1,0 +1,178 @@
+{
+  "kind": "owned_uva_numeric_step_cgroup_v2_metadata_observation",
+  "at_utc": "2026-11-01T13:40:16.076947+00:00",
+  "hostname": "slurm5",
+  "job_id": "6780635",
+  "step_id": "50",
+  "pid": 718051,
+  "parent_pid": 718045,
+  "uid": 2618919,
+  "effective_uid": 2618919,
+  "status_uid_and_gid_lines": [
+    "Uid:\t2618919\t2618919\t2618919\t2618919",
+    "Gid:\t90030\t90030\t90030\t90030",
+    "NSpid:\t718051"
+  ],
+  "process_stat": "718051 (python3) R 718045 718051 718044 0 -1 4194560 2046 1018 0 0 3 1 1 1 20 0 1 0 50121967 26103808 3835 2147483648 94349513826304 94349516666381 140720834169696 0 0 0 0 16781312 2 0 0 0 17 5 0 0 0 0 0 94349519038512 94349519322584 94349761282048 140720834178058 140720834181560 140720834181560 140720834187239 0\n",
+  "cgroup": "0::/system.slice/slurmstepd.scope/job_6780635/step_50/user/task_0\n",
+  "cgroup2_mountinfo": [
+    "34 24 0:29 / /sys/fs/cgroup rw,nosuid,nodev,noexec,relatime shared:9 - cgroup2 cgroup2 rw,nsdelegate,memory_recursiveprot"
+  ],
+  "namespace_inode": 4026531835,
+  "directories": [
+    {
+      "path": "/sys/fs/cgroup/system.slice/slurmstepd.scope/job_6780635",
+      "uid": 0,
+      "gid": 0,
+      "mode": "0o755",
+      "inode": 241636,
+      "device": 29,
+      "is_directory": true,
+      "is_symlink": false,
+      "cgroup.procs": {
+        "raw": "",
+        "uid": 0,
+        "gid": 0,
+        "mode": "0o644",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "cgroup.controllers": {
+        "raw": "cpuset cpu memory\n",
+        "uid": 0,
+        "gid": 0,
+        "mode": "0o444",
+        "sha256": "80b778f6b6ade97cfab7c985c2c8c0ef2e0e7ccd375c4384f7a7ffbb461d8cd9"
+      },
+      "cgroup.type": {
+        "raw": "domain\n",
+        "uid": 0,
+        "gid": 0,
+        "mode": "0o644",
+        "sha256": "f1061c5a5926f63a60f59dd3195dd4d50419bd585d7228d052ee2ce35c15efb7"
+      }
+    },
+    {
+      "path": "/sys/fs/cgroup/system.slice/slurmstepd.scope/job_6780635/step_50",
+      "uid": 0,
+      "gid": 0,
+      "mode": "0o755",
+      "inode": 263223,
+      "device": 29,
+      "is_directory": true,
+      "is_symlink": false,
+      "cgroup.procs": {
+        "raw": "",
+        "uid": 0,
+        "gid": 0,
+        "mode": "0o644",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "cgroup.controllers": {
+        "raw": "cpuset cpu memory\n",
+        "uid": 0,
+        "gid": 0,
+        "mode": "0o444",
+        "sha256": "80b778f6b6ade97cfab7c985c2c8c0ef2e0e7ccd375c4384f7a7ffbb461d8cd9"
+      },
+      "cgroup.type": {
+        "raw": "domain\n",
+        "uid": 0,
+        "gid": 0,
+        "mode": "0o644",
+        "sha256": "f1061c5a5926f63a60f59dd3195dd4d50419bd585d7228d052ee2ce35c15efb7"
+      }
+    },
+    {
+      "path": "/sys/fs/cgroup/system.slice/slurmstepd.scope/job_6780635/step_50/user",
+      "uid": 0,
+      "gid": 0,
+      "mode": "0o755",
+      "inode": 263265,
+      "device": 29,
+      "is_directory": true,
+      "is_symlink": false,
+      "cgroup.procs": {
+        "raw": "",
+        "uid": 0,
+        "gid": 0,
+        "mode": "0o644",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "cgroup.controllers": {
+        "raw": "cpuset cpu memory\n",
+        "uid": 0,
+        "gid": 0,
+        "mode": "0o444",
+        "sha256": "80b778f6b6ade97cfab7c985c2c8c0ef2e0e7ccd375c4384f7a7ffbb461d8cd9"
+      },
+      "cgroup.type": {
+        "raw": "domain\n",
+        "uid": 0,
+        "gid": 0,
+        "mode": "0o644",
+        "sha256": "f1061c5a5926f63a60f59dd3195dd4d50419bd585d7228d052ee2ce35c15efb7"
+      }
+    },
+    {
+      "path": "/sys/fs/cgroup/system.slice/slurmstepd.scope/job_6780635/step_50/user/task_0",
+      "uid": 0,
+      "gid": 0,
+      "mode": "0o755",
+      "inode": 263391,
+      "device": 29,
+      "is_directory": true,
+      "is_symlink": false,
+      "cgroup.procs": {
+        "raw": "718051\n",
+        "uid": 0,
+        "gid": 0,
+        "mode": "0o644",
+        "sha256": "bf84cb7a86db43adc1d33f358e1e28d1ca6466f383640089d2278dc0b6e2df27"
+      },
+      "cgroup.controllers": {
+        "raw": "cpuset cpu memory\n",
+        "uid": 0,
+        "gid": 0,
+        "mode": "0o444",
+        "sha256": "80b778f6b6ade97cfab7c985c2c8c0ef2e0e7ccd375c4384f7a7ffbb461d8cd9"
+      },
+      "cgroup.type": {
+        "raw": "domain\n",
+        "uid": 0,
+        "gid": 0,
+        "mode": "0o644",
+        "sha256": "f1061c5a5926f63a60f59dd3195dd4d50419bd585d7228d052ee2ce35c15efb7"
+      }
+    }
+  ],
+  "owned_scheduler_queries": [
+    {
+      "command": [
+        "scontrol",
+        "show",
+        "job",
+        "-d",
+        "6780635"
+      ],
+      "returncode": 0,
+      "stdout": "JobId=6780635 JobName=pixel_study_monitor\n   UserId=sl5nw(2618919) GroupId=collaborator(90030) MCS_label=N/A\n   Priority=405 Nice=0 Account=sl5nw_base QOS=normal\n   JobState=RUNNING Reason=None Dependency=(null)\n   Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0\n   DerivedExitCode=1:0\n   RunTime=03:54:31 TimeLimit=7-00:00:00 TimeMin=N/A\n   SubmitTime=2026-11-01T04:43:15 EligibleTime=2026-11-01T04:45:39\n   AccrueTime=2026-11-01T04:45:39\n   StartTime=2026-11-01T04:45:45 EndTime=2026-11-08T04:45:45 Deadline=N/A\n   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-11-01T04:45:45 Scheduler=Backfill\n   Partition=nolim AllocNode:Sid=portal05:1318683\n   ReqNodeList=(null) ExcNodeList=(null)\n   NodeList=slurm5\n   BatchHost=slurm5\n   NumNodes=1 NumCPUs=2 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:*\n   ReqTRES=cpu=1,mem=2G,node=1,billing=309\n   AllocTRES=cpu=2,mem=2G,node=1,billing=311\n   Socks/Node=* NtasksPerN:B:S:C=0:0:*:1 CoreSpec=*\n   JOB_GRES=(null)\n     Nodes=slurm5 CPU_IDs=10-11 Mem=2048 GRES=\n   MinCPUsNode=1 MinMemoryNode=2G MinTmpDiskNode=0\n   Features=(null) DelayBoot=00:00:00\n   OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null)\n   Command=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/remote_setup/2026-11-01-01-30_pixel-study-monitor_source-commit-f9a9c1672f788f52ba06836cee26f2dd6314cec7_processor-count-1_host-memory-gib-2_time-limit-days-7_poll-interval-seconds-1200_partition-nolim_account-sl5nw-base_gpu-count-0/monitor.sbatch\n   WorkDir=/p/rlprojects/RND_worktrees/merge-atari-cleanrl\n   StdErr=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/jobs/monitor_6780635.log\n   StdIn=/dev/null\n   StdOut=/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1/slurm/jobs/monitor_6780635.log\n   Power=\n   TresPerNode=gres/gpu:0\n   TresPerTask=cpu:1\n   \n\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "scontrol",
+        "show",
+        "step",
+        "-d",
+        "6780635.50"
+      ],
+      "returncode": 0,
+      "stdout": "StepId=6780635.50 UserId=2618919 StartTime=2026-11-01T08:40:15 TimeLimit=00:03:00\n   State=RUNNING Partition=nolim NodeList=slurm5\n   Nodes=1 CPUs=1 Tasks=1 Name=python3 Network=(null)\n   TRES=cpu=1,mem=2G,node=1\n   ResvPorts=(null)\n   CPUFreqReq=Default Dist=Cyclic\n   SrunHost:Pid=portal05:1488301\n   TresPerNode=gres/gpu:0\n   TresPerTask=cpu:1\n\n",
+      "stderr": ""
+    }
+  ],
+  "environment_transitions": 0,
+  "scientific_credit": 0,
+  "worker_admission": false,
+  "kernel_device_enforcement_verified": false
+}
