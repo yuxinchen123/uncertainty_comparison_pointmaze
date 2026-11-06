@@ -258,7 +258,13 @@ def main():
     candidate_config = replace(reference_config, **json.loads(args.learner))
     reference_environment = {"num_envs": reference_config.n_envs, **ACCEPTED_ENVIRONMENT}
     candidate_environment = {**reference_environment, **json.loads(args.environment)}
-    record = {"name": args.name, "host": os.uname().nodename, "device_kind": device.device_kind,
+    import subprocess
+    source = {"commit": subprocess.run(["git", "-C", str(PLATFORM_ROOT), "rev-parse", "HEAD"],
+                                       capture_output=True, text=True).stdout.strip(),
+              "changed_files": subprocess.run(
+                  ["git", "-C", str(PLATFORM_ROOT), "status", "--porcelain", "--", "src", "scripts/atari_pixel_campaign"],
+                  capture_output=True, text=True).stdout.splitlines()}
+    record = {"name": args.name, "source": source, "host": os.uname().nodename, "device_kind": device.device_kind,
               "cuda_visible_devices": os.environ.get("CUDA_VISIBLE_DEVICES"),
               "slurm_job_id": os.environ.get("SLURM_JOB_ID"), "jax_version": jax.__version__,
               "xla_flags": os.environ.get("XLA_FLAGS"), "copies": args.copies,
