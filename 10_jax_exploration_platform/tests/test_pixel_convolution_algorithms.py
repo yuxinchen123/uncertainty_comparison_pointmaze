@@ -87,3 +87,26 @@ def test_copies_stay_independent():
         np.testing.assert_array_equal(np.asarray(first[0][0]), np.asarray(second[0][0]))
         np.testing.assert_array_equal(np.asarray(first[1][1]["weight"][0]),
                                       np.asarray(second[1][1]["weight"][0]))
+
+
+@pytest.mark.parametrize("algorithm", ["compiler", "space_to_depth", "patch_matrix"])
+@pytest.mark.parametrize("batching", ["vmap", "unrolled"])
+@pytest.mark.parametrize("copies", [1, 2])
+def test_paired_rnd_trunks_match_separate_networks(algorithm, batching, copies):
+    """Predictor and target outputs from the paired trunk equal two separate evaluations."""
+    from types import SimpleNamespace
+
+    from exploration_platform.atari_pixels.networks import (initialize_networks, rnd_forward,
+                                                            rnd_pair_forward)
+
+    parameters, target = initialize_networks(tuple(range(1, copies + 1)), 18)
+    frames = jax.random.normal(jax.random.PRNGKey(5), (copies, 16, 1, 84, 84), dtype=jnp.float32)
+    configuration = SimpleNamespace(convolution_algorithm=algorithm, convolution_batching=batching,
+                                    network_layout="nchw", dense_batching="matmul",
+                                    fuse_network_bias_and_activation=False)
+    predicted, targets = rnd_pair_forward(parameters["predictor"], target, frames, configuration)
+    np.testing.assert_allclose(np.asarray(predicted),
+                               np.asarray(rnd_forward(parameters["predictor"], frames, configuration)),
+                               rtol=1e-4, atol=1e-5)
+    np.testing.assert_allclose(np.asarray(targets), np.asarray(rnd_forward(target, frames, configuration)),
+                               rtol=1e-4, atol=1e-5)

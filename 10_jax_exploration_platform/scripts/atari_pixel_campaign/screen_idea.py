@@ -38,10 +38,11 @@ ACCEPTED_ENVIRONMENT = {"cache_room_backgrounds": True, "render_final_two_only":
 REQUIRED_XLA_FLAG = "--xla_gpu_exclude_nondeterministic_ops=true"
 # Settings that change only the order of float32 sums inside the networks, never the equations.
 SUMMATION_ORDER_FIELDS = {"convolution_algorithm", "convolution_batching", "network_layout",
-                          "dense_batching"}
+                          "dense_batching", "paired_rnd_rollout_trunks"}
 # Environment settings whose pixels are proven identical to upstream (exact unit tests, and the
 # exact initialization agreement below runs for every environment change).
-EXACT_ENVIRONMENT_FIELDS = {"separable_rectangle_drawing", "unroll_fixed_render_loops"}
+EXACT_ENVIRONMENT_FIELDS = {"separable_rectangle_drawing", "unroll_fixed_render_loops",
+                            "masked_conditional_draws"}
 
 
 def write_json(path, value):

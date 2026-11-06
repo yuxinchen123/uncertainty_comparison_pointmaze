@@ -7,7 +7,8 @@ import jax.numpy as jnp
 
 from .config import PixelPPOConfig
 from .networks import (actor_logits, categorical_statistics, critic_values, initialize_networks,
-                       policy_features, policy_forward, quantity_keys, rnd_forward)
+                       policy_features, policy_forward, quantity_keys, rnd_forward,
+                       rnd_pair_forward)
 from .state import (AdamState, FlatParameterLayout, PixelTrainState, adam_step, initialize_adam, initialize_statistics,
                     normalize_frames, update_moments, update_observation_statistics)
 from .settings import scalar_product, scalar_setting
@@ -49,8 +50,12 @@ def gather_indexed_frames(frame_bank, lanes, frame_indices):
 def intrinsic_reward(parameters, target, frames, statistics, configuration=None):
     """Use half the SUM of feature errors for the rollout bonus, as upstream does."""
     normalized = normalize_frames(frames, statistics)
-    differences = (rnd_forward(target, normalized, configuration)
-                   - rnd_forward(parameters["predictor"], normalized, configuration))
+    if configuration is not None and configuration.paired_rnd_rollout_trunks:
+        predicted, targets = rnd_pair_forward(parameters["predictor"], target, normalized, configuration)
+        differences = targets - predicted
+    else:
+        differences = (rnd_forward(target, normalized, configuration)
+                       - rnd_forward(parameters["predictor"], normalized, configuration))
     return jnp.sum(differences ** 2, axis=-1) * 0.5
 
 

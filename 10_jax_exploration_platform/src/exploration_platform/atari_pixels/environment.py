@@ -182,6 +182,89 @@ def _install_unrolled_render_loops(game):
     renderer.render = jax.jit(render)
 
 
+class _MaskedDrawLax:
+    """jax.lax whose "draw or leave unchanged" conditionals become masked draws.
+
+    Inside vmap, cond(p, draw, identity, raster) becomes select(p, draw(raster), raster): both
+    rasters must exist, so every sprite drawn inside such a branch first copies the whole frame
+    batch. Here the branch runs unconditionally while the drawing utilities treat their sprites as
+    transparent wherever p is false, which leaves the raster unchanged exactly where the
+    original kept it. Conditionals whose false branch is not the identity keep jax.lax.cond.
+    """
+
+    def __init__(self, base):
+        self.base = base
+        self.conditions = []
+
+    def __getattr__(self, name):
+        return getattr(self.base, name)
+
+    def cond(self, predicate, true_fun, false_fun, *operands, **kwargs):
+        if len(operands) == 1 and not kwargs and false_fun(operands[0]) is operands[0]:
+            self.conditions.append(jnp.asarray(predicate, bool))
+            try:
+                return true_fun(operands[0])
+            finally:
+                self.conditions.pop()
+        return jax.lax.cond(predicate, true_fun, false_fun, *operands, **kwargs)
+
+    def active(self):
+        """The conjunction of the enclosing conditions, or None outside every converted branch."""
+        if not self.conditions:
+            return None
+        result = self.conditions[0]
+        for condition in self.conditions[1:]:
+            result = jnp.logical_and(result, condition)
+        return result
+
+
+def _install_masked_conditional_draws(game, unroll_loops=False):
+    """Trace this renderer with masked draws (and, optionally, unrolled fixed-count loops)."""
+    from jaxtari.games.montezuma_revenge import renderer as renderer_module
+
+    renderer = game.renderer
+    utilities = renderer.jr
+    lax = _MaskedDrawLax(_UnrolledLax() if unroll_loops else jax.lax)
+    original_render = type(renderer).render.__wrapped__
+    draw_rects, render_at = utilities.draw_rects, utilities.render_at
+    render_at_clipped = utilities.render_at_clipped
+    transparent = utilities.TRANSPARENT_ID
+
+    def masked_rects(raster, positions, sizes, color_id):
+        condition = lax.active()
+        if condition is not None:
+            # x == -1 hides a rectangle in upstream draw_rects.
+            positions = positions.at[:, 0].set(jnp.where(condition, positions[:, 0], -1))
+        return draw_rects(raster, positions, sizes, color_id)
+
+    def masked_sprite(draw):
+        def drawn(raster, x, y, sprite_mask, *args, **kwargs):
+            condition = lax.active()
+            if condition is not None:
+                sprite_mask = jnp.where(condition, sprite_mask,
+                                        jnp.asarray(transparent, sprite_mask.dtype))
+            return draw(raster, x, y, sprite_mask, *args, **kwargs)
+        return drawn
+
+    class _MaskedJax:
+        def __getattr__(self, name):
+            return lax if name == "lax" else getattr(jax, name)
+
+    def render(state):
+        saved = renderer_module.jax
+        renderer_module.jax = _MaskedJax()
+        utilities.draw_rects, utilities.render_at = masked_rects, masked_sprite(render_at)
+        utilities.render_at_clipped = masked_sprite(render_at_clipped)
+        try:
+            return original_render(renderer, state)
+        finally:
+            renderer_module.jax = saved
+            utilities.draw_rects, utilities.render_at = draw_rects, render_at
+            utilities.render_at_clipped = render_at_clipped
+
+    renderer.render = jax.jit(render)
+
+
 def area_resize_weights(source_size: int, destination_size: int = 84) -> jax.Array:
     """Build exact pixel-overlap weights for a one-dimensional area reduction."""
     # Before: 210 source rows; after: [84, 210] weights whose rows each sum to one.
@@ -223,7 +306,8 @@ class AtariPixelEnvironment:
                  fuse_pixel_preprocessing: bool = False,
                  combine_palette_and_sprite_drawing: bool = False,
                  separable_rectangle_drawing: bool = False,
-                 unroll_fixed_render_loops: bool = False):
+                 unroll_fixed_render_loops: bool = False,
+                 masked_conditional_draws: bool = False):
         """Load the pinned game lazily and retain only static preprocessing settings."""
         # Keep package imports out of learner-only tests that use a small fake environment.
         import jaxtari
@@ -254,6 +338,7 @@ class AtariPixelEnvironment:
         self.combine_palette_and_sprite_drawing = combine_palette_and_sprite_drawing
         self.separable_rectangle_drawing = separable_rectangle_drawing
         self.unroll_fixed_render_loops = unroll_fixed_render_loops
+        self.masked_conditional_draws = masked_conditional_draws
 
         # All calls into this game must use int32; the older platform enables x64 globally.
         with jax.enable_x64(False):
@@ -264,7 +349,9 @@ class AtariPixelEnvironment:
             if cache_room_backgrounds:
                 # Upstream caches only static room geometry; actors, items, and darkness stay dynamic.
                 _install_room_background_cache(self.game)
-            if unroll_fixed_render_loops:
+            if masked_conditional_draws:
+                _install_masked_conditional_draws(self.game, unroll_loops=unroll_fixed_render_loops)
+            elif unroll_fixed_render_loops:
                 _install_unrolled_render_loops(self.game)
             height, width, channels = self.game.image_space().shape
             if channels != 3 or self.game.action_space().n != self.action_count:

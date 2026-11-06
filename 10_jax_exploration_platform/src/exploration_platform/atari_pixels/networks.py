@@ -302,6 +302,29 @@ def rnd_forward(parameters, normalized_frames, configuration=None):
     return dense(parameters["dense"][-1], hidden, batching)
 
 
+def rnd_pair_forward(predictor, target, normalized_frames, configuration=None):
+    """Predictor and frozen target as one two-member batch through their identical trunks.
+
+    Both networks read the same frames through the same three convolutions, so their kernels are
+    stacked along the copy axis and run as one batch of 2C copies: half the convolution launches,
+    each twice as large. Dense heads stay separate (predictor three layers, target one).
+    """
+    copies = normalized_frames.shape[0]
+    layers = tuple({"weight": jnp.concatenate([mine["weight"], theirs["weight"]]),
+                    "bias": jnp.concatenate([mine["bias"], theirs["bias"]])}
+                   for mine, theirs in zip(predictor["convolutions"], target["convolutions"]))
+    hidden = convolution_trunk(layers, jnp.concatenate([normalized_frames, normalized_frames]),
+                               leaky=True, configuration=configuration)
+    batching = configuration.dense_batching if configuration is not None else "matmul"
+
+    def head(parameters, values):
+        for layer in parameters["dense"][:-1]:
+            values = jax.nn.relu(dense(layer, values, batching))
+        return dense(parameters["dense"][-1], values, batching)
+
+    return head(predictor, hidden[:copies]), head(target, hidden[copies:])
+
+
 def categorical_statistics(logits, actions):
     """Compute chosen-action log probability and categorical entropy in float32."""
     log_probabilities = jax.nn.log_softmax(logits, axis=-1)

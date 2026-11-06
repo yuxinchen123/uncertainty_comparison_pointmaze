@@ -12,16 +12,28 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 
-from exploration_platform.atari_pixels.environment import _install_unrolled_render_loops
+import pytest
+
+from exploration_platform.atari_pixels.environment import (_install_masked_conditional_draws,
+                                                           _install_unrolled_render_loops)
 
 
-def test_unrolled_render_matches_original():
-    """Same state, two renderers: the original and the unrolled one."""
+INSTALLERS = {
+    "unrolled loops": _install_unrolled_render_loops,
+    "masked conditional draws": _install_masked_conditional_draws,
+    "masked conditional draws and unrolled loops":
+        lambda game: _install_masked_conditional_draws(game, unroll_loops=True),
+}
+
+
+@pytest.mark.parametrize("variant", sorted(INSTALLERS))
+def test_changed_render_matches_original(variant):
+    """Same state, two renderers: the original and the changed one."""
     import jaxtari
 
     with jax.enable_x64(False):
         original, unrolled = jaxtari.make("montezumarevenge"), jaxtari.make("montezumarevenge")
-        _install_unrolled_render_loops(unrolled)
+        INSTALLERS[variant](unrolled)
         step = jax.jit(original.step)
         render_original, render_unrolled = jax.jit(original.render), jax.jit(unrolled.render)
         states = []
@@ -36,7 +48,18 @@ def test_unrolled_render_matches_original():
         _, template = original.reset(jax.random.PRNGKey(99))
         for room in range(original.consts.MAX_ROOMS):
             states.append(template.replace(room_id=jnp.asarray(room, jnp.int32)))
+            # Torch, amulet, keys and swords in the inventory; lasers on at several cycle phases.
+            carried = template.inventory.at[0].set(2).at[1].set(1).at[2].set(1).at[3].set(1)
+            for cycle in (0, 3, 50, 95):
+                states.append(template.replace(
+                    room_id=jnp.asarray(room, jnp.int32), inventory=carried,
+                    lasers_active=jnp.ones_like(template.lasers_active),
+                    laser_cycle=jnp.asarray(cycle, template.laser_cycle.dtype)))
         for state in states:
             np.testing.assert_array_equal(np.asarray(render_unrolled(state)),
                                           np.asarray(render_original(state)))
-        assert len(states) >= 40
+        assert len(states) >= 170
+        # Training renders all environments at once under vmap, where conditionals become selects.
+        batch = jax.tree.map(lambda *values: jnp.stack(values), *states)
+        np.testing.assert_array_equal(np.asarray(jax.jit(jax.vmap(unrolled.render))(batch)),
+                                      np.asarray(jax.jit(jax.vmap(original.render))(batch)))

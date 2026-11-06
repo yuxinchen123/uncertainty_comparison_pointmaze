@@ -55,6 +55,7 @@ class PixelPPOConfig:
     # XLA options for the compiled training iteration only, as (name, value) pairs. They may
     # change how kernels are launched, never the arithmetic.
     iteration_compiler_options: tuple[tuple[str, str], ...] = ()
+    paired_rnd_rollout_trunks: bool = False
     flat_parameters: bool = False
     fuse_optimizer: bool = False
     pre_gather_minibatches: bool = False
