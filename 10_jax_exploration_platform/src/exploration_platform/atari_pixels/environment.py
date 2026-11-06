@@ -359,6 +359,7 @@ class AtariPixelEnvironment:
                  render_final_two_together: bool = False,
                  two_way_masked_draws: bool = False,
                  reset_lane_budget: int = 0,
+                 constant_game_reset: bool = False,
                  require_room_geometry: bool = True):
         """Load the pinned game lazily and retain only static preprocessing settings."""
         # Keep package imports out of learner-only tests that use a small fake environment.
@@ -400,6 +401,7 @@ class AtariPixelEnvironment:
         if reset_lane_budget < 0:
             raise ValueError("reset_lane_budget must be zero (off) or positive")
         self.reset_lane_budget = reset_lane_budget
+        self.constant_game_reset = constant_game_reset
 
         # All calls into this game must use int32; the older platform enables x64 globally.
         with jax.enable_x64(False):
@@ -419,6 +421,10 @@ class AtariPixelEnvironment:
             self.room_count = int(self.game.consts.MAX_ROOMS)
             if require_room_geometry:
                 _check_start_room_geometry(self.game)
+            if constant_game_reset:
+                # The pinned reset builds a fixed start state and only stores its key argument, so
+                # one host copy with the key replaced equals game.reset(key) (checked by a test).
+                self.reset_template = jax.device_get(self.game.reset(jax.random.PRNGKey(0))[1])
             height, width, channels = self.game.image_space().shape
             if channels != 3 or self.game.action_space().n != self.action_count:
                 raise ValueError("the pinned Montezuma game must expose RGB pixels and 18 actions")
@@ -515,6 +521,12 @@ class AtariPixelEnvironment:
         _, next_game, reward, done, _ = self.game.step(game, action)
         return next_game, frame_count + jnp.int32(1), action, reward, done
 
+    def _game_reset(self, key):
+        """A fresh game state for this key: the stored start state with the key, or game.reset."""
+        if getattr(self, "constant_game_reset", False):
+            return self.reset_template.replace(key=key)
+        return self.game.reset(key)[1]
+
     def _reset_single(self, state, reset_game, active=True):
         """Apply NOOP/FIRE initialization, preserving the game after a life loss.
 
@@ -524,7 +536,7 @@ class AtariPixelEnvironment:
         # Full-game resets use a new named key; a life-loss reset keeps score and inventory.
         reset_index = state.reset_count + jnp.int32(1)
         game_key = self._named_key(state.key, GAME_STREAM, reset_index)
-        game = jax.lax.cond(reset_game, lambda _: self.game.reset(game_key)[1],
+        game = jax.lax.cond(reset_game, lambda _: self._game_reset(game_key),
                             lambda _: state.game, operand=None)
         frame_count = state.frame_count
         previous_action = jnp.where(reset_game, jnp.int32(0), state.previous_action)
@@ -540,7 +552,7 @@ class AtariPixelEnvironment:
             current, frames, action, _, ended = self._raw_frame(
                 current, state.key, frames, action, jnp.int32(0))
             restart_key = self._named_key(game_key, GAME_STREAM, index)
-            current = jax.lax.cond(ended, lambda _: self.game.reset(restart_key)[1],
+            current = jax.lax.cond(ended, lambda _: self._game_reset(restart_key),
                                    lambda _: current, operand=None)
             return current, frames, action, full_reset | ended
 
@@ -565,7 +577,7 @@ class AtariPixelEnvironment:
     def _initial_single(self, key):
         """Initialize one lane, including the first NOOP/FIRE reset and frame stack."""
         # The placeholder stack is replaced completely by the first full-game reset.
-        game = self.game.reset(self._named_key(key, GAME_STREAM, jnp.int32(0)))[1]
+        game = self._game_reset(self._named_key(key, GAME_STREAM, jnp.int32(0)))
         state = PixelEnvironmentState(
             game, jnp.zeros(self.observation_shape, jnp.uint8), key,
             jnp.int32(0), jnp.int32(0), jnp.int32(-1), jnp.int32(0), jnp.float32(0), jnp.int32(0))

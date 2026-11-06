@@ -14,17 +14,35 @@ os.environ.setdefault("JAXTARI_SKIP_SPRITE_UPDATE", "1")
 
 import jax
 import numpy as np
+import pytest
 
 SETTINGS = dict(num_envs=32, max_episode_steps=150, cache_room_backgrounds=True, render_final_two_only=True,
                 separable_rectangle_drawing=True, unroll_fixed_render_loops=True, masked_conditional_draws=True,
                 two_way_masked_draws=True, render_final_two_together=True)
 
 
-def test_gathered_resets_match_per_lane_resets():
+def test_stored_start_state_equals_game_reset():
+    """The pinned reset only stores its key: the stored start state with the key is game.reset(key)."""
+    from exploration_platform.atari_pixels.environment import AtariPixelEnvironment
+
+    environment = AtariPixelEnvironment(num_envs=2, constant_game_reset=True)
+    with jax.enable_x64(False):
+        for index in range(16):
+            key = jax.random.fold_in(jax.random.PRNGKey(5), index)
+            expected = jax.jit(lambda k: environment.game.reset(k)[1])(key)
+            actual = jax.jit(environment._game_reset)(key)
+            for wanted, observed in zip(jax.tree.leaves(expected), jax.tree.leaves(actual)):
+                assert observed.dtype == wanted.dtype
+                np.testing.assert_array_equal(np.asarray(observed), np.asarray(wanted))
+
+
+@pytest.mark.parametrize("options", [{"reset_lane_budget": 2},
+                                     {"reset_lane_budget": 2, "constant_game_reset": True}])
+def test_gathered_resets_match_per_lane_resets(options):
     from exploration_platform.atari_pixels.environment import AtariPixelEnvironment
 
     per_lane = AtariPixelEnvironment(**SETTINGS)
-    gathered = AtariPixelEnvironment(reset_lane_budget=2, **SETTINGS)
+    gathered = AtariPixelEnvironment(**options, **SETTINGS)
     state, _ = per_lane.reset([3, 4])
     other, _ = gathered.reset([3, 4])
     step_per_lane, step_gathered = jax.jit(per_lane.step), jax.jit(gathered.step)
