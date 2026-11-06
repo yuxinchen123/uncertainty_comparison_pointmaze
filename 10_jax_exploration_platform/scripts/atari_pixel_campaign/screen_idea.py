@@ -41,7 +41,7 @@ SUMMATION_ORDER_FIELDS = {"convolution_algorithm", "convolution_batching", "netw
                           "dense_batching"}
 # Environment settings whose pixels are proven identical to upstream (exact unit tests, and the
 # exact initialization agreement below runs for every environment change).
-EXACT_ENVIRONMENT_FIELDS = {"separable_rectangle_drawing"}
+EXACT_ENVIRONMENT_FIELDS = {"separable_rectangle_drawing", "unroll_fixed_render_loops"}
 
 
 def write_json(path, value):

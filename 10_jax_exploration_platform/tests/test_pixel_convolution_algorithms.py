@@ -61,7 +61,7 @@ def test_space_to_depth_is_the_same_convolution():
 
 
 @pytest.mark.parametrize("algorithm", ["patch_weight_gradient", "patch_matrix", "space_to_depth"])
-@pytest.mark.parametrize("batching", ["vmap", "sequential"])
+@pytest.mark.parametrize("batching", ["vmap", "sequential", "unrolled"])
 @pytest.mark.parametrize("copies", [1, 2])
 def test_algorithm_matches_compiler(algorithm, batching, copies):
     """Outputs, input gradients and weight gradients agree with the compiler's convolution."""

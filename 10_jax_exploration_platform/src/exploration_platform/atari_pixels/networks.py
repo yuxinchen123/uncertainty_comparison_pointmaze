@@ -225,6 +225,10 @@ def convolution(layer, images, stride, layout="nchw", batching="vmap", include_b
     if batching == "sequential":
         # Before: one grouped convolution over copies; after: copies one after another.
         return jax.lax.map(lambda values: one_copy(*values), (images, layer["weight"], layer["bias"]))
+    if batching == "unrolled":
+        # Copies one after another without a device loop: fixed slices, then one stack.
+        return jnp.stack([one_copy(images[index], layer["weight"][index], layer["bias"][index])
+                          for index in range(images.shape[0])])
     if algorithm != "compiler":
         raise ValueError("grouped convolution batching supports only the compiler algorithm")
     # Before: C separate [B,H,W,I] batches; after: [B,H,W,C*I] with C feature groups.

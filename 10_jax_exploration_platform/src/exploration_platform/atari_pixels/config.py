@@ -131,7 +131,7 @@ class PixelPPOConfig:
                 raise ValueError("each per-copy setting must contain exactly n_copies values")
         choices = {"network_layout": ("nchw", "nhwc"),
                    "dense_batching": ("matmul", "einsum"),
-                   "convolution_batching": ("vmap", "grouped", "sequential"),
+                   "convolution_batching": ("vmap", "grouped", "sequential", "unrolled"),
                    "convolution_algorithm": ("compiler", "patch_weight_gradient", "patch_matrix",
                                              "space_to_depth"),
                    "rollout_observation_storage": ("float32", "uint8"),

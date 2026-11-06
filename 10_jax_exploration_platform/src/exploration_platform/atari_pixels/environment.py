@@ -128,6 +128,60 @@ def separable_draw_rects(utilities):
     return draw_rects
 
 
+class _UnrolledLax:
+    """jax.lax whose fori_loop is unrolled in Python when both bounds are Python integers.
+
+    A loop whose count depends on the game state (lives, keys, swords) keeps the original loop.
+    """
+
+    def __getattr__(self, name):
+        return getattr(jax.lax, name)
+
+    @staticmethod
+    def fori_loop(lower, upper, body_fun, init_val, **kwargs):
+        if isinstance(lower, int) and isinstance(upper, int):
+            # The index has the same strong integer type that fori_loop would give it.
+            index_type = jnp.asarray(0).dtype
+            value = init_val
+            for index in range(lower, upper):
+                value = body_fun(jnp.asarray(index, index_type), value)
+            return value
+        return jax.lax.fori_loop(lower, upper, body_fun, init_val, **kwargs)
+
+
+class _UnrolledJax:
+    """The jax module as seen by the renderer while its fixed-count loops are unrolled."""
+
+    lax = _UnrolledLax()
+
+    def __getattr__(self, name):
+        return getattr(jax, name)
+
+
+def _install_unrolled_render_loops(game):
+    """Trace this game's renderer with its fixed-count drawing loops unrolled.
+
+    Before: seven fixed-count loops (12 platforms, 4 ladders, 3 items, 3 enemies, 2 doors, 2 ropes,
+    1 conveyor) run as device loops, each iteration a few small kernels. After: the same body
+    calls in the same order, traced once each, so the compiler can merge them. Pixels are
+    unchanged: only the program structure differs. Applies to this renderer instance only.
+    """
+    from jaxtari.games.montezuma_revenge import renderer as renderer_module
+
+    renderer = game.renderer
+    original = type(renderer).render.__wrapped__
+
+    def render(state):
+        saved = renderer_module.jax
+        renderer_module.jax = _UnrolledJax()
+        try:
+            return original(renderer, state)
+        finally:
+            renderer_module.jax = saved
+
+    renderer.render = jax.jit(render)
+
+
 def area_resize_weights(source_size: int, destination_size: int = 84) -> jax.Array:
     """Build exact pixel-overlap weights for a one-dimensional area reduction."""
     # Before: 210 source rows; after: [84, 210] weights whose rows each sum to one.
@@ -168,7 +222,8 @@ class AtariPixelEnvironment:
                  cache_room_backgrounds: bool = False,
                  fuse_pixel_preprocessing: bool = False,
                  combine_palette_and_sprite_drawing: bool = False,
-                 separable_rectangle_drawing: bool = False):
+                 separable_rectangle_drawing: bool = False,
+                 unroll_fixed_render_loops: bool = False):
         """Load the pinned game lazily and retain only static preprocessing settings."""
         # Keep package imports out of learner-only tests that use a small fake environment.
         import jaxtari
@@ -198,6 +253,7 @@ class AtariPixelEnvironment:
         self.fuse_pixel_preprocessing = fuse_pixel_preprocessing
         self.combine_palette_and_sprite_drawing = combine_palette_and_sprite_drawing
         self.separable_rectangle_drawing = separable_rectangle_drawing
+        self.unroll_fixed_render_loops = unroll_fixed_render_loops
 
         # All calls into this game must use int32; the older platform enables x64 globally.
         with jax.enable_x64(False):
@@ -208,6 +264,8 @@ class AtariPixelEnvironment:
             if cache_room_backgrounds:
                 # Upstream caches only static room geometry; actors, items, and darkness stay dynamic.
                 _install_room_background_cache(self.game)
+            if unroll_fixed_render_loops:
+                _install_unrolled_render_loops(self.game)
             height, width, channels = self.game.image_space().shape
             if channels != 3 or self.game.action_space().n != self.action_count:
                 raise ValueError("the pinned Montezuma game must expose RGB pixels and 18 actions")
