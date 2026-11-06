@@ -51,3 +51,13 @@ mark the memory limit of the packing measurement (four copies fit at 40.6 GB), n
 Both confirmation runs (A4500 job 6831378, H100 serval02 pass 12) ended without a timed round: before the first round
 the budget check assumed 60 s per update, so a 20-update round (1200 s) never fit. The check now uses the measured
 warm-up update. Failed folders kept with the suffix `_failed-attempt-1_empty-round-estimate`; reruns use the original names.
+
+## 2026-11-05 21:05 PT: all launched work finished; stale runner record removed
+
+No Slurm job from `slurm/submitted_jobids.txt` is queued or running, no unit is pending or running in the serval05
+queue, and no campaign process remains on serval02 or serval05 (serval05 card at 0 MiB). The first serval02 runner
+(process 1143116, pass 1) finished its units at 17:02 PT but never removed `logs/serval02_runner.pid`: its script was
+edited and restored while it ran (16:13 PT), so bash did not reach its last lines. The process no longer exists; the
+stale file was removed. The serval05 queue runner (tmux session serval05_queue, shared by other sessions) stays up,
+idle. The 20-minute session monitor was stopped: the final training waits on the user's decision about the
+environment (plan section 197).
