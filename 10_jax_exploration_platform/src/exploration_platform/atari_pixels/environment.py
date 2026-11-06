@@ -515,8 +515,12 @@ class AtariPixelEnvironment:
         _, next_game, reward, done, _ = self.game.step(game, action)
         return next_game, frame_count + jnp.int32(1), action, reward, done
 
-    def _reset_single(self, state, reset_game):
-        """Apply NOOP/FIRE initialization, preserving the game after a life loss."""
+    def _reset_single(self, state, reset_game, active=True):
+        """Apply NOOP/FIRE initialization, preserving the game after a life loss.
+
+        active=False (padding entries of a gathered reset, whose results are discarded) skips the
+        NOOP frames, so they do not lengthen the batch's NOOP loop.
+        """
         # Full-game resets use a new named key; a life-loss reset keeps score and inventory.
         reset_index = state.reset_count + jnp.int32(1)
         game_key = self._named_key(state.key, GAME_STREAM, reset_index)
@@ -527,6 +531,7 @@ class AtariPixelEnvironment:
         noop_key = self._named_key(state.key, NOOP_STREAM, reset_index)
         noop_count = (jax.random.randint(noop_key, (), 0, self.noop_max, dtype=jnp.int32)
                       if self.noop_max else jnp.int32(0))
+        noop_count = jnp.where(active, noop_count, jnp.int32(0))
 
         # EnvPool's FIRE games take 0..29 raw NOOP frames, then one raw FIRE frame.
         def noop_body(index, carry):
@@ -654,7 +659,7 @@ class AtariPixelEnvironment:
             lanes = jnp.nonzero(ended, size=budget, fill_value=0)[0]
             valid = jnp.arange(budget) < count
             chosen = jax.tree.map(lambda value: value[lanes], current)
-            reset = jax.vmap(self._reset_single)(chosen, full[lanes])
+            reset = jax.vmap(self._reset_single)(chosen, full[lanes], valid)
             # Padding entries point past the end and are dropped by the scatter.
             target = jnp.where(valid, lanes, ended.shape[0])
             return jax.tree.map(lambda value, new: value.at[target].set(new, mode="drop"), current, reset)
