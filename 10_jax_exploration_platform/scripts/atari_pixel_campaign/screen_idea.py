@@ -38,11 +38,12 @@ ACCEPTED_ENVIRONMENT = {"cache_room_backgrounds": True, "render_final_two_only":
 REQUIRED_XLA_FLAG = "--xla_gpu_exclude_nondeterministic_ops=true"
 # Settings that change only the order of float32 sums inside the networks, never the equations.
 SUMMATION_ORDER_FIELDS = {"convolution_algorithm", "convolution_batching", "network_layout",
-                          "dense_batching", "paired_rnd_rollout_trunks"}
+                          "dense_batching", "paired_rnd_rollout_trunks",
+                          "layer_convolution_algorithms"}
 # Environment settings whose pixels are proven identical to upstream (exact unit tests, and the
 # exact initialization agreement below runs for every environment change).
 EXACT_ENVIRONMENT_FIELDS = {"separable_rectangle_drawing", "unroll_fixed_render_loops",
-                            "masked_conditional_draws"}
+                            "masked_conditional_draws", "render_final_two_together"}
 
 
 def write_json(path, value):
@@ -267,6 +268,8 @@ def main():
     def learner_settings(text):
         """JSON lists become the tuples the frozen configuration expects."""
         values = json.loads(text)
+        if "layer_convolution_algorithms" in values:
+            values["layer_convolution_algorithms"] = tuple(values["layer_convolution_algorithms"])
         if "iteration_compiler_options" in values:
             values["iteration_compiler_options"] = tuple(tuple(pair) for pair in values["iteration_compiler_options"])
         return values

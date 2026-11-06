@@ -307,7 +307,8 @@ class AtariPixelEnvironment:
                  combine_palette_and_sprite_drawing: bool = False,
                  separable_rectangle_drawing: bool = False,
                  unroll_fixed_render_loops: bool = False,
-                 masked_conditional_draws: bool = False):
+                 masked_conditional_draws: bool = False,
+                 render_final_two_together: bool = False):
         """Load the pinned game lazily and retain only static preprocessing settings."""
         # Keep package imports out of learner-only tests that use a small fake environment.
         import jaxtari
@@ -339,6 +340,9 @@ class AtariPixelEnvironment:
         self.separable_rectangle_drawing = separable_rectangle_drawing
         self.unroll_fixed_render_loops = unroll_fixed_render_loops
         self.masked_conditional_draws = masked_conditional_draws
+        if render_final_two_together and not render_final_two_only:
+            raise ValueError("render_final_two_together requires render_final_two_only")
+        self.render_final_two_together = render_final_two_together
 
         # All calls into this game must use int32; the older platform enables x64 globally.
         with jax.enable_x64(False):
@@ -545,7 +549,12 @@ class AtariPixelEnvironment:
                  jnp.bool_(False), initial_frame, initial_frame)
         (game, count, previous, reward, game_done, prior, latest), _ = jax.lax.scan(
             frame_body, carry, None, length=self.frame_skip, unroll=self.frame_skip_unroll)
-        if self.render_final_two_only:
+        if self.render_final_two_only and self.render_final_two_together:
+            # One renderer call over the stacked pair: half the renderer launches, same pixels.
+            pair = jax.tree.map(lambda first, second: jnp.stack([first, second]), prior, latest)
+            rendered = jax.vmap(self._frame)(pair)
+            prior, latest = rendered[0], rendered[1]
+        elif self.render_final_two_only:
             # Render only the retained last two game states instead of all held-action frames.
             prior, latest = self._frame(prior), self._frame(latest)
         frame = self._preprocess_pair(prior, latest) if self.frame_skip > 1 else self._preprocess_pair(latest, latest)

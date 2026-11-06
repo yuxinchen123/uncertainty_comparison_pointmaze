@@ -246,13 +246,15 @@ def convolution(layer, images, stride, layout="nchw", batching="vmap", include_b
 def convolution_trunk(layers, frames, leaky=False, configuration=None):
     """Run the three CleanRL convolutions and flatten in PyTorch's NCHW order."""
     images = frames.transpose(0, 1, 3, 4, 2)
-    for layer, stride in zip(layers, (4, 2, 1)):
+    per_layer = getattr(configuration, "layer_convolution_algorithms", ()) if configuration is not None else ()
+    for index, (layer, stride) in enumerate(zip(layers, (4, 2, 1))):
         fused = configuration is not None and configuration.fuse_network_bias_and_activation
         images = convolution(layer, images, stride,
             layout=configuration.network_layout if configuration is not None else "nchw",
             batching=configuration.convolution_batching if configuration is not None else "vmap",
             include_bias=not fused,
-            algorithm=configuration.convolution_algorithm if configuration is not None else "compiler")
+            algorithm=(per_layer[index] if per_layer else
+                       configuration.convolution_algorithm if configuration is not None else "compiler"))
         if fused:
             from .kernels import bias_activation
             images = bias_activation(images, layer["bias"], leaky)
