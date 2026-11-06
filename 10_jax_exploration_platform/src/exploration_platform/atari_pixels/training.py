@@ -2,6 +2,8 @@
 
 from typing import NamedTuple
 
+from dataclasses import replace
+
 import jax
 import jax.numpy as jnp
 
@@ -171,13 +173,35 @@ def minibatch_loss(parameters, target, batch, predictor_mask, config,
     value_loss_int = 0.5 * ((value_int - batch["return_int"]) ** 2).mean(axis=1)
     normalized_frames = (normalize_frames(batch["raw_frames"], observation_statistics)
                          if config.fuse_minibatch_image_preparation else batch["normalized_frames"])
-    target_features = (batch["target_features"] if config.cache_target_features
-                       else rnd_forward(target, normalized_frames, config))
-    target_features = jax.lax.stop_gradient(target_features)
-    predictor_features = predictor(parameters["predictor"], normalized_frames)
-    # Upstream trains with MEAN feature error, although the rollout bonus uses SUM/2.
-    errors = ((predictor_features - target_features) ** 2).mean(axis=-1)
-    predictor_loss = (errors * predictor_mask).sum(axis=1) / jnp.maximum(predictor_mask.sum(axis=1), 1.0)
+    def masked_error_sum(frames, mask, cached_targets):
+        """Sum of masked per-row feature errors for the given rows."""
+        targets = (cached_targets if cached_targets is not None
+                   else rnd_forward(target, frames, config))
+        targets = jax.lax.stop_gradient(targets)
+        # Upstream trains with MEAN feature error, although the rollout bonus uses SUM/2.
+        errors = ((predictor(parameters["predictor"], frames) - targets) ** 2).mean(axis=-1)
+        return (errors * mask).sum(axis=1)
+
+    cached = batch["target_features"] if config.cache_target_features else None
+    rows = config.predictor_selected_rows
+    if rows and rows < predictor_mask.shape[1]:
+        # Only rows in the predictor mask carry gradient. Move them to the front (keeping their
+        # order) and evaluate the predictor and target on the first `rows` rows only; a copy
+        # with more selected rows than that falls back to every row.
+        def selected_rows(_):
+            order = jnp.argsort(jnp.logical_not(predictor_mask > 0), axis=1, stable=True)[:, :rows]
+            pick = lambda values: jax.vmap(lambda per_copy, index: per_copy[index])(values, order)
+            return masked_error_sum(pick(normalized_frames), pick(predictor_mask),
+                                    None if cached is None else pick(cached))
+
+        def all_rows(_):
+            return masked_error_sum(normalized_frames, predictor_mask, cached)
+
+        overflow = jnp.any(predictor_mask.sum(axis=1) > rows)
+        error_sum = jax.lax.cond(overflow, all_rows, selected_rows, None)
+    else:
+        error_sum = masked_error_sum(normalized_frames, predictor_mask, cached)
+    predictor_loss = error_sum / jnp.maximum(predictor_mask.sum(axis=1), 1.0)
     entropy_mean = entropy.mean(axis=1)
     losses = (policy_loss - scalar_setting(config, "entropy_coefficient") * entropy_mean
               + scalar_setting(config, "value_coefficient") * (value_loss_ext + value_loss_int) + predictor_loss)
@@ -277,6 +301,10 @@ class PixelPPORND:
     def collect(self, state):
         """Collect an on-policy rollout with frozen parameters and pre-update RND statistics."""
         config = self.config
+        # The rollout evaluates 128 rows per step; it may use its own convolution algorithm.
+        network_config = (replace(config, convolution_algorithm=config.rollout_convolution_algorithm,
+                                  layer_convolution_algorithms=())
+                          if config.rollout_convolution_algorithm else config)
         action_keys = (jax.vmap(lambda step: quantity_keys(state.copy_seeds, "rollout/actions",
             state.iteration, step))(jnp.arange(config.num_steps))
             if config.batch_quantity_keyed_random_generation else None)
@@ -290,12 +318,12 @@ class PixelPPORND:
         def step(carry, step_index):
             """Record one transition and preserve its next pixels for the RND bonus."""
             environment_state, observations, done_before, frame_indices = carry
-            hidden = policy_features(state.parameters["agent"], observations, config)
-            logits = actor_logits(state.parameters["agent"], hidden, config)
+            hidden = policy_features(state.parameters["agent"], observations, network_config)
+            logits = actor_logits(state.parameters["agent"], hidden, network_config)
             if config.hoist_critic:
                 values_ext = values_int = jnp.zeros(observations.shape[:2], jnp.float32)
             else:
-                values_ext, values_int = critic_values(state.parameters["agent"], hidden, config)
+                values_ext, values_int = critic_values(state.parameters["agent"], hidden, network_config)
             keys = (action_keys[step_index] if config.batch_quantity_keyed_random_generation
                     else quantity_keys(state.copy_seeds, "rollout/actions", state.iteration, step_index))
             actions = jax.vmap(lambda key, value: jax.random.categorical(key, value).astype(jnp.int32))(keys, logits)
@@ -307,7 +335,7 @@ class PixelPPORND:
             # image is its pre-reset image, as returned by the original EnvPool transition.
             frames = information["final_observation"][..., 3:4, :, :]
             bonus = (jnp.zeros_like(reward) if config.hoist_rollout_bonus else intrinsic_reward(
-                state.parameters, state.target, frames, state.observation_statistics, config))
+                state.parameters, state.target, frames, state.observation_statistics, network_config))
             if indexed:
                 stored_observations = jnp.where(step_index == 0, frame_indices - 4, frame_indices)
                 normal_index = jnp.full(frame_indices.shape[:-1] + (1,), 8 + 2 * step_index, jnp.int32)

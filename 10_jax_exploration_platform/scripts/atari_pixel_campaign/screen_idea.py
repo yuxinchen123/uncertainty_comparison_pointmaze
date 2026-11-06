@@ -39,7 +39,8 @@ REQUIRED_XLA_FLAG = "--xla_gpu_exclude_nondeterministic_ops=true"
 # Settings that change only the order of float32 sums inside the networks, never the equations.
 SUMMATION_ORDER_FIELDS = {"convolution_algorithm", "convolution_batching", "network_layout",
                           "dense_batching", "paired_rnd_rollout_trunks",
-                          "layer_convolution_algorithms"}
+                          "layer_convolution_algorithms", "predictor_selected_rows",
+                          "rollout_convolution_algorithm", "merged_head_layers"}
 # Environment settings whose pixels are proven identical to upstream (exact unit tests, and the
 # exact initialization agreement below runs for every environment change).
 EXACT_ENVIRONMENT_FIELDS = {"separable_rectangle_drawing", "unroll_fixed_render_loops",
@@ -187,8 +188,10 @@ def gradient_check(reference, candidate, host_state):
                 if name != "frame_bank"}
     del batch
     gc.collect()
-    # Every row trains the predictor here, so every predictor weight receives a gradient.
-    masks = jnp.ones((reference.trainer.config.n_copies, rows), jnp.float32)
+    # Predictor rows drawn as in training (each row with the configured probability, fixed key).
+    proportion = reference.trainer.config.predictor_update_proportion
+    masks = (jax.random.uniform(jax.random.PRNGKey(12345), (reference.trainer.config.n_copies, rows))
+             < proportion).astype(jnp.float32)
 
     def gradients(executor):
         """Gradient of the CleanRL minibatch loss under this variant's network settings."""
@@ -203,7 +206,7 @@ def gradient_check(reference, candidate, host_state):
     report = agreement(reference_gradients, candidate_gradients)
     scale = max(float(abs(value).max()) for value in jax.tree.leaves(reference_gradients))
     return {**report, "largest_reference_gradient_magnitude": scale, "minibatch_rows": rows,
-            "predictor_mask": "all rows"}
+            "predictor_mask": f"each row with probability {proportion}, fixed key 12345"}
 
 
 def decide(pairs, correctness_passed):

@@ -5,6 +5,7 @@ import math
 
 import jax
 import jax.numpy as jnp
+import numpy as np
 
 
 def stream_identifier(name):
@@ -190,6 +191,34 @@ def convolution(layer, images, stride, layout="nchw", batching="vmap", include_b
 
     patch_weight_gradient_convolve.defvjp(patch_forward, patch_backward)
 
+    @jax.custom_vjp
+    def stride_one_patch_weight_gradient(image_batch, weight):
+        """Stride-1 compiler convolution with the window-product weight gradient."""
+        return compiler_convolve(image_batch, weight, stride=1)
+
+    def stride_one_forward(image_batch, weight):
+        return compiler_convolve(image_batch, weight, stride=1), (image_batch, weight)
+
+    def stride_one_backward(residual, output_gradient):
+        image_batch, weight = residual
+        _, input_vjp = jax.vjp(lambda values: compiler_convolve(values, weight, stride=1), image_batch)
+        (input_gradient,) = input_vjp(output_gradient)
+        count, chunk = row_chunks(image_batch.shape[0])
+
+        def accumulate(total, index):
+            images = jax.lax.dynamic_slice_in_dim(image_batch, index * chunk, chunk, 0)
+            gradient = jax.lax.dynamic_slice_in_dim(output_gradient, index * chunk, chunk, 0)
+            windows = image_patches(images, weight.shape[0], 1)
+            return total + jnp.einsum("byxp,byxo->po", windows, gradient,
+                                      precision=jax.lax.Precision.HIGHEST), None
+
+        weight_gradient, _ = jax.lax.scan(
+            accumulate, jnp.zeros((weight.size // weight.shape[-1], weight.shape[-1]), weight.dtype),
+            jnp.arange(count))
+        return input_gradient, weight_gradient.reshape(weight.shape)
+
+    stride_one_patch_weight_gradient.defvjp(stride_one_forward, stride_one_backward)
+
     def convolve(image_batch, weight):
         """Dispatch one copy's convolution to the selected algorithm."""
         if algorithm == "compiler":
@@ -214,6 +243,12 @@ def convolution(layer, images, stride, layout="nchw", batching="vmap", include_b
                 return compiler_convolve(image_batch, weight)
             return compiler_convolve(space_to_depth(image_batch, stride),
                                      space_to_depth_kernel(weight, stride), stride=1)
+        if algorithm == "space_to_depth_patch_weight_gradient":
+            # Stride-1 convolution on rearranged pixels whose weight gradient is the window
+            # matrix product (the same custom gradient as patch_weight_gradient, at stride 1).
+            images, kernel = ((image_batch, weight) if stride == 1 else
+                              (space_to_depth(image_batch, stride), space_to_depth_kernel(weight, stride)))
+            return stride_one_patch_weight_gradient(images, kernel)
         raise ValueError(f"unknown convolution algorithm {algorithm}")
 
     def one_copy(image_batch, weight, bias):
@@ -282,16 +317,41 @@ def actor_logits(parameters, features, configuration=None):
     return dense(parameters["actor"][1], jax.nn.relu(dense(parameters["actor"][0], features, batching)), batching)
 
 
+def merged_dense(layers, values, batching):
+    """Layers that read the same input as one matrix product; outputs split back in order."""
+    merged = {"weight": jnp.concatenate([layer["weight"] for layer in layers], axis=-1),
+              "bias": jnp.concatenate([layer["bias"] for layer in layers], axis=-1)}
+    outputs = dense(merged, values, batching)
+    edges = np.cumsum([layer["weight"].shape[-1] for layer in layers])[:-1]
+    return jnp.split(outputs, edges, axis=-1)
+
+
+def value_heads(parameters, features, batching, merged=False):
+    """Extrinsic and intrinsic values; merged computes both as one two-output layer."""
+    if merged:
+        value_ext, value_int = merged_dense((parameters["value_ext"], parameters["value_int"]), features, batching)
+        return value_ext[..., 0], value_int[..., 0]
+    return dense(parameters["value_ext"], features, batching)[..., 0], dense(parameters["value_int"], features, batching)[..., 0]
+
+
 def critic_values(parameters, hidden, configuration=None):
     """Apply the residual value layers to a rollout step or the complete rollout."""
     batching = configuration.dense_batching if configuration is not None else "matmul"
     features = hidden + jax.nn.relu(dense(parameters["extra"], hidden, batching))
-    return dense(parameters["value_ext"], features, batching)[..., 0], dense(parameters["value_int"], features, batching)[..., 0]
+    return value_heads(parameters, features, batching,
+                       getattr(configuration, "merged_head_layers", False))
 
 
 def policy_forward(parameters, observations, configuration=None):
     """Return action logits and both value heads from one shared CNN pass."""
     hidden = policy_features(parameters, observations, configuration)
+    if getattr(configuration, "merged_head_layers", False):
+        # The actor's first layer and the critic's extra layer both read `hidden`.
+        batching = configuration.dense_batching
+        actor_hidden, extra = merged_dense((parameters["actor"][0], parameters["extra"]), hidden, batching)
+        features = hidden + jax.nn.relu(extra)
+        values_ext, values_int = value_heads(parameters, features, batching, merged=True)
+        return dense(parameters["actor"][1], jax.nn.relu(actor_hidden), batching), values_ext, values_int
     values_ext, values_int = critic_values(parameters, hidden, configuration)
     return actor_logits(parameters, hidden, configuration), values_ext, values_int
 

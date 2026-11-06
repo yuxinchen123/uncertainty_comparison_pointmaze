@@ -60,7 +60,8 @@ def test_space_to_depth_is_the_same_convolution():
     np.testing.assert_allclose(np.asarray(rearranged), np.asarray(direct), rtol=1e-5, atol=1e-5)
 
 
-@pytest.mark.parametrize("algorithm", ["patch_weight_gradient", "patch_matrix", "space_to_depth"])
+@pytest.mark.parametrize("algorithm", ["patch_weight_gradient", "patch_matrix", "space_to_depth",
+                                       "space_to_depth_patch_weight_gradient"])
 @pytest.mark.parametrize("batching", ["vmap", "sequential", "unrolled"])
 @pytest.mark.parametrize("copies", [1, 2])
 def test_algorithm_matches_compiler(algorithm, batching, copies):

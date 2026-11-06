@@ -59,6 +59,14 @@ class PixelPPOConfig:
     # One algorithm per convolution layer: policy first, second, third, then RND (predictor and
     # target) first, second, third. Empty uses convolution_algorithm everywhere.
     layer_convolution_algorithms: tuple[str, ...] = ()
+    # Evaluate the predictor (and an uncached target) on at most this many predictor-mask rows
+    # per minibatch, with an exact fallback to every row; 0 evaluates every row.
+    predictor_selected_rows: int = 0
+    # Convolution algorithm for the rollout's networks only (empty: the same as the update).
+    rollout_convolution_algorithm: str = ""
+    # Matrix products that read the same input computed as one (actor first layer with the
+    # critic's extra layer; extrinsic with intrinsic value head).
+    merged_head_layers: bool = False
     flat_parameters: bool = False
     fuse_optimizer: bool = False
     pre_gather_minibatches: bool = False
@@ -140,7 +148,7 @@ class PixelPPOConfig:
                    "dense_batching": ("matmul", "einsum"),
                    "convolution_batching": ("vmap", "grouped", "sequential", "unrolled"),
                    "convolution_algorithm": ("compiler", "patch_weight_gradient", "patch_matrix",
-                                             "space_to_depth"),
+                                             "space_to_depth", "space_to_depth_patch_weight_gradient"),
                    "rollout_observation_storage": ("float32", "uint8"),
                    "rollout_frame_storage": ("stacked_frames", "indexed_frames"),
                    "moment_reduction": ("two_pass", "raw_moments")}
@@ -151,6 +159,9 @@ class PixelPPOConfig:
                 len(self.layer_convolution_algorithms) != 6
                 or not set(self.layer_convolution_algorithms) <= set(choices["convolution_algorithm"])):
             raise ValueError("layer_convolution_algorithms needs six known algorithms (policy, then RND)")
+        if self.rollout_convolution_algorithm and \
+                self.rollout_convolution_algorithm not in choices["convolution_algorithm"]:
+            raise ValueError("rollout_convolution_algorithm must be empty or a known algorithm")
 
     def per_copy_values(self, name):
         """Return explicitly supplied values, leaving unspecified settings as original scalars."""
