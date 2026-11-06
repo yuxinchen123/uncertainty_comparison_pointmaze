@@ -1,1 +1,6 @@
-units/make_check_units.sh (checks); the final training commands are added when they are launched.
+# Checks: units/make_check_units.sh, make_idea_51_units.sh, make_idea_52_units.sh, make_idea_53_units.sh, make_h100_timing_units.sh
+# Final training units: python3 units/make_final_units.py
+# A4500 (one Slurm job per seed, seeds 5 to 12):
+for seed in 5 6 7 8 9 10 11 12; do sbatch --parsable slurm/jobs/a4500-jaguar03_final-training_seed-$seed/job.sbatch >> slurm/submitted_jobids.txt; done
+# H100 (serval02 card 1, seeds 1 to 4 packed):
+ssh serval02 "nohup bash units/h100-serval02-card-1_final-training_seeds-1-to-4.sh > logs/h100_final_training.out 2>&1 < /dev/null &"

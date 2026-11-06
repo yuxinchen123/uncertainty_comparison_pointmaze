@@ -31,7 +31,7 @@ about five times slower per game step. The corrected pack takes those rooms from
 | precision | float32 networks at highest matrix precision, float64 running statistics, deterministic GPU operations |
 | H100 NVL (serval02 card 1) | 4 copies packed, seeds 1 to 4; `convolution_algorithm=space_to_depth`, cached target features, predictor on 1,280 selected rows, while-loop double buffering |
 | RTX A4500 (jaguar03, 8 cards) | 1 copy per card, seeds 5 to 12; `convolution_batching=unrolled`, cached target features, predictor on 1,280 selected rows |
-| environment speed settings (both) | cached room backgrounds, last two states rendered (in one call), separable rectangle drawing, unrolled fixed render loops, masked one- and two-way draws |
+| environment speed settings (both) | cached room backgrounds, last two states rendered (in one call), separable rectangle drawing, unrolled fixed render loops, masked one- and two-way draws, resets gathered for ended lanes only (8 lanes per step on the A4500, 16 on the H100) |
 | game | JAXtari 04ab9aec (installed package) with the corrected sprite pack (`XDG_DATA_HOME=/p/rlprojects/RND/reference_repos/jaxtari_pixel_study_assets_montezuma_room_geometry_from_png`) |
 | checkpoints | complete state every 20 minutes, at stop signals and at the end (`train_final.py`) |
 
@@ -45,7 +45,10 @@ about five times slower per game step. The corrected pack takes those rooms from
   (`require_room_geometry`); episode limit default 27,000 agent steps (was 108,000); exposes `room_count`.
 - `training.py`: each update records which rooms each copy's games were in (`rooms_visited`).
 - `train_final.py`: the run identity includes the game source and the asset pack's record checksum.
-- Tests: `tests/test_pixel_montezuma_room_geometry.py` (new); the small test environment gains the
+- `environment.py` (ideas 51 and 52, found on the corrected game): `reset_lane_budget` runs the NOOP/FIRE reset only for
+  the ended lanes, gathered into a fixed batch (padding entries skip their NOOP frames); exact, A4500 1.93 to 1.66 s per
+  update. Idea 53 (`constant_game_reset`) is exact but gave no speed change and is not used.
+- Tests: `tests/test_pixel_montezuma_room_geometry.py`, `tests/test_pixel_gathered_resets.py` (new); the small test environment gains the
   `render_final_two_together` attribute.
 
 ## Git state

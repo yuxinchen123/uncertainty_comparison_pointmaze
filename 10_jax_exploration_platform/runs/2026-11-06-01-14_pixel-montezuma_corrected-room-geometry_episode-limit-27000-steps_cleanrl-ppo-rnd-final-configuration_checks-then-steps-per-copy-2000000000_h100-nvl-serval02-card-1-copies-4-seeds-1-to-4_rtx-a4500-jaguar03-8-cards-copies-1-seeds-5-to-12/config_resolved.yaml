@@ -13,6 +13,7 @@ environment:
   unroll_fixed_render_loops: true
   masked_conditional_draws: true
   two_way_masked_draws: true
+  reset_lane_budget: {h100_four_copies: 16, a4500_one_copy: 8}
 learner_h100:
   convolution_algorithm: space_to_depth
   cache_target_features: true

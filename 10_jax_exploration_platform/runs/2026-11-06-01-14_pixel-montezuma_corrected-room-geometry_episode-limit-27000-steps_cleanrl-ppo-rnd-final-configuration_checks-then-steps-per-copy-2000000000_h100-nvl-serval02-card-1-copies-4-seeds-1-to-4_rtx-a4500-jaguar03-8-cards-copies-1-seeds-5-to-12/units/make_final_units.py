@@ -20,9 +20,12 @@ PLATFORM = RUN.parents[1]
 PYTHON = "/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python"
 ASSETS = "/p/rlprojects/RND/reference_repos/jaxtari_pixel_study_assets_montezuma_room_geometry_from_png"
 CARD = "GPU-fed69954-5a71-dbb2-ee91-544e0eb6b8a3"
-ENVIRONMENT = ('{"separable_rectangle_drawing": true, "unroll_fixed_render_loops": true, '
-               '"masked_conditional_draws": true, "two_way_masked_draws": true, "render_final_two_together": true, '
-               '"max_episode_steps": 27000}')
+# Gathered resets (ideas 51 and 52): up to 8 ended lanes per step for one copy, 16 for four copies.
+ENVIRONMENT = {
+    gpu: ('{"separable_rectangle_drawing": true, "unroll_fixed_render_loops": true, '
+          '"masked_conditional_draws": true, "two_way_masked_draws": true, "render_final_two_together": true, '
+          f'"max_episode_steps": 27000, "reset_lane_budget": {budget}}}')
+    for gpu, budget in (("h100", 16), ("a4500", 8))}
 LEARNER = {
     "h100": ('{"convolution_algorithm": "space_to_depth", "cache_target_features": true, "predictor_selected_rows": 1280, '
              '"iteration_compiler_options": [["xla_gpu_enable_while_loop_double_buffering", "true"]]}'),
@@ -46,7 +49,7 @@ def train_command(gpu, copies, seed, data, limit_seconds):
     return (f"{PYTHON} -u scripts/atari_pixel_campaign/train_final.py --run-dir {data}/run --copies {copies} "
             f"--seed-start {seed} --target-updates {TARGET_UPDATES} --observation-warmup-iterations 50 "
             f"--checkpoint-seconds 1200{limit} --learner {shlex.quote(LEARNER[gpu])} "
-            f"--environment {shlex.quote(ENVIRONMENT)}")
+            f"--environment {shlex.quote(ENVIRONMENT[gpu])}")
 
 
 def a4500_job(seed):

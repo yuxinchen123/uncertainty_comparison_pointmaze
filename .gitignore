@@ -288,3 +288,8 @@ core.*
 10_jax_exploration_platform/benchmark_runs/**/campaign_state.json
 10_jax_exploration_platform/benchmark_runs/**/processes.json
 10_jax_exploration_platform/benchmark_runs/**/remote_setup/*.tar.gz
+
+# Profiler traces and training checkpoints (large; kept on disk only)
+**/trace/plugins/
+*.xplane.pb
+**/checkpoint.pkl
