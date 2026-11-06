@@ -30,3 +30,12 @@ gradients of the CleanRL minibatch loss of both variants on one identical suppli
 
 The runner wrote `$?` after a command substitution, so its log line always shows 0. The unit's own `unit.log` holds
 the true exit code. The second runner (pass 2) uses the corrected script.
+
+## 2026-11-05 16:38 PT: superseded first attempts and several serval02 runners
+
+Units whose first attempt ran out of memory or used the old code keep their folders with a `progress.json` but no
+`result.json` (A4500 ideas 31, 32 at two copies; idea 32 at one copy; idea 35 at two copies; the A4500 two-copy
+reference profile); their reruns are the `_attempt-2` / `_attempt-3_allocator-cuda-async-fraction-0.85` folders.
+serval02 card 1 is served by up to four runner processes (passes 1 to 4, one list each); each takes the card-1 lock
+for one unit at a time, so units on the card never overlap. Every finished screen ended in under 15 minutes
+(longest 822 s).
