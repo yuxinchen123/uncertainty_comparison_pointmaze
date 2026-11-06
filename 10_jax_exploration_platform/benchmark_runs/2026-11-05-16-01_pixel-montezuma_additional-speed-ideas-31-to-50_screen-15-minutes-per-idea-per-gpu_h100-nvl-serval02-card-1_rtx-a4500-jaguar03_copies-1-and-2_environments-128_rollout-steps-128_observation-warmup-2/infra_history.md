@@ -61,3 +61,13 @@ edited and restored while it ran (16:13 PT), so bash did not reach its last line
 stale file was removed. The serval05 queue runner (tmux session serval05_queue, shared by other sessions) stays up,
 idle. The 20-minute session monitor was stopped: the final training waits on the user's decision about the
 environment (plan section 197).
+
+## 2026-11-06 01:14 PT: the stuck game was a broken sprite pack; work continues in a new run folder
+
+The probes in `probes/` (`game_version_random_play.py`, `stuck_state_anatomy.py`, `conveyor_left_end.py`,
+`render_frames.py`, and the frames in `render_frames_original_pack/` and `render_frames_corrected_assets/`)
+found that the alternative sprite pack's `.npy` collision maps of five rooms are solid below row 47
+(plan section 198). Checks on the corrected game and the final training run in
+`runs/2026-11-06-01-14_pixel-montezuma_corrected-room-geometry_...`. Job ids of the probes
+(6831990, 6831992, 6832000, 6832008, 6832019, 6832046, 6832058, 6832059, 6832061) are in this
+folder's `slurm/submitted_jobids.txt`; all finished.
