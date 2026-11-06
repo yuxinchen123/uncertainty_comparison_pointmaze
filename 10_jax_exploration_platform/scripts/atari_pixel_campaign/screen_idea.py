@@ -39,6 +39,9 @@ REQUIRED_XLA_FLAG = "--xla_gpu_exclude_nondeterministic_ops=true"
 # Settings that change only the order of float32 sums inside the networks, never the equations.
 SUMMATION_ORDER_FIELDS = {"convolution_algorithm", "convolution_batching", "network_layout",
                           "dense_batching"}
+# Environment settings whose pixels are proven identical to upstream (exact unit tests, and the
+# exact initialization agreement below runs for every environment change).
+EXACT_ENVIRONMENT_FIELDS = {"separable_rectangle_drawing"}
 
 
 def write_json(path, value):
@@ -229,6 +232,8 @@ def main():
     parser.add_argument("--learner", default="{}", help="JSON learner changes of the candidate")
     parser.add_argument("--environment", default="{}", help="JSON environment changes of the candidate")
     parser.add_argument("--reference-learner", default="{}", help="JSON learner settings of the reference")
+    parser.add_argument("--reference-environment", default="{}",
+                        help="JSON environment settings added to the accepted reference environment")
     parser.add_argument("--copies", type=int, default=1)
     parser.add_argument("--seed-start", type=int, default=1)
     parser.add_argument("--observation-warmup-iterations", type=int, default=2)
@@ -262,7 +267,8 @@ def main():
                                       observation_warmup_iterations=args.observation_warmup_iterations,
                                       **json.loads(args.reference_learner))
     candidate_config = replace(reference_config, **json.loads(args.learner))
-    reference_environment = {"num_envs": reference_config.n_envs, **ACCEPTED_ENVIRONMENT}
+    reference_environment = {"num_envs": reference_config.n_envs, **ACCEPTED_ENVIRONMENT,
+                             **json.loads(args.reference_environment)}
     candidate_environment = {**reference_environment, **json.loads(args.environment)}
     import subprocess
     source = {"commit": subprocess.run(["git", "-C", str(PLATFORM_ROOT), "rev-parse", "HEAD"],
@@ -326,7 +332,7 @@ def main():
         record["correctness"] = correctness
     except CorrectnessMismatch as error:
         update_error = str(error)
-        reordering_only = (not json.loads(args.environment)
+        reordering_only = (set(json.loads(args.environment)) <= EXACT_ENVIRONMENT_FIELDS
                            and set(json.loads(args.learner)) <= SUMMATION_ORDER_FIELDS)
         gradient_report, gradient_error = None, None
         if reordering_only:
