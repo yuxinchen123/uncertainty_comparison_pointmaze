@@ -248,6 +248,8 @@ def main():
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--cache-directory", type=Path, required=True)
     parser.add_argument("--profile", action="store_true", help="profile the reference; no candidate")
+    parser.add_argument("--timing-only", action="store_true",
+                        help="with --profile: time whole updates and record memory only (packing)")
     args = parser.parse_args()
     started = time.monotonic()
     args.output.mkdir(parents=True, exist_ok=True)
@@ -317,12 +319,23 @@ def main():
         record["warmup_calls"] = warm_calls
         memory = MemoryObservation(device)
         rounds = []
-        while len(rounds) < 3 and remaining() > 3 * (rounds[-1]["seconds"] if rounds else 60):
+        while len(rounds) < (5 if args.timing_only else 3) and remaining() > 3 * (rounds[-1]["seconds"] if rounds else 60):
             result, warm_host = measure_round(reference, warm_host, 1, memory)
             rounds.append(result)
             progress("timing", rounds=len(rounds))
         record["whole_update_rounds"] = rounds
         record["seconds_per_update"] = statistics.median(row["seconds"] for row in rounds)
+        transitions = reference_config.batch_size * reference_config.n_copies
+        record["transitions_per_second_total"] = transitions / record["seconds_per_update"]
+        record["transitions_per_second_per_copy"] = record["transitions_per_second_total"] / args.copies
+        record["hours_per_million_steps_per_copy"] = 1e6 / (3600 * record["transitions_per_second_per_copy"])
+        record["peak_allocator_bytes"] = max(row["memory"]["allocator"]["peak_bytes_in_use"] for row in rounds)
+        record["device_memory_bytes"] = rounds[0]["memory"]["allocator"].get("bytes_limit")
+        if args.timing_only:
+            record["elapsed_seconds"] = time.monotonic() - started
+            write_json(result_path, record)
+            progress("completed")
+            return
         progress("phases")
         record["phases"] = phase_times(reference, warm_host)
         progress("tracing")

@@ -49,6 +49,7 @@ def main():
     for name in ("--learner", "--environment", "--reference-learner", "--reference-environment"):
         parser.add_argument(name, default="{}")
     parser.add_argument("--profile", action="store_true")
+    parser.add_argument("--timing-only", action="store_true")
     parser.add_argument("--async-allocator", action="store_true")
     args = parser.parse_args()
     unit = f"{args.gpu}_{args.slug}_copies-{args.copies}"
@@ -68,7 +69,7 @@ mkdir -p "$CACHE" {output}
 cd {PLATFORM}
 echo "start $(TZ=America/Los_Angeles date '+%Y-%m-%d %H:%M:%S PT') host $(hostname) pid $$" >> {output}/unit.log
 timeout --signal=TERM --kill-after=30 900 {PYTHON} -u scripts/atari_pixel_campaign/screen_idea.py \\
-  --name {shlex.quote(args.name)} {options} --copies {args.copies}{' --profile' if args.profile else ''} \\
+  --name {shlex.quote(args.name)} {options} --copies {args.copies}{' --profile' if args.profile else ''}{' --timing-only' if args.timing_only else ''} \\
   --budget-seconds 840 --observation-warmup-iterations 2 \\
   --output {output} --cache-directory "$CACHE" >> {output}/unit.log 2>&1
 rc=$?
