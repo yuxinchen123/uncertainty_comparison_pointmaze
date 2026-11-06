@@ -52,6 +52,9 @@ class PixelPPOConfig:
     dense_batching: str = "matmul"
     convolution_batching: str = "vmap"
     convolution_algorithm: str = "compiler"
+    # XLA options for the compiled training iteration only, as (name, value) pairs. They may
+    # change how kernels are launched, never the arithmetic.
+    iteration_compiler_options: tuple[tuple[str, str], ...] = ()
     flat_parameters: bool = False
     fuse_optimizer: bool = False
     pre_gather_minibatches: bool = False

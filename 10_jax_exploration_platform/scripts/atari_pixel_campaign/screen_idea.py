@@ -263,10 +263,17 @@ def main():
                                   canonical_training_state, measure_round, warm_executor,
                                   MemoryObservation)
 
+    def learner_settings(text):
+        """JSON lists become the tuples the frozen configuration expects."""
+        values = json.loads(text)
+        if "iteration_compiler_options" in values:
+            values["iteration_compiler_options"] = tuple(tuple(pair) for pair in values["iteration_compiler_options"])
+        return values
+
     reference_config = PixelPPOConfig(n_copies=args.copies,
                                       observation_warmup_iterations=args.observation_warmup_iterations,
-                                      **json.loads(args.reference_learner))
-    candidate_config = replace(reference_config, **json.loads(args.learner))
+                                      **learner_settings(args.reference_learner))
+    candidate_config = replace(reference_config, **learner_settings(args.learner))
     reference_environment = {"num_envs": reference_config.n_envs, **ACCEPTED_ENVIRONMENT,
                              **json.loads(args.reference_environment)}
     candidate_environment = {**reference_environment, **json.loads(args.environment)}
