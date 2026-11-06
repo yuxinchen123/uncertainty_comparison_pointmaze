@@ -36,6 +36,9 @@ sys.path.insert(0, str(PLATFORM_ROOT / "src"))
 
 ACCEPTED_ENVIRONMENT = {"cache_room_backgrounds": True, "render_final_two_only": True}
 REQUIRED_XLA_FLAG = "--xla_gpu_exclude_nondeterministic_ops=true"
+# Settings that change only the order of float32 sums inside the networks, never the equations.
+SUMMATION_ORDER_FIELDS = {"convolution_algorithm", "convolution_batching", "network_layout",
+                          "dense_batching"}
 
 
 def write_json(path, value):
@@ -96,13 +99,17 @@ def phase_times(executor, host_state):
     trainer = executor.trainer
     collect, prepare, update = (jax.jit(trainer.collect), jax.jit(trainer.prepare_batch),
                                 jax.jit(trainer.update))
+    # Keep only the arrays one phase needs, so two copies fit on a 20 GB card.
     state = device_copy(host_state)
+    result = {"rollout_seconds": time_call(collect, state)}
     rollout_state, rollout = collect(state)
+    del state
+    result["prepare_seconds"] = time_call(prepare, rollout_state, rollout)
     prepared_state, batch = prepare(rollout_state, rollout)
-    result = {"rollout_seconds": time_call(collect, state),
-              "prepare_seconds": time_call(prepare, rollout_state, rollout),
-              "update_seconds": time_call(update, prepared_state, batch)}
-    del state, rollout_state, rollout, prepared_state, batch
+    del rollout_state, rollout
+    gc.collect()
+    result["update_seconds"] = time_call(update, prepared_state, batch)
+    del prepared_state, batch
     gc.collect()
     return result
 
@@ -148,6 +155,43 @@ def traced_update(executor, host_state, trace_directory):
         return kernel_summary(trace_directory)
     except Exception as error:  # the timing result stays valid without the kernel table
         return {"error": f"{type(error).__name__}: {error}"}
+
+
+def gradient_check(reference, candidate, host_state):
+    """Compare loss gradients of both variants on one identical supplied minibatch.
+
+    Used when the one-update check fails for an idea that only reorders float32 sums inside the
+    networks: Adam divides each step by the gradient's running size, so elements with gradients
+    near zero turn rounding differences into parameter differences above 1e-5. The gradients
+    themselves must still agree at float32 absolute 1e-5 and relative 1e-4.
+    """
+    import jax
+    import jax.numpy as jnp
+    from exploration_platform.atari_pixels.training import minibatch_loss
+    from paired_benchmark import agreement, device_copy, host_copy
+
+    state = device_copy(host_state)
+    rollout_state, rollout = jax.jit(reference.trainer.collect)(state)
+    prepared, batch = jax.jit(reference.trainer.prepare_batch)(rollout_state, rollout)
+    rows = reference.trainer.config.minibatch_size
+    selected = {name: value[:, :rows] for name, value in batch.items() if name != "frame_bank"}
+    # Every row trains the predictor here, so every predictor weight receives a gradient.
+    masks = jnp.ones((reference.trainer.config.n_copies, rows), jnp.float32)
+
+    def gradients(executor):
+        """Gradient of the CleanRL minibatch loss under this variant's network settings."""
+        trainer = executor.trainer
+
+        def loss(parameters):
+            return minibatch_loss(parameters, prepared.target, selected, masks, trainer.config,
+                                  trainer.intrinsic_coefficients, prepared.observation_statistics)[0]
+        return host_copy(jax.jit(jax.grad(loss))(prepared.parameters))
+
+    reference_gradients, candidate_gradients = gradients(reference), gradients(candidate)
+    report = agreement(reference_gradients, candidate_gradients)
+    scale = max(float(abs(value).max()) for value in jax.tree.leaves(reference_gradients))
+    return {**report, "largest_reference_gradient_magnitude": scale, "minibatch_rows": rows,
+            "predictor_mask": "all rows"}
 
 
 def decide(pairs, correctness_passed):
@@ -269,11 +313,27 @@ def main():
         correctness, starting_host = correctness_checks(reference, candidate, initial_host)
         record["correctness"] = correctness
     except CorrectnessMismatch as error:
-        record.update(correctness={"passed": False, "error": str(error)}, **decide([], False),
-                      elapsed_seconds=time.monotonic() - started)
-        write_json(result_path, record)
-        progress("rejected", error=str(error))
-        return
+        update_error = str(error)
+        reordering_only = (not json.loads(args.environment)
+                           and set(json.loads(args.learner)) <= SUMMATION_ORDER_FIELDS)
+        gradient_report, gradient_error = None, None
+        if reordering_only:
+            progress("gradient_check", update_check_error=update_error)
+            try:
+                gradient_report = gradient_check(reference, candidate, initial_host)
+            except CorrectnessMismatch as second:
+                gradient_error = str(second)
+        if gradient_report is None:
+            record.update(correctness={"passed": False, "update_check_error": update_error,
+                                       "gradient_check_error": gradient_error,
+                                       "gradient_check_run": reordering_only},
+                          **decide([], False), elapsed_seconds=time.monotonic() - started)
+            write_json(result_path, record)
+            progress("rejected", error=update_error, gradient_error=gradient_error)
+            return
+        record["correctness"] = {"passed": True, "passed_by": "gradient agreement on one supplied minibatch",
+                                 "update_check_error": update_error, "gradient_check": gradient_report}
+        starting_host = initial_host
     del initial_host
     progress("warming")
     reference_host, record_warm_reference = warm_executor(reference, starting_host, 1)

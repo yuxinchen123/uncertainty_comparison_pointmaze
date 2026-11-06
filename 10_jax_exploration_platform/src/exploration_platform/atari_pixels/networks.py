@@ -1,6 +1,7 @@
 """Independent-copy CNNs matching cleanrl/ppo_rnd_envpool.py at the recorded commit."""
 
 import hashlib
+import math
 
 import jax
 import jax.numpy as jnp
@@ -104,6 +105,17 @@ def image_patches(images, kernel, stride):
     return jnp.stack(windows, axis=3).reshape(rows, out_height, out_width, kernel * kernel * channels)
 
 
+# Copied image windows are built for at most this many rows at once (memory: one 1024-row chunk
+# of the first policy layer is 1024 x 400 x 256 float32 values, 0.42 GB).
+PATCH_ROWS_PER_CHUNK = 1024
+
+
+def row_chunks(rows):
+    """Split a row count into equal chunks of at most PATCH_ROWS_PER_CHUNK rows."""
+    chunk = math.gcd(rows, PATCH_ROWS_PER_CHUNK)
+    return rows // chunk, chunk
+
+
 def space_to_depth(images, block):
     """Move each block x block pixel square into channels: [B,H,W,C] -> [B,H/b,W/b,b*b*C]."""
     rows, height, width, channels = images.shape
@@ -161,10 +173,20 @@ def convolution(layer, images, stride, layout="nchw", batching="vmap", include_b
         image_batch, weight = residual
         _, input_vjp = jax.vjp(lambda values: compiler_convolve(values, weight), image_batch)
         (input_gradient,) = input_vjp(output_gradient)
-        windows = image_patches(image_batch, weight.shape[0], stride)
-        weight_gradient = jnp.einsum("byxp,byxo->po", windows, output_gradient,
-                                     precision=jax.lax.Precision.HIGHEST).reshape(weight.shape)
-        return input_gradient, weight_gradient
+        count, chunk = row_chunks(image_batch.shape[0])
+
+        def accumulate(total, index):
+            """Add one row chunk's windows^T @ output gradient."""
+            images = jax.lax.dynamic_slice_in_dim(image_batch, index * chunk, chunk, 0)
+            gradient = jax.lax.dynamic_slice_in_dim(output_gradient, index * chunk, chunk, 0)
+            windows = image_patches(images, weight.shape[0], stride)
+            return total + jnp.einsum("byxp,byxo->po", windows, gradient,
+                                      precision=jax.lax.Precision.HIGHEST), None
+
+        weight_gradient, _ = jax.lax.scan(
+            accumulate, jnp.zeros((weight.size // weight.shape[-1], weight.shape[-1]), weight.dtype),
+            jnp.arange(count))
+        return input_gradient, weight_gradient.reshape(weight.shape)
 
     patch_weight_gradient_convolve.defvjp(patch_forward, patch_backward)
 
@@ -175,9 +197,18 @@ def convolution(layer, images, stride, layout="nchw", batching="vmap", include_b
         if algorithm == "patch_weight_gradient":
             return patch_weight_gradient_convolve(image_batch, weight)
         if algorithm == "patch_matrix":
-            windows = image_patches(image_batch, weight.shape[0], stride)
-            return jnp.einsum("byxp,po->byxo", windows, weight.reshape(-1, weight.shape[-1]),
-                              precision=jax.lax.Precision.HIGHEST)
+            count, chunk = row_chunks(image_batch.shape[0])
+
+            @jax.checkpoint
+            def chunk_product(images, weight):
+                """One row chunk; its windows are rebuilt in the backward pass, not stored."""
+                return jnp.einsum("byxp,po->byxo", image_patches(images, weight.shape[0], stride),
+                                  weight.reshape(-1, weight.shape[-1]),
+                                  precision=jax.lax.Precision.HIGHEST)
+
+            chunks = image_batch.reshape(count, chunk, *image_batch.shape[1:])
+            result = jax.lax.map(lambda images: chunk_product(images, weight), chunks)
+            return result.reshape(image_batch.shape[0], *result.shape[2:])
         if algorithm == "space_to_depth":
             if stride == 1:
                 return compiler_convolve(image_batch, weight)

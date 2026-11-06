@@ -3,7 +3,7 @@
 set -u
 unset PYTHONPATH PYTHONHOME
 export PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 OMP_NUM_THREADS=1
-export XLA_FLAGS=--xla_gpu_exclude_nondeterministic_ops=true XLA_PYTHON_CLIENT_PREALLOCATE=false
+export XLA_FLAGS=--xla_gpu_exclude_nondeterministic_ops=true XLA_PYTHON_CLIENT_PREALLOCATE=false JAXTARI_SKIP_SPRITE_UPDATE=1
 OTHER=$(nvidia-smi --query-compute-apps=pid --format=csv,noheader | xargs -r -n1 ps -o user= -p | grep -vc "^sl5nw$" || true)
 if [ "${OTHER:-0}" -gt 0 ] || [ "$(nvidia-smi --query-compute-apps=pid --format=csv,noheader | wc -l)" -gt 0 ]; then echo "serval05 card busy"; exit 3; fi
 CACHE=/tmp/sl5nw_pixel_screen_cache_h100

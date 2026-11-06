@@ -3,7 +3,7 @@
 set -u
 unset PYTHONPATH PYTHONHOME
 export PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 OMP_NUM_THREADS=1
-export XLA_FLAGS=--xla_gpu_exclude_nondeterministic_ops=true XLA_PYTHON_CLIENT_PREALLOCATE=false
+export XLA_FLAGS=--xla_gpu_exclude_nondeterministic_ops=true XLA_PYTHON_CLIENT_PREALLOCATE=false JAXTARI_SKIP_SPRITE_UPDATE=1
 CACHE=/tmp/sl5nw_pixel_screen_cache_a4500
 mkdir -p "$CACHE" /p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/benchmark_runs/2026-11-05-16-01_pixel-montezuma_additional-speed-ideas-31-to-50_screen-15-minutes-per-idea-per-gpu_h100-nvl-serval02-card-1_rtx-a4500-jaguar03_copies-1-and-2_environments-128_rollout-steps-128_observation-warmup-2/data/a4500-jaguar03_idea-32_whole-convolution-as-window-matrix-products_copies-1
 cd /p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform
