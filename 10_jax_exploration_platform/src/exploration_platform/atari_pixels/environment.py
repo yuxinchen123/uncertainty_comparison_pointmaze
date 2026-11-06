@@ -91,6 +91,43 @@ def _install_room_background_cache(game):
     renderer.pre_load_rooms = True
 
 
+def separable_draw_rects(utilities):
+    """Return an exact replacement for JAXtari's draw_rects that avoids per-rectangle frames.
+
+    Upstream builds one full-frame mask per rectangle and ORs them ([rectangles, H, W] per
+    environment; 88 laser rectangles per frame in Montezuma). A pixel is covered exactly when some
+    rectangle contains both its row and its column, so the coverage count is the product
+    (row membership [H, R]) @ (column membership [R, W]) of 0/1 values. The counts are integers of
+    at most R, exact in float32, and a pixel is drawn exactly when its count is positive.
+    """
+    config = utilities.config
+    height, width = utilities._xx.shape
+    rows, columns = jnp.arange(height), jnp.arange(width)
+
+    def draw_rects(raster, positions, sizes, color_id):
+        """Same scaling, hiding rule (x == -1) and colour as upstream draw_rects."""
+        width_scale, height_scale = config.width_scaling, config.height_scaling
+        pos_scaled = jnp.stack([
+            jnp.round(positions[:, 0] * width_scale),
+            jnp.round(positions[:, 1] * height_scale),
+        ], axis=1).astype(jnp.int32)
+        size_scaled = jnp.stack([
+            jnp.maximum(1, jnp.round(sizes[:, 0] * width_scale)),
+            jnp.maximum(1, jnp.round(sizes[:, 1] * height_scale)),
+        ], axis=1).astype(jnp.int32)
+        should_draw = pos_scaled[:, 0] != -1
+        in_rows = ((rows[:, None] >= pos_scaled[None, :, 1])
+                   & (rows[:, None] < pos_scaled[None, :, 1] + size_scaled[None, :, 1])
+                   & should_draw[None, :])
+        in_columns = ((columns[:, None] >= pos_scaled[None, :, 0])
+                      & (columns[:, None] < pos_scaled[None, :, 0] + size_scaled[None, :, 0]))
+        counts = jnp.matmul(in_rows.astype(jnp.float32), in_columns.astype(jnp.float32).T,
+                            precision=jax.lax.Precision.HIGHEST)
+        return jnp.where(counts > 0, jnp.asarray(color_id, raster.dtype), raster)
+
+    return draw_rects
+
+
 def area_resize_weights(source_size: int, destination_size: int = 84) -> jax.Array:
     """Build exact pixel-overlap weights for a one-dimensional area reduction."""
     # Before: 210 source rows; after: [84, 210] weights whose rows each sum to one.
@@ -130,7 +167,8 @@ class AtariPixelEnvironment:
                  reset_only_when_needed: bool = True,
                  cache_room_backgrounds: bool = False,
                  fuse_pixel_preprocessing: bool = False,
-                 combine_palette_and_sprite_drawing: bool = False):
+                 combine_palette_and_sprite_drawing: bool = False,
+                 separable_rectangle_drawing: bool = False):
         """Load the pinned game lazily and retain only static preprocessing settings."""
         # Keep package imports out of learner-only tests that use a small fake environment.
         import jaxtari
@@ -159,10 +197,14 @@ class AtariPixelEnvironment:
         self.cache_room_backgrounds = cache_room_backgrounds
         self.fuse_pixel_preprocessing = fuse_pixel_preprocessing
         self.combine_palette_and_sprite_drawing = combine_palette_and_sprite_drawing
+        self.separable_rectangle_drawing = separable_rectangle_drawing
 
         # All calls into this game must use int32; the older platform enables x64 globally.
         with jax.enable_x64(False):
             self.game = jaxtari.make("montezumarevenge")
+            if separable_rectangle_drawing:
+                # Before the background cache, so cached rooms use the same exact drawing.
+                self.game.renderer.jr.draw_rects = separable_draw_rects(self.game.renderer.jr)
             if cache_room_backgrounds:
                 # Upstream caches only static room geometry; actors, items, and darkness stay dynamic.
                 _install_room_background_cache(self.game)
