@@ -1,0 +1,24 @@
+schema_version: 1
+run_id: 2026-11-06-01-14_pixel-montezuma_corrected-room-geometry_episode-limit-27000-steps_cleanrl-ppo-rnd-final-configuration_checks-then-steps-per-copy-2000000000_h100-nvl-serval02-card-1-copies-4-seeds-1-to-4_rtx-a4500-jaguar03-8-cards-copies-1-seeds-5-to-12
+description: >
+  Pixel Montezuma CleanRL PPO+RND, selected fast configuration per card, corrected room geometry:
+  checks on the corrected game, then two billion training steps per copy (4 H100 copies, 8 A4500 copies).
+specs:
+  env: jaxtari-montezumarevenge@04ab9aec+room-geometry-from-pack-png, episode-limit-27000-steps
+  agent: cleanrl-ppo-rnd-envpool@pixel-jax-port
+  update_schedule: cleanrl-anneal-over-122070-updates
+compile_signature:
+  envs_per_copy: 128
+  rollout_steps: 128
+  epochs: 4
+  minibatches: 4
+  dtype: float32
+  stats_dtype: float64
+  h100_copies: 4
+  a4500_copies_per_card: 1
+seeding:
+  h100_seeds: [1, 2, 3, 4]
+  a4500_seeds: [5, 6, 7, 8, 9, 10, 11, 12]
+  mode: distinct
+artifacts:
+  per_unit: data/<unit>/

@@ -51,6 +51,30 @@ def learner_settings(text):
     return values
 
 
+def game_source():
+    """Where the imported JAXtari game comes from: a source tree's commit, or the installed version."""
+    import hashlib
+
+    import jaxtari
+    from jaxtari.paths import get_storage_dir
+
+    package = Path(jaxtari.__file__).resolve().parent
+    # The sprite and collision-map pack decides the room geometry, so it is part of the game.
+    assets = Path(get_storage_dir()).resolve()
+    record = assets / "asset_source.json"
+    asset_identity = {"asset_root": str(assets), "asset_record_sha256":
+                      hashlib.sha256(record.read_bytes()).hexdigest() if record.exists() else None}
+    commit = subprocess.run(["git", "-C", str(package), "rev-parse", "HEAD"],
+                            capture_output=True, text=True)
+    if commit.returncode == 0:
+        dirty = subprocess.run(["git", "-C", str(package), "status", "--porcelain", "--", "."],
+                               capture_output=True, text=True).stdout.strip()
+        return {"path": str(package), "commit": commit.stdout.strip(), "uncommitted_changes": bool(dirty),
+                **asset_identity}
+    from importlib.metadata import version
+    return {"path": str(package), "installed_version": version("JAXtari"), **asset_identity}
+
+
 def keep_metrics_through(path, iteration):
     """Drop metric lines after the checkpoint so a resumed record has no duplicates."""
     if not path.exists():
@@ -100,11 +124,12 @@ def main():
     commit = subprocess.run(["git", "-C", str(PLATFORM_ROOT), "rev-parse", "HEAD"],
                             capture_output=True, text=True).stdout.strip()
     # The target may be raised by a later invocation; everything else must match the folder.
-    identity = {"learner": asdict(config), "environment": environment, "copy_seeds": list(seeds)}
+    identity = {"learner": asdict(config), "environment": environment, "copy_seeds": list(seeds),
+                "game_source": game_source()}
     run_record = run_dir / "run.json"
     if run_record.exists():
         recorded = json.loads(run_record.read_text())
-        if {key: recorded[key] for key in identity} != json.loads(json.dumps(identity, default=str)):
+        if {key: recorded.get(key) for key in identity} != json.loads(json.dumps(identity, default=str)):
             raise SystemExit("this run folder belongs to a different configuration")
     else:
         write_json(run_record, {**identity, "source_commit": commit, "host": os.uname().nodename,

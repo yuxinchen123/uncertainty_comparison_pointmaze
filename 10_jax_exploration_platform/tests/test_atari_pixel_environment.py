@@ -115,6 +115,7 @@ class SmallPixelEnvironment(AtariPixelEnvironment):
         self.episodic_life = True
         self.sticky_action_probability = 0.0
         self.render_final_two_only = False
+        self.render_final_two_together = False
         self.frame_skip_unroll = 1
         self.batch_layout = "flat"
         self.stack_update = "concatenate"

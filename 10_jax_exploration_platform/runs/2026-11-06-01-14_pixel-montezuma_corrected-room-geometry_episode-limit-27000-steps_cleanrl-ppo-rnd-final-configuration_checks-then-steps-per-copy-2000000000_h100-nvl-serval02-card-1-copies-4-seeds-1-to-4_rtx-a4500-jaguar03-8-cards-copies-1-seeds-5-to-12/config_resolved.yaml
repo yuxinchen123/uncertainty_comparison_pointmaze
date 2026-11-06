@@ -1,0 +1,27 @@
+asset_root: /p/rlprojects/RND/reference_repos/jaxtari_pixel_study_assets_montezuma_room_geometry_from_png
+environment:
+  num_envs: 128
+  frame_skip: 4
+  max_episode_steps: 27000
+  noop_max: 30
+  episodic_life: true
+  sticky_action_probability: 0.25
+  cache_room_backgrounds: true
+  render_final_two_only: true
+  render_final_two_together: true
+  separable_rectangle_drawing: true
+  unroll_fixed_render_loops: true
+  masked_conditional_draws: true
+  two_way_masked_draws: true
+learner_h100:
+  convolution_algorithm: space_to_depth
+  cache_target_features: true
+  predictor_selected_rows: 1280
+  iteration_compiler_options: [[xla_gpu_enable_while_loop_double_buffering, "true"]]
+learner_a4500:
+  convolution_batching: unrolled
+  cache_target_features: true
+  predictor_selected_rows: 1280
+target_updates: 122070
+observation_warmup_iterations: 50
+checkpoint_seconds: 1200

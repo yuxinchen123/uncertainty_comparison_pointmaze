@@ -33,6 +33,8 @@ class Rollout(NamedTuple):
     logits: object
     reset_frames: object
     frame_bank: object
+    # [copies, rooms] booleans per step: which rooms any of a copy's games is in after the step.
+    rooms: object = None
 
 
 def flatten_rollout(values):
@@ -347,6 +349,13 @@ class PixelPPORND:
             else:
                 stored_observations = (observations.astype(jnp.float32)
                     if config.rollout_observation_storage == "float32" else observations)
+            room_count = getattr(self.environment, "room_count", 0)
+            if room_count:
+                # Before: room per game [C*N]; after: [C, rooms], true where any of the copy's games is.
+                room_ids = next_environment.game.room_id.reshape(config.n_copies, config.n_envs)
+                rooms = (room_ids[..., None] == jnp.arange(room_count, dtype=room_ids.dtype)).any(axis=1)
+            else:
+                rooms = jnp.zeros((config.n_copies, 0), jnp.bool_)
             recorded = Rollout(stored_observations, frames, actions, log_probability, reward, bonus,
                                done_before, values_ext, values_int, information["episode_return"],
                                information["episode_done"], hidden if config.hoist_critic else
@@ -355,7 +364,7 @@ class PixelPPORND:
                                jnp.zeros(logits.shape[:2] + (0,), jnp.float32),
                                next_observations[..., 3:4, :, :] if indexed else
                                jnp.zeros(observations.shape[:2] + (0, 84, 84), jnp.uint8),
-                               jnp.zeros(observations.shape[:2] + (0, 84, 84), jnp.uint8))
+                               jnp.zeros(observations.shape[:2] + (0, 84, 84), jnp.uint8), rooms=rooms)
             return (next_environment, next_observations, done, frame_indices), recorded
 
         (environment_state, observations, done, _), rollout = jax.lax.scan(
@@ -532,5 +541,7 @@ class PixelPPORND:
         metrics = {**metrics, "reward_ext_sum": rollout.rewards.sum(axis=(0, 2)),
                    "intrinsic_reward_mean": rollout.intrinsic_rewards.mean(axis=(0, 2)),
                    "episode_count": episode_count, "episode_return_sum": episode_return_sum,
+                   # [copies, rooms]: rooms any of the copy's games was in after some step of this rollout.
+                   "rooms_visited": rollout.rooms.any(axis=0),
                    "steps_per_policy": (state.iteration + 1) * self.config.batch_size}
         return next_state._replace(iteration=state.iteration + 1), metrics

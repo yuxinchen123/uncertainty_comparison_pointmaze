@@ -1,7 +1,8 @@
 """Pixel Montezuma adapter with the recorded EnvPool 0.6.6 preprocessing.
 
-The game is JAXtari at commit 04ab9aec318c72162e2e53503a594a489d7e162b.
-Its game logic is a reimplementation; this module does not claim ALE trajectories.
+The game is JAXtari at commit 04ab9aec318c72162e2e53503a594a489d7e162b, with the room images and
+collision maps of the corrected alternative sprite pack (CORRECTED_ASSET_ROOT, selected through
+XDG_DATA_HOME). Its game logic is a reimplementation; this module does not claim ALE trajectories.
 Grayscale precedes the final-two-frame maximum, followed by area resizing and
 four-frame stacking. Resets happen inside the transition, so no action is lost
 to a separate reset-only call.
@@ -287,6 +288,30 @@ def _install_masked_conditional_draws(game, unroll_loops=False, two_way=False):
     renderer.render = jax.jit(render)
 
 
+CORRECTED_ASSET_ROOT = ("/p/rlprojects/RND/reference_repos/"
+                        "jaxtari_pixel_study_assets_montezuma_room_geometry_from_png")
+
+
+def _check_start_room_geometry(game):
+    """Refuse a sprite pack whose start-room collision map fills the room below the top floor.
+
+    The alternative pack's 2026-10-01 .npy collision maps of five rooms copy the corridor room
+    (solid below row 47): the player is then carried by the start room's conveyor to x = 54 and
+    stays there, and no fall ever costs a life. The corrected pack takes those rooms from the same
+    pack's .png images (scripts/atari_pixel_campaign/build_montezuma_room_geometry_assets.py).
+    """
+    from jaxtari.games.montezuma_revenge.core import get_room_idx
+
+    start = game.consts.INITIAL_ROOM_ID
+    collision = game.ROOM_COLLISION_MAPS[get_room_idx(jnp.int32(start))]
+    # Between the top floor (rows 46-49) and the ledges (row 90), inside the side walls.
+    if bool(jnp.any(collision[52:88, 10:150] != 0)):
+        raise ValueError(
+            "the installed JAXtari sprite pack fills the Montezuma start room below its top floor, "
+            "which traps the player on the conveyor and removes fall deaths; set XDG_DATA_HOME="
+            f"{CORRECTED_ASSET_ROOT} (or pass require_room_geometry=False to reproduce old runs)")
+
+
 def area_resize_weights(source_size: int, destination_size: int = 84) -> jax.Array:
     """Build exact pixel-overlap weights for a one-dimensional area reduction."""
     # Before: 210 source rows; after: [84, 210] weights whose rows each sum to one.
@@ -318,7 +343,8 @@ class AtariPixelEnvironment:
     observation_shape = (4, 84, 84)
 
     def __init__(self, num_envs: int = 128, frame_skip: int = 4,
-                 max_episode_steps: int = 108000, noop_max: int = 30,
+                 # EnvPool's limit is 108,000 frames, i.e. 27,000 agent steps of four frames.
+                 max_episode_steps: int = 27000, noop_max: int = 30,
                  episodic_life: bool = True,
                  sticky_action_probability: float = 0.25,
                  render_final_two_only: bool = False, frame_skip_unroll: int = 1,
@@ -331,7 +357,8 @@ class AtariPixelEnvironment:
                  unroll_fixed_render_loops: bool = False,
                  masked_conditional_draws: bool = False,
                  render_final_two_together: bool = False,
-                 two_way_masked_draws: bool = False):
+                 two_way_masked_draws: bool = False,
+                 require_room_geometry: bool = True):
         """Load the pinned game lazily and retain only static preprocessing settings."""
         # Keep package imports out of learner-only tests that use a small fake environment.
         import jaxtari
@@ -384,6 +411,10 @@ class AtariPixelEnvironment:
                                                   two_way=two_way_masked_draws)
             elif unroll_fixed_render_loops:
                 _install_unrolled_render_loops(self.game)
+            # Rooms are numbered 0..room_count-1; the learner records which ones each copy visits.
+            self.room_count = int(self.game.consts.MAX_ROOMS)
+            if require_room_geometry:
+                _check_start_room_geometry(self.game)
             height, width, channels = self.game.image_space().shape
             if channels != 3 or self.game.action_space().n != self.action_count:
                 raise ValueError("the pinned Montezuma game must expose RGB pixels and 18 actions")
