@@ -13,3 +13,7 @@ python3 make_unit.py a4500-jaguar03 idea-51_resets-gathered-for-ended-lanes_budg
 python3 make_unit.py h100-serval02-card-1 idea-51_resets-gathered-for-ended-lanes_budget-16 4 \
   "idea 51: NOOP/FIRE resets only for ended lanes, gathered 16 at a time (exact; per-lane reset beyond 16)" \
   --environment '{"reset_lane_budget": 16}' --reference-learner "$H100_LEARNER" --reference-environment "$ENVIRONMENT"
+# The 4-copy H100 screen ran out of memory (both programs at about 40 GB each); screen at 2 copies instead.
+python3 make_unit.py h100-serval02-card-1 idea-51_resets-gathered-for-ended-lanes_budget-8 2 \
+  "idea 51: NOOP/FIRE resets only for ended lanes, gathered 8 at a time (exact; per-lane reset beyond 8)" \
+  --environment '{"reset_lane_budget": 8}' --reference-learner "$H100_LEARNER" --reference-environment "$ENVIRONMENT"

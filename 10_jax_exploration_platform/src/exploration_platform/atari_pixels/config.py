@@ -92,6 +92,9 @@ class PixelPPOConfig:
         object.__setattr__(self, "per_copy_learning_rates", tuple(float(value) for value in self.per_copy_learning_rates))
         object.__setattr__(self, "per_copy_intrinsic_coefficients", tuple(
             float(value) for value in self.per_copy_intrinsic_coefficients))
+        object.__setattr__(self, "iteration_compiler_options", tuple(
+            (name, value) for name, value in self.iteration_compiler_options))
+        object.__setattr__(self, "layer_convolution_algorithms", tuple(self.layer_convolution_algorithms))
         # Before: a JSON/Python mapping; after: sorted immutable (name, values) pairs.
         items = (self.per_copy_scalar_settings.items() if isinstance(self.per_copy_scalar_settings, Mapping)
                  else self.per_copy_scalar_settings)
