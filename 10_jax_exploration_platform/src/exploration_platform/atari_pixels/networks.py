@@ -247,6 +247,8 @@ def convolution_trunk(layers, frames, leaky=False, configuration=None):
     """Run the three CleanRL convolutions and flatten in PyTorch's NCHW order."""
     images = frames.transpose(0, 1, 3, 4, 2)
     per_layer = getattr(configuration, "layer_convolution_algorithms", ()) if configuration is not None else ()
+    # The RND trunks (predictor and target) use leaky activations; the policy trunk does not.
+    per_layer = per_layer[3:] if leaky else per_layer[:3]
     for index, (layer, stride) in enumerate(zip(layers, (4, 2, 1))):
         fused = configuration is not None and configuration.fuse_network_bias_and_activation
         images = convolution(layer, images, stride,

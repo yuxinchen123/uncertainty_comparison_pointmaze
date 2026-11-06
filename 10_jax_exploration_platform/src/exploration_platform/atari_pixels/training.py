@@ -204,7 +204,9 @@ class PixelPPORND:
                                          (config.learning_rate,) * config.n_copies, jnp.float32)
         self.intrinsic_coefficients = jnp.asarray(config.per_copy_values("intrinsic_coefficient") or
                                                 (config.intrinsic_coefficient,) * config.n_copies, jnp.float32)
-        options = dict(config.iteration_compiler_options)
+        # XLA takes switch options as booleans and every other option as text.
+        options = {name: {"true": True, "false": False}.get(value, value)
+                   for name, value in config.iteration_compiler_options}
         self._compiled_iteration = jax.jit(self.iteration, donate_argnums=(0,) if config.donate_state else (),
                                            **({"compiler_options": options} if options else {}))
         self._compiled_warmup = jax.jit(self._warmup)

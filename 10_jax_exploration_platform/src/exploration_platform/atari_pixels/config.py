@@ -56,7 +56,8 @@ class PixelPPOConfig:
     # change how kernels are launched, never the arithmetic.
     iteration_compiler_options: tuple[tuple[str, str], ...] = ()
     paired_rnd_rollout_trunks: bool = False
-    # One algorithm per convolution layer (first, second, third); empty uses convolution_algorithm.
+    # One algorithm per convolution layer: policy first, second, third, then RND (predictor and
+    # target) first, second, third. Empty uses convolution_algorithm everywhere.
     layer_convolution_algorithms: tuple[str, ...] = ()
     flat_parameters: bool = False
     fuse_optimizer: bool = False
@@ -147,9 +148,9 @@ class PixelPPOConfig:
             if getattr(self, name) not in allowed:
                 raise ValueError(f"{name} must be one of {allowed}")
         if self.layer_convolution_algorithms and (
-                len(self.layer_convolution_algorithms) != 3
+                len(self.layer_convolution_algorithms) != 6
                 or not set(self.layer_convolution_algorithms) <= set(choices["convolution_algorithm"])):
-            raise ValueError("layer_convolution_algorithms needs three known algorithms")
+            raise ValueError("layer_convolution_algorithms needs six known algorithms (policy, then RND)")
 
     def per_copy_values(self, name):
         """Return explicitly supplied values, leaving unspecified settings as original scalars."""

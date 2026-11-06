@@ -23,6 +23,8 @@ INSTALLERS = {
     "masked conditional draws": _install_masked_conditional_draws,
     "masked conditional draws and unrolled loops":
         lambda game: _install_masked_conditional_draws(game, unroll_loops=True),
+    "two-way masked draws and unrolled loops":
+        lambda game: _install_masked_conditional_draws(game, unroll_loops=True, two_way=True),
 }
 
 
@@ -58,7 +60,14 @@ def test_changed_render_matches_original(variant):
         for state in states:
             np.testing.assert_array_equal(np.asarray(render_unrolled(state)),
                                           np.asarray(render_original(state)))
-        assert len(states) >= 170
+        # Every item type in every item slot, and every enemy type, all active.
+        for kind in range(5):
+            states.append(template.replace(
+                items_active=jnp.ones_like(template.items_active),
+                items_type=jnp.full_like(template.items_type, kind),
+                enemies_active=jnp.ones_like(template.enemies_active),
+                enemies_type=jnp.full_like(template.enemies_type, kind % 3)))
+        assert len(states) >= 175
         # Training renders all environments at once under vmap, where conditionals become selects.
         batch = jax.tree.map(lambda *values: jnp.stack(values), *states)
         np.testing.assert_array_equal(np.asarray(jax.jit(jax.vmap(unrolled.render))(batch)),

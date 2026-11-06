@@ -192,21 +192,37 @@ class _MaskedDrawLax:
     original kept it. Conditionals whose false branch is not the identity keep jax.lax.cond.
     """
 
-    def __init__(self, base):
+    def __init__(self, base, raster_shape=None):
         self.base = base
         self.conditions = []
+        # Set for the two-way variant: frame-shaped operands only; any other operand (for
+        # example a choice between sprite masks) keeps jax.lax.cond and jax.lax.switch.
+        self.raster_shape = raster_shape
+
+    def _frame_operand(self, operands, kwargs):
+        return (self.raster_shape is not None and len(operands) == 1 and not kwargs
+                and getattr(operands[0], "shape", None) == self.raster_shape)
+
+    def _masked(self, condition, function, value):
+        self.conditions.append(jnp.asarray(condition, bool))
+        try:
+            return function(value)
+        finally:
+            self.conditions.pop()
 
     def __getattr__(self, name):
         return getattr(self.base, name)
 
     def cond(self, predicate, true_fun, false_fun, *operands, **kwargs):
         if len(operands) == 1 and not kwargs and false_fun(operands[0]) is operands[0]:
-            self.conditions.append(jnp.asarray(predicate, bool))
-            try:
-                return true_fun(operands[0])
-            finally:
-                self.conditions.pop()
+            return self._masked(predicate, true_fun, operands[0])
+        if self._frame_operand(operands, kwargs):
+            # Both branches draw: each draws only where its own condition holds.
+            predicate = jnp.asarray(predicate, bool)
+            drawn = self._masked(predicate, true_fun, operands[0])
+            return self._masked(jnp.logical_not(predicate), false_fun, drawn)
         return jax.lax.cond(predicate, true_fun, false_fun, *operands, **kwargs)
+
 
     def active(self):
         """The conjunction of the enclosing conditions, or None outside every converted branch."""
@@ -218,13 +234,19 @@ class _MaskedDrawLax:
         return result
 
 
-def _install_masked_conditional_draws(game, unroll_loops=False):
-    """Trace this renderer with masked draws (and, optionally, unrolled fixed-count loops)."""
+def _install_masked_conditional_draws(game, unroll_loops=False, two_way=False):
+    """Trace this renderer with masked draws (and, optionally, unrolled fixed-count loops).
+
+    two_way also converts two-branch conditionals on the frame: each branch draws only where its
+    own condition holds. Switches keep jax.lax.switch (converting them changed pixels: some
+    background-drawing branches are not pure draws; probe job 6831225).
+    """
     from jaxtari.games.montezuma_revenge import renderer as renderer_module
 
     renderer = game.renderer
     utilities = renderer.jr
-    lax = _MaskedDrawLax(_UnrolledLax() if unroll_loops else jax.lax)
+    lax = _MaskedDrawLax(_UnrolledLax() if unroll_loops else jax.lax,
+                         raster_shape=tuple(utilities._xx.shape) if two_way else None)
     original_render = type(renderer).render.__wrapped__
     draw_rects, render_at = utilities.draw_rects, utilities.render_at
     render_at_clipped = utilities.render_at_clipped
@@ -308,7 +330,8 @@ class AtariPixelEnvironment:
                  separable_rectangle_drawing: bool = False,
                  unroll_fixed_render_loops: bool = False,
                  masked_conditional_draws: bool = False,
-                 render_final_two_together: bool = False):
+                 render_final_two_together: bool = False,
+                 two_way_masked_draws: bool = False):
         """Load the pinned game lazily and retain only static preprocessing settings."""
         # Keep package imports out of learner-only tests that use a small fake environment.
         import jaxtari
@@ -343,6 +366,9 @@ class AtariPixelEnvironment:
         if render_final_two_together and not render_final_two_only:
             raise ValueError("render_final_two_together requires render_final_two_only")
         self.render_final_two_together = render_final_two_together
+        if two_way_masked_draws and not masked_conditional_draws:
+            raise ValueError("two_way_masked_draws requires masked_conditional_draws")
+        self.two_way_masked_draws = two_way_masked_draws
 
         # All calls into this game must use int32; the older platform enables x64 globally.
         with jax.enable_x64(False):
@@ -354,7 +380,8 @@ class AtariPixelEnvironment:
                 # Upstream caches only static room geometry; actors, items, and darkness stay dynamic.
                 _install_room_background_cache(self.game)
             if masked_conditional_draws:
-                _install_masked_conditional_draws(self.game, unroll_loops=unroll_fixed_render_loops)
+                _install_masked_conditional_draws(self.game, unroll_loops=unroll_fixed_render_loops,
+                                                  two_way=two_way_masked_draws)
             elif unroll_fixed_render_loops:
                 _install_unrolled_render_loops(self.game)
             height, width, channels = self.game.image_space().shape
