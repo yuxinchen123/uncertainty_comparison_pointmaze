@@ -39,3 +39,15 @@ reference profile); their reruns are the `_attempt-2` / `_attempt-3_allocator-cu
 serval02 card 1 is served by up to four runner processes (passes 1 to 4, one list each); each takes the card-1 lock
 for one unit at a time, so units on the card never overlap. Every finished screen ended in under 15 minutes
 (longest 822 s).
+
+## 2026-11-05 19:29 and 19:49 PT: H100 eight- and sixteen-copy packing runs out of memory (expected)
+
+`packing-final-configuration` at eight copies (serval05) and sixteen copies (serval02 card 1) stopped with
+RESOURCE_EXHAUSTED when the training iteration asked for 74.65 GiB and 88.26 GiB, above the 85% allocator limit. These
+mark the memory limit of the packing measurement (four copies fit at 40.6 GB), not an infrastructure fault.
+
+## 2026-11-05 20:05 PT: confirmation runs found no time for a round (my estimate)
+
+Both confirmation runs (A4500 job 6831378, H100 serval02 pass 12) ended without a timed round: before the first round
+the budget check assumed 60 s per update, so a 20-update round (1200 s) never fit. The check now uses the measured
+warm-up update. Failed folders kept with the suffix `_failed-attempt-1_empty-round-estimate`; reruns use the original names.

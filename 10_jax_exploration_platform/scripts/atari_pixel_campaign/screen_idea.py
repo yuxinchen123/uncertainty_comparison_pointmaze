@@ -323,7 +323,8 @@ def main():
         rounds = []
         per_round = args.updates_per_round if args.timing_only else 1
         while (len(rounds) < (args.timing_rounds if args.timing_only else 3)
-               and remaining() > 1.5 * (rounds[-1]["seconds"] if rounds else 60 * per_round)):
+               and remaining() > 1.5 * (rounds[-1]["seconds"] if rounds
+                                        else warm_calls[-1]["seconds"] * per_round)):
             result, warm_host = measure_round(reference, warm_host, per_round, memory)
             rounds.append(result)
             progress("timing", rounds=len(rounds))
