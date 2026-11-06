@@ -358,6 +358,7 @@ class AtariPixelEnvironment:
                  masked_conditional_draws: bool = False,
                  render_final_two_together: bool = False,
                  two_way_masked_draws: bool = False,
+                 reset_lane_budget: int = 0,
                  require_room_geometry: bool = True):
         """Load the pinned game lazily and retain only static preprocessing settings."""
         # Keep package imports out of learner-only tests that use a small fake environment.
@@ -396,6 +397,9 @@ class AtariPixelEnvironment:
         if two_way_masked_draws and not masked_conditional_draws:
             raise ValueError("two_way_masked_draws requires masked_conditional_draws")
         self.two_way_masked_draws = two_way_masked_draws
+        if reset_lane_budget < 0:
+            raise ValueError("reset_lane_budget must be zero (off) or positive")
+        self.reset_lane_budget = reset_lane_budget
 
         # All calls into this game must use int32; the older platform enables x64 globally.
         with jax.enable_x64(False):
@@ -634,6 +638,30 @@ class AtariPixelEnvironment:
                 "life_lost": life_lost, "truncated": truncated}
         return next_state, jnp.sign(reward).astype(jnp.float32), done, info
 
+    def _reset_gathered(self, state, ended, full, reset_everywhere):
+        """Run NOOP/FIRE resets only on the lanes that ended, gathered into a small fixed batch.
+
+        Inside vmap, a per-lane conditional reset computes the reset (up to 30 game frames, a game
+        reset per frame, a render) for every lane whenever any lane ended. Here the first
+        reset_lane_budget ended lanes are gathered, reset with the same per-lane function and
+        scattered back; with more ended lanes than the budget the per-lane reset runs as before.
+        """
+        # Before: lanes [C*N,...] with ended [C*N]; after: the same lanes, ended ones reset.
+        budget = self.reset_lane_budget
+        count = jnp.sum(ended.astype(jnp.int32))
+
+        def gathered(current):
+            lanes = jnp.nonzero(ended, size=budget, fill_value=0)[0]
+            valid = jnp.arange(budget) < count
+            chosen = jax.tree.map(lambda value: value[lanes], current)
+            reset = jax.vmap(self._reset_single)(chosen, full[lanes])
+            # Padding entries point past the end and are dropped by the scatter.
+            target = jnp.where(valid, lanes, ended.shape[0])
+            return jax.tree.map(lambda value, new: value.at[target].set(new, mode="drop"), current, reset)
+
+        branch = jnp.where(count == 0, 0, jnp.where(count <= budget, 1, 2))
+        return jax.lax.switch(branch, [lambda current: current, gathered, reset_everywhere], state)
+
     def step(self, state, actions):
         """Step all [C,N] lanes, resetting finished lanes without an extra transition."""
         # Before: actions [C,N]; after: flat state lanes plus pixels and statistics [C,N,...].
@@ -654,7 +682,9 @@ class AtariPixelEnvironment:
                     operand=None)
                 return self._map_lanes(reset_lane, shape, current, done, info["episode_done"])
 
-            if self.reset_only_when_needed:
+            if self.reset_only_when_needed and getattr(self, "reset_lane_budget", 0):
+                next_state = self._reset_gathered(next_state, done, info["episode_done"], reset_finished)
+            elif self.reset_only_when_needed:
                 next_state = jax.lax.cond(jnp.any(done), reset_finished,
                                            lambda current: current, next_state)
             else:
