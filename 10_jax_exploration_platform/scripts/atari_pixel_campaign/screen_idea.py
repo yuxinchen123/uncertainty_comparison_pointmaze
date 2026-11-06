@@ -172,9 +172,15 @@ def gradient_check(reference, candidate, host_state):
 
     state = device_copy(host_state)
     rollout_state, rollout = jax.jit(reference.trainer.collect)(state)
+    del state
     prepared, batch = jax.jit(reference.trainer.prepare_batch)(rollout_state, rollout)
+    del rollout_state, rollout
     rows = reference.trainer.config.minibatch_size
-    selected = {name: value[:, :rows] for name, value in batch.items() if name != "frame_bank"}
+    # Keep one minibatch only, so two copies fit on a 20 GB card.
+    selected = {name: jnp.array(value[:, :rows], copy=True) for name, value in batch.items()
+                if name != "frame_bank"}
+    del batch
+    gc.collect()
     # Every row trains the predictor here, so every predictor weight receives a gradient.
     masks = jnp.ones((reference.trainer.config.n_copies, rows), jnp.float32)
 
