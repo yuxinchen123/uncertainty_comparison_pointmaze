@@ -51,6 +51,7 @@ class PixelPPOConfig:
     network_layout: str = "nchw"
     dense_batching: str = "matmul"
     convolution_batching: str = "vmap"
+    convolution_algorithm: str = "compiler"
     flat_parameters: bool = False
     fuse_optimizer: bool = False
     pre_gather_minibatches: bool = False
@@ -130,7 +131,9 @@ class PixelPPOConfig:
                 raise ValueError("each per-copy setting must contain exactly n_copies values")
         choices = {"network_layout": ("nchw", "nhwc"),
                    "dense_batching": ("matmul", "einsum"),
-                   "convolution_batching": ("vmap", "grouped"),
+                   "convolution_batching": ("vmap", "grouped", "sequential"),
+                   "convolution_algorithm": ("compiler", "patch_weight_gradient", "patch_matrix",
+                                             "space_to_depth"),
                    "rollout_observation_storage": ("float32", "uint8"),
                    "rollout_frame_storage": ("stacked_frames", "indexed_frames"),
                    "moment_reduction": ("two_pass", "raw_moments")}

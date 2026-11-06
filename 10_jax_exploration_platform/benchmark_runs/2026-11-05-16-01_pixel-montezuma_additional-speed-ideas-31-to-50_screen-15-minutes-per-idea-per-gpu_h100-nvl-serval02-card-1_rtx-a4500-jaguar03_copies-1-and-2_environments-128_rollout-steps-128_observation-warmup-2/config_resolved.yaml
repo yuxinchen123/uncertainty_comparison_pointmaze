@@ -1,0 +1,12 @@
+# Resolved settings of every screen in this folder; per-unit records repeat the full learner dataclass.
+learner_reference: {n_copies: [1, 2], n_envs: 128, num_steps: 128, update_epochs: 4, num_minibatches: 4,
+  learning_rate: 1.0e-4, adam_epsilon: 1.0e-5, anneal_learning_rate: true, gamma_ext: 0.999, gamma_int: 0.99,
+  gae_lambda: 0.95, clip_coefficient: 0.1, entropy_coefficient: 0.001, value_coefficient: 0.5,
+  max_gradient_norm: 0.5, intrinsic_coefficient: 1.0, extrinsic_coefficient: 2.0,
+  predictor_update_proportion: 0.25, observation_warmup_iterations: 2, convolution_algorithm: compiler,
+  convolution_batching: vmap, network_layout: nchw}
+environment_reference: {num_envs: 128, cache_room_backgrounds: true, render_final_two_only: true}
+runtime: {JAX_ENABLE_X64: true, jax_default_matmul_precision: highest,
+  XLA_FLAGS: "--xla_gpu_exclude_nondeterministic_ops=true", XLA_PYTHON_CLIENT_PREALLOCATE: false}
+screen: {budget_seconds: 840, hard_limit_seconds: 900, max_pairs: 7, updates_per_variant_per_pair: 1}
+python: /p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python

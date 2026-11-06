@@ -1,0 +1,10 @@
+profile-reference	profile of the accepted reference	{}	1	profile
+profile-reference	profile of the accepted reference	{}	2	profile
+idea-31_convolution-weight-gradient-as-window-matrix-product	convolution weight gradient as one matrix product of copied image windows	{"convolution_algorithm": "patch_weight_gradient"}	1	screen
+idea-31_convolution-weight-gradient-as-window-matrix-product	convolution weight gradient as one matrix product of copied image windows	{"convolution_algorithm": "patch_weight_gradient"}	2	screen
+idea-32_whole-convolution-as-window-matrix-products	whole convolution as matrix products of copied image windows	{"convolution_algorithm": "patch_matrix"}	1	screen
+idea-32_whole-convolution-as-window-matrix-products	whole convolution as matrix products of copied image windows	{"convolution_algorithm": "patch_matrix"}	2	screen
+idea-33_strided-convolutions-as-stride-1-on-rearranged-pixels	strided convolutions as stride-1 convolutions on rearranged pixels	{"convolution_algorithm": "space_to_depth"}	1	screen
+idea-33_strided-convolutions-as-stride-1-on-rearranged-pixels	strided convolutions as stride-1 convolutions on rearranged pixels	{"convolution_algorithm": "space_to_depth"}	2	screen
+idea-34_copies-one-after-another-in-convolutions	copies one after another in the convolutions	{"convolution_batching": "sequential"}	1	screen
+idea-34_copies-one-after-another-in-convolutions	copies one after another in the convolutions	{"convolution_batching": "sequential"}	2	screen

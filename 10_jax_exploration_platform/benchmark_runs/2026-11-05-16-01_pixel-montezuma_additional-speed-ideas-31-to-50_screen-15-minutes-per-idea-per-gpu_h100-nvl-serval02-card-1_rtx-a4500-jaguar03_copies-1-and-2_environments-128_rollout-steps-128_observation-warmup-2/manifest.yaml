@@ -1,0 +1,14 @@
+schema_version: 1
+run_id: 2026-11-05-16-01_pixel-montezuma_additional-speed-ideas-31-to-50_screen-15-minutes-per-idea-per-gpu_h100-nvl-serval02-card-1_rtx-a4500-jaguar03_copies-1-and-2_environments-128_rollout-steps-128_observation-warmup-2
+description: >
+  Fifteen-minute paired speed screens of the twenty additional infrastructure ideas (31 to 50) for the pixel
+  Montezuma CleanRL PPO+RND JAX trainer, on H100 NVL and RTX A4500, one and two copies.
+parent_campaign: benchmark_runs/2026-10-31-00-11_jaxatari_montezuma_pixels_cleanrl_ppo_rnd_environments-per-copy-128_rollout-steps-128_ideas-30-plus-20_steps-per-copy-2000000000_seed-start-1
+plan: ~/.claude/plans/2026-10-31-00-02_rnd-merge-atari-infrastructure-optimization.md
+git:
+  branch: merge-atari-cleanrl
+  commit: pending
+specs:
+  env: jaxtari@04ab9aec318c72162e2e53503a594a489d7e162b (Montezuma pixels, 128 environments)
+  agent: cleanrl ppo_rnd_envpool@fe8d8a03c41a7ef5b523e2e354bd01c363e786bb (JAX port)
+  jax: 0.11.0

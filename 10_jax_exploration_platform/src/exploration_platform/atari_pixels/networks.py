@@ -90,10 +90,52 @@ def dense(layer, values, batching="matmul"):
     return product + layer["bias"][:, None]
 
 
-def convolution(layer, images, stride, layout="nchw", batching="vmap", include_bias=True):
-    """Apply independent HWIO kernels to each policy's NHWC image batch."""
+def image_patches(images, kernel, stride):
+    """Copy every kernel window of [B,H,W,C] images into [B,OH,OW,kernel*kernel*C] rows.
+
+    Strided slices only copy values, so each row holds exactly the pixels one output position
+    reads. The row order (kernel row, kernel column, channel) equals a flattened HWIO kernel.
+    """
+    rows, height, width, channels = images.shape
+    out_height, out_width = (height - kernel) // stride + 1, (width - kernel) // stride + 1
+    windows = [images[:, i:i + stride * (out_height - 1) + 1:stride,
+                      j:j + stride * (out_width - 1) + 1:stride, :]
+               for i in range(kernel) for j in range(kernel)]
+    return jnp.stack(windows, axis=3).reshape(rows, out_height, out_width, kernel * kernel * channels)
+
+
+def space_to_depth(images, block):
+    """Move each block x block pixel square into channels: [B,H,W,C] -> [B,H/b,W/b,b*b*C]."""
+    rows, height, width, channels = images.shape
+    height, width = height - height % block, width - width % block
+    images = images[:, :height, :width].reshape(rows, height // block, block, width // block, block, channels)
+    return images.transpose(0, 1, 3, 2, 4, 5).reshape(rows, height // block, width // block,
+                                                      block * block * channels)
+
+
+def space_to_depth_kernel(weight, block):
+    """Rearrange an HWIO kernel to match space_to_depth images: [k,k,C,O] -> [k/b,k/b,b*b*C,O]."""
+    kernel, _, channels, outputs = weight.shape
+    weight = weight.reshape(kernel // block, block, kernel // block, block, channels, outputs)
+    return weight.transpose(0, 2, 1, 3, 4, 5).reshape(kernel // block, kernel // block,
+                                                      block * block * channels, outputs)
+
+
+def convolution(layer, images, stride, layout="nchw", batching="vmap", include_bias=True,
+                algorithm="compiler"):
+    """Apply independent HWIO kernels to each policy's NHWC image batch.
+
+    algorithm selects how one copy's convolution and its gradients are computed; every choice
+    evaluates the same float32 sums at highest precision (only the summation order differs):
+    - compiler: the compiler's convolution for the forward pass and both gradients.
+    - patch_weight_gradient: compiler forward pass and input gradient; the weight gradient is
+      one matrix product of copied image windows and output gradients.
+    - patch_matrix: forward pass is that matrix product; automatic differentiation then gives
+      matrix-product weight and input gradients.
+    - space_to_depth: strided layers become stride-1 convolutions on rearranged pixels.
+    """
     # Before: [copies, rows, H, W, channels]; after: independent output images per copy.
-    def convolve(image_batch, weight, groups=1):
+    def compiler_convolve(image_batch, weight, groups=1, stride=stride):
         """Choose the compiler's NCHW or NHWC convolution path without changing image values."""
         if layout == "nchw":
             result = jax.lax.conv_general_dilated(
@@ -105,19 +147,62 @@ def convolution(layer, images, stride, layout="nchw", batching="vmap", include_b
             dimension_numbers=("NHWC", "HWIO", "NHWC"), feature_group_count=groups,
             precision=jax.lax.Precision.HIGHEST)
 
+    @jax.custom_vjp
+    def patch_weight_gradient_convolve(image_batch, weight):
+        """Compiler convolution whose weight gradient is an explicit matrix product."""
+        return compiler_convolve(image_batch, weight)
+
+    def patch_forward(image_batch, weight):
+        """Keep the inputs; the windows are copied again only inside the backward pass."""
+        return compiler_convolve(image_batch, weight), (image_batch, weight)
+
+    def patch_backward(residual, output_gradient):
+        """Input gradient from the compiler; weight gradient as windows^T @ output gradient."""
+        image_batch, weight = residual
+        _, input_vjp = jax.vjp(lambda values: compiler_convolve(values, weight), image_batch)
+        (input_gradient,) = input_vjp(output_gradient)
+        windows = image_patches(image_batch, weight.shape[0], stride)
+        weight_gradient = jnp.einsum("byxp,byxo->po", windows, output_gradient,
+                                     precision=jax.lax.Precision.HIGHEST).reshape(weight.shape)
+        return input_gradient, weight_gradient
+
+    patch_weight_gradient_convolve.defvjp(patch_forward, patch_backward)
+
+    def convolve(image_batch, weight):
+        """Dispatch one copy's convolution to the selected algorithm."""
+        if algorithm == "compiler":
+            return compiler_convolve(image_batch, weight)
+        if algorithm == "patch_weight_gradient":
+            return patch_weight_gradient_convolve(image_batch, weight)
+        if algorithm == "patch_matrix":
+            windows = image_patches(image_batch, weight.shape[0], stride)
+            return jnp.einsum("byxp,po->byxo", windows, weight.reshape(-1, weight.shape[-1]),
+                              precision=jax.lax.Precision.HIGHEST)
+        if algorithm == "space_to_depth":
+            if stride == 1:
+                return compiler_convolve(image_batch, weight)
+            return compiler_convolve(space_to_depth(image_batch, stride),
+                                     space_to_depth_kernel(weight, stride), stride=1)
+        raise ValueError(f"unknown convolution algorithm {algorithm}")
+
     def one_copy(image_batch, weight, bias):
         """Convolve one policy's images at full float32 matrix precision."""
         result = convolve(image_batch, weight)
         return result + bias if include_bias else result
     if batching == "vmap":
         return jax.vmap(one_copy)(images, layer["weight"], layer["bias"])
+    if batching == "sequential":
+        # Before: one grouped convolution over copies; after: copies one after another.
+        return jax.lax.map(lambda values: one_copy(*values), (images, layer["weight"], layer["bias"]))
+    if algorithm != "compiler":
+        raise ValueError("grouped convolution batching supports only the compiler algorithm")
     # Before: C separate [B,H,W,I] batches; after: [B,H,W,C*I] with C feature groups.
     copies, rows, height, width, channels = images.shape
     packed_images = images.transpose(1, 2, 3, 0, 4).reshape(rows, height, width, copies * channels)
     weights = layer["weight"]
     packed_weights = weights.transpose(1, 2, 3, 0, 4).reshape(
         weights.shape[1], weights.shape[2], channels, copies * weights.shape[-1])
-    result = convolve(packed_images, packed_weights, copies)
+    result = compiler_convolve(packed_images, packed_weights, copies)
     result = result.reshape(rows, result.shape[1], result.shape[2], copies, weights.shape[-1])
     result = result.transpose(3, 0, 1, 2, 4)
     return result + layer["bias"][:, None, None, None, :] if include_bias else result
@@ -131,7 +216,8 @@ def convolution_trunk(layers, frames, leaky=False, configuration=None):
         images = convolution(layer, images, stride,
             layout=configuration.network_layout if configuration is not None else "nchw",
             batching=configuration.convolution_batching if configuration is not None else "vmap",
-            include_bias=not fused)
+            include_bias=not fused,
+            algorithm=configuration.convolution_algorithm if configuration is not None else "compiler")
         if fused:
             from .kernels import bias_activation
             images = bias_activation(images, layer["bias"], leaky)
