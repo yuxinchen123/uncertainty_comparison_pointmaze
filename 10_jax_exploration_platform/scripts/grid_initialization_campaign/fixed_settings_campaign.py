@@ -146,7 +146,7 @@ def add_confirmation(run_dir):
 
 def stage_finished(run_dir, prefix):
     """True when no unit with this prefix is pending or running."""
-    return not any((run_dir/'queue'/state).glob(prefix+'*.json') for state in ('pending', 'running'))
+    return not any(any((run_dir/'queue'/state).glob(prefix+'*.json')) for state in ('pending', 'running'))
 
 
 def advance(run_dir):

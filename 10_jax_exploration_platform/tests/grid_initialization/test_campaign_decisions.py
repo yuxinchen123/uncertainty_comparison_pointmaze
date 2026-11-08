@@ -224,3 +224,16 @@ def test_confirmation_source_guard_requires_recorded_source(tmp_path, monkeypatc
     monkeypatch.setattr(campaign, 'own_live_jobs', lambda run_dir: {})
     with pytest.raises(FileNotFoundError):
         campaign.confirmation_source_ready(tmp_path)
+
+
+def test_fixed_settings_stage_finished_reads_pending_and_running(tmp_path):
+    """A phase is finished only when no unit with its prefix is pending or running."""
+    import sys
+    from pathlib import Path
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]/'scripts/grid_initialization_campaign'))
+    from fixed_settings_campaign import stage_finished
+    for state in ('pending', 'running'):
+        (tmp_path/'queue'/state).mkdir(parents=True)
+    assert stage_finished(tmp_path, 'measurement_')
+    (tmp_path/'queue/running/measurement_a.json').write_text('{}')
+    assert not stage_finished(tmp_path, 'measurement_')
