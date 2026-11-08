@@ -16,6 +16,18 @@ CPU_PER_CARD = 4
 # Confirmation jobs measured at most 1.11 GiB of host memory per allocated card.
 # This request applies only to newly submitted training jobs.
 MEMORY_GIB_PER_CARD = 8
+# Fixed-settings study, measured 2026-11-07 23:55 PT: training jobs use 0.6-2.2 GiB of host memory
+# and about one processor core per card (sstat MaxRSS and AveCPU); the one-card packing
+# measurements use about 5 GiB, so they keep the larger request.
+FIXED_TRAINING_CPU_PER_CARD = 2
+FIXED_TRAINING_MEMORY_GIB_PER_CARD = 3
+
+
+def card_request(run_dir, canary):
+    """Processor cores and host memory asked per card for one research or measurement job."""
+    if fixed_study(run_dir) and not canary:
+        return FIXED_TRAINING_CPU_PER_CARD, FIXED_TRAINING_MEMORY_GIB_PER_CARD
+    return CPU_PER_CARD, MEMORY_GIB_PER_CARD
 
 
 def slurm_fields(row):
@@ -91,8 +103,9 @@ def submit_job(run_dir, identity, stage, partition='gpu', node=None, gpu_type=No
         f'export PYTHONPATH={shlex.quote(str(Path(source["snapshot"])/"10_jax_exploration_platform/src"))}\n'
         f'cd {shlex.quote(str(PROJECT))}\n'+body)
     # Each subprocess owns one allocated card; processes never share a preallocated pool.
-    memory = 16 if monitor or report else MEMORY_GIB_PER_CARD*cards
-    cpus = 1 if monitor else 2 if report else CPU_PER_CARD*cards
+    cpu_per_card, memory_per_card = card_request(run_dir, canary or stage in ('checks', 'infrastructure'))
+    memory = 16 if monitor or report else memory_per_card*cards
+    cpus = 1 if monitor else 2 if report else cpu_per_card*cards
     command = [str(ACCOUNTS/'submit_as.sh'), identity, '--idfile',
         str(run_dir/'slurm'/f'submitted_jobids_{ledger_prefix(run_dir)}_{account}.txt'),
         '--dir', str(PROJECT), '--', '--job-name', name, '--partition', partition,
@@ -284,6 +297,11 @@ def top_up(run_dir, stage):
     held_nodes = {record['node'] for record in active if record.get('node')}
     held_nodes.update(row[5] for row in live.values() if row[3] == 'RUNNING'
                       and row[5] in nodes)
+    if fixed_study(run_dir):
+        # Running jobs are already subtracted in the scheduler's free counts; only a node with one
+        # of our jobs still waiting on it is held, so spare cards beside a running job are used.
+        held_nodes = {record['node'] for record in active if record.get('node')
+                      and live[record['job_id']][3] != 'RUNNING'}
     ready, failed = compatibility_classes(run_dir)
     type_counts = {}
     for record in classes:
@@ -320,13 +338,14 @@ def top_up(run_dir, stage):
                               if reserved else budgets.get((identity, record['partition'])))
                     if not budget:
                         continue
-                    available = min(physical['cards'], physical['cpus']//CPU_PER_CARD,
-                        int(physical['memory_gib']//MEMORY_GIB_PER_CARD), budget['cards'],
-                        budget['cpus']//CPU_PER_CARD, int(budget['memory_gib']//MEMORY_GIB_PER_CARD),
+                    canary = stage == 'research' and record['gres_type'] not in ready
+                    cpu_card, memory_card = card_request(run_dir, canary or stage != 'research')
+                    available = min(physical['cards'], physical['cpus']//cpu_card,
+                        int(physical['memory_gib']//memory_card), budget['cards'],
+                        budget['cpus']//cpu_card, int(budget['memory_gib']//memory_card),
                         remaining, type_counts[record['gres_type']])
                     if available < 1:
                         continue
-                    canary = stage == 'research' and record['gres_type'] not in ready
                     cards = 1 if canary or stage == 'checks' else int(available)
                     identifier = submit_job(run_dir, identity, stage, partition=record['partition'],
                         node=node, gpu_type=record['gres_type'], cards=cards,
@@ -336,8 +355,8 @@ def top_up(run_dir, stage):
                     remaining -= cards
                     type_counts[record['gres_type']] -= cards
                     budget['cards'] -= cards
-                    budget['cpus'] -= CPU_PER_CARD*cards
-                    budget['memory_gib'] -= MEMORY_GIB_PER_CARD*cards
+                    budget['cpus'] -= cpu_card*cards
+                    budget['memory_gib'] -= memory_card*cards
                     if len(jobs) % 10 == 0:
                         time.sleep(30)
                     break
