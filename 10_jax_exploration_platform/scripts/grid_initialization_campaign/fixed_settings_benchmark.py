@@ -84,8 +84,8 @@ def choose_packing(cases):
     for case in cases:
         if not case.get('completed') or not case['correctness']['passed']:
             continue
-        if case['peak_device_memory_mb'] * 1.25 > case['device_memory_limit_mb']:
-            continue
+        # A completed case ran at that copy count; the recorded peak is the process's peak over
+        # all earlier cases (including any that ran out of memory), so it cannot reject a case.
         key = f"{case['policy_kind']}_{case['intrinsic_source']}"
         if case['steps_per_second_total'] > chosen.get(key, {}).get('steps_per_second_total', 0):
             chosen[key] = {'copies': case['copies'], 'steps_per_second_total': case['steps_per_second_total'],
