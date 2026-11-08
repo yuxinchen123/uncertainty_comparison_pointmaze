@@ -64,15 +64,40 @@ def game_source():
     record = assets / "asset_source.json"
     asset_identity = {"asset_root": str(assets), "asset_record_sha256":
                       hashlib.sha256(record.read_bytes()).hexdigest() if record.exists() else None}
+    # A commit describes the game only when git tracks the package's own files. An installed package
+    # inside an ignored environment folder of another repository would report that repository's HEAD.
+    tracked = subprocess.run(["git", "-C", str(package), "ls-files", "--error-unmatch", "__init__.py"],
+                             capture_output=True, text=True)
     commit = subprocess.run(["git", "-C", str(package), "rev-parse", "HEAD"],
                             capture_output=True, text=True)
-    if commit.returncode == 0:
+    if tracked.returncode == 0 and commit.returncode == 0:
         dirty = subprocess.run(["git", "-C", str(package), "status", "--porcelain", "--", "."],
                                capture_output=True, text=True).stdout.strip()
         return {"path": str(package), "commit": commit.stdout.strip(), "uncommitted_changes": bool(dirty),
                 **asset_identity}
     from importlib.metadata import version
     return {"path": str(package), "installed_version": version("JAXtari"), **asset_identity}
+
+
+def mismatched_identity(recorded, identity):
+    """Names of identity fields that differ from the run folder's record (empty when it may resume).
+
+    Run folders written before 2026-11-07 recorded, for an installed game package, the HEAD of the
+    repository enclosing the environment folder as the game's "commit"; that HEAD moves with
+    unrelated commits. Such a record matches when the package path and the asset pack are the same
+    and no file of the installed package changed after the run folder was created.
+    """
+    differing = [key for key in identity if key != "game_source" and recorded.get(key) != identity[key]]
+    old, new = recorded.get("game_source") or {}, identity["game_source"]
+    if old != new:
+        same_place = all(old.get(key) == new.get(key) for key in ("path", "asset_root", "asset_record_sha256"))
+        enclosing_commit = "commit" in old and "installed_version" in new
+        created = recorded.get("created_unix")
+        unchanged = created is not None and max(
+            (item.stat().st_mtime for item in Path(new["path"]).rglob("*") if item.is_file()), default=0) <= created
+        if not (same_place and enclosing_commit and unchanged):
+            differing.append("game_source")
+    return differing
 
 
 def keep_metrics_through(path, iteration):
@@ -129,8 +154,9 @@ def main():
     run_record = run_dir / "run.json"
     if run_record.exists():
         recorded = json.loads(run_record.read_text())
-        if {key: recorded.get(key) for key in identity} != json.loads(json.dumps(identity, default=str)):
-            raise SystemExit("this run folder belongs to a different configuration")
+        differing = mismatched_identity(recorded, json.loads(json.dumps(identity, default=str)))
+        if differing:
+            raise SystemExit(f"this run folder belongs to a different configuration: {differing} differ")
     else:
         write_json(run_record, {**identity, "source_commit": commit, "host": os.uname().nodename,
                                 "device_kind": jax.devices()[0].device_kind,
