@@ -130,8 +130,11 @@ def inspect_progress(run_dir):
     observation_path = run_dir/'monitor_progress_observations.json'
     prior = read_json(observation_path) if observation_path.exists() else {}
     current, warnings = {}, []
-    for path in (run_dir/'queue/running').glob('*.json'):
-        task = read_json(path)
+    # Read the claims under the queue lock: a finishing unit moves its file to done/.
+    from common import queue_lock
+    with queue_lock(run_dir):
+        running = [read_json(path) for path in (run_dir/'queue/running').glob('*.json')]
+    for task in running:
         progress_path = run_dir/'data/research'/task['name']/'progress.jsonl'
         size = progress_path.stat().st_size if progress_path.exists() else 0
         previous = prior.get(task['name'])

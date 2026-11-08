@@ -281,8 +281,11 @@ def top_up(run_dir, stage):
     submissions = [read_json(path) for path in (run_dir/'slurm/submissions').glob('*.json')]
     submissions = classify_submission_reservations(submissions, live)
     active = [record for record in submissions if record['job_id'] in live]
-    tasks = [read_json(path) for state in ('pending', 'running')
-             for path in (run_dir/'queue'/state).glob('*.json')]
+    # Read under the queue lock: a worker that claims a unit moves its file between the folders.
+    from common import queue_lock
+    with queue_lock(run_dir):
+        tasks = [read_json(path) for state in ('pending', 'running')
+                 for path in (run_dir/'queue'/state).glob('*.json')]
     outstanding = sum(task['stage'] == stage for task in tasks)
     remaining = outstanding-sum(record['cards'] for record in active if record['stage'] == stage)
     if remaining <= 0:
