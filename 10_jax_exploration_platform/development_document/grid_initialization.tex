@@ -1,4 +1,4 @@
-% Initial-bonus study. Root document supplies \GridInitializationRunPath for generated results.
+% Grid studies. Root document supplies \GridInitializationRunPath and \FixedSettingsRunPath for generated results.
 \section{Uneven initial bonuses in deterministic grid exploration}
 \label{sec:grid-initialization}
 
@@ -78,7 +78,81 @@ environments have the same transition graph.}
 \label{tab:grid-initialization-environments}
 \end{table}
 
-\subsection{Training and initialization comparisons}
+\subsection{Fixed CleanRL PPO-RND settings: normalization and learned decay}
+\label{sec:grid-fixed-settings}
+This study fixes PPO at CleanRL PPO-RND's scalar settings and tunes only the learning rate,
+the entropy coefficient and the intrinsic weight $\beta$, which multiplies the intrinsic
+advantage. It adds the two CleanRL normalizations and an online RND whose bonus decays as its
+predictor learns. The maps are the straight grid of 32 cells and the snake grid of width 16
+with two turns (50 cells), each with the tabular and the neural policy.
+
+Recall $c(s)$ (the mean-one initial field) and $n$ (the arrivals at $s$) from
+Section~\ref{sec:grid-initialization}. Define $g$ as a frozen random target network, $f_t$ as a
+predictor after $t$ updates, both evaluated on the cell's input $\phi(s)$, and
+$e_t(s)=\tfrac12\lVert g(\phi(s))-f_t(\phi(s))\rVert^2$ as the online RND error. The two decay
+rules are
+\begin{align}
+b_{\mathrm{count}}(s,n) &= \frac{c(s)}{\sqrt n}, &
+b_{\mathrm{online}}(s,t) &= e_t(s).
+\end{align}
+The online bonus is CleanRL's raw error and is not scaled to mean one. With state
+normalization, $\phi(s)$ is the cell's coordinates whitened by running statistics and clipped to
+$[-5,5]$; the statistics start from 50 random-action rollouts of 128 steps. Reward normalization
+divides every bonus by the running standard deviation of its discounted sum.
+
+\begin{table}[H]
+\centering\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.6cm}
+>{\raggedright\arraybackslash}p{2.2cm}>{\raggedright\arraybackslash}p{2.0cm}
+>{\raggedright\arraybackslash}p{2.4cm}>{\raggedright\arraybackslash}p{2.2cm}@{}}
+\blackrule
+\textbf{Setting} & \textbf{CleanRL PPO-RND} & \textbf{CleanRL PPO} & \textbf{Earlier grid default} & \textbf{This study} \\
+\blackrule
+learning rate & $10^{-4}$ & $2.5\times10^{-4}$ & $2^{-8}$ & $\{10^{-4},10^{-3}\}$ \\ \greyrule
+entropy coefficient & $0.001$ & $0.01$ & $2^{-10}$ & $\{0.001,0.01\}$ \\ \greyrule
+intrinsic weight $\beta$ & $1$ & N/A & $1$ & $2^{-6},\dots,2^{6}$ (13) \\ \greyrule
+rollout, epochs, minibatches & 128, 4, 4 & 128, 4, 4 & same & 128, 4, 4 \\ \greyrule
+extrinsic / intrinsic discount & 0.999 / 0.99 & 0.99 / N/A & same & 0.999 / 0.99 \\ \greyrule
+GAE, clip, value coefficient & 0.95, 0.1, 0.5 & 0.95, 0.2, 0.5 & 0.95, 0.1, 0.5 & 0.95, 0.1, 0.5 \\ \greyrule
+gradient norm, Adam $\epsilon$ & 0.5, $10^{-5}$ & 0.5, $10^{-5}$ & same & 0.5, $10^{-5}$ \\ \greyrule
+extrinsic advantage weight & 2 & 1 & 2 & 2 \\ \greyrule
+environments per policy & 128 & 4 & 1 & 1 \\
+\blackrule
+\end{tabular}
+\caption{PPO settings. ``Same'' repeats the column to its left.}
+\label{tab:grid-fixed-settings}
+\end{table}
+
+\begin{table}[H]
+\centering\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.6cm}>{\raggedright\arraybackslash}p{1.6cm}
+>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}p{1.4cm}@{}}
+\blackrule
+\textbf{Method} & \textbf{Decay} & \textbf{State normalization} & \textbf{Reward normalization} & \textbf{Conditions} \\
+\blackrule
+no bonus & --- & N/A & N/A & 1 \\ \greyrule
+uniform field & $1/\sqrt n$ & N/A (no RND network) & off, on & 2 \\ \greyrule
+alternating field, odd cells $2^{-6}$ of even cells & $1/\sqrt n$ & N/A (no RND network) & off, on & 2 \\ \greyrule
+frozen random-network field & $1/\sqrt n$ & off, on & off, on & 4 \\ \greyrule
+online RND (same networks as the frozen field) & learned & off, on & off, on & 4 \\
+\blackrule
+\end{tabular}
+\caption{Conditions of each map and policy. Each runs all learning rates, entropies and
+intrinsic weights (52 configurations; 4 for no bonus) for 16,777,216 transitions on 16
+development seeds; the configuration with the smallest mean capped first-goal time is then rerun
+on 128 fresh seeds, as is the best intrinsic weight at learning rate $10^{-4}$ and entropy 0.001.}
+\label{tab:grid-fixed-conditions}
+\end{table}
+
+\ifdefined\FixedSettingsRunPath
+  \IfFileExists{\FixedSettingsRunPath/analysis/results.tex}{%
+    \input{\FixedSettingsRunPath/analysis/results.tex}%
+  }{No results of this study have been generated yet.}
+\fi
+
+\subsection{Earlier study: training and initialization comparisons}
 \begin{table}[H]
 \centering
 \setlength{\tabcolsep}{4pt}
@@ -175,7 +249,7 @@ Configurations are distinct from independent seed copies.}
 \label{tab:grid-initialization-swept}
 \end{table}
 
-\subsection{Behavior and relation to previous work}
+\subsection{Earlier study: behavior and relation to previous work}
 Initial-field maps, total-visitation maps, and late-visitation maps use shared color scales
 within each comparison. Training-position samples and farthest-discovered distance distinguish
 continued progress from repeatedly visiting the same part of a path. Action arrows show legal
@@ -196,7 +270,7 @@ rule exact and tests the consequences of the initial field in isolation.
 The inverse-square-root rule is a reference condition here; no universal optimality claim
 is made for every deterministic environment or policy optimizer.
 
-\subsection{Completed results}
+\subsection{Earlier study: completed results}
 \ifdefined\GridInitializationRunPath
   \IfFileExists{\GridInitializationRunPath/analysis/results.tex}{%
     \input{\GridInitializationRunPath/analysis/results.tex}%

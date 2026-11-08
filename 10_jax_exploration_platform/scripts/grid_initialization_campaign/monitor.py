@@ -8,8 +8,9 @@ import subprocess
 import textwrap
 import time
 
-from campaign import advance
-from common import (ACCOUNTS, PYTHON, append_json, now, own_live_jobs, pacific,
+import campaign
+import fixed_settings_campaign
+from common import (ACCOUNTS, PYTHON, append_json, fixed_study, ledger_prefix, now, own_live_jobs, pacific,
                     queue_counts, read_json, write_json)
 from submit import RESOURCE_FILE, top_up, submit_report_job
 from run_report import completed_result_count
@@ -65,7 +66,7 @@ def stop_workers(run_dir, live):
     (run_dir/'STOP').write_text(now()+'\n')
     cancelled = []
     for account in ('sl5nw', 'yuxinchen'):
-        ledger = run_dir/'slurm'/f'submitted_jobids_initial_bonus_{account}.txt'
+        ledger = run_dir/'slurm'/f'submitted_jobids_{ledger_prefix(run_dir)}_{account}.txt'
         if not ledger.exists():
             continue
         permitted = set(ledger.read_text().split())
@@ -208,8 +209,9 @@ def tick(run_dir):
         write_json(run_dir/'campaign_state.json', state)
     else:
         recover_claims(run_dir, live)
-        production_profiles(run_dir)
-        state = advance(run_dir)
+        if not fixed_study(run_dir):
+            production_profiles(run_dir)
+        state = (fixed_settings_campaign if fixed_study(run_dir) else campaign).advance(run_dir)
         if state['phase'] != 'complete':
             stage = ('checks' if state['phase'] == 'checks' else 'infrastructure'
                      if 'measurements' in state['phase'] else 'research')
@@ -225,8 +227,9 @@ def tick(run_dir):
     live = own_live_jobs(run_dir)
     counts = queue_counts(run_dir)
     inspect_progress(run_dir)
-    from performance_report import write_report
-    write_report(run_dir)
+    if not fixed_study(run_dir):
+        from performance_report import write_report
+        write_report(run_dir)
     summary = {'at': now(), 'phase': state['phase'], 'counts': counts,
                'deadline': state.get('deadline'), 'deadline_reached': expired,
                'cadence_seconds': 1200, 'jobs': list(live.values())}

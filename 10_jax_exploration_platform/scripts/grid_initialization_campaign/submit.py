@@ -9,7 +9,7 @@ import shlex
 import subprocess
 import time
 
-from common import ACCOUNTS, PROJECT, PYTHON, now, own_live_jobs, read_json, write_json
+from common import ACCOUNTS, PROJECT, PYTHON, fixed_study, ledger_prefix, now, own_live_jobs, read_json, write_json
 
 RESOURCE_FILE = Path('/p/rlprojects/.claude/skills/uva-submit-gpu-sweep/school_compute_resource/server_introduction.json')
 CPU_PER_CARD = 4
@@ -63,7 +63,7 @@ def submit_job(run_dir, identity, stage, partition='gpu', node=None, gpu_type=No
     scripts = run_dir/'slurm/scripts'
     scripts.mkdir(parents=True, exist_ok=True)
     (run_dir/'logs').mkdir(exist_ok=True)
-    name = f'grid-initial-{"monitor" if monitor else stage}-{time.time_ns()}'
+    name = f'grid-{"fixed" if fixed_study(run_dir) else "initial"}-{"monitor" if monitor else stage}-{time.time_ns()}'
     script = scripts/(name+'.sh')
     source = read_json(run_dir/'source.json')
     directory = Path(source['snapshot'])/'10_jax_exploration_platform/scripts/grid_initialization_campaign'
@@ -94,7 +94,7 @@ def submit_job(run_dir, identity, stage, partition='gpu', node=None, gpu_type=No
     memory = 16 if monitor or report else MEMORY_GIB_PER_CARD*cards
     cpus = 1 if monitor else 2 if report else CPU_PER_CARD*cards
     command = [str(ACCOUNTS/'submit_as.sh'), identity, '--idfile',
-        str(run_dir/'slurm'/f'submitted_jobids_initial_bonus_{account}.txt'),
+        str(run_dir/'slurm'/f'submitted_jobids_{ledger_prefix(run_dir)}_{account}.txt'),
         '--dir', str(PROJECT), '--', '--job-name', name, '--partition', partition,
         '--nodes', '1', '--ntasks', '1', '--cpus-per-task', str(cpus),
         '--mem', f'{memory}G', '--time', str(seconds),
@@ -234,6 +234,17 @@ def node_resources(output):
 def compatibility_classes(run_dir):
     """Admit a GPU class only after every case of its real short measurement passed."""
     ready, failed = set(), set()
+    if fixed_study(run_dir):
+        # A class is ready once its packing record names copies for both policies and both sources.
+        needed = {f'{policy}_{source}' for policy in ('tabular', 'neural') for source in ('count', 'online_rnd')}
+        for path in (run_dir/'infrastructure/compatibility').glob('*.json'):
+            record = read_json(path)
+            packing = run_dir/'infrastructure/packing'/path.name
+            if record.get('completed') and packing.exists() and needed <= set(read_json(packing)):
+                ready.add(record.get('gpu_type', path.stem))
+            elif record.get('completed') or 'failure' in record:
+                failed.add(record.get('gpu_type', path.stem))
+        return ready, failed-ready
     for path in (run_dir/'infrastructure/compatibility').glob('*.json'):
         record = read_json(path)
         gpu_type = record.get('gpu_type')

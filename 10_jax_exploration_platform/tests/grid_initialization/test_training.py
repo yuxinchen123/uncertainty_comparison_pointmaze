@@ -73,7 +73,7 @@ def test_complete_iteration_and_independent_settings(policy_kind):
     assert np.asarray(expected.counts).sum() == 16
     assert all(np.isfinite(np.asarray(value)).all() for value in jax.tree.leaves(expected.parameters))
     changed = GridTrainer(replace(trainer.configuration, per_copy_scalar_settings={
-        "learning_rate": (2 ** -8, 2 ** -5), "intrinsic_coefficient": (1., 16.)}),
+        "learning_rate": (trainer.configuration.learning_rate, 2 ** -5), "intrinsic_coefficient": (1., 16.)}),
         trainer.transition_table, trainer.coordinates, trainer.fields)
     actual, _ = changed.train_iteration(state)
     for a, b in zip(jax.tree.leaves(expected), jax.tree.leaves(actual)):

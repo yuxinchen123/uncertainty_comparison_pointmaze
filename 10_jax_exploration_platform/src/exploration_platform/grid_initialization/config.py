@@ -24,10 +24,13 @@ class GridPPOConfig:
     episode_length: int = 1024
     start_state: int = 0
     goal_state: int = -1
-    learning_rate: float = 2 ** -8
+    # Defaults are CleanRL PPO-RND's scalar settings, as the audit report recommends for the
+    # straight and snake grids (GPT_session/ChatGPT_Research-audit-report_20261107-1858.pdf,
+    # pages 14-15). Before 2026-11-07: learning rate 2^-8 and entropy coefficient 2^-10.
+    learning_rate: float = 1e-4
     intrinsic_coefficient: float = 1.0
     extrinsic_coefficient: float = 2.0
-    entropy_coefficient: float = 2 ** -10
+    entropy_coefficient: float = 1e-3
     value_coefficient: float = 0.5
     clip_coefficient: float = 0.1
     gamma_ext: float = 0.999
@@ -40,6 +43,12 @@ class GridPPOConfig:
     upstream_reward_filter_axis: bool = True
     associative_reward_filter: bool = False
     moment_reduction: str = "two_pass"
+    # "count": frozen field divided by the square root of visits; "online_rnd": the predictor
+    # error of a CleanRL-style random network distillation trained during PPO.
+    intrinsic_source: str = "count"
+    # Whiten the online RND inputs with running statistics (CleanRL observation normalization).
+    normalize_rnd_inputs: bool = False
+    predictor_update_proportion: float = 0.25
     per_copy_scalar_settings: tuple | Mapping = ()
     rollout_unroll: int = 1
     update_unroll: int = 1
@@ -65,6 +74,17 @@ class GridPPOConfig:
             raise ValueError("policy_kind must be tabular or neural")
         if self.moment_reduction not in {"two_pass", "raw_moments"}:
             raise ValueError("moment_reduction must be two_pass or raw_moments")
+        if self.intrinsic_source not in {"count", "online_rnd"}:
+            raise ValueError("intrinsic_source must be count or online_rnd")
+        if self.normalize_rnd_inputs and self.intrinsic_source != "online_rnd":
+            raise ValueError("RND input normalization acts only on online RND; frozen fields are built normalized")
+        if self.intrinsic_source == "online_rnd":
+            if not 0 < self.predictor_update_proportion <= 1:
+                raise ValueError("predictor_update_proportion must be in (0, 1]")
+            unsupported = [name for name in ("flatten_update_scan", "pre_gather_minibatches",
+                           "all_states_minibatch", "hoist_bonus", "flat_parameters") if getattr(self, name)]
+            if unsupported:
+                raise ValueError(f"online RND is not implemented with: {unsupported}")
         if min(self.n_copies, self.hidden_width, self.num_steps, self.update_epochs,
                self.num_minibatches, self.total_timesteps, self.episode_length,
                self.rollout_unroll, self.update_unroll) < 1:

@@ -1,0 +1,24 @@
+schema_version: 1
+run_id: 2026-11-07-20-03_fixed-cleanrl-ppo-rnd_straight-32-snake-16x2_tabular-neural_uniform-alternating-frozen-network-online-rnd_state-and-reward-normalization_learning-rate-1e-4-1e-3_entropy-1e-3-1e-2_steps-16777216_seeds-0-15_confirmation-20000-20127
+description: >
+  Fixed CleanRL PPO-RND settings on the straight-32 and snake-16x2 grids: no bonus, uniform,
+  alternating, frozen network field and online RND, with state and reward normalization off/on;
+  learning rate, entropy and intrinsic weight swept on 16 seeds, chosen settings confirmed on 128.
+specs:
+  env: grid_initialization.environments@straight-32,snake-16-turns-2
+  agent: grid_initialization.training@cleanrl-ppo-rnd-scalars
+  bonus: count-inverse-square-root and online-rnd
+compile_signature:
+  envs_per_copy: 1
+  rollout_steps: 128
+  epochs: 4
+  minibatches: 4
+  dtype: float32
+  stats_dtype: float64
+seeding:
+  mode: paired
+  development_policy_seeds: [0, 15]
+  confirmation_policy_seeds: [20000, 20127]
+artifacts:
+  metrics: metrics.jsonl
+  summary: summary.json

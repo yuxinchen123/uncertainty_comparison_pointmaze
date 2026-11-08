@@ -46,6 +46,29 @@ def memory_profile(run_dir, policy_kind):
     return {'copies': 32, 'changes': {}}
 
 
+def fixed_settings_packing(run_dir, policy_kind, intrinsic_source):
+    """Read the copies per process measured for this card class, policy and bonus source."""
+    # Before: packing/nvidia_rtx_a4500.json {"neural_online_rnd": {"copies": 256}}; after: 256.
+    path = run_dir/'infrastructure/packing'/(os.environ.get('GRID_GPU_CLASS', 'default')+'.json')
+    entry = read_json(path).get(f'{policy_kind}_{intrinsic_source}') if path.exists() else None
+    return {'copies': entry['copies'], 'changes': {}, 'source': str(path)} if entry else {'copies': 32, 'changes': {}}
+
+
+def fixed_settings_field(spec, geometry, field_seed, episode_length):
+    """Build one field of the fixed-settings study and its input statistics, if any."""
+    from exploration_platform.grid_initialization.fields import make_initial_bonus_field
+    from exploration_platform.grid_initialization.online_rnd import frozen_network_field, warmup_statistics
+    # The frozen network field and online RND share networks and, when normalized, statistics.
+    if spec['field_kind'] == 'random_network':
+        statistics = (warmup_statistics(geometry, episode_length, field_seed)
+                      if spec.get('state_normalization') else None)
+        return frozen_network_field(geometry, field_seed, statistics), statistics
+    if spec.get('state_normalization'):
+        raise ValueError('State normalization applies only to fields built by RND networks.')
+    return make_initial_bonus_field(spec['field_kind'], geometry, seed=field_seed,
+                                    severity_exponent=spec['severity_exponent']), None
+
+
 def main():
     """Execute one immutable settings/seed unit with per-copy state on the GPU."""
     parser = argparse.ArgumentParser()
@@ -64,18 +87,24 @@ def main():
     if jax.default_backend() != 'gpu':
         raise RuntimeError('Training requires an allocated compatible GPU; CPU fallback is forbidden.')
     spec = read_json(args.specification)
-    canonical_fields = uses_canonical_archive(spec)
+    fixed_study = spec.get('study') == 'fixed-settings'
+    canonical_fields = uses_canonical_archive(spec) and not fixed_study
+    # The fixed-settings study records count (and online RND error) histories in every unit.
+    histories = canonical_fields or fixed_study
+    source_kind = spec.get('intrinsic_source', 'count')
+    online = source_kind == 'online_rnd'
     folder = args.run_dir / 'data/research' / spec['name']
     folder.mkdir(parents=True, exist_ok=True)
     if (folder / 'summary.json').exists() and read_json(folder / 'summary.json').get('completed'):
         return
     geometry = make_geometry(**spec['geometry'])
-    profile = memory_profile(args.run_dir, spec['policy_kind'])
+    profile = (fixed_settings_packing(args.run_dir, spec['policy_kind'], source_kind) if fixed_study
+               else memory_profile(args.run_dir, spec['policy_kind']))
     # Before: settings x seeds; after: independent copies whose seed ignores setting/packing.
     copies = [(setting_index, seed) for setting_index in range(len(spec['settings']))
               for seed in range(spec['seed_start'], spec['seed_start']+spec['seed_count'])]
     total_scientific_copies = len(copies)
-    records, arrays, field_cache = [], [], {}
+    records, arrays, field_cache, statistics_cache = [], [], {}, {}
     completed_ids = set()
     for completed_path in sorted(folder.glob('completed_copies_*.json')):
         completed = read_json(completed_path)
@@ -115,8 +144,12 @@ def main():
         seeds = np.asarray([item[1] for item in selected], np.int32)
         # Four distinct policy seeds share each random field; confirmation fields are disjoint.
         field_seeds = seeds // 4
-        bonus_fields, raw_fields = [], []
+        bonus_fields, raw_fields, statistics_rows = [], [], []
+        episode_length = 1 << (8*geometry.goal_state-1).bit_length()
         for field_seed in field_seeds:
+            if fixed_study and int(field_seed) not in field_cache:
+                field_cache[int(field_seed)], statistics_cache[int(field_seed)] = fixed_settings_field(
+                    spec, field_geometry, int(field_seed), episode_length)
             if int(field_seed) not in field_cache:
                 if canonical_fields:
                     field_cache[int(field_seed)] = load_or_create_initial_field(
@@ -140,7 +173,17 @@ def main():
                 raise ValueError(f'Unknown field transform: {transform}')
             bonus_fields.append(normalized)
             raw_fields.append(raw)
-        initial_fields = np.stack(bonus_fields)
+            statistics_rows.append(statistics_cache.get(int(field_seed)))
+        # Count bonuses read the mean-one field; online RND reads its own raw error, so the
+        # trainer receives the raw field only as the record of its starting values.
+        initial_fields = np.stack(raw_fields if online else bonus_fields)
+        rnd = None
+        if online:
+            from exploration_platform.grid_initialization.online_rnd import stack_networks
+            rnd = stack_networks(field_seeds)
+            if spec.get('state_normalization'):
+                rnd['statistics'] = {name: np.stack([np.asarray(row[name], np.float64) for row in statistics_rows])
+                                     for name in ('mean', 'variance', 'count')}
         per_copy = {name: tuple(spec['settings'][index][name] for index in setting_indices)
                     for name in ('learning_rate', 'intrinsic_coefficient', 'entropy_coefficient', 'gamma_int')}
         rollout_steps = spec['settings'][0].get('rollout_steps', 128)
@@ -150,24 +193,29 @@ def main():
             total_timesteps=spec['total_timesteps'], episode_length=1 << (8*geometry.goal_state-1).bit_length(),
             goal_state=geometry.goal_state, num_steps=rollout_steps,
             normalize_intrinsic_rewards=spec.get('normalize_intrinsic_rewards', False),
+            intrinsic_source=source_kind,
+            normalize_rnd_inputs=bool(online and spec.get('state_normalization')),
             per_copy_scalar_settings=per_copy, **changes)
-        trainer = GridTrainer(configuration, geometry.transition_table, geometry.coordinates, initial_fields)
+        trainer = GridTrainer(configuration, geometry.transition_table, geometry.coordinates, initial_fields, rnd)
         policy_seeds = np.asarray([seed_for('policy', int(seed)) for seed in seeds], np.uint32)
         state = trainer.initialize(policy_seeds)
         log_interval = max(1, configuration.total_iterations // 128)
         snapshots, steps, maximums = [], [], []
         visitation_steps = (visitation_checkpoint_steps(configuration.total_timesteps,
-                            configuration.num_steps) if canonical_fields else [])
+                            configuration.num_steps) if histories else [])
         visitation_step_set = set(visitation_steps)
-        visitation_counts = []
+        visitation_counts, error_history = [], []
+        initial_errors = np.asarray(jax.device_get(trainer.all_cell_errors(state))) if online else None
         late_start = None
         for iteration in range(configuration.total_iterations):
             if iteration == int(.9 * configuration.total_iterations):
                 late_start = np.asarray(jax.device_get(state.counts)).copy()
             state, metrics = trainer.train_iteration(state)
             # Confirmation records the actual lifetime counts, before later goals and resets can hide delay.
-            if canonical_fields and (iteration+1)*configuration.num_steps in visitation_step_set:
+            if histories and (iteration+1)*configuration.num_steps in visitation_step_set:
                 visitation_counts.append(np.asarray(jax.device_get(state.counts)).copy())
+                if online:
+                    error_history.append(np.asarray(jax.device_get(trainer.all_cell_errors(state))))
             if iteration % log_interval == 0 or iteration == configuration.total_iterations-1:
                 host = jax.device_get(metrics)
                 position = np.asarray(jax.device_get(state.positions))
@@ -183,18 +231,30 @@ def main():
         probabilities = np.asarray(jax.device_get(jax.nn.softmax(trainer.policy_outputs(state)[..., :4], axis=-1)))
         reached = np.asarray(jax.device_get(state.reached)).mean(axis=1)
         blocked = np.asarray(jax.device_get(state.blocked_moves))
+        # Final-policy evaluation without learning: 32 sampled episodes and one greedy episode.
+        episodes = int(spec.get('evaluation_episodes', 0))
+        sampled = np.asarray(jax.device_get(trainer.evaluate(state, episodes, False))) if episodes else None
+        greedy = np.asarray(jax.device_get(trainer.evaluate(state, 1, True))) if episodes else None
         current_records = [{'setting_index': int(setting_index), 'policy_seed': int(seed),
             'field_seed': int(field_seed), 'first_goal_step': int(first[index]),
             'capped_first_goal_steps': int(first[index]) if first[index] >= 0 else spec['total_timesteps'],
             'coverage': float(reached[index]),
             'maximum_progress': int(np.asarray(jax.device_get(state.maximum_progress))[index]),
             'goal_arrivals': int(np.asarray(jax.device_get(state.successes))[index]),
-            'blocked_fraction': float(blocked[index]/spec['total_timesteps'])}
+            'blocked_fraction': float(blocked[index]/spec['total_timesteps']),
+            **({'evaluation_goal_rate_sampled': float((sampled[index] >= 0).mean()),
+                'evaluation_goal_rate_greedy': float(greedy[index, 0] >= 0),
+                'evaluation_mean_goal_steps_sampled': (float(sampled[index][sampled[index] >= 0].mean())
+                    if (sampled[index] >= 0).any() else None)} if episodes else {})}
             for index, ((setting_index, seed), field_seed) in enumerate(zip(selected, field_seeds))]
         # Before: cumulative counts at selected times; after: [snapshot,copies,states] without changing RNG.
         history = ({'visit_count_history': np.stack(visitation_counts),
                     'visit_count_history_steps': np.asarray(visitation_steps, np.int64)}
-                   if canonical_fields else {})
+                   if histories else {})
+        if online:
+            history.update(rnd_error_initial=initial_errors, rnd_error_history=np.stack(error_history))
+        if episodes:
+            history.update(evaluation_sampled_goal_steps=sampled, evaluation_greedy_goal_steps=greedy)
         np.savez_compressed(behavior_path, initial_fields=initial_fields, raw_initial_fields=np.stack(raw_fields),
             visit_counts=counts, late_visit_counts=counts-late_start if late_start is not None else counts,
             policy_probabilities=probabilities, positions=geometry.positions, grid=geometry.grid,
@@ -223,12 +283,17 @@ def main():
             'coverage_mean': float(np.mean([row['coverage'] for row in rows])),
             'policy_seeds': [row['policy_seed'] for row in rows],
             'field_seeds': [row['field_seed'] for row in rows],
-            'first_goal_steps': [row['first_goal_step'] for row in rows]})
+            'first_goal_steps': [row['first_goal_step'] for row in rows],
+            **({'evaluation_goal_rate_sampled': float(np.mean([row['evaluation_goal_rate_sampled'] for row in rows])),
+                'evaluation_goal_rate_greedy': float(np.mean([row['evaluation_goal_rate_greedy'] for row in rows]))}
+               if rows and 'evaluation_goal_rate_sampled' in rows[0] else {})})
     # Before: physical batches; after: one scientific unit with consistent copy and time axes.
     loaded = [np.load(path) for path in arrays]
     axis_one = {'trajectory_states', 'maximum_progress_history'}
     fixed = {'positions', 'grid', 'trajectory_steps'}
-    if canonical_fields:
+    if online:
+        axis_one.add('rnd_error_history')
+    if histories:
         axis_one.add('visit_count_history')
         fixed.add('visit_count_history_steps')
         expected_steps = np.asarray(visitation_checkpoint_steps(spec['total_timesteps'],

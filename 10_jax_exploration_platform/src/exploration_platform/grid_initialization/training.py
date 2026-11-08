@@ -10,8 +10,10 @@ import numpy as np
 from .config import GridPPOConfig
 from ..atari_pixels.networks import categorical_statistics, initialize_layer, quantity_keys
 from ..atari_pixels.settings import scalar_setting, scalar_product
-from ..atari_pixels.state import (AdamState, FlatParameterLayout, adam_step, initialize_adam,
-                                 initialize_statistics)
+from ..atari_pixels.state import (AdamState, FlatParameterLayout, RunningStatistics, adam_step,
+                                 initialize_adam, initialize_statistics, normalize_frames,
+                                 update_observation_statistics)
+from .online_rnd import jax_errors, jax_forward
 from ..atari_pixels.training import normalize_intrinsic_rewards as cleanrl_normalize
 
 
@@ -33,6 +35,9 @@ class GridTrainState(NamedTuple):
     reward_filter: object
     iteration: object
     policy_seeds: object
+    # Online RND only (None for count bonuses): the frozen target and the input statistics.
+    target: object = None
+    observation_statistics: object = None
 
 
 class GridRollout(NamedTuple):
@@ -79,7 +84,7 @@ def network_outputs(parameters, states, coordinates, configuration):
     return jnp.concatenate((logits, critics), axis=-1)
 
 
-def initialize(configuration, transition_table, coordinates, fields, policy_seeds):
+def initialize(configuration, transition_table, coordinates, fields, policy_seeds, rnd=None):
     """Validate experiment inputs and initialize policy tables or coordinate networks."""
     # Validation happens on the host before tracing, including bounds and field finiteness.
     transitions, points, initial = map(np.asarray, (transition_table, coordinates, fields))
@@ -113,6 +118,20 @@ def initialize(configuration, transition_table, coordinates, fields, policy_seed
             "actor_head": initialize_layer(seeds, "grid/policy/actor_head", 4, width, gain=0.01),
             "critic_extra": initialize_layer(seeds, "grid/policy/critic_extra", width, width, gain=0.1),
             "critic_head": initialize_layer(seeds, "grid/policy/critic_head", 2, width, gain=0.01)}
+    # Online RND: the predictor joins the policy's parameters, so one Adam with one joint
+    # gradient clip updates both, as in CleanRL; the target stays outside the optimizer.
+    target = statistics = None
+    if configuration.intrinsic_source == "online_rnd":
+        if rnd is None:
+            raise ValueError("online RND requires per-copy target and predictor networks")
+        parameters = dict(parameters, predictor=jax.tree.map(jnp.asarray, rnd["predictor"]))
+        target = jax.tree.map(jnp.asarray, rnd["target"])
+        if configuration.normalize_rnd_inputs:
+            statistics = RunningStatistics(jnp.asarray(rnd["statistics"]["mean"], jnp.float64),
+                jnp.asarray(rnd["statistics"]["variance"], jnp.float64),
+                jnp.asarray(rnd["statistics"]["count"], jnp.float64))
+    elif rnd is not None:
+        raise ValueError("RND networks were supplied to a count-bonus configuration")
     # Before: no visits; after: the start is marked reached, with zero arrival counts.
     shape = (configuration.n_copies,)
     counts = jnp.zeros(shape + (state_count,), jnp.int32)
@@ -125,7 +144,24 @@ def initialize(configuration, transition_table, coordinates, fields, policy_seed
         jnp.full(shape, configuration.start_state, jnp.int32),
         jnp.zeros(shape, jnp.int32),
         initialize_statistics(configuration.n_copies, ()),
-        jnp.zeros(shape + (filter_size,), jnp.float32), jnp.zeros((), jnp.int32), seeds)
+        jnp.zeros(shape + (filter_size,), jnp.float32), jnp.zeros((), jnp.int32), seeds,
+        target, statistics)
+
+
+def rnd_inputs(state, coordinates, states):
+    """Return the online RND inputs for selected states, whitened when statistics exist."""
+    # Before: state ids [C,M]; after: [C,M,2] coordinates, normalized and clipped if enabled.
+    values = coordinates[states]
+    if state.observation_statistics is not None:
+        values = normalize_frames(values, state.observation_statistics)
+    return values
+
+
+def all_cell_errors(state, coordinates, configuration):
+    """Evaluate the online RND bonus of every cell once; it is fixed during a rollout."""
+    ids = jnp.broadcast_to(jnp.arange(coordinates.shape[0], dtype=jnp.int32),
+                           (configuration.n_copies, coordinates.shape[0]))
+    return jax_errors(state.parameters["predictor"], state.target, rnd_inputs(state, coordinates, ids))
 
 
 def collect_rollout(state, configuration, transition_table, coordinates, fields):
@@ -156,9 +192,10 @@ def collect_rollout(state, configuration, transition_table, coordinates, fields)
         arrived = transition_table[position, actions]
         counts = counts.at[rows, arrived].add(1)
         visits = counts[rows, arrived]
-        bonus = jnp.zeros((copies,), jnp.float32) if configuration.hoist_bonus else (
+        bonus = fields[rows, arrived] if configuration.intrinsic_source == "online_rnd" else (
+            jnp.zeros((copies,), jnp.float32) if configuration.hoist_bonus else (
             fields[rows, arrived] * jax.lax.rsqrt(visits.astype(jnp.float32)) if configuration.rsqrt_bonus
-            else fields[rows, arrived] / jnp.sqrt(visits.astype(jnp.float32)))
+            else fields[rows, arrived] / jnp.sqrt(visits.astype(jnp.float32))))
         succeeded = arrived == goal
         elapsed = elapsed + 1
         done = succeeded | (elapsed >= configuration.episode_length)
@@ -249,10 +286,17 @@ def prepare_batch(state, rollout, coordinates, configuration):
         "advantage_ext": ext_advantage.T, "advantage_int": int_advantage.T,
         "return_ext": (ext_advantage + rollout.values_ext).T,
         "return_int": (int_advantage + rollout.values_int).T}
+    if configuration.intrinsic_source == "online_rnd":
+        # CleanRL updates the input statistics with the rollout's states after GAE, then
+        # trains the predictor on those states whitened with the updated statistics.
+        if state.observation_statistics is not None:
+            state = state._replace(observation_statistics=update_observation_statistics(
+                state.observation_statistics, coordinates[batch["states"]], configuration.moment_reduction))
+        batch["rnd_inputs"] = rnd_inputs(state, coordinates, batch["states"])
     return state, batch
 
 
-def minibatch_loss(parameters, batch, coordinates, configuration):
+def minibatch_loss(parameters, batch, coordinates, configuration, target=None):
     """Use CleanRL's clipped policy and task critic loss with an unclipped intrinsic critic."""
     if configuration.all_states_minibatch:
         ids = jnp.broadcast_to(jnp.arange(coordinates.shape[0], dtype=jnp.int32), (configuration.n_copies, coordinates.shape[0]))
@@ -277,6 +321,14 @@ def minibatch_loss(parameters, batch, coordinates, configuration):
     total += scalar_setting(configuration, "value_coefficient") * (ext_loss + int_loss)
     diagnostics = {"loss": total, "policy_loss": policy_loss, "value_loss": ext_loss + int_loss,
         "entropy": entropy, "approximate_kl": ((ratio - 1) - (log_probability - batch["log_probabilities"])).mean(axis=1)}
+    if configuration.intrinsic_source == "online_rnd":
+        # CleanRL: mean squared feature error, averaged over the samples kept by the mask.
+        features = jax.lax.stop_gradient(jax_forward(target, batch["rnd_inputs"]))
+        errors = ((jax_forward(parameters["predictor"], batch["rnd_inputs"]) - features) ** 2).mean(axis=-1)
+        mask = batch["predictor_mask"].astype(jnp.float32)
+        predictor_loss = (errors * mask).sum(axis=1) / jnp.maximum(mask.sum(axis=1), 1.0)
+        total = total + predictor_loss
+        diagnostics.update(loss=total, predictor_loss=predictor_loss)
     return total.sum(), diagnostics
 
 
@@ -307,11 +359,16 @@ def update_policy(state, batch, coordinates, configuration):
     def minibatch(carry, rows_or_batch):
         """Differentiate one minibatch and update each policy using its own gradient norm."""
         parameters, optimizer = carry
-        selected = rows_or_batch if configuration.pre_gather_minibatches else gather(rows_or_batch)
+        if configuration.intrinsic_source == "online_rnd":
+            rows, mask = rows_or_batch
+            selected = dict(gather(rows), predictor_mask=mask)
+        else:
+            selected = rows_or_batch if configuration.pre_gather_minibatches else gather(rows_or_batch)
 
         def loss(values):
             """Unpack flat storage only at the policy evaluation boundary."""
-            return minibatch_loss(layout.unpack(values) if layout else values, selected, coordinates, configuration)
+            return minibatch_loss(layout.unpack(values) if layout else values, selected, coordinates,
+                                  configuration, state.target)
 
         (_, metrics), gradients = jax.value_and_grad(loss, has_aux=True)(parameters)
         parameters, optimizer, norm = adam_step(parameters, gradients, optimizer, rates,
@@ -331,6 +388,12 @@ def update_policy(state, batch, coordinates, configuration):
             """Run one complete shuffled epoch in its original update order."""
             rows = permutation(index)
             selected = jax.vmap(gather)(rows) if configuration.pre_gather_minibatches else rows
+            if configuration.intrinsic_source == "online_rnd":
+                # One uniform draw per sample per epoch keeps it with probability 0.25.
+                keys = quantity_keys(state.policy_seeds, "grid/rnd/predictor_mask", state.iteration, index)
+                kept = jax.vmap(lambda key: jax.random.uniform(key, (configuration.num_steps,)))(keys) < (
+                    configuration.predictor_update_proportion)
+                selected = (rows, jax.vmap(lambda ids: jax.vmap(lambda values, row: values[row])(kept, ids))(rows))
             return jax.lax.scan(minibatch, carry, selected, unroll=configuration.update_unroll)
 
         (parameters, optimizer), metrics = jax.lax.scan(epoch, (parameters, optimizer), jnp.arange(configuration.update_epochs, dtype=jnp.int32))
@@ -343,6 +406,8 @@ def update_policy(state, batch, coordinates, configuration):
 
 def train_iteration(state, configuration, transition_table, coordinates, fields):
     """Collect one exact-count rollout and perform its complete CleanRL PPO update."""
+    if configuration.intrinsic_source == "online_rnd":
+        fields = all_cell_errors(state, coordinates, configuration)
     state, rollout = collect_rollout(state, configuration, transition_table, coordinates, fields)
     state, batch = prepare_batch(state, rollout, coordinates, configuration)
     state, metrics = update_policy(state, batch, coordinates, configuration)
@@ -364,20 +429,61 @@ def compiled_iteration(configuration):
         donate_argnums=(0,) if configuration.donate_state else ())
 
 
+def evaluate_policy(state, configuration, transition_table, coordinates, episodes, greedy):
+    """Play episodes from the start with the fixed final policy; return each goal step or -1."""
+    # Before: parameters; after: first goal step [C,episodes], -1 when the limit is reached.
+    copies, state_count = configuration.n_copies, coordinates.shape[0]
+    goal = state_count - 1 if configuration.goal_state == -1 else configuration.goal_state
+    ids = jnp.broadcast_to(jnp.arange(state_count, dtype=jnp.int32), (copies, state_count))
+    logits = network_outputs(state.parameters, ids, coordinates, configuration)[..., :4]
+    episode_ids = jnp.arange(episodes, dtype=jnp.uint32)
+
+    def step(carry, time):
+        """Move every unfinished evaluation episode one transition."""
+        position, reached_at = carry
+        values = jnp.take_along_axis(logits, position[..., None], axis=1)
+        if greedy:
+            actions = jnp.argmax(values, axis=-1)
+        else:
+            keys = quantity_keys(state.policy_seeds, "grid/evaluation/actions", time)
+            keys = jax.vmap(lambda key: jax.vmap(lambda episode: jax.random.fold_in(key, episode))(episode_ids))(keys)
+            actions = jax.vmap(jax.vmap(jax.random.categorical))(keys, values)
+        arrived = transition_table[position, actions.astype(jnp.int32)]
+        unfinished = reached_at < 0
+        reached_at = jnp.where(unfinished & (arrived == goal), time + 1, reached_at)
+        return (jnp.where(unfinished, arrived, position), reached_at), None
+
+    start = jnp.full((copies, episodes), configuration.start_state, jnp.int32)
+    (_, reached_at), _ = jax.lax.scan(step, (start, jnp.full((copies, episodes), -1, jnp.int32)),
+                                      jnp.arange(configuration.episode_length, dtype=jnp.int32))
+    return reached_at
+
+
 class GridTrainer:
     """Bind immutable experiment inputs once and compile complete independent-policy updates."""
 
-    def __init__(self, configuration, transition_table, coordinates, fields):
+    def __init__(self, configuration, transition_table, coordinates, fields, rnd=None):
         """Keep one concrete geometry and frozen field batch outside mutable training state."""
         self.configuration = configuration
         self.transition_table = jnp.asarray(transition_table, jnp.int32)
         self.coordinates = jnp.asarray(coordinates, jnp.float32)
         self.fields = jnp.asarray(fields, jnp.float32)
+        self.rnd = rnd
         self._iteration = compiled_iteration(configuration)
 
     def initialize(self, policy_seeds):
         """Create a fresh independent group after validating immutable inputs."""
-        return initialize(self.configuration, self.transition_table, self.coordinates, self.fields, policy_seeds)
+        return initialize(self.configuration, self.transition_table, self.coordinates, self.fields,
+                          policy_seeds, self.rnd)
+
+    def all_cell_errors(self, state):
+        """Return the online RND bonus of every cell for the decay record."""
+        return jax.jit(lambda value: all_cell_errors(value, self.coordinates, self.configuration))(state)
+
+    def evaluate(self, state, episodes, greedy):
+        """Return each evaluation episode's goal step, or -1, for the fixed final policy."""
+        return jax.jit(lambda value: evaluate_policy(value, self.configuration, self.transition_table,
+                                                     self.coordinates, episodes, greedy))(state)
 
     def train_iteration(self, state):
         """Execute one compiled rollout and update without copying data to the host."""
@@ -385,7 +491,9 @@ class GridTrainer:
 
     def capture(self, state):
         """Return a rollout for correctness or visualization without changing its input."""
-        return collect_rollout(state, self.configuration, self.transition_table, self.coordinates, self.fields)
+        fields = (all_cell_errors(state, self.coordinates, self.configuration)
+                  if self.configuration.intrinsic_source == "online_rnd" else self.fields)
+        return collect_rollout(state, self.configuration, self.transition_table, self.coordinates, fields)
 
     def prepare_batch(self, state, rollout):
         """Expose fixed PPO targets for independent optimization comparisons."""

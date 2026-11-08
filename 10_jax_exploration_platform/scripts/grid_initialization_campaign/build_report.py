@@ -6,7 +6,7 @@ from pathlib import Path
 import re
 import subprocess
 
-from common import PLATFORM, PROJECT, PYTHON, now, write_json
+from common import PLATFORM, PROJECT, PYTHON, fixed_study, now, write_json
 
 
 def main():
@@ -16,7 +16,8 @@ def main():
     args = parser.parse_args()
     if not os.environ.get('SLURM_JOB_ID'):
         raise RuntimeError('Document generation runs on an allocated compute node.')
-    subprocess.run([str(PYTHON), str(Path(__file__).parent/'report.py'),
+    script = 'fixed_settings_report.py' if fixed_study(args.run_dir) else 'report.py'
+    subprocess.run([str(PYTHON), str(Path(__file__).parent/script),
                     '--run-dir', str(args.run_dir)], check=True)
     document = PROJECT/'10_jax_exploration_platform/development_document/RND_JAX_exploration_development_document.tex'
     result = subprocess.run(['/u/sl5nw/.TinyTeX/bin/x86_64-linux/latexmk', '-cd', '-pdf',

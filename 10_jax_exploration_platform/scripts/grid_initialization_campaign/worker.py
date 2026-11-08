@@ -7,7 +7,7 @@ import subprocess
 import sys
 import time
 
-from common import PYTHON, claim, finish, now, queue_lock, read_json, write_json
+from common import PYTHON, claim, finish, fixed_study, now, queue_lock, read_json, write_json
 
 
 def retry_memory_failure(run_dir, task):
@@ -62,10 +62,16 @@ def main():
         command = [str(PYTHON), str(Path(__file__).resolve().parent/'benchmark.py'),
             '--run-dir', str(args.run_dir), '--idea', 'baseline', '--copies', '32',
             '--policy-kind', 'all', '--geometry', 'all', '--output', str(output)]
+        limit = 590
+        if fixed_study(args.run_dir):
+            # The fixed study measures packing (64-512 copies) for both bonus sources instead.
+            command = [str(PYTHON), str(Path(__file__).resolve().parent/'fixed_settings_benchmark.py'),
+                       '--run-dir', str(args.run_dir), '--gpu-class', gpu_class]
+            limit = 2100
         try:
-            result = subprocess.run(command, timeout=590)
+            result = subprocess.run(command, timeout=limit)
         except subprocess.TimeoutExpired:
-            write_json(output, {'completed': False, 'failure': 'Compatibility measurement exceeded 590 seconds.',
+            write_json(output, {'completed': False, 'failure': f'Compatibility measurement exceeded {limit} seconds.',
                                'hardware': card, 'gpu_type': gpu_class})
             raise SystemExit(124)
         if not output.exists():

@@ -18,6 +18,17 @@ ACCOUNTS = Path('/p/rlprojects/.claude/skills/submit-as-account/scripts')
 os.umask(0o002)
 
 
+def fixed_study(run_dir):
+    """True for the fixed CleanRL PPO-RND settings study, whose source record names it."""
+    path = Path(run_dir)/'source.json'
+    return path.exists() and read_json(path).get('campaign') == 'fixed-settings'
+
+
+def ledger_prefix(run_dir):
+    """Each study keeps its own per-account job-id ledgers."""
+    return 'fixed_settings' if fixed_study(run_dir) else 'initial_bonus'
+
+
 def now():
     """Return an offset-bearing timestamp rather than an ambiguous local time."""
     return datetime.now().astimezone().isoformat()
