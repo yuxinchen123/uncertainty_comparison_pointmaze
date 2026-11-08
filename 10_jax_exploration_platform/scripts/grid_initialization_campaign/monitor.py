@@ -22,7 +22,8 @@ def recover_claims(run_dir, live):
     with queue_lock(run_dir):
         for path in (run_dir/'queue/running').glob('*.json'):
             task = read_json(path)
-            if task['job_id'] not in live:
+            # serval05 has no scheduler; its queue runner holds such a claim until the unit ends.
+            if task['job_id'] not in live and not str(task['job_id']).startswith('serval05'):
                 task['recovery_count'] = task.get('recovery_count', 0)+1
                 target = 'pending' if task['recovery_count'] <= 2 else 'failed'
                 write_json(run_dir/'queue'/target/path.name, task)
