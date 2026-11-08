@@ -293,3 +293,17 @@ core.*
 **/trace/plugins/
 *.xplane.pb
 **/checkpoint.pkl
+
+# A run's code/source_<commit>/ folders are copies of the whole repository at a named commit,
+# written so workers run frozen code; git history already holds each of them.
+10_jax_exploration_platform/runs/**/code/source_*/
+# pytest temporary folders written into a run's infrastructure/ by the allocated-node checks.
+10_jax_exploration_platform/runs/**/infrastructure/*_checks/
+# Per-stage behaviour figures that no report embeds (regenerable from the run's data/). The
+# reports embed only the long-confirmation figures; `confirmation_comparison-*` does not match
+# `long-confirmation_comparison-*`.
+10_jax_exploration_platform/runs/**/analysis/plots/calibration_comparison-*
+10_jax_exploration_platform/runs/**/analysis/plots/field-search_comparison-*
+10_jax_exploration_platform/runs/**/analysis/plots/diagnosis_comparison-*
+10_jax_exploration_platform/runs/**/analysis/plots/fine-tuning_comparison-*
+10_jax_exploration_platform/runs/**/analysis/plots/confirmation_comparison-*

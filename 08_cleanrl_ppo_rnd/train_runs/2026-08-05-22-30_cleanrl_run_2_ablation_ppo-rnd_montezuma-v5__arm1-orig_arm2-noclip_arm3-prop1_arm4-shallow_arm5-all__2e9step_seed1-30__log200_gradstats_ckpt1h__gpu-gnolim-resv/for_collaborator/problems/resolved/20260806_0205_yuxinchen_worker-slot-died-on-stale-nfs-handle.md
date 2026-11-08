@@ -44,7 +44,7 @@ raise transiently when many slots list and read the same directory at once (my 4
 within a few seconds of each other). One transient read then kills the slot thread for good — the
 thread is never restarted, so the loss is permanent for the job's lifetime.
 
-Suggested fix in `/p/rlprojects/.claude/skills/submit-gpu-sweep/scripts/worker_manager.py`, since it
+Suggested fix in `/p/rlprojects/.claude/skills/uva-submit-gpu-sweep/scripts/worker_manager.py`, since it
 affects every sweep run from this skill, not just this one: catch `OSError` (and
 `json.JSONDecodeError`, for a marker caught mid-write) in that peek block and `continue`, and
 consider wrapping the slot body so a slot survives a transient claim error instead of dying.
