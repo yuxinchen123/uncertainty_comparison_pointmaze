@@ -53,4 +53,15 @@ Relative to the earlier initial-bonus study (commit 0d14eb3):
 
 ## 4. Git state
 
-Filled in at launch below.
+
+
+Repository `/p/rlprojects/RND`, branch `main`, commit `0f1d36654887b8b0f00667c2f44a229b5ad2733c` (pushed 2026-11-07), clean for all
+study code. Workers run the frozen copy `code/source_0f1d36654887b8b0f00667c2f44a229b5ad2733c/` (recorded in `source.json`).
+
+## 5. Outcome
+
+- Finished 2026-11-09 02:48 PT. 295 queue units done and none failed: 2 setup units, 196 development units (seeds 0 to 15) and 97 confirmation units (seeds 20000 to 20127). The 104 frozen choices in `confirmation_frozen.json` cover each condition's chosen configuration and the best of the default learning-rate and entropy cell; 7 of the second kind equal the chosen one and share its unit.
+- Every summary holds the expected number of copies (293 result summaries, all completed).
+- Results: `analysis/analysis.md` (and `analysis.html`), the tables in `analysis/results.tex`, included in `development_document/RND_JAX_exploration_development_document.tex`, and the figures in `analysis/plots/`.
+- The final report was run from repository commit 457bd744: the run's frozen code plus three report-only changes to `fixed_settings_report.py` so the results tables fit the page (narrower columns, only the mean styled, the weight set as math). No training or metric code changed.
+- Placement changes near the end of each phase (units moved from slow cards to fast cards, one safeguard mistake) are recorded in `infra_history.md`.
