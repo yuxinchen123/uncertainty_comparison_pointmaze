@@ -18,6 +18,9 @@ METHOD_LABELS = {'no-bonus': 'no bonus', 'uniform': 'uniform field',
 CASE_ORDER = [('straight', 'tabular'), ('straight', 'neural'), ('snake', 'tabular'), ('snake', 'neural')]
 CASE_LABELS = {'straight': 'straight grid, 32 cells', 'snake': 'snake grid, width 16, 2 turns (50 cells)'}
 COLORS = ('#0072B2', '#E69F00', '#009E73', '#CC79A7')
+# Seeds removed from EACH end before the trimmed mean, per 128 seeds (16 seeds: 1 per end).
+TRIM_PER_128 = 10
+TRIM_CHOICES = (0, 2, 4, 6, 8, 10, 13, 16, 20)
 
 
 def condition_label(name):
@@ -30,6 +33,39 @@ def condition_label(name):
         parts.append('state normalization ' + ('on' if condition['state_normalization'] else 'off'))
     parts.append('reward normalization ' + ('on' if condition['reward_normalization'] else 'off'))
     return ', '.join(parts)
+
+
+def trim_count(seeds, per_128=TRIM_PER_128):
+    """Seeds removed from each end: per_128 scaled to the number of seeds, rounded down."""
+    # Before: 128 seeds -> 10 per end; after scaling: 16 seeds -> 1 per end.
+    return seeds * per_128 // 128
+
+
+def trimmed_mean(values, per_end):
+    """Mean after dropping the per_end smallest and per_end largest values."""
+    ordered = np.sort(np.asarray(values, np.float64))
+    return float(ordered[per_end:len(ordered)-per_end].mean())
+
+
+def grouped_standard_errors(values, group_ids, per_end, seed, repetitions=2000):
+    """Bootstrap standard errors of the mean and of the trimmed mean, resampling whole groups."""
+    # Network conditions: 32 field seeds of 4 policies, resampled as groups of 4; others: single policies.
+    values = np.asarray(values, np.float64)
+    unique, inverse = np.unique(np.asarray(group_ids), return_inverse=True)
+    if len(unique) < 2:
+        return None, None
+    members = [values[inverse == index] for index in range(len(unique))]
+    generator = np.random.default_rng(seed)
+    chosen = generator.integers(0, len(unique), size=(repetitions, len(unique)))
+    if len({len(group) for group in members}) == 1:
+        pooled = np.sort(np.stack(members)[chosen].reshape(repetitions, -1), axis=1)
+        means = pooled.mean(axis=1)
+        trimmed = pooled[:, per_end:pooled.shape[1]-per_end].mean(axis=1)
+    else:
+        samples = [np.concatenate([members[index] for index in draw]) for draw in chosen]
+        means = np.asarray([sample.mean() for sample in samples])
+        trimmed = np.asarray([trimmed_mean(sample, trim_count(len(sample))) for sample in samples])
+    return float(means.std(ddof=1)), float(trimmed.std(ddof=1))
 
 
 def collect(run_dir):
@@ -49,16 +85,27 @@ def collect(run_dir):
                 'method': spec['method'], 'configuration': setting['configuration'], 'copies': copies,
                 'unit': path.parent.name, 'seeds': len(copies), 'mean': float(capped.mean()),
                 'interval': grouped_mean_interval(capped, groups, 7) if len(copies) > 1 else [None, None],
+                'trim': trim_count(len(copies)), 'trimmed': trimmed_mean(capped, trim_count(len(copies))),
+                'capped_seeds': int(np.sum(capped >= BUDGET)), 'values': capped,
                 'discovery': float(np.mean([row['first_goal_step'] >= 0 for row in copies])),
                 'coverage': float(np.mean([row['coverage'] for row in copies])),
                 'sampled': float(np.mean([row['evaluation_goal_rate_sampled'] for row in copies])),
                 'greedy': float(np.mean([row['evaluation_goal_rate_greedy'] for row in copies]))})
+            rows[-1]['standard_error'], rows[-1]['trimmed_standard_error'] = grouped_standard_errors(
+                capped, groups, rows[-1]['trim'], 7)
     return rows
 
 
-def number(value):
-    """Round large step counts to whole numbers with thousands separators."""
-    return f'{value:,.0f}'
+def number(value, thousands=False):
+    """A step count: in thousands with two decimals (8.11K) when the table allows, else a whole number."""
+    return f'{value/1000:,.2f}K' if thousands else f'{value:,.0f}'
+
+
+def in_thousands(rows):
+    """Write a table's step counts in thousands when every mean, trimmed mean and interval end is at least 1,000."""
+    values = [row[name] for row in rows for name in ('mean', 'trimmed')]
+    values += [end for row in rows for end in row['interval'] if end is not None]
+    return min(values) >= 1000
 
 
 def mark(values, index, smaller_better):
@@ -88,19 +135,27 @@ def setting_text(configuration):
 def results_table(rows, latex=False):
     """Conditions in rows sorted by mean capped first-goal time; metrics in columns."""
     rows = sorted(rows, key=lambda row: (row['mean'], -row['discovery']))
-    columns = [('mean', True), ('discovery', False), ('coverage', False), ('sampled', False), ('greedy', False)]
+    columns = [('mean', True), ('trimmed', True), ('discovery', False), ('coverage', False), ('sampled', False),
+               ('greedy', False)]
+    thousands = in_thousands(rows)
+    plus_minus = '$\\pm$' if latex else '±'
     lines = []
     for index, row in enumerate(rows):
         low, high = row['interval']
         cells = [condition_label(row['condition'])]
         for name, smaller in columns:
             values = [item[name] for item in rows]
-            # Style only the value: an underlined phrase cannot wrap, so the interval stays plain.
-            # Before: '\underline{163,714 [70,645, 294,237]}'; after: '\underline{163,714} [70,645, 294,237]'.
-            text = number(row[name]) if name == 'mean' else f'{100*row[name]:.1f}%'
-            interval = f' [{number(low)}, {number(high)}]' if name == 'mean' and low is not None else ''
+            # Style only the value: an underlined phrase cannot wrap, so the error and interval stay plain.
+            # Before: '\underline{163,714} [70,645, 294,237]'; after: '\underline{163.71K} ± 56.40K [70.65K, 294.24K]'.
+            text = number(row[name], thousands) if name in ('mean', 'trimmed') else f'{100*row[name]:.1f}%'
+            extra = ''
+            error = row.get({'mean': 'standard_error', 'trimmed': 'trimmed_standard_error'}.get(name, ''))
+            if error is not None and name in ('mean', 'trimmed'):
+                extra += f' {plus_minus} {number(error, thousands)}'
+            if name == 'mean' and low is not None:
+                extra += f' [{number(low, thousands)}, {number(high, thousands)}]'
             cells.append(styled(text.replace('%', '\\%') if latex else text, mark(values, index, smaller), latex)
-                         + interval)
+                         + extra)
         # The weight is set as math in LaTeX so it never breaks across lines.
         # Before: 'weight 2^-6'; after: 'weight $2^{-6}$'.
         text = setting_text(row['configuration'])
@@ -112,22 +167,110 @@ def results_table(rows, latex=False):
 
 def markdown_table(rows):
     """Render one results table in Markdown with the sorted column's arrow."""
-    header = ('| condition | mean capped first-goal steps ↓ [95%] | goal found | coverage | '
-              'final-policy goal rate, sampled | greedy | configuration | seeds |\n|---|---|---|---|---|---|---|---|\n')
+    trim = max(row['trim'] for row in rows)
+    header = ('| condition | mean capped first-goal steps ↓ ± standard error [95%] | '
+              f'trimmed mean ({trim} lowest and {trim} highest seeds removed) ± standard error | goal found | coverage | '
+              'final-policy goal rate, sampled | greedy | configuration | seeds |\n|---|---|---|---|---|---|---|---|---|\n')
     return header + ''.join('| ' + ' | '.join(cells) + ' |\n' for cells in results_table(rows))
 
 
 def latex_table(rows, caption, label):
     """Render one results table in LaTeX for the development document."""
     body = ''.join(' & '.join(cells) + ' \\\\\n' for cells in results_table(rows, latex=True))
-    # Fit the text width (13.97 cm): 12.0 cm of columns plus 14 gaps of 3 pt (1.5 cm); the
+    # Fit the text width (13.97 cm): 12.2 cm of columns plus 16 gaps of 3 pt (1.69 cm); the
     # earlier 13.5 cm of columns with 6 pt gaps ran 82.6 pt into the margin.
+    # Before: 8 columns (3.3, 2.3, 0.8, 0.9, 1.0, 0.8, 2.3, 0.6); after: a trimmed-mean column added.
+    trim = max(row['trim'] for row in rows)
     return ('\\begin{table}[H]\\centering\\scriptsize\\setlength{\\tabcolsep}{3pt}\n\\caption{' + caption + '}\\label{' + label + '}\n'
             '\\begin{tabular}{@{}' + ''.join(f'>{{\\raggedright\\arraybackslash}}p{{{width}cm}}' for width in
-                                              (3.3, 2.3, 0.8, 0.9, 1.0, 0.8, 2.3, 0.6)) + '@{}}\\toprule\n'
-            'condition & mean capped first-goal steps $\\downarrow$ [95\\%] & goal found & coverage & '
+                                              (2.8, 2.1, 1.5, 0.8, 0.9, 1.0, 0.8, 1.7, 0.6)) + '@{}}\\toprule\n'
+            'condition & mean capped first-goal steps $\\downarrow$ $\\pm$ standard error [95\\%] & '
+            f'trimmed mean, {trim} lowest and {trim} highest removed, $\\pm$ standard error & goal found & coverage & '
             'final goal rate, sampled & greedy & configuration & seeds \\\\\\midrule\n' + body +
             '\\bottomrule\\end{tabular}\\end{table}\n')
+
+
+def best_by_trim(rows, per_end):
+    """The two conditions with the smallest trimmed mean when per_end seeds are removed from each end."""
+    ranked = sorted(rows, key=lambda row: (trimmed_mean(row['values'], per_end), -row['discovery']))
+    return [(row, trimmed_mean(row['values'], per_end)) for row in ranked[:2]]
+
+
+def tail_counts(values):
+    """Seeds more than three interquartile ranges above the third quartile, and below the first."""
+    first, third = np.quantile(values, [0.25, 0.75])
+    spread = third - first
+    return int(np.sum(values > third + 3*spread)), int(np.sum(values < first - 3*spread))
+
+
+def trimming_section(cases):
+    """Markdown and LaTeX discussing how many seeds to trim and whether the best condition changes."""
+    # cases: [(kind, policy, rows of the 128-seed chosen confirmation)], in CASE_ORDER.
+    tops = [row for _, _, rows in cases for row in sorted(rows, key=lambda row: row['mean'])[:4]]
+    high = max(tail_counts(row['values'])[0] for row in tops)
+    low = max(tail_counts(row['values'])[1] for row in tops)
+    change = lambda row, a, b: abs(trimmed_mean(row['values'], b)/trimmed_mean(row['values'], a) - 1)
+    markdown = [
+        "## Trimmed means: how many seeds to remove, and whether the results change\n\n"
+        "Define $v_{(1)} \\le \\dots \\le v_{(K)}$ as the sorted capped first-goal times $\\min(T_i, B)$ of one "
+        "configuration. The trimmed mean removing $k$ seeds from each end is "
+        "$M_k(B) = \\dfrac{1}{K-2k} \\sum_{i=k+1}^{K-k} v_{(i)}$; $M_0(B) = M(B)$.\n\n"
+        f"**The extreme values are on the high side.** Among the four best conditions of each case (by $M(B)$, 16 "
+        f"conditions), up to {high} of 128 seeds lie more than three interquartile ranges above the third quartile, "
+        + (f"and at most {low} lie that far below the first quartile. " if low else "and none lie that far below the "
+           "first quartile. ") + f"A seed that never reaches the goal counts as "
+        f"$B$ = {BUDGET:,}, so one such seed adds {BUDGET/128/1000:,.1f}K to a 128-seed mean: a single failure can "
+        "decide the ranking of conditions whose typical seed needs 10K to 100K transitions.\n\n"
+        f"**Chosen: {TRIM_PER_128} seeds from each end of 128** (7.8% per end, 108 seeds kept; 1 per end of the 16 "
+        "development seeds). Removing 2 or 4 leaves the single failures of several conditions in the mean. Between "
+        f"6 and {TRIM_PER_128} removed per end, the trimmed means of these 16 conditions still move by up to "
+        f"{100*max(change(row, 6, TRIM_PER_128) for row in tops):.1f}%; between {TRIM_PER_128} and 13 (10% per end) "
+        f"by up to {100*max(change(row, TRIM_PER_128, 13) for row in tops):.1f}%. Removing more than about 10% per "
+        "end removes every failure of conditions that fail on up to that many seeds, so they look as good as "
+        "conditions that never fail. Trimming also removes exactly the never-found seeds that $M(B)$ is meant to "
+        "count, so configurations are still chosen by the untrimmed $M(B)$; the trimmed mean is reported beside "
+        "it.\n\n"]
+    tex_rows = []
+    for kind, policy, rows in cases:
+        if not rows:
+            continue
+        markdown.append(f"### {CASE_LABELS[kind]}, {policy} policy\n\n| seeds removed from each end | best condition "
+                        "| its trimmed mean | second condition | its trimmed mean |\n|---|---|---|---|---|\n")
+        best = {}
+        for per_end in TRIM_CHOICES:
+            (first, first_value), (second, second_value) = best_by_trim(rows, per_end)
+            best[per_end] = first
+            markdown.append(f"| {per_end} | {condition_label(first['condition'])} | {number(first_value, True)} | "
+                            f"{condition_label(second['condition'])} | {number(second_value, True)} |\n")
+        changes = [per_end for per_end in TRIM_CHOICES if best[per_end]['condition'] != best[0]['condition']]
+        (chosen, chosen_value), (runner, runner_value) = best_by_trim(rows, TRIM_PER_128)
+        if not changes:
+            verdict = 'The best condition is the same for every number removed, up to 20 per end.'
+        else:
+            verdict = f"The best condition differs from the untrimmed one at {', '.join(map(str, changes))} removed per end."
+        verdict += (f" With {TRIM_PER_128} removed, {condition_label(chosen['condition'])} leads "
+                    f"{condition_label(runner['condition'])} by {number(runner_value - chosen_value, True)}; their "
+                    f"standard errors are {number(chosen['trimmed_standard_error'], True)} and "
+                    f"{number(runner['trimmed_standard_error'], True)}.")
+        if chosen['condition'] != best[0]['condition']:
+            verdict += (f" It is not the untrimmed best ({condition_label(best[0]['condition'])}): "
+                        f"{chosen['capped_seeds']} of its 128 seeds never reached the goal, against "
+                        f"{best[0]['capped_seeds']}; each such seed adds {BUDGET/128/1000:,.1f}K to an untrimmed mean.")
+        markdown.append(f"\n{verdict}\n\n")
+        tex_rows.append(f"{kind} grid, {policy} & {condition_label(best[0]['condition'])}, "
+                        f"{number(best[0]['mean'], True)} & {condition_label(chosen['condition'])}, "
+                        f"{number(trimmed_mean(chosen['values'], TRIM_PER_128), True)} & "
+                        + (', '.join(map(str, changes)) if changes else 'none') + ' \\\\\n')
+    tex = ('\\begin{table}[H]\\centering\\scriptsize\\setlength{\\tabcolsep}{3pt}\n\\caption{Best condition of each '
+           f'case by the mean capped first-goal time and by the trimmed mean with {TRIM_PER_128} of 128 seeds removed '
+           'from each end (chosen configurations, 128 seeds). Extreme values are mostly seeds that need millions of '
+           'transitions or never reach the goal; configurations are still chosen by the untrimmed mean.}'
+           '\\label{tab:fixed-trimming}\n\\begin{tabular}{@{}' + ''.join(
+               f'>{{\\raggedright\\arraybackslash}}p{{{width}cm}}' for width in (2.2, 4.4, 4.4, 2.2)) + '@{}}\\toprule\n'
+           f'case & best, untrimmed mean & best, trimmed mean ({TRIM_PER_128} per end) & seeds removed per end (of '
+           f"{', '.join(map(str, TRIM_CHOICES[1:]))}) at which the best differs from the untrimmed best "
+           '\\\\\\midrule\n' + ''.join(tex_rows) + '\\bottomrule\\end{tabular}\\end{table}\n')
+    return ''.join(markdown), tex
 
 
 def development_figure(rows, kind, policy, plots):
@@ -242,8 +385,13 @@ def generate(run_dir):
         "broken by the goal discovery rate $F(B) = \\dfrac{1}{K} \\sum_{i=1}^{K} \\mathbf{1}[T_i \\le B]$. Coverage is "
         "the fraction of path cells reached in training by $B$. The final-policy goal rate is the fraction of 32 "
         "evaluation episodes (actions sampled from the final policy, no learning) that reach the goal; the greedy "
-        "column uses one episode with the most likely action. Intervals are 95% bootstrap intervals; network "
-        "conditions resample field seeds (four policies share a field), the others resample policy seeds.\n\n")
+        "column uses one episode with the most likely action. Intervals are 95% bootstrap intervals and standard "
+        "errors are bootstrap standard errors (2,000 resamples); network conditions resample field seeds (four "
+        "policies share a field), the others resample policy seeds. The trimmed mean drops the "
+        f"{TRIM_PER_128} smallest and {TRIM_PER_128} largest capped first-goal times of 128 seeds (1 of 16 in "
+        "development) before averaging; it is defined, and the number removed is discussed, in the section on "
+        "trimmed means. Step counts are written in thousands (8.11K = 8,110) when every value in a table is at least "
+        "1,000.\n\n")
     markdown.append(
         "## Settings\n\nAll conditions use CleanRL PPO-RND's scalar settings: rollout 128, 4 epochs, 4 minibatches, "
         "extrinsic discount 0.999, intrinsic discount 0.99, GAE 0.95, clip 0.1, value coefficient 0.5, maximum "
@@ -276,6 +424,10 @@ def generate(run_dir):
                                    '128 seeds per condition. Best in bold, second best underlined, per column.',
                                    f'tab:fixed-confirmation-{protocol}-{kind}-{policy}'))
         markdown.append(''.join(section))
+    trimming_markdown, trimming_tex = trimming_section(
+        [(kind, policy, by_case.get((kind, policy, 'confirmation', 'chosen'), [])) for kind, policy in CASE_ORDER])
+    markdown.append(trimming_markdown)
+    tex.append(trimming_tex)
     section = ["## Development\n\n"]
     for kind, policy in CASE_ORDER:
         selected = by_case.get((kind, policy, 'development', None), [])

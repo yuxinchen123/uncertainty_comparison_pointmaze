@@ -117,3 +117,18 @@
 - 2026-11-09 02:55 PT: report job 6847645, waiting in cpu since 23:28 PT and not a final report, was cancelled by id. The final report (run_report.py --final) was submitted to nolim as job 6847940 (infrastructure/final_report_nolim.sh, a copy of the generated report script with --final) and recorded in slurm/submissions/6847940.json so the study monitor does not submit a second report job. It started at once on slurm4.
 
 - 2026-11-09 03:08 PT: completion audit. 295 units done, none failed; 293 result summaries, all completed with the expected copy counts; 97 confirmation units match the 104 frozen choices (7 shared). All 145 ledger jobs have ended: 107 completed, 34 cancelled by id (the moved slow-card jobs, unstartable pinned fast-card jobs, the H100 NVL and A100 jobs at completion, and non-final report jobs), 3 failed early (tests 6837925 and profile 6838340 before launch, monitor 6838771 in its first second, all described above). The study monitor 6838818 found the final report and exited normally at 03:08 PT, writing summary.json. Final report from commit 457bd744; the development document builds with no overflowing lines and no undefined references, and the eight results-table pages were rendered and checked by eye (infrastructure/page_checks/). The PDF was made group-readable. The session monitor was deleted.
+
+## 2026-11-09 15:33 PT: trimmed means and standard errors added to the report (user request)
+
+- Results tables now show step counts in thousands (8.11K) when every value is at least 1,000, a bootstrap standard
+  error beside the mean, and a trimmed mean that drops the 10 smallest and 10 largest of 128 seeds (1 of 16 in
+  development), with its own standard error. The untrimmed mean stays the primary metric and the sort order.
+- Number to trim chosen from the data: the extreme values are on the high side (seeds needing millions of steps or
+  never reaching the goal, each adding 131.1K to a 128-seed mean); no seed of the top conditions is that far below
+  the first quartile. New section "Trimmed means" in analysis.md and table 5.12 in the development document.
+- Effect: the best condition is unchanged with 10 removed on three cases; on the snake grid with the neural policy the
+  frozen network field with state normalization on and reward normalization off (one never-found seed) leads by
+  9.25K over the untrimmed best (standard errors 1.59K and 3.78K).
+- Report jobs on nolim (srun, ids appended to the sl5nw ledger): 6852874, 6852880, 6852887. Document: 95 pages,
+  0 overfull boxes, 0 undefined references; table pages 61 to 69 checked by eye (page_checks/trim_page_*.png).
+- Exploration scripts: infrastructure/explore_trimming.py, explore_outlier_counts.py.

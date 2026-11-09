@@ -16,6 +16,7 @@ POINT_CM = 2.54 / 72.27
 def row(condition, mean, discovery):
     """Build one condition row in the shape results_table reads."""
     return {'condition': condition, 'mean': mean, 'interval': (mean*0.9, mean*1.1), 'discovery': discovery,
+            'trimmed': mean*0.8, 'trim': 10, 'standard_error': mean*0.05, 'trimmed_standard_error': mean*0.04,
             'coverage': 1.0, 'sampled': 1.0, 'greedy': 1.0, 'seeds': 128,
             'configuration': {'learning_rate': 0.001, 'entropy_coefficient': 0.01, 'intrinsic_coefficient': 0.125}}
 
@@ -51,7 +52,8 @@ def test_only_the_mean_is_styled_so_the_interval_can_wrap():
     tex = REPORT.latex_table([row('no-bonus_state-normalization-off_reward-normalization-off', 163714, 1.0),
                               row('uniform_state-normalization-off_reward-normalization-on', 8110, 1.0)],
                              'caption', 'tab:test')
-    assert '\\underline{163,714} [147,343, 180,085]' in tex and '\\textbf{8,110} [7,299, 8,921]' in tex
+    assert '\\underline{163.71K} $\\pm$ 8.19K [147.34K, 180.09K]' in tex
+    assert '\\textbf{8.11K} $\\pm$ 0.41K [7.30K, 8.92K]' in tex
 
 
 def test_weight_is_set_as_math_so_it_does_not_break():
@@ -59,3 +61,30 @@ def test_weight_is_set_as_math_so_it_does_not_break():
     tex = REPORT.latex_table([row('no-bonus_state-normalization-off_reward-normalization-off', 21468, 1.0)],
                              'caption', 'tab:test')
     assert 'weight $2^{-3}$' in tex and '\\raggedright' in tex
+
+
+def test_counts_are_whole_numbers_when_a_value_is_below_one_thousand():
+    """Thousands are used only when every mean, trimmed mean and interval end is at least 1,000."""
+    small = row('uniform_state-normalization-off_reward-normalization-on', 900, 1.0)
+    tex = REPORT.latex_table([small], 'caption', 'tab:test')
+    assert '\\textbf{900} $\\pm$ 45 [810, 990]' in tex
+
+
+def test_trimmed_mean_removes_the_given_number_from_each_end():
+    """Before: mean of 1..10 plus one never-found seed; after removing 1 per end: the middle values only."""
+    values = list(range(1, 11)) + [16777216]
+    assert REPORT.trimmed_mean(values, 1) == sum(range(2, 11)) / 9
+    assert REPORT.trim_count(128) == 10 and REPORT.trim_count(16) == 1
+
+
+def test_grouped_standard_error_matches_the_formula_for_single_seed_groups():
+    """With one policy per group the bootstrap standard error is close to s / sqrt(K)."""
+    import numpy as np
+    values = np.random.default_rng(3).exponential(1000.0, 128)
+    error, trimmed_error = REPORT.grouped_standard_errors(values, list(range(128)), 10, 7)
+    expected = values.std(ddof=1) / np.sqrt(128)
+    assert abs(error / expected - 1) < 0.1
+    # One never-found seed dominates the error of the mean but not of the trimmed mean.
+    values[0] = 16777216
+    error, trimmed_error = REPORT.grouped_standard_errors(values, list(range(128)), 10, 7)
+    assert trimmed_error < error / 10
