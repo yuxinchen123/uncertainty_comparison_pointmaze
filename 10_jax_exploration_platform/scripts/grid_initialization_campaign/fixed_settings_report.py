@@ -101,7 +101,10 @@ def results_table(rows, latex=False):
             interval = f' [{number(low)}, {number(high)}]' if name == 'mean' and low is not None else ''
             cells.append(styled(text.replace('%', '\\%') if latex else text, mark(values, index, smaller), latex)
                          + interval)
-        cells.append(setting_text(row['configuration']).replace('^', '\\^{}') if latex else setting_text(row['configuration']))
+        # The weight is set as math in LaTeX so it never breaks across lines.
+        # Before: 'weight 2^-6'; after: 'weight $2^{-6}$'.
+        text = setting_text(row['configuration'])
+        cells.append(text.replace(text.rsplit(' ', 1)[1], f"$2^{{{text.rsplit('^', 1)[1]}}}$") if latex else text)
         cells.append(str(row['seeds']))
         lines.append(cells)
     return lines
@@ -120,7 +123,8 @@ def latex_table(rows, caption, label):
     # Fit the text width (13.97 cm): 12.0 cm of columns plus 14 gaps of 3 pt (1.5 cm); the
     # earlier 13.5 cm of columns with 6 pt gaps ran 82.6 pt into the margin.
     return ('\\begin{table}[H]\\centering\\scriptsize\\setlength{\\tabcolsep}{3pt}\n\\caption{' + caption + '}\\label{' + label + '}\n'
-            '\\begin{tabular}{@{}p{3.3cm}p{2.3cm}p{0.8cm}p{0.9cm}p{1.0cm}p{0.8cm}p{2.3cm}p{0.6cm}@{}}\\toprule\n'
+            '\\begin{tabular}{@{}' + ''.join(f'>{{\\raggedright\\arraybackslash}}p{{{width}cm}}' for width in
+                                              (3.3, 2.3, 0.8, 0.9, 1.0, 0.8, 2.3, 0.6)) + '@{}}\\toprule\n'
             'condition & mean capped first-goal steps $\\downarrow$ [95\\%] & goal found & coverage & '
             'final goal rate, sampled & greedy & configuration & seeds \\\\\\midrule\n' + body +
             '\\bottomrule\\end{tabular}\\end{table}\n')

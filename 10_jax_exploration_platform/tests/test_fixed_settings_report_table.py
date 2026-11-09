@@ -22,10 +22,10 @@ def row(condition, mean, discovery):
 
 def table_width_cm(tex):
     """Sum the paragraph-column widths plus the gaps between columns of one generated table."""
-    # Before: '...\\setlength{\\tabcolsep}{3pt}...{@{}p{3.3cm}...p{0.6cm}@{}}'; after: 12.0 + 14 * 3 pt.
+    # Before: '...\\setlength{\\tabcolsep}{3pt}...{@{}>{...}p{3.3cm}...p{0.6cm}@{}}'; after: 12.0 + 14 * 3 pt.
     widths = [float(value) for value in re.findall(r'p\{([0-9.]+)cm\}', tex)]
     gap = float(re.search(r'\\tabcolsep\}\{([0-9.]+)pt\}', tex).group(1))
-    outer = 0 if '@{}p' in tex else 2
+    outer = 0 if '\\begin{tabular}{@{}' in tex else 2
     return sum(widths) + (2*(len(widths)-1) + outer)*gap*POINT_CM
 
 
@@ -52,3 +52,10 @@ def test_only_the_mean_is_styled_so_the_interval_can_wrap():
                               row('uniform_state-normalization-off_reward-normalization-on', 8110, 1.0)],
                              'caption', 'tab:test')
     assert '\\underline{163,714} [147,343, 180,085]' in tex and '\\textbf{8,110} [7,299, 8,921]' in tex
+
+
+def test_weight_is_set_as_math_so_it_does_not_break():
+    """The weight 2^-3 broke as '2^-' and '3' on two lines when written as text."""
+    tex = REPORT.latex_table([row('no-bonus_state-normalization-off_reward-normalization-off', 21468, 1.0)],
+                             'caption', 'tab:test')
+    assert 'weight $2^{-3}$' in tex and '\\raggedright' in tex
