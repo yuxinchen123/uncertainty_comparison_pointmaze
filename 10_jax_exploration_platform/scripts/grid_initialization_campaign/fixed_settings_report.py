@@ -114,8 +114,10 @@ def markdown_table(rows):
 def latex_table(rows, caption, label):
     """Render one results table in LaTeX for the development document."""
     body = ''.join(' & '.join(cells) + ' \\\\\n' for cells in results_table(rows, latex=True))
-    return ('\\begin{table}[H]\\centering\\scriptsize\n\\caption{' + caption + '}\\label{' + label + '}\n'
-            '\\begin{tabular}{p{4.2cm}p{2.6cm}p{0.9cm}p{0.9cm}p{1.1cm}p{0.9cm}p{2.4cm}p{0.5cm}}\\toprule\n'
+    # Fit the text width (13.97 cm): 12.0 cm of columns plus 14 gaps of 3 pt (1.5 cm); the
+    # earlier 13.5 cm of columns with 6 pt gaps ran 82.6 pt into the margin.
+    return ('\\begin{table}[H]\\centering\\scriptsize\\setlength{\\tabcolsep}{3pt}\n\\caption{' + caption + '}\\label{' + label + '}\n'
+            '\\begin{tabular}{@{}p{3.3cm}p{2.3cm}p{0.8cm}p{0.9cm}p{1.0cm}p{0.8cm}p{2.3cm}p{0.6cm}@{}}\\toprule\n'
             'condition & mean capped first-goal steps $\\downarrow$ [95\\%] & goal found & coverage & '
             'final goal rate, sampled & greedy & configuration & seeds \\\\\\midrule\n' + body +
             '\\bottomrule\\end{tabular}\\end{table}\n')
