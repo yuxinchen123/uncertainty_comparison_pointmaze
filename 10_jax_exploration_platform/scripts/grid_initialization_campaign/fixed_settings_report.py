@@ -95,9 +95,12 @@ def results_table(rows, latex=False):
         cells = [condition_label(row['condition'])]
         for name, smaller in columns:
             values = [item[name] for item in rows]
-            text = (number(row[name]) + (f' [{number(low)}, {number(high)}]' if low is not None else '')
-                    if name == 'mean' else f'{100*row[name]:.1f}%')
-            cells.append(styled(text.replace('%', '\\%') if latex else text, mark(values, index, smaller), latex))
+            # Style only the value: an underlined phrase cannot wrap, so the interval stays plain.
+            # Before: '\underline{163,714 [70,645, 294,237]}'; after: '\underline{163,714} [70,645, 294,237]'.
+            text = number(row[name]) if name == 'mean' else f'{100*row[name]:.1f}%'
+            interval = f' [{number(low)}, {number(high)}]' if name == 'mean' and low is not None else ''
+            cells.append(styled(text.replace('%', '\\%') if latex else text, mark(values, index, smaller), latex)
+                         + interval)
         cells.append(setting_text(row['configuration']).replace('^', '\\^{}') if latex else setting_text(row['configuration']))
         cells.append(str(row['seeds']))
         lines.append(cells)

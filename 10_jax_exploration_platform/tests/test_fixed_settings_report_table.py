@@ -44,3 +44,11 @@ def test_results_table_keeps_one_row_per_condition_sorted_by_the_primary_metric(
                              'caption', 'tab:test')
     body = tex.split('\\midrule\n')[1].split('\\bottomrule')[0].strip().splitlines()
     assert len(body) == 2 and body[0].startswith('uniform field')
+
+
+def test_only_the_mean_is_styled_so_the_interval_can_wrap():
+    """An underlined mean with its interval inside the underline ran up to 9.2 pt out of its column."""
+    tex = REPORT.latex_table([row('no-bonus_state-normalization-off_reward-normalization-off', 163714, 1.0),
+                              row('uniform_state-normalization-off_reward-normalization-on', 8110, 1.0)],
+                             'caption', 'tab:test')
+    assert '\\underline{163,714} [147,343, 180,085]' in tex and '\\textbf{8,110} [7,299, 8,921]' in tex
