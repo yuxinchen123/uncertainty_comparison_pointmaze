@@ -307,3 +307,7 @@ core.*
 10_jax_exploration_platform/runs/**/analysis/plots/diagnosis_comparison-*
 10_jax_exploration_platform/runs/**/analysis/plots/fine-tuning_comparison-*
 10_jax_exploration_platform/runs/**/analysis/plots/confirmation_comparison-*
+
+# Analysis folders: scripts and intermediate data stay out of git; analysis.md and plots/ are committed
+10_jax_exploration_platform/runs/**/analysis/*/code/
+10_jax_exploration_platform/runs/**/analysis/*/data/

@@ -2715,6 +2715,131 @@ will be added when the corresponding training records exist.
 \end{figure}
 % <<< AUTO-GENERATED FIGURES END: pixel-montezuma-paired-measurements
 
+\subsection{Final training on the corrected game}
+\label{sec:pixel-montezuma-final-training}
+
+Twelve copies of the final CleanRL PPO and RND configuration
+(\Cref{sec:pixel-montezuma-learner}) trained on the corrected game: room
+geometry taken from the sprite pack's images and an episode limit of $27{,}000$
+agent steps. Each copy ran $122{,}070$ updates of $16{,}384$ agent steps
+($128$ games $\times$ $128$ steps), $2{,}000{,}015{,}360$ agent steps
+($8.0$ billion frames). Seeds 1 to 4 trained as four copies packed in one
+process on one H100 NVL (serval02 card 1) from 2026-11-06 02:17 to 2026-11-09
+02:34 PT, without a restart. Seeds 5 to 12 trained as one copy per RTX A4500 on
+jaguar03; seeds 7, 8, 10 and 12 were paused on 2026-11-07 when four jaguar03
+cards were needed back, and resumed from their checkpoints on RTX 5080 cards
+(nekomata01 and nekomata02). All twelve finished with exactly $122{,}070$
+recorded updates.
+
+The game score per finished game over a window $W$ of updates is
+\[
+S(W) = \frac{\sum_{u \in W} R_u}{\sum_{u \in W} N_u},
+\]
+where $R_u$ is the sum of the scores of the games that ended during update $u$
+(any of the copy's $128$ games) and $N_u$ is the number of those games. The
+last $1\%$ is the last $1{,}221$ updates (about $20$ million agent steps); the
+best $1\%$ window is the highest $S(W)$ over the $99$ consecutive windows of
+$1{,}221$ updates from the start and the last $1\%$. A room counts as reached
+once any of the copy's games has been in it.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\begin{tabular}{@{}rlrrrr@{}}
+\toprule
+seed & card & \shortstack[r]{score per game,\\last $1\%$} & \shortstack[r]{best $1\%$\\window} &
+\shortstack[r]{rooms visited per\\update, last $1\%$} & \shortstack[r]{rooms reached\\in training} \\
+\midrule
+1 & H100 NVL, 4 copies & 3,827 & 4,484 & 11.5 & 19 \\
+2 & H100 NVL, 4 copies & 3,629 & 5,668 & 14.1 & 22 \\
+3 & H100 NVL, 4 copies & 4,604 & 4,604 & 14.3 & 24 \\
+4 & H100 NVL, 4 copies & 5,470 & 5,608 & 16.6 & 24 \\
+5 & RTX A4500 & 5,246 & 5,849 & 15.4 & 24 \\
+6 & RTX A4500 & 2,594 & 4,445 & 8.9 & 17 \\
+7 & RTX A4500, then RTX 5080 & 5,750 & 5,984 & 15.0 & 22 \\
+8 & RTX A4500, then RTX 5080 & 5,828 & 5,986 & 12.7 & 22 \\
+9 & RTX A4500 & 2,653 & 3,432 & 10.2 & 22 \\
+10 & RTX A4500, then RTX 5080 & 5,093 & 7,064 & 15.8 & 24 \\
+11 & RTX A4500 & 4,098 & 4,447 & 10.1 & 17 \\
+12 & RTX A4500, then RTX 5080 & 5,862 & 5,980 & 17.2 & 22 \\
+\bottomrule
+\end{tabular}
+\caption{Final training, one row per seed (the seeds are repeats of one
+configuration, so no cell is marked best). Score per game is $S(W)$ above.
+The update at which each seed first reached each room is in the run folder's
+\texttt{analysis.md}.}
+\label{tab:pixel-montezuma-final-training-results}
+\end{table}
+
+Seconds per iteration in \Cref{tab:pixel-montezuma-final-training-speed} are
+the median gaps between consecutive recorded updates of each training segment,
+leaving out the first update after a start or resume; ranges run over the
+seeds of the row. One iteration advances every copy on the card by $16{,}384$
+agent steps, so a copy gets $r = 16{,}384 / t$ agent steps per second at $t$
+seconds per iteration, the total is the number of copies times $r$, and the
+hours per million steps per copy are $10^{6} / (3600\, r)$.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.1cm}>{\raggedright\arraybackslash}p{1.1cm}rrrrr@{}}
+\toprule
+card and phase & seeds & copies & \shortstack[r]{seconds per\\iteration} &
+\shortstack[r]{total steps\\per second\\(millions)} & \shortstack[r]{steps per\\second per copy\\(thousands)} &
+\shortstack[r]{hours per\\million steps\\per copy} \\
+\midrule
+H100 NVL, serval02 card 1, four copies in one process & 1--4 & 4 & 2.08 & 0.0314 & 7.9 & 0.0353 \\
+RTX 5080, nekomata01, 2 cards training & 7, 8 & 1 & 1.23--1.24 & 0.0133 & 13.3 & 0.0209 \\
+RTX 5080, nekomata02, 2 cards training & 10, 12 & 1 & 1.25--1.26 & 0.0130--0.0131 & 13.0--13.1 & 0.0211--0.0214 \\
+RTX A4500, jaguar03, 4 cards training & 5, 6, 9, 11 & 1 & 1.35--1.38 & 0.0119--0.0121 & 11.9--12.1 & 0.0229--0.0234 \\
+RTX A4500, jaguar03, all 8 cards training & 5--12 & 1 & 1.37--1.44 & 0.0114--0.0120 & 11.4--12.0 & 0.0232--0.0244 \\
+\bottomrule
+\end{tabular}
+\caption{Training speed of the final training, one row per card class and
+phase. The RTX A4500 rows are before and after 19:57 PT on 2026-11-07, when
+four of jaguar03's eight cards were handed back; the RTX 5080 rows are the last
+$16{,}000$ to $18{,}000$ updates of seeds 7, 8, 10 and 12.}
+\label{tab:pixel-montezuma-final-training-speed}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{\detokenize{../runs/2026-11-06-01-14_pixel-montezuma_corrected-room-geometry_episode-limit-27000-steps_cleanrl-ppo-rnd-final-configuration_checks-then-steps-per-copy-2000000000_h100-nvl-serval02-card-1-copies-4-seeds-1-to-4_rtx-a4500-jaguar03-8-cards-copies-1-seeds-5-to-12/analysis/2026-11-09-02-46_final-training-results_all-12-copies_h100-nvl-rtx-a4500-rtx-5080/plots/learning_curves_seeds_1_to_4_h100_nvl_four_copies.png}}
+\caption{Seeds 1 to 4 (four copies on one H100 NVL). Each point is one window
+of $1{,}221$ updates. Panels: $S(W)$, rooms reached so far, rooms visited per
+update (mean over the window), and the mean intrinsic reward per step. The
+vertical scales equal those of \Cref{fig:pixel-montezuma-final-training-one-copy}.
+Script: \texttt{code/make\_results.py} in the run's analysis folder.}
+\label{fig:pixel-montezuma-final-training-h100}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{\detokenize{../runs/2026-11-06-01-14_pixel-montezuma_corrected-room-geometry_episode-limit-27000-steps_cleanrl-ppo-rnd-final-configuration_checks-then-steps-per-copy-2000000000_h100-nvl-serval02-card-1-copies-4-seeds-1-to-4_rtx-a4500-jaguar03-8-cards-copies-1-seeds-5-to-12/analysis/2026-11-09-02-46_final-training-results_all-12-copies_h100-nvl-rtx-a4500-rtx-5080/plots/learning_curves_seeds_5_to_12_one_copy_per_card.png}}
+\caption{Seeds 5 to 12 (one copy per card), with the panels and scales of
+\Cref{fig:pixel-montezuma-final-training-h100}.}
+\label{fig:pixel-montezuma-final-training-one-copy}
+\end{figure}
+
+\paragraph{Findings.}
+\begin{enumerate}[label=(\roman*),leftmargin=*]
+\item \textbf{Scores.} Over the last $1\%$ the median score per game across
+the twelve seeds is $4{,}849$; eight seeds score $4{,}098$ to $5{,}862$, seeds 1
+and 2 about $3{,}700$, and seeds 6 and 9 about $2{,}600$.
+\item \textbf{Rooms.} Seeds reached $17$ to $24$ rooms (median $22$). Rooms 24
+and 25 were reached only by seeds 3, 4, 5 and 10; seeds 6 and 11 never reached
+rooms 22, 23 or 30 to 32. New rooms were still found late in some seeds: seed 4
+first reached rooms 24 and 25 at update $88{,}088$ ($1.44$ billion steps) and
+seed 1 rooms 22 and 23 at updates $54{,}417$ and $64{,}280$; no one-copy seed
+(5 to 12) reached a new room after about $0.7$ billion steps.
+\item \textbf{Speed.} Four copies on one H100 NVL gave $31{,}400$ agent steps
+per second in total, about $2.6$ times one RTX A4500 copy, but each copy took
+$0.035$ hours per million steps, against $0.021$ on an RTX 5080 and $0.023$ to
+$0.024$ on an RTX A4500. A copy on an RTX 5080 ran about $10\%$ faster than on
+an RTX A4500.
+\end{enumerate}
+
 \def\GridInitializationRunPath{/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-10-31-21-48_initial-bonus_uniform-random-adversarial-neural_policy-tabular-neural_count-inverse-square-root_steps-262144-to-16777216_seeds-development-0-15_confirmation-10000-10511}
 \def\FixedSettingsRunPath{/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-11-07-20-03_fixed-cleanrl-ppo-rnd_straight-32-snake-16x2_tabular-neural_uniform-alternating-frozen-network-online-rnd_state-and-reward-normalization_learning-rate-1e-4-1e-3_entropy-1e-3-1e-2_steps-16777216_seeds-0-15_confirmation-20000-20127}
 \input{grid_initialization.tex}
