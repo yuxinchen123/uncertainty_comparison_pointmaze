@@ -96,3 +96,12 @@ def test_record_frozen_keeps_other_ideas_and_replaces_the_same_one(tmp_path):
     units.record_frozen(path, [{'idea': 'b', 'case': 'x', 'configuration': 2}])
     units.record_frozen(path, [{'idea': 'a', 'case': 'x', 'configuration': 3}])
     assert sorted((entry['idea'], entry['configuration']) for entry in units.read_json(path)) == [('a', 3), ('b', 2)]
+
+
+def test_a_case_already_queued_is_not_queued_again_under_another_split():
+    """Units of 256 seeds are dropped for a case that already has 128-seed units; other cases are kept."""
+    rows = [{'name': 'confirmation-09_snake_a_seeds-20000-20255'}, {'name': 'confirmation-09_snake_a_seeds-20256-20511'},
+            {'name': 'confirmation-09_straight_a_seeds-20000-20255'}]
+    queued = {'confirmation-09_snake_a_seeds-20000-20127', 'confirmation-09_straight_a_seeds-20000-20255'}
+    kept = units.without_split_again(rows, queued)
+    assert [row['name'] for row in kept] == ['confirmation-09_straight_a_seeds-20000-20255']

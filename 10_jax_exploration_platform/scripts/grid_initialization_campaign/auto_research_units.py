@@ -140,6 +140,22 @@ def confirmation_specifications(run_dir, batch, ideas, seed_start, seed_count, f
     return rows, frozen
 
 
+def without_split_again(rows, queued):
+    """Drop confirmation units of an idea and case that already has units under another split of the seeds."""
+    # Before: new rows "..._seeds-20000-20255" while "..._seeds-20000-20127" is queued; after: that case's rows are gone.
+    new_names = {row['name'] for row in rows}
+    kept = []
+    for row in rows:
+        prefix = row['name'].rsplit('_seeds-', 1)[0] + '_seeds-'
+        if any(name.startswith(prefix) and name not in new_names for name in queued):
+            continue
+        kept.append(row)
+    skipped = sorted({row['name'].rsplit('_seeds-', 1)[0] for row in rows} - {row['name'].rsplit('_seeds-', 1)[0] for row in kept})
+    for prefix in skipped:
+        print(f'skipped, already queued under another split of the seeds: {prefix}')
+    return kept
+
+
 def record_frozen(path, frozen):
     """Add the chosen configurations to the batch's record, replacing an earlier entry of the same idea and case."""
     # Before: a file with idea A's four cases, and new rows for idea B; after: the file holds A's and B's rows.
@@ -175,6 +191,11 @@ def main():
     else:
         rows = unit_specifications(args.batch, ideas, args.stage, args.learning_rates)
     # Round-robin over ideas: the queue order is case-major, so each idea's first unit is near the front.
+    # A unit staged on a remote server or held aside sits in a queue folder that enqueue() does not look at.
+    elsewhere = {path.stem for folder in (args.run_dir/'queue').iterdir() if folder.is_dir()
+                 for path in folder.glob('*.json')}
+    if args.stage == 'confirmation':
+        rows = without_split_again(rows, elsewhere)
     if not rows:
         print(f'0 units queued for batch {args.batch} ({args.stage}): nothing is ready')
         return
@@ -183,9 +204,6 @@ def main():
     ordered = [per_idea[idea][index] for index in range(max(map(len, per_idea.values()))) for idea in ideas
                if index < len(per_idea[idea])]
     created = 0
-    # A unit staged on a remote server or held aside sits in a queue folder that enqueue() does not look at.
-    elsewhere = {path.stem for folder in (args.run_dir/'queue').iterdir() if folder.is_dir()
-                 for path in folder.glob('*.json')}
     for row in ordered:
         if row['name'] in elsewhere:
             continue
