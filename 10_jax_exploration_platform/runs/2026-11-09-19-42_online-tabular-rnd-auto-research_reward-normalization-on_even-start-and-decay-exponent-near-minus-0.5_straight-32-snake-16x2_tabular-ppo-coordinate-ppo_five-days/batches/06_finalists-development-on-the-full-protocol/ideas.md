@@ -52,3 +52,25 @@ queued here as the row `control` (online tabular-RND, reward normalization on, n
 - when the extension's own units finish, the two sets are compared pair by pair as a check of both paths;
 - the 1,024-seed confirmation of the baseline's chosen configuration then runs here as well, so the final comparison
   does not wait for the extension.
+
+## Addition of 2026-11-10 08:24 PT: the two copies of the baseline's grid agree on average, not run by run
+
+Check on the first finished case (snake grid, coordinate-PPO; 832 pairs of the same configuration and seed, script
+`analysis/compare_baseline_paths.py`, job in `logs/compare_baseline_paths_*.out`):
+
+- only 57 of 832 pairs (6.9%) have the same first-goal time in both copies;
+- the means over all 832 pairs are 2,002K (extension copy, UVA cards) and 2,085K (this run's copy, MIT cards);
+- the extension copy chooses learning rate 1e-4, entropy 0.01, weight 2^-6 (76.4K; 83.9K in this run's copy), and this
+  run's copy chooses learning rate 1e-4, entropy 0.01, weight 2^5 (74.8K; 89.9K in the extension copy).
+
+Reading:
+
+1. The earlier statement that each pair "trains the same run" is wrong across cards. A different card model or a
+   different grouping of copies changes floating-point rounding, and over 131,072 updates the runs part. Each copy
+   is a valid draw of the same protocol; they are equal in distribution, not seed by seed.
+2. The baseline's choice between weights at learning rate 1e-4 and entropy 0.01 is within the noise of 16 seeds: the
+   two copies pick different weights with scores 2% apart.
+3. For the final comparison the baseline row confirmed here uses this run's choice. When the extension confirms its
+   own choice, that row is added beside it, so the finalist is compared with both.
+4. The difference on the same seeds stays a valid comparison (same field seeds and networks on both sides), but
+   pairing removes less noise than it would if runs were reproducible across cards.

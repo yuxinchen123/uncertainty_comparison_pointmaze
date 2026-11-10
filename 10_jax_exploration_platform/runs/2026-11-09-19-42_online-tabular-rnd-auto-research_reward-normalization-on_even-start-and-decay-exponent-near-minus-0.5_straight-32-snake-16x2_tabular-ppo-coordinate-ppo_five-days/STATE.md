@@ -256,6 +256,17 @@ Times are Pacific. The protocol is in `program.md`; the plan is
   finalist (schedule-fit RND, −1, every step), the −0.5 form that meets both property targets, and the two
   ablation arms (count rule −1 every step on the frozen tabular-RND field; unit start alone). The 16 long
   unit-start units and the finalist's 16 units are on MIT; the rest on UVA.
+- **2026-11-10 07:02-08:25. Finalist stage.** The finalist's development grid finished (chosen: learning rate 1e-3
+  in all four cases; 6.82K, 1.32K, 14.5K and 33.6K on seeds 0-15) and its confirmation on seeds 20000-21023 is
+  running, as are the confirmations of the exponent −0.5 form and of the uneven-start ablation (512 seeds). The
+  baseline's grid is trained here as well (row `control`), because the extension's copy on UVA cards needs until
+  about the evening of 11-11; its first case (snake grid, coordinate-PPO) finished at 08:20 and its confirmation was
+  queued at once (the builder now confirms case by case).
+- **2026-11-10 08:25. The two copies of the baseline's grid agree on average, not run by run** (snake grid,
+  coordinate-PPO): 6.9% of the 832 pairs of the same configuration and seed are identical; means 2,002K and 2,085K;
+  the two copies choose different weights at learning rate 1e-4 and entropy 0.01 with scores 2% apart. Runs are not
+  reproducible across card models or groupings of copies, so comparisons are between distributions. Details and
+  consequences: `batches/06_…/ideas.md`, last section.
 
 ## Idea list
 
