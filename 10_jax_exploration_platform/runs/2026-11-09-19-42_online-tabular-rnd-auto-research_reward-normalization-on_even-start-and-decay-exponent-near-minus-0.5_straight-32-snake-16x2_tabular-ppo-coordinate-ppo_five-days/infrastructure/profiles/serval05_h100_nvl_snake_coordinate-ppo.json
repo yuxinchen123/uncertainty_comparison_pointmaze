@@ -1,0 +1,99 @@
+{
+  "device": "cuda:0",
+  "geometry": "snake",
+  "policy": "coordinate-PPO",
+  "ideas": {
+    "control": [
+      {
+        "copies": 512,
+        "seconds_per_iteration": 0.2147724037989974,
+        "total_steps_per_second_millions": 0.3051416236013928,
+        "steps_per_second_per_copy_thousands": 0.5959797335964703,
+        "hours_per_million_steps_per_copy": 0.46608594574435197
+      },
+      {
+        "copies": 1024,
+        "seconds_per_iteration": 0.4158989403047599,
+        "total_steps_per_second_millions": 0.3151534839303843,
+        "steps_per_second_per_copy_thousands": 0.3077670741507659,
+        "hours_per_million_steps_per_copy": 0.9025584642030381
+      },
+      {
+        "copies": 2048,
+        "seconds_per_iteration": 0.8673937206505797,
+        "total_steps_per_second_millions": 0.3022203109833232,
+        "steps_per_second_per_copy_thousands": 0.14756851122232578,
+        "hours_per_million_steps_per_copy": 1.8823648451618487
+      }
+    ],
+    "unit-start-power-4-sgd-0.1-length-readout": [
+      {
+        "copies": 512,
+        "seconds_per_iteration": 0.13581731953890994,
+        "total_steps_per_second_millions": 0.4825305065840647,
+        "steps_per_second_per_copy_thousands": 0.9424423956720014,
+        "hours_per_million_steps_per_copy": 0.2947424469160372
+      },
+      {
+        "copies": 1024,
+        "seconds_per_iteration": 0.25635905205272136,
+        "total_steps_per_second_millions": 0.5112829016587426,
+        "steps_per_second_per_copy_thousands": 0.4992997086511158,
+        "hours_per_million_steps_per_copy": 0.5563347483783015
+      },
+      {
+        "copies": 2048,
+        "seconds_per_iteration": 0.4969281763536856,
+        "total_steps_per_second_millions": 0.5275289518166114,
+        "steps_per_second_per_copy_thousands": 0.2575824960042048,
+        "hours_per_million_steps_per_copy": 1.078403160489769
+      }
+    ],
+    "unit-start-shrink-target-sgd-0.1-length-readout": [
+      {
+        "copies": 512,
+        "seconds_per_iteration": 0.13556638614973054,
+        "total_steps_per_second_millions": 0.4834236705817083,
+        "steps_per_second_per_copy_thousands": 0.9441868566048991,
+        "hours_per_million_steps_per_copy": 0.2941978866096583
+      },
+      {
+        "copies": 1024,
+        "seconds_per_iteration": 0.2561962749925442,
+        "total_steps_per_second_millions": 0.5116077507520921,
+        "steps_per_second_per_copy_thousands": 0.4996169440938399,
+        "hours_per_million_steps_per_copy": 0.5559814995497921
+      },
+      {
+        "copies": 2048,
+        "seconds_per_iteration": 0.4945977311464958,
+        "total_steps_per_second_millions": 0.530014562323892,
+        "steps_per_second_per_copy_thousands": 0.2587961730097129,
+        "hours_per_million_steps_per_copy": 1.0733457707172218
+      }
+    ],
+    "target-copy-trunk-input-rows-power-4-sgd-0.1-initial-ratio-length": [
+      {
+        "copies": 512,
+        "seconds_per_iteration": 0.03503819019533694,
+        "total_steps_per_second_millions": 1.8704162410968894,
+        "steps_per_second_per_copy_thousands": 3.653156720892362,
+        "hours_per_million_steps_per_copy": 0.07603773913918606
+      },
+      {
+        "copies": 1024,
+        "seconds_per_iteration": 0.0571304329088889,
+        "total_steps_per_second_millions": 2.294258827147913,
+        "steps_per_second_per_copy_thousands": 2.240487135886634,
+        "hours_per_million_steps_per_copy": 0.12398097419463737
+      },
+      {
+        "copies": 2048,
+        "seconds_per_iteration": 0.09896992669673636,
+        "total_steps_per_second_millions": 2.6487237967070705,
+        "steps_per_second_per_copy_thousands": 1.2933221663608743,
+        "hours_per_million_steps_per_copy": 0.21477848675507022
+      }
+    ]
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "device": "cuda:0",
+  "geometry": "snake",
+  "policy": "coordinate-PPO",
+  "ideas": {
+    "control": [
+      {
+        "copies": 256,
+        "seconds_per_iteration": 0.05530193775193766,
+        "total_steps_per_second_millions": 0.5925289661093635,
+        "steps_per_second_per_copy_thousands": 2.3145662738647013,
+        "hours_per_million_steps_per_copy": 0.12001288574639249
+      },
+      {
+        "copies": 512,
+        "seconds_per_iteration": 0.10597440029960126,
+        "total_steps_per_second_millions": 0.6184135018902918,
+        "steps_per_second_per_copy_thousands": 1.2078388708794763,
+        "hours_per_million_steps_per_copy": 0.229979167316843
+      }
+    ],
+    "unit-start-shrink-target-sgd-1-length-readout": [
+      {
+        "copies": 256,
+        "seconds_per_iteration": 0.03440642525674775,
+        "total_steps_per_second_millions": 0.9523802532660255,
+        "steps_per_second_per_copy_thousands": 3.720235364320412,
+        "hours_per_million_steps_per_copy": 0.07466672147731716
+      },
+      {
+        "copies": 512,
+        "seconds_per_iteration": 0.06460441049421206,
+        "total_steps_per_second_millions": 1.0144199056792167,
+        "steps_per_second_per_copy_thousands": 1.9812888782797202,
+        "hours_per_million_steps_per_copy": 0.14020054360723103
+      }
+    ],
+    "unit-start-exact-step-shrink-target": [
+      {
+        "copies": 256,
+        "seconds_per_iteration": 0.0599621393950656,
+        "total_steps_per_second_millions": 0.5464781665661607,
+        "steps_per_second_per_copy_thousands": 2.134680338149065,
+        "hours_per_million_steps_per_copy": 0.13012617056220832
+      },
+      {
+        "copies": 512,
+        "seconds_per_iteration": 0.11440469964873046,
+        "total_steps_per_second_millions": 0.5728435999676806,
+        "steps_per_second_per_copy_thousands": 1.1188351561868763,
+        "hours_per_million_steps_per_copy": 0.24827408777936297
+      }
+    ],
+    "unit-start-exact-step-2-iterations-shrink-target": [
+      {
+        "copies": 256,
+        "seconds_per_iteration": 0.11922237684484571,
+        "total_steps_per_second_millions": 0.2748477330110924,
+        "steps_per_second_per_copy_thousands": 1.0736239570745798,
+        "hours_per_million_steps_per_copy": 0.2587291164167659
+      },
+      {
+        "copies": 512,
+        "seconds_per_iteration": 0.23383094719611108,
+        "total_steps_per_second_millions": 0.28027085715491623,
+        "steps_per_second_per_copy_thousands": 0.5474040178806957,
+        "hours_per_million_steps_per_copy": 0.5074456319360049
+      }
+    ],
+    "unit-start-exact-step-4-iterations-shrink-target": [
+      {
+        "copies": 256,
+        "seconds_per_iteration": 0.22434651280054824,
+        "total_steps_per_second_millions": 0.14605976973277887,
+        "steps_per_second_per_copy_thousands": 0.5705459755186675,
+        "hours_per_million_steps_per_copy": 0.4868630920150786
+      },
+      {
+        "copies": 512,
+        "seconds_per_iteration": 0.44168040765216576,
+        "total_steps_per_second_millions": 0.14837877991547957,
+        "steps_per_second_per_copy_thousands": 0.289802304522421,
+        "hours_per_million_steps_per_copy": 0.9585078291062624
+      }
+    ]
+  }
+}

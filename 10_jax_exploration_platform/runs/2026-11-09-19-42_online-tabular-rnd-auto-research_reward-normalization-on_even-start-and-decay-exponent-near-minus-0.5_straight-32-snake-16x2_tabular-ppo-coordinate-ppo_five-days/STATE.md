@@ -43,6 +43,10 @@ Times are Pacific. The protocol is in `program.md`; the plan is
   6. **Training only the input rows of a frozen trunk does not fit:**
      - frozen random deeper layers: slope about −0.1;
      - the target-copy trunk: −0.1 to −0.16 at learning rates up to 1.
+- **Correction, 2026-11-09 23:20:** the serval05 profile below was taken while another account's processes were on
+  the card, so its absolute values are about half the true ones. The reference is the serval02 card 1 profile of
+  23:15 (`infrastructure/profiles/README.md`): control 0.106 s per iteration at 512 copies (0.62 million steps per
+  second), plain-SGD ideas 0.065 s, exact-step with one step per minibatch 0.114 s.
 - **2026-11-09 20:07. serval05 profile (H100 NVL, snake grid, coordinate-PPO).** Seconds per iteration at 512 copies:
   - control 0.215;
   - power-law and shrink-target with plain SGD 0.136;
@@ -119,6 +123,12 @@ Times are Pacific. The protocol is in `program.md`; the plan is
   settings compute the same numbers under the new code (new keys default off; unchanged-path gates).
 - **2026-11-09 23:09. Batch 2 queued:** 224 units (`batches/02_…/ideas.md`): 10 diagnostic count-rule rows and 4
   stable shrink-target ideas, at both policy learning rates.
+- **2026-11-09 23:20. Exact-step profile and bench** (serval02 card 1). One step per minibatch costs 1.08 times the
+  control and is accepted; two and four steps cost 2.2 and 4.2 times and are not used. Bench slopes under uniform
+  visits: one step −0.31 / −0.25, two −0.33 / −0.28, four −0.36 / −0.31; with 4 counts per kept visit −0.41 / −0.37.
+  No non-finite copy in any law. So the exact step is stable but under-counts when a minibatch holds many cells.
+- **2026-11-09 23:20. Gilbreth started:** 7 of its 12 standby jobs began at about 23:15 and passed the first-unit
+  check with the corrected tolerance.
 
 ## Idea list
 
