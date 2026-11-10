@@ -208,6 +208,22 @@ Times are Pacific. The protocol is in `program.md`; the plan is
     RND that has both wanted properties exactly.
   - The −0.5 schedule meets both property targets of `program.md`; the −1 schedule at a quarter rate meets the
     even-start target only. Both are run so the comparison is direct.
+- **2026-11-10 03:45. Batch 3 complete (224 of 224, none failed); summary in `batches/03_…/summary.md`.** The count
+  rule with exponent −1 refreshed at every step is ahead of the control in all four cases: 6.47 ± 0.26 against
+  7.22 ± 0.28 (straight, tabular-PPO), 1.70 ± 0.26 against 3.90 ± 0.20 (straight, coordinate-PPO), 13.31 ± 0.74
+  against 18.74 ± 0.96 (snake, tabular-PPO), 41.3 ± 2.8 against 82.1 ± 12.0 (snake, coordinate-PPO). Exponent −0.5
+  is ahead only with coordinate-PPO; −1.5 and faster fail on the snake grid with coordinate-PPO. So the data put the
+  decay target near −1, with the refresh at every step, and not at −0.5.
+- **2026-11-10 03:26. Batch 5 queued** (`batches/05_…/ideas.md`, 64 count-rule units on the frozen tabular-RND
+  field; commit `accf9bde`; no trainer change). It is the cell of the 2×2 comparison with an uneven start and a
+  scheduled decay.
+- **2026-11-10 03:45. Batch 4, 118 of 288.** Every exact-fit RND row finished so far is within one standard error of
+  the count rule of the same shape: −0.5 per rollout 3.43 against 3.52 and 39.4 against 42.8; −0.5 per step 2.29
+  against 2.38 and 32.2 against 32.3; −1 at rate 0.25 per rollout 6.97 against 7.08; −1 per step 6.33 against 6.47.
+  The all-layers fit at −0.5 scores 64.2 ± 4.4 on the snake grid with coordinate-PPO (exact form and count rule: 57.0).
+- **2026-11-10 03:05 and 03:23. Rebalances** with the new fleet command `take-back` (waiting units returned at once):
+  42 units from Gautschi and 27 from Gilbreth to MIT and ACES, then 24 from MIT to Gilbreth and Gautschi when
+  Gilbreth's waiting jobs started.
 
 ## Idea list
 
