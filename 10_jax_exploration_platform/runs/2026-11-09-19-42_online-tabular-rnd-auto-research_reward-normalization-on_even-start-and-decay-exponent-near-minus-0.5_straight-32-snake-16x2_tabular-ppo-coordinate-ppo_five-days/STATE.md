@@ -224,6 +224,38 @@ Times are Pacific. The protocol is in `program.md`; the plan is
 - **2026-11-10 03:05 and 03:23. Rebalances** with the new fleet command `take-back` (waiting units returned at once):
   42 units from Gautschi and 27 from Gilbreth to MIT and ACES, then 24 from MIT to Gilbreth and Gautschi when
   Gilbreth's waiting jobs started.
+- **2026-11-10 04:22. Batch 4, 215 of 288; batch 5, 63 of 64** (32 seeds, best of 28 settings, thousands of
+  transitions; cases in the order straight tabular-PPO, straight coordinate-PPO, snake tabular-PPO, snake
+  coordinate-PPO):
+
+  | row | straight, tabular-PPO | straight, coordinate-PPO | snake, tabular-PPO | snake, coordinate-PPO |
+  |---|---|---|---|---|
+  | control | 7.22 ± 0.28 | 3.90 ± 0.20 | 18.74 ± 0.96 | 82.1 ± 12.0 |
+  | schedule-fit RND, −1, every step | 6.33 ± 0.29 | 1.96 ± 0.29 | 13.51 ± 0.72 | 42.1 ± 2.8 |
+  | schedule-fit RND, −1 at rate 0.25, every step | 6.75 ± 0.37 | 2.13 ± 0.19 | 13.69 ± 1.05 | 43.2 ± 3.0 |
+  | schedule-fit RND, −1 at rate 0.25, per rollout | 6.97 ± 0.41 | 3.11 ± 0.24 | 16.60 ± 0.87 | 43.8 ± 5.6 |
+  | count rule −1 every step, even field | 6.47 ± 0.26 | 1.70 ± 0.26 | 13.31 ± 0.74 | 41.3 ± 2.8 |
+  | count rule −1 every step, frozen tabular-RND field | 6.91 ± 0.60 | 2.03 ± 0.26 (unfinished) | 15.06 ± 1.44 | 51.5 ± 7.1 |
+  | count rule −0.5 every step, even field | 8.42 ± 0.39 | 2.38 ± 0.22 | 32.3 ± 4.5 | 52.7 ± 7.8 |
+  | count rule −0.5 every step, frozen tabular-RND field | 14.23 ± 3.80 | 2.56 ± 0.28 | 67.7 ± 12.7 | 558 ± 208 |
+  | unit start alone (batch 1) | 8.57 ± 0.64 | 4.66 ± 0.22 | 21.74 ± 1.24 | 1,905 ± 292 |
+
+  Reading:
+  1. **The schedule-fit RND with exponent −1, refreshed every step, is ahead of the control in all four cases**
+     (by 12%, 50%, 28% and 49%), and equals its count rule within one standard error.
+  2. **2×2 of the two parts.** Scheduled decay with the uneven start is ahead of the control in all four cases;
+     the even start adds 7% to 25% on top of it at −1; the even start with the decay left to training (unit start
+     alone) is behind the control in all four.
+  3. **The even start matters more when the decay is slow:** at −0.5 the uneven field is 69%, 8%, 110% and about
+     10 times slower than the even field. With exponent −a, a cell whose start is f times higher needs f^(1/a)
+     times the visits to draw level: 4 times at −1 and 16 times at −0.5 for f = 4.
+  4. Batch 5's first prediction (uneven start within 30% of the even field) holds at −1 every step and fails at
+     −0.5 and at −1 with a quarter rate on the snake grid with coordinate-PPO (104 ± 38 against 39.5).
+- **2026-11-10 04:27. Batch 6 queued: finalists on the full protocol, development stage** (`batches/06_…/ideas.md`,
+  64 units, commit `47c6d296`; unit builder stages `development` and `confirmation`, commit `3fefc804`). Rows: the
+  finalist (schedule-fit RND, −1, every step), the −0.5 form that meets both property targets, and the two
+  ablation arms (count rule −1 every step on the frozen tabular-RND field; unit start alone). The 16 long
+  unit-start units and the finalist's 16 units are on MIT; the rest on UVA.
 
 ## Idea list
 
