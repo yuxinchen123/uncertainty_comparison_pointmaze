@@ -1,0 +1,85 @@
+{
+  "unit-start-exact-step-shrink-target": {
+    "settings": {
+      "rnd_loss": "shrink_target",
+      "rnd_optimizer": "exact_step",
+      "rnd_readout": "length",
+      "rnd_unit_length_target": true
+    },
+    "network": {
+      "zero_predictor_output": true
+    }
+  },
+  "unit-start-exact-step-2-iterations-shrink-target": {
+    "settings": {
+      "rnd_loss": "shrink_target",
+      "rnd_optimizer": "exact_step",
+      "rnd_readout": "length",
+      "rnd_unit_length_target": true,
+      "rnd_exact_step_iterations": 2
+    },
+    "network": {
+      "zero_predictor_output": true
+    }
+  },
+  "unit-start-exact-step-4-iterations-shrink-target": {
+    "settings": {
+      "rnd_loss": "shrink_target",
+      "rnd_optimizer": "exact_step",
+      "rnd_readout": "length",
+      "rnd_unit_length_target": true,
+      "rnd_exact_step_iterations": 4
+    },
+    "network": {
+      "zero_predictor_output": true
+    }
+  },
+  "unit-start-exact-step-shrink-exponent-minus-1": {
+    "settings": {
+      "rnd_loss": "shrink_target",
+      "rnd_optimizer": "exact_step",
+      "rnd_readout": "length",
+      "rnd_unit_length_target": true,
+      "rnd_shrink_power": 1.0
+    },
+    "network": {
+      "zero_predictor_output": true
+    }
+  },
+  "unit-start-exact-step-shrink-exponent-minus-0.25": {
+    "settings": {
+      "rnd_loss": "shrink_target",
+      "rnd_optimizer": "exact_step",
+      "rnd_readout": "length",
+      "rnd_unit_length_target": true,
+      "rnd_shrink_power": 4.0
+    },
+    "network": {
+      "zero_predictor_output": true
+    }
+  },
+  "unit-start-exact-step-shrink-target-count-0.25-per-visit": {
+    "settings": {
+      "rnd_loss": "shrink_target",
+      "rnd_optimizer": "exact_step",
+      "rnd_readout": "length",
+      "rnd_unit_length_target": true,
+      "rnd_count_per_kept_visit": 0.25
+    },
+    "network": {
+      "zero_predictor_output": true
+    }
+  },
+  "unit-start-exact-step-shrink-target-count-4-per-visit": {
+    "settings": {
+      "rnd_loss": "shrink_target",
+      "rnd_optimizer": "exact_step",
+      "rnd_readout": "length",
+      "rnd_unit_length_target": true,
+      "rnd_count_per_kept_visit": 4.0
+    },
+    "network": {
+      "zero_predictor_output": true
+    }
+  }
+}

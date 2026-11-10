@@ -16,7 +16,8 @@ from initial_field_archive import load_or_create_initial_field, uses_canonical_a
 
 # Online RND settings a unit specification may carry under "rnd_settings" (GridPPOConfig names).
 RND_SETTING_NAMES = ('rnd_readout', 'rnd_unit_length_target', 'rnd_loss', 'rnd_loss_power', 'rnd_shrink_power', 'rnd_optimizer',
-                     'rnd_learning_rate', 'rnd_learning_rate_time_scale', 'rnd_trainable')
+                     'rnd_learning_rate', 'rnd_learning_rate_time_scale', 'rnd_trainable',
+                     'rnd_exact_step_iterations', 'rnd_count_per_kept_visit')
 
 
 def network_options(spec):

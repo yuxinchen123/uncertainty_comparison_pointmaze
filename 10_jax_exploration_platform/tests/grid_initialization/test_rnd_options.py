@@ -159,3 +159,64 @@ def test_generalized_shrink_power_matches_its_closed_form_and_stays_bounded():
         assert np.isfinite(np.asarray(trainer.all_cell_errors(state))).all()
     with pytest.raises(ValueError):
         GridPPOConfig(n_copies=1, intrinsic_source="online_rnd", rnd_shrink_power=1.0)
+
+
+def exact_trainer(world, iterations=1, **changes):
+    """A unit-start trainer with the exact-step optimizer and the length readout."""
+    return tabular_trainer(world, rnd_optimizer="exact_step", rnd_loss="shrink_target", rnd_readout="length",
+        rnd_unit_length_target=True, rnd_exact_step_iterations=iterations, network={"zero_predictor_output": True},
+        **changes)
+
+
+def test_exact_step_counts_kept_visits_of_one_cell():
+    """Eight kept visits of one cell in a minibatch take its error length from 1 to 1/sqrt(1+8), then on to 1/sqrt(1+10)."""
+    from exploration_platform.grid_initialization.training import exact_shrink_step
+    world = make_geometry("straight", 8)
+    trainer, state, _ = exact_trainer(world)
+    cells = jnp.zeros((2, 8), jnp.int32)
+    inputs = state.rnd_table[cells]
+    predictor = exact_shrink_step(state.parameters["predictor"], state.target, inputs, jnp.ones((2, 8)), trainer.configuration)
+    errors = np.asarray(trainer.all_cell_errors(state._replace(parameters=dict(state.parameters, predictor=predictor))))
+    np.testing.assert_allclose(errors[:, 0], 1.0 / np.sqrt(9.0), rtol=0.02)
+    # Two more kept visits; unkept samples of the minibatch do not count.
+    mask = jnp.asarray(np.tile([1, 1, 0, 0, 0, 0, 0, 0], (2, 1)))
+    predictor = exact_shrink_step(predictor, state.target, inputs, mask, trainer.configuration)
+    errors = np.asarray(trainer.all_cell_errors(state._replace(parameters=dict(state.parameters, predictor=predictor))))
+    np.testing.assert_allclose(errors[:, 0], 1.0 / np.sqrt(11.0), rtol=0.03)
+    # A minibatch with nothing kept changes nothing.
+    same = exact_shrink_step(predictor, state.target, inputs, jnp.zeros((2, 8)), trainer.configuration)
+    jax.tree.map(lambda a, b: np.testing.assert_array_equal(np.asarray(a), np.asarray(b)), same, predictor)
+
+
+def test_exact_step_counts_each_cell_by_its_own_visits_and_other_exponents():
+    """Cells with 6 and 2 kept visits end near 1/sqrt(7) and 1/sqrt(3); p = 1 and p = 4 follow (1 + n)^(-1/p).
+
+    Two cells share the deeper layers, so a few steps along the gradient realize both targets only approximately;
+    the rarer cell is moved a little less than its target (measured 0.63-0.64 against 0.577 after four steps).
+    """
+    from exploration_platform.grid_initialization.training import exact_shrink_step
+    world = make_geometry("straight", 8)
+    cells = jnp.asarray(np.tile([0, 0, 0, 0, 0, 0, 1, 1], (2, 1)))
+    for power in (2.0, 1.0, 4.0):
+        trainer, state, _ = exact_trainer(world, iterations=4, **({} if power == 2.0 else {"rnd_shrink_power": power}))
+        predictor = exact_shrink_step(state.parameters["predictor"], state.target, state.rnd_table[cells],
+                                      jnp.ones((2, 8)), trainer.configuration)
+        errors = np.asarray(trainer.all_cell_errors(state._replace(parameters=dict(state.parameters, predictor=predictor))))
+        # The rarer cell is under-moved more when its target is further away (p = 1: 0.43 against 0.33).
+        tolerance = 0.15 if power == 2.0 else 0.35
+        np.testing.assert_allclose(errors[:, 0], 7.0 ** (-1.0 / power), rtol=tolerance)
+        np.testing.assert_allclose(errors[:, 1], 3.0 ** (-1.0 / power), rtol=tolerance)
+        assert np.all(errors[:, 0] < errors[:, 1]) and np.all(errors[:, 1] < 1.0)
+        assert np.isfinite(errors).all() and errors[:, 2:].min() > 0.5
+
+
+def test_exact_step_trains_inside_the_ppo_iteration_and_refuses_other_losses():
+    """A full iteration with the exact-step optimizer lowers the start cell's bonus and stays finite."""
+    world = make_geometry("straight", 8)
+    trainer, state, _ = exact_trainer(world)
+    for _ in range(3):
+        state, _ = trainer.train_iteration(state)
+    errors = np.asarray(trainer.all_cell_errors(state))
+    assert np.isfinite(errors).all() and np.all(errors[:, 0] < 0.9)
+    with pytest.raises(ValueError):
+        GridPPOConfig(n_copies=1, intrinsic_source="online_rnd", rnd_input="one_hot", rnd_optimizer="exact_step")

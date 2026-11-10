@@ -70,6 +70,12 @@ class GridPPOConfig:
     rnd_optimizer: str = "shared_adam"
     rnd_learning_rate: float = 1e-4
     rnd_learning_rate_time_scale: float = 0.0
+    # "exact_step" optimizer only (shrink-target loss, one-hot inputs): no learning rate. Each minibatch moves every
+    # kept cell toward its shrink target for all of its kept visits at once, r -> r (1 + count * m * r^p)^(-1/p) for
+    # m kept visits, with the step length that best realizes those targets along the gradient direction, repeated
+    # this many times. One kept visit then adds `rnd_count_per_kept_visit` to the cell's count.
+    rnd_exact_step_iterations: int = 1
+    rnd_count_per_kept_visit: float = 1.0
     # "all" layers of the predictor train, or only its input weights (one row per cell for one-hot inputs).
     rnd_trainable: str = "all"
     per_copy_scalar_settings: tuple | Mapping = ()
@@ -108,7 +114,8 @@ class GridPPOConfig:
         choices = {"rnd_input": {"coordinates", "one_hot"},
                    "rnd_readout": {"half_squared", "length", "initial_ratio_half_squared", "initial_ratio_length"},
                    "rnd_loss": {"cleanrl", "power", "shrink_target"},
-                   "rnd_optimizer": {"shared_adam", "adam", "sgd", "adagrad"}, "rnd_trainable": {"all", "input_layer"}}
+                   "rnd_optimizer": {"shared_adam", "adam", "sgd", "adagrad", "exact_step"},
+                   "rnd_trainable": {"all", "input_layer"}}
         for name, allowed in choices.items():
             if getattr(self, name) not in allowed:
                 raise ValueError(f"{name} must be one of {sorted(allowed)}")
@@ -127,6 +134,11 @@ class GridPPOConfig:
             raise ValueError("rnd_shrink_power applies only to the shrink-target loss")
         if self.rnd_learning_rate <= 0 or self.rnd_learning_rate_time_scale < 0:
             raise ValueError("rnd_learning_rate must be positive and its time scale nonnegative")
+        if self.rnd_optimizer == "exact_step" and (self.rnd_loss != "shrink_target" or self.rnd_input != "one_hot"
+                                                   or self.rnd_trainable != "all"):
+            raise ValueError("the exact-step optimizer needs the shrink-target loss, one-hot inputs and all layers training")
+        if self.rnd_exact_step_iterations < 1 or self.rnd_count_per_kept_visit <= 0:
+            raise ValueError("rnd_exact_step_iterations and rnd_count_per_kept_visit must be positive")
         if self.intrinsic_source == "online_rnd":
             if not 0 < self.predictor_update_proportion <= 1:
                 raise ValueError("predictor_update_proportion must be in (0, 1]")

@@ -50,7 +50,7 @@ def run_idea(idea, geometry_kind, iterations, field_seeds):
     from exploration_platform.grid_initialization.environments import make_geometry
     from exploration_platform.grid_initialization.online_rnd import NetworkOptions, stack_networks
     from exploration_platform.grid_initialization.training import (
-        all_cell_errors, initialize, predictor_sample_losses, predictor_step)
+        all_cell_errors, exact_shrink_step, initialize, predictor_sample_losses, predictor_step)
     world = make_geometry(geometry_kind, 32, 0) if geometry_kind == 'straight' else make_geometry('snake', 16, 2)
     # Before: 8 field seeds; after: 16 copies, the 8 seeds under uniform visits then the same 8 start-heavy.
     copies, states = len(field_seeds) * len(VISITATION_LAWS), world.state_count
@@ -84,12 +84,15 @@ def run_idea(idea, geometry_kind, iterations, field_seeds):
             """Update every copy's predictor on one 32-state minibatch."""
             predictor, optimizer = carry
             rows, kept = piece
+            chosen = jax.vmap(lambda table, ids: table[ids])(inputs, rows)
+            mask = jax.vmap(lambda flags, ids: flags[ids])(kept, rows).astype(jnp.float32)
+            if configuration.rnd_optimizer == 'exact_step':
+                # No learning rate: the exact step toward each kept cell's shrink target.
+                return (exact_shrink_step(predictor, state.target, chosen, mask, configuration), optimizer), None
 
             def loss(values):
                 """Masked mean of the per-sample predictor losses, as in the RL update."""
-                chosen = jax.vmap(lambda table, ids: table[ids])(inputs, rows)
                 errors = predictor_sample_losses(values, state.target, chosen, configuration)
-                mask = jax.vmap(lambda flags, ids: flags[ids])(kept, rows).astype(jnp.float32)
                 return ((errors * mask).sum(axis=1) / jnp.maximum(mask.sum(axis=1), 1.0)).sum()
 
             gradients = jax.grad(loss)(predictor)

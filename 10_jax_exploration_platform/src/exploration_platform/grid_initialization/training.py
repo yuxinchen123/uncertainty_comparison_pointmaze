@@ -397,7 +397,10 @@ def minibatch_loss(parameters, batch, coordinates, configuration, target=None):
     total += scalar_setting(configuration, "value_coefficient") * (ext_loss + int_loss)
     diagnostics = {"loss": total, "policy_loss": policy_loss, "value_loss": ext_loss + int_loss,
         "entropy": entropy, "approximate_kl": ((ratio - 1) - (log_probability - batch["log_probabilities"])).mean(axis=1)}
-    if configuration.intrinsic_source == "online_rnd":
+    if configuration.intrinsic_source == "online_rnd" and configuration.rnd_optimizer == "exact_step":
+        # The exact-step optimizer computes its own direction and step, so the predictor adds nothing here.
+        diagnostics.update(predictor_loss=jnp.zeros_like(total))
+    elif configuration.intrinsic_source == "online_rnd":
         # CleanRL: mean squared feature error, averaged over the samples kept by the mask.
         errors = predictor_sample_losses(parameters["predictor"], target, batch["rnd_inputs"], configuration)
         mask = batch["predictor_mask"].astype(jnp.float32)
@@ -454,8 +457,13 @@ def update_policy(state, batch, coordinates, configuration):
             policy, optimizer, norm = adam_step(policy, {name: value for name, value in gradients.items()
                 if name != "predictor"}, optimizer, rates, scalar_setting(configuration, "max_gradient_norm"),
                 scalar_setting(configuration, "adam_epsilon"), fuse_optimizer=configuration.fuse_optimizer)
-            predictor, predictor_optimizer = predictor_step(parameters["predictor"], gradients["predictor"],
-                                                            predictor_optimizer, configuration)
+            if configuration.rnd_optimizer == "exact_step":
+                predictor = exact_shrink_step(parameters["predictor"], state.target, selected["rnd_inputs"],
+                                              selected["predictor_mask"], configuration)
+                predictor_optimizer = predictor_optimizer._replace(step=predictor_optimizer.step + 1)
+            else:
+                predictor, predictor_optimizer = predictor_step(parameters["predictor"], gradients["predictor"],
+                                                                predictor_optimizer, configuration)
             parameters = dict(policy, predictor=predictor)
         else:
             parameters, optimizer, norm = adam_step(parameters, gradients, optimizer, rates,
@@ -491,6 +499,45 @@ def update_policy(state, batch, coordinates, configuration):
         optimizer = AdamState(layout.unpack(optimizer.first), layout.unpack(optimizer.second), optimizer.step)
     return state._replace(parameters=parameters, optimizer=optimizer, predictor_optimizer=predictor_optimizer), {
         **metrics, "learning_rate": rates}
+
+
+def exact_shrink_step(predictor, target, inputs, mask, configuration):
+    """Move every kept cell of a minibatch to its shrink target for all its kept visits, with the best step length."""
+    # Before: one-hot inputs [C,M,S] and a keep mask [C,M]; after: predictor weights after the exact steps.
+    kept = mask.astype(jnp.float32)
+    features = jax.lax.stop_gradient(target_features(target, inputs, configuration))
+    # Kept visits of each sample's own cell in this minibatch: for one-hot rows the inner product is 1 or 0.
+    same_cell = jnp.einsum("cmd,cnd->cmn", inputs, inputs, precision=jax.lax.Precision.HIGHEST)
+    visits = (same_cell * kept[:, None, :]).sum(axis=-1)
+    # Every distinct kept cell gets total weight one, however many of its visits were kept.
+    weight = (kept / jnp.maximum(visits, 1.0))[..., None]
+    outputs = jax_forward(predictor, inputs)
+    residual = features - outputs
+    squared = jnp.sum(residual ** 2, axis=-1, keepdims=True)
+    power = configuration.rnd_shrink_power
+    count = configuration.rnd_count_per_kept_visit * visits[..., None]
+    # m kept visits at once: r -> r (1 + count * r^p)^(-1/p), the same as m single shrink steps in a row.
+    factor = (1.0 + count * squared ** (power / 2.0)) ** (-1.0 / power)
+    wanted = jax.lax.stop_gradient(outputs + (1.0 - factor) * residual)
+    copies = kept.shape[0]
+
+    def one_step(predictor, _):
+        """Steepest descent on the weighted squared distance to the wanted outputs, with the exact step length."""
+        def distance(values):
+            return 0.5 * (weight * (jax_forward(values, inputs) - wanted) ** 2).sum()
+
+        gradient = jax.grad(distance)(predictor)
+        direction = jax.tree.map(lambda value: -value, gradient)
+        # The outputs change by `step * moved` to first order; the best step is a one-dimensional least squares.
+        current, moved = jax.jvp(lambda values: jax_forward(values, inputs), (predictor,), (direction,))
+        numerator = (weight * (wanted - current) * moved).sum(axis=(1, 2))
+        denominator = (weight * moved * moved).sum(axis=(1, 2))
+        step = jnp.where(denominator > 0, numerator / jnp.where(denominator > 0, denominator, 1.0), 0.0)
+        return jax.tree.map(lambda value, change: value + step.reshape((copies,) + (1,) * (value.ndim - 1)) * change,
+                            predictor, direction), None
+
+    predictor, _ = jax.lax.scan(one_step, predictor, None, length=configuration.rnd_exact_step_iterations)
+    return predictor
 
 
 def predictor_step(predictor, gradients, optimizer, configuration):
