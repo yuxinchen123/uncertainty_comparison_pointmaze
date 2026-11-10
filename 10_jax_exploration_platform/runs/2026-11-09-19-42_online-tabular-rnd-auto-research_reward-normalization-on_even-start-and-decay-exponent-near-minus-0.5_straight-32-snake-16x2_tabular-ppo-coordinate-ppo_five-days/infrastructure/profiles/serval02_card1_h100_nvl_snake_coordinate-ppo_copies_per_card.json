@@ -1,0 +1,106 @@
+{
+  "device": "cuda:0",
+  "geometry": "snake",
+  "policy": "coordinate-PPO",
+  "ideas": {
+    "control": [
+      {
+        "copies": 64,
+        "seconds_per_iteration": 0.019532903598155828,
+        "total_steps_per_second_millions": 0.4193948922562356,
+        "steps_per_second_per_copy_thousands": 6.553045191503681,
+        "hours_per_million_steps_per_copy": 0.04238911371127567
+      },
+      {
+        "copies": 128,
+        "seconds_per_iteration": 0.03179441610118374,
+        "total_steps_per_second_millions": 0.5153106113934894,
+        "steps_per_second_per_copy_thousands": 4.0258641515116365,
+        "hours_per_million_steps_per_copy": 0.06899829883069389
+      },
+      {
+        "copies": 256,
+        "seconds_per_iteration": 0.054569953947793695,
+        "total_steps_per_second_millions": 0.6004769590120725,
+        "steps_per_second_per_copy_thousands": 2.345613121140908,
+        "hours_per_million_steps_per_copy": 0.11842437922698286
+      },
+      {
+        "copies": 512,
+        "seconds_per_iteration": 0.10515362415462733,
+        "total_steps_per_second_millions": 0.6232405257248194,
+        "steps_per_second_per_copy_thousands": 1.2172666518062878,
+        "hours_per_million_steps_per_copy": 0.22819796908556278
+      },
+      {
+        "copies": 1024,
+        "seconds_per_iteration": 0.2055405829101801,
+        "total_steps_per_second_millions": 0.637694017133724,
+        "steps_per_second_per_copy_thousands": 0.6227480636071523,
+        "hours_per_million_steps_per_copy": 0.44605161221827283
+      },
+      {
+        "copies": 2048,
+        "seconds_per_iteration": 0.40729990201070904,
+        "total_steps_per_second_millions": 0.6436141985448047,
+        "steps_per_second_per_copy_thousands": 0.3142647453832054,
+        "hours_per_million_steps_per_copy": 0.8838973567940736
+      },
+      {
+        "copies": 4096,
+        "failure": "out of memory"
+      }
+    ],
+    "schedule-fit-rnd-exponent-minus-1-refresh-per-step": [
+      {
+        "copies": 64,
+        "seconds_per_iteration": 0.007218524056952447,
+        "total_steps_per_second_millions": 1.1348580312771779,
+        "steps_per_second_per_copy_thousands": 17.732156738705903,
+        "hours_per_million_steps_per_copy": 0.015665199776372495
+      },
+      {
+        "copies": 128,
+        "seconds_per_iteration": 0.00846321479184553,
+        "total_steps_per_second_millions": 1.935907383065156,
+        "steps_per_second_per_copy_thousands": 15.124276430196533,
+        "hours_per_million_steps_per_copy": 0.018366351544803667
+      },
+      {
+        "copies": 256,
+        "seconds_per_iteration": 0.010935147653799503,
+        "total_steps_per_second_millions": 2.9965759071039613,
+        "steps_per_second_per_copy_thousands": 11.70537463712485,
+        "hours_per_million_steps_per_copy": 0.023730789179252393
+      },
+      {
+        "copies": 512,
+        "seconds_per_iteration": 0.015811379894148558,
+        "total_steps_per_second_millions": 4.144862778501288,
+        "steps_per_second_per_copy_thousands": 8.09543511426033,
+        "hours_per_million_steps_per_copy": 0.03431289039528767
+      },
+      {
+        "copies": 1024,
+        "seconds_per_iteration": 0.026549325394444167,
+        "total_steps_per_second_millions": 4.9369239350777905,
+        "steps_per_second_per_copy_thousands": 4.821214780349404,
+        "hours_per_million_steps_per_copy": 0.057615723512248626
+      },
+      {
+        "copies": 2048,
+        "seconds_per_iteration": 0.047734815860167146,
+        "total_steps_per_second_millions": 5.491673012166137,
+        "steps_per_second_per_copy_thousands": 2.6814809629717464,
+        "hours_per_million_steps_per_copy": 0.10359118025209885
+      },
+      {
+        "copies": 4096,
+        "seconds_per_iteration": 0.0908050304511562,
+        "total_steps_per_second_millions": 5.773777040711562,
+        "steps_per_second_per_copy_thousands": 1.4096135353299712,
+        "hours_per_million_steps_per_copy": 0.19705952788879388
+      }
+    ]
+  }
+}

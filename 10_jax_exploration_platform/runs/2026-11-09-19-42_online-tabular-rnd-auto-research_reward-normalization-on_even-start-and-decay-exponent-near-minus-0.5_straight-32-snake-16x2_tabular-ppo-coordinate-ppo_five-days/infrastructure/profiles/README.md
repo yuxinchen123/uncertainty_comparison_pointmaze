@@ -25,6 +25,52 @@ Reading:
 - The exact-step form with one step per minibatch costs 1.08 times the control: accepted as it is.
 - Two and four steps per minibatch cost 2.2 and 4.2 times the control; they are not used in RL.
 
+## Copies per process: serval02 card 1 (H100 NVL), 2026-11-10 10:35 to 10:41 PT
+
+`serval02_card1_h100_nvl_snake_coordinate-ppo_copies_per_card.json` (snake grid, coordinate-PPO, 20 timed
+iterations per row; serval05 had another account's process on its card, so the profile ran on serval02 card 1; no
+other process was on that card during or after the measurement). Asked by the user on 2026-11-10: are the H100 and
+H200 cards fully used, and how many copies should one process hold. Rule used (user, 2026-11-10): keep doubling the
+copies while a doubling raises the total throughput by more than 10%.
+
+**Baseline's kind of unit (predictor trained by gradient steps: control, unit start alone, shrink target):**
+
+| copies | seconds per iteration | total steps per second (millions) | steps per second per copy (thousands) | hours per million steps per copy | gain from doubling |
+|---|---|---|---|---|---|
+| 64 | 0.0195 | 0.419 | 6.55 | 0.042 | |
+| 128 | 0.0318 | 0.515 | 4.03 | 0.069 | +23% |
+| 256 | 0.0546 | 0.600 | 2.35 | 0.118 | +17% |
+| 512 | 0.1052 | 0.623 | 1.22 | 0.228 | +4% |
+| 1024 | 0.2055 | 0.638 | 0.62 | 0.446 | +2% |
+| 2048 | 0.4073 | 0.644 | 0.31 | 0.884 | +1% |
+| 4096 | out of memory on the 94 GB card | | | | |
+
+**Finalist's kind of unit (schedule-fit RND with the exact output-layer fit; count-rule units are lighter still):**
+
+| copies | seconds per iteration | total steps per second (millions) | steps per second per copy (thousands) | hours per million steps per copy | gain from doubling |
+|---|---|---|---|---|---|
+| 64 | 0.0072 | 1.135 | 17.73 | 0.016 | |
+| 128 | 0.0085 | 1.936 | 15.12 | 0.018 | +71% |
+| 256 | 0.0109 | 2.997 | 11.71 | 0.024 | +55% |
+| 512 | 0.0158 | 4.145 | 8.10 | 0.034 | +38% |
+| 1024 | 0.0265 | 4.937 | 4.82 | 0.058 | +19% |
+| 2048 | 0.0477 | 5.492 | 2.68 | 0.104 | +11% |
+| 4096 | 0.0908 | 5.774 | 1.41 | 0.197 | +5% |
+
+Reading:
+- **Trained-predictor units: 256 copies per process.** The units run so far held 208 copies (development, about
+  0.57 million steps per second) or 128 copies (confirmation, 0.515 million): 5% and 14% below the card's 0.60 million.
+  The cards showed 100% utilization and about 5 GB of 80 GB memory in use; memory is not the limit, the card's
+  arithmetic is.
+- **Exact-fit and count-rule units: 2,048 copies per process.** The units run so far held 128 or 208 copies (about
+  1.9 to 2.6 million steps per second) against 5.5 million at 2,048: the card could have done 2.1 to 2.8 times as
+  much. Their units finished within minutes to an hour, so the loss was small in hours, but larger units are the rule
+  from now on.
+- **When cards outnumber the waiting units**, smaller units still finish sooner on the clock (more cards at once);
+  the knee sizes apply when units wait for cards, as the baseline's units do now.
+- From 2026-11-10 10:45 PT: confirmation units of trained-predictor rows hold 256 seeds
+  (`auto_research_units.py --seeds-per-unit 256`); exact-fit and count-rule rows use up to 2,048 copies per unit.
+
 ## Earlier profile: serval05 (H100 NVL), 2026-11-09 20:02 PT — taken on a shared card
 
 `serval05_h100_nvl_snake_coordinate-ppo.json`. Another account's processes were on the card during this profile

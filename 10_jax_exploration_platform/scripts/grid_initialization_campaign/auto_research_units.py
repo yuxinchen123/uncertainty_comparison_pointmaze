@@ -108,7 +108,8 @@ def development_settings(run_dir, batch):
     return table
 
 
-def confirmation_specifications(run_dir, batch, ideas, seed_start, seed_count, finished_cases_only=False):
+def confirmation_specifications(run_dir, batch, ideas, seed_start, seed_count, finished_cases_only=False,
+                                seeds_per_unit=CONFIRMATION_SEEDS_PER_UNIT):
     """Choose each idea's configuration per case from its development units and build its confirmation units."""
     finished = development_settings(run_dir, batch)
     expected = len(LEARNING_RATES) * len(ENTROPIES) * len(WEIGHTS)
@@ -130,8 +131,10 @@ def confirmation_specifications(run_dir, batch, ideas, seed_start, seed_count, f
                 frozen.append({'idea': name, 'case': case_name(geometry, policy), 'configuration': best['configuration'],
                                'development_capped_mean_first_goal_steps': best['capped_mean_first_goal_steps'],
                                'development_goal_fraction': best['goal_fraction']})
-                for start in range(seed_start, seed_start + seed_count, CONFIRMATION_SEEDS_PER_UNIT):
-                    count = min(CONFIRMATION_SEEDS_PER_UNIT, seed_start + seed_count - start)
+                # Seeds per unit follow the card's measured knee: about 256 copies for a trained predictor,
+                # about 2,048 for the exact fit or a count rule (infrastructure/profiles/README.md).
+                for start in range(seed_start, seed_start + seed_count, seeds_per_unit):
+                    count = min(seeds_per_unit, seed_start + seed_count - start)
                     rows.append(specification('confirmation', batch, name, idea, geometry, policy,
                                               [best['configuration']], start, count, None, ''))
     return rows, frozen
@@ -157,6 +160,8 @@ def main():
     parser.add_argument('--only', nargs='*', default=None, help='queue only these ideas of the file')
     parser.add_argument('--confirmation-seeds', nargs=2, type=int, default=list(BASELINE_CONFIRMATION_SEEDS),
                         metavar=('START', 'COUNT'), help='confirmation stage: first seed and number of seeds')
+    parser.add_argument('--seeds-per-unit', type=int, default=CONFIRMATION_SEEDS_PER_UNIT,
+                        help='confirmation stage: policy seeds trained by one process')
     parser.add_argument('--finished-cases-only', action='store_true',
                         help='confirmation stage: confirm the cases whose development grid is complete, skip the others')
     args = parser.parse_args()
@@ -164,7 +169,8 @@ def main():
              if not args.only or name in args.only}
     if args.stage == 'confirmation':
         rows, frozen = confirmation_specifications(args.run_dir, args.batch, ideas, *args.confirmation_seeds,
-                                                   finished_cases_only=args.finished_cases_only)
+                                                   finished_cases_only=args.finished_cases_only,
+                                                   seeds_per_unit=args.seeds_per_unit)
         record_frozen(args.run_dir/f'confirmation_frozen_{args.batch}.json', frozen)
     else:
         rows = unit_specifications(args.batch, ideas, args.stage, args.learning_rates)

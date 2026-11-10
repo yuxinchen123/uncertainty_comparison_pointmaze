@@ -71,6 +71,10 @@ def test_confirmation_units_use_the_configuration_the_development_units_chose(tm
     (tmp_path / 'data/research' / rows[0]['name'] / 'summary.json').unlink()
     with pytest.raises(RuntimeError):
         units.confirmation_specifications(tmp_path, '09', ideas, 20000, 1024)
+    # Larger units: 256 seeds per process gives 4 units for a case, and 1,000 seeds end with a shorter unit.
+    wide, _ = units.confirmation_specifications(tmp_path, '09', ideas, 20000, 1000, finished_cases_only=True,
+                                                seeds_per_unit=256)
+    assert len(wide) == 3 * 4 and sorted({row['seed_count'] for row in wide}) == [232, 256]
     # With finished cases only, the three complete cases are confirmed and the unfinished one is skipped.
     partial, chosen = units.confirmation_specifications(tmp_path, '09', ideas, 20000, 1024, finished_cases_only=True)
     assert len(partial) == 3 * 8 and len(chosen) == 3
