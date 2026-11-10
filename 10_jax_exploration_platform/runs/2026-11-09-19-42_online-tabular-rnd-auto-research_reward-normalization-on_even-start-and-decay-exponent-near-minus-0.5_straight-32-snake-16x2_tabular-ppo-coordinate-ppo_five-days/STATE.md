@@ -81,6 +81,12 @@ Times are Pacific. The protocol is in `program.md`; the plan is
   20 worker jobs were submitted; the 2 Gautschi H100 jobs started at once and passed the first-unit check (all 656
   arrays identical to UVA's). The others wait on priority. Units staged for 2 hours on a server where no job has
   started go back to UVA at the next tick. MIT is reached through the connection open on portal11.
+- **2026-11-09 21:26. Policy learning rate matters for the control, so the main ideas also run at 1e-4.** Partial
+  progress on the snake grid with coordinate-PPO: the control at policy learning rate 1e-4 has 99-100% of its copies
+  at the goal by 262K transitions, against 65-70% for the control at 1e-3 after 2M to 3M. In the control the policy's
+  learning rate is also the predictor's, so a lower rate slows its decay (bench: slope −0.7 instead of −1.5 on the
+  snake grid). 64 units were added: the eight main ideas at policy learning rate 1e-4 in all four cases. An idea's
+  screen score is now its best setting over both policy learning rates, compared with the control's best over both.
 
 ## Idea list
 
