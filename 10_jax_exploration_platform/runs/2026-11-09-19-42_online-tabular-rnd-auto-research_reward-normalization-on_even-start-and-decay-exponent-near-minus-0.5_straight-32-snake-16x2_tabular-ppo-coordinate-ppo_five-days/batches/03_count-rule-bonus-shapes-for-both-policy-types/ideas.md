@@ -1,6 +1,6 @@
 # Batch 3: which bonus shape works for both policy types (count-rule runs)
 
-Written 2026-11-10 01:35 PT, before any unit of the batch had finished. Times are Pacific. Exact settings:
+Written 2026-11-10 01:27 PT, before any unit of the batch had finished. Times are Pacific. Exact settings:
 `rl_ideas.json`. These are count-rule runs on the uniform field, not RND variants: they take minutes each, and batch 2
 showed that the stable RND candidate matches the count rule of the same form. Reward normalization is on. Policy
 learning rates 1e-3 and 1e-4, entropy 0.001 and 0.01, weights 2^-6 to 2^6 in steps of 4×, seeds 0-31, 2^22 transitions.

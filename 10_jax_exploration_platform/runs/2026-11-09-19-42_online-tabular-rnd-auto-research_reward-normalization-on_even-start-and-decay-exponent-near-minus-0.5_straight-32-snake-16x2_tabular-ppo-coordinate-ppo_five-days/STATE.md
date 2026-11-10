@@ -145,6 +145,33 @@ Times are Pacific. The protocol is in `program.md`; the plan is
      there and 14 of 448 on the snake grid with tabular-PPO.
 - **2026-11-10 01:03. Placement.** MIT and ACES had emptied their queues (count units take minutes), so 82 of the
   units waiting at UVA went to them, with 8 new ACES jobs and 5 new MIT jobs.
+- **2026-11-10 01:22. Main finding of batches 1 and 2 (261 of 400 units): the best decay exponent depends on the
+  policy type.** Count-rule rows with the bonus fixed during a rollout (32 seeds, best setting):
+
+  | decay exponent | straight, tabular-PPO | snake, tabular-PPO | snake, coordinate-PPO |
+  |---|---|---|---|
+  | −2 | 7.56K ± 0.61K | 14.1K ± 1.6K | 3,288K ± 282K (goal found by 25%) |
+  | −1 | 7.73K ± 0.47K | 16.3K ± 0.9K | 116.9K ± 41.6K |
+  | −0.5 | 9.70K ± 0.72K | 40.3K ± 5.5K (quarter speed) | 57.0K ± 4.4K |
+  | −0.25 | 22.2K ± 3.2K | 227K ± 55K | 65.8K ± 8.0K |
+  | control | lr 1e-4 only: 16.8K | 18.7K ± 1.0K | 82.1K ± 12.0K |
+  | unit start + shrink target, SGD 2 | 10.5K ± 0.8K | 61.3K ± 8.1K (14 non-finite copies) | 57.0K ± 5.9K |
+
+  Reading:
+  1. With tabular-PPO a faster decay is better; with coordinate-PPO on the snake grid −0.5 is best and −2 fails.
+     The hypothesis "−0.5 is the right decay" holds for coordinate-PPO on the snake grid and not for tabular-PPO.
+  2. The even start alone does not help: the initial-ratio readout (same decay as the control) scores 24.4K against
+     the control's 18.7K on the snake grid with tabular-PPO, and 4.27K against 3.90K on the straight grid with
+     coordinate-PPO. Unit start alone scores 2.1M on the snake grid with coordinate-PPO.
+  3. The candidate matches its count rule with coordinate-PPO (57.0K against 51K to 57K) and on the straight grid
+     with tabular-PPO (10.5K against 9.0K to 9.7K), but trails it on the snake grid with tabular-PPO (61.3K against
+     32K to 40K), where it also has non-finite copies.
+  4. Straight grid, coordinate-PPO: control 3.90K; every reasonable variant 3.8K to 6.3K; candidate 5.07K (SGD 2),
+     5.53K (SGD 1); shrink exponent −1 4.27K.
+- **2026-11-10 01:27. Batch 3 queued** (`batches/03_…/ideas.md`, 224 count-rule units; commit `9d038926`, 105 tests
+  and both unchanged-path gates pass): exponents −0.75, −1.5, −3; per-step forms at −1 and −2; sums of a fast and a
+  slow power law; count rates at −1 and −2. Question: is there one bonus shape that is good for both policy types?
+  Code rollout as before; `code/current` now names the newest copy on every machine.
 
 ## Idea list
 

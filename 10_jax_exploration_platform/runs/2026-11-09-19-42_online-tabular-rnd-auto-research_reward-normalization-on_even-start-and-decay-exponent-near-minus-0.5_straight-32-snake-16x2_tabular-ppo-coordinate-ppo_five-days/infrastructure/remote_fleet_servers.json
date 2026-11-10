@@ -11,7 +11,7 @@
   "check": [],
   "remote_run": "/scratch/gautschi/liu4869/rnd_grid/runs/auto_research",
   "python": "/scratch/gautschi/liu4869/envs/rnd_platform_jax/bin/python",
-  "code": "/scratch/gautschi/liu4869/rnd_grid/code/source_19581d3336a120df762c6251f16367ac20449a80/10_jax_exploration_platform",
+  "code": "/scratch/gautschi/liu4869/rnd_grid/code/current/10_jax_exploration_platform",
   "unit_seconds": 4500,
   "pools": {
    "h100": {
@@ -60,7 +60,7 @@
   ],
   "remote_run": "/scratch/user/u.sl359075/rnd_grid/runs/auto_research",
   "python": "/scratch/user/u.sl359075/envs/rnd_platform_jax/bin/python",
-  "code": "/scratch/user/u.sl359075/rnd_grid/code/source_19581d3336a120df762c6251f16367ac20449a80/10_jax_exploration_platform",
+  "code": "/scratch/user/u.sl359075/rnd_grid/code/current/10_jax_exploration_platform",
   "unit_seconds": 5400,
   "pools": {
    "h100": {
@@ -97,13 +97,13 @@
   "check": [],
   "remote_run": "/scratch/gilbreth/liu4869/rnd_grid/runs/auto_research",
   "python": "/scratch/gilbreth/liu4869/envs/rnd_platform_jax/bin/python",
-  "code": "/scratch/gilbreth/liu4869/rnd_grid/code/source_19581d3336a120df762c6251f16367ac20449a80/10_jax_exploration_platform",
+  "code": "/scratch/gilbreth/liu4869/rnd_grid/code/current/10_jax_exploration_platform",
   "unit_seconds": 8000,
   "pools": {
    "a100-80gb-standby": {
     "gpu_class": "a100_80gb_gilbreth",
     "time_limit": "04:00:00",
-    "max_jobs": 12,
+    "max_jobs": 20,
     "sbatch_options": [
      "-p",
      "a100-80gb",
@@ -146,7 +146,7 @@
   ],
   "remote_run": "/orcd/scratch/orcd/008/shuzel/rnd_grid/runs/auto_research",
   "python": "/orcd/scratch/orcd/008/shuzel/envs/rnd_platform_jax/bin/python",
-  "code": "/orcd/scratch/orcd/008/shuzel/rnd_grid/code/source_19581d3336a120df762c6251f16367ac20449a80/10_jax_exploration_platform",
+  "code": "/orcd/scratch/orcd/008/shuzel/rnd_grid/code/current/10_jax_exploration_platform",
   "unit_seconds": 4000,
   "pools": {
    "advanced": {
