@@ -47,3 +47,22 @@ def test_confirmation_table_sorts_by_the_pooled_mean_and_names_the_baseline():
     assert '-1.50K [-1.50K, -1.50K], -15% (16 seeds)' in lines[2] and 'weight 2^-2' in lines[2]
     alone = report.confirmation_table(pooled, configurations, '06', 'straight', 'neural', {})
     assert 'baseline not finished' in alone
+
+
+def test_confirmation_summary_gives_each_case_a_percentage_and_a_verdict():
+    """An idea 1,500 steps faster on every seed is ahead; one with noise around the baseline is level."""
+    generator = np.random.default_rng(1)
+    scores = np.linspace(9000, 11000, 64)
+    pooled = {('06', 'control', 'snake', 'neural'): records(scores),
+              ('06', 'faster-idea', 'snake', 'neural'): records(scores - 1500),
+              ('06', 'noisy-idea', 'snake', 'neural'): records(scores + generator.normal(0, 3000, 64)),
+              ('06', 'faster-idea', 'straight', 'neural'): records(scores)}
+    table = report.confirmation_summary(pooled, '06', {'faster-idea': 'the faster idea'})
+    lines = table.strip().splitlines()
+    assert len(lines) == 5 and lines[2].startswith('| control |') and lines[2].endswith('| baseline |')
+    faster = next(line for line in lines if line.startswith('| the faster idea'))
+    assert '-15%, ahead (64 seeds in common)' in faster and 'baseline not finished' in faster
+    assert faster.endswith('| 1 of 1 compared |') and faster.count('not run yet') == 2
+    noisy = next(line for line in lines if line.startswith('| noisy-idea'))
+    assert 'level' in noisy and noisy.endswith('| 0 of 1 compared |')
+    assert report.verdict({'interval': [1.0, 2.0]}) == 'behind'

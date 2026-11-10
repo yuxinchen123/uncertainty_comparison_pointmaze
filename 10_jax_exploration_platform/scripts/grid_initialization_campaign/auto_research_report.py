@@ -195,6 +195,46 @@ def confirmation_table(pooled, configurations, batch, kind, policy, ideas):
     return ''.join(lines)
 
 
+def verdict(paired):
+    """Say in a word where a row stands against the baseline: its 95% interval below zero, above zero, or across it."""
+    low, high = paired['interval']
+    return 'ahead' if high < 0 else 'behind' if low > 0 else 'level'
+
+
+def confirmation_summary(pooled, batch, ideas):
+    """One row per idea: confirmed score, percentage difference to the baseline and verdict in each of the four cases."""
+    # Before: per-case tables; after: ideas in rows, the four cases in columns, sorted by the mean percentage difference.
+    names = sorted({idea for group, idea, _, _ in pooled if group == batch})
+    rows = []
+    for idea in names:
+        cells, percentages, ahead, compared = [], [], 0, 0
+        for kind, policy in CASE_ORDER:
+            records = pooled.get((batch, idea, kind, policy))
+            baseline = pooled.get((batch, BASELINE_IDEA, kind, policy))
+            if records is None:
+                cells.append('not run yet')
+                continue
+            row = confirmation_row(records, baseline)
+            text = f"{number(row['mean'], True)} ({row['seeds']} seeds)"
+            if idea != BASELINE_IDEA and row['paired'] is not None:
+                percentage = 100 * row['paired']['mean'] / row['paired']['baseline_mean']
+                word = verdict(row['paired'])
+                text += f"; {percentage:+.0f}%, {word} ({row['paired']['seeds']} seeds in common)"
+                percentages.append(percentage)
+                ahead += word == 'ahead'
+                compared += 1
+            elif idea != BASELINE_IDEA:
+                text += '; baseline not finished'
+            cells.append(text)
+        count = 'baseline' if idea == BASELINE_IDEA else f'{ahead} of {compared} compared'
+        rows.append((idea != BASELINE_IDEA, float(np.mean(percentages)) if percentages else 0.0, idea, cells, count))
+    lines = ['| idea | ' + ' | '.join(f'{CASE_LABELS[kind]}, {POLICY_LABELS[policy]}' for kind, policy in CASE_ORDER)
+             + ' | cases ahead of the baseline |\n|---|---|---|---|---|---|\n']
+    for _, _, idea, cells, count in sorted(rows):
+        lines.append(f"| {ideas.get(idea, idea)} | " + ' | '.join(cells) + f' | {count} |\n')
+    return ''.join(lines)
+
+
 def generate(run_dir):
     """Write analysis/analysis.md (with its contents table) and a JSON of every best row."""
     analysis = run_dir/'analysis'
@@ -244,6 +284,11 @@ def generate(run_dir):
                    "$K$ seeds both rows have (negative means faster than the baseline), followed by the same "
                    "difference as a percentage of the baseline's mean. Standard errors and 95% intervals resample "
                    "field seeds (four policy seeds each).\n\n"]
+        section.append("### All four cases\n\nEach cell gives the confirmed score, then the difference to the baseline on "
+                       "the seeds both have as a percentage of the baseline's mean, and a verdict: ahead when the whole "
+                       "95% interval of the difference is below zero, behind when it is above zero, level when it "
+                       "contains zero. Rows are sorted by the mean of those percentages.\n\n"
+                       + confirmation_summary(pooled, batch, words) + '\n')
         for kind, policy in CASE_ORDER:
             section.append(f"### {CASE_LABELS[kind]}, {POLICY_LABELS[policy]}\n\n")
             present = any((group, grid, kind_of_policy) == (batch, kind, policy) for group, _, grid, kind_of_policy in pooled)
