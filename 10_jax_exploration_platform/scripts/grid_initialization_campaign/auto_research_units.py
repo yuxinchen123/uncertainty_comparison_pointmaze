@@ -1,44 +1,86 @@
-"""Queue the online tabular-RND auto research's units: one idea x one case x one entropy per unit.
+"""Queue the online tabular-RND auto research's units.
 
 An idea file maps idea names (words) to {"settings": {GridPPOConfig rnd_* keys}, "network": {NetworkOptions keys},
-"reward_normalization": true}. Every such unit is online tabular-RND on the fixed-settings study's maps and PPO, with
-the stage's seeds, budget and early stop. An idea holding {"count": {...}} is a count-rule row instead: on the uniform
-field, or with "field": "frozen_tabular_rnd" on the untrained tabular-RND error of each cell (an uneven start).
+"reward_normalization": true}. Every such unit is online tabular-RND on the fixed-settings study's maps and PPO. An
+idea holding {"count": {...}} is a count-rule row instead: on the uniform field, or with
+"field": "frozen_tabular_rnd" on the untrained tabular-RND error of each cell (an uneven start).
+
+Stages:
+- screen: one idea x one case x one policy learning rate x one entropy per unit, 7 weights, seeds 0-31, stopped at
+  2^22 transitions on the full learning-rate schedule;
+- development: the fixed-settings study's own protocol, all 52 configurations on seeds 0-15 at the full budget;
+- confirmation: each idea's configuration chosen per case from its finished development units by the study's own
+  rule, on the confirmation seeds in units of 128.
 """
 
 import argparse
 import json
 from pathlib import Path
 
-from common import enqueue, write_json
-from fixed_settings_campaign import BUDGET, EVALUATION_EPISODES, GEOMETRIES, POLICIES
+from common import enqueue, read_json, write_json
+from fixed_settings_campaign import (BASELINE_CONFIRMATION_SEEDS, BUDGET, CONFIRMATION_SEEDS_PER_UNIT,
+                                     DEVELOPMENT_SEEDS, ENTROPIES, EVALUATION_EPISODES, GEOMETRIES, LEARNING_RATES,
+                                     POLICIES, WEIGHTS, choose)
 
 HERE = Path(__file__).resolve().parent
-# Screen: learning rate 1e-3 x entropy {1e-3, 1e-2} x weights 2^-6, 2^-4, ..., 2^6, seeds 0-31, stopped at 2^22.
 STAGES = {'screen': {'learning_rates': (1e-3,), 'entropies': (1e-3, 1e-2),
                      'weights': tuple(2.0 ** exponent for exponent in range(-6, 7, 2)),
-                     'seed_start': 0, 'seed_count': 32, 'stop_after_timesteps': 2 ** 22}}
+                     'seed_start': 0, 'seed_count': 32, 'stop_after_timesteps': 2 ** 22},
+          'development': {'learning_rates': LEARNING_RATES, 'entropies': ENTROPIES, 'weights': WEIGHTS,
+                          'seed_start': DEVELOPMENT_SEEDS[0], 'seed_count': DEVELOPMENT_SEEDS[1],
+                          'stop_after_timesteps': None}}
+
+
+def case_name(geometry, policy):
+    """Name one of the four cases as the unit names spell it."""
+    return f"{geometry['kind']}-width-{geometry['width']}-turns-{geometry['turns']}_policy-{policy}"
+
+
+def checked_idea(name, idea):
+    """Refuse an idea with unknown keys; return whether it is a count rule and whether its field is the frozen one."""
+    unknown = set(idea) - {'settings', 'network', 'reward_normalization', 'count', 'field'}
+    if unknown:
+        raise ValueError(f'{name}: unknown idea keys {sorted(unknown)}')
+    # A "count" idea is a count rule in a diagnostic form, not an RND variant.
+    counted = 'count' in idea
+    if counted and (set(idea['count']) - {'count_update', 'count_rate', 'count_decay_exponent', 'count_mixture'}
+                    or 'settings' in idea):
+        raise ValueError(f'{name}: a count idea holds only count_update, count_rate, count_decay_exponent and count_mixture')
+    # Its field is uniform, or the frozen tabular-RND field: the count rule on an uneven start.
+    field = idea.get('field', 'uniform')
+    if field not in {'uniform', 'frozen_tabular_rnd'} or ('field' in idea and not counted):
+        raise ValueError(f'{name}: "field" is uniform or frozen_tabular_rnd, and only a count idea has one')
+    return counted, field == 'frozen_tabular_rnd'
+
+
+def specification(stage, batch, name, idea, geometry, policy, settings, seed_start, seed_count, stop, label):
+    """Build one unit's specification: an idea in one case, with its settings and seeds."""
+    counted, frozen = checked_idea(name, idea)
+    reward = idea.get('reward_normalization', True)
+    seeds = f'{seed_start}-{seed_start + seed_count - 1}'
+    kind = ('frozen-tabular-rnd-count' if frozen else 'uniform-count') if counted else 'online-tabular-rnd'
+    return {'name': f'{stage}-{batch}_{case_name(geometry, policy)}_{name}{label}_seeds-{seeds}',
+            'study': 'fixed-settings', 'wave': f'fixed-{stage}-{batch}', 'protocol': None, 'geometry': geometry,
+            'policy_kind': policy, 'idea': name, 'batch': batch,
+            'condition': f'{kind}_{name}_reward-normalization-{"on" if reward else "off"}',
+            'method': ('frozen-tabular-rnd' if frozen else 'uniform') if counted else 'online-tabular-rnd',
+            'field_kind': 'uniform' if counted and not frozen else 'random_network', 'severity_exponent': 0,
+            'intrinsic_source': 'count' if counted else 'online_rnd', 'state_normalization': False,
+            'normalize_intrinsic_rewards': reward, 'rnd_input': 'coordinates' if counted and not frozen else 'one_hot',
+            'rnd_settings': idea.get('settings', {}), 'network_options': idea.get('network', {}),
+            **idea.get('count', {}),
+            'settings': settings, 'setting_offset': 0, 'total_timesteps': BUDGET, 'stop_after_timesteps': stop,
+            'seed_start': seed_start, 'seed_count': seed_count, 'evaluation_episodes': EVALUATION_EPISODES,
+            'variant': 'primary',
+            **({} if counted and 'count_decay_exponent' in idea['count'] else {'count_decay_exponent': 0.5})}
 
 
 def unit_specifications(batch, ideas, stage='screen', learning_rates=None):
-    """Build every unit specification of a batch: ideas x cases x policy learning rates x entropies."""
-    # Before: {"control": {}}; after: 4 cases x 2 entropies = 8 specifications of 7 settings x 32 seeds.
+    """Build a screen's or a development's units: ideas x cases x policy learning rates x entropies."""
+    # Before: {"control": {}} at the screen stage; after: 4 cases x 2 entropies = 8 units of 7 settings x 32 seeds.
     plan = dict(STAGES[stage], **({'learning_rates': tuple(learning_rates)} if learning_rates else {}))
     rows = []
     for name, idea in ideas.items():
-        unknown = set(idea) - {'settings', 'network', 'reward_normalization', 'count', 'field'}
-        if unknown:
-            raise ValueError(f'{name}: unknown idea keys {sorted(unknown)}')
-        # A "count" idea is a count rule in a diagnostic form, not an RND variant.
-        counted = 'count' in idea
-        if counted and (set(idea['count']) - {'count_update', 'count_rate', 'count_decay_exponent', 'count_mixture'}
-                        or 'settings' in idea):
-            raise ValueError(f'{name}: a count idea holds only count_update, count_rate, count_decay_exponent and count_mixture')
-        # Its field is uniform, or the frozen tabular-RND field: the count rule on an uneven start.
-        field = idea.get('field', 'uniform')
-        if field not in {'uniform', 'frozen_tabular_rnd'} or ('field' in idea and not counted):
-            raise ValueError(f'{name}: "field" is uniform or frozen_tabular_rnd, and only a count idea has one')
-        frozen = field == 'frozen_tabular_rnd'
         for geometry in GEOMETRIES:
             for policy in POLICIES:
                 for rate in plan['learning_rates']:
@@ -46,27 +88,48 @@ def unit_specifications(batch, ideas, stage='screen', learning_rates=None):
                         settings = [{'learning_rate': rate, 'entropy_coefficient': entropy,
                                      'intrinsic_coefficient': weight, 'gamma_int': 0.99, 'rollout_steps': 128}
                                     for weight in plan['weights']]
-                        case = f"{geometry['kind']}-width-{geometry['width']}-turns-{geometry['turns']}_policy-{policy}"
-                        seeds = f"{plan['seed_start']}-{plan['seed_start'] + plan['seed_count'] - 1}"
-                        unit = f"{stage}-{batch}_{case}_{name}_learning-rate-{rate:g}_entropy-{entropy:g}_seeds-{seeds}"
-                        reward = idea.get('reward_normalization', True)
-                        rows.append({'name': unit, 'study': 'fixed-settings', 'wave': f'fixed-{stage}-{batch}',
-                            'protocol': None, 'geometry': geometry, 'policy_kind': policy, 'idea': name, 'batch': batch,
-                            'condition': (f'{("frozen-tabular-rnd-count" if frozen else "uniform-count") if counted else "online-tabular-rnd"}'
-                                          f'_{name}_reward-normalization-{"on" if reward else "off"}'),
-                            'method': ('frozen-tabular-rnd' if frozen else 'uniform') if counted else 'online-tabular-rnd',
-                            'field_kind': 'uniform' if counted and not frozen else 'random_network', 'severity_exponent': 0,
-                            'intrinsic_source': 'count' if counted else 'online_rnd', 'state_normalization': False,
-                            'normalize_intrinsic_rewards': reward,
-                            'rnd_input': 'coordinates' if counted and not frozen else 'one_hot',
-                            'rnd_settings': idea.get('settings', {}), 'network_options': idea.get('network', {}),
-                            **idea.get('count', {}),
-                            'settings': settings, 'setting_offset': 0, 'total_timesteps': BUDGET,
-                            'stop_after_timesteps': plan['stop_after_timesteps'], 'seed_start': plan['seed_start'],
-                            'seed_count': plan['seed_count'], 'evaluation_episodes': EVALUATION_EPISODES,
-                            'variant': 'primary', **({} if counted and 'count_decay_exponent' in idea['count'] else
-                                                     {'count_decay_exponent': 0.5})})
+                        rows.append(specification(stage, batch, name, idea, geometry, policy, settings,
+                            plan['seed_start'], plan['seed_count'], plan['stop_after_timesteps'],
+                            f'_learning-rate-{rate:g}_entropy-{entropy:g}'))
     return rows
+
+
+def development_settings(run_dir, batch):
+    """Read every finished development setting of a batch, keyed by (idea, case)."""
+    # Before: summary.json files of development units; after: {(idea, case): [setting rows with their scores]}.
+    table = {}
+    for path in (run_dir/'data/research').glob(f'development-{batch}_*/summary.json'):
+        summary = read_json(path)
+        if not summary.get('completed'):
+            continue
+        spec = summary['specification']
+        key = (spec['idea'], case_name(spec['geometry'], spec['policy_kind']))
+        table.setdefault(key, []).extend(summary['settings'])
+    return table
+
+
+def confirmation_specifications(run_dir, batch, ideas, seed_start, seed_count):
+    """Choose each idea's configuration per case from its development units and build its confirmation units."""
+    finished = development_settings(run_dir, batch)
+    expected = len(LEARNING_RATES) * len(ENTROPIES) * len(WEIGHTS)
+    rows, frozen = [], []
+    for name, idea in ideas.items():
+        for geometry in GEOMETRIES:
+            for policy in POLICIES:
+                candidates = finished.get((name, case_name(geometry, policy)), [])
+                if len(candidates) != expected:
+                    raise RuntimeError(f'{name} {case_name(geometry, policy)}: {len(candidates)} of {expected} '
+                                       'development settings finished')
+                # The study's own rule: smallest mean capped first-goal time, then the larger discovery rate.
+                best = choose(candidates)
+                frozen.append({'idea': name, 'case': case_name(geometry, policy), 'configuration': best['configuration'],
+                               'development_capped_mean_first_goal_steps': best['capped_mean_first_goal_steps'],
+                               'development_goal_fraction': best['goal_fraction']})
+                for start in range(seed_start, seed_start + seed_count, CONFIRMATION_SEEDS_PER_UNIT):
+                    count = min(CONFIRMATION_SEEDS_PER_UNIT, seed_start + seed_count - start)
+                    rows.append(specification('confirmation', batch, name, idea, geometry, policy,
+                                              [best['configuration']], start, count, None, ''))
+    return rows, frozen
 
 
 def main():
@@ -75,14 +138,20 @@ def main():
     parser.add_argument('--run-dir', type=Path, required=True)
     parser.add_argument('--batch', required=True)
     parser.add_argument('--ideas', type=Path, required=True)
-    parser.add_argument('--stage', default='screen', choices=sorted(STAGES))
+    parser.add_argument('--stage', default='screen', choices=sorted(STAGES) + ['confirmation'])
     parser.add_argument('--learning-rates', nargs='*', type=float, default=None,
                         help='policy learning rates, when they differ from the stage\'s own')
     parser.add_argument('--only', nargs='*', default=None, help='queue only these ideas of the file')
+    parser.add_argument('--confirmation-seeds', nargs=2, type=int, default=list(BASELINE_CONFIRMATION_SEEDS),
+                        metavar=('START', 'COUNT'), help='confirmation stage: first seed and number of seeds')
     args = parser.parse_args()
     ideas = {name: idea for name, idea in json.loads(args.ideas.read_text()).items()
              if not args.only or name in args.only}
-    rows = unit_specifications(args.batch, ideas, args.stage, args.learning_rates)
+    if args.stage == 'confirmation':
+        rows, frozen = confirmation_specifications(args.run_dir, args.batch, ideas, *args.confirmation_seeds)
+        write_json(args.run_dir/f'confirmation_frozen_{args.batch}.json', frozen)
+    else:
+        rows = unit_specifications(args.batch, ideas, args.stage, args.learning_rates)
     # Round-robin over ideas: the queue order is case-major, so each idea's first unit is near the front.
     ideas = list(dict.fromkeys(row['idea'] for row in rows))
     per_idea = {idea: [row for row in rows if row['idea'] == idea] for idea in ideas}
@@ -92,16 +161,16 @@ def main():
     # A unit staged on a remote server or held aside sits in a queue folder that enqueue() does not look at.
     elsewhere = {path.stem for folder in (args.run_dir/'queue').iterdir() if folder.is_dir()
                  for path in folder.glob('*.json')}
-    for specification in ordered:
-        if specification['name'] in elsewhere:
+    for row in ordered:
+        if row['name'] in elsewhere:
             continue
-        location = args.run_dir/'specifications'/(specification['name']+'.json')
-        write_json(location, specification)
-        created += enqueue(args.run_dir, {'name': specification['name'], 'stage': 'research',
+        location = args.run_dir/'specifications'/(row['name']+'.json')
+        write_json(location, row)
+        created += enqueue(args.run_dir, {'name': row['name'], 'stage': 'research',
             'limit_seconds': 4*86400, 'minimum_device_memory_mb': 7000,
-            'intrinsic_source': specification['intrinsic_source'],
+            'intrinsic_source': row['intrinsic_source'],
             'command': [str(HERE/'train_unit.py'), '--run-dir', str(args.run_dir), '--specification', str(location)]})
-    print(f'{created} of {len(ordered)} units queued for batch {args.batch}')
+    print(f'{created} of {len(ordered)} units queued for batch {args.batch} ({args.stage})')
 
 
 if __name__ == '__main__':

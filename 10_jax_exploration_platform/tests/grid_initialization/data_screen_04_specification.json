@@ -1,0 +1,93 @@
+{
+  "name": "screen-04_snake-width-16-turns-2_policy-neural_schedule-fit-rnd-exponent-minus-1-refresh-per-step_learning-rate-0.0001_entropy-0.001_seeds-0-31",
+  "study": "fixed-settings",
+  "wave": "fixed-screen-04",
+  "protocol": null,
+  "geometry": {
+    "kind": "snake",
+    "width": 16,
+    "turns": 2
+  },
+  "policy_kind": "neural",
+  "idea": "schedule-fit-rnd-exponent-minus-1-refresh-per-step",
+  "batch": "04",
+  "condition": "online-tabular-rnd_schedule-fit-rnd-exponent-minus-1-refresh-per-step_reward-normalization-on",
+  "method": "online-tabular-rnd",
+  "field_kind": "random_network",
+  "severity_exponent": 0,
+  "intrinsic_source": "online_rnd",
+  "state_normalization": false,
+  "normalize_intrinsic_rewards": true,
+  "rnd_input": "one_hot",
+  "rnd_settings": {
+    "rnd_loss": "shrink_target",
+    "rnd_optimizer": "rollout_fit",
+    "rnd_readout": "length",
+    "rnd_unit_length_target": true,
+    "rnd_shrink_power": 1.0,
+    "rnd_refresh": "per_step",
+    "rnd_fit_solver": "output_layer_exact"
+  },
+  "network_options": {
+    "zero_predictor_output": true
+  },
+  "settings": [
+    {
+      "learning_rate": 0.0001,
+      "entropy_coefficient": 0.001,
+      "intrinsic_coefficient": 0.015625,
+      "gamma_int": 0.99,
+      "rollout_steps": 128
+    },
+    {
+      "learning_rate": 0.0001,
+      "entropy_coefficient": 0.001,
+      "intrinsic_coefficient": 0.0625,
+      "gamma_int": 0.99,
+      "rollout_steps": 128
+    },
+    {
+      "learning_rate": 0.0001,
+      "entropy_coefficient": 0.001,
+      "intrinsic_coefficient": 0.25,
+      "gamma_int": 0.99,
+      "rollout_steps": 128
+    },
+    {
+      "learning_rate": 0.0001,
+      "entropy_coefficient": 0.001,
+      "intrinsic_coefficient": 1.0,
+      "gamma_int": 0.99,
+      "rollout_steps": 128
+    },
+    {
+      "learning_rate": 0.0001,
+      "entropy_coefficient": 0.001,
+      "intrinsic_coefficient": 4.0,
+      "gamma_int": 0.99,
+      "rollout_steps": 128
+    },
+    {
+      "learning_rate": 0.0001,
+      "entropy_coefficient": 0.001,
+      "intrinsic_coefficient": 16.0,
+      "gamma_int": 0.99,
+      "rollout_steps": 128
+    },
+    {
+      "learning_rate": 0.0001,
+      "entropy_coefficient": 0.001,
+      "intrinsic_coefficient": 64.0,
+      "gamma_int": 0.99,
+      "rollout_steps": 128
+    }
+  ],
+  "setting_offset": 0,
+  "total_timesteps": 16777216,
+  "stop_after_timesteps": 4194304,
+  "seed_start": 0,
+  "seed_count": 32,
+  "evaluation_episodes": 32,
+  "variant": "primary",
+  "count_decay_exponent": 0.5
+}
