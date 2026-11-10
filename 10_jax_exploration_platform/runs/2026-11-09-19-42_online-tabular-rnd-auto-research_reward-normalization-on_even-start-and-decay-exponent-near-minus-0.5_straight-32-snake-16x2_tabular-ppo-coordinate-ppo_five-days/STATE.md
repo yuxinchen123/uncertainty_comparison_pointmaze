@@ -129,6 +129,22 @@ Times are Pacific. The protocol is in `program.md`; the plan is
   No non-finite copy in any law. So the exact step is stable but under-counts when a minibatch holds many cells.
 - **2026-11-09 23:20. Gilbreth started:** 7 of its 12 standby jobs began at about 23:15 and passed the first-unit
   check with the corrected tolerance.
+- **2026-11-10 00:45. Batches 1 and 2, partial** (170 of 400 units; 32 seeds; best setting per idea; `analysis/`):
+  1. **The candidate imitates the handicapped count rule.** Unit start + shrink target (SGD 2) against the count rule
+     fixed per rollout at half speed: 10.5K ± 0.8K against 9.0K ± 0.6K (straight, tabular-PPO) and 57.0K ± 5.9K
+     against 51.2K ± 6.6K (snake, coordinate-PPO).
+  2. **The handicaps cost little.** Per-rollout or per-step, and count rates from 0.25 to 4, all score 47K to 57K on
+     the snake grid with coordinate-PPO and 8.1K to 9.0K on the straight grid with tabular-PPO.
+  3. **The preferred decay depends on the policy type.** Snake grid, coordinate-PPO: count exponent −0.5 forms 47K to
+     57K, control 82.1K ± 12.0K, exponent −1 117K, exponent −2 3.3M (goal found by 25%). Tabular-PPO so far prefers
+     variants whose error collapses fast: unit start alone 21.7K on the snake grid; wide input layer 7.4K and
+     initial-ratio readout 7.95K on the straight grid.
+  4. **Straight grid, coordinate-PPO:** every reasonable variant scores 3.8K to 6.3K; control 3.90K ± 0.20K; the
+     candidate 5.07K ± 0.33K.
+  5. **Stability:** SGD 3 has 179 of 896 non-finite copies on the snake grid with coordinate-PPO; SGD 2 has 2 of 672
+     there and 14 of 448 on the snake grid with tabular-PPO.
+- **2026-11-10 01:03. Placement.** MIT and ACES had emptied their queues (count units take minutes), so 82 of the
+  units waiting at UVA went to them, with 8 new ACES jobs and 5 new MIT jobs.
 
 ## Idea list
 
