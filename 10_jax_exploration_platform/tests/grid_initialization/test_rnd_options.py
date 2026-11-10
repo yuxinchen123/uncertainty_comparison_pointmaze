@@ -220,3 +220,31 @@ def test_exact_step_trains_inside_the_ppo_iteration_and_refuses_other_losses():
     assert np.isfinite(errors).all() and np.all(errors[:, 0] < 0.9)
     with pytest.raises(ValueError):
         GridPPOConfig(n_copies=1, intrinsic_source="online_rnd", rnd_input="one_hot", rnd_optimizer="exact_step")
+
+
+def test_diagnostic_count_forms_follow_their_formulas():
+    """Per-step with rate 1 is the count rule; per-rollout uses the visits before the rollout; the rate scales them."""
+    world = make_geometry("straight", 4)
+    fields = np.ones((1, world.state_count), np.float32)
+
+    def bonuses(**changes):
+        configuration = GridPPOConfig(n_copies=1, num_steps=16, num_minibatches=2, total_timesteps=64, episode_length=64,
+                                      **changes)
+        trainer = GridTrainer(configuration, world.transition_table, world.coordinates, fields)
+        state = trainer.initialize([5])
+        state, first = trainer.capture(state)
+        _, second = trainer.capture(state)
+        return first, second
+
+    rule_first, rule_second = bonuses()
+    step_first, _ = bonuses(count_rate=0.5)
+    rollout_first, rollout_second = bonuses(count_update="per_rollout")
+    # The same policy seed gives the same path, so arrival counts match across the three runs.
+    counts = np.asarray(rule_first.arrival_counts, np.float64)[:, 0]
+    np.testing.assert_allclose(np.asarray(rule_first.intrinsic_rewards)[:, 0], counts ** -0.5, rtol=1e-6)
+    np.testing.assert_allclose(np.asarray(step_first.intrinsic_rewards)[:, 0], (1 + 0.5 * (counts - 1)) ** -0.5, rtol=1e-6)
+    # In the first rollout nothing was visited before it began, so every bonus is 1.
+    np.testing.assert_allclose(np.asarray(rollout_first.intrinsic_rewards), 1.0, rtol=1e-6)
+    assert np.asarray(rollout_second.intrinsic_rewards).max() <= 1.0 and np.asarray(rollout_second.intrinsic_rewards).min() < 1.0
+    with pytest.raises(ValueError):
+        GridPPOConfig(n_copies=1, intrinsic_source="online_rnd", count_update="per_rollout")

@@ -51,6 +51,11 @@ class GridPPOConfig:
     predictor_update_proportion: float = 0.25
     # Count rule exponent: bonus = field x visits^(-exponent); 0.5 keeps the exact 1/sqrt path.
     count_decay_exponent: float = 0.5
+    # Diagnostic forms of the count rule (defaults are the rule itself). Define m as the cell's earlier visits:
+    # those before this arrival ("per_step") or before this rollout began ("per_rollout", as an RND bonus that is
+    # fixed during a rollout). The bonus is field x (1 + count_rate x m)^(-exponent); per_step with rate 1 is the rule.
+    count_update: str = "per_step"
+    count_rate: float = 1.0
     # Online RND input: "coordinates" (coordinate-RND) or "one_hot" (tabular-RND). The policy always reads coordinates.
     rnd_input: str = "coordinates"
     # Online RND bonus readout: CleanRL's half summed squared error, or its square root (the error length);
@@ -111,6 +116,11 @@ class GridPPOConfig:
             raise ValueError("count_decay_exponent must be positive")
         if self.count_decay_exponent != 0.5 and self.rsqrt_bonus:
             raise ValueError("rsqrt_bonus implements only the exponent 0.5")
+        if self.count_update not in {"per_step", "per_rollout"} or self.count_rate <= 0:
+            raise ValueError("count_update must be per_step or per_rollout and count_rate positive")
+        if (self.count_update != "per_step" or self.count_rate != 1.0) and (
+                self.intrinsic_source != "count" or self.hoist_bonus or self.rsqrt_bonus):
+            raise ValueError("the diagnostic count forms need the plain count path")
         choices = {"rnd_input": {"coordinates", "one_hot"},
                    "rnd_readout": {"half_squared", "length", "initial_ratio_half_squared", "initial_ratio_length"},
                    "rnd_loss": {"cleanrl", "power", "shrink_target"},

@@ -25,9 +25,13 @@ def unit_specifications(batch, ideas, stage='screen', learning_rates=None):
     plan = dict(STAGES[stage], **({'learning_rates': tuple(learning_rates)} if learning_rates else {}))
     rows = []
     for name, idea in ideas.items():
-        unknown = set(idea) - {'settings', 'network', 'reward_normalization'}
+        unknown = set(idea) - {'settings', 'network', 'reward_normalization', 'count'}
         if unknown:
             raise ValueError(f'{name}: unknown idea keys {sorted(unknown)}')
+        # A "count" idea is the uniform count field in a diagnostic form, not an RND variant.
+        counted = 'count' in idea
+        if counted and (set(idea['count']) - {'count_update', 'count_rate', 'count_decay_exponent'} or 'settings' in idea):
+            raise ValueError(f'{name}: a count idea holds only count_update, count_rate and count_decay_exponent')
         for geometry in GEOMETRIES:
             for policy in POLICIES:
                 for rate in plan['learning_rates']:
@@ -41,15 +45,19 @@ def unit_specifications(batch, ideas, stage='screen', learning_rates=None):
                         reward = idea.get('reward_normalization', True)
                         rows.append({'name': unit, 'study': 'fixed-settings', 'wave': f'fixed-{stage}-{batch}',
                             'protocol': None, 'geometry': geometry, 'policy_kind': policy, 'idea': name, 'batch': batch,
-                            'condition': f'online-tabular-rnd_{name}_reward-normalization-{"on" if reward else "off"}',
-                            'method': 'online-tabular-rnd', 'field_kind': 'random_network', 'severity_exponent': 0,
-                            'intrinsic_source': 'online_rnd', 'state_normalization': False,
-                            'normalize_intrinsic_rewards': reward, 'rnd_input': 'one_hot',
+                            'condition': (f'{"uniform-count" if counted else "online-tabular-rnd"}_{name}'
+                                          f'_reward-normalization-{"on" if reward else "off"}'),
+                            'method': 'uniform' if counted else 'online-tabular-rnd',
+                            'field_kind': 'uniform' if counted else 'random_network', 'severity_exponent': 0,
+                            'intrinsic_source': 'count' if counted else 'online_rnd', 'state_normalization': False,
+                            'normalize_intrinsic_rewards': reward, 'rnd_input': 'coordinates' if counted else 'one_hot',
                             'rnd_settings': idea.get('settings', {}), 'network_options': idea.get('network', {}),
+                            **idea.get('count', {}),
                             'settings': settings, 'setting_offset': 0, 'total_timesteps': BUDGET,
                             'stop_after_timesteps': plan['stop_after_timesteps'], 'seed_start': plan['seed_start'],
                             'seed_count': plan['seed_count'], 'evaluation_episodes': EVALUATION_EPISODES,
-                            'variant': 'primary', 'count_decay_exponent': 0.5})
+                            'variant': 'primary', **({} if counted and 'count_decay_exponent' in idea['count'] else
+                                                     {'count_decay_exponent': 0.5})})
     return rows
 
 
@@ -82,7 +90,8 @@ def main():
         location = args.run_dir/'specifications'/(specification['name']+'.json')
         write_json(location, specification)
         created += enqueue(args.run_dir, {'name': specification['name'], 'stage': 'research',
-            'limit_seconds': 4*86400, 'minimum_device_memory_mb': 7000, 'intrinsic_source': 'online_rnd',
+            'limit_seconds': 4*86400, 'minimum_device_memory_mb': 7000,
+            'intrinsic_source': specification['intrinsic_source'],
             'command': [str(HERE/'train_unit.py'), '--run-dir', str(args.run_dir), '--specification', str(location)]})
     print(f'{created} of {len(ordered)} units queued for batch {args.batch}')
 

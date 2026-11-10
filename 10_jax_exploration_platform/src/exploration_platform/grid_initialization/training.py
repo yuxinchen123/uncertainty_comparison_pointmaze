@@ -245,9 +245,15 @@ def collect_rollout(state, configuration, transition_table, coordinates, fields)
         arrived = transition_table[position, actions]
         counts = counts.at[rows, arrived].add(1)
         visits = counts[rows, arrived]
-        bonus = fields[rows, arrived] if configuration.intrinsic_source == "online_rnd" else (
-            jnp.zeros((copies,), jnp.float32) if configuration.hoist_bonus else
-            count_bonus(fields[rows, arrived], visits, configuration))
+        if configuration.count_update != "per_step" or configuration.count_rate != 1.0:
+            # Diagnostic count forms: earlier visits m are those before this arrival, or before this rollout.
+            earlier = (state.counts[rows, arrived] if configuration.count_update == "per_rollout" else visits - 1)
+            bonus = fields[rows, arrived] * (1.0 + jnp.float32(configuration.count_rate) * earlier.astype(jnp.float32)
+                                             ) ** jnp.float32(-configuration.count_decay_exponent)
+        else:
+            bonus = fields[rows, arrived] if configuration.intrinsic_source == "online_rnd" else (
+                jnp.zeros((copies,), jnp.float32) if configuration.hoist_bonus else
+                count_bonus(fields[rows, arrived], visits, configuration))
         succeeded = arrived == goal
         elapsed = elapsed + 1
         done = succeeded | (elapsed >= configuration.episode_length)

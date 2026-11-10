@@ -40,6 +40,9 @@ def properties(row):
     """Start evenness, per-cell decay slopes and late count consistency of one setting's copies, from its records."""
     # Before: behavior.npz with [checkpoints, copies, cells] histories; after: medians over this setting's copies.
     data = np.load(row['folder']/'behavior.npz')
+    if 'rnd_error_history' not in data.files:
+        # A count-rule diagnostic has no network error: its start is even by construction.
+        return {'start_max_over_min': 1.0, 'slope_median': None, 'slope_quartiles': None, 'late_consistency': None}
     selected = data['setting_indices'] == row['setting_index']
     initial = data['rnd_error_initial'][selected]
     history = data['rnd_error_history'][:, selected]
@@ -61,7 +64,10 @@ def properties(row):
 
 def nonfinite_copies(folder):
     """Count a unit's copies whose bonus became not-a-number or infinite at any checkpoint, and its copies."""
-    history = np.load(folder/'behavior.npz')['rnd_error_history']
+    data = np.load(folder/'behavior.npz')
+    if 'rnd_error_history' not in data.files:
+        return 0, int(len(data['seed_ids']))
+    history = data['rnd_error_history']
     return int((~np.isfinite(history).all(axis=(0, 2))).sum()), int(history.shape[1])
 
 
