@@ -59,6 +59,12 @@ def properties(row):
             'late_consistency': float(np.median(consistency)) if consistency else None}
 
 
+def nonfinite_copies(folder):
+    """Count a unit's copies whose bonus became not-a-number or infinite at any checkpoint, and its copies."""
+    history = np.load(folder/'behavior.npz')['rnd_error_history']
+    return int((~np.isfinite(history).all(axis=(0, 2))).sum()), int(history.shape[1])
+
+
 def best_rows(rows):
     """Each idea's best setting per stage, batch and case: smallest mean capped first-goal time, then discovery."""
     groups = defaultdict(list)
@@ -66,11 +72,14 @@ def best_rows(rows):
         groups[(row['stage'], row['batch'], row['idea'], row['kind'], row['policy'])].append(row)
     best = {}
     for key, members in groups.items():
+        # An idea whose predictor ran away in some copies is not a fair test of its properties; count them.
+        counts = [nonfinite_copies(folder) for folder in sorted({row['folder'] for row in members})]
         chosen = min(members, key=lambda row: (row['mean'], -row['discovery']))
         capped = np.asarray([copy['capped_first_goal_steps'] for copy in chosen['copies']], np.float64)
         groups_of_seeds = [copy['field_seed'] for copy in chosen['copies']]
         error, _ = grouped_standard_errors(capped, groups_of_seeds, 0, 7)
         best[key] = {**chosen, 'settings_finished': len(members), 'standard_error': error,
+                     'nonfinite_copies': sum(bad for bad, _ in counts), 'all_copies': sum(total for _, total in counts),
                      'interval': grouped_mean_interval(capped, groups_of_seeds, 7), **properties(chosen)}
     return best
 
@@ -88,8 +97,8 @@ def case_table(rows, ideas):
     thousands = min(row['mean'] for row in rows) >= 1000
     means = [row['mean'] for row in rows]
     lines = ['| idea | mean capped first-goal steps ↓ ± standard error [95%] | goal found | start max/min | '
-             'decay slope, median [middle half] | late count consistency | properties met | best setting | seeds |\n'
-             '|---|---|---|---|---|---|---|---|---|\n']
+             'decay slope, median [middle half] | late count consistency | properties met | best setting | seeds | '
+             'copies with a non-finite bonus, all settings |\n|---|---|---|---|---|---|---|---|---|---|\n']
     for index, row in enumerate(rows):
         low, high = row['interval']
         slope = ('n/a' if row['slope_median'] is None else
@@ -104,7 +113,7 @@ def case_table(rows, ideas):
                      f"{spread} | "
                      f"{100*row['discovery']:.1f}% | {row['start_max_over_min']:.2f} | {slope} | "
                      f"{'n/a' if row['late_consistency'] is None else format(row['late_consistency'], '.2f')} | {met(row)} | "
-                     f"{setting} | {len(row['copies'])} |\n")
+                     f"{setting} | {len(row['copies'])} | {row['nonfinite_copies']} of {row['all_copies']} |\n")
     return ''.join(lines)
 
 
@@ -130,7 +139,9 @@ def generate(run_dir):
         "settings (policy learning rate 1e-3, and 1e-4 for the control and the main ideas; entropy 0.001 or 0.01; "
         "weight 2^-6 to 2^6 in steps of 4×) on seeds 0-31; the "
         "standard error and interval resample field seeds (four policies each). Every idea keeps CleanRL's reward "
-        "normalization on unless its name says it replaces it.\n\n")
+        "normalization on unless its name says it replaces it. The last column counts, over all of an idea's settings in "
+        "the case, the copies whose bonus became not-a-number or infinite: such an idea is unstable, and its score is "
+        "not evidence about the two properties.\n\n")
     for stage_batch in sorted({(key[0], key[1]) for key in best}):
         section = [f"## {stage_batch[0].replace('-', ' ')}: results\n\n"]
         budgets = {row['budget'] for key, row in best.items() if (key[0], key[1]) == stage_batch}

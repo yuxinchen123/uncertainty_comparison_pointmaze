@@ -62,6 +62,9 @@ class GridPPOConfig:
     # error E, or a regression to the predictor's own output moved so that the error length goes r -> r/sqrt(1+r^2).
     rnd_loss: str = "cleanrl"
     rnd_loss_power: float = 2.0
+    # Shrink-target loss only: the error length r moves toward r (1 + r^p)^(-1/p) per update, so it follows
+    # (r0^-p + n)^(-1/p) and the decay exponent is -1/p. p = 2 is the count rule's -1/2.
+    rnd_shrink_power: float = 2.0
     # "shared_adam": the predictor joins the policy's Adam and joint clip (CleanRL); otherwise it has its own
     # optimizer with no clip and its own learning rate, constant or rate/(1 + t/rnd_learning_rate_time_scale).
     rnd_optimizer: str = "shared_adam"
@@ -118,6 +121,10 @@ class GridPPOConfig:
             raise ValueError("one-hot RND inputs are never whitened")
         if self.rnd_loss == "power" and self.rnd_loss_power < 2:
             raise ValueError("rnd_loss_power must be at least 2")
+        if self.rnd_shrink_power <= 0:
+            raise ValueError("rnd_shrink_power must be positive")
+        if self.rnd_shrink_power != 2.0 and self.rnd_loss != "shrink_target":
+            raise ValueError("rnd_shrink_power applies only to the shrink-target loss")
         if self.rnd_learning_rate <= 0 or self.rnd_learning_rate_time_scale < 0:
             raise ValueError("rnd_learning_rate must be positive and its time scale nonnegative")
         if self.intrinsic_source == "online_rnd":

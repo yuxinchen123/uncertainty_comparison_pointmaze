@@ -361,10 +361,14 @@ def predictor_sample_losses(predictor, target, inputs, configuration):
         # (2/q) E^(q/2) of the summed squared error E: q = 2 is plain least squares.
         power = configuration.rnd_loss_power
         return (2.0 / power) * jnp.sum((outputs - features) ** 2, axis=-1) ** (power / 2.0)
-    # Regress to the output moved toward the target so that the error length r becomes r/sqrt(1+r^2).
+    # Regress to the output moved toward the target so that the error length r becomes r (1 + r^p)^(-1/p);
+    # p = 2 is r/sqrt(1+r^2). The step factor lies between 0 and 1 for every r, so the update cannot run away.
     residual = features - outputs
     squared = jnp.sum(residual ** 2, axis=-1, keepdims=True)
-    moved = jax.lax.stop_gradient(outputs + (1.0 - jax.lax.rsqrt(1.0 + squared)) * residual)
+    power = configuration.rnd_shrink_power
+    factor = (jax.lax.rsqrt(1.0 + squared) if power == 2.0 else
+              (1.0 + squared ** (power / 2.0)) ** (-1.0 / power))
+    moved = jax.lax.stop_gradient(outputs + (1.0 - factor) * residual)
     return 0.5 * jnp.sum((outputs - moved) ** 2, axis=-1)
 
 

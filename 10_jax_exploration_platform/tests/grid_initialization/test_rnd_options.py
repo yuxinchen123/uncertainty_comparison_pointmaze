@@ -138,3 +138,24 @@ def test_training_budget_reads_an_early_stop():
     assert training_budget({'total_timesteps': 2 ** 24, 'stop_after_timesteps': 2 ** 22}) == 2 ** 22
     with pytest.raises(ValueError):
         training_budget({'total_timesteps': 2 ** 22, 'stop_after_timesteps': 2 ** 24})
+
+
+def test_generalized_shrink_power_matches_its_closed_form_and_stays_bounded():
+    """The shrink factor is (1 + r^p)^(-1/p): p = 2 is the original 1/sqrt(1+r^2); the loss is finite for huge errors."""
+    from exploration_platform.grid_initialization.training import predictor_sample_losses
+    world = make_geometry("straight", 8)
+    for power in (1.0, 2.0, 4.0):
+        trainer, state, _ = tabular_trainer(world, rnd_optimizer="sgd", rnd_learning_rate=0.5, rnd_loss="shrink_target",
+            rnd_shrink_power=power, rnd_readout="length", rnd_unit_length_target=True,
+            network={"zero_predictor_output": True})
+        ids = jnp.broadcast_to(jnp.arange(8), (2, 8))
+        inputs = state.rnd_table[ids]
+        losses = np.asarray(predictor_sample_losses(state.parameters["predictor"], state.target, inputs,
+                                                    trainer.configuration))
+        # Unit start: r = 1 in every cell, so the loss is 0.5 (1 - 2^(-1/p))^2 everywhere.
+        np.testing.assert_allclose(losses, 0.5 * (1.0 - 2.0 ** (-1.0 / power)) ** 2, rtol=1e-5)
+        for _ in range(3):
+            state, _ = trainer.train_iteration(state)
+        assert np.isfinite(np.asarray(trainer.all_cell_errors(state))).all()
+    with pytest.raises(ValueError):
+        GridPPOConfig(n_copies=1, intrinsic_source="online_rnd", rnd_shrink_power=1.0)

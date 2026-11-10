@@ -12,7 +12,9 @@ import sys
 import time
 
 PLATFORM = Path(__file__).resolve().parents[2]
-VISITATION_LAWS = ('uniform', 'start-heavy', 'first-half-only')
+VISITATION_LAWS = ('uniform', 'start-heavy', 'first-half-only', 'one-cell-rollouts')
+# In the one-cell law every rollout sits in a single cell, for this many rollouts in a row, then moves to the next cell.
+ROLLOUTS_PER_CELL = 8
 
 
 def visitation_probabilities(law, state_count):
@@ -25,6 +27,9 @@ def visitation_probabilities(law, state_count):
     if law == 'first-half-only':
         weights = (np.arange(state_count) < state_count // 2).astype(np.float64)
         return weights / weights.sum()
+    if law == 'one-cell-rollouts':
+        # The cell is set by the rollout's number, not drawn; this row is never used.
+        return np.full(state_count, 1.0 / state_count)
     weights = np.exp(-3.0 * np.arange(state_count) / (state_count - 1))
     return weights / weights.sum()
 
@@ -60,6 +65,7 @@ def run_idea(idea, geometry_kind, iterations, field_seeds):
     # Never-visited cells get a log-probability of -inf, so they are never drawn.
     logits = jnp.asarray(np.log(np.repeat(np.stack([visitation_probabilities(law, states) for law in VISITATION_LAWS]),
                                           len(field_seeds), axis=0)), jnp.float32)
+    dwelling = jnp.asarray(np.repeat([law == 'one-cell-rollouts' for law in VISITATION_LAWS], len(field_seeds)))
     coordinates = jnp.asarray(world.coordinates, jnp.float32)
     rate = float(idea.get('shared_learning_rate', 1e-3))
 
@@ -68,6 +74,9 @@ def run_idea(idea, geometry_kind, iterations, field_seeds):
         predictor, optimizer, counts = carry
         key = jax.random.fold_in(jax.random.PRNGKey(7), index)
         rollout = jax.random.categorical(key, logits, shape=(128, copies)).T.astype(jnp.int32)
+        # One-cell copies: all 128 states of this rollout are one cell, as when a policy dwells early in RL.
+        # Before: rollout 17 of a 32-cell grid; after: every state is cell (17 // 8) % 32 = 2.
+        rollout = jnp.where(dwelling[:, None], (index // ROLLOUTS_PER_CELL) % states, rollout)
         counts = counts + jax.vmap(lambda row: jnp.bincount(row, length=states))(rollout).astype(jnp.int32)
         inputs = state.rnd_table[rollout]
 
@@ -161,7 +170,9 @@ def measures(history, visits):
             'late_count_consistency_sd_log': float(np.median(consistency)),
             'deviation_from_inverse_square_root_mean': float(deviation.mean()),
             'deviation_from_inverse_square_root_worst_cell': float(np.median(deviation.max(axis=1))),
-            'final_visits_median': float(np.median(visits[-1])), 'finite': bool(np.isfinite(history).all()), **unvisited}
+            'final_visits_median': float(np.median(visits[-1])), 'finite': bool(np.isfinite(history).all()),
+            'nonfinite_copies': int((~np.isfinite(history).all(axis=(0, 2))).sum()), 'copies': int(history.shape[1]),
+            **unvisited}
 
 
 def main():
@@ -194,7 +205,8 @@ def main():
                 result[f'{geometry}_{law}'] = {**measures(history[:, part], visits[:, part]), 'seconds': seconds}
         (args.output/f'{name}.json').write_text(json.dumps(result, indent=2))
         print(json.dumps({'idea': name, **{key: {k: value[k] for k in ('start_max_over_min', 'slope_median',
-              'late_count_consistency_sd_log', 'unvisited_final_over_start_median', 'unvisited_over_visited_final_bonus',
+              'late_count_consistency_sd_log', 'nonfinite_copies', 'unvisited_final_over_start_median',
+              'unvisited_over_visited_final_bonus',
               'seconds') if k in value} for key, value in result.items() if '_' in key and isinstance(value, dict)}}),
               flush=True)
 
