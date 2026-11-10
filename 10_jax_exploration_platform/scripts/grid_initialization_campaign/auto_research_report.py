@@ -46,8 +46,13 @@ def properties(row):
     visits = data['visit_count_history'][:, selected]
     slopes = fitted_slopes(history / initial[None], visits)
     final, counts = history[-1], visits[-1]
-    consistency = [np.std(np.log(final[copy][counts[copy] >= 2] * np.sqrt(counts[copy][counts[copy] >= 2])))
-                   for copy in range(final.shape[0]) if (counts[copy] >= 2).sum() >= 2]
+    # A bonus that reached exactly zero has no logarithm; such cells are left out of the spread.
+    consistency = []
+    for copy in range(final.shape[0]):
+        usable = (counts[copy] >= 2) & (final[copy] > 0)
+        if usable.sum() >= 2:
+            consistency.append(np.std(np.log(final[copy][usable] * np.sqrt(counts[copy][usable]))))
+    slopes = slopes[np.isfinite(slopes)]
     return {'start_max_over_min': float(np.median(initial.max(axis=1) / initial.min(axis=1))),
             'slope_median': float(np.median(slopes)) if len(slopes) else None,
             'slope_quartiles': np.quantile(slopes, [0.25, 0.75]).tolist() if len(slopes) else None,
