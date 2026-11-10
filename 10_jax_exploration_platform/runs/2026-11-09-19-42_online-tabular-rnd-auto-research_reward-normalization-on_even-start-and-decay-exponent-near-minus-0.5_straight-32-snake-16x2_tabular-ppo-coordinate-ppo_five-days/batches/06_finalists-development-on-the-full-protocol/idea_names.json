@@ -1,0 +1,7 @@
+{
+ "control": "baseline: CleanRL online tabular-RND (uneven start, decay left to training)",
+ "schedule-fit-rnd-exponent-minus-1-refresh-per-step": "schedule-fit RND, decay exponent −1, refreshed every step (even start, scheduled decay)",
+ "schedule-fit-rnd-exponent-minus-0.5-refresh-per-step": "schedule-fit RND, decay exponent −0.5, refreshed every step (even start, scheduled decay)",
+ "frozen-tabular-rnd-field-count-per-step-exponent-minus-1": "count rule on the frozen tabular-RND field, decay exponent −1, refreshed every step (uneven start, scheduled decay)",
+ "unit-start": "unit start alone (even start, decay left to training)"
+}

@@ -1,19 +1,19 @@
 # Online tabular-RND auto research
 
-Generated 2026-11-10 07:05 PT (times are Pacific, converted from machines running Eastern). Finished settings: 7409. Protocol: `program.md`; log: `STATE.md`.
+Generated 2026-11-10 07:24 PT (times are Pacific, converted from machines running Eastern). Finished settings: 7423. Protocol: `program.md`; log: `STATE.md`.
 
 ## Contents
 
 | Section | First written | Last changed | Status |
 |---|---|---|---|
 | [Measures](#measures) | 2026-11-09 21:43 PT | 2026-11-09 22:42 PT | unread |
-| [development 06: results](#development-06-results) | 2026-11-10 04:43 PT | 2026-11-10 07:03 PT | unread |
-| [screen 01: results](#screen-01-results) | 2026-11-09 21:43 PT | 2026-11-10 04:23 PT | unread |
+| [development 06: results](#development-06-results) | 2026-11-10 04:43 PT | 2026-11-10 07:24 PT | unread |
+| [screen 01: results](#screen-01-results) | 2026-11-09 21:43 PT | 2026-11-10 07:24 PT | unread |
 | [screen 02: results](#screen-02-results) | 2026-11-09 23:44 PT | 2026-11-10 03:23 PT | unread |
 | [screen 03: results](#screen-03-results) | 2026-11-10 02:03 PT | 2026-11-10 03:43 PT | unread |
-| [screen 04: results](#screen-04-results) | 2026-11-10 03:05 PT | 2026-11-10 07:03 PT | unread |
-| [screen 05: results](#screen-05-results) | 2026-11-10 04:04 PT | 2026-11-10 04:43 PT | unread |
-| [confirmation 06: chosen configurations on the confirmation seeds](#confirmation-06-chosen-configurations-on-the-confirmation-seeds) | 2026-11-10 07:05 PT | 2026-11-10 07:05 PT | unread |
+| [screen 04: results](#screen-04-results) | 2026-11-10 03:05 PT | 2026-11-10 07:24 PT | unread |
+| [screen 05: results](#screen-05-results) | 2026-11-10 04:04 PT | 2026-11-10 07:24 PT | unread |
+| [confirmation 06: chosen configurations on the confirmation seeds](#confirmation-06-chosen-configurations-on-the-confirmation-seeds) | 2026-11-10 07:05 PT | 2026-11-10 07:24 PT | unread |
 
 [Read with section colors](analysis.html). No section marks itself read.
 
@@ -29,35 +29,35 @@ Budget per policy: 16,777,216 transitions, on the full 16,777,216-transition lea
 
 | idea | mean capped first-goal steps ↓ ± standard error [95%] | goal found | start max/min | decay slope, median [middle half] | late count consistency | properties met | best setting | seeds | copies with a non-finite bonus, all settings |
 |---|---|---|---|---|---|---|---|---|---|
-| schedule-fit-rnd-exponent-minus-1-refresh-per-step | **6.82K** ± 0.39K [6.06K, 7.58K] | 100.0% | 1.00 | -0.68 [-0.71, -0.64] | 1.74 | even start | learning rate 0.001, entropy 0.001, weight 2^-6 | 16 | 0 of 832 |
-| frozen-tabular-rnd-field-count-per-step-exponent-minus-1 | <u>7.69K</u> ± 0.92K [5.87K, 9.51K] | 100.0% | 3.55 | n/a | n/a | neither | learning rate 0.001, entropy 0.01, weight 2^-6 | 16 | 0 of 832 |
-| schedule-fit-rnd-exponent-minus-0.5-refresh-per-step | 8.18K ± 0.69K [6.82K, 9.47K] | 100.0% | 1.00 | -0.47 [-0.47, -0.47] | 1.15 | both | learning rate 0.001, entropy 0.001, weight 2^-6 | 16 | 0 of 832 |
+| schedule-fit RND, decay exponent −1, refreshed every step (even start, scheduled decay) | **6.82K** ± 0.39K [6.06K, 7.58K] | 100.0% | 1.00 | -0.68 [-0.71, -0.64] | 1.74 | even start | learning rate 0.001, entropy 0.001, weight 2^-6 | 16 | 0 of 832 |
+| count rule on the frozen tabular-RND field, decay exponent −1, refreshed every step (uneven start, scheduled decay) | <u>7.69K</u> ± 0.92K [5.87K, 9.51K] | 100.0% | 3.55 | n/a | n/a | neither | learning rate 0.001, entropy 0.01, weight 2^-6 | 16 | 0 of 832 |
+| schedule-fit RND, decay exponent −0.5, refreshed every step (even start, scheduled decay) | 8.18K ± 0.69K [6.82K, 9.47K] | 100.0% | 1.00 | -0.47 [-0.47, -0.47] | 1.15 | both | learning rate 0.001, entropy 0.001, weight 2^-6 | 16 | 0 of 832 |
 
 ### straight grid, 32 cells, coordinate-PPO
 
 | idea | mean capped first-goal steps ↓ ± standard error [95%] | goal found | start max/min | decay slope, median [middle half] | late count consistency | properties met | best setting | seeds | copies with a non-finite bonus, all settings |
 |---|---|---|---|---|---|---|---|---|---|
-| schedule-fit-rnd-exponent-minus-1-refresh-per-step | **1.32K** ± 0.25K [0.89K, 1.79K] | 100.0% | 1.00 | -0.67 [-0.69, -0.65] | 1.77 | even start | learning rate 0.001, entropy 0.01, weight 2^-5 | 16 | 0 of 832 |
-| frozen-tabular-rnd-field-count-per-step-exponent-minus-1 | <u>1.48K</u> ± 0.23K [0.97K, 1.81K] | 100.0% | 3.55 | n/a | n/a | neither | learning rate 0.001, entropy 0.001, weight 2^-1 | 16 | 0 of 832 |
-| schedule-fit-rnd-exponent-minus-0.5-refresh-per-step | 2.29K ± 0.35K [1.52K, 2.84K] | 100.0% | 1.00 | -0.47 [-0.47, -0.47] | 1.22 | both | learning rate 0.001, entropy 0.001, weight 2^0 | 16 | 0 of 832 |
+| schedule-fit RND, decay exponent −1, refreshed every step (even start, scheduled decay) | **1.32K** ± 0.25K [0.89K, 1.79K] | 100.0% | 1.00 | -0.67 [-0.69, -0.65] | 1.77 | even start | learning rate 0.001, entropy 0.01, weight 2^-5 | 16 | 0 of 832 |
+| count rule on the frozen tabular-RND field, decay exponent −1, refreshed every step (uneven start, scheduled decay) | <u>1.48K</u> ± 0.23K [0.97K, 1.81K] | 100.0% | 3.55 | n/a | n/a | neither | learning rate 0.001, entropy 0.001, weight 2^-1 | 16 | 0 of 832 |
+| schedule-fit RND, decay exponent −0.5, refreshed every step (even start, scheduled decay) | 2.29K ± 0.35K [1.52K, 2.84K] | 100.0% | 1.00 | -0.47 [-0.47, -0.47] | 1.22 | both | learning rate 0.001, entropy 0.001, weight 2^0 | 16 | 0 of 832 |
 
 ### snake grid, width 16, 2 turns (50 cells), tabular-PPO
 
 | idea | mean capped first-goal steps ↓ ± standard error [95%] | goal found | start max/min | decay slope, median [middle half] | late count consistency | properties met | best setting | seeds | copies with a non-finite bonus, all settings |
 |---|---|---|---|---|---|---|---|---|---|
-| schedule-fit-rnd-exponent-minus-1-refresh-per-step | **14.51K** ± 0.68K [13.25K, 15.77K] | 100.0% | 1.00 | -0.68 [-0.71, -0.66] | 1.38 | even start | learning rate 0.001, entropy 0.01, weight 2^-6 | 16 | 0 of 832 |
-| frozen-tabular-rnd-field-count-per-step-exponent-minus-1 | <u>16.78K</u> ± 1.32K [14.58K, 19.78K] | 100.0% | 4.52 | n/a | n/a | neither | learning rate 0.001, entropy 0.01, weight 2^-6 | 16 | 0 of 832 |
-| schedule-fit-rnd-exponent-minus-0.5-refresh-per-step | 34.73K ± 5.15K [25.06K, 44.00K] | 100.0% | 1.00 | -0.48 [-0.48, -0.48] | 0.90 | both | learning rate 0.001, entropy 0.001, weight 2^-6 | 16 | 0 of 832 |
-| unit-start | 59.46K ± 4.63K [52.09K, 69.50K] | 100.0% | 1.00 | -3.65 [-3.96, -3.32] | 3.99 | even start | learning rate 0.0001, entropy 0.001, weight 2^-6 | 16 | 0 of 416 |
+| schedule-fit RND, decay exponent −1, refreshed every step (even start, scheduled decay) | **14.51K** ± 0.68K [13.25K, 15.77K] | 100.0% | 1.00 | -0.68 [-0.71, -0.66] | 1.38 | even start | learning rate 0.001, entropy 0.01, weight 2^-6 | 16 | 0 of 832 |
+| count rule on the frozen tabular-RND field, decay exponent −1, refreshed every step (uneven start, scheduled decay) | <u>16.78K</u> ± 1.32K [14.58K, 19.78K] | 100.0% | 4.52 | n/a | n/a | neither | learning rate 0.001, entropy 0.01, weight 2^-6 | 16 | 0 of 832 |
+| schedule-fit RND, decay exponent −0.5, refreshed every step (even start, scheduled decay) | 34.73K ± 5.15K [25.06K, 44.00K] | 100.0% | 1.00 | -0.48 [-0.48, -0.48] | 0.90 | both | learning rate 0.001, entropy 0.001, weight 2^-6 | 16 | 0 of 832 |
+| unit start alone (even start, decay left to training) | 59.46K ± 4.63K [52.09K, 69.50K] | 100.0% | 1.00 | -3.65 [-3.96, -3.32] | 3.99 | even start | learning rate 0.0001, entropy 0.001, weight 2^-6 | 16 | 0 of 416 |
 
 ### snake grid, width 16, 2 turns (50 cells), coordinate-PPO
 
 | idea | mean capped first-goal steps ↓ ± standard error [95%] | goal found | start max/min | decay slope, median [middle half] | late count consistency | properties met | best setting | seeds | copies with a non-finite bonus, all settings |
 |---|---|---|---|---|---|---|---|---|---|
-| schedule-fit-rnd-exponent-minus-1-refresh-per-step | **33.63K** ± 3.06K [27.99K, 39.28K] | 100.0% | 1.00 | -0.77 [-0.80, -0.73] | 1.38 | even start | learning rate 0.001, entropy 0.01, weight 2^6 | 16 | 0 of 832 |
-| schedule-fit-rnd-exponent-minus-0.5-refresh-per-step | <u>44.96K</u> ± 8.33K [28.43K, 61.48K] | 100.0% | 1.00 | -0.48 [-0.49, -0.48] | 0.83 | both | learning rate 0.001, entropy 0.01, weight 2^3 | 16 | 0 of 624 |
-| frozen-tabular-rnd-field-count-per-step-exponent-minus-1 | 55.18K ± 6.07K [43.09K, 67.26K] | 100.0% | 4.52 | n/a | n/a | neither | learning rate 0.001, entropy 0.01, weight 2^-2 | 16 | 0 of 832 |
-| unit-start | 7,653.13K ± 2,320.03K [2,276.61K, 12,209.23K] | 56.2% | 1.00 | -1.33 [-2.52, -0.89] | 6.04 | even start | learning rate 0.0001, entropy 0.01, weight 2^-6 | 16 | 0 of 832 |
+| schedule-fit RND, decay exponent −1, refreshed every step (even start, scheduled decay) | **33.63K** ± 3.06K [27.99K, 39.28K] | 100.0% | 1.00 | -0.77 [-0.80, -0.73] | 1.38 | even start | learning rate 0.001, entropy 0.01, weight 2^6 | 16 | 0 of 832 |
+| schedule-fit RND, decay exponent −0.5, refreshed every step (even start, scheduled decay) | <u>44.96K</u> ± 8.33K [28.43K, 61.48K] | 100.0% | 1.00 | -0.48 [-0.49, -0.48] | 0.83 | both | learning rate 0.001, entropy 0.01, weight 2^3 | 16 | 0 of 624 |
+| count rule on the frozen tabular-RND field, decay exponent −1, refreshed every step (uneven start, scheduled decay) | 55.18K ± 6.07K [43.09K, 67.26K] | 100.0% | 4.52 | n/a | n/a | neither | learning rate 0.001, entropy 0.01, weight 2^-2 | 16 | 0 of 832 |
+| unit start alone (even start, decay left to training) | 7,653.13K ± 2,320.03K [2,276.61K, 12,209.23K] | 56.2% | 1.00 | -1.33 [-2.52, -0.89] | 6.04 | even start | learning rate 0.0001, entropy 0.01, weight 2^-6 | 16 | 0 of 832 |
 
 ## screen 01: results
 
@@ -67,10 +67,10 @@ Budget per policy: 4,194,304 transitions, on the full 16,777,216-transition lear
 
 | idea | mean capped first-goal steps ↓ ± standard error [95%] | goal found | start max/min | decay slope, median [middle half] | late count consistency | properties met | best setting | seeds | copies with a non-finite bonus, all settings |
 |---|---|---|---|---|---|---|---|---|---|
-| control | **7.22K** ± 0.28K [6.73K, 7.81K] | 100.0% | 3.65 | -3.78 [-4.18, -3.42] | 4.83 | neither | learning rate 0.001, entropy 0.001, weight 2^-4 | 32 | 0 of 896 |
+| baseline: CleanRL online tabular-RND (uneven start, decay left to training) | **7.22K** ± 0.28K [6.73K, 7.81K] | 100.0% | 3.65 | -3.78 [-4.18, -3.42] | 4.83 | neither | learning rate 0.001, entropy 0.001, weight 2^-4 | 32 | 0 of 896 |
 | wide-input-layer-64 | <u>7.41K</u> ± 0.50K [6.57K, 8.44K] | 100.0% | 2.63 | -3.84 [-4.24, -3.50] | 4.87 | neither | learning rate 0.001, entropy 0.001, weight 2^-4 | 32 | 0 of 448 |
 | initial-ratio-readout | 7.95K ± 0.44K [7.14K, 8.84K] | 100.0% | 1.00 | -3.75 [-4.16, -3.41] | 4.83 | even start | learning rate 0.001, entropy 0.01, weight 2^-4 | 32 | 0 of 448 |
-| unit-start | 8.57K ± 0.64K [7.33K, 9.86K] | 100.0% | 1.00 | -4.16 [-4.60, -3.66] | 5.52 | even start | learning rate 0.001, entropy 0.01, weight 2^6 | 32 | 0 of 896 |
+| unit start alone (even start, decay left to training) | 8.57K ± 0.64K [7.33K, 9.86K] | 100.0% | 1.00 | -4.16 [-4.60, -3.66] | 5.52 | even start | learning rate 0.001, entropy 0.01, weight 2^6 | 32 | 0 of 896 |
 | length-readout | 9.79K ± 0.80K [8.24K, 11.40K] | 100.0% | 1.91 | -1.87 [-2.09, -1.69] | 2.43 | neither | learning rate 0.001, entropy 0.01, weight 2^6 | 32 | 0 of 896 |
 | unit-start-shrink-target-sgd-2-length-readout | 10.47K ± 0.81K [8.91K, 12.09K] | 100.0% | 1.00 | -0.51 [-0.55, -0.48] | 0.93 | both | learning rate 0.001, entropy 0.01, weight 2^-6 | 32 | 0 of 896 |
 | separate-adam-constant-learning-rate-1e-4 | 11.37K ± 1.33K [8.79K, 13.92K] | 100.0% | 3.65 | -2.54 [-2.90, -2.20] | 3.93 | neither | learning rate 0.001, entropy 0.01, weight 2^-6 | 32 | 0 of 896 |
@@ -86,10 +86,10 @@ Budget per policy: 4,194,304 transitions, on the full 16,777,216-transition lear
 | idea | mean capped first-goal steps ↓ ± standard error [95%] | goal found | start max/min | decay slope, median [middle half] | late count consistency | properties met | best setting | seeds | copies with a non-finite bonus, all settings |
 |---|---|---|---|---|---|---|---|---|---|
 | separate-adam-constant-learning-rate-1e-4 | **3.78K** ± 0.29K [3.22K, 4.35K] | 100.0% | 3.65 | -2.68 [-3.14, -2.30] | 3.96 | neither | learning rate 0.001, entropy 0.001, weight 2^-6 | 32 | 0 of 896 |
-| control | <u>3.90K</u> ± 0.20K [3.51K, 4.29K] | 100.0% | 3.65 | -4.02 [-4.39, -3.60] | 4.87 | neither | learning rate 0.001, entropy 0.001, weight 2^4 | 32 | 0 of 896 |
+| baseline: CleanRL online tabular-RND (uneven start, decay left to training) | <u>3.90K</u> ± 0.20K [3.51K, 4.29K] | 100.0% | 3.65 | -4.02 [-4.39, -3.60] | 4.87 | neither | learning rate 0.001, entropy 0.001, weight 2^4 | 32 | 0 of 896 |
 | wide-input-layer-64 | 4.06K ± 0.11K [3.84K, 4.28K] | 100.0% | 2.63 | -4.13 [-4.47, -3.71] | 4.90 | neither | learning rate 0.001, entropy 0.01, weight 2^6 | 32 | 0 of 448 |
 | initial-ratio-readout | 4.27K ± 0.19K [3.86K, 4.61K] | 100.0% | 1.00 | -4.02 [-4.38, -3.59] | 4.87 | even start | learning rate 0.001, entropy 0.001, weight 2^-2 | 32 | 0 of 448 |
-| unit-start | 4.66K ± 0.22K [4.26K, 5.10K] | 100.0% | 1.00 | -3.97 [-4.54, -3.29] | 5.54 | even start | learning rate 0.001, entropy 0.001, weight 2^0 | 32 | 0 of 896 |
+| unit start alone (even start, decay left to training) | 4.66K ± 0.22K [4.26K, 5.10K] | 100.0% | 1.00 | -3.97 [-4.54, -3.29] | 5.54 | even start | learning rate 0.001, entropy 0.001, weight 2^0 | 32 | 0 of 896 |
 | unit-start-adagrad-0.1 | 4.76K ± 0.26K [4.25K, 5.26K] | 100.0% | 1.00 | -0.63 [-1.25, -0.33] | 1.87 | even start | learning rate 0.001, entropy 0.01, weight 2^6 | 32 | 0 of 448 |
 | length-readout | 4.80K ± 0.17K [4.44K, 5.11K] | 100.0% | 1.91 | -2.05 [-2.22, -1.81] | 2.46 | neither | learning rate 0.001, entropy 0.001, weight 2^0 | 32 | 0 of 896 |
 | unit-start-power-4-sgd-0.3-length-readout | 5.03K ± 0.52K [4.06K, 6.08K] | 100.0% | 1.00 | -0.50 [-0.52, -0.47] | 0.92 | both | learning rate 0.001, entropy 0.01, weight 2^-6 | 32 | 7 of 896 |
@@ -104,8 +104,8 @@ Budget per policy: 4,194,304 transitions, on the full 16,777,216-transition lear
 | idea | mean capped first-goal steps ↓ ± standard error [95%] | goal found | start max/min | decay slope, median [middle half] | late count consistency | properties met | best setting | seeds | copies with a non-finite bonus, all settings |
 |---|---|---|---|---|---|---|---|---|---|
 | wide-input-layer-64 | **16.37K** ± 0.59K [15.26K, 17.56K] | 100.0% | 3.04 | -3.45 [-3.83, -3.10] | 3.73 | neither | learning rate 0.001, entropy 0.01, weight 2^0 | 32 | 0 of 448 |
-| control | <u>18.74K</u> ± 0.96K [16.96K, 20.71K] | 100.0% | 4.23 | -2.72 [-3.08, -2.38] | 3.48 | neither | learning rate 0.001, entropy 0.01, weight 2^0 | 32 | 0 of 896 |
-| unit-start | 21.74K ± 1.24K [19.22K, 24.05K] | 100.0% | 1.00 | -4.46 [-4.97, -4.01] | 4.44 | even start | learning rate 0.001, entropy 0.001, weight 2^2 | 32 | 0 of 896 |
+| baseline: CleanRL online tabular-RND (uneven start, decay left to training) | <u>18.74K</u> ± 0.96K [16.96K, 20.71K] | 100.0% | 4.23 | -2.72 [-3.08, -2.38] | 3.48 | neither | learning rate 0.001, entropy 0.01, weight 2^0 | 32 | 0 of 896 |
+| unit start alone (even start, decay left to training) | 21.74K ± 1.24K [19.22K, 24.05K] | 100.0% | 1.00 | -4.46 [-4.97, -4.01] | 4.44 | even start | learning rate 0.001, entropy 0.001, weight 2^2 | 32 | 0 of 896 |
 | initial-ratio-readout | 24.42K ± 1.69K [21.11K, 27.70K] | 100.0% | 1.00 | -2.66 [-3.00, -2.35] | 3.54 | even start | learning rate 0.001, entropy 0.01, weight 2^-4 | 32 | 0 of 448 |
 | length-readout | 26.31K ± 3.48K [20.56K, 33.76K] | 100.0% | 2.06 | -1.30 [-1.48, -1.14] | 1.75 | neither | learning rate 0.001, entropy 0.01, weight 2^0 | 32 | 0 of 896 |
 | bias-start-0.5 | 28.09K ± 1.10K [25.89K, 30.13K] | 100.0% | 1.04 | -1.48 [-1.65, -1.31] | 1.89 | even start | learning rate 0.001, entropy 0.001, weight 2^0 | 32 | 0 of 448 |
@@ -125,13 +125,13 @@ Budget per policy: 4,194,304 transitions, on the full 16,777,216-transition lear
 | unit-start-adagrad-0.1 | 58.40K ± 4.54K [49.64K, 67.01K] | 100.0% | 1.00 | -0.34 [-0.47, -0.23] | 1.00 | even start | learning rate 0.001, entropy 0.01, weight 2^2 | 32 | 0 of 448 |
 | length-readout | 59.81K ± 8.31K [46.04K, 78.03K] | 100.0% | 2.06 | -0.95 [-1.20, -0.73] | 1.65 | neither | learning rate 0.001, entropy 0.001, weight 2^-2 | 32 | 0 of 672 |
 | power-4-sgd-0.1-length-readout | 60.47K ± 7.22K [46.21K, 74.80K] | 100.0% | 2.06 | -0.26 [-0.30, -0.23] | 0.35 | neither | learning rate 0.001, entropy 0.01, weight 2^-6 | 32 | 3 of 896 |
-| control | 82.11K ± 12.00K [59.55K, 105.87K] | 100.0% | 4.23 | -0.93 [-1.17, -0.67] | 1.75 | neither | learning rate 0.0001, entropy 0.001, weight 2^-2 | 32 | 0 of 896 |
+| baseline: CleanRL online tabular-RND (uneven start, decay left to training) | 82.11K ± 12.00K [59.55K, 105.87K] | 100.0% | 4.23 | -0.93 [-1.17, -0.67] | 1.75 | neither | learning rate 0.0001, entropy 0.001, weight 2^-2 | 32 | 0 of 896 |
 | unit-start-shrink-target-sgd-3-length-readout | 446.86K ± 249.72K [50.91K, 968.53K] | 90.6% | 1.00 | -0.52 [-0.56, -0.49] | 0.66 | both | learning rate 0.001, entropy 0.01, weight 2^6 | 32 | 179 of 896 |
 | unit-start-power-4-sgd-0.3-length-readout | 482.36K ± 167.17K [214.41K, 846.20K] | 90.6% | 1.00 | -0.47 [-0.50, -0.44] | 0.64 | both | learning rate 0.0001, entropy 0.001, weight 2^6 | 32 | 200 of 896 |
 | bias-start-0.5 | 1,085.52K ± 248.59K [639.55K, 1,598.99K] | 84.4% | 1.04 | -1.09 [-1.38, -0.78] | 3.04 | even start | learning rate 0.001, entropy 0.01, weight 2^6 | 32 | 0 of 448 |
 | initial-ratio-readout | 1,104.67K ± 362.54K [457.12K, 1,874.40K] | 75.0% | 1.00 | -1.70 [-2.46, -1.14] | 4.36 | even start | learning rate 0.001, entropy 0.01, weight 2^0 | 32 | 0 of 448 |
 | wide-input-layer-64 | 1,130.86K ± 273.55K [588.73K, 1,676.47K] | 75.0% | 3.04 | -2.10 [-3.10, -1.25] | 4.42 | neither | learning rate 0.001, entropy 0.001, weight 2^4 | 32 | 0 of 448 |
-| unit-start | 1,905.10K ± 292.49K [1,392.73K, 2,515.92K] | 56.2% | 1.00 | -1.38 [-2.88, -0.81] | 6.54 | even start | learning rate 0.0001, entropy 0.01, weight 2^-6 | 32 | 0 of 896 |
+| unit start alone (even start, decay left to training) | 1,905.10K ± 292.49K [1,392.73K, 2,515.92K] | 56.2% | 1.00 | -1.38 [-2.88, -0.81] | 6.54 | even start | learning rate 0.0001, entropy 0.01, weight 2^-6 | 32 | 0 of 896 |
 
 ## screen 02: results
 
@@ -303,7 +303,7 @@ Budget per policy: 4,194,304 transitions, on the full 16,777,216-transition lear
 |---|---|---|---|---|---|---|---|---|---|
 | count-per-step-exponent-minus-1.5-rate-0.25 | **6.23K** ± 0.32K [5.65K, 6.89K] | 100.0% | 1.00 | n/a | n/a | even start | learning rate 0.001, entropy 0.001, weight 2^-6 | 32 | 0 of 896 |
 | count-per-step-exponent-minus-1.5-rate-0.0625 | <u>6.26K</u> ± 0.34K [5.63K, 6.95K] | 100.0% | 1.00 | n/a | n/a | even start | learning rate 0.001, entropy 0.001, weight 2^-6 | 32 | 0 of 896 |
-| schedule-fit-rnd-exponent-minus-1-refresh-per-step | 6.33K ± 0.29K [5.79K, 6.91K] | 100.0% | 1.00 | -0.79 [-0.82, -0.76] | 1.70 | even start | learning rate 0.001, entropy 0.01, weight 2^-6 | 32 | 0 of 896 |
+| schedule-fit RND, decay exponent −1, refreshed every step (even start, scheduled decay) | 6.33K ± 0.29K [5.79K, 6.91K] | 100.0% | 1.00 | -0.79 [-0.82, -0.76] | 1.70 | even start | learning rate 0.001, entropy 0.01, weight 2^-6 | 32 | 0 of 896 |
 | count-per-step-exponent-minus-1-rate-0.5 | 6.35K ± 0.37K [5.68K, 7.10K] | 100.0% | 1.00 | n/a | n/a | even start | learning rate 0.001, entropy 0.001, weight 2^-6 | 32 | 0 of 896 |
 | schedule-fit-rnd-exponent-minus-1-rate-0.25-refresh-per-step | 6.75K ± 0.37K [6.09K, 7.48K] | 100.0% | 1.00 | -0.86 [-0.87, -0.85] | 1.57 | even start | learning rate 0.001, entropy 0.001, weight 2^-6 | 32 | 0 of 896 |
 | count-per-step-exponent-minus-1-rate-0.0625 | 6.75K ± 0.29K [6.22K, 7.32K] | 100.0% | 1.00 | n/a | n/a | even start | learning rate 0.001, entropy 0.001, weight 2^-6 | 32 | 0 of 896 |
@@ -315,7 +315,7 @@ Budget per policy: 4,194,304 transitions, on the full 16,777,216-transition lear
 | count-per-step-exponent-minus-0.75 | 7.53K ± 0.46K [6.64K, 8.45K] | 100.0% | 1.00 | n/a | n/a | even start | learning rate 0.001, entropy 0.01, weight 2^-6 | 32 | 0 of 896 |
 | count-per-rollout-exponent-minus-1-rate-0.5 | 7.55K ± 0.44K [6.72K, 8.41K] | 100.0% | 1.00 | n/a | n/a | even start | learning rate 0.001, entropy 0.01, weight 2^-6 | 32 | 0 of 896 |
 | count-per-rollout-exponent-minus-1-rate-0.0625 | 7.74K ± 0.45K [6.92K, 8.64K] | 100.0% | 1.00 | n/a | n/a | even start | learning rate 0.001, entropy 0.001, weight 2^-6 | 32 | 0 of 896 |
-| schedule-fit-rnd-exponent-minus-0.5-refresh-per-step | 8.63K ± 0.65K [7.42K, 9.93K] | 100.0% | 1.00 | -0.50 [-0.50, -0.50] | 1.09 | both | learning rate 0.001, entropy 0.001, weight 2^-6 | 32 | 0 of 896 |
+| schedule-fit RND, decay exponent −0.5, refreshed every step (even start, scheduled decay) | 8.63K ± 0.65K [7.42K, 9.93K] | 100.0% | 1.00 | -0.50 [-0.50, -0.50] | 1.09 | both | learning rate 0.001, entropy 0.001, weight 2^-6 | 32 | 0 of 896 |
 | schedule-fit-rnd-exponent-minus-0.5-refresh-per-rollout | 8.77K ± 0.84K [7.29K, 10.50K] | 100.0% | 1.00 | -0.50 [-0.50, -0.50] | 1.09 | both | learning rate 0.001, entropy 0.001, weight 2^-6 | 32 | 0 of 896 |
 | schedule-fit-rnd-all-layers-exponent-minus-1-rate-0.25 | 9.64K ± 1.08K [7.69K, 11.91K] | 100.0% | 1.00 | -1.03 [-1.08, -0.98] | 1.59 | even start | learning rate 0.001, entropy 0.001, weight 2^-6 | 32 | 0 of 448 |
 | schedule-fit-rnd-all-layers-exponent-minus-0.5 | 11.86K ± 1.20K [9.65K, 14.28K] | 100.0% | 1.00 | -0.57 [-0.59, -0.54] | 1.04 | both | learning rate 0.001, entropy 0.01, weight 2^-6 | 32 | 0 of 896 |
@@ -325,12 +325,12 @@ Budget per policy: 4,194,304 transitions, on the full 16,777,216-transition lear
 | idea | mean capped first-goal steps ↓ ± standard error [95%] | goal found | start max/min | decay slope, median [middle half] | late count consistency | properties met | best setting | seeds | copies with a non-finite bonus, all settings |
 |---|---|---|---|---|---|---|---|---|---|
 | count-per-step-exponent-minus-1.5-rate-0.25 | **1.83K** ± 0.27K [1.33K, 2.42K] | 100.0% | 1.00 | n/a | n/a | even start | learning rate 0.001, entropy 0.01, weight 2^-4 | 32 | 0 of 896 |
-| schedule-fit-rnd-exponent-minus-1-refresh-per-step | <u>1.96K</u> ± 0.29K [1.42K, 2.54K] | 100.0% | 1.00 | -0.79 [-0.80, -0.77] | 1.76 | even start | learning rate 0.001, entropy 0.001, weight 2^6 | 32 | 0 of 896 |
+| schedule-fit RND, decay exponent −1, refreshed every step (even start, scheduled decay) | <u>1.96K</u> ± 0.29K [1.42K, 2.54K] | 100.0% | 1.00 | -0.79 [-0.80, -0.77] | 1.76 | even start | learning rate 0.001, entropy 0.001, weight 2^6 | 32 | 0 of 896 |
 | count-per-step-exponent-minus-1-rate-0.5 | 2.05K ± 0.26K [1.55K, 2.56K] | 100.0% | 1.00 | n/a | n/a | even start | learning rate 0.001, entropy 0.01, weight 2^4 | 32 | 0 of 896 |
 | schedule-fit-rnd-exponent-minus-1-rate-0.25-refresh-per-step | 2.13K ± 0.19K [1.73K, 2.44K] | 100.0% | 1.00 | -0.86 [-0.87, -0.85] | 1.63 | even start | learning rate 0.001, entropy 0.001, weight 2^6 | 32 | 0 of 896 |
 | schedule-fit-rnd-exponent-minus-0.75-refresh-per-step | 2.22K ± 0.25K [1.73K, 2.70K] | 100.0% | 1.00 | -0.69 [-0.69, -0.69] | 1.49 | even start | learning rate 0.001, entropy 0.001, weight 2^6 | 32 | 0 of 896 |
 | count-per-step-exponent-minus-1-rate-0.25 | 2.27K ± 0.20K [1.82K, 2.59K] | 100.0% | 1.00 | n/a | n/a | even start | learning rate 0.001, entropy 0.01, weight 2^-2 | 32 | 0 of 896 |
-| schedule-fit-rnd-exponent-minus-0.5-refresh-per-step | 2.29K ± 0.23K [1.85K, 2.74K] | 100.0% | 1.00 | -0.50 [-0.50, -0.50] | 1.13 | both | learning rate 0.001, entropy 0.01, weight 2^-6 | 32 | 0 of 896 |
+| schedule-fit RND, decay exponent −0.5, refreshed every step (even start, scheduled decay) | 2.29K ± 0.23K [1.85K, 2.74K] | 100.0% | 1.00 | -0.50 [-0.50, -0.50] | 1.13 | both | learning rate 0.001, entropy 0.01, weight 2^-6 | 32 | 0 of 896 |
 | count-per-step-exponent-minus-0.75 | 2.30K ± 0.28K [1.80K, 2.89K] | 100.0% | 1.00 | n/a | n/a | even start | learning rate 0.001, entropy 0.01, weight 2^-6 | 32 | 0 of 896 |
 | count-per-step-exponent-minus-1.5-rate-0.0625 | 2.31K ± 0.23K [1.85K, 2.74K] | 100.0% | 1.00 | n/a | n/a | even start | learning rate 0.001, entropy 0.01, weight 2^0 | 32 | 0 of 896 |
 | count-per-step-exponent-minus-1-rate-0.125 | 2.36K ± 0.25K [1.91K, 2.88K] | 100.0% | 1.00 | n/a | n/a | even start | learning rate 0.001, entropy 0.001, weight 2^0 | 32 | 0 of 896 |
@@ -340,7 +340,8 @@ Budget per policy: 4,194,304 transitions, on the full 16,777,216-transition lear
 | count-per-rollout-exponent-minus-1-rate-0.125 | 3.09K ± 0.22K [2.68K, 3.54K] | 100.0% | 1.00 | n/a | n/a | even start | learning rate 0.001, entropy 0.001, weight 2^-2 | 32 | 0 of 896 |
 | schedule-fit-rnd-exponent-minus-1-rate-0.25-refresh-per-rollout | 3.11K ± 0.24K [2.70K, 3.61K] | 100.0% | 1.00 | -0.86 [-0.87, -0.84] | 1.61 | even start | learning rate 0.001, entropy 0.001, weight 2^0 | 32 | 0 of 896 |
 | schedule-fit-rnd-exponent-minus-0.5-refresh-per-rollout | 3.43K ± 0.31K [2.89K, 4.08K] | 100.0% | 1.00 | -0.50 [-0.50, -0.50] | 1.12 | both | learning rate 0.001, entropy 0.01, weight 2^-4 | 32 | 0 of 896 |
-| schedule-fit-rnd-all-layers-exponent-minus-0.5 | 4.23K ± 0.37K [3.50K, 4.93K] | 100.0% | 1.00 | -0.55 [-0.58, -0.53] | 1.08 | both | learning rate 0.001, entropy 0.001, weight 2^2 | 32 | 0 of 672 |
+| schedule-fit-rnd-all-layers-exponent-minus-0.5 | 4.15K ± 0.39K [3.40K, 4.94K] | 100.0% | 1.00 | -0.55 [-0.58, -0.53] | 1.07 | both | learning rate 0.001, entropy 0.01, weight 2^-2 | 32 | 0 of 896 |
+| schedule-fit-rnd-all-layers-exponent-minus-1-rate-0.25 | 27.13K ± 1.90K [23.42K, 30.79K] | 100.0% | 1.00 | -1.00 [-1.05, -0.94] | 1.58 | even start | learning rate 0.0001, entropy 0.001, weight 2^-6 | 32 | 0 of 224 |
 
 ### snake grid, width 16, 2 turns (50 cells), tabular-PPO
 
@@ -351,7 +352,7 @@ Budget per policy: 4,194,304 transitions, on the full 16,777,216-transition lear
 | count-per-step-exponent-minus-1.5-rate-0.0625 | 12.38K ± 0.64K [11.12K, 13.61K] | 100.0% | 1.00 | n/a | n/a | even start | learning rate 0.001, entropy 0.001, weight 2^-6 | 32 | 0 of 896 |
 | count-per-step-exponent-minus-1-rate-0.125 | 13.11K ± 1.20K [11.20K, 15.74K] | 100.0% | 1.00 | n/a | n/a | even start | learning rate 0.001, entropy 0.01, weight 2^-6 | 32 | 0 of 896 |
 | count-per-step-exponent-minus-1-rate-0.25 | 13.42K ± 1.07K [11.39K, 15.55K] | 100.0% | 1.00 | n/a | n/a | even start | learning rate 0.001, entropy 0.01, weight 2^-6 | 32 | 0 of 896 |
-| schedule-fit-rnd-exponent-minus-1-refresh-per-step | 13.51K ± 0.72K [12.03K, 14.77K] | 100.0% | 1.00 | -0.81 [-0.83, -0.79] | 1.34 | even start | learning rate 0.001, entropy 0.001, weight 2^-6 | 32 | 0 of 896 |
+| schedule-fit RND, decay exponent −1, refreshed every step (even start, scheduled decay) | 13.51K ± 0.72K [12.03K, 14.77K] | 100.0% | 1.00 | -0.81 [-0.83, -0.79] | 1.34 | even start | learning rate 0.001, entropy 0.001, weight 2^-6 | 32 | 0 of 896 |
 | schedule-fit-rnd-exponent-minus-1-rate-0.25-refresh-per-step | 13.69K ± 1.05K [11.84K, 15.92K] | 100.0% | 1.00 | -0.88 [-0.88, -0.87] | 1.24 | even start | learning rate 0.001, entropy 0.01, weight 2^-6 | 32 | 0 of 896 |
 | count-per-step-exponent-minus-1-rate-0.0625 | 15.09K ± 1.23K [12.90K, 17.72K] | 100.0% | 1.00 | n/a | n/a | even start | learning rate 0.001, entropy 0.001, weight 2^-6 | 32 | 0 of 896 |
 | count-per-rollout-exponent-minus-1-rate-0.125 | 16.42K ± 1.13K [14.25K, 18.66K] | 100.0% | 1.00 | n/a | n/a | even start | learning rate 0.001, entropy 0.01, weight 2^-6 | 32 | 0 of 896 |
@@ -361,7 +362,7 @@ Budget per policy: 4,194,304 transitions, on the full 16,777,216-transition lear
 | count-per-rollout-exponent-minus-1-rate-0.0625 | 17.09K ± 1.41K [14.39K, 19.88K] | 100.0% | 1.00 | n/a | n/a | even start | learning rate 0.001, entropy 0.001, weight 2^-6 | 32 | 0 of 896 |
 | schedule-fit-rnd-exponent-minus-0.75-refresh-per-step | 17.84K ± 2.03K [14.07K, 21.90K] | 100.0% | 1.00 | -0.70 [-0.71, -0.70] | 1.13 | even start | learning rate 0.001, entropy 0.01, weight 2^-6 | 32 | 0 of 896 |
 | schedule-fit-rnd-all-layers-exponent-minus-1-rate-0.25 | 27.83K ± 2.71K [22.46K, 32.89K] | 100.0% | 1.00 | -1.00 [-1.06, -0.93] | 1.17 | even start | learning rate 0.001, entropy 0.001, weight 2^-6 | 32 | 0 of 896 |
-| schedule-fit-rnd-exponent-minus-0.5-refresh-per-step | 32.19K ± 4.39K [23.58K, 40.70K] | 100.0% | 1.00 | -0.50 [-0.50, -0.50] | 0.83 | both | learning rate 0.001, entropy 0.01, weight 2^-6 | 32 | 0 of 896 |
+| schedule-fit RND, decay exponent −0.5, refreshed every step (even start, scheduled decay) | 32.19K ± 4.39K [23.58K, 40.70K] | 100.0% | 1.00 | -0.50 [-0.50, -0.50] | 0.83 | both | learning rate 0.001, entropy 0.01, weight 2^-6 | 32 | 0 of 896 |
 | schedule-fit-rnd-exponent-minus-0.5-refresh-per-rollout | 39.35K ± 6.45K [28.24K, 53.03K] | 100.0% | 1.00 | -0.50 [-0.50, -0.50] | 0.83 | both | learning rate 0.001, entropy 0.001, weight 2^-6 | 32 | 0 of 896 |
 | schedule-fit-rnd-all-layers-exponent-minus-0.5 | 44.96K ± 9.44K [27.99K, 64.42K] | 100.0% | 1.00 | -0.55 [-0.58, -0.51] | 0.75 | both | learning rate 0.001, entropy 0.001, weight 2^-4 | 32 | 0 of 896 |
 
@@ -373,13 +374,13 @@ Budget per policy: 4,194,304 transitions, on the full 16,777,216-transition lear
 | count-per-step-exponent-minus-1-rate-0.25 | <u>39.52K</u> ± 2.99K [33.49K, 45.06K] | 100.0% | 1.00 | n/a | n/a | even start | learning rate 0.001, entropy 0.01, weight 2^2 | 32 | 0 of 896 |
 | count-per-step-exponent-minus-0.75 | 39.70K ± 3.12K [33.98K, 45.72K] | 100.0% | 1.00 | n/a | n/a | even start | learning rate 0.001, entropy 0.01, weight 2^0 | 32 | 0 of 896 |
 | count-per-rollout-exponent-minus-1-rate-0.125 | 39.96K ± 3.55K [33.72K, 47.20K] | 100.0% | 1.00 | n/a | n/a | even start | learning rate 0.001, entropy 0.01, weight 2^6 | 32 | 0 of 896 |
-| schedule-fit-rnd-exponent-minus-1-refresh-per-step | 42.07K ± 2.84K [36.97K, 47.87K] | 100.0% | 1.00 | -0.88 [-0.91, -0.83] | 1.36 | even start | learning rate 0.001, entropy 0.01, weight 2^2 | 32 | 0 of 896 |
+| schedule-fit RND, decay exponent −1, refreshed every step (even start, scheduled decay) | 42.07K ± 2.84K [36.97K, 47.87K] | 100.0% | 1.00 | -0.88 [-0.91, -0.83] | 1.36 | even start | learning rate 0.001, entropy 0.01, weight 2^2 | 32 | 0 of 896 |
 | schedule-fit-rnd-exponent-minus-1-rate-0.25-refresh-per-step | 43.21K ± 3.03K [37.94K, 49.48K] | 100.0% | 1.00 | -0.91 [-0.94, -0.89] | 1.24 | even start | learning rate 0.001, entropy 0.01, weight 2^0 | 32 | 0 of 896 |
 | schedule-fit-rnd-exponent-minus-1-rate-0.25-refresh-per-rollout | 43.75K ± 5.55K [33.64K, 55.38K] | 100.0% | 1.00 | -0.94 [-0.96, -0.90] | 1.23 | even start | learning rate 0.001, entropy 0.01, weight 2^0 | 32 | 0 of 896 |
 | count-per-step-exponent-minus-1-rate-0.125 | 43.77K ± 4.98K [34.59K, 53.57K] | 100.0% | 1.00 | n/a | n/a | even start | learning rate 0.001, entropy 0.01, weight 2^4 | 32 | 0 of 896 |
 | count-per-step-exponent-minus-1-rate-0.0625 | 44.84K ± 3.95K [37.69K, 52.90K] | 100.0% | 1.00 | n/a | n/a | even start | learning rate 0.001, entropy 0.01, weight 2^2 | 32 | 0 of 896 |
 | schedule-fit-rnd-exponent-minus-0.75-refresh-per-step | 47.94K ± 4.44K [39.63K, 57.22K] | 100.0% | 1.00 | -0.72 [-0.73, -0.71] | 1.11 | even start | learning rate 0.001, entropy 0.01, weight 2^4 | 32 | 0 of 896 |
-| schedule-fit-rnd-exponent-minus-0.5-refresh-per-step | 48.98K ± 5.06K [39.54K, 59.22K] | 100.0% | 1.00 | -0.50 [-0.50, -0.50] | 0.77 | both | learning rate 0.001, entropy 0.01, weight 2^2 | 32 | 0 of 896 |
+| schedule-fit RND, decay exponent −0.5, refreshed every step (even start, scheduled decay) | 48.98K ± 5.06K [39.54K, 59.22K] | 100.0% | 1.00 | -0.50 [-0.50, -0.50] | 0.77 | both | learning rate 0.001, entropy 0.01, weight 2^2 | 32 | 0 of 896 |
 | count-per-step-exponent-minus-1.5-rate-0.0625 | 52.94K ± 8.20K [40.18K, 71.75K] | 100.0% | 1.00 | n/a | n/a | even start | learning rate 0.001, entropy 0.01, weight 2^6 | 32 | 0 of 896 |
 | count-per-rollout-exponent-minus-1-rate-0.0625 | 54.17K ± 5.22K [44.99K, 65.03K] | 100.0% | 1.00 | n/a | n/a | even start | learning rate 0.001, entropy 0.01, weight 2^6 | 32 | 0 of 896 |
 | schedule-fit-rnd-exponent-minus-0.5-refresh-per-rollout | 57.66K ± 3.08K [51.76K, 63.84K] | 100.0% | 1.00 | -0.50 [-0.50, -0.50] | 0.78 | both | learning rate 0.001, entropy 0.01, weight 2^6 | 32 | 0 of 896 |
@@ -396,7 +397,7 @@ Budget per policy: 4,194,304 transitions, on the full 16,777,216-transition lear
 
 | idea | mean capped first-goal steps ↓ ± standard error [95%] | goal found | start max/min | decay slope, median [middle half] | late count consistency | properties met | best setting | seeds | copies with a non-finite bonus, all settings |
 |---|---|---|---|---|---|---|---|---|---|
-| frozen-tabular-rnd-field-count-per-step-exponent-minus-1 | **6.91K** ± 0.60K [5.85K, 8.16K] | 100.0% | 3.65 | n/a | n/a | neither | learning rate 0.001, entropy 0.001, weight 2^-6 | 32 | 0 of 896 |
+| count rule on the frozen tabular-RND field, decay exponent −1, refreshed every step (uneven start, scheduled decay) | **6.91K** ± 0.60K [5.85K, 8.16K] | 100.0% | 3.65 | n/a | n/a | neither | learning rate 0.001, entropy 0.001, weight 2^-6 | 32 | 0 of 896 |
 | frozen-tabular-rnd-field-count-per-step-exponent-minus-1-rate-0.25 | <u>7.58K</u> ± 0.60K [6.50K, 8.78K] | 100.0% | 3.65 | n/a | n/a | neither | learning rate 0.001, entropy 0.001, weight 2^-6 | 32 | 0 of 896 |
 | frozen-tabular-rnd-field-count-per-rollout-exponent-minus-1-rate-0.25 | 7.89K ± 0.64K [6.71K, 9.15K] | 100.0% | 3.65 | n/a | n/a | neither | learning rate 0.001, entropy 0.001, weight 2^-6 | 32 | 0 of 896 |
 | frozen-tabular-rnd-field-count-per-step-exponent-minus-0.5 | 14.23K ± 3.80K [7.62K, 21.55K] | 100.0% | 3.65 | n/a | n/a | neither | learning rate 0.001, entropy 0.001, weight 2^-6 | 32 | 0 of 896 |
@@ -405,7 +406,7 @@ Budget per policy: 4,194,304 transitions, on the full 16,777,216-transition lear
 
 | idea | mean capped first-goal steps ↓ ± standard error [95%] | goal found | start max/min | decay slope, median [middle half] | late count consistency | properties met | best setting | seeds | copies with a non-finite bonus, all settings |
 |---|---|---|---|---|---|---|---|---|---|
-| frozen-tabular-rnd-field-count-per-step-exponent-minus-1 | **1.94K** ± 0.25K [1.48K, 2.45K] | 100.0% | 3.65 | n/a | n/a | neither | learning rate 0.001, entropy 0.01, weight 2^-6 | 32 | 0 of 896 |
+| count rule on the frozen tabular-RND field, decay exponent −1, refreshed every step (uneven start, scheduled decay) | **1.94K** ± 0.25K [1.48K, 2.45K] | 100.0% | 3.65 | n/a | n/a | neither | learning rate 0.001, entropy 0.01, weight 2^-6 | 32 | 0 of 896 |
 | frozen-tabular-rnd-field-count-per-step-exponent-minus-1-rate-0.25 | <u>2.12K</u> ± 0.25K [1.66K, 2.63K] | 100.0% | 3.65 | n/a | n/a | neither | learning rate 0.001, entropy 0.001, weight 2^-6 | 32 | 0 of 896 |
 | frozen-tabular-rnd-field-count-per-step-exponent-minus-0.5 | 2.56K ± 0.28K [2.00K, 3.08K] | 100.0% | 3.65 | n/a | n/a | neither | learning rate 0.001, entropy 0.01, weight 2^2 | 32 | 0 of 896 |
 | frozen-tabular-rnd-field-count-per-rollout-exponent-minus-1-rate-0.25 | 3.13K ± 0.27K [2.64K, 3.66K] | 100.0% | 3.65 | n/a | n/a | neither | learning rate 0.001, entropy 0.001, weight 2^0 | 32 | 0 of 896 |
@@ -414,7 +415,7 @@ Budget per policy: 4,194,304 transitions, on the full 16,777,216-transition lear
 
 | idea | mean capped first-goal steps ↓ ± standard error [95%] | goal found | start max/min | decay slope, median [middle half] | late count consistency | properties met | best setting | seeds | copies with a non-finite bonus, all settings |
 |---|---|---|---|---|---|---|---|---|---|
-| frozen-tabular-rnd-field-count-per-step-exponent-minus-1 | **15.06K** ± 1.44K [12.35K, 18.02K] | 100.0% | 4.23 | n/a | n/a | neither | learning rate 0.001, entropy 0.01, weight 2^-6 | 32 | 0 of 896 |
+| count rule on the frozen tabular-RND field, decay exponent −1, refreshed every step (uneven start, scheduled decay) | **15.06K** ± 1.44K [12.35K, 18.02K] | 100.0% | 4.23 | n/a | n/a | neither | learning rate 0.001, entropy 0.01, weight 2^-6 | 32 | 0 of 896 |
 | frozen-tabular-rnd-field-count-per-step-exponent-minus-1-rate-0.25 | <u>15.60K</u> ± 1.02K [13.73K, 17.69K] | 100.0% | 4.23 | n/a | n/a | neither | learning rate 0.001, entropy 0.01, weight 2^-6 | 32 | 0 of 896 |
 | frozen-tabular-rnd-field-count-per-rollout-exponent-minus-1-rate-0.25 | 18.76K ± 1.80K [15.49K, 22.41K] | 100.0% | 4.23 | n/a | n/a | neither | learning rate 0.001, entropy 0.01, weight 2^-6 | 32 | 0 of 896 |
 | frozen-tabular-rnd-field-count-per-step-exponent-minus-0.5 | 67.66K ± 12.73K [45.78K, 94.69K] | 100.0% | 4.23 | n/a | n/a | neither | learning rate 0.0001, entropy 0.01, weight 2^-6 | 32 | 0 of 896 |
@@ -423,7 +424,7 @@ Budget per policy: 4,194,304 transitions, on the full 16,777,216-transition lear
 
 | idea | mean capped first-goal steps ↓ ± standard error [95%] | goal found | start max/min | decay slope, median [middle half] | late count consistency | properties met | best setting | seeds | copies with a non-finite bonus, all settings |
 |---|---|---|---|---|---|---|---|---|---|
-| frozen-tabular-rnd-field-count-per-step-exponent-minus-1 | **51.45K** ± 7.08K [39.77K, 66.60K] | 100.0% | 4.23 | n/a | n/a | neither | learning rate 0.001, entropy 0.01, weight 2^4 | 32 | 0 of 896 |
+| count rule on the frozen tabular-RND field, decay exponent −1, refreshed every step (uneven start, scheduled decay) | **51.45K** ± 7.08K [39.77K, 66.60K] | 100.0% | 4.23 | n/a | n/a | neither | learning rate 0.001, entropy 0.01, weight 2^4 | 32 | 0 of 896 |
 | frozen-tabular-rnd-field-count-per-step-exponent-minus-1-rate-0.25 | <u>103.94K</u> ± 38.15K [38.07K, 180.13K] | 100.0% | 4.23 | n/a | n/a | neither | learning rate 0.001, entropy 0.01, weight 2^-2 | 32 | 0 of 896 |
 | frozen-tabular-rnd-field-count-per-rollout-exponent-minus-1-rate-0.25 | 129.21K ± 31.87K [71.61K, 193.00K] | 100.0% | 4.23 | n/a | n/a | neither | learning rate 0.001, entropy 0.01, weight 2^2 | 32 | 0 of 896 |
 | frozen-tabular-rnd-field-count-per-step-exponent-minus-0.5 | 557.95K ± 207.57K [203.88K, 996.57K] | 96.9% | 4.23 | n/a | n/a | neither | learning rate 0.001, entropy 0.01, weight 2^-4 | 32 | 0 of 896 |
@@ -434,19 +435,25 @@ Define $K$ as the number of policy seeds, $B$ as the budget, and $T_i$ as the tr
 
 ### straight grid, 32 cells, tabular-PPO
 
-Not run yet.
+| idea | mean capped first-goal steps ↓ ± standard error [95%] | difference to the baseline on the same seeds [95%] | goal found | coverage | final-policy goal rate, sampled | greedy | configuration | seeds |
+|---|---|---|---|---|---|---|---|---|
+| count rule on the frozen tabular-RND field, decay exponent −1, refreshed every step (uneven start, scheduled decay) | **6.55K** ± 0.23K [6.11K, 7.01K] | baseline not finished | 100.0% | 100.0% | 100.0% | 100.0% | learning rate 0.001, entropy 0.01, weight 2^-6 | 256 |
 
 ### straight grid, 32 cells, coordinate-PPO
 
-Not run yet.
+| idea | mean capped first-goal steps ↓ ± standard error [95%] | difference to the baseline on the same seeds [95%] | goal found | coverage | final-policy goal rate, sampled | greedy | configuration | seeds |
+|---|---|---|---|---|---|---|---|---|
+| count rule on the frozen tabular-RND field, decay exponent −1, refreshed every step (uneven start, scheduled decay) | **2.56K** ± 0.15K [2.26K, 2.86K] | baseline not finished | 100.0% | 100.0% | 99.2% | 99.2% | learning rate 0.001, entropy 0.001, weight 2^-1 | 128 |
 
 ### snake grid, width 16, 2 turns (50 cells), tabular-PPO
 
 | idea | mean capped first-goal steps ↓ ± standard error [95%] | difference to the baseline on the same seeds [95%] | goal found | coverage | final-policy goal rate, sampled | greedy | configuration | seeds |
 |---|---|---|---|---|---|---|---|---|
-| frozen-tabular-rnd-field-count-per-step-exponent-minus-1 | **14.07K** ± 0.34K [13.43K, 14.78K] | baseline not finished | 100.0% | 100.0% | 100.0% | 100.0% | learning rate 0.001, entropy 0.01, weight 2^-6 | 512 |
+| count rule on the frozen tabular-RND field, decay exponent −1, refreshed every step (uneven start, scheduled decay) | **14.07K** ± 0.34K [13.43K, 14.78K] | baseline not finished | 100.0% | 100.0% | 100.0% | 100.0% | learning rate 0.001, entropy 0.01, weight 2^-6 | 512 |
 
 ### snake grid, width 16, 2 turns (50 cells), coordinate-PPO
 
-Not run yet.
+| idea | mean capped first-goal steps ↓ ± standard error [95%] | difference to the baseline on the same seeds [95%] | goal found | coverage | final-policy goal rate, sampled | greedy | configuration | seeds |
+|---|---|---|---|---|---|---|---|---|
+| count rule on the frozen tabular-RND field, decay exponent −1, refreshed every step (uneven start, scheduled decay) | **128.05K** ± 16.31K [99.89K, 161.84K] | baseline not finished | 100.0% | 100.0% | 39.1% | 36.1% | learning rate 0.001, entropy 0.01, weight 2^-2 | 512 |
 
