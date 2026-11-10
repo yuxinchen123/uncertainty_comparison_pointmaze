@@ -13,7 +13,7 @@ from ..atari_pixels.settings import scalar_setting, scalar_product
 from ..atari_pixels.state import (AdamState, FlatParameterLayout, RunningStatistics, adam_step,
                                  initialize_adam, initialize_statistics, normalize_frames,
                                  update_observation_statistics)
-from .online_rnd import jax_errors, jax_forward
+from .online_rnd import jax_errors, jax_features, jax_forward
 from ..atari_pixels.training import normalize_intrinsic_rewards as cleanrl_normalize
 
 
@@ -229,9 +229,14 @@ def collect_rollout(state, configuration, transition_table, coordinates, fields)
         state.iteration, step))(jnp.arange(configuration.num_steps, dtype=jnp.int32))
         if configuration.batch_random_keys else None)
 
+    refresh = configuration.intrinsic_source == "online_rnd" and configuration.rnd_refresh == "per_step"
+    if refresh:
+        # Before: error lengths [C,S] at the start of the rollout; after: each cell's place on the bonus schedule.
+        places = schedule_position(fields, configuration)
+
     def step(carry, time):
         """Collect one transition, including goal arrivals and automatic episode reset."""
-        position, elapsed, counts, reached, successes, episodes, first_goal, progress, blocked = carry
+        position, elapsed, counts, reached, successes, episodes, first_goal, progress, blocked, *seen = carry
         outputs = (gather_states(cached, position[:, None], configuration)[:, 0]
             if cached is not None else network_outputs(
                 state.parameters, position[:, None], coordinates, configuration)[:, 0])
@@ -258,6 +263,12 @@ def collect_rollout(state, configuration, transition_table, coordinates, fields)
             bonus = fields[rows, arrived] if configuration.intrinsic_source == "online_rnd" else (
                 jnp.zeros((copies,), jnp.float32) if configuration.hoist_bonus else
                 count_bonus(fields[rows, arrived], visits, configuration))
+        if refresh:
+            # The predictor trains on this rollout's states, so the current state counts as seen once more; the
+            # arrival earns the error the predictor would have after the states seen so far in this rollout.
+            # Before: place 3 and seen 1 under (1+m)^(-1/2); after: bonus (1+4)^(-1/2).
+            seen = (seen[0].at[rows, position].add(1.0),)
+            bonus = schedule_value(places[rows, arrived] + seen[0][rows, arrived], configuration).astype(jnp.float32)
         succeeded = arrived == goal
         elapsed = elapsed + 1
         done = succeeded | (elapsed >= configuration.episode_length)
@@ -270,13 +281,15 @@ def collect_rollout(state, configuration, transition_table, coordinates, fields)
             succeeded.astype(jnp.float32), bonus, done, succeeded)
         return (jnp.where(done, configuration.start_state, arrived), jnp.where(done, 0, elapsed),
                 counts, reached, successes + succeeded, episodes + done, first_goal,
-                jnp.maximum(progress, arrived), blocked + (arrived == position)), record
+                jnp.maximum(progress, arrived), blocked + (arrived == position), *seen), record
 
     carry = (state.positions, state.episode_steps, state.counts, state.reached,
              state.successes, state.episodes, state.first_goal_step, state.maximum_progress, state.blocked_moves)
+    if refresh:
+        carry = carry + (jnp.zeros(fields.shape, jnp.float32),)
     carry, rollout = jax.lax.scan(step, carry, jnp.arange(configuration.num_steps, dtype=jnp.int32),
                                   unroll=configuration.rollout_unroll)
-    position, elapsed, counts, reached, successes, episodes, first_goal, progress, blocked = carry
+    position, elapsed, counts, reached, successes, episodes, first_goal, progress, blocked = carry[:9]
     # Before: rollout rows [T,C]; after: state ids [C,T] for one wide forward pass.
     ids = rollout.states.T
     if configuration.hoist_values or configuration.hoist_log_probabilities:
@@ -407,8 +420,8 @@ def minibatch_loss(parameters, batch, coordinates, configuration, target=None):
     total += scalar_setting(configuration, "value_coefficient") * (ext_loss + int_loss)
     diagnostics = {"loss": total, "policy_loss": policy_loss, "value_loss": ext_loss + int_loss,
         "entropy": entropy, "approximate_kl": ((ratio - 1) - (log_probability - batch["log_probabilities"])).mean(axis=1)}
-    if configuration.intrinsic_source == "online_rnd" and configuration.rnd_optimizer == "exact_step":
-        # The exact-step optimizer computes its own direction and step, so the predictor adds nothing here.
+    if configuration.intrinsic_source == "online_rnd" and configuration.rnd_optimizer in {"exact_step", "rollout_fit"}:
+        # These optimizers compute their own direction and step, so the predictor adds nothing here.
         diagnostics.update(predictor_loss=jnp.zeros_like(total))
     elif configuration.intrinsic_source == "online_rnd":
         # CleanRL: mean squared feature error, averaged over the samples kept by the mask.
@@ -445,6 +458,11 @@ def update_policy(state, batch, coordinates, configuration):
         return jax.tree.map(lambda values: jax.vmap(lambda values, ids: values[ids])(values, rows), batch)
 
     separate = configuration.intrinsic_source == "online_rnd" and configuration.rnd_optimizer != "shared_adam"
+    if configuration.intrinsic_source == "online_rnd" and configuration.rnd_optimizer == "rollout_fit":
+        # Before: batch["states"] [C,T] cell ids; after: visits of every cell in this rollout [C,S], then one fit.
+        visits = jax.nn.one_hot(batch["states"], coordinates.shape[0], dtype=jnp.float32).sum(axis=1)
+        fitted = rollout_count_fit(parameters["predictor"], state.target, state.rnd_table, visits, configuration)
+        parameters = dict(parameters, predictor=fitted)
 
     def minibatch(carry, rows_or_batch):
         """Differentiate one minibatch and update each policy using its own gradient norm."""
@@ -467,7 +485,10 @@ def update_policy(state, batch, coordinates, configuration):
             policy, optimizer, norm = adam_step(policy, {name: value for name, value in gradients.items()
                 if name != "predictor"}, optimizer, rates, scalar_setting(configuration, "max_gradient_norm"),
                 scalar_setting(configuration, "adam_epsilon"), fuse_optimizer=configuration.fuse_optimizer)
-            if configuration.rnd_optimizer == "exact_step":
+            if configuration.rnd_optimizer == "rollout_fit":
+                # The predictor was fitted once for the whole rollout, before the policy's epochs.
+                predictor = parameters["predictor"]
+            elif configuration.rnd_optimizer == "exact_step":
                 predictor = exact_shrink_step(parameters["predictor"], state.target, selected["rnd_inputs"],
                                               selected["predictor_mask"], configuration)
                 predictor_optimizer = predictor_optimizer._replace(step=predictor_optimizer.step + 1)
@@ -548,6 +569,101 @@ def exact_shrink_step(predictor, target, inputs, mask, configuration):
 
     predictor, _ = jax.lax.scan(one_step, predictor, None, length=configuration.rnd_exact_step_iterations)
     return predictor
+
+
+def schedule_value(steps, configuration):
+    """Bonus schedule b(m), normalized to b(0) = 1: one power law of (1 + rate m) or a weighted sum of several."""
+    scaled = 1.0 + configuration.rnd_count_per_kept_visit * steps
+    if not configuration.rnd_schedule:
+        return scaled ** (-1.0 / configuration.rnd_shrink_power)
+    total = sum(weight for weight, _ in configuration.rnd_schedule)
+    return sum((weight / total) * scaled ** (-exponent) for weight, exponent in configuration.rnd_schedule)
+
+
+def schedule_position(length, configuration):
+    """Invert the schedule: the visits m at which b(m) equals an error length (zero for lengths of 1 or more)."""
+    # Before: lengths [1.0, 0.5] under b(m) = (1+m)^(-1/2); after: visits [0, 3].
+    length = jnp.clip(length, 1e-12, 1.0)
+    if not configuration.rnd_schedule:
+        return (length ** (-configuration.rnd_shrink_power) - 1.0) / configuration.rnd_count_per_kept_visit
+    # A sum of power laws has no closed inverse: bisect on log(1 + rate m), where b is decreasing.
+    low, high = jnp.zeros_like(length), jnp.full_like(length, 60.0)
+
+    def halve(bounds, _):
+        low, high = bounds
+        middle = 0.5 * (low + high)
+        value = schedule_value(jnp.expm1(middle) / configuration.rnd_count_per_kept_visit, configuration)
+        return (jnp.where(value > length, middle, low), jnp.where(value > length, high, middle)), None
+
+    (low, high), _ = jax.lax.scan(halve, (low, high), None, length=50)
+    return jnp.expm1(0.5 * (low + high)) / configuration.rnd_count_per_kept_visit
+
+
+def rollout_count_fit(predictor, target, table, visits, configuration):
+    """Fit the predictor to every cell's output target for one rollout: visited cells advance, the others stay."""
+    # Before: predictor weights, the one-hot table [S,S], visits of each cell in this rollout [C,S].
+    # After: weights whose error length in each cell is the schedule moved on by that cell's visits.
+    copies, cells = visits.shape
+    inputs = jnp.broadcast_to(table, (copies,) + table.shape)
+    features = jax.lax.stop_gradient(target_features(target, inputs, configuration))
+
+    def wanted_change(current):
+        """Output change of every cell: visited cells move along the schedule by their visits, the others by zero."""
+        residual = features - current
+        length = jnp.sqrt(jnp.sum(residual ** 2, axis=-1, keepdims=True))
+        moved = schedule_value(schedule_position(length, configuration) + visits[..., None], configuration)
+        factor = jnp.where(visits[..., None] > 0, jnp.minimum(moved / jnp.maximum(length, 1e-12), 1.0), 1.0)
+        return jax.lax.stop_gradient((1.0 - factor) * residual)
+
+    if configuration.rnd_fit_solver == "output_layer_exact":
+        # Only the output layer changes: with hidden features H [C,S,W] and wanted changes E [C,S,F], the smallest
+        # weight change that gives every cell exactly its change is H^T (H H^T)^-1 E, solved in float64.
+        hidden = jax_features(predictor, inputs).astype(jnp.float64)
+        error = wanted_change(jax_forward(predictor, inputs)).astype(jnp.float64)
+        gram = jnp.einsum("csw,ctw->cst", hidden, hidden)
+        ridge = 1e-10 * jnp.trace(gram, axis1=1, axis2=2)[:, None, None] / cells * jnp.eye(cells)
+        change = jnp.einsum("csw,csf->cwf", hidden, jnp.linalg.solve(gram + ridge, error))
+        output = dict(predictor[-1], weight=predictor[-1]["weight"] + change.astype(predictor[-1]["weight"].dtype))
+        return tuple(predictor[:-1]) + (output,)
+
+    def outputs_of(values):
+        """Outputs of every cell as a function of the predictor's weights."""
+        return jax_forward(values, inputs)
+
+    def inner(values_a, values_b):
+        """Per-copy inner product of two weight trees or two output arrays."""
+        if isinstance(values_a, jnp.ndarray):
+            return (values_a * values_b).reshape(copies, -1).sum(axis=1)
+        return sum((a * b).reshape(copies, -1).sum(axis=1)
+                   for a, b in zip(jax.tree.leaves(values_a), jax.tree.leaves(values_b)))
+
+    def scale(tree, factor):
+        """Multiply every leaf by a per-copy factor."""
+        return jax.tree.map(lambda value: value * factor.reshape((copies,) + (1,) * (value.ndim - 1)), tree)
+
+    # All layers change: one least-squares step on the predictor linearized at its current weights. Visited cells
+    # ask for their change and unvisited cells for zero change, all with the same weight.
+    current, push = jax.linearize(outputs_of, predictor)
+    pull = jax.linear_transpose(push, predictor)
+    error = wanted_change(current)
+
+    def iteration(carry, _):
+        """One conjugate-gradient iteration on the normal equations, for every copy at once."""
+        change, remaining, gradient, direction, size = carry
+        pushed = push(direction)
+        step = size / jnp.maximum(inner(pushed, pushed), 1e-30)
+        change = jax.tree.map(lambda a, b: a + b, change, scale(direction, step))
+        remaining = remaining - step.reshape(copies, 1, 1) * pushed
+        (gradient,) = pull(remaining)
+        new_size = inner(gradient, gradient)
+        direction = jax.tree.map(lambda a, b: a + b, gradient, scale(direction, new_size / jnp.maximum(size, 1e-30)))
+        return (change, remaining, gradient, direction, new_size), None
+
+    (gradient,) = pull(error)
+    zero = jax.tree.map(jnp.zeros_like, predictor)
+    start = (zero, error, gradient, gradient, inner(gradient, gradient))
+    (change, _, _, _, _), _ = jax.lax.scan(iteration, start, None, length=configuration.rnd_fit_iterations)
+    return jax.tree.map(lambda a, b: a + b, predictor, change)
 
 
 def predictor_step(predictor, gradients, optimizer, configuration):

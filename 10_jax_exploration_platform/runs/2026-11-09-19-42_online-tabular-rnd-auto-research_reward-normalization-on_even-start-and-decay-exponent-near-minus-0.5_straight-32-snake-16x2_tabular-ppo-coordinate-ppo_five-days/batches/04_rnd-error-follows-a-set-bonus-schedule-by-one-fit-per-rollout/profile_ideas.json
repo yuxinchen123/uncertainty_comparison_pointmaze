@@ -1,0 +1,48 @@
+{
+  "control": {},
+  "unit-start-rollout-fit-output-layer-exact-exponent-minus-0.5": {
+    "settings": {
+      "rnd_loss": "shrink_target",
+      "rnd_optimizer": "rollout_fit",
+      "rnd_readout": "length",
+      "rnd_unit_length_target": true,
+      "rnd_fit_solver": "output_layer_exact"
+    },
+    "network": {
+      "zero_predictor_output": true
+    }
+  },
+  "unit-start-rollout-fit-output-layer-exact-exponent-minus-1-plus-0.3-of-exponent-minus-0.5": {
+    "settings": {
+      "rnd_loss": "shrink_target",
+      "rnd_optimizer": "rollout_fit",
+      "rnd_readout": "length",
+      "rnd_unit_length_target": true,
+      "rnd_schedule": [
+        [
+          1.0,
+          1.0
+        ],
+        [
+          0.3,
+          0.5
+        ]
+      ],
+      "rnd_fit_solver": "output_layer_exact"
+    },
+    "network": {
+      "zero_predictor_output": true
+    }
+  },
+  "unit-start-rollout-fit-all-layers-12-iterations-exponent-minus-0.5": {
+    "settings": {
+      "rnd_loss": "shrink_target",
+      "rnd_optimizer": "rollout_fit",
+      "rnd_readout": "length",
+      "rnd_unit_length_target": true
+    },
+    "network": {
+      "zero_predictor_output": true
+    }
+  }
+}

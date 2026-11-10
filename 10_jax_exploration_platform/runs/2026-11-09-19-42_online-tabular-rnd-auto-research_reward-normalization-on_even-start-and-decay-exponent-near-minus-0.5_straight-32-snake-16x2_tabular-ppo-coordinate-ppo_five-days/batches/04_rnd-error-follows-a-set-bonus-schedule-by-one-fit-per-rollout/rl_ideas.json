@@ -1,0 +1,178 @@
+{
+ "schedule-fit-rnd-exponent-minus-0.5-refresh-per-rollout": {
+  "settings": {
+   "rnd_loss": "shrink_target",
+   "rnd_optimizer": "rollout_fit",
+   "rnd_readout": "length",
+   "rnd_unit_length_target": true,
+   "rnd_fit_solver": "output_layer_exact"
+  },
+  "network": {
+   "zero_predictor_output": true
+  }
+ },
+ "schedule-fit-rnd-exponent-minus-0.5-refresh-per-step": {
+  "settings": {
+   "rnd_loss": "shrink_target",
+   "rnd_optimizer": "rollout_fit",
+   "rnd_readout": "length",
+   "rnd_unit_length_target": true,
+   "rnd_refresh": "per_step",
+   "rnd_fit_solver": "output_layer_exact"
+  },
+  "network": {
+   "zero_predictor_output": true
+  }
+ },
+ "schedule-fit-rnd-exponent-minus-1-rate-0.25-refresh-per-rollout": {
+  "settings": {
+   "rnd_loss": "shrink_target",
+   "rnd_optimizer": "rollout_fit",
+   "rnd_readout": "length",
+   "rnd_unit_length_target": true,
+   "rnd_shrink_power": 1.0,
+   "rnd_count_per_kept_visit": 0.25,
+   "rnd_fit_solver": "output_layer_exact"
+  },
+  "network": {
+   "zero_predictor_output": true
+  }
+ },
+ "schedule-fit-rnd-exponent-minus-1-rate-0.25-refresh-per-step": {
+  "settings": {
+   "rnd_loss": "shrink_target",
+   "rnd_optimizer": "rollout_fit",
+   "rnd_readout": "length",
+   "rnd_unit_length_target": true,
+   "rnd_refresh": "per_step",
+   "rnd_shrink_power": 1.0,
+   "rnd_count_per_kept_visit": 0.25,
+   "rnd_fit_solver": "output_layer_exact"
+  },
+  "network": {
+   "zero_predictor_output": true
+  }
+ },
+ "schedule-fit-rnd-exponent-minus-1-refresh-per-step": {
+  "settings": {
+   "rnd_loss": "shrink_target",
+   "rnd_optimizer": "rollout_fit",
+   "rnd_readout": "length",
+   "rnd_unit_length_target": true,
+   "rnd_shrink_power": 1.0,
+   "rnd_refresh": "per_step",
+   "rnd_fit_solver": "output_layer_exact"
+  },
+  "network": {
+   "zero_predictor_output": true
+  }
+ },
+ "schedule-fit-rnd-exponent-minus-0.75-refresh-per-step": {
+  "settings": {
+   "rnd_loss": "shrink_target",
+   "rnd_optimizer": "rollout_fit",
+   "rnd_readout": "length",
+   "rnd_unit_length_target": true,
+   "rnd_shrink_power": 1.3333333333333333,
+   "rnd_refresh": "per_step",
+   "rnd_fit_solver": "output_layer_exact"
+  },
+  "network": {
+   "zero_predictor_output": true
+  }
+ },
+ "schedule-fit-rnd-all-layers-exponent-minus-0.5": {
+  "settings": {
+   "rnd_loss": "shrink_target",
+   "rnd_optimizer": "rollout_fit",
+   "rnd_readout": "length",
+   "rnd_unit_length_target": true
+  },
+  "network": {
+   "zero_predictor_output": true
+  }
+ },
+ "schedule-fit-rnd-all-layers-exponent-minus-1-rate-0.25": {
+  "settings": {
+   "rnd_loss": "shrink_target",
+   "rnd_optimizer": "rollout_fit",
+   "rnd_readout": "length",
+   "rnd_unit_length_target": true,
+   "rnd_shrink_power": 1.0,
+   "rnd_count_per_kept_visit": 0.25
+  },
+  "network": {
+   "zero_predictor_output": true
+  }
+ },
+ "count-per-step-exponent-minus-1-rate-0.5": {
+  "count": {
+   "count_update": "per_step",
+   "count_decay_exponent": 1.0,
+   "count_rate": 0.5
+  }
+ },
+ "count-per-step-exponent-minus-1-rate-0.25": {
+  "count": {
+   "count_update": "per_step",
+   "count_decay_exponent": 1.0,
+   "count_rate": 0.25
+  }
+ },
+ "count-per-step-exponent-minus-1-rate-0.125": {
+  "count": {
+   "count_update": "per_step",
+   "count_decay_exponent": 1.0,
+   "count_rate": 0.125
+  }
+ },
+ "count-per-step-exponent-minus-1-rate-0.0625": {
+  "count": {
+   "count_update": "per_step",
+   "count_decay_exponent": 1.0,
+   "count_rate": 0.0625
+  }
+ },
+ "count-per-rollout-exponent-minus-1-rate-0.5": {
+  "count": {
+   "count_update": "per_rollout",
+   "count_decay_exponent": 1.0,
+   "count_rate": 0.5
+  }
+ },
+ "count-per-rollout-exponent-minus-1-rate-0.125": {
+  "count": {
+   "count_update": "per_rollout",
+   "count_decay_exponent": 1.0,
+   "count_rate": 0.125
+  }
+ },
+ "count-per-rollout-exponent-minus-1-rate-0.0625": {
+  "count": {
+   "count_update": "per_rollout",
+   "count_decay_exponent": 1.0,
+   "count_rate": 0.0625
+  }
+ },
+ "count-per-step-exponent-minus-0.75": {
+  "count": {
+   "count_update": "per_step",
+   "count_decay_exponent": 0.75,
+   "count_rate": 1.0
+  }
+ },
+ "count-per-step-exponent-minus-1.5-rate-0.25": {
+  "count": {
+   "count_update": "per_step",
+   "count_decay_exponent": 1.5,
+   "count_rate": 0.25
+  }
+ },
+ "count-per-step-exponent-minus-1.5-rate-0.0625": {
+  "count": {
+   "count_update": "per_step",
+   "count_decay_exponent": 1.5,
+   "count_rate": 0.0625
+  }
+ }
+}

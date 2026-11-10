@@ -50,14 +50,16 @@ def run_idea(idea, geometry_kind, iterations, field_seeds):
     from exploration_platform.grid_initialization.environments import make_geometry
     from exploration_platform.grid_initialization.online_rnd import NetworkOptions, stack_networks
     from exploration_platform.grid_initialization.training import (
-        all_cell_errors, exact_shrink_step, initialize, predictor_sample_losses, predictor_step)
+        all_cell_errors, exact_shrink_step, initialize, predictor_sample_losses, predictor_step, rollout_count_fit)
     world = make_geometry(geometry_kind, 32, 0) if geometry_kind == 'straight' else make_geometry('snake', 16, 2)
     # Before: 8 field seeds; after: 16 copies, the 8 seeds under uniform visits then the same 8 start-heavy.
     copies, states = len(field_seeds) * len(VISITATION_LAWS), world.state_count
     options = NetworkOptions(input_kind='one_hot', **idea.get('network', {}))
     rnd = stack_networks(np.asarray(list(field_seeds) * len(VISITATION_LAWS)), options, states)
+    settings = {name: (tuple(tuple(pair) for pair in value) if name == 'rnd_schedule' else value)
+                for name, value in idea.get('settings', {}).items()}
     configuration = GridPPOConfig(n_copies=copies, intrinsic_source='online_rnd', rnd_input='one_hot',
-                                  total_timesteps=128 * (1 << 17), **idea.get('settings', {}))
+                                  total_timesteps=128 * (1 << 17), **settings)
     state = initialize(configuration, world.transition_table, world.coordinates,
                        np.ones((copies, states), np.float32), np.arange(copies) + 1, rnd)
     shared = configuration.rnd_optimizer == 'shared_adam'
@@ -79,6 +81,10 @@ def run_idea(idea, geometry_kind, iterations, field_seeds):
         rollout = jnp.where(dwelling[:, None], (index // ROLLOUTS_PER_CELL) % states, rollout)
         counts = counts + jax.vmap(lambda row: jnp.bincount(row, length=states))(rollout).astype(jnp.int32)
         inputs = state.rnd_table[rollout]
+        if configuration.rnd_optimizer == 'rollout_fit':
+            # One fit per rollout to every cell's target; no minibatches.
+            visited = jax.nn.one_hot(rollout, states, dtype=jnp.float32).sum(axis=1)
+            return (rollout_count_fit(predictor, state.target, state.rnd_table, visited, configuration), optimizer, counts), None
 
         def minibatch(carry, piece):
             """Update every copy's predictor on one 32-state minibatch."""

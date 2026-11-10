@@ -262,3 +262,120 @@ def test_count_mixture_is_a_weighted_sum_of_power_laws():
                                (1 + earlier) ** -2.0 + 0.1 * (1 + earlier) ** -0.5, rtol=1e-6)
     with pytest.raises(ValueError):
         GridPPOConfig(n_copies=1, count_mixture=((1.0, -1.0),))
+
+
+def fit_trainer(world, **changes):
+    """A unit-start trainer with the rollout-fit optimizer and the length readout."""
+    return tabular_trainer(world, rnd_optimizer="rollout_fit", rnd_loss="shrink_target", rnd_readout="length",
+        rnd_unit_length_target=True, network={"zero_predictor_output": True}, **changes)
+
+
+def test_schedule_position_inverts_the_schedule():
+    """b(m) and its inverse agree for one power law and for a sum of two."""
+    from exploration_platform.grid_initialization.training import schedule_position, schedule_value
+    visits = jnp.asarray([0.0, 1.0, 7.0, 100.0, 5000.0])
+    for changes in ({}, {"rnd_shrink_power": 1.0}, {"rnd_schedule": ((1.0, 2.0), (0.3, 0.5))},
+                    {"rnd_schedule": ((1.0, 1.0), (0.1, 0.5)), "rnd_count_per_kept_visit": 0.5}):
+        configuration = GridPPOConfig(n_copies=1, intrinsic_source="online_rnd", rnd_input="one_hot",
+            rnd_optimizer="rollout_fit", rnd_loss="shrink_target", rnd_readout="length", rnd_unit_length_target=True,
+            **changes)
+        values = schedule_value(visits, configuration)
+        assert float(values[0]) == pytest.approx(1.0) and np.all(np.diff(np.asarray(values)) < 0)
+        np.testing.assert_allclose(np.asarray(schedule_position(values, configuration)), np.asarray(visits),
+                                   rtol=2e-3, atol=2e-3)
+
+
+def test_rollout_fit_moves_visited_cells_by_their_visits_and_holds_the_others():
+    """Cells visited 8 and 2 times end at 1/sqrt(9) and 1/sqrt(3); unvisited cells stay at 1; visits add up."""
+    from exploration_platform.grid_initialization.training import rollout_count_fit
+    world = make_geometry("straight", 8)
+    trainer, state, _ = fit_trainer(world)
+    visits = jnp.asarray(np.tile([8.0, 2.0, 0, 0, 0, 0, 0, 0], (2, 1)), jnp.float32)
+    predictor = rollout_count_fit(state.parameters["predictor"], state.target, state.rnd_table, visits, trainer.configuration)
+    errors = np.asarray(trainer.all_cell_errors(state._replace(parameters=dict(state.parameters, predictor=predictor))))
+    np.testing.assert_allclose(errors[:, 0], 1.0 / 3.0, rtol=0.03)
+    np.testing.assert_allclose(errors[:, 1], 1.0 / np.sqrt(3.0), rtol=0.03)
+    np.testing.assert_allclose(errors[:, 2:], 1.0, rtol=0.02)
+    # A second rollout: one more visit of cell 0 and three of cell 5.
+    more = jnp.asarray(np.tile([1.0, 0, 0, 0, 0, 3.0, 0, 0], (2, 1)), jnp.float32)
+    predictor = rollout_count_fit(predictor, state.target, state.rnd_table, more, trainer.configuration)
+    errors = np.asarray(trainer.all_cell_errors(state._replace(parameters=dict(state.parameters, predictor=predictor))))
+    # After the first rollout all layers matter and 12 iterations fit only part of each change (measured: cell 5
+    # reaches 0.60 of the wanted 0.5); the changes go the right way and unvisited cells barely move.
+    assert np.all(errors[:, 5] < 0.7) and np.all(errors[:, 5] >= 0.5 - 0.02)
+    assert np.all(errors[:, 0] <= 1.0 / 3.0 + 2e-3) and np.all(errors[:, 0] >= 1.0 / np.sqrt(10.0) - 5e-3)
+    np.testing.assert_allclose(errors[:, 1], 1.0 / np.sqrt(3.0), rtol=0.05)
+
+
+def test_exact_output_layer_fit_is_the_count_rule_in_every_cell():
+    """With the exact solver, three rollouts of visits leave every cell at b(its total visits), unvisited cells at 1."""
+    from exploration_platform.grid_initialization.training import rollout_count_fit
+    world = make_geometry("snake", 4, 2)
+    cells = world.state_count
+    generator = np.random.default_rng(3)
+    for changes, schedule in (({}, lambda m: (1 + m) ** -0.5),
+                              ({"rnd_shrink_power": 1.0}, lambda m: (1 + m) ** -1.0),
+                              ({"rnd_schedule": ((1.0, 1.0), (0.3, 0.5))}, lambda m: ((1 + m) ** -1.0 + 0.3 * (1 + m) ** -0.5) / 1.3)):
+        trainer, state, _ = fit_trainer(world, rnd_fit_solver="output_layer_exact", **changes)
+        predictor, total = state.parameters["predictor"], np.zeros((2, cells))
+        for _ in range(3):
+            visits = generator.integers(0, 40, (2, cells)) * (generator.random((2, cells)) < 0.5)
+            total += visits
+            predictor = rollout_count_fit(predictor, state.target, state.rnd_table, jnp.asarray(visits, jnp.float32),
+                                          trainer.configuration)
+        errors = np.asarray(trainer.all_cell_errors(state._replace(parameters=dict(state.parameters, predictor=predictor))))
+        np.testing.assert_allclose(errors, schedule(total), rtol=2e-3)
+        # Only the output layer changed.
+        for before, after in zip(state.parameters["predictor"][:-1], predictor[:-1]):
+            np.testing.assert_array_equal(np.asarray(before["weight"]), np.asarray(after["weight"]))
+
+
+def test_rollout_fit_follows_a_sum_of_power_laws_and_runs_inside_ppo():
+    """With the schedule (1+m)^-2 + 0.3 (1+m)^-0.5, normalized, 4 visits give its value at 4; PPO iterations stay finite."""
+    from exploration_platform.grid_initialization.training import rollout_count_fit
+    world = make_geometry("straight", 8)
+    trainer, state, _ = fit_trainer(world, rnd_schedule=((1.0, 2.0), (0.3, 0.5)))
+    visits = jnp.asarray(np.tile([4.0, 0, 0, 0, 0, 0, 0, 0], (2, 1)), jnp.float32)
+    predictor = rollout_count_fit(state.parameters["predictor"], state.target, state.rnd_table, visits, trainer.configuration)
+    errors = np.asarray(trainer.all_cell_errors(state._replace(parameters=dict(state.parameters, predictor=predictor))))
+    np.testing.assert_allclose(errors[:, 0], (5.0 ** -2 + 0.3 * 5.0 ** -0.5) / 1.3, rtol=0.05)
+    # Inside PPO: the exact solver never raises an error length; the conjugate-gradient solver lets unvisited
+    # cells drift by a few percent (measured 1.035 after three iterations).
+    for solver, ceiling in (("output_layer_exact", 1.001), ("conjugate_gradient", 1.1)):
+        trainer, state, _ = fit_trainer(world, rnd_schedule=((1.0, 2.0), (0.3, 0.5)), rnd_fit_solver=solver)
+        for _ in range(3):
+            state, _ = trainer.train_iteration(state)
+        errors = np.asarray(trainer.all_cell_errors(state))
+        assert np.isfinite(errors).all() and np.all(errors[:, 0] < 0.9) and errors.max() <= ceiling
+        if solver == "output_layer_exact":
+            # Every cell's error is the schedule at a whole number of visits, and the visits of all cells add up
+            # to the samples the predictor was trained on: 3 rollouts of num_steps states.
+            from exploration_platform.grid_initialization.training import schedule_position
+            positions = np.asarray(schedule_position(jnp.asarray(errors), trainer.configuration), np.float64)
+            np.testing.assert_allclose(positions, np.round(positions), atol=0.05)
+            np.testing.assert_allclose(positions.sum(axis=1), 3 * trainer.configuration.num_steps, atol=0.2)
+    with pytest.raises(ValueError):
+        GridPPOConfig(n_copies=1, intrinsic_source="online_rnd", rnd_input="one_hot", rnd_optimizer="rollout_fit",
+                      rnd_loss="shrink_target")
+
+
+def test_per_step_refresh_gives_each_arrival_the_error_after_the_states_already_seen():
+    """From a unit start, an arrival's bonus is the schedule at the times its cell was a state earlier in the rollout."""
+    world = make_geometry("straight", 8)
+    for changes, schedule in (({}, lambda m: (1 + m) ** -0.5),
+                              ({"rnd_shrink_power": 1.0, "rnd_count_per_kept_visit": 0.25}, lambda m: (1 + 0.25 * m) ** -1.0)):
+        trainer, state, _ = fit_trainer(world, rnd_fit_solver="output_layer_exact", rnd_refresh="per_step", **changes)
+        _, rollout = trainer.capture(state)
+        states, arrivals = np.asarray(rollout.states), np.asarray(rollout.arrivals)
+        bonus = np.asarray(rollout.intrinsic_rewards)
+        # Before: states [T,C] and arrivals [T,C]; after: how often each arrival's cell was a state at steps 0..t.
+        seen = np.stack([(states[: time + 1] == arrivals[time]).sum(axis=0) for time in range(states.shape[0])])
+        np.testing.assert_allclose(bonus, schedule(seen), rtol=1e-4)
+        assert seen.max() > 2 and bonus.min() < 0.7
+        # After the update every cell's error is the schedule at the times it was a state in the rollout.
+        state, _ = trainer.train_iteration(state)
+        errors = np.asarray(trainer.all_cell_errors(state))
+        totals = np.stack([(states == cell).sum(axis=0) for cell in range(world.state_count)], axis=1)
+        np.testing.assert_allclose(errors, schedule(totals), rtol=2e-3)
+    with pytest.raises(ValueError):
+        fit_trainer(world, rnd_refresh="per_step")

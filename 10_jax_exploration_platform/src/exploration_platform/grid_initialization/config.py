@@ -84,6 +84,23 @@ class GridPPOConfig:
     # this many times. One kept visit then adds `rnd_count_per_kept_visit` to the cell's count.
     rnd_exact_step_iterations: int = 1
     rnd_count_per_kept_visit: float = 1.0
+    # "rollout_fit" optimizer only (one-hot inputs): once per rollout, every cell gets an output target and the
+    # predictor is fitted to all of them together. A cell visited n times in the rollout moves along the bonus
+    # schedule by n visits; a cell not visited keeps its output.
+    # The schedule is b(m) = (1 + rate m)^(-1/p) for rnd_shrink_power p, or a normalized weighted sum of power laws
+    # rnd_schedule = ((weight, exponent), ...) of (1 + rate m), with rate = rnd_count_per_kept_visit.
+    rnd_schedule: tuple = ()
+    # How the fit is solved: "conjugate_gradient" moves all layers by one least-squares step on the linearized
+    # predictor, solved approximately by rnd_fit_iterations conjugate-gradient iterations; "output_layer_exact"
+    # changes only the output layer, by the smallest change that meets every cell's target exactly (the hidden
+    # layers stay as initialized).
+    rnd_fit_solver: str = "conjugate_gradient"
+    rnd_fit_iterations: int = 12
+    # When the bonus follows the predictor: "per_rollout" reads the predictor as it was when the rollout began
+    # (CleanRL); "per_step" gives each arrival the error the predictor would have after also training on the states
+    # already seen in this rollout. With the exact output-layer fit that error is known in closed form (the schedule
+    # moved on by those visits), so the weights are still written once per rollout.
+    rnd_refresh: str = "per_rollout"
     # "all" layers of the predictor train, or only its input weights (one row per cell for one-hot inputs).
     rnd_trainable: str = "all"
     per_copy_scalar_settings: tuple | Mapping = ()
@@ -131,7 +148,8 @@ class GridPPOConfig:
         choices = {"rnd_input": {"coordinates", "one_hot"},
                    "rnd_readout": {"half_squared", "length", "initial_ratio_half_squared", "initial_ratio_length"},
                    "rnd_loss": {"cleanrl", "power", "shrink_target"},
-                   "rnd_optimizer": {"shared_adam", "adam", "sgd", "adagrad", "exact_step"},
+                   "rnd_optimizer": {"shared_adam", "adam", "sgd", "adagrad", "exact_step", "rollout_fit"},
+                   "rnd_refresh": {"per_rollout", "per_step"},
                    "rnd_trainable": {"all", "input_layer"}}
         for name, allowed in choices.items():
             if getattr(self, name) not in allowed:
@@ -151,9 +169,25 @@ class GridPPOConfig:
             raise ValueError("rnd_shrink_power applies only to the shrink-target loss")
         if self.rnd_learning_rate <= 0 or self.rnd_learning_rate_time_scale < 0:
             raise ValueError("rnd_learning_rate must be positive and its time scale nonnegative")
-        if self.rnd_optimizer == "exact_step" and (self.rnd_loss != "shrink_target" or self.rnd_input != "one_hot"
-                                                   or self.rnd_trainable != "all"):
-            raise ValueError("the exact-step optimizer needs the shrink-target loss, one-hot inputs and all layers training")
+        if self.rnd_optimizer in {"exact_step", "rollout_fit"} and (
+                self.rnd_loss != "shrink_target" or self.rnd_input != "one_hot" or self.rnd_trainable != "all"):
+            raise ValueError("the exact-step and rollout-fit optimizers need the shrink-target loss, one-hot inputs "
+                             "and all layers training")
+        object.__setattr__(self, "rnd_schedule", tuple((float(weight), float(exponent))
+                                                       for weight, exponent in self.rnd_schedule))
+        if any(weight <= 0 or exponent <= 0 for weight, exponent in self.rnd_schedule):
+            raise ValueError("rnd_schedule needs positive weights and exponents")
+        if self.rnd_schedule and self.rnd_optimizer != "rollout_fit":
+            raise ValueError("rnd_schedule applies only to the rollout-fit optimizer")
+        if self.rnd_optimizer == "rollout_fit" and not (self.rnd_unit_length_target and self.rnd_readout == "length"):
+            raise ValueError("the rollout-fit optimizer reads the error length of unit-length targets")
+        if self.rnd_fit_iterations < 1:
+            raise ValueError("rnd_fit_iterations must be positive")
+        if self.rnd_refresh == "per_step" and not (self.rnd_optimizer == "rollout_fit"
+                                                   and self.rnd_fit_solver == "output_layer_exact"):
+            raise ValueError("the per-step refresh needs the rollout-fit optimizer with the exact output-layer solver")
+        if self.rnd_fit_solver not in {"conjugate_gradient", "output_layer_exact"}:
+            raise ValueError("rnd_fit_solver must be conjugate_gradient or output_layer_exact")
         if self.rnd_exact_step_iterations < 1 or self.rnd_count_per_kept_visit <= 0:
             raise ValueError("rnd_exact_step_iterations and rnd_count_per_kept_visit must be positive")
         if self.intrinsic_source == "online_rnd":

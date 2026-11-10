@@ -222,6 +222,18 @@ def jax_forward(layers, inputs):
     return values
 
 
+def jax_features(layers, inputs):
+    """Evaluate per-copy networks up to the input of their output layer: the features that layer reads."""
+    # Before: inputs [copies, rows, D]; after: activations [copies, rows, width of the last hidden layer].
+    import jax
+    import jax.numpy as jnp
+    values = inputs
+    for layer, weights in enumerate(layers[:-1]):
+        values = jnp.matmul(values, weights["weight"], precision=jax.lax.Precision.HIGHEST) + weights["bias"][:, None]
+        values = jax.nn.leaky_relu(values, negative_slope=LEAKY_SLOPE) if layer < LEAKY_LAYERS else jax.nn.relu(values)
+    return values
+
+
 def jax_errors(predictor, target, inputs):
     """Return the CleanRL rollout bonus: half the summed squared feature error per row."""
     import jax.numpy as jnp

@@ -17,7 +17,8 @@ from initial_field_archive import load_or_create_initial_field, uses_canonical_a
 # Online RND settings a unit specification may carry under "rnd_settings" (GridPPOConfig names).
 RND_SETTING_NAMES = ('rnd_readout', 'rnd_unit_length_target', 'rnd_loss', 'rnd_loss_power', 'rnd_shrink_power', 'rnd_optimizer',
                      'rnd_learning_rate', 'rnd_learning_rate_time_scale', 'rnd_trainable',
-                     'rnd_exact_step_iterations', 'rnd_count_per_kept_visit')
+                     'rnd_exact_step_iterations', 'rnd_count_per_kept_visit', 'rnd_fit_iterations',
+                     'rnd_schedule', 'rnd_fit_solver', 'rnd_refresh')
 
 
 def network_options(spec):
@@ -223,7 +224,8 @@ def main():
             count_update=spec.get('count_update', 'per_step'), count_rate=spec.get('count_rate', 1.0),
             count_mixture=tuple(tuple(pair) for pair in spec.get('count_mixture', ())),
             rnd_input=spec.get('rnd_input', 'coordinates') if online else 'coordinates',
-            **{name: value for name, value in spec.get('rnd_settings', {}).items() if name in RND_SETTING_NAMES},
+            **{name: (tuple(tuple(pair) for pair in value) if name == 'rnd_schedule' else value)
+               for name, value in spec.get('rnd_settings', {}).items() if name in RND_SETTING_NAMES},
             per_copy_scalar_settings=per_copy, **changes)
         if set(spec.get('rnd_settings', {})) - set(RND_SETTING_NAMES):
             raise ValueError(f"Unknown RND settings: {sorted(set(spec['rnd_settings']) - set(RND_SETTING_NAMES))}")
