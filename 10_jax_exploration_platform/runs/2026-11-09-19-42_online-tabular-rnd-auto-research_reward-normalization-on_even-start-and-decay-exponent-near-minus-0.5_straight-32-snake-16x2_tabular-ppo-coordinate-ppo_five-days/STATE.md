@@ -172,6 +172,42 @@ Times are Pacific. The protocol is in `program.md`; the plan is
   and both unchanged-path gates pass): exponents −0.75, −1.5, −3; per-step forms at −1 and −2; sums of a fast and a
   slow power law; count rates at −1 and −2. Question: is there one bonus shape that is good for both policy types?
   Code rollout as before; `code/current` now names the newest copy on every machine.
+- **2026-11-10 02:35. Batch 3, 137 of 224 units** (32 seeds, best of 28 settings, thousands of transitions; cases
+  in the order straight tabular-PPO, straight coordinate-PPO, snake tabular-PPO, snake coordinate-PPO):
+
+  | row | straight, tabular-PPO | straight, coordinate-PPO | snake, tabular-PPO | snake, coordinate-PPO |
+  |---|---|---|---|---|
+  | control | 7.22 ± 0.28 | 3.90 ± 0.20 | 18.74 ± 0.96 | 82.1 ± 12.0 |
+  | count rule −0.5, per step | 8.42 ± 0.39 | 2.38 ± 0.22 | 32.3 ± 4.5 | 52.7 ± 7.8 |
+  | count rule −1 at rate 0.25, per rollout | 7.08 ± 0.37 | not finished | 15.92 ± 0.79 | 63.8 ± 9.7 |
+  | count rule −1, per step | not finished | not finished | not finished | 41.3 ± 2.8 |
+  | count rule −1.5, per rollout | 7.21 ± 0.44 | 15.9 (settings unfinished) | 12.9 ± 1.1 | 2,429 ± 325 |
+  | count rule −1 plus 0.3 of −0.5, per rollout | 9.76 ± 1.17 | not finished | 26.2 ± 2.2 | 56.8 ± 3.8 |
+
+  Reading:
+  1. The −0.5 rule stays ahead of the control with coordinate-PPO and behind it with tabular-PPO.
+  2. Exponent −1 at a quarter of the count rate is level with or ahead of the control in the three cases finished.
+  3. A per-step refresh of the bonus beats a per-rollout refresh in every pair measured.
+  4. Sums of a fast and a slow power law are not better than −1 alone, so batch 3's third prediction fails.
+- **2026-11-10 02:20-02:29. Bench and profile of the rollout fit** (serval05, card free; `bench/batch_04_four_laws/`,
+  `infrastructure/profiles/serval05_h100_nvl_snake_coordinate-ppo_rollout_fit.json`). New optimizer `rollout_fit`:
+  once per rollout every cell gets an output target (visited cells move along the bonus schedule by their visits,
+  the others stay) and the predictor is fitted to all of them.
+  - Exact output-layer solve: start 1.00, slope −0.49 on both grids, zero spread between cells, unvisited cells kept
+    exactly, under all four visit patterns; 0.015 s per iteration at 512 copies against the control's 0.105.
+  - All layers by 12 conjugate-gradient iterations: slope −0.45 / −0.40, spread 0.1, but −1.03 when each rollout
+    sits in one cell; same cost as the control.
+  - Dropped after measurement: equal weights per visited cell (slope −0.19), and 24 iterations with two steps
+    (3.7 times the control's cost).
+- **2026-11-10 02:43. Batch 4 queued** (`batches/04_…/ideas.md`, 288 units; commit `84723a80`, 110 tests and both
+  unchanged-path gates pass, jobs 6861020 and 6861021). 8 RND rows whose error follows a set schedule (exact fit at
+  −0.5 and at −1 with rate 0.25, each refreshed per rollout and per step; −1 and −0.75 per step; all-layers fit at
+  −0.5 and at −1 with rate 0.25) and 10 count-rule rows around −1 with slower count rates. Third code rollout as
+  before. Units staged: MIT 110, ACES 50, Gautschi 40, Gilbreth 30, UVA 58.
+  - With one-hot inputs the exact fit computes the same bonus as a count rule of the same shape (tested). It is the
+    RND that has both wanted properties exactly.
+  - The −0.5 schedule meets both property targets of `program.md`; the −1 schedule at a quarter rate meets the
+    even-start target only. Both are run so the comparison is direct.
 
 ## Idea list
 
@@ -191,3 +227,8 @@ Times are Pacific. The protocol is in `program.md`; the plan is
 | input rows only (frozen trunk or target-copy trunk) | per-cell decay | bench: does not fit (−0.1); dropped |
 | unit start + power-law q = 4 | both | candidate; RL batch 1 |
 | unit start + shrink-target | both | candidate; RL batch 1 |
+| count-rule bonus shapes (exponents, count rates, sums of power laws, per-step or per-rollout refresh) | decay (diagnostic) | RL batches 2 and 3: −0.5 best with coordinate-PPO, faster decay best with tabular-PPO; −1 at rate 0.25 level with or ahead of the control in three cases; batch 4 continues |
+| shrink-target with other exponents; exact-step optimizer | decay | RL batch 2: matches the per-rollout count rule in two cases, behind it on the snake grid with tabular-PPO |
+| rollout fit, exact output-layer solve, schedule −0.5 or −1 at rate 0.25 | both, exactly | bench: start 1.00, slope on the schedule, zero spread; RL batch 4 |
+| per-step refresh of the bonus (exact fit) | decay timing | RL batch 4 |
+| rollout fit, all layers (12 conjugate-gradient iterations) | both, approximately | bench: −0.45 / −0.40, −1.03 under one-cell rollouts; RL batch 4 |
