@@ -14,8 +14,12 @@ import tempfile
 
 import numpy as np
 
-# Different processors may round floating-point results differently, so floats may differ by this much.
-RELATIVE_TOLERANCE = 1e-4
+# Different processor families round differently (measured 2026-11-09: AMD EPYC 7543 against UVA's Ice Lake gave
+# float differences up to 1.0e-2 after the four training iterations, with every integer array, such as visit counts
+# and positions, equal; the orthogonal weight draw itself already differs by 2e-4 on its smallest entries). So
+# integers must match exactly and floats may differ by this much; a wrong code path or environment gives differences
+# of order one or different visit counts.
+RELATIVE_TOLERANCE = 5e-2
 # A value smaller than this in size is compared on this scale, so 0 against 1e-12 passes (difference below 1e-8).
 SCALE_FLOOR = 1e-4
 
@@ -57,7 +61,10 @@ def compare_files(reference_path, candidate_path):
             largest, largest_name = difference, name
         if not passed:
             failed.append({'array': name, 'reason': reason, 'relative_difference': difference})
-    return {'passed': not failed, 'arrays_compared': len(set(reference.files) | set(candidate.files)),
+    # Before: every failed array listed; after: the first ten and their count, so the record stays short.
+    failed_count, failed = len(failed), failed[:10]
+    return {'passed': not failed, 'failed_array_count': failed_count,
+            'arrays_compared': len(set(reference.files) | set(candidate.files)),
             'identical_arrays': identical, 'largest_relative_difference': largest,
             'largest_difference_array': largest_name, 'failed_arrays': failed,
             'relative_tolerance': RELATIVE_TOLERANCE, 'scale_floor': SCALE_FLOOR}

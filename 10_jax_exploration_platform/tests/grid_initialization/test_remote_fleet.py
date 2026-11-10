@@ -506,7 +506,8 @@ def test_compare_arrays_accepts_rounding_and_refuses_real_differences(tmp_path):
     assert compare.compare_arrays(ones, ones.copy()) == (True, 'identical', 0.0)
     passed, reason, difference = compare.compare_arrays(ones, ones * numpy.float32(1.00001))
     assert passed and reason == 'within the relative tolerance' and 5e-6 < difference < 2e-5
-    assert compare.compare_arrays(ones, ones * numpy.float32(1.01))[0] is False
+    assert compare.compare_arrays(ones, ones * numpy.float32(1.01))[0] is True
+    assert compare.compare_arrays(ones, ones * numpy.float32(1.2))[0] is False
     # Values near zero are compared on an absolute scale; integers and shapes must match exactly.
     assert compare.compare_arrays(numpy.zeros(2), numpy.asarray([1e-12, 0.]))[0] is True
     assert compare.compare_arrays(numpy.arange(3), numpy.asarray([0, 1, 3])) == (False, 'integer values differ', None)
