@@ -40,3 +40,15 @@ time, then the larger discovery rate) and confirmed on seeds 20000-21023, the ba
 3. The exponent −0.5 form is ahead of the baseline with coordinate-PPO and behind it with tabular-PPO.
 4. The 2×2 comparison on the confirmation seeds: the scheduled decay gives most of the gain; the even start adds
    7% to 25% on top of it; the even start with the decay left to training is behind the baseline.
+
+## Addition of 2026-11-10 05:44 PT: the baseline's development grid is also run here
+
+The extension run trains the baseline's development grid on UVA cards, and it is slower than estimated: at 05:42 the
+baseline's own units needed up to 12 more hours, and two other units of that run sit on Tesla P100 cards with 22 and
+37 hours left; the extension's confirmation stage starts only when all of them have finished. So the same grid is
+queued here as the row `control` (online tabular-RND, reward normalization on, no change), on H100 cards:
+
+- same protocol, seeds and settings as the extension's row, so each (configuration, seed) pair trains the same run;
+- when the extension's own units finish, the two sets are compared pair by pair as a check of both paths;
+- the 1,024-seed confirmation of the baseline's chosen configuration then runs here as well, so the final comparison
+  does not wait for the extension.

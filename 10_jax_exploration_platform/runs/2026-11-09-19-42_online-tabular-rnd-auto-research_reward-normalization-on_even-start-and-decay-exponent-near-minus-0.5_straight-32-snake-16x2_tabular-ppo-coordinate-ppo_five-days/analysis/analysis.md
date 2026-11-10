@@ -1,17 +1,17 @@
 # Online tabular-RND auto research
 
-Generated 2026-11-10 04:43 PT (times are Pacific, converted from machines running Eastern). Finished settings: 6429. Protocol: `program.md`; log: `STATE.md`.
+Generated 2026-11-10 05:23 PT (times are Pacific, converted from machines running Eastern). Finished settings: 6628. Protocol: `program.md`; log: `STATE.md`.
 
 ## Contents
 
 | Section | First written | Last changed | Status |
 |---|---|---|---|
 | [Measures](#measures) | 2026-11-09 21:43 PT | 2026-11-09 22:42 PT | unread |
-| [development 06: results](#development-06-results) | 2026-11-10 04:43 PT | 2026-11-10 04:43 PT | unread |
+| [development 06: results](#development-06-results) | 2026-11-10 04:43 PT | 2026-11-10 05:23 PT | unread |
 | [screen 01: results](#screen-01-results) | 2026-11-09 21:43 PT | 2026-11-10 04:23 PT | unread |
 | [screen 02: results](#screen-02-results) | 2026-11-09 23:44 PT | 2026-11-10 03:23 PT | unread |
 | [screen 03: results](#screen-03-results) | 2026-11-10 02:03 PT | 2026-11-10 03:43 PT | unread |
-| [screen 04: results](#screen-04-results) | 2026-11-10 03:05 PT | 2026-11-10 04:43 PT | unread |
+| [screen 04: results](#screen-04-results) | 2026-11-10 03:05 PT | 2026-11-10 05:23 PT | unread |
 | [screen 05: results](#screen-05-results) | 2026-11-10 04:04 PT | 2026-11-10 04:43 PT | unread |
 
 [Read with section colors](analysis.html). No section marks itself read.
@@ -30,17 +30,23 @@ Not run yet.
 
 ### straight grid, 32 cells, coordinate-PPO
 
-Not run yet.
+| idea | mean capped first-goal steps ↓ ± standard error [95%] | goal found | start max/min | decay slope, median [middle half] | late count consistency | properties met | best setting | seeds | copies with a non-finite bonus, all settings |
+|---|---|---|---|---|---|---|---|---|---|
+| frozen-tabular-rnd-field-count-per-step-exponent-minus-1 | **13.21K** ± 1.26K [10.94K, 15.71K] | 100.0% | 3.55 | n/a | n/a | neither | learning rate 0.0001, entropy 0.001, weight 2^5 | 16 | 0 of 208 |
 
 ### snake grid, width 16, 2 turns (50 cells), tabular-PPO
 
 | idea | mean capped first-goal steps ↓ ± standard error [95%] | goal found | start max/min | decay slope, median [middle half] | late count consistency | properties met | best setting | seeds | copies with a non-finite bonus, all settings |
 |---|---|---|---|---|---|---|---|---|---|
 | frozen-tabular-rnd-field-count-per-step-exponent-minus-1 | **16.78K** ± 1.32K [14.58K, 19.78K] | 100.0% | 4.52 | n/a | n/a | neither | learning rate 0.001, entropy 0.01, weight 2^-6 | 16 | 0 of 832 |
+| schedule-fit-rnd-exponent-minus-1-refresh-per-step | <u>52.00K</u> ± 3.39K [45.25K, 58.75K] | 100.0% | 1.00 | -0.71 [-0.74, -0.68] | 1.35 | even start | learning rate 0.0001, entropy 0.001, weight 2^-6 | 16 | 0 of 416 |
 
 ### snake grid, width 16, 2 turns (50 cells), coordinate-PPO
 
-Not run yet.
+| idea | mean capped first-goal steps ↓ ± standard error [95%] | goal found | start max/min | decay slope, median [middle half] | late count consistency | properties met | best setting | seeds | copies with a non-finite bonus, all settings |
+|---|---|---|---|---|---|---|---|---|---|
+| schedule-fit-rnd-exponent-minus-1-refresh-per-step | **33.63K** ± 3.06K [27.99K, 39.28K] | 100.0% | 1.00 | -0.77 [-0.80, -0.73] | 1.38 | even start | learning rate 0.001, entropy 0.01, weight 2^6 | 16 | 0 of 832 |
+| frozen-tabular-rnd-field-count-per-step-exponent-minus-1 | <u>55.18K</u> ± 6.07K [43.09K, 67.26K] | 100.0% | 4.52 | n/a | n/a | neither | learning rate 0.001, entropy 0.01, weight 2^-2 | 16 | 0 of 832 |
 
 ## screen 01: results
 
@@ -290,8 +296,9 @@ Budget per policy: 4,194,304 transitions, on the full 16,777,216-transition lear
 | schedule-fit-rnd-exponent-minus-1-rate-0.25-refresh-per-rollout | 6.97K ± 0.41K [6.23K, 7.80K] | 100.0% | 1.00 | -0.86 [-0.87, -0.85] | 1.57 | even start | learning rate 0.001, entropy 0.01, weight 2^-6 | 32 | 0 of 896 |
 | count-per-rollout-exponent-minus-1-rate-0.125 | 7.41K ± 0.56K [6.41K, 8.58K] | 100.0% | 1.00 | n/a | n/a | even start | learning rate 0.001, entropy 0.01, weight 2^-6 | 32 | 0 of 896 |
 | count-per-rollout-exponent-minus-1-rate-0.0625 | 7.74K ± 0.45K [6.92K, 8.64K] | 100.0% | 1.00 | n/a | n/a | even start | learning rate 0.001, entropy 0.001, weight 2^-6 | 32 | 0 of 896 |
+| schedule-fit-rnd-exponent-minus-0.5-refresh-per-rollout | 8.77K ± 0.84K [7.29K, 10.50K] | 100.0% | 1.00 | -0.50 [-0.50, -0.50] | 1.09 | both | learning rate 0.001, entropy 0.001, weight 2^-6 | 32 | 0 of 672 |
+| schedule-fit-rnd-all-layers-exponent-minus-0.5 | 11.86K ± 1.20K [9.65K, 14.28K] | 100.0% | 1.00 | -0.57 [-0.59, -0.54] | 1.04 | both | learning rate 0.001, entropy 0.01, weight 2^-6 | 32 | 0 of 896 |
 | count-per-rollout-exponent-minus-1-rate-0.5 | 16.23K ± 1.49K [12.92K, 18.79K] | 100.0% | 1.00 | n/a | n/a | even start | learning rate 0.0001, entropy 0.001, weight 2^-6 | 32 | 0 of 448 |
-| schedule-fit-rnd-all-layers-exponent-minus-0.5 | 18.98K ± 2.22K [14.45K, 23.16K] | 100.0% | 1.00 | -0.53 [-0.55, -0.50] | 0.99 | both | learning rate 0.0001, entropy 0.001, weight 2^-6 | 32 | 0 of 448 |
 
 ### straight grid, 32 cells, coordinate-PPO
 
@@ -325,17 +332,17 @@ Budget per policy: 4,194,304 transitions, on the full 16,777,216-transition lear
 | count-per-step-exponent-minus-1-rate-0.25 | 13.42K ± 1.07K [11.39K, 15.55K] | 100.0% | 1.00 | n/a | n/a | even start | learning rate 0.001, entropy 0.01, weight 2^-6 | 32 | 0 of 896 |
 | schedule-fit-rnd-exponent-minus-1-refresh-per-step | 13.51K ± 0.72K [12.03K, 14.77K] | 100.0% | 1.00 | -0.81 [-0.83, -0.79] | 1.34 | even start | learning rate 0.001, entropy 0.001, weight 2^-6 | 32 | 0 of 896 |
 | schedule-fit-rnd-exponent-minus-1-rate-0.25-refresh-per-step | 13.69K ± 1.05K [11.84K, 15.92K] | 100.0% | 1.00 | -0.88 [-0.88, -0.87] | 1.24 | even start | learning rate 0.001, entropy 0.01, weight 2^-6 | 32 | 0 of 896 |
-| count-per-step-exponent-minus-1-rate-0.0625 | 16.00K ± 0.98K [14.19K, 17.98K] | 100.0% | 1.00 | n/a | n/a | even start | learning rate 0.001, entropy 0.01, weight 2^-6 | 32 | 0 of 672 |
+| count-per-step-exponent-minus-1-rate-0.0625 | 15.09K ± 1.23K [12.90K, 17.72K] | 100.0% | 1.00 | n/a | n/a | even start | learning rate 0.001, entropy 0.001, weight 2^-6 | 32 | 0 of 896 |
 | count-per-rollout-exponent-minus-1-rate-0.125 | 16.42K ± 1.13K [14.25K, 18.66K] | 100.0% | 1.00 | n/a | n/a | even start | learning rate 0.001, entropy 0.01, weight 2^-6 | 32 | 0 of 896 |
 | schedule-fit-rnd-exponent-minus-1-rate-0.25-refresh-per-rollout | 16.60K ± 0.87K [14.97K, 18.34K] | 100.0% | 1.00 | -0.88 [-0.88, -0.87] | 1.24 | even start | learning rate 0.001, entropy 0.001, weight 2^-6 | 32 | 0 of 896 |
 | count-per-step-exponent-minus-0.75 | 16.62K ± 1.52K [13.65K, 19.51K] | 100.0% | 1.00 | n/a | n/a | even start | learning rate 0.001, entropy 0.001, weight 2^-6 | 32 | 0 of 896 |
 | count-per-rollout-exponent-minus-1-rate-0.5 | 17.08K ± 0.86K [15.35K, 18.72K] | 100.0% | 1.00 | n/a | n/a | even start | learning rate 0.001, entropy 0.001, weight 2^-6 | 32 | 0 of 896 |
 | count-per-rollout-exponent-minus-1-rate-0.0625 | 17.09K ± 1.41K [14.39K, 19.88K] | 100.0% | 1.00 | n/a | n/a | even start | learning rate 0.001, entropy 0.001, weight 2^-6 | 32 | 0 of 896 |
 | schedule-fit-rnd-exponent-minus-0.75-refresh-per-step | 17.84K ± 2.03K [14.07K, 21.90K] | 100.0% | 1.00 | -0.70 [-0.71, -0.70] | 1.13 | even start | learning rate 0.001, entropy 0.01, weight 2^-6 | 32 | 0 of 896 |
+| schedule-fit-rnd-all-layers-exponent-minus-1-rate-0.25 | 27.83K ± 2.71K [22.46K, 32.89K] | 100.0% | 1.00 | -1.00 [-1.06, -0.93] | 1.17 | even start | learning rate 0.001, entropy 0.001, weight 2^-6 | 32 | 0 of 672 |
 | schedule-fit-rnd-exponent-minus-0.5-refresh-per-step | 32.19K ± 4.39K [23.58K, 40.70K] | 100.0% | 1.00 | -0.50 [-0.50, -0.50] | 0.83 | both | learning rate 0.001, entropy 0.01, weight 2^-6 | 32 | 0 of 896 |
 | schedule-fit-rnd-exponent-minus-0.5-refresh-per-rollout | 39.35K ± 6.45K [28.24K, 53.03K] | 100.0% | 1.00 | -0.50 [-0.50, -0.50] | 0.83 | both | learning rate 0.001, entropy 0.001, weight 2^-6 | 32 | 0 of 896 |
 | schedule-fit-rnd-all-layers-exponent-minus-0.5 | 44.96K ± 9.44K [27.99K, 64.42K] | 100.0% | 1.00 | -0.55 [-0.58, -0.51] | 0.75 | both | learning rate 0.001, entropy 0.001, weight 2^-4 | 32 | 0 of 896 |
-| schedule-fit-rnd-all-layers-exponent-minus-1-rate-0.25 | 66.53K ± 10.28K [47.46K, 87.62K] | 100.0% | 1.00 | -0.88 [-0.93, -0.82] | 1.13 | even start | learning rate 0.0001, entropy 0.001, weight 2^-6 | 32 | 0 of 224 |
 
 ### snake grid, width 16, 2 turns (50 cells), coordinate-PPO
 
