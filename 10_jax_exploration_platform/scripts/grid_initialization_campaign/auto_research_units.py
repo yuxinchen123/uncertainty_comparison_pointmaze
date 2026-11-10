@@ -132,6 +132,14 @@ def confirmation_specifications(run_dir, batch, ideas, seed_start, seed_count):
     return rows, frozen
 
 
+def record_frozen(path, frozen):
+    """Add the chosen configurations to the batch's record, replacing an earlier entry of the same idea and case."""
+    # Before: a file with idea A's four cases, and new rows for idea B; after: the file holds A's and B's rows.
+    earlier = read_json(path) if path.exists() else []
+    fresh = {(entry['idea'], entry['case']) for entry in frozen}
+    write_json(path, [entry for entry in earlier if (entry['idea'], entry['case']) not in fresh] + frozen)
+
+
 def main():
     """Write and queue one batch's units, interleaved so every idea gets cards early."""
     parser = argparse.ArgumentParser()
@@ -149,7 +157,7 @@ def main():
              if not args.only or name in args.only}
     if args.stage == 'confirmation':
         rows, frozen = confirmation_specifications(args.run_dir, args.batch, ideas, *args.confirmation_seeds)
-        write_json(args.run_dir/f'confirmation_frozen_{args.batch}.json', frozen)
+        record_frozen(args.run_dir/f'confirmation_frozen_{args.batch}.json', frozen)
     else:
         rows = unit_specifications(args.batch, ideas, args.stage, args.learning_rates)
     # Round-robin over ideas: the queue order is case-major, so each idea's first unit is near the front.

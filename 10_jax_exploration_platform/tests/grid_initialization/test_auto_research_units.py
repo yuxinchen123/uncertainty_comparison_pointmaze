@@ -80,3 +80,12 @@ def test_screen_specification_is_unchanged_by_the_rewrite():
     ideas = {old['idea']: {'settings': old['rnd_settings'], 'network': old['network_options']}}
     new = {row['name']: row for row in units.unit_specifications('04', ideas, learning_rates=[1e-3, 1e-4])}
     assert new[old['name']] == old
+
+
+def test_record_frozen_keeps_other_ideas_and_replaces_the_same_one(tmp_path):
+    """Recording a second idea keeps the first; recording the first again replaces its entry."""
+    path = tmp_path / 'confirmation_frozen_09.json'
+    units.record_frozen(path, [{'idea': 'a', 'case': 'x', 'configuration': 1}])
+    units.record_frozen(path, [{'idea': 'b', 'case': 'x', 'configuration': 2}])
+    units.record_frozen(path, [{'idea': 'a', 'case': 'x', 'configuration': 3}])
+    assert sorted((entry['idea'], entry['configuration']) for entry in units.read_json(path)) == [('a', 3), ('b', 2)]
