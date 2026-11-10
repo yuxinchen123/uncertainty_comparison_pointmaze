@@ -4,6 +4,7 @@ import argparse
 from collections import defaultdict
 import json
 from pathlib import Path
+import re
 
 import numpy as np
 
@@ -165,16 +166,14 @@ def confirmation_row(records, baseline):
     return row
 
 
-def confirmation_table(pooled, configurations, batch, kind, policy, ideas):
+def confirmation_cells(pooled, configurations, batch, kind, policy, ideas, latex=False):
     """Ideas in rows sorted by the confirmed score; metrics and the paired difference to the baseline in columns."""
     baseline = pooled.get((batch, BASELINE_IDEA, kind, policy))
     rows = sorted(((idea, confirmation_row(records, baseline), configurations[(group, idea, grid, kind_of_policy)])
                    for (group, idea, grid, kind_of_policy), records in pooled.items()
                    if (group, grid, kind_of_policy) == (batch, kind, policy)), key=lambda item: item[1]['mean'])
-    means = [row['mean'] for _, row, _ in rows]
-    lines = ['| idea | mean capped first-goal steps ↓ ± standard error [95%] | difference to the baseline on the same '
-             'seeds [95%] | goal found | coverage | final-policy goal rate, sampled | greedy | configuration | seeds |\n'
-             '|---|---|---|---|---|---|---|---|---|\n']
+    plus_minus, percent = ('$\\pm$', '\\%') if latex else ('±', '%')
+    lines = []
     for index, (idea, row, setting) in enumerate(rows):
         low, high = row['interval']
         paired = row['paired']
@@ -183,16 +182,55 @@ def confirmation_table(pooled, configurations, batch, kind, policy, ideas):
         elif paired is None:
             difference = 'baseline not finished'
         else:
+            # Before: -5630 steps on 1,024 common seeds; after: '-5.63K [-6.14K, -5.13K], -31% (1024 seeds)'.
             difference = (f"{paired['mean'] / 1000:+,.2f}K [{paired['interval'][0] / 1000:+,.2f}K, "
-                          f"{paired['interval'][1] / 1000:+,.2f}K], {100 * paired['mean'] / paired['baseline_mean']:+.0f}% "
+                          f"{paired['interval'][1] / 1000:+,.2f}K], {100 * paired['mean'] / paired['baseline_mean']:+.0f}{percent} "
                           f"({paired['seeds']} seeds)")
+            if latex:
+                difference = re.sub(r'([+-])([0-9])', r'$\1$\2', difference)
+        weight = int(round(np.log2(setting['intrinsic_coefficient'])))
         configuration = (f"learning rate {setting['learning_rate']:g}, entropy {setting['entropy_coefficient']:g}, "
-                         f"weight 2^{int(round(np.log2(setting['intrinsic_coefficient'])))}")
-        lines.append(f"| {ideas.get(idea, idea)} | {styled(number(row['mean'], True), mark(means, index, True))} ± "
-                     f"{number(row['standard_error'], True)} [{number(low, True)}, {number(high, True)}] | {difference} | "
-                     f"{100 * row['discovery']:.1f}% | {100 * row['coverage']:.1f}% | {100 * row['sampled']:.1f}% | "
-                     f"{100 * row['greedy']:.1f}% | {configuration} | {row['seeds']} |\n")
-    return ''.join(lines)
+                         + (f"weight $2^{{{weight}}}$" if latex else f"weight 2^{weight}"))
+        name = ideas.get(idea, idea)
+        if latex:
+            # Before: 'decay exponent −1'; after: 'decay exponent $-1$'.
+            name = re.sub(r'exponent [−-]([0-9.]+)', r'exponent $-\1$', name)
+        cells = [name, styled(number(row['mean'], True), mark([item[1]['mean'] for item in rows], index, True), latex)
+                 + f" {plus_minus} {number(row['standard_error'], True)} [{number(low, True)}, {number(high, True)}]",
+                 difference]
+        for key in ('discovery', 'coverage', 'sampled', 'greedy'):
+            values = [item[1][key] for item in rows]
+            cells.append(styled(f"{100 * row[key]:.1f}{percent}", mark(values, index, False), latex))
+        lines.append(cells + [configuration, str(row['seeds'])])
+    return lines
+
+
+def confirmation_table(pooled, configurations, batch, kind, policy, ideas):
+    """One case's confirmation table in Markdown, with the sorted column's arrow."""
+    header = ('| idea | mean capped first-goal steps ↓ ± standard error [95%] | difference to the baseline on the same '
+              'seeds [95%] | goal found | coverage | final-policy goal rate, sampled | greedy | configuration | seeds |\n'
+              '|---|---|---|---|---|---|---|---|---|\n')
+    return header + ''.join('| ' + ' | '.join(cells) + ' |\n'
+                            for cells in confirmation_cells(pooled, configurations, batch, kind, policy, ideas))
+
+
+def confirmation_latex(pooled, configurations, batch, kind, policy, ideas):
+    """One case's confirmation table in LaTeX for the development document (13.97 cm of text width)."""
+    # Nine columns: 12.1 cm of columns plus 16 gaps of 3 pt (1.69 cm), the layout of the fixed-settings tables.
+    body = ''.join(' & '.join(cells) + ' \\\\\n'
+                   for cells in confirmation_cells(pooled, configurations, batch, kind, policy, ideas, latex=True))
+    widths = (2.9, 2.1, 2.3, 0.7, 0.8, 0.8, 0.7, 1.3, 0.5)
+    return ('\\begin{table}[H]\\centering\\scriptsize\\setlength{\\tabcolsep}{3pt}\n'
+            f'\\caption{{Confirmation on seeds 20000 on, {CASE_LABELS[kind]}, {POLICY_LABELS[policy]}: each idea\'s '
+            'configuration chosen on the development seeds. The difference column is the mean over the seeds both rows '
+            'have of the idea\'s capped first-goal time minus the baseline\'s (negative is faster), with its 95\\% '
+            'interval from resampling field seeds and the same difference as a percentage of the baseline\'s mean.}'
+            f'\\label{{tab:auto-research-confirmation-{batch}-{kind}-{policy}}}\n'
+            '\\begin{tabular}{@{}' + ''.join(f'>{{\\raggedright\\arraybackslash}}p{{{width}cm}}' for width in widths)
+            + '@{}}\\toprule\n'
+            'idea & mean capped first-goal steps $\\downarrow$ $\\pm$ standard error [95\\%] & difference to the '
+            'baseline on the same seeds [95\\%] & goal found & coverage & final goal rate, sampled & greedy & '
+            'configuration & seeds \\\\\\midrule\n' + body + '\\bottomrule\\end{tabular}\\end{table}\n')
 
 
 def verdict(paired):
@@ -295,6 +333,13 @@ def generate(run_dir):
             section.append(confirmation_table(pooled, configurations, batch, kind, policy, words) + '\n'
                            if present else 'Not run yet.\n\n')
         markdown.append(''.join(section))
+    # The same confirmation tables in LaTeX, read by the development document.
+    tex = ['% Generated by auto_research_report.py; do not edit.\n']
+    for batch in sorted({key[0] for key in pooled}):
+        for kind, policy in CASE_ORDER:
+            if any((group, grid, kind_of_policy) == (batch, kind, policy) for group, _, grid, kind_of_policy in pooled):
+                tex.append(confirmation_latex(pooled, configurations, batch, kind, policy, words))
+    (analysis/'results.tex').write_text(''.join(tex))
     _write_report_with_history(analysis, ''.join(markdown))
     write_json(analysis/'best_rows.json', {'at': now(), 'rows': [
         {key: value for key, value in row.items() if key not in ('copies', 'folder')} | {'folder': str(row['folder'])}

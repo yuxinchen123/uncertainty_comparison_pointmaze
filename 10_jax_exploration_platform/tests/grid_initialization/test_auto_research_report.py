@@ -66,3 +66,18 @@ def test_confirmation_summary_gives_each_case_a_percentage_and_a_verdict():
     noisy = next(line for line in lines if line.startswith('| noisy-idea'))
     assert 'level' in noisy and noisy.endswith('| 0 of 1 compared |')
     assert report.verdict({'interval': [1.0, 2.0]}) == 'behind'
+
+
+def test_confirmation_latex_sets_signs_and_weights_as_math():
+    """The LaTeX table keeps the row order and sets minus signs, percent signs and weights for LaTeX."""
+    setting = {'learning_rate': 1e-3, 'entropy_coefficient': 0.01, 'intrinsic_coefficient': 0.25}
+    scores = np.linspace(9000, 11000, 16)
+    pooled = {('06', 'control', 'snake', 'neural'): records(scores),
+              ('06', 'new-idea', 'snake', 'neural'): records(scores - 1500)}
+    configurations = {key: setting for key in pooled}
+    text = report.confirmation_latex(pooled, configurations, '06', 'snake', 'neural',
+                                     {'new-idea': 'new idea, decay exponent −1'})
+    assert 'new idea, decay exponent $-1$ & \\textbf{8.50K} $\\pm$' in text
+    assert '$-$1.50K [$-$1.50K, $-$1.50K], $-$15\\% (16 seeds)' in text and 'weight $2^{-2}$' in text
+    assert text.count('\\\\') == 3 and '\\label{tab:auto-research-confirmation-06-snake-neural}' in text
+    assert '%' not in text.replace('\\%', '')
