@@ -28,6 +28,9 @@ def test_confirmation_row_pairs_the_idea_with_the_baseline_seed_by_seed():
     assert row['paired']['mean'] == -2000.0 and row['paired']['interval'] == [-2000.0, -2000.0]
     assert abs(row['paired']['baseline_mean'] - base_scores[:48].mean()) < 1e-6
     assert row['discovery'] == 1.0 and row['greedy'] == 0.5 and row['standard_error'] > 0
+    # 48 seeds: 3 removed from each end (10 per 128, rounded down); the trimmed mean ignores them.
+    ordered = np.sort(base_scores[:48] - 2000)
+    assert row['trim'] == 3 and abs(row['trimmed'] - ordered[3:45].mean()) < 1e-9
     # The baseline's own row, and a row without a finished baseline, carry no difference.
     assert report.confirmation_row(baseline, baseline)['paired'] is None
     assert report.confirmation_row(idea, None)['paired'] is None

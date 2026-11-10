@@ -11,7 +11,7 @@ import numpy as np
 from common import now, pacific, read_json, write_json
 from fixed_settings_campaign import BUDGET
 from fixed_settings_report import (CASE_LABELS, CASE_ORDER, POLICY_LABELS, fitted_slopes, grouped_standard_errors,
-                                   mark, number, styled)
+                                   mark, number, styled, trim_count)
 from report import _write_report_with_history, grouped_mean_interval
 
 TARGET_SLOPE = (-0.6, -0.4)
@@ -149,7 +149,10 @@ def confirmation_row(records, baseline):
     seeds = sorted(records)
     capped = np.asarray([records[seed]['capped_first_goal_steps'] for seed in seeds], np.float64)
     groups = [records[seed]['field_seed'] for seed in seeds]
+    # The trimmed mean removes the same share of seeds from each end as the fixed-settings report (10 per 128).
+    trim = trim_count(len(seeds))
     row = {'mean': float(capped.mean()), 'standard_error': grouped_standard_errors(capped, groups, 0, 7)[0],
+           'trim': trim, 'trimmed': float(np.sort(capped)[trim:len(capped) - trim].mean()),
            'interval': grouped_mean_interval(capped, groups, 7), 'seeds': len(seeds),
            'discovery': float(np.mean([records[seed]['first_goal_step'] >= 0 for seed in seeds])),
            'coverage': float(np.mean([records[seed]['coverage'] for seed in seeds])),
@@ -197,7 +200,9 @@ def confirmation_cells(pooled, configurations, batch, kind, policy, ideas, latex
             name = re.sub(r'exponent [−-]([0-9.]+)', r'exponent $-\1$', name)
         cells = [name, styled(number(row['mean'], True), mark([item[1]['mean'] for item in rows], index, True), latex)
                  + f" {plus_minus} {number(row['standard_error'], True)} [{number(low, True)}, {number(high, True)}]",
-                 difference]
+                 difference,
+                 styled(number(row['trimmed'], True), mark([item[1]['trimmed'] for item in rows], index, True), latex)
+                 + f" ({row['trim']} per end)"]
         for key in ('discovery', 'coverage', 'sampled', 'greedy'):
             values = [item[1][key] for item in rows]
             cells.append(styled(f"{100 * row[key]:.1f}{percent}", mark(values, index, False), latex))
@@ -208,18 +213,19 @@ def confirmation_cells(pooled, configurations, batch, kind, policy, ideas, latex
 def confirmation_table(pooled, configurations, batch, kind, policy, ideas):
     """One case's confirmation table in Markdown, with the sorted column's arrow."""
     header = ('| idea | mean capped first-goal steps ↓ ± standard error [95%] | difference to the baseline on the same '
-              'seeds [95%] | goal found | coverage | final-policy goal rate, sampled | greedy | configuration | seeds |\n'
-              '|---|---|---|---|---|---|---|---|---|\n')
+              'seeds [95%] | trimmed mean (lowest and highest seeds removed) | goal found | coverage | '
+              'final-policy goal rate, sampled | greedy | configuration | seeds |\n'
+              '|---|---|---|---|---|---|---|---|---|---|\n')
     return header + ''.join('| ' + ' | '.join(cells) + ' |\n'
                             for cells in confirmation_cells(pooled, configurations, batch, kind, policy, ideas))
 
 
 def confirmation_latex(pooled, configurations, batch, kind, policy, ideas):
     """One case's confirmation table in LaTeX for the development document (13.97 cm of text width)."""
-    # Nine columns: 12.1 cm of columns plus 16 gaps of 3 pt (1.69 cm), the layout of the fixed-settings tables.
+    # Ten columns: 12.2 cm of columns plus 18 gaps of 3 pt (1.9 cm), close to the fixed-settings tables' layout.
     body = ''.join(' & '.join(cells) + ' \\\\\n'
                    for cells in confirmation_cells(pooled, configurations, batch, kind, policy, ideas, latex=True))
-    widths = (2.9, 2.1, 2.3, 0.7, 0.8, 0.8, 0.7, 1.3, 0.5)
+    widths = (2.6, 2.0, 2.2, 1.1, 0.6, 0.7, 0.7, 0.6, 1.2, 0.5)
     return ('\\begin{table}[H]\\centering\\scriptsize\\setlength{\\tabcolsep}{3pt}\n'
             f'\\caption{{Confirmation on seeds 20000 on, {CASE_LABELS[kind]}, {POLICY_LABELS[policy]}: each idea\'s '
             'configuration chosen on the development seeds. The difference column is the mean over the seeds both rows '
@@ -229,7 +235,8 @@ def confirmation_latex(pooled, configurations, batch, kind, policy, ideas):
             '\\begin{tabular}{@{}' + ''.join(f'>{{\\raggedright\\arraybackslash}}p{{{width}cm}}' for width in widths)
             + '@{}}\\toprule\n'
             'idea & mean capped first-goal steps $\\downarrow$ $\\pm$ standard error [95\\%] & difference to the '
-            'baseline on the same seeds [95\\%] & goal found & coverage & final goal rate, sampled & greedy & '
+            'baseline on the same seeds [95\\%] & trimmed mean (lowest and highest seeds removed) & goal found & '
+            'coverage & final goal rate, sampled & greedy & '
             'configuration & seeds \\\\\\midrule\n' + body + '\\bottomrule\\end{tabular}\\end{table}\n')
 
 
