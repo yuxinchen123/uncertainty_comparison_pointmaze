@@ -71,6 +71,9 @@ def test_confirmation_units_use_the_configuration_the_development_units_chose(tm
     (tmp_path / 'data/research' / rows[0]['name'] / 'summary.json').unlink()
     with pytest.raises(RuntimeError):
         units.confirmation_specifications(tmp_path, '09', ideas, 20000, 1024)
+    # With finished cases only, the three complete cases are confirmed and the unfinished one is skipped.
+    partial, chosen = units.confirmation_specifications(tmp_path, '09', ideas, 20000, 1024, finished_cases_only=True)
+    assert len(partial) == 3 * 8 and len(chosen) == 3
 
 
 def test_screen_specification_is_unchanged_by_the_rewrite():

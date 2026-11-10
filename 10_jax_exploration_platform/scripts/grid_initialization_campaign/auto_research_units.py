@@ -108,7 +108,7 @@ def development_settings(run_dir, batch):
     return table
 
 
-def confirmation_specifications(run_dir, batch, ideas, seed_start, seed_count):
+def confirmation_specifications(run_dir, batch, ideas, seed_start, seed_count, finished_cases_only=False):
     """Choose each idea's configuration per case from its development units and build its confirmation units."""
     finished = development_settings(run_dir, batch)
     expected = len(LEARNING_RATES) * len(ENTROPIES) * len(WEIGHTS)
@@ -118,8 +118,13 @@ def confirmation_specifications(run_dir, batch, ideas, seed_start, seed_count):
             for policy in POLICIES:
                 candidates = finished.get((name, case_name(geometry, policy)), [])
                 if len(candidates) != expected:
-                    raise RuntimeError(f'{name} {case_name(geometry, policy)}: {len(candidates)} of {expected} '
-                                       'development settings finished')
+                    message = (f'{name} {case_name(geometry, policy)}: {len(candidates)} of {expected} '
+                               'development settings finished')
+                    if not finished_cases_only:
+                        raise RuntimeError(message)
+                    # A case whose grid is still training is left for a later call; the finished cases go ahead.
+                    print('skipped, ' + message)
+                    continue
                 # The study's own rule: smallest mean capped first-goal time, then the larger discovery rate.
                 best = choose(candidates)
                 frozen.append({'idea': name, 'case': case_name(geometry, policy), 'configuration': best['configuration'],
@@ -152,15 +157,21 @@ def main():
     parser.add_argument('--only', nargs='*', default=None, help='queue only these ideas of the file')
     parser.add_argument('--confirmation-seeds', nargs=2, type=int, default=list(BASELINE_CONFIRMATION_SEEDS),
                         metavar=('START', 'COUNT'), help='confirmation stage: first seed and number of seeds')
+    parser.add_argument('--finished-cases-only', action='store_true',
+                        help='confirmation stage: confirm the cases whose development grid is complete, skip the others')
     args = parser.parse_args()
     ideas = {name: idea for name, idea in json.loads(args.ideas.read_text()).items()
              if not args.only or name in args.only}
     if args.stage == 'confirmation':
-        rows, frozen = confirmation_specifications(args.run_dir, args.batch, ideas, *args.confirmation_seeds)
+        rows, frozen = confirmation_specifications(args.run_dir, args.batch, ideas, *args.confirmation_seeds,
+                                                   finished_cases_only=args.finished_cases_only)
         record_frozen(args.run_dir/f'confirmation_frozen_{args.batch}.json', frozen)
     else:
         rows = unit_specifications(args.batch, ideas, args.stage, args.learning_rates)
     # Round-robin over ideas: the queue order is case-major, so each idea's first unit is near the front.
+    if not rows:
+        print(f'0 units queued for batch {args.batch} ({args.stage}): nothing is ready')
+        return
     ideas = list(dict.fromkeys(row['idea'] for row in rows))
     per_idea = {idea: [row for row in rows if row['idea'] == idea] for idea in ideas}
     ordered = [per_idea[idea][index] for index in range(max(map(len, per_idea.values()))) for idea in ideas
