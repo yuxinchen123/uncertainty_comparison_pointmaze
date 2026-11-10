@@ -118,3 +118,40 @@ papers citing the coin-flip network and DRND). These were judged further from th
   exponent.
 - A paper regressing an RND predictor toward its own residual shrunk by a residual-dependent factor.
 - A paper training only the one-hot input layer of a nonlinear RND predictor.
+
+## Additions of 2026-11-10 02:55 PT: the rollout fit, general schedules and the per-step refresh
+
+Written when batch 4 was queued, before its results. Recall $\rho(s)$ is the residual length at state $s$ (the
+bonus). Define $b(m)$ as a chosen decreasing bonus schedule with $b(0) = 1$, and $n$ as the number of times $s$ is a
+training state in one rollout.
+
+### What batch 4 adds to the method
+
+1. **A general schedule.** The shrink-target map is the case $b(m) = (1+m)^{-1/2}$ of the update
+   $\rho \mapsto b(b^{-1}(\rho) + n)$. Any decreasing $b$ can be used; batch 4 runs $(1+m)^{-1/2}$, $(1+m)^{-3/4}$,
+   $(1+m)^{-1}$ and $(1+m/4)^{-1}$.
+2. **One fit per rollout.** All cells get their new outputs together: visited cells move, the others are held. The
+   exact version changes only the output layer, by the smallest weight change that meets every cell's output.
+3. **A per-step refresh.** An arrival earns the error the predictor would have after the states already seen in the
+   same rollout.
+
+### Closest published work, and the difference
+
+| block | closest published work | difference, and how strong it is |
+|---|---|---|
+| a schedule other than the inverse square root | count bonuses with other exponents: the inverse-count bonus of Bayesian exploration bonus methods, and the inverse square root of MBIE-EB (Strehl and Littman 2008, downloaded) | The schedules themselves are published count bonuses. Not found: an RND residual made to follow a chosen schedule. The paper on the inverse-count bonus is not downloaded yet and must be read before it is cited. |
+| exact fit of the output layer with other cells held | recursive least squares and minimum-norm interpolation; with one-hot inputs, a count table | Weak as a novelty claim. With one-hot inputs the residual length is a function of the visit count alone (tested), so a reviewer will read it as a count bonus stored in a network. |
+| per-step refresh | count bonuses are refreshed at every step by construction; Never Give Up refreshes its episodic term within the episode (Badia et al. 2020, downloaded) | Not new as an idea. For RND it is a design choice: the published implementations hold the predictor fixed during a rollout. |
+| all-layers fit by a linearized least-squares step | Gauss–Newton and natural-gradient steps (general optimization); none found for an exploration-bonus predictor | The step is standard. Its use to hold unvisited states while visited ones move was not found. |
+
+### What can be claimed, as of batch 3
+
+1. The count-rule rows say the best schedule depends on the policy: the inverse square root is ahead of the control
+   with coordinate-PPO and behind it with tabular-PPO; $(1+m/4)^{-1}$ is level with or ahead of the control in the
+   three cases finished.
+2. So a method fixed at $-1/2$ is not supported in all four cases by the data so far. What the data may support is
+   narrower: an RND whose start is even and whose decay is set by a schedule, with the schedule and the refresh
+   timing shown to matter.
+3. With one-hot inputs the exact form equals a count rule, so the paper's method claim has to rest on a form that
+   also applies when inputs are not one-hot: the gradient-trained shrink-target form of batch 2, or the all-layers
+   fit of batch 4. Their rows decide whether that claim can be made.
