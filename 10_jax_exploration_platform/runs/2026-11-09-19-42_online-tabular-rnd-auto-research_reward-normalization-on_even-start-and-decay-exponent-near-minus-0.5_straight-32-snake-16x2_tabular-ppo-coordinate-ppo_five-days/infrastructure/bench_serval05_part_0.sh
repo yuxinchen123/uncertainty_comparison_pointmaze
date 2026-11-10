@@ -2,7 +2,7 @@
 # serval05 bench unit (under the queue's lock): distillation bench with three visitation laws, idea group 0 of 3.
 set -euo pipefail
 FREE=$(nvidia-smi --query-gpu=memory.free --format=csv,noheader,nounits | head -1)
-if [ "$FREE" -lt 30000 ]; then echo "card busy: $FREE MiB free"; nvidia-smi --query-compute-apps=pid,used_memory --format=csv; exit 75; fi
+if [ "$FREE" -lt 4000 ]; then echo "card busy: $FREE MiB free"; nvidia-smi --query-compute-apps=pid,used_memory --format=csv; exit 75; fi
 P=/p/rlprojects/RND/10_jax_exploration_platform
 export PYTHONPATH=$P/src PYTHONNOUSERSITE=1 XLA_PYTHON_CLIENT_PREALLOCATE=false
 timeout 1750 /p/rlprojects/RND/.venvs/platform_jax/bin/python -u $P/scripts/grid_initialization_campaign/rnd_decay_bench.py \

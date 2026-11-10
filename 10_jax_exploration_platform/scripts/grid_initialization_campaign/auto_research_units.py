@@ -19,10 +19,10 @@ STAGES = {'screen': {'learning_rates': (1e-3,), 'entropies': (1e-3, 1e-2),
                      'seed_start': 0, 'seed_count': 32, 'stop_after_timesteps': 2 ** 22}}
 
 
-def unit_specifications(batch, ideas, stage='screen'):
-    """Build every unit specification of a batch: ideas x cases x entropies."""
+def unit_specifications(batch, ideas, stage='screen', learning_rates=None):
+    """Build every unit specification of a batch: ideas x cases x policy learning rates x entropies."""
     # Before: {"control": {}}; after: 4 cases x 2 entropies = 8 specifications of 7 settings x 32 seeds.
-    plan = STAGES[stage]
+    plan = dict(STAGES[stage], **({'learning_rates': tuple(learning_rates)} if learning_rates else {}))
     rows = []
     for name, idea in ideas.items():
         unknown = set(idea) - {'settings', 'network', 'reward_normalization'}
@@ -60,8 +60,13 @@ def main():
     parser.add_argument('--batch', required=True)
     parser.add_argument('--ideas', type=Path, required=True)
     parser.add_argument('--stage', default='screen', choices=sorted(STAGES))
+    parser.add_argument('--learning-rates', nargs='*', type=float, default=None,
+                        help='policy learning rates, when they differ from the stage\'s own')
+    parser.add_argument('--only', nargs='*', default=None, help='queue only these ideas of the file')
     args = parser.parse_args()
-    rows = unit_specifications(args.batch, json.loads(args.ideas.read_text()), args.stage)
+    ideas = {name: idea for name, idea in json.loads(args.ideas.read_text()).items()
+             if not args.only or name in args.only}
+    rows = unit_specifications(args.batch, ideas, args.stage, args.learning_rates)
     # Round-robin over ideas: the queue order is case-major, so each idea's first unit is near the front.
     ideas = list(dict.fromkeys(row['idea'] for row in rows))
     per_idea = {idea: [row for row in rows if row['idea'] == idea] for idea in ideas}
