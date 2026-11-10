@@ -267,6 +267,25 @@ Times are Pacific. The protocol is in `program.md`; the plan is
   the two copies choose different weights at learning rate 1e-4 and entropy 0.01 with scores 2% apart. Runs are not
   reproducible across card models or groupings of copies, so comparisons are between distributions. Details and
   consequences: `batches/06_…/ideas.md`, last section.
+- **2026-11-10 11:45. Confirmation on seeds 20000-21023, state at 11:45** (mean capped first-goal time at 2^24;
+  difference to the baseline on the same seeds with its 95% interval; full tables in `analysis/analysis.md`,
+  section "confirmation 06"):
+
+  | case | baseline | finalist: schedule-fit RND, −1, every step | schedule-fit RND, −0.5, every step | uneven start, scheduled decay (512 seeds) |
+  |---|---|---|---|---|
+  | snake, coordinate-PPO | 157.0K ± 29.5K (1,024 seeds) | 67.6K ± 7.0K; −89K [−158K, −36K], −57% | 60.3K ± 1.9K; −101K [−175K, −43K], −63% | 128.1K ± 16.3K; −13K [−101K, +48K] |
+  | snake, tabular-PPO | 17.89K ± 0.36K (640 seeds so far) | 12.84K ± 0.18K; −5.1K [−5.8K, −4.5K], −29% | 32.0K ± 1.1K; +12.5K [+10.2K, +14.9K], +70% | 14.07K ± 0.34K; −3.9K [−4.8K, −3.1K], −22% |
+  | straight, coordinate-PPO | confirmation running | 2.41K ± 0.06K | 3.09K ± 0.06K | 2.39K ± 0.09K |
+  | straight, tabular-PPO | development 3 of 4 units | 6.09K ± 0.12K (640 seeds) | 8.04K ± 0.21K | 6.48K ± 0.17K |
+
+  Reading so far: the finalist is ahead of the baseline in both cases that have a baseline (intervals exclude
+  zero); the −0.5 form is ahead with coordinate-PPO and 70% behind with tabular-PPO; the scheduled decay with the
+  uneven start is ahead with tabular-PPO and level with the baseline with coordinate-PPO. The baseline's final
+  policy reaches the goal in 98% of evaluation episodes on the snake grid with coordinate-PPO, the finalist's in
+  55% (its chosen weight there is 2^6, the largest of the grid).
+- **2026-11-10 10:45. Copies per process** (user request): trained-predictor units reach the card's limit at 256
+  copies, exact-fit units keep gaining to 2,048 (`infrastructure/profiles/README.md`). Confirmation units of
+  trained-predictor rows hold 256 seeds from now on.
 
 ## Idea list
 
