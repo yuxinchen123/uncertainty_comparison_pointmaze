@@ -1,196 +1,196 @@
 {
-  "gautschi": {
-    "ssh": [
-      "ssh",
-      "-o",
-      "BatchMode=yes",
-      "-o",
-      "ConnectTimeout=30",
-      "gautschi"
-    ],
-    "check": [],
-    "remote_run": "/scratch/gautschi/liu4869/rnd_grid/runs/auto_research",
-    "python": "/scratch/gautschi/liu4869/envs/rnd_platform_jax/bin/python",
-    "code": "/scratch/gautschi/liu4869/rnd_grid/code/source_9cd855bb4d2c2da5399974396a9183c58fba890a/10_jax_exploration_platform",
-    "unit_seconds": 4500,
-    "pools": {
-      "h100": {
-        "gpu_class": "h100_sxm_gautschi",
-        "time_limit": "12:00:00",
-        "max_jobs": 2,
-        "sbatch_options": [
-          "-p",
-          "ai",
-          "-q",
-          "normal",
-          "-A",
-          "dsimchil",
-          "-N1",
-          "-n14",
-          "--gpus-per-node=1"
-        ]
-      }
-    },
-    "ready": true,
-    "failed_calls_in_a_row": 0,
-    "budget_command": "bash -lc slist 2> /dev/null | grep dsimchil",
-    "budget_field": 2,
-    "budget_unit": "H100-hours"
+ "gautschi": {
+  "ssh": [
+   "ssh",
+   "-o",
+   "BatchMode=yes",
+   "-o",
+   "ConnectTimeout=30",
+   "gautschi"
+  ],
+  "check": [],
+  "remote_run": "/scratch/gautschi/liu4869/rnd_grid/runs/auto_research",
+  "python": "/scratch/gautschi/liu4869/envs/rnd_platform_jax/bin/python",
+  "code": "/scratch/gautschi/liu4869/rnd_grid/code/source_19581d3336a120df762c6251f16367ac20449a80/10_jax_exploration_platform",
+  "unit_seconds": 4500,
+  "pools": {
+   "h100": {
+    "gpu_class": "h100_sxm_gautschi",
+    "time_limit": "12:00:00",
+    "max_jobs": 2,
+    "sbatch_options": [
+     "-p",
+     "ai",
+     "-q",
+     "normal",
+     "-A",
+     "dsimchil",
+     "-N1",
+     "-n14",
+     "--gpus-per-node=1"
+    ]
+   }
   },
-  "aces": {
-    "ssh": [
-      "ssh",
-      "-o",
-      "BatchMode=yes",
-      "portal05",
-      "ssh",
-      "-o",
-      "BatchMode=yes",
-      "aces"
-    ],
-    "check": [
-      "ssh",
-      "-o",
-      "BatchMode=yes",
-      "portal05",
-      "ssh",
-      "-O",
-      "check",
-      "aces"
-    ],
-    "remote_run": "/scratch/user/u.sl359075/rnd_grid/runs/auto_research",
-    "python": "/scratch/user/u.sl359075/envs/rnd_platform_jax/bin/python",
-    "code": "/scratch/user/u.sl359075/rnd_grid/code/source_9cd855bb4d2c2da5399974396a9183c58fba890a/10_jax_exploration_platform",
-    "unit_seconds": 5400,
-    "pools": {
-      "h100": {
-        "gpu_class": "h100_pcie_aces",
-        "time_limit": "08:00:00",
-        "max_jobs": 10,
-        "sbatch_options": [
-          "--account=158590754315",
-          "-p",
-          "gpu",
-          "--nodes=1",
-          "--ntasks=1",
-          "--cpus-per-task=2",
-          "--mem=8G",
-          "--gres=gpu:h100:1"
-        ]
-      }
-    },
-    "ready": true,
-    "failed_calls_in_a_row": 0,
-    "budget_command": "myproject 2>&1 | grep 158590754315",
-    "budget_field": 6,
-    "budget_unit": "SUs"
+  "ready": true,
+  "failed_calls_in_a_row": 0,
+  "budget_command": "bash -lc slist 2> /dev/null | grep dsimchil",
+  "budget_field": 2,
+  "budget_unit": "H100-hours"
+ },
+ "aces": {
+  "ssh": [
+   "ssh",
+   "-o",
+   "BatchMode=yes",
+   "portal05",
+   "ssh",
+   "-o",
+   "BatchMode=yes",
+   "aces"
+  ],
+  "check": [
+   "ssh",
+   "-o",
+   "BatchMode=yes",
+   "portal05",
+   "ssh",
+   "-O",
+   "check",
+   "aces"
+  ],
+  "remote_run": "/scratch/user/u.sl359075/rnd_grid/runs/auto_research",
+  "python": "/scratch/user/u.sl359075/envs/rnd_platform_jax/bin/python",
+  "code": "/scratch/user/u.sl359075/rnd_grid/code/source_19581d3336a120df762c6251f16367ac20449a80/10_jax_exploration_platform",
+  "unit_seconds": 5400,
+  "pools": {
+   "h100": {
+    "gpu_class": "h100_pcie_aces",
+    "time_limit": "08:00:00",
+    "max_jobs": 10,
+    "sbatch_options": [
+     "--account=158590754315",
+     "-p",
+     "gpu",
+     "--nodes=1",
+     "--ntasks=1",
+     "--cpus-per-task=2",
+     "--mem=8G",
+     "--gres=gpu:h100:1"
+    ]
+   }
   },
-  "gilbreth": {
-    "ssh": [
-      "ssh",
-      "-o",
-      "BatchMode=yes",
-      "-o",
-      "ConnectTimeout=30",
-      "gilbreth"
-    ],
-    "check": [],
-    "remote_run": "/scratch/gilbreth/liu4869/rnd_grid/runs/auto_research",
-    "python": "/scratch/gilbreth/liu4869/envs/rnd_platform_jax/bin/python",
-    "code": "/scratch/gilbreth/liu4869/rnd_grid/code/source_9cd855bb4d2c2da5399974396a9183c58fba890a/10_jax_exploration_platform",
-    "unit_seconds": 8000,
-    "pools": {
-      "a100-80gb-standby": {
-        "gpu_class": "a100_80gb_gilbreth",
-        "time_limit": "04:00:00",
-        "max_jobs": 12,
-        "sbatch_options": [
-          "-p",
-          "a100-80gb",
-          "-q",
-          "standby",
-          "-A",
-          "dsmichil",
-          "-N1",
-          "-n1",
-          "-c4",
-          "--gres=gpu:1",
-          "--mem=12G"
-        ]
-      }
-    },
-    "ready": true,
-    "failed_calls_in_a_row": 0,
-    "budget_note": "standby, not charged"
+  "ready": true,
+  "failed_calls_in_a_row": 0,
+  "budget_command": "myproject 2>&1 | grep 158590754315",
+  "budget_field": 6,
+  "budget_unit": "SUs"
+ },
+ "gilbreth": {
+  "ssh": [
+   "ssh",
+   "-o",
+   "BatchMode=yes",
+   "-o",
+   "ConnectTimeout=30",
+   "gilbreth"
+  ],
+  "check": [],
+  "remote_run": "/scratch/gilbreth/liu4869/rnd_grid/runs/auto_research",
+  "python": "/scratch/gilbreth/liu4869/envs/rnd_platform_jax/bin/python",
+  "code": "/scratch/gilbreth/liu4869/rnd_grid/code/source_19581d3336a120df762c6251f16367ac20449a80/10_jax_exploration_platform",
+  "unit_seconds": 8000,
+  "pools": {
+   "a100-80gb-standby": {
+    "gpu_class": "a100_80gb_gilbreth",
+    "time_limit": "04:00:00",
+    "max_jobs": 12,
+    "sbatch_options": [
+     "-p",
+     "a100-80gb",
+     "-q",
+     "standby",
+     "-A",
+     "dsmichil",
+     "-N1",
+     "-n1",
+     "-c4",
+     "--gres=gpu:1",
+     "--mem=12G"
+    ]
+   }
   },
-  "mit": {
-    "ssh": [
-      "ssh",
-      "-o",
-      "BatchMode=yes",
-      "portal11",
-      "ssh",
-      "-o",
-      "BatchMode=yes",
-      "mit"
-    ],
-    "check": [
-      "ssh",
-      "-o",
-      "BatchMode=yes",
-      "portal11",
-      "ssh",
-      "-O",
-      "check",
-      "mit"
-    ],
-    "remote_run": "/orcd/scratch/orcd/008/shuzel/rnd_grid/runs/auto_research",
-    "python": "/orcd/scratch/orcd/008/shuzel/envs/rnd_platform_jax/bin/python",
-    "code": "/orcd/scratch/orcd/008/shuzel/rnd_grid/code/source_9cd855bb4d2c2da5399974396a9183c58fba890a/10_jax_exploration_platform",
-    "unit_seconds": 4000,
-    "pools": {
-      "advanced": {
-        "gpu_class": "h100_mit",
-        "time_limit": "12:00:00",
-        "max_jobs": 4,
-        "card_guard": true,
-        "sbatch_options": [
-          "--partition=mit_normal_gpu",
-          "--account=mit_amf_advanced_gpu",
-          "--qos=mit_amf_advanced_gpu",
-          "--gpus=h100:1",
-          "--nodes=1",
-          "--ntasks=1",
-          "--cpus-per-task=4",
-          "--mem=16G",
-          "--requeue",
-          "--open-mode=append",
-          "-x",
-          "node3401-c1"
-        ]
-      },
-      "preemptable": {
-        "gpu_class": "h100_mit",
-        "time_limit": "12:00:00",
-        "max_jobs": 4,
-        "card_guard": true,
-        "sbatch_options": [
-          "--partition=mit_preemptable",
-          "--gpus=h100:1",
-          "--nodes=1",
-          "--ntasks=1",
-          "--cpus-per-task=4",
-          "--mem=16G",
-          "--requeue",
-          "--open-mode=append",
-          "-x",
-          "node[1634,2433-2434,2804,2906,3000-3008,3100-3102,3200-3208,3300-3302,3400,3402-3408,3500-3512,4102-4108,4200-4207],node3401-c1,node4100-c1,node5500-c1,node5501-c1,node5502-c1,node5600-c1,node5601-c1,node5602-c1,node5700-c1,node5701-c1,node5702-c1,node5800-c1,node5801-c1,node5802-c1"
-        ]
-      }
-    },
-    "ready": true,
-    "failed_calls_in_a_row": 0,
-    "failed_call_limit": 1,
-    "budget_note": "not charged"
-  }
+  "ready": true,
+  "failed_calls_in_a_row": 0,
+  "budget_note": "standby, not charged"
+ },
+ "mit": {
+  "ssh": [
+   "ssh",
+   "-o",
+   "BatchMode=yes",
+   "portal11",
+   "ssh",
+   "-o",
+   "BatchMode=yes",
+   "mit"
+  ],
+  "check": [
+   "ssh",
+   "-o",
+   "BatchMode=yes",
+   "portal11",
+   "ssh",
+   "-O",
+   "check",
+   "mit"
+  ],
+  "remote_run": "/orcd/scratch/orcd/008/shuzel/rnd_grid/runs/auto_research",
+  "python": "/orcd/scratch/orcd/008/shuzel/envs/rnd_platform_jax/bin/python",
+  "code": "/orcd/scratch/orcd/008/shuzel/rnd_grid/code/source_19581d3336a120df762c6251f16367ac20449a80/10_jax_exploration_platform",
+  "unit_seconds": 4000,
+  "pools": {
+   "advanced": {
+    "gpu_class": "h100_mit",
+    "time_limit": "12:00:00",
+    "max_jobs": 4,
+    "card_guard": true,
+    "sbatch_options": [
+     "--partition=mit_normal_gpu",
+     "--account=mit_amf_advanced_gpu",
+     "--qos=mit_amf_advanced_gpu",
+     "--gpus=h100:1",
+     "--nodes=1",
+     "--ntasks=1",
+     "--cpus-per-task=4",
+     "--mem=16G",
+     "--requeue",
+     "--open-mode=append",
+     "-x",
+     "node3401-c1"
+    ]
+   },
+   "preemptable": {
+    "gpu_class": "h100_mit",
+    "time_limit": "12:00:00",
+    "max_jobs": 4,
+    "card_guard": true,
+    "sbatch_options": [
+     "--partition=mit_preemptable",
+     "--gpus=h100:1",
+     "--nodes=1",
+     "--ntasks=1",
+     "--cpus-per-task=4",
+     "--mem=16G",
+     "--requeue",
+     "--open-mode=append",
+     "-x",
+     "node[1634,2433-2434,2804,2906,3000-3008,3100-3102,3200-3208,3300-3302,3400,3402-3408,3500-3512,4102-4108,4200-4207],node3401-c1,node4100-c1,node5500-c1,node5501-c1,node5502-c1,node5600-c1,node5601-c1,node5602-c1,node5700-c1,node5701-c1,node5702-c1,node5800-c1,node5801-c1,node5802-c1"
+    ]
+   }
+  },
+  "ready": true,
+  "failed_calls_in_a_row": 0,
+  "failed_call_limit": 1,
+  "budget_note": "not charged"
+ }
 }

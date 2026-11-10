@@ -87,6 +87,38 @@ Times are Pacific. The protocol is in `program.md`; the plan is
   learning rate is also the predictor's, so a lower rate slows its decay (bench: slope −0.7 instead of −1.5 on the
   snake grid). 64 units were added: the eight main ideas at policy learning rate 1e-4 in all four cases. An idea's
   screen score is now its best setting over both policy learning rates, compared with the control's best over both.
+- **2026-11-09 22:25. The power-law loss diverges in RL** (`diagnosis/diagnosis.md`). Unit start + power-law q = 4
+  had 53 and 59 of 224 copies with a non-finite bonus on the snake grid with coordinate-PPO. Its step factor
+  $2\rho^2$ has no upper limit, and early in RL a cell fills whole minibatches. The shrink-target loss has a step
+  factor between 0 and 1 and is the method's loss from here on. Eight power-law units that had not started are held in
+  `queue/deferred_unstable_power_law/`. The screen report now lists copies with a non-finite bonus.
+- **2026-11-09 22:30-23:05. Batch 2 code** (commits `00b86271`, `b264ed38`, `19581d33`; 104 tests and both
+  unchanged-path gates pass):
+  - generalized shrink map $\rho \to \rho(1+\rho^p)^{-1/p}$, exponent $-1/p$;
+  - exact-step optimizer: no learning rate, the step that best realizes every kept cell's shrink target;
+  - diagnostic count-rule forms: bonus fixed during a rollout, and a count rate;
+  - bench: a fourth law in which each rollout sits in one cell.
+- **2026-11-09 22:50. Batch 2 bench** (`bench/batch_02_four_laws/`, serval02 card 1). With unit start and the shrink
+  target, SGD 1 and 2 have no non-finite copy under one-cell rollouts; SGD 3 has 3 of 16, SGD 4 has 8 of 16 and SGD 6
+  all. Exponent −1 is stable at SGD 1 (slopes −0.93 / −0.86), exponent −0.25 at SGD 2 and 4 (−0.22 to −0.24). The
+  exact-step form has slopes −0.31 / −0.25 with one step per minibatch: it under-counts when a minibatch holds many
+  cells. The one-cell law did not reproduce the power-law failure, so the RL non-finite count stays the gate.
+- **2026-11-09 23:00. Batch 1, partial RL results** (32 seeds, best setting of each idea so far):
+  - straight grid, coordinate-PPO: control 3.90K ± 0.20K; separate Adam 1e-4 3.78K; shrink target SGD 1 without unit
+    start 6.20K; unit start alone 21.1K; unit start + shrink target only finished at policy learning rate 1e-4
+    (32K to 35K), where every idea is slow;
+  - snake grid, coordinate-PPO: shrink target SGD 1 without unit start 55.2K ± 8.3K; control 82.1K ± 12.0K (at
+    policy learning rate 1e-4); even-start-only variants 1.1M;
+  - straight grid, tabular-PPO: initial-ratio readout 7.95K; unit start 8.57K; length readout 9.79K; unit start +
+    shrink target SGD 3 14.9K ± 2.5K; control not finished.
+  Reading: the control is already fast on the straight grid; the slower decay helps on the snake grid; the stable
+  full candidate is not ahead anywhere yet.
+- **2026-11-09 23:08. Code rollout for batch 2.** New frozen copy `code/source_19581d33…/` on UVA and on Gautschi,
+  Gilbreth, ACES and MIT. Running workers launch each unit from the folder named `source_9cd855bb…`, so on every
+  machine that name is now a link to the new copy and the original is kept as `source_9cd855bb….original`. Batch 1
+  settings compute the same numbers under the new code (new keys default off; unchanged-path gates).
+- **2026-11-09 23:09. Batch 2 queued:** 224 units (`batches/02_…/ideas.md`): 10 diagnostic count-rule rows and 4
+  stable shrink-target ideas, at both policy learning rates.
 
 ## Idea list
 
