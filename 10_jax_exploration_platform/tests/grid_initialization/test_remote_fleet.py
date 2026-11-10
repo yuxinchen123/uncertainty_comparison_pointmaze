@@ -459,16 +459,18 @@ def test_take_back_returns_waiting_units_at_once_and_leaves_claimed_ones(world):
     # A worker has claimed unit_c meanwhile: it is no longer in the server's pending folder.
     (world.server / 'queue/running').mkdir(exist_ok=True)
     os.rename(world.server / 'queue/pending/unit_c.json', world.server / 'queue/running/unit_c.json')
-    fleet.take_back(world.run, world.table, Namespace(server='pretend', units=2, from_end=True, match=None))
+    fleet.take_back(world.run, world.table, Namespace(server='pretend', units=1, from_end=True, match=None, hold=False))
+    fleet.take_back(world.run, world.table, Namespace(server='pretend', units=1, from_end=True, match=None, hold=True))
     uva, server = folders(world)
     # Of the waiting units b and d, both are taken back; c stays where its worker has it.
-    assert uva['unit_b'] == 'pending' and server['unit_b'] == 'withdrawn'
+    # unit_d came back to pending; unit_b was held: it sits in deferred, where no UVA worker takes it.
+    assert uva['unit_b'] == 'deferred' and server['unit_b'] == 'withdrawn'
     assert uva['unit_d'] == 'pending' and server['unit_d'] == 'withdrawn'
     assert uva['unit_c'] == 'remote_pretend' and server['unit_c'] == 'running'
     assignment = fleet.load_assignment(world.run)
     assert assignment['unit_d']['state'] == 'returned' and assignment['unit_c']['state'] == 'staged'
     # Nothing matches: nothing moves.
-    fleet.take_back(world.run, world.table, Namespace(server='pretend', units=2, from_end=False, match='unit_z'))
+    fleet.take_back(world.run, world.table, Namespace(server='pretend', units=2, from_end=False, match='unit_z', hold=False))
     assert folders(world) == (uva, server)
 
 

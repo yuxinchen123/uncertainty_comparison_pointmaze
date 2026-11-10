@@ -709,8 +709,8 @@ def finish_assignment(run_dir, units, state):
     write_json(assignment_path(run_dir), assignment)
 
 
-def bring_back(run_dir, table, name, returned, command):
-    """Put units the server gave up back in UVA's pending folder, with whatever records they have."""
+def bring_back(run_dir, table, name, returned, command, folder='pending'):
+    """Put units the server gave up back in a UVA queue folder (pending, or deferred to hold them), with their records."""
     # A unit going back to UVA brings the records it has, so finished copies are not trained again.
     entry = table[name]
     with_records = [unit for unit, data in returned if data]
@@ -719,10 +719,10 @@ def bring_back(run_dir, table, name, returned, command):
               + [f':{entry["remote_run"]}/data/research/{unit}' for unit in with_records[1:]]
               + [str(run_dir / 'data/research') + '/'])
     for unit, _ in returned:
-        move_unit(run_dir, unit, f'remote_{name}', 'pending')
+        move_unit(run_dir, unit, f'remote_{name}', folder)
     finish_assignment(run_dir, [unit for unit, _ in returned], 'returned')
     for unit, _ in returned:
-        log(run_dir, f'{name} | {command} | {unit} is back in queue/pending on UVA')
+        log(run_dir, f'{name} | {command} | {unit} is back in queue/{folder} on UVA')
 
 
 def take_back(run_dir, table, args):
@@ -742,8 +742,9 @@ def take_back(run_dir, table, args):
     moved = parse_moves(remote(run_dir, table, name, move_script(table[name], plan, int(time.time()))))
     returned = [(unit, data) for _, unit, data in moved]
     log(run_dir, f'{name} | take-back | {len(returned)} of {len(chosen)} waiting unit(s) taken back '
-        f'(match: {args.match}, from the end: {args.from_end})')
-    bring_back(run_dir, table, name, returned, 'take-back')
+        f'(match: {args.match}, from the end: {args.from_end}, held: {args.hold})')
+    # Held units go to queue/deferred, where no UVA worker takes them; "stage --include-deferred" sends them on.
+    bring_back(run_dir, table, name, returned, 'take-back', 'deferred' if args.hold else 'pending')
 
 
 def tick_server(run_dir, table, name, dry_run):
@@ -911,6 +912,8 @@ def main():
     taking.add_argument('--units', type=int, required=True)
     taking.add_argument('--from-end', action='store_true')
     taking.add_argument('--match')
+    taking.add_argument('--hold', action='store_true',
+                        help='put the units in queue/deferred, out of the UVA workers\' reach, to stage them elsewhere')
     args = parser.parse_args()
     run_dir = args.run_dir.resolve()
     table = read_json(table_path(run_dir))
