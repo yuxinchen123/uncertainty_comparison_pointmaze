@@ -1,0 +1,299 @@
+{
+  "control": {},
+  "separate-adam-constant-learning-rate-1e-4": {
+    "settings": {
+      "rnd_optimizer": "adam",
+      "rnd_learning_rate": 0.0001
+    }
+  },
+  "separate-adam-constant-learning-rate-1e-3": {
+    "settings": {
+      "rnd_optimizer": "adam",
+      "rnd_learning_rate": 0.001
+    }
+  },
+  "length-readout": {
+    "settings": {
+      "rnd_readout": "length"
+    }
+  },
+  "input-layer-only": {
+    "settings": {
+      "rnd_trainable": "input_layer"
+    }
+  },
+  "unit-start": {
+    "settings": {
+      "rnd_unit_length_target": true
+    },
+    "network": {
+      "zero_predictor_output": true
+    }
+  },
+  "initial-ratio-readout": {
+    "settings": {
+      "rnd_readout": "initial_ratio_half_squared"
+    }
+  },
+  "wide-input-layer-64": {
+    "network": {
+      "first_width": 64
+    }
+  },
+  "bias-start-0.5": {
+    "network": {
+      "bias_std": 0.5
+    }
+  },
+  "power-4-sgd-0.001-length-readout": {
+    "settings": {
+      "rnd_loss": "power",
+      "rnd_loss_power": 4.0,
+      "rnd_optimizer": "sgd",
+      "rnd_learning_rate": 0.001,
+      "rnd_readout": "length"
+    }
+  },
+  "power-6-sgd-0.001": {
+    "settings": {
+      "rnd_loss": "power",
+      "rnd_loss_power": 6.0,
+      "rnd_optimizer": "sgd",
+      "rnd_learning_rate": 0.001
+    }
+  },
+  "adagrad-0.001": {
+    "settings": {
+      "rnd_optimizer": "adagrad",
+      "rnd_learning_rate": 0.001
+    }
+  },
+  "unit-start-adagrad-0.001": {
+    "settings": {
+      "rnd_optimizer": "adagrad",
+      "rnd_learning_rate": 0.001,
+      "rnd_unit_length_target": true
+    },
+    "network": {
+      "zero_predictor_output": true
+    }
+  },
+  "power-4-sgd-0.01-length-readout": {
+    "settings": {
+      "rnd_loss": "power",
+      "rnd_loss_power": 4.0,
+      "rnd_optimizer": "sgd",
+      "rnd_learning_rate": 0.01,
+      "rnd_readout": "length"
+    }
+  },
+  "power-6-sgd-0.01": {
+    "settings": {
+      "rnd_loss": "power",
+      "rnd_loss_power": 6.0,
+      "rnd_optimizer": "sgd",
+      "rnd_learning_rate": 0.01
+    }
+  },
+  "adagrad-0.01": {
+    "settings": {
+      "rnd_optimizer": "adagrad",
+      "rnd_learning_rate": 0.01
+    }
+  },
+  "unit-start-adagrad-0.01": {
+    "settings": {
+      "rnd_optimizer": "adagrad",
+      "rnd_learning_rate": 0.01,
+      "rnd_unit_length_target": true
+    },
+    "network": {
+      "zero_predictor_output": true
+    }
+  },
+  "power-4-sgd-0.1-length-readout": {
+    "settings": {
+      "rnd_loss": "power",
+      "rnd_loss_power": 4.0,
+      "rnd_optimizer": "sgd",
+      "rnd_learning_rate": 0.1,
+      "rnd_readout": "length"
+    }
+  },
+  "power-6-sgd-0.1": {
+    "settings": {
+      "rnd_loss": "power",
+      "rnd_loss_power": 6.0,
+      "rnd_optimizer": "sgd",
+      "rnd_learning_rate": 0.1
+    }
+  },
+  "adagrad-0.1": {
+    "settings": {
+      "rnd_optimizer": "adagrad",
+      "rnd_learning_rate": 0.1
+    }
+  },
+  "unit-start-adagrad-0.1": {
+    "settings": {
+      "rnd_optimizer": "adagrad",
+      "rnd_learning_rate": 0.1,
+      "rnd_unit_length_target": true
+    },
+    "network": {
+      "zero_predictor_output": true
+    }
+  },
+  "shrink-target-sgd-0.01-length-readout": {
+    "settings": {
+      "rnd_loss": "shrink_target",
+      "rnd_optimizer": "sgd",
+      "rnd_learning_rate": 0.01,
+      "rnd_readout": "length"
+    }
+  },
+  "unit-start-power-4-sgd-0.01-length-readout": {
+    "settings": {
+      "rnd_loss": "power",
+      "rnd_loss_power": 4.0,
+      "rnd_optimizer": "sgd",
+      "rnd_learning_rate": 0.01,
+      "rnd_readout": "length",
+      "rnd_unit_length_target": true
+    },
+    "network": {
+      "zero_predictor_output": true
+    }
+  },
+  "unit-start-shrink-target-sgd-0.01-length-readout": {
+    "settings": {
+      "rnd_loss": "shrink_target",
+      "rnd_optimizer": "sgd",
+      "rnd_learning_rate": 0.01,
+      "rnd_readout": "length",
+      "rnd_unit_length_target": true
+    },
+    "network": {
+      "zero_predictor_output": true
+    }
+  },
+  "target-copy-trunk-input-rows-power-4-sgd-0.01-initial-ratio-length": {
+    "settings": {
+      "rnd_loss": "power",
+      "rnd_loss_power": 4.0,
+      "rnd_optimizer": "sgd",
+      "rnd_learning_rate": 0.01,
+      "rnd_readout": "initial_ratio_length",
+      "rnd_trainable": "input_layer"
+    },
+    "network": {
+      "predictor_trunk": "target_copy"
+    }
+  },
+  "shrink-target-sgd-0.1-length-readout": {
+    "settings": {
+      "rnd_loss": "shrink_target",
+      "rnd_optimizer": "sgd",
+      "rnd_learning_rate": 0.1,
+      "rnd_readout": "length"
+    }
+  },
+  "unit-start-power-4-sgd-0.1-length-readout": {
+    "settings": {
+      "rnd_loss": "power",
+      "rnd_loss_power": 4.0,
+      "rnd_optimizer": "sgd",
+      "rnd_learning_rate": 0.1,
+      "rnd_readout": "length",
+      "rnd_unit_length_target": true
+    },
+    "network": {
+      "zero_predictor_output": true
+    }
+  },
+  "unit-start-shrink-target-sgd-0.1-length-readout": {
+    "settings": {
+      "rnd_loss": "shrink_target",
+      "rnd_optimizer": "sgd",
+      "rnd_learning_rate": 0.1,
+      "rnd_readout": "length",
+      "rnd_unit_length_target": true
+    },
+    "network": {
+      "zero_predictor_output": true
+    }
+  },
+  "target-copy-trunk-input-rows-power-4-sgd-0.1-initial-ratio-length": {
+    "settings": {
+      "rnd_loss": "power",
+      "rnd_loss_power": 4.0,
+      "rnd_optimizer": "sgd",
+      "rnd_learning_rate": 0.1,
+      "rnd_readout": "initial_ratio_length",
+      "rnd_trainable": "input_layer"
+    },
+    "network": {
+      "predictor_trunk": "target_copy"
+    }
+  },
+  "shrink-target-sgd-1-length-readout": {
+    "settings": {
+      "rnd_loss": "shrink_target",
+      "rnd_optimizer": "sgd",
+      "rnd_learning_rate": 1.0,
+      "rnd_readout": "length"
+    }
+  },
+  "unit-start-power-4-sgd-1-length-readout": {
+    "settings": {
+      "rnd_loss": "power",
+      "rnd_loss_power": 4.0,
+      "rnd_optimizer": "sgd",
+      "rnd_learning_rate": 1.0,
+      "rnd_readout": "length",
+      "rnd_unit_length_target": true
+    },
+    "network": {
+      "zero_predictor_output": true
+    }
+  },
+  "unit-start-shrink-target-sgd-1-length-readout": {
+    "settings": {
+      "rnd_loss": "shrink_target",
+      "rnd_optimizer": "sgd",
+      "rnd_learning_rate": 1.0,
+      "rnd_readout": "length",
+      "rnd_unit_length_target": true
+    },
+    "network": {
+      "zero_predictor_output": true
+    }
+  },
+  "target-copy-trunk-input-rows-power-4-sgd-1-initial-ratio-length": {
+    "settings": {
+      "rnd_loss": "power",
+      "rnd_loss_power": 4.0,
+      "rnd_optimizer": "sgd",
+      "rnd_learning_rate": 1.0,
+      "rnd_readout": "initial_ratio_length",
+      "rnd_trainable": "input_layer"
+    },
+    "network": {
+      "predictor_trunk": "target_copy"
+    }
+  },
+  "sgd-inverse-time-0.1-time-scale-1000": {
+    "settings": {
+      "rnd_optimizer": "sgd",
+      "rnd_learning_rate": 0.1,
+      "rnd_learning_rate_time_scale": 1000.0
+    }
+  },
+  "sgd-inverse-time-1-time-scale-1000": {
+    "settings": {
+      "rnd_optimizer": "sgd",
+      "rnd_learning_rate": 1.0,
+      "rnd_learning_rate_time_scale": 1000.0
+    }
+  }
+}

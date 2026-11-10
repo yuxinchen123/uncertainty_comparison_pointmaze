@@ -1,0 +1,101 @@
+{
+  "control": {},
+  "separate-adam-constant-learning-rate-1e-4": {
+    "settings": {
+      "rnd_optimizer": "adam",
+      "rnd_learning_rate": 0.0001
+    }
+  },
+  "length-readout": {
+    "settings": {
+      "rnd_readout": "length"
+    }
+  },
+  "initial-ratio-readout": {
+    "settings": {
+      "rnd_readout": "initial_ratio_half_squared"
+    }
+  },
+  "unit-start": {
+    "settings": {
+      "rnd_unit_length_target": true
+    },
+    "network": {
+      "zero_predictor_output": true
+    }
+  },
+  "bias-start-0.5": {
+    "network": {
+      "bias_std": 0.5
+    }
+  },
+  "wide-input-layer-64": {
+    "network": {
+      "first_width": 64
+    }
+  },
+  "power-4-sgd-0.1-length-readout": {
+    "settings": {
+      "rnd_loss": "power",
+      "rnd_loss_power": 4.0,
+      "rnd_optimizer": "sgd",
+      "rnd_learning_rate": 0.1,
+      "rnd_readout": "length"
+    }
+  },
+  "shrink-target-sgd-1-length-readout": {
+    "settings": {
+      "rnd_loss": "shrink_target",
+      "rnd_optimizer": "sgd",
+      "rnd_learning_rate": 1.0,
+      "rnd_readout": "length"
+    }
+  },
+  "unit-start-adagrad-0.1": {
+    "settings": {
+      "rnd_optimizer": "adagrad",
+      "rnd_learning_rate": 0.1,
+      "rnd_unit_length_target": true
+    },
+    "network": {
+      "zero_predictor_output": true
+    }
+  },
+  "unit-start-power-4-sgd-0.3-length-readout": {
+    "settings": {
+      "rnd_loss": "power",
+      "rnd_loss_power": 4.0,
+      "rnd_optimizer": "sgd",
+      "rnd_learning_rate": 0.3,
+      "rnd_readout": "length",
+      "rnd_unit_length_target": true
+    },
+    "network": {
+      "zero_predictor_output": true
+    }
+  },
+  "unit-start-shrink-target-sgd-2-length-readout": {
+    "settings": {
+      "rnd_loss": "shrink_target",
+      "rnd_optimizer": "sgd",
+      "rnd_learning_rate": 2.0,
+      "rnd_readout": "length",
+      "rnd_unit_length_target": true
+    },
+    "network": {
+      "zero_predictor_output": true
+    }
+  },
+  "unit-start-shrink-target-sgd-3-length-readout": {
+    "settings": {
+      "rnd_loss": "shrink_target",
+      "rnd_optimizer": "sgd",
+      "rnd_learning_rate": 3.0,
+      "rnd_readout": "length",
+      "rnd_unit_length_target": true
+    },
+    "network": {
+      "zero_predictor_output": true
+    }
+  }
+}

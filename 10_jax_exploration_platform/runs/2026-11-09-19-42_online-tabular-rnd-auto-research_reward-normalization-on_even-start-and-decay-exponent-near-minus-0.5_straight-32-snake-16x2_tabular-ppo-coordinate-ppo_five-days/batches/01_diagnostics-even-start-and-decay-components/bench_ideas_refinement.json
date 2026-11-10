@@ -1,0 +1,94 @@
+{
+  "unit-start-power-4-sgd-0.2-length-readout": {
+    "settings": {
+      "rnd_loss": "power",
+      "rnd_loss_power": 4.0,
+      "rnd_optimizer": "sgd",
+      "rnd_learning_rate": 0.2,
+      "rnd_readout": "length",
+      "rnd_unit_length_target": true
+    },
+    "network": {
+      "zero_predictor_output": true
+    }
+  },
+  "unit-start-power-4-sgd-0.3-length-readout": {
+    "settings": {
+      "rnd_loss": "power",
+      "rnd_loss_power": 4.0,
+      "rnd_optimizer": "sgd",
+      "rnd_learning_rate": 0.3,
+      "rnd_readout": "length",
+      "rnd_unit_length_target": true
+    },
+    "network": {
+      "zero_predictor_output": true
+    }
+  },
+  "unit-start-power-4-sgd-0.5-length-readout": {
+    "settings": {
+      "rnd_loss": "power",
+      "rnd_loss_power": 4.0,
+      "rnd_optimizer": "sgd",
+      "rnd_learning_rate": 0.5,
+      "rnd_readout": "length",
+      "rnd_unit_length_target": true
+    },
+    "network": {
+      "zero_predictor_output": true
+    }
+  },
+  "unit-start-shrink-target-sgd-2-length-readout": {
+    "settings": {
+      "rnd_loss": "shrink_target",
+      "rnd_optimizer": "sgd",
+      "rnd_learning_rate": 2.0,
+      "rnd_readout": "length",
+      "rnd_unit_length_target": true
+    },
+    "network": {
+      "zero_predictor_output": true
+    }
+  },
+  "unit-start-shrink-target-sgd-3-length-readout": {
+    "settings": {
+      "rnd_loss": "shrink_target",
+      "rnd_optimizer": "sgd",
+      "rnd_learning_rate": 3.0,
+      "rnd_readout": "length",
+      "rnd_unit_length_target": true
+    },
+    "network": {
+      "zero_predictor_output": true
+    }
+  },
+  "unit-start-shrink-target-sgd-5-length-readout": {
+    "settings": {
+      "rnd_loss": "shrink_target",
+      "rnd_optimizer": "sgd",
+      "rnd_learning_rate": 5.0,
+      "rnd_readout": "length",
+      "rnd_unit_length_target": true
+    },
+    "network": {
+      "zero_predictor_output": true
+    }
+  },
+  "shrink-target-sgd-3-length-readout": {
+    "settings": {
+      "rnd_loss": "shrink_target",
+      "rnd_optimizer": "sgd",
+      "rnd_learning_rate": 3.0,
+      "rnd_readout": "length"
+    }
+  },
+  "power-4-sgd-0.3-length-readout": {
+    "settings": {
+      "rnd_loss": "power",
+      "rnd_loss_power": 4.0,
+      "rnd_optimizer": "sgd",
+      "rnd_learning_rate": 0.3,
+      "rnd_readout": "length"
+    }
+  }
+}
