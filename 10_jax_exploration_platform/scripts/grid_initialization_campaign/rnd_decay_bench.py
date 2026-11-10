@@ -31,8 +31,8 @@ def checkpoint_iterations(iterations):
     return points if points[-1] == iterations else points + [iterations]
 
 
-def run_idea(idea, geometry_kind, law, iterations, field_seeds):
-    """Train one idea's predictors (one copy per field seed) and return the bonus and visit histories."""
+def run_idea(idea, geometry_kind, iterations, field_seeds):
+    """Train one idea's predictors, one copy per field seed and visitation law, and return the histories."""
     import jax
     import jax.numpy as jnp
     import numpy as np
@@ -43,16 +43,18 @@ def run_idea(idea, geometry_kind, law, iterations, field_seeds):
     from exploration_platform.grid_initialization.training import (
         all_cell_errors, initialize, predictor_sample_losses, predictor_step)
     world = make_geometry(geometry_kind, 32, 0) if geometry_kind == 'straight' else make_geometry('snake', 16, 2)
-    copies, states = len(field_seeds), world.state_count
+    # Before: 8 field seeds; after: 16 copies, the 8 seeds under uniform visits then the same 8 start-heavy.
+    copies, states = len(field_seeds) * len(VISITATION_LAWS), world.state_count
     options = NetworkOptions(input_kind='one_hot', **idea.get('network', {}))
-    rnd = stack_networks(np.asarray(field_seeds), options, states)
+    rnd = stack_networks(np.asarray(list(field_seeds) * len(VISITATION_LAWS)), options, states)
     configuration = GridPPOConfig(n_copies=copies, intrinsic_source='online_rnd', rnd_input='one_hot',
                                   total_timesteps=128 * (1 << 17), **idea.get('settings', {}))
     state = initialize(configuration, world.transition_table, world.coordinates,
                        np.ones((copies, states), np.float32), np.arange(copies) + 1, rnd)
     shared = configuration.rnd_optimizer == 'shared_adam'
     optimizer = initialize_adam(state.parameters['predictor']) if shared else state.predictor_optimizer
-    probabilities = jnp.asarray(visitation_probabilities(law, states), jnp.float32)
+    logits = jnp.log(jnp.asarray(np.repeat(np.stack([visitation_probabilities(law, states) for law in VISITATION_LAWS]),
+                                           len(field_seeds), axis=0), jnp.float32))
     coordinates = jnp.asarray(world.coordinates, jnp.float32)
     rate = float(idea.get('shared_learning_rate', 1e-3))
 
@@ -60,7 +62,7 @@ def run_idea(idea, geometry_kind, law, iterations, field_seeds):
         """One rollout's states, then 4 epochs x 4 minibatches of masked predictor updates."""
         predictor, optimizer, counts = carry
         key = jax.random.fold_in(jax.random.PRNGKey(7), index)
-        rollout = jax.random.choice(key, states, (copies, 128), p=probabilities)
+        rollout = jax.random.categorical(key, logits, shape=(128, copies)).T.astype(jnp.int32)
         counts = counts + jax.vmap(lambda row: jnp.bincount(row, length=states))(rollout).astype(jnp.int32)
         inputs = state.rnd_table[rollout]
 
@@ -148,7 +150,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--ideas', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
-    parser.add_argument('--iterations', type=int, default=1 << 13)
+    parser.add_argument('--iterations', type=int, default=1 << 12)
     parser.add_argument('--field-seeds', type=int, default=8)
     parser.add_argument('--only', nargs='*', default=None)
     args = parser.parse_args()
@@ -165,10 +167,12 @@ def main():
             continue
         result = {'idea': name, 'definition': idea, 'iterations': args.iterations, 'device': str(jax.devices()[0])}
         for geometry in ('straight', 'snake'):
-            for law in VISITATION_LAWS:
-                history, visits, seconds = run_idea(idea, geometry, law, args.iterations, list(range(args.field_seeds)))
-                result[f'{geometry}_{law}'] = {**measures(history, visits), 'seconds': seconds}
-                np.savez_compressed(args.output/f'{name}_{geometry}_{law}.npz', bonus=history, visits=visits)
+            history, visits, seconds = run_idea(idea, geometry, args.iterations, list(range(args.field_seeds)))
+            np.savez_compressed(args.output/f'{name}_{geometry}.npz', bonus=history, visits=visits)
+            # Before: [checkpoints, 16 copies, cells]; after: each law's 8 copies measured on their own.
+            for index, law in enumerate(VISITATION_LAWS):
+                part = slice(index * args.field_seeds, (index + 1) * args.field_seeds)
+                result[f'{geometry}_{law}'] = {**measures(history[:, part], visits[:, part]), 'seconds': seconds}
         (args.output/f'{name}.json').write_text(json.dumps(result, indent=2))
         print(json.dumps({'idea': name, **{key: {k: value[k] for k in ('start_max_over_min', 'slope_median',
               'late_count_consistency_sd_log', 'seconds')} for key, value in result.items() if '_' in key and

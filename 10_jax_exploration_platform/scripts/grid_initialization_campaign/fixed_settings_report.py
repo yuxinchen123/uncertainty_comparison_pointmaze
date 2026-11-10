@@ -2,19 +2,27 @@
 
 import argparse
 from collections import defaultdict
+import json
 from pathlib import Path
 
 import numpy as np
 
 from common import now, pacific, read_json, write_json
 from fixed_settings_campaign import (BUDGET, DEFAULT_CELL, ENTROPIES, LEARNING_RATES, WEIGHTS,
-                                     condition_name, conditions)
+                                     condition_name, conditions, settings_for)
 from report import _write_report_with_history, grouped_mean_interval
 
-NETWORK_METHODS = {'frozen-network', 'online-rnd'}
+# Network conditions resample field seeds; only the coordinate-RND ones have a state-normalization setting.
+NETWORK_METHODS = {'frozen-network', 'online-rnd', 'frozen-tabular-rnd', 'online-tabular-rnd'}
+COORDINATE_NETWORK_METHODS = {'frozen-network', 'online-rnd'}
+ONLINE_METHODS = {'online-rnd', 'online-tabular-rnd'}
+# User naming rule (2026-11-09): tabular-RND reads one-hot cells, coordinate-RND the 2-d coordinates;
+# tabular-PPO is the table policy, coordinate-PPO the neural policy, which reads the coordinates.
 METHOD_LABELS = {'no-bonus': 'no bonus', 'uniform': 'uniform field',
                  'alternating-high-low': 'alternating high/low field (64:1)',
-                 'frozen-network': 'frozen network field', 'online-rnd': 'online RND'}
+                 'frozen-network': 'frozen coordinate-RND field', 'online-rnd': 'online coordinate-RND',
+                 'frozen-tabular-rnd': 'frozen tabular-RND field', 'online-tabular-rnd': 'online tabular-RND'}
+POLICY_LABELS = {'tabular': 'tabular-PPO', 'neural': 'coordinate-PPO'}
 CASE_ORDER = [('straight', 'tabular'), ('straight', 'neural'), ('snake', 'tabular'), ('snake', 'neural')]
 CASE_LABELS = {'straight': 'straight grid, 32 cells', 'snake': 'snake grid, width 16, 2 turns (50 cells)'}
 COLORS = ('#0072B2', '#E69F00', '#009E73', '#CC79A7')
@@ -23,13 +31,20 @@ TRIM_PER_128 = 10
 TRIM_CHOICES = (0, 2, 4, 6, 8, 10, 13, 16, 20)
 
 
+def all_conditions():
+    """The original study's 13 conditions and the extension's 10."""
+    return conditions('original') + conditions('extension')
+
+
 def condition_label(name):
-    """Words for a condition: method, then the two normalizations."""
-    condition = next(row for row in conditions() if condition_name(row) == name)
+    """Words for a condition: method (with the decay exponent of uniform fields), then the normalizations."""
+    condition = next(row for row in all_conditions() if condition_name(row) == name)
     if condition['method'] == 'no-bonus':
         return 'no bonus'
     parts = [METHOD_LABELS[condition['method']]]
-    if condition['method'] in NETWORK_METHODS:
+    if condition['method'] == 'uniform':
+        parts[0] += f", decay exponent -{condition.get('count_decay_exponent', 0.5):g}"
+    if condition['method'] in COORDINATE_NETWORK_METHODS:
         parts.append('state normalization ' + ('on' if condition['state_normalization'] else 'off'))
     parts.append('reward normalization ' + ('on' if condition['reward_normalization'] else 'off'))
     return ', '.join(parts)
@@ -68,31 +83,47 @@ def grouped_standard_errors(values, group_ids, per_end, seed, repetitions=2000):
     return float(means.std(ddof=1)), float(trimmed.std(ddof=1))
 
 
+def report_folders(run_dir):
+    """The study folder and the extension folders whose rows join its report (report_extensions.json)."""
+    listed = run_dir/'report_extensions.json'
+    return [run_dir] + ([Path(path) for path in read_json(listed)] if listed.exists() else [])
+
+
 def collect(run_dir):
-    """One row per finished setting, with its per-seed records and summary metrics."""
+    """One row per finished setting, merging units that hold seeds of the same configuration."""
+    # Before: 8 confirmation units of 128 seeds; after: one row of 1,024 seeds with all its records.
+    merged = {}
+    for folder in report_folders(run_dir):
+        for path in sorted((folder/'data/research').glob('fixed-*/summary.json')):
+            summary = read_json(path)
+            if not summary.get('completed'):
+                continue
+            spec = summary['specification']
+            for setting in summary['settings']:
+                key = (spec['wave'], spec.get('protocol'), spec['geometry']['kind'], spec['policy_kind'],
+                       spec['condition'], json.dumps(setting['configuration'], sort_keys=True))
+                entry = merged.setdefault(key, {'spec': spec, 'configuration': setting['configuration'],
+                                                'copies': [], 'units': []})
+                entry['copies'] += [row for row in summary['copy_records'] if row['setting_index'] == setting['setting_index']]
+                entry['units'].append((folder, path.parent.name, setting['setting_index']))
     rows = []
-    for path in sorted((run_dir/'data/research').glob('fixed-*/summary.json')):
-        summary = read_json(path)
-        if not summary.get('completed'):
-            continue
-        spec = summary['specification']
-        for setting in summary['settings']:
-            copies = [row for row in summary['copy_records'] if row['setting_index'] == setting['setting_index']]
-            capped = np.asarray([row['capped_first_goal_steps'] for row in copies], np.float64)
-            groups = [row['field_seed'] if spec['method'] in NETWORK_METHODS else row['policy_seed'] for row in copies]
-            rows.append({'wave': spec['wave'].removeprefix('fixed-'), 'protocol': spec.get('protocol'),
-                'kind': spec['geometry']['kind'], 'policy': spec['policy_kind'], 'condition': spec['condition'],
-                'method': spec['method'], 'configuration': setting['configuration'], 'copies': copies,
-                'unit': path.parent.name, 'seeds': len(copies), 'mean': float(capped.mean()),
-                'interval': grouped_mean_interval(capped, groups, 7) if len(copies) > 1 else [None, None],
-                'trim': trim_count(len(copies)), 'trimmed': trimmed_mean(capped, trim_count(len(copies))),
-                'capped_seeds': int(np.sum(capped >= BUDGET)), 'values': capped,
-                'discovery': float(np.mean([row['first_goal_step'] >= 0 for row in copies])),
-                'coverage': float(np.mean([row['coverage'] for row in copies])),
-                'sampled': float(np.mean([row['evaluation_goal_rate_sampled'] for row in copies])),
-                'greedy': float(np.mean([row['evaluation_goal_rate_greedy'] for row in copies]))})
-            rows[-1]['standard_error'], rows[-1]['trimmed_standard_error'] = grouped_standard_errors(
-                capped, groups, rows[-1]['trim'], 7)
+    for entry in merged.values():
+        spec, copies = entry['spec'], entry['copies']
+        capped = np.asarray([row['capped_first_goal_steps'] for row in copies], np.float64)
+        groups = [row['field_seed'] if spec['method'] in NETWORK_METHODS else row['policy_seed'] for row in copies]
+        rows.append({'wave': spec['wave'].removeprefix('fixed-'), 'protocol': spec.get('protocol'),
+            'kind': spec['geometry']['kind'], 'policy': spec['policy_kind'], 'condition': spec['condition'],
+            'method': spec['method'], 'configuration': entry['configuration'], 'copies': copies,
+            'units': entry['units'], 'seeds': len(copies), 'mean': float(capped.mean()),
+            'interval': grouped_mean_interval(capped, groups, 7) if len(copies) > 1 else [None, None],
+            'trim': trim_count(len(copies)), 'trimmed': trimmed_mean(capped, trim_count(len(copies))),
+            'capped_seeds': int(np.sum(capped >= BUDGET)), 'values': capped,
+            'discovery': float(np.mean([row['first_goal_step'] >= 0 for row in copies])),
+            'coverage': float(np.mean([row['coverage'] for row in copies])),
+            'sampled': float(np.mean([row['evaluation_goal_rate_sampled'] for row in copies])),
+            'greedy': float(np.mean([row['evaluation_goal_rate_greedy'] for row in copies]))})
+        rows[-1]['standard_error'], rows[-1]['trimmed_standard_error'] = grouped_standard_errors(
+            capped, groups, rows[-1]['trim'], 7)
     return rows
 
 
@@ -234,7 +265,7 @@ def trimming_section(cases):
     for kind, policy, rows in cases:
         if not rows:
             continue
-        markdown.append(f"### {CASE_LABELS[kind]}, {policy} policy\n\n| seeds removed from each end | best condition "
+        markdown.append(f"### {CASE_LABELS[kind]}, {POLICY_LABELS[policy]}\n\n| seeds removed from each end | best condition "
                         "| its trimmed mean | second condition | its trimmed mean |\n|---|---|---|---|---|\n")
         best = {}
         for per_end in TRIM_CHOICES:
@@ -257,13 +288,13 @@ def trimming_section(cases):
                         f"{chosen['capped_seeds']} of its 128 seeds never reached the goal, against "
                         f"{best[0]['capped_seeds']}; each such seed adds {BUDGET/128/1000:,.1f}K to an untrimmed mean.")
         markdown.append(f"\n{verdict}\n\n")
-        tex_rows.append(f"{kind} grid, {policy} & {condition_label(best[0]['condition'])}, "
+        tex_rows.append(f"{kind} grid, {POLICY_LABELS[policy]} & {condition_label(best[0]['condition'])}, "
                         f"{number(best[0]['mean'], True)} & {condition_label(chosen['condition'])}, "
                         f"{number(trimmed_mean(chosen['values'], TRIM_PER_128), True)} & "
                         + (', '.join(map(str, changes)) if changes else 'none') + ' \\\\\n')
     tex = ('\\begin{table}[H]\\centering\\scriptsize\\setlength{\\tabcolsep}{3pt}\n\\caption{Best condition of each '
            f'case by the mean capped first-goal time and by the trimmed mean with {TRIM_PER_128} of 128 seeds removed '
-           'from each end (chosen configurations, 128 seeds). Extreme values are mostly seeds that need millions of '
+           'from each end (chosen configurations; 128 seeds, 1,024 for the auto research baseline). Extreme values are mostly seeds that need millions of '
            'transitions or never reach the goal; configurations are still chosen by the untrimmed mean.}'
            '\\label{tab:fixed-trimming}\n\\begin{tabular}{@{}' + ''.join(
                f'>{{\\raggedright\\arraybackslash}}p{{{width}cm}}' for width in (2.2, 4.4, 4.4, 2.2)) + '@{}}\\toprule\n'
@@ -278,8 +309,10 @@ def development_figure(rows, kind, policy, plots):
     import matplotlib
     matplotlib.use('Agg')
     import matplotlib.pyplot as plt
-    names = [condition_name(row) for row in conditions() if row['method'] != 'no-bonus']
-    figure, axes = plt.subplots(3, 4, figsize=(14, 9), sharex=True, sharey=True)
+    present = {row['condition'] for row in rows}
+    names = [condition_name(row) for row in all_conditions() if row['method'] != 'no-bonus' and condition_name(row) in present]
+    panel_rows = max(1, -(-len(names) // 4))
+    figure, axes = plt.subplots(panel_rows, 4, figsize=(14, 3*panel_rows), sharex=True, sharey=True, squeeze=False)
     baseline = [row for row in rows if row['method'] == 'no-bonus']
     for axis, name in zip(axes.flat, names):
         for color, (rate, entropy) in zip(COLORS, [(r, e) for r in LEARNING_RATES for e in ENTROPIES]):
@@ -295,12 +328,14 @@ def development_figure(rows, kind, policy, plots):
         axis.set_xscale('log', base=2)
         axis.set_yscale('log')
         axis.set_title(condition_label(name), fontsize=8)
+    for axis in axes.flat[len(names):]:
+        axis.set_visible(False)
     for axis in axes[-1]:
         axis.set_xlabel('intrinsic weight')
     for axis in axes[:, 0]:
         axis.set_ylabel('mean capped first-goal steps')
     axes.flat[0].legend(fontsize=7)
-    figure.suptitle(f'Development, {CASE_LABELS[kind]}, {policy} policy, 16 seeds per point '
+    figure.suptitle(f'Development, {CASE_LABELS[kind]}, {POLICY_LABELS[policy]}, 16 seeds per point '
                     '(dotted: no bonus at each learning rate and entropy)', fontsize=10)
     figure.tight_layout()
     name = f'development_intrinsic-weight_{kind}_{policy}'
@@ -310,16 +345,20 @@ def development_figure(rows, kind, policy, plots):
     return name
 
 
-def decay_records(run_dir, rows):
-    """Per online-RND confirmation row: relative error e_t/e_0 and visits N_t at every checkpoint."""
+def decay_records(rows):
+    """Per online-RND confirmation row: relative error e_t/e_0 and visits N_t at every checkpoint, over all its units."""
     output = []
     for row in rows:
-        if row['method'] != 'online-rnd':
+        if row['method'] not in ONLINE_METHODS:
             continue
-        data = np.load(run_dir/'data/research'/row['unit']/'behavior.npz')
-        ratio = data['rnd_error_history'] / data['rnd_error_initial'][None]
-        output.append({**row, 'ratio': ratio, 'visits': data['visit_count_history'],
-                       'steps': data['visit_count_history_steps']})
+        # Before: one behavior archive per unit; after: the row's copies joined along the copy axis.
+        ratios, visits = [], []
+        for folder, unit, setting_index in row['units']:
+            data = np.load(folder/'data/research'/unit/'behavior.npz')
+            selected = data['setting_indices'] == setting_index
+            ratios.append(data['rnd_error_history'][:, selected] / data['rnd_error_initial'][selected][None])
+            visits.append(data['visit_count_history'][:, selected])
+        output.append({**row, 'ratio': np.concatenate(ratios, axis=1), 'visits': np.concatenate(visits, axis=1)})
     return output
 
 
@@ -342,7 +381,7 @@ def decay_figure(records, kind, policy, plots):
     matplotlib.use('Agg')
     import matplotlib.pyplot as plt
     figure, axis = plt.subplots(figsize=(7, 5))
-    for color, record in zip(COLORS, records):
+    for color, record in zip(COLORS + ('#D55E00', '#56B4E9', '#F0E442', '#000000'), records):
         n, q = record['visits'].ravel(), record['ratio'].ravel()
         keep = (n >= 1) & (q > 0)
         bins = np.unique(np.round(np.logspace(0, np.log10(max(n[keep].max(), 2)), 30)))
@@ -356,7 +395,7 @@ def decay_figure(records, kind, policy, plots):
     axis.set_yscale('log')
     axis.set_xlabel('visits to the cell, N')
     axis.set_ylabel('online RND error / its value at step 0 (median over cells and seeds)')
-    axis.set_title(f'{CASE_LABELS[kind]}, {policy} policy, confirmation seeds', fontsize=10)
+    axis.set_title(f'{CASE_LABELS[kind]}, {POLICY_LABELS[policy]}, confirmation seeds', fontsize=10)
     axis.legend(fontsize=7)
     figure.tight_layout()
     name = f'decay_online-rnd_{kind}_{policy}'
@@ -397,11 +436,18 @@ def generate(run_dir):
         "extrinsic discount 0.999, intrinsic discount 0.99, GAE 0.95, clip 0.1, value coefficient 0.5, maximum "
         "gradient norm 0.5, Adam epsilon 1e-5, extrinsic advantage weight 2, linear learning-rate annealing. Swept "
         "per condition: learning rate {1e-4, 1e-3} × entropy {0.001, 0.01} × intrinsic weight 2^-6 … 2^6 (13 "
-        "values). Count-based fields are scaled to average 1 over cells and divided by √visits; online RND uses the "
-        "raw CleanRL prediction error (half the summed squared error of 512 features). State normalization whitens "
-        "the RND networks' input coordinates with running statistics, started by 50 random-action rollouts of 128 "
-        "steps; reward normalization divides the bonus by the running standard deviation of its discounted sum. "
-        "Development: 16 seeds per configuration; confirmation: 128 fresh seeds (20000-20127).\n\n")
+        "values). Count-based fields are scaled to average 1 over cells and multiplied by $N^{-a}$, where $N$ is the "
+        "cell's visits and $a$ the decay exponent: $a = 0.5$ (division by √visits) except the uniform rows that name "
+        "another exponent. Online RND uses the raw CleanRL prediction error (half the summed squared error of 512 "
+        "features). Coordinate-RND networks read the 2-d cell coordinates; tabular-RND networks read a one-hot cell "
+        "vector, with the same deeper layers. State normalization whitens the coordinate-RND inputs with running "
+        "statistics, started by 50 random-action rollouts of 128 steps (it does not apply to one-hot inputs); reward "
+        "normalization divides the bonus by the running standard deviation of its discounted sum. Tabular-PPO keeps "
+        "a table of 4 action logits and 2 values per cell; coordinate-PPO is the neural policy, which reads the "
+        "coordinates. Development: 16 seeds per configuration; confirmation: 128 fresh seeds (20000-20127), and 1,024 "
+        "(20000-21023) for online tabular-RND with reward normalization on, the auto research's baseline. The uniform "
+        "fields with decay exponents 2, 1 and 0.25 and the tabular-RND rows come from the extension run "
+        "`runs/2026-11-09-19-40_fixed-cleanrl-ppo-rnd-extension_…`, on the same seeds and settings.\n\n")
     tex = []
     for protocol, title in (('chosen', 'chosen configuration of each condition'),
                             ('default-cell', 'learning rate 1e-4, entropy 0.001, best intrinsic weight')):
@@ -410,18 +456,19 @@ def generate(run_dir):
             selected = by_case.get((kind, policy, 'confirmation', protocol), [])
             if protocol == 'default-cell':
                 # A condition whose chosen configuration is already in the default cell reuses that run.
-                frozen = read_json(run_dir/'confirmation_frozen.json') if (run_dir/'confirmation_frozen.json').exists() else []
+                frozen = [row for folder in report_folders(run_dir) if (folder/'confirmation_frozen.json').exists()
+                          for row in read_json(folder/'confirmation_frozen.json')]
                 reused = {row['condition'] for row in frozen if row['same_as_chosen'] and row['geometry']['kind'] == kind
                           and row['policy_kind'] == policy}
                 selected = selected + [row for row in by_case.get((kind, policy, 'confirmation', 'chosen'), [])
                                        if row['condition'] in reused]
-            section.append(f"### {CASE_LABELS[kind]}, {policy} policy\n\n")
+            section.append(f"### {CASE_LABELS[kind]}, {POLICY_LABELS[policy]}\n\n")
             if not selected:
                 section.append('Not run yet.\n\n')
                 continue
             section.append(markdown_table(selected) + '\n')
-            tex.append(latex_table(selected, f'Confirmation ({title}), {CASE_LABELS[kind]}, {policy} policy, '
-                                   '128 seeds per condition. Best in bold, second best underlined, per column.',
+            tex.append(latex_table(selected, f'Confirmation ({title}), {CASE_LABELS[kind]}, {POLICY_LABELS[policy]}; '
+                                   'seeds per condition in the last column. Best in bold, second best underlined, per column.',
                                    f'tab:fixed-confirmation-{protocol}-{kind}-{policy}'))
         markdown.append(''.join(section))
     trimming_markdown, trimming_tex = trimming_section(
@@ -431,7 +478,7 @@ def generate(run_dir):
     section = ["## Development\n\n"]
     for kind, policy in CASE_ORDER:
         selected = by_case.get((kind, policy, 'development', None), [])
-        section.append(f"### {CASE_LABELS[kind]}, {policy} policy\n\n")
+        section.append(f"### {CASE_LABELS[kind]}, {POLICY_LABELS[policy]}\n\n")
         if not selected:
             section.append('Not run yet.\n\n')
             continue
@@ -439,20 +486,21 @@ def generate(run_dir):
         for row in selected:
             if row['condition'] not in best or (row['mean'], -row['discovery']) < (best[row['condition']]['mean'], -best[row['condition']]['discovery']):
                 best[row['condition']] = row
-        section.append(f'Best configuration of each condition ({len(selected)} of 628 settings finished):\n\n'
+        planned = sum(len(settings_for(row)) for row in all_conditions())
+        section.append(f'Best configuration of each condition ({len(selected)} of {planned} settings finished):\n\n'
                        + markdown_table(list(best.values())) + '\n')
         name = development_figure(selected, kind, policy, plots)
         section.append(f'![development, {kind}, {policy}](plots/{name}.png)\n\n')
     markdown.append(''.join(section))
-    section = ["## Decay: online RND against the count rule\n\n"
+    section = ["## Decay: online RND (coordinate- and tabular-RND) against the count rule\n\n"
                "Define $e_t(s)$ as the online RND error of cell $s$ after $t$ updates and $N_t(s)$ as its visits. The "
                "figures plot $e_t(s)/e_0(s)$ against $N_t(s)$ for the chosen confirmation configurations, beside "
                "$N^{-1/2}$, the count rule's decay. Slopes are least-squares fits of $\\log(e_t/e_0)$ on $\\log N_t$ "
                "per cell and seed (cells with at least three checkpoints of 2 or more visits); the count rule's slope "
                "is -0.5.\n\n"]
     for kind, policy in CASE_ORDER:
-        records = decay_records(run_dir, by_case.get((kind, policy, 'confirmation', 'chosen'), []))
-        section.append(f"### {CASE_LABELS[kind]}, {policy} policy\n\n")
+        records = decay_records(by_case.get((kind, policy, 'confirmation', 'chosen'), []))
+        section.append(f"### {CASE_LABELS[kind]}, {POLICY_LABELS[policy]}\n\n")
         if not records:
             section.append('Not run yet.\n\n')
             continue
@@ -468,21 +516,24 @@ def generate(run_dir):
         section.append('\n')
         tex.append('\\begin{figure}[H]\\centering\\includegraphics[width=0.7\\linewidth]{\\FixedSettingsRunPath/analysis/plots/'
                    + name + '.pdf}\\caption{Online RND relative error against visits, ' + CASE_LABELS[kind] + ', '
-                   + policy + ' policy; dashed: $N^{-1/2}$.}\\end{figure}\n')
+                   + POLICY_LABELS[policy] + '; dashed: $N^{-1/2}$.}\\end{figure}\n')
     markdown.append(''.join(section))
-    markdown.append(f"## Records\n\nUnit records: `data/research/fixed-*/summary.json` and `behavior.npz`. Frozen "
-                    f"confirmation choices: `confirmation_frozen.json`. Report generated {pacific()}.\n")
+    markdown.append(f"## Records\n\nUnit records: `data/research/fixed-*/summary.json` and `behavior.npz` of this "
+                    f"folder and of the extension run listed in `report_extensions.json`. Frozen confirmation choices: "
+                    f"`confirmation_frozen.json` of each folder. Report generated {pacific()}.\n")
     _write_report_with_history(analysis, ''.join(markdown))
     (analysis/'results.tex').write_text('% Generated by fixed_settings_report.py; do not edit.\n' + ''.join(tex))
     write_json(analysis/'report_record.json', {'at': now(), 'settings': len(rows)})
 
 
 def main():
-    """Generate the report from the run folder's records."""
+    """Generate the report: an extension folder regenerates the study it extends (study.json 'report_into')."""
     parser = argparse.ArgumentParser()
     parser.add_argument('--run-dir', type=Path, required=True)
     args = parser.parse_args()
-    generate(args.run_dir)
+    study = args.run_dir/'study.json'
+    target = Path(read_json(study)['report_into']) if study.exists() and 'report_into' in read_json(study) else args.run_dir
+    generate(target)
 
 
 if __name__ == '__main__':

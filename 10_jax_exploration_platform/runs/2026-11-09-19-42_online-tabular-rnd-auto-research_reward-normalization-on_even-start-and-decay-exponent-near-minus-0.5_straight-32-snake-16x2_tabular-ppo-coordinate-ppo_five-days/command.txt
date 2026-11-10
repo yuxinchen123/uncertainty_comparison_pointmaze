@@ -1,0 +1,1 @@
+cd /p/rlprojects/RND/10_jax_exploration_platform/scripts/grid_initialization_campaign && python -c 'from submit import submit_job; submit_job(<run>, "uva-sl5nw", "monitor", partition="cpu", node="puma01", reservation="sl5nw_168", monitor=True)'   # persistent monitor: fills cards for queued auto-research units (phase auto-research: no automatic phases)

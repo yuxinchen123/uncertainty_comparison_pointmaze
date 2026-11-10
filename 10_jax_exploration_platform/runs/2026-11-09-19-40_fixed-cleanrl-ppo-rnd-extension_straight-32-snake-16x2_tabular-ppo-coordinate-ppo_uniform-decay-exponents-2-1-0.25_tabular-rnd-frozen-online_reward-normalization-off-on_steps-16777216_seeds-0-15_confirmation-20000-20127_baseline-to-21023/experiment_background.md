@@ -65,7 +65,7 @@ keeps the old numbers.
 
 ## 4. Git state
 
-(filled in at commit time)
+Repository `/p/rlprojects/RND`, branch `main`, commit `9cd855bb4d2c2da5399974396a9183c58fba890a` (pushed 2026-11-09 20:10 PT). Workers run the frozen copy `code/source_9cd855bb4d2c2da5399974396a9183c58fba890a/` (recorded in `source.json`).
 
 ## 5. Outcome
 
