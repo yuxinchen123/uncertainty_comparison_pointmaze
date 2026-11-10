@@ -73,7 +73,12 @@ def main():
     ordered = [per_idea[idea][index] for index in range(max(map(len, per_idea.values()))) for idea in ideas
                if index < len(per_idea[idea])]
     created = 0
+    # A unit staged on a remote server or held aside sits in a queue folder that enqueue() does not look at.
+    elsewhere = {path.stem for folder in (args.run_dir/'queue').iterdir() if folder.is_dir()
+                 for path in folder.glob('*.json')}
     for specification in ordered:
+        if specification['name'] in elsewhere:
+            continue
         location = args.run_dir/'specifications'/(specification['name']+'.json')
         write_json(location, specification)
         created += enqueue(args.run_dir, {'name': specification['name'], 'stage': 'research',

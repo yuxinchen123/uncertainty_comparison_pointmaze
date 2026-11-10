@@ -1,12 +1,12 @@
 # Remote servers: environment and code for whole training units
 
-Built 2026-11-09 between 20:05 PT and 20:40 PT. Times are Pacific, converted from servers that run on Eastern
-(Purdue) and Central (ACES, DeltaAI). No speed test, throughput measurement, benchmark, canary or training was run on
+Built 2026-11-09 between 20:05 PT and 20:52 PT. Times are Pacific, converted from servers that run on Eastern
+(Purdue, MIT) and Central (ACES, DeltaAI). No speed test, throughput measurement, benchmark, canary or training was run on
 any of these servers (user rule 2026-11-09: their speed is estimated from the serval05 measurements). Each build job
 only installed packages and then imported the study's modules.
 
-Eight jobs were submitted (Gautschi 2, Gilbreth 2, ACES 3, DeltaAI 1) and all eight had ended by 20:37 PT; none is
-queued or running, and no job was cancelled. The agent that built this had no recurring-task tool, so it watched
+Nine build jobs were submitted (Gautschi 2, Gilbreth 2, ACES 3, DeltaAI 1, MIT 1) and all nine had ended by
+20:52 PT; none is queued or running, and no job was cancelled. The agent that built this had no recurring-task tool, so it watched
 the jobs itself until each ended and left no monitor behind.
 
 ## What was copied to every server
@@ -35,13 +35,36 @@ The import check prints the library versions and `jax.devices()`, then imports
 
 ## MIT (user shuzel)
 
-- **Not ready.** `ssh -O check mit` at about 20:05 PT: no control connection
-  (`/localtmp/sl5nw/ssh-cm-shuzel@orcd-login.mit.edu:22` does not exist). No login was attempted.
-- The user must log in at https://orcd-ood.mit.edu; the main session then opens the connection with
-  `open_mit_connection_detached.py` (rule `mit-cluster-slurm.md`) and builds with the same three setup files.
-  Planned places: environment `~/orcd/scratch/envs/rnd_platform_jax`, code
-  `~/orcd/scratch/rnd_grid/code/source_9cd855bb4d2c2da5399974396a9183c58fba890a/`.
-- No job was submitted; there is no `submitted_jobids_mit.txt`.
+- **Ready** (processor import check; no card was used).
+- At about 20:05 PT there was no control connection to MIT and nothing was attempted. At 20:41 PT the user's
+  connection was open on portal11; every MIT command since then went through it
+  (`ssh portal11 'ssh -o BatchMode=yes mit ...'`, each after `ssh portal11 'ssh -O check mit'` answered
+  "Master running"). No new MIT login was started.
+- Environment: `/orcd/scratch/orcd/008/shuzel/envs/rnd_platform_jax` (the same folder as
+  `~/orcd/scratch/envs/rnd_platform_jax`); package list beside it in `rnd_platform_jax.pip_freeze.txt`.
+- Code: `/orcd/scratch/orcd/008/shuzel/rnd_grid/code/source_9cd855bb4d2c2da5399974396a9183c58fba890a/10_jax_exploration_platform/`
+  (171 files, the same checksum as on UVA).
+- Conda: `/orcd/software/core/001/pkg/miniforge/26.7.2-0/bin/conda` (module `miniforge/26.7.2-0`).
+- Job (partition `mit_normal`, free tier, 4 cores, 16 GB; id in `../slurm/submitted_jobids_mit.txt`): 28556857, node
+  node3111, submitted 20:46 PT, started 20:48 PT, COMPLETED in 3 min 44 s. The compute node reached the internet
+  without a proxy.
+- Import check of job 28556857 (a processor node, so the CUDA plugin finds no card and jax uses the processor; the
+  plugin's `CUDA_ERROR_NO_DEVICE` traceback is printed before it):
+
+  ```text
+  installed set matches all 21 pins
+  python 3.12.13 at /orcd/scratch/orcd/008/shuzel/envs/rnd_platform_jax/bin/python
+  jax 0.11.0 numpy 2.5.2
+  jaxlib 0.11.0
+  jax-cuda12-plugin 0.11.0
+  jax-cuda12-pjrt 0.11.0
+  default backend: cpu
+  devices: [CpuDevice(id=0)]
+  study modules imported: grid_initialization.{config,environments,fields,online_rnd,training}, common, initial_field_archive, train_unit
+  ```
+
+- Scratch on MIT is purged after 6 months without use, and the scratch space was 74% full (760 of 1,024 GB) when
+  the environment was built.
 
 ## Purdue Gautschi (account dsimchil)
 
@@ -189,11 +212,22 @@ The import check prints the library versions and `jax.devices()`, then imports
    `PYTHONNOUSERSITE=1`.
 3. ACES compute nodes reach the internet only after `module load WebProxy/0000`. A job that downloads anything there
    needs it.
-4. Gautschi and ACES were checked on processor nodes only; their first card job should print `jax.devices()` before
-   training.
+4. Gautschi, ACES and MIT were checked on processor nodes only. The fleet's worker job prints `jax.devices()` and
+   ends without taking a unit unless jax uses the card. Gautschi's first worker job (18179686, node h010, 21:04 PT)
+   printed `[CudaDevice(id=0)]` on an H100 80GB.
 5. **Gilbreth's Slurm account is `dsmichil`** (`-A dsmichil`); `dsimchil`, the account on Gautschi and the name in
    `purdue-cluster-slurm.md`, is refused at submit on Gilbreth.
-6. MIT needs the user's login before anything can be built there.
+6. MIT is reached only through the user's connection on portal11; when it closes, nothing can be sent there
+   until the user logs in again.
+7. **Gautschi's `ai` partition refuses a job that does not ask for exactly 14 cores per card** (`-n14`; two
+   submissions with `-n4` were refused at 21:02 PT and created no job).
+
+## Worker fleet
+
+Units are placed on these servers by `scripts/grid_initialization_campaign/remote_fleet.py`. Its server table is
+`remote_fleet_servers.json` in this folder; the files it sends to each server are under `remote_fleet/`; every
+decision is in `../slurm/fleet_log.txt`. Each server's run folder is `<base>/rnd_grid/runs/auto_research`. DeltaAI
+is not in the table (not used now).
 
 ## Appendix: build script
 
