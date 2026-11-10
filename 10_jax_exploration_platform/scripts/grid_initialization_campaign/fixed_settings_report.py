@@ -4,6 +4,7 @@ import argparse
 from collections import defaultdict
 import json
 from pathlib import Path
+import re
 
 import numpy as np
 
@@ -48,6 +49,12 @@ def condition_label(name):
         parts.append('state normalization ' + ('on' if condition['state_normalization'] else 'off'))
     parts.append('reward normalization ' + ('on' if condition['reward_normalization'] else 'off'))
     return ', '.join(parts)
+
+
+def latex_label(name):
+    """A condition's words for LaTeX: the decay exponent's minus sign is set as math."""
+    # Before: 'uniform field, decay exponent -0.5, ...'; after: 'uniform field, decay exponent $-0.5$, ...'.
+    return re.sub(r'exponent -([0-9.]+)', r'exponent $-\1$', condition_label(name))
 
 
 def trim_count(seeds, per_128=TRIM_PER_128):
@@ -173,7 +180,7 @@ def results_table(rows, latex=False):
     lines = []
     for index, row in enumerate(rows):
         low, high = row['interval']
-        cells = [condition_label(row['condition'])]
+        cells = [latex_label(row['condition']) if latex else condition_label(row['condition'])]
         for name, smaller in columns:
             values = [item[name] for item in rows]
             # Style only the value: an underlined phrase cannot wrap, so the error and interval stay plain.
@@ -288,8 +295,8 @@ def trimming_section(cases):
                         f"{chosen['capped_seeds']} of its 128 seeds never reached the goal, against "
                         f"{best[0]['capped_seeds']}; each such seed adds {BUDGET/128/1000:,.1f}K to an untrimmed mean.")
         markdown.append(f"\n{verdict}\n\n")
-        tex_rows.append(f"{kind} grid, {POLICY_LABELS[policy]} & {condition_label(best[0]['condition'])}, "
-                        f"{number(best[0]['mean'], True)} & {condition_label(chosen['condition'])}, "
+        tex_rows.append(f"{kind} grid, {POLICY_LABELS[policy]} & {latex_label(best[0]['condition'])}, "
+                        f"{number(best[0]['mean'], True)} & {latex_label(chosen['condition'])}, "
                         f"{number(trimmed_mean(chosen['values'], TRIM_PER_128), True)} & "
                         + (', '.join(map(str, changes)) if changes else 'none') + ' \\\\\n')
     tex = ('\\begin{table}[H]\\centering\\scriptsize\\setlength{\\tabcolsep}{3pt}\n\\caption{Best condition of each '

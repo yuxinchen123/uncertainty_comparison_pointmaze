@@ -1,0 +1,28 @@
+schema_version: 1
+run_id: 2026-11-09-19-42_online-tabular-rnd-auto-research_reward-normalization-on_even-start-and-decay-exponent-near-minus-0.5_straight-32-snake-16x2_tabular-ppo-coordinate-ppo_five-days
+description: >
+  Five-day auto research (2026-11-09 to 2026-11-14) to develop a new online tabular-RND variant whose bonus starts even
+  across cells and decays like visits^-0.5 per cell, and that beats CleanRL online tabular-RND with reward normalization
+  on, in four cases (straight-32 and snake-16x2 grids, tabular-PPO and coordinate-PPO).
+specs:
+  env: grid_initialization.environments@straight-32,snake-16-turns-2
+  agent: grid_initialization.training@cleanrl-ppo-rnd-scalars
+  bonus: online tabular-rnd (one-hot inputs) with per-idea readout, target, loss, optimizer and trainable-layer settings
+compile_signature:
+  envs_per_copy: 1
+  rollout_steps: 128
+  epochs: 4
+  minibatches: 4
+  dtype: float32
+  stats_dtype: float64
+seeding:
+  mode: paired with the fixed-settings study and its extension
+  screen_policy_seeds: [0, 31]
+  development_policy_seeds: [0, 15]
+  confirmation_policy_seeds: [20000, 21023]
+baseline: runs/2026-11-09-19-40_fixed-cleanrl-ppo-rnd-extension_... (online tabular-RND, reward normalization on)
+artifacts:
+  protocol: program.md
+  log: STATE.md
+  report: analysis/analysis.md
+  metrics: metrics.jsonl

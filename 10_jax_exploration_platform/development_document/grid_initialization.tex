@@ -84,7 +84,9 @@ This study fixes PPO at CleanRL PPO-RND's scalar settings and tunes only the lea
 the entropy coefficient and the intrinsic weight $\beta$, which multiplies the intrinsic
 advantage. It adds the two CleanRL normalizations and an online RND whose bonus decays as its
 predictor learns. The maps are the straight grid of 32 cells and the snake grid of width 16
-with two turns (50 cells), each with the tabular and the neural policy.
+with two turns (50 cells). Each map runs with two policies: tabular-PPO, a table of four action
+logits and two values per cell, and coordinate-PPO, the neural policy, which reads the cell's
+two coordinates.
 
 Recall $c(s)$ (the mean-one initial field) and $n$ (the arrivals at $s$) from
 Section~\ref{sec:grid-initialization}. Define $g$ as a frozen random target network, $f_t$ as a
@@ -95,10 +97,21 @@ rules are
 b_{\mathrm{count}}(s,n) &= \frac{c(s)}{\sqrt n}, &
 b_{\mathrm{online}}(s,t) &= e_t(s).
 \end{align}
-The online bonus is CleanRL's raw error and is not scaled to mean one. With state
-normalization, $\phi(s)$ is the cell's coordinates whitened by running statistics and clipped to
-$[-5,5]$; the statistics start from 50 random-action rollouts of 128 steps. Reward normalization
-divides every bonus by the running standard deviation of its discounted sum.
+The online bonus is CleanRL's raw error and is not scaled to mean one. The RND networks read
+one of two inputs $\phi(s)$:
+\begin{itemize}[leftmargin=*]
+\item \textbf{Coordinate-RND.} $\phi(s)$ is the cell's two coordinates. With state normalization
+they are whitened by running statistics and clipped to $[-5,5]$; the statistics start from 50
+random-action rollouts of 128 steps.
+\item \textbf{Tabular-RND.} $\phi(s)$ is the one-hot vector of the cell. Only the input layer
+differs from coordinate-RND (the deeper layers have the same weights), and state normalization
+does not apply.
+\end{itemize}
+Reward normalization divides every bonus by the running standard deviation of its discounted
+sum. An extension run (2026-11-09) adds the tabular-RND conditions and, for the uniform field,
+other decay exponents: define $a>0$ as the decay exponent, so that
+$b_{\mathrm{count}}(s,n)=c(s)\,n^{-a}$; the count rule above is $a=\tfrac12$, and the extension
+runs $a\in\{2,1,\tfrac14\}$.
 
 \begin{table}[H]
 \centering\small
@@ -133,16 +146,22 @@ environments per policy & 128 & 4 & 1 & 1 \\
 \textbf{Method} & \textbf{Decay} & \textbf{State normalization} & \textbf{Reward normalization} & \textbf{Conditions} \\
 \blackrule
 no bonus & --- & N/A & N/A & 1 \\ \greyrule
-uniform field & $1/\sqrt n$ & N/A (no RND network) & off, on & 2 \\ \greyrule
-alternating field, odd cells $2^{-6}$ of even cells & $1/\sqrt n$ & N/A (no RND network) & off, on & 2 \\ \greyrule
-frozen random-network field & $1/\sqrt n$ & off, on & off, on & 4 \\ \greyrule
-online RND (same networks as the frozen field) & learned & off, on & off, on & 4 \\
+uniform field, decay exponent $-0.5$ & $n^{-1/2}$ & N/A (no RND network) & off, on & 2 \\ \greyrule
+uniform field, decay exponents $-2$, $-1$, $-0.25$ (extension) & $n^{-2}$, $n^{-1}$, $n^{-1/4}$ & N/A (no RND network) & off, on & 6 \\ \greyrule
+alternating field, odd cells $2^{-6}$ of even cells & $n^{-1/2}$ & N/A (no RND network) & off, on & 2 \\ \greyrule
+frozen coordinate-RND field & $n^{-1/2}$ & off, on & off, on & 4 \\ \greyrule
+online coordinate-RND (same networks as the frozen coordinate-RND field) & learned & off, on & off, on & 4 \\ \greyrule
+frozen tabular-RND field (extension) & $n^{-1/2}$ & N/A (one-hot input) & off, on & 2 \\ \greyrule
+online tabular-RND (extension; same networks as the frozen tabular-RND field) & learned & N/A (one-hot input) & off, on & 2 \\
 \blackrule
 \end{tabular}
-\caption{Conditions of each map and policy. Each runs all learning rates, entropies and
+\caption{Conditions of each map and policy: 13 of the original study and 10 of the extension,
+which uses the same seeds and settings. Each runs all learning rates, entropies and
 intrinsic weights (52 configurations; 4 for no bonus) for 16,777,216 transitions on 16
 development seeds; the configuration with the smallest mean capped first-goal time is then rerun
-on 128 fresh seeds, as is the best intrinsic weight at learning rate $10^{-4}$ and entropy 0.001.}
+on 128 fresh seeds, as is the best intrinsic weight at learning rate $10^{-4}$ and entropy 0.001.
+Online tabular-RND with reward normalization on, the baseline of the auto research, is rerun on
+1,024 fresh seeds.}
 \label{tab:grid-fixed-conditions}
 \end{table}
 

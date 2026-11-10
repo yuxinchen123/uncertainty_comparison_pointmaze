@@ -88,3 +88,16 @@ def test_grouped_standard_error_matches_the_formula_for_single_seed_groups():
     values[0] = 16777216
     error, trimmed_error = REPORT.grouped_standard_errors(values, list(range(128)), 10, 7)
     assert trimmed_error < error / 10
+
+
+def test_labels_name_the_rnd_input_the_policy_and_the_decay_exponent():
+    """Tables say coordinate-RND or tabular-RND, and the uniform field's decay exponent, with a math minus in LaTeX."""
+    assert REPORT.condition_label('online-rnd_state-normalization-on_reward-normalization-on') == (
+        'online coordinate-RND, state normalization on, reward normalization on')
+    assert REPORT.condition_label('online-tabular-rnd_state-normalization-off_reward-normalization-on') == (
+        'online tabular-RND, reward normalization on')
+    assert REPORT.condition_label('uniform-decay-exponent-0.25_state-normalization-off_reward-normalization-off') == (
+        'uniform field, decay exponent -0.25, reward normalization off')
+    assert REPORT.latex_label('uniform_state-normalization-off_reward-normalization-on') == (
+        'uniform field, decay exponent $-0.5$, reward normalization on')
+    assert REPORT.POLICY_LABELS == {'tabular': 'tabular-PPO', 'neural': 'coordinate-PPO'}

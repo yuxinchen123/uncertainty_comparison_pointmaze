@@ -1,6 +1,6 @@
 # Fixed CleanRL PPO-RND settings on the straight and snake grids
 
-Generated 2026-11-09 19:56 PT (times are Pacific, converted from machines running Eastern). Phase: complete. Finished settings: 2609.
+Generated 2026-11-09 20:43 PT (times are Pacific, converted from machines running Eastern). Phase: complete. Finished settings: 2617.
 
 ## Contents
 
@@ -11,9 +11,9 @@ Generated 2026-11-09 19:56 PT (times are Pacific, converted from machines runnin
 | [Confirmation, chosen configuration of each condition](#confirmation-chosen-configuration-of-each-condition) | 2026-11-07 21:49 PT | 2026-11-09 19:56 PT | unread |
 | [Confirmation, learning rate 1e-4, entropy 0.001, best intrinsic weight](#confirmation-learning-rate-1e-4-entropy-0-001-best-intrinsic-weight) | 2026-11-07 21:49 PT | 2026-11-09 19:56 PT | unread |
 | [Trimmed means: how many seeds to remove, and whether the results change](#trimmed-means-how-many-seeds-to-remove-and-whether-the-results-change) | 2026-11-09 15:29 PT | 2026-11-09 19:56 PT | unread |
-| [Development](#development) | 2026-11-07 21:49 PT | 2026-11-09 19:56 PT | unread |
+| [Development](#development) | 2026-11-07 21:49 PT | 2026-11-09 20:42 PT | unread |
 | [Decay: online RND (coordinate- and tabular-RND) against the count rule](#decay-online-rnd-coordinate-and-tabular-rnd-against-the-count-rule) | 2026-11-09 19:56 PT | 2026-11-09 19:56 PT | unread |
-| [Records](#records) | 2026-11-07 21:49 PT | 2026-11-09 19:56 PT | unread |
+| [Records](#records) | 2026-11-07 21:49 PT | 2026-11-09 20:44 PT | unread |
 
 [Read with section colors](analysis.html). No section marks itself read.
 
@@ -315,7 +315,7 @@ Best configuration of each condition (628 of 1148 settings finished):
 
 ### snake grid, width 16, 2 turns (50 cells), coordinate-PPO
 
-Best configuration of each condition (628 of 1148 settings finished):
+Best configuration of each condition (636 of 1148 settings finished):
 
 | condition | mean capped first-goal steps ↓ ± standard error [95%] | trimmed mean (1 lowest and 1 highest seeds removed) ± standard error | goal found | coverage | final-policy goal rate, sampled | greedy | configuration | seeds |
 |---|---|---|---|---|---|---|---|---|
@@ -326,7 +326,9 @@ Best configuration of each condition (628 of 1148 settings finished):
 | online coordinate-RND, state normalization on, reward normalization off | 90.60K ± 17.72K [68.32K, 131.95K] | 78.37K ± 16.00K | **100.0%** | **100.0%** | <u>93.8%</u> | 87.5% | learning rate 0.001, entropy 0.01, weight 2^4 | 16 |
 | online coordinate-RND, state normalization on, reward normalization on | 164.22K ± 11.18K [141.87K, 186.57K] | 165.58K ± 11.97K | **100.0%** | **100.0%** | **100.0%** | <u>93.8%</u> | learning rate 0.0001, entropy 0.01, weight 2^-1 | 16 |
 | online coordinate-RND, state normalization off, reward normalization off | 268.83K ± 27.93K [215.84K, 321.82K] | 256.19K ± 29.87K | **100.0%** | **100.0%** | **100.0%** | **100.0%** | learning rate 0.0001, entropy 0.01, weight 2^0 | 16 |
+| frozen tabular-RND field, reward normalization off | 380.98K ± 174.98K [97.88K, 770.95K] | 227.33K ± 159.33K | **100.0%** | **100.0%** | 43.8% | 6.2% | learning rate 0.001, entropy 0.01, weight 2^3 | 16 |
 | online coordinate-RND, state normalization off, reward normalization on | 419.98K ± 47.69K [342.60K, 532.44K] | 424.81K ± 47.85K | **100.0%** | **100.0%** | 62.5% | 62.5% | learning rate 0.0001, entropy 0.01, weight 2^-3 | 16 |
+| frozen tabular-RND field, reward normalization on | 714.75K ± 325.69K [262.69K, 1,439.89K] | 417.96K ± 283.13K | **100.0%** | **100.0%** | 12.5% | 0.0% | learning rate 0.001, entropy 0.01, weight 2^6 | 16 |
 | no bonus | 8,466.34K ± 2,080.44K [4,321.51K, 12,619.21K] | 8,476.02K ± 2,377.34K | 50.0% | <u>90.2%</u> | 0.0% | 0.0% | learning rate 0.0001, entropy 0.01, weight 2^0 | 16 |
 | frozen coordinate-RND field, state normalization off, reward normalization on | 8,756.40K ± 914.23K [6,898.94K, 10,282.77K] | 8,808.07K ± 1,026.24K | <u>56.2%</u> | 86.9% | 12.5% | 12.5% | learning rate 0.001, entropy 0.01, weight 2^-2 | 16 |
 | alternating high/low field (64:1), reward normalization on | 9,809.34K ± 1,953.37K [5,982.40K, 13,635.44K] | 10,012.10K ± 2,232.25K | 43.8% | 81.4% | 0.0% | 0.0% | learning rate 0.001, entropy 0.01, weight 2^2 | 16 |
@@ -385,4 +387,4 @@ Define $e_t(s)$ as the online RND error of cell $s$ after $t$ updates and $N_t(s
 
 ## Records
 
-Unit records: `data/research/fixed-*/summary.json` and `behavior.npz` of this folder and of the extension run listed in `report_extensions.json`. Frozen confirmation choices: `confirmation_frozen.json` of each folder. Report generated 2026-11-09 19:56 PT.
+Unit records: `data/research/fixed-*/summary.json` and `behavior.npz` of this folder and of the extension run listed in `report_extensions.json`. Frozen confirmation choices: `confirmation_frozen.json` of each folder. Report generated 2026-11-09 20:44 PT.

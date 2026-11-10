@@ -12,15 +12,19 @@ import sys
 import time
 
 PLATFORM = Path(__file__).resolve().parents[2]
-VISITATION_LAWS = ('uniform', 'start-heavy')
+VISITATION_LAWS = ('uniform', 'start-heavy', 'first-half-only')
 
 
 def visitation_probabilities(law, state_count):
-    """Probability of each cell in a rollout: uniform, or falling to e^-3 of the start's along the path."""
+    """Probability of each cell in a rollout: uniform, falling to e^-3 of the start's, or the first half only."""
     import numpy as np
     # Before: 'start-heavy', 4 cells; after: [0.53, 0.26, 0.13, 0.07] (proportional to e^{-3 s/(S-1)}).
+    # 'first-half-only', 4 cells: [0.5, 0.5, 0, 0]; the second half is never visited, as cells beyond the frontier.
     if law == 'uniform':
         return np.full(state_count, 1.0 / state_count)
+    if law == 'first-half-only':
+        weights = (np.arange(state_count) < state_count // 2).astype(np.float64)
+        return weights / weights.sum()
     weights = np.exp(-3.0 * np.arange(state_count) / (state_count - 1))
     return weights / weights.sum()
 
@@ -53,8 +57,9 @@ def run_idea(idea, geometry_kind, iterations, field_seeds):
                        np.ones((copies, states), np.float32), np.arange(copies) + 1, rnd)
     shared = configuration.rnd_optimizer == 'shared_adam'
     optimizer = initialize_adam(state.parameters['predictor']) if shared else state.predictor_optimizer
-    logits = jnp.log(jnp.asarray(np.repeat(np.stack([visitation_probabilities(law, states) for law in VISITATION_LAWS]),
-                                           len(field_seeds), axis=0), jnp.float32))
+    # Never-visited cells get a log-probability of -inf, so they are never drawn.
+    logits = jnp.asarray(np.log(np.repeat(np.stack([visitation_probabilities(law, states) for law in VISITATION_LAWS]),
+                                          len(field_seeds), axis=0)), jnp.float32)
     coordinates = jnp.asarray(world.coordinates, jnp.float32)
     rate = float(idea.get('shared_learning_rate', 1e-3))
 
@@ -130,11 +135,25 @@ def measures(history, visits):
             if usable.sum() >= 3 and np.ptp(np.log(n[usable])) > 0:
                 slopes.append(np.polyfit(np.log(n[usable]), np.log(q[usable]), 1)[0])
     slopes = np.asarray(slopes)
-    final, final_visits = history[-1], np.maximum(visits[-1], 1)
-    # sd over cells of log(b_T sqrt(N_T)): zero when every cell's bonus is the same function c/sqrt(N) of its own visits.
-    consistency = np.std(np.log(np.maximum(final, 1e-30) * np.sqrt(final_visits)), axis=1)
+    final, visited = history[-1], visits[-1] > 0
+    # sd over visited cells of log(b_T sqrt(N_T)): zero when each bonus is the same function c/sqrt(N) of its own visits.
+    consistency = np.asarray([np.std(np.log(np.maximum(final[copy][visited[copy]], 1e-30) *
+                                            np.sqrt(visits[-1][copy][visited[copy]]))) for copy in range(final.shape[0])])
     target = np.minimum(1.0, np.maximum(visits, 1) ** -0.5)
     deviation = np.sqrt(np.mean((np.log(np.maximum(ratio[1:], 1e-30)) - np.log(target[1:])) ** 2, axis=0))
+    # Never-visited cells should keep their starting bonus: their final bonus over their start, and the
+    # contrast between the never-visited and the visited cells' final bonuses (the count rule's grows without limit).
+    unvisited = {}
+    if (~visited).any():
+        kept = [ratio[-1][copy][~visited[copy]] for copy in range(final.shape[0]) if (~visited[copy]).any()]
+        contrast = [np.median(final[copy][~visited[copy]]) / np.median(final[copy][visited[copy]])
+                    for copy in range(final.shape[0]) if (~visited[copy]).any() and visited[copy].any()]
+        unvisited = {'unvisited_final_over_start_median': float(np.median(np.concatenate(kept))),
+                     'unvisited_final_over_start_min': float(np.min(np.concatenate(kept))),
+                     'unvisited_over_visited_final_bonus': float(np.median(contrast)),
+                     'unvisited_over_visited_by_checkpoint': [float(np.median([
+                         np.median(history[index][copy][~visited[copy]]) / np.median(history[index][copy][visited[copy]])
+                         for copy in range(final.shape[0])])) for index in range(1, history.shape[0])]}
     return {'start_max_over_min': float(np.median(initial.max(axis=1) / initial.min(axis=1))),
             'start_sd_log': float(np.median(np.std(np.log(initial), axis=1))),
             'slope_median': float(np.median(slopes)) if len(slopes) else None,
@@ -142,7 +161,7 @@ def measures(history, visits):
             'late_count_consistency_sd_log': float(np.median(consistency)),
             'deviation_from_inverse_square_root_mean': float(deviation.mean()),
             'deviation_from_inverse_square_root_worst_cell': float(np.median(deviation.max(axis=1))),
-            'final_visits_median': float(np.median(visits[-1])), 'finite': bool(np.isfinite(history).all())}
+            'final_visits_median': float(np.median(visits[-1])), 'finite': bool(np.isfinite(history).all()), **unvisited}
 
 
 def main():
@@ -175,8 +194,9 @@ def main():
                 result[f'{geometry}_{law}'] = {**measures(history[:, part], visits[:, part]), 'seconds': seconds}
         (args.output/f'{name}.json').write_text(json.dumps(result, indent=2))
         print(json.dumps({'idea': name, **{key: {k: value[k] for k in ('start_max_over_min', 'slope_median',
-              'late_count_consistency_sd_log', 'seconds')} for key, value in result.items() if '_' in key and
-              isinstance(value, dict)}}), flush=True)
+              'late_count_consistency_sd_log', 'unvisited_final_over_start_median', 'unvisited_over_visited_final_bonus',
+              'seconds') if k in value} for key, value in result.items() if '_' in key and isinstance(value, dict)}}),
+              flush=True)
 
 
 if __name__ == '__main__':
