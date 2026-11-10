@@ -15,6 +15,7 @@ from report import _write_report_with_history, grouped_mean_interval
 
 TARGET_SLOPE = (-0.6, -0.4)
 TARGET_START = 1.5
+BASELINE_IDEA = 'control'
 
 
 def unit_rows(run_dir):
@@ -23,7 +24,8 @@ def unit_rows(run_dir):
     for path in sorted((run_dir/'data/research').glob('*/summary.json')):
         summary = read_json(path)
         spec = summary['specification']
-        if not summary.get('completed') or 'idea' not in spec:
+        # Confirmation units are pooled over all their seeds by confirmation_records(), never ranked by unit.
+        if not summary.get('completed') or 'idea' not in spec or spec['wave'].startswith('fixed-confirmation'):
             continue
         for setting in summary['settings']:
             copies = [row for row in summary['copy_records'] if row['setting_index'] == setting['setting_index']]
@@ -125,6 +127,74 @@ def case_table(rows, ideas):
     return ''.join(lines)
 
 
+def confirmation_records(run_dir):
+    """Pool every finished confirmation unit's copies by (batch, idea, grid, policy), one record per policy seed."""
+    # Before: 8 units of 128 seeds for one idea in one case; after: {policy seed: record} with 1,024 entries.
+    pooled, configurations = defaultdict(dict), {}
+    for path in sorted((run_dir/'data/research').glob('confirmation-*/summary.json')):
+        summary = read_json(path)
+        spec = summary['specification']
+        if not summary.get('completed'):
+            continue
+        key = (spec['batch'], spec['idea'], spec['geometry']['kind'], spec['policy_kind'])
+        for record in summary['copy_records']:
+            pooled[key][record['policy_seed']] = record
+        configurations[key] = summary['settings'][0]['configuration']
+    return pooled, configurations
+
+
+def confirmation_row(records, baseline):
+    """One idea's confirmed metrics in one case, and its paired difference to the baseline on the seeds both have."""
+    seeds = sorted(records)
+    capped = np.asarray([records[seed]['capped_first_goal_steps'] for seed in seeds], np.float64)
+    groups = [records[seed]['field_seed'] for seed in seeds]
+    row = {'mean': float(capped.mean()), 'standard_error': grouped_standard_errors(capped, groups, 0, 7)[0],
+           'interval': grouped_mean_interval(capped, groups, 7), 'seeds': len(seeds),
+           'discovery': float(np.mean([records[seed]['first_goal_step'] >= 0 for seed in seeds])),
+           'coverage': float(np.mean([records[seed]['coverage'] for seed in seeds])),
+           'sampled': float(np.mean([records[seed]['evaluation_goal_rate_sampled'] for seed in seeds])),
+           'greedy': float(np.mean([records[seed]['evaluation_goal_rate_greedy'] for seed in seeds])), 'paired': None}
+    common = [seed for seed in seeds if baseline is not None and seed in baseline]
+    if common and baseline is not records:
+        # Before: two score lists on the same policy seeds; after: their per-seed differences, grouped by field seed.
+        difference = np.asarray([records[seed]['capped_first_goal_steps'] - baseline[seed]['capped_first_goal_steps']
+                                 for seed in common], np.float64)
+        row['paired'] = {'mean': float(difference.mean()), 'seeds': len(common),
+                         'interval': grouped_mean_interval(difference, [records[seed]['field_seed'] for seed in common], 7),
+                         'baseline_mean': float(np.mean([baseline[seed]['capped_first_goal_steps'] for seed in common]))}
+    return row
+
+
+def confirmation_table(pooled, configurations, batch, kind, policy, ideas):
+    """Ideas in rows sorted by the confirmed score; metrics and the paired difference to the baseline in columns."""
+    baseline = pooled.get((batch, BASELINE_IDEA, kind, policy))
+    rows = sorted(((idea, confirmation_row(records, baseline), configurations[(group, idea, grid, kind_of_policy)])
+                   for (group, idea, grid, kind_of_policy), records in pooled.items()
+                   if (group, grid, kind_of_policy) == (batch, kind, policy)), key=lambda item: item[1]['mean'])
+    means = [row['mean'] for _, row, _ in rows]
+    lines = ['| idea | mean capped first-goal steps ↓ ± standard error [95%] | difference to the baseline on the same '
+             'seeds [95%] | goal found | coverage | final-policy goal rate, sampled | greedy | configuration | seeds |\n'
+             '|---|---|---|---|---|---|---|---|---|\n']
+    for index, (idea, row, setting) in enumerate(rows):
+        low, high = row['interval']
+        paired = row['paired']
+        if idea == BASELINE_IDEA:
+            difference = 'baseline'
+        elif paired is None:
+            difference = 'baseline not finished'
+        else:
+            difference = (f"{paired['mean'] / 1000:+,.2f}K [{paired['interval'][0] / 1000:+,.2f}K, "
+                          f"{paired['interval'][1] / 1000:+,.2f}K], {100 * paired['mean'] / paired['baseline_mean']:+.0f}% "
+                          f"({paired['seeds']} seeds)")
+        configuration = (f"learning rate {setting['learning_rate']:g}, entropy {setting['entropy_coefficient']:g}, "
+                         f"weight 2^{int(round(np.log2(setting['intrinsic_coefficient'])))}")
+        lines.append(f"| {ideas.get(idea, idea)} | {styled(number(row['mean'], True), mark(means, index, True))} ± "
+                     f"{number(row['standard_error'], True)} [{number(low, True)}, {number(high, True)}] | {difference} | "
+                     f"{100 * row['discovery']:.1f}% | {100 * row['coverage']:.1f}% | {100 * row['sampled']:.1f}% | "
+                     f"{100 * row['greedy']:.1f}% | {configuration} | {row['seeds']} |\n")
+    return ''.join(lines)
+
+
 def generate(run_dir):
     """Write analysis/analysis.md (with its contents table) and a JSON of every best row."""
     analysis = run_dir/'analysis'
@@ -159,6 +229,26 @@ def generate(run_dir):
             selected = [row for key, row in best.items() if (key[0], key[1]) == stage_batch and key[3:] == (kind, policy)]
             section.append(f"### {CASE_LABELS[kind]}, {POLICY_LABELS[policy]}\n\n")
             section.append(case_table(selected, words) + '\n' if selected else 'Not run yet.\n\n')
+        markdown.append(''.join(section))
+    pooled, configurations = confirmation_records(run_dir)
+    for batch in sorted({key[0] for key in pooled}):
+        section = [f"## confirmation {batch}: chosen configurations on the confirmation seeds\n\n"
+                   "Define $K$ as the number of policy seeds, $B$ as the budget, and $T_i$ as the transition at which "
+                   "policy $i$ first reaches the goal ($T_i = \\infty$ if never). The score is "
+                   "$M(B) = \\dfrac{1}{K} \\sum_{i=1}^{K} \\min(T_i, B)$ at "
+                   f"$B$ = {BUDGET:,}. Each row is one idea's configuration chosen on the development seeds, trained on "
+                   "the confirmation seeds from 20000 on; every finished seed of a row is pooled. Define $T_i^{a}$ and "
+                   "$T_i^{b}$ as policy $i$'s first-goal transitions under the row's idea and under the baseline "
+                   f"(`{BASELINE_IDEA}`, CleanRL online tabular-RND with reward normalization on). The difference "
+                   "column is $\\dfrac{1}{K} \\sum_{i=1}^{K} \\left(\\min(T_i^{a}, B) - \\min(T_i^{b}, B)\\right)$ over the "
+                   "$K$ seeds both rows have (negative means faster than the baseline), followed by the same "
+                   "difference as a percentage of the baseline's mean. Standard errors and 95% intervals resample "
+                   "field seeds (four policy seeds each).\n\n"]
+        for kind, policy in CASE_ORDER:
+            section.append(f"### {CASE_LABELS[kind]}, {POLICY_LABELS[policy]}\n\n")
+            present = any((group, grid, kind_of_policy) == (batch, kind, policy) for group, _, grid, kind_of_policy in pooled)
+            section.append(confirmation_table(pooled, configurations, batch, kind, policy, words) + '\n'
+                           if present else 'Not run yet.\n\n')
         markdown.append(''.join(section))
     _write_report_with_history(analysis, ''.join(markdown))
     write_json(analysis/'best_rows.json', {'at': now(), 'rows': [
