@@ -1,0 +1,45 @@
+{
+ "schedule-fit-rnd-exponent-minus-1-refresh-per-step": {
+  "settings": {
+   "rnd_loss": "shrink_target",
+   "rnd_optimizer": "rollout_fit",
+   "rnd_readout": "length",
+   "rnd_unit_length_target": true,
+   "rnd_shrink_power": 1.0,
+   "rnd_refresh": "per_step",
+   "rnd_fit_solver": "output_layer_exact"
+  },
+  "network": {
+   "zero_predictor_output": true
+  }
+ },
+ "schedule-fit-rnd-exponent-minus-0.5-refresh-per-step": {
+  "settings": {
+   "rnd_loss": "shrink_target",
+   "rnd_optimizer": "rollout_fit",
+   "rnd_readout": "length",
+   "rnd_unit_length_target": true,
+   "rnd_refresh": "per_step",
+   "rnd_fit_solver": "output_layer_exact"
+  },
+  "network": {
+   "zero_predictor_output": true
+  }
+ },
+ "frozen-tabular-rnd-field-count-per-step-exponent-minus-1": {
+  "count": {
+   "count_update": "per_step",
+   "count_decay_exponent": 1.0,
+   "count_rate": 1.0
+  },
+  "field": "frozen_tabular_rnd"
+ },
+ "unit-start": {
+  "settings": {
+   "rnd_unit_length_target": true
+  },
+  "network": {
+   "zero_predictor_output": true
+  }
+ }
+}
