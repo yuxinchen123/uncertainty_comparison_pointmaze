@@ -49,6 +49,26 @@ class GridPPOConfig:
     # Whiten the online RND inputs with running statistics (CleanRL observation normalization).
     normalize_rnd_inputs: bool = False
     predictor_update_proportion: float = 0.25
+    # Count rule exponent: bonus = field x visits^(-exponent); 0.5 keeps the exact 1/sqrt path.
+    count_decay_exponent: float = 0.5
+    # Online RND input: "coordinates" (coordinate-RND) or "one_hot" (tabular-RND). The policy always reads coordinates.
+    rnd_input: str = "coordinates"
+    # Online RND bonus readout: CleanRL's half summed squared error, or its square root (the error length);
+    # the "initial_ratio" forms divide by the same readout of the untrained predictor in each cell.
+    rnd_readout: str = "half_squared"
+    # Scale the target's features to unit length in every cell.
+    rnd_unit_length_target: bool = False
+    # Predictor loss: CleanRL's mean squared feature error, the power (2/q) E^(q/2) of the summed squared
+    # error E, or a regression to the predictor's own output moved so that the error length goes r -> r/sqrt(1+r^2).
+    rnd_loss: str = "cleanrl"
+    rnd_loss_power: float = 2.0
+    # "shared_adam": the predictor joins the policy's Adam and joint clip (CleanRL); otherwise it has its own
+    # optimizer with no clip and its own learning rate, constant or rate/(1 + t/rnd_learning_rate_time_scale).
+    rnd_optimizer: str = "shared_adam"
+    rnd_learning_rate: float = 1e-4
+    rnd_learning_rate_time_scale: float = 0.0
+    # "all" layers of the predictor train, or only its input weights (one row per cell for one-hot inputs).
+    rnd_trainable: str = "all"
     per_copy_scalar_settings: tuple | Mapping = ()
     rollout_unroll: int = 1
     update_unroll: int = 1
@@ -78,6 +98,28 @@ class GridPPOConfig:
             raise ValueError("intrinsic_source must be count or online_rnd")
         if self.normalize_rnd_inputs and self.intrinsic_source != "online_rnd":
             raise ValueError("RND input normalization acts only on online RND; frozen fields are built normalized")
+        if not math.isfinite(self.count_decay_exponent) or self.count_decay_exponent <= 0:
+            raise ValueError("count_decay_exponent must be positive")
+        if self.count_decay_exponent != 0.5 and self.rsqrt_bonus:
+            raise ValueError("rsqrt_bonus implements only the exponent 0.5")
+        choices = {"rnd_input": {"coordinates", "one_hot"},
+                   "rnd_readout": {"half_squared", "length", "initial_ratio_half_squared", "initial_ratio_length"},
+                   "rnd_loss": {"cleanrl", "power", "shrink_target"},
+                   "rnd_optimizer": {"shared_adam", "adam", "sgd", "adagrad"}, "rnd_trainable": {"all", "input_layer"}}
+        for name, allowed in choices.items():
+            if getattr(self, name) not in allowed:
+                raise ValueError(f"{name} must be one of {sorted(allowed)}")
+        changed = [name for name, default in (("rnd_input", "coordinates"), ("rnd_readout", "half_squared"),
+                   ("rnd_unit_length_target", False), ("rnd_loss", "cleanrl"), ("rnd_optimizer", "shared_adam"),
+                   ("rnd_trainable", "all")) if getattr(self, name) != default]
+        if changed and self.intrinsic_source != "online_rnd":
+            raise ValueError(f"online RND settings were given to a count-bonus configuration: {changed}")
+        if self.rnd_input == "one_hot" and self.normalize_rnd_inputs:
+            raise ValueError("one-hot RND inputs are never whitened")
+        if self.rnd_loss == "power" and self.rnd_loss_power < 2:
+            raise ValueError("rnd_loss_power must be at least 2")
+        if self.rnd_learning_rate <= 0 or self.rnd_learning_rate_time_scale < 0:
+            raise ValueError("rnd_learning_rate must be positive and its time scale nonnegative")
         if self.intrinsic_source == "online_rnd":
             if not 0 < self.predictor_update_proportion <= 1:
                 raise ValueError("predictor_update_proportion must be in (0, 1]")

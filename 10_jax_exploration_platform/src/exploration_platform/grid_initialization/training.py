@@ -38,6 +38,12 @@ class GridTrainState(NamedTuple):
     # Online RND only (None for count bonuses): the frozen target and the input statistics.
     target: object = None
     observation_statistics: object = None
+    # Online tabular-RND only: the [S,S] one-hot input table (None for coordinate inputs).
+    rnd_table: object = None
+    # Online RND with its own optimizer only: the predictor's optimizer state.
+    predictor_optimizer: object = None
+    # Online RND with an initial-ratio readout only: each cell's untrained readout [C,S].
+    rnd_initial: object = None
 
 
 class GridRollout(NamedTuple):
@@ -120,7 +126,7 @@ def initialize(configuration, transition_table, coordinates, fields, policy_seed
             "critic_head": initialize_layer(seeds, "grid/policy/critic_head", 2, width, gain=0.01)}
     # Online RND: the predictor joins the policy's parameters, so one Adam with one joint
     # gradient clip updates both, as in CleanRL; the target stays outside the optimizer.
-    target = statistics = None
+    target = statistics = rnd_table = predictor_optimizer = rnd_initial = None
     if configuration.intrinsic_source == "online_rnd":
         if rnd is None:
             raise ValueError("online RND requires per-copy target and predictor networks")
@@ -130,6 +136,11 @@ def initialize(configuration, transition_table, coordinates, fields, policy_seed
             statistics = RunningStatistics(jnp.asarray(rnd["statistics"]["mean"], jnp.float64),
                 jnp.asarray(rnd["statistics"]["variance"], jnp.float64),
                 jnp.asarray(rnd["statistics"]["count"], jnp.float64))
+        if configuration.rnd_input == "one_hot":
+            rnd_table = jnp.eye(state_count, dtype=jnp.float32)
+        expected = state_count if configuration.rnd_input == "one_hot" else 2
+        if parameters["predictor"][0]["weight"].shape[1] != expected:
+            raise ValueError(f"the RND input layer must read {expected} values per cell")
     elif rnd is not None:
         raise ValueError("RND networks were supplied to a count-bonus configuration")
     # Before: no visits; after: the start is marked reached, with zero arrival counts.
@@ -137,7 +148,22 @@ def initialize(configuration, transition_table, coordinates, fields, policy_seed
     counts = jnp.zeros(shape + (state_count,), jnp.int32)
     reached = jnp.zeros_like(counts, dtype=jnp.bool_).at[:, configuration.start_state].set(True)
     filter_size = configuration.num_steps if configuration.upstream_reward_filter_axis else 1
-    return GridTrainState(parameters, initialize_adam(parameters),
+    # A predictor with its own optimizer is left out of the policy's Adam and its joint clip.
+    separate = configuration.intrinsic_source == "online_rnd" and configuration.rnd_optimizer != "shared_adam"
+    policy_parameters = {name: value for name, value in parameters.items() if name != "predictor"} if separate else parameters
+    if separate:
+        zeros = jax.tree.map(jnp.zeros_like, parameters["predictor"])
+        predictor_optimizer = AdamState(zeros if configuration.rnd_optimizer == "adam" else None,
+            zeros if configuration.rnd_optimizer in {"adam", "adagrad"} else None, jnp.zeros((), jnp.int32))
+    if configuration.intrinsic_source == "online_rnd" and configuration.rnd_readout.startswith("initial_ratio"):
+        # Before: untrained networks; after: each cell's untrained readout, which later bonuses are divided by.
+        table = rnd_table if rnd_table is not None else points
+        ids = jnp.broadcast_to(jnp.arange(state_count, dtype=jnp.int32), (configuration.n_copies, state_count))
+        inputs = jnp.asarray(table, jnp.float32)[ids]
+        if statistics is not None:
+            inputs = normalize_frames(inputs, statistics)
+        rnd_initial = rnd_readout(parameters["predictor"], target, inputs, configuration)
+    return GridTrainState(parameters, initialize_adam(policy_parameters),
         jnp.full(shape, configuration.start_state, jnp.int32), jnp.zeros(shape, jnp.int32),
         counts, jnp.zeros_like(counts), reached, jnp.zeros(shape, jnp.int32),
         jnp.zeros(shape, jnp.int32), jnp.full(shape, -1, jnp.int32),
@@ -145,23 +171,50 @@ def initialize(configuration, transition_table, coordinates, fields, policy_seed
         jnp.zeros(shape, jnp.int32),
         initialize_statistics(configuration.n_copies, ()),
         jnp.zeros(shape + (filter_size,), jnp.float32), jnp.zeros((), jnp.int32), seeds,
-        target, statistics)
+        target, statistics, rnd_table, predictor_optimizer, rnd_initial)
 
 
 def rnd_inputs(state, coordinates, states):
-    """Return the online RND inputs for selected states, whitened when statistics exist."""
-    # Before: state ids [C,M]; after: [C,M,2] coordinates, normalized and clipped if enabled.
-    values = coordinates[states]
+    """Return the online RND inputs for selected states: coordinates (whitened when statistics exist) or one-hot rows."""
+    # Before: state ids [C,M]; after: [C,M,2] coordinates, normalized and clipped if enabled, or [C,M,S] one-hot rows.
+    values = (state.rnd_table if state.rnd_table is not None else coordinates)[states]
     if state.observation_statistics is not None:
         values = normalize_frames(values, state.observation_statistics)
     return values
 
 
+def target_features(target, inputs, configuration):
+    """Evaluate the frozen target, scaled to unit length per row when the configuration asks for it."""
+    # Before: [C,M,512] features; after: the same rows divided by their own lengths.
+    features = jax_forward(target, inputs)
+    if configuration.rnd_unit_length_target:
+        features = features / jnp.sqrt(jnp.sum(features ** 2, axis=-1, keepdims=True))
+    return features
+
+
+def rnd_readout(predictor, target, inputs, configuration):
+    """Return the bonus before any initial-ratio division: half the summed squared error, or its square root."""
+    if configuration.rnd_readout == "half_squared" and not configuration.rnd_unit_length_target:
+        return jax_errors(predictor, target, inputs)
+    squared = jnp.sum((jax_forward(predictor, inputs) - target_features(target, inputs, configuration)) ** 2, axis=-1)
+    return jnp.sqrt(squared) if configuration.rnd_readout.endswith("length") else 0.5 * squared
+
+
 def all_cell_errors(state, coordinates, configuration):
     """Evaluate the online RND bonus of every cell once; it is fixed during a rollout."""
-    ids = jnp.broadcast_to(jnp.arange(coordinates.shape[0], dtype=jnp.int32),
-                           (configuration.n_copies, coordinates.shape[0]))
-    return jax_errors(state.parameters["predictor"], state.target, rnd_inputs(state, coordinates, ids))
+    state_count = coordinates.shape[0]
+    ids = jnp.broadcast_to(jnp.arange(state_count, dtype=jnp.int32), (configuration.n_copies, state_count))
+    values = rnd_readout(state.parameters["predictor"], state.target, rnd_inputs(state, coordinates, ids), configuration)
+    return values / state.rnd_initial if state.rnd_initial is not None else values
+
+
+def count_bonus(field_values, visits, configuration):
+    """Return field x visits^(-exponent); the exponent 0.5 keeps the original division by the square root."""
+    # Before: field 1.0 and visits 4; after: 0.5 at exponent 0.5, 0.25 at exponent 1, 1/16 at exponent 2.
+    visits = visits.astype(jnp.float32)
+    if configuration.count_decay_exponent == 0.5:
+        return field_values * jax.lax.rsqrt(visits) if configuration.rsqrt_bonus else field_values / jnp.sqrt(visits)
+    return field_values * visits ** jnp.float32(-configuration.count_decay_exponent)
 
 
 def collect_rollout(state, configuration, transition_table, coordinates, fields):
@@ -193,9 +246,8 @@ def collect_rollout(state, configuration, transition_table, coordinates, fields)
         counts = counts.at[rows, arrived].add(1)
         visits = counts[rows, arrived]
         bonus = fields[rows, arrived] if configuration.intrinsic_source == "online_rnd" else (
-            jnp.zeros((copies,), jnp.float32) if configuration.hoist_bonus else (
-            fields[rows, arrived] * jax.lax.rsqrt(visits.astype(jnp.float32)) if configuration.rsqrt_bonus
-            else fields[rows, arrived] / jnp.sqrt(visits.astype(jnp.float32))))
+            jnp.zeros((copies,), jnp.float32) if configuration.hoist_bonus else
+            count_bonus(fields[rows, arrived], visits, configuration))
         succeeded = arrived == goal
         elapsed = elapsed + 1
         done = succeeded | (elapsed >= configuration.episode_length)
@@ -227,9 +279,7 @@ def collect_rollout(state, configuration, transition_table, coordinates, fields)
                 outputs[..., :4], rollout.actions.T)[0].T)
     if configuration.hoist_bonus:
         initial = gather_states(fields, rollout.arrivals.T, configuration).T
-        visits = rollout.arrival_counts.astype(jnp.float32)
-        bonus = initial * jax.lax.rsqrt(visits) if configuration.rsqrt_bonus else initial / jnp.sqrt(visits)
-        rollout = rollout._replace(intrinsic_rewards=bonus)
+        rollout = rollout._replace(intrinsic_rewards=count_bonus(initial, rollout.arrival_counts, configuration))
     return state._replace(positions=position, episode_steps=elapsed, counts=counts,
         window_counts=counts - state.counts, reached=reached, successes=successes,
         episodes=episodes, first_goal_step=first_goal, maximum_progress=progress, blocked_moves=blocked), rollout
@@ -296,6 +346,28 @@ def prepare_batch(state, rollout, coordinates, configuration):
     return state, batch
 
 
+def predictor_sample_losses(predictor, target, inputs, configuration):
+    """Return each sample's predictor loss [C,M] under the configured loss and trainable layers."""
+    if configuration.rnd_trainable == "input_layer":
+        # Only the input weights train: with one-hot inputs each cell's row moves only when that cell is trained.
+        # The input bias is shared by every cell, so it stays frozen with the deeper layers.
+        predictor = ({"weight": predictor[0]["weight"], "bias": jax.lax.stop_gradient(predictor[0]["bias"])},) + tuple(
+            jax.tree.map(jax.lax.stop_gradient, layer) for layer in predictor[1:])
+    features = jax.lax.stop_gradient(target_features(target, inputs, configuration))
+    outputs = jax_forward(predictor, inputs)
+    if configuration.rnd_loss == "cleanrl":
+        return ((outputs - features) ** 2).mean(axis=-1)
+    if configuration.rnd_loss == "power":
+        # (2/q) E^(q/2) of the summed squared error E: q = 2 is plain least squares.
+        power = configuration.rnd_loss_power
+        return (2.0 / power) * jnp.sum((outputs - features) ** 2, axis=-1) ** (power / 2.0)
+    # Regress to the output moved toward the target so that the error length r becomes r/sqrt(1+r^2).
+    residual = features - outputs
+    squared = jnp.sum(residual ** 2, axis=-1, keepdims=True)
+    moved = jax.lax.stop_gradient(outputs + (1.0 - jax.lax.rsqrt(1.0 + squared)) * residual)
+    return 0.5 * jnp.sum((outputs - moved) ** 2, axis=-1)
+
+
 def minibatch_loss(parameters, batch, coordinates, configuration, target=None):
     """Use CleanRL's clipped policy and task critic loss with an unclipped intrinsic critic."""
     if configuration.all_states_minibatch:
@@ -323,8 +395,7 @@ def minibatch_loss(parameters, batch, coordinates, configuration, target=None):
         "entropy": entropy, "approximate_kl": ((ratio - 1) - (log_probability - batch["log_probabilities"])).mean(axis=1)}
     if configuration.intrinsic_source == "online_rnd":
         # CleanRL: mean squared feature error, averaged over the samples kept by the mask.
-        features = jax.lax.stop_gradient(jax_forward(target, batch["rnd_inputs"]))
-        errors = ((jax_forward(parameters["predictor"], batch["rnd_inputs"]) - features) ** 2).mean(axis=-1)
+        errors = predictor_sample_losses(parameters["predictor"], target, batch["rnd_inputs"], configuration)
         mask = batch["predictor_mask"].astype(jnp.float32)
         predictor_loss = (errors * mask).sum(axis=1) / jnp.maximum(mask.sum(axis=1), 1.0)
         total = total + predictor_loss
@@ -356,9 +427,11 @@ def update_policy(state, batch, coordinates, configuration):
         """Select matching transitions independently within each policy."""
         return jax.tree.map(lambda values: jax.vmap(lambda values, ids: values[ids])(values, rows), batch)
 
+    separate = configuration.intrinsic_source == "online_rnd" and configuration.rnd_optimizer != "shared_adam"
+
     def minibatch(carry, rows_or_batch):
         """Differentiate one minibatch and update each policy using its own gradient norm."""
-        parameters, optimizer = carry
+        parameters, optimizer, predictor_optimizer = carry
         if configuration.intrinsic_source == "online_rnd":
             rows, mask = rows_or_batch
             selected = dict(gather(rows), predictor_mask=mask)
@@ -371,17 +444,27 @@ def update_policy(state, batch, coordinates, configuration):
                                   configuration, state.target)
 
         (_, metrics), gradients = jax.value_and_grad(loss, has_aux=True)(parameters)
-        parameters, optimizer, norm = adam_step(parameters, gradients, optimizer, rates,
-            scalar_setting(configuration, "max_gradient_norm"), scalar_setting(configuration, "adam_epsilon"),
-            fuse_optimizer=configuration.fuse_optimizer and layout is None)
-        return (parameters, optimizer), {**metrics, "gradient_norm": norm}
+        if separate:
+            # The policy keeps Adam with its own clip; the predictor takes its own unclipped step.
+            policy = {name: value for name, value in parameters.items() if name != "predictor"}
+            policy, optimizer, norm = adam_step(policy, {name: value for name, value in gradients.items()
+                if name != "predictor"}, optimizer, rates, scalar_setting(configuration, "max_gradient_norm"),
+                scalar_setting(configuration, "adam_epsilon"), fuse_optimizer=configuration.fuse_optimizer)
+            predictor, predictor_optimizer = predictor_step(parameters["predictor"], gradients["predictor"],
+                                                            predictor_optimizer, configuration)
+            parameters = dict(policy, predictor=predictor)
+        else:
+            parameters, optimizer, norm = adam_step(parameters, gradients, optimizer, rates,
+                scalar_setting(configuration, "max_gradient_norm"), scalar_setting(configuration, "adam_epsilon"),
+                fuse_optimizer=configuration.fuse_optimizer and layout is None)
+        return (parameters, optimizer, predictor_optimizer), {**metrics, "gradient_norm": norm}
 
     if configuration.flatten_update_scan:
         rows = jax.vmap(permutation)(jnp.arange(configuration.update_epochs, dtype=jnp.int32)).reshape(
             configuration.update_epochs * configuration.num_minibatches, configuration.n_copies, configuration.minibatch_size)
         selected = jax.vmap(gather)(rows) if configuration.pre_gather_minibatches else rows
-        (parameters, optimizer), metrics = jax.lax.scan(minibatch, (parameters, optimizer), selected,
-                                                       unroll=configuration.update_unroll)
+        (parameters, optimizer, predictor_optimizer), metrics = jax.lax.scan(
+            minibatch, (parameters, optimizer, state.predictor_optimizer), selected, unroll=configuration.update_unroll)
         metrics = jax.tree.map(lambda values: values.mean(axis=0), metrics)
     else:
         def epoch(carry, index):
@@ -396,12 +479,33 @@ def update_policy(state, batch, coordinates, configuration):
                 selected = (rows, jax.vmap(lambda ids: jax.vmap(lambda values, row: values[row])(kept, ids))(rows))
             return jax.lax.scan(minibatch, carry, selected, unroll=configuration.update_unroll)
 
-        (parameters, optimizer), metrics = jax.lax.scan(epoch, (parameters, optimizer), jnp.arange(configuration.update_epochs, dtype=jnp.int32))
+        (parameters, optimizer, predictor_optimizer), metrics = jax.lax.scan(
+            epoch, (parameters, optimizer, state.predictor_optimizer), jnp.arange(configuration.update_epochs, dtype=jnp.int32))
         metrics = jax.tree.map(lambda values: values.mean(axis=(0, 1)), metrics)
     if layout:
         parameters = layout.unpack(parameters)
         optimizer = AdamState(layout.unpack(optimizer.first), layout.unpack(optimizer.second), optimizer.step)
-    return state._replace(parameters=parameters, optimizer=optimizer), {**metrics, "learning_rate": rates}
+    return state._replace(parameters=parameters, optimizer=optimizer, predictor_optimizer=predictor_optimizer), {
+        **metrics, "learning_rate": rates}
+
+
+def predictor_step(predictor, gradients, optimizer, configuration):
+    """Apply the predictor's own optimizer to every copy: SGD, AdaGrad or Adam, with no clip."""
+    # The learning rate is constant, or rate/(1 + t/T) after t earlier predictor steps.
+    rate = jnp.float32(configuration.rnd_learning_rate)
+    if configuration.rnd_learning_rate_time_scale > 0:
+        rate = rate / (1.0 + optimizer.step.astype(jnp.float32) / configuration.rnd_learning_rate_time_scale)
+    step = optimizer.step + 1
+    if configuration.rnd_optimizer == "sgd":
+        return jax.tree.map(lambda value, gradient: value - rate * gradient, predictor, gradients), optimizer._replace(step=step)
+    if configuration.rnd_optimizer == "adagrad":
+        # PyTorch AdaGrad: the accumulated squared gradient divides each step, epsilon 1e-10.
+        second = jax.tree.map(lambda total, gradient: total + gradient ** 2, optimizer.second, gradients)
+        return jax.tree.map(lambda value, gradient, total: value - rate * gradient / (jnp.sqrt(total) + 1e-10),
+                            predictor, gradients, second), AdamState(None, second, step)
+    rates = jnp.full((predictor[0]["weight"].shape[0],), rate, jnp.float32)
+    predictor, optimizer, _ = adam_step(predictor, gradients, optimizer, rates, 0.0, configuration.adam_epsilon)
+    return predictor, optimizer
 
 
 def train_iteration(state, configuration, transition_table, coordinates, fields):

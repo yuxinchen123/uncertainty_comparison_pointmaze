@@ -14,6 +14,28 @@ from common import PLATFORM, append_json, now, read_json, seed_for, write_json
 from initial_field_archive import load_or_create_initial_field, uses_canonical_archive
 
 
+# Online RND settings a unit specification may carry under "rnd_settings" (GridPPOConfig names).
+RND_SETTING_NAMES = ('rnd_readout', 'rnd_unit_length_target', 'rnd_loss', 'rnd_loss_power', 'rnd_optimizer',
+                     'rnd_learning_rate', 'rnd_learning_rate_time_scale', 'rnd_trainable')
+
+
+def network_options(spec):
+    """Read the unit's RND network construction; the default is the coordinate networks."""
+    from exploration_platform.grid_initialization.online_rnd import NetworkOptions
+    # Before: {"rnd_input": "one_hot", "network_options": {"first_width": 64}}; after: NetworkOptions(one_hot, 64, ...).
+    return NetworkOptions(input_kind=spec.get('rnd_input', 'coordinates'), **spec.get('network_options', {}))
+
+
+def training_budget(spec):
+    """Return the transitions actually trained: the full budget, or an earlier stop on the same schedule."""
+    stop = spec.get('stop_after_timesteps')
+    if stop is None:
+        return spec['total_timesteps']
+    if not 0 < stop <= spec['total_timesteps']:
+        raise ValueError('stop_after_timesteps must lie within the learning-rate schedule.')
+    return stop
+
+
 def visitation_checkpoint_steps(total_timesteps, rollout_steps):
     """List exact powers-of-two visitation checkpoints from 1024 transitions through the budget."""
     if total_timesteps < 1 or rollout_steps < 1:
@@ -62,7 +84,7 @@ def fixed_settings_field(spec, geometry, field_seed, episode_length):
     if spec['field_kind'] == 'random_network':
         statistics = (warmup_statistics(geometry, episode_length, field_seed)
                       if spec.get('state_normalization') else None)
-        return frozen_network_field(geometry, field_seed, statistics), statistics
+        return frozen_network_field(geometry, field_seed, statistics, network_options(spec)), statistics
     if spec.get('state_normalization'):
         raise ValueError('State normalization applies only to fields built by RND networks.')
     return make_initial_bonus_field(spec['field_kind'], geometry, seed=field_seed,
@@ -179,8 +201,9 @@ def main():
         initial_fields = np.stack(raw_fields if online else bonus_fields)
         rnd = None
         if online:
-            from exploration_platform.grid_initialization.online_rnd import stack_networks
-            rnd = stack_networks(field_seeds)
+            from exploration_platform.grid_initialization.online_rnd import input_table, stack_networks
+            options = network_options(spec)
+            rnd = stack_networks(field_seeds, options, input_table(field_geometry, options).shape[1])
             if spec.get('state_normalization'):
                 rnd['statistics'] = {name: np.stack([np.asarray(row[name], np.float64) for row in statistics_rows])
                                      for name in ('mean', 'variance', 'count')}
@@ -195,20 +218,28 @@ def main():
             normalize_intrinsic_rewards=spec.get('normalize_intrinsic_rewards', False),
             intrinsic_source=source_kind,
             normalize_rnd_inputs=bool(online and spec.get('state_normalization')),
+            count_decay_exponent=spec.get('count_decay_exponent', 0.5),
+            rnd_input=spec.get('rnd_input', 'coordinates') if online else 'coordinates',
+            **{name: value for name, value in spec.get('rnd_settings', {}).items() if name in RND_SETTING_NAMES},
             per_copy_scalar_settings=per_copy, **changes)
+        if set(spec.get('rnd_settings', {})) - set(RND_SETTING_NAMES):
+            raise ValueError(f"Unknown RND settings: {sorted(set(spec['rnd_settings']) - set(RND_SETTING_NAMES))}")
+        budget = training_budget(spec)
+        if budget % configuration.num_steps:
+            raise ValueError('An early stop must fall on a rollout boundary.')
         trainer = GridTrainer(configuration, geometry.transition_table, geometry.coordinates, initial_fields, rnd)
         policy_seeds = np.asarray([seed_for('policy', int(seed)) for seed in seeds], np.uint32)
         state = trainer.initialize(policy_seeds)
         log_interval = max(1, configuration.total_iterations // 128)
         snapshots, steps, maximums = [], [], []
-        visitation_steps = (visitation_checkpoint_steps(configuration.total_timesteps,
-                            configuration.num_steps) if histories else [])
+        visitation_steps = (visitation_checkpoint_steps(budget, configuration.num_steps) if histories else [])
         visitation_step_set = set(visitation_steps)
         visitation_counts, error_history = [], []
         initial_errors = np.asarray(jax.device_get(trainer.all_cell_errors(state))) if online else None
         late_start = None
-        for iteration in range(configuration.total_iterations):
-            if iteration == int(.9 * configuration.total_iterations):
+        trained_iterations = budget // configuration.num_steps
+        for iteration in range(trained_iterations):
+            if iteration == int(.9 * trained_iterations):
                 late_start = np.asarray(jax.device_get(state.counts)).copy()
             state, metrics = trainer.train_iteration(state)
             # Confirmation records the actual lifetime counts, before later goals and resets can hide delay.
@@ -216,7 +247,7 @@ def main():
                 visitation_counts.append(np.asarray(jax.device_get(state.counts)).copy())
                 if online:
                     error_history.append(np.asarray(jax.device_get(trainer.all_cell_errors(state))))
-            if iteration % log_interval == 0 or iteration == configuration.total_iterations-1:
+            if iteration % log_interval == 0 or iteration == trained_iterations-1:
                 host = jax.device_get(metrics)
                 position = np.asarray(jax.device_get(state.positions))
                 snapshots.append(position.copy())
@@ -224,7 +255,7 @@ def main():
                 maximums.append(np.asarray(host['maximum_progress']).copy())
                 append_json(folder / 'progress.jsonl', {'at': now(), 'batch_offset': offset,
                     'completed_copies': len(records), 'total_copies': total_scientific_copies,
-                    'iteration': iteration+1, 'total_iterations': configuration.total_iterations,
+                    'iteration': iteration+1, 'total_iterations': trained_iterations,
                     'goal_fraction': float((np.asarray(host['first_goal_step']) >= 0).mean())})
         first = np.asarray(jax.device_get(state.first_goal_step))
         counts = np.asarray(jax.device_get(state.counts))
@@ -237,11 +268,11 @@ def main():
         greedy = np.asarray(jax.device_get(trainer.evaluate(state, 1, True))) if episodes else None
         current_records = [{'setting_index': int(setting_index), 'policy_seed': int(seed),
             'field_seed': int(field_seed), 'first_goal_step': int(first[index]),
-            'capped_first_goal_steps': int(first[index]) if first[index] >= 0 else spec['total_timesteps'],
+            'capped_first_goal_steps': int(first[index]) if first[index] >= 0 else budget,
             'coverage': float(reached[index]),
             'maximum_progress': int(np.asarray(jax.device_get(state.maximum_progress))[index]),
             'goal_arrivals': int(np.asarray(jax.device_get(state.successes))[index]),
-            'blocked_fraction': float(blocked[index]/spec['total_timesteps']),
+            'blocked_fraction': float(blocked[index]/budget),
             **({'evaluation_goal_rate_sampled': float((sampled[index] >= 0).mean()),
                 'evaluation_goal_rate_greedy': float(greedy[index, 0] >= 0),
                 'evaluation_mean_goal_steps_sampled': (float(sampled[index][sampled[index] >= 0].mean())
@@ -296,7 +327,7 @@ def main():
     if histories:
         axis_one.add('visit_count_history')
         fixed.add('visit_count_history_steps')
-        expected_steps = np.asarray(visitation_checkpoint_steps(spec['total_timesteps'],
+        expected_steps = np.asarray(visitation_checkpoint_steps(training_budget(spec),
             spec['settings'][0].get('rollout_steps', 128)), np.int64)
         for path, data in zip(arrays, loaded):
             if not {'visit_count_history', 'visit_count_history_steps'}.issubset(data.files):
@@ -314,7 +345,7 @@ def main():
                 np.concatenate([data[name] for data in loaded], axis=1 if name in axis_one else 0)
                 for name in loaded[0].files}
     np.savez_compressed(folder / 'behavior.npz', **combined)
-    write_json(folder / 'summary.json', {'completed': True, 'specification': spec,
+    write_json(folder / 'summary.json', {'completed': True, 'specification': spec, 'budget': training_budget(spec),
         'settings': summaries, 'copy_records': records,
         'wall_seconds': sum(read_json(path).get('wall_seconds', 0.) for path in folder.glob('completed_copies_*.json')),
         'wall_seconds_this_attempt': time.monotonic()-started, 'resumed_copy_count': len(completed_ids),

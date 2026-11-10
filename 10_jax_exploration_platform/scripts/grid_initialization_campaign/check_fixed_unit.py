@@ -11,7 +11,7 @@ import tempfile
 import numpy as np
 
 from common import PYTHON, now, read_json, write_json
-from fixed_settings_campaign import conditions, condition_name
+from fixed_settings_campaign import condition_set, conditions, condition_name
 
 HERE = Path(__file__).resolve().parent
 
@@ -41,7 +41,8 @@ def main():
         settings = [{'learning_rate': 1e-3, 'entropy_coefficient': 1e-3, 'intrinsic_coefficient': 1.0,
                      'gamma_int': 0.99, 'rollout_steps': 128}, {'learning_rate': 1e-4, 'entropy_coefficient': 1e-2,
                      'intrinsic_coefficient': 4.0, 'gamma_int': 0.99, 'rollout_steps': 128}]
-        for condition in conditions():
+        listed = conditions(condition_set(args.run_dir))
+        for condition in listed:
             for policy in ('tabular', 'neural'):
                 spec = {'name': f'check_{policy}_{condition_name(condition)}', 'study': 'fixed-settings',
                         'wave': 'fixed-check', 'geometry': {'kind': 'snake', 'width': 4, 'turns': 2},
@@ -50,6 +51,8 @@ def main():
                         'intrinsic_source': condition['intrinsic_source'],
                         'state_normalization': condition['state_normalization'],
                         'normalize_intrinsic_rewards': condition['reward_normalization'],
+                        'count_decay_exponent': condition.get('count_decay_exponent', 0.5),
+                        'rnd_input': condition.get('rnd_input', 'coordinates'),
                         'settings': settings, 'total_timesteps': 2048, 'seed_start': 0, 'seed_count': 2,
                         'evaluation_episodes': 4}
                 folder_path = run_unit(scratch, spec)
@@ -64,7 +67,8 @@ def main():
                 results.append({'unit': spec['name'], 'passed': True,
                                 'capped_means': [row['capped_mean_first_goal_steps'] for row in summary['settings']]})
         # Resume: remove the summary and the second shard, then rerun; two copies must be reused.
-        folder_path = scratch/'data/research'/'check_neural_online-rnd_state-normalization-on_reward-normalization-on'
+        last_online = [condition for condition in listed if condition['intrinsic_source'] == 'online_rnd'][-1]
+        folder_path = scratch/'data/research'/f'check_neural_{condition_name(last_online)}'
         before = read_json(folder_path/'summary.json')['copy_records']
         (folder_path/'summary.json').unlink()
         shards = sorted(folder_path.glob('completed_copies_*.json'))

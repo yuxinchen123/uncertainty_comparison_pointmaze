@@ -1,0 +1,26 @@
+schema_version: 1
+run_id: 2026-11-09-19-40_fixed-cleanrl-ppo-rnd-extension_straight-32-snake-16x2_tabular-ppo-coordinate-ppo_uniform-decay-exponents-2-1-0.25_tabular-rnd-frozen-online_reward-normalization-off-on_steps-16777216_seeds-0-15_confirmation-20000-20127_baseline-to-21023
+description: >
+  Extension of the fixed CleanRL PPO-RND grid study (2026-11-07): the uniform field with decay exponents 2, 1 and 0.25
+  (bonus = field x visits^-exponent), and RND whose networks read a one-hot cell vector (tabular-RND) as a frozen field
+  and as online RND, each with reward normalization off and on, on the same maps, seeds and swept settings.
+specs:
+  env: grid_initialization.environments@straight-32,snake-16-turns-2
+  agent: grid_initialization.training@cleanrl-ppo-rnd-scalars
+  bonus: count-inverse-power (exponents 2, 1, 0.25) and frozen/online tabular-rnd (one-hot inputs)
+compile_signature:
+  envs_per_copy: 1
+  rollout_steps: 128
+  epochs: 4
+  minibatches: 4
+  dtype: float32
+  stats_dtype: float64
+seeding:
+  mode: paired with the original study
+  development_policy_seeds: [0, 15]
+  confirmation_policy_seeds: [20000, 20127]
+  baseline_confirmation_policy_seeds: [20000, 21023]
+report: the original study's analysis (runs/2026-11-07-20-03_fixed-...) is regenerated with these rows
+artifacts:
+  metrics: metrics.jsonl
+  summary: summary.json

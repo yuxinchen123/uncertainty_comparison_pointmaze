@@ -21,6 +21,7 @@ def main():
     commands = [[str(PROJECT/'.venvs/atari_pixels_jax/bin/python'), '-m', 'pytest', '-q',
                  str(PLATFORM/'tests/grid_initialization')],
                 [str(PYTHON), str(here/'check_count_path_unchanged.py'), '--run-dir', str(args.run_dir)],
+                [str(PYTHON), str(here/'check_online_path_unchanged.py'), '--run-dir', str(args.run_dir)],
                 [str(PYTHON), str(here/'check_fixed_unit.py'), '--run-dir', str(args.run_dir)]]
     results = []
     for command in commands:

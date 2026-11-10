@@ -3,6 +3,11 @@
 Phases: checks -> measurements (normalization speed screen on an RTX A4500) -> development (every
 configuration on seeds 0-15) -> confirmation (each condition's chosen configuration and the
 default cell's best intrinsic weight on fresh seeds 20000-20127) -> complete.
+
+A run folder whose study.json says {"condition_set": "extension"} holds the 2026-11-09 extension: the
+uniform field with decay exponents 2, 1 and 0.25, and the frozen and online tabular-RND (one-hot inputs),
+on the same seeds and settings. It skips the measurement phase, and its online tabular-RND with reward
+normalization on is confirmed on 1,024 seeds (20000-21023), the auto research's baseline.
 """
 
 import argparse
@@ -23,9 +28,44 @@ LEARNING_RATES = (1e-4, 1e-3)
 ENTROPIES = (1e-3, 1e-2)
 WEIGHTS = tuple(2.0 ** exponent for exponent in range(-6, 7))
 DEFAULT_CELL = (1e-4, 1e-3)
+CONFIRMATION_SEEDS_PER_UNIT = 128
+BASELINE_CONFIRMATION_SEEDS = (20000, 1024)
+EXTENSION_EXPONENTS = (2.0, 1.0, 0.25)
 
 
-def conditions():
+def condition_set(run_dir):
+    """Read which condition list a run folder holds: the original study or the 2026-11-09 extension."""
+    path = Path(run_dir)/'study.json'
+    return read_json(path)['condition_set'] if path.exists() else 'original'
+
+
+def conditions(which='original'):
+    """List a case's conditions: the original 13, or the extension's 10."""
+    if which == 'extension':
+        return extension_conditions()
+    if which != 'original':
+        raise ValueError(f'Unknown condition set: {which}')
+    return original_conditions()
+
+
+def extension_conditions():
+    """The extension: uniform with decay exponents 2, 1, 0.25, and frozen and online tabular-RND, each x reward normalization."""
+    rows = []
+    for exponent in EXTENSION_EXPONENTS:
+        for reward in (False, True):
+            rows.append({'method': 'uniform', 'field_kind': 'uniform', 'severity_exponent': 0,
+                         'intrinsic_source': 'count', 'state_normalization': False, 'reward_normalization': reward,
+                         'count_decay_exponent': exponent})
+    # One-hot inputs are never whitened, so state normalization does not apply.
+    for method, source in (('frozen-tabular-rnd', 'count'), ('online-tabular-rnd', 'online_rnd')):
+        for reward in (False, True):
+            rows.append({'method': method, 'field_kind': 'random_network', 'severity_exponent': 0,
+                         'intrinsic_source': source, 'state_normalization': False,
+                         'reward_normalization': reward, 'rnd_input': 'one_hot'})
+    return rows
+
+
+def original_conditions():
     """List the 13 conditions of a case: method, field, strength and the two normalizations."""
     # Uniform and alternating fields have no RND network, so state normalization does not apply.
     rows = [{'method': 'no-bonus', 'field_kind': 'none', 'severity_exponent': 0,
@@ -47,8 +87,11 @@ def conditions():
 
 
 def condition_name(condition):
-    """Name a condition in words for files and reports."""
-    return (f"{condition['method']}_state-normalization-{'on' if condition['state_normalization'] else 'off'}"
+    """Name a condition in words for files and reports; the original names are unchanged."""
+    # Before: uniform with exponent 2; after: 'uniform-decay-exponent-2_state-normalization-off_reward-normalization-on'.
+    exponent = condition.get('count_decay_exponent', 0.5)
+    method = condition['method'] + (f"-decay-exponent-{exponent:g}" if exponent != 0.5 else '')
+    return (f"{method}_state-normalization-{'on' if condition['state_normalization'] else 'off'}"
             f"_reward-normalization-{'on' if condition['reward_normalization'] else 'off'}")
 
 
@@ -61,13 +104,16 @@ def settings_for(condition):
 
 
 def add_units(run_dir, wave, geometry, policy, condition, settings, seed_start, seed_count, protocol=None):
-    """Queue one condition's settings in units of at most sixteen settings."""
+    """Queue one condition's settings in units of at most sixteen settings and 128 confirmation seeds."""
     created = False
     case = f"{geometry['kind']}-width-{geometry['width']}-turns-{geometry['turns']}_policy-{policy}"
-    for start in range(0, len(settings), SETTINGS_PER_UNIT):
+    seed_chunk = CONFIRMATION_SEEDS_PER_UNIT if wave == 'confirmation' else seed_count
+    for start, chunk_start in ((start, chunk_start) for start in range(0, len(settings), SETTINGS_PER_UNIT)
+                               for chunk_start in range(seed_start, seed_start + seed_count, seed_chunk)):
         selected = settings[start:start + SETTINGS_PER_UNIT]
+        chunk_count = min(seed_chunk, seed_start + seed_count - chunk_start)
         name = (f"fixed-{wave}{'-'+protocol if protocol else ''}_{case}_{condition_name(condition)}"
-                f"_settings-{start}-{start+len(selected)-1}_seeds-{seed_start}-{seed_start+seed_count-1}")
+                f"_settings-{start}-{start+len(selected)-1}_seeds-{chunk_start}-{chunk_start+chunk_count-1}")
         specification = {'name': name, 'study': 'fixed-settings', 'wave': f'fixed-{wave}', 'protocol': protocol,
             'geometry': geometry, 'policy_kind': policy, 'condition': condition_name(condition),
             'method': condition['method'], 'field_kind': condition['field_kind'],
@@ -76,8 +122,9 @@ def add_units(run_dir, wave, geometry, policy, condition, settings, seed_start, 
             'state_normalization': condition['state_normalization'],
             'normalize_intrinsic_rewards': condition['reward_normalization'],
             'settings': selected, 'setting_offset': start, 'total_timesteps': BUDGET,
-            'seed_start': seed_start, 'seed_count': seed_count, 'evaluation_episodes': EVALUATION_EPISODES,
-            'variant': 'primary'}
+            'seed_start': chunk_start, 'seed_count': chunk_count, 'evaluation_episodes': EVALUATION_EPISODES,
+            'variant': 'primary', 'count_decay_exponent': condition.get('count_decay_exponent', 0.5),
+            'rnd_input': condition.get('rnd_input', 'coordinates')}
         location = run_dir/'specifications'/(name+'.json')
         write_json(location, specification)
         created = enqueue(run_dir, {'name': name, 'stage': 'research', 'limit_seconds': 4*86400,
@@ -88,7 +135,7 @@ def add_units(run_dir, wave, geometry, policy, condition, settings, seed_start, 
 
 def add_development(run_dir):
     """Queue every configuration of every case on the development seeds, conditions interleaved."""
-    for condition in conditions():
+    for condition in conditions(condition_set(run_dir)):
         for geometry in GEOMETRIES:
             for policy in POLICIES:
                 add_units(run_dir, 'development', geometry, policy, condition, settings_for(condition),
@@ -121,7 +168,7 @@ def add_confirmation(run_dir):
     """Freeze each condition's chosen configuration and the default cell's best weight, then queue them."""
     rows = development_rows(run_dir)
     frozen = []
-    for condition in conditions():
+    for condition in conditions(condition_set(run_dir)):
         for geometry in GEOMETRIES:
             for policy in POLICIES:
                 candidates = [row for row in rows if row['geometry'] == geometry and
@@ -139,8 +186,11 @@ def add_confirmation(run_dir):
                                    'development_capped_mean_first_goal_steps': chosen['capped_mean_first_goal_steps'],
                                    'development_goal_fraction': chosen['goal_fraction']})
                     if not duplicate:
+                        # The auto research's baseline is confirmed on 1,024 seeds; every other row on 128.
+                        baseline = (condition['method'] == 'online-tabular-rnd' and condition['reward_normalization']
+                                    and protocol == 'chosen')
                         add_units(run_dir, 'confirmation', geometry, policy, condition, [chosen['configuration']],
-                                  *CONFIRMATION_SEEDS, protocol=protocol)
+                                  *(BASELINE_CONFIRMATION_SEEDS if baseline else CONFIRMATION_SEEDS), protocol=protocol)
     write_json(run_dir/'confirmation_frozen.json', frozen)
 
 
@@ -158,7 +208,12 @@ def advance(run_dir):
     if phase == 'checks':
         enqueue(run_dir, {'name': 'checks_fixed-settings', 'stage': 'checks', 'limit_seconds': 3000,
                           'command': [str(HERE/'run_fixed_checks.py'), '--run-dir', str(run_dir)]})
-        if (run_dir/'checks.json').exists() and read_json(run_dir/'checks.json').get('passed'):
+        if (run_dir/'checks.json').exists() and read_json(run_dir/'checks.json').get('passed') and (
+                condition_set(run_dir) == 'extension'):
+            # The extension reuses the original study's measured packing, so it has no measurement phase.
+            add_development(run_dir)
+            state.update(phase='development', development_started_at=now())
+        elif (run_dir/'checks.json').exists() and read_json(run_dir/'checks.json').get('passed'):
             enqueue(run_dir, {'name': 'measurement_normalization-speed-screen', 'stage': 'infrastructure',
                               'limit_seconds': 3000, 'command': [str(HERE/'fixed_settings_benchmark.py'),
                               '--run-dir', str(run_dir), '--gpu-class', 'nvidia_rtx_a4500', '--screen']})
