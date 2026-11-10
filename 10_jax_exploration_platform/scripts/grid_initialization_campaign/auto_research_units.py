@@ -30,8 +30,9 @@ def unit_specifications(batch, ideas, stage='screen', learning_rates=None):
             raise ValueError(f'{name}: unknown idea keys {sorted(unknown)}')
         # A "count" idea is the uniform count field in a diagnostic form, not an RND variant.
         counted = 'count' in idea
-        if counted and (set(idea['count']) - {'count_update', 'count_rate', 'count_decay_exponent'} or 'settings' in idea):
-            raise ValueError(f'{name}: a count idea holds only count_update, count_rate and count_decay_exponent')
+        if counted and (set(idea['count']) - {'count_update', 'count_rate', 'count_decay_exponent', 'count_mixture'}
+                        or 'settings' in idea):
+            raise ValueError(f'{name}: a count idea holds only count_update, count_rate, count_decay_exponent and count_mixture')
         for geometry in GEOMETRIES:
             for policy in POLICIES:
                 for rate in plan['learning_rates']:

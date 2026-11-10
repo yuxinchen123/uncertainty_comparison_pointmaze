@@ -248,3 +248,17 @@ def test_diagnostic_count_forms_follow_their_formulas():
     assert np.asarray(rollout_second.intrinsic_rewards).max() <= 1.0 and np.asarray(rollout_second.intrinsic_rewards).min() < 1.0
     with pytest.raises(ValueError):
         GridPPOConfig(n_copies=1, intrinsic_source="online_rnd", count_update="per_rollout")
+
+
+def test_count_mixture_is_a_weighted_sum_of_power_laws():
+    """A mixture ((1, 2), (0.1, 0.5)) gives (1+m)^-2 + 0.1 (1+m)^-0.5 of the earlier visits m."""
+    world = make_geometry("straight", 4)
+    configuration = GridPPOConfig(n_copies=1, num_steps=16, num_minibatches=2, total_timesteps=64, episode_length=64,
+                                  count_mixture=((1.0, 2.0), (0.1, 0.5)))
+    trainer = GridTrainer(configuration, world.transition_table, world.coordinates, np.ones((1, world.state_count), np.float32))
+    _, rollout = trainer.capture(trainer.initialize([5]))
+    earlier = np.asarray(rollout.arrival_counts, np.float64)[:, 0] - 1
+    np.testing.assert_allclose(np.asarray(rollout.intrinsic_rewards)[:, 0],
+                               (1 + earlier) ** -2.0 + 0.1 * (1 + earlier) ** -0.5, rtol=1e-6)
+    with pytest.raises(ValueError):
+        GridPPOConfig(n_copies=1, count_mixture=((1.0, -1.0),))

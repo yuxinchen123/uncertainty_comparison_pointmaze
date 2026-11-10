@@ -1,0 +1,133 @@
+{
+  "count-per-rollout-exponent-minus-0.75": {
+    "count": {
+      "count_update": "per_rollout",
+      "count_decay_exponent": 0.75
+    }
+  },
+  "count-per-rollout-exponent-minus-1.5": {
+    "count": {
+      "count_update": "per_rollout",
+      "count_decay_exponent": 1.5
+    }
+  },
+  "count-per-rollout-exponent-minus-3": {
+    "count": {
+      "count_update": "per_rollout",
+      "count_decay_exponent": 3.0
+    }
+  },
+  "count-per-step-exponent-minus-1": {
+    "count": {
+      "count_decay_exponent": 1.0
+    }
+  },
+  "count-per-step-exponent-minus-2": {
+    "count": {
+      "count_decay_exponent": 2.0
+    }
+  },
+  "count-per-rollout-exponent-minus-2-plus-0.03-of-exponent-minus-0.5": {
+    "count": {
+      "count_update": "per_rollout",
+      "count_mixture": [
+        [
+          1.0,
+          2.0
+        ],
+        [
+          0.03,
+          0.5
+        ]
+      ]
+    }
+  },
+  "count-per-rollout-exponent-minus-2-plus-0.1-of-exponent-minus-0.5": {
+    "count": {
+      "count_update": "per_rollout",
+      "count_mixture": [
+        [
+          1.0,
+          2.0
+        ],
+        [
+          0.1,
+          0.5
+        ]
+      ]
+    }
+  },
+  "count-per-rollout-exponent-minus-2-plus-0.3-of-exponent-minus-0.5": {
+    "count": {
+      "count_update": "per_rollout",
+      "count_mixture": [
+        [
+          1.0,
+          2.0
+        ],
+        [
+          0.3,
+          0.5
+        ]
+      ]
+    }
+  },
+  "count-per-rollout-exponent-minus-1-plus-0.1-of-exponent-minus-0.5": {
+    "count": {
+      "count_update": "per_rollout",
+      "count_mixture": [
+        [
+          1.0,
+          1.0
+        ],
+        [
+          0.1,
+          0.5
+        ]
+      ]
+    }
+  },
+  "count-per-rollout-exponent-minus-1-plus-0.3-of-exponent-minus-0.5": {
+    "count": {
+      "count_update": "per_rollout",
+      "count_mixture": [
+        [
+          1.0,
+          1.0
+        ],
+        [
+          0.3,
+          0.5
+        ]
+      ]
+    }
+  },
+  "count-per-rollout-exponent-minus-2-rate-0.25": {
+    "count": {
+      "count_update": "per_rollout",
+      "count_decay_exponent": 2.0,
+      "count_rate": 0.25
+    }
+  },
+  "count-per-rollout-exponent-minus-2-rate-4": {
+    "count": {
+      "count_update": "per_rollout",
+      "count_decay_exponent": 2.0,
+      "count_rate": 4.0
+    }
+  },
+  "count-per-rollout-exponent-minus-1-rate-0.25": {
+    "count": {
+      "count_update": "per_rollout",
+      "count_decay_exponent": 1.0,
+      "count_rate": 0.25
+    }
+  },
+  "count-per-rollout-exponent-minus-1-rate-4": {
+    "count": {
+      "count_update": "per_rollout",
+      "count_decay_exponent": 1.0,
+      "count_rate": 4.0
+    }
+  }
+}

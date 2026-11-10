@@ -221,6 +221,7 @@ def main():
             normalize_rnd_inputs=bool(online and spec.get('state_normalization')),
             count_decay_exponent=spec.get('count_decay_exponent', 0.5),
             count_update=spec.get('count_update', 'per_step'), count_rate=spec.get('count_rate', 1.0),
+            count_mixture=tuple(tuple(pair) for pair in spec.get('count_mixture', ())),
             rnd_input=spec.get('rnd_input', 'coordinates') if online else 'coordinates',
             **{name: value for name, value in spec.get('rnd_settings', {}).items() if name in RND_SETTING_NAMES},
             per_copy_scalar_settings=per_copy, **changes)

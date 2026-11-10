@@ -56,6 +56,9 @@ class GridPPOConfig:
     # fixed during a rollout). The bonus is field x (1 + count_rate x m)^(-exponent); per_step with rate 1 is the rule.
     count_update: str = "per_step"
     count_rate: float = 1.0
+    # Diagnostic bonus shapes: a weighted sum of power laws, sum_k weight_k (1 + count_rate x m)^(-exponent_k),
+    # given as ((weight, exponent), ...). Empty keeps the single exponent `count_decay_exponent`.
+    count_mixture: tuple = ()
     # Online RND input: "coordinates" (coordinate-RND) or "one_hot" (tabular-RND). The policy always reads coordinates.
     rnd_input: str = "coordinates"
     # Online RND bonus readout: CleanRL's half summed squared error, or its square root (the error length);
@@ -118,7 +121,11 @@ class GridPPOConfig:
             raise ValueError("rsqrt_bonus implements only the exponent 0.5")
         if self.count_update not in {"per_step", "per_rollout"} or self.count_rate <= 0:
             raise ValueError("count_update must be per_step or per_rollout and count_rate positive")
-        if (self.count_update != "per_step" or self.count_rate != 1.0) and (
+        object.__setattr__(self, "count_mixture", tuple((float(weight), float(exponent))
+                                                         for weight, exponent in self.count_mixture))
+        if any(weight <= 0 or exponent <= 0 for weight, exponent in self.count_mixture):
+            raise ValueError("count_mixture needs positive weights and exponents")
+        if (self.count_update != "per_step" or self.count_rate != 1.0 or self.count_mixture) and (
                 self.intrinsic_source != "count" or self.hoist_bonus or self.rsqrt_bonus):
             raise ValueError("the diagnostic count forms need the plain count path")
         choices = {"rnd_input": {"coordinates", "one_hot"},

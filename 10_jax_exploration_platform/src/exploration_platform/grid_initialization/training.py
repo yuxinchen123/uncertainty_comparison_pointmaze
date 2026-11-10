@@ -245,11 +245,15 @@ def collect_rollout(state, configuration, transition_table, coordinates, fields)
         arrived = transition_table[position, actions]
         counts = counts.at[rows, arrived].add(1)
         visits = counts[rows, arrived]
-        if configuration.count_update != "per_step" or configuration.count_rate != 1.0:
+        if configuration.count_update != "per_step" or configuration.count_rate != 1.0 or configuration.count_mixture:
             # Diagnostic count forms: earlier visits m are those before this arrival, or before this rollout.
             earlier = (state.counts[rows, arrived] if configuration.count_update == "per_rollout" else visits - 1)
-            bonus = fields[rows, arrived] * (1.0 + jnp.float32(configuration.count_rate) * earlier.astype(jnp.float32)
-                                             ) ** jnp.float32(-configuration.count_decay_exponent)
+            scaled = 1.0 + jnp.float32(configuration.count_rate) * earlier.astype(jnp.float32)
+            # Before: one exponent; after: the same, or a weighted sum of power laws of the scaled count.
+            shape = (sum(jnp.float32(weight) * scaled ** jnp.float32(-exponent)
+                         for weight, exponent in configuration.count_mixture) if configuration.count_mixture
+                     else scaled ** jnp.float32(-configuration.count_decay_exponent))
+            bonus = fields[rows, arrived] * shape
         else:
             bonus = fields[rows, arrived] if configuration.intrinsic_source == "online_rnd" else (
                 jnp.zeros((copies,), jnp.float32) if configuration.hoist_bonus else
