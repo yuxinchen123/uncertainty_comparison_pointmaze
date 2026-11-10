@@ -51,6 +51,36 @@ Times are Pacific. The protocol is in `program.md`; the plan is
   Total throughput is flat above 512 copies (0.30 million steps per second for the control). So the new ideas are
   faster than the baseline and need no speed work. One H100 NVL is about 2 RTX A4500 cards. The table is in
   `infrastructure/profiles/serval05_h100_nvl_snake_coordinate-ppo.json`.
+- **2026-11-09 20:47.** The control was also queued at policy learning rate 1e-4 (8 units), so the screen's control
+  is not weak where the baseline prefers that rate. The batch's ideas and predictions were written to
+  `batches/01_…/ideas.md` before any RL unit finished.
+- **2026-11-09 20:45-21:10. Three-law bench** (`bench/batch_01_three_laws/`; serval05, and serval02 card 1 while
+  another account held serval05). The third law visits only the first half of the cells, about 33K visits per visited
+  cell on the straight grid. It measures what never-visited cells keep. The count rule would end with a
+  never-visited / visited bonus ratio of about 180 (straight) and 145 (snake).
+
+  | variant | never-visited cells keep, straight / snake | never-visited / visited bonus at the end |
+  |---|---|---|
+  | control | 29% / 32% | over 10^11: the visited bonus falls to almost nothing |
+  | unit start only | 52% / 55% | over 10^13 |
+  | separate Adam 1e-4 | 32% / 34% | 10^9 / 10^4 |
+  | length readout | 54% / 56% | 10^6 / 10^5 |
+  | power-law q = 4, SGD 0.1, no unit start | 50% / 54% | 12 / 6.5 |
+  | shrink target, SGD 1, no unit start | 52% / 54% | 20 / 9.5 |
+  | unit start + AdaGrad 0.1 | 86% / 74% | 10^12 / 10^3: cells do not follow one law |
+  | unit start + power-law q = 4, SGD 0.3 | 71% / 75% | 64 / 48 |
+  | unit start + shrink target, SGD 2 | 71% / 75% | 82 / 62 |
+  | unit start + shrink target, SGD 3 | 73% / 74% | 94 / 74 |
+
+  Reading: the two full candidates behave like a count rule with about a quarter to a half of a count per visit, and
+  never-visited cells keep about three quarters of their start. The control instead drives visited cells' bonus to
+  nearly zero within a few visits. Loss powers for other exponents: q = 6 at learning rate 0.1 gives slopes −0.19 /
+  −0.16 (the target is −0.25); q = 3 at learning rate 1 diverges, so it needs a smaller rate.
+- **2026-11-09 21:02-21:07. Remote fleet started** (`scripts/grid_initialization_campaign/remote_fleet.py`, log in
+  `slurm/fleet_log.txt`). 46 units were staged from the end of the queue: Gautschi 6, ACES 16, Gilbreth 12, MIT 12.
+  20 worker jobs were submitted; the 2 Gautschi H100 jobs started at once and passed the first-unit check (all 656
+  arrays identical to UVA's). The others wait on priority. Units staged for 2 hours on a server where no job has
+  started go back to UVA at the next tick. MIT is reached through the connection open on portal11.
 
 ## Idea list
 
