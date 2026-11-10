@@ -40,10 +40,12 @@ def properties(row):
     """Start evenness, per-cell decay slopes and late count consistency of one setting's copies, from its records."""
     # Before: behavior.npz with [checkpoints, copies, cells] histories; after: medians over this setting's copies.
     data = np.load(row['folder']/'behavior.npz')
-    if 'rnd_error_history' not in data.files:
-        # A count-rule diagnostic has no network error: its start is even by construction.
-        return {'start_max_over_min': 1.0, 'slope_median': None, 'slope_quartiles': None, 'late_consistency': None}
     selected = data['setting_indices'] == row['setting_index']
+    if 'rnd_error_history' not in data.files:
+        # A count-rule row has no network error: its start is its field (uniform, or the frozen tabular-RND field).
+        fields = data['initial_fields'][selected]
+        return {'start_max_over_min': float(np.median(fields.max(axis=1) / fields.min(axis=1))),
+                'slope_median': None, 'slope_quartiles': None, 'late_consistency': None}
     initial = data['rnd_error_initial'][selected]
     history = data['rnd_error_history'][:, selected]
     visits = data['visit_count_history'][:, selected]

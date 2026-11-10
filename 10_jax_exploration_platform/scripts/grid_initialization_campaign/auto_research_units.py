@@ -1,8 +1,9 @@
 """Queue the online tabular-RND auto research's units: one idea x one case x one entropy per unit.
 
 An idea file maps idea names (words) to {"settings": {GridPPOConfig rnd_* keys}, "network": {NetworkOptions keys},
-"reward_normalization": true}. Every unit is online tabular-RND on the fixed-settings study's maps and PPO, with the
-stage's seeds, budget and early stop.
+"reward_normalization": true}. Every such unit is online tabular-RND on the fixed-settings study's maps and PPO, with
+the stage's seeds, budget and early stop. An idea holding {"count": {...}} is a count-rule row instead: on the uniform
+field, or with "field": "frozen_tabular_rnd" on the untrained tabular-RND error of each cell (an uneven start).
 """
 
 import argparse
@@ -25,14 +26,19 @@ def unit_specifications(batch, ideas, stage='screen', learning_rates=None):
     plan = dict(STAGES[stage], **({'learning_rates': tuple(learning_rates)} if learning_rates else {}))
     rows = []
     for name, idea in ideas.items():
-        unknown = set(idea) - {'settings', 'network', 'reward_normalization', 'count'}
+        unknown = set(idea) - {'settings', 'network', 'reward_normalization', 'count', 'field'}
         if unknown:
             raise ValueError(f'{name}: unknown idea keys {sorted(unknown)}')
-        # A "count" idea is the uniform count field in a diagnostic form, not an RND variant.
+        # A "count" idea is a count rule in a diagnostic form, not an RND variant.
         counted = 'count' in idea
         if counted and (set(idea['count']) - {'count_update', 'count_rate', 'count_decay_exponent', 'count_mixture'}
                         or 'settings' in idea):
             raise ValueError(f'{name}: a count idea holds only count_update, count_rate, count_decay_exponent and count_mixture')
+        # Its field is uniform, or the frozen tabular-RND field: the count rule on an uneven start.
+        field = idea.get('field', 'uniform')
+        if field not in {'uniform', 'frozen_tabular_rnd'} or ('field' in idea and not counted):
+            raise ValueError(f'{name}: "field" is uniform or frozen_tabular_rnd, and only a count idea has one')
+        frozen = field == 'frozen_tabular_rnd'
         for geometry in GEOMETRIES:
             for policy in POLICIES:
                 for rate in plan['learning_rates']:
@@ -46,12 +52,13 @@ def unit_specifications(batch, ideas, stage='screen', learning_rates=None):
                         reward = idea.get('reward_normalization', True)
                         rows.append({'name': unit, 'study': 'fixed-settings', 'wave': f'fixed-{stage}-{batch}',
                             'protocol': None, 'geometry': geometry, 'policy_kind': policy, 'idea': name, 'batch': batch,
-                            'condition': (f'{"uniform-count" if counted else "online-tabular-rnd"}_{name}'
-                                          f'_reward-normalization-{"on" if reward else "off"}'),
-                            'method': 'uniform' if counted else 'online-tabular-rnd',
-                            'field_kind': 'uniform' if counted else 'random_network', 'severity_exponent': 0,
+                            'condition': (f'{("frozen-tabular-rnd-count" if frozen else "uniform-count") if counted else "online-tabular-rnd"}'
+                                          f'_{name}_reward-normalization-{"on" if reward else "off"}'),
+                            'method': ('frozen-tabular-rnd' if frozen else 'uniform') if counted else 'online-tabular-rnd',
+                            'field_kind': 'uniform' if counted and not frozen else 'random_network', 'severity_exponent': 0,
                             'intrinsic_source': 'count' if counted else 'online_rnd', 'state_normalization': False,
-                            'normalize_intrinsic_rewards': reward, 'rnd_input': 'coordinates' if counted else 'one_hot',
+                            'normalize_intrinsic_rewards': reward,
+                            'rnd_input': 'coordinates' if counted and not frozen else 'one_hot',
                             'rnd_settings': idea.get('settings', {}), 'network_options': idea.get('network', {}),
                             **idea.get('count', {}),
                             'settings': settings, 'setting_offset': 0, 'total_timesteps': BUDGET,

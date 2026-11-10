@@ -1,0 +1,34 @@
+{
+ "frozen-tabular-rnd-field-count-per-step-exponent-minus-1": {
+  "count": {
+   "count_update": "per_step",
+   "count_decay_exponent": 1.0,
+   "count_rate": 1.0
+  },
+  "field": "frozen_tabular_rnd"
+ },
+ "frozen-tabular-rnd-field-count-per-step-exponent-minus-1-rate-0.25": {
+  "count": {
+   "count_update": "per_step",
+   "count_decay_exponent": 1.0,
+   "count_rate": 0.25
+  },
+  "field": "frozen_tabular_rnd"
+ },
+ "frozen-tabular-rnd-field-count-per-rollout-exponent-minus-1-rate-0.25": {
+  "count": {
+   "count_update": "per_rollout",
+   "count_decay_exponent": 1.0,
+   "count_rate": 0.25
+  },
+  "field": "frozen_tabular_rnd"
+ },
+ "frozen-tabular-rnd-field-count-per-step-exponent-minus-0.5": {
+  "count": {
+   "count_update": "per_step",
+   "count_decay_exponent": 0.5,
+   "count_rate": 1.0
+  },
+  "field": "frozen_tabular_rnd"
+ }
+}
