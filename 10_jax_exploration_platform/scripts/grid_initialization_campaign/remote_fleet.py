@@ -709,6 +709,43 @@ def finish_assignment(run_dir, units, state):
     write_json(assignment_path(run_dir), assignment)
 
 
+def bring_back(run_dir, table, name, returned, command):
+    """Put units the server gave up back in UVA's pending folder, with whatever records they have."""
+    # A unit going back to UVA brings the records it has, so finished copies are not trained again.
+    entry = table[name]
+    with_records = [unit for unit, data in returned if data]
+    if with_records:
+        rsync(run_dir, table, name, [remote_path(entry, f'data/research/{with_records[0]}')]
+              + [f':{entry["remote_run"]}/data/research/{unit}' for unit in with_records[1:]]
+              + [str(run_dir / 'data/research') + '/'])
+    for unit, _ in returned:
+        move_unit(run_dir, unit, f'remote_{name}', 'pending')
+    finish_assignment(run_dir, [unit for unit, _ in returned], 'returned')
+    for unit, _ in returned:
+        log(run_dir, f'{name} | {command} | {unit} is back in queue/pending on UVA')
+
+
+def take_back(run_dir, table, args):
+    """Take units still waiting on a server back to UVA's pending folder, so they can be staged elsewhere."""
+    name = args.server
+    assigned, status = read_status(run_dir, table, name, False)
+    if not status['prepared']:
+        raise SystemExit(f'{name} is not prepared; nothing to take back.')
+    # Only units no job has claimed: a unit a worker took meanwhile fails its move on the server and stays there.
+    waiting = sorted(unit for unit in set(assigned) & set(status['queue']['pending'])
+                     if args.match is None or args.match in unit)
+    chosen = (waiting[-args.units:] if args.from_end else waiting[:args.units]) if args.units > 0 else []
+    if not chosen:
+        log(run_dir, f'{name} | take-back | no waiting unit matched; nothing moved')
+        return
+    plan = {'place': [], 'recover': [], 'pull_back': [], 'withdraw': chosen}
+    moved = parse_moves(remote(run_dir, table, name, move_script(table[name], plan, int(time.time()))))
+    returned = [(unit, data) for _, unit, data in moved]
+    log(run_dir, f'{name} | take-back | {len(returned)} of {len(chosen)} waiting unit(s) taken back '
+        f'(match: {args.match}, from the end: {args.from_end})')
+    bring_back(run_dir, table, name, returned, 'take-back')
+
+
 def tick_server(run_dir, table, name, dry_run):
     """Bring one server's finished, failed, orphaned and long-waiting units up to date on UVA."""
     entry = table[name]
@@ -769,17 +806,7 @@ def tick_server(run_dir, table, name, dry_run):
                 assignment[unit]['recoveries'] = assignment[unit].get('recoveries', 0) + 1
             log(run_dir, f'{name} | tick | {action} {unit}: {plan["reason"].get(unit, "copied earlier, now visible")}')
         write_json(assignment_path(run_dir), assignment)
-        # A unit going back to UVA brings the records it has, so finished copies are not trained again.
-        with_records = [unit for unit, data in returned if data]
-        if with_records:
-            rsync(run_dir, table, name, [remote_path(entry, f'data/research/{with_records[0]}')]
-                  + [f':{entry["remote_run"]}/data/research/{unit}' for unit in with_records[1:]]
-                  + [str(run_dir / 'data/research') + '/'])
-        for unit, _ in returned:
-            move_unit(run_dir, unit, f'remote_{name}', 'pending')
-        finish_assignment(run_dir, [unit for unit, _ in returned], 'returned')
-        for unit, _ in returned:
-            log(run_dir, f'{name} | tick | {unit} is back in queue/pending on UVA')
+        bring_back(run_dir, table, name, returned, 'tick')
     # A server that failed its first-unit check takes no more units until someone has looked.
     if status['check'] is not None and not status['check'].get('passed') and entry['ready']:
         entry['ready'] = False
@@ -879,6 +906,11 @@ def main():
         command.add_argument('--dry-run', action='store_true')
     commands.add_parser('status')
     commands.add_parser('cancel-pending').add_argument('--server', required=True)
+    taking = commands.add_parser('take-back')
+    taking.add_argument('--server', required=True)
+    taking.add_argument('--units', type=int, required=True)
+    taking.add_argument('--from-end', action='store_true')
+    taking.add_argument('--match')
     args = parser.parse_args()
     run_dir = args.run_dir.resolve()
     table = read_json(table_path(run_dir))
@@ -887,7 +919,8 @@ def main():
         tick(run_dir, table, args, act=False)
         return
     with fleet_lock(run_dir):
-        {'stage': stage, 'submit': submit, 'tick': tick, 'cancel-pending': cancel_pending}[args.command](
+        {'stage': stage, 'submit': submit, 'tick': tick, 'cancel-pending': cancel_pending,
+         'take-back': take_back}[args.command](
             run_dir, table, args)
 
 

@@ -453,6 +453,25 @@ def test_long_wait_without_a_start_sends_units_back(world):
     assert (world.state / 'cancelled').read_text().split() == ['501']
 
 
+def test_take_back_returns_waiting_units_at_once_and_leaves_claimed_ones(world):
+    """A waiting unit comes back to UVA's pending folder on request; a unit a job has claimed stays on the server."""
+    fleet.stage(world.run, world.table, stage_arguments(units=3))
+    # A worker has claimed unit_c meanwhile: it is no longer in the server's pending folder.
+    (world.server / 'queue/running').mkdir(exist_ok=True)
+    os.rename(world.server / 'queue/pending/unit_c.json', world.server / 'queue/running/unit_c.json')
+    fleet.take_back(world.run, world.table, Namespace(server='pretend', units=2, from_end=True, match=None))
+    uva, server = folders(world)
+    # Of the waiting units b and d, both are taken back; c stays where its worker has it.
+    assert uva['unit_b'] == 'pending' and server['unit_b'] == 'withdrawn'
+    assert uva['unit_d'] == 'pending' and server['unit_d'] == 'withdrawn'
+    assert uva['unit_c'] == 'remote_pretend' and server['unit_c'] == 'running'
+    assignment = fleet.load_assignment(world.run)
+    assert assignment['unit_d']['state'] == 'returned' and assignment['unit_c']['state'] == 'staged'
+    # Nothing matches: nothing moves.
+    fleet.take_back(world.run, world.table, Namespace(server='pretend', units=2, from_end=False, match='unit_z'))
+    assert folders(world) == (uva, server)
+
+
 def test_copy_failure_moves_the_units_back(world, monkeypatch):
     """When the copy to the server fails, the units return to the UVA folder they came from."""
     (world.run / 'queue/pending/unit_d.json').rename(world.run / 'queue/deferred/unit_d.json')
