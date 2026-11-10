@@ -89,7 +89,8 @@ def case_table(rows, ideas):
         low, high = row['interval']
         slope = ('n/a' if row['slope_median'] is None else
                  f"{row['slope_median']:.2f} [{row['slope_quartiles'][0]:.2f}, {row['slope_quartiles'][1]:.2f}]")
-        setting = (f"entropy {row['configuration']['entropy_coefficient']:g}, weight "
+        setting = (f"learning rate {row['configuration']['learning_rate']:g}, entropy "
+                   f"{row['configuration']['entropy_coefficient']:g}, weight "
                    f"2^{int(round(np.log2(row['configuration']['intrinsic_coefficient'])))}")
         # One field seed gives no resampling groups, so the error and interval are left out.
         spread = ('' if row['standard_error'] is None else
@@ -120,8 +121,9 @@ def generate(run_dir):
         "$\\log N_t(s)$ per cell and seed, over checkpoints with $N_t(s) \\ge 2$ (target "
         f"[{TARGET_SLOPE[0]}, {TARGET_SLOPE[1]}]). Late count consistency is the spread over cells of "
         "$\\log(b_T(s) \\sqrt{N_T(s)})$ at the last checkpoint $T$ (zero when every cell follows the same $c/\\sqrt{N}$). "
-        "The screen score is the mean capped first-goal time $M(B)$ at the screen's budget, the best of each idea's 14 "
-        "settings (learning rate 1e-3, entropy 0.001 or 0.01, weight 2^-6 to 2^6 in steps of 4×) on seeds 0-31; the "
+        "The screen score is the mean capped first-goal time $M(B)$ at the screen's budget, the best of each idea's "
+        "settings (policy learning rate 1e-3, and 1e-4 for the control and the main ideas; entropy 0.001 or 0.01; "
+        "weight 2^-6 to 2^6 in steps of 4×) on seeds 0-31; the "
         "standard error and interval resample field seeds (four policies each). Every idea keeps CleanRL's reward "
         "normalization on unless its name says it replaces it.\n\n")
     for stage_batch in sorted({(key[0], key[1]) for key in best}):
