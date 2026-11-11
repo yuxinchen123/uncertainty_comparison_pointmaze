@@ -286,6 +286,39 @@ Times are Pacific. The protocol is in `program.md`; the plan is
 - **2026-11-10 10:45. Copies per process** (user request): trained-predictor units reach the card's limit at 256
   copies, exact-fit units keep gaining to 2,048 (`infrastructure/profiles/README.md`). Confirmation units of
   trained-predictor rows hold 256 seeds from now on.
+- **2026-11-10 18:02. The baseline and the finalist are confirmed in all four cases on seeds 20000-21023** (1,024
+  seeds each; mean capped first-goal time at 2^24; difference on the same seeds with its 95% interval; trimmed mean
+  with the lowest and highest 80 seeds removed; full tables in `analysis/analysis.md`, section "confirmation 06",
+  and in `analysis/results.tex`):
+
+  | case | baseline: mean, trimmed | finalist (schedule-fit RND, −1, every step): mean, trimmed | difference [95%] | verdict |
+  |---|---|---|---|---|
+  | straight, tabular-PPO | 7.56K ± 0.13K, 7.46K | 6.12K ± 0.10K, 6.00K | −1.44K [−1.62K, −1.26K], −19% | ahead |
+  | straight, coordinate-PPO | 81.7K ± 29.4K, 4.74K | 2.41K ± 0.06K, 2.20K | −79.3K [−147.2K, −32.6K], −97% | ahead |
+  | snake, tabular-PPO | 18.47K ± 0.27K, 18.14K | 12.84K ± 0.18K, 12.59K | −5.63K [−6.14K, −5.13K], −31% | ahead |
+  | snake, coordinate-PPO | 157.0K ± 29.5K, 91.0K | 67.6K ± 7.0K, 43.1K | −89.4K [−157.5K, −35.9K], −57% | ahead |
+
+  Other rows against the same baseline:
+  - **Schedule-fit RND, exponent −0.5, every step (1,024 seeds):** +6% [+0.16K, +0.86K], behind; −96%, ahead; +73%,
+    behind; −62%, ahead. Ahead in 2 of 4 cases (both with coordinate-PPO).
+  - **Uneven start with the scheduled decay (count rule −1 on the frozen tabular-RND field, 512 seeds):** −14%,
+    ahead; −98%, ahead; −22%, ahead; −9% [−101K, +48K], level. Ahead in 3 of 4.
+  - **Even start alone:** development scores behind the baseline in the three cases finished (4.14K, 22.1K, 7,653K
+    against 3.59K, 20.1K, 74.8K); its confirmation is running.
+
+  Against the success rule of `program.md`:
+  1. Below the baseline in each of the four cases on the same 1,024 seeds: met, every interval excludes zero.
+  2. Both property targets: the even start is met (start max/min 1.00); the decay target of −0.5 is **not** met by
+     the finalist, whose schedule is −1 by design (measured per-cell slope −0.68 to −0.77 over the visits of a run).
+     The form that meets both targets (−0.5) is ahead in only 2 of 4 cases.
+  3. Novelty: with one-hot inputs the exact fit equals a count rule of the same shape (`literature/novelty.md`); the
+     claim that can be made is narrower than a new bonus.
+  4. 2×2 ablation: the uneven-start cell is confirmed; the even-start-alone cell is running.
+  5. Notes for the report: on the straight grid with coordinate-PPO three baseline seeds never found the goal and
+     carry 60% of its mean, so the trimmed mean is given beside it (the finalist is ahead on both); on the snake grid
+     with coordinate-PPO the finalist's final policy reaches the goal in 55% of evaluation episodes against the
+     baseline's 98% (its chosen weight is 2^6, the largest of the grid); three of the finalist's chosen weights are
+     at an edge of the weight grid.
 
 ## Idea list
 

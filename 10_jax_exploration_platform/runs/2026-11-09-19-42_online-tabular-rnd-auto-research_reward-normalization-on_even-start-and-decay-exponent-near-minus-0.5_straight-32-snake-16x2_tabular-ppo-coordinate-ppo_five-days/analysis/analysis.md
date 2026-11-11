@@ -1,20 +1,20 @@
 # Online tabular-RND auto research
 
-Generated 2026-11-10 14:05 PT (times are Pacific, converted from machines running Eastern). Finished settings: 8024. Protocol: `program.md`; log: `STATE.md`.
+Generated 2026-11-10 18:03 PT (times are Pacific, converted from machines running Eastern). Finished settings: 8830. Protocol: `program.md`; log: `STATE.md`.
 
 ## Contents
 
 | Section | First written | Last changed | Status |
 |---|---|---|---|
 | [Measures](#measures) | 2026-11-09 21:43 PT | 2026-11-09 22:42 PT | unread |
-| [development 06: results](#development-06-results) | 2026-11-10 04:43 PT | 2026-11-10 14:05 PT | unread |
-| [development 07: results](#development-07-results) | 2026-11-10 13:44 PT | 2026-11-10 14:05 PT | unread |
+| [development 06: results](#development-06-results) | 2026-11-10 04:43 PT | 2026-11-10 16:03 PT | unread |
+| [development 07: results](#development-07-results) | 2026-11-10 13:44 PT | 2026-11-10 18:03 PT | unread |
 | [screen 01: results](#screen-01-results) | 2026-11-09 21:43 PT | 2026-11-10 11:24 PT | unread |
 | [screen 02: results](#screen-02-results) | 2026-11-09 23:44 PT | 2026-11-10 03:23 PT | unread |
 | [screen 03: results](#screen-03-results) | 2026-11-10 02:03 PT | 2026-11-10 03:43 PT | unread |
 | [screen 04: results](#screen-04-results) | 2026-11-10 03:05 PT | 2026-11-10 12:24 PT | unread |
 | [screen 05: results](#screen-05-results) | 2026-11-10 04:04 PT | 2026-11-10 07:24 PT | unread |
-| [confirmation 06: chosen configurations on the confirmation seeds](#confirmation-06-chosen-configurations-on-the-confirmation-seeds) | 2026-11-10 07:05 PT | 2026-11-10 13:44 PT | unread |
+| [confirmation 06: chosen configurations on the confirmation seeds](#confirmation-06-chosen-configurations-on-the-confirmation-seeds) | 2026-11-10 07:05 PT | 2026-11-10 18:03 PT | unread |
 
 [Read with section colors](analysis.html). No section marks itself read.
 
@@ -34,7 +34,7 @@ Budget per policy: 16,777,216 transitions, on the full 16,777,216-transition lea
 | baseline: CleanRL online tabular-RND (uneven start, decay left to training) | <u>7.17K</u> ± 0.36K [6.60K, 8.01K] | 100.0% | 3.55 | -3.31 [-3.61, -3.06] | 4.79 | neither | learning rate 0.001, entropy 0.001, weight 2^-4 | 16 | 0 of 832 |
 | count rule on the frozen tabular-RND field, decay exponent −1, refreshed every step (uneven start, scheduled decay) | 7.69K ± 0.92K [5.87K, 9.51K] | 100.0% | 3.55 | n/a | n/a | neither | learning rate 0.001, entropy 0.01, weight 2^-6 | 16 | 0 of 832 |
 | schedule-fit RND, decay exponent −0.5, refreshed every step (even start, scheduled decay) | 8.18K ± 0.69K [6.82K, 9.47K] | 100.0% | 1.00 | -0.47 [-0.47, -0.47] | 1.15 | both | learning rate 0.001, entropy 0.001, weight 2^-6 | 16 | 0 of 832 |
-| unit start alone (even start, decay left to training) | 8.70K ± 1.01K [6.75K, 10.76K] | 100.0% | 1.00 | -3.49 [-3.77, -3.11] | 5.61 | even start | learning rate 0.001, entropy 0.001, weight 2^-6 | 16 | 0 of 208 |
+| unit start alone (even start, decay left to training) | 8.70K ± 1.01K [6.75K, 10.75K] | 100.0% | 1.00 | -3.50 [-3.76, -3.11] | 5.62 | even start | learning rate 0.001, entropy 0.01, weight 2^-6 | 16 | 0 of 624 |
 
 ### straight grid, 32 cells, coordinate-PPO
 
@@ -72,19 +72,31 @@ Budget per policy: 16,777,216 transitions, on the full 16,777,216-transition lea
 
 ### straight grid, 32 cells, tabular-PPO
 
-Not run yet.
+| idea | mean capped first-goal steps ↓ ± standard error [95%] | goal found | start max/min | decay slope, median [middle half] | late count consistency | properties met | best setting | seeds | copies with a non-finite bonus, all settings |
+|---|---|---|---|---|---|---|---|---|---|
+| schedule-fit RND, decay exponent −1.5, refreshed every step | **5.75K** ± 0.27K [5.17K, 6.29K] | 100.0% | 1.00 | -0.67 [-0.76, -0.59] | 2.13 | even start | learning rate 0.001, entropy 0.001, weight 2^-6 | 16 | 0 of 832 |
+| schedule-fit RND, decay exponent −2, refreshed every step | <u>6.02K</u> ± 0.31K [5.45K, 6.69K] | 100.0% | 1.00 | -0.63 [-0.76, -0.48] | 2.44 | even start | learning rate 0.001, entropy 0.001, weight 2^-6 | 16 | 0 of 832 |
+| schedule-fit RND, decay exponent −0.75, refreshed every step | 7.25K ± 0.49K [6.32K, 8.26K] | 100.0% | 1.00 | -0.61 [-0.63, -0.60] | 1.48 | even start | learning rate 0.001, entropy 0.001, weight 2^-6 | 16 | 0 of 832 |
+| schedule-fit RND, decay exponent −1, refreshed once per rollout | 8.18K ± 0.20K [7.81K, 8.56K] | 100.0% | 1.00 | -0.67 [-0.71, -0.63] | 1.74 | even start | learning rate 0.001, entropy 0.01, weight 2^-6 | 16 | 0 of 832 |
+| schedule-fit RND, decay exponent −0.25, refreshed every step | 22.52K ± 2.84K [16.60K, 28.34K] | 100.0% | 1.00 | -0.25 [-0.25, -0.25] | 0.62 | even start | learning rate 0.0001, entropy 0.01, weight 2^-6 | 16 | 0 of 832 |
 
 ### straight grid, 32 cells, coordinate-PPO
 
-Not run yet.
+| idea | mean capped first-goal steps ↓ ± standard error [95%] | goal found | start max/min | decay slope, median [middle half] | late count consistency | properties met | best setting | seeds | copies with a non-finite bonus, all settings |
+|---|---|---|---|---|---|---|---|---|---|
+| schedule-fit RND, decay exponent −0.75, refreshed every step | **1.72K** ± 0.34K [1.03K, 2.33K] | 100.0% | 1.00 | -0.61 [-0.62, -0.60] | 1.58 | even start | learning rate 0.001, entropy 0.001, weight 2^-6 | 16 | 0 of 832 |
+| schedule-fit RND, decay exponent −1.5, refreshed every step | <u>1.80K</u> ± 0.34K [1.06K, 2.35K] | 100.0% | 1.00 | -0.65 [-0.71, -0.61] | 2.15 | even start | learning rate 0.001, entropy 0.01, weight 2^-6 | 16 | 0 of 832 |
+| schedule-fit RND, decay exponent −1, refreshed once per rollout | 2.15K ± 0.24K [1.67K, 2.64K] | 100.0% | 1.00 | -0.67 [-0.69, -0.65] | 1.82 | even start | learning rate 0.001, entropy 0.001, weight 2^-6 | 16 | 0 of 832 |
+| schedule-fit RND, decay exponent −2, refreshed every step | 2.30K ± 0.58K [1.39K, 3.64K] | 100.0% | 1.00 | -0.56 [-0.65, -0.48] | 2.48 | both | learning rate 0.001, entropy 0.001, weight 2^-6 | 16 | 0 of 832 |
+| schedule-fit RND, decay exponent −0.25, refreshed every step | 4.29K ± 0.48K [3.35K, 5.12K] | 100.0% | 1.00 | -0.25 [-0.25, -0.25] | 0.81 | even start | learning rate 0.001, entropy 0.001, weight 2^-6 | 16 | 0 of 832 |
 
 ### snake grid, width 16, 2 turns (50 cells), tabular-PPO
 
 | idea | mean capped first-goal steps ↓ ± standard error [95%] | goal found | start max/min | decay slope, median [middle half] | late count consistency | properties met | best setting | seeds | copies with a non-finite bonus, all settings |
 |---|---|---|---|---|---|---|---|---|---|
-| schedule-fit RND, decay exponent −1.5, refreshed every step | **10.51K** ± 0.53K [9.40K, 11.66K] | 100.0% | 1.00 | -0.68 [-0.76, -0.62] | 1.69 | even start | learning rate 0.001, entropy 0.01, weight 2^-6 | 16 | 0 of 624 |
+| schedule-fit RND, decay exponent −1.5, refreshed every step | **10.51K** ± 0.53K [9.40K, 11.66K] | 100.0% | 1.00 | -0.68 [-0.76, -0.62] | 1.69 | even start | learning rate 0.001, entropy 0.01, weight 2^-6 | 16 | 0 of 832 |
 | schedule-fit RND, decay exponent −2, refreshed every step | <u>13.08K</u> ± 1.31K [10.04K, 14.97K] | 100.0% | 1.00 | -0.61 [-0.73, -0.50] | 1.93 | even start | learning rate 0.001, entropy 0.01, weight 2^-6 | 16 | 0 of 832 |
-| schedule-fit RND, decay exponent −1, refreshed once per rollout | 16.74K ± 1.27K [14.35K, 19.14K] | 100.0% | 1.00 | -0.69 [-0.71, -0.66] | 1.38 | even start | learning rate 0.001, entropy 0.001, weight 2^-6 | 16 | 0 of 624 |
+| schedule-fit RND, decay exponent −1, refreshed once per rollout | 16.44K ± 1.18K [14.22K, 18.65K] | 100.0% | 1.00 | -0.69 [-0.71, -0.66] | 1.38 | even start | learning rate 0.001, entropy 0.01, weight 2^-6 | 16 | 0 of 832 |
 | schedule-fit RND, decay exponent −0.75, refreshed every step | 17.68K ± 2.02K [14.29K, 21.96K] | 100.0% | 1.00 | -0.62 [-0.63, -0.61] | 1.16 | even start | learning rate 0.001, entropy 0.01, weight 2^-6 | 16 | 0 of 832 |
 | schedule-fit RND, decay exponent −0.25, refreshed every step | 79.87K ± 7.93K [67.46K, 97.30K] | 100.0% | 1.00 | -0.25 [-0.25, -0.25] | 0.45 | even start | learning rate 0.0001, entropy 0.001, weight 2^-6 | 16 | 0 of 832 |
 
@@ -92,7 +104,11 @@ Not run yet.
 
 | idea | mean capped first-goal steps ↓ ± standard error [95%] | goal found | start max/min | decay slope, median [middle half] | late count consistency | properties met | best setting | seeds | copies with a non-finite bonus, all settings |
 |---|---|---|---|---|---|---|---|---|---|
-| schedule-fit RND, decay exponent −0.25, refreshed every step | **119.79K** ± 16.45K [82.54K, 151.89K] | 100.0% | 1.00 | -0.25 [-0.25, -0.25] | 0.51 | even start | learning rate 0.0001, entropy 0.01, weight 2^3 | 16 | 0 of 208 |
+| schedule-fit RND, decay exponent −0.75, refreshed every step | **38.00K** ± 2.44K [33.43K, 42.57K] | 100.0% | 1.00 | -0.68 [-0.70, -0.65] | 1.13 | even start | learning rate 0.001, entropy 0.01, weight 2^-2 | 16 | 0 of 832 |
+| schedule-fit RND, decay exponent −1, refreshed once per rollout | <u>46.97K</u> ± 6.80K [34.48K, 59.46K] | 100.0% | 1.00 | -0.77 [-0.82, -0.72] | 1.37 | even start | learning rate 0.001, entropy 0.01, weight 2^0 | 16 | 0 of 832 |
+| schedule-fit RND, decay exponent −0.25, refreshed every step | 62.81K ± 3.18K [56.43K, 69.20K] | 100.0% | 1.00 | -0.25 [-0.25, -0.25] | 0.43 | even start | learning rate 0.001, entropy 0.001, weight 2^-4 | 16 | 0 of 624 |
+| schedule-fit RND, decay exponent −1.5, refreshed every step | 640.48K ± 186.82K [254.86K, 954.45K] | 100.0% | 1.00 | -0.86 [-0.95, -0.75] | 1.71 | even start | learning rate 0.001, entropy 0.01, weight 2^5 | 16 | 0 of 832 |
+| schedule-fit RND, decay exponent −2, refreshed every step | 3,708.89K ± 1,001.63K [1,756.61K, 5,661.16K] | 87.5% | 1.00 | -0.85 [-1.15, -0.63] | 1.74 | even start | learning rate 0.001, entropy 0.01, weight 2^2 | 16 | 0 of 832 |
 
 ## screen 01: results
 
@@ -474,27 +490,28 @@ Each cell gives the confirmed score, then the difference to the baseline on the 
 
 | idea | straight grid, 32 cells, tabular-PPO | straight grid, 32 cells, coordinate-PPO | snake grid, width 16, 2 turns (50 cells), tabular-PPO | snake grid, width 16, 2 turns (50 cells), coordinate-PPO | cases ahead of the baseline |
 |---|---|---|---|---|---|
-| baseline: CleanRL online tabular-RND (uneven start, decay left to training) | not run yet | 104.28K (768 seeds) | 18.47K (1024 seeds) | 157.01K (1024 seeds) | baseline |
-| schedule-fit RND, decay exponent −1, refreshed every step (even start, scheduled decay) | 6.12K (1024 seeds); baseline not finished | 2.41K (1024 seeds); -98%, ahead (768 seeds in common) | 12.84K (1024 seeds); -31%, ahead (1024 seeds in common) | 67.57K (1024 seeds); -57%, ahead (1024 seeds in common) | 3 of 3 compared |
-| count rule on the frozen tabular-RND field, decay exponent −1, refreshed every step (uneven start, scheduled decay) | 6.48K (512 seeds); baseline not finished | 2.39K (512 seeds); -98%, ahead (512 seeds in common) | 14.07K (512 seeds); -22%, ahead (512 seeds in common) | 128.05K (512 seeds); -9%, level (512 seeds in common) | 2 of 3 compared |
-| schedule-fit RND, decay exponent −0.5, refreshed every step (even start, scheduled decay) | 8.04K (1024 seeds); baseline not finished | 3.09K (1024 seeds); -97%, ahead (768 seeds in common) | 32.01K (1024 seeds); +73%, behind (1024 seeds in common) | 60.05K (1024 seeds); -62%, ahead (1024 seeds in common) | 2 of 3 compared |
+| baseline: CleanRL online tabular-RND (uneven start, decay left to training) | 7.56K (1024 seeds) | 81.69K (1024 seeds) | 18.47K (1024 seeds) | 157.01K (1024 seeds) | baseline |
+| schedule-fit RND, decay exponent −1, refreshed every step (even start, scheduled decay) | 6.12K (1024 seeds); -19%, ahead (1024 seeds in common) | 2.41K (1024 seeds); -97%, ahead (1024 seeds in common) | 12.84K (1024 seeds); -31%, ahead (1024 seeds in common) | 67.57K (1024 seeds); -57%, ahead (1024 seeds in common) | 4 of 4 compared |
+| count rule on the frozen tabular-RND field, decay exponent −1, refreshed every step (uneven start, scheduled decay) | 6.48K (512 seeds); -14%, ahead (512 seeds in common) | 2.39K (512 seeds); -98%, ahead (512 seeds in common) | 14.07K (512 seeds); -22%, ahead (512 seeds in common) | 128.05K (512 seeds); -9%, level (512 seeds in common) | 3 of 4 compared |
+| schedule-fit RND, decay exponent −0.5, refreshed every step (even start, scheduled decay) | 8.04K (1024 seeds); +6%, behind (1024 seeds in common) | 3.09K (1024 seeds); -96%, ahead (1024 seeds in common) | 32.01K (1024 seeds); +73%, behind (1024 seeds in common) | 60.05K (1024 seeds); -62%, ahead (1024 seeds in common) | 2 of 4 compared |
 
 ### straight grid, 32 cells, tabular-PPO
 
 | idea | mean capped first-goal steps ↓ ± standard error [95%] | difference to the baseline on the same seeds [95%] | trimmed mean (lowest and highest seeds removed) | goal found | coverage | final-policy goal rate, sampled | greedy | configuration | seeds |
 |---|---|---|---|---|---|---|---|---|---|
-| schedule-fit RND, decay exponent −1, refreshed every step (even start, scheduled decay) | **6.12K** ± 0.10K [5.92K, 6.31K] | baseline not finished | **6.00K** (80 per end) | **100.0%** | **100.0%** | **100.0%** | **100.0%** | learning rate 0.001, entropy 0.001, weight 2^-6 | 1024 |
-| count rule on the frozen tabular-RND field, decay exponent −1, refreshed every step (uneven start, scheduled decay) | <u>6.48K</u> ± 0.17K [6.16K, 6.81K] | baseline not finished | <u>6.28K</u> (40 per end) | **100.0%** | **100.0%** | **100.0%** | **100.0%** | learning rate 0.001, entropy 0.01, weight 2^-6 | 512 |
-| schedule-fit RND, decay exponent −0.5, refreshed every step (even start, scheduled decay) | 8.04K ± 0.21K [7.66K, 8.48K] | baseline not finished | 7.38K (80 per end) | **100.0%** | **100.0%** | **100.0%** | **100.0%** | learning rate 0.001, entropy 0.001, weight 2^-6 | 1024 |
+| schedule-fit RND, decay exponent −1, refreshed every step (even start, scheduled decay) | **6.12K** ± 0.10K [5.92K, 6.31K] | -1.44K [-1.62K, -1.26K], -19% (1024 seeds) | **6.00K** (80 per end) | **100.0%** | **100.0%** | **100.0%** | **100.0%** | learning rate 0.001, entropy 0.001, weight 2^-6 | 1024 |
+| count rule on the frozen tabular-RND field, decay exponent −1, refreshed every step (uneven start, scheduled decay) | <u>6.48K</u> ± 0.17K [6.16K, 6.81K] | -1.04K [-1.34K, -0.75K], -14% (512 seeds) | <u>6.28K</u> (40 per end) | **100.0%** | **100.0%** | **100.0%** | **100.0%** | learning rate 0.001, entropy 0.01, weight 2^-6 | 512 |
+| baseline: CleanRL online tabular-RND (uneven start, decay left to training) | 7.56K ± 0.13K [7.31K, 7.80K] | baseline | 7.46K (80 per end) | **100.0%** | **100.0%** | **100.0%** | **100.0%** | learning rate 0.001, entropy 0.001, weight 2^-4 | 1024 |
+| schedule-fit RND, decay exponent −0.5, refreshed every step (even start, scheduled decay) | 8.04K ± 0.21K [7.66K, 8.48K] | +0.49K [+0.16K, +0.86K], +6% (1024 seeds) | 7.38K (80 per end) | **100.0%** | **100.0%** | **100.0%** | **100.0%** | learning rate 0.001, entropy 0.001, weight 2^-6 | 1024 |
 
 ### straight grid, 32 cells, coordinate-PPO
 
 | idea | mean capped first-goal steps ↓ ± standard error [95%] | difference to the baseline on the same seeds [95%] | trimmed mean (lowest and highest seeds removed) | goal found | coverage | final-policy goal rate, sampled | greedy | configuration | seeds |
 |---|---|---|---|---|---|---|---|---|---|
 | count rule on the frozen tabular-RND field, decay exponent −1, refreshed every step (uneven start, scheduled decay) | **2.39K** ± 0.09K [2.23K, 2.57K] | -95.45K [-201.92K, -20.50K], -98% (512 seeds) | **2.20K** (40 per end) | **100.0%** | **100.0%** | <u>99.8%</u> | <u>99.8%</u> | learning rate 0.001, entropy 0.001, weight 2^-1 | 512 |
-| schedule-fit RND, decay exponent −1, refreshed every step (even start, scheduled decay) | <u>2.41K</u> ± 0.06K [2.28K, 2.54K] | -101.91K [-186.50K, -37.82K], -98% (768 seeds) | <u>2.20K</u> (80 per end) | **100.0%** | **100.0%** | 96.7% | 96.7% | learning rate 0.001, entropy 0.01, weight 2^-5 | 1024 |
-| schedule-fit RND, decay exponent −0.5, refreshed every step (even start, scheduled decay) | 3.09K ± 0.06K [2.97K, 3.21K] | -101.19K [-185.79K, -37.12K], -97% (768 seeds) | 2.91K (80 per end) | **100.0%** | **100.0%** | **100.0%** | **100.0%** | learning rate 0.001, entropy 0.001, weight 2^0 | 1024 |
-| baseline: CleanRL online tabular-RND (uneven start, decay left to training) | 104.28K ± 39.35K [40.23K, 188.92K] | baseline | 4.78K (60 per end) | <u>99.6%</u> | <u>99.9%</u> | 99.3% | 99.3% | learning rate 0.001, entropy 0.001, weight 2^-6 | 768 |
+| schedule-fit RND, decay exponent −1, refreshed every step (even start, scheduled decay) | <u>2.41K</u> ± 0.06K [2.28K, 2.54K] | -79.28K [-147.16K, -32.64K], -97% (1024 seeds) | <u>2.20K</u> (80 per end) | **100.0%** | **100.0%** | 96.7% | 96.7% | learning rate 0.001, entropy 0.01, weight 2^-5 | 1024 |
+| schedule-fit RND, decay exponent −0.5, refreshed every step (even start, scheduled decay) | 3.09K ± 0.06K [2.97K, 3.21K] | -78.59K [-146.51K, -31.90K], -96% (1024 seeds) | 2.91K (80 per end) | **100.0%** | **100.0%** | **100.0%** | **100.0%** | learning rate 0.001, entropy 0.001, weight 2^0 | 1024 |
+| baseline: CleanRL online tabular-RND (uneven start, decay left to training) | 81.69K ± 29.36K [35.05K, 149.63K] | baseline | 4.74K (80 per end) | <u>99.7%</u> | <u>99.9%</u> | 99.3% | 99.3% | learning rate 0.001, entropy 0.001, weight 2^-6 | 1024 |
 
 ### snake grid, width 16, 2 turns (50 cells), tabular-PPO
 
