@@ -525,7 +525,9 @@ def remote(run_dir, table, name, script, timeout=180, dry_run=False):
 def rsync(run_dir, table, name, arguments, timeout=900):
     """Copy files to or from a server over the same ssh route."""
     shell = shlex.join(table[name]['ssh'][:-1])
-    return call(run_dir, table, name, ['rsync', '-rt', '-e', shell] + arguments, None, timeout)
+    # -O: folders keep their own times. A unit trained under the other UVA account leaves a folder this account
+    # may write into but whose time it may not set; without -O rsync copies every file and then exits 23.
+    return call(run_dir, table, name, ['rsync', '-rtO', '-e', shell] + arguments, None, timeout)
 
 
 def remote_path(entry, path=''):

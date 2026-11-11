@@ -11,17 +11,17 @@ schedule-fit RND, decay exponent $-0.75$, refreshed every step & 6.81K (512 seed
 \addlinespace[2pt]
 count rule on the frozen tabular-RND field, decay exponent $-1$, refreshed every step (uneven start, scheduled decay) & 6.48K (512 seeds); $-14$\%, ahead (512 seeds in common) & 2.39K (512 seeds); $-98$\%, ahead (512 seeds in common) & 14.07K (512 seeds); $-22$\%, ahead (512 seeds in common) & 128.05K (512 seeds); $-9$\%, level (512 seeds in common) & 3 of 4 compared \\
 \addlinespace[2pt]
-schedule-fit RND, decay exponent $-2$, refreshed every step & 5.59K (512 seeds); $-26$\%, ahead (512 seeds in common) & not run yet & 10.49K (512 seeds); $-42$\%, ahead (512 seeds in common) & not run yet & 2 of 2 compared \\
-\addlinespace[2pt]
 schedule-fit RND, decay exponent $-1$, refreshed once per rollout & 7.13K (512 seeds); $-5$\%, ahead (512 seeds in common) & 4.55K (512 seeds); $-95$\%, ahead (512 seeds in common) & 14.78K (512 seeds); $-18$\%, ahead (512 seeds in common) & 120.79K (512 seeds); $-14$\%, level (512 seeds in common) & 3 of 4 compared \\
 \addlinespace[2pt]
 schedule-fit RND, decay exponent $-0.5$, refreshed every step (even start, scheduled decay) & 8.04K (1024 seeds); $+6$\%, behind (1024 seeds in common) & 3.09K (1024 seeds); $-96$\%, ahead (1024 seeds in common) & 32.01K (1024 seeds); $+73$\%, behind (1024 seeds in common) & 60.05K (1024 seeds); $-62$\%, ahead (1024 seeds in common) & 2 of 4 compared \\
 \addlinespace[2pt]
-schedule-fit RND, decay exponent $-1.5$, refreshed every step & 5.38K (512 seeds); $-29$\%, ahead (512 seeds in common) & not run yet & 10.10K (512 seeds); $-44$\%, ahead (512 seeds in common) & 1.32M (512 seeds); $+834$\%, behind (512 seeds in common) & 2 of 3 compared \\
+schedule-fit RND, decay exponent $-1.5$, refreshed every step & 5.38K (512 seeds); $-29$\%, ahead (512 seeds in common) & 15.64K (512 seeds); $-84$\%, ahead (512 seeds in common) & 10.10K (512 seeds); $-44$\%, ahead (512 seeds in common) & 1.32M (512 seeds); $+834$\%, behind (512 seeds in common) & 3 of 4 compared \\
 \addlinespace[2pt]
-schedule-fit RND, decay exponent $-0.25$, refreshed every step & 20.54K (512 seeds); $+173$\%, behind (512 seeds in common) & 5.72K (512 seeds); $-94$\%, ahead (512 seeds in common) & 218.14K (512 seeds); $+1112$\%, behind (512 seeds in common) & not run yet & 1 of 3 compared \\
+schedule-fit RND, decay exponent $-0.25$, refreshed every step & 20.54K (512 seeds); $+173$\%, behind (512 seeds in common) & 5.72K (512 seeds); $-94$\%, ahead (512 seeds in common) & 218.14K (512 seeds); $+1112$\%, behind (512 seeds in common) & 67.35K (512 seeds); $-52$\%, ahead (512 seeds in common) & 2 of 4 compared \\
 \addlinespace[2pt]
-unit start alone (even start, decay left to training) & not run yet & 5.35K (256 seeds); $-82$\%, ahead (256 seeds in common) & 20.35K (512 seeds); $+13$\%, behind (512 seeds in common) & 8.37M (512 seeds); $+5846$\%, behind (512 seeds in common) & 1 of 3 compared \\
+schedule-fit RND, decay exponent $-2$, refreshed every step & 5.59K (512 seeds); $-26$\%, ahead (512 seeds in common) & 230.23K (512 seeds); $+135$\%, level (512 seeds in common) & 10.49K (512 seeds); $-42$\%, ahead (512 seeds in common) & 5.53M (512 seeds); $+3827$\%, behind (512 seeds in common) & 2 of 4 compared \\
+\addlinespace[2pt]
+unit start alone (even start, decay left to training) & 8.67K (512 seeds); $+15$\%, behind (512 seeds in common) & 5.23K (512 seeds); $-95$\%, ahead (512 seeds in common) & 20.35K (512 seeds); $+13$\%, behind (512 seeds in common) & 8.37M (512 seeds); $+5846$\%, behind (512 seeds in common) & 1 of 4 compared \\
 \bottomrule\end{tabular}\end{table}
 \begin{table}[H]\centering\scriptsize\setlength{\tabcolsep}{3pt}
 \caption{Confirmation on seeds 20000 on, straight grid, 32 cells, tabular-PPO: each idea's configuration chosen on the development seeds. The difference column is the mean over the seeds both rows have of the idea's capped first-goal time minus the baseline's (negative is faster), with its 95\% interval from resampling field seeds and the same difference as a percentage of the baseline's mean. The trimmed mean removes the lowest and highest 10 of every 128 seeds.}\label{tab:auto-research-confirmation-all-batches-straight-tabular}
@@ -43,6 +43,8 @@ baseline: CleanRL online tabular-RND (uneven start, decay left to training) & 7.
 \addlinespace[2pt]
 schedule-fit RND, decay exponent $-0.5$, refreshed every step (even start, scheduled decay) & 8.04K $\pm$ 0.21K [7.66K, 8.48K] & $+$0.49K [$+$0.16K, $+$0.86K], $+$6\% (1024 seeds) & 7.38K & \textbf{100.0\%} / \textbf{100.0\%} & \textbf{100.0\%} / \textbf{100.0\%} & learning rate 0.001, entropy 0.001, weight $2^{-6}$ & 1024 \\
 \addlinespace[2pt]
+unit start alone (even start, decay left to training) & 8.67K $\pm$ 0.27K [8.16K, 9.21K] & $+$1.14K [$+$0.75K, $+$1.56K], $+$15\% (512 seeds) & 8.12K & \textbf{100.0\%} / \textbf{100.0\%} & \textbf{100.0\%} / \textbf{100.0\%} & learning rate 0.001, entropy 0.01, weight $2^{-6}$ & 512 \\
+\addlinespace[2pt]
 schedule-fit RND, decay exponent $-0.25$, refreshed every step & 20.54K $\pm$ 1.84K [17.69K, 24.78K] & $+$13.01K [$+$10.23K, $+$17.15K], $+$173\% (512 seeds) & 16.96K & \textbf{100.0\%} / \textbf{100.0\%} & \textbf{100.0\%} / \textbf{100.0\%} & learning rate 0.0001, entropy 0.01, weight $2^{-6}$ & 512 \\
 \bottomrule\end{tabular}\end{table}
 \begin{table}[H]\centering\scriptsize\setlength{\tabcolsep}{3pt}
@@ -59,11 +61,15 @@ schedule-fit RND, decay exponent $-0.5$, refreshed every step (even start, sched
 \addlinespace[2pt]
 schedule-fit RND, decay exponent $-1$, refreshed once per rollout & 4.55K $\pm$ 0.71K [3.66K, 6.23K] & $-$93.29K [$-$199.63K, $-$18.30K], $-$95\% (512 seeds) & 3.56K & \textbf{100.0\%} / \textbf{100.0\%} & \textbf{100.0\%} / \textbf{100.0\%} & learning rate 0.001, entropy 0.001, weight $2^{-6}$ & 512 \\
 \addlinespace[2pt]
-unit start alone (even start, decay left to training) & 5.35K $\pm$ 0.16K [5.04K, 5.68K] & $-$23.89K [$-$60.87K, $-$0.20K], $-$82\% (256 seeds) & 5.01K & \textbf{100.0\%} / \textbf{100.0\%} & 96.9\% / 96.9\% & learning rate 0.001, entropy 0.01, weight $2^{0}$ & 256 \\
+unit start alone (even start, decay left to training) & 5.23K $\pm$ 0.12K [5.00K, 5.46K] & $-$92.62K [$-$199.12K, $-$17.80K], $-$95\% (512 seeds) & 4.88K & \textbf{100.0\%} / \textbf{100.0\%} & 97.3\% / 97.3\% & learning rate 0.001, entropy 0.01, weight $2^{0}$ & 512 \\
 \addlinespace[2pt]
 schedule-fit RND, decay exponent $-0.25$, refreshed every step & 5.72K $\pm$ 0.13K [5.47K, 5.99K] & $-$92.12K [$-$198.51K, $-$17.16K], $-$94\% (512 seeds) & 5.60K & \textbf{100.0\%} / \textbf{100.0\%} & \textbf{100.0\%} / \textbf{100.0\%} & learning rate 0.001, entropy 0.001, weight $2^{-6}$ & 512 \\
 \addlinespace[2pt]
+schedule-fit RND, decay exponent $-1.5$, refreshed every step & 15.64K $\pm$ 4.01K [9.19K, 24.31K] & $-$82.20K [$-$182.98K, $-$9.94K], $-$84\% (512 seeds) & 2.58K & \textbf{100.0\%} / \textbf{100.0\%} & 97.7\% / 97.7\% & learning rate 0.001, entropy 0.01, weight $2^{-6}$ & 512 \\
+\addlinespace[2pt]
 baseline: CleanRL online tabular-RND (uneven start, decay left to training) & 81.69K $\pm$ 29.36K [35.05K, 149.63K] & baseline & 4.74K & \underline{99.7\%} / \underline{99.9\%} & 99.3\% / 99.3\% & learning rate 0.001, entropy 0.001, weight $2^{-6}$ & 1024 \\
+\addlinespace[2pt]
+schedule-fit RND, decay exponent $-2$, refreshed every step & 230.23K $\pm$ 62.60K [123.14K, 363.47K] & $+$132.39K [$-$19.22K, $+$289.84K], $+$135\% (512 seeds) & 3.80K & 99.4\% / 99.8\% & 99.4\% / 99.4\% & learning rate 0.001, entropy 0.001, weight $2^{-6}$ & 512 \\
 \bottomrule\end{tabular}\end{table}
 \begin{table}[H]\centering\scriptsize\setlength{\tabcolsep}{3pt}
 \caption{Confirmation on seeds 20000 on, snake grid, width 16, 2 turns (50 cells), tabular-PPO: each idea's configuration chosen on the development seeds. The difference column is the mean over the seeds both rows have of the idea's capped first-goal time minus the baseline's (negative is faster), with its 95\% interval from resampling field seeds and the same difference as a percentage of the baseline's mean. The trimmed mean removes the lowest and highest 10 of every 128 seeds.}\label{tab:auto-research-confirmation-all-batches-snake-tabular}
@@ -95,7 +101,9 @@ schedule-fit RND, decay exponent $-0.25$, refreshed every step & 218.14K $\pm$ 1
 idea & mean capped first-goal steps $\downarrow$ $\pm$ standard error [95\%] & difference to the baseline on the same seeds [95\%] & trimmed mean & goal found / coverage & final-policy goal rate, sampled / greedy & configuration & seeds \\\midrule
 schedule-fit RND, decay exponent $-0.75$, refreshed every step & \textbf{52.42K} $\pm$ 1.62K [49.49K, 55.73K] & $-$88.34K [$-$171.38K, $-$38.12K], $-$63\% (512 seeds) & \underline{47.86K} & \textbf{100.0\%} / \textbf{100.0\%} & 56.6\% / 55.9\% & learning rate 0.001, entropy 0.01, weight $2^{-2}$ & 512 \\
 \addlinespace[2pt]
-schedule-fit RND, decay exponent $-0.5$, refreshed every step (even start, scheduled decay) & \underline{60.05K} $\pm$ 1.73K [56.79K, 63.59K] & $-$96.96K [$-$161.78K, $-$47.52K], $-$62\% (1024 seeds) & 53.25K & \textbf{100.0\%} / \textbf{100.0\%} & \underline{84.6\%} / \underline{84.4\%} & learning rate 0.001, entropy 0.01, weight $2^{3}$ & 1024 \\
+schedule-fit RND, decay exponent $-0.5$, refreshed every step (even start, scheduled decay) & \underline{60.05K} $\pm$ 1.73K [56.79K, 63.59K] & $-$96.96K [$-$161.78K, $-$47.52K], $-$62\% (1024 seeds) & 53.25K & \textbf{100.0\%} / \textbf{100.0\%} & 84.6\% / 84.4\% & learning rate 0.001, entropy 0.01, weight $2^{3}$ & 1024 \\
+\addlinespace[2pt]
+schedule-fit RND, decay exponent $-0.25$, refreshed every step & 67.35K $\pm$ 2.11K [63.33K, 71.66K] & $-$73.42K [$-$156.25K, $-$23.84K], $-$52\% (512 seeds) & 60.53K & \textbf{100.0\%} / \textbf{100.0\%} & \underline{89.5\%} / \underline{89.3\%} & learning rate 0.001, entropy 0.01, weight $2^{0}$ & 512 \\
 \addlinespace[2pt]
 schedule-fit RND, decay exponent $-1$, refreshed every step (even start, scheduled decay) & 67.57K $\pm$ 7.01K [56.66K, 82.97K] & $-$89.44K [$-$157.50K, $-$35.85K], $-$57\% (1024 seeds) & \textbf{43.14K} & \textbf{100.0\%} / \textbf{100.0\%} & 55.3\% / 54.7\% & learning rate 0.001, entropy 0.01, weight $2^{6}$ & 1024 \\
 \addlinespace[2pt]
@@ -106,6 +114,8 @@ count rule on the frozen tabular-RND field, decay exponent $-1$, refreshed every
 baseline: CleanRL online tabular-RND (uneven start, decay left to training) & 157.01K $\pm$ 29.53K [106.76K, 221.37K] & baseline & 90.95K & \underline{99.7\%} / \underline{100.0\%} & \textbf{97.9\%} / \textbf{97.9\%} & learning rate 0.0001, entropy 0.01, weight $2^{5}$ & 1024 \\
 \addlinespace[2pt]
 schedule-fit RND, decay exponent $-1.5$, refreshed every step & 1.32M $\pm$ 118.94K [1.10M, 1.56M] & $+$1.17M [$+$946.97K, $+$1.42M], $+$834\% (512 seeds) & 800.02K & 98.4\% / 99.9\% & 41.7\% / 40.6\% & learning rate 0.001, entropy 0.01, weight $2^{5}$ & 512 \\
+\addlinespace[2pt]
+schedule-fit RND, decay exponent $-2$, refreshed every step & 5.53M $\pm$ 251.25K [5.03M, 6.03M] & $+$5.39M [$+$4.88M, $+$5.90M], $+$3827\% (512 seeds) & 5.00M & 86.1\% / 97.6\% & 35.5\% / 34.4\% & learning rate 0.001, entropy 0.01, weight $2^{2}$ & 512 \\
 \addlinespace[2pt]
 unit start alone (even start, decay left to training) & 8.37M $\pm$ 347.86K [7.70M, 9.04M] & $+$8.23M [$+$7.55M, $+$8.89M], $+$5846\% (512 seeds) & 8.37M & 52.1\% / 95.0\% & 2.0\% / 2.0\% & learning rate 0.0001, entropy 0.01, weight $2^{-6}$ & 512 \\
 \bottomrule\end{tabular}\end{table}

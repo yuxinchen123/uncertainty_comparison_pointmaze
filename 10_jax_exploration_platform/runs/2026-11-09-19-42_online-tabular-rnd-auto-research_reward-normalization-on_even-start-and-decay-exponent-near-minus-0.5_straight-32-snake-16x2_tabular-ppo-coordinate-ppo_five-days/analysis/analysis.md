@@ -1,6 +1,6 @@
 # Online tabular-RND auto research
 
-Generated 2026-11-10 21:30 PT (times are Pacific, converted from machines running Eastern). Finished settings: 8856. Protocol: `program.md`; log: `STATE.md`.
+Generated 2026-11-11 00:04 PT (times are Pacific, converted from machines running Eastern). Finished settings: 8856. Protocol: `program.md`; log: `STATE.md`.
 
 ## Contents
 
@@ -14,7 +14,7 @@ Generated 2026-11-10 21:30 PT (times are Pacific, converted from machines runnin
 | [screen 03: results](#screen-03-results) | 2026-11-10 02:03 PT | 2026-11-10 03:43 PT | unread |
 | [screen 04: results](#screen-04-results) | 2026-11-10 03:05 PT | 2026-11-10 12:24 PT | unread |
 | [screen 05: results](#screen-05-results) | 2026-11-10 04:04 PT | 2026-11-10 07:24 PT | unread |
-| [confirmation: chosen configurations on the confirmation seeds](#confirmation-chosen-configurations-on-the-confirmation-seeds) | 2026-11-10 18:24 PT | 2026-11-10 21:30 PT | unread |
+| [confirmation: chosen configurations on the confirmation seeds](#confirmation-chosen-configurations-on-the-confirmation-seeds) | 2026-11-10 18:24 PT | 2026-11-11 00:04 PT | unread |
 
 [Read with section colors](analysis.html). No section marks itself read.
 
@@ -494,12 +494,12 @@ Each cell gives the confirmed score, then the difference to the baseline on the 
 | schedule-fit RND, decay exponent −1, refreshed every step (even start, scheduled decay) | 6.12K (1024 seeds); -19%, ahead (1024 seeds in common) | 2.41K (1024 seeds); -97%, ahead (1024 seeds in common) | 12.84K (1024 seeds); -31%, ahead (1024 seeds in common) | 67.57K (1024 seeds); -57%, ahead (1024 seeds in common) | 4 of 4 compared |
 | schedule-fit RND, decay exponent −0.75, refreshed every step | 6.81K (512 seeds); -10%, ahead (512 seeds in common) | 2.19K (512 seeds); -98%, ahead (512 seeds in common) | 15.99K (512 seeds); -11%, ahead (512 seeds in common) | 52.42K (512 seeds); -63%, ahead (512 seeds in common) | 4 of 4 compared |
 | count rule on the frozen tabular-RND field, decay exponent −1, refreshed every step (uneven start, scheduled decay) | 6.48K (512 seeds); -14%, ahead (512 seeds in common) | 2.39K (512 seeds); -98%, ahead (512 seeds in common) | 14.07K (512 seeds); -22%, ahead (512 seeds in common) | 128.05K (512 seeds); -9%, level (512 seeds in common) | 3 of 4 compared |
-| schedule-fit RND, decay exponent −2, refreshed every step | 5.59K (512 seeds); -26%, ahead (512 seeds in common) | not run yet | 10.49K (512 seeds); -42%, ahead (512 seeds in common) | not run yet | 2 of 2 compared |
 | schedule-fit RND, decay exponent −1, refreshed once per rollout | 7.13K (512 seeds); -5%, ahead (512 seeds in common) | 4.55K (512 seeds); -95%, ahead (512 seeds in common) | 14.78K (512 seeds); -18%, ahead (512 seeds in common) | 120.79K (512 seeds); -14%, level (512 seeds in common) | 3 of 4 compared |
 | schedule-fit RND, decay exponent −0.5, refreshed every step (even start, scheduled decay) | 8.04K (1024 seeds); +6%, behind (1024 seeds in common) | 3.09K (1024 seeds); -96%, ahead (1024 seeds in common) | 32.01K (1024 seeds); +73%, behind (1024 seeds in common) | 60.05K (1024 seeds); -62%, ahead (1024 seeds in common) | 2 of 4 compared |
-| schedule-fit RND, decay exponent −1.5, refreshed every step | 5.38K (512 seeds); -29%, ahead (512 seeds in common) | not run yet | 10.10K (512 seeds); -44%, ahead (512 seeds in common) | 1.32M (512 seeds); +834%, behind (512 seeds in common) | 2 of 3 compared |
-| schedule-fit RND, decay exponent −0.25, refreshed every step | 20.54K (512 seeds); +173%, behind (512 seeds in common) | 5.72K (512 seeds); -94%, ahead (512 seeds in common) | 218.14K (512 seeds); +1112%, behind (512 seeds in common) | not run yet | 1 of 3 compared |
-| unit start alone (even start, decay left to training) | not run yet | 5.35K (256 seeds); -82%, ahead (256 seeds in common) | 20.35K (512 seeds); +13%, behind (512 seeds in common) | 8.37M (512 seeds); +5846%, behind (512 seeds in common) | 1 of 3 compared |
+| schedule-fit RND, decay exponent −1.5, refreshed every step | 5.38K (512 seeds); -29%, ahead (512 seeds in common) | 15.64K (512 seeds); -84%, ahead (512 seeds in common) | 10.10K (512 seeds); -44%, ahead (512 seeds in common) | 1.32M (512 seeds); +834%, behind (512 seeds in common) | 3 of 4 compared |
+| schedule-fit RND, decay exponent −0.25, refreshed every step | 20.54K (512 seeds); +173%, behind (512 seeds in common) | 5.72K (512 seeds); -94%, ahead (512 seeds in common) | 218.14K (512 seeds); +1112%, behind (512 seeds in common) | 67.35K (512 seeds); -52%, ahead (512 seeds in common) | 2 of 4 compared |
+| schedule-fit RND, decay exponent −2, refreshed every step | 5.59K (512 seeds); -26%, ahead (512 seeds in common) | 230.23K (512 seeds); +135%, level (512 seeds in common) | 10.49K (512 seeds); -42%, ahead (512 seeds in common) | 5.53M (512 seeds); +3827%, behind (512 seeds in common) | 2 of 4 compared |
+| unit start alone (even start, decay left to training) | 8.67K (512 seeds); +15%, behind (512 seeds in common) | 5.23K (512 seeds); -95%, ahead (512 seeds in common) | 20.35K (512 seeds); +13%, behind (512 seeds in common) | 8.37M (512 seeds); +5846%, behind (512 seeds in common) | 1 of 4 compared |
 
 ### straight grid, 32 cells, tabular-PPO
 
@@ -513,6 +513,7 @@ Each cell gives the confirmed score, then the difference to the baseline on the 
 | schedule-fit RND, decay exponent −1, refreshed once per rollout | 7.13K ± 0.16K [6.81K, 7.46K] | -0.39K [-0.69K, -0.10K], -5% (512 seeds) | 6.98K (40 per end) | **100.0%** | **100.0%** | **100.0%** | **100.0%** | learning rate 0.001, entropy 0.01, weight 2^-6 | 512 |
 | baseline: CleanRL online tabular-RND (uneven start, decay left to training) | 7.56K ± 0.13K [7.31K, 7.80K] | baseline | 7.46K (80 per end) | **100.0%** | **100.0%** | **100.0%** | **100.0%** | learning rate 0.001, entropy 0.001, weight 2^-4 | 1024 |
 | schedule-fit RND, decay exponent −0.5, refreshed every step (even start, scheduled decay) | 8.04K ± 0.21K [7.66K, 8.48K] | +0.49K [+0.16K, +0.86K], +6% (1024 seeds) | 7.38K (80 per end) | **100.0%** | **100.0%** | **100.0%** | **100.0%** | learning rate 0.001, entropy 0.001, weight 2^-6 | 1024 |
+| unit start alone (even start, decay left to training) | 8.67K ± 0.27K [8.16K, 9.21K] | +1.14K [+0.75K, +1.56K], +15% (512 seeds) | 8.12K (40 per end) | **100.0%** | **100.0%** | **100.0%** | **100.0%** | learning rate 0.001, entropy 0.01, weight 2^-6 | 512 |
 | schedule-fit RND, decay exponent −0.25, refreshed every step | 20.54K ± 1.84K [17.69K, 24.78K] | +13.01K [+10.23K, +17.15K], +173% (512 seeds) | 16.96K (40 per end) | **100.0%** | **100.0%** | **100.0%** | **100.0%** | learning rate 0.0001, entropy 0.01, weight 2^-6 | 512 |
 
 ### straight grid, 32 cells, coordinate-PPO
@@ -524,9 +525,11 @@ Each cell gives the confirmed score, then the difference to the baseline on the 
 | schedule-fit RND, decay exponent −1, refreshed every step (even start, scheduled decay) | 2.41K ± 0.06K [2.28K, 2.54K] | -79.28K [-147.16K, -32.64K], -97% (1024 seeds) | 2.20K (80 per end) | **100.0%** | **100.0%** | 96.7% | 96.7% | learning rate 0.001, entropy 0.01, weight 2^-5 | 1024 |
 | schedule-fit RND, decay exponent −0.5, refreshed every step (even start, scheduled decay) | 3.09K ± 0.06K [2.97K, 3.21K] | -78.59K [-146.51K, -31.90K], -96% (1024 seeds) | 2.91K (80 per end) | **100.0%** | **100.0%** | **100.0%** | **100.0%** | learning rate 0.001, entropy 0.001, weight 2^0 | 1024 |
 | schedule-fit RND, decay exponent −1, refreshed once per rollout | 4.55K ± 0.71K [3.66K, 6.23K] | -93.29K [-199.63K, -18.30K], -95% (512 seeds) | 3.56K (40 per end) | **100.0%** | **100.0%** | **100.0%** | **100.0%** | learning rate 0.001, entropy 0.001, weight 2^-6 | 512 |
-| unit start alone (even start, decay left to training) | 5.35K ± 0.16K [5.04K, 5.68K] | -23.89K [-60.87K, -0.20K], -82% (256 seeds) | 5.01K (20 per end) | **100.0%** | **100.0%** | 96.9% | 96.9% | learning rate 0.001, entropy 0.01, weight 2^0 | 256 |
+| unit start alone (even start, decay left to training) | 5.23K ± 0.12K [5.00K, 5.46K] | -92.62K [-199.12K, -17.80K], -95% (512 seeds) | 4.88K (40 per end) | **100.0%** | **100.0%** | 97.3% | 97.3% | learning rate 0.001, entropy 0.01, weight 2^0 | 512 |
 | schedule-fit RND, decay exponent −0.25, refreshed every step | 5.72K ± 0.13K [5.47K, 5.99K] | -92.12K [-198.51K, -17.16K], -94% (512 seeds) | 5.60K (40 per end) | **100.0%** | **100.0%** | **100.0%** | **100.0%** | learning rate 0.001, entropy 0.001, weight 2^-6 | 512 |
+| schedule-fit RND, decay exponent −1.5, refreshed every step | 15.64K ± 4.01K [9.19K, 24.31K] | -82.20K [-182.98K, -9.94K], -84% (512 seeds) | 2.58K (40 per end) | **100.0%** | **100.0%** | 97.7% | 97.7% | learning rate 0.001, entropy 0.01, weight 2^-6 | 512 |
 | baseline: CleanRL online tabular-RND (uneven start, decay left to training) | 81.69K ± 29.36K [35.05K, 149.63K] | baseline | 4.74K (80 per end) | <u>99.7%</u> | <u>99.9%</u> | 99.3% | 99.3% | learning rate 0.001, entropy 0.001, weight 2^-6 | 1024 |
+| schedule-fit RND, decay exponent −2, refreshed every step | 230.23K ± 62.60K [123.14K, 363.47K] | +132.39K [-19.22K, +289.84K], +135% (512 seeds) | 3.80K (40 per end) | 99.4% | 99.8% | 99.4% | 99.4% | learning rate 0.001, entropy 0.001, weight 2^-6 | 512 |
 
 ### snake grid, width 16, 2 turns (50 cells), tabular-PPO
 
@@ -548,11 +551,13 @@ Each cell gives the confirmed score, then the difference to the baseline on the 
 | idea | mean capped first-goal steps ↓ ± standard error [95%] | difference to the baseline on the same seeds [95%] | trimmed mean (lowest and highest seeds removed) | goal found | coverage | final-policy goal rate, sampled | greedy | configuration | seeds |
 |---|---|---|---|---|---|---|---|---|---|
 | schedule-fit RND, decay exponent −0.75, refreshed every step | **52.42K** ± 1.62K [49.49K, 55.73K] | -88.34K [-171.38K, -38.12K], -63% (512 seeds) | <u>47.86K</u> (40 per end) | **100.0%** | **100.0%** | 56.6% | 55.9% | learning rate 0.001, entropy 0.01, weight 2^-2 | 512 |
-| schedule-fit RND, decay exponent −0.5, refreshed every step (even start, scheduled decay) | <u>60.05K</u> ± 1.73K [56.79K, 63.59K] | -96.96K [-161.78K, -47.52K], -62% (1024 seeds) | 53.25K (80 per end) | **100.0%** | **100.0%** | <u>84.6%</u> | <u>84.4%</u> | learning rate 0.001, entropy 0.01, weight 2^3 | 1024 |
+| schedule-fit RND, decay exponent −0.5, refreshed every step (even start, scheduled decay) | <u>60.05K</u> ± 1.73K [56.79K, 63.59K] | -96.96K [-161.78K, -47.52K], -62% (1024 seeds) | 53.25K (80 per end) | **100.0%** | **100.0%** | 84.6% | 84.4% | learning rate 0.001, entropy 0.01, weight 2^3 | 1024 |
+| schedule-fit RND, decay exponent −0.25, refreshed every step | 67.35K ± 2.11K [63.33K, 71.66K] | -73.42K [-156.25K, -23.84K], -52% (512 seeds) | 60.53K (40 per end) | **100.0%** | **100.0%** | <u>89.5%</u> | <u>89.3%</u> | learning rate 0.001, entropy 0.01, weight 2^0 | 512 |
 | schedule-fit RND, decay exponent −1, refreshed every step (even start, scheduled decay) | 67.57K ± 7.01K [56.66K, 82.97K] | -89.44K [-157.50K, -35.85K], -57% (1024 seeds) | **43.14K** (80 per end) | **100.0%** | **100.0%** | 55.3% | 54.7% | learning rate 0.001, entropy 0.01, weight 2^6 | 1024 |
 | schedule-fit RND, decay exponent −1, refreshed once per rollout | 120.79K ± 9.18K [102.72K, 139.45K] | -19.97K [-93.43K, +29.22K], -14% (512 seeds) | 80.63K (40 per end) | **100.0%** | **100.0%** | 47.5% | 47.3% | learning rate 0.001, entropy 0.01, weight 2^0 | 512 |
 | count rule on the frozen tabular-RND field, decay exponent −1, refreshed every step (uneven start, scheduled decay) | 128.05K ± 16.31K [99.89K, 161.84K] | -12.72K [-100.66K, +48.34K], -9% (512 seeds) | 63.29K (40 per end) | **100.0%** | **100.0%** | 39.1% | 36.1% | learning rate 0.001, entropy 0.01, weight 2^-2 | 512 |
 | baseline: CleanRL online tabular-RND (uneven start, decay left to training) | 157.01K ± 29.53K [106.76K, 221.37K] | baseline | 90.95K (80 per end) | <u>99.7%</u> | <u>100.0%</u> | **97.9%** | **97.9%** | learning rate 0.0001, entropy 0.01, weight 2^5 | 1024 |
 | schedule-fit RND, decay exponent −1.5, refreshed every step | 1.32M ± 118.94K [1.10M, 1.56M] | +1.17M [+946.97K, +1.42M], +834% (512 seeds) | 800.02K (40 per end) | 98.4% | 99.9% | 41.7% | 40.6% | learning rate 0.001, entropy 0.01, weight 2^5 | 512 |
+| schedule-fit RND, decay exponent −2, refreshed every step | 5.53M ± 251.25K [5.03M, 6.03M] | +5.39M [+4.88M, +5.90M], +3827% (512 seeds) | 5.00M (40 per end) | 86.1% | 97.6% | 35.5% | 34.4% | learning rate 0.001, entropy 0.01, weight 2^2 | 512 |
 | unit start alone (even start, decay left to training) | 8.37M ± 347.86K [7.70M, 9.04M] | +8.23M [+7.55M, +8.89M], +5846% (512 seeds) | 8.37M (40 per end) | 52.1% | 95.0% | 2.0% | 2.0% | learning rate 0.0001, entropy 0.01, weight 2^-6 | 512 |
 
