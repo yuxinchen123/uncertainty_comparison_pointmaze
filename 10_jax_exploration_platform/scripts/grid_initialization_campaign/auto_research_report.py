@@ -170,6 +170,13 @@ def confirmation_row(records, baseline):
     return row
 
 
+def compact(value, signed=False):
+    """A step count for a table cell: thousands with two decimals, or millions from one million on."""
+    # Before: 12840.2 and 8370040.0; after: '12.84K' and '8.37M' (signed: '+12.84K').
+    scaled, unit = (value / 1e6, 'M') if abs(value) >= 1e6 else (value / 1e3, 'K')
+    return f"{scaled:{'+' if signed else ''},.2f}{unit}"
+
+
 def confirmation_cells(pooled, configurations, batch, kind, policy, ideas, latex=False):
     """Ideas in rows sorted by the confirmed score; metrics and the paired difference to the baseline in columns."""
     baseline = pooled.get((batch, BASELINE_IDEA, kind, policy))
@@ -187,8 +194,8 @@ def confirmation_cells(pooled, configurations, batch, kind, policy, ideas, latex
             difference = 'baseline not finished'
         else:
             # Before: -5630 steps on 1,024 common seeds; after: '-5.63K [-6.14K, -5.13K], -31% (1024 seeds)'.
-            difference = (f"{paired['mean'] / 1000:+,.2f}K [{paired['interval'][0] / 1000:+,.2f}K, "
-                          f"{paired['interval'][1] / 1000:+,.2f}K], {100 * paired['mean'] / paired['baseline_mean']:+.0f}{percent} "
+            difference = (f"{compact(paired['mean'], True)} [{compact(paired['interval'][0], True)}, "
+                          f"{compact(paired['interval'][1], True)}], {100 * paired['mean'] / paired['baseline_mean']:+.0f}{percent} "
                           f"({paired['seeds']} seeds)")
             if latex:
                 difference = re.sub(r'([+-])([0-9])', r'$\1$\2', difference)
@@ -199,10 +206,10 @@ def confirmation_cells(pooled, configurations, batch, kind, policy, ideas, latex
         if latex:
             # Before: 'decay exponent −1'; after: 'decay exponent $-1$'.
             name = re.sub(r'exponent [−-]([0-9.]+)', r'exponent $-\1$', name)
-        cells = [name, styled(number(row['mean'], True), mark([item[1]['mean'] for item in rows], index, True), latex)
-                 + f" {plus_minus} {number(row['standard_error'], True)} [{number(low, True)}, {number(high, True)}]",
+        cells = [name, styled(compact(row['mean']), mark([item[1]['mean'] for item in rows], index, True), latex)
+                 + f" {plus_minus} {compact(row['standard_error'])} [{compact(low)}, {compact(high)}]",
                  difference,
-                 styled(number(row['trimmed'], True), mark([item[1]['trimmed'] for item in rows], index, True), latex)
+                 styled(compact(row['trimmed']), mark([item[1]['trimmed'] for item in rows], index, True), latex)
                  + f" ({row['trim']} per end)"]
         for key in ('discovery', 'coverage', 'sampled', 'greedy'):
             values = [item[1][key] for item in rows]
@@ -223,22 +230,29 @@ def confirmation_table(pooled, configurations, batch, kind, policy, ideas):
 
 def confirmation_latex(pooled, configurations, batch, kind, policy, ideas):
     """One case's confirmation table in LaTeX for the development document (13.97 cm of text width)."""
-    # Ten columns: 12.2 cm of columns plus 18 gaps of 3 pt (1.9 cm), close to the fixed-settings tables' layout.
-    body = ''.join(' & '.join(cells) + ' \\\\\n'
-                   for cells in confirmation_cells(pooled, configurations, batch, kind, policy, ideas, latex=True))
-    widths = (2.6, 2.0, 2.2, 1.1, 0.6, 0.7, 0.7, 0.6, 1.2, 0.5)
+    # Eight columns: 12.25 cm of columns plus 14 gaps of 3 pt (1.48 cm). The two pairs of percentage columns of the
+    # Markdown table share a cell each, and the seeds dropped per end move to the caption.
+    # Before: [..., '6.00K (80 per end)', '100.0\%', '100.0\%', '100.0\%', '100.0\%', ...];
+    # after:  [..., '6.00K', '100.0\% / 100.0\%', '100.0\% / 100.0\%', ...].
+    lines = []
+    for cells in confirmation_cells(pooled, configurations, batch, kind, policy, ideas, latex=True):
+        name, mean, difference, trimmed, found, coverage, sampled, greedy, configuration, seeds = cells
+        lines.append(' & '.join([name, mean, difference, re.sub(r' \(\d+ per end\)', '', trimmed),
+                                 f'{found} / {coverage}', f'{sampled} / {greedy}', configuration, seeds]) + ' \\\\\n')
+    widths = (2.4, 1.85, 2.05, 0.9, 1.45, 1.45, 1.6, 0.55)
     return ('\\begin{table}[H]\\centering\\scriptsize\\setlength{\\tabcolsep}{3pt}\n'
             f'\\caption{{Confirmation on seeds 20000 on, {CASE_LABELS[kind]}, {POLICY_LABELS[policy]}: each idea\'s '
             'configuration chosen on the development seeds. The difference column is the mean over the seeds both rows '
             'have of the idea\'s capped first-goal time minus the baseline\'s (negative is faster), with its 95\\% '
-            'interval from resampling field seeds and the same difference as a percentage of the baseline\'s mean.}'
-            f'\\label{{tab:auto-research-confirmation-{batch}-{kind}-{policy}}}\n'
+            'interval from resampling field seeds and the same difference as a percentage of the baseline\'s mean. '
+            'The trimmed mean removes the lowest and highest 10 of every 128 seeds.}'
+            f'\\label{{tab:auto-research-confirmation-{batch.replace(" ", "-")}-{kind}-{policy}}}\n'
             '\\begin{tabular}{@{}' + ''.join(f'>{{\\raggedright\\arraybackslash}}p{{{width}cm}}' for width in widths)
             + '@{}}\\toprule\n'
             'idea & mean capped first-goal steps $\\downarrow$ $\\pm$ standard error [95\\%] & difference to the '
-            'baseline on the same seeds [95\\%] & trimmed mean (lowest and highest seeds removed) & goal found & '
-            'coverage & final goal rate, sampled & greedy & '
-            'configuration & seeds \\\\\\midrule\n' + body + '\\bottomrule\\end{tabular}\\end{table}\n')
+            'baseline on the same seeds [95\\%] & trimmed mean & goal found / coverage & '
+            'final-policy goal rate, sampled / greedy & configuration & seeds \\\\\\midrule\n'
+            + '\\addlinespace[2pt]\n'.join(lines) + '\\bottomrule\\end{tabular}\\end{table}\n')
 
 
 def verdict(paired):
@@ -247,10 +261,11 @@ def verdict(paired):
     return 'ahead' if high < 0 else 'behind' if low > 0 else 'level'
 
 
-def confirmation_summary(pooled, batch, ideas):
-    """One row per idea: confirmed score, percentage difference to the baseline and verdict in each of the four cases."""
+def summary_rows(pooled, batch, ideas, latex=False):
+    """One row of cells per idea: confirmed score, percentage difference to the baseline and verdict in each case."""
     # Before: per-case tables; after: ideas in rows, the four cases in columns, sorted by the mean percentage difference.
     names = sorted({idea for group, idea, _, _ in pooled if group == batch})
+    percent = '\\%' if latex else '%'
     rows = []
     for idea in names:
         cells, percentages, ahead, compared = [], [], 0, 0
@@ -261,11 +276,13 @@ def confirmation_summary(pooled, batch, ideas):
                 cells.append('not run yet')
                 continue
             row = confirmation_row(records, baseline)
-            text = f"{number(row['mean'], True)} ({row['seeds']} seeds)"
+            text = f"{compact(row['mean'])} ({row['seeds']} seeds)"
             if idea != BASELINE_IDEA and row['paired'] is not None:
                 percentage = 100 * row['paired']['mean'] / row['paired']['baseline_mean']
                 word = verdict(row['paired'])
-                text += f"; {percentage:+.0f}%, {word} ({row['paired']['seeds']} seeds in common)"
+                # Before: -0.31 of the baseline's mean; after: '-31%, ahead (1024 seeds in common)', math signs in LaTeX.
+                signed = f"${'+' if percentage >= 0 else '-'}{abs(percentage):.0f}${percent}" if latex else f"{percentage:+.0f}%"
+                text += f"; {signed}, {word} ({row['paired']['seeds']} seeds in common)"
                 percentages.append(percentage)
                 ahead += word == 'ahead'
                 compared += 1
@@ -274,11 +291,37 @@ def confirmation_summary(pooled, batch, ideas):
             cells.append(text)
         count = 'baseline' if idea == BASELINE_IDEA else f'{ahead} of {compared} compared'
         rows.append((idea != BASELINE_IDEA, float(np.mean(percentages)) if percentages else 0.0, idea, cells, count))
-    lines = ['| idea | ' + ' | '.join(f'{CASE_LABELS[kind]}, {POLICY_LABELS[policy]}' for kind, policy in CASE_ORDER)
-             + ' | cases ahead of the baseline |\n|---|---|---|---|---|---|\n']
+    result = []
     for _, _, idea, cells, count in sorted(rows):
-        lines.append(f"| {ideas.get(idea, idea)} | " + ' | '.join(cells) + f' | {count} |\n')
-    return ''.join(lines)
+        name = ideas.get(idea, idea)
+        if latex:
+            name = re.sub(r'exponent [−-]([0-9.]+)', r'exponent $-\1$', name)
+        result.append([name] + cells + [count])
+    return result
+
+
+def confirmation_summary(pooled, batch, ideas):
+    """The four-case summary in Markdown."""
+    header = ('| idea | ' + ' | '.join(f'{CASE_LABELS[kind]}, {POLICY_LABELS[policy]}' for kind, policy in CASE_ORDER)
+              + ' | cases ahead of the baseline |\n|---|---|---|---|---|---|\n')
+    return header + ''.join('| ' + ' | '.join(cells) + ' |\n' for cells in summary_rows(pooled, batch, ideas))
+
+
+def confirmation_summary_latex(pooled, batch, ideas):
+    """The four-case summary in LaTeX for the development document (13.97 cm of text width)."""
+    # Six columns: 12.5 cm of columns plus 10 gaps of 3 pt (1.06 cm).
+    body = '\\addlinespace[2pt]\n'.join(' & '.join(cells) + ' \\\\\n' for cells in summary_rows(pooled, batch, ideas, latex=True))
+    widths = (2.9, 2.15, 2.15, 2.15, 2.15, 1.0)
+    return ('\\begin{table}[H]\\centering\\scriptsize\\setlength{\\tabcolsep}{3pt}\n'
+            '\\caption{Confirmation on seeds 20000 on, all four cases. Each cell gives the mean capped first-goal time, '
+            'then the difference to the baseline on the seeds both rows have as a percentage of the baseline\'s mean, '
+            'and a verdict: ahead when the whole 95\\% interval of the difference is below zero, behind when it is above '
+            'zero, level when it contains zero. Rows are sorted by the mean of those percentages.}'
+            '\\label{tab:auto-research-confirmation-summary}\n'
+            '\\begin{tabular}{@{}' + ''.join(f'>{{\\raggedright\\arraybackslash}}p{{{width}cm}}' for width in widths)
+            + '@{}}\\toprule\n'
+            'idea & ' + ' & '.join(f'{CASE_LABELS[kind]}, {POLICY_LABELS[policy]}' for kind, policy in CASE_ORDER)
+            + ' & cases ahead of the baseline \\\\\\midrule\n' + body + '\\bottomrule\\end{tabular}\\end{table}\n')
 
 
 def generate(run_dir):
@@ -344,6 +387,7 @@ def generate(run_dir):
     # The same confirmation tables in LaTeX, read by the development document.
     tex = ['% Generated by auto_research_report.py; do not edit.\n']
     for batch in sorted({key[0] for key in pooled}):
+        tex.append(confirmation_summary_latex(pooled, batch, words))
         for kind, policy in CASE_ORDER:
             if any((group, grid, kind_of_policy) == (batch, kind, policy) for group, _, grid, kind_of_policy in pooled):
                 tex.append(confirmation_latex(pooled, configurations, batch, kind, policy, words))

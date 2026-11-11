@@ -84,3 +84,17 @@ def test_confirmation_latex_sets_signs_and_weights_as_math():
     assert '$-$1.50K [$-$1.50K, $-$1.50K], $-$15\\% (16 seeds)' in text and 'weight $2^{-2}$' in text
     assert text.count('\\\\') == 3 and '\\label{tab:auto-research-confirmation-06-snake-neural}' in text
     assert '%' not in text.replace('\\%', '')
+    # The two pairs of percentage columns share a cell each, and the trimmed count moves to the caption.
+    assert '\\%} / ' in text and 'per end' not in text and '\\addlinespace' in text
+    # Step counts from one million on are written in millions, so no cell holds a long number.
+    assert report.compact(8370040.0) == '8.37M' and report.compact(-1500.0, True) == '-1.50K'
+
+
+def test_confirmation_summary_latex_escapes_percent_and_sets_signs_as_math():
+    """The LaTeX summary has one row per idea, math minus signs and escaped percent signs."""
+    scores = np.linspace(9000, 11000, 64)
+    pooled = {('06', 'control', 'snake', 'neural'): records(scores),
+              ('06', 'faster-idea', 'snake', 'neural'): records(scores - 1500)}
+    table = report.confirmation_summary_latex(pooled, '06', {'faster-idea': 'schedule-fit RND, decay exponent −1'})
+    assert '$-15$\\%, ahead (64 seeds in common)' in table and 'exponent $-1$' in table
+    assert table.count('\\\\\n') == 2 and '%, ahead' not in table.replace('\\%', '')

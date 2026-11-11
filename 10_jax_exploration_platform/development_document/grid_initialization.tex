@@ -171,6 +171,111 @@ Online tabular-RND with reward normalization on, the baseline of the auto resear
   }{No results of this study have been generated yet.}
 \fi
 
+\subsection{Online tabular-RND with an even start and a scheduled decay}
+\label{sec:grid-schedule-fit}
+The baseline of this study is online tabular-RND with reward normalization on
+(\Cref{tab:grid-fixed-conditions}), tuned by the protocol of \Cref{sec:grid-fixed-settings}.
+Measured at its chosen configurations on the development seeds, its bonus starts uneven and
+decays much faster than a count rule. The largest starting bonus is 3.6 times the smallest on
+the straight grid and 4.5 times on the snake grid. The median slope of the logarithm of a cell's
+bonus on the logarithm of its visits is $-3.3$ and $-3.5$ on the straight grid (tabular-PPO,
+coordinate-PPO) and $-2.8$ and $-1.3$ on the snake grid. The study asks whether an RND whose
+start is even and whose decay is set by design reaches the goal sooner than this baseline in the
+four cases (two grids, two policies).
+
+\paragraph{Method.}
+Recall the frozen target $g$, the predictor $f_t$ and the one-hot input $\phi(s)$ from
+\Cref{sec:grid-fixed-settings}. Define the error length
+$\rho_t(s)=\lVert g(\phi(s))-f_t(\phi(s))\rVert$, a decreasing schedule $b(m)$ with $b(0)=1$, and
+$a>0$ as the decay exponent of the schedule $b(m)=(1+m)^{-a}$. The schedule-fit RND uses
+$\rho_t(s)$ as its bonus and has four parts:
+\begin{enumerate}[leftmargin=*]
+\item \textbf{Even start.} The predictor's output layer starts at zero and the target's output is
+divided by its own length, so $\rho_0(s)=1$ in every cell.
+\item \textbf{The error carries the count.} A cell's place on the schedule is
+$m(s)=b^{-1}(\rho_t(s))$; no visit count is stored.
+\item \textbf{One fit per rollout.} Define $n(s)$ as the number of times cell $s$ is a state of
+the rollout just collected, $H$ as the matrix whose rows are the last hidden layer's activations
+of all cells, and $E$ as the matrix whose rows are the wanted changes of the cells' outputs: the
+change that brings a visited cell to $\rho(s)=b(m(s)+n(s))$, and zero for every other cell. The
+output layer's weights change by $H^{\top}(HH^{\top})^{-1}E$, the smallest change that gives every
+cell exactly its wanted output.
+\item \textbf{Refresh at every step.} Define $k$ as the number of times the arrival cell was a
+state earlier in the same rollout. An arrival earns $b(m(s)+k)$, the error the predictor would
+have after also training on those states; the weights are still written once per rollout.
+\end{enumerate}
+With one-hot inputs the fit changes the outputs of the visited cells only, so $\rho_t(s)$ equals
+$b$ of the number of times $s$ has been a training state. The bonus is therefore the bonus of a
+count rule of the same shape (a unit test checks the equality): the method is the RND that has
+both properties exactly, not a new bonus.
+
+\paragraph{Protocol.}
+Screens of 32 seeds, stopped at a quarter of the budget, chose the schedule and the refresh. The
+comparison repeats the protocol of \Cref{sec:grid-fixed-settings} for every row of
+\Cref{tab:grid-schedule-fit-rows}: all 52 configurations for 16.8 million transitions on the 16
+development seeds, then the configuration with the smallest mean capped first-goal time on fresh
+seeds from 20000 on (1,024 seeds for the baseline and the two main rows, 512 for the others).
+The baseline's development grid was trained a second time for this study, on other cards. The
+same seed does not give the same run on another card model, so rows are compared as
+distributions over the same seeds.
+
+\begin{table}[H]
+\centering\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.3cm}?>{\raggedright\arraybackslash}p{1.4cm}
+?>{\raggedright\arraybackslash}p{2.5cm}?>{\raggedright\arraybackslash}p{2.0cm}?>{\raggedright\arraybackslash}p{2.2cm}@{}}
+\blackrule
+\textbf{Row} & \textbf{Start} & \textbf{Decay} & \textbf{Bonus refresh} & \textbf{Confirmation seeds} \\
+\blackrule
+baseline: CleanRL online tabular-RND & uneven & left to training & once per rollout & 1,024 \\ \greyrule
+schedule-fit RND, $a=1$ & even & $(1+m)^{-1}$ & every step & 1,024 \\ \greyrule
+schedule-fit RND, $a=\tfrac12$ & even & $(1+m)^{-1/2}$ & every step & 1,024 \\ \greyrule
+schedule-fit RND, $a\in\{\tfrac14,\tfrac34,\tfrac32,2\}$ & even & $(1+m)^{-a}$ & every step & 512 \\ \greyrule
+schedule-fit RND, $a=1$, refreshed once per rollout & even & $(1+m)^{-1}$ & once per rollout & 512 \\ \greyrule
+count rule on the frozen tabular-RND field, $a=1$ & uneven & $c(s)\,n^{-1}$ & every step & 512 \\ \greyrule
+unit start alone (part 1 only, with CleanRL's predictor training) & even & left to training & once per rollout & 512 \\
+\blackrule
+\end{tabular}
+\caption{Rows of the comparison. The last two rows separate the two parts: the scheduled decay on
+the baseline's uneven start, and the even start with the decay left to training. $c(s)$ and $n$
+are the mean-one field and the arrivals of \Cref{sec:grid-initialization}.}
+\label{tab:grid-schedule-fit-rows}
+\end{table}
+
+\ifdefined\AutoResearchRunPath
+  \IfFileExists{\AutoResearchRunPath/analysis/results.tex}{%
+    \input{\AutoResearchRunPath/analysis/results.tex}%
+  }{No results of this study have been generated yet.}
+\fi
+
+\paragraph{Findings.}
+\begin{enumerate}[leftmargin=*]
+\item \textbf{The schedule-fit RND with $a=1$, refreshed at every step, is ahead of the baseline
+in all four cases} on the same 1,024 seeds (\Cref{tab:auto-research-confirmation-summary}): 6.12K
+against 7.56K transitions and 2.41K against 81.7K on the straight grid, 12.84K against 18.47K and
+67.6K against 157.0K on the snake grid (tabular-PPO first). Every 95\% interval of the difference
+excludes zero.
+\item \textbf{On the straight grid with coordinate-PPO the baseline's mean rests on a few seeds.}
+Three of its 1,024 seeds never reach the goal and carry 60\% of its mean. With the lowest and
+highest 80 seeds removed the means are 2.20K and 4.74K, so the lead holds without them and is
+about half, not 97\%.
+\item \textbf{The decay exponent that wins is near $-1$, not $-\tfrac12$.} With $a=\tfrac12$
+the row is ahead with coordinate-PPO and behind with tabular-PPO (6\% and 73\% slower than the
+baseline). With $a=\tfrac34$ and $a=1$ it is ahead in all four cases. With $a=\tfrac32$ it is the
+fastest row with tabular-PPO and fails on the snake grid with coordinate-PPO.
+\item \textbf{Both parts matter, and the decay matters more.} The scheduled decay on the
+baseline's uneven start is ahead of the baseline in three cases and level in the fourth. The
+even start with the decay left to training is behind the baseline on the snake grid with either
+policy. The two together are best in three cases; on the straight grid with coordinate-PPO the
+uneven start is level with the even one.
+\item \textbf{Refreshing the bonus at every step is ahead of refreshing once per rollout} at the
+same schedule in every case finished.
+\item \textbf{The final policy is a cost on the snake grid with coordinate-PPO.} The schedule-fit
+RND with $a=1$ reaches the goal sooner there, but its final policy reaches it in 55\% of
+evaluation episodes against the baseline's 98\%; its chosen intrinsic weight is $2^{6}$, the
+largest of the grid.
+\end{enumerate}
+
 \subsection{Earlier study: training and initialization comparisons}
 \begin{table}[H]
 \centering
