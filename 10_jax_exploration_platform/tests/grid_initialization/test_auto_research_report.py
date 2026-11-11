@@ -151,3 +151,31 @@ def test_step_ticks_use_decades_on_a_wide_axis_and_1_2_5_on_a_narrow_one():
     """A narrow range gets 1-2-5 ticks inside it; a range over 30-fold gets powers of ten only."""
     assert report.step_ticks(5100.0, 25000.0) == [10000.0, 20000.0]
     assert report.step_ticks(49000.0, 6.0e6) == [100000.0, 1000000.0]
+
+
+def test_confirmation_records_pool_own_units_and_rows_of_another_folder(tmp_path):
+    """Own confirmation units pool by their idea; another folder's finished units join under the listed idea key."""
+    import json
+
+    def write_unit(folder, idea, start, completed=True):
+        """Write one unit summary of four seeds for the snake grid with the coordinate policy."""
+        spec = {'geometry': {'kind': 'snake'}, 'policy_kind': 'neural'} | ({'idea': idea} if idea else {})
+        folder.mkdir(parents=True)
+        (folder / 'summary.json').write_text(json.dumps({
+            'completed': completed, 'specification': spec, 'settings': [{'configuration': {'learning_rate': 1e-3}}],
+            'copy_records': list(records([1000.0] * 4, start=start).values())}))
+
+    run, other = tmp_path / 'run', tmp_path / 'other'
+    write_unit(run / 'data/research/confirmation-06_a', 'control', 20000)
+    write_unit(run / 'data/research/confirmation-06_b', 'control', 20004)
+    write_unit(other / 'data/research/fixed-confirmation-chosen_x_seeds-20000-20003', None, 20000)
+    write_unit(other / 'data/research/fixed-confirmation-chosen_x_seeds-20004-20007', None, 20004, completed=False)
+    (run / 'batches').mkdir()
+    (run / 'batches/external_rows.json').write_text(json.dumps([{
+        'idea': 'control-second-copy', 'label': 'baseline trained a second time',
+        'pattern': str(other / 'data/research/fixed-confirmation-chosen_x_seeds-*/summary.json')}]))
+    pooled, configurations = report.confirmation_records(run)
+    assert sorted(pooled[('all batches', 'control', 'snake', 'neural')]) == list(range(20000, 20008))
+    # The unfinished unit of the other folder is left out.
+    assert sorted(pooled[('all batches', 'control-second-copy', 'snake', 'neural')]) == list(range(20000, 20004))
+    assert configurations[('all batches', 'control-second-copy', 'snake', 'neural')] == {'learning_rate': 1e-3}

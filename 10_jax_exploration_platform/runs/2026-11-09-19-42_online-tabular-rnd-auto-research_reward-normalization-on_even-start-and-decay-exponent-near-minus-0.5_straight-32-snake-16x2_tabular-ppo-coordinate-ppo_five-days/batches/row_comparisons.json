@@ -1,17 +1,37 @@
 [
- {"first": "schedule-fit-rnd-exponent-minus-1-refresh-per-step",
+ {
+  "first": "schedule-fit-rnd-exponent-minus-1-refresh-per-step",
   "second": "frozen-tabular-rnd-field-count-per-step-exponent-minus-1",
-  "label": "even start against uneven start, both with the scheduled decay (decay exponent −1, refreshed every step)"},
- {"first": "schedule-fit-rnd-exponent-minus-1-refresh-per-step",
+  "label": "even start against uneven start, both with the scheduled decay (decay exponent −1, refreshed every step)"
+ },
+ {
+  "first": "schedule-fit-rnd-exponent-minus-1-refresh-per-step",
   "second": "unit-start",
-  "label": "scheduled decay (decay exponent −1, refreshed every step) against decay left to training, both with the even start"},
- {"first": "schedule-fit-rnd-exponent-minus-1-refresh-per-step",
+  "label": "scheduled decay (decay exponent −1, refreshed every step) against decay left to training, both with the even start"
+ },
+ {
+  "first": "schedule-fit-rnd-exponent-minus-1-refresh-per-step",
   "second": "schedule-fit-rnd-exponent-minus-1-refresh-per-rollout",
-  "label": "refreshed every step against refreshed once per rollout, both schedule-fit RND with decay exponent −1"},
- {"first": "schedule-fit-rnd-exponent-minus-0.75-refresh-per-step",
+  "label": "refreshed every step against refreshed once per rollout, both schedule-fit RND with decay exponent −1"
+ },
+ {
+  "first": "schedule-fit-rnd-exponent-minus-0.75-refresh-per-step",
   "second": "schedule-fit-rnd-exponent-minus-1-refresh-per-step",
-  "label": "decay exponent −0.75 against decay exponent −1, both schedule-fit RND refreshed every step"},
- {"first": "schedule-fit-rnd-exponent-minus-0.5-refresh-per-step",
+  "label": "decay exponent −0.75 against decay exponent −1, both schedule-fit RND refreshed every step"
+ },
+ {
+  "first": "schedule-fit-rnd-exponent-minus-0.5-refresh-per-step",
   "second": "schedule-fit-rnd-exponent-minus-1-refresh-per-step",
-  "label": "decay exponent −0.5 against decay exponent −1, both schedule-fit RND refreshed every step"}
+  "label": "decay exponent −0.5 against decay exponent −1, both schedule-fit RND refreshed every step"
+ },
+ {
+  "first": "schedule-fit-rnd-exponent-minus-1-refresh-per-step",
+  "second": "control-configuration-chosen-by-the-extension-run",
+  "label": "schedule-fit RND, decay exponent −1, refreshed every step, against the baseline trained a second time by the extension run"
+ },
+ {
+  "first": "control-configuration-chosen-by-the-extension-run",
+  "second": "control",
+  "label": "baseline trained a second time by the extension run against the baseline of this study (same method, each with the configuration its own development grid chose)"
+ }
 ]

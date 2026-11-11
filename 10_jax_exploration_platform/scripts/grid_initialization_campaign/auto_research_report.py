@@ -128,17 +128,28 @@ def case_table(rows, ideas):
     return ''.join(lines)
 
 
+def external_rows(run_dir):
+    """Rows trained by another run folder that join this report (batches/external_rows.json); none without the file."""
+    # Each entry: {'idea': key of the row, 'label': its name in words, 'pattern': glob of the other folder's summaries}.
+    path = run_dir/'batches/external_rows.json'
+    return read_json(path) if path.exists() else []
+
+
 def confirmation_records(run_dir):
     """Pool every finished confirmation unit's copies by (batch, idea, grid, policy), one record per policy seed."""
     # Before: 8 units of 128 seeds for one idea in one case; after: {policy seed: record} with 1,024 entries.
     pooled, configurations = defaultdict(dict), {}
-    for path in sorted((run_dir/'data/research').glob('confirmation-*/summary.json')):
+    sources = [(None, path) for path in sorted((run_dir/'data/research').glob('confirmation-*/summary.json'))]
+    for row in external_rows(run_dir):
+        pattern = Path(row['pattern'])
+        sources += [(row['idea'], path) for path in sorted(Path(pattern.anchor).glob(str(pattern.relative_to(pattern.anchor))))]
+    for idea, path in sources:
         summary = read_json(path)
         spec = summary['specification']
         if not summary.get('completed'):
             continue
         # Every batch's confirmation rows share one group, so each is compared with the one baseline row.
-        key = ('all batches', spec['idea'], spec['geometry']['kind'], spec['policy_kind'])
+        key = ('all batches', idea or spec['idea'], spec['geometry']['kind'], spec['policy_kind'])
         for record in summary['copy_records']:
             pooled[key][record['policy_seed']] = record
         configurations[key] = summary['settings'][0]['configuration']
@@ -474,6 +485,7 @@ def generate(run_dir):
     words = {}
     for path in sorted((run_dir/'batches').glob('*/idea_names.json')):
         words.update(read_json(path))
+    words.update({row['idea']: row['label'] for row in external_rows(run_dir)})
     markdown = [f"# Online tabular-RND auto research\n\nGenerated {pacific()} (times are Pacific, converted from machines "
                 f"running Eastern). Finished settings: {len(rows)}. Protocol: `program.md`; log: `STATE.md`.\n\n"]
     markdown.append(
