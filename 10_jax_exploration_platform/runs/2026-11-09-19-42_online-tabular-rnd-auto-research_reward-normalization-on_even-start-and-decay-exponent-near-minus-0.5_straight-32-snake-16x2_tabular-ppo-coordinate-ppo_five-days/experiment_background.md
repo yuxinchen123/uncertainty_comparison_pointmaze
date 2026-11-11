@@ -66,4 +66,37 @@ Repository `/p/rlprojects/RND`, branch `main`. Batch 1 runs the frozen copy
 
 ## 5. Outcome
 
-(filled in when the study ends; interim results are in `analysis/analysis.md` and `STATE.md`)
+Written 2026-11-11 11:05 PT. Every unit finished: 1,260 done, none failed (968 screen units in five batches, 160
+development units, 132 confirmation units). Full tables: `analysis/analysis.md`; log: `STATE.md`; batch summaries:
+`batches/NN_…/summary.md`.
+
+**The method found** ("schedule-fit RND"): the predictor's output layer starts at zero and the target has unit
+length, so every cell's error starts at 1; after each rollout one exact fit of the output layer moves each visited
+cell's error along a chosen schedule $(1+m)^{-a}$; the bonus is refreshed at every step.
+
+**Confirmation against the baseline** (CleanRL online tabular-RND, reward normalization on) at 2^24 transitions on
+seeds from 20000 on; mean capped first-goal time, and the difference on the same seeds as a percentage of the
+baseline's mean:
+
+| row | seeds | straight, tabular-PPO | straight, coordinate-PPO | snake, tabular-PPO | snake, coordinate-PPO | cases ahead |
+|---|---|---|---|---|---|---|
+| baseline | 1,024 | 7.56K | 81.7K | 18.47K | 157.0K | — |
+| schedule-fit RND, exponent −1, every step | 1,024 | 6.12K, −19% | 2.41K, −97% | 12.84K, −31% | 67.6K, −57% | 4 of 4 |
+| schedule-fit RND, exponent −0.75, every step | 512 | 6.81K, −10% | 2.19K, −98% | 15.99K, −11% | 52.4K, −63% | 4 of 4 |
+| schedule-fit RND, exponent −0.5, every step | 1,024 | 8.04K, +6% | 3.09K, −96% | 32.0K, +73% | 60.1K, −62% | 2 of 4 |
+
+**Against the goal set by the user:**
+
+1. **Improved in all four cases:** yes, at exponents −1 and −0.75.
+2. **A more even initial bonus:** yes, the largest-to-smallest ratio is 1.00 against the baseline's 3.6 and 4.5.
+   With the scheduled decay, the even start is ahead of the uneven start in three cases and level in one.
+3. **A decay near −0.5:** no. The −0.5 schedule is ahead only with coordinate-PPO. The rows ahead in all four cases
+   have measured slopes of −0.61 to −0.77, against the baseline's −1.3 to −3.5.
+4. **A new method for a paper:** limited. With one-hot inputs the method computes a count rule's bonus
+   (`literature/novelty.md`, final statement).
+
+**Excluded runs:** none. No unit was ended by the infrastructure with its result kept; units stopped by a job's end
+were run again from the start.
+
+**Not run:** 8 power-law units (`queue/deferred_unstable_power_law/`, the loss diverges in RL) and 8 duplicate
+confirmation units (`queue/withdrawn_duplicates/`).

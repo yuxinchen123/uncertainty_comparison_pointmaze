@@ -6,13 +6,24 @@ Times are Pacific. The protocol is in `program.md`; the plan is
 
 ## Where things are
 
-- **Code:** repository commit `9cd855bb` (pushed). The frozen copy is `code/source_9cd855bb…/`.
+- **Status (2026-11-11 11:00 PT):** every unit of the study is finished (1,260 done, none failed, none on any other
+  server). What remains is outside this folder: the extension run's own confirmation of the baseline, compared with
+  this folder's baseline row when it ends.
+- **Result in one line:** the schedule-fit RND with decay exponent −1, refreshed at every step, is ahead of the
+  baseline in all four cases on 1,024 seeds; so is exponent −0.75 on 512 seeds; exponent −0.5 is ahead in two.
+- **Code:** frozen copy `code/current` → `code/source_84723a80…/` (training code); report code at the repository's
+  head.
 - **Records:**
   - bench results: `bench/batch_NN/<idea>.json`;
   - RL units: `data/research/<unit>/summary.json`;
-  - ledgers: `slurm/submitted_jobids_*.txt`.
-- **Baseline:** the extension run `runs/2026-11-09-19-40_fixed-…-extension_…`, condition "online tabular-RND, reward
-  normalization on". It is confirmed on 1,024 seeds once its development finishes.
+  - ledgers: `slurm/submitted_jobids_*.txt`;
+  - batch summaries: `batches/NN_…/summary.md` (batches 3 to 7).
+- **Report:** `analysis/analysis.md` (generated), `analysis/results.tex` (read by the development document, section
+  "Online tabular-RND with an even start and a scheduled decay").
+- **Baseline:** its development grid and its 1,024-seed confirmation were trained here (row `control`, batch 6),
+  because the extension run's cards were slow. The extension run trains the same row again.
+- **Not run:** 8 power-law units held in `queue/deferred_unstable_power_law/` (the loss diverges in RL) and 8
+  duplicates in `queue/withdrawn_duplicates/`.
 
 ## Log
 
@@ -320,6 +331,46 @@ Times are Pacific. The protocol is in `program.md`; the plan is
      baseline's 98% (its chosen weight is 2^6, the largest of the grid); three of the finalist's chosen weights are
      at an edge of the weight grid.
 
+- **2026-11-11 00:06. The sweep's confirmation is complete (20 of 20 units); every unit of the study is done.** The
+  last two units ran on Gautschi. The copy step failed once on a folder owned by the other UVA account (rsync could
+  not set its time); the copy now leaves folder times alone (`rsync -rtO`, commit `97661f28`).
+- **2026-11-11 10:40-11:00. Final tables and write-up.** The report gained a table of rows compared with each other
+  on the same seeds (`batches/row_comparisons.json`, commit `ed6af93c`). On seeds 20000 on, against the baseline
+  (percentage of the baseline's mean on the common seeds; cases in the order straight grid tabular-PPO, straight grid
+  coordinate-PPO, snake grid tabular-PPO, snake grid coordinate-PPO):
+
+  | row | seeds | four cases | ahead in |
+  |---|---|---|---|
+  | schedule-fit RND, −1, every step | 1,024 | −19%, −97%, −31%, −57% | 4 of 4 |
+  | schedule-fit RND, −0.75, every step | 512 | −10%, −98%, −11%, −63% | 4 of 4 |
+  | count rule on the frozen tabular-RND field, −1, every step (uneven start) | 512 | −14%, −98%, −22%, −9% (level) | 3 of 4 |
+  | schedule-fit RND, −1, once per rollout | 512 | −5%, −95%, −18%, −14% (level) | 3 of 4 |
+  | schedule-fit RND, −1.5, every step | 512 | −29%, −84%, −44%, +834% | 3 of 4 |
+  | schedule-fit RND, −0.5, every step | 1,024 | +6%, −96%, +73%, −62% | 2 of 4 |
+  | schedule-fit RND, −0.25, every step | 512 | +173%, −94%, +1,112%, −52% | 2 of 4 |
+  | schedule-fit RND, −2, every step | 512 | −26%, +135% (level), −42%, +3,827% | 2 of 4 |
+  | unit start alone (even start, decay left to training) | 512 | +15%, −95%, +13%, +5,846% | 1 of 4 |
+
+  Rows against each other on the same seeds:
+  - **Even start against uneven start, both with the scheduled decay:** −5% ahead, −2% level, −9% ahead, −43% ahead.
+  - **Scheduled decay against decay left to training, both with the even start:** ahead in all four (−29%, −55%,
+    −37%, −99%).
+  - **Refresh every step against once per rollout, both at −1:** ahead in all four (−14%, −49%, −13%, −40%).
+  - **Exponent −0.75 against −1:** +11% behind, −6% level, +24% behind, −28% ahead.
+  - **Exponent −0.5 against −1:** +31% behind, +28% behind, +149% behind, −11% level.
+
+  Against the success rule of `program.md`:
+  1. Below the baseline in each of the four cases on the same 1,024 seeds: met by the exponent −1 form.
+  2. Even-start target: met (ratio 1.00). Decay target of −0.5: not met by the rows that are ahead in all four
+     cases (measured slope −0.61 to −0.68 at exponent −0.75 and −0.67 to −0.77 at −1). The exponent −0.5 form meets
+     it (−0.47 to −0.48) and is ahead only with coordinate-PPO.
+  3. Ablation: the gain needs both parts in three of four cases, and the decay is the larger part.
+  4. Novelty: limited; with one-hot inputs the method computes a count rule's bonus (`literature/novelty.md`, final
+     section).
+
+  Written: `batches/04_…/summary.md`, `batches/06_…/summary.md`, `batches/07_…/summary.md`, the findings of the
+  development document's subsection, the outcome section of `experiment_background.md`.
+
 ## Idea list
 
 | idea | targets | status |
@@ -340,6 +391,6 @@ Times are Pacific. The protocol is in `program.md`; the plan is
 | unit start + shrink-target | both | candidate; RL batch 1 |
 | count-rule bonus shapes (exponents, count rates, sums of power laws, per-step or per-rollout refresh) | decay (diagnostic) | RL batches 2 and 3: −0.5 best with coordinate-PPO, faster decay best with tabular-PPO; −1 at rate 0.25 level with or ahead of the control in three cases; batch 4 continues |
 | shrink-target with other exponents; exact-step optimizer | decay | RL batch 2: matches the per-rollout count rule in two cases, behind it on the snake grid with tabular-PPO |
-| rollout fit, exact output-layer solve, schedule −0.5 or −1 at rate 0.25 | both, exactly | bench: start 1.00, slope on the schedule, zero spread; RL batch 4 |
-| per-step refresh of the bonus (exact fit) | decay timing | RL batch 4 |
-| rollout fit, all layers (12 conjugate-gradient iterations) | both, approximately | bench: −0.45 / −0.40, −1.03 under one-cell rollouts; RL batch 4 |
+| rollout fit, exact output-layer solve ("schedule-fit RND"), schedules −0.25 to −2 | both, exactly | confirmed on the full protocol (batches 6 and 7): −0.75 and −1 ahead of the baseline in all four cases; −0.5 in two |
+| per-step refresh of the bonus (exact fit) | decay timing | confirmed (batch 7): ahead of the per-rollout refresh in all four cases |
+| rollout fit, all layers (12 conjugate-gradient iterations) | both, approximately | RL batch 4: behind the exact fit in all eight comparisons (11% to 68%); not taken further |

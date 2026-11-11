@@ -155,3 +155,59 @@ training state in one rollout.
 3. With one-hot inputs the exact form equals a count rule, so the paper's method claim has to rest on a form that
    also applies when inputs are not one-hot: the gradient-trained shrink-target form of batch 2, or the all-layers
    fit of batch 4. Their rows decide whether that claim can be made.
+
+## Final statement (2026-11-11 PT, after the confirmation of batches 6 and 7)
+
+### What was confirmed
+
+The schedule-fit RND (even start, error made to follow $b(m) = (1+m)^{-a}$ by one exact output-layer fit per rollout,
+bonus refreshed at every step) is ahead of CleanRL's online tabular-RND in all four cases with $a = 1$ (1,024 seeds)
+and with $a = 0.75$ (512 seeds). Numbers: `analysis/analysis.md`, section "confirmation".
+
+### What the method is, against published work
+
+1. **With one-hot inputs it computes the bonus of a count rule.** The error length of a cell is $b$ of the number of
+   times the cell has been a training state (unit test `test_exact_output_layer_fit_is_the_count_rule_in_every_cell`).
+   Count bonuses of the forms $n^{-1/2}$ and $(1+n)^{-1}$ are published (MBIE-EB, Strehl and Littman 2008,
+   downloaded; the inverse-count bonus of Bayesian exploration bonus methods, still to be read before it is cited).
+   So the bonus is not new.
+2. **The per-step refresh** is what a count bonus does by construction. For RND it is a design choice that the
+   published implementations do not make.
+3. **The even start** by a zero output layer and a unit-length target was not found for RND in the searches of
+   `sources.md`, but it is a small construction.
+4. **No published RND variant was run as a comparison row.** The study compares with one baseline only, so it makes
+   no claim against DRND, NovelD, coin-flip networks or the others listed in `program.md`.
+
+### Claims the data supports
+
+These are measurements about RND on these grids, not a new bonus.
+
+1. CleanRL's online tabular-RND with reward normalization starts uneven (largest over smallest bonus 3.6 and 4.5)
+   and decays with a per-cell slope of −1.3 to −3.5.
+2. An RND with an even start and a scheduled decay reaches the goal sooner in all four cases at exponents −0.75
+   and −1.
+3. The exponent that is best depends on the policy: tabular-PPO is fastest at −1.5, coordinate-PPO at −0.75. The
+   inverse square root, the classical count-bonus rate and this study's target, is ahead of the baseline only with
+   coordinate-PPO.
+4. Given the even start, the scheduled decay is ahead of the decay left to training in all four cases. Given the
+   scheduled decay, the even start is ahead of the uneven start in three cases and level in one.
+5. Refreshing the bonus at every step is ahead of refreshing once per rollout in all four cases (13% to 49%).
+
+### What cannot be claimed
+
+1. A new exploration bonus: see point 1 above.
+2. Anything for inputs that are not one-hot. The all-layers fit, the only form built here that applies to such
+   inputs, was behind the exact fit in all eight screen comparisons (11% to 68%) and was not run on the full
+   protocol.
+3. That the decay target of −0.5 was reached by the winning method: the measured slope of the rows ahead in all four
+   cases is −0.61 to −0.77.
+
+### What a paper would still need
+
+1. The two properties with inputs that are not one-hot (coordinate-RND on these grids first): a fit that moves the
+   visited states along the schedule while holding the others, at a cost near the baseline's.
+2. Published RND variants as labeled comparison rows under the same protocol.
+3. An account of why the best exponent differs between the two policy types.
+
+Against the novelty rule of `program.md`: the finalist is not a re-implementation of a published RND variant, but
+with one-hot inputs it equals a published kind of bonus, so it does not pass as a method claim by itself.
