@@ -13,6 +13,8 @@ count rule on the frozen tabular-RND field, decay exponent $-1$, refreshed every
 \addlinespace[2pt]
 schedule-fit RND, decay exponent $-1$, refreshed once per rollout & 7.13K (512 seeds); $-5$\%, ahead (512 seeds in common) & 4.55K (512 seeds); $-95$\%, ahead (512 seeds in common) & 14.78K (512 seeds); $-18$\%, ahead (512 seeds in common) & 120.79K (512 seeds); $-14$\%, level (512 seeds in common) & 3 of 4 compared \\
 \addlinespace[2pt]
+baseline trained a second time by the extension run (configuration chosen by its own development grid) & 7.55K (1024 seeds); $-0$\%, level (1024 seeds in common) & 4.59K (1024 seeds); $-94$\%, ahead (1024 seeds in common) & 18.25K (1024 seeds); $-1$\%, level (1024 seeds in common) & 164.07K (1024 seeds); $+5$\%, level (1024 seeds in common) & 1 of 4 compared \\
+\addlinespace[2pt]
 schedule-fit RND, decay exponent $-0.5$, refreshed every step (even start, scheduled decay) & 8.04K (1024 seeds); $+6$\%, behind (1024 seeds in common) & 3.09K (1024 seeds); $-96$\%, ahead (1024 seeds in common) & 32.01K (1024 seeds); $+73$\%, behind (1024 seeds in common) & 60.05K (1024 seeds); $-62$\%, ahead (1024 seeds in common) & 2 of 4 compared \\
 \addlinespace[2pt]
 schedule-fit RND, decay exponent $-1.5$, refreshed every step & 5.38K (512 seeds); $-29$\%, ahead (512 seeds in common) & 15.64K (512 seeds); $-84$\%, ahead (512 seeds in common) & 10.10K (512 seeds); $-44$\%, ahead (512 seeds in common) & 1.32M (512 seeds); $+834$\%, behind (512 seeds in common) & 3 of 4 compared \\
@@ -36,6 +38,10 @@ refreshed every step against refreshed once per rollout, both schedule-fit RND w
 decay exponent $-0.75$ against decay exponent $-1$, both schedule-fit RND refreshed every step & $+$0.67K [$+$0.43K, $+$0.93K], $+$11\%, behind (512 seeds) & $-$0.15K [$-$0.30K, $+$0.01K], $-$6\%, level (512 seeds) & $+$3.11K [$+$2.49K, $+$3.77K], $+$24\%, behind (512 seeds) & $-$20.13K [$-$50.48K, $-$0.92K], $-$28\%, ahead (512 seeds) \\
 \addlinespace[2pt]
 decay exponent $-0.5$ against decay exponent $-1$, both schedule-fit RND refreshed every step & $+$1.92K [$+$1.62K, $+$2.30K], $+$31\%, behind (1024 seeds) & $+$0.68K [$+$0.56K, $+$0.80K], $+$28\%, behind (1024 seeds) & $+$19.17K [$+$17.28K, $+$21.18K], $+$149\%, behind (1024 seeds) & $-$7.52K [$-$23.01K, $+$3.86K], $-$11\%, level (1024 seeds) \\
+\addlinespace[2pt]
+schedule-fit RND, decay exponent $-1$, refreshed every step, against the baseline trained a second time by the extension run & $-$1.43K [$-$1.60K, $-$1.25K], $-$19\%, ahead (1024 seeds) & $-$2.19K [$-$2.34K, $-$2.03K], $-$48\%, ahead (1024 seeds) & $-$5.41K [$-$5.91K, $-$4.91K], $-$30\%, ahead (1024 seeds) & $-$96.51K [$-$169.65K, $-$41.48K], $-$59\%, ahead (1024 seeds) \\
+\addlinespace[2pt]
+baseline trained a second time by the extension run against the baseline of this study (same method, each with the configuration its own development grid chose) & $-$0.01K [$-$0.06K, $+$0.04K], $-$0\%, level (1024 seeds) & $-$77.09K [$-$144.99K, $-$30.39K], $-$94\%, ahead (1024 seeds) & $-$0.23K [$-$0.58K, $+$0.11K], $-$1\%, level (1024 seeds) & $+$7.07K [$-$75.67K, $+$86.98K], $+$5\%, level (1024 seeds) \\
 \bottomrule\end{tabular}\end{table}
 \begin{figure}[H]\centering\includegraphics[width=\linewidth]{\AutoResearchRunPath/analysis/plots/confirmation_by_decay_exponent.pdf}\caption{Confirmation on seeds 20000 on: the schedule-fit RND refreshed every step, against $a$ of its schedule $(1+m)^{-a}$. Top: mean capped first-goal time with its 95\% interval (logarithmic axis). Bottom: the final policy's goal rate with sampled actions. Dashed line and band: the baseline and its 95\% interval.}\label{fig:auto-research-confirmation-by-decay-exponent}\end{figure}
 \begin{table}[H]\centering\scriptsize\setlength{\tabcolsep}{3pt}
@@ -53,6 +59,8 @@ count rule on the frozen tabular-RND field, decay exponent $-1$, refreshed every
 schedule-fit RND, decay exponent $-0.75$, refreshed every step & 6.81K $\pm$ 0.18K [6.46K, 7.15K] & $-$0.72K [$-$1.04K, $-$0.41K], $-$10\% (512 seeds) & 6.57K & \textbf{100.0\%} / \textbf{100.0\%} & \textbf{100.0\%} / \textbf{100.0\%} & learning rate 0.001, entropy 0.001, weight $2^{-6}$ & 512 \\
 \addlinespace[2pt]
 schedule-fit RND, decay exponent $-1$, refreshed once per rollout & 7.13K $\pm$ 0.16K [6.81K, 7.46K] & $-$0.39K [$-$0.69K, $-$0.10K], $-$5\% (512 seeds) & 6.98K & \textbf{100.0\%} / \textbf{100.0\%} & \textbf{100.0\%} / \textbf{100.0\%} & learning rate 0.001, entropy 0.01, weight $2^{-6}$ & 512 \\
+\addlinespace[2pt]
+baseline trained a second time by the extension run (configuration chosen by its own development grid) & 7.55K $\pm$ 0.13K [7.30K, 7.79K] & $-$0.01K [$-$0.06K, $+$0.04K], $-$0\% (1024 seeds) & 7.46K & \textbf{100.0\%} / \textbf{100.0\%} & \textbf{100.0\%} / \textbf{100.0\%} & learning rate 0.001, entropy 0.001, weight $2^{-3}$ & 1024 \\
 \addlinespace[2pt]
 baseline: CleanRL online tabular-RND (uneven start, decay left to training) & 7.56K $\pm$ 0.13K [7.31K, 7.80K] & baseline & 7.46K & \textbf{100.0\%} / \textbf{100.0\%} & \textbf{100.0\%} / \textbf{100.0\%} & learning rate 0.001, entropy 0.001, weight $2^{-4}$ & 1024 \\
 \addlinespace[2pt]
@@ -75,6 +83,8 @@ schedule-fit RND, decay exponent $-1$, refreshed every step (even start, schedul
 schedule-fit RND, decay exponent $-0.5$, refreshed every step (even start, scheduled decay) & 3.09K $\pm$ 0.06K [2.97K, 3.21K] & $-$78.59K [$-$146.51K, $-$31.90K], $-$96\% (1024 seeds) & 2.91K & \textbf{100.0\%} / \textbf{100.0\%} & \textbf{100.0\%} / \textbf{100.0\%} & learning rate 0.001, entropy 0.001, weight $2^{0}$ & 1024 \\
 \addlinespace[2pt]
 schedule-fit RND, decay exponent $-1$, refreshed once per rollout & 4.55K $\pm$ 0.71K [3.66K, 6.23K] & $-$93.29K [$-$199.63K, $-$18.30K], $-$95\% (512 seeds) & 3.56K & \textbf{100.0\%} / \textbf{100.0\%} & \textbf{100.0\%} / \textbf{100.0\%} & learning rate 0.001, entropy 0.001, weight $2^{-6}$ & 512 \\
+\addlinespace[2pt]
+baseline trained a second time by the extension run (configuration chosen by its own development grid) & 4.59K $\pm$ 0.05K [4.49K, 4.70K] & $-$77.09K [$-$144.99K, $-$30.39K], $-$94\% (1024 seeds) & 4.57K & \textbf{100.0\%} / \textbf{100.0\%} & 97.2\% / 97.2\% & learning rate 0.001, entropy 0.01, weight $2^{-4}$ & 1024 \\
 \addlinespace[2pt]
 unit start alone (even start, decay left to training) & 5.23K $\pm$ 0.12K [5.00K, 5.46K] & $-$92.62K [$-$199.12K, $-$17.80K], $-$95\% (512 seeds) & 4.88K & \textbf{100.0\%} / \textbf{100.0\%} & 97.3\% / 97.3\% & learning rate 0.001, entropy 0.01, weight $2^{0}$ & 512 \\
 \addlinespace[2pt]
@@ -102,6 +112,8 @@ schedule-fit RND, decay exponent $-1$, refreshed once per rollout & 14.78K $\pm$
 \addlinespace[2pt]
 schedule-fit RND, decay exponent $-0.75$, refreshed every step & 15.99K $\pm$ 0.43K [15.17K, 16.84K] & $-$2.01K [$-$3.00K, $-$1.06K], $-$11\% (512 seeds) & 15.01K & \textbf{100.0\%} / \textbf{100.0\%} & \textbf{100.0\%} / \textbf{100.0\%} & learning rate 0.001, entropy 0.01, weight $2^{-6}$ & 512 \\
 \addlinespace[2pt]
+baseline trained a second time by the extension run (configuration chosen by its own development grid) & 18.25K $\pm$ 0.26K [17.74K, 18.76K] & $-$0.23K [$-$0.58K, $+$0.11K], $-$1\% (1024 seeds) & 17.97K & \textbf{100.0\%} / \textbf{100.0\%} & \textbf{100.0\%} / \textbf{100.0\%} & learning rate 0.001, entropy 0.01, weight $2^{-3}$ & 1024 \\
+\addlinespace[2pt]
 baseline: CleanRL online tabular-RND (uneven start, decay left to training) & 18.47K $\pm$ 0.27K [17.95K, 19.03K] & baseline & 18.14K & \textbf{100.0\%} / \textbf{100.0\%} & \textbf{100.0\%} / \textbf{100.0\%} & learning rate 0.001, entropy 0.001, weight $2^{5}$ & 1024 \\
 \addlinespace[2pt]
 unit start alone (even start, decay left to training) & 20.35K $\pm$ 0.48K [19.43K, 21.24K] & $+$2.35K [$+$1.44K, $+$3.21K], $+$13\% (512 seeds) & 20.05K & \textbf{100.0\%} / \textbf{100.0\%} & \textbf{100.0\%} / \textbf{100.0\%} & learning rate 0.001, entropy 0.001, weight $2^{-4}$ & 512 \\
@@ -127,6 +139,8 @@ schedule-fit RND, decay exponent $-1$, refreshed once per rollout & 120.79K $\pm
 count rule on the frozen tabular-RND field, decay exponent $-1$, refreshed every step (uneven start, scheduled decay) & 128.05K $\pm$ 16.31K [99.89K, 161.84K] & $-$12.72K [$-$100.66K, $+$48.34K], $-$9\% (512 seeds) & 63.29K & \textbf{100.0\%} / \textbf{100.0\%} & 39.1\% / 36.1\% & learning rate 0.001, entropy 0.01, weight $2^{-2}$ & 512 \\
 \addlinespace[2pt]
 baseline: CleanRL online tabular-RND (uneven start, decay left to training) & 157.01K $\pm$ 29.53K [106.76K, 221.37K] & baseline & 90.95K & \underline{99.7\%} / \underline{100.0\%} & \textbf{97.9\%} / \textbf{97.9\%} & learning rate 0.0001, entropy 0.01, weight $2^{5}$ & 1024 \\
+\addlinespace[2pt]
+baseline trained a second time by the extension run (configuration chosen by its own development grid) & 164.07K $\pm$ 31.30K [112.05K, 236.03K] & $+$7.07K [$-$75.67K, $+$86.98K], $+$5\% (1024 seeds) & 91.89K & \underline{99.7\%} / 100.0\% & 50.6\% / 50.0\% & learning rate 0.0001, entropy 0.01, weight $2^{-6}$ & 1024 \\
 \addlinespace[2pt]
 schedule-fit RND, decay exponent $-1.5$, refreshed every step & 1.32M $\pm$ 118.94K [1.10M, 1.56M] & $+$1.17M [$+$946.97K, $+$1.42M], $+$834\% (512 seeds) & 800.02K & 98.4\% / 99.9\% & 41.7\% / 40.6\% & learning rate 0.001, entropy 0.01, weight $2^{5}$ & 512 \\
 \addlinespace[2pt]

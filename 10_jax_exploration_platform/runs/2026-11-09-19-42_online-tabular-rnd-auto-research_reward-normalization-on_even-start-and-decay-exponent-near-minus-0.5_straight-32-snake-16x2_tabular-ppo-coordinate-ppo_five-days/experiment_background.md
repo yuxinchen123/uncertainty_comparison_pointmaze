@@ -85,6 +85,11 @@ baseline's mean:
 | schedule-fit RND, exponent −0.75, every step | 512 | 6.81K, −10% | 2.19K, −98% | 15.99K, −11% | 52.4K, −63% | 4 of 4 |
 | schedule-fit RND, exponent −0.5, every step | 1,024 | 8.04K, +6% | 3.09K, −96% | 32.0K, +73% | 60.1K, −62% | 2 of 4 |
 
+**Against the baseline as trained by the extension run** (same method, the configuration its own development grid
+chose; same 1,024 seeds): the exponent −1 row is ahead in all four cases, by 19%, 48%, 30% and 59%. The two copies
+of the baseline are level in three cases; on the straight grid with coordinate-PPO the extension's copy (4.59K, all
+seeds reach the goal) is ahead of this study's (81.7K, three seeds never do).
+
 **Against the goal set by the user:**
 
 1. **Improved in all four cases:** yes, at exponents −1 and −0.75.

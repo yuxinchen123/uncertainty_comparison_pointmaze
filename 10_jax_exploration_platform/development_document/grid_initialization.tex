@@ -171,6 +171,28 @@ Online tabular-RND with reward normalization on, the baseline of the auto resear
   }{No results of this study have been generated yet.}
 \fi
 
+\paragraph{Findings of the extension.}
+The numbers are mean capped first-goal times on the confirmation seeds, in the order straight
+grid with tabular-PPO, straight grid with coordinate-PPO, snake grid with tabular-PPO, snake grid
+with coordinate-PPO.
+\begin{enumerate}[leftmargin=*]
+\item \textbf{For the uniform field the best decay exponent depends on the policy.} With reward
+normalization on, tabular-PPO is fastest at $a=2$ (5.49K and 10.44K) and slowest at
+$a=\tfrac14$ (19.44K and 252.2K). Coordinate-PPO is fastest at $a=1$ (2.41K and 63.9K), and
+$a=2$ fails on the snake grid (11.5M; 37\% of seeds find the goal). The original count rule,
+$a=\tfrac12$, gives 8.11K, 3.14K, 31.9K and 163.7K.
+\item \textbf{An uneven start costs at $a=\tfrac12$.} The frozen tabular-RND field is slower than
+the uniform field at the same exponent in every case: 12.98K, 3.52K, 77.3K and 2.18M with reward
+normalization on.
+\item \textbf{Online tabular-RND has a lower mean than online coordinate-RND in every case},
+each at its best normalization: 7.55K against 11.59K, 4.59K against 7.82K, 18.20K against
+20.35K, and 164.1K against 235.9K.
+\item \textbf{Reward normalization changes online tabular-RND only with coordinate-PPO, and
+there through a few seeds.} With tabular-PPO the means are equal (7.66K off, 7.55K on; 18.20K
+and 18.25K). With coordinate-PPO they are 55.8K off against 4.59K on and 488.3K against 164.1K,
+while the trimmed means are 4.84K against 4.57K and 51.3K against 91.9K.
+\end{enumerate}
+
 \subsection{Online tabular-RND with an even start and a scheduled decay}
 \label{sec:grid-schedule-fit}
 The baseline of this study is online tabular-RND with reward normalization on
@@ -215,9 +237,11 @@ comparison repeats the protocol of \Cref{sec:grid-fixed-settings} for every row 
 \Cref{tab:grid-schedule-fit-rows}: all 52 configurations for 16.8 million transitions on the 16
 development seeds, then the configuration with the smallest mean capped first-goal time on fresh
 seeds from 20000 on (1,024 seeds for the baseline and the two main rows, 512 for the others).
-The baseline's development grid was trained a second time for this study, on other cards. The
-same seed does not give the same run on another card model, so rows are compared as
-distributions over the same seeds.
+The baseline's development grid was trained twice, by the extension run of
+\Cref{sec:grid-fixed-settings} and by this study, on different cards. The same seed does not give
+the same run on another card model, and the two grids chose different configurations. Both were
+confirmed on the same 1,024 seeds; the baseline of this study is the second, and the first is
+its own row in the tables.
 
 \begin{table}[H]
 \centering\small
@@ -228,6 +252,7 @@ distributions over the same seeds.
 \textbf{Row} & \textbf{Start} & \textbf{Decay} & \textbf{Bonus refresh} & \textbf{Confirmation seeds} \\
 \blackrule
 baseline: CleanRL online tabular-RND & uneven & left to training & once per rollout & 1,024 \\ \greyrule
+the same baseline as trained by the extension run, with its own chosen configuration & uneven & left to training & once per rollout & 1,024 \\ \greyrule
 schedule-fit RND, $a=1$ & even & $(1+m)^{-1}$ & every step & 1,024 \\ \greyrule
 schedule-fit RND, $a=\tfrac12$ & even & $(1+m)^{-1/2}$ & every step & 1,024 \\ \greyrule
 schedule-fit RND, $a\in\{\tfrac14,\tfrac34,\tfrac32,2\}$ & even & $(1+m)^{-a}$ & every step & 512 \\ \greyrule
@@ -254,11 +279,15 @@ are the mean-one field and the arrivals of \Cref{sec:grid-initialization}.}
 in all four cases} on the same 1,024 seeds (\Cref{tab:auto-research-confirmation-summary}): 6.12K
 against 7.56K transitions and 2.41K against 81.7K on the straight grid, 12.84K against 18.47K and
 67.6K against 157.0K on the snake grid (tabular-PPO first). Every 95\% interval of the difference
-excludes zero.
+excludes zero. It is also ahead of the baseline as trained by the extension run in all four
+cases, by 19\%, 48\%, 30\% and 59\% on the same 1,024 seeds
+(\Cref{tab:auto-research-confirmation-pairs}).
 \item \textbf{On the straight grid with coordinate-PPO the baseline's mean rests on a few seeds.}
 Three of its 1,024 seeds never reach the goal and carry 60\% of its mean. With the lowest and
 highest 80 seeds removed the means are 2.20K and 4.74K, so the lead holds without them and is
-about half, not 97\%.
+about half, not 97\%. The baseline as trained by the extension run chose another configuration
+(entropy 0.01, weight $2^{-4}$); all of its seeds reach the goal, its mean is 4.59K, and the
+schedule-fit RND is 48\% ahead of it.
 \item \textbf{The schedules ahead in all four cases are $a=\tfrac34$ and $a=1$, not
 $a=\tfrac12$.} By exponent (\Cref{tab:auto-research-confirmation-summary},
 \Cref{fig:auto-research-confirmation-by-decay-exponent}):
@@ -304,7 +333,8 @@ same schedule in all four cases: 14\%, 49\%, 13\% and 40\% faster on the same 51
 \item \textbf{The final policy is a cost on the snake grid with coordinate-PPO.} The schedule-fit
 RND with $a=1$ reaches the goal sooner there, but its final policy reaches it in 55\% of
 evaluation episodes against the baseline's 98\%; its chosen intrinsic weight is $2^{6}$, the
-largest of the grid. The slower schedules keep more of the final policy in that case: 85\% with
+largest of the grid. The baseline's own rate depends on its configuration: it is 51\% with the
+configuration chosen by the extension run. The slower schedules keep more of the final policy in that case: 85\% with
 $a=\tfrac12$ (60.1K transitions, level with $a=1$ on the same seeds) and 90\% with $a=\tfrac14$
 (67.4K), both ahead of the baseline in first-goal time.
 \end{enumerate}

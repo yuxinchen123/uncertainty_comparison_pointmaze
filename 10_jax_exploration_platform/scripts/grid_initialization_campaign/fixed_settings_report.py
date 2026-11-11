@@ -5,6 +5,7 @@ from collections import defaultdict
 import json
 from pathlib import Path
 import re
+import textwrap
 
 import numpy as np
 
@@ -205,27 +206,28 @@ def results_table(rows, latex=False):
 
 def markdown_table(rows):
     """Render one results table in Markdown with the sorted column's arrow."""
-    trim = max(row['trim'] for row in rows)
     header = ('| condition | mean capped first-goal steps ↓ ± standard error [95%] | '
-              f'trimmed mean ({trim} lowest and {trim} highest seeds removed) ± standard error | goal found | coverage | '
+              f'trimmed mean ({TRIM_PER_128} of every 128 seeds removed from each end) ± standard error | goal found | coverage | '
               'final-policy goal rate, sampled | greedy | configuration | seeds |\n|---|---|---|---|---|---|---|---|---|\n')
     return header + ''.join('| ' + ' | '.join(cells) + ' |\n' for cells in results_table(rows))
 
 
 def latex_table(rows, caption, label):
-    """Render one results table in LaTeX for the development document."""
+    """Render one results table in LaTeX for the development document; it continues on the next page when it is long."""
     body = ''.join(' & '.join(cells) + ' \\\\\n' for cells in results_table(rows, latex=True))
     # Fit the text width (13.97 cm): 12.2 cm of columns plus 16 gaps of 3 pt (1.69 cm); the
     # earlier 13.5 cm of columns with 6 pt gaps ran 82.6 pt into the margin.
-    # Before: 8 columns (3.3, 2.3, 0.8, 0.9, 1.0, 0.8, 2.3, 0.6); after: a trimmed-mean column added.
-    trim = max(row['trim'] for row in rows)
-    return ('\\begin{table}[H]\\centering\\scriptsize\\setlength{\\tabcolsep}{3pt}\n\\caption{' + caption + '}\\label{' + label + '}\n'
-            '\\begin{tabular}{@{}' + ''.join(f'>{{\\raggedright\\arraybackslash}}p{{{width}cm}}' for width in
-                                              (2.8, 2.1, 1.5, 0.8, 0.9, 1.0, 0.8, 1.7, 0.6)) + '@{}}\\toprule\n'
-            'condition & mean capped first-goal steps $\\downarrow$ $\\pm$ standard error [95\\%] & '
-            f'trimmed mean, {trim} lowest and {trim} highest removed, $\\pm$ standard error & goal found & coverage & '
-            'final goal rate, sampled & greedy & configuration & seeds \\\\\\midrule\n' + body +
-            '\\bottomrule\\end{tabular}\\end{table}\n')
+    # A longtable, because 23 conditions of up to four lines each are taller than one page: as one unbreakable
+    # tabular the last rows ran off the page. The small font is set per column so the caption keeps its size.
+    columns = ''.join(f'>{{\\scriptsize\\raggedright\\arraybackslash}}p{{{width}cm}}' for width in
+                      (2.8, 2.1, 1.5, 0.8, 0.9, 1.0, 0.8, 1.7, 0.6))
+    header = ('condition & mean capped first-goal steps $\\downarrow$ $\\pm$ standard error [95\\%] & '
+              f'trimmed mean, {TRIM_PER_128} of every 128 seeds removed from each end, $\\pm$ standard error & goal found & '
+              'coverage & final goal rate, sampled & greedy & configuration & seeds \\\\\\midrule\n')
+    return ('\\begingroup\\setlength{\\tabcolsep}{3pt}\\setlength{\\LTcapwidth}{\\linewidth}\n'
+            '\\begin{longtable}{@{}' + columns + '@{}}\n\\caption{' + caption + '}\\label{' + label + '}\\\\\n'
+            '\\toprule\n' + header + '\\endfirsthead\n\\toprule\n' + header + '\\endhead\n'
+            '\\bottomrule\n\\endfoot\n' + body + '\\end{longtable}\\endgroup\n')
 
 
 def best_by_trim(rows, per_end):
@@ -334,17 +336,25 @@ def development_figure(rows, kind, policy, plots):
             axis.axhline(row['mean'], color=color, linestyle=':', linewidth=1)
         axis.set_xscale('log', base=2)
         axis.set_yscale('log')
-        axis.set_title(condition_label(name), fontsize=8)
+        # A long condition name is wrapped onto two lines so it stays above its own panel.
+        # Before: 'frozen coordinate-RND field, state normalization off, reward normalization off' on one line;
+        # after:  the same words broken after about 44 characters.
+        axis.set_title(textwrap.fill(condition_label(name), 44), fontsize=8)
     for axis in axes.flat[len(names):]:
         axis.set_visible(False)
-    for axis in axes[-1]:
-        axis.set_xlabel('intrinsic weight')
+    # The lowest drawn panel of each column carries the weight axis, also where the last row is not full.
+    for column in range(4):
+        drawn = [axes[row, column] for row in range(panel_rows) if row * 4 + column < len(names)]
+        if drawn:
+            drawn[-1].set_xlabel('intrinsic weight')
+            drawn[-1].tick_params(labelbottom=True)
     for axis in axes[:, 0]:
         axis.set_ylabel('mean capped first-goal steps')
     axes.flat[0].legend(fontsize=7)
     figure.suptitle(f'Development, {CASE_LABELS[kind]}, {POLICY_LABELS[policy]}, 16 seeds per point '
-                    '(dotted: no bonus at each learning rate and entropy)', fontsize=10)
-    figure.tight_layout()
+                    '(dotted: no bonus at each learning rate and entropy)', fontsize=10, y=0.995)
+    # The top strip is kept for the figure's title, which otherwise runs through the first row's panel titles.
+    figure.tight_layout(rect=(0, 0, 1, 1 - 0.25 / panel_rows))
     name = f'development_intrinsic-weight_{kind}_{policy}'
     for suffix in ('png', 'pdf'):
         figure.savefig(plots/f'{name}.{suffix}', dpi=130)

@@ -6,9 +6,8 @@ Times are Pacific. The protocol is in `program.md`; the plan is
 
 ## Where things are
 
-- **Status (2026-11-11 11:00 PT):** every unit of the study is finished (1,260 done, none failed, none on any other
-  server). What remains is outside this folder: the extension run's own confirmation of the baseline, compared with
-  this folder's baseline row when it ends.
+- **Status (2026-11-11 15:10 PT):** complete. Every unit of the study is finished (1,260 done, none failed, none on
+  any other server), and the extension run's own baseline is confirmed and compared with this folder's baseline.
 - **Result in one line:** the schedule-fit RND with decay exponent −1, refreshed at every step, is ahead of the
   baseline in all four cases on 1,024 seeds; so is exponent −0.75 on 512 seeds; exponent −0.5 is ahead in two.
 - **Code:** frozen copy `code/current` → `code/source_84723a80…/` (training code); report code at the repository's
@@ -370,6 +369,21 @@ Times are Pacific. The protocol is in `program.md`; the plan is
 
   Written: `batches/04_…/summary.md`, `batches/06_…/summary.md`, `batches/07_…/summary.md`, the findings of the
   development document's subsection, the outcome section of `experiment_background.md`.
+
+- **2026-11-11 15:05. The extension run's own baseline is confirmed and joins the report as a second baseline row**
+  (`batches/external_rows.json`; commit `735bac6c`). The extension's development grid chose other configurations
+  (weights 2^-3, 2^-4, 2^-3, 2^-6; entropy 0.001, 0.01, 0.01, 0.01; learning rate 1e-3, 1e-3, 1e-3, 1e-4). On the
+  same 1,024 seeds:
+
+  | case | extension's baseline | this study's baseline | the two against each other | schedule-fit RND (−1, every step) against the extension's baseline |
+  |---|---|---|---|---|
+  | straight, tabular-PPO | 7.55K | 7.56K | level | −1.43K [−1.60K, −1.25K], −19%, ahead |
+  | straight, coordinate-PPO | 4.59K (all seeds reach the goal) | 81.7K (3 seeds never do) | extension's ahead, −94% | −2.19K [−2.34K, −2.03K], −48%, ahead |
+  | snake, tabular-PPO | 18.25K | 18.47K | level | −5.41K [−5.91K, −4.91K], −30%, ahead |
+  | snake, coordinate-PPO | 164.1K (final-policy goal rate 51%) | 157.0K (98%) | level | −96.5K [−169.7K, −41.5K], −59%, ahead |
+
+  So the main row is ahead of both copies of the baseline in all four cases, and on the straight grid with
+  coordinate-PPO the lead over a baseline without failed seeds is 48%.
 
 ## Idea list
 

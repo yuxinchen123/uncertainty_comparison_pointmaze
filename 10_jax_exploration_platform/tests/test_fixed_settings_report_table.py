@@ -26,7 +26,7 @@ def table_width_cm(tex):
     # Before: '...\\setlength{\\tabcolsep}{3pt}...{@{}>{...}p{3.3cm}...p{0.6cm}@{}}'; after: 12.0 + 14 * 3 pt.
     widths = [float(value) for value in re.findall(r'p\{([0-9.]+)cm\}', tex)]
     gap = float(re.search(r'\\tabcolsep\}\{([0-9.]+)pt\}', tex).group(1))
-    outer = 0 if '\\begin{tabular}{@{}' in tex else 2
+    outer = 0 if '\\begin{longtable}{@{}' in tex else 2
     return sum(widths) + (2*(len(widths)-1) + outer)*gap*POINT_CM
 
 
@@ -43,8 +43,11 @@ def test_results_table_keeps_one_row_per_condition_sorted_by_the_primary_metric(
     tex = REPORT.latex_table([row('no-bonus_state-normalization-off_reward-normalization-off', 21468, 1.0),
                               row('uniform_state-normalization-off_reward-normalization-on', 8110, 1.0)],
                              'caption', 'tab:test')
-    body = tex.split('\\midrule\n')[1].split('\\bottomrule')[0].strip().splitlines()
+    body = tex.split('\\endfoot\n')[1].split('\\end{longtable}')[0].strip().splitlines()
     assert len(body) == 2 and body[0].startswith('uniform field')
+    # The table may continue on the next page: its header is given once for the first page and once for the others.
+    assert tex.count('\\toprule') == 2 and '\\endfirsthead' in tex and '\\endhead' in tex
+    assert '10 of every 128 seeds removed from each end' in tex
 
 
 def test_only_the_mean_is_styled_so_the_interval_can_wrap():
