@@ -5,7 +5,7 @@
 # No speed test or benchmark is run.
 RUN=/orcd/scratch/orcd/008/shuzel/rnd_grid/runs/auto_research
 PY=/orcd/scratch/orcd/008/shuzel/envs/rnd_platform_jax/bin/python
-CODE=/orcd/scratch/orcd/008/shuzel/rnd_grid/code/source_9cd855bb4d2c2da5399974396a9183c58fba890a/10_jax_exploration_platform
+CODE=/orcd/scratch/orcd/008/shuzel/rnd_grid/code/current/10_jax_exploration_platform
 UNIT_SECONDS=4000
 LIMIT_SECONDS=43200
 export GRID_GPU_CLASS=h100_mit

@@ -5,7 +5,7 @@
 # No speed test or benchmark is run.
 RUN=/scratch/gilbreth/liu4869/rnd_grid/runs/auto_research
 PY=/scratch/gilbreth/liu4869/envs/rnd_platform_jax/bin/python
-CODE=/scratch/gilbreth/liu4869/rnd_grid/code/source_9cd855bb4d2c2da5399974396a9183c58fba890a/10_jax_exploration_platform
+CODE=/scratch/gilbreth/liu4869/rnd_grid/code/current/10_jax_exploration_platform
 UNIT_SECONDS=8000
 LIMIT_SECONDS=14400
 export GRID_GPU_CLASS=a100_80gb_gilbreth
