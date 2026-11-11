@@ -119,3 +119,35 @@ def test_pair_rows_compare_one_idea_with_another_on_their_common_seeds():
     assert 'exponent $-1$' in tex and '$-$0.50K [$-$0.50K, $-$0.50K], $-$5\\%, ahead (32 seeds)' in tex
     # One body row ends with a line break; the header row runs straight into its rule.
     assert tex.count('\\\\\n') == 1 and '\\label{tab:auto-research-confirmation-pairs}' in tex
+
+
+def test_exponent_rows_keep_the_per_step_schedule_fit_rows_in_exponent_order():
+    """Only schedule-fit rows refreshed every step count, sorted from the slowest decay; other ideas are left out."""
+    scores = np.linspace(9000, 11000, 16)
+    case = ('snake', 'neural')
+    pooled = {('06', 'control', *case): records(scores),
+              ('06', 'schedule-fit-rnd-exponent-minus-1-refresh-per-step', *case): records(scores - 1000),
+              ('06', 'schedule-fit-rnd-exponent-minus-0.5-refresh-per-step', *case): records(scores + 500),
+              ('06', 'schedule-fit-rnd-exponent-minus-1-refresh-per-rollout', *case): records(scores),
+              ('06', 'unit-start', *case): records(scores)}
+    rows = report.exponent_rows(pooled, '06', *case)
+    assert [exponent for exponent, _ in rows] == [0.5, 1.0]
+    assert rows[0][1]['paired']['mean'] == 500.0 and rows[1][1]['paired']['mean'] == -1000.0
+    assert report.exponent_rows(pooled, '06', 'straight', 'tabular') == []
+
+
+def test_decay_exponent_figure_is_written_only_when_a_row_exists(tmp_path):
+    """The figure is written as PNG and PDF when a schedule-fit row exists, and skipped otherwise."""
+    scores = np.linspace(9000, 11000, 16)
+    pooled = {('06', 'control', 'snake', 'neural'): records(scores)}
+    assert report.decay_exponent_figure(pooled, '06', tmp_path) is None and not list(tmp_path.iterdir())
+    pooled[('06', 'schedule-fit-rnd-exponent-minus-1-refresh-per-step', 'snake', 'neural')] = records(scores - 1000)
+    assert report.decay_exponent_figure(pooled, '06', tmp_path) == 'confirmation_by_decay_exponent'
+    assert sorted(path.name for path in tmp_path.iterdir()) == ['confirmation_by_decay_exponent.pdf',
+                                                                'confirmation_by_decay_exponent.png']
+
+
+def test_step_ticks_use_decades_on_a_wide_axis_and_1_2_5_on_a_narrow_one():
+    """A narrow range gets 1-2-5 ticks inside it; a range over 30-fold gets powers of ten only."""
+    assert report.step_ticks(5100.0, 25000.0) == [10000.0, 20000.0]
+    assert report.step_ticks(49000.0, 6.0e6) == [100000.0, 1000000.0]

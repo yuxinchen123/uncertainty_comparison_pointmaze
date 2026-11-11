@@ -260,7 +260,8 @@ Three of its 1,024 seeds never reach the goal and carry 60\% of its mean. With t
 highest 80 seeds removed the means are 2.20K and 4.74K, so the lead holds without them and is
 about half, not 97\%.
 \item \textbf{The schedules ahead in all four cases are $a=\tfrac34$ and $a=1$, not
-$a=\tfrac12$.} By exponent (\Cref{tab:auto-research-confirmation-summary}):
+$a=\tfrac12$.} By exponent (\Cref{tab:auto-research-confirmation-summary},
+\Cref{fig:auto-research-confirmation-by-decay-exponent}):
 \begin{itemize}[leftmargin=*]
 \item $a=\tfrac14$: behind with tabular-PPO (2.7 and 12 times the baseline's time), ahead with
 coordinate-PPO.
@@ -274,7 +275,11 @@ the snake grid with coordinate-PPO (5.53M; 14\% of its seeds never reach the goa
 Tabular-PPO is faster with a faster decay and coordinate-PPO with a slower one. Against $a=1$ on
 the same seeds (\Cref{tab:auto-research-confirmation-pairs}), $a=\tfrac34$ is 11\% and 24\% slower
 with tabular-PPO, level on the straight grid with coordinate-PPO and 28\% faster on the snake
-grid with coordinate-PPO; $a=\tfrac12$ is slower in three cases and level in the fourth.
+grid with coordinate-PPO; $a=\tfrac12$ is slower in three cases and level in the fourth. A
+different count rate does not change the result at $a=\tfrac12$: in the screens, with the schedule
+$(1+cm)^{-1/2}$ refreshed once per rollout and $c$ from 0.25 to 4, the snake grid with tabular-PPO
+stays at 37.7K to 42.8K transitions against the baseline's 18.7K (32 seeds, a quarter of the
+budget).
 \item \textbf{The even start is exact; the measured decay of the winning rows is steeper than
 $-\tfrac12$.} Every schedule-fit row starts with a largest-to-smallest ratio of 1.00. The median
 slope measured as for the baseline is $-0.47$ to $-0.48$ with $a=\tfrac12$, $-0.61$ to $-0.68$

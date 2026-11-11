@@ -1,6 +1,6 @@
 # Online tabular-RND auto research
 
-Generated 2026-11-11 10:41 PT (times are Pacific, converted from machines running Eastern). Finished settings: 8856. Protocol: `program.md`; log: `STATE.md`.
+Generated 2026-11-11 10:54 PT (times are Pacific, converted from machines running Eastern). Finished settings: 8856. Protocol: `program.md`; log: `STATE.md`.
 
 ## Contents
 
@@ -14,7 +14,7 @@ Generated 2026-11-11 10:41 PT (times are Pacific, converted from machines runnin
 | [screen 03: results](#screen-03-results) | 2026-11-10 02:03 PT | 2026-11-10 03:43 PT | unread |
 | [screen 04: results](#screen-04-results) | 2026-11-10 03:05 PT | 2026-11-10 12:24 PT | unread |
 | [screen 05: results](#screen-05-results) | 2026-11-10 04:04 PT | 2026-11-10 07:24 PT | unread |
-| [confirmation: chosen configurations on the confirmation seeds](#confirmation-chosen-configurations-on-the-confirmation-seeds) | 2026-11-10 18:24 PT | 2026-11-11 10:41 PT | unread |
+| [confirmation: chosen configurations on the confirmation seeds](#confirmation-chosen-configurations-on-the-confirmation-seeds) | 2026-11-10 18:24 PT | 2026-11-11 10:54 PT | unread |
 
 [Read with section colors](analysis.html). No section marks itself read.
 
@@ -512,6 +512,12 @@ Each cell gives the first-named row's score minus the second-named row's over th
 | refreshed every step against refreshed once per rollout, both schedule-fit RND with decay exponent −1 | -0.99K [-1.22K, -0.77K], -14%, ahead (512 seeds) | -2.21K [-3.93K, -1.32K], -49%, ahead (512 seeds) | -1.90K [-2.34K, -1.46K], -13%, ahead (512 seeds) | -48.25K [-76.99K, -14.32K], -40%, ahead (512 seeds) |
 | decay exponent −0.75 against decay exponent −1, both schedule-fit RND refreshed every step | +0.67K [+0.43K, +0.93K], +11%, behind (512 seeds) | -0.15K [-0.30K, +0.01K], -6%, level (512 seeds) | +3.11K [+2.49K, +3.77K], +24%, behind (512 seeds) | -20.13K [-50.48K, -0.92K], -28%, ahead (512 seeds) |
 | decay exponent −0.5 against decay exponent −1, both schedule-fit RND refreshed every step | +1.92K [+1.62K, +2.30K], +31%, behind (1024 seeds) | +0.68K [+0.56K, +0.80K], +28%, behind (1024 seeds) | +19.17K [+17.28K, +21.18K], +149%, behind (1024 seeds) | -7.52K [-23.01K, +3.86K], -11%, level (1024 seeds) |
+
+### Against the decay exponent
+
+The schedule-fit RND rows refreshed every step in the four cases of the table above (same order), against $a$ of their schedule $(1+m)^{-a}$, where $m$ is the number of times the cell has been a training state (decay exponent $-a$). Top: the score with its 95% interval, on a logarithmic axis. Bottom: the final policy's goal rate $P(B)$ with sampled actions, the share of evaluation episodes that reach the goal. The dashed line is the baseline.
+
+![confirmation by decay exponent](plots/confirmation_by_decay_exponent.png)
 
 ### straight grid, 32 cells, tabular-PPO
 

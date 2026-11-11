@@ -376,10 +376,99 @@ def pair_latex(pooled, batch, pairs):
             + ' \\\\\\midrule\n' + body + '\\bottomrule\\end{tabular}\\end{table}\n')
 
 
+EXPONENT_IDEA = re.compile(r'^schedule-fit-rnd-exponent-minus-([0-9.]+)-refresh-per-step$')
+FRACTIONS = {0.25: '¼', 0.5: '½', 0.75: '¾', 1.5: '1½'}
+
+
+def exponent_rows(pooled, batch, kind, policy):
+    """The schedule-fit rows refreshed every step in one case, as (decay exponent, confirmed row), slowest decay first."""
+    # Before: pooled records keyed by idea name; after: [(0.25, row), (0.5, row), ..., (2.0, row)].
+    baseline = pooled.get((batch, BASELINE_IDEA, kind, policy))
+    rows = [(float(EXPONENT_IDEA.match(idea).group(1)), confirmation_row(records, baseline))
+            for (group, idea, grid, kind_of_policy), records in pooled.items()
+            if (group, grid, kind_of_policy) == (batch, kind, policy) and EXPONENT_IDEA.match(idea)]
+    return sorted(rows, key=lambda item: item[0])
+
+
+def step_ticks(low, high):
+    """Tick values for a logarithmic step-count axis: powers of ten over a wide range, 1-2-5 steps over a narrow one."""
+    # Before: (5100, 25000); after: [10000, 20000]. Before: (49000, 6.0e6); after: [100000, 1000000].
+    digits = (1,) if high / low > 30 else (1, 2, 5)
+    return [digit * 10.0 ** power for power in range(int(np.floor(np.log10(low))), int(np.ceil(np.log10(high))) + 1)
+            for digit in digits if low <= digit * 10.0 ** power <= high]
+
+
+def decay_exponent_figure(pooled, batch, plots):
+    """Draw first-goal time and final-policy goal rate against the decay exponent, one column per case; None if no row."""
+    if not any(exponent_rows(pooled, batch, kind, policy) for kind, policy in CASE_ORDER):
+        return None
+    import matplotlib
+    matplotlib.use('Agg')
+    import matplotlib.pyplot as plt
+    from matplotlib.lines import Line2D
+    # One series hue for the method; the baseline is a reference line in neutral ink, dashed, so it is not told by hue.
+    series, ink, muted, grid = '#2a78d6', '#0b0b0b', '#52514e', '#e4e3df'
+    figure, axes = plt.subplots(2, 4, figsize=(6.8, 3.9), sharex='col')
+    for column, (kind, policy) in enumerate(CASE_ORDER):
+        rows = exponent_rows(pooled, batch, kind, policy)
+        baseline = pooled.get((batch, BASELINE_IDEA, kind, policy))
+        reference = confirmation_row(baseline, baseline) if baseline else None
+        places = list(range(len(rows)))
+        for axis, key, low_high in ((axes[0, column], 'mean', lambda row: row['interval']), (axes[1, column], 'sampled', None)):
+            scale = 1.0 if key == 'mean' else 100.0
+            values = [scale * row[key] for _, row in rows]
+            if low_high:
+                # The 95% interval of each mean as a thin vertical line behind its marker.
+                for place, (_, row) in zip(places, rows):
+                    axis.plot([place, place], low_high(row), color=series, linewidth=1, solid_capstyle='butt', zorder=2)
+            axis.plot(places, values, color=series, linewidth=1.8, marker='o', markersize=5, markeredgecolor='white',
+                      markeredgewidth=0.9, zorder=3)
+            if reference:
+                level = scale * reference[key]
+                if low_high:
+                    axis.axhspan(*reference['interval'], color=muted, alpha=0.12, linewidth=0, zorder=1)
+                axis.axhline(level, color=muted, linewidth=1.3, linestyle=(0, (4, 2)), zorder=2)
+            axis.set_xticks(places)
+            # Quarter steps are written as fractions so that six labels fit under one narrow panel.
+            axis.set_xticklabels([FRACTIONS.get(exponent, f'{exponent:g}') for exponent, _ in rows], fontsize=8.5)
+            axis.margins(x=0.08)
+            axis.tick_params(axis='y', labelsize=7.5, length=0)
+            axis.tick_params(axis='x', length=0)
+            axis.grid(axis='y', color=grid, linewidth=0.6)
+            axis.set_axisbelow(True)
+            for side in ('top', 'right', 'left'):
+                axis.spines[side].set_visible(False)
+            axis.spines['bottom'].set_color(muted)
+        top = axes[0, column]
+        top.set_yscale('log')
+        top.margins(y=0.1)
+        # Step counts as 10K, 100K, 1M at chosen values; the automatic minor labels are dropped.
+        ticks = step_ticks(*top.get_ylim())
+        top.set_yticks(ticks)
+        top.set_yticklabels([compact(value).replace('.00', '') for value in ticks])
+        top.minorticks_off()
+        top.set_title(f'{CASE_LABELS[kind].split(",")[0]},\n{POLICY_LABELS[policy]}', fontsize=8.5, color=ink)
+        axes[1, column].set_ylim(0, 108)
+    axes[0, 0].set_ylabel('mean capped first-goal\ntransitions (log scale)', fontsize=8, color=ink)
+    axes[1, 0].set_ylabel('final-policy goal rate,\nsampled actions (%)', fontsize=8, color=ink)
+    figure.legend(handles=[Line2D([], [], color=series, linewidth=1.8, marker='o', markersize=5, markeredgecolor='white',
+                                  label='schedule-fit RND, refreshed every step (bar: 95% interval)'),
+                           Line2D([], [], color=muted, linewidth=1.3, linestyle=(0, (4, 2)),
+                                  label='baseline: CleanRL online tabular-RND (band: 95% interval)')],
+                  loc='upper center', ncol=1, frameon=False, fontsize=8, bbox_to_anchor=(0.5, 1.0))
+    figure.supxlabel('$a$ in the schedule $(1+m)^{-a}$ (decay exponent $-a$)', fontsize=8, color=ink)
+    figure.tight_layout(rect=(0, 0, 1, 0.9))
+    name = 'confirmation_by_decay_exponent'
+    for suffix in ('png', 'pdf'):
+        figure.savefig(plots/f'{name}.{suffix}', dpi=170)
+    plt.close(figure)
+    return name
+
+
 def generate(run_dir):
     """Write analysis/analysis.md (with its contents table) and a JSON of every best row."""
-    analysis = run_dir/'analysis'
-    analysis.mkdir(exist_ok=True)
+    analysis, plots = run_dir/'analysis', run_dir/'analysis/plots'
+    plots.mkdir(parents=True, exist_ok=True)
     rows = unit_rows(run_dir)
     best = best_rows(rows)
     words = {}
@@ -415,6 +504,7 @@ def generate(run_dir):
     # A study may list pairs of rows to compare with each other (its ablation); a study without the file has none.
     pairs_path = run_dir/'batches/row_comparisons.json'
     pairs = read_json(pairs_path) if pairs_path.exists() else []
+    figures = {}
     for batch in sorted({key[0] for key in pooled}):
         section = ["## confirmation: chosen configurations on the confirmation seeds\n\n"
                    "Define $K$ as the number of policy seeds, $B$ as the budget, and $T_i$ as the transition at which "
@@ -439,6 +529,15 @@ def generate(run_dir):
                            "interval, the same difference as a percentage of the second row's mean, and a verdict about "
                            "the first-named row: ahead when the whole interval is below zero, behind when it is above "
                            "zero, level when it contains zero.\n\n" + pair_table(pooled, batch, pairs) + '\n')
+        figures[batch] = decay_exponent_figure(pooled, batch, plots)
+        if figures[batch]:
+            section.append("### Against the decay exponent\n\nThe schedule-fit RND rows refreshed every step in the four cases of the "
+                           "table above (same order), against $a$ of their schedule $(1+m)^{-a}$, where $m$ is the "
+                           "number of times the cell has been a training state (decay exponent $-a$). Top: the "
+                           "score with its 95% interval, on a logarithmic axis. Bottom: the final policy's goal rate "
+                           "$P(B)$ with sampled actions, the share of evaluation episodes that reach the goal. The "
+                           "dashed line is the baseline.\n\n"
+                           f"![confirmation by decay exponent](plots/{figures[batch]}.png)\n\n")
         for kind, policy in CASE_ORDER:
             section.append(f"### {CASE_LABELS[kind]}, {POLICY_LABELS[policy]}\n\n")
             present = any((group, grid, kind_of_policy) == (batch, kind, policy) for group, _, grid, kind_of_policy in pooled)
@@ -451,6 +550,13 @@ def generate(run_dir):
         tex.append(confirmation_summary_latex(pooled, batch, words))
         if pairs:
             tex.append(pair_latex(pooled, batch, pairs))
+        if figures[batch]:
+            tex.append('\\begin{figure}[H]\\centering\\includegraphics[width=\\linewidth]{\\AutoResearchRunPath/analysis/'
+                       f'plots/{figures[batch]}.pdf}}' '\\caption{Confirmation on seeds 20000 on: the '
+                       'schedule-fit RND refreshed every step, against $a$ of its schedule $(1+m)^{-a}$. Top: mean capped '
+                       'first-goal time with its 95\\% interval (logarithmic axis). Bottom: the final policy\'s goal '
+                       'rate with sampled actions. Dashed line and band: the baseline and its 95\\% interval.}'
+                       '\\label{fig:auto-research-confirmation-by-decay-exponent}\\end{figure}\n')
         for kind, policy in CASE_ORDER:
             if any((group, grid, kind_of_policy) == (batch, kind, policy) for group, _, grid, kind_of_policy in pooled):
                 tex.append(confirmation_latex(pooled, configurations, batch, kind, policy, words))
