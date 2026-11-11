@@ -324,6 +324,58 @@ def confirmation_summary_latex(pooled, batch, ideas):
             + ' & cases ahead of the baseline \\\\\\midrule\n' + body + '\\bottomrule\\end{tabular}\\end{table}\n')
 
 
+def pair_rows(pooled, batch, pairs, latex=False):
+    """One row of cells per requested pair of ideas: the first idea's score minus the second's, in each case."""
+    # Before: two ideas' {policy seed: record} in a case;
+    # after:  '-1.23K [-1.90K, -0.61K], -9%, ahead (512 seeds)', the verdict being about the first-named idea.
+    percent = '\\%' if latex else '%'
+    rows = []
+    for pair in pairs:
+        cells = []
+        for kind, policy in CASE_ORDER:
+            first, second = (pooled.get((batch, pair[side], kind, policy)) for side in ('first', 'second'))
+            if first is None or second is None:
+                cells.append('not run yet')
+                continue
+            paired = confirmation_row(first, second)['paired']
+            if paired is None:
+                cells.append('no seeds in common yet')
+                continue
+            text = (f"{compact(paired['mean'], True)} [{compact(paired['interval'][0], True)}, "
+                    f"{compact(paired['interval'][1], True)}], {100 * paired['mean'] / paired['baseline_mean']:+.0f}{percent}, "
+                    f"{verdict(paired)} ({paired['seeds']} seeds)")
+            cells.append(re.sub(r'([+-])([0-9])', r'$\1$\2', text) if latex else text)
+        label = re.sub(r'exponent [−-]([0-9.]+)', r'exponent $-\1$', pair['label']) if latex else pair['label']
+        rows.append([label] + cells)
+    return rows
+
+
+def pair_table(pooled, batch, pairs):
+    """The row-against-row comparisons in Markdown: pairs in rows, the four cases in columns."""
+    header = ('| first row against second row | ' + ' | '.join(f'{CASE_LABELS[kind]}, {POLICY_LABELS[policy]}'
+                                                               for kind, policy in CASE_ORDER) + ' |\n|---|---|---|---|---|\n')
+    return header + ''.join('| ' + ' | '.join(cells) + ' |\n' for cells in pair_rows(pooled, batch, pairs))
+
+
+def pair_latex(pooled, batch, pairs):
+    """The row-against-row comparisons in LaTeX for the development document (13.97 cm of text width)."""
+    # Five columns: 12.3 cm of columns plus 8 gaps of 3 pt (0.85 cm).
+    body = '\\addlinespace[2pt]\n'.join(' & '.join(cells) + ' \\\\\n' for cells in pair_rows(pooled, batch, pairs, latex=True))
+    widths = (3.3, 2.25, 2.25, 2.25, 2.25)
+    return ('\\begin{table}[H]\\centering\\scriptsize\\setlength{\\tabcolsep}{3pt}\n'
+            '\\caption{Confirmation on seeds 20000 on, one row against another. Each cell gives the first-named row\'s '
+            'mean capped first-goal time minus the second-named row\'s over the seeds both have (negative means the '
+            'first is faster), its 95\\% interval from resampling field seeds, the same difference as a percentage of '
+            'the second row\'s mean, and a verdict about the first-named row: ahead when the whole interval is below '
+            'zero, behind when it is above zero, level when it contains zero.}'
+            '\\label{tab:auto-research-confirmation-pairs}\n'
+            '\\begin{tabular}{@{}' + ''.join(f'>{{\\raggedright\\arraybackslash}}p{{{width}cm}}' for width in widths)
+            + '@{}}\\toprule\n'
+            'first row against second row & ' + ' & '.join(f'{CASE_LABELS[kind]}, {POLICY_LABELS[policy]}'
+                                                           for kind, policy in CASE_ORDER)
+            + ' \\\\\\midrule\n' + body + '\\bottomrule\\end{tabular}\\end{table}\n')
+
+
 def generate(run_dir):
     """Write analysis/analysis.md (with its contents table) and a JSON of every best row."""
     analysis = run_dir/'analysis'
@@ -360,6 +412,9 @@ def generate(run_dir):
             section.append(case_table(selected, words) + '\n' if selected else 'Not run yet.\n\n')
         markdown.append(''.join(section))
     pooled, configurations = confirmation_records(run_dir)
+    # A study may list pairs of rows to compare with each other (its ablation); a study without the file has none.
+    pairs_path = run_dir/'batches/row_comparisons.json'
+    pairs = read_json(pairs_path) if pairs_path.exists() else []
     for batch in sorted({key[0] for key in pooled}):
         section = ["## confirmation: chosen configurations on the confirmation seeds\n\n"
                    "Define $K$ as the number of policy seeds, $B$ as the budget, and $T_i$ as the transition at which "
@@ -378,6 +433,12 @@ def generate(run_dir):
                        "95% interval of the difference is below zero, behind when it is above zero, level when it "
                        "contains zero. Rows are sorted by the mean of those percentages.\n\n"
                        + confirmation_summary(pooled, batch, words) + '\n')
+        if pairs:
+            section.append("### One row against another\n\nEach cell gives the first-named row's score minus the "
+                           "second-named row's over the seeds both have (negative means the first is faster), its 95% "
+                           "interval, the same difference as a percentage of the second row's mean, and a verdict about "
+                           "the first-named row: ahead when the whole interval is below zero, behind when it is above "
+                           "zero, level when it contains zero.\n\n" + pair_table(pooled, batch, pairs) + '\n')
         for kind, policy in CASE_ORDER:
             section.append(f"### {CASE_LABELS[kind]}, {POLICY_LABELS[policy]}\n\n")
             present = any((group, grid, kind_of_policy) == (batch, kind, policy) for group, _, grid, kind_of_policy in pooled)
@@ -388,6 +449,8 @@ def generate(run_dir):
     tex = ['% Generated by auto_research_report.py; do not edit.\n']
     for batch in sorted({key[0] for key in pooled}):
         tex.append(confirmation_summary_latex(pooled, batch, words))
+        if pairs:
+            tex.append(pair_latex(pooled, batch, pairs))
         for kind, policy in CASE_ORDER:
             if any((group, grid, kind_of_policy) == (batch, kind, policy) for group, _, grid, kind_of_policy in pooled):
                 tex.append(confirmation_latex(pooled, configurations, batch, kind, policy, words))

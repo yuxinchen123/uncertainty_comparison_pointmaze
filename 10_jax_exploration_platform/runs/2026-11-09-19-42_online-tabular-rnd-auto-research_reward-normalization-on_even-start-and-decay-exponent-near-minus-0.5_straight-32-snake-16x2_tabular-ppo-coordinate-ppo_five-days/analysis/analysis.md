@@ -1,6 +1,6 @@
 # Online tabular-RND auto research
 
-Generated 2026-11-11 00:04 PT (times are Pacific, converted from machines running Eastern). Finished settings: 8856. Protocol: `program.md`; log: `STATE.md`.
+Generated 2026-11-11 10:41 PT (times are Pacific, converted from machines running Eastern). Finished settings: 8856. Protocol: `program.md`; log: `STATE.md`.
 
 ## Contents
 
@@ -14,7 +14,7 @@ Generated 2026-11-11 00:04 PT (times are Pacific, converted from machines runnin
 | [screen 03: results](#screen-03-results) | 2026-11-10 02:03 PT | 2026-11-10 03:43 PT | unread |
 | [screen 04: results](#screen-04-results) | 2026-11-10 03:05 PT | 2026-11-10 12:24 PT | unread |
 | [screen 05: results](#screen-05-results) | 2026-11-10 04:04 PT | 2026-11-10 07:24 PT | unread |
-| [confirmation: chosen configurations on the confirmation seeds](#confirmation-chosen-configurations-on-the-confirmation-seeds) | 2026-11-10 18:24 PT | 2026-11-11 00:04 PT | unread |
+| [confirmation: chosen configurations on the confirmation seeds](#confirmation-chosen-configurations-on-the-confirmation-seeds) | 2026-11-10 18:24 PT | 2026-11-11 10:41 PT | unread |
 
 [Read with section colors](analysis.html). No section marks itself read.
 
@@ -500,6 +500,18 @@ Each cell gives the confirmed score, then the difference to the baseline on the 
 | schedule-fit RND, decay exponent −0.25, refreshed every step | 20.54K (512 seeds); +173%, behind (512 seeds in common) | 5.72K (512 seeds); -94%, ahead (512 seeds in common) | 218.14K (512 seeds); +1112%, behind (512 seeds in common) | 67.35K (512 seeds); -52%, ahead (512 seeds in common) | 2 of 4 compared |
 | schedule-fit RND, decay exponent −2, refreshed every step | 5.59K (512 seeds); -26%, ahead (512 seeds in common) | 230.23K (512 seeds); +135%, level (512 seeds in common) | 10.49K (512 seeds); -42%, ahead (512 seeds in common) | 5.53M (512 seeds); +3827%, behind (512 seeds in common) | 2 of 4 compared |
 | unit start alone (even start, decay left to training) | 8.67K (512 seeds); +15%, behind (512 seeds in common) | 5.23K (512 seeds); -95%, ahead (512 seeds in common) | 20.35K (512 seeds); +13%, behind (512 seeds in common) | 8.37M (512 seeds); +5846%, behind (512 seeds in common) | 1 of 4 compared |
+
+### One row against another
+
+Each cell gives the first-named row's score minus the second-named row's over the seeds both have (negative means the first is faster), its 95% interval, the same difference as a percentage of the second row's mean, and a verdict about the first-named row: ahead when the whole interval is below zero, behind when it is above zero, level when it contains zero.
+
+| first row against second row | straight grid, 32 cells, tabular-PPO | straight grid, 32 cells, coordinate-PPO | snake grid, width 16, 2 turns (50 cells), tabular-PPO | snake grid, width 16, 2 turns (50 cells), coordinate-PPO |
+|---|---|---|---|---|
+| even start against uneven start, both with the scheduled decay (decay exponent −1, refreshed every step) | -0.34K [-0.55K, -0.14K], -5%, ahead (512 seeds) | -0.05K [-0.18K, +0.07K], -2%, level (512 seeds) | -1.20K [-1.71K, -0.73K], -9%, ahead (512 seeds) | -55.50K [-96.47K, -13.17K], -43%, ahead (512 seeds) |
+| scheduled decay (decay exponent −1, refreshed every step) against decay left to training, both with the even start | -2.53K [-2.93K, -2.15K], -29%, ahead (512 seeds) | -2.89K [-3.16K, -2.63K], -55%, ahead (512 seeds) | -7.47K [-8.33K, -6.61K], -37%, ahead (512 seeds) | -8.30M [-8.98M, -7.61M], -99%, ahead (512 seeds) |
+| refreshed every step against refreshed once per rollout, both schedule-fit RND with decay exponent −1 | -0.99K [-1.22K, -0.77K], -14%, ahead (512 seeds) | -2.21K [-3.93K, -1.32K], -49%, ahead (512 seeds) | -1.90K [-2.34K, -1.46K], -13%, ahead (512 seeds) | -48.25K [-76.99K, -14.32K], -40%, ahead (512 seeds) |
+| decay exponent −0.75 against decay exponent −1, both schedule-fit RND refreshed every step | +0.67K [+0.43K, +0.93K], +11%, behind (512 seeds) | -0.15K [-0.30K, +0.01K], -6%, level (512 seeds) | +3.11K [+2.49K, +3.77K], +24%, behind (512 seeds) | -20.13K [-50.48K, -0.92K], -28%, ahead (512 seeds) |
+| decay exponent −0.5 against decay exponent −1, both schedule-fit RND refreshed every step | +1.92K [+1.62K, +2.30K], +31%, behind (1024 seeds) | +0.68K [+0.56K, +0.80K], +28%, behind (1024 seeds) | +19.17K [+17.28K, +21.18K], +149%, behind (1024 seeds) | -7.52K [-23.01K, +3.86K], -11%, level (1024 seeds) |
 
 ### straight grid, 32 cells, tabular-PPO
 

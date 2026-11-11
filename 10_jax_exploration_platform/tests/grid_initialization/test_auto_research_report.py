@@ -98,3 +98,24 @@ def test_confirmation_summary_latex_escapes_percent_and_sets_signs_as_math():
     table = report.confirmation_summary_latex(pooled, '06', {'faster-idea': 'schedule-fit RND, decay exponent −1'})
     assert '$-15$\\%, ahead (64 seeds in common)' in table and 'exponent $-1$' in table
     assert table.count('\\\\\n') == 2 and '%, ahead' not in table.replace('\\%', '')
+
+
+def test_pair_rows_compare_one_idea_with_another_on_their_common_seeds():
+    """A pair's cell is the first idea minus the second with a verdict about the first; a missing case says so."""
+    scores = np.linspace(9000, 11000, 64)
+    pooled = {('06', 'even-start', 'snake', 'neural'): records(scores[:32] - 500),
+              ('06', 'uneven-start', 'snake', 'neural'): records(scores),
+              ('06', 'even-start', 'straight', 'tabular'): records(scores),
+              ('06', 'uneven-start', 'straight', 'tabular'): records(scores, start=30000)}
+    pairs = [{'first': 'even-start', 'second': 'uneven-start', 'label': 'even start, decay exponent −1, against uneven start'}]
+    label, straight_tabular, straight_neural, snake_tabular, snake_neural = report.pair_rows(pooled, '06', pairs)[0]
+    assert label == pairs[0]['label']
+    # 32 common seeds, every one 500 steps faster: the percentage is of the second row's mean on those seeds.
+    assert snake_neural == f'-0.50K [-0.50K, -0.50K], {-100 * 500 / scores[:32].mean():+.0f}%, ahead (32 seeds)'
+    assert straight_tabular == 'no seeds in common yet' and straight_neural == snake_tabular == 'not run yet'
+    table = report.pair_table(pooled, '06', pairs)
+    assert table.count('\n') == 3 and table.startswith('| first row against second row | straight grid')
+    tex = report.pair_latex(pooled, '06', pairs)
+    assert 'exponent $-1$' in tex and '$-$0.50K [$-$0.50K, $-$0.50K], $-$5\\%, ahead (32 seeds)' in tex
+    # One body row ends with a line break; the header row runs straight into its rule.
+    assert tex.count('\\\\\n') == 1 and '\\label{tab:auto-research-confirmation-pairs}' in tex

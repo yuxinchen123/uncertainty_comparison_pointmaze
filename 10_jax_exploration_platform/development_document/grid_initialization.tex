@@ -259,21 +259,49 @@ excludes zero.
 Three of its 1,024 seeds never reach the goal and carry 60\% of its mean. With the lowest and
 highest 80 seeds removed the means are 2.20K and 4.74K, so the lead holds without them and is
 about half, not 97\%.
-\item \textbf{The decay exponent that wins is near $-1$, not $-\tfrac12$.} With $a=\tfrac12$
-the row is ahead with coordinate-PPO and behind with tabular-PPO (6\% and 73\% slower than the
-baseline). With $a=\tfrac34$ and $a=1$ it is ahead in all four cases. With $a=\tfrac32$ it is the
-fastest row with tabular-PPO and fails on the snake grid with coordinate-PPO.
-\item \textbf{Both parts matter, and the decay matters more.} The scheduled decay on the
-baseline's uneven start is ahead of the baseline in three cases and level in the fourth. The
-even start with the decay left to training is behind the baseline on the snake grid with either
-policy. The two together are best in three cases; on the straight grid with coordinate-PPO the
-uneven start is level with the even one.
+\item \textbf{The schedules ahead in all four cases are $a=\tfrac34$ and $a=1$, not
+$a=\tfrac12$.} By exponent (\Cref{tab:auto-research-confirmation-summary}):
+\begin{itemize}[leftmargin=*]
+\item $a=\tfrac14$: behind with tabular-PPO (2.7 and 12 times the baseline's time), ahead with
+coordinate-PPO.
+\item $a=\tfrac12$: behind with tabular-PPO (6\% and 73\% slower), ahead with coordinate-PPO.
+\item $a=\tfrac34$ and $a=1$: ahead in all four cases.
+\item $a=\tfrac32$: the fastest row with tabular-PPO (29\% and 44\% faster than the baseline),
+behind on the snake grid with coordinate-PPO (1.32M against 157.0K).
+\item $a=2$: ahead with tabular-PPO, level on the straight grid with coordinate-PPO, behind on
+the snake grid with coordinate-PPO (5.53M; 14\% of its seeds never reach the goal).
+\end{itemize}
+Tabular-PPO is faster with a faster decay and coordinate-PPO with a slower one. Against $a=1$ on
+the same seeds (\Cref{tab:auto-research-confirmation-pairs}), $a=\tfrac34$ is 11\% and 24\% slower
+with tabular-PPO, level on the straight grid with coordinate-PPO and 28\% faster on the snake
+grid with coordinate-PPO; $a=\tfrac12$ is slower in three cases and level in the fourth.
+\item \textbf{The even start is exact; the measured decay of the winning rows is steeper than
+$-\tfrac12$.} Every schedule-fit row starts with a largest-to-smallest ratio of 1.00. The median
+slope measured as for the baseline is $-0.47$ to $-0.48$ with $a=\tfrac12$, $-0.61$ to $-0.68$
+with $a=\tfrac34$ and $-0.67$ to $-0.77$ with $a=1$, against the baseline's $-1.3$ to $-3.5$.
+\item \textbf{Both parts matter, and the decay matters more}
+(\Cref{tab:auto-research-confirmation-pairs}):
+\begin{itemize}[leftmargin=*]
+\item The scheduled decay on the baseline's uneven start is ahead of the baseline in three cases
+and level on the snake grid with coordinate-PPO.
+\item The even start with the decay left to training is behind the baseline with tabular-PPO on
+both grids (15\% and 13\% slower) and on the snake grid with coordinate-PPO (8.37M; 48\% of its
+seeds never reach the goal). On the straight grid with coordinate-PPO its mean is lower only
+because of the baseline's three seeds that never reach the goal: the trimmed means are 4.88K and
+4.74K.
+\item With the even start, the scheduled decay is ahead of the decay left to training in all four
+cases (29\%, 55\%, 37\% and 99\% faster).
+\item With the scheduled decay, the even start is ahead of the uneven start in three cases (5\%,
+9\% and 43\% faster) and level on the straight grid with coordinate-PPO.
+\end{itemize}
 \item \textbf{Refreshing the bonus at every step is ahead of refreshing once per rollout} at the
-same schedule in every case finished.
+same schedule in all four cases: 14\%, 49\%, 13\% and 40\% faster on the same 512 seeds.
 \item \textbf{The final policy is a cost on the snake grid with coordinate-PPO.} The schedule-fit
 RND with $a=1$ reaches the goal sooner there, but its final policy reaches it in 55\% of
 evaluation episodes against the baseline's 98\%; its chosen intrinsic weight is $2^{6}$, the
-largest of the grid.
+largest of the grid. The slower schedules keep more of the final policy in that case: 85\% with
+$a=\tfrac12$ (60.1K transitions, level with $a=1$ on the same seeds) and 90\% with $a=\tfrac14$
+(67.4K), both ahead of the baseline in first-goal time.
 \end{enumerate}
 
 \subsection{Earlier study: training and initialization comparisons}
