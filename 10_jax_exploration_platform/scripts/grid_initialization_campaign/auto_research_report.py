@@ -137,7 +137,8 @@ def confirmation_records(run_dir):
         spec = summary['specification']
         if not summary.get('completed'):
             continue
-        key = (spec['batch'], spec['idea'], spec['geometry']['kind'], spec['policy_kind'])
+        # Every batch's confirmation rows share one group, so each is compared with the one baseline row.
+        key = ('all batches', spec['idea'], spec['geometry']['kind'], spec['policy_kind'])
         for record in summary['copy_records']:
             pooled[key][record['policy_seed']] = record
         configurations[key] = summary['settings'][0]['configuration']
@@ -317,7 +318,7 @@ def generate(run_dir):
         markdown.append(''.join(section))
     pooled, configurations = confirmation_records(run_dir)
     for batch in sorted({key[0] for key in pooled}):
-        section = [f"## confirmation {batch}: chosen configurations on the confirmation seeds\n\n"
+        section = ["## confirmation: chosen configurations on the confirmation seeds\n\n"
                    "Define $K$ as the number of policy seeds, $B$ as the budget, and $T_i$ as the transition at which "
                    "policy $i$ first reaches the goal ($T_i = \\infty$ if never). The score is "
                    "$M(B) = \\dfrac{1}{K} \\sum_{i=1}^{K} \\min(T_i, B)$ at "
