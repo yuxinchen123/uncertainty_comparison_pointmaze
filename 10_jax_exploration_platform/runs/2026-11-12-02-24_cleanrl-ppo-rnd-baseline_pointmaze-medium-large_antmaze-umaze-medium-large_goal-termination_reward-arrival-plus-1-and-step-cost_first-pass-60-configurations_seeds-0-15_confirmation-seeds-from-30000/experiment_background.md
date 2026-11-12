@@ -39,4 +39,5 @@ The AntMaze phases are added after the speed study has fixed the ant's physics.
 
 ## Git state
 
-Commit `816c626b` (pushed) at folder creation; the frozen copy's commit is in `source.json`.
+Commit `816c626b` (pushed) at folder creation. The PointMaze first pass runs the frozen copy of commit `6ad2fa46`
+(pushed); `source.json` names the copy new jobs run.

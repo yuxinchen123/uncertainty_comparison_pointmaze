@@ -45,6 +45,17 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   settings of the current implementation (fixed-length solver loop, smaller carried state, contact points, line
   search, solver passes) with their physics checks. Sweep machinery, analysis code and PointMaze speed ideas are
   being written and measured in parallel.
+- 2026-11-12 02:20 PT: analysis and report code committed (`b805bfe8`, 44 tests); sweep machinery committed
+  (`816c626b`, 82 tests). PointMaze idea profiles so far on an RTX A4500 at 4 environments per policy: 2.4 million
+  steps per second at 512 and at 960 policies; many cells in one program cost nothing; next values from shifted
+  values, gathering per epoch and the packed-key permutation gain 0% to 1% (not kept); target features once per
+  iteration gain 3% on the A4500 and 6% on the RTX 5080.
+- 2026-11-12 02:31 PT: **RND baseline, PointMaze first pass started** in
+  `runs/2026-11-12-02-24_cleanrl-ppo-rnd-baseline_*`: PointMaze Medium and Large, both reward settings in one
+  process, 60 configurations x 16 seeds, 4 environments per policy, 50,331,648 steps per policy, 16 units of 256
+  policies (8 configurations each) from the frozen code copy of commit `6ad2fa46`. Workers 6874063, 6874076 to
+  6874078, 6874082 (yuxinchen) and 6874080, 6874081 (sl5nw) hold 16 cards (RTX 5080, A40, RTX 4000 Ada, RTX A4000);
+  persistent monitor job 6874083. All 16 units started within a minute.
 
 ## Next
 
