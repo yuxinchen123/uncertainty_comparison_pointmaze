@@ -21,8 +21,14 @@ Times are Pacific.
 - The planner's list of card classes is older than the hardware: lynx01, lynx02, lynx05 and affogato13 now hold
   RTX 4000 Ada cards, which it does not pin to. Workers that ask for that card type on any node are placed there by
   the scheduler.
-- 2026-11-12 12:07 to 12:25 PT: the three units of "development at the budget" waited 16 minutes with no worker.
+- 2026-11-12 12:07 to 12:24 PT: the three units of "development at the budget" waited with no worker.
   The planner counted two cards of the four-card job 6884496 as idle workers, but their worker processes had ended
   when the queue was empty (the job goes on for its other two cards). The planner now counts only the cards of
   waiting jobs as workers without a unit. The pinned worker 6886277 (ai02) waits on priority; workers 6886680
-  (ai04) and 6886681 (any RTX 5080) were added at 12:25 PT.
+  (ai04) and 6886681 (any RTX 5080) were added at 12:24 PT (times from the scheduler's records).
+- 2026-11-12 12:24 to 12:27 PT: the three added workers did not start although cards, processors and memory were
+  free on several nodes. The card partition had 3,334 waiting jobs (2,901 of one other user), and our accounts'
+  priority is low (815 to 1,220), so the scheduler did not reach them. At 12:26:54 PT one worker was started on an
+  idle card inside job 6884496 (lynx04, yuxinchen; two of its four cards had finished their units), through
+  `srun --jobid=6884496 --overlap`; its log is `logs/worker_on_idle_card_of_job_6884496.log`. The three waiting
+  workers stay in the queue; whichever starts finds the remaining units or exits.
