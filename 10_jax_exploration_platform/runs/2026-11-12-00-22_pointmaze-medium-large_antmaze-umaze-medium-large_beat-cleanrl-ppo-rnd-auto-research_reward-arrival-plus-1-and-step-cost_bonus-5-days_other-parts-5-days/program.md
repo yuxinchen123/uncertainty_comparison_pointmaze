@@ -96,7 +96,7 @@ RND's chosen configuration (development runs trained for exactly the budget, 16 
 |---|---|---|---|---|---|---|
 | PointMaze Large, reward 1 on arrival | 2e-3 | 0.01 | 2 | 0.1 | 0.888 ± 0.008 | 0.994 |
 | PointMaze Medium, reward 1 on arrival | 6e-3 | 0.01 | 2 | 0.1 | 0.942 ± 0.007 | 0.999 |
-| PointMaze Medium, step cost | 6e-3 | 0.01 | 0.0078125 | 0.1 | −0.341 ± 0.005 | −0.306 |
+| PointMaze Medium, step cost | 6e-3 | 0.01 | 0.001953125 (replaced 0.0078125 on 2026-11-12 after lower weights were tried) | 0.1 | −0.3405 ± 0.003 | −0.304 |
 | PointMaze Large, step cost | 2e-3 | 0.01 | 4 | 0.1 | −0.7247 ± 0.0009 | −0.712 |
 
 ## What may change, and when

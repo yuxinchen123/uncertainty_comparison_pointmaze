@@ -196,6 +196,17 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   kept from the random-action rollouts, slower predictor, local (random Fourier) features as the input of RND,
   scheduled last layer on local features. A validation block of 256 seeds (10000 to 10255) is added for ideas near
   the control. Implementation started.
+- 2026-11-12 14:45 PT: PointMaze Medium with the step cost, lower intrinsic weights (16 seeds): weight 0.00195 at
+  learning rate 6e-3 gives −0.3405 ± 0.003 (final level −0.304), level with the earlier choice (−0.3408 at weight
+  0.0078) and ahead of it on the final level, so by the rule it is **RND's configuration for that case**; its
+  confirmation is queued and the earlier confirmation (−0.351 ± 0.001) stays on disk, left out of the report.
+- 2026-11-12 14:45 PT: batch 1, fast last layer with step 0.1: best whole-curve mean 0.862 ± 0.016 (weight 0.5);
+  median first arrival 61 thousand steps at weight 1 and 55 thousand at weight 2 (control: 353 and 192 thousand)
+  but final levels 0.96 and 0.75. Scheduled last layer with decay 0.5: 0.25 at best. Batch 2 got a seventh idea
+  from the records: the divisor held after 1/16, 1/8 or 1/4 of the run (18 units now).
+- 2026-11-12 14:45 PT: the control was queued on the validation block (seeds 10000 to 10255, weights 1, 2 and 4;
+  3 units, handed to Gilbreth), so that every later idea near the control has a reference that resolves about
+  0.007.
 
 ## Next
 

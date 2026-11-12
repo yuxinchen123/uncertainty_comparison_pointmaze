@@ -1,5 +1,8 @@
 {
-  "title": "CleanRL PPO-RND baseline on PointMaze: second pass of the development sweep",
-  "exclude_units": ["development-first-pass_*"],
+  "title": "CleanRL PPO-RND baseline on PointMaze: development sweeps and confirmation",
+  "exclude_units": [
+    "development-first-pass_*",
+    "confirmation_pointmaze-medium_reward-step-cost_cleanrl-ppo-rnd_learning-rate-0.006_entropy-coefficient-0.01_intrinsic-weight-0.0078125_*"
+  ],
   "repeated_configurations": "show"
 }

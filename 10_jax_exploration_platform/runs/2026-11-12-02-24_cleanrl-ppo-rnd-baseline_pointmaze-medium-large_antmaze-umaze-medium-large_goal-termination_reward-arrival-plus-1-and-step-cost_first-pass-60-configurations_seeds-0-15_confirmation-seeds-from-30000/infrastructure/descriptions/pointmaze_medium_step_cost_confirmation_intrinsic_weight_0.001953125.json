@@ -1,0 +1,41 @@
+{
+  "study": "cleanrl-ppo-rnd-baseline",
+  "configuration_files": {
+    "pointmaze": "configs/experiments/pointmaze_large_cleanrl-ppo-rnd_goal-termination_reward-arrival-plus-one_example_steps-1024000.toml"
+  },
+  "environments": [
+    "pointmaze-medium"
+  ],
+  "environments_per_policy": {
+    "pointmaze": 4
+  },
+  "steps_per_policy": 1048576,
+  "windows_per_unit": 256,
+  "policies_per_unit": 256,
+  "minimum_card_memory_mb": 7000,
+  "phase": "confirmation",
+  "reward_settings": [
+    "step_cost"
+  ],
+  "seeds": {
+    "first": 30000,
+    "count": 1024
+  },
+  "sweeps": [
+    {
+      "method": "cleanrl-ppo-rnd",
+      "bonus": "rnd_next_state",
+      "cells": {
+        "kind": "list",
+        "cells": [
+          {
+            "learning_rate": 0.006,
+            "entropy_coefficient": 0.01,
+            "intrinsic_weight": 0.001953125,
+            "clip_coefficient": 0.1
+          }
+        ]
+      }
+    }
+  ]
+}

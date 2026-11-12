@@ -1,0 +1,45 @@
+{
+  "study": "beat-cleanrl-ppo-rnd-auto-research",
+  "bonus": "rnd_next_state",
+  "configuration_files": {
+    "pointmaze": "configs/experiments/pointmaze_large_cleanrl-ppo-rnd_goal-termination_reward-arrival-plus-one_example_steps-1024000.toml"
+  },
+  "environments": [
+    "pointmaze-large"
+  ],
+  "reward_settings": [
+    "arrival_plus_one"
+  ],
+  "environments_per_policy": {
+    "pointmaze": 4
+  },
+  "steps_per_policy": 8388608,
+  "windows_per_unit": 256,
+  "policies_per_unit": 256,
+  "minimum_card_memory_mb": 7000,
+  "phase": "validation-block",
+  "seeds": {
+    "first": 10000,
+    "count": 256
+  },
+  "method": "control-cleanrl-ppo-rnd",
+  "cells": {
+    "kind": "grid",
+    "values": {
+      "learning_rate": [
+        0.002
+      ],
+      "entropy_coefficient": [
+        0.01
+      ],
+      "intrinsic_weight": [
+        1.0,
+        2.0,
+        4.0
+      ],
+      "clip_coefficient": [
+        0.1
+      ]
+    }
+  }
+}

@@ -24,6 +24,16 @@ maze-grid records.
    192 thousand).
 6. **Half of the control's missing whole-curve mean (0.058 of 0.115) is in the first 524 thousand steps,** before
    and around the first arrivals; 0.039 is in the rise to 0.94 at 2.1 million steps; 0.018 is after that.
+7. **The intrinsic reward the learner sees rises again late in the control** (added 2026-11-12 14:50 PT, from the
+   summary's second property table): intrinsic weight times the reward at the probes is 0.0156 after the first
+   window, 0.0025 at a quarter of the budget and 0.0045 at the end. The raw bonus stops falling once the learning
+   rate has been annealed, while the divisor (a running standard deviation over the whole history) keeps falling.
+   Early, the falling divisor is what keeps the reward up until the goal is found: with the divisor frozen from the
+   start (batch 1's fixed scale) only 13 of 16 policies find the goal.
+8. **A bonus that falls inside the rollout finds the goal much sooner but ends lower** (added 14:50 PT): the fast
+   last layer with step 0.1 has its median first arrival at 61 thousand steps at weight 1 and 55 thousand at weight
+   2 (control: 353 and 192 thousand), with final levels of 0.96 and 0.75 (control: 0.997 and 0.995); its best
+   whole-curve mean is 0.862 ± 0.016 at weight 0.5.
 
 ## Screen
 
@@ -54,8 +64,9 @@ than about $2\ell$ apart share almost nothing.
 | slower predictor | the predictor has its own Adam at a constant rate below batch 1's slowest | 0.0625 and 0.125 times 1e-4 |
 | local features as the input of RND | the target and the predictor read $\phi(x)$ ($D$ = 256) instead of $x$; trained and divided as in the control | $\ell$ = 0.5, 1, 2 |
 | scheduled last layer on local features | no trained network: the output layer on $\phi(x)$ ($D$ = 512) is fitted in closed form step by step so that each visit moves the visited input's squared error one place along $(1+m)^{-a}$; no divisor | $\ell$ = 0.5, 1, 2 at $a$ = 0.5; $a$ = 1 at $\ell$ = 1 |
+| divisor held after a part of the run | the divisor follows the running standard deviation as in the control until a fraction $f$ of the run's planned steps, and keeps the value it has then for the rest of the run, so the reward the learner sees can only fall with the bonus afterwards | $f$ = 1/16, 1/8, 1/4 |
 
-That is 15 units: 1 + 3 + 2 + 2 + 3 + 4.
+That is 18 units: 1 + 3 + 2 + 2 + 3 + 4 + 3.
 
 ## Predictions (written before the runs)
 
@@ -77,3 +88,9 @@ That is 15 units: 1 + 3 + 2 + 2 + 3 + 4.
    0.9 until they are visited, and the decay slope is within 0.1 of $-a$. All 16 policies reach the goal at some
    weight. Its whole-curve mean is the highest of the batch if a bonus that only counts is enough; if it is behind
    the control with every policy reaching the goal late, the missing slope costs time at the start.
+6. **Divisor held after a part of the run** (written 2026-11-12 14:50 PT): intrinsic weight times the reward at the
+   probes at the end of the run is below its value at a quarter of the budget (in the control it is 1.8 times
+   higher). The final level at weights 4 and 16 is higher than the control's at the same weights. At the best
+   weight the whole-curve mean is 0.005 to 0.015 ahead (a difference the validation block must resolve); $f$ = 1/16
+   (524 thousand steps, about when the first arrivals happen) may be too early and lose arrivals.
+
