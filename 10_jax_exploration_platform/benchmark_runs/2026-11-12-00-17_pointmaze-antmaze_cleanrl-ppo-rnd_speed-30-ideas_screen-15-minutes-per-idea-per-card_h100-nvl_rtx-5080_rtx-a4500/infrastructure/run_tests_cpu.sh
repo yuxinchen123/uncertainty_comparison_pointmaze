@@ -1,4 +1,5 @@
 #!/bin/bash
+#SBATCH -p cpu
 #SBATCH -c 8
 #SBATCH --mem=24G
 #SBATCH -t 01:00:00
@@ -8,7 +9,13 @@
 set -euo pipefail
 P=/p/rlprojects/RND/10_jax_exploration_platform
 cd $P
-export PYTHONPATH=$P/src PYTHONNOUSERSITE=1 JAX_PLATFORMS=cpu XLA_FLAGS=--xla_cpu_multi_thread_eigen=false
+# The platform_jax environment holds no pytest. The folder below links only pytest's own pure-Python
+# packages (pytest, _pytest, pluggy, iniconfig, py) from the atari_pixels_jax environment, so jax,
+# numpy and mujoco still come from platform_jax. Nothing is written into either environment:
+# no bytecode files, and no pytest cache folder.
+PYTEST_PACKAGES="$(dirname "$(scontrol show job "$SLURM_JOB_ID" | grep -oP 'Command=\K\S+')")/pytest_packages_linked_from_atari_pixels_jax"
+export PYTHONPATH=$P/src:$PYTEST_PACKAGES PYTHONNOUSERSITE=1 JAX_PLATFORMS=cpu XLA_FLAGS=--xla_cpu_multi_thread_eigen=false
+export PYTHONDONTWRITEBYTECODE=1
 export OMP_NUM_THREADS=8 OPENBLAS_NUM_THREADS=8 MKL_NUM_THREADS=8
 echo "host $(hostname) cpus ${SLURM_CPUS_PER_TASK:-?} started $(TZ=America/Los_Angeles date '+%Y-%m-%d %H:%M:%S PT')"
-/p/rlprojects/RND/.venvs/platform_jax/bin/python -m pytest -q "$@"
+/p/rlprojects/RND/.venvs/platform_jax/bin/python -m pytest -q -p no:cacheprovider "$@"

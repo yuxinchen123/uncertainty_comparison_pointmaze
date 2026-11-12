@@ -1,4 +1,5 @@
 #!/bin/bash
+#SBATCH -p cpu
 #SBATCH -c 8
 #SBATCH --mem=24G
 #SBATCH -t 02:00:00
@@ -12,7 +13,7 @@
 # Run on a compute node:  sbatch scripts/create_platform_jax_warp_env.sh
 set -euo pipefail
 export PYTHONNOUSERSITE=1
-CONDA=/sw/ubuntu2204/ebu082024/software/common/core/miniforge/24.7.1-py3.11/condabin/conda
+CONDA=/sw/ubuntu2204/current/software/common/core/miniforge/26.7.2/bin/conda
 SRC=/p/rlprojects/RND/.venvs/platform_jax
 ENV=/p/rlprojects/RND/.venvs/platform_jax_warp
 [ -e "$ENV" ] && { echo "$ENV already exists; remove it by hand before rebuilding"; exit 1; }
