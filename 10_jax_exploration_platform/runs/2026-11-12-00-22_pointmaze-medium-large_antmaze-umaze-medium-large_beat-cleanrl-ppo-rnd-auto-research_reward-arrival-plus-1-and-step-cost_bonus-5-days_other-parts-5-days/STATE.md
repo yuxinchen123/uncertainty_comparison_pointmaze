@@ -97,6 +97,18 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   so far: 16 for PointMaze or both families and 5 for the ant; only "target features once per iteration" gains
   anything for PointMaze (3% to 6%).
 - 2026-11-12 11:50 PT: batch 1 written (`batches/01_start-scale-and-decay-of-the-bonus-on-continuous-inputs/ideas.md`).
+- 2026-11-12 12:05 PT: budgets read from the second pass: PointMaze Medium 1,048,576 steps (both reward settings),
+  PointMaze Large with reward 1 on arrival 8,388,608. At those budgets the intrinsic discount 0.99 beats 0.999 and
+  clip 0.1 beats 0.2, so CleanRL's values stay.
+- 2026-11-12 12:46 PT: development at the budget, PointMaze Large with reward 1 on arrival (9 configurations, 16
+  seeds, learning rate annealed over the 8,388,608 steps): best learning rate 2e-3, entropy 0.01, intrinsic weight
+  2: whole-curve mean 0.888 ± 0.008, final level 0.994, median first arrival at 278 thousand steps. Second: learning
+  rate 1e-3, weight 2: 0.881 ± 0.008. **This is RND's configuration for that case.**
+- 2026-11-12 12:47 PT: confirmation units built for that case (12 units of 256 policies, seeds 30000 to 31023): the
+  chosen configuration, RND at CleanRL's untouched settings, and PPO without a bonus.
+- 2026-11-12 12:10 to 12:47 PT: UVA's scheduler is not starting our new workers (3,334 waiting jobs in the card
+  partition, 2,901 of one other user; our priority is low). Units run on cards inside job 6884496, which we already
+  hold: its own workers and one more worker started on an idle card through `srun --overlap`.
 
 ## Next
 

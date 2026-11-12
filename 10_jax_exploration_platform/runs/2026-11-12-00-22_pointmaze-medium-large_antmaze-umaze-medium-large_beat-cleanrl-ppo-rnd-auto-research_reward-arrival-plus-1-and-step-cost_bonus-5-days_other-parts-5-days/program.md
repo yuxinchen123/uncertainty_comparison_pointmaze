@@ -79,11 +79,22 @@ of their final level, rounded up to a power of two. Written here before any meth
 
 | environment | setting A | setting B |
 |---|---|---|
-| PointMaze Medium | (not set yet) | (not set yet) |
-| PointMaze Large | (not set yet) | (not set yet) |
+| PointMaze Medium | 1,048,576 (set 2026-11-12) | 1,048,576 (set 2026-11-12) |
+| PointMaze Large | 8,388,608 (set 2026-11-12) | (not set yet) |
 | AntMaze U-maze | (not set yet) | (not set yet) |
 | AntMaze Medium | (not set yet) | (not set yet) |
 | AntMaze Large | (not set yet) | (not set yet) |
+
+How the PointMaze budgets were read (second pass of the development sweep, 16 seeds, 256 logging windows, curve
+smoothed over 5% of the run): the best three configurations reach 95% of their final level at 262, 328 and 344
+thousand steps on Medium with reward 1 on arrival, at 279, 295 and 328 thousand on Medium with the step cost, and at
+2.75, 3.47 and 4.19 million on Large with reward 1 on arrival.
+
+RND's chosen configuration (development runs trained for exactly the budget, 16 seeds):
+
+| case | learning rate | entropy | intrinsic weight | clip | whole-curve mean | final level |
+|---|---|---|---|---|---|---|
+| PointMaze Large, reward 1 on arrival | 2e-3 | 0.01 | 2 | 0.1 | 0.888 ± 0.008 | 0.994 |
 
 ## What may change, and when
 
