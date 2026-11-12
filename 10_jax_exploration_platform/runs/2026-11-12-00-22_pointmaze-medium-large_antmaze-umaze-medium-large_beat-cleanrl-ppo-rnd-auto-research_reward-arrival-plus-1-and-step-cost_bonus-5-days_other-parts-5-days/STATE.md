@@ -230,6 +230,20 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   divisor (−0.557), the three scheduled last layers (−0.637, −0.779, −0.884), even start (−0.698). No idea goes to
   the development sweep. Of the six predictions, one held (error length), five did not. What batch 1 leaves for
   batch 2 is in `batches/02_.../ideas.md`, "What batch 1 showed".
+- 2026-11-12 15:23 PT: RND's confirmation on PointMaze Medium with the step cost at the new weight 0.00195:
+  −0.3517 ± 0.0008 (final level −0.3075), the same as at weight 0.0078 (−0.3512 ± 0.0009) and 0.0035 behind PPO
+  without a bonus (−0.3481 ± 0.0008). A bonus this small cannot cost that much by its reward, so the cost is
+  somewhere else in the RND program; the first suspect is the gradient clip that the policy shares with the
+  predictor (the predictor's large early gradient shrinks the policy's step). Test queued on the validation block
+  (seeds 10000 to 10255, PointMaze Medium, step cost): RND as it is, the predictor with its own optimizer outside
+  the clip at 0.25 and 1 times 1e-4, and PPO without a bonus. The same two predictor settings are queued on
+  PointMaze Large with reward 1 on arrival at their two best weights.
+- 2026-11-12 15:27 PT: **batch 2 screen submitted** (18 units; frozen code d7054945; description
+  `batches/02_.../screen_pointmaze-large_reward-arrival-plus-one.json`). Four units went to Gilbreth at once and 15
+  UVA workers were submitted (6890372 to 6890472). The implementation settled two points of the scheduled last
+  layer on local features: it has no bias input (a bias would give far inputs a shared part of about 0.5), and
+  with 512 features an input far from every fitted input keeps 0.93 to 0.98 of its squared error, not above 0.99,
+  because random features of far inputs still overlap by about 0.044.
 
 ## Next
 

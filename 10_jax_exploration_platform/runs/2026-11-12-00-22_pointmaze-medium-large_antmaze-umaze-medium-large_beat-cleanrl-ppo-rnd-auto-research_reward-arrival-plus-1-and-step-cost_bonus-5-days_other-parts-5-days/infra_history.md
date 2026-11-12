@@ -26,3 +26,8 @@ Times are Pacific.
   `submitted_jobids_gilbreth.txt.before_ledger_correction_2026-11-12-15-08`. The auto research folder then
   submitted jobs 12346016 to 12346018 for its units.
 - 2026-11-12 15:26 PT: four screen workers asking for an A100 (planned start 2026-11-13 or unknown) cancelled by ledger id, never started; workers for the validation units submitted on RTX 2080 Ti, RTX 4000 Ada and GTX 1080 Ti with a 2-hour limit.
+- 2026-11-12 15:27 PT: the first submission of batch 2's UVA workers stopped after one job: the planner pinned a
+  GTX 1080 Ti request to affogato13, which holds RTX 4000 Ada cards only, and the scheduler refused it ("Requested
+  node configuration is not available"). The planner's table of card types per node is wrong for that node; the
+  workers were submitted again with RTX 2080 Ti and RTX 4000 Ada only (6890372 to 6890472). To correct: the
+  source of that table.

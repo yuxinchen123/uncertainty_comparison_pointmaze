@@ -16,6 +16,8 @@ values:
 | batch | case | steps per policy | seeds | swept |
 |---|---|---|---|---|
 | 1: the start, the scale and the decay of the bonus | PointMaze Large, reward 1 on arrival | 8,388,608 | 0 to 15 | intrinsic weight (12 values), and each idea's own setting (3 values where it has one) |
+| 2: where the bonus points at the start, and features that keep the fit local | PointMaze Large, reward 1 on arrival | 8,388,608 | 0 to 15 | intrinsic weight (12 values), and each idea's own setting |
+| validation block (ideas near the control, and the control) | PointMaze Large, reward 1 on arrival; PointMaze Medium, step cost | 8,388,608; 1,048,576 | 10000 to 10255 | the idea's best weights |
 
 Fixed in batch 1: learning rate 2e-3 annealed to zero over the run, entropy 0.01, clip 0.1, 4 environments per
 policy, 128-step rollouts, 256 logging windows.
@@ -32,3 +34,4 @@ record of the bonus on the maze grid.
 | batch | commit of the frozen code copy |
 |---|---|
 | 1 | `2b84cab185ef9030ec5225e413c32863e17ca4b0` (frozen 2026-11-12 13:32 PT; screen submitted 13:35 PT) |
+| 2 | `d7054945b292c2fb2b0d8a6d4d7f8407659f59f5` (frozen 2026-11-12 15:26 PT; screen submitted 15:27 PT). The validation units of batch 1 still waiting at that time run on this copy too; with no option set, or with batch 1's options, it gives the same arrays as the earlier copy (job 6889910, 12 of 12 cases). |
