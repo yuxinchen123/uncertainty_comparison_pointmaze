@@ -138,6 +138,26 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   only.
 - 2026-11-12 13:45 PT: Gilbreth (Purdue, standby cards) runs units of the baseline folder: 9 done and verified, 4
   running. Gautschi's L40S queue estimates a start on 2026-11-14, so no unit waits there.
+- 2026-11-12 14:10 PT: **first readings of the batch 1 screen** (quick script; the generated summary replaces
+  them). Whole-curve mean at each unit's best intrinsic weight, 16 seeds:
+  control 0.885 ± 0.010 (weight 2; the baseline's own run gave 0.888 ± 0.008);
+  separate predictor step size at 0.25 times 1e-4: 0.887 ± 0.012 (weight 1), at 1 times: 0.881 ± 0.007 (weight 4);
+  fixed scale 0.547 ± 0.096 (weight 16, 13 of 16 policies reach the goal);
+  even start with no divisor 0.327 ± 0.099 (weight 0.25, 10 of 16);
+  even start 0.186 ± 0.085 (weight 0.25, 9 of 16).
+  So prediction 1 (even start changes nothing) and prediction 2 (fixed scale and no divisor gain 0.02 to 0.05) did
+  not hold: all three are far behind.
+- 2026-11-12 14:10 PT: **what the control's bonus looks like on the maze grid** (median over 16 seeds, weight 2).
+  Before any training it is 0.6 at the start cell and rises with the distance from it to 56 at the far cells,
+  where it is the same number in every cell beyond the input clip of ±5. The inputs are whitened with statistics
+  from the random-action rollouts around the start, so a far cell is a large input and an untrained predictor's
+  error grows with the size of its input. RND therefore starts with a bonus that points away from the start. After
+  32,768 steps the bonus is 0.007 to 0.03 near the start and 0.3 to 0.45 in the far cells; after 262,144 steps it
+  is still highest in the corner farthest from the start (0.11) and lower at the goal (0.04). The even start
+  removes this slope (0.5 everywhere), and fewer policies then reach the goal at all.
+  Two things to check with the full summary: (1) how much of the control's missing whole-curve mean (0.115) is
+  before the first arrival (median 192 thousand steps, 2.3% of the budget) and how much is the rise after it;
+  (2) whether the bonus left in the far corner keeps policies away from the goal after they have found it.
 
 ## Next
 
