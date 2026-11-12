@@ -271,6 +271,21 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   This is the first idea ahead of the control on the primary metric on seeds it was not chosen on, by a small
   amount; four comparisons were made, so it needs the fresh seeds before it counts. Batch 2 has the slower
   settings 0.0625 and 0.125.
+- 2026-11-12 15:40 PT: **the ant ceiling is verified and committed (30b2c609).** With it, 16,384 ants under
+  random torques for 1,400 steps had 0 steps above the wall tops and 0 arrivals over a wall, with MuJoCo Warp and
+  with MJX's JAX implementation; agreement with C MuJoCo is unchanged; speed is unchanged (1.67 million steps per
+  second at 16,384 environments, and 1.93 million at 32,768 environments with 34.5 GiB, on an H100 NVL).
+  **The ant leaves the floor by its own leg power in C MuJoCo too** (motors of 150 N m per joint on a body under
+  1 kg): of 1,024 ants with random torques for 700 steps, 83 rose above the 2 m wall tops and 4 were over a wall
+  cell. So crossing walls is a property of the Gymnasium ant model, not a fault of the fast physics. With the
+  ceiling an untrained policy still spends about 0.33% of steps within 0.5 m of it; the per-window counter is read
+  against that level.
+- 2026-11-12 15:57 PT: **AntMaze baseline folder created and its first unit handed to Gilbreth**:
+  `runs/2026-11-12-15-56_cleanrl-ppo-rnd-baseline_antmaze-umaze-medium-large_mujoco-warp-physics_ceiling-on-wall-tops_goal-termination_reward-arrival-plus-1-and-step-cost_environments-per-policy-check-4-16-128_seeds-0-15_confirmation-seeds-from-30000`.
+  First phase: the check of 4, 16 and 128 environments per policy on the U-maze with reward 1 on arrival
+  (48 configurations: learning rate 1e-4 to 3e-3, entropy 0.001 and 0.01, weight 0.0625 to 64; 16 seeds;
+  16,777,216 steps; 8 units). MIT and Gautschi cannot start H100 work now (other sessions hold this account's
+  limits), so the units run on Gilbreth's standby A100 and A30 cards.
 
 ## Next
 
