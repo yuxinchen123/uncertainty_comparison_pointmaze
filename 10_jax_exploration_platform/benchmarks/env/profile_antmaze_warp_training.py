@@ -254,6 +254,8 @@ def measure(args) -> int:
                                      capture_output=True, text=True).stdout.strip(),
         "configuration_file": STUDY_CONFIGURATION.name, "status": "running",
         "processor_dry_run": not on_card,
+        # the model has had its ceiling since 2026-11-12; a record without this field is older
+        "model_has_ceiling": True,
     }
     write_record(path, record)
     say(f"cell {policies} policies x {per_policy} environments on {args.machine} ({card['name']}); "
@@ -313,6 +315,9 @@ def measure(args) -> int:
             first_goal_steps=sorted(int(step) for step in log["first_goal_step"] if step >= 0),
             iterations_run=3 + args.rounds * block,
             non_finite_resets=int(np.asarray(state.env_state.nan_count).sum()),
+            # the environment's fault record over all iterations of this process, summed over policies
+            ceiling_zone_steps=int(np.asarray(state.env_state.ceiling_zone_steps, np.int64).sum()),
+            largest_torso_speed=float(np.asarray(state.env_state.largest_torso_speed).max()),
             memory=memory_record(card["uuid"]) if on_card else None,
             pool=runner.check_environment(state))
         write_record(path, record)
@@ -453,11 +458,19 @@ def render(records_folder: Path) -> str:
         lines += [f"## {card} ({machine})", ""]
         if measured:
             sample = measured[0]
+            with_ceiling = sum(1 for r in measured if r.get("model_has_ceiling"))
             lines += [
                 f"JAX {sample['versions']['jax']}, MuJoCo MJX {sample['versions']['mujoco-mjx']}, "
                 f"warp-lang {sample['versions']['warp-lang']}, driver {sample['card']['driver']}, card "
                 f"memory {sample['card']['memory_total_mib']:,} MiB; kernel folder "
-                f"`{sample['kernel_folder']}`.",
+                f"`{sample['kernel_folder']}`. "
+                + ("Every row was measured with the ceiling in the model." if with_ceiling == len(measured)
+                   else "Every row was measured before the model had its ceiling; the cells measured "
+                        "again with it are in the section \"After the ceiling\"." if with_ceiling == 0
+                   else f"{with_ceiling} of the {len(measured)} rows were measured with the ceiling in "
+                        "the model: " + ", ".join(f"{r['policies']:,} x {r['environments_per_policy']}"
+                                                  for r in sorted(measured, key=CELL_ORDER)
+                                                  if r.get("model_has_ceiling")) + "."),
                 "",
                 "| policies | environments<br>per policy | environments<br>in total | seconds per<br>iteration | "
                 "total steps per<br>second (millions) | steps per second<br>per policy | "
@@ -497,7 +510,8 @@ def render(records_folder: Path) -> str:
                 lines.append(f"- {r['policies']:,} policies x {r['environments_per_policy']} environments, "
                              f"{pacific(r['started_iso'])}: {reason}.")
             lines.append("")
-    return "\n".join(lines + render_arrivals(records_folder.parent / "records_arrivals"))
+    return "\n".join(lines + render_arrivals(records_folder.parent / "records_arrivals")
+                     + render_after_the_ceiling(records_folder.parent))
 
 
 def render_arrivals(folder: Path) -> list:
@@ -516,8 +530,34 @@ def render_arrivals(folder: Path) -> list:
         "`units/diagnose_arrivals_with_random_torques.py` stepped ants with random torques (standard "
         "normal, clipped to [-1, 1], fresh at every step), the episode ending at the goal or after 700 "
         "steps, with each implementation of the physics, and kept the torso's position and velocity "
-        "of every step. The walls are 2 m high.",
+        "of every step. The walls are 2 m high. This measurement was made before the model had its "
+        "ceiling.",
         "",
+        *arrival_rows(records),
+    ]
+    for r in records:
+        arrivals = r["arrivals"]
+        if not arrivals:
+            continue
+        # a wall cell of the U-maze between the start row and the goal row: (2, 1) or (2, 2)
+        over = sum(1 for a in arrivals if [2, 1] in a["cells_in_order"] or [2, 2] in a["cells_in_order"])
+        steps = sorted(a["step_of_the_episode"] for a in arrivals)
+        heights = sorted(a["largest_height_of_the_episode"] for a in arrivals)
+        lines.append(
+            f"- {names[r['physics']]}: {over} of the {len(arrivals)} episodes that ended at the goal went "
+            f"through the wall cells between the start row and the goal row, above the wall: the largest "
+            f"torso height of these episodes was between {heights[0]:.2f} m and {heights[-1]:.2f} m, and "
+            f"they ended at the goal after {steps[0]} to {steps[-1]} steps.")
+    lines += ["", "In both implementations some ants rose above the walls and crossed them; the records hold "
+              "every such episode that ended at the goal (`records_arrivals/`). Nothing in the environment "
+              "of that time ended or discarded an episode in which the torso was above the walls.", ""]
+    return lines
+
+
+def arrival_rows(records: list) -> list:
+    """The table of the random-torque measurement: one row per physics implementation."""
+    names = {"jax": "MJX JAX", "warp": "MuJoCo Warp"}
+    lines = [
         "| physics | environments | environment<br>steps | episodes<br>ended | ended at<br>the goal | "
         "steps with the torso<br>above the walls' top | steps faster<br>than 10 m/s | "
         "steps with the torso<br>inside a wall cell | steps with the torso<br>outside the maze | "
@@ -533,23 +573,329 @@ def render_arrivals(folder: Path) -> list:
             f"{r['steps_with_the_torso_inside_a_wall_cell']:,} | "
             f"{r['steps_with_the_torso_outside_the_maze']:,} | {r['largest_torso_height']:.2f} | "
             f"{r['largest_torso_speed']:.2f} |")
-    lines.append("")
-    for r in records:
-        arrivals = r["arrivals"]
-        if not arrivals:
-            continue
-        # a wall cell of the U-maze between the start row and the goal row: (2, 1) or (2, 2)
-        over = sum(1 for a in arrivals if [2, 1] in a["cells_in_order"] or [2, 2] in a["cells_in_order"])
-        steps = sorted(a["step_of_the_episode"] for a in arrivals)
-        heights = sorted(a["largest_height_of_the_episode"] for a in arrivals)
-        lines.append(
-            f"- {names[r['physics']]}: {over} of the {len(arrivals)} episodes that ended at the goal went "
-            f"through the wall cells between the start row and the goal row, above the wall: the largest "
-            f"torso height of these episodes was between {heights[0]:.2f} m and {heights[-1]:.2f} m, and "
-            f"they ended at the goal after {steps[0]} to {steps[-1]} steps.")
-    lines += ["", "In both implementations some ants rise above the walls and cross them; the records hold "
-              "every such episode that ended at the goal (`records_arrivals/`). Nothing in the environment "
-              "ends or discards an episode in which the torso is above the walls.", ""]
+    return lines + [""]
+
+
+def render_after_the_ceiling(profile_folder: Path) -> list:
+    """The section "After the ceiling" from the records made with the ceiling in the model: the
+    checks against C MuJoCo before and after, the nine ants on processors, the random-torque
+    measurement again, and the speed cells again. A part whose record does not exist is left out;
+    no lines when none exists."""
+    read = lambda path: json.loads(path.read_text()) if path.exists() else None
+    checks_folder = profile_folder.parent / "antmaze_warp"
+    before = read(checks_folder / "antmaze_warp_checks_processors_before-the-ceiling.json")
+    after = read(checks_folder / "antmaze_warp_checks_processors.json")
+    ants = read(profile_folder / "records_ceiling" / "ordinary-and-thrown-ants_processors.json")
+    torque_folder = profile_folder / "records_arrivals_after_the_ceiling"
+    torques = [json.loads(path.read_text()) for path in sorted(torque_folder.glob("*.json"))]
+    earlier_torques = {r["physics"]: r for r in (json.loads(path.read_text()) for path in sorted(
+        (profile_folder / "records_arrivals").glob("*.json")))}
+    cells = [json.loads(path.read_text()) for path in
+             sorted((profile_folder / "records_after_the_ceiling").glob("*.json"))]
+    earlier_cells = {(r["policies"], r["environments_per_policy"]): r for r in (
+        json.loads(path.read_text()) for path in sorted((profile_folder / "records").glob("h100-nvl_*.json")))
+        if r.get("status") == "measured"}
+    if not (before and after) and not ants and not torques and not cells:
+        return []
+    names = {"jax": "MJX JAX", "warp": "MuJoCo Warp", "c_mujoco": "C MuJoCo"}
+    lines = [
+        "## After the ceiling",
+        "",
+        "Since 2026-11-12 the model of all three maps holds one plane on the wall tops (2 m) whose "
+        "normal points down and which collides with the torso sphere only (`envs/antmaze/am_common.py`). "
+        "The torso sphere (radius 0.25 m) comes within the contact margin of it when the torso centre "
+        "is at 1.74 m. The environment also keeps a fault record per policy "
+        "(`envs/antmaze/faults.py`): the environment steps with the torso centre above 1.5 m (the "
+        "ceiling zone) after any physics step, and the largest torso speed; the training command "
+        "writes both into every window record of an AntMaze unit.",
+        "",
+    ]
+
+    # GOAL: the environment's checks against C MuJoCo of the same model, before and after.
+    if before and after:
+        check = "check a: one step against C MuJoCo and against JAX, 50 states"
+        lines += [
+            "### Checks against C MuJoCo of the same model, before and after (processors)",
+            "",
+            f"`benchmarks/env/antmaze_warp_checks.py` on {after['host']}, MuJoCo Warp on the processor device: "
+            f"before the ceiling {before['measured_pacific']} (Slurm job {before['slurm_job']}), with it "
+            f"{after['measured_pacific']} (Slurm job {after['slurm_job']}). The C MuJoCo reference loads the "
+            "same XML, so it has the ceiling too. One environment step from 50 states along a C-MuJoCo "
+            "random-torque trajectory; the largest absolute position difference, in metres:",
+            "",
+            "| kind of state | pair | states | largest difference<br>before (m) | largest difference<br>with the ceiling (m) | "
+            "median<br>before (m) | median with<br>the ceiling (m) | gate of<br>`spec.md` |",
+            "|---|---|---:|---:|---:|---:|---:|---|",
+        ]
+        gates = {("contact_free", "warp_against_c"): "below 1e-4", ("contact_free", "jax_against_c"): "below 1e-4",
+                 ("in_contact", "warp_against_c"): "below 5e-2", ("in_contact", "jax_against_c"): "below 5e-2"}
+        for kind in ("contact_free", "in_contact"):
+            for pair in ("warp_against_c", "jax_against_c", "warp_against_jax"):
+                b, a = before["checks"][check][kind][pair], after["checks"][check][kind][pair]
+                lines.append(f"| {kind.replace('_', ' ')} | {pair.replace('_', ' ')} | {a['count']} | "
+                             f"{b['largest']:.2e} | {a['largest']:.2e} | {b['median']:.2e} | {a['median']:.2e} | "
+                             f"{gates.get((kind, pair), '')} |")
+        divergence = "check a: 20 shared-torque steps from the spawn against C MuJoCo"
+        resting = "check b: resting height after 1,200 passive steps"
+        part = lambda record, name, implementation, field: record["checks"][name][implementation][field]
+        lines += [
+            "",
+            "- 20 shared-torque steps from the spawn, largest position difference from C MuJoCo before the "
+            "first contact: Warp " + f"{part(before, divergence, 'warp', 'largest_before_the_first_contact'):.2e} m "
+            f"before and {part(after, divergence, 'warp', 'largest_before_the_first_contact'):.2e} m with the "
+            f"ceiling; JAX {part(before, divergence, 'jax', 'largest_before_the_first_contact'):.2e} m and "
+            f"{part(after, divergence, 'jax', 'largest_before_the_first_contact'):.2e} m. Over all 20 steps: Warp "
+            f"{part(before, divergence, 'warp', 'largest_over_all_steps'):.3f} m and "
+            f"{part(after, divergence, 'warp', 'largest_over_all_steps'):.3f} m; JAX "
+            f"{part(before, divergence, 'jax', 'largest_over_all_steps'):.3f} m and "
+            f"{part(after, divergence, 'jax', 'largest_over_all_steps'):.3f} m (gate: below 4 m).",
+            "- Resting height after 1,200 passive steps (reference 0.38248 m): C MuJoCo "
+            f"{part(before, resting, 'c_mujoco', 'height'):.5f} m before and "
+            f"{part(after, resting, 'c_mujoco', 'height'):.5f} m with the ceiling; Warp "
+            f"{part(before, resting, 'warp', 'height'):.5f} m and {part(after, resting, 'warp', 'height'):.5f} m; "
+            f"JAX {part(before, resting, 'jax', 'height'):.5f} m and {part(after, resting, 'jax', 'height'):.5f} m.",
+            "",
+        ]
+
+    # GOAL: the nine ants of the ceiling test, stepped one physics step at a time on processors.
+    if ants:
+        lines += [
+            "### Which ants touch the ceiling (processors, one physics step at a time)",
+            "",
+            f"`units/diagnose_ordinary_and_thrown_ants.py` on {ants['host']}, {pacific(ants['measured_iso'])} "
+            f"(Slurm job {ants['slurm_job']}): nine ants from the spawn, {ants['physics_steps']:,} physics steps "
+            "of 0.01 s each, in C MuJoCo of the same model and in both implementations (float32, MuJoCo "
+            "Warp on the processor device). The spawn height of the torso centre is 0.75 m; the ceiling is "
+            "touched from 1.74 m; the wall tops are at 2 m.",
+            "",
+            "| ant | largest torso height (m)<br>C MuJoCo | largest torso height (m)<br>MJX JAX | "
+            "largest torso height (m)<br>MuJoCo Warp | physics steps with a<br>ceiling contact<br>"
+            "C MuJoCo, JAX, Warp | moved on the floor plane (m)<br>C MuJoCo, JAX, Warp |",
+            "|---|---:|---:|---:|---:|---:|",
+        ]
+        rows = ants["nine_ants"]
+        for c, j, w in zip(rows["c_mujoco"], rows["jax"], rows["warp"]):
+            lines.append(
+                f"| {c['case']} | {c['largest_torso_height']:.3f} | {j['largest_torso_height']:.3f} | "
+                f"{w['largest_torso_height']:.3f} | {c['physics_steps_with_a_ceiling_contact']}, "
+                f"{j['physics_steps_with_a_ceiling_contact']}, {w['physics_steps_with_a_ceiling_contact']} | "
+                f"{c['moved_on_the_floor_plane']:.2f}, {j['moved_on_the_floor_plane']:.2f}, "
+                f"{w['moved_on_the_floor_plane']:.2f} |")
+        thrown = ants["thrown_upward_c_mujoco"]
+        lines += [
+            "",
+            "- An ant thrown upward from the spawn in C MuJoCo, largest height of the torso centre: "
+            + "; ".join(f"{row['speed']:.0f} m/s: {row['largest_torso_height']:.3f} m" for row in thrown) + ".",
+        ]
+        for implementation, result in ants["one_step_in_ceiling_contact"].items():
+            contact = set(result["states_in_ceiling_contact"])
+            differences = [d for k, d in zip(result["c_states"], result["largest_position_difference_per_state"])
+                           if k in contact]
+            lines.append(
+                f"- One physics step of {names[implementation]} from {len(differences)} C-MuJoCo states of the "
+                "ant thrown at 10 m/s that are in contact with the ceiling, against C MuJoCo's next state: "
+                f"largest position difference {max(differences):.2e} m (the in-contact gate of `spec.md` is 5e-2 m).")
+        # GOAL: the 36 periodic patterns, one row per torque size and frequency (four patterns each).
+        patterns = ants["periodic_patterns_c_mujoco"]
+        touching = [p for p in patterns if p["physics_steps_with_a_ceiling_contact"]]
+        lines += [
+            "",
+            "Periodic leg torques in C MuJoCo, 10 s each from the spawn: each hip gets a sine and its ankle "
+            "the same sine a quarter period ahead or behind, with diagonal leg pairs in turn or one leg after "
+            f"the other. {len(touching)} of the {len(patterns)} patterns brought the torso to the ceiling: the "
+            f"ant's own legs lift it off the floor (the model's motors give {ants['motor_torque_at_full_control']:g} "
+            f"N m per joint at full control to a body of {ants['ant_mass']:.2f} kg). The Gymnasium Ant "
+            "environment itself calls a torso height from 0.2 m to 1.0 m healthy.",
+            "",
+            "| share of the<br>full torque | frequency (Hz) | largest torso height<br>of the four patterns (m) | "
+            "patterns that touched<br>the ceiling | most physics steps<br>with a ceiling contact | "
+            "moved on the floor<br>plane (m) |",
+            "|---:|---:|---:|---:|---:|---:|",
+        ]
+        for torque in sorted({p["torque"] for p in patterns}):
+            for hertz in sorted({p["hertz"] for p in patterns}):
+                group = [p for p in patterns if p["torque"] == torque and p["hertz"] == hertz]
+                heights = [p["largest_torso_height"] for p in group]
+                moved = [p["moved_on_the_floor_plane"] for p in group]
+                steps = [p["physics_steps_with_a_ceiling_contact"] for p in group]
+                lines.append(f"| {torque:g} | {hertz:g} | {min(heights):.2f} to {max(heights):.2f} | "
+                             f"{sum(1 for x in steps if x)} of {len(group)} | {max(steps)} | "
+                             f"{min(moved):.2f} to {max(moved):.2f} |")
+        lines.append("")
+        # GOAL: random torques in C MuJoCo itself, with the ceiling and without it.
+        if "random_torques_c_mujoco" in ants:
+            both = ants["random_torques_c_mujoco"]
+            sample = both["with_the_ceiling"]
+            lines += [
+                f"Random torques in C MuJoCo itself (float64), {sample['ants']} ants from the spawn for "
+                f"{sample['environment_steps'] // sample['ants']} environment steps of 5 physics steps each, "
+                "no reset and no goal, the same torques on the model with the ceiling and on the same model "
+                "without it (the torso is looked at after the last physics step of each environment step):",
+                "",
+                "| model in C MuJoCo | environment<br>steps | steps with the torso<br>above the walls' top | "
+                "ants that were<br>above the walls' top | steps with the torso<br>inside a wall cell | "
+                "steps with the torso<br>outside the maze | steps in the<br>ceiling zone | "
+                "ants that were in<br>the ceiling zone | steps faster<br>than 5 m/s | steps faster<br>than 10 m/s | "
+                "largest torso<br>height (m) | largest torso<br>speed (m/s) |",
+                "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
+            ]
+            for name, key in (("without the ceiling", "without_the_ceiling"), ("with the ceiling", "with_the_ceiling")):
+                r = both[key]
+                lines.append(
+                    f"| {name} | {r['environment_steps']:,} | {r['steps_with_the_torso_above_the_walls_top']:,} | "
+                    f"{r['ants_with_the_torso_above_the_walls_top']:,} of {r['ants']:,} | "
+                    f"{r['steps_with_the_torso_inside_a_wall_cell']:,} | "
+                    f"{r['steps_with_the_torso_outside_the_maze']:,} | "
+                    f"{r['steps_with_the_torso_in_the_ceiling_zone']:,} | "
+                    f"{r['ants_with_the_torso_in_the_ceiling_zone']:,} of {r['ants']:,} | "
+                    f"{r['steps_faster_than_5_metres_per_second']:,} | "
+                    f"{r['steps_faster_than_10_metres_per_second']:,} | {r['largest_torso_height']:.2f} | "
+                    f"{r['largest_torso_speed']:.2f} |")
+            without = both["without_the_ceiling"]
+            lines += [
+                "",
+                f"Without the ceiling, {without['ants_with_the_torso_above_the_walls_top']:,} of the "
+                f"{without['ants']:,} ants rose above the wall tops in C MuJoCo and "
+                f"{without['ants_with_the_torso_inside_a_wall_cell']} of them were over a wall cell: the ant "
+                "model itself leaves the floor under random torques, in the reference's own stepper as in "
+                "the two implementations.",
+                ""]
+
+    # GOAL: the random-torque measurement again, beside the earlier one.
+    if torques:
+        lines += [
+            "### Random torques again (H100 NVL, serval02 card 1)",
+            "",
+            "The measurement of the section above with the ceiling in the model: 16,384 ants, 1,400 "
+            "environment steps, random torques, the episode ending at the goal or after 700 steps.",
+            "",
+            *arrival_rows(torques),
+            "| physics | steps with the torso in<br>the ceiling zone<br>(above 1.5 m) | steps with the torso at<br>"
+            "the ceiling (above 1.74 m) | episodes with a step<br>in the ceiling zone | the environment's own<br>"
+            "count of ceiling-zone<br>steps | the environment's own<br>largest torso<br>speed (m/s) | "
+            "steps faster<br>than 5 m/s | steps faster<br>than 2 m/s |",
+            "|---|---:|---:|---:|---:|---:|---:|---:|",
+        ]
+        for r in torques:
+            own = r["environment_fault_record"]
+            lines.append(
+                f"| {names[r['physics']]} | {r['steps_with_the_torso_in_the_ceiling_zone']:,} | "
+                f"{r['steps_with_the_torso_at_the_ceiling']:,} | "
+                f"{r['episodes_with_the_torso_in_the_ceiling_zone']:,} of {r['episodes_ended']:,} | "
+                f"{own['ceiling_zone_steps']:,} | {own['largest_torso_speed']:.2f} | "
+                f"{r['steps_faster_than_5_metres_per_second']:,} | {r['steps_faster_than_2_metres_per_second']:,} |")
+        lines += [
+            "",
+            "The script looks at the torso after the last physics step of each environment step; the "
+            "environment's own count looks after each of the 5 physics steps, so it is the larger one.",
+            "",
+        ]
+        for r in torques:
+            share = lambda count: f"{100 * count / r['environment_steps']:.4f}%"
+            height, speed = r["torso_height_percentiles"], r["torso_speed_percentiles"]
+            earlier = earlier_torques.get(r["physics"])
+            arrivals = r["arrivals"]
+            around = [a for a in arrivals if a["went_around_the_wall"]]
+            text = (
+                f"- {names[r['physics']]}: {r['steps_with_the_torso_above_the_walls_top']:,} steps with the torso "
+                f"above the wall tops"
+                + (f" ({earlier['steps_with_the_torso_above_the_walls_top']:,} before the ceiling)" if earlier else "")
+                + f", {r['steps_with_the_torso_inside_a_wall_cell']:,} inside a wall cell"
+                + (f" ({earlier['steps_with_the_torso_inside_a_wall_cell']:,} before)" if earlier else "")
+                + f", {r['steps_with_the_torso_outside_the_maze']:,} outside the maze"
+                + (f" ({earlier['steps_with_the_torso_outside_the_maze']:,} before)" if earlier else "")
+                + f". The torso was in the ceiling zone in {share(r['steps_with_the_torso_in_the_ceiling_zone'])} "
+                f"of the steps and at the ceiling in {share(r['steps_with_the_torso_at_the_ceiling'])}. Torso "
+                f"height: median {height['50']:.2f} m, 99% of the steps below {height['99']:.2f} m, 99.99% below "
+                f"{height['99.99']:.2f} m. Torso speed: median {speed['50']:.2f} m/s, 99% of the steps below "
+                f"{speed['99']:.2f} m/s, 99.99% below {speed['99.99']:.2f} m/s. {r['non_finite_resets']} "
+                f"non-finite resets. Episodes that ended at the goal: {len(arrivals)}"
+                + (f" ({earlier['episodes_ended_at_the_goal']} before)" if earlier else ""))
+            if arrivals:
+                heights = sorted(a["largest_height_of_the_episode"] for a in arrivals)
+                steps = sorted(a["step_of_the_episode"] for a in arrivals)
+                text += (f"; {len(around)} of them went around the wall through the open cells, "
+                         f"{len(arrivals) - len(around)} did not; their largest torso height was between "
+                         f"{heights[0]:.2f} m and {heights[-1]:.2f} m, and they ended after {steps[0]} to "
+                         f"{steps[-1]} steps")
+            lines.append(text + ".")
+        lines.append("")
+        # GOAL: the two implementations on the card beside C MuJoCo on processors, as shares of the steps.
+        if ants and "random_torques_c_mujoco" in ants:
+            c = ants["random_torques_c_mujoco"]["with_the_ceiling"]
+            percent = lambda count, steps: f"{100 * count / steps:.4f}%"
+            lines += [
+                "The same counts as shares of the environment steps, beside C MuJoCo with the same kind of "
+                f"torques ({c['environment_steps']:,} steps on processors, section above; C MuJoCo ran "
+                "without resets and without the goal):",
+                "",
+                "| physics | steps in the<br>ceiling zone | steps faster<br>than 5 m/s | steps faster<br>than 10 m/s | "
+                "largest torso<br>speed (m/s) |",
+                "|---|---:|---:|---:|---:|",
+                f"| C MuJoCo | {percent(c['steps_with_the_torso_in_the_ceiling_zone'], c['environment_steps'])} | "
+                f"{percent(c['steps_faster_than_5_metres_per_second'], c['environment_steps'])} | "
+                f"{percent(c['steps_faster_than_10_metres_per_second'], c['environment_steps'])} "
+                f"({c['steps_faster_than_10_metres_per_second']} steps) | {c['largest_torso_speed']:.2f} |",
+            ]
+            for r in sorted(torques, key=lambda record: record["physics"], reverse=True):
+                lines.append(
+                    f"| {names[r['physics']]} | "
+                    f"{percent(r['steps_with_the_torso_in_the_ceiling_zone'], r['environment_steps'])} | "
+                    f"{percent(r['steps_faster_than_5_metres_per_second'], r['environment_steps'])} | "
+                    f"{percent(r['steps_faster_than_10_metres_per_second'], r['environment_steps'])} "
+                    f"({r['steps_faster_than_10_metres_per_second']:,} steps) | {r['largest_torso_speed']:.2f} |")
+            lines.append("")
+            for r in torques:
+                fast = r["steps_faster_than_10_metres_per_second"]
+                if fast:
+                    expected = fast * c["environment_steps"] / r["environment_steps"]
+                    lines += [
+                        f"At the rate of {names[r['physics']]} ({fast:,} steps faster than 10 m/s in "
+                        f"{r['environment_steps']:,}), C MuJoCo's {c['environment_steps']:,} steps would hold "
+                        f"about {expected:.0f} such steps; they hold {c['steps_faster_than_10_metres_per_second']}.",
+                        ""]
+
+    # GOAL: the speed cells measured again, beside the earlier values of the same cells.
+    measured = [r for r in cells if r.get("status") == "measured"]
+    if cells:
+        lines += ["### Speed with the ceiling in the model (H100 NVL, serval02 card 1)", ""]
+    if measured:
+        lines += [
+            "| policies | environments<br>per policy | environments<br>in total | seconds per<br>iteration | "
+            "total steps per<br>second (millions) | steps per second<br>per policy | "
+            "hours per million<br>steps per policy | rollout<br>share | update<br>share | "
+            "peak card<br>memory (GiB) | largest<br>pool use | measured |",
+            "|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|",
+            *table_rows(measured), ""]
+        for r in sorted(measured, key=CELL_ORDER):
+            earlier = earlier_cells.get((r["policies"], r["environments_per_policy"]))
+            held = lambda record: (record["memory"]["process_mib_on_card"] or record["memory"]["card_mib_used"]) / 1024
+            text = (f"- {r['policies']:,} x {r['environments_per_policy']}: "
+                    + (f"before the ceiling {earlier['seconds_per_iteration']:.4f} s per iteration, "
+                       f"{earlier['total_steps_per_second_millions']:.3f} million steps per second and "
+                       f"{held(earlier):.2f} GiB; with it {r['seconds_per_iteration']:.4f} s "
+                       f"({100 * (r['seconds_per_iteration'] / earlier['seconds_per_iteration'] - 1):+.1f}%), "
+                       f"{r['total_steps_per_second_millions']:.3f} million and {held(r):.2f} GiB. "
+                       if earlier else "not measured before the ceiling. ")
+                    + f"First two iterations (with compilation) {r['first_two_iterations_seconds'][0]:.0f} s and "
+                    f"{r['first_two_iterations_seconds'][1]:.0f} s; loss finite "
+                    f"{'yes' if r['loss_finite'] else 'NO'}; {r['episodes_ended']:,} episodes ended, "
+                    f"{r['arrivals']:,} at the goal; {r['non_finite_resets']} non-finite resets; "
+                    f"{r['ceiling_zone_steps']:,} environment steps in the ceiling zone of "
+                    f"{r['iterations_run'] * r['rollout_steps'] * r['environments']:,}; largest torso speed "
+                    f"{r['largest_torso_speed']:.2f} m/s.")
+            lines.append(text)
+        lines.append("")
+    unused = [r for r in cells if r.get("status") != "measured"]
+    if unused:
+        lines += ["Not measured or not used:", ""]
+        for r in unused:
+            reason = (f"another process was on the card: {r['other_processes_on_card']}"
+                      if r["status"] == "discarded" else
+                      r.get("reason", "the process ended before the cell was measured"))
+            lines.append(f"- {r['policies']:,} policies x {r['environments_per_policy']} environments, "
+                         f"{pacific(r['started_iso'])}: {reason}.")
+        lines.append("")
     return lines
 
 

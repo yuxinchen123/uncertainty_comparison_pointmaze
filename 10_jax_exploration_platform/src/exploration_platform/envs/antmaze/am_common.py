@@ -1,8 +1,8 @@
 """Shared ground truth for the AntMaze environment family (numpy + xml only, no jax).
 
 Holds the maze presets (umaze / medium / large), the environment configuration dataclass, and
-the MJCF builder that turns the vendored Gymnasium ant model plus a maze map into one model the
-MJX stepper loads. Reference semantics: Gymnasium-Robotics 1.3.1 `AntMaze_<Map>-v5`
+the MJCF builder that turns the vendored Gymnasium ant model plus a maze map and a ceiling on the
+wall tops into one model the MJX stepper loads. Reference semantics: Gymnasium-Robotics 1.3.1 `AntMaze_<Map>-v5`
 (`gymnasium_robotics/envs/maze/ant_maze_v5.py` + `maze_v4.py`), whose numbers are restated in
 `spec.md` beside this file. The maze maps are the same three grids the PointMaze family uses
 (`gymnasium_robotics.envs.maze.maps.U_MAZE / MEDIUM_MAZE / LARGE_MAZE`), scaled by 4, so they
@@ -20,6 +20,25 @@ SCALING = 4.0        # maze_size_scaling: one maze cell is a 4 m x 4 m square
 HEIGHT = 0.5         # maze_height: wall boxes are HEIGHT * SCALING = 2 m tall
 GOAL_RADIUS = 0.45   # sparse reward paid when |torso xy - goal xy| <= this, in metres
 FRAME_SKIP = 5       # one environment step = 5 physics steps of 0.01 s (20 Hz control)
+
+# ---- the ceiling (a deviation from the reference, decided in the session of 2026-11-12 and reported to the user, who may reverse it; spec.md, deviation 8) ----
+# Under strong torques an ant can leave the floor and rise above the 2 m walls, and then cross
+# them. One plane on the wall tops, with its normal pointing down, stops the torso there.
+CEILING_HEIGHT = HEIGHT * SCALING   # metres: the plane lies on the wall tops, at 2 m
+TORSO_RADIUS = 0.25                 # metres: the torso sphere of ant.xml
+CONTACT_MARGIN = 0.01               # metres: the geom margin of ant.xml's default class
+# torso-centre height at which the torso sphere comes within the margin of the ceiling: 1.74 m
+CEILING_CONTACT_HEIGHT = CEILING_HEIGHT - TORSO_RADIUS - CONTACT_MARGIN
+# The ceiling zone that the fault record counts: torso centre above 1.5 m, which is 0.5 m under
+# the plane and 0.24 m under the height of first contact.
+CEILING_ZONE_DEPTH = 0.5
+CEILING_ZONE_HEIGHT = CEILING_HEIGHT - CEILING_ZONE_DEPTH
+# Collision bits. ant.xml gives every geom contype 1; the floor and the walls have conaffinity 1
+# and the ant's geoms conaffinity 0, so each ant geom meets the floor and the walls and nothing
+# else. The ceiling answers only to bit 2 (conaffinity 2, contype 0), and only the torso sphere
+# also carries that bit (contype 3), so the model gains exactly one pair, torso against ceiling.
+CEILING_BIT = 2
+TORSO_GEOM = "torso_geom"
 
 ANT_XML = path.join(path.dirname(__file__), "assets", "ant.xml")
 # the implementations of the physics step a configuration may name in its `physics` field
@@ -140,11 +159,13 @@ def merged_wall_boxes(map_name: str):
 
 
 def build_antmaze_xml(cfg: AntMazeConfig) -> str:
-    """The vendored ant.xml with the maze walls and the fused solver settings, as an XML string.
+    """The vendored ant.xml with the maze walls, the ceiling and the fused solver settings, as
+    an XML string.
 
     Wall boxes carry the reference's contact attributes (`contype=1 conaffinity=1`, box type,
     z centred at HEIGHT/2 * SCALING = 1 m), placed exactly where `maze_v4.Maze.make_maze` puts
-    them; only the per-cell-to-per-run merge and the option line differ (spec.md, deviations).
+    them; the per-cell-to-per-run merge, the ceiling and the option line differ (spec.md,
+    deviations).
     """
     tree = ET.parse(ANT_XML)
     root = tree.getroot()
@@ -154,6 +175,17 @@ def build_antmaze_xml(cfg: AntMazeConfig) -> str:
                       pos=f"{x} {y} {HEIGHT / 2.0 * SCALING}",
                       size=f"{hx} {hy} {HEIGHT / 2.0 * SCALING}",
                       type="box", contype="1", conaffinity="1", rgba="0.7 0.5 0.3 1.0")
+
+    # GOAL: the ceiling, which only the torso sphere meets. The plane is the floor's (same size,
+    # the default class's margin, friction and contact dimension) turned over and lifted to the
+    # wall tops; it is not drawn (alpha 0).
+    # before: torso_geom contype 1 (ant.xml's default)   -> pairs: torso-floor, torso-walls
+    # after:  torso_geom contype 1 | CEILING_BIT = 3      -> the same pairs and torso-ceiling
+    torso = root.find(f".//geom[@name='{TORSO_GEOM}']")
+    torso.set("contype", str(1 | CEILING_BIT))
+    ET.SubElement(worldbody, "geom", name="ceiling", type="plane", pos=f"0 0 {CEILING_HEIGHT}",
+                  zaxis="0 0 -1", size="40 40 40", contype="0", conaffinity=str(CEILING_BIT),
+                  rgba="0 0 0 0")
     opt = tree.find(".//option")
     opt.set("integrator", cfg.integrator)
     opt.set("iterations", str(cfg.solver_iterations))

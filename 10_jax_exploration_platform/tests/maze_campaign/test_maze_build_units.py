@@ -225,6 +225,9 @@ class ConfirmationAndOtherMaps(unittest.TestCase):
         self.assertEqual(command(dict(warp_ant, interpreter=__file__))[:2], [__file__, "run_training.py"])
         with self.assertRaisesRegex(FileNotFoundError, "needs the interpreter /no/such/python"):
             command(dict(warp_ant, interpreter="/no/such/python"))
+        # on a remote server the named path is UVA's: the worker's own interpreter runs the unit there
+        self.assertEqual(own("worker").unit_interpreter(dict(warp_ant, interpreter="/no/such/python"), remote=True),
+                         sys.executable)
 
     def test_several_sweeps_in_one_description(self):
         """A description may list sweeps that share its top-level keys; equal ids are refused."""

@@ -5,8 +5,10 @@
 # Each cell is one Python process (benchmarks/env/profile_antmaze_warp_training.py), run one after the other,
 # so the memory a process holds on the card belongs to one cell. A cell gets an equal part of the time that
 # is left; a cell that cannot start before the unit's end gets a record that says so.
-# Output is appended to logs/<unit name>.log of the profile folder; records go to records/; the Markdown
-# table antmaze_warp_training.md is written again at the end.
+# Output is appended to logs/<unit name>.log of the profile folder; records go to records/, or to the folder
+# of the profile folder that RECORDS_FOLDER names (records_after_the_ceiling for the H100 NVL cells measured
+# again with the ceiling in the model, whose file names equal those of the earlier cells); the Markdown table
+# antmaze_warp_training.md is written again at the end.
 # The interpreter is platform_jax_warp (platform_jax plus warp-lang 1.14.0). WARP_CACHE_PATH is not set: the
 # environment chooses the node-local kernel folder itself, as a training unit does.
 # Where it may run: serval02 card 1 (started through serval02_card1_run.sh, which pins the card by its UUID),
@@ -40,7 +42,8 @@ nvidia-smi --query-gpu=index,uuid,name,memory.used,utilization.gpu --format=csv,
 echo "processes on the cards before the unit:"; nvidia-smi --query-compute-apps=gpu_uuid,pid,used_memory --format=csv,noheader
 
 # GOAL: one process per cell, stopped 14.5 minutes after the unit started whatever it is doing.
-cell_arguments() { echo --records "$OUT/records" --policies "${1%x*}" --environments-per-policy "${1#*x}" --card-slug "$CARD_SLUG" ; }
+RECORDS="$OUT/${RECORDS_FOLDER:-records}"
+cell_arguments() { echo --records "$RECORDS" --policies "${1%x*}" --environments-per-policy "${1#*x}" --card-slug "$CARD_SLUG" ; }
 worst=0; cells_left=$#
 for cell in "$@"; do
     left=$((START + 870 - $(date +%s)))

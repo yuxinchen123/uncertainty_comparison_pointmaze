@@ -97,10 +97,15 @@ def write_unit_configuration(run_dir, specification):
     return path
 
 
-def unit_interpreter(specification):
+def unit_interpreter(specification, remote=False):
     """The interpreter that runs a unit: the one its specification names, else this worker's own."""
     # before: {"unit_id": "...", "interpreter": "/p/rlprojects/RND/.venvs/platform_jax_warp/bin/python"}
     # after:  that path; a specification without the key gives sys.executable, as before the key existed
+    # On a remote server the named path is UVA's and does not exist. The server table names ONE environment
+    # per server (the worker's own), built to hold every package a unit of the study needs, MuJoCo Warp
+    # included, so there the worker's own interpreter runs every unit.
+    if remote:
+        return sys.executable
     interpreter = specification.get("interpreter", sys.executable)
     if not Path(interpreter).exists():
         raise FileNotFoundError(f"unit {specification['unit_id']} needs the interpreter {interpreter}, "
@@ -108,9 +113,9 @@ def unit_interpreter(specification):
     return interpreter
 
 
-def unit_command(run_dir, specification, configuration, limit_seconds, trainer):
+def unit_command(run_dir, specification, configuration, limit_seconds, trainer, remote=False):
     """The run_training.py command of one unit; running it again continues the unit from its checkpoint."""
-    return [unit_interpreter(specification), str(trainer), "--run-dir", str(run_dir), "--unit-id", specification["unit_id"],
+    return [unit_interpreter(specification, remote), str(trainer), "--run-dir", str(run_dir), "--unit-id", specification["unit_id"],
             "--configuration-file", str(configuration), *specification["options"],
             "--checkpoint-seconds", str(CHECKPOINT_SECONDS), "--time-limit-seconds", str(int(limit_seconds)),
             "--no-aggregate"]
@@ -178,10 +183,10 @@ def completed_unit_folder(run_dir, name, summary):
     common.write_json(folder / "summary.json", summary)
 
 
-def run_unit(run_dir, unit, specification, card, limit_seconds, trainer, left, sample_memory):
+def run_unit(run_dir, unit, specification, card, limit_seconds, trainer, left, sample_memory, remote=False):
     """Run one claimed unit until it ends or its time limit; returns (how it ended, details of the attempt)."""
     configuration = write_unit_configuration(run_dir, specification)
-    command = unit_command(run_dir, specification, configuration, limit_seconds, trainer)
+    command = unit_command(run_dir, specification, configuration, limit_seconds, trainer, remote)
     log_path = run_dir / "logs" / f"{unit['name']}_job-{unit['job_id']}.log"
     log_path.parent.mkdir(parents=True, exist_ok=True)
     started, largest = time.monotonic(), None
@@ -283,7 +288,8 @@ def main(argv=None, card=None, trainer=TRAINER, sample_memory=card_memory_used_m
             try:
                 specification = common.read_json(run_dir / unit["specification"])
                 outcome, details = run_unit(run_dir, unit, specification, card, limit, trainer,
-                                            lambda: ends_at - time.monotonic(), sample_memory)
+                                            lambda: ends_at - time.monotonic(), sample_memory,
+                                            remote=args.remote_records)
             except BaseException:
                 # a worker that cannot go on gives its claim back first; the error is raised again
                 unit_queue.give_back(run_dir, unit, "worker_error", counts_as_failure=True)

@@ -1,11 +1,14 @@
 """Batched AntMaze in JAX, through MuJoCo MJX — the platform's second environment family.
 
 The ant is real articulated physics, so unlike PointMaze the stepper is not hand-derived: the
-model is the vendored Gymnasium `ant.xml` plus the maze walls (`am_common.build_antmaze_xml`),
-and one environment step is `frame_skip` MJX physics steps, vmapped over every environment of
-every copy. Resets are fully deterministic (zero reset noise on both the cells and the joints,
-matching AntMaze-v5's `reset_noise_scale=0.0` plus this platform's zero position noise), so
-auto-reset is a `where` against the initial state and the environment holds no RNG at all.
+model is the vendored Gymnasium `ant.xml` plus the maze walls and a ceiling on the wall tops that
+only the torso meets (`am_common.build_antmaze_xml`), and one environment step is `frame_skip`
+MJX physics steps, vmapped over every environment of every copy. The state also carries the fault
+record of `faults.py`: per policy, the steps with the torso in the ceiling zone and the largest
+torso speed since the driver last read them. Resets are fully deterministic (zero reset noise on
+both the cells and the joints, matching AntMaze-v5's `reset_noise_scale=0.0` plus this platform's
+zero position noise), so auto-reset is a `where` against the initial state and the environment
+holds no RNG at all.
 
 The platform runs with `jax_enable_x64=True` globally (float64 running statistics); MJX under
 that default would build a float64 physics program, twice the memory and well below half the
@@ -29,6 +32,7 @@ from mujoco import mjx
 from mujoco.mjx._src import math as mjx_math
 from mujoco.mjx._src import solver as mjx_solver
 
+from . import faults
 from .am_common import SCALING, AntMazeConfig, build_antmaze_xml, cell_center
 from ..pointmaze.pm_common import MAPS
 
@@ -55,6 +59,9 @@ class EnvState(NamedTuple):
     step_count: jnp.ndarray    # [C, N] int32, steps since this environment's last reset
     reset_count: jnp.ndarray   # [C, N] int32, completed episodes (deterministic resets: metric only)
     nan_count: jnp.ndarray     # [C, N] int32, episodes ended by a non-finite physics state
+    # the fault record of `faults.py`, per policy, since the driver last read it
+    ceiling_zone_steps: jnp.ndarray    # [C] int32, environment steps with the torso above 1.5 m
+    largest_torso_speed: jnp.ndarray   # [C] float32, metres per second
 
 
 def wants_another_pass(model, ctx):
@@ -207,14 +214,14 @@ class JaxAntMaze:
         return CarriedPhysics(data.qpos, data.qvel, data.qacc_warmstart, data.time)
 
     def reset(self) -> EnvState:
-        """Initial state: every environment at the spawn, step and episode counters at zero.
+        """Initial state: every environment at the spawn, every counter at zero.
 
-        The two counters are separate arrays on purpose: the training state is donated to the
+        The counters are separate arrays on purpose: the training state is donated to the
         compiled iteration, and donation refuses a buffer that appears twice in the tree.
         """
         return EnvState(self._spawned_data(), jnp.zeros((self.C, self.N), jnp.int32),
                         jnp.zeros((self.C, self.N), jnp.int32),
-                        jnp.zeros((self.C, self.N), jnp.int32))
+                        jnp.zeros((self.C, self.N), jnp.int32), *faults.window_init(self.C))
 
     def _obs(self, data):
         """Observation [C, N, 29]: the full qpos (15, torso xy included) then qvel (14).
@@ -227,13 +234,15 @@ class JaxAntMaze:
         return jnp.concatenate([data.qpos, data.qvel], -1).reshape(self.C, self.N, 29)
 
     def respawn(self, state: EnvState):
-        """Every environment back at the spawn with step counts zeroed; episode counter kept.
+        """Every environment back at the spawn with step counts and the fault record zeroed;
+        the episode counters are kept.
 
         The runner calls this once after the warm-up rollouts so training starts on full-length
-        episodes, mirroring the PointMaze respawn.
+        episodes, mirroring the PointMaze respawn, and so the first window's fault record holds
+        no warm-up step.
         """
         state = EnvState(self._spawned_data(), jnp.zeros_like(state.step_count),
-                         state.reset_count, state.nan_count)
+                         state.reset_count, state.nan_count, *faults.window_init(self.C))
         return state, self._obs(state.data)
 
     def step(self, state: EnvState, act):
@@ -249,15 +258,20 @@ class JaxAntMaze:
                 data = state.data.replace(ctrl=a)
 
                 def frame(d, _):
-                    """One physics step at the held ctrl."""
-                    return jax.vmap(self._physics_step, in_axes=(None, 0))(self.model, d), None
+                    """One physics step at the held ctrl; outputs the torso's height and speed."""
+                    d = jax.vmap(self._physics_step, in_axes=(None, 0))(self.model, d)
+                    return d, faults.torso_height_and_speed(d.qpos, d.qvel)
             else:
                 data = state.data
 
                 def frame(carried, _):
-                    """One physics step at the held ctrl, from the carried arrays alone."""
-                    return jax.vmap(self._carried_physics_step)(carried, a), None
-            data, _ = jax.lax.scan(frame, data, None, length=self.cfg.frame_skip)
+                    """One physics step at the held ctrl, from the carried arrays alone; outputs
+                    the torso's height and speed."""
+                    carried = jax.vmap(self._carried_physics_step)(carried, a)
+                    return carried, faults.torso_height_and_speed(carried.qpos, carried.qvel)
+            # before: data at the start of the step; after: data 5 physics steps later, and the
+            # torso's height and speed after each of them, [frame_skip, B] each
+            data, (heights, speeds) = jax.lax.scan(frame, data, None, length=self.cfg.frame_skip)
 
             step_count = state.step_count + 1
 
@@ -300,8 +314,19 @@ class JaxAntMaze:
             nan_count = state.nan_count + bad.astype(jnp.int32)
 
             obs = self._obs(data)
-            return (EnvState(data, step_count, reset_count, nan_count),
+            return (EnvState(data, step_count, reset_count, nan_count,
+                             *faults.add_step(state.ceiling_zone_steps, state.largest_torso_speed,
+                                              heights, speeds, self.C, self.N)),
                     obs, reward, terminated, truncated, final_obs)
+
+    def fault_window(self, state: EnvState):
+        """The fault record of the window that ends now, and the state with it set back to zero.
+
+        Returns ({"ceiling_zone_steps_per_copy": [C numbers], "largest_torso_speed_per_copy":
+        [C numbers]}, state). Reading waits for the device, so the training command calls this
+        once per logging window, where it waits anyway.
+        """
+        return faults.read_window(state), faults.clear_window(state)
 
     def cell_index(self, obs_flat):
         """Flat maze-cell index of [C, M, obs] observations -> [C, M] int32, for coverage.

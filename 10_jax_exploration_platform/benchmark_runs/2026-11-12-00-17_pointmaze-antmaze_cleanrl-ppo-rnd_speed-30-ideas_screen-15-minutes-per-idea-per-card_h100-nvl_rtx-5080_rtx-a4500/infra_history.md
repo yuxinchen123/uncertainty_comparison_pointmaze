@@ -106,3 +106,32 @@ Times are Pacific.
      physics), unit 4 (14:07 PT, the example command stopped and continued), unit 3 (14:25 PT, three cells). The
      32,768-environment cells (unit 6) and the 4,096-policy cell (unit 7) were not run: from 14:37 PT the card
      was held by units of other sessions, an evaluation unit first, and I stopped my waiting starter at 14:47 PT.
+- 2026-11-12 14:52 to 15:51 PT, the ceiling in the AntMaze model and the fault record (session 9ca0cb45; records
+  and document: `profiles/antmaze_warp_training/`, section "After the ceiling" of `antmaze_warp_training.md`):
+  1. serval05 was not used: three processes of another account (pyt9dp, 13,415 MiB together) were on its card at
+     14:57 and at 15:26 PT.
+  2. serval02 card 1 was held from before 15:12 PT by an evaluation unit of the cloud-service session (started
+     without the holder file), and the starter of the network distillation session waited for the lock as well.
+     This work's starter (`units/start_units_waiting_in_line_for_card_1.sh`, started 15:12 PT, log
+     `logs/start_h100_units_after_the_ceiling.log`) waited in line; its first try at 15:22 PT found the card
+     busy. Nothing was stopped and `interrupt_for_profile.sh` was not used.
+  3. What ran on serval02 card 1, each without another process on the card: unit 9 (15:28 to 15:32 PT, 16,384
+     ants with random torques, Warp then JAX physics, 224 s), unit 10 (15:35 to 15:39 PT, 1,024 policies x 16
+     environments, 221 s), unit 11 (15:40 to 15:45 PT, 2,048 policies x 16 environments, 307 s).
+  4. Processor jobs on puma01 through the reservation (ids in `slurm/submitted_jobids_tests_sl5nw.txt`, all
+     COMPLETED): 6889957 (15:05 PT, periodic leg torques in C MuJoCo), 6890020 (15:08 to 15:12 PT, the new
+     ceiling tests with the Warp interpreter, 14 passed), 6890149 (15:16 to 15:25 PT, the card units' scripts at
+     a tiny size and the nine ants' record), 6890150 (15:16 to 15:23 PT, the environment's checks against C
+     MuJoCo with the ceiling), 6890636 (15:35 to 15:38 PT, the nine ants' record again with 1,024 ants in its C
+     MuJoCo random-torque part), and the suites on the changed source: 6890164 (`tests/envs`, 44 passed, 6
+     skipped for want of warp-lang), 6890165 (the Warp interpreter's files, 42 passed), 6890166 (`tests/agents`
+     and `tests/golden_09`, 80 passed, 2 deselected), 6890167 (`tests/integration`, 23 passed), 6890196 (the two
+     JAX ant profile scripts' tests, 16 passed), 6890950 (15:43 to 15:51 PT, the ceiling tests, `test_antmaze_mjx.py`
+     and the training-iteration script's test once more after the last source edit, 26 passed).
+  5. `units/run_cells.sh` now takes the records folder from `RECORDS_FOLDER` (default `records`); the cells
+     measured again went to `records_after_the_ceiling/`. A record of the training-iteration script made from
+     now on holds `model_has_ceiling`. Job 6886965 (RTX 5080, queued by the earlier work) was not touched; when
+     it starts it measures the model with the ceiling and writes to `records/`.
+  6. The working tree is shared: commit d7054945 of another session (15:26 PT) took in the 8 lines this work
+     inserted into `scripts/run_training.py` (the fault record in the window record). Without the environment
+     files of this work, which were not committed, those lines do nothing.

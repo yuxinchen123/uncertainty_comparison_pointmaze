@@ -14,6 +14,13 @@ speed and one-step move of the episode, the maze cells the torso went through, a
 position at chosen steps before the arrival. For all environments together it writes how many
 steps had the torso above the walls' top (2 m), faster than 10 m/s, or inside a wall cell.
 
+Since the model has its ceiling (2026-11-12) the record also holds: the steps with the torso in the
+ceiling zone (above 1.5 m) and at the ceiling (above 1.74 m, where the torso sphere meets it), the
+episodes with at least one such step, the environment's own fault record summed over all
+environments, the steps faster than 2 and 5 m/s, percentiles of the torso's height and speed, and
+for every episode that ended at the goal whether it went around the wall (through the cell at the
+far end of the wall) and its steps in the ceiling zone.
+
 Run on a card, never on a login node:
   <platform_jax_warp python> diagnose_arrivals_with_random_torques.py --physics warp \
       --environments 16384 --steps 1400 --out <file.json>
@@ -64,7 +71,8 @@ def main():
     import jax.numpy as jnp
     import numpy as np
     import exploration_platform  # noqa: F401
-    from exploration_platform.envs.antmaze.am_common import preset
+    from exploration_platform.envs.antmaze.am_common import (CEILING_CONTACT_HEIGHT, CEILING_ZONE_HEIGHT,
+                                                             preset)
     from exploration_platform.envs.pointmaze.pm_common import MAPS
     say = lambda text: print(f"[{time.time() - started:6.1f} s] {text}", flush=True)
 
@@ -109,6 +117,13 @@ def main():
     in_wall = np.zeros(row.shape, bool)
     in_wall[inside] = maze[row[inside], col[inside]] == 1
     speed = np.linalg.norm(velocity, axis=-1)
+    in_zone = position[..., 2] > CEILING_ZONE_HEIGHT
+    # GOAL: the episode each step belongs to, to count the episodes that entered the ceiling zone.
+    # before: done [steps, n], True at an episode's last step
+    # after:  episode [steps, n], the number of episodes of the environment that ended before the step
+    episode = np.cumsum(done, axis=0) - done
+    episodes_in_zone = sum(len(np.unique(episode[in_zone[:, b], b])) for b in np.nonzero(in_zone.any(0))[0])
+    percentiles = (50, 90, 99, 99.9, 99.99)
     record = {
         "physics": args.physics, "environments": n, "steps": int(position.shape[0]),
         "goal_cell": list(cfg.goal_cell), "start_cell": list(cfg.start_cell),
@@ -120,6 +135,19 @@ def main():
         "steps_with_the_torso_inside_a_wall_cell": int(in_wall.sum()),
         "steps_with_the_torso_outside_the_maze": int((~inside).sum()),
         "largest_torso_height": float(position[..., 2].max()), "largest_torso_speed": float(speed.max()),
+        "ceiling_zone_height": CEILING_ZONE_HEIGHT, "ceiling_contact_height": CEILING_CONTACT_HEIGHT,
+        "steps_with_the_torso_in_the_ceiling_zone": int(in_zone.sum()),
+        "steps_with_the_torso_at_the_ceiling": int((position[..., 2] > CEILING_CONTACT_HEIGHT).sum()),
+        "episodes_with_the_torso_in_the_ceiling_zone": int(episodes_in_zone),
+        # the environment's own fault record (it looks at every physics step, this script at the
+        # last physics step of each environment step, so the environment's count is the larger)
+        "environment_fault_record": {
+            "ceiling_zone_steps": int(np.asarray(state.ceiling_zone_steps, np.int64).sum()),
+            "largest_torso_speed": float(np.asarray(state.largest_torso_speed).max())},
+        "steps_faster_than_2_metres_per_second": int((speed > 2.0).sum()),
+        "steps_faster_than_5_metres_per_second": int((speed > 5.0).sum()),
+        "torso_height_percentiles": {str(q): float(np.percentile(position[..., 2], q)) for q in percentiles},
+        "torso_speed_percentiles": {str(q): float(np.percentile(speed, q)) for q in percentiles},
         "pool": env.overflow_report(state) if args.physics == "warp" else None, "arrivals": []}
 
     # GOAL: every episode that ended at the goal, from its first step to the arrival.
@@ -139,6 +167,11 @@ def main():
             "largest_speed_of_the_episode": round(float(fast.max()), 2),
             "largest_move_in_one_step": round(float(moves.max()), 2),
             "cells_in_order": visited[:40],
+            # around the U-maze's wall: through the open cell (2, 3) at the wall's far end, and
+            # never inside a wall cell
+            "went_around_the_wall": bool((2, 3) in visited and all(maze[r, c] == 0 for r, c in visited
+                                                                   if 0 <= r < rows and 0 <= c < cols)),
+            "steps_in_the_ceiling_zone_of_the_episode": int((path[:, 2] > CEILING_ZONE_HEIGHT).sum()),
             "torso_before_the_arrival": {str(back): [round(float(x), 2) for x in position[t - back, b]]
                                          for back in LOOK_BACK if t - back >= first}})
     record["wall_seconds"] = time.time() - started

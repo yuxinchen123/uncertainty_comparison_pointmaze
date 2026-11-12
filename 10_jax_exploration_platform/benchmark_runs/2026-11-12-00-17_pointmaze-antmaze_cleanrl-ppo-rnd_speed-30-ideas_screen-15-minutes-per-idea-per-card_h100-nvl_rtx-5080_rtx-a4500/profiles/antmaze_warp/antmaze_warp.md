@@ -310,7 +310,7 @@ Warp pool: 4 contacts and 4 candidate pairs at most in a pool of 48, 20 rows at 
 
 ## Correctness measurements on processors (MuJoCo Warp on the processor device)
 
-Host puma01, 2026-11-12 12:51 PT, Slurm job 6887049; the same functions as on the card.
+Host puma01, 2026-11-12 15:16 PT, Slurm job 6890150; the same functions as on the card.
 
 ### check a: one step against C MuJoCo and against JAX, 50 states
 
@@ -407,8 +407,8 @@ Reference resting height 0.38248 m (gate: within 1e-4 m), 1,200 passive environm
 
 | implementation | height (m) | difference from<br>the reference (m) | largest speed<br>at the end | a state settled in C MuJoCo<br>moved by, in 200 more steps (m) |
 |---|---:|---:|---:|---:|
-| C MuJoCo, float64 | 0.269531 | 1.13e-01 | 1.26e-01 | none |
-| MuJoCo Warp, float32 | 0.382481 | 9.79e-07 | 2.76e-06 | 4.21e-02 |
+| C MuJoCo, float64 | 0.270727 | 1.12e-01 | 2.48e-01 | none |
+| MuJoCo Warp, float32 | 0.382481 | 9.79e-07 | 2.76e-06 | 2.07e-01 |
 
 Warp pool: 4 contacts and 4 candidate pairs at most in a pool of 48, 20 rows at most of 160, nothing dropped.
 

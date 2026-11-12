@@ -190,6 +190,13 @@ def test_the_command_runs_the_warp_example_in_both_reward_settings():
             assert complete["physics_pool"] == pools[1]
             assert 0 < complete["physics_pool"]["pool_fraction_largest"] < 1
             assert complete["nan_respawned_episodes"] == 0
+            # the fault record of each window: one count and one speed per policy; a window is
+            # 16 steps x 4 environments per policy, and the ants move in it
+            for window in records[2:4]:
+                assert len(window["ceiling_zone_steps_per_copy"]) == 2
+                assert all(0 <= steps <= 16 * 4 for steps in window["ceiling_zone_steps_per_copy"])
+                assert all(0.0 < speed < 100.0 for speed in window["largest_torso_speed_per_copy"])
+            assert "ceiling_zone_steps_per_copy" not in complete
             log = (run_dir / "logs" / "unit.log").read_text()
             assert "MuJoCo Warp physics: kernel folder " in log
             assert "shared contact pool 384 slots (48 per environment x 8 environments)" in log
@@ -216,9 +223,10 @@ def test_the_command_stops_a_unit_whose_pool_is_too_small():
 
 def test_state_saved_and_restored_continues_bit_for_bit():
     """The whole training state with the Warp data tree in it: saved after 1 of 3 iterations and
-    restored into a newly built trainer. The restored state equals the saved one in all 257
-    arrays; after two more iterations 243 arrays equal the uninterrupted unit's bit for bit, and
-    the 14 left out are the island arrays the physics step never writes."""
+    restored into a newly built trainer. The restored state equals the saved one in all 259
+    arrays (257 before the environment's fault record added two); after two more iterations 245
+    arrays equal the uninterrupted unit's bit for bit, and the 14 left out are the island arrays
+    the physics step never writes."""
     cfg = PPOConfig(configuration_preset="antmaze_current", n_copies=2, n_envs=1, num_steps=4,
                     prime_iterations=1, update_style="epoch_minibatch", num_minibatches=2,
                     episode_log=True)
@@ -264,4 +272,7 @@ def test_a_unit_stopped_twice_and_continued_equals_the_whole_unit():
         assert total("episodes_per_copy") == [10, 10] and total("length_sum_per_copy") == [70, 70]
         # the largest pool use is part of the state, so it continues across the stops as well
         assert actual[-1]["physics_pool"] == expected[-1]["physics_pool"]
+        # so is the fault record: the window that was stopped twice holds the same numbers
+        assert all(len(w["largest_torso_speed_per_copy"]) == 2 and max(w["largest_torso_speed_per_copy"]) > 0
+                   for w in windows(actual))
         assert actual[-1]["resumed_from_iteration"] == 2

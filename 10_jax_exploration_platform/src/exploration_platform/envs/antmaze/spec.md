@@ -69,6 +69,24 @@ and its `assets/ant.xml`. The `ant.xml` vendored in `assets/` here is a byte cop
    networks never see a NaN, and counted in the state's `nan_count` so a run can report how
    often it happened. The C-MuJoCo reference in float64 does not need this.
 
+8. **A ceiling on the wall tops (decided in the session of 2026-11-12 and reported to the user, who may reverse it).** The reference has none. Its ant
+   is strong enough to leave the floor (motors of 150 N m per joint on a body of under 1 kg), and
+   under random torques some ants rose above the 2 m walls and crossed them: measured on an H100
+   NVL with 16,384 ants for 1,400 steps, 63,100 steps with the torso above the wall tops and 15
+   arrivals at the U-maze goal over the wall with MJX's JAX implementation, 51,818 steps and 2
+   arrivals with MuJoCo Warp. C MuJoCo does the same on the model without a ceiling: of 1,024
+   ants with random torques for 700 steps, 83 had the torso above the wall tops and 4 were over
+   a wall cell. A maze whose walls can be crossed is not the task. The model of all
+   three maps therefore holds one plane at z = 2 m whose normal points down, with the floor's
+   contact parameters, that collides with the torso sphere only: the plane has `contype=0
+   conaffinity=2`, the torso sphere `contype=3` and every other geom keeps `contype=1`, so the
+   model gains exactly one geom pair and the floor and wall pairs are those of before. The torso
+   sphere (radius 0.25 m) meets the plane when the torso centre is at 1.74 m. The environment
+   state carries a fault record per policy (`faults.py`): the environment steps with the torso
+   centre above 1.5 m after any physics step, and the largest torso speed; the training command
+   writes both into every window record (`ceiling_zone_steps_per_copy`,
+   `largest_torso_speed_per_copy`). Checks: `tests/envs/test_antmaze_ceiling.py`.
+
 ## Correctness gates
 
 Run by `tests/envs/test_antmaze_mjx.py` (fast, CPU) and

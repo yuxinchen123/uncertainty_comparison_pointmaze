@@ -1,8 +1,9 @@
 """Batched AntMaze through MuJoCo Warp, called from JAX — a candidate replacement for `mjx_antmaze`.
 
-The model, the frame skip, the reward, the goal termination, the truncation, the reset to the
-fixed spawn, the 29-number observation and the non-finite respawn are those of
-`mjx_antmaze.JaxAntMaze`; only the physics step differs. `mujoco.mjx.step` with a model put with
+The model (with its ceiling on the wall tops), the frame skip, the reward, the goal termination,
+the truncation, the reset to the fixed spawn, the 29-number observation, the non-finite respawn
+and the fault record (`faults.py`) are those of `mjx_antmaze.JaxAntMaze`; only the physics step
+differs. `mujoco.mjx.step` with a model put with
 `impl="warp"` runs MuJoCo Warp's kernels on the card through one foreign call per physics step,
 inside `jax.jit` and `jax.lax.scan`, for all C*N environments as one batch.
 
@@ -66,6 +67,7 @@ from mujoco import mjx
 from mujoco.mjx import warp as mjx_warp
 from mujoco.mjx.warp import types as mjx_warp_types
 
+from . import faults
 from .am_common import SCALING, AntMazeConfig, build_antmaze_xml, cell_center
 from ..pointmaze.pm_common import MAPS
 
@@ -126,6 +128,9 @@ class WarpEnvState(NamedTuple):
     ncollision_peak: jnp.ndarray  # [] int32, most candidate pairs in the shared pool
     nefc_peak: jnp.ndarray        # [] int32, most constraint rows of one environment
     overflow: jnp.ndarray         # [C, N] int32, MuJoCo Warp's overflow bits, kept once set
+    # the fault record of `faults.py`, per policy, since the driver last read it
+    ceiling_zone_steps: jnp.ndarray    # [C] int32, environment steps with the torso above 1.5 m
+    largest_torso_speed: jnp.ndarray   # [C] float32, metres per second
 
 
 class WarpAntMaze:
@@ -208,16 +213,19 @@ class WarpAntMaze:
         zeros = lambda: jnp.zeros((self.C, self.N), jnp.int32)
         scalar = lambda: jnp.zeros((), jnp.int32)
         return WarpEnvState(self._spawned_data(), zeros(), zeros(), zeros(),
-                            scalar(), scalar(), scalar(), zeros())
+                            scalar(), scalar(), scalar(), zeros(), *faults.window_init(self.C))
 
     def _obs(self, data):
         """Observation [C, N, 29]: the full qpos (15, torso xy included) then qvel (14)."""
         return jnp.concatenate([data.qpos, data.qvel], -1).reshape(self.C, self.N, 29)
 
     def respawn(self, state: WarpEnvState):
-        """Every environment back at the spawn with step counts zeroed; other counters kept."""
+        """Every environment back at the spawn with step counts and the fault record zeroed (the
+        first window's fault record then holds no warm-up step); other counters kept."""
+        zone_steps, largest_speed = faults.window_init(self.C)
         state = state._replace(data=self._spawned_data(),
-                               step_count=jnp.zeros_like(state.step_count))
+                               step_count=jnp.zeros_like(state.step_count),
+                               ceiling_zone_steps=zone_steps, largest_torso_speed=largest_speed)
         return state, self._obs(state.data)
 
     def step(self, state: WarpEnvState, act):
@@ -233,13 +241,14 @@ class WarpAntMaze:
                 return jnp.isfinite(d.qpos).all(-1) & jnp.isfinite(d.qvel).all(-1)
 
             def frame(d, _):
-                """One physics step at the held ctrl; outputs the pool use, the row count and
-                which environments are finite after it."""
+                """One physics step at the held ctrl; outputs the pool use, the row count, which
+                environments are finite after it, and the torso's height and speed."""
                 d = jax.vmap(mjx.step, in_axes=(None, 0))(self.model, d)
                 impl = d._impl
-                return d, (impl.nacon.max(), impl.ncollision.max(), impl.nefc.max(), finite(d))
+                return d, (impl.nacon.max(), impl.ncollision.max(), impl.nefc.max(), finite(d),
+                           *faults.torso_height_and_speed(d.qpos, d.qvel))
             finite_before = finite(data)
-            data, (nacon, ncollision, nefc, finite_after) = jax.lax.scan(
+            data, (nacon, ncollision, nefc, finite_after, heights, speeds) = jax.lax.scan(
                 frame, data, None, length=self.cfg.frame_skip)
 
             step_count = state.step_count + 1
@@ -284,8 +293,19 @@ class WarpAntMaze:
                 jnp.maximum(state.nacon_peak, nacon.max()),
                 jnp.maximum(state.ncollision_peak, ncollision.max()),
                 jnp.maximum(state.nefc_peak, nefc.max()),
-                state.overflow | data._impl.overflow.reshape(self.C, self.N))
+                state.overflow | data._impl.overflow.reshape(self.C, self.N),
+                *faults.add_step(state.ceiling_zone_steps, state.largest_torso_speed,
+                                 heights, speeds, self.C, self.N))
             return stepped, obs, reward, terminated, truncated, final_obs
+
+    def fault_window(self, state: WarpEnvState):
+        """The fault record of the window that ends now, and the state with it set back to zero.
+
+        Returns ({"ceiling_zone_steps_per_copy": [C numbers], "largest_torso_speed_per_copy":
+        [C numbers]}, state). Reading waits for the device, so the training command calls this
+        once per logging window, where it waits anyway.
+        """
+        return faults.read_window(state), faults.clear_window(state)
 
     def overflow_report(self, state: WarpEnvState):
         """Pool use and limits as plain numbers, and whether any contact or row was dropped.
