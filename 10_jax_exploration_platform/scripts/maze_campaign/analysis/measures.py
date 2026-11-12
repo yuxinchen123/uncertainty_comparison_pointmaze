@@ -9,12 +9,20 @@ range counts in proportion. Sums of episodes are split the same way.
 - Final level L(B): the mean of the curve over the last 10% of the budget, steps (0.9 B, B].
 - A budget shorter than the run reads the same records up to that step, so L(0.5 B) is the mean over
   (0.45 B, 0.5 B] of the run trained for B steps.
+- A smoothed curve is the seed-averaged curve averaged over a fixed number of steps that end at each logged
+  step. The peak of the decline check is the highest value of the curve smoothed over 10% of the budget, the
+  same width as the final level, so the smoothed value at B is L(B) and the peak is never below it. The budget
+  rule smooths over 5% of the run's steps and looks for the first step that reaches 95% of the final level.
 """
 
 import numpy as np
 
 FINAL_SHARE = 0.1
 LENGTH_FRACTIONS = (0.25, 0.5, 0.75, 1.0)
+# The budget rule of the plan: the curve smoothed over this share of the run's steps, and the share of the
+# final level (measured from the return of an episode that never reaches the goal) it has to reach.
+BUDGET_SMOOTHING_SHARE = 0.05
+BUDGET_LEVEL_SHARE = 0.95
 
 
 def require_steps(policy, budget):
@@ -116,6 +124,30 @@ def mean_curve(policies, budget=None):
     return grid, values.mean(axis=0), error
 
 
+def smoothed_curve(grid, curve, width):
+    """A step curve averaged over the `width` steps that end at each of its steps from `width` on: steps, values."""
+    # before: window ends [100, 200, 300, 400] with values [0, 1, 1, 0], width 200
+    # after:  steps [200, 300, 400], values [0.5, 1.0, 0.5]; no value before step 200, where the range is not full.
+    ends = grid[grid >= width]
+    values = np.asarray([steps_inside(grid, end - width, end) @ curve / width for end in ends])
+    return ends, values
+
+
+def steps_to_final_level_share(policies, run_steps, share=BUDGET_LEVEL_SHARE, smoothing=BUDGET_SMOOTHING_SHARE):
+    """The first logged step at which the smoothed seed-averaged curve reaches a share of the final level; None if never."""
+    # Both sides are measured from the return of an episode that never reaches the goal, so the answer is the
+    # same with reward 1 on arrival (floor 0) and with the step cost (floor -1). A configuration whose final
+    # level is that floor has no rise to measure.
+    floor = policies[0].never_reached_return
+    level = float(np.mean([final_level(policy, run_steps) for policy in policies]))
+    if level <= floor:
+        return None
+    grid, curve, _ = mean_curve(policies, run_steps)
+    ends, values = smoothed_curve(grid, curve, smoothing * run_steps)
+    reached = np.flatnonzero(values - floor >= share * (level - floor))
+    return int(ends[reached[0]]) if len(reached) else None
+
+
 def standard_error(values):
     """Standard error of the mean over seeds; None with fewer than two."""
     values = np.asarray(values, np.float64)
@@ -126,10 +158,13 @@ def configuration_measures(policies, budget):
     """Every measure of one configuration at the budget; all of its policies must have trained that far."""
     whole = [whole_curve_mean(policy, budget) for policy in policies]
     final = [final_level(policy, budget) for policy in policies]
+    level, floor = float(np.mean(final)), policies[0].never_reached_return
+    # Two peaks of the seed-averaged curve: of the curve smoothed over the last-10% width (the decline check's),
+    # and of its single windows (stricter, because one window of a few seeds is raised by noise).
     grid, curve, _ = mean_curve(policies, budget)
-    peak_index = int(np.argmax(curve))
-    peak, floor = float(curve[peak_index]), policies[0].never_reached_return
-    level = float(np.mean(final))
+    ends, smoothed = smoothed_curve(grid, curve, FINAL_SHARE * budget)
+    peak_index, window_index = int(np.argmax(smoothed)), int(np.argmax(curve))
+    peak, window_peak = float(smoothed[peak_index]), float(curve[window_index])
 
     # Episode measures of the last 10%: the goal share is a mean over policies, the steps to the goal a mean
     # over all arrivals of all policies.
@@ -143,10 +178,12 @@ def configuration_measures(policies, budget):
         'final_level': level, 'final_level_error': standard_error(final),
         'final_level_at': {fraction: float(np.mean([final_level(policy, fraction * budget) for policy in policies]))
                            for fraction in LENGTH_FRACTIONS},
-        'peak': peak, 'peak_step': int(grid[peak_index]),
-        # Both are measured from the return of an episode that never reaches the goal, so the ratio means the
+        # The ratios are measured from the return of an episode that never reaches the goal, so they mean the
         # same with reward 1 on arrival (floor 0) and with the step cost (floor -1).
+        'peak': peak, 'peak_step': int(ends[peak_index]),
         'final_over_peak': (level - floor) / (peak - floor) if peak > floor else None,
+        'single_window_peak': window_peak, 'single_window_peak_step': int(grid[window_index]),
+        'final_over_single_window_peak': (level - floor) / (window_peak - floor) if window_peak > floor else None,
         'capped_first_goal_step': float(np.mean([capped_first_goal_step(policy, budget) for policy in policies])),
         'reached_goal_share': float(np.mean([reached_goal(policy, budget) for policy in policies])),
         'coverage': None if any(value is None for value in coverage) else float(np.mean(coverage)),

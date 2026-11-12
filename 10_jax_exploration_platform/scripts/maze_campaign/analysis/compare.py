@@ -9,6 +9,9 @@
 - Verdict: the method beats the baseline when the W interval is entirely above zero and the L interval is not
   entirely below zero.
 - Success: the method beats the baseline in all five environments in one reward setting.
+- Budget rule: of the three configurations with the highest W, the largest first step at which the smoothed
+  seed-averaged curve reaches 95% of the final level; twice that, rounded up to a power of two, and at most the
+  run's own length. A configuration that never reaches 95% counts as the whole run.
 """
 
 import hashlib
@@ -56,6 +59,20 @@ def best_environments_per_policy(configurations, budget):
     # after:  (16, its best configuration) when the best of the three widths' own best W belongs to 16.
     best = choose_configuration(configurations, budget)
     return best.environments_per_policy, best
+
+
+def propose_budget(configurations, run_steps, most=3):
+    """The plan's budget rule on the configurations of one sweep that have trained the run's whole length."""
+    # before: three configurations whose smoothed curves reach 95% of their final level at steps 200, 350 and 100
+    #         in runs of 4,000 steps; after: largest 350, doubled 700, rounded up to 1,024, not capped: budget 1,024.
+    ranked = [row[2] for row in rank_configurations(configurations, run_steps)][:most]
+    reached = [measures.steps_to_final_level_share(group.policies, run_steps) for group in ranked]
+    never = [group for group, step in zip(ranked, reached) if step is None]
+    # A configuration that never reaches the share counts as the whole run, which puts the budget at the cap.
+    largest = int(run_steps) if never else max(reached)
+    rounded = 1 << (2 * largest - 1).bit_length()
+    return {'configurations': list(zip(ranked, reached)), 'never': never, 'largest': largest, 'rounded': rounded,
+            'capped': rounded > run_steps, 'budget': min(rounded, int(run_steps))}
 
 
 def paired_differences(method_policies, baseline_policies, measure, budget):
