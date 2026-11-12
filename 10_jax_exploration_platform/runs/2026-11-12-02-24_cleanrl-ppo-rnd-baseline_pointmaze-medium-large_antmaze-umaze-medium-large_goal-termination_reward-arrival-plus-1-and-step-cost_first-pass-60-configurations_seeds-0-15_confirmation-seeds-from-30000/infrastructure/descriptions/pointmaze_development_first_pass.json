@@ -1,0 +1,16 @@
+{
+  "study": "cleanrl-ppo-rnd-baseline",
+  "phase": "development-first-pass",
+  "method": "cleanrl-ppo-rnd",
+  "bonus": "rnd_next_state",
+  "environments": ["pointmaze-medium", "pointmaze-large"],
+  "reward_settings": ["arrival_plus_one", "step_cost"],
+  "configuration_files": {"pointmaze": "configs/experiments/pointmaze_large_cleanrl-ppo-rnd_goal-termination_reward-arrival-plus-one_example_steps-1024000.toml"},
+  "environments_per_policy": {"pointmaze": 4},
+  "steps_per_policy": {"pointmaze": 50331648},
+  "windows_per_unit": 192,
+  "cells": {"kind": "first_pass_grid"},
+  "seeds": {"first": 0, "count": 16},
+  "policies_per_unit": 256,
+  "minimum_card_memory_mb": 7000
+}
