@@ -109,12 +109,35 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
 - 2026-11-12 12:10 to 12:47 PT: UVA's scheduler is not starting our new workers (3,334 waiting jobs in the card
   partition, 2,901 of one other user; our priority is low). Units run on cards inside job 6884496, which we already
   hold: its own workers and one more worker started on an idle card through `srun --overlap`.
+- 2026-11-12 12:56 PT: development at the budget on PointMaze Medium (1,048,576 steps, 16 seeds). Reward 1 on
+  arrival: the best learning rate is the largest tried (1e-2, weight 2: whole-curve mean 0.944 ± 0.006), so the
+  edge rule applies and learning rates 1e-2, 2e-2 and 3e-2 with weights 2 and 4 were queued. Step cost: the 12
+  configurations lie between −0.341 and −0.377, the best four within their intervals; chosen learning rate 6e-3,
+  weight 0.0078125 (−0.341 ± 0.005). Its confirmation units (1,024 fresh seeds, with the two reference rows) are
+  queued.
+- 2026-11-12 13:05 PT: budget for PointMaze Large with the step cost, read from the second pass: the best three
+  configurations reach 95% of their final level at 7.7, 7.1 and 8.7 million steps, so the budget is 33,554,432
+  steps (twice the largest, rounded up to a power of two).
+- 2026-11-12 13:10 to 13:20 PT: UVA workers were not being started because they asked for 4 days. Workers now ask
+  for 2 hours, 2 processors and 4 GiB; three started at once. Details in the baseline folder's `infra_history.md`.
+- 2026-11-12 13:28 PT: batch 1 code reviewed; suites on the whole working tree pass (jobs 6887438: 80 passed;
+  6887440: 54 passed; 6887439: 170 passed, 2 skipped; sweep machinery: 90 passed). Commit `2b84cab1`.
+- 2026-11-12 13:35 PT: **batch 1 screen submitted** (14 units of 192 policies: 12 intrinsic weights × 16 seeds, on
+  PointMaze Large with reward 1 on arrival at 8,388,608 steps; description
+  `batches/01_.../screen_pointmaze-large_reward-arrival-plus-one.json`). Workers 6887738 to 6887755, monitor
+  6887756. The first unit started at 13:35 PT on ai02.
 
 ## Next
 
-1. Review and commit the trainer changes; run the whole-iteration time breakdown for both families.
-2. Order the 30 speed ideas from the breakdown; profile them (15 minutes each, H100 NVL first).
-3. Rollout-shape check (4, 16, 128 environments per policy); RND first-pass sweep; budgets.
+1. Batch 1 screen: read each unit as it finishes (whole-curve mean, final level, median first arrival, the two
+   property measures); write `batches/01_.../summary.md`; ideas ahead of the control go to the development sweep.
+2. RND baseline: confirmation of PointMaze Large with reward 1 on arrival and of Medium with the step cost
+   (running); Medium with reward 1 on arrival after its higher learning rates; Large with the step cost at
+   33,554,432 steps (development at the budget, then confirmation).
+3. AntMaze with the Warp physics: rollout-shape check, first-pass sweep, budgets (H100 work: MIT, then Purdue, then
+   the ACCESS servers).
+4. Purdue fleet for the PointMaze units (Gautschi L40S, Gilbreth standby cards).
+5. The remaining speed ideas and the copies per card for the production workloads.
 
 ## Ideas (status)
 

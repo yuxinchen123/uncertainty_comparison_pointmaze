@@ -31,4 +31,4 @@ record of the bonus on the maze grid.
 
 | batch | commit of the frozen code copy |
 |---|---|
-| 1 | (written at submission) |
+| 1 | `2b84cab185ef9030ec5225e413c32863e17ca4b0` (frozen 2026-11-12 13:32 PT; screen submitted 13:35 PT) |
