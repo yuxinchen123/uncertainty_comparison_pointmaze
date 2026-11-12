@@ -1,0 +1,109 @@
+trainer:
+  action_noise_generator: threefry
+  actor_critic_joint_trunk: false
+  adam_eps: 1e-05
+  advantage_scan_unroll: 1
+  anneal_lr: true
+  base_seed: 0
+  batch_stats_f32: false
+  betas: ()
+  bootstrap_on_truncation: true
+  clip_coef: 0.1
+  clip_per_network: false
+  configuration_preset: antmaze_current
+  copies_per_group: 0
+  copy_seed_offset: 0
+  critic_lr_scale: 1.0
+  diagnostics: false
+  ent_coef: 0.001
+  episode_log: true
+  ext_coef: 2.0
+  ext_reward_offset: 0.0
+  ext_reward_scale: 1.0
+  flat_params: false
+  gae_lambda: 0.95
+  gamma_ext: 0.999
+  gamma_int: 0.99
+  gather_minibatches_per_epoch: false
+  hoist_rollout: true
+  int_coef: 1.0
+  int_coef_schedule: constant
+  intrinsic_bootstrap_observation: reset_observation
+  intrinsic_sums_by_matrix_product: false
+  learning_rate: 0.0001
+  learning_rates: ()
+  logstd_floor: -inf
+  max_grad_norm: 0.5
+  n_copies: 16
+  n_envs: 4
+  next_values_from_shifted_values: false
+  no_bonus_advantage_stream: task_only
+  normalize_agent_obs: false
+  normalize_ext_reward: false
+  num_minibatches: 4
+  num_steps: 128
+  parameter_settings: ()
+  permutation_draw: argsort_uniform
+  prime_iterations: 50
+  scan_unroll: 0
+  setting_names: ('learning_rate', 'int_coef')
+  skip_reset_draws_at_zero_noise: false
+  success_gate_rate: 0.0
+  sweep_seed_mode: paired
+  target_features_once_per_iteration: false
+  total_iterations: 0
+  track_coverage: true
+  update_epochs: 4
+  update_style: epoch_minibatch
+  update_unroll: 2
+  vf_coef: 0.5
+environment:
+  specification: antmaze_umaze_term700_nonoise_physics-warp_reward-arrival-plus-one@1
+  map_name: umaze
+  start_cell: (3, 1)
+  goal_cell: (1, 1)
+  max_episode_steps: 700
+  continuing_task: false
+  reward_shift: 0.0
+  goal_radius: 0.45
+  frame_skip: 5
+  integrator: implicitfast
+  solver_iterations: 4
+  ls_iterations: 8
+  max_geom_pairs: 8
+  max_contact_points: 32
+  solver_loop: while_loop
+  carried_state: whole_data
+  physics: warp
+  warp_contact_slots_per_environment: 48
+  warp_constraint_rows_per_environment: 160
+runtime:
+  interpreter: /p/rlprojects/RND/.venvs/platform_jax_warp/bin/python
+  unit_id: example
+  iterations: 400
+  window_iterations: 50
+  run_seed: 0
+  reward_setting: arrival_plus_one
+configuration_file:
+  path: /p/rlprojects/RND/10_jax_exploration_platform/configs/experiments/antmaze_umaze_warp-physics_cleanrl-ppo-rnd_goal-termination_reward-arrival-plus-one_example_steps-204800.toml
+  sha256: 8ed5b3c40c3c5ffb746d27f2ff52470cdcd36c7688309bf84cbdf5a4012966e8
+  metadata:
+    name: "Example: CleanRL PPO with random network distillation on AntMaze U-maze with MuJoCo Warp physics, episode ends at the goal, reward 1 on arrival"
+    implementation: jax_exploration_platform
+    environment_family: antmaze
+    source_files:
+      - 07_reconstruction/ppo_rnd_envpool.py
+      - .claude/rules/exploration-metrics-pointmaze-antmaze.md
+      - 10_jax_exploration_platform/src/exploration_platform/envs/antmaze/warp_antmaze.py
+    notes: "Learner values are CleanRL's defaults in the first source file, except that the predictor trains on the whole batch. Environment, goal termination and the two reward settings are defined in the second source file. A small run for a first check: 16 policies on seeds 0 to 15, 4 environments each. The physics is MuJoCo Warp's (third source file): one shared pool of 48 contact slots per environment and at most 160 constraint rows per environment; a unit in which either is exceeded stops."
+    source_steps_per_policy_copy: 204800
+bonus_options:
+  feature_dim: 128
+  hidden: 256
+  even_start: false
+  reward_divisor: running_std
+  predictor_learning_rate_multiple: 0.0
+  bonus_form: half_squared_error
+  fast_last_layer_step: 0.0
+  scheduled_last_layer_decay: 0.0
+  record_bonus_on_maze_grid: false

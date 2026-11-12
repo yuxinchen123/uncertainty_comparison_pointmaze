@@ -74,3 +74,35 @@ Times are Pacific.
   another process on the card and the closing log line): a script replaced over the network file system is lost
   to a shell on another machine that is still reading it. No other process was noted on card 1 during that unit
   (no `.other_processes` file). Later units start with the new script. A script in use is not replaced again.
+- 2026-11-12 12:26 to 14:20 PT, training iteration with the Warp AntMaze physics (`profiles/antmaze_warp_training/`,
+  session 9ca0cb45; the work that put the Warp ant behind `--physics warp`):
+  1. serval05 was not used: processes of another account (pyt9dp, 13 to 23 GB) were on its card at 12:28 and at
+     13:11 PT.
+  2. serval02 card 1 was shared with two other sessions of this account. From about 12:42 to 13:12 PT its lock
+     was held by one evaluation unit of the cloud-service session (`flock -w 3600 ...
+     serval02_card1_unit_2118328.sh`, 1,806 s, started without the holder file), before and after it by profiles
+     of the network distillation session. The starter of the earlier Warp work
+     (`profiles/antmaze_warp/units/start_units_when_card_1_is_free.sh`) looks every 30 seconds; a unit that waits
+     on the lock itself passed it at 13:12 PT. From 13:13 PT the units of this work wait in line with a blocking
+     `flock` (`profiles/antmaze_warp_training/units/start_units_waiting_in_line_for_card_1.sh`). I stopped only my
+     own two starters, each while it held no unit; no process of another session was stopped.
+  3. On serval02 one measuring process needs 72 to 80 s to load the libraries, and building and priming took
+     about 0.115 s per policy (136 s for 1,024 policies, 469 s for 4,096). Unit 1 (three cells) therefore measured
+     one cell: the 4,096-policy cell was stopped at the unit's limit and the third cell did not start. The later
+     units hold two cells, or one; 8,192 policies cannot be built inside a 15-minute unit.
+  4. RTX 5080: job 6886965 (4 processors, 12 GB, nekomata02, submitted 12:43 PT) waits on `Priority`. Both RTX
+     5080 nodes had 22 of 24 processors in use by jobs of two other users, and three 2-processor profile jobs of
+     another session (6885759, 6886016, 6886953) have waited there since 11:50 PT. RTX A4500: not measured, all 8
+     cards of jaguar03 were held by job 6874312 of this account at 12:28, 12:43 and 13:02 PT.
+  5. Test jobs on puma01 (ids in `slurm/submitted_jobids_tests_sl5nw.txt`): 6886702, 6886860, 6887246, 6888341
+     (Warp interpreter), 6886713, 6886714, 6886926, 6887247 (default interpreter), 6886848, 6887049, 6887832,
+     6887841 (single scripts). 6886702 failed on two faults of the new tests, corrected before 6886860; 6887832
+     failed because its output path existed only on the login node; 6886926 failed in one test of another
+     session's new file (`tests/bonuses/test_rnd_bonus_options.py::test_separate_predictor_step_size`).
+  6. The working tree was shared with another session, whose commit 2b84cab1 (13:32 PT) took in this work's
+     files as they stood then.
+  7. What ran on serval02 card 1 for this work, all without another process on the card: unit 1 (13:26 PT, one
+     cell measured), unit 5 (13:54 PT, two cells), unit 8 (14:02 PT, ants with random torques, Warp and JAX
+     physics), unit 4 (14:07 PT, the example command stopped and continued), unit 3 (14:25 PT, three cells). The
+     32,768-environment cells (unit 6) and the 4,096-policy cell (unit 7) were not run: from 14:37 PT the card
+     was held by units of other sessions, an evaluation unit first, and I stopped my waiting starter at 14:47 PT.

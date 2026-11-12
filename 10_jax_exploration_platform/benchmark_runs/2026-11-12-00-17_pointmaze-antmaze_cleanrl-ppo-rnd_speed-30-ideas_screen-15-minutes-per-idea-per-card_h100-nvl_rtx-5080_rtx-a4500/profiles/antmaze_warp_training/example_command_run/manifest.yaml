@@ -1,0 +1,30 @@
+schema_version: 1
+run_id: example_command_run
+description: "Example: CleanRL PPO with random network distillation on AntMaze U-maze with MuJoCo Warp physics, episode ends at the goal, reward 1 on arrival"
+git:
+  commit: fcb5c83fb2f8c60fabc7f96ccd914606fe15200e
+  dirty: true
+  version_tag: jax-platform-v0.1.0-819-gfcb5c83f
+specs:
+  env: antmaze_umaze_term700_nonoise_physics-warp_reward-arrival-plus-one@1
+  agent: ppo_full_batch_continuing_intrinsic@3
+  configuration_preset: antmaze_current
+  bonus: rnd_next_state@1
+  update_schedule: per_rollout@1
+compile_signature:
+  copies: 16
+  envs_per_copy: 4
+  rollout_steps: 128
+  update_style: epoch_minibatch
+  epochs: 4
+  minibatches: 4
+  dtype: float32
+  stats_dtype: float64
+seeding:
+  base_seed: 0
+  run_seed: 0
+  mode: distinct
+artifacts:
+  metrics: metrics.jsonl
+  summary: summary.json
+  shards: data/*.jsonl

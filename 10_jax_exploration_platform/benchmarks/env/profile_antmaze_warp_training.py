@@ -54,6 +54,8 @@ STUDY_CONFIGURATION = BASE / "configs/experiments" / (
     "antmaze_umaze_warp-physics_cleanrl-ppo-rnd_goal-termination_reward-arrival-plus-one"
     "_example_steps-204800.toml")
 PACIFIC = ZoneInfo("America/Los_Angeles")
+# the order of the cells in the document: by the environments in total, then by those per policy
+CELL_ORDER = lambda record: (record["environments"], record["environments_per_policy"])
 OUT_OF_MEMORY_EXIT_CODE = 77
 NO_CARD_EXIT_CODE = 76
 
@@ -305,6 +307,11 @@ def measure(args) -> int:
             hours_per_million_steps_per_policy=1e6 / (3600.0 * per_policy_rate),
             loss_finite=bool(np.isfinite(losses).all()),
             episodes_ended=int(log["episodes"].sum()), arrivals=int(log["arrivals"].sum()),
+            # the lengths of the episodes that ended at the goal, summed, and the policies' first
+            # training steps with an arrival (-1: none): an arrival this early is not a walk
+            arrival_steps_sum=int(log["steps_to_goal_sum"].sum()),
+            first_goal_steps=sorted(int(step) for step in log["first_goal_step"] if step >= 0),
+            iterations_run=3 + args.rounds * block,
             non_finite_resets=int(np.asarray(state.env_state.nan_count).sum()),
             memory=memory_record(card["uuid"]) if on_card else None,
             pool=runner.check_environment(state))
@@ -385,9 +392,9 @@ def share(record: dict, piece: str) -> str:
 
 
 def table_rows(records: list) -> list:
-    """One table row per measured cell, ordered by environments per policy and then by policies."""
+    """One table row per measured cell, ordered by the environments in total and then by those per policy."""
     rows = []
-    for r in sorted(records, key=lambda r: (r["environments_per_policy"], r["policies"])):
+    for r in sorted(records, key=CELL_ORDER):
         # a processor dry run has no card memory; its row shows 0
         memory, pool = r["memory"] or {"process_mib_on_card": 0, "card_mib_used": 0}, r["pool"]
         held = memory["process_mib_on_card"] or memory["card_mib_used"]
@@ -461,12 +468,12 @@ def render(records_folder: Path) -> str:
             lines += ["First two iterations (with compilation), seconds: " + "; ".join(
                 f"{r['policies']:,} x {r['environments_per_policy']}: "
                 f"{r['first_two_iterations_seconds'][0]:.0f} and {r['first_two_iterations_seconds'][1]:.0f}"
-                for r in sorted(measured, key=lambda r: (r["environments_per_policy"], r["policies"]))) + ".",
+                for r in sorted(measured, key=CELL_ORDER)) + ".",
                 ""]
             in_use = [f"{r['policies']:,} x {r['environments_per_policy']}: "
                       f"{r['memory']['jax_peak_bytes'] / 2 ** 30:.2f} and "
                       f"{r['memory']['warp_pool_peak_bytes'] / 2 ** 30:.2f}"
-                      for r in sorted(measured, key=lambda r: (r["environments_per_policy"], r["policies"]))
+                      for r in sorted(measured, key=CELL_ORDER)
                       if r["memory"]]
             if in_use:
                 lines += ["Largest memory in use as the two libraries count it themselves, JAX's and then "
@@ -474,8 +481,11 @@ def render(records_folder: Path) -> str:
                           "uses, and the card's context): " + "; ".join(in_use) + ".", ""]
             checks = [f"{r['policies']:,} x {r['environments_per_policy']}: loss finite "
                       f"{'yes' if r['loss_finite'] else 'NO'}, {r['episodes_ended']:,} episodes ended, "
-                      f"{r['arrivals']:,} at the goal, {r['non_finite_resets']} non-finite resets"
-                      for r in sorted(measured, key=lambda r: (r["environments_per_policy"], r["policies"]))]
+                      f"{r['arrivals']:,} at the goal"
+                      + (f" (after {r['arrival_steps_sum'] / r['arrivals']:.0f} steps on average)"
+                         if r["arrivals"] and "arrival_steps_sum" in r else "")
+                      + f", {r['non_finite_resets']} non-finite resets"
+                      for r in sorted(measured, key=CELL_ORDER)]
             lines += ["Checks in the same processes: " + "; ".join(checks) + ".", ""]
         unused = [r for r in group if r["status"] != "measured"]
         if unused:
@@ -487,7 +497,60 @@ def render(records_folder: Path) -> str:
                 lines.append(f"- {r['policies']:,} policies x {r['environments_per_policy']} environments, "
                              f"{pacific(r['started_iso'])}: {reason}.")
             lines.append("")
-    return "\n".join(lines)
+    return "\n".join(lines + render_arrivals(records_folder.parent / "records_arrivals"))
+
+
+def render_arrivals(folder: Path) -> list:
+    """The section on episodes that end at the goal under random torques, from the records of
+    `units/diagnose_arrivals_with_random_torques.py`; no lines when there is no such record."""
+    records = [json.loads(path.read_text()) for path in sorted(folder.glob("*.json"))]
+    if not records:
+        return []
+    names = {"jax": "MJX JAX", "warp": "MuJoCo Warp"}
+    lines = [
+        "## Episodes that end at the goal without a walk (H100 NVL, serval02 card 1)",
+        "",
+        "The measured cells above counted episodes that ended at the goal after 15 iterations of an "
+        "untrained policy. The start cell and the goal cell of the U-maze are 8 m apart with a wall "
+        "cell between them (the way around is about 16 m), so these are not walks. "
+        "`units/diagnose_arrivals_with_random_torques.py` stepped ants with random torques (standard "
+        "normal, clipped to [-1, 1], fresh at every step), the episode ending at the goal or after 700 "
+        "steps, with each implementation of the physics, and kept the torso's position and velocity "
+        "of every step. The walls are 2 m high.",
+        "",
+        "| physics | environments | environment<br>steps | episodes<br>ended | ended at<br>the goal | "
+        "steps with the torso<br>above the walls' top | steps faster<br>than 10 m/s | "
+        "steps with the torso<br>inside a wall cell | steps with the torso<br>outside the maze | "
+        "largest torso<br>height (m) | largest torso<br>speed (m/s) |",
+        "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
+    ]
+    for r in records:
+        lines.append(
+            f"| {names[r['physics']]} | {r['environments']:,} | {r['environment_steps']:,} | "
+            f"{r['episodes_ended']:,} | {r['episodes_ended_at_the_goal']} | "
+            f"{r['steps_with_the_torso_above_the_walls_top']:,} | "
+            f"{r['steps_faster_than_10_metres_per_second']:,} | "
+            f"{r['steps_with_the_torso_inside_a_wall_cell']:,} | "
+            f"{r['steps_with_the_torso_outside_the_maze']:,} | {r['largest_torso_height']:.2f} | "
+            f"{r['largest_torso_speed']:.2f} |")
+    lines.append("")
+    for r in records:
+        arrivals = r["arrivals"]
+        if not arrivals:
+            continue
+        # a wall cell of the U-maze between the start row and the goal row: (2, 1) or (2, 2)
+        over = sum(1 for a in arrivals if [2, 1] in a["cells_in_order"] or [2, 2] in a["cells_in_order"])
+        steps = sorted(a["step_of_the_episode"] for a in arrivals)
+        heights = sorted(a["largest_height_of_the_episode"] for a in arrivals)
+        lines.append(
+            f"- {names[r['physics']]}: {over} of the {len(arrivals)} episodes that ended at the goal went "
+            f"through the wall cells between the start row and the goal row, above the wall: the largest "
+            f"torso height of these episodes was between {heights[0]:.2f} m and {heights[-1]:.2f} m, and "
+            f"they ended at the goal after {steps[0]} to {steps[-1]} steps.")
+    lines += ["", "In both implementations some ants rise above the walls and cross them; the records hold "
+              "every such episode that ended at the goal (`records_arrivals/`). Nothing in the environment "
+              "ends or discards an episode in which the torso is above the walls.", ""]
+    return lines
 
 
 def main(argv=None) -> int:

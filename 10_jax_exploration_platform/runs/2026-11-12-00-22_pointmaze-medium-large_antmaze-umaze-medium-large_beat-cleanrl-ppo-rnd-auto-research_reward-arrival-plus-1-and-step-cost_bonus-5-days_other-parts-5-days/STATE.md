@@ -207,6 +207,22 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
 - 2026-11-12 14:45 PT: the control was queued on the validation block (seeds 10000 to 10255, weights 1, 2 and 4;
   3 units, handed to Gilbreth), so that every later idea near the control has a reference that resolves about
   0.007.
+- 2026-11-12 14:50 PT: **the Warp ant trains from the training command and the sweep machinery** (commit
+  2b84cab1). On an H100 NVL, U-maze, the study's learner: 1.68 million steps per second at 16,384 environments
+  (1,024 policies × 16, or 128 × 128; 1.25 s per iteration; peak card memory 17.8 GiB), 0.89 million at 4,096
+  environments; the rollout is 90% to 94% of the iteration. The cell at 32,768 environments is not measured yet.
+- 2026-11-12 14:50 PT: **defect: ants are thrown over the maze walls in both physics implementations.** With
+  random torques (16,384 ants, 1,400 steps) the torso is above the 2 m walls in 51,818 steps with MuJoCo Warp
+  (largest height 5.5 m; 2 arrivals at the U-maze goal, both over the wall) and in 63,100 steps with MJX's JAX
+  implementation (19 m; 15 arrivals). No AntMaze run is started before this is fixed. Fix chosen (routine, applies
+  to every method alike, the user can reverse it): a ceiling at the wall-top height that only the torso collides
+  with, plus per-window counters of steps near the ceiling and of the largest torso speed, so that a policy that
+  gets itself thrown is visible. A worker is implementing and verifying it.
+- 2026-11-12 14:55 PT: remote H100 servers, read through the open connections without any new login: MIT (portal11)
+  is reachable, but other sessions of this account hold 4 of 4 cards on `mit_preemptable` and have 1 running and 5
+  waiting jobs on `mit_normal_gpu`, so new work would wait there; Gautschi's 2 H100 cards are in use by another
+  session; ACES (portal05) and DeltaAI (portal11) connections are open. MIT has the earlier study's environment
+  `~/orcd/scratch/envs/rnd_platform_jax` (no mujoco, no warp).
 
 ## Next
 
