@@ -37,7 +37,11 @@ standard deviation of its discounted sum. **One change from CleanRL, in every ru
 batch (no 25% subsampling).** Networks as in the platform: policy and value 64-64 tanh; RND target 256-128,
 predictor 256-128-128.
 
-- Environments per policy: set during the baseline (rollout-shape check with 4, 16, 128), one value per family.
+- Environments per policy: set during the baseline (rollout-shape check), one value per family.
+  - **PointMaze: 4** (set 2026-11-12 02:05 PT). On PointMaze Large at 50.3 million steps per policy, intrinsic
+    weight 1, the whole-curve mean was 0.89 with 4 environments per policy, 0.70 with 16 and 0.24 with 128; at
+    20.7 million steps it was 0.79 with 4 and 0.54 with 2; at 11.8 million steps 0.67 with 4 and 0.03 with 1.
+  - AntMaze: not set yet (after the ant's physics settings are decided).
 - First-pass sweep: intrinsic weight $4^{-6}, 4^{-5}, \dots, 4^{3}$ (10 values) × learning rate {1e-4, 3e-4, 1e-3} ×
   entropy {0.001, 0.01} = 60 configurations × 16 development seeds (0 to 15).
 - Edge rule: a chosen intrinsic weight at an end of the grid extends the grid by three values on that side before

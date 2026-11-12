@@ -34,6 +34,17 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   RTX A4500s): 4, 16 and 128 environments per policy, intrinsic weights 0.0625, 1, 16, seeds 0 to 15, 50,331,648
   steps per policy. Folder `runs/2026-11-12-01-29_rollout-shape-check_*`. The AntMaze part waits for the ant's
   physics settings, because a kept physics change applies to every later run.
+- 2026-11-12 02:05 PT: rollout-shape check on PointMaze Large read (units with 4, 16 and 128 environments per policy
+  complete; 2 and 1 running, far enough to compare at equal steps). **PointMaze uses 4 environments per policy.**
+  Whole-curve mean at intrinsic weight 1: 0.89 (4), 0.70 (16), 0.24 (128) at 50.3 million steps; 0.54 with 2 against
+  0.79 with 4 at 20.7 million; 0.03 with 1 against 0.67 with 4 at 11.8 million. Other things seen: weight 0.0625
+  almost never finds the goal (0 to 2 of 16 policies); weight 16 finds it in all 16 but ends low and falls late
+  (final level 0.42 at 20.7 million steps, 0.22 at 50.3 million, 4 environments), so a too-large weight shows the
+  rise and later fall; weight 1 with 4 environments ends at 0.99 and passes 95% of that near 16 million steps.
+- 2026-11-12 02:05 PT: two more ant measurements started on the H100: MuJoCo's Warp implementation, and faster
+  settings of the current implementation (fixed-length solver loop, smaller carried state, contact points, line
+  search, solver passes) with their physics checks. Sweep machinery, analysis code and PointMaze speed ideas are
+  being written and measured in parallel.
 
 ## Next
 
