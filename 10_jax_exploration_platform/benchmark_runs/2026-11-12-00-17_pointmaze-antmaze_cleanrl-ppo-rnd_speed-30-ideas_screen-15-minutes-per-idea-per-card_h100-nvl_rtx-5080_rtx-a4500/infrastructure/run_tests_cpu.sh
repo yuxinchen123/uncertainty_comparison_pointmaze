@@ -13,7 +13,7 @@ cd $P
 # packages (pytest, _pytest, pluggy, iniconfig, py) from the atari_pixels_jax environment, so jax,
 # numpy and mujoco still come from platform_jax. Nothing is written into either environment:
 # no bytecode files, and no pytest cache folder.
-PYTEST_PACKAGES="$(dirname "$(scontrol show job "$SLURM_JOB_ID" | grep -oP 'Command=\K\S+')")/pytest_packages_linked_from_atari_pixels_jax"
+PYTEST_PACKAGES="$P/benchmark_runs/2026-11-12-00-17_pointmaze-antmaze_cleanrl-ppo-rnd_speed-30-ideas_screen-15-minutes-per-idea-per-card_h100-nvl_rtx-5080_rtx-a4500/infrastructure/pytest_packages_linked_from_atari_pixels_jax"
 export PYTHONPATH=$P/src:$PYTEST_PACKAGES PYTHONNOUSERSITE=1 JAX_PLATFORMS=cpu XLA_FLAGS=--xla_cpu_multi_thread_eigen=false
 export PYTHONDONTWRITEBYTECODE=1
 export OMP_NUM_THREADS=8 OPENBLAS_NUM_THREADS=8 MKL_NUM_THREADS=8

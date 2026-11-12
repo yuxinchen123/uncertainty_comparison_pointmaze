@@ -12,30 +12,35 @@ import jax
 import jax.numpy as jnp
 
 from .. import F32, LOG2PI
-from ..agents.ppo.losses import ppo_loss_per_copy, ppo_loss_per_copy_discrete
+from ..agents.ppo.losses import (loss_coefficients, ppo_loss_per_copy,
+                                 ppo_loss_per_copy_discrete)
 from ..agents.ppo.networks import actor_logits, actor_mean, critic_values, logprob_discrete
 from ..bonuses.rnd.networks import whiten
 from ..agents.ppo.update import build_update
 from ..statistics import rms_update
 from . import diagnostics as diag
+from .episode_log import add_rollout, extend_running_return
 from .state import named_params, put_params, stored_params
 
 
-def build_total_loss(cfg, bonus, layout, discrete: bool = False):
+def build_total_loss(cfg, bonus, layout, discrete: bool = False, sweep=None):
     """The scalar the optimizer minimises: the agent's per-copy loss plus the bonus's, summed.
 
     Adding the two [C] vectors before the sum, rather than summing each separately, is what keeps
     this identical to the single-module trainer down to the last bit. `discrete` picks the
-    categorical actor's loss — a Python decision taken when the program is built.
+    categorical actor's loss — a Python decision taken when the program is built. `sweep` supplies
+    the clip, entropy and value coefficients that differ between copies; without it, or for a
+    coefficient it does not hold, the configuration's scalar is used.
     """
     agent_loss = ppo_loss_per_copy_discrete if discrete else ppo_loss_per_copy
+    coef = loss_coefficients(cfg, sweep)
 
     def total_loss(params, batch, style_a):
         """Sum over copies of (agent loss + bonus loss) on one (mini)batch."""
         # in the one-array form the gradient is taken with respect to the flat array, so the
         # named tensors the networks expect are cut out of it here
         named = layout.unpack(params) if layout.packed else params
-        loss_c = agent_loss(cfg, named["agent"], batch, style_a)
+        loss_c = agent_loss(coef, named["agent"], batch, style_a)
         return (loss_c + bonus.loss(named["bonus"], batch)).sum()
     return total_loss
 
@@ -65,7 +70,7 @@ def build_iteration(cfg, env, bonus, sweep, layout, capture_batch: bool = False)
             f"the {bonus.name} bonus cannot score one rollout step at a time, so it cannot be "
             "composed with hoist_rollout=False; leave the hoist on")
 
-    update_fn = build_update(cfg, build_total_loss(cfg, bonus, layout, discrete),
+    update_fn = build_update(cfg, build_total_loss(cfg, bonus, layout, discrete, sweep),
                              sweep.lr_per_copy)
 
     # the reward-decline study's switches, all decided here while the program is built
@@ -79,6 +84,17 @@ def build_iteration(cfg, env, bonus, sweep, layout, capture_batch: bool = False)
     # a step paid more than the reward shift ended inside the goal radius, whatever the payment
     # rule: per_step pays shift + 1 there, remaining_steps pays shift + at least 1
     inside_threshold = env.cfg.reward_shift + 0.5
+
+    # the PointMaze and AntMaze study's keys, also decided here. The reward the learner sees is
+    # scale x the environment's reward + offset: Python numbers when every copy shares them, one
+    # value per copy broadcast over the [T, C, N] rollout otherwise. Scale 1 and offset 0 as
+    # Python numbers put no arithmetic into the program.
+    reward_scale = sweep.setting(cfg, "ext_reward_scale", (1, C, 1))
+    reward_offset = sweep.setting(cfg, "ext_reward_offset", (1, C, 1))
+    maps_reward = not (isinstance(reward_scale, (int, float)) and reward_scale == 1
+                       and isinstance(reward_offset, (int, float)) and reward_offset == 0)
+    if cfg.episode_log and not cfg.hoist_rollout:
+        raise ValueError("episode_log is built only for the hoisted rollout")
 
     def iteration(state, lr):
         """Roll out, score, form advantages, update; returns (state, metrics)."""
@@ -112,6 +128,26 @@ def build_iteration(cfg, env, bonus, sweep, layout, capture_batch: bool = False)
         # before: [C, T*N]; after: [T, C, N] — the inverse of flat for a scalar-per-step field
         unflat = lambda x: x.reshape(C, T, N).transpose(1, 0, 2)
 
+        # With the episode log on, the hoisted rollout also carries each environment's running
+        # episode return and stores, per step, that return and the step's number in its episode.
+        # With it off the carry and the stored fields are exactly what they always were.
+        rollout_start = (state.env_state, state.obs)
+        if cfg.episode_log:
+            rollout_start += (state.agent_state["episode_log"]["running_return"],)
+
+        def logged_step(carry, env_state, stepped, next_obs, r_ext, term, trunc, out):
+            """The scan step's result: the next carry and the stored fields, with the log's two.
+
+            env_state is the environment state before the step and `stepped` the one after it.
+            before (log off): carry (state, obs),         out (..., reward, terminated, done)
+            after  (log on):  carry (state, obs, return), out (..., done, return so far, step
+                              number in the episode)
+            """
+            if not cfg.episode_log:
+                return (stepped, next_obs), out
+            running, so_far = extend_running_return(carry[2], r_ext, term | trunc)
+            return (stepped, next_obs, running), out + (so_far, env_state.step_count + 1)
+
         if cfg.hoist_rollout:
             # The scan carries only what is genuinely sequential: the action (which the
             # environment consumes) and the environment step. The critic values, the
@@ -123,38 +159,41 @@ def build_iteration(cfg, env, bonus, sweep, layout, capture_batch: bool = False)
             if discrete:
                 def body(carry, z):
                     """One rollout step: sample from the logits, step, store what the rest needs."""
-                    env_state, obs = carry
+                    env_state, obs = carry[:2]
                     logits = actor_logits(agent_params["actor"], seen(obs))
                     action = jnp.argmax(logits + z, axis=-1).astype(jnp.int32)
                     logp = logprob_discrete(logits, action)
-                    env_state, next_obs, r_ext, term, trunc, final_obs = env.step(env_state,
-                                                                                  action)
+                    stepped, next_obs, r_ext, term, trunc, final_obs = env.step(env_state,
+                                                                                action)
                     out = (obs, action, logp, final_obs, r_ext,
                            term.astype(F32), (term | trunc).astype(F32))
-                    return (env_state, next_obs), out
+                    return logged_step(carry, env_state, stepped, next_obs, r_ext,
+                                       term, trunc, out)
 
-                (env_state, obs_last), outs = jax.lax.scan(
-                    body, (state.env_state, state.obs), z_all, unroll=scan_unroll)
-                obs_buf, act_buf, logp_buf, nobs_buf, rext_buf, term_buf, done_buf = outs
+                rollout_carry, outs = jax.lax.scan(
+                    body, rollout_start, z_all, unroll=scan_unroll)
+                obs_buf, act_buf, logp_buf, nobs_buf, rext_buf, term_buf, done_buf = outs[:7]
             else:
                 def body(carry, z):
                     """One rollout step: act, step the environment, store what the rest needs."""
-                    env_state, obs = carry
+                    env_state, obs = carry[:2]
                     mean = actor_mean(agent_params["actor"], seen(obs))
                     action = mean + jnp.exp(logstd)[:, None, :] * z
-                    env_state, next_obs, r_ext, term, trunc, final_obs = env.step(env_state,
-                                                                                  action)
+                    stepped, next_obs, r_ext, term, trunc, final_obs = env.step(env_state,
+                                                                                action)
                     out = (obs, action, final_obs, r_ext,
                            term.astype(F32), (term | trunc).astype(F32))
-                    return (env_state, next_obs), out
+                    return logged_step(carry, env_state, stepped, next_obs, r_ext,
+                                       term, trunc, out)
 
-                (env_state, obs_last), outs = jax.lax.scan(
-                    body, (state.env_state, state.obs), z_all, unroll=scan_unroll)
-                obs_buf, act_buf, nobs_buf, rext_buf, term_buf, done_buf = outs
+                rollout_carry, outs = jax.lax.scan(
+                    body, rollout_start, z_all, unroll=scan_unroll)
+                obs_buf, act_buf, nobs_buf, rext_buf, term_buf, done_buf = outs[:6]
 
                 # log-probability of the sampled actions depends only on the noise and logstd
                 logp_buf = (-0.5 * z_all * z_all - logstd[None, :, None, :]
                             - 0.5 * LOG2PI).sum(-1)
+            env_state, obs_last = rollout_carry[:2]
             # one critic pass covers the on-step values and the bootstrap values together
             obs_flat, nobs_flat = flat(obs_buf), flat(nobs_buf)
             vall_e, vall_i = critic_values(
@@ -231,10 +270,16 @@ def build_iteration(cfg, env, bonus, sweep, layout, capture_batch: bool = False)
                 success_old, ended["episodes"], ended["reached"], cfg.success_gate_rate)
         else:
             success_old = None
-        rext_used = rext_buf
+        if cfg.episode_log:
+            agent_state["episode_log"] = add_rollout(
+                state.agent_state["episode_log"], rollout_carry[2], term_buf, done_buf,
+                outs[-2], outs[-1], step, N)
+        # before: the environment's reward, 1 on arrival and 0 elsewhere, [T, C, N]
+        # after:  with scale 1/400 and offset -1/400 for a copy, 0 on arrival and -1/400 elsewhere
+        rext_used = rext_buf * reward_scale + reward_offset if maps_reward else rext_buf
         if cfg.normalize_ext_reward:
             ext_filter, ext_rms, rext_used, ext_std = diag.normalize_task_reward(
-                state.agent_state["ext_filter"], state.agent_state["ext_rms"], rext_buf,
+                state.agent_state["ext_filter"], state.agent_state["ext_rms"], rext_used,
                 done_buf, cfg.gamma_ext)
             agent_state["ext_filter"], agent_state["ext_rms"] = ext_filter, ext_rms
 

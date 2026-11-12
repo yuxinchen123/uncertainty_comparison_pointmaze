@@ -18,18 +18,23 @@ from ..evaluation.coverage import coverage_fraction
 from ..statistics import rms_init
 from . import diagnostics as diag
 from .compose import Composition
+from .episode_log import log_init
 from .state import TrainState, put_params
 
 
 class Runner:
     """Static configuration plus two compiled programs; all mutable state lives in a TrainState."""
 
-    def __init__(self, cfg: PPOConfig, bonus="rnd_next_state", env_cfg=None):
+    def __init__(self, cfg: PPOConfig, bonus="rnd_next_state", env_cfg=None,
+                 bonus_constants=None):
         """Compose this configuration's environment, agent and bonus, and compile the programs.
 
         `bonus` is a preset name from `bonuses/registry.py`, or a factory passed straight in.
+        `bonus_constants` are the bonus's fixed arrays read from a checkpoint (the distillation
+        target network); a resumed run passes them so the program holds the saved numbers instead
+        of drawing them again.
         """
-        self.composition = Composition(cfg, bonus, env_cfg)
+        self.composition = Composition(cfg, bonus, env_cfg, bonus_constants)
         self.cfg = self.composition.cfg
         self.env = self.composition.env
         self.bonus = self.composition.bonus
@@ -64,6 +69,8 @@ class Runner:
                 cfg.n_copies, cfg.n_envs)
         if cfg.normalize_agent_obs:
             agent_state["obs_rms"] = rms_init(cfg.n_copies, self.env.obs_dim)
+        if cfg.episode_log:
+            agent_state["episode_log"] = log_init(cfg.n_copies, cfg.n_envs)
         state = TrainState(
             env_state=self.env.reset(),
             obs=jnp.zeros((cfg.n_copies, cfg.n_envs, self.env.obs_dim), F32),
@@ -152,6 +159,7 @@ class Runner:
                                          if self.sweep.beta_per_copy is not None else None),
                        "group_index": self.sweep.copy_group.tolist(),
                        "group_settings": [list(s) for s in self.sweep.group_settings],
+                       "setting_names": list(self.sweep.setting_names),
                        "sweep_seed_mode": cfg.sweep_seed_mode if self.sweep.is_sweep else None,
                        "history": history}
 

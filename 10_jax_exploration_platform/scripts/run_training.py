@@ -24,9 +24,18 @@ The launch-time files (`manifest.yaml`, `config_resolved.yaml`, `command.txt`) a
 the first iteration, per the `experiment-background` skill. `experiment_background.md` is written by
 hand at the same moment and is not this script's job.
 
-No model state is saved: checkpoints are off by default on this platform. Resuming is therefore per
-UNIT: a unit whose shard already ends in a `unit_complete` record is skipped, so re-running the same
-command continues a job at the first unfinished unit and never repeats finished work.
+No model state is saved by default. Resuming is then per UNIT: a unit whose shard already ends in a
+`unit_complete` record is skipped, so re-running the same command continues a job at the first
+unfinished unit and never repeats finished work, and an unfinished unit starts again from zero.
+
+With `--checkpoint-seconds` (or `--time-limit-seconds`) the unit's whole state is saved to
+`checkpoints/<unit_id>.npz` at window ends and when the process is told to stop. Re-running the
+same command then continues the unit from that iteration: window records later than the checkpoint
+are dropped from the shard and written again, and the results equal an uninterrupted unit's.
+
+Episodes that end at the goal (`--terminate-at-goal`, or a named `--reward-setting`) have no shared
+episode clock, so such a unit needs `--episode-log`: each window record then carries, per copy, the
+episodes that ended in the window, the arrivals, and the sums of their returns and lengths.
 
 Example:
   PYTHONNOUSERSITE=1 /p/rlprojects/RND/.venvs/platform_jax/bin/python run_training.py \
@@ -50,8 +59,13 @@ from zoneinfo import ZoneInfo
 
 PLATFORM_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PLATFORM_ROOT / "src"))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import numpy as np
+
+from experiment_configuration import (DEFAULT_SETTING_NAMES, REWARD_SETTING_NAMES,
+                                      REWARD_SETTINGS, parse_with_configuration_file,
+                                      reward_mappings)
 
 PACIFIC = ZoneInfo("America/Los_Angeles")
 
@@ -92,8 +106,12 @@ AGENT_SPECS = {
     "pointmaze_current": "ppo_full_batch_continuing_intrinsic@3",
     "pointmaze_historical": "ppo_full_batch@1",
     "antmaze_historical": "ppo_full_batch@1",
+    "antmaze_current": "ppo_full_batch_continuing_intrinsic@3",
     "montezuma_object_historical": "ppo_full_batch@1",
 }
+
+# set by the stop signals when checkpoints are on; the training loop reads it after each iteration
+STOP = {"requested": False}
 
 
 def env_config_of(env_name: str):
@@ -302,7 +320,36 @@ def parse_args(argv=None) -> argparse.Namespace:
                         help="iterations over which the learning rate anneals linearly to zero; "
                              "0 = this run's own length. A longer horizon makes a short run use "
                              "the early part of a long run's schedule")
-    from experiment_configuration import parse_with_configuration_file
+    # the PointMaze and AntMaze study (2026-11-11); every default leaves a run as it was
+    parser.add_argument("--clip-coef", type=float, default=0.2,
+                        help="clip coefficient of the epoch-minibatch update (CleanRL: 0.1)")
+    parser.add_argument("--prime-iterations", type=int, default=10,
+                        help="rollouts of random actions that start the bonus's input statistics "
+                             "before training (CleanRL: 50)")
+    parser.add_argument("--entropy-coefficients", default="",
+                        help="comma-separated entropy coefficients to sweep, one cell each")
+    parser.add_argument("--clip-coefficients", default="",
+                        help="comma-separated clip coefficients to sweep, one cell each")
+    parser.add_argument("--value-coefficients", default="",
+                        help="comma-separated value coefficients to sweep, one cell each")
+    parser.add_argument("--reward-setting", default="environment", choices=list(REWARD_SETTINGS),
+                        help="environment: the environment's own reward. arrival_plus_one: the "
+                             "episode ends at the goal, which pays 1. step_cost: the episode "
+                             "ends at the goal, every step costs 1 / (step limit), arrival pays "
+                             "0. arrival_plus_one_and_step_cost: both in one process, each cell "
+                             "once per reward on the same seeds")
+    parser.add_argument("--episode-log", action="store_true",
+                        help="record per copy and window the episodes that ended, the arrivals, "
+                             "and the sums of returns, lengths and steps to the goal")
+    parser.add_argument("--gather-minibatches-per-epoch", action="store_true",
+                        help="epoch-minibatch updates hold one shuffled copy of the batch at a "
+                             "time instead of one per epoch")
+    parser.add_argument("--checkpoint-seconds", type=float, default=0.0,
+                        help="> 0: save the unit's whole state at the first window end after "
+                             "this many seconds since the last save, and when the process is "
+                             "told to stop; re-running the command continues from the save")
+    parser.add_argument("--time-limit-seconds", type=float, default=0.0,
+                        help="> 0: after this many seconds, save the unit's state and stop")
     return parse_with_configuration_file(parser, argv)
 
 
@@ -318,31 +365,46 @@ def build_env_config(args: argparse.Namespace):
     from exploration_platform.envs.pointmaze.pm_common import EnvConfig, validate_env_config
     episode_steps = args.episode_steps or ENVIRONMENTS[args.env]["episode_steps"]
     document = getattr(args, "experiment_configuration_data", None)
+    # a named reward setting is defined on an episode that ends at the goal and pays 1 there
+    named_reward = args.reward_setting != "environment"
+    if named_reward and (args.reward_shift != 0 or args.goal_reward != "per_step"):
+        raise ValueError(f"--reward-setting {args.reward_setting} starts from a reward of 1 on "
+                         "arrival and 0 elsewhere: leave --reward-shift at 0 and --goal-reward "
+                         "at per_step")
+    terminate_at_goal = args.terminate_at_goal or named_reward
     if args.env != "pointmaze-large":
-        if (args.map, args.start_cell, args.goal_cell, args.terminate_at_goal, args.goal_reward) != (
-                "large", "7,1", "1,10", False, "per_step"):
+        if (args.map, args.start_cell, args.goal_cell, args.goal_reward) != (
+                "large", "7,1", "1,10", "per_step"):
             raise ValueError("PointMaze map and goal options cannot change another environment")
+        antmaze = args.env.startswith("antmaze-")
+        if terminate_at_goal and not antmaze:
+            raise ValueError("ending the episode at the goal is built for PointMaze and AntMaze; "
+                             f"{args.env} has no such option")
         environment = env_config_of(args.env)
         if document is not None:
             environment = replace(environment, **document["environment"])
-        return replace(environment, max_episode_steps=episode_steps,
-                       reward_shift=args.reward_shift)
+        changes = dict(max_episode_steps=episode_steps, reward_shift=args.reward_shift)
+        if antmaze:
+            changes["continuing_task"] = not terminate_at_goal
+        return replace(environment, **changes)
     # Retain file-only environment settings such as noise and goal radius, then apply CLI values.
     fields = dict(document["environment"]) if document is not None else {}
     fields.update(map_name=args.map, start_cell=cell(args.start_cell),
                   goal_cell=cell(args.goal_cell), max_episode_steps=episode_steps,
-                  continuing_task=not args.terminate_at_goal,
+                  continuing_task=not terminate_at_goal,
                   reward_shift=args.reward_shift, goal_reward=args.goal_reward)
     env_cfg = EnvConfig(**fields)
     validate_env_config(env_cfg)
     return env_cfg
 
 
-def env_spec(env_cfg) -> str:
+def env_spec(env_cfg, reward_setting: str = "environment") -> str:
     """The environment's identity string; the original task keeps its original name.
 
     before: large map, continuing, cap 400, shift 0, per_step -> pointmaze_large_cont400_nonoise@1
     before: medium map, terminating, cap 250, shift -1 -> pointmaze_medium_term250_nonoise_shift-1@1
+    before: large map, terminating, cap 400, reward setting step_cost
+            -> pointmaze_large_term400_nonoise_reward-step-cost@1
     """
     environment_type = type(env_cfg).__name__
     if environment_type == "MontezumaConfig":
@@ -361,10 +423,12 @@ def env_spec(env_cfg) -> str:
         name += f"_shift{env_cfg.reward_shift:g}"
     if family == "pointmaze" and env_cfg.goal_reward != "per_step":
         name += f"_{env_cfg.goal_reward}"
+    if reward_setting != "environment":
+        name += "_reward-" + reward_setting.replace("_", "-")
     return name + "@1"
 
 
-def specs_of(bonus: str, config, env_cfg) -> dict:
+def specs_of(bonus: str, config, env_cfg, reward_setting: str = "environment") -> dict:
     """Record the actual environment and its named algorithm configuration, plus the bonus."""
     # an older name for a family records the family's own name, so two runs written against
     # different vocabularies are still comparable by their manifests
@@ -373,7 +437,8 @@ def specs_of(bonus: str, config, env_cfg) -> dict:
     if name not in UPDATE_SCHEDULES:
         raise ValueError(f"no update schedule recorded for bonus {bonus!r}; add it to "
                          f"UPDATE_SCHEDULES so the run's manifest names one")
-    return {"env": env_spec(env_cfg), "agent": AGENT_SPECS[config.configuration_preset],
+    return {"env": env_spec(env_cfg, reward_setting),
+            "agent": AGENT_SPECS[config.configuration_preset],
             "configuration_preset": config.configuration_preset,
             "bonus": f"{name}@1", "update_schedule": UPDATE_SCHEDULES[name]}
 
@@ -392,18 +457,57 @@ def build_config(args: argparse.Namespace):
     return resolve_configuration(configuration, build_env_config(args))
 
 
+def cross_product_cells(lists: dict, reward_pairs: tuple):
+    """The cells of a sweep over several per-copy settings, and the name of each column.
+
+    lists maps a setting name to the values to try (an empty list leaves that setting a scalar).
+    The first name varies slowest. Two reward mappings add the reward scale and offset as the
+    last two columns, so each cell appears once per reward setting.
+
+    before: {"learning_rate": [1e-4], "int_coef": [], "ent_coef": [0.001, 0.01]}, one mapping
+    after:  (("learning_rate", "ent_coef"), ((1e-4, 0.001), (1e-4, 0.01)))
+    before: {"int_coef": [1.0, 4.0]}, mappings ((1.0, 0.0), (0.0025, -0.0025))
+    after:  (("int_coef", "ext_reward_scale", "ext_reward_offset"),
+             ((1.0, 1.0, 0.0), (1.0, 0.0025, -0.0025), (4.0, 1.0, 0.0), (4.0, 0.0025, -0.0025)))
+    """
+    from itertools import product
+    names = tuple(name for name, values in lists.items() if values)
+    axes = [[(value,) for value in lists[name]] for name in names]
+    if len(reward_pairs) == 2:
+        names += REWARD_SETTING_NAMES
+        axes.append(list(reward_pairs))
+    return names, tuple(sum(combination, ()) for combination in product(*axes))
+
+
 def _build_config_values(args: argparse.Namespace):
     """The trainer configuration this unit runs, sweeping the knobs whose lists are non-empty."""
     from exploration_platform.agents.ppo.config import PPOConfig
     from exploration_platform.training.sweep import sweep_config
     from exploration_platform.agents.ppo.presets import resolve_configuration
     from exploration_platform.bonuses.registry import ALIASES
+    env_cfg = build_env_config(args)
     selected = resolve_configuration(PPOConfig(configuration_preset=args.configuration_preset),
-                                     build_env_config(args))
+                                     env_cfg)
     rates, weights = number_list(args.learning_rates), number_list(args.intrinsic_weights)
+    more_lists = {"ent_coef": number_list(args.entropy_coefficients),
+                  "clip_coef": number_list(args.clip_coefficients),
+                  "vf_coef": number_list(args.value_coefficients)}
     no_bonus = ALIASES.get(args.bonus, args.bonus) == "none"
     task_only = no_bonus and selected.no_bonus_advantage_stream == "task_only"
     intrinsic_coefficient = 0. if task_only else args.intrinsic_coefficient
+
+    # the reward the learner sees. The environment's own reward keeps the scale and offset of a
+    # configuration file (1 and 0 without one); a named setting fixes them from the step limit;
+    # both named settings at once put them into every cell instead.
+    document = getattr(args, "experiment_configuration_data", None)
+    reward_pairs = reward_mappings(args.reward_setting, env_cfg.max_episode_steps)
+    if len(reward_pairs) == 1:
+        reward_scale, reward_offset = reward_pairs[0]
+    elif document is not None and not reward_pairs:
+        reward_scale = document["trainer"]["ext_reward_scale"]
+        reward_offset = document["trainer"]["ext_reward_offset"]
+    else:
+        reward_scale, reward_offset = 1.0, 0.0
     common = dict(configuration_preset=selected.configuration_preset,
                   intrinsic_bootstrap_observation=selected.intrinsic_bootstrap_observation,
                   no_bonus_advantage_stream=selected.no_bonus_advantage_stream,
@@ -422,40 +526,69 @@ def _build_config_values(args: argparse.Namespace):
                   clip_per_network=args.clip_per_network, logstd_floor=args.logstd_floor,
                   critic_lr_scale=args.critic_lr_scale, vf_coef=args.vf_coef,
                   bootstrap_on_truncation=not args.no_bootstrap_on_truncation,
-                  normalize_agent_obs=args.normalize_agent_obs)
+                  normalize_agent_obs=args.normalize_agent_obs,
+                  clip_coef=args.clip_coef, prime_iterations=args.prime_iterations,
+                  episode_log=args.episode_log,
+                  gather_minibatches_per_epoch=args.gather_minibatches_per_epoch,
+                  ext_reward_scale=reward_scale, ext_reward_offset=reward_offset)
     # Reject PointMaze-only study options before a run directory or its manifest is written.
-    resolve_configuration(PPOConfig(**common), build_env_config(args))
+    resolve_configuration(PPOConfig(**common), env_cfg)
     if 0 < args.lr_anneal_iterations < args.iterations:
         raise ValueError("--lr-anneal-iterations shorter than the run would anneal the learning "
                          "rate below zero")
-    if args.terminate_at_goal and not args.diagnostics:
-        raise ValueError("--terminate-at-goal needs --diagnostics: episodes then end at different "
-                         "steps, and only the episode tracker counts them")
-    # Before: two rates x two weights = four cells; after: only the listed pairs train.
+    # the object-observation Montezuma configuration has no goal and always runs to its step cap
+    if not getattr(env_cfg, "continuing_task", True) and not (args.episode_log
+                                                             or args.diagnostics):
+        raise ValueError("an episode that ends at the goal needs --episode-log (or "
+                         "--diagnostics): episodes then end at different steps, and only an "
+                         "episode log counts them")
+    # Before: two rates x two weights = four cells; after: only the listed cells train.
     settings_from_file = getattr(args, "experiment_parameter_settings", ())
     if args.parameter_settings or settings_from_file:
-        if rates or weights:
+        if rates or weights or any(more_lists.values()):
             raise ValueError("explicit parameter settings cannot be combined with sweep lists")
         if args.parameter_settings:
             mapping = json.loads(args.parameter_settings.read_text())
             if args.bonus not in mapping or not mapping[args.bonus]:
                 raise ValueError(f"no parameter settings listed for {args.bonus}")
-            pairs = mapping[args.bonus]
+            rows, names = mapping[args.bonus], DEFAULT_SETTING_NAMES
         else:
-            pairs = settings_from_file
-        settings = tuple(tuple(float(value) for value in pair) for pair in pairs)
-        if any(len(pair) != 2 for pair in settings) or args.copies_per_cell < 1:
-            raise ValueError("explicit settings require [rate, weight] pairs and copies-per-cell")
-        if task_only and any(weight != 0 for _, weight in settings):
+            rows = settings_from_file
+            names = getattr(args, "experiment_setting_names", DEFAULT_SETTING_NAMES)
+        settings = tuple(tuple(float(value) for value in row) for row in rows)
+        if any(len(row) != len(names) for row in settings) or args.copies_per_cell < 1:
+            raise ValueError(f"explicit settings require one value for each of {list(names)} "
+                             "per cell, and copies-per-cell")
+        if len(reward_pairs) == 2 and not set(REWARD_SETTING_NAMES) <= set(names):
+            # every listed cell once per reward setting, on the same seeds
+            names = names + REWARD_SETTING_NAMES
+            settings = tuple(row + pair for row in settings for pair in reward_pairs)
+        if task_only and "int_coef" in names and any(
+                row[names.index("int_coef")] != 0 for row in settings):
             raise ValueError("no-bonus settings must use intrinsic weight zero")
+        # a cell that names the learning rate replaces the scalar, which keeps its default as
+        # the recorded files expect; otherwise the scalar is the rate every copy trains at
+        scalars = {} if "learning_rate" in names else {"learning_rate": args.learning_rate}
         return PPOConfig(n_copies=len(settings) * args.copies_per_cell,
                          update_style=args.update_style, parameter_settings=settings,
-                         copies_per_group=args.copies_per_cell,
-                         int_coef=intrinsic_coefficient, **common)
+                         setting_names=names, copies_per_group=args.copies_per_cell,
+                         int_coef=intrinsic_coefficient, **scalars, **common)
+    if task_only and any(weight != 0 for weight in weights):
+        raise ValueError("no-bonus sweeps must use intrinsic weight zero")
+    # a sweep over more than rates and weights, or over both reward settings, is written as
+    # explicit cells: the cross product of every list, each column named
+    if any(more_lists.values()) or len(reward_pairs) == 2:
+        if args.copies_per_cell <= 0:
+            raise ValueError("a sweep needs --copies-per-cell")
+        names, settings = cross_product_cells(
+            {"learning_rate": rates, "int_coef": weights, **more_lists}, reward_pairs)
+        return PPOConfig(n_copies=len(settings) * args.copies_per_cell,
+                         update_style=args.update_style, parameter_settings=settings,
+                         setting_names=names, copies_per_group=args.copies_per_cell,
+                         learning_rate=args.learning_rate, int_coef=intrinsic_coefficient,
+                         **common)
     # a sweep derives its copy count from the cells; a single configuration takes --copies
     if rates or weights:
-        if task_only and any(weight != 0 for weight in weights):
-            raise ValueError("no-bonus sweeps must use intrinsic weight zero")
         if args.copies_per_cell <= 0:
             raise ValueError("a sweep needs --copies-per-cell")
         return sweep_config(learning_rates=rates, betas=weights,
@@ -481,7 +614,7 @@ def write_launch_files(run_dir: Path, args: argparse.Namespace, config, env_cfg)
     # the full configuration after defaults and overrides — what actually ran, not what was typed
     resolved = {"trainer": {field: getattr(config, field)
                             for field in sorted(config.__dataclass_fields__)},
-                "environment": {"specification": env_spec(env_cfg),
+                "environment": {"specification": env_spec(env_cfg, args.reward_setting),
                                 **{field: (str(getattr(env_cfg, field))
                                            if isinstance(getattr(env_cfg, field), tuple)
                                            else getattr(env_cfg, field))
@@ -489,7 +622,8 @@ def write_launch_files(run_dir: Path, args: argparse.Namespace, config, env_cfg)
                 "runtime": {"interpreter": sys.executable, "unit_id": args.unit_id,
                             "iterations": args.iterations,
                             "window_iterations": args.window_iterations,
-                            "run_seed": args.run_seed}}
+                            "run_seed": args.run_seed,
+                            "reward_setting": args.reward_setting}}
     document = getattr(args, "experiment_configuration_data", None)
     if document is not None:
         resolved["configuration_file"] = {name: document[name] for name in ("path", "sha256", "metadata")}
@@ -501,7 +635,7 @@ def write_launch_files(run_dir: Path, args: argparse.Namespace, config, env_cfg)
         "run_id": run_dir.name,
         "description": args.description or "one training unit on the JAX exploration platform",
         "git": git_state(PLATFORM_ROOT.parent),
-        "specs": specs_of(args.bonus, config, env_cfg),
+        "specs": specs_of(args.bonus, config, env_cfg, args.reward_setting),
         "compile_signature": {
             "copies": config.n_copies, "envs_per_copy": config.n_envs,
             "rollout_steps": config.num_steps, "update_style": config.update_style,
@@ -516,15 +650,45 @@ def write_launch_files(run_dir: Path, args: argparse.Namespace, config, env_cfg)
     (run_dir / "manifest.yaml").write_text(as_yaml(manifest) + "\n")
 
 
+def keep_records_through(shard: Path, iteration: int) -> int:
+    """Drop the window records later than a checkpoint, so a resumed shard holds each window once.
+
+    before: windows ending at iterations 3, 6 and 9, and a checkpoint taken at iteration 7
+    after:  the windows ending at 3 and 6 stay; the one ending at 9 will be written again
+    Returns the number of records kept. The file is replaced only once the new one is whole.
+    """
+    kept = [line for line in shard.read_text().splitlines() if line.strip()
+            and not (json.loads(line).get("record") == "episode_window"
+                     and json.loads(line)["last_iteration"] > iteration)]
+    temporary = shard.with_name(shard.name + ".tmp")
+    temporary.write_text("".join(line + "\n" for line in kept))
+    os.replace(temporary, shard)
+    return len(kept)
+
+
+def checkpoint_identity(args: argparse.Namespace, config, env_cfg, sweep) -> dict:
+    """What must agree before a checkpoint may continue this unit: everything that shapes it."""
+    from dataclasses import asdict
+    return {"trainer_config": asdict(config), "environment_config": asdict(env_cfg),
+            "environment": env_spec(env_cfg, args.reward_setting), "bonus": args.bonus,
+            "run_seed": args.run_seed, "copy_seed_index": list(sweep.copy_seed_index),
+            "iterations": args.iterations, "window_iterations": args.window_iterations,
+            "lr_anneal_iterations": args.lr_anneal_iterations or args.iterations}
+
+
 def main() -> None:
     """Create the run folder, train, write one record per phase, then aggregate."""
     args = parse_args()
+    process_start = time.time()
     if args.episode_steps == 0:
         args.episode_steps = ENVIRONMENTS[args.env]["episode_steps"]
     run_dir = Path(args.run_dir).resolve()
     for sub in ("data", "logs"):
         (run_dir / sub).mkdir(parents=True, exist_ok=True)
 
+    from exploration_platform.training import episode_log
+    from exploration_platform.training.checkpoint import (check_identity, read_checkpoint,
+                                                          restore_state, save_checkpoint)
     from exploration_platform.training.runner import Runner
     import jax
     import jax.numpy as jnp
@@ -543,6 +707,12 @@ def main() -> None:
         print(line, flush=True)
         log.write(line + "\n")
 
+    # checkpoints are on only when one of their two options is given; without them this unit
+    # runs exactly as it always did
+    checkpointing = args.checkpoint_seconds > 0 or args.time_limit_seconds > 0
+    checkpoint_path = run_dir / "checkpoints" / f"{args.unit_id}.npz"
+    saved = None
+
     # a shard whose last line says the unit finished is left alone: re-running is then a no-op, and
     # that is what makes a job's command resumable — it restarts at the first unfinished unit
     if shard.exists():
@@ -551,8 +721,14 @@ def main() -> None:
             say(f"resume: {args.unit_id} is already complete in {shard.name} "
                 f"({len(existing)} records on disk); skipping it")
             return
-        say(f"resume: {args.unit_id} has a partial shard with {len(existing)} records; no model "
-            f"state is saved, so this is a fresh attempt appended to the same file")
+        if checkpointing and checkpoint_path.exists():
+            saved = read_checkpoint(checkpoint_path)
+        else:
+            say(f"resume: {args.unit_id} has a partial shard with {len(existing)} records; no "
+                f"model state is saved, so this is a fresh attempt appended to the same file")
+    elif checkpointing and checkpoint_path.exists():
+        raise ValueError(f"{checkpoint_path} exists but the unit's shard {shard} does not; "
+                         "delete the checkpoint to start this unit again")
 
     # one line per record, opened for appending and flushed immediately, so the file is the live
     # progress signal and a re-run never truncates what is already there
@@ -565,24 +741,49 @@ def main() -> None:
         out.flush()
         os.fsync(out.fileno())
 
-    hardware = hardware_record()
-    hardware.update(unit_id=args.unit_id, attempt_started=datetime.now().astimezone().isoformat())
-    emit(hardware)
-    say(f"unit {args.unit_id} on {hardware['host']} / {hardware['device_kind']}, "
-        f"jax {hardware['jax']}")
+    def emit_job(**extra) -> None:
+        """Record what this attempt runs on, as the attempt's first line in the shard."""
+        hardware = hardware_record()
+        hardware.update(unit_id=args.unit_id,
+                        attempt_started=datetime.now().astimezone().isoformat(), **extra)
+        emit(hardware)
+        say(f"unit {args.unit_id} on {hardware['host']} / {hardware['device_kind']}, "
+            f"jax {hardware['jax']}")
+
+    if saved is None:
+        emit_job()
 
     # build the trainer, then time the compilation of the first iteration separately from the rest,
-    # because the first iteration pays for compiling the whole program
+    # because the first iteration pays for compiling the program. A resumed unit hands the
+    # trainer the bonus's saved fixed arrays, so the program holds the numbers it started with.
     build_start = time.time()
-    trainer = Runner(config, bonus=args.bonus, env_cfg=env_cfg)
+    trainer = Runner(config, bonus=args.bonus, env_cfg=env_cfg,
+                     bonus_constants=saved["bonus_constants"] if saved else None)
     config = trainer.cfg
     sweep = trainer.sweep
+    identity = checkpoint_identity(args, config, env_cfg, sweep)
+    if saved is not None:
+        # the checkpoint must belong to this unit before the shard is touched; the window
+        # records later than it are then dropped, and this attempt's lines follow the kept ones
+        check_identity(saved["identity"], identity)
+        state = restore_state(trainer.init_state(run_seed=args.run_seed), saved["leaves"])
+        start_iteration = int(np.asarray(state.step)) + 1
+        out.close()
+        kept = keep_records_through(shard, start_iteration - 1)
+        out = open(shard, "a", buffering=1)
+        emit_job(resumed_from_iteration=start_iteration - 1)
+
     steps_per_iteration = config.num_steps * config.n_copies * config.n_envs
     steps_per_copy_per_iteration = config.num_steps * config.n_envs
-    episodes_per_copy_per_iteration = steps_per_copy_per_iteration / args.episode_steps
     # the episode clock: how many iterations it takes for the 128-step window to return to the
     # same place inside the 400-step episode. A window spanning a whole number of these carries
-    # every part of the episode exactly once, so its reward sum is free of the clock.
+    # every part of the episode exactly once, so its reward sum is free of the clock. An episode
+    # that also ends at the goal has no such clock: with the episode log on, the fields derived
+    # from it are then written as null and the episode counts come from the log.
+    ends_at_goal = not getattr(env_cfg, "continuing_task", True)
+    fixed_clock = not (ends_at_goal and config.episode_log)
+    episodes_per_copy_per_iteration = (steps_per_copy_per_iteration / args.episode_steps
+                                       if fixed_clock else None)
     clock_iterations = int(args.episode_steps // np.gcd(config.num_steps, args.episode_steps))
 
     def episode_phase(iteration: int) -> int:
@@ -594,48 +795,55 @@ def main() -> None:
         return ((iteration - 1) * config.num_steps) % args.episode_steps
 
     # the unit's own identity card: which cell each copy belongs to, so the aggregator can group
-    # the per-copy arrays of every later record without re-deriving the sweep
+    # the per-copy arrays of every later record without re-deriving the sweep. A resumed attempt
+    # writes a short record instead, so the unit keeps one identity card and readers that take
+    # the records after the last `unit_start` still see every window.
     configuration_document = getattr(args, "experiment_configuration_data", None)
-    emit({"record": "unit_start", "unit_id": args.unit_id, "bonus": args.bonus,
-          "environment": env_spec(env_cfg), "diagnostics": config.diagnostics,
-          # this unit's whole configuration: units of one run folder may differ in their flags,
-          # while the folder's config_resolved.yaml holds only the first unit's
-          "trainer_config": {field: (list(value) if isinstance(value, tuple) else value)
-                             for field, value in ((f, getattr(config, f))
-                                                  for f in sorted(config.__dataclass_fields__))},
-          "environment_config": {field: (list(value) if isinstance(value, tuple) else value)
-                                 for field, value in ((f, getattr(env_cfg, f))
-                                                      for f in env_cfg.__dataclass_fields__)},
-          "copies": config.n_copies, "envs_per_copy": config.n_envs,
-          "rollout_steps": config.num_steps, "iterations": args.iterations,
-          "window_iterations": args.window_iterations, "episode_steps": args.episode_steps,
-          "episode_clock_iterations": int(clock_iterations),
-          "copies_per_cell": config.copies_per_group,
-          "cell_settings": [list(setting) for setting in sweep.group_settings],
-          "copy_cell": sweep.copy_group.tolist(),
-          "copy_seed_index": list(sweep.copy_seed_index),
-          # the slice of a chunked run this process holds; 0 and the whole count for an unchunked
-          # run, so an aggregator can tell chunks apart and check that they cover the run exactly
-          "copy_seed_offset": config.copy_seed_offset,
-          "copy_seed_index_first": int(min(sweep.copy_seed_index)),
-          "copy_seed_index_last": int(max(sweep.copy_seed_index)),
-          "sweep_seed_mode": config.sweep_seed_mode if sweep.is_sweep else "distinct",
-          "episodes_per_copy_per_iteration": episodes_per_copy_per_iteration,
-          "steps_per_iteration": steps_per_iteration,
-          "lr_anneal_iterations": args.lr_anneal_iterations or args.iterations,
-          **({"configuration_file": {name: configuration_document[name]
-                                      for name in ("path", "sha256", "metadata")}}
-             if configuration_document is not None else {})})
+    if saved is not None:
+        emit({"record": "unit_resume", "unit_id": args.unit_id,
+              "resumed_from_iteration": start_iteration - 1, "records_kept": kept,
+              "checkpoint": str(checkpoint_path)})
+        say(f"resume: continuing {args.unit_id} from the checkpoint at iteration "
+            f"{start_iteration - 1} of {args.iterations}; {kept} records kept in {shard.name}")
+    else:
+        emit({"record": "unit_start", "unit_id": args.unit_id, "bonus": args.bonus,
+              "environment": env_spec(env_cfg, args.reward_setting),
+              "diagnostics": config.diagnostics,
+              # this unit's whole configuration: units of one run folder may differ in their
+              # flags, while the folder's config_resolved.yaml holds only the first unit's
+              "trainer_config": {field: (list(value) if isinstance(value, tuple) else value)
+                                 for field, value in ((f, getattr(config, f))
+                                                      for f in sorted(config.__dataclass_fields__))},
+              "environment_config": {field: (list(value) if isinstance(value, tuple) else value)
+                                     for field, value in ((f, getattr(env_cfg, f))
+                                                          for f in env_cfg.__dataclass_fields__)},
+              "copies": config.n_copies, "envs_per_copy": config.n_envs,
+              "rollout_steps": config.num_steps, "iterations": args.iterations,
+              "window_iterations": args.window_iterations, "episode_steps": args.episode_steps,
+              "episode_clock_iterations": int(clock_iterations) if fixed_clock else None,
+              "copies_per_cell": config.copies_per_group,
+              # one row per cell, one value per name in cell_setting_names
+              "cell_settings": [list(setting) for setting in sweep.group_settings],
+              "cell_setting_names": list(sweep.setting_names),
+              "copy_cell": sweep.copy_group.tolist(),
+              "copy_seed_index": list(sweep.copy_seed_index),
+              # the slice of a chunked run this process holds; 0 and the whole count for an
+              # unchunked run, so an aggregator can tell chunks apart and check that they cover
+              # the run exactly
+              "copy_seed_offset": config.copy_seed_offset,
+              "copy_seed_index_first": int(min(sweep.copy_seed_index)),
+              "copy_seed_index_last": int(max(sweep.copy_seed_index)),
+              "sweep_seed_mode": config.sweep_seed_mode if sweep.is_sweep else "distinct",
+              "episodes_per_copy_per_iteration": episodes_per_copy_per_iteration,
+              "steps_per_iteration": steps_per_iteration,
+              "lr_anneal_iterations": args.lr_anneal_iterations or args.iterations,
+              "reward_setting": args.reward_setting, "episode_log": config.episode_log,
+              **({"configuration_file": {name: configuration_document[name]
+                                          for name in ("path", "sha256", "metadata")}}
+                 if configuration_document is not None else {})})
     say(f"{config.n_copies} copies x {config.n_envs} environments x {config.num_steps} steps, "
         f"{args.iterations} iterations, update style {config.update_style}, "
         f"{len(sweep.group_settings)} cells of {config.copies_per_group or config.n_copies} copies")
-
-    state = trainer.init_state(run_seed=args.run_seed)
-    prime_start = time.time()
-    state = trainer.prime(state)
-    jax.block_until_ready(state.obs)
-    say(f"building and priming done in {time.time() - build_start:.1f}s "
-        f"(priming alone {time.time() - prime_start:.1f}s)")
 
     # the window accumulators live on the device: adding to them is dispatched without waiting, so
     # the loop never synchronises except on the iterations that close a window
@@ -643,11 +851,59 @@ def main() -> None:
     rint_in_window = jnp.zeros((config.n_copies,))
     # the diagnostics' window sums, also on the device; None until the first iteration names them
     diag_in_window = None
-    start = time.time()
-    first_iteration_seconds = None
     window_index = 0
     window_first_iteration = 1
-    for iteration in range(1, args.iterations + 1):
+    if saved is None:
+        state = trainer.init_state(run_seed=args.run_seed)
+        prime_start = time.time()
+        state = trainer.prime(state)
+        jax.block_until_ready(state.obs)
+        start_iteration = 1
+        say(f"building and priming done in {time.time() - build_start:.1f}s "
+            f"(priming alone {time.time() - prime_start:.1f}s)")
+    else:
+        # the driver's own sums and counters continue from where the checkpoint was taken
+        driver = saved["driver"]
+        reward_in_window = jnp.asarray(driver["reward_in_window"])
+        rint_in_window = jnp.asarray(driver["rint_in_window"])
+        if "diagnostics" in driver:
+            diag_in_window = jax.tree.map(jnp.asarray, driver["diagnostics"])
+        window_index = int(driver["window_index"])
+        window_first_iteration = int(driver["window_first_iteration"])
+        say(f"building and restoring done in {time.time() - build_start:.1f}s")
+
+    # the reward the learner sees is scale x the environment's reward + offset, per copy; the
+    # episode log sums the environment's reward, and these turn its sums into the learner's
+    per_copy_number = lambda name: np.asarray(
+        sweep.per_copy_values.get(name, (getattr(config, name),) * config.n_copies), np.float64)
+    reward_scale, reward_offset = (per_copy_number("ext_reward_scale"),
+                                   per_copy_number("ext_reward_offset"))
+
+    last_checkpoint = time.time()
+
+    def save(reason: str) -> None:
+        """Write the unit's whole state and the driver's partial window sums to the checkpoint."""
+        nonlocal last_checkpoint
+        driver = {"reward_in_window": np.asarray(reward_in_window),
+                  "rint_in_window": np.asarray(rint_in_window),
+                  "window_index": np.asarray(window_index),
+                  "window_first_iteration": np.asarray(window_first_iteration)}
+        if diag_in_window is not None:
+            driver["diagnostics"] = {name: np.asarray(value)
+                                     for name, value in diag_in_window.items()}
+        save_checkpoint(checkpoint_path, state, identity, trainer.bonus.constants, driver)
+        last_checkpoint = time.time()
+        say(f"checkpoint at iteration {int(np.asarray(state.step))} ({reason}) in "
+            f"{checkpoint_path.name}")
+
+    if checkpointing:
+        import signal
+        for number in (signal.SIGTERM, signal.SIGINT):
+            signal.signal(number, lambda *_: STOP.update(requested=True))
+
+    start = time.time()
+    first_iteration_seconds = None
+    for iteration in range(start_iteration, args.iterations + 1):
         iteration_start = time.time()
         state, metrics = trainer.iterate(
             state, trainer.lr_argument(iteration, args.lr_anneal_iterations or args.iterations))
@@ -664,7 +920,8 @@ def main() -> None:
 
         # one record per window, and always one at the last iteration; those are the only
         # iterations that wait for the device, so recording does not serialise the loop
-        if iteration % args.window_iterations == 0 or iteration == args.iterations:
+        window_end = iteration % args.window_iterations == 0 or iteration == args.iterations
+        if window_end:
             jax.block_until_ready(metrics["loss"])
             iterations_in_window = iteration - window_first_iteration + 1
             elapsed = time.time() - start
@@ -678,14 +935,18 @@ def main() -> None:
                 "iterations_in_window": iterations_in_window,
                 "episode_phase_first_iteration": episode_phase(window_first_iteration),
                 "episode_phase_last_iteration": episode_phase(iteration),
-                "episode_clock_cycles_in_window": iterations_in_window / clock_iterations,
+                "episode_clock_cycles_in_window": (iterations_in_window / clock_iterations
+                                                   if fixed_clock else None),
                 # a window covering a whole number of clock cycles sees every part of the episode
                 # the same number of times, so its reward sum carries no episode-clock artifact;
                 # a window that does not is excluded from every score
-                "phase_blocked": iterations_in_window % clock_iterations == 0,
-                "episodes_per_copy_in_window":
-                    iterations_in_window * episodes_per_copy_per_iteration,
-                "episodes_per_copy_cumulative": iteration * episodes_per_copy_per_iteration,
+                "phase_blocked": (iterations_in_window % clock_iterations == 0
+                                  if fixed_clock else None),
+                "episodes_per_copy_in_window": (
+                    iterations_in_window * episodes_per_copy_per_iteration
+                    if fixed_clock else None),
+                "episodes_per_copy_cumulative": (iteration * episodes_per_copy_per_iteration
+                                                 if fixed_clock else None),
                 "seconds_since_first_iteration": elapsed,
                 "env_steps": iteration * steps_per_iteration,
                 "env_steps_per_copy": iteration * steps_per_copy_per_iteration,
@@ -706,23 +967,66 @@ def main() -> None:
                         value if name.startswith("episode_") else value / iterations_in_window)]
                     for name, value in diag_in_window.items()}
                 diag_in_window = None
+            if config.episode_log:
+                # the episodes that ended in this window, per copy, read from the state and set
+                # back to zero there. Returns of the reward the learner sees follow from the
+                # environment's: scale x (sum of returns) + offset x (sum of lengths).
+                # before: 2 episodes of lengths 30 and 400, one arrival, environment returns 1
+                #         and 0, scale 1/400 and offset -1/400
+                # after:  return_sum_per_copy 1/400 - 430/400 = -1.0725
+                window_log = episode_log.read_window(state.agent_state["episode_log"])
+                state = state._replace(agent_state={
+                    **state.agent_state,
+                    "episode_log": episode_log.clear_window(state.agent_state["episode_log"])})
+                record.update({
+                    "episodes_per_copy": window_log["episodes"].tolist(),
+                    "arrivals_per_copy": window_log["arrivals"].tolist(),
+                    "return_sum_per_copy": (reward_scale * window_log["return_sum"]
+                                            + reward_offset * window_log["length_sum"]).tolist(),
+                    "environment_return_sum_per_copy": window_log["return_sum"].tolist(),
+                    "length_sum_per_copy": window_log["length_sum"].tolist(),
+                    "steps_to_goal_sum_per_copy": window_log["steps_to_goal_sum"].tolist(),
+                    "first_goal_step_per_copy": window_log["first_goal_step"].tolist()})
             emit(record)
             coverage_note = (f", maze coverage mean {np.mean(record['coverage_per_copy']):.3f}"
                              if config.track_coverage else "")
+            episode_note = (f", {int(np.sum(record['episodes_per_copy']))} episodes ended and "
+                            f"{int(np.sum(record['arrivals_per_copy']))} reached the goal"
+                            if config.episode_log else "")
+            clock_note = (f"phase blocked {record['phase_blocked']}" if fixed_clock
+                          else "no episode clock: episodes end at the goal")
             say(f"window {window_index} (iterations {window_first_iteration}-{iteration} of "
-                f"{args.iterations}, phase blocked {record['phase_blocked']}) "
+                f"{args.iterations}, {clock_note}) "
                 f"loss {record['loss']:.4f}, extrinsic reward per copy summed over the window "
-                f"mean {reward.mean():.3f}{coverage_note}, elapsed {elapsed:.1f}s")
+                f"mean {reward.mean():.3f}{coverage_note}{episode_note}, elapsed {elapsed:.1f}s")
             reward_in_window = jnp.zeros((config.n_copies,))
             rint_in_window = jnp.zeros((config.n_copies,))
             window_index += 1
             window_first_iteration = iteration + 1
 
+        # save when told to stop, at the time limit, or at a window end once the interval has
+        # passed; a stop ends the process here, and the same command continues the unit later
+        if checkpointing and iteration < args.iterations:
+            now = time.time()
+            stopping = STOP["requested"] or (args.time_limit_seconds > 0
+                                             and now - process_start >= args.time_limit_seconds)
+            if stopping:
+                save("stop signal" if STOP["requested"] else "time limit")
+                out.close()
+                log.close()
+                raise SystemExit(f"unit {args.unit_id} stopped at iteration {iteration} of "
+                                 f"{args.iterations} with its state saved; run the same command "
+                                 "again to continue it")
+            if window_end and args.checkpoint_seconds > 0 and (
+                    now - last_checkpoint >= args.checkpoint_seconds):
+                save("interval")
+
     jax.block_until_ready(state.agent_params)
     total_seconds = time.time() - start
     # the steady-state rate excludes the first iteration, which paid for compiling the program
+    iterations_this_attempt = args.iterations - start_iteration + 1
     steady_seconds = total_seconds - (first_iteration_seconds or 0.0)
-    steady_iterations = max(args.iterations - 1, 1)
+    steady_iterations = max(iterations_this_attempt - 1, 1)
     # environments that were respawned for a non-finite physics state (the MJX families
     # count them; other families have no such field)
     nan_count = getattr(state.env_state, "nan_count", None)
@@ -735,26 +1039,32 @@ def main() -> None:
         "windows": window_index,
         "env_steps": args.iterations * steps_per_iteration,
         "env_steps_per_copy": args.iterations * steps_per_copy_per_iteration,
-        "episodes_per_copy": args.iterations * episodes_per_copy_per_iteration,
+        "episodes_per_copy": (args.iterations * episodes_per_copy_per_iteration
+                              if fixed_clock else None),
         "copies": config.n_copies,
         "seconds_total": total_seconds,
         "seconds_build_and_prime": start - build_start,
         "seconds_first_iteration_with_compile": first_iteration_seconds,
         "seconds_per_iteration_steady": steady_seconds / steady_iterations,
         "attempt_finished": datetime.now().astimezone().isoformat(),
+        # a resumed attempt's seconds cover only the iterations it ran itself
+        **({"resumed_from_iteration": start_iteration - 1,
+            "iterations_this_attempt": iterations_this_attempt} if saved is not None else {}),
     })
     nan_note = (f", {nan_episodes} episodes respawned for a non-finite physics state"
                 if nan_episodes else "")
     say(f"unit {args.unit_id} complete: {args.iterations} iterations in "
         f"{total_seconds:.1f}s{nan_note}")
     out.close()
+    # a complete unit needs no checkpoint: its shard says it is finished
+    if checkpointing and checkpoint_path.exists():
+        checkpoint_path.unlink()
 
     if args.no_aggregate:
         log.close()
         return
 
     # one shard is still a sweep of one: the run-level files are always the aggregate
-    sys.path.insert(0, str(Path(__file__).resolve().parent))
     from aggregate_run import aggregate
     summary = aggregate(run_dir)
     say(f"aggregated: {summary['records']} episode-window records, steady rate "

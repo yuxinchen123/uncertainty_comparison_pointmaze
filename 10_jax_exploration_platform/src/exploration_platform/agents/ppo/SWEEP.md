@@ -69,9 +69,36 @@ for bit — which is what the test of that name checks.
 The annealing schedule stays one scalar argument per iteration: the constant holds the base rates
 and the argument carries the multiplier, so no per-iteration host-to-device copy is introduced.
 
-## Sweeping something else again
+## More settings per copy: named cells
 
-Every per-copy loss term already reduces over the copy axis, so the same mechanism extends to any
-scalar knob that enters elementwise — the entropy coefficient, the value coefficient, the clip
-range, the gradient-norm limit. Each needs a `[C]` constant beside `lr_per_copy` and
-`beta_per_copy`, and the scalar replaced where it is used.
+Explicit cells may give each copy more than a rate and a weight. `setting_names` says what each
+column of `parameter_settings` holds, and a name that is not listed stays the configuration's own
+scalar, so the compiled program of a run that does not list it is what it was.
+
+| name | where the per-copy value enters |
+|---|---|
+| `learning_rate` | Adam's step, `[C, 1, ...]` against each parameter |
+| `int_coef` | the intrinsic advantage's weight, `[1, C, 1]` |
+| `ent_coef`, `vf_coef` | the per-copy loss terms, `[C]` |
+| `clip_coef` | the ratio clip and the extrinsic value clip, `[C, 1]` against `[C, M]` rows |
+| `ext_reward_scale`, `ext_reward_offset` | the reward the learner sees, scale x reward + offset, `[1, C, 1]` |
+
+```python
+from exploration_platform.agents.ppo.config import PPOConfig
+
+# two entropy coefficients x two reward settings (limit 400), 16 copies each on the same seeds
+cfg = PPOConfig(n_copies=64, copies_per_group=16,
+                setting_names=("ent_coef", "ext_reward_scale", "ext_reward_offset"),
+                parameter_settings=((0.001, 1.0, 0.0), (0.001, 1 / 400, -1 / 400),
+                                    (0.01, 1.0, 0.0), (0.01, 1 / 400, -1 / 400)))
+```
+
+`SweepVectors.setting(cfg, name, shape, transform)` returns the scalar or the per-copy array. A
+derived constant such as `1 - clip_coef` is formed from the Python numbers before rounding to
+float32, as the scalar program forms it, so one value for every copy reproduces the scalar program
+bit for bit (`tests/agents/test_per_copy_settings.py`).
+
+A further per-copy setting needs one row in `SETTING_RULES` of `training/sweep.py` and a call of
+`sweep.setting` where its scalar is used. Settings that fix shapes or structure cannot differ
+between copies: environments per policy, rollout length, epochs, minibatches, update style,
+network widths, the map, the bonus family.

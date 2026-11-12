@@ -1,10 +1,15 @@
-"""Summarize runs recorded with --diagnostics: per setting, the curve of mean episode return, its
-peak, its final-10% level, and the goal-reaching share, from the per-episode tracker sums.
+"""Summarize runs recorded with --diagnostics or --episode-log: per setting, the curve of mean
+episode return, its peak, its final-10% level, and the goal-reaching share, from the per-episode
+sums.
 
-Every window record carries, per copy, the sums over the episodes that ENDED in that window
-(episode_episodes, episode_reached, episode_ret, ...). A copy's mean episode return in a window is
-episode_ret / episode_episodes; the setting's curve is the mean of that over its copies. This works
-for continuing and terminating environments alike, because it counts real episode ends.
+Every window record carries, per copy, the sums over the episodes that ENDED in that window: the
+diagnostics' tracker fields (episode_episodes, episode_reached, episode_ret, ...) or the episode
+log's (episodes_per_copy, arrivals_per_copy, return_sum_per_copy, ...). A copy's mean episode
+return in a window is the return sum divided by the episodes; the setting's curve is the mean of
+that over its copies. This works for continuing and terminating environments alike, because it
+counts real episode ends. With the episode log, an episode "reached the goal" when it ended there,
+the return is of the reward the learner sees, and the steps to the goal and each copy's first
+training step with an arrival are summarized as well.
 
 Definitions (per setting; c indexes copies, w windows, W the number of windows):
 - curve[w] = mean over copies of ret[c, w] / episodes[c, w]
@@ -59,9 +64,14 @@ def return_offset(environment: str) -> float:
 
 def summarize_cell(windows, copies, offset: float = 0.0):
     """The numbers of one setting from its copies' columns of every window (see module doc)."""
-    get = lambda name: np.array([[w["diagnostics_per_copy"][name][c] for c in copies]
-                                 for w in windows], dtype=float)
-    episodes, ret, reached = get("episode_episodes"), get("episode_ret"), get("episode_reached")
+    # before: one record per window with per-copy lists; after: arrays [windows, copies]. The
+    # diagnostics' tracker is read when a record has it, the episode log otherwise.
+    tracked = "diagnostics_per_copy" in windows[-1]
+    column = lambda name: np.array([[(w["diagnostics_per_copy"] if tracked else w)[name][c]
+                                     for c in copies] for w in windows], dtype=float)
+    names = (("episode_episodes", "episode_ret", "episode_reached") if tracked else
+             ("episodes_per_copy", "return_sum_per_copy", "arrivals_per_copy"))
+    episodes, ret, reached = (column(name) for name in names)
     ret = ret + offset * episodes
     steps = np.array([w["env_steps_per_copy"] for w in windows], dtype=float)
     # before: ret, episodes [W, copies]; after: per-copy per-window mean return, NaN where no
@@ -93,6 +103,20 @@ def summarize_cell(windows, copies, offset: float = 0.0):
     if "coverage_per_copy" in windows[-1]:
         cov = np.array([windows[-1]["coverage_per_copy"][c] for c in copies])
         out["coverage_final"], out["coverage_final_se"] = float(cov.mean()), se(cov)
+    if not tracked:
+        # the episode log's own numbers: episode length and steps to the goal over the final
+        # windows, and when each copy first arrived (-1: never; counted as the whole run in the
+        # mean capped first-goal step)
+        lengths, to_goal = column("length_sum_per_copy"), column("steps_to_goal_sum_per_copy")
+        first = np.array([windows[-1]["first_goal_step_per_copy"][c] for c in copies], dtype=float)
+        out.update({
+            "episode_length_final": float(lengths[-tail:].sum() / max(episodes[-tail:].sum(), 1)),
+            "steps_to_goal_final": (float(to_goal[-tail:].sum() / reached[-tail:].sum())
+                                    if reached[-tail:].sum() > 0 else float("nan")),
+            "first_goal_step_per_copy": first.tolist(),
+            "goal_discovery_rate": float(np.mean(first >= 0)),
+            "mean_capped_first_goal_step": float(np.where(first >= 0, first, steps[-1]).mean())})
+        return out
     # final-window means of every other diagnostic, so a mechanism can be read off the table
     tail_diag = {}
     for name in windows[-1]["diagnostics_per_copy"]:
@@ -114,22 +138,46 @@ def summarize_cell(windows, copies, offset: float = 0.0):
     return out
 
 
+def cell_values(start: dict, setting: list) -> dict:
+    """One cell's settings by name, with the learning rate and intrinsic weight always present.
+
+    A unit written before cells had names holds (learning rate, intrinsic weight) pairs. A value
+    the cell does not hold is the unit's own scalar.
+    before: names ["int_coef", "ent_coef"], cell [4.0, 0.01], the unit's learning rate 1e-4
+    after:  {"learning_rate": 1e-4, "int_coef": 4.0, "ent_coef": 0.01}
+    """
+    names = start.get("cell_setting_names", ["learning_rate", "int_coef"])
+    values = dict(zip(names, setting))
+    for name in ("learning_rate", "int_coef"):
+        if name not in values:
+            values[name] = start["trainer_config"][name]
+    return values
+
+
 def summarize_run(run: Path):
     """Every unit of one run folder, split into its settings."""
     result = {}
     for shard in sorted((run / "data").glob("*.jsonl")):
         start, windows, complete = read_shard(shard)
-        if start is None or not windows or "diagnostics_per_copy" not in windows[-1]:
+        if start is None or not windows or not (
+                "diagnostics_per_copy" in windows[-1] or "episodes_per_copy" in windows[-1]):
             continue
         cells = start["cell_settings"]
         copy_cell = start["copy_cell"]
         for g, setting in enumerate(cells):
             copies = [c for c, cell in enumerate(copy_cell) if cell == g]
-            key = f"{start['unit_id']}|lr={setting[0]:g}|beta={setting[1]:g}"
+            values = cell_values(start, setting)
+            # the key names the rate and the weight as it always did, then every other setting
+            # the cell holds, so two cells that differ only there keep separate entries
+            others = {name: value for name, value in values.items()
+                      if name not in ("learning_rate", "int_coef")}
+            key = (f"{start['unit_id']}|lr={values['learning_rate']:g}|beta={values['int_coef']:g}"
+                   + "".join(f"|{name}={value:g}" for name, value in others.items()))
             offset = return_offset(start["environment"])
             result[key] = {"unit": start["unit_id"], "bonus": start["bonus"],
                            "environment": start["environment"], "return_offset": offset,
-                           "learning_rate": setting[0], "intrinsic_weight": setting[1],
+                           "learning_rate": values["learning_rate"],
+                           "intrinsic_weight": values["int_coef"], "other_settings": others,
                            "complete": complete, **summarize_cell(windows, copies, offset)}
     return result
 

@@ -65,8 +65,10 @@ class PPOConfig:
                                      # uses `learning_rate` (round 4)
     betas: tuple = ()                # sweep: the weights on the intrinsic advantage to try;
                                      # empty means every copy uses `int_coef`
-    parameter_settings: tuple = ()   # explicit (learning rate, intrinsic weight) pairs;
-                                     # selects only requested cells instead of a cross product
+    parameter_settings: tuple = ()   # explicit cells, one row per cell holding one value per
+                                     # name in `setting_names` (by default a learning rate and
+                                     # an intrinsic weight); selects only the requested cells
+                                     # instead of a cross product
     copies_per_group: int = 0        # sweep: copies each (learning rate, beta) cell gets; the
                                      # groups are the cross product of the two lists
     sweep_seed_mode: str = "paired"  # "paired": copy k of every group shares one seed stream,
@@ -106,3 +108,22 @@ class PPOConfig:
     normalize_agent_obs: bool = False  # feed the actor and critic the observation centred and
                                      # scaled by its running per-copy statistics, clipped to +-5,
                                      # instead of the raw position and velocity
+
+    # ---- the PointMaze and AntMaze study (2026-11-11). Every default reproduces the arithmetic
+    # above, so a configuration that sets none of these compiles exactly the program it did ----
+    setting_names: tuple = ("learning_rate", "int_coef")  # what each row of `parameter_settings`
+                                     # holds, in order. Allowed names: learning_rate, int_coef,
+                                     # ent_coef, clip_coef, vf_coef, ext_reward_scale,
+                                     # ext_reward_offset. A named value is one number per copy;
+                                     # every other value stays the scalar of this configuration
+    ext_reward_scale: float = 1.0    # the extrinsic reward the learner sees is
+    ext_reward_offset: float = 0.0   # scale x (the environment's reward) + offset. Scale 1 and
+                                     # offset 0 add no arithmetic. With a reward of 1 on arrival
+                                     # and 0 elsewhere, scale 1/limit and offset -1/limit give a
+                                     # cost of 1/limit per step and 0 on arrival
+    episode_log: bool = False        # per copy, count the episodes that end in each rollout and
+                                     # add up their returns, lengths and steps to the goal, and
+                                     # keep each copy's first training step with an arrival
+    gather_minibatches_per_epoch: bool = False  # epoch-minibatch updates gather one epoch's
+                                     # minibatches at a time, so one shuffled copy of the batch
+                                     # is held instead of one per epoch

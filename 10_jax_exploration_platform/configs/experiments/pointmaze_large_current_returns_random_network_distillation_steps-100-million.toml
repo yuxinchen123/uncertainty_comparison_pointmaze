@@ -12,7 +12,7 @@ source_files = [
 source_record_sha256 = "c2775277b4796c7e9f76817cf3eef4340848afdac216848dde2745f6b64a946b"
 source_unit = "random-network-distillation_learning-rate-0.001_intrinsic-weight-100"
 notes = "The current preset uses the reset observation for continuing intrinsic returns and excludes intrinsic advantages for a no-bonus policy. This file selects the recorded distillation cell, not a new default."
-later_fields_recorded_explicitly = ["diagnostics", "total_iterations", "int_coef_schedule", "success_gate_rate", "normalize_ext_reward", "clip_per_network", "logstd_floor", "critic_lr_scale", "normalize_agent_obs"]
+later_fields_recorded_explicitly = ["diagnostics", "total_iterations", "int_coef_schedule", "success_gate_rate", "normalize_ext_reward", "clip_per_network", "logstd_floor", "critic_lr_scale", "normalize_agent_obs", "setting_names", "ext_reward_scale", "ext_reward_offset", "episode_log", "gather_minibatches_per_epoch"]
 source_steps_per_policy_copy = 100006400
 
 [trainer]
@@ -61,6 +61,11 @@ clip_per_network = false
 logstd_floor = -inf
 critic_lr_scale = 1.0
 normalize_agent_obs = false
+setting_names = ["learning_rate", "int_coef"]
+ext_reward_scale = 1.0
+ext_reward_offset = 0.0
+episode_log = false
+gather_minibatches_per_epoch = false
 
 [environment]
 map_name = "large"
@@ -80,3 +85,4 @@ iterations = 195325
 window_iterations = 200
 run_seed = 0
 lr_anneal_iterations = 195325
+reward_setting = "environment"

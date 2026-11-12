@@ -10,6 +10,9 @@ input, so a whitened input keeps the same scale as the agent moves through the m
 predictor's own error is also the loss the optimizer minimises, and it rides the agent's Adam —
 one optimizer over {agent, bonus}, which is what the frozen 09_parallelization baseline did.
 """
+import jax
+import jax.numpy as jnp
+
 from ...statistics import rms_init, rms_update
 from ..protocol import BonusFunctions
 from .config import RNDConfig
@@ -17,15 +20,24 @@ from .networks import features, init_predictor, init_target, whiten
 
 
 def build(cfg, env_cfg, rnd_cfg: RNDConfig, n_copies: int, base_seed: int, copy_seed_index,
-          obs_dim: int = 4):
+          obs_dim: int = 4, saved_constants=None):
     """Bind this bonus to one run's copy count, seeds and statistics setting.
 
     env_cfg is unused: this family reads the observation as obs_dim numbers and needs to know
-    nothing else about the environment it came from.
+    nothing else about the environment it came from. saved_constants, from a checkpoint, replaces
+    the draw of the target network, so a run resumed on another card model keeps the target it
+    started with to the last digit.
     """
-    # the target is a constant of the program, not a parameter: it is drawn once here and never
-    # appears in any gradient
+    # the target is a constant of the program, not a parameter: it is drawn once here (or taken
+    # from the checkpoint) and never appears in any gradient
     target = init_target(rnd_cfg, n_copies, base_seed, copy_seed_index, obs_dim)
+    if saved_constants is not None:
+        saved = saved_constants["target"]
+        shapes = {name: tuple(value.shape) for name, value in target.items()}
+        if {name: tuple(value.shape) for name, value in saved.items()} != shapes:
+            raise ValueError("the saved distillation target does not have this run's shapes "
+                             f"{shapes}")
+        target = jax.tree.map(lambda value: jnp.asarray(value, value.dtype), dict(saved))
 
     def init():
         """The predictor's weights, and fresh statistics for the observation dimensions."""
@@ -63,4 +75,5 @@ def build(cfg, env_cfg, rnd_cfg: RNDConfig, n_copies: int, base_seed: int, copy_
         return {}
 
     return BonusFunctions(name="rnd_next_state", init=init, prime=prime, rollout_step=score,
-                          post_rollout=post_rollout, loss=loss, metrics=metrics)
+                          post_rollout=post_rollout, loss=loss, metrics=metrics,
+                          constants={"target": target})

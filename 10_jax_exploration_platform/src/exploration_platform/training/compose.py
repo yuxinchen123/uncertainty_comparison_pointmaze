@@ -34,12 +34,14 @@ ENV_CLASSES = {EnvConfig: JaxPointMaze, AntMazeConfig: JaxAntMaze,
 class Composition:
     """One assembled run: the environment, the bonus, the parameter layout, and two programs."""
 
-    def __init__(self, cfg, bonus, env_cfg=None):
+    def __init__(self, cfg, bonus, env_cfg=None, bonus_constants=None):
         """Build the environment and the bonus for this configuration, then compile both programs.
 
         `bonus` is a preset name from the registry, or a factory
         `(cfg, env_cfg, n_copies, base_seed, copy_seed_index, obs_dim) -> BonusFunctions` passed
         straight in, so the family binds to this run before anything is traced.
+        `bonus_constants`, when given, are the bonus's fixed arrays as a checkpoint saved them;
+        the factory then uses them instead of drawing its own.
         """
         self.env_cfg = env_cfg or EnvConfig()
         cfg = resolve_configuration(cfg, self.env_cfg)
@@ -53,9 +55,12 @@ class Composition:
                              copy_seed_index=self.sweep.copy_seed_index)
         self.open_cells, self.n_cells = self.env.open_cells, self.env.n_cells
 
-        # the bonus binds to this run before anything is traced
+        # the bonus binds to this run before anything is traced; saved constants are passed only
+        # on a resume, so a factory written before checkpoints existed is called as it always was
+        saved = {} if bonus_constants is None else {"saved_constants": bonus_constants}
         self.bonus = make_bonus(bonus)(cfg, self.env_cfg, cfg.n_copies, cfg.base_seed,
-                                       self.sweep.copy_seed_index, obs_dim=self.env.obs_dim)
+                                       self.sweep.copy_seed_index, obs_dim=self.env.obs_dim,
+                                       **saved)
         discrete = getattr(self.env, "action_kind", "continuous") == "discrete"
         if discrete:
             self.init_agent_params = init_agent_params_discrete(
@@ -80,7 +85,7 @@ class Composition:
                                                self.layout), donate_argnums=(0,))
         prime_step = build_prime_step(cfg, self.env, self.bonus, self.layout)
         self.prime_step = jax.jit(prime_step) if prime_step is not None else None
-        self.total_loss = build_total_loss(cfg, self.bonus, self.layout, discrete)
+        self.total_loss = build_total_loss(cfg, self.bonus, self.layout, discrete, self.sweep)
 
     def iteration_capturing_batch(self):
         """The same iteration, unjitted, also returning the update batch it built.

@@ -95,6 +95,40 @@ def test_goal_reward_semantics():
     print("ok test_goal_reward_semantics")
 
 
+def test_goal_termination_and_reset():
+    """With the episode ending at the goal: arrival terminates, pays 1 once, and respawns exactly;
+    an environment away from the goal runs on, and the step limit is still a truncation."""
+    from dataclasses import replace
+    cfg = replace(preset("umaze"), continuing_task=False)
+    env = JaxAntMaze(cfg, 1, 3)
+    s = env.reset()
+    goal = np.asarray(env.goal)
+    qpos = np.asarray(s.data.qpos).copy()
+    qpos[0, 0:2] = goal + np.array([0.2, 0.0], np.float32)   # env 0: inside the radius
+    qpos[1, 0:2] = goal + np.array([0.6, 0.0], np.float32)   # env 1: outside
+    step_count = np.zeros((1, 3), np.int32)
+    step_count[0, 2] = cfg.max_episode_steps - 1             # env 2: at the start, one step left
+    s = s._replace(data=s.data.replace(qpos=jnp.asarray(qpos)), step_count=jnp.asarray(step_count))
+    step = jax.jit(env.step)
+    s, obs, rew, term, trunc, final = step(s, jnp.zeros((1, 3, 8), jnp.float32))
+    np.testing.assert_array_equal(np.asarray(term[0]), [True, False, False])
+    np.testing.assert_array_equal(np.asarray(trunc[0]), [False, False, True])
+    np.testing.assert_array_equal(np.asarray(rew[0]), [1.0, 0.0, 0.0])
+    # the arrived and the truncated environment are back at the spawn exactly; the other is not
+    spawn = np.concatenate([np.asarray(env.init_qpos), np.asarray(env.init_qvel)])
+    np.testing.assert_array_equal(np.asarray(obs[0, 0]), spawn)
+    np.testing.assert_array_equal(np.asarray(obs[0, 2]), spawn)
+    assert (np.asarray(obs[0, 1]) != spawn).any()
+    np.testing.assert_array_equal(np.asarray(s.step_count[0]), [0, 1, 0])
+    np.testing.assert_array_equal(np.asarray(s.reset_count[0]), [1, 0, 1])
+    # the observation before the reset still shows the torso at the goal
+    assert np.linalg.norm(np.asarray(final[0, 0, 0:2]) - goal) <= cfg.goal_radius
+    # the next step starts a new episode: no reward, no termination
+    s, obs, rew, term, trunc, final = step(s, jnp.zeros((1, 3, 8), jnp.float32))
+    assert float(rew[0, 0]) == 0.0 and not bool(term[0, 0]) and int(s.step_count[0, 0]) == 1
+    print("ok test_goal_termination_and_reset")
+
+
 def test_truncation_and_autoreset():
     """At the cap the env truncates, respawns exactly, and counts the episode."""
     cfg = preset("umaze")
@@ -181,6 +215,7 @@ if __name__ == "__main__":
     test_step_contract_and_determinism()
     test_copy_isolation()
     test_goal_reward_semantics()
+    test_goal_termination_and_reset()
     test_truncation_and_autoreset()
     test_x64_boundary()
     test_cell_index_and_open_cells()

@@ -1,7 +1,8 @@
 """Resolve the old platform's named environment configurations without sharing algorithm defaults.
 
-Pixel-based CleanRL Atari has its own configuration and trainer. These presets only reproduce
-PointMaze and the historical AntMaze and object-observation Montezuma implementations.
+Pixel-based CleanRL Atari has its own configuration and trainer. These presets reproduce
+PointMaze, the historical AntMaze and object-observation Montezuma implementations, and the
+current AntMaze rules of the study that started 2026-11-11.
 """
 from dataclasses import replace
 
@@ -16,6 +17,9 @@ PRESETS = {
     "pointmaze_current": ("EnvConfig", "reset_observation", "task_only"),
     "pointmaze_historical": ("EnvConfig", "final_observation", "weighted_intrinsic"),
     "antmaze_historical": ("AntMazeConfig", "final_observation", "weighted_intrinsic"),
+    # the PointMaze rules on the ant: the intrinsic return continues into the reset state, and a
+    # no-bonus policy learns from task advantages only. Chosen by name; never the default.
+    "antmaze_current": ("AntMazeConfig", "reset_observation", "task_only"),
     "montezuma_object_historical": ("MontezumaConfig", "final_observation", "weighted_intrinsic"),
 }
 
@@ -44,14 +48,18 @@ def resolve_configuration(config, environment_config):
             raise ValueError(f"{field}={value!r} conflicts with configuration {name!r} "
                              f"which requires {expected!r}")
     if environment_type != "EnvConfig":
-        pointmaze_study = (config.diagnostics or config.success_gate_rate > 0
+        # the diagnostics bundle reads PointMaze's velocity out of the observation, so it stays
+        # refused for every other environment; the other study options are refused only under a
+        # historical name, which must keep reproducing what it recorded
+        pointmaze_study = (config.success_gate_rate > 0
                            or config.normalize_agent_obs or config.normalize_ext_reward
                            or config.clip_per_network or config.logstd_floor > float("-inf")
                            or config.critic_lr_scale != 1.0
                            or config.int_coef_schedule != "constant")
-        if pointmaze_study:
+        if config.diagnostics or (pointmaze_study and name.endswith("_historical")):
             raise ValueError("PointMaze study options require a PointMaze configuration; "
-                             "historical environments do not inherit them")
+                             "historical environments do not inherit them, and the diagnostics "
+                             "read PointMaze's velocity (use episode_log for episode counts)")
     return replace(config, configuration_preset=name,
                    intrinsic_bootstrap_observation=intrinsic_observation,
                    no_bonus_advantage_stream=no_bonus_stream)

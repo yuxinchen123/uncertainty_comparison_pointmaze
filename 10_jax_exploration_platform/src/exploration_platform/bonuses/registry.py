@@ -15,8 +15,9 @@ from .visit_count.implementation import build as build_visit_count
 
 def rnd_preset(rnd_cfg: RNDConfig):
     """A factory for random network distillation at the given network widths."""
-    return lambda cfg, env_cfg, n_copies, base_seed, copy_seed_index, obs_dim=4: build_rnd(
-        cfg, env_cfg, rnd_cfg, n_copies, base_seed, copy_seed_index, obs_dim)
+    return (lambda cfg, env_cfg, n_copies, base_seed, copy_seed_index, obs_dim=4,
+            saved_constants=None: build_rnd(cfg, env_cfg, rnd_cfg, n_copies, base_seed,
+                                            copy_seed_index, obs_dim, saved_constants))
 
 
 def visit_count_preset(vc_cfg: VisitCountConfig, name: str):

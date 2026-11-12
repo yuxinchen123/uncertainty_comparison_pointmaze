@@ -78,7 +78,8 @@ def test_same_function_in_double_precision():
     to64 = lambda x: jax.numpy.asarray(np.asarray(x).astype(np.float64))
     pa = jax.tree.map(to64, ta.init_trainable())
     pb = tb.layout.pack(jax.tree.map(to64, tb.init_trainable()))
-    batch = {k: to64(v) for k, v in make_batch(ta.cfg, jax.random.PRNGKey(3)).items()}
+    batch = {k: to64(v) for k, v in make_batch(ta.cfg, jax.random.PRNGKey(3), ta.env.obs_dim,
+                                               ta.env.act_dim).items()}
 
     la, ga = jax.jit(jax.value_and_grad(lambda p: ta.total_loss(p, batch, style_a=False)))(pa)
     lb, gb = jax.jit(jax.value_and_grad(lambda p: tb.total_loss(p, batch, style_a=False)))(pb)

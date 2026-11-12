@@ -111,6 +111,9 @@ def build_update(cfg, loss_fn, lr_per_copy):
                             or cfg.logstd_floor > float("-inf")):
         raise ValueError("diagnostics and clip_per_network need the named parameter tree; "
                          "turn flat_params off")
+    if cfg.gather_minibatches_per_epoch and cfg.update_style != "epoch_minibatch":
+        raise ValueError("gather_minibatches_per_epoch applies to epoch_minibatch updates only; "
+                         f"this configuration's update style is {cfg.update_style!r}")
     if (cfg.diagnostics or cfg.clip_per_network or cfg.critic_lr_scale != 1.0
             or cfg.logstd_floor > float("-inf")):
         return _build_reporting(cfg, loss_fn, lr_per_copy)
@@ -133,30 +136,54 @@ def _build_full_batch(cfg, loss_fn, lr_per_copy):
     return update
 
 
-def _build_epoch_minibatch(cfg, loss_fn, lr_per_copy):
-    """Style B: epochs x minibatches of shuffled steps, run as one scan over the 16 steps."""
+def scan_minibatches(cfg, batch, key, carry, body):
+    """Shuffle each copy's rows once per epoch and run `body` over every minibatch, in order.
+
+    body(carry, minibatch) -> (carry, output). Returns (carry, the outputs stacked over the
+    epochs x minibatches gradient steps). By default every minibatch of every epoch is gathered
+    before the first step, which holds one shuffled copy of the batch per epoch. With
+    gather_minibatches_per_epoch the same rows are gathered one epoch at a time inside an outer
+    scan over the epochs, so one shuffled copy is held; the draws and the step order are the same.
+    """
     C = cfg.n_copies
     Brows = cfg.num_steps * cfg.n_envs
     mb_size = Brows // cfg.num_minibatches
     n_steps = cfg.update_epochs * cfg.num_minibatches
 
-    def update(params, opt, batch, lr, key):
-        """Draw all permutations up front, gather every minibatch, then scan the steps."""
-        # permutations, independent per copy AND per epoch
-        # before: uniform draws (E, C, B); after: minibatch row indices (E*K, C, mb)
-        perm = jnp.argsort(jax.random.uniform(key, (cfg.update_epochs, C, Brows), F32), axis=-1)
-        idx = perm.reshape(cfg.update_epochs, C, cfg.num_minibatches, mb_size)
+    # permutations, independent per copy AND per epoch
+    # before: uniform draws (E, C, B); after: minibatch row indices (E, C, K, mb)
+    perm = jnp.argsort(jax.random.uniform(key, (cfg.update_epochs, C, Brows), F32), axis=-1)
+    idx = perm.reshape(cfg.update_epochs, C, cfg.num_minibatches, mb_size)
+
+    def gather(t, rows):
+        """One batch field cut into minibatches: (C,B,k) -> (S,C,mb,k); (C,B) -> (S,C,mb)."""
+        if t.ndim == 3:
+            return jnp.take_along_axis(t[None], rows[..., None], axis=2)
+        return jnp.take_along_axis(t[None], rows, axis=2)
+
+    if not cfg.gather_minibatches_per_epoch:
+        # gather all minibatches up front, then one scan over the E*K steps
         idx = idx.transpose(0, 2, 1, 3).reshape(n_steps, C, mb_size)
+        mbs = {k: gather(batch[k], idx) for k in sorted(batch)}
+        return jax.lax.scan(body, carry, mbs, unroll=cfg.update_unroll)
 
-        # gather all minibatches up front: field (C,B,k) -> (S,C,mb,k); (C,B) -> (S,C,mb)
-        def gather(t):
-            """One batch field, cut into the S minibatches the scan will walk."""
-            if t.ndim == 3:
-                return jnp.take_along_axis(t[None], idx[..., None], axis=2)
-            return jnp.take_along_axis(t[None], idx, axis=2)
+    def epoch(carry, rows):
+        """One epoch: gather its K minibatches, then scan them."""
+        mbs = {k: gather(batch[k], rows) for k in sorted(batch)}
+        return jax.lax.scan(body, carry, mbs, unroll=cfg.update_unroll)
 
-        mbs = {k: gather(batch[k]) for k in sorted(batch)}
+    # before: idx (E, C, K, mb); after: (E, K, C, mb), one epoch's rows per outer step
+    carry, outputs = jax.lax.scan(epoch, carry, idx.transpose(0, 2, 1, 3))
+    # before: outputs (E, K, ...); after: (E*K, ...), the shape the single scan returns
+    return carry, jax.tree.map(lambda x: x.reshape((n_steps,) + x.shape[2:]), outputs)
 
+
+def _build_epoch_minibatch(cfg, loss_fn, lr_per_copy):
+    """Style B: epochs x minibatches of shuffled steps, run as one scan over the 16 steps."""
+    C = cfg.n_copies
+
+    def update(params, opt, batch, lr, key):
+        """Draw all permutations up front, gather the minibatches, then scan the steps."""
         def body(carry, mb):
             """One of the sixteen gradient steps."""
             params, opt = carry
@@ -165,8 +192,7 @@ def _build_epoch_minibatch(cfg, loss_fn, lr_per_copy):
             params, opt = adam_step(params, grads, opt, lr, cfg.adam_eps, C, lr_per_copy)
             return (params, opt), loss
 
-        (params, opt), losses = jax.lax.scan(body, (params, opt), mbs,
-                                             unroll=cfg.update_unroll)
+        (params, opt), losses = scan_minibatches(cfg, batch, key, (params, opt), body)
         return params, opt, losses[-1]
     return update
 
@@ -211,25 +237,8 @@ def _build_reporting(cfg, loss_fn, lr_per_copy):
     if cfg.update_style != "epoch_minibatch":
         raise ValueError(f"unknown update style {cfg.update_style!r}")
 
-    Brows = cfg.num_steps * cfg.n_envs
-    mb_size = Brows // cfg.num_minibatches
-    n_steps = cfg.update_epochs * cfg.num_minibatches
-
     def update(params, opt, batch, lr, key):
         """Style B as in `_build_epoch_minibatch`, with the clip report averaged over the steps."""
-        # the same permutations and minibatches as the plain style B builder
-        perm = jnp.argsort(jax.random.uniform(key, (cfg.update_epochs, C, Brows), F32), axis=-1)
-        idx = perm.reshape(cfg.update_epochs, C, cfg.num_minibatches, mb_size)
-        idx = idx.transpose(0, 2, 1, 3).reshape(n_steps, C, mb_size)
-
-        def gather(t):
-            """One batch field, cut into the S minibatches the scan will walk."""
-            if t.ndim == 3:
-                return jnp.take_along_axis(t[None], idx[..., None], axis=2)
-            return jnp.take_along_axis(t[None], idx, axis=2)
-
-        mbs = {k: gather(batch[k]) for k in sorted(batch)}
-
         def body(carry, mb):
             """One gradient step, with its clip report as a scan output."""
             params, opt = carry
@@ -238,8 +247,8 @@ def _build_reporting(cfg, loss_fn, lr_per_copy):
             stepped, opt = adam_step(params, grads, opt, lr, cfg.adam_eps, C, lr_per_copy)
             return (after_step(cfg, params, stepped), opt), (loss, report)
 
-        # the reports come back stacked [S, C]; the mean over the S steps is what is recorded
-        (params, opt), (losses, reports) = jax.lax.scan(body, (params, opt), mbs,
-                                                        unroll=cfg.update_unroll)
+        # the same permutations and minibatches as the plain style B builder; the reports come
+        # back stacked [S, C], and the mean over the S steps is what is recorded
+        (params, opt), (losses, reports) = scan_minibatches(cfg, batch, key, (params, opt), body)
         return params, opt, losses[-1], jax.tree.map(lambda x: x.mean(axis=0), reports)
     return update

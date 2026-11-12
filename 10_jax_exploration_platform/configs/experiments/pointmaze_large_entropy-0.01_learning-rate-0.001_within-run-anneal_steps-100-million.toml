@@ -12,7 +12,7 @@ source_files = [
 source_record_sha256 = "996c3961a328497dbaa3d649dbf1da16b30fa9f6888be3eaf1cff4a31af4c011"
 source_unit = "lr-1e-3_steps-100M_c2_entropy-coefficient-0.01_anneal-in-run_rnd_next_state"
 notes = "Separate confirmed study choice. The per-unit header is authoritative; another unit overwrote run-level YAML. Entropy 0.01 is not a global or Atari default."
-later_fields_recorded_explicitly = []
+later_fields_recorded_explicitly = ["setting_names", "ext_reward_scale", "ext_reward_offset", "episode_log", "gather_minibatches_per_epoch"]
 source_steps_per_policy_copy = 100000256
 
 [trainer]
@@ -61,6 +61,11 @@ clip_per_network = false
 logstd_floor = -inf
 critic_lr_scale = 1.0
 normalize_agent_obs = false
+setting_names = ["learning_rate", "int_coef"]
+ext_reward_scale = 1.0
+ext_reward_offset = 0.0
+episode_log = false
+gather_minibatches_per_epoch = false
 
 [environment]
 map_name = "large"
@@ -80,3 +85,4 @@ iterations = 195313
 window_iterations = 500
 run_seed = 0
 lr_anneal_iterations = 195313
+reward_setting = "environment"

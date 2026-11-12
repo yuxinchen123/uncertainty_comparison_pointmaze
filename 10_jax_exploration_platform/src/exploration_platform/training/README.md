@@ -9,6 +9,8 @@ Where the environment, the agent and the bonus meet, and the only place that cal
 | `train_step.py` | one training iteration and one warm-up pass, built for exactly one (environment, agent, bonus) combination |
 | `compose.py` | picks the three pieces, fixes the parameter layout, and compiles the two programs |
 | `runner.py` | the driver: build a state, warm it up, step the compiled iteration in a loop, record sparsely |
+| `episode_log.py` | the per-copy episode log (key `episode_log`): episodes ended, arrivals, sums of returns, lengths and steps to the goal, and each copy's first training step with an arrival, kept by masked sums over the rollout |
+| `checkpoint.py` | saving a unit's whole state (and the bonus's fixed arrays) to one `.npz` file and restoring it into a newly built trainer, so an interrupted unit continues exactly |
 
 The compiled iteration takes a state and a learning-rate scalar and returns a new state and the
 iteration's metrics. Its key comes from the state (`fold_in(rng, step)`), so the driver keeps no

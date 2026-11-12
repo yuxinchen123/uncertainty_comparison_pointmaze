@@ -12,7 +12,7 @@ source_files = [
 source_record_sha256 = "e271fc8a4478f000b19f60caab39e834b4238a5b0b2ed81c821349296f197f73"
 source_unit = "unit-1_rnd-next-state_learning-rate-1e-3_intrinsic-weight-10_copies-8192"
 notes = "Historical final-observation intrinsic bootstrap and historical weighted intrinsic advantage path. Later study switches are explicitly disabled."
-later_fields_recorded_explicitly = ["parameter_settings", "copy_seed_offset", "diagnostics", "total_iterations", "int_coef_schedule", "success_gate_rate", "normalize_ext_reward", "clip_per_network", "logstd_floor", "critic_lr_scale", "normalize_agent_obs"]
+later_fields_recorded_explicitly = ["parameter_settings", "copy_seed_offset", "diagnostics", "total_iterations", "int_coef_schedule", "success_gate_rate", "normalize_ext_reward", "clip_per_network", "logstd_floor", "critic_lr_scale", "normalize_agent_obs", "setting_names", "ext_reward_scale", "ext_reward_offset", "episode_log", "gather_minibatches_per_epoch"]
 source_steps_per_policy_copy = 100044800
 
 [trainer]
@@ -61,6 +61,11 @@ clip_per_network = false
 logstd_floor = -inf
 critic_lr_scale = 1.0
 normalize_agent_obs = false
+setting_names = ["learning_rate", "int_coef"]
+ext_reward_scale = 1.0
+ext_reward_offset = 0.0
+episode_log = false
+gather_minibatches_per_epoch = false
 
 [environment]
 map_name = "large"
@@ -80,3 +85,4 @@ iterations = 195400
 window_iterations = 200
 run_seed = 0
 lr_anneal_iterations = 195400
+reward_setting = "environment"

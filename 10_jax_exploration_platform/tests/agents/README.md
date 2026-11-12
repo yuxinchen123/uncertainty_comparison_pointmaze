@@ -14,6 +14,12 @@ return targets and confirms that the old final-state intrinsic bootstrap differs
 | `test_hoist_equivalence.py` | computing the critic values, the log-probability and the bonus after the rollout gives the same numbers as computing them inside it | yes |
 | `test_flat_params_equivalence.py` | holding all parameters in one array computes the same function as holding the named arrays (checked in double precision) | yes |
 | `audit_float64.py` | which quantities are held in double precision and which in single | yes |
+| `test_per_copy_settings.py` | named cells: entropy, clip and value coefficients and the reward scale and offset per copy; one value for every copy reproduces the scalar program bit for bit; groups do not influence each other | yes, on the processor |
+| `test_goal_termination_and_reward_settings.py` | hand-built rollouts on PointMaze and AntMaze: arrival ends the episode with no bootstrap, the step limit bootstraps, the intrinsic return continues, and both reward settings pay what they say | yes |
+| `test_episode_log.py` | the episode log's sums against the episode tracker, its first-arrival step, and that turning it on leaves training bit-identical | yes, on the processor |
+| `test_gather_minibatches_per_epoch.py` | gathering minibatches one epoch at a time gives the same rows, order and bits; 16 and 128 environments per policy run | yes, on the processor |
+| `test_cleanrl_minibatch_reference.py` | one minibatch's clipped loss and gradient against a float64 NumPy transcription of lines 463 to 512 of `07_reconstruction/ppo_rnd_envpool.py` | yes |
+| `test_checkpoint_resume.py` | a unit saved, restored into a new trainer and continued equals the uninterrupted unit bit for bit, on PointMaze and AntMaze | yes, on the processor |
 | `test_forward_fixture.py` | the JAX forward passes reproduce the PyTorch trainer's outputs | **no** — it needs a fixture file written by the PyTorch trainer, which was not copied into this folder (see `../../ORIGIN.md`) |
 
 Run one with the platform environment, for example:

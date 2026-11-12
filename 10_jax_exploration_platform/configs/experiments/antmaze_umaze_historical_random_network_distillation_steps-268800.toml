@@ -12,7 +12,7 @@ source_files = [
 source_record_sha256 = "91737f688bbcba4ca9f0af0473dafc017e730c7c181e06022943b178fde1fd85"
 source_unit = "unit-rnd_next_state"
 notes = "Explicit historical return semantics; PointMaze study changes stay disabled. Environment fields omitted by the old writer are recorded from the unchanged environment dataclass."
-later_fields_recorded_explicitly = ["parameter_settings", "diagnostics", "total_iterations", "int_coef_schedule", "success_gate_rate", "normalize_ext_reward", "clip_per_network", "logstd_floor", "critic_lr_scale", "normalize_agent_obs"]
+later_fields_recorded_explicitly = ["parameter_settings", "diagnostics", "total_iterations", "int_coef_schedule", "success_gate_rate", "normalize_ext_reward", "clip_per_network", "logstd_floor", "critic_lr_scale", "normalize_agent_obs", "setting_names", "ext_reward_scale", "ext_reward_offset", "episode_log", "gather_minibatches_per_epoch"]
 source_steps_per_policy_copy = 268800
 
 [trainer]
@@ -61,6 +61,11 @@ clip_per_network = false
 logstd_floor = -inf
 critic_lr_scale = 1.0
 normalize_agent_obs = false
+setting_names = ["learning_rate", "int_coef"]
+ext_reward_scale = 1.0
+ext_reward_offset = 0.0
+episode_log = false
+gather_minibatches_per_epoch = false
 
 [environment]
 map_name = "umaze"
@@ -84,3 +89,4 @@ iterations = 2100
 window_iterations = 175
 run_seed = 0
 lr_anneal_iterations = 2100
+reward_setting = "environment"

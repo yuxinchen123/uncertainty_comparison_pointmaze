@@ -34,6 +34,21 @@ Each pair contains a learning rate and an intrinsic-advantage weight. Algorithms
 different pairs; no extra Cartesian-product settings are created. Copies share seed indices
 across settings. The no-bonus policy control uses weight zero.
 
+Options added for the PointMaze and AntMaze study (2026-11-12); every default leaves a run as it
+was:
+
+| option | what it does |
+|---|---|
+| `--clip-coef`, `--prime-iterations` | the clip coefficient of the epoch-minibatch update and the number of random-action rollouts before training (CleanRL: 0.1 and 50) |
+| `--entropy-coefficients`, `--clip-coefficients`, `--value-coefficients` | comma-separated lists that are crossed with `--learning-rates` and `--intrinsic-weights`; each cell of the cross product gets `--copies-per-cell` copies on the same seeds |
+| `--reward-setting` | `arrival_plus_one` (the episode ends at the goal, which pays 1), `step_cost` (every step costs 1 / step limit, arrival pays 0), or `arrival_plus_one_and_step_cost` (both in one process, each cell once per reward on the same seeds); the name goes into the environment specification |
+| `--episode-log` | per copy and window: episodes ended, arrivals, sums of returns, lengths and steps to the goal, first training step with an arrival; required when the episode ends at the goal |
+| `--gather-minibatches-per-epoch` | holds one shuffled copy of the batch at a time in the epoch-minibatch update |
+| `--checkpoint-seconds`, `--time-limit-seconds` | save the unit's whole state to `checkpoints/<unit_id>.npz` at window ends, on a stop signal and at the time limit; the same command then continues the unit |
+
+`configs/experiments/` holds one example file per family for that study; a run starts with
+`run_training.py --run-dir <folder> --unit-id <name> --configuration-file <file>`.
+
 Separate UVA programs use `--no-aggregate`; `aggregate_selected_run.py` publishes their
 combined scores and curves, and `monitor_selected_run.py` monitors progress on a compute node.
 `write_corrected_report.py` reads that aggregate to generate the corrected results table and

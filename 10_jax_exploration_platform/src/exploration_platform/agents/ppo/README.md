@@ -9,8 +9,9 @@ elementwise — so one program is C independent trainers that never touch each o
 |---|---|
 | `config.py` | `PPOConfig` — every knob of the agent and of the loop that drives it |
 | `networks.py` | the actor and the two-headed critic: their keyed per-copy initialisation and their forward passes |
-| `losses.py` | `ppo_loss_per_copy` — the policy, value and entropy terms, returned as a [C] vector so a bonus's [C] vector can be added to it before the single sum |
-| `update.py` | the per-copy gradient-norm clip, the hand-rolled Adam, and the two update styles, each built as its own function |
+| `losses.py` | `ppo_loss_per_copy` — the policy, value and entropy terms, returned as a [C] vector so a bonus's [C] vector can be added to it before the single sum; `loss_coefficients` reads the clip, entropy and value coefficients as scalars or one per copy |
+| `update.py` | the per-copy gradient-norm clip, the hand-rolled Adam, and the two update styles, each built as its own function; `scan_minibatches` gathers the minibatches all at once or one epoch at a time |
+| `presets.py` | the named environment-specific rules (`pointmaze_current`, `pointmaze_historical`, `antmaze_historical`, `antmaze_current`, `montezuma_object_historical`) |
 
 The agent knows nothing about any bonus. What ties them together is
 `../../training/compose.py`, which picks one of each and only then calls `jax.jit`.

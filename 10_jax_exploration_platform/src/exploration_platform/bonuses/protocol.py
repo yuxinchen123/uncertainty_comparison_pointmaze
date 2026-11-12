@@ -15,6 +15,10 @@ The hooks, in the order one iteration calls them:
 | `loss` | inside every gradient step | `(params, batch) -> [C] per-copy loss` |
 | `metrics` | once per iteration | `(params, state) -> dict of [C] arrays` |
 
+`constants` holds the family's fixed arrays that are neither parameters nor state (the random
+network distillation target). A checkpoint saves them, and a resumed run hands them back to the
+family's factory as `saved_constants`, so the program holds the saved numbers and not a new draw.
+
 `next_obs` is always float32 [C, M, 4]: [C, N, 4] for one rollout step, [C, T*N, 4] for a whole
 rollout flattened. `reward` is [C, M]. `params` and `state` are trees of device arrays and may be
 empty — a family with nothing to train passes `{}`, and the compiled program then holds none of
@@ -46,3 +50,4 @@ class BonusFunctions:
     metrics: Callable
     prime: Optional[Callable] = None
     rollout_step: Optional[Callable] = None
+    constants: Optional[dict] = None

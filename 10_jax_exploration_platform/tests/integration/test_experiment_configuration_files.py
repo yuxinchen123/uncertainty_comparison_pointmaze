@@ -9,13 +9,18 @@ import unittest
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "scripts"))
 from experiment_configuration import (additional_trainer_fields, argument_defaults,
-                                      parse_with_configuration_file, read_experiment_configuration)
+                                      parse_with_configuration_file, read_experiment_configuration,
+                                      reward_mappings)
 
 CONFIGURATIONS = ROOT / "configs/experiments"
 CURRENT = CONFIGURATIONS / "pointmaze_large_current_returns_random_network_distillation_steps-100-million.toml"
 HISTORICAL = CONFIGURATIONS / "pointmaze_large_historical_random_network_distillation_steps-100-million.toml"
 PART_A = CONFIGURATIONS / "pointmaze_large_entropy-0.01_learning-rate-0.001_within-run-anneal_steps-100-million.toml"
 PART_B = CONFIGURATIONS / "pointmaze_large_entropy-0.01_learning-rate-0.0001_within-run-anneal_steps-400-million.toml"
+# The study that started 2026-11-11 adds one example per family; they record no earlier run.
+POINTMAZE_EXAMPLE = CONFIGURATIONS / "pointmaze_large_cleanrl-ppo-rnd_goal-termination_reward-arrival-plus-one_example_steps-1024000.toml"
+ANTMAZE_EXAMPLE = CONFIGURATIONS / "antmaze_umaze_cleanrl-ppo-rnd_goal-termination_reward-arrival-plus-one_example_steps-204800.toml"
+EXAMPLES = (POINTMAZE_EXAMPLE, ANTMAZE_EXAMPLE)
 
 
 def small_parser():
@@ -32,6 +37,7 @@ def small_parser():
     parser.add_argument("--intrinsic-weights", default="")
     parser.add_argument("--ent-coef", type=float, default=0.0)
     parser.add_argument("--env", default="pointmaze-large")
+    parser.add_argument("--reward-setting", default="environment")
     return parser
 
 
@@ -42,11 +48,18 @@ class RecordedExperimentFiles(unittest.TestCase):
         """Current and historical returns remain explicit in six complete recorded experiments."""
         # Pixel CleanRL uses another schema and command, so old-platform loading must reject it.
         paths = [path for path in CONFIGURATIONS.glob("*.toml")
-                 if path.name != "montezuma_pixels_original_cleanrl.toml"]
+                 if path.name != "montezuma_pixels_original_cleanrl.toml" and path not in EXAMPLES]
         self.assertEqual(len(paths), 6)
         documents = [read_experiment_configuration(path) for path in paths]
         for document in documents:
-            self.assertEqual(len(document["trainer"]), 45)
+            self.assertEqual(len(document["trainer"]), 50)
+            # The fields added on 2026-11-12 stay at the values that change nothing.
+            self.assertEqual(document["trainer"]["setting_names"], ("learning_rate", "int_coef"))
+            self.assertEqual((document["trainer"]["ext_reward_scale"],
+                              document["trainer"]["ext_reward_offset"]), (1.0, 0.0))
+            self.assertFalse(document["trainer"]["episode_log"])
+            self.assertFalse(document["trainer"]["gather_minibatches_per_epoch"])
+            self.assertEqual(document["runtime"]["reward_setting"], "environment")
             self.assertTrue(document["metadata"]["source_files"])
             self.assertEqual(len(document["sha256"]), 64)
             if document["metadata"]["environment_family"] != "pointmaze":
@@ -58,6 +71,79 @@ class RecordedExperimentFiles(unittest.TestCase):
         self.assertEqual(current["trainer"]["no_bonus_advantage_stream"], "task_only")
         self.assertEqual(historical["trainer"]["intrinsic_bootstrap_observation"], "final_observation")
         self.assertEqual(historical["trainer"]["no_bonus_advantage_stream"], "weighted_intrinsic")
+
+    def test_study_examples_hold_the_cleanrl_values_and_goal_termination(self):
+        """One example per family: CleanRL learner values, the episode ends at the goal."""
+        for path, preset, limit in ((POINTMAZE_EXAMPLE, "pointmaze_current", 400),
+                                    (ANTMAZE_EXAMPLE, "antmaze_current", 700)):
+            document = read_experiment_configuration(path)
+            trainer, environment = document["trainer"], document["environment"]
+            self.assertEqual(len(trainer), 50)
+            self.assertEqual(trainer["configuration_preset"], preset)
+            self.assertEqual((trainer["update_style"], trainer["update_epochs"],
+                              trainer["num_minibatches"]), ("epoch_minibatch", 4, 4))
+            self.assertEqual((trainer["clip_coef"], trainer["learning_rate"], trainer["ent_coef"],
+                              trainer["prime_iterations"]), (0.1, 0.0001, 0.001, 50))
+            self.assertTrue(trainer["anneal_lr"] and trainer["episode_log"])
+            self.assertEqual(document["runtime"]["lr_anneal_iterations"],
+                             document["runtime"]["iterations"])
+            self.assertFalse(environment["continuing_task"])
+            self.assertEqual((environment["max_episode_steps"], environment["reward_shift"]),
+                             (limit, 0.0))
+            self.assertEqual(document["runtime"]["reward_setting"], "arrival_plus_one")
+
+    def test_named_reward_settings_fix_the_scale_and_offset(self):
+        """A file's reward scale and offset must be the ones its named reward setting means."""
+        # Before: reward 1 on arrival, 0 elsewhere; after step_cost at limit 400: 0 and -1/400.
+        self.assertEqual(reward_mappings("environment", 400), ())
+        self.assertEqual(reward_mappings("arrival_plus_one", 400), ((1.0, 0.0),))
+        self.assertEqual(reward_mappings("step_cost", 400), ((0.0025, -0.0025),))
+        self.assertEqual(reward_mappings("arrival_plus_one_and_step_cost", 700),
+                         ((1.0, 0.0), (1 / 700, -1 / 700)))
+        with self.assertRaisesRegex(ValueError, "unknown reward setting"):
+            reward_mappings("per_step", 400)
+        text = POINTMAZE_EXAMPLE.read_text()
+        step_cost = text.replace('reward_setting = "arrival_plus_one"', 'reward_setting = "step_cost"')
+        both = (text.replace('reward_setting = "arrival_plus_one"',
+                             'reward_setting = "arrival_plus_one_and_step_cost"')
+                .replace('setting_names = ["learning_rate", "int_coef"]',
+                         'setting_names = ["int_coef", "ext_reward_scale", "ext_reward_offset"]')
+                .replace("parameter_settings = []",
+                         "parameter_settings = [[1.0, 1.0, 0.0], [1.0, 0.0025, -0.0025]]")
+                .replace("copies_per_group = 0", "copies_per_group = 8"))
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "configuration.toml"
+            # step_cost with the scale and offset of arrival_plus_one is refused
+            path.write_text(step_cost)
+            with self.assertRaisesRegex(ValueError, "ext_reward_scale"):
+                read_experiment_configuration(path)
+            path.write_text(step_cost.replace("ext_reward_scale = 1.0", "ext_reward_scale = 0.0025")
+                            .replace("ext_reward_offset = 0.0", "ext_reward_offset = -0.0025"))
+            self.assertEqual(read_experiment_configuration(path)["trainer"]["ext_reward_offset"], -0.0025)
+            # a named setting on an episode that does not end at the goal is refused
+            path.write_text(text.replace("continuing_task = false", "continuing_task = true"))
+            with self.assertRaisesRegex(ValueError, "ends the episode at the goal"):
+                read_experiment_configuration(path)
+            # both settings need cells that hold exactly the two pairs
+            path.write_text(both)
+            document = read_experiment_configuration(path)
+            self.assertEqual(document["trainer"]["parameter_settings"],
+                             ((1.0, 1.0, 0.0), (1.0, 0.0025, -0.0025)))
+            parsed = parse_with_configuration_file(small_parser(), [
+                "--run-dir", "/tmp/test", "--unit-id", "test", "--configuration-file", str(path),
+                "--intrinsic-coefficient", "4"])
+            self.assertEqual(parsed.experiment_setting_names,
+                             ("int_coef", "ext_reward_scale", "ext_reward_offset"))
+            self.assertEqual(parsed.experiment_parameter_settings,
+                             ((4.0, 1.0, 0.0), (4.0, 0.0025, -0.0025)))
+            for refused in (["--reward-setting", "step_cost"], ["--intrinsic-weights", "1,2"]):
+                with self.assertRaisesRegex(ValueError, "edit the file's cells"):
+                    parse_with_configuration_file(small_parser(), [
+                        "--run-dir", "/tmp/test", "--unit-id", "test",
+                        "--configuration-file", str(path), *refused])
+            path.write_text(both.replace("[1.0, 0.0025, -0.0025]", "[1.0, 0.5, -0.5]"))
+            with self.assertRaisesRegex(ValueError, "exactly the pairs"):
+                read_experiment_configuration(path)
 
     def test_confirmed_studies_use_exact_unit_headers_and_schedule_horizons(self):
         """The two confirmed entropy experiments retain their actual cells, copy counts and budgets."""
@@ -88,6 +174,7 @@ class RecordedExperimentFiles(unittest.TestCase):
         self.assertEqual(parsed.ent_coef, 0.0)
         self.assertEqual(parsed.experiment_parameter_settings,
                          ((0.0002, 1.0), (0.0002, 10.0), (0.0002, 100.0), (0.0002, 1000.0)))
+        self.assertEqual(parsed.experiment_setting_names, ("learning_rate", "int_coef"))
         self.assertEqual(read_experiment_configuration(PART_A)["trainer"]["ent_coef"], 0.01)
         parsed = parse_with_configuration_file(small_parser(), arguments + ["--intrinsic-weights", "2,3"])
         self.assertEqual(parsed.experiment_parameter_settings, ())

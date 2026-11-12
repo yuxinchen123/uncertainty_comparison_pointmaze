@@ -53,6 +53,46 @@ def latest_windows(records: list) -> list:
     return [latest[key] for key in sorted(latest)]
 
 
+def window_episode_returns(record: dict) -> list:
+    """The mean episode return of each copy in one window.
+
+    A record with the episode log counts the episodes that really ended in the window, so it is
+    right when episodes end at the goal: return_sum / episodes, for the copies that ended at
+    least one. A record without it divides the window's reward sum by the number of fixed-length
+    episodes the window spans.
+
+    before: episodes_per_copy [2, 0], return_sum_per_copy [1.0, 0.0] -> [0.5]
+    before: no log, 32 episodes per copy in the window, reward sums [64.0, 16.0] -> [2.0, 0.5]
+    """
+    if "episodes_per_copy" in record:
+        return [total / episodes for total, episodes in zip(record["return_sum_per_copy"],
+                                                            record["episodes_per_copy"])
+                if episodes > 0]
+    episodes = record["episodes_per_copy_in_window"]
+    return [value / episodes for value in record["reward_ext_sum_per_copy"]]
+
+
+def first_goal_summary(records: list):
+    """How many copies reached the goal in training and how soon, from each unit's last window.
+
+    first_goal_step_per_copy holds each copy's training step at its first arrival, -1 if none.
+    The mean capped first-goal step counts a copy that never arrived as the unit's whole length.
+    before: steps [300, -1] at 1000 steps per copy -> reached 1 of 2, mean capped step 650
+    Returns None when no record carries the episode log.
+    """
+    steps, capped = [], []
+    for record in records:
+        if "first_goal_step_per_copy" not in record:
+            continue
+        budget = record["env_steps_per_copy"]
+        steps += record["first_goal_step_per_copy"]
+        capped += [step if step >= 0 else budget for step in record["first_goal_step_per_copy"]]
+    if not steps:
+        return None
+    return {"copies": len(steps), "copies_that_reached_the_goal": sum(step >= 0 for step in steps),
+            "mean_capped_first_goal_step": sum(capped) / len(capped)}
+
+
 def aggregate(run_dir: Path) -> dict:
     """Write metrics.jsonl and summary.json from the shards; return the summary."""
     run_dir = Path(run_dir)
@@ -111,8 +151,7 @@ def aggregate(run_dir: Path) -> dict:
         per_unit_last[record["unit_id"]] = record
     returns, coverage = [], []
     for record in per_unit_last.values():
-        episodes = record["episodes_per_copy_in_window"]
-        returns += [value / episodes for value in record["reward_ext_sum_per_copy"]]
+        returns += window_episode_returns(record)
         coverage += record.get("coverage_per_copy", [])
     summary = {
         "run_id": run_dir.name,
@@ -133,6 +172,9 @@ def aggregate(run_dir: Path) -> dict:
         },
         "hardware": hardware,
     }
+    first_goal = first_goal_summary(list(per_unit_last.values()))
+    if first_goal is not None:
+        summary["first_goal"] = first_goal
     (run_dir / "summary.json").write_text(json.dumps(summary, indent=2) + "\n")
     return summary
 
