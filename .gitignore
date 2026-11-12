@@ -311,3 +311,8 @@ core.*
 # Analysis folders: scripts and intermediate data stay out of git; analysis.md and plots/ are committed
 10_jax_exploration_platform/runs/**/analysis/*/code/
 10_jax_exploration_platform/runs/**/analysis/*/data/
+
+# copies-per-card records of the JAX platform are small and are read by fleets and frozen code copies
+!10_jax_exploration_platform/device/estimates/*.json
+!10_jax_exploration_platform/device/probes/*.json
+!10_jax_exploration_platform/device/observed/*.jsonl
