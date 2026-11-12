@@ -443,9 +443,8 @@ class PixelPPORND:
             # Training targets use CURRENT frames and UPDATED statistics, unlike rollout targets.
             normalized = (normalize_frames(frames, observation_statistics)
                           if config.fuse_minibatch_image_preparation else batch["normalized_frames"])
-            batch["target_features"] = jax.lax.stop_gradient(target_features(
-                rnd_forward(state.target, normalized, config),
-                uniform_start=config.rnd_uniform_start))
+            # Cache RAW frozen features; normalize exactly once inside masked_error_sum.
+            batch["target_features"] = jax.lax.stop_gradient(rnd_forward(state.target, normalized, config))
         return state._replace(observation_statistics=observation_statistics,
                               reward_statistics=reward_statistics, reward_filter=reward_filter), batch
 
