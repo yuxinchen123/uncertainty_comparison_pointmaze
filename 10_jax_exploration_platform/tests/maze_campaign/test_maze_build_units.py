@@ -7,7 +7,7 @@ import tempfile
 import tomllib
 import unittest
 
-from maze_test_support import ANTMAZE, PLATFORM, description, units_of
+from maze_test_support import ANTMAZE, ANTMAZE_WARP, PLATFORM, description, units_of
 from grid_campaign import common
 import build_units
 import unit_queue
@@ -202,6 +202,29 @@ class ConfirmationAndOtherMaps(unittest.TestCase):
                           ant["runtime"]["environment"]), ("medium", 1000, "antmaze-medium"))
         self.assertEqual(units[2]["base_configuration_file"], ANTMAZE)
         self.assertEqual(units[2]["seed_count"], 256)
+
+    def test_a_warp_physics_unit_names_its_interpreter_and_its_own_workload(self):
+        """A unit built from a file with physics "warp" names the platform_jax_warp interpreter; others name none."""
+        import sys
+        from grid_campaign import own
+        study = self.confirmation(environments=["antmaze-umaze", "pointmaze-large"],
+                                  seeds={"first": 30000, "count": 256})
+        jax_ant, point = units_of(study, self.estimates)
+        warp_ant, _ = units_of(dict(study, configuration_files=dict(study["configuration_files"],
+                                                                    antmaze=ANTMAZE_WARP)), self.estimates)
+        self.assertEqual((warp_ant["physics"], warp_ant["interpreter"]),
+                         ("warp", "/p/rlprojects/RND/.venvs/platform_jax_warp/bin/python"))
+        self.assertEqual(tomllib.loads(warp_ant["configuration_toml"])["environment"]["physics"], "warp")
+        self.assertEqual(warp_ant["workload"], jax_ant["workload"] + "_physics-warp")
+        for unit in (jax_ant, point):
+            self.assertEqual(unit["physics"], "jax")
+            self.assertNotIn("interpreter", unit)
+        # the worker starts the unit with the named interpreter when there is one, else with its own
+        command = lambda unit: own("worker").unit_command(Path("/run"), unit, Path("/unit.toml"), 3000, "run_training.py")
+        self.assertEqual(command(jax_ant)[0], sys.executable)
+        self.assertEqual(command(dict(warp_ant, interpreter=__file__))[:2], [__file__, "run_training.py"])
+        with self.assertRaisesRegex(FileNotFoundError, "needs the interpreter /no/such/python"):
+            command(dict(warp_ant, interpreter="/no/such/python"))
 
     def test_several_sweeps_in_one_description(self):
         """A description may list sweeps that share its top-level keys; equal ids are refused."""

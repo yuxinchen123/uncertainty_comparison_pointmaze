@@ -358,8 +358,16 @@ def check_lines(name, r):
         lines = ["| value | written into | Warp environment<br>respawned | JAX environment<br>respawned |", "|---|---|---|---|"]
         lines += [f"| {c['value']} | {c['coordinate']} | {'yes' if c['warp_respawned'] else 'NO'} |"
                   f" {'yes' if c['jax_respawned'] else 'NO'} |" for c in r["cases"]]
+        # the Warp environment's rule changed after the first measurements; a table measured before says so
+        swallowed = [c for c in r["cases"] if not c["warp_respawned"]]
+        note = ([] if not swallowed else [
+            "", "This table was measured before the Warp environment tested the state it is handed: MuJoCo Warp turns"
+            " a torso quaternion that holds a NaN into a valid one at the start of a physics step, so the state after"
+            " the step was finite. Since 2026-11-12 12:26 PT `WarpAntMaze.step` also tests the positions and velocities"
+            " it is handed and those after each physics step, and that case is respawned (the table of the same check"
+            " on processors, and `tests/envs/test_antmaze_warp.py::test_non_finite_inputs_are_respawned`)."])
         return lines + ["", f"The healthy environment beside them: respawned {r['healthy_environment_respawned']},"
-                        f" numbers unchanged {r['healthy_environment_unchanged']}."]
+                        f" numbers unchanged {r['healthy_environment_unchanged']}."] + note
     return ["```json", json.dumps(r, indent=1), "```"]
 
 

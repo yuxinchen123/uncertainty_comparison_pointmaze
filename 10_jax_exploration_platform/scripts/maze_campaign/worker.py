@@ -3,7 +3,9 @@
     python worker.py --run-dir RUN [--observed-dir DIR] [--remote-records] [--max-seconds N]
 
 The worker claims the next pending unit its card can hold and runs scripts/run_training.py on it,
-with a checkpoint every 20 minutes and a time limit taken from what is left of the job. Then
+with a checkpoint every 20 minutes and a time limit taken from what is left of the job. The unit's
+process runs with this worker's own interpreter, or with the one the unit's specification names
+(`interpreter`: a unit whose AntMaze physics is MuJoCo Warp needs platform_jax_warp). Then
   - a unit whose shard ends with a unit_complete record moves to done, and one line for the
     copies-per-card skill is added to <observed dir>/<workload>.jsonl;
   - a unit that stopped with its state saved (time limit, stop signal) returns to pending, and a
@@ -95,9 +97,20 @@ def write_unit_configuration(run_dir, specification):
     return path
 
 
+def unit_interpreter(specification):
+    """The interpreter that runs a unit: the one its specification names, else this worker's own."""
+    # before: {"unit_id": "...", "interpreter": "/p/rlprojects/RND/.venvs/platform_jax_warp/bin/python"}
+    # after:  that path; a specification without the key gives sys.executable, as before the key existed
+    interpreter = specification.get("interpreter", sys.executable)
+    if not Path(interpreter).exists():
+        raise FileNotFoundError(f"unit {specification['unit_id']} needs the interpreter {interpreter}, "
+                                "which does not exist on this machine")
+    return interpreter
+
+
 def unit_command(run_dir, specification, configuration, limit_seconds, trainer):
     """The run_training.py command of one unit; running it again continues the unit from its checkpoint."""
-    return [sys.executable, str(trainer), "--run-dir", str(run_dir), "--unit-id", specification["unit_id"],
+    return [unit_interpreter(specification), str(trainer), "--run-dir", str(run_dir), "--unit-id", specification["unit_id"],
             "--configuration-file", str(configuration), *specification["options"],
             "--checkpoint-seconds", str(CHECKPOINT_SECONDS), "--time-limit-seconds", str(int(limit_seconds)),
             "--no-aggregate"]

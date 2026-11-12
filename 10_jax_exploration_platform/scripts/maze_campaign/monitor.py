@@ -247,7 +247,7 @@ def markdown_report(run_dir, sweeps, nodes, warnings, cadence, extra):
     return "\n".join(lines) + "\n"
 
 
-def one_pass(run_dir, top_up_phase=None, complete_when_drained=False, report_command=None):
+def one_pass(run_dir, top_up_phase=None, complete_when_drained=False, report_command=None, gpu_types=None):
     """Do one monitoring pass; returns (whether the sweep is complete, seconds until the next pass)."""
     run_dir = Path(run_dir)
     if not (run_dir / "queue").exists():
@@ -259,7 +259,7 @@ def one_pass(run_dir, top_up_phase=None, complete_when_drained=False, report_com
     # 2. pending units without a worker get worker jobs, when this monitor was asked to send them
     submitted = []
     if top_up_phase and not stopped and not (run_dir / "SWEEP_COMPLETE").exists():
-        submitted = own("submit").top_up(run_dir, top_up_phase)
+        submitted = own("submit").top_up(run_dir, top_up_phase, gpu_types)
         live = common.own_live_jobs(run_dir)
     # 3. counts and per-unit progress
     state_path = run_dir / "monitor_state.json"
@@ -326,11 +326,20 @@ def main(argv=None):
     parser.add_argument("--complete-when-drained", action="store_true",
                         help="write RUN/SWEEP_COMPLETE once every unit is done or failed")
     parser.add_argument("--report-command", help="a command whose Markdown output is added to each report")
+    parser.add_argument("--cpus-per-card", type=int, help="processors each worker job of a top-up asks for per card")
+    parser.add_argument("--memory-gib-per-card", type=int,
+                        help="host memory in GiB each worker job of a top-up asks for per card")
+    parser.add_argument("--worker-hours", type=float, help="time limit in hours of each worker job of a top-up")
+    parser.add_argument("--gpu-types", help="comma-separated card types (gres names) a top-up may ask for; "
+                                            "default: every type whose card can hold a pending unit")
     args = parser.parse_args(argv)
+    # the request of the workers this monitor submits: the same three settings as submit.py's own options
+    own("submit").set_request_per_card(args.cpus_per_card, args.memory_gib_per_card)
+    own("submit").set_worker_hours(args.worker_hours)
     while True:
         started = time.monotonic()
         complete, cadence = one_pass(args.run_dir.resolve(), args.top_up_phase, args.complete_when_drained,
-                                     args.report_command)
+                                     args.report_command, args.gpu_types.split(",") if args.gpu_types else None)
         if complete or not args.loop:
             break
         time.sleep(max(0, cadence - (time.monotonic() - started)))

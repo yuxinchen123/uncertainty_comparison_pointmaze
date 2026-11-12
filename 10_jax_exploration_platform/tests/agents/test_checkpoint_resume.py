@@ -40,9 +40,13 @@ def identity_of(cfg, env_cfg, runner) -> dict:
             "copy_seed_index": list(runner.sweep.copy_seed_index), "run_seed": 17}
 
 
-def check_resume(cfg, env_cfg, bonus: str, total: int, stop_after: int) -> None:
+def check_resume(cfg, env_cfg, bonus: str, total: int, stop_after: int, unwritten=()) -> None:
     """Train `total` iterations in one go, and again with a save and a restore after
-    `stop_after`; require the two final states to be bit-identical."""
+    `stop_after`; require the two final states to be bit-identical.
+
+    unwritten: parts of array paths that are left out of the final comparison, for arrays the
+    environment hands back without writing them (the Warp AntMaze names its own). The saved and
+    the restored state are still compared in every array."""
     # the uninterrupted unit
     whole = Runner(cfg, bonus=bonus, env_cfg=env_cfg)
     state = whole.prime(whole.init_state(run_seed=17))
@@ -103,10 +107,12 @@ def check_resume(cfg, env_cfg, bonus: str, total: int, stop_after: int) -> None:
             pass
 
     assert actual.keys() == expected.keys()
-    for name in expected:
-        assert actual[name].tobytes() == expected[name].tobytes(), f"{name} differs after resume"
+    compared = [name for name in expected if not any(part in name for part in unwritten)]
+    differing = [name for name in compared if actual[name].tobytes() != expected[name].tobytes()]
+    assert not differing, f"{len(differing)} arrays differ after resume: {differing}"
     print(f"PASS {type(env_cfg).__name__} / {bonus}: saved after {stop_after} of {total} "
-          f"iterations, restored, {len(expected)} arrays bit-identical to the uninterrupted unit")
+          f"iterations, restored, {len(compared)} of {len(expected)} arrays compared and "
+          "bit-identical to the uninterrupted unit")
 
 
 def test_named_trees_round_trip():
@@ -149,7 +155,30 @@ def test_a_trainer_field_added_later_is_read_as_its_default():
         raise AssertionError("another copy count was accepted")
     except ValueError as error:
         assert "trainer_config" in str(error)
-    print("PASS a trainer field added after a checkpoint is read as its default")
+    # an environment field added later (the AntMaze physics) is read the same way, from the
+    # defaults of the environment's configuration class
+    ant = replace(preset("umaze"), continuing_task=False)
+    ant_record = lambda env_cfg: {"trainer_config": asdict(PPOConfig(n_copies=4)),
+                                  "environment_config": asdict(env_cfg), "run_seed": 17}
+    older_ant = json.loads(json.dumps(ant_record(ant)))
+    for name in ("physics", "warp_contact_slots_per_environment",
+                 "warp_constraint_rows_per_environment"):
+        del older_ant["environment_config"][name]
+    defaults = asdict(type(ant)())
+    check_identity(older_ant, ant_record(ant), environment_defaults=defaults)
+    for changed in (replace(ant, physics="warp"), replace(ant, max_episode_steps=5)):
+        try:
+            check_identity(older_ant, ant_record(changed), environment_defaults=defaults)
+            raise AssertionError("a changed environment field was accepted")
+        except ValueError as error:
+            assert "environment_config" in str(error)
+    # without the defaults a later environment field is refused, as before
+    try:
+        check_identity(older_ant, ant_record(ant))
+        raise AssertionError("a later environment field was accepted without its defaults")
+    except ValueError as error:
+        assert "environment_config" in str(error)
+    print("PASS a trainer or environment field added after a checkpoint is read as its default")
 
 
 def test_pointmaze_resume_is_bit_identical():

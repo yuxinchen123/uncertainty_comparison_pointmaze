@@ -71,6 +71,10 @@ class Runner:
             agent_state["obs_rms"] = rms_init(cfg.n_copies, self.env.obs_dim)
         if cfg.episode_log:
             agent_state["episode_log"] = log_init(cfg.n_copies, cfg.n_envs)
+        if self.bonus.record_on_maze_grid:
+            # visits to each maze cell since the driver last read them (training/maze_grid.py)
+            agent_state["maze_grid_visits"] = jnp.zeros(
+                (cfg.n_copies, self.composition.n_cells), jnp.int32)
         state = TrainState(
             env_state=self.env.reset(),
             obs=jnp.zeros((cfg.n_copies, cfg.n_envs, self.env.obs_dim), F32),
@@ -109,6 +113,17 @@ class Runner:
         sweeps_rate = self.sweep.lr_per_copy is not None
         return jnp.asarray(frac if sweeps_rate else self.cfg.learning_rate * frac, F32)
 
+    def check_environment(self, state: TrainState):
+        """Stop the run if the environment dropped part of its physics; returns its pool report.
+
+        Only the Warp AntMaze keeps such a report (a shared contact pool that drops what does not
+        fit); for every other environment this returns None. Reading the report waits for the
+        device, so a driver calls this where it waits anyway: after priming, at a window end,
+        before a checkpoint.
+        """
+        check = getattr(self.env, "raise_on_overflow", None)
+        return check(state.env_state) if check is not None else None
+
     def coverage(self, state: TrainState):
         """Fraction of the open maze cells each copy has visited, [C] — device to host."""
         return coverage_fraction(state.visited, self.composition.open_cells)
@@ -123,6 +138,7 @@ class Runner:
         """
         cfg = self.cfg
         state = self.prime(self.init_state(run_seed))
+        self.check_environment(state)
         t0 = time.time()
         last_log = t0
         history = []
@@ -139,6 +155,7 @@ class Runner:
                 history.append(row)
             if now - last_log >= log_every_seconds or it == num_iterations:
                 jax.block_until_ready(metrics)
+                self.check_environment(state)
                 last_log = now
                 r = np.asarray(metrics["reward_ext_sum"])
                 cov = (f" coverage mean {self.coverage(state).mean():.3f}"

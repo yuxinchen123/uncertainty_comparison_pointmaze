@@ -44,6 +44,32 @@ def set_request_per_card(cpus=None, memory_gib=None):
             CPUS_PER_CARD[partition] = cpus
     if memory_gib is not None:
         MEMORY_GIB_PER_CARD = memory_gib
+
+
+WORKER_HOURS = None    # None: a worker job asks for the longest time its partition allows
+
+
+def set_worker_hours(hours=None):
+    """Give worker jobs a shorter time limit than the partition's, for this process."""
+    # read 2026-11-12: with 3,334 waiting jobs in the card partition and a low priority, workers asking
+    # for 4 days were not started for over an hour although cards were free; the scheduler can only place
+    # a low-priority job on a free card when the job ends before the jobs ahead of it are due to start.
+    # Units are resumable and a worker reads the time it has left, so a short limit loses no work
+    global WORKER_HOURS
+    WORKER_HOURS = hours
+
+
+def wall_seconds(kind, allowed_seconds):
+    """The time limit a job asks for, in seconds: what the partition allows, capped for worker jobs."""
+    # before: ("worker", 345600) with a 2-hour limit set ; after: 7200
+    # before: ("monitor", 345600) with a 2-hour limit set ; after: 345600 (the monitor outlives the workers)
+    if kind != "worker" or WORKER_HOURS is None:
+        return allowed_seconds
+    if WORKER_HOURS <= 0:
+        raise ValueError(f"the worker time limit must be positive; it is {WORKER_HOURS} hours")
+    return min(allowed_seconds, int(WORKER_HOURS * 3600))
+
+
 OBSERVED = common.PROJECT / "10_jax_exploration_platform/device/observed"
 # the JAX job environment of skill rnd-jax-submission, section 7, for one worker process per card
 WORKER_ENVIRONMENT = """# Sourced by every job script of this run folder. Written by scripts/maze_campaign/submit.py.
@@ -123,7 +149,7 @@ def submit_job(run_dir, phase, job, text, dry_run=False):
     run_dir = Path(run_dir)
     account = job["identity"].removeprefix("uva-")
     name = f"maze-{job['kind']}_{phase}_{time.time_ns()}"
-    seconds = grid_submit.allowed_seconds(job["partition"], job["reservation"])
+    seconds = wall_seconds(job["kind"], grid_submit.allowed_seconds(job["partition"], job["reservation"]))
     # Slurm reads a bare number as minutes, so the limit is spelled as hours:minutes:seconds
     arguments = ["--job-name", name, "--partition", job["partition"], "--nodes", "1", "--ntasks", "1",
                  "--cpus-per-task", str(job["cpus"]), "--mem", f"{job['memory_gib']}G",
@@ -364,6 +390,9 @@ def main(argv=None):
     parser.add_argument("--memory-gib-per-card", type=int,
                         help="host memory in GiB a worker asks for per card (default 16); size it from the "
                              "measured MaxRSS of finished units of the same kind, plus a margin")
+    parser.add_argument("--worker-hours", type=float,
+                        help="time limit of each worker job in hours (default: the longest the partition allows); "
+                             "a short limit lets the scheduler place a low-priority worker on a free card")
     parser.add_argument("--monitor", action="store_true", help="submit the persistent monitor job instead")
     parser.add_argument("--top-up-phase", help="with --monitor: every pass also submits workers under this phase")
     parser.add_argument("--complete-when-drained", action="store_true",
@@ -372,9 +401,14 @@ def main(argv=None):
     args = parser.parse_args(argv)
     run_dir = args.run_dir.resolve()
     set_request_per_card(args.cpus_per_card, args.memory_gib_per_card)
+    set_worker_hours(args.worker_hours)
     if args.monitor:
         options = (["--top-up-phase", args.top_up_phase] if args.top_up_phase else []) + (
             ["--complete-when-drained"] if args.complete_when_drained else [])
+        # the monitor's top-ups ask for what this call's workers would: the same request and time limit
+        for name in ("cpus_per_card", "memory_gib_per_card", "worker_hours", "gpu_types"):
+            if getattr(args, name) is not None:
+                options += ["--" + name.replace("_", "-"), str(getattr(args, name))]
         print(submit_monitor(run_dir, options, args.dry_run))
     elif args.phase:
         print(top_up(run_dir, args.phase, args.gpu_types.split(",") if args.gpu_types else None,

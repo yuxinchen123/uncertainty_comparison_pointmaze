@@ -76,13 +76,19 @@ def clip_and_report(cfg, grads, n_copies: int):
     return clipped, report
 
 
-def adam_step(params, grads, opt: OptState, lr, adam_eps: float, n_copies: int, lr_per_copy):
+def adam_step(params, grads, opt: OptState, lr, adam_eps: float, n_copies: int, lr_per_copy,
+              bonus_rate=None):
     """One Adam step (torch.optim.Adam formula): moments, bias correction, parameter update.
 
     Without a sweep, `lr` is the rate for every copy and `lr_per_copy` is None, so the arithmetic
     is a scalar times a tree. With a sweep, `lr` is the annealing multiplier and `lr_per_copy` is
     a [C] device constant broadcast along the copy axis — a vector reshaped to [C, 1, ...]
     against each parameter, which the compiler folds into the same elementwise update.
+
+    bonus_rate, when given, is the constant rate of the bonus's parameters (the tree under
+    "bonus"), in place of the agent's rate: the bonus then has its own Adam. Its moments sit in
+    the same two trees and it shares the step counter, because both optimizers take exactly one
+    step per gradient step.
     """
     b1, b2, eps = 0.9, 0.999, adam_eps
     t = opt.t + 1
@@ -98,40 +104,65 @@ def adam_step(params, grads, opt: OptState, lr, adam_eps: float, n_copies: int, 
             # before: lr_per_copy [C]; after: [C, 1, ...] matching this parameter's rank
             rate = lr_per_copy.reshape((n_copies,) + (1,) * (p.ndim - 1)) * lr
             return p - (rate / bc1) * mm / (jnp.sqrt(vv / bc2) + eps)
-    return jax.tree.map(step, params, m, v), OptState(m, v, t)
+    if bonus_rate is None:
+        return jax.tree.map(step, params, m, v), OptState(m, v, t)
+    # the agent at its own (annealed, possibly per-copy) rate, the bonus at its constant rate
+    bonus_step = lambda p, mm, vv: p - (bonus_rate / bc1) * mm / (jnp.sqrt(vv / bc2) + eps)
+    stepped = {"agent": jax.tree.map(step, params["agent"], m["agent"], v["agent"]),
+               "bonus": jax.tree.map(bonus_step, params["bonus"], m["bonus"], v["bonus"])}
+    return stepped, OptState(m, v, t)
 
 
-def build_update(cfg, loss_fn, lr_per_copy):
+def clip_and_step(cfg, params, grads, opt: OptState, lr, lr_per_copy, bonus_rate):
+    """Clip one gradient and take one Adam step with it.
+
+    bonus_rate None: the joint clip over the agent and the bonus and one rate, as always.
+    bonus_rate given: the clip covers the agent's gradient only, and the bonus's parameters are
+    stepped with their unclipped gradient at that constant rate.
+    """
+    if bonus_rate is None:
+        grads = clip_per_copy(grads, cfg.n_copies, cfg.max_grad_norm)
+        return adam_step(params, grads, opt, lr, cfg.adam_eps, cfg.n_copies, lr_per_copy)
+    grads = {"agent": clip_per_copy(grads["agent"], cfg.n_copies, cfg.max_grad_norm),
+             "bonus": grads["bonus"]}
+    return adam_step(params, grads, opt, lr, cfg.adam_eps, cfg.n_copies, lr_per_copy, bonus_rate)
+
+
+def build_update(cfg, loss_fn, lr_per_copy, bonus_rate=None):
     """Return the update function for this configuration's style, chosen here and not at run time.
 
     loss_fn(params, batch) -> scalar loss summed over copies. The returned function has the
-    signature update(params, opt, batch, lr, key) -> (params, opt, reported loss).
+    signature update(params, opt, batch, lr, key) -> (params, opt, reported loss). bonus_rate is
+    the constant learning rate of a bonus that has its own Adam, or None (see `clip_and_step`).
     """
-    if cfg.flat_params and (cfg.diagnostics or cfg.clip_per_network or cfg.critic_lr_scale != 1.0
-                            or cfg.logstd_floor > float("-inf")):
+    reporting = (cfg.diagnostics or cfg.clip_per_network or cfg.critic_lr_scale != 1.0
+                 or cfg.logstd_floor > float("-inf"))
+    if bonus_rate is not None and (cfg.flat_params or reporting):
+        raise ValueError("a bonus with its own learning rate needs the named parameter tree and "
+                         "the plain update: turn off flat_params, diagnostics, clip_per_network, "
+                         "critic_lr_scale and logstd_floor")
+    if cfg.flat_params and reporting:
         raise ValueError("diagnostics and clip_per_network need the named parameter tree; "
                          "turn flat_params off")
     if cfg.gather_minibatches_per_epoch and cfg.update_style != "epoch_minibatch":
         raise ValueError("gather_minibatches_per_epoch applies to epoch_minibatch updates only; "
                          f"this configuration's update style is {cfg.update_style!r}")
-    if (cfg.diagnostics or cfg.clip_per_network or cfg.critic_lr_scale != 1.0
-            or cfg.logstd_floor > float("-inf")):
+    if reporting:
         return _build_reporting(cfg, loss_fn, lr_per_copy)
     if cfg.update_style == "full_batch":
-        return _build_full_batch(cfg, loss_fn, lr_per_copy)
+        return _build_full_batch(cfg, loss_fn, lr_per_copy, bonus_rate)
     if cfg.update_style == "epoch_minibatch":
-        return _build_epoch_minibatch(cfg, loss_fn, lr_per_copy)
+        return _build_epoch_minibatch(cfg, loss_fn, lr_per_copy, bonus_rate)
     raise ValueError(f"unknown update style {cfg.update_style!r}; "
                      "use 'full_batch' or 'epoch_minibatch'")
 
 
-def _build_full_batch(cfg, loss_fn, lr_per_copy):
+def _build_full_batch(cfg, loss_fn, lr_per_copy, bonus_rate=None):
     """Style A: one gradient step on all T*N rows per copy (spec 11 + correction)."""
     def update(params, opt, batch, lr, key):
         """One gradient, one clip, one Adam step."""
         loss, grads = jax.value_and_grad(lambda p: loss_fn(p, batch, style_a=True))(params)
-        grads = clip_per_copy(grads, cfg.n_copies, cfg.max_grad_norm)
-        params, opt = adam_step(params, grads, opt, lr, cfg.adam_eps, cfg.n_copies, lr_per_copy)
+        params, opt = clip_and_step(cfg, params, grads, opt, lr, lr_per_copy, bonus_rate)
         return params, opt, loss
     return update
 
@@ -218,18 +249,15 @@ def scan_minibatches(cfg, batch, key, carry, body):
     return carry, jax.tree.map(lambda x: x.reshape((n_steps,) + x.shape[2:]), outputs)
 
 
-def _build_epoch_minibatch(cfg, loss_fn, lr_per_copy):
+def _build_epoch_minibatch(cfg, loss_fn, lr_per_copy, bonus_rate=None):
     """Style B: epochs x minibatches of shuffled steps, run as one scan over the 16 steps."""
-    C = cfg.n_copies
-
     def update(params, opt, batch, lr, key):
         """Draw all permutations up front, gather the minibatches, then scan the steps."""
         def body(carry, mb):
             """One of the sixteen gradient steps."""
             params, opt = carry
             loss, grads = jax.value_and_grad(lambda p: loss_fn(p, mb, style_a=False))(params)
-            grads = clip_per_copy(grads, C, cfg.max_grad_norm)
-            params, opt = adam_step(params, grads, opt, lr, cfg.adam_eps, C, lr_per_copy)
+            params, opt = clip_and_step(cfg, params, grads, opt, lr, lr_per_copy, bonus_rate)
             return (params, opt), loss
 
         (params, opt), losses = scan_minibatches(cfg, batch, key, (params, opt), body)

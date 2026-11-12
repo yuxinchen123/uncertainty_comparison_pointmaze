@@ -22,6 +22,8 @@ GOAL_RADIUS = 0.45   # sparse reward paid when |torso xy - goal xy| <= this, in 
 FRAME_SKIP = 5       # one environment step = 5 physics steps of 0.01 s (20 Hz control)
 
 ANT_XML = path.join(path.dirname(__file__), "assets", "ant.xml")
+# the implementations of the physics step a configuration may name in its `physics` field
+PHYSICS = ("jax", "warp")
 
 
 @dataclass(frozen=True)
@@ -71,6 +73,20 @@ class AntMazeConfig:
     # solver's start values, the clock) and rebuilds the rest inside the step.
     solver_loop: str = "while_loop"
     carried_state: str = "whole_data"
+    # ---- which implementation runs the physics step (the composer reads `physics`) ----
+    # "jax": MJX's JAX implementation (`mjx_antmaze.JaxAntMaze`), the stepper of every run before
+    # 2026-11-12. "warp": MuJoCo Warp called from JAX (`warp_antmaze.WarpAntMaze`), about 8 times
+    # as fast on an H100 NVL; it needs an interpreter with warp-lang
+    # (/p/rlprojects/RND/.venvs/platform_jax_warp). The model, the reward, the termination and the
+    # reset are the same; the contact numerics differ within the gates of spec.md.
+    # The two sizes below are read by `warp_antmaze` only. All environments of a process share one
+    # pool of contact slots (and one of candidate geom pairs) of
+    # warp_contact_slots_per_environment x (policies x environments per policy) slots; one
+    # environment holds at most warp_constraint_rows_per_environment constraint rows. MuJoCo Warp
+    # drops what does not fit, and the trainer then stops the unit.
+    physics: str = "jax"
+    warp_contact_slots_per_environment: int = 48
+    warp_constraint_rows_per_environment: int = 160
 
 
 def preset(map_name: str) -> AntMazeConfig:

@@ -20,7 +20,9 @@ PART_B = CONFIGURATIONS / "pointmaze_large_entropy-0.01_learning-rate-0.0001_wit
 # The study that started 2026-11-11 adds one example per family; they record no earlier run.
 POINTMAZE_EXAMPLE = CONFIGURATIONS / "pointmaze_large_cleanrl-ppo-rnd_goal-termination_reward-arrival-plus-one_example_steps-1024000.toml"
 ANTMAZE_EXAMPLE = CONFIGURATIONS / "antmaze_umaze_cleanrl-ppo-rnd_goal-termination_reward-arrival-plus-one_example_steps-204800.toml"
-EXAMPLES = (POINTMAZE_EXAMPLE, ANTMAZE_EXAMPLE)
+# The same AntMaze example with the physics stepped by MuJoCo Warp.
+ANTMAZE_WARP_EXAMPLE = CONFIGURATIONS / "antmaze_umaze_warp-physics_cleanrl-ppo-rnd_goal-termination_reward-arrival-plus-one_example_steps-204800.toml"
+EXAMPLES = (POINTMAZE_EXAMPLE, ANTMAZE_EXAMPLE, ANTMAZE_WARP_EXAMPLE)
 # The number of trainer fields every recorded file must hold (the fields of PPOConfig).
 FIELDS = 58
 
@@ -73,6 +75,9 @@ class RecordedExperimentFiles(unittest.TestCase):
             self.assertEqual(document["runtime"]["reward_setting"], "environment")
             self.assertTrue(document["metadata"]["source_files"])
             self.assertEqual(len(document["sha256"]), 64)
+            # The physics field added on 2026-11-12 stays at MJX's JAX implementation.
+            if document["metadata"]["environment_family"] == "antmaze":
+                self.assertEqual(document["environment"]["physics"], "jax")
             if document["metadata"]["environment_family"] != "pointmaze":
                 self.assertEqual(document["trainer"]["ent_coef"], 0.0)
                 self.assertFalse(document["trainer"]["diagnostics"])
@@ -86,7 +91,8 @@ class RecordedExperimentFiles(unittest.TestCase):
     def test_study_examples_hold_the_cleanrl_values_and_goal_termination(self):
         """One example per family: CleanRL learner values, the episode ends at the goal."""
         for path, preset, limit in ((POINTMAZE_EXAMPLE, "pointmaze_current", 400),
-                                    (ANTMAZE_EXAMPLE, "antmaze_current", 700)):
+                                    (ANTMAZE_EXAMPLE, "antmaze_current", 700),
+                                    (ANTMAZE_WARP_EXAMPLE, "antmaze_current", 700)):
             document = read_experiment_configuration(path)
             trainer, environment = document["trainer"], document["environment"]
             self.assertEqual(len(trainer), FIELDS)
@@ -102,6 +108,18 @@ class RecordedExperimentFiles(unittest.TestCase):
             self.assertEqual((environment["max_episode_steps"], environment["reward_shift"]),
                              (limit, 0.0))
             self.assertEqual(document["runtime"]["reward_setting"], "arrival_plus_one")
+        # The Warp example is the AntMaze example with the physics field changed and nothing else;
+        # a file's physics becomes the command's default, and PointMaze files carry none.
+        jax_example, warp_example, pointmaze = map(read_experiment_configuration, (
+            ANTMAZE_EXAMPLE, ANTMAZE_WARP_EXAMPLE, POINTMAZE_EXAMPLE))
+        self.assertEqual(warp_example["environment"], {**jax_example["environment"], "physics": "warp"})
+        self.assertEqual((warp_example["trainer"], warp_example["runtime"]),
+                         (jax_example["trainer"], jax_example["runtime"]))
+        self.assertEqual((jax_example["environment"]["warp_contact_slots_per_environment"],
+                          jax_example["environment"]["warp_constraint_rows_per_environment"]), (48, 160))
+        self.assertEqual((argument_defaults(jax_example)["physics"],
+                          argument_defaults(warp_example)["physics"]), ("jax", "warp"))
+        self.assertNotIn("physics", argument_defaults(pointmaze))
 
     def test_named_reward_settings_fix_the_scale_and_offset(self):
         """A file's reward scale and offset must be the ones its named reward setting means."""

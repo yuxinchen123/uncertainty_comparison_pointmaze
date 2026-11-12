@@ -7,6 +7,7 @@ producing wrong numbers.
 
 Run: PYTHONNOUSERSITE=1 JAX_PLATFORMS=cpu <jax python> test_antmaze_compose.py
 """
+import importlib.util
 import sys
 from pathlib import Path
 
@@ -53,6 +54,28 @@ def test_visit_count_is_refused():
         print("ok test_visit_count_is_refused")
         return
     raise AssertionError("composing visit-count with AntMaze did not raise")
+
+
+def test_the_physics_field_selects_the_environment_class():
+    """`physics` picks the stepper: "jax" (the default) builds JaxAntMaze as before, "warp"
+    builds WarpAntMaze where warp-lang is installed and is refused with the environment's name
+    where it is not; any other value is refused."""
+    from exploration_platform.training.compose import environment_class
+    assert preset("umaze").physics == "jax"
+    assert environment_class(preset("umaze")).__name__ == "JaxAntMaze"
+    assert environment_class(replace(preset("umaze"), physics="warp")).__name__ == "WarpAntMaze"
+    try:
+        environment_class(replace(preset("umaze"), physics="mjx"))
+        raise AssertionError("an unknown physics was accepted")
+    except ValueError as error:
+        assert "unknown AntMaze physics" in str(error), error
+    if importlib.util.find_spec("warp") is None:
+        try:
+            Runner(PPOConfig(**SMALL), bonus="none", env_cfg=replace(preset("umaze"), physics="warp"))
+            raise AssertionError("the Warp physics was built without warp-lang")
+        except RuntimeError as error:
+            assert "platform_jax_warp" in str(error), error
+    print("ok test_the_physics_field_selects_the_environment_class")
 
 
 def test_current_rules_train_with_goal_termination_and_the_episode_log():

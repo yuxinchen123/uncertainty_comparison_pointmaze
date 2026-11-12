@@ -9,28 +9,53 @@ inside `jax.jit` and `jax.lax.scan`, for all C*N environments as one batch.
 Three things differ from the JAX implementation and are visible here:
 
 1. Contacts of all environments share ONE pool of `naconmax` slots (candidate geom pairs share a
-   pool of the same size). When the pool is full, further contacts are dropped without an error.
-   The state therefore carries the largest pool use seen so far and MuJoCo Warp's own overflow
-   flags, and `overflow_report` turns them into a verdict a caller must check.
-2. Constraint rows are limited per environment by `njmax`; rows beyond it are dropped and flagged
-   the same way.
+   pool of the same size), sized from the batch: `warp_contact_slots_per_environment` of the
+   configuration (48) x the number of environments. When the pool is full, further contacts are
+   dropped without an error. The state therefore carries the largest pool use seen so far and
+   MuJoCo Warp's own overflow flags; `overflow_report` turns them into a verdict, and
+   `raise_on_overflow` stops the caller when anything was dropped. The training command calls
+   it after priming, at every window end, before every checkpoint, and between window ends about
+   once a minute (`Runner.check_environment`).
+2. Constraint rows are limited per environment by `njmax`
+   (`warp_constraint_rows_per_environment`, 160); rows beyond it are dropped and flagged the
+   same way.
 3. The MJX-JAX contact caps of the model (`max_geom_pairs`, `max_contact_points`) are custom
    numerics that only MJX's JAX implementation reads; MuJoCo Warp ignores them. The
    configuration fields `solver_loop` and `carried_state` are read by `mjx_antmaze` only.
+4. MuJoCo Warp compiles its kernels the first time a process on a machine needs them and keeps
+   them in a kernel folder. `prepare_kernel_folder` puts that folder on node-local storage
+   (`WARP_CACHE_PATH` when the job sets it), creates it, and the environment names it in
+   `kernel_folder`.
 
-Two measured facts limit its use (2026-11-12, `benchmarks/env/profile_antmaze_warp.py`):
+Two measured facts (2026-11-12, `benchmarks/env/profile_antmaze_warp.py`):
 
 - Only graph mode `WARP` returns the pool counters. In `WARP_STAGED` the physics is the same
   but the contact, candidate-pair and row counts read 0 at every step, so `overflow_report`
   cannot see a drop there.
-- MuJoCo Warp normalises the torso quaternion at the start of a step and turns a quaternion
-  that holds a NaN into a valid one. A NaN written only into the quaternion is therefore not
-  respawned, where the JAX implementation respawns it; a non-finite value in any other
-  coordinate is respawned by both.
+- MuJoCo Warp normalises the torso quaternion at the start of a physics step and turns a
+  quaternion that holds a NaN into a valid one (measured: a half turn about the vertical axis),
+  so a NaN in the quaternion alone is gone after the step. `step` therefore also tests the
+  positions and velocities it is handed, and those after each of its physics steps: an
+  environment that was non-finite at any of these points is respawned and counted, as in the
+  JAX implementation.
+
+Repeatability and checkpoints (measured 2026-11-12 on processors, 2 policies x 1 environment,
+`benchmark_runs/2026-11-12-00-17_*/profiles/antmaze_warp_training/units/diagnose_resume_leaves.py`):
+of the 168 arrays of the Warp data, 154 are equal bit for bit between two runs of the same
+program, and between a run in one go and a run saved to a checkpoint and restored. The other 14
+(`ISLAND_ARRAYS`, the bookkeeping of constraint islands) differ between any two runs: a physics
+step of this model hands those buffers back without writing them, so they hold whatever the
+memory held. Nothing reads them. On a card the contacts also enter the shared pool in an order
+that changes from run to run, so there two runs differ in the physics itself.
 
 The physics is float32. As in `mjx_antmaze`, every MJX call is traced inside
 `jax.enable_x64(False)`, so the platform's 64-bit running statistics stay outside it.
 """
+import getpass
+import os
+import tempfile
+from dataclasses import replace
+from pathlib import Path
 from typing import NamedTuple
 
 import jax
@@ -50,6 +75,45 @@ OVERFLOW_BITS = {1: "constraint rows over njmax", 2: "constraint Jacobian non-ze
                  4: "candidate pairs over the shared pool", 8: "contacts over the shared pool",
                  16: "convex collision", 32: "height field", 64: "contact sensor matches",
                  128: "active degrees of freedom"}
+# parts of the paths of the Warp data's arrays that a physics step of this model returns
+# unwritten (constraint islands); a comparison of two states leaves them out
+ISLAND_ARRAYS = ("_impl.dof_islandid", "_impl.efc_islandid", "_impl.island_", "_impl.map_dof2idof",
+                 "_impl.map_efc2iefc", "_impl.map_idof2dof", "_impl.map_iefc2efc", "_impl.nidof")
+
+
+def prepare_kernel_folder() -> str:
+    """Put MuJoCo Warp's compiled kernels on node-local storage; returns the folder Warp uses.
+
+    The base folder is `WARP_CACHE_PATH` when the job has set it, else
+    /localtmp/<user>/warp_kernel_cache where the node has /localtmp, else
+    <the node's temporary folder>/<user>/warp_kernel_cache. It is created if missing, and Warp
+    adds its own version to it (.../warp_kernel_cache/1.14.0). Warp's default, the home folder's
+    ~/.cache/warp, is on network storage and is never used.
+    """
+    import warp as wp
+
+    # GOAL: choose the base folder and create it; a node whose /localtmp refuses the user's
+    # folder gets the temporary folder instead.
+    base = os.environ.get("WARP_CACHE_PATH")
+    if base is None:
+        user_folder = Path(getpass.getuser()) / "warp_kernel_cache"
+        base = str(Path("/localtmp") / user_folder)
+        try:
+            os.makedirs(base, exist_ok=True)
+        except OSError:
+            base = str(Path(tempfile.gettempdir()) / user_folder)
+        # processes this one starts compile into the same folder
+        os.environ["WARP_CACHE_PATH"] = base
+    os.makedirs(base, exist_ok=True)
+
+    # GOAL: start Warp, which reads the base folder then, and require that it took it. Warp
+    # started earlier in this process with another folder cannot be moved any more.
+    wp.init()
+    folder = wp.config.kernel_cache_dir
+    if Path(os.path.realpath(base)) not in Path(os.path.realpath(folder)).parents:
+        raise RuntimeError(f"Warp was started before the AntMaze environment and keeps its kernels in {folder}, "
+                           f"not under {base}; set WARP_CACHE_PATH before the process starts")
+    return folder
 
 
 class WarpEnvState(NamedTuple):
@@ -72,13 +136,15 @@ class WarpAntMaze:
     act_dim = 8
 
     def __init__(self, cfg: AntMazeConfig, n_copies: int, n_envs: int, base_seed: int = 0,
-                 dtype=jnp.float32, copy_seed_index=None, contacts_per_env: int = 48,
-                 njmax: int = 160, graph_mode: str = "WARP", naconmax: int = None):
+                 dtype=jnp.float32, copy_seed_index=None, contacts_per_env: int = None,
+                 njmax: int = None, graph_mode: str = "WARP", naconmax: int = None):
         """Build the Warp model and the deterministic spawn for one (C, N) shape.
 
-        contacts_per_env sizes the shared pool (naconmax = C*N*contacts_per_env, unless naconmax
-        is given as a whole number of slots); njmax is the constraint-row limit of one
-        environment; graph_mode names how the foreign call replays its CUDA graph (`WARP`: one
+        The shared pool holds naconmax = C*N*contacts_per_env slots and one environment at most
+        njmax constraint rows; both sizes come from the configuration
+        (`warp_contact_slots_per_environment`, `warp_constraint_rows_per_environment`) unless a
+        measurement passes its own (contacts_per_env, njmax, or naconmax as a whole number of
+        slots). graph_mode names how the foreign call replays its CUDA graph (`WARP`: one
         captured graph per set of buffer addresses; `WARP_STAGED`: one graph, with copies to
         fixed buffers). base_seed / copy_seed_index are accepted for the composer's uniform call
         signature and unused: this environment draws no random numbers.
@@ -88,10 +154,15 @@ class WarpAntMaze:
         if not mjx_warp.WARP_INSTALLED:
             raise RuntimeError("WarpAntMaze needs warp-lang (MJX 3.11.0 asks for 1.14.0); this interpreter has "
                                "none. The environment /p/rlprojects/RND/.venvs/platform_jax_warp holds it.")
-        self.cfg, self.C, self.N, self.dtype = cfg, n_copies, n_envs, dtype
+        # the environment's own record of its configuration names the physics that runs
+        self.cfg, self.C, self.N, self.dtype = replace(cfg, physics="warp"), n_copies, n_envs, dtype
         self.B = n_copies * n_envs
+        if contacts_per_env is None:
+            contacts_per_env = cfg.warp_contact_slots_per_environment
         self.naconmax = self.B * contacts_per_env if naconmax is None else naconmax
-        self.njmax = njmax
+        self.njmax = cfg.warp_constraint_rows_per_environment if njmax is None else njmax
+        # node-local, created if missing; the training command writes it into the unit's log
+        self.kernel_folder = prepare_kernel_folder()
 
         maze_map = MAPS[cfg.map_name]
         self.rows, self.cols = len(maze_map), len(maze_map[0])
@@ -157,20 +228,29 @@ class WarpAntMaze:
             a = jnp.clip(act.astype(F32), -1.0, 1.0).reshape(self.B, self.nu)
             data = state.data.replace(ctrl=a)
 
+            def finite(d):
+                """[B] bool: every position and velocity of the environment is a finite number."""
+                return jnp.isfinite(d.qpos).all(-1) & jnp.isfinite(d.qvel).all(-1)
+
             def frame(d, _):
-                """One physics step at the held ctrl; outputs the pool use and the row count."""
+                """One physics step at the held ctrl; outputs the pool use, the row count and
+                which environments are finite after it."""
                 d = jax.vmap(mjx.step, in_axes=(None, 0))(self.model, d)
                 impl = d._impl
-                return d, (impl.nacon.max(), impl.ncollision.max(), impl.nefc.max())
-            data, (nacon, ncollision, nefc) = jax.lax.scan(frame, data, None,
-                                                           length=self.cfg.frame_skip)
+                return d, (impl.nacon.max(), impl.ncollision.max(), impl.nefc.max(), finite(d))
+            finite_before = finite(data)
+            data, (nacon, ncollision, nefc, finite_after) = jax.lax.scan(
+                frame, data, None, length=self.cfg.frame_skip)
 
             step_count = state.step_count + 1
 
             # a non-finite state is respawned like a truncation, pays no reward, and is counted
-            # (same rule as the JAX implementation)
-            bad = (~jnp.isfinite(data.qpos).all(-1) | ~jnp.isfinite(data.qvel).all(-1)
-                   ).reshape(self.C, self.N)
+            # (same rule as the JAX implementation). The state is tested as it comes in and after
+            # each physics step, because MuJoCo Warp turns a torso quaternion that holds a NaN
+            # into a valid one at the start of a physics step: testing only the end of the step
+            # would let that environment go on from a state the physics never produced.
+            # before: finite_before [B], finite_after [frame_skip, B]; after: bad [C, N]
+            bad = ~(finite_before & finite_after.all(0)).reshape(self.C, self.N)
 
             # sparse goal reward on the torso's xy after the step
             delta = data.qpos[:, 0:2].reshape(self.C, self.N, 2) - self.goal
@@ -228,10 +308,19 @@ class WarpAntMaze:
                 "dropped": bool(reasons), "reasons": reasons}
 
     def raise_on_overflow(self, state: WarpEnvState):
-        """Raise if MuJoCo Warp dropped a contact, a candidate pair or a constraint row."""
+        """Raise if MuJoCo Warp dropped a contact, a candidate pair or a constraint row;
+        otherwise return the report of the pool use."""
         report = self.overflow_report(state)
         if report["dropped"]:
-            raise RuntimeError(f"MuJoCo Warp dropped contacts or constraint rows: {report}")
+            raise RuntimeError(
+                "MuJoCo Warp dropped part of the physics (" + "; ".join(report["reasons"]) + "), so "
+                "the states after the drop are not the model's and this run must not continue. "
+                f"Largest use: {report['nacon_peak']:,} contacts and {report['ncollision_peak']:,} "
+                f"candidate pairs in the shared pool of {report['naconmax']:,} slots "
+                f"({report['naconmax'] / self.B:g} per environment x {self.B:,} environments); "
+                f"{report['nefc_peak']} constraint rows of one environment, limit {report['njmax']}. "
+                "Raise warp_contact_slots_per_environment or warp_constraint_rows_per_environment "
+                "in the environment configuration and start the unit again from its beginning.")
         return report
 
     def cell_index(self, obs_flat):

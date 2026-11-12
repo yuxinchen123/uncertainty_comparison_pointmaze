@@ -1,0 +1,46 @@
+{
+  "study": "cleanrl-ppo-rnd-baseline",
+  "configuration_files": {
+    "pointmaze": "configs/experiments/pointmaze_large_cleanrl-ppo-rnd_goal-termination_reward-arrival-plus-one_example_steps-1024000.toml"
+  },
+  "environments": [
+    "pointmaze-medium"
+  ],
+  "environments_per_policy": {
+    "pointmaze": 4
+  },
+  "steps_per_policy": 1048576,
+  "windows_per_unit": 256,
+  "policies_per_unit": 256,
+  "minimum_card_memory_mb": 7000,
+  "phase": "development-at-the-budget-higher-learning-rates",
+  "method": "cleanrl-ppo-rnd",
+  "bonus": "rnd_next_state",
+  "reward_settings": [
+    "arrival_plus_one"
+  ],
+  "seeds": {
+    "first": 0,
+    "count": 16
+  },
+  "cells": {
+    "kind": "grid",
+    "values": {
+      "learning_rate": [
+        0.01,
+        0.02,
+        0.03
+      ],
+      "entropy_coefficient": [
+        0.01
+      ],
+      "intrinsic_weight": [
+        2.0,
+        4.0
+      ],
+      "clip_coefficient": [
+        0.1
+      ]
+    }
+  }
+}

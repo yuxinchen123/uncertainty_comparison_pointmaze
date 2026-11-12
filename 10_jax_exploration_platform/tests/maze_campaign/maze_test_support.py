@@ -19,6 +19,8 @@ POINTMAZE = ("configs/experiments/pointmaze_large_cleanrl-ppo-rnd_goal-terminati
              "reward-arrival-plus-one_example_steps-1024000.toml")
 ANTMAZE = ("configs/experiments/antmaze_umaze_cleanrl-ppo-rnd_goal-termination_"
            "reward-arrival-plus-one_example_steps-204800.toml")
+ANTMAZE_WARP = ("configs/experiments/antmaze_umaze_warp-physics_cleanrl-ppo-rnd_goal-termination_"
+                "reward-arrival-plus-one_example_steps-204800.toml")
 CARD = {"gpu": "NVIDIA RTX A4500", "memory_mb": 20470, "driver": "580.0", "hostname": "testnode",
         "recorded_at": "2026-11-12T01:00:00-08:00", "cuda_visible_devices": "0"}
 

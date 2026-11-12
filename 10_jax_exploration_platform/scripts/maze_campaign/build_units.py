@@ -59,6 +59,10 @@ SETTING_NAMES = {"learning_rate": "learning_rate", "entropy_coefficient": "ent_c
 SETTING_WORDS = {name: words for words, name in SETTING_NAMES.items()}
 WORDS = re.compile(r"[a-z0-9][a-z0-9.-]*")
 MEMORY_MARGIN = 1.25   # the copies-per-card skill's margin on the largest memory peak seen
+# the interpreter a unit needs when its AntMaze physics is not MJX's JAX implementation (the
+# `physics` value of its configuration file's [environment]); every other unit runs with the
+# interpreter of the worker that starts it (platform_jax)
+PHYSICS_INTERPRETERS = {"warp": "/p/rlprojects/RND/.venvs/platform_jax_warp/bin/python"}
 
 
 def per_copy_setting_names(platform):
@@ -288,6 +292,11 @@ def sweep_units(sweep, estimates_dir, platform):
         base_text = (platform / base_file).read_text()
         base = tomllib.loads(base_text)
         trainer_changes = dict(sweep.get("trainer_changes", {}))
+        # the implementation of the AntMaze physics is the base file's; a file written before
+        # the field existed, and every PointMaze file, means MJX's JAX implementation
+        physics = base["environment"].get("physics", "jax")
+        if physics != "jax" and physics not in PHYSICS_INTERPRETERS:
+            raise ValueError(f"{base_file} names the physics {physics!r}, for which no interpreter is recorded")
         environments_per_policy = pick(sweep.get("environments_per_policy"), environment, family,
                                        "environments_per_policy", base["trainer"]["n_envs"])
         rollout_steps = trainer_changes.get("num_steps", base["trainer"]["num_steps"])
@@ -309,9 +318,11 @@ def sweep_units(sweep, estimates_dir, platform):
                              ceil(iterations / pick(sweep["windows_per_unit"], environment, family, "windows_per_unit")))
 
         # how many policies a unit may hold comes from the copies-per-card estimate of this workload
+        # (another physics is another workload: its speed and memory per policy differ)
         workload = pick(sweep.get("workload"), environment, family, "workload",
                         f"{environment}_environments-per-policy-{environments_per_policy}"
-                        f"_update-{update_style.replace('_', '-')}_bonus-{sweep['bonus'].replace('_', '-')}")
+                        f"_update-{update_style.replace('_', '-')}_bonus-{sweep['bonus'].replace('_', '-')}"
+                        + ("" if physics == "jax" else f"_physics-{physics}"))
         limit = policies_per_unit(pick(sweep["policies_per_unit"], environment, family, "policies_per_unit"),
                                   workload, environments_per_policy, estimates_dir)
         seeds = pick(sweep["seeds"], environment, family, "seeds")
@@ -359,6 +370,8 @@ def sweep_units(sweep, estimates_dir, platform):
                     "unit_id": identifier, "study": sweep["study"], "phase": sweep["phase"],
                     "method": sweep["method"], "bonus": sweep["bonus"], "environment": environment,
                     "family": family, "reward_setting": reward, "workload": workload,
+                    "physics": physics,
+                    **({} if physics == "jax" else {"interpreter": PHYSICS_INTERPRETERS[physics]}),
                     "cell_setting_names": list(names), "cells": unit_cells, "cell_positions": positions,
                     "first_seed": first_seed, "seed_count": seed_count, "policies": policies,
                     "environments_per_policy": environments_per_policy, "rollout_steps": rollout_steps,

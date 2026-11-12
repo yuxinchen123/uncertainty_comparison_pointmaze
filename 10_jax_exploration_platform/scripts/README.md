@@ -45,9 +45,30 @@ was:
 | `--episode-log` | per copy and window: episodes ended, arrivals, sums of returns, lengths and steps to the goal, first training step with an arrival; required when the episode ends at the goal |
 | `--gather-minibatches-per-epoch` | holds one shuffled copy of the batch at a time in the epoch-minibatch update |
 | `--checkpoint-seconds`, `--time-limit-seconds` | save the unit's whole state to `checkpoints/<unit_id>.npz` at window ends, on a stop signal and at the time limit; the same command then continues the unit |
+| `--bonus-options` | options of the bonus family the unit changes, as `name=value,...`<br>(the fields of `RNDConfig` in `src/exploration_platform/bonuses/rnd/config.py`);<br>a pair replaces the same name of a configuration file's `[bonus_options]` table.<br>One value for the whole process. `unit_start` holds every option under `bonus_options`.<br>`record_bonus_on_maze_grid=true` adds the maze-grid fields to every window record<br>and one `maze_grid_at_start` record |
 
-`configs/experiments/` holds one example file per family for that study; a run starts with
+| `--physics` | AntMaze only: `jax` (default; MJX's JAX implementation) or `warp` (MuJoCo Warp, about 8 times as fast on an H100 NVL). `warp` needs the interpreter `/p/rlprojects/RND/.venvs/platform_jax_warp/bin/python`; the environment specification then holds `_physics-warp` |
+
+`configs/experiments/` holds one example file per family for that study, and one for AntMaze with
+the MuJoCo Warp physics; a run starts with
 `run_training.py --run-dir <folder> --unit-id <name> --configuration-file <file>`.
+
+A unit with the Warp physics:
+
+1. writes MuJoCo Warp's kernel folder into its log. The folder is node-local and created if
+   missing: `WARP_CACHE_PATH` when the job sets it, else `/localtmp/<user>/warp_kernel_cache`,
+   else `<temporary folder>/<user>/warp_kernel_cache`;
+2. sizes the contact pool that all environments share from the batch: 48 slots per environment
+   (`warp_contact_slots_per_environment` in the file's `[environment]`), and at most 160 constraint
+   rows per environment (`warp_constraint_rows_per_environment`);
+3. records the largest pool use in every window record and in `unit_complete` (`physics_pool`);
+4. stops with an error, written to its log as `STOPPED: ...`, when MuJoCo Warp dropped a contact
+   or a constraint row. The check runs after priming, at every window end, before every
+   checkpoint, and between window ends about once a minute, so no record and no checkpoint is
+   written after a drop. The unit must then start again from its beginning with a larger pool;
+5. saves and continues from checkpoints like every other unit. On processors the continued unit
+   equals the uninterrupted one bit for bit. On a card two runs of the same unit already differ,
+   because the contacts enter the shared pool in an order that changes from run to run.
 
 Separate UVA programs use `--no-aggregate`; `aggregate_selected_run.py` publishes their
 combined scores and curves, and `monitor_selected_run.py` monitors progress on a compute node.

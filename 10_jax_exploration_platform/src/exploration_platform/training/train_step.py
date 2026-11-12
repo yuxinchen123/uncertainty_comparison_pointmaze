@@ -106,6 +106,35 @@ def intrinsic_sum_matrices(gamma_int: float, gae_lambda: float, steps: int):
             jnp.asarray(advantage_matrix, F32))
 
 
+REWARD_DIVISORS = ("running_std", "frozen_after_priming", "none")
+
+
+def filtered_intrinsic_sum(gamma_int: float, carried, rint_buf, unroll: int = 1):
+    """The discounted forward filter of the intrinsic reward, one rollout step at a time.
+
+    f[t] = gamma f[t-1] + r[t], started from the value carried in from the rollout before.
+    before: gamma 0.5, carried 4, rewards 1, 1, 1
+    after:  (2.125, [3, 2.5, 2.125]): the value to carry on, and the filter at every step
+    carried [C, N], rint_buf [T, C, N].
+    """
+    def filt_body(f, r):
+        """The discounted forward filter, one rollout step at a time."""
+        f = gamma_int * f + r
+        return f, f
+    return jax.lax.scan(filt_body, carried, rint_buf, unroll=unroll)
+
+
+def intrinsic_divisor(reward_divisor: str, int_rms, n_copies: int):
+    """What each copy's intrinsic reward is divided by, [C] float32.
+
+    "running_std" and "frozen_after_priming" read the standard deviation of the reward's
+    discounted sum from the statistics as they stand; "none" is 1.
+    """
+    if reward_divisor == "none":
+        return jnp.ones((n_copies,), F32)
+    return jnp.sqrt(int_rms.var + 1e-8).astype(F32).reshape(n_copies)
+
+
 def build_iteration(cfg, env, bonus, sweep, layout, capture_batch: bool = False):
     """Return the unjitted iteration function for this configuration.
 
@@ -123,7 +152,13 @@ def build_iteration(cfg, env, bonus, sweep, layout, capture_batch: bool = False)
             "composed with hoist_rollout=False; leave the hoist on")
 
     update_fn = build_update(cfg, build_total_loss(cfg, bonus, layout, discrete, sweep),
-                             sweep.lr_per_copy)
+                             sweep.lr_per_copy, bonus.own_learning_rate)
+
+    # what the bonus's reward is divided by, from the family's own record
+    reward_divisor = bonus.reward_divisor
+    if reward_divisor not in REWARD_DIVISORS:
+        raise ValueError(f"unknown reward divisor {reward_divisor!r} of the {bonus.name} bonus; "
+                         f"choose from {list(REWARD_DIVISORS)}")
 
     # the reward-decline study's switches, all decided here while the program is built
     if cfg.int_coef_schedule not in ("constant", "linear_decay"):
@@ -348,23 +383,32 @@ def build_iteration(cfg, env, bonus, sweep, layout, capture_batch: bool = False)
         rint_buf = unflat(rint_flat)
 
         # intrinsic filter forward in time, then per-copy normalization (spec 5.2)
-        def filt_body(f, r):
-            """The discounted forward filter, one rollout step at a time."""
-            f = cfg.gamma_int * f + r
-            return f, f
-        if cfg.intrinsic_sums_by_matrix_product:
-            # before: rewards [T, C, N] and the filter value carried in, [C, N]
-            # after:  filt[t] = sum over s <= t of gamma^(t-s) r[s] + gamma^(t+1) x carried value
-            filt = (jnp.matmul(filter_matrix, rint_buf.reshape(T, C * N)).reshape(T, C, N)
-                    + carry_powers[:, None, None] * state.agent_state["int_filter"][None])
-            int_filter = filt[-1]
+        if reward_divisor == "running_std":
+            if cfg.intrinsic_sums_by_matrix_product:
+                # before: rewards [T, C, N] and the filter value carried in, [C, N]
+                # after:  filt[t] = sum over s <= t of gamma^(t-s) r[s]
+                #         + gamma^(t+1) x carried value
+                filt = (jnp.matmul(filter_matrix, rint_buf.reshape(T, C * N)).reshape(T, C, N)
+                        + carry_powers[:, None, None] * state.agent_state["int_filter"][None])
+                int_filter = filt[-1]
+            else:
+                int_filter, filt = filtered_intrinsic_sum(
+                    cfg.gamma_int, state.agent_state["int_filter"], rint_buf,
+                    cfg.advantage_scan_unroll)
+            int_rms = rms_update(state.agent_state["int_rms"],
+                                 filt.transpose(1, 0, 2).reshape(C, T * N, 1),
+                                 cfg.batch_stats_f32)
+            int_std = jnp.sqrt(int_rms.var + 1e-8).astype(F32).reshape(1, C, 1)
+            rint_hat = rint_buf / int_std
         else:
-            int_filter, filt = jax.lax.scan(filt_body, state.agent_state["int_filter"], rint_buf,
-                                            unroll=cfg.advantage_scan_unroll)
-        int_rms = rms_update(state.agent_state["int_rms"],
-                             filt.transpose(1, 0, 2).reshape(C, T * N, 1), cfg.batch_stats_f32)
-        int_std = jnp.sqrt(int_rms.var + 1e-8).astype(F32).reshape(1, C, 1)
-        rint_hat = rint_buf / int_std
+            # the statistics are not moved: a frozen divisor keeps the value the priming
+            # rollouts left, and no divisor leaves the reward as the bonus gave it
+            int_filter = state.agent_state["int_filter"]
+            int_rms = state.agent_state["int_rms"]
+            int_std = intrinsic_divisor(reward_divisor, int_rms, C).reshape(1, C, 1)
+            rint_hat = rint_buf
+            if reward_divisor == "frozen_after_priming":
+                rint_hat = rint_buf / int_std
 
         # study additions: the episode tracker (and the running goal-reaching rate it feeds), and
         # the task reward scaled by its running discounted-sum std. Neither runs by default.
@@ -385,6 +429,12 @@ def build_iteration(cfg, env, bonus, sweep, layout, capture_batch: bool = False)
             agent_state["episode_log"] = add_rollout(
                 state.agent_state["episode_log"], rollout_carry[2], term_buf, done_buf,
                 outs[-2], outs[-1], step, N)
+        if bonus.record_on_maze_grid:
+            # one visit per state the rollout reached, counted in the cell it lies in; the
+            # driver reads the counts once per logging window and sets them back to zero
+            # before: positions of [C, T*N] states; after: counts [C, rows*cols] grown by T*N
+            agent_state["maze_grid_visits"] = state.agent_state["maze_grid_visits"].at[
+                jnp.arange(C)[:, None], env.cell_index(nobs_flat)].add(1)
         # before: the environment's reward, 1 on arrival and 0 elsewhere, [T, C, N]
         # after:  with scale 1/400 and offset -1/400 for a copy, 0 on arrival and -1/400 elsewhere
         rext_used = rext_buf * reward_scale + reward_offset if maps_reward else rext_buf
@@ -516,9 +566,21 @@ def build_prime_step(cfg, env, bonus, layout):
     if bonus.prime is None:
         return None
     C, N, T = cfg.n_copies, cfg.n_envs, cfg.num_steps
+    frozen_divisor = bonus.reward_divisor == "frozen_after_priming"
+    if frozen_divisor and bonus.score_alone is None:
+        raise ValueError(f"the {bonus.name} bonus cannot score the priming rollouts, so its "
+                         "reward divisor cannot be frozen after priming")
+    if frozen_divisor and cfg.prime_iterations < 1:
+        raise ValueError("a reward divisor frozen after priming needs at least one priming "
+                         "rollout; prime_iterations is 0")
 
     def prime_step(state, key):
-        """One warm-up rollout (spec 4.3): random actions, the bonus's statistics updated."""
+        """One warm-up rollout (spec 4.3): random actions, the bonus's statistics updated.
+
+        With a divisor frozen after priming, the rollout is also scored and the running
+        statistics of the reward's discounted sum take it in, exactly as a training rollout's
+        would; the divisor is then what these statistics hold when priming ends.
+        """
         if getattr(env, "action_kind", "continuous") == "discrete":
             acts = jax.random.randint(key, (T, C, N), 0, env.n_actions, jnp.int32)
         else:
@@ -533,8 +595,20 @@ def build_prime_step(cfg, env, bonus, layout):
         env_state, nobs = jax.lax.scan(body, state.env_state, acts)
         # before: nobs [T, C, N, obs]; after: [C, T*N, obs], the shape the statistics consume
         bonus_params = named_params(stored_params(state, layout), layout)["bonus"]
-        bonus_state = bonus.prime(bonus_params, state.bonus_state,
-                                  nobs.transpose(1, 0, 2, 3).reshape(C, T * N, env.obs_dim))
-        return state._replace(env_state=env_state, bonus_state=bonus_state)
+        nobs_flat = nobs.transpose(1, 0, 2, 3).reshape(C, T * N, env.obs_dim)
+        bonus_state = bonus.prime(bonus_params, state.bonus_state, nobs_flat)
+        state = state._replace(env_state=env_state, bonus_state=bonus_state)
+        if not frozen_divisor:
+            return state
+        # score the rollout with the statistics that now include it, then filter and fold in
+        # before: rewards [C, T*N]; after: [T, C, N], the order the filter runs in
+        rint_buf = bonus.score_alone(bonus_params, bonus_state, nobs_flat).reshape(
+            C, T, N).transpose(1, 0, 2)
+        int_filter, filt = filtered_intrinsic_sum(
+            cfg.gamma_int, state.agent_state["int_filter"], rint_buf)
+        int_rms = rms_update(state.agent_state["int_rms"],
+                             filt.transpose(1, 0, 2).reshape(C, T * N, 1), cfg.batch_stats_f32)
+        return state._replace(agent_state={**state.agent_state, "int_filter": int_filter,
+                                           "int_rms": int_rms})
 
     return prime_step

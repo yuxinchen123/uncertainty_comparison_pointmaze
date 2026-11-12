@@ -262,6 +262,8 @@ Pool use 97.1% of the pool (sized from a largest use of 115,514). Run A: 38,903 
 
 The healthy environment beside them: respawned {'warp': False, 'jax': False}, numbers unchanged {'warp': True, 'jax': False}.
 
+This table was measured before the Warp environment tested the state it is handed: MuJoCo Warp turns a torso quaternion that holds a NaN into a valid one at the start of a physics step, so the state after the step was finite. Since 2026-11-12 12:26 PT `WarpAntMaze.step` also tests the positions and velocities it is handed and those after each physics step, and that case is respawned (the table of the same check on processors, and `tests/envs/test_antmaze_warp.py::test_non_finite_inputs_are_respawned`).
+
 ### check b: resting height in graph mode WARP_STAGED (serval02 card 1, 2026-11-12 10:56 PT)
 
 Reference resting height 0.38248 m (gate: within 1e-4 m), 1,200 passive environment steps from the spawn.
@@ -308,7 +310,7 @@ Warp pool: 4 contacts and 4 candidate pairs at most in a pool of 48, 20 rows at 
 
 ## Correctness measurements on processors (MuJoCo Warp on the processor device)
 
-Host puma01, 2026-11-12 11:11 PT, Slurm job 6884824; the same functions as on the card.
+Host puma01, 2026-11-12 12:51 PT, Slurm job 6887049; the same functions as on the card.
 
 ### check a: one step against C MuJoCo and against JAX, 50 states
 
@@ -375,7 +377,7 @@ Pool use 7.0% of the pool. Run A: 23 contacts and 45 candidate pairs at most in 
 |---|---|---|---|
 | nan | torso x | yes | yes |
 | inf | torso x | yes | yes |
-| nan | torso quaternion w | NO | yes |
+| nan | torso quaternion w | yes | yes |
 | inf | torso quaternion w | yes | yes |
 | nan | a hinge angle | yes | yes |
 | inf | a hinge angle | yes | yes |

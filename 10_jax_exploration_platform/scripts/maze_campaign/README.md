@@ -8,7 +8,10 @@ and its worker has claimed one. `P` is `/p/rlprojects/RND/10_jax_exploration_pla
 folder under `P/runs/`, `M` this folder. Every command runs with
 `PYTHONNOUSERSITE=1 /p/rlprojects/RND/.venvs/platform_jax/bin/python` (Python 3.11 or later is
 needed; the login node's `python3` is 3.10). Only the worker's child process, `run_training.py`,
-imports JAX; every file here uses the standard library and may run on a login node.
+imports JAX; every file here uses the standard library and may run on a login node. The worker
+starts that child process with its own interpreter, except for a unit whose AntMaze physics is
+MuJoCo Warp, which it starts with `/p/rlprojects/RND/.venvs/platform_jax_warp/bin/python`
+(section "AntMaze with the MuJoCo Warp physics").
 
 ## Files
 
@@ -19,7 +22,7 @@ imports JAX; every file here uses the standard library and may run on a login no
 | `submit.py` | submits worker jobs on UVA under both accounts,<br>and the persistent monitor job |
 | `worker.py` | one process per card: claims a unit, runs `run_training.py`,<br>records how it ended, takes the next |
 | `monitor.py` | one pass or a loop: returns units of ended jobs to pending,<br>counts, progress, status files |
-| `remote_fleet.py` | MIT, Purdue Gautschi, TAMU ACES, NCSA DeltaAI:<br>thin wrappers over the grid campaign's file of the same name |
+| `remote_fleet.py` | Purdue Gautschi and Gilbreth, MIT, TAMU ACES, NCSA DeltaAI: the grid campaign's file of the same name<br>with this study's worker job, checks and returns, and `hand-over-tick`, the one command of a tick |
 | `cancel_ledger.py` | the only cancel path: the jobs of one ledger file of a stopped run,<br>or single ids of one ledger |
 | `unit_queue.py` | the queue: claim by rename, return, finish, recover,<br>progress read from a shard |
 | `grid_campaign.py` | loads the grid campaign's functions that are reused here |
@@ -135,7 +138,7 @@ How units are cut:
 ## The unit file
 
 `RUN/specifications/<unit>.json` holds the unit's identity (`unit_id`, `study`, `phase`, `method`,
-`bonus`, `environment`, `reward_setting`, `workload`), its content (`cell_setting_names`, `cells`,
+`bonus`, `environment`, `reward_setting`, `workload`, `physics`), its content (`cell_setting_names`, `cells`,
 `cell_positions`, `first_seed`, `seed_count`, `policies`), its length (`iterations`,
 `window_iterations`, `windows_expected`, `steps_per_policy`), `run_seed`, its size class
 (`minimum_card_memory_mb`, `policies_per_unit` with its source), and what `run_training.py` gets:
@@ -147,6 +150,37 @@ values of `configuration_changes` replaced, among them the cells as `setting_nam
 
 The cells go through the configuration file because `run_training.py --parameter-settings` takes
 (learning rate, intrinsic weight) pairs only.
+
+## AntMaze with the MuJoCo Warp physics
+
+The implementation of the AntMaze physics is a value of the family's base configuration file:
+`physics = "jax"` (MJX's JAX implementation) or `physics = "warp"` (MuJoCo Warp) under
+`[environment]`. A description chooses Warp by naming a Warp file for the family:
+
+```json
+"configuration_files": {
+  "antmaze": "configs/experiments/antmaze_umaze_warp-physics_cleanrl-ppo-rnd_goal-termination_reward-arrival-plus-one_example_steps-204800.toml"
+}
+```
+
+What changes for such a unit:
+
+1. Its specification holds `"physics": "warp"` and
+   `"interpreter": "/p/rlprojects/RND/.venvs/platform_jax_warp/bin/python"`
+   (`PHYSICS_INTERPRETERS` in `build_units.py`). The worker starts the unit with that interpreter
+   and stops with an error when the file does not exist on its machine. A unit without the key
+   (every PointMaze unit, AntMaze with the JAX physics, every unit built before the key existed)
+   runs with the worker's own interpreter, as before.
+2. Its default workload name ends in `_physics-warp`, so the copies-per-card estimates and the
+   observed lines of the two implementations are kept apart.
+3. Its unit id does not name the physics. Two sweeps of one run folder that differ only in the
+   physics need different `method` or `phase` words.
+4. `run_training.py` writes MuJoCo Warp's kernel folder (node-local) into the unit's log, records
+   the largest use of the shared contact pool in every window record and in `unit_complete`
+   (`physics_pool`), and ends the unit with an error when MuJoCo Warp dropped a contact or a
+   constraint row. The worker counts that as a failure of the unit.
+5. Remote servers: the path above is UVA's. A server that runs such a unit needs an environment
+   with warp-lang at that path, or its own value in the specification; neither has been set up.
 
 ## Steps
 
@@ -207,18 +241,49 @@ RUN=/p/rlprojects/RND/10_jax_exploration_platform/runs/<run folder>
    $PY $M/submit.py --run-dir $RUN --phase <phase>
    ```
 
-6. **Remote servers** (H100 and H200 work; order MIT, Purdue Gautschi, TAMU ACES, NCSA DeltaAI).
+6. **Remote servers** (H100 and H200 work: order MIT, Purdue Gautschi, TAMU ACES, NCSA DeltaAI;
+   PointMaze units also run on Gautschi's L40S cards and on Gilbreth's `standby` cards).
    Needs `RUN/infrastructure/remote_fleet_servers.json` in the grid campaign's format, with
-   `remote_run`, `code` and `python` set for this study; `unit_seconds` is the least training time
-   a job must have left to start a unit (units continue from checkpoints, so 1800 is enough). No
-   probe, benchmark or canary job runs on these servers.
+   `remote_run`, `python` and `code_root` set for this study (`code` is written by `prepare`:
+   `<code_root>/source_<commit>/10_jax_exploration_platform`); `unit_seconds` is the least
+   training time a job must have left to start a unit (units continue from checkpoints, so 1800 is
+   enough). A server with a `hand_over` entry (`units_at_once`, `match`, `pool`) is served by
+   `hand-over-tick`. No probe, benchmark or canary job runs on these servers: a server's first
+   real unit is its check, and until that unit is verified the server holds one unit.
 
    ```bash
+   $PY $M/remote_fleet.py --run-dir $RUN prepare --server gautschi      # job scripts and the frozen code copy
+   $PY $M/remote_fleet.py --run-dir $RUN hand-over-tick --dry-run
+   $PY $M/remote_fleet.py --run-dir $RUN hand-over-tick                 # every monitoring tick of the session
+   $PY $M/remote_fleet.py --run-dir $RUN status
    $PY $M/remote_fleet.py --run-dir $RUN stage --server mit --units 4 --match pointmaze --dry-run
    $PY $M/remote_fleet.py --run-dir $RUN submit --server mit --jobs 4 --pool preemptable --dry-run
-   $PY $M/remote_fleet.py --run-dir $RUN tick          # every monitoring tick of the session
-   $PY $M/remote_fleet.py --run-dir $RUN status
    ```
+
+   What `hand-over-tick` does for each server, in this order:
+
+   1. one status call: the server's queue folders, claim records, our jobs, and how many windows
+      each unit's shard holds;
+   2. finished units: records copied to UVA and checked (a `unit_complete` record, the expected
+      number of windows; for the server's first unit also the same record kinds, keys and kinds of
+      values as a unit trained on UVA). A checked shard and log move to `RUN/data` and `RUN/logs`,
+      the unit moves to `queue/done`, and its line is added to `P/device/observed/<workload>.jsonl`;
+   3. a unit whose job ended goes back to the server's pending folder and continues from its
+      checkpoint in a later job; a unit no job started for within two hours goes back to UVA's
+      `queue/pending`, with its checkpoint and shard when the server has both;
+   4. pending units of UVA move to `queue/remote_<server>/` (one rename each, under the queue
+      lock) up to `units_at_once`, the last of UVA's order first, and are copied to the server;
+   5. worker jobs are submitted for the units no job will take, at most `max_jobs` live per pool;
+      each id is appended to `RUN/slurm/submitted_jobids_<server>.txt` and to the same file in the
+      server's run folder;
+   6. one line per unit: cluster, job id, card, state on the server, windows written of windows
+      expected.
+
+   Two things a server needs that UVA has without asking: an environment with `mujoco` and
+   `mujoco-mjx` beside JAX (the trainer imports them at its start; build script and package lists:
+   `RUN/infrastructure/remote_fleet/setup/`), and a git repository above the code copy
+   (`run_training.py` records that folder's commit and stops where git cannot read one; `prepare`
+   makes one there, with a tag that names the UVA commit).
 
 7. **Stop a sweep** (rule `submit-the-whole-queue-up-front.md`, "Cancelling a whole queue"):
 
@@ -276,14 +341,16 @@ Imported, not copied (`grid_campaign.py` loads them from `scripts/grid_initializ
 2. `submit.py`: `allowed_seconds`, `node_resources`, `capacity_budgets`, `reservation_budget`,
    `owner_reservation`, `slurm_fields`, `RESOURCE_FILE`.
 3. `worker.py`: `hardware`.
-4. `remote_fleet.py`: every command and helper except the four replaced parts named at the head of
+4. `remote_fleet.py`: every command and helper except the replaced parts named at the head of
    this folder's `remote_fleet.py`.
 
 Written new here: the unit builder, the queue (the grid campaign's `claim`, `finish` and
 `recover_claims` do not return a stopped unit to pending or count failures), the worker's loop,
 the submission plan, and the monitor's pass.
 
-**Adapted and not exercised:** `remote_fleet.py` and the worker's `--remote-records` records have
-not run against any server; `submit.py`'s calls to the scheduler and `submit_as.sh` have not sent
-a job; `worker.py` has not started the real `run_training.py`. The first submission of each is its
-first real run.
+**Exercised and not exercised.** `submit.py`, `worker.py` and `monitor.py` have run the UVA sweeps
+of 2026-11-12. `remote_fleet.py prepare` and `hand-over-tick` and the worker's `--remote-records`
+records first ran against Purdue Gautschi and Gilbreth on 2026-11-12 (record:
+`RUN/infra_history.md` of the baseline run). The commands taken unchanged from the grid campaign
+(`stage`, `submit`, `tick`, `status`, `take-back`) have run for this study only as parts of
+`hand-over-tick`; MIT, TAMU ACES and NCSA DeltaAI have no entry in a server table of this study yet.

@@ -115,9 +115,15 @@ def read_experiment_configuration(path):
     path = Path(path).resolve()
     content = path.read_bytes()
     document = tomllib.loads(content.decode())
-    if set(document) != {"metadata", "trainer", "environment", "runtime"}:
-        raise ValueError("old-platform TOML requires metadata, trainer, environment and runtime sections; "
-                         "pixel CleanRL files use their separate command")
+    # bonus_options is the one optional section: the bonus family's own options a file changes
+    if set(document) - {"bonus_options"} != {"metadata", "trainer", "environment", "runtime"}:
+        raise ValueError("old-platform TOML requires metadata, trainer, environment and runtime sections "
+                         "(bonus_options is optional); pixel CleanRL files use their separate command")
+    bonus_options = document.get("bonus_options", {})
+    if not isinstance(bonus_options, dict) or not all(
+            isinstance(value, (bool, int, float, str)) for value in bonus_options.values()):
+        raise ValueError("bonus_options must be a table holding one value per named option of "
+                         "the bonus family")
     metadata, trainer, environment, runtime = (document[name] for name in
                                                ("metadata", "trainer", "environment", "runtime"))
     if metadata.get("implementation") != "jax_exploration_platform":
@@ -154,7 +160,8 @@ def read_experiment_configuration(path):
     environment = {name: tuple(value) if name in ("start_cell", "goal_cell") else value
                    for name, value in environment.items()}
     return {"metadata": metadata, "trainer": trainer, "environment": environment,
-            "runtime": runtime, "path": str(path), "sha256": hashlib.sha256(content).hexdigest()}
+            "runtime": runtime, "bonus_options": dict(bonus_options),
+            "path": str(path), "sha256": hashlib.sha256(content).hexdigest()}
 
 
 def argument_defaults(document):
@@ -173,7 +180,8 @@ def argument_defaults(document):
                         terminate_at_goal=not environment["continuing_task"],
                         goal_reward=environment["goal_reward"])
     if document["metadata"]["environment_family"] == "antmaze":
-        defaults.update(terminate_at_goal=not environment["continuing_task"])
+        defaults.update(terminate_at_goal=not environment["continuing_task"],
+                        physics=environment["physics"])
     return defaults
 
 

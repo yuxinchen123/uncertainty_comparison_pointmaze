@@ -42,7 +42,31 @@ Two property measures, read on a fixed grid of maze positions (velocity zero) ev
 | separate predictor step size | the predictor gets its own Adam and its own learning rate, not annealed with the policy's | predictor learning rate 0.25, 1 and 4 times 1e-4 |
 | error length as the bonus | the bonus is the length of the error vector instead of half its square | none |
 | fast last layer inside the rollout | between two policy updates, the predictor's output layer takes one small step at every visited state, so a state seen twice in one rollout pays less the second time | step size 0.1, 0.3, 1 of the exact fit |
-| scheduled last layer on fixed features | the predictor's body is fixed; its output layer is fitted in closed form once per rollout so that each visited input's error moves along $(1+m)^{-a}$, with $m$ read from the error itself; bonus refreshed every step | $a$ = 0.5, 0.75, 1 |
+| scheduled last layer on fixed features | the predictor's body is fixed; its output layer is fitted in closed form once per rollout so that each visited input's error moves along $(1+m)^{-a}$, with $m$ read from the error itself; bonus refreshed every step | decay $a$ = 0.5, 0.75, 1 |
+
+## How the screen is run (settled 2026-11-12 13:20 PT, before any run)
+
+- **Learning rate 2e-3, entropy 0.01, clip 0.1:** RND's chosen configuration for this case (development runs at the
+  budget).
+- **Intrinsic weights, 12 values:** the 10 of the first pass ($4^{-6}$ to $4^{3}$) plus 0.5 and 2, so that the
+  control's own best weight (2) is in the grid and the ideas are read at factor 2 around it. One unit per row of
+  the table: 12 weights × 16 seeds = 192 policies in one process.
+- **The grid diagnostic is on in every unit** (it does not change training): per logging window and policy, the
+  bonus at one probe per open cell (cell centre, velocity zero), the divisor, and the visits to each cell.
+- **Fixed scale:** each random-action rollout at the start is scored and its discounted sum enters the divisor's
+  statistics, as a training rollout's would; the divisor is what those statistics hold when the random-action
+  rollouts end. (Before this change those rollouts never touched the divisor, so "its value after them" was 1.)
+- **The output layer in the two last-layer ideas includes its bias:** a constant 1 is appended to the last hidden
+  features before they are scaled to unit length, so an input whose hidden units are all off still has a feature
+  vector.
+- **Both last-layer ideas work step by step inside the rollout,** not once per rollout: after the states of one
+  step are scored, the layer takes the smallest change that moves their errors. Environments of one policy in the
+  same state at the same step count as one visit.
+- **Scheduled last layer:** the squared error at an input never visited can rise slightly above 1 when other inputs
+  are fitted; it is not clipped. The input statistics keep moving as in the baseline, so the schedule is exact at
+  the moment of fitting and drifts afterwards. If the diagnostic shows that the drift matters, frozen input
+  statistics are the follow-up.
+- **Decay slope:** computed in the analysis from the recorded probes and visits.
 
 ## Predictions (written before the runs)
 

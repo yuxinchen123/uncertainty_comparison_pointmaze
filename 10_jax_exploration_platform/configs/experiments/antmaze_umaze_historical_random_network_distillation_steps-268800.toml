@@ -91,6 +91,9 @@ max_geom_pairs = 8
 max_contact_points = 32
 solver_loop = "while_loop"
 carried_state = "whole_data"
+physics = "jax"
+warp_contact_slots_per_environment = 48
+warp_constraint_rows_per_environment = 160
 
 [runtime]
 environment = "antmaze-umaze"

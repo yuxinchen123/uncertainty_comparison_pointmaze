@@ -51,6 +51,22 @@ def features(target, predictor, x):
     return target_features(target, x), predictor_features(predictor, x)
 
 
+def predictor_hidden(predictor, x):
+    """The predictor's last hidden layer, [C, M, feature_dim]: what its output layer reads."""
+    ph = jax.nn.relu(jnp.matmul(x, predictor["W0"]) + predictor["b0"][:, None, :])
+    return jax.nn.relu(jnp.matmul(ph, predictor["W1"]) + predictor["b1"][:, None, :])
+
+
+def unit_length(x):
+    """Each vector along the last axis scaled to length 1.
+
+    before: [3.0, 4.0] ; after: [0.6, 0.8]
+    The squared length is kept at or above 1e-24 only so that a vector of zeros stays zeros
+    instead of becoming not-a-number; a network output is never that short otherwise.
+    """
+    return x / jnp.sqrt(jnp.maximum((x * x).sum(axis=-1, keepdims=True), 1e-24))
+
+
 def whiten(obs, obs_rms):
     """Centre and scale the network input by the running statistics, clipped to +-5.
 

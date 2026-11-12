@@ -1,0 +1,153 @@
+{
+  "study": "beat-cleanrl-ppo-rnd-auto-research",
+  "phase": "batch-01-screen",
+  "bonus": "rnd_next_state",
+  "configuration_files": {
+    "pointmaze": "configs/experiments/pointmaze_large_cleanrl-ppo-rnd_goal-termination_reward-arrival-plus-one_example_steps-1024000.toml"
+  },
+  "environments": [
+    "pointmaze-large"
+  ],
+  "reward_settings": [
+    "arrival_plus_one"
+  ],
+  "environments_per_policy": {
+    "pointmaze": 4
+  },
+  "steps_per_policy": 8388608,
+  "windows_per_unit": 256,
+  "seeds": {
+    "first": 0,
+    "count": 16
+  },
+  "policies_per_unit": 256,
+  "minimum_card_memory_mb": 7000,
+  "cells": {
+    "kind": "grid",
+    "values": {
+      "learning_rate": [
+        0.002
+      ],
+      "entropy_coefficient": [
+        0.01
+      ],
+      "intrinsic_weight": [
+        0.000244140625,
+        0.0009765625,
+        0.00390625,
+        0.015625,
+        0.0625,
+        0.25,
+        0.5,
+        1.0,
+        2.0,
+        4.0,
+        16.0,
+        64.0
+      ],
+      "clip_coefficient": [
+        0.1
+      ]
+    }
+  },
+  "sweeps": [
+    {
+      "method": "control-cleanrl-ppo-rnd",
+      "extra_options": [
+        "--bonus-options",
+        "record_bonus_on_maze_grid=true"
+      ]
+    },
+    {
+      "method": "even-start",
+      "extra_options": [
+        "--bonus-options",
+        "even_start=true,record_bonus_on_maze_grid=true"
+      ]
+    },
+    {
+      "method": "fixed-scale",
+      "extra_options": [
+        "--bonus-options",
+        "reward_divisor=frozen_after_priming,record_bonus_on_maze_grid=true"
+      ]
+    },
+    {
+      "method": "even-start-with-no-divisor",
+      "extra_options": [
+        "--bonus-options",
+        "even_start=true,reward_divisor=none,record_bonus_on_maze_grid=true"
+      ]
+    },
+    {
+      "method": "separate-predictor-step-size-multiple-0-point-25",
+      "extra_options": [
+        "--bonus-options",
+        "predictor_learning_rate_multiple=0.25,record_bonus_on_maze_grid=true"
+      ]
+    },
+    {
+      "method": "separate-predictor-step-size-multiple-1",
+      "extra_options": [
+        "--bonus-options",
+        "predictor_learning_rate_multiple=1,record_bonus_on_maze_grid=true"
+      ]
+    },
+    {
+      "method": "separate-predictor-step-size-multiple-4",
+      "extra_options": [
+        "--bonus-options",
+        "predictor_learning_rate_multiple=4,record_bonus_on_maze_grid=true"
+      ]
+    },
+    {
+      "method": "error-length-as-the-bonus",
+      "extra_options": [
+        "--bonus-options",
+        "bonus_form=error_length,record_bonus_on_maze_grid=true"
+      ]
+    },
+    {
+      "method": "fast-last-layer-inside-the-rollout-step-0-point-1",
+      "extra_options": [
+        "--bonus-options",
+        "fast_last_layer_step=0.1,record_bonus_on_maze_grid=true"
+      ]
+    },
+    {
+      "method": "fast-last-layer-inside-the-rollout-step-0-point-3",
+      "extra_options": [
+        "--bonus-options",
+        "fast_last_layer_step=0.3,record_bonus_on_maze_grid=true"
+      ]
+    },
+    {
+      "method": "fast-last-layer-inside-the-rollout-step-1",
+      "extra_options": [
+        "--bonus-options",
+        "fast_last_layer_step=1,record_bonus_on_maze_grid=true"
+      ]
+    },
+    {
+      "method": "scheduled-last-layer-on-fixed-features-decay-0-point-5",
+      "extra_options": [
+        "--bonus-options",
+        "scheduled_last_layer_decay=0.5,record_bonus_on_maze_grid=true"
+      ]
+    },
+    {
+      "method": "scheduled-last-layer-on-fixed-features-decay-0-point-75",
+      "extra_options": [
+        "--bonus-options",
+        "scheduled_last_layer_decay=0.75,record_bonus_on_maze_grid=true"
+      ]
+    },
+    {
+      "method": "scheduled-last-layer-on-fixed-features-decay-1",
+      "extra_options": [
+        "--bonus-options",
+        "scheduled_last_layer_decay=1,record_bonus_on_maze_grid=true"
+      ]
+    }
+  ]
+}

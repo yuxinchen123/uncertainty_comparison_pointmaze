@@ -84,6 +84,20 @@ class Plan(unittest.TestCase):
             submit.CPUS_PER_CARD.update(defaults[0])
             submit.set_request_per_card(memory_gib=defaults[1])
 
+    def test_a_worker_time_limit_caps_worker_jobs_only(self):
+        """A 2-hour limit shortens a worker's 4 days to 7,200 s, never lengthens, and leaves the monitor alone."""
+        self.assertEqual(submit.wall_seconds("worker", 345600), 345600)
+        try:
+            submit.set_worker_hours(2)
+            self.assertEqual(submit.wall_seconds("worker", 345600), 7200)
+            self.assertEqual(submit.wall_seconds("worker", 3600), 3600)
+            self.assertEqual(submit.wall_seconds("monitor", 345600), 345600)
+            submit.set_worker_hours(0)
+            with self.assertRaises(ValueError):
+                submit.wall_seconds("worker", 345600)
+        finally:
+            submit.set_worker_hours(None)
+
     def test_never_more_worker_cards_than_units_without_a_worker(self):
         """Three pending units and one waiting worker of this run: two new cards; none when all are covered."""
         self.assertEqual(sum(job["cards"] for job in plan([7000] * 3, without_unit=1)), 2)

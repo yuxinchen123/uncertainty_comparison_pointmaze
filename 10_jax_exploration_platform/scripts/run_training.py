@@ -37,6 +37,22 @@ Episodes that end at the goal (`--terminate-at-goal`, or a named `--reward-setti
 episode clock, so such a unit needs `--episode-log`: each window record then carries, per copy, the
 episodes that ended in the window, the arrivals, and the sums of their returns and lengths.
 
+AntMaze runs its physics through MJX's JAX implementation by default. `--physics warp` (or
+`physics = "warp"` in a configuration file's `[environment]`) runs it through MuJoCo Warp, which
+needs the interpreter /p/rlprojects/RND/.venvs/platform_jax_warp/bin/python. Such a unit names the
+physics in its environment specification, writes MuJoCo Warp's kernel folder into its log, records
+the largest use of the shared contact pool in every window record and in `unit_complete`, and
+stops with a message when MuJoCo Warp dropped a contact or a constraint row.
+
+A bonus family's own options (the fields of its configuration class, `bonuses/rnd/config.py` for
+random network distillation) are changed with `--bonus-options name=value,...` or a configuration
+file's optional `[bonus_options]` table; they hold for the whole process, never per copy. The
+`unit_start` record holds every option with its value under `bonus_options`. With
+`record_bonus_on_maze_grid=true` each window record also carries, per copy, the bonus at one probe
+observation per open maze cell, the divisor of the intrinsic reward, and the window's visits to
+each cell (`training/maze_grid.py`); one `maze_grid_at_start` record holds the same fields before
+the first training iteration.
+
 Example:
   PYTHONNOUSERSITE=1 /p/rlprojects/RND/.venvs/platform_jax/bin/python run_training.py \
     --run-dir <runs/...> --unit-id unit-1 --bonus rnd_next_state \
@@ -112,6 +128,9 @@ AGENT_SPECS = {
 
 # set by the stop signals when checkpoints are on; the training loop reads it after each iteration
 STOP = {"requested": False}
+# a unit with the Warp AntMaze physics reads its contact pool at window ends and, between them,
+# once this many seconds have passed since the last read (each read waits for the device once)
+POOL_CHECK_SECONDS = 60.0
 
 
 def env_config_of(env_name: str):
@@ -338,6 +357,10 @@ def parse_args(argv=None) -> argparse.Namespace:
                              "ends at the goal, every step costs 1 / (step limit), arrival pays "
                              "0. arrival_plus_one_and_step_cost: both in one process, each cell "
                              "once per reward on the same seeds")
+    parser.add_argument("--physics", default="jax", choices=["jax", "warp"],
+                        help="AntMaze only: the implementation of the physics step. jax: MJX's "
+                             "JAX implementation. warp: MuJoCo Warp, which needs the interpreter "
+                             "of the platform_jax_warp environment")
     parser.add_argument("--episode-log", action="store_true",
                         help="record per copy and window the episodes that ended, the arrivals, "
                              "and the sums of returns, lengths and steps to the goal")
@@ -350,7 +373,32 @@ def parse_args(argv=None) -> argparse.Namespace:
                              "told to stop; re-running the command continues from the save")
     parser.add_argument("--time-limit-seconds", type=float, default=0.0,
                         help="> 0: after this many seconds, save the unit's state and stop")
+    parser.add_argument("--bonus-options", default="",
+                        help="options of the bonus family this unit changes, as comma-separated "
+                             "name=value pairs, e.g. even_start=true,reward_divisor=none (the "
+                             "names are the fields of the family's configuration, "
+                             "bonuses/rnd/config.py); a pair replaces the same name of a "
+                             "configuration file's [bonus_options] table")
     return parse_with_configuration_file(parser, argv)
+
+
+def bonus_options_of(args: argparse.Namespace) -> dict:
+    """The bonus family's options this unit changes: the configuration file's, then the command's.
+
+    before: file [bonus_options] even_start = true ; --bonus-options reward_divisor=none
+    after:  {"even_start": True, "reward_divisor": "none"}
+    A value from the command line stays text here; the registry reads it in the option's type.
+    """
+    document = getattr(args, "experiment_configuration_data", None)
+    options = dict(document["bonus_options"]) if document is not None else {}
+    for pair in args.bonus_options.split(","):
+        if not pair.strip():
+            continue
+        name, separator, value = (part.strip() for part in pair.partition("="))
+        if not (name and separator and value):
+            raise ValueError(f"--bonus-options takes name=value pairs; {pair!r} is not one")
+        options[name] = value
+    return options
 
 
 def cell(text: str) -> tuple:
@@ -372,6 +420,9 @@ def build_env_config(args: argparse.Namespace):
                          "arrival and 0 elsewhere: leave --reward-shift at 0 and --goal-reward "
                          "at per_step")
     terminate_at_goal = args.terminate_at_goal or named_reward
+    if args.physics != "jax" and not args.env.startswith("antmaze-"):
+        raise ValueError(f"--physics {args.physics} is built for AntMaze only; {args.env} has one "
+                         "implementation")
     if args.env != "pointmaze-large":
         if (args.map, args.start_cell, args.goal_cell, args.goal_reward) != (
                 "large", "7,1", "1,10", "per_step"):
@@ -385,7 +436,7 @@ def build_env_config(args: argparse.Namespace):
             environment = replace(environment, **document["environment"])
         changes = dict(max_episode_steps=episode_steps, reward_shift=args.reward_shift)
         if antmaze:
-            changes["continuing_task"] = not terminate_at_goal
+            changes.update(continuing_task=not terminate_at_goal, physics=args.physics)
         return replace(environment, **changes)
     # Retain file-only environment settings such as noise and goal radius, then apply CLI values.
     fields = dict(document["environment"]) if document is not None else {}
@@ -405,6 +456,9 @@ def env_spec(env_cfg, reward_setting: str = "environment") -> str:
     before: medium map, terminating, cap 250, shift -1 -> pointmaze_medium_term250_nonoise_shift-1@1
     before: large map, terminating, cap 400, reward setting step_cost
             -> pointmaze_large_term400_nonoise_reward-step-cost@1
+    before: AntMaze U-maze, terminating, cap 700, MuJoCo Warp physics, reward setting step_cost
+            -> antmaze_umaze_term700_nonoise_physics-warp_reward-step-cost@1
+    (AntMaze with the JAX physics keeps the name it had before the physics could be chosen)
     """
     environment_type = type(env_cfg).__name__
     if environment_type == "MontezumaConfig":
@@ -419,6 +473,8 @@ def env_spec(env_cfg, reward_setting: str = "environment") -> str:
             "large", (7, 1), (1, 10)):
         name += (f"_start{env_cfg.start_cell[0]}-{env_cfg.start_cell[1]}"
                  f"_goal{env_cfg.goal_cell[0]}-{env_cfg.goal_cell[1]}")
+    if family == "antmaze" and env_cfg.physics != "jax":
+        name += f"_physics-{env_cfg.physics}"
     if env_cfg.reward_shift:
         name += f"_shift{env_cfg.reward_shift:g}"
     if family == "pointmaze" and env_cfg.goal_reward != "per_step":
@@ -627,6 +683,11 @@ def write_launch_files(run_dir: Path, args: argparse.Namespace, config, env_cfg)
     document = getattr(args, "experiment_configuration_data", None)
     if document is not None:
         resolved["configuration_file"] = {name: document[name] for name in ("path", "sha256", "metadata")}
+    # the bonus family's own options, every one with its value (absent for a family with none)
+    from exploration_platform.bonuses.registry import bonus_options_record
+    bonus_record = bonus_options_record(args.bonus, bonus_options_of(args))
+    if bonus_record:
+        resolved["bonus_options"] = bonus_record
     (run_dir / "config_resolved.yaml").write_text(as_yaml(resolved) + "\n")
 
     # machine-readable identity of the run: which code, which component versions, which shape
@@ -666,11 +727,37 @@ def keep_records_through(shard: Path, iteration: int) -> int:
     return len(kept)
 
 
+def pool_record(report):
+    """The use of MuJoCo Warp's shared contact pool in a record's words; None without a pool.
+
+    before: {"nacon_peak": 9731, "ncollision_peak": 24110, "naconmax": 786432, "nefc_peak": 39,
+             "njmax": 160, "overflow_bits": 0, "dropped": False, "reasons": []}
+    after:  {"contacts_largest": 9731, "candidate_pairs_largest": 24110, "pool_slots": 786432,
+             "pool_fraction_largest": 0.0307, "constraint_rows_largest": 39,
+             "constraint_row_limit": 160}
+    Contacts and candidate pairs each have a pool of `pool_slots`; the fraction is the fuller one.
+    """
+    if report is None:
+        return None
+    fullest = max(report["nacon_peak"], report["ncollision_peak"])
+    return {"contacts_largest": report["nacon_peak"],
+            "candidate_pairs_largest": report["ncollision_peak"],
+            "pool_slots": report["naconmax"],
+            "pool_fraction_largest": round(fullest / report["naconmax"], 4),
+            "constraint_rows_largest": report["nefc_peak"],
+            "constraint_row_limit": report["njmax"]}
+
+
 def checkpoint_identity(args: argparse.Namespace, config, env_cfg, sweep) -> dict:
     """What must agree before a checkpoint may continue this unit: everything that shapes it."""
     from dataclasses import asdict
+    from exploration_platform.bonuses.registry import bonus_options_record
+    # the bonus family's options enter only when the unit changes one, so a unit that changes
+    # none keeps the identity it had before the options existed
+    changed = bonus_options_of(args)
     return {"trainer_config": asdict(config), "environment_config": asdict(env_cfg),
             "environment": env_spec(env_cfg, args.reward_setting), "bonus": args.bonus,
+            **({"bonus_options": bonus_options_record(args.bonus, changed)} if changed else {}),
             "run_seed": args.run_seed, "copy_seed_index": list(sweep.copy_seed_index),
             "iterations": args.iterations, "window_iterations": args.window_iterations,
             "lr_anneal_iterations": args.lr_anneal_iterations or args.iterations}
@@ -686,7 +773,8 @@ def main() -> None:
     for sub in ("data", "logs"):
         (run_dir / sub).mkdir(parents=True, exist_ok=True)
 
-    from exploration_platform.training import episode_log
+    from exploration_platform.bonuses.registry import bonus_options_record, make_bonus
+    from exploration_platform.training import episode_log, maze_grid
     from exploration_platform.training.checkpoint import (check_identity, read_checkpoint,
                                                           restore_state, save_checkpoint)
     from exploration_platform.training.runner import Runner
@@ -695,6 +783,10 @@ def main() -> None:
 
     config = build_config(args)
     env_cfg = build_env_config(args)
+    # the bonus family's options this unit changes, and the family's whole option record; an
+    # unknown option or a combination that is not built is refused here
+    bonus_options = bonus_options_of(args)
+    bonus_record = bonus_options_record(args.bonus, bonus_options)
     if not (run_dir / "manifest.yaml").exists():
         write_launch_files(run_dir, args, config, env_cfg)
 
@@ -757,15 +849,39 @@ def main() -> None:
     # because the first iteration pays for compiling the program. A resumed unit hands the
     # trainer the bonus's saved fixed arrays, so the program holds the numbers it started with.
     build_start = time.time()
-    trainer = Runner(config, bonus=args.bonus, env_cfg=env_cfg,
+    trainer = Runner(config, bonus=make_bonus(args.bonus, bonus_options), env_cfg=env_cfg,
                      bonus_constants=saved["bonus_constants"] if saved else None)
     config = trainer.cfg
     sweep = trainer.sweep
+    # the program that scores the maze-grid probes, only when the bonus's options ask for it
+    maze_probe = (maze_grid.build_probe(config, trainer.env, trainer.bonus, trainer.layout)
+                  if trainer.bonus.record_on_maze_grid else None)
+    kernel_folder = getattr(trainer.env, "kernel_folder", None)
+    if kernel_folder is not None:
+        # MuJoCo Warp: where its compiled kernels are kept on this node, and the pool's size
+        environments = config.n_copies * config.n_envs
+        say(f"MuJoCo Warp physics: kernel folder {kernel_folder}, holding "
+            f"{sum(1 for entry in os.scandir(kernel_folder) if entry.is_dir())} compiled kernel "
+            f"folders before this unit's first step; shared contact pool {trainer.env.naconmax:,} "
+            f"slots ({trainer.env.naconmax / environments:g} per environment x {environments:,} "
+            f"environments), at most {trainer.env.njmax} constraint rows per environment")
+
+    def checked_pool():
+        """The environment's pool use as a record entry (None without a pool); a drop is written
+        to the unit's log and stops the unit."""
+        try:
+            return pool_record(trainer.check_environment(state))
+        except RuntimeError as error:
+            say(f"STOPPED: {error}")
+            raise
+
     identity = checkpoint_identity(args, config, env_cfg, sweep)
     if saved is not None:
         # the checkpoint must belong to this unit before the shard is touched; the window
         # records later than it are then dropped, and this attempt's lines follow the kept ones
-        check_identity(saved["identity"], identity)
+        from dataclasses import asdict
+        check_identity(saved["identity"], identity,
+                       environment_defaults=asdict(type(env_cfg)()))
         state = restore_state(trainer.init_state(run_seed=args.run_seed), saved["leaves"])
         start_iteration = int(np.asarray(state.step)) + 1
         out.close()
@@ -838,6 +954,14 @@ def main() -> None:
               "steps_per_iteration": steps_per_iteration,
               "lr_anneal_iterations": args.lr_anneal_iterations or args.iterations,
               "reward_setting": args.reward_setting, "episode_log": config.episode_log,
+              # every option of the bonus family with its value ({} for a family with none), so
+              # two units of one family can be told apart; and, when the bonus is recorded on
+              # the maze grid, the (row, column) cell of each probe, in the order of the
+              # per-probe lists of the window records
+              "bonus_options": bonus_record,
+              **({"maze_grid_probe_cells": [list(cell) for cell in
+                                            maze_grid.open_cell_list(trainer.env)]}
+                 if maze_probe is not None else {}),
               **({"configuration_file": {name: configuration_document[name]
                                           for name in ("path", "sha256", "metadata")}}
                  if configuration_document is not None else {})})
@@ -858,9 +982,14 @@ def main() -> None:
         prime_start = time.time()
         state = trainer.prime(state)
         jax.block_until_ready(state.obs)
+        checked_pool()
         start_iteration = 1
         say(f"building and priming done in {time.time() - build_start:.1f}s "
             f"(priming alone {time.time() - prime_start:.1f}s)")
+        if maze_probe is not None:
+            # the bonus on the maze grid before the first training iteration (no visit yet)
+            emit({"record": "maze_grid_at_start", "unit_id": args.unit_id,
+                  **maze_grid.read_window(state, maze_probe)})
     else:
         # the driver's own sums and counters continue from where the checkpoint was taken
         driver = saved["driver"]
@@ -884,6 +1013,7 @@ def main() -> None:
     def save(reason: str) -> None:
         """Write the unit's whole state and the driver's partial window sums to the checkpoint."""
         nonlocal last_checkpoint
+        checked_pool()
         driver = {"reward_in_window": np.asarray(reward_in_window),
                   "rint_in_window": np.asarray(rint_in_window),
                   "window_index": np.asarray(window_index),
@@ -902,6 +1032,7 @@ def main() -> None:
             signal.signal(number, lambda *_: STOP.update(requested=True))
 
     start = time.time()
+    last_pool_check = start
     first_iteration_seconds = None
     for iteration in range(start_iteration, args.iterations + 1):
         iteration_start = time.time()
@@ -917,6 +1048,12 @@ def main() -> None:
             first_iteration_seconds = time.time() - iteration_start
             say(f"first iteration (includes compiling the program) "
                 f"{first_iteration_seconds:.1f}s")
+
+        # a Warp AntMaze unit in which MuJoCo Warp dropped a contact or a constraint row stops
+        # within about a minute, not only at the next window end
+        if kernel_folder is not None and time.time() - last_pool_check >= POOL_CHECK_SECONDS:
+            checked_pool()
+            last_pool_check = time.time()
 
         # one record per window, and always one at the last iteration; those are the only
         # iterations that wait for the device, so recording does not serialise the loop
@@ -955,6 +1092,11 @@ def main() -> None:
                 "rint_mean_per_copy":
                     (np.asarray(rint_in_window) / iterations_in_window).tolist(),
             }
+            # the Warp AntMaze's largest pool use so far; a unit in which MuJoCo Warp dropped
+            # a contact or a constraint row stops here, before this window is written
+            pool = checked_pool()
+            if pool is not None:
+                record["physics_pool"] = pool
             if config.track_coverage:
                 record["coverage_per_copy"] = trainer.coverage(state).tolist()
             if config.diagnostics:
@@ -987,6 +1129,11 @@ def main() -> None:
                     "length_sum_per_copy": window_log["length_sum"].tolist(),
                     "steps_to_goal_sum_per_copy": window_log["steps_to_goal_sum"].tolist(),
                     "first_goal_step_per_copy": window_log["first_goal_step"].tolist()})
+            if maze_probe is not None:
+                # the bonus at each open cell's probe as the window ends, the divisor, and the
+                # window's visits to each cell, per copy; the visit counts go back to zero
+                record.update(maze_grid.read_window(state, maze_probe))
+                state = state._replace(agent_state=maze_grid.clear_window(state.agent_state))
             emit(record)
             coverage_note = (f", maze coverage mean {np.mean(record['coverage_per_copy']):.3f}"
                              if config.track_coverage else "")
@@ -995,10 +1142,12 @@ def main() -> None:
                             if config.episode_log else "")
             clock_note = (f"phase blocked {record['phase_blocked']}" if fixed_clock
                           else "no episode clock: episodes end at the goal")
+            pool_note = (f", contact pool at most {pool['pool_fraction_largest']:.1%} used"
+                         if pool is not None else "")
             say(f"window {window_index} (iterations {window_first_iteration}-{iteration} of "
                 f"{args.iterations}, {clock_note}) "
                 f"loss {record['loss']:.4f}, extrinsic reward per copy summed over the window "
-                f"mean {reward.mean():.3f}{coverage_note}{episode_note}, elapsed {elapsed:.1f}s")
+                f"mean {reward.mean():.3f}{coverage_note}{episode_note}{pool_note}, elapsed {elapsed:.1f}s")
             reward_in_window = jnp.zeros((config.n_copies,))
             rint_in_window = jnp.zeros((config.n_copies,))
             window_index += 1
@@ -1031,10 +1180,13 @@ def main() -> None:
     # count them; other families have no such field)
     nan_count = getattr(state.env_state, "nan_count", None)
     nan_episodes = int(np.asarray(nan_count).sum()) if nan_count is not None else None
+    final_pool = checked_pool()
     emit({
         "record": "unit_complete",
         "unit_id": args.unit_id,
         "nan_respawned_episodes": nan_episodes,
+        # the Warp AntMaze's largest use of its shared contact pool over the whole unit
+        **({"physics_pool": final_pool} if final_pool is not None else {}),
         "iterations": args.iterations,
         "windows": window_index,
         "env_steps": args.iterations * steps_per_iteration,

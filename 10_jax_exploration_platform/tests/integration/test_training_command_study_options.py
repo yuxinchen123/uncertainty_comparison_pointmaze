@@ -119,6 +119,13 @@ def test_reward_settings_and_goal_termination():
     # the environments of earlier runs keep their names
     _, _, env = built("--env", "antmaze-umaze")
     assert env.continuing_task and env_spec(env) == "antmaze_umaze_cont700_nonoise@1"
+    assert env.physics == "jax"
+    # the AntMaze physics is an option; the name says so only when it is not MJX's JAX one
+    arguments, _, env = built("--env", "antmaze-umaze", "--physics", "warp", "--reward-setting",
+                              "arrival_plus_one", "--episode-log")
+    assert env.physics == "warp" and env_spec(env, arguments.reward_setting) == (
+        "antmaze_umaze_term700_nonoise_physics-warp_reward-arrival-plus-one@1")
+    assert "AntMaze only" in refused("--physics", "warp")
 
     # refused: an episode that ends at the goal with nothing counting its episodes, a named
     # setting on a shifted reward, and goal termination where there is no goal

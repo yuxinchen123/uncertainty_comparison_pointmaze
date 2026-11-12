@@ -9,7 +9,10 @@ Run on a compute node, never on a login node:
   WARP_CACHE_PATH=<node-local folder> PYTHONNOUSERSITE=1 JAX_PLATFORMS=cpu \
       <platform_jax_warp python> -m pytest -q tests/envs/test_antmaze_warp.py
 """
+import os
+import subprocess
 import sys
+from dataclasses import replace
 from pathlib import Path
 
 import pytest
@@ -23,7 +26,7 @@ import jax  # noqa: E402
 import jax.numpy as jnp  # noqa: E402
 import numpy as np  # noqa: E402
 from exploration_platform.envs.antmaze.am_common import cell_center, preset  # noqa: E402
-from exploration_platform.envs.antmaze.warp_antmaze import WarpAntMaze  # noqa: E402
+from exploration_platform.envs.antmaze.warp_antmaze import WarpAntMaze, prepare_kernel_folder  # noqa: E402
 
 
 def test_reset_shapes_and_spawn():
@@ -39,6 +42,41 @@ def test_reset_shapes_and_spawn():
     assert s.data._impl.efc__force.shape == (6, 160)
     _, obs = env.respawn(s)
     assert obs.shape == (2, 3, 29) and obs.dtype == jnp.float32
+    # the environment's own record of its configuration names the physics that runs
+    assert env.cfg.physics == "warp" and (env.naconmax, env.njmax) == (6 * 48, 160)
+
+
+def test_pool_sizes_come_from_the_configuration():
+    """The shared pool is slots per environment x environments; both sizes are configuration fields."""
+    cfg = replace(preset("umaze"), warp_contact_slots_per_environment=8,
+                  warp_constraint_rows_per_environment=64)
+    env = WarpAntMaze(cfg, 2, 3)
+    s = env.reset()
+    assert (env.naconmax, env.njmax) == (6 * 8, 64)
+    assert s.data._impl.contact__dist.shape == (48,) and s.data._impl.efc__force.shape == (6, 64)
+    # a measurement may still pass its own sizes, which replace the configuration's
+    assert WarpAntMaze(cfg, 2, 3, naconmax=100, njmax=32).naconmax == 100
+
+
+def test_kernel_folder_is_node_local_and_created():
+    """The kernel folder is under WARP_CACHE_PATH when the job sets it; without it, under the
+    node's /localtmp or temporary folder, in the user's own folder, and never in the home folder."""
+    env = WarpAntMaze(preset("umaze"), 1, 1)
+    assert Path(env.kernel_folder).is_dir() and env.kernel_folder == prepare_kernel_folder()
+    if "WARP_CACHE_PATH" in os.environ:
+        assert Path(os.path.realpath(os.environ["WARP_CACHE_PATH"])) in Path(env.kernel_folder).parents
+    # a new process with the variable unset chooses the folder itself and creates it
+    script = ("import sys; sys.path.insert(0, sys.argv[1]);"
+              "from exploration_platform.envs.antmaze.warp_antmaze import prepare_kernel_folder;"
+              "print('KERNEL_FOLDER', prepare_kernel_folder())")
+    environment = {name: value for name, value in os.environ.items() if name != "WARP_CACHE_PATH"}
+    output = subprocess.run([sys.executable, "-c", script, str(BASE / "src")], env=environment,
+                            capture_output=True, text=True, check=True).stdout
+    folder = Path(next(line.split(" ", 1)[1] for line in output.splitlines()
+                       if line.startswith("KERNEL_FOLDER ")))
+    user = os.environ.get("USER") or os.environ["LOGNAME"]
+    assert folder.is_dir() and folder.parent.name == "warp_kernel_cache"
+    assert folder.parent.parent.name == user and Path.home() not in folder.parents
 
 
 def test_step_contract_determinism_and_x64_boundary():
@@ -110,8 +148,9 @@ def test_small_pool_is_reported():
     assert report["dropped"] and max(report["nacon_peak"], report["ncollision_peak"]) > report["naconmax"]
     env = WarpAntMaze(preset("umaze"), 1, 1)
     state = env.reset()._replace(nacon_peak=jnp.asarray(env.naconmax + 1, jnp.int32))
-    with pytest.raises(RuntimeError):
+    with pytest.raises(RuntimeError, match="dropped part of the physics") as stop:
         env.raise_on_overflow(state)
+    assert "warp_contact_slots_per_environment" in str(stop.value)
 
 
 @pytest.mark.parametrize("continuing_task", [True, False])
@@ -138,17 +177,18 @@ def test_trainer_like_rollout_with_resets_and_donated_state():
     assert not result["pool"]["dropped"]
 
 
-def test_non_finite_inputs_are_respawned_except_a_non_finite_quaternion():
-    """Every poisoned coordinate is respawned as in the JAX environment, except the torso quaternion.
+def test_non_finite_inputs_are_respawned():
+    """Every poisoned coordinate is respawned and counted, as in the JAX environment.
 
-    MuJoCo Warp normalises the torso quaternion at the start of the step and turns a quaternion with a
-    NaN into a valid one, so that one case goes on from a valid state instead of being respawned.
+    MuJoCo Warp normalises the torso quaternion at the start of a physics step and turns a quaternion
+    with a NaN into a valid one, so the state after the step is finite. The environment therefore
+    also tests the state it is handed (and the state after each physics step), and that case is
+    respawned like the others.
     """
     result = checks.non_finite_inputs()
     print("non-finite inputs:", result)
+    assert len(result["cases"]) == 12
     for case in result["cases"]:
-        assert case["jax_respawned"]
-        swallowed = case["coordinate"] == "torso quaternion w" and case["value"] == "nan"
-        assert case["warp_respawned"] == (not swallowed), case
+        assert case["jax_respawned"] and case["warp_respawned"], case
     assert result["healthy_environment_respawned"] == {"warp": False, "jax": False}
     assert result["healthy_environment_unchanged"] == {"warp": True, "jax": True}

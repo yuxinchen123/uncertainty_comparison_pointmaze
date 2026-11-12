@@ -113,28 +113,34 @@ def read_checkpoint(path) -> dict:
             "bonus_constants": constants or None, "driver": driver}
 
 
-def check_identity(saved: dict, current: dict) -> None:
+def check_identity(saved: dict, current: dict, environment_defaults: dict = None) -> None:
     """Refuse a checkpoint written by a different unit, naming every entry that differs.
 
-    A trainer field added after the checkpoint was written is absent from its record. Such a
-    field is added with a default that keeps the earlier program, so the saved record is read as
-    holding that default: the checkpoint continues when the current unit holds the default too,
-    and is refused when the current unit has changed the field.
+    A trainer or environment field added after the checkpoint was written is absent from its
+    record. Such a field is added with a default that keeps the earlier program, so the saved
+    record is read as holding that default: the checkpoint continues when the current unit holds
+    the default too, and is refused when the current unit has changed the field.
+    environment_defaults: the default fields of the current unit's environment configuration
+    class; without them a later environment field is refused.
 
     before: saved trainer_config has no "permutation_draw"; current holds "argsort_uniform"
     after:  accepted; with current "sort_packed_keys" it is refused, naming trainer_config
+    before: saved environment_config has no "physics"; current holds "jax"
+    after:  accepted; with current "warp" it is refused, naming environment_config
     """
     from dataclasses import asdict
 
     from ..agents.ppo.config import PPOConfig
 
     current = normalized(current)
-    saved_trainer, current_trainer = saved.get("trainer_config"), current.get("trainer_config")
-    if isinstance(saved_trainer, dict) and isinstance(current_trainer, dict):
-        defaults = normalized(asdict(PPOConfig()))
-        later = {name: defaults[name] for name in current_trainer
-                 if name not in saved_trainer and name in defaults}
-        saved = {**saved, "trainer_config": {**later, **saved_trainer}}
+    defaults = {"trainer_config": normalized(asdict(PPOConfig())),
+                "environment_config": normalized(environment_defaults or {})}
+    for part, part_defaults in defaults.items():
+        saved_part, current_part = saved.get(part), current.get(part)
+        if isinstance(saved_part, dict) and isinstance(current_part, dict):
+            later = {name: part_defaults[name] for name in current_part
+                     if name not in saved_part and name in part_defaults}
+            saved = {**saved, part: {**later, **saved_part}}
     differing = sorted(name for name in set(saved) | set(current)
                        if saved.get(name) != current.get(name))
     if differing:

@@ -8,16 +8,17 @@ algorithms; a bonus that is not chosen contributes no arithmetic to it at all, w
 makes "PPO with no bonus" genuinely cheaper rather than nominally cheaper.
 
 The environment is picked by the TYPE of the configuration object: a PointMaze `EnvConfig`
-builds `JaxPointMaze`, an `AntMazeConfig` builds `JaxAntMaze`. The environment then reports its
-own observation and action widths, its open-cell mask and its cell indexer, so nothing else in
-the trainer knows which family it is running.
+builds `JaxPointMaze`, an `AntMazeConfig` builds `JaxAntMaze`, or `WarpAntMaze` when its `physics`
+field says "warp". The environment then reports its own observation and action widths, its
+open-cell mask and its cell indexer, so nothing else in the trainer knows which family it is
+running.
 """
 import jax
 
 from ..agents.ppo.networks import init_agent_params, init_agent_params_discrete
 from ..agents.ppo.presets import resolve_configuration
 from ..bonuses.registry import make_bonus
-from ..envs.antmaze.am_common import AntMazeConfig
+from ..envs.antmaze.am_common import PHYSICS, AntMazeConfig
 from ..envs.antmaze.mjx_antmaze import JaxAntMaze
 from ..envs.atari_montezuma.jax_montezuma import JaxMontezuma, MontezumaConfig
 from ..envs.pointmaze.jax_pointmaze import JaxPointMaze
@@ -29,6 +30,20 @@ from .train_step import build_iteration, build_prime_step, build_total_loss
 # which environment class a configuration type selects; a new family adds one row
 ENV_CLASSES = {EnvConfig: JaxPointMaze, AntMazeConfig: JaxAntMaze,
                MontezumaConfig: JaxMontezuma}
+
+
+def environment_class(env_cfg):
+    """The environment class a configuration selects: by its type, and for AntMaze by `physics`.
+
+    before: AntMazeConfig(physics="jax") -> JaxAntMaze; AntMazeConfig(physics="warp") -> WarpAntMaze
+    """
+    if isinstance(env_cfg, AntMazeConfig) and env_cfg.physics != "jax":
+        if env_cfg.physics not in PHYSICS:
+            raise ValueError(f"unknown AntMaze physics {env_cfg.physics!r}; choose from {PHYSICS}")
+        # imported only when chosen: every other run starts without MuJoCo Warp, as before
+        from ..envs.antmaze.warp_antmaze import WarpAntMaze
+        return WarpAntMaze
+    return ENV_CLASSES[type(env_cfg)]
 
 
 class Composition:
@@ -49,7 +64,7 @@ class Composition:
         self.sweep = build_sweep(cfg)
 
         # the environment, with the sweep's seed streams: paired groups meet the same environments
-        env_class = ENV_CLASSES[type(self.env_cfg)]
+        env_class = environment_class(self.env_cfg)
         env_options = {}
         if cfg.skip_reset_draws_at_zero_noise:
             if env_class is not JaxPointMaze:
