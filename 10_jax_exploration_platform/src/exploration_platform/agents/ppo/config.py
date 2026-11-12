@@ -90,7 +90,9 @@ class PPOConfig:
                                      # gradient norms, value fit, advantage sizes) and a per-copy
                                      # episode tracker (episodes ended, goal reached, steps inside)
     total_iterations: int = 0        # the run's length in iterations; read only by the schedules
-                                     # below, which need to know where in the run an iteration is
+                                     # below and by a bonus's reward divisor held after a
+                                     # fraction of the run, which need to know where in the run
+                                     # an iteration is
     int_coef_schedule: str = "constant"  # "linear_decay": the intrinsic weight times
                                      # 1 - (k - 1) / total_iterations at iteration k, reaching
                                      # nearly zero at the end, the same shape as the rate anneal

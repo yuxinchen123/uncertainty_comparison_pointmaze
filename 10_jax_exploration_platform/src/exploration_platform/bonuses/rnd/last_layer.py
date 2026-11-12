@@ -16,7 +16,9 @@ change times that state's unit-length features.
   step multiplies the error of its states by 1 - eta. The copy is dropped after the rollout.
 - `scheduled_layer_scores`: the layer is the bonus's own state, kept between rollouts; each step
   moves the squared error e of its states to (1 + e^(-1/a))^(-a), one place further along the
-  schedule (1 + m)^(-a).
+  schedule (1 + m)^(-a). Its rows may also be random Fourier features of the input scaled to
+  unit length, [N, D] with no bias row: features of two inputs a few length scales apart are
+  nearly orthogonal, so a visit to one leaves the other's error where it was.
 
 Arithmetic precision: FLOAT64 for the features after the body, the targets, the layer and the
 fit. The body's forward pass stays float32 like every other network. Two reasons:

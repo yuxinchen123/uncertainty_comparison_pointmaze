@@ -25,3 +25,4 @@ Times are Pacific.
   folder, every other id to the baseline); the earlier files are kept beside them as
   `submitted_jobids_gilbreth.txt.before_ledger_correction_2026-11-12-15-08`. The auto research folder then
   submitted jobs 12346016 to 12346018 for its units.
+- 2026-11-12 15:26 PT: four screen workers asking for an A100 (planned start 2026-11-13 or unknown) cancelled by ledger id, never started; workers for the validation units submitted on RTX 2080 Ti, RTX 4000 Ada and GTX 1080 Ti with a 2-hour limit.

@@ -135,7 +135,11 @@ def test_options_at_their_defaults_change_nothing():
     defaults = {"even_start": False, "reward_divisor": "running_std",
                 "predictor_learning_rate_multiple": 0, "bonus_form": "half_squared_error",
                 "fast_last_layer_step": "0", "scheduled_last_layer_decay": 0.0,
-                "record_bonus_on_maze_grid": "false"}
+                "record_bonus_on_maze_grid": "false",
+                # the options of batch 2
+                "input_clip": "5", "input_statistics": "running", "input_features": "raw",
+                "fourier_feature_count": "256", "fourier_length_scale": 1.0,
+                "scheduled_last_layer_features": "body", "divisor_hold_fraction": 0}
     for style in ("epoch_minibatch", "full_batch"):
         cfg = PPOConfig(**{**SMALL, "update_style": style}, episode_log=True)
         _, _, plain, _ = train(cfg, "rnd_next_state", env_cfg=SHORT_EPISODES)
@@ -467,11 +471,18 @@ def test_saved_units_continue_exactly():
 
 
 def test_one_policy_never_moves_another():
-    """With the two last-layer fits, moving one policy's actor before training leaves every
-    other policy's parameters and bonus state bit-identical."""
-    cfg = PPOConfig(**{**SMALL, "n_copies": 4})
+    """With the two last-layer fits, with random Fourier features (read by both networks, and
+    under the scheduled last layer) and with a divisor held after a part of the run, moving one
+    policy's actor before training leaves every other policy's parameters and bonus state
+    bit-identical."""
+    cfg = PPOConfig(**{**SMALL, "n_copies": 4}, total_iterations=2)
     keep = np.array([0, 1, 3])
-    for options in (dict(fast_last_layer_step=0.3), dict(scheduled_last_layer_decay=0.75)):
+    for options in (dict(fast_last_layer_step=0.3), dict(scheduled_last_layer_decay=0.75),
+                    dict(input_features="random_fourier", fourier_feature_count=32,
+                         fourier_length_scale=0.5),
+                    dict(scheduled_last_layer_decay=0.75, fourier_feature_count=32,
+                         scheduled_last_layer_features="random_fourier"),
+                    dict(reward_divisor="held_after_fraction", divisor_hold_fraction=0.5)):
         finals = []
         for move in (False, True):
             runner = Runner(cfg, bonus=rnd(**options), env_cfg=SHORT_EPISODES)
@@ -492,7 +503,8 @@ def test_one_policy_never_moves_another():
             assert plain[name][keep].tobytes() == moved[name][keep].tobytes(), (options, name)
             differs = differs or plain[name][2].tobytes() != moved[name][2].tobytes()
         assert differs, "the moved policy did not change"
-    print("PASS the last-layer fits keep the policies apart")
+    print("PASS the last-layer fits, the random Fourier features and the held divisor keep the "
+          "policies apart")
 
 
 if __name__ == "__main__":

@@ -10,6 +10,7 @@ Checks that belong to a bonus family rather than to the agent.
 | `test_visit_count_learning_sanity.py` | on a short run of the composed program: a heavily visited state scores below an unvisited one, the mean intrinsic reward falls as the table fills, and the copies keep reaching new cells |
 | `test_rnd_last_layer_fits.py` | the two output-layer fits on hand-made features:<br>the smallest joint change against NumPy's pseudo-inverse,<br>a state seen again in one rollout (fast last layer),<br>one state seen k times follows (1 + k)^(-a) and a state with<br>orthogonal features keeps error 1 (scheduled last layer) |
 | `test_rnd_bonus_options.py` | the options of the distillation bonus (2026-11-12):<br>defaults leave the training state bit-identical, recording on<br>the maze grid changes nothing in training, even start, error<br>length, frozen divisor, no divisor, the predictor's own step<br>size, both last-layer variants in the trainer, saved units<br>continue exactly, one policy never moves another |
+| `test_rnd_input_and_local_feature_options.py` | the options of batch 2 (2026-11-12):<br>the bound of the input clip, input statistics frozen after<br>priming, random Fourier features (inner product against<br>exp(-d^2 / (2 l^2)), draws keyed by seed index and feature)<br>read by both networks or by the scheduled last layer (an<br>input 5 length scales away moves only by the features'<br>overlap), a divisor held after a fraction of the run, saved<br>units continue exactly |
 
 Run one, for example:
 

@@ -1,6 +1,8 @@
 """The training command's bonus options (2026-11-12): `--bonus-options`, the optional
 `[bonus_options]` table of a configuration file, the `unit_start` record's `bonus_options`, the
-maze-grid fields of the window records, and stopping and continuing a unit that uses them.
+maze-grid fields of the window records, and stopping and continuing a unit that uses them. The
+option string of every unit of batch 2 of the PointMaze and AntMaze study is run through the
+command (`BATCH_2_UNITS`).
 
 Run on a compute node: PYTHONNOUSERSITE=1 JAX_PLATFORMS=cpu <platform_jax python> -m pytest <file>
 """
@@ -16,7 +18,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 sys.path.insert(0, str(ROOT / "src"))
 import run_training  # noqa: E402
 from experiment_configuration import read_experiment_configuration  # noqa: E402
-from run_training import bonus_options_of, parse_args  # noqa: E402
+from run_training import bonus_options_of, build_config, parse_args  # noqa: E402
 
 BASE = ["--run-dir", "/tmp/bonus-options-test", "--unit-id", "test"]
 POINTMAZE_EXAMPLE = ROOT / "configs/experiments" / (
@@ -27,6 +29,79 @@ SHORT = ["--unit-id", "unit", "--copies", "2", "--envs-per-copy", "2", "--rollou
          "--iterations", "5", "--window-iterations", "2", "--episode-steps", "7",
          "--update-style", "epoch_minibatch", "--clip-coef", "0.1", "--prime-iterations", "1",
          "--episode-log", "--terminate-at-goal"]
+# the same unit planned for 16 iterations in 4 windows of 4
+SIXTEEN = [*SHORT[:SHORT.index("--iterations")], "--iterations", "16",
+           "--window-iterations", "4", *SHORT[SHORT.index("--episode-steps"):]]
+# every option of the distillation bonus at its default, as a unit's start record holds them
+DEFAULT_RECORD = {
+    "feature_dim": 128, "hidden": 256, "even_start": False, "reward_divisor": "running_std",
+    "predictor_learning_rate_multiple": 0.0, "bonus_form": "half_squared_error",
+    "fast_last_layer_step": 0.0, "scheduled_last_layer_decay": 0.0,
+    "record_bonus_on_maze_grid": False, "input_clip": 5.0, "input_statistics": "running",
+    "input_features": "raw", "fourier_feature_count": 256, "fourier_length_scale": 1.0,
+    "scheduled_last_layer_features": "body", "divisor_hold_fraction": 0.0}
+
+# The 18 units of batch 2 in the order of its ideas table: (name, the unit's --bonus-options,
+# what its start record must hold beside the defaults and the maze-grid record). Random Fourier
+# features bring input statistics frozen after priming and no clip; the scheduled last layer
+# also brings the even start and no divisor.
+GRID = "record_bonus_on_maze_grid=true"
+KEPT = {"input_statistics": "frozen_after_priming"}
+LOCAL_INPUT = {"input_features": "random_fourier", **KEPT, "input_clip": 0.0}
+LOCAL_LAYER = {"scheduled_last_layer_features": "random_fourier", "fourier_feature_count": 512,
+               **KEPT, "input_clip": 0.0, "even_start": True, "reward_divisor": "none"}
+HELD = {"reward_divisor": "held_after_fraction"}
+BATCH_2_UNITS = (
+    ("control", GRID, {}),
+    ("wider input clip, 10", f"input_clip=10,{GRID}", {"input_clip": 10.0}),
+    ("wider input clip, 20", f"input_clip=20,{GRID}", {"input_clip": 20.0}),
+    ("wider input clip, no clip", f"input_clip=0,{GRID}", {"input_clip": 0.0}),
+    ("input statistics kept from the random-action rollouts, no clip",
+     f"input_statistics=frozen_after_priming,input_clip=0,{GRID}", {**KEPT, "input_clip": 0.0}),
+    ("input statistics kept from the random-action rollouts, clip 20",
+     f"input_statistics=frozen_after_priming,input_clip=20,{GRID}",
+     {**KEPT, "input_clip": 20.0}),
+    ("slower predictor, 0.0625 x 1e-4", f"predictor_learning_rate_multiple=0.0625,{GRID}",
+     {"predictor_learning_rate_multiple": 0.0625}),
+    ("slower predictor, 0.125 x 1e-4", f"predictor_learning_rate_multiple=0.125,{GRID}",
+     {"predictor_learning_rate_multiple": 0.125}),
+    ("local features as the input of RND, length 0.5",
+     f"input_features=random_fourier,fourier_feature_count=256,fourier_length_scale=0.5,{GRID}",
+     {**LOCAL_INPUT, "fourier_length_scale": 0.5}),
+    ("local features as the input of RND, length 1",
+     f"input_features=random_fourier,fourier_feature_count=256,fourier_length_scale=1,{GRID}",
+     LOCAL_INPUT),
+    ("local features as the input of RND, length 2",
+     f"input_features=random_fourier,fourier_feature_count=256,fourier_length_scale=2,{GRID}",
+     {**LOCAL_INPUT, "fourier_length_scale": 2.0}),
+    ("scheduled last layer on local features, decay 0.5, length 0.5",
+     "scheduled_last_layer_decay=0.5,scheduled_last_layer_features=random_fourier,"
+     f"fourier_feature_count=512,fourier_length_scale=0.5,{GRID}",
+     {**LOCAL_LAYER, "scheduled_last_layer_decay": 0.5, "fourier_length_scale": 0.5}),
+    ("scheduled last layer on local features, decay 0.5, length 1",
+     "scheduled_last_layer_decay=0.5,scheduled_last_layer_features=random_fourier,"
+     f"fourier_feature_count=512,fourier_length_scale=1,{GRID}",
+     {**LOCAL_LAYER, "scheduled_last_layer_decay": 0.5}),
+    ("scheduled last layer on local features, decay 0.5, length 2",
+     "scheduled_last_layer_decay=0.5,scheduled_last_layer_features=random_fourier,"
+     f"fourier_feature_count=512,fourier_length_scale=2,{GRID}",
+     {**LOCAL_LAYER, "scheduled_last_layer_decay": 0.5, "fourier_length_scale": 2.0}),
+    ("scheduled last layer on local features, decay 1, length 1",
+     "scheduled_last_layer_decay=1,scheduled_last_layer_features=random_fourier,"
+     f"fourier_feature_count=512,fourier_length_scale=1,{GRID}",
+     {**LOCAL_LAYER, "scheduled_last_layer_decay": 1.0}),
+    ("divisor held after 1/16 of the run",
+     f"reward_divisor=held_after_fraction,divisor_hold_fraction=0.0625,{GRID}",
+     {**HELD, "divisor_hold_fraction": 0.0625}),
+    ("divisor held after 1/8 of the run",
+     f"reward_divisor=held_after_fraction,divisor_hold_fraction=0.125,{GRID}",
+     {**HELD, "divisor_hold_fraction": 0.125}),
+    ("divisor held after 1/4 of the run",
+     f"reward_divisor=held_after_fraction,divisor_hold_fraction=0.25,{GRID}",
+     {**HELD, "divisor_hold_fraction": 0.25}),
+)
+# fields of a window record that differ between two runs of one unit
+TIMING = {"written_at", "seconds_since_first_iteration"}
 
 
 def run_command(*options) -> None:
@@ -121,10 +196,8 @@ def test_unit_records_hold_the_options_and_the_maze_grid():
         start = expected[1]
         assert start["record"] == "unit_start" and start["bonus"] == "rnd_next_state"
         assert start["bonus_options"] == {
-            "feature_dim": 128, "hidden": 256, "even_start": True, "reward_divisor": "none",
-            "predictor_learning_rate_multiple": 0.0, "bonus_form": "half_squared_error",
-            "fast_last_layer_step": 0.0, "scheduled_last_layer_decay": 0.5,
-            "record_bonus_on_maze_grid": True}
+            **DEFAULT_RECORD, "even_start": True, "reward_divisor": "none",
+            "scheduled_last_layer_decay": 0.5, "record_bonus_on_maze_grid": True}
         cells = start["maze_grid_probe_cells"]
         assert len(cells) == OPEN_CELLS and [7, 1] in cells and [1, 10] in cells
         assert "scheduled_last_layer_decay: 0.5" in (whole / "config_resolved.yaml").read_text()
@@ -196,7 +269,123 @@ def test_a_unit_without_options_is_recorded_as_before_plus_the_option_record():
     print("PASS a unit without options: defaults recorded, no maze-grid field, identity as before")
 
 
+def windows_of(records: list) -> list:
+    """A unit's window records without the fields that differ between two runs of it."""
+    return [{name: value for name, value in record.items() if name not in TIMING}
+            for record in records if record["record"] == "episode_window"]
+
+
+def stopped_and_continued(run_dir: Path, options: list) -> tuple:
+    """Run a unit that its time limit stops once, then the same command again to its end;
+    returns (the names of the arrays in the checkpoint of the stop, the unit's records)."""
+    try:
+        run_command("--run-dir", str(run_dir), *options, "--time-limit-seconds", "1e-9")
+        raise AssertionError("the time limit did not stop the unit")
+    except SystemExit as stop:
+        assert "run the same command again" in str(stop)
+    with np.load(run_dir / "checkpoints" / "unit.npz") as saved:
+        names = list(saved.files)
+    run_command("--run-dir", str(run_dir), *options, "--checkpoint-seconds", "1e-9")
+    return names, records_of(run_dir, "unit")
+
+
+def test_the_planned_length_reaches_the_trainer_with_a_held_divisor():
+    """A divisor held after a fraction of the run counts the iterations the learning rate
+    anneals over; a unit without it carries no planned length, as before."""
+    held = "reward_divisor=held_after_fraction,divisor_hold_fraction=0.25"
+    assert build_config(parse_args([*BASE, "--iterations", "16"])).total_iterations == 0
+    assert build_config(parse_args([*BASE, "--iterations", "16",
+                                    "--bonus-options", held])).total_iterations == 16
+    assert build_config(parse_args([*BASE, "--iterations", "16", "--lr-anneal-iterations", "64",
+                                    "--bonus-options", held])).total_iterations == 64
+    # a configuration file: the 2,000 iterations its learning rate anneals over
+    from_file = [*BASE, "--configuration-file", str(POINTMAZE_EXAMPLE)]
+    assert build_config(parse_args(from_file)).total_iterations == 0
+    assert build_config(parse_args([*from_file, "--bonus-options", held])).total_iterations == 2000
+    # the intrinsic weight's schedule counts the run's own iterations: with both, one length
+    scheduled = ["--intrinsic-weight-schedule", "linear_decay"]
+    assert build_config(parse_args([*BASE, "--iterations", "16", *scheduled,
+                                    "--bonus-options", held])).total_iterations == 16
+    try:
+        build_config(parse_args([*BASE, "--iterations", "16", "--lr-anneal-iterations", "64",
+                                 *scheduled, "--bonus-options", held]))
+        raise AssertionError("two planned lengths were accepted")
+    except ValueError as error:
+        assert "one planned length" in str(error)
+    print("PASS the planned length reaches the trainer with a held divisor, and only then")
+
+
+def test_the_command_runs_every_unit_of_batch_2():
+    """Each of the 18 option strings of batch 2 is accepted by the training command; the unit's
+    start record holds the options with what they imply; the maze-grid record is written. A
+    held divisor shows one value from its hold on, and the unit held after a quarter of the run
+    equals the control up to there. Units with random Fourier features and with a held divisor,
+    stopped once and continued, equal the same units run in one go."""
+    assert len(BATCH_2_UNITS) == 18 and len({options for _, options, _ in BATCH_2_UNITS}) == 18
+    with tempfile.TemporaryDirectory() as directory:
+        windows = {}
+        for number, (name, options, changes) in enumerate(BATCH_2_UNITS):
+            run_dir = Path(directory) / f"unit_{number}"
+            run_command("--run-dir", str(run_dir), *SIXTEEN, "--bonus-options", options)
+            records = records_of(run_dir, "unit")
+            start = next(record for record in records if record["record"] == "unit_start")
+            assert start["bonus_options"] == {
+                **DEFAULT_RECORD, "record_bonus_on_maze_grid": True, **changes}, name
+            assert len(start["maze_grid_probe_cells"]) == OPEN_CELLS, name
+
+            # the bonus on the maze grid: before training, and in each of the four windows
+            at_start = [record for record in records
+                        if record["record"] == "maze_grid_at_start"]
+            windows[name] = windows_of(records)
+            assert len(at_start) == 1 and len(windows[name]) == 4, name
+            for record in (*at_start, *windows[name]):
+                bonus = np.asarray(record["probe_bonus_per_copy"])
+                assert bonus.shape == (2, OPEN_CELLS) and np.isfinite(bonus).all(), name
+                assert (bonus > 0).all(), name
+                divisor = np.asarray(record["intrinsic_reward_divisor_per_copy"])
+                assert divisor.shape == (2,) and (divisor > 0).all(), name
+            if "scheduled_last_layer_decay" in changes:
+                # the schedule starts at a squared error of 1 at every probe
+                np.testing.assert_allclose(at_start[0]["probe_bonus_per_copy"], 1.0, rtol=1e-5)
+
+        # the divisor: moving from window to window in the control; one value in every window
+        # of a unit that holds it from iteration number 1, 2 or 4 (the first window ends there)
+        divisors = lambda name: [window["intrinsic_reward_divisor_per_copy"]
+                                 for window in windows[name]]
+        control = divisors("control")
+        assert all(control[index] != control[index + 1] for index in range(3))
+        for name in ("divisor held after 1/16 of the run", "divisor held after 1/8 of the run",
+                     "divisor held after 1/4 of the run"):
+            assert all(one == divisors(name)[0] for one in divisors(name)), name
+        # held from iteration number 4: the first window (iterations 0 to 3) is the control's
+        quarter = windows["divisor held after 1/4 of the run"]
+        assert quarter[0] == windows["control"][0]
+        assert quarter[1] != windows["control"][1]
+        assert divisors("divisor held after 1/16 of the run")[0] != control[0]
+
+        # stopped once and continued: the checkpoint holds the frequencies and phases (and no
+        # predictor body), and both units end with the records of the unit run in one go
+        for number, (name, expected_names) in enumerate((
+                ("scheduled last layer on local features, decay 1, length 1",
+                 ("bonus_constant/fourier/frequencies", "bonus_constant/fourier/phases",
+                  "bonus_constant/target/W0")),
+                ("local features as the input of RND, length 0.5",
+                 ("bonus_constant/fourier/frequencies", "bonus_constant/fourier/phases",
+                  "bonus_constant/target/W0")),
+                ("divisor held after 1/4 of the run", ("bonus_constant/target/W0",)))):
+            options = next(options for unit, options, _ in BATCH_2_UNITS if unit == name)
+            names, records = stopped_and_continued(
+                Path(directory) / f"parts_{number}", [*SIXTEEN, "--bonus-options", options])
+            assert all(expected in names for expected in expected_names), (name, names)
+            assert not any(one.startswith("bonus_constant/predictor_body/") for one in names)
+            assert windows_of(records) == windows[name], name
+    print("PASS the training command runs the 18 units of batch 2:\n  "
+          + "\n  ".join(f"{name}: {options}" for name, options, _ in BATCH_2_UNITS))
+
+
 if __name__ == "__main__":
     test_options_from_the_command_line_and_from_a_file()
     test_unit_records_hold_the_options_and_the_maze_grid()
     test_a_unit_without_options_is_recorded_as_before_plus_the_option_record()
+    test_the_planned_length_reaches_the_trainer_with_a_held_divisor()
+    test_the_command_runs_every_unit_of_batch_2()

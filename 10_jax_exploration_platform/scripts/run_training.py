@@ -47,7 +47,9 @@ stops with a message when MuJoCo Warp dropped a contact or a constraint row.
 A bonus family's own options (the fields of its configuration class, `bonuses/rnd/config.py` for
 random network distillation) are changed with `--bonus-options name=value,...` or a configuration
 file's optional `[bonus_options]` table; they hold for the whole process, never per copy. The
-`unit_start` record holds every option with its value under `bonus_options`. With
+`unit_start` record holds every option with its value under `bonus_options`. A reward divisor
+held after a fraction of the run (`reward_divisor=held_after_fraction`) counts that fraction of
+the iterations the learning rate anneals over (`--lr-anneal-iterations`, or `--iterations`). With
 `record_bonus_on_maze_grid=true` each window record also carries, per copy, the bonus at one probe
 observation per open maze cell, the divisor of the intrinsic reward, and the window's visits to
 each cell (`training/maze_grid.py`); one `maze_grid_at_start` record holds the same fields before
@@ -535,6 +537,30 @@ def cross_product_cells(lists: dict, reward_pairs: tuple):
     return names, tuple(sum(combination, ()) for combination in product(*axes))
 
 
+def planned_iterations(args: argparse.Namespace) -> int:
+    """The planned length of the run that the trainer configuration carries; 0 when nothing in
+    the trainer reads it.
+
+    The intrinsic weight's schedule reads this run's own length. A reward divisor held after a
+    fraction of the run reads the length the learning-rate anneal runs over, so a unit holds at
+    the same iteration however often it is stopped and continued.
+    before: --iterations 16384, --bonus-options reward_divisor=held_after_fraction,... ; after: 16384
+    before: --iterations 16384, neither a weight schedule nor a held divisor         ; after: 0
+    """
+    from exploration_platform.bonuses.registry import family_configuration
+    family = family_configuration(args.bonus, bonus_options_of(args))
+    held_divisor = getattr(family, "reward_divisor", None) == "held_after_fraction"
+    weight_schedule = args.intrinsic_weight_schedule != "constant"
+    anneal_iterations = args.lr_anneal_iterations or args.iterations
+    if not held_divisor:
+        return args.iterations if weight_schedule else 0
+    if weight_schedule and anneal_iterations != args.iterations:
+        raise ValueError("the intrinsic weight's schedule runs over --iterations and the held "
+                         "reward divisor over --lr-anneal-iterations; the trainer carries one "
+                         "planned length, so the two must be equal when both are used")
+    return anneal_iterations
+
+
 def _build_config_values(args: argparse.Namespace):
     """The trainer configuration this unit runs, sweeping the knobs whose lists are non-empty."""
     from exploration_platform.agents.ppo.config import PPOConfig
@@ -575,8 +601,7 @@ def _build_config_values(args: argparse.Namespace):
                   max_grad_norm=args.max_grad_norm, update_epochs=args.update_epochs,
                   num_minibatches=args.num_minibatches, diagnostics=args.diagnostics,
                   int_coef_schedule=args.intrinsic_weight_schedule,
-                  total_iterations=(args.iterations
-                                    if args.intrinsic_weight_schedule != "constant" else 0),
+                  total_iterations=planned_iterations(args),
                   success_gate_rate=args.success_gate_rate,
                   normalize_ext_reward=args.normalize_extrinsic_reward,
                   clip_per_network=args.clip_per_network, logstd_floor=args.logstd_floor,
@@ -1129,6 +1154,14 @@ def main() -> None:
                     "length_sum_per_copy": window_log["length_sum"].tolist(),
                     "steps_to_goal_sum_per_copy": window_log["steps_to_goal_sum"].tolist(),
                     "first_goal_step_per_copy": window_log["first_goal_step"].tolist()})
+            fault_window = getattr(trainer.env, "fault_window", None)
+            if fault_window is not None:
+                # AntMaze only: the window's steps with the torso in the ceiling zone and its
+                # largest torso speed, per copy, read from the environment state and set back to
+                # zero there (envs/antmaze/faults.py)
+                fault_record, env_state = fault_window(state.env_state)
+                record.update(fault_record)
+                state = state._replace(env_state=env_state)
             if maze_probe is not None:
                 # the bonus at each open cell's probe as the window ends, the divisor, and the
                 # window's visits to each cell, per copy; the visit counts go back to zero

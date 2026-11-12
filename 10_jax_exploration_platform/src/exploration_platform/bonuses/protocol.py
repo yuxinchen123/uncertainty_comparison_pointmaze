@@ -36,7 +36,7 @@ to [C, T*N], or `None` when the rollout did not score anything and the family mu
 That is the whole difference between the two rollout shapes, and it is decided once, in Python,
 when the program is built.
 
-Four further fields say how the trainer treats the family. Their defaults are what the trainer
+Five further fields say how the trainer treats the family. Their defaults are what the trainer
 always did, so a family that sets none of them composes into the program it always did:
 
 - `score_alone` — `(params, state, obs [C, M, obs]) -> [C, M]`: the bonus each given observation
@@ -47,7 +47,11 @@ always did, so a family that sets none of them composes into the program it alwa
 - `reward_divisor` — what the trainer divides the bonus by before it forms the intrinsic
   advantage. "running_std": the running standard deviation of the bonus's discounted sum, moved
   on by every rollout. "frozen_after_priming": the same statistic gathered over the priming
-  rollouts only and never moved afterwards. "none": no division.
+  rollouts only and never moved afterwards. "held_after_fraction": moved on by every rollout
+  of the iterations numbered (from 0) below `divisor_hold_fraction` x the configuration's
+  `total_iterations`, and not moved from that iteration on. "none": no division.
+- `divisor_hold_fraction` — the fraction read with the "held_after_fraction" divisor; `None`
+  with every other divisor.
 - `own_learning_rate` — `None`: the family's parameters are stepped by the agent's Adam, at the
   agent's rate, inside the joint gradient clip. A number: they are stepped at this constant
   rate (never annealed) with their own moments, and their gradient is left out of the clip.
@@ -71,5 +75,6 @@ class BonusFunctions:
     constants: Optional[dict] = None
     score_alone: Optional[Callable] = None
     reward_divisor: str = "running_std"
+    divisor_hold_fraction: Optional[float] = None
     own_learning_rate: Optional[float] = None
     record_on_maze_grid: bool = False

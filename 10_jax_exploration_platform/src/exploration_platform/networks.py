@@ -12,8 +12,10 @@ from . import F32
 # Stable integer ids for the keyed init (the reproducible-randomness rule: one named quantity,
 # one key). These five are FROZEN — every number 09_parallelization measured depends on them, and
 # the golden-parity gate compares against those numbers. A new network takes the next free id and
-# never reuses one of these.
-NET_IDS = {"actor": 1, "critic": 2, "critic_heads": 3, "rnd_target": 4, "rnd_predictor": 5}
+# never reuses one of these. Ids 6 and 7 (2026-11-12) are the two streams of the distillation
+# bonus's random Fourier features; no draw of the first five depends on them.
+NET_IDS = {"actor": 1, "critic": 2, "critic_heads": 3, "rnd_target": 4, "rnd_predictor": 5,
+           "rnd_fourier_frequencies": 6, "rnd_fourier_phases": 7}
 
 
 def orthogonal(key, rows, cols, gain):

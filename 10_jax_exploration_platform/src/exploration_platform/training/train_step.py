@@ -106,7 +106,7 @@ def intrinsic_sum_matrices(gamma_int: float, gae_lambda: float, steps: int):
             jnp.asarray(advantage_matrix, F32))
 
 
-REWARD_DIVISORS = ("running_std", "frozen_after_priming", "none")
+REWARD_DIVISORS = ("running_std", "frozen_after_priming", "held_after_fraction", "none")
 
 
 def filtered_intrinsic_sum(gamma_int: float, carried, rint_buf, unroll: int = 1):
@@ -127,8 +127,9 @@ def filtered_intrinsic_sum(gamma_int: float, carried, rint_buf, unroll: int = 1)
 def intrinsic_divisor(reward_divisor: str, int_rms, n_copies: int):
     """What each copy's intrinsic reward is divided by, [C] float32.
 
-    "running_std" and "frozen_after_priming" read the standard deviation of the reward's
-    discounted sum from the statistics as they stand; "none" is 1.
+    "running_std", "frozen_after_priming" and "held_after_fraction" read the standard deviation
+    of the reward's discounted sum from the statistics as they stand (the held value once the
+    statistics are held); "none" is 1.
     """
     if reward_divisor == "none":
         return jnp.ones((n_copies,), F32)
@@ -159,6 +160,13 @@ def build_iteration(cfg, env, bonus, sweep, layout, capture_batch: bool = False)
     if reward_divisor not in REWARD_DIVISORS:
         raise ValueError(f"unknown reward divisor {reward_divisor!r} of the {bonus.name} bonus; "
                          f"choose from {list(REWARD_DIVISORS)}")
+    if reward_divisor == "held_after_fraction":
+        # the first iteration, numbered from 0, whose rollout no longer moves the divisor
+        # before: fraction 1/16 of 16,384 planned iterations ; after: 1,024
+        if cfg.total_iterations <= 0:
+            raise ValueError("a reward divisor held after a fraction of the run needs "
+                             "total_iterations, the run's planned number of iterations")
+        hold_iteration = int(np.ceil(bonus.divisor_hold_fraction * cfg.total_iterations))
 
     # the reward-decline study's switches, all decided here while the program is built
     if cfg.int_coef_schedule not in ("constant", "linear_decay"):
@@ -383,7 +391,7 @@ def build_iteration(cfg, env, bonus, sweep, layout, capture_batch: bool = False)
         rint_buf = unflat(rint_flat)
 
         # intrinsic filter forward in time, then per-copy normalization (spec 5.2)
-        if reward_divisor == "running_std":
+        if reward_divisor in ("running_std", "held_after_fraction"):
             if cfg.intrinsic_sums_by_matrix_product:
                 # before: rewards [T, C, N] and the filter value carried in, [C, N]
                 # after:  filt[t] = sum over s <= t of gamma^(t-s) r[s]
@@ -398,6 +406,16 @@ def build_iteration(cfg, env, bonus, sweep, layout, capture_batch: bool = False)
             int_rms = rms_update(state.agent_state["int_rms"],
                                  filt.transpose(1, 0, 2).reshape(C, T * N, 1),
                                  cfg.batch_stats_f32)
+            if reward_divisor == "held_after_fraction":
+                # state.step counts the iterations finished before this one. Below the hold
+                # iteration the values just computed stand, as with the running divisor; from
+                # it on the statistics and the filter value keep what the state holds
+                # before: state.step 1023, hold at 1024 ; after: the statistics moved on
+                # before: state.step 1024, hold at 1024 ; after: the statistics of step 1023
+                held = state.step >= hold_iteration
+                int_filter = jnp.where(held, state.agent_state["int_filter"], int_filter)
+                int_rms = jax.tree.map(lambda kept, moved: jnp.where(held, kept, moved),
+                                       state.agent_state["int_rms"], int_rms)
             int_std = jnp.sqrt(int_rms.var + 1e-8).astype(F32).reshape(1, C, 1)
             rint_hat = rint_buf / int_std
         else:
