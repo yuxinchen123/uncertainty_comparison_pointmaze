@@ -93,6 +93,24 @@ def goal_windows(start, first_goal_windows, episodes=10, goal_steps=40):
     return windows
 
 
+def curve_windows(start, curves, episodes=20):
+    """Every window of a unit whose policy c has, in window w, the share curves[c][w] of its episodes at the goal.
+
+    before: curves [[0, 1.0, 0.6]] with 20 episodes per window; after: three windows with 0, 20 and 12 arrivals.
+    Reward 1 on arrival only: the return sum of a window is its number of arrivals.
+    """
+    limit = start['environment_config']['max_episode_steps']
+    windows = []
+    for index in range(len(curves[0])):
+        arrivals = [round(curve[index] * episodes) for curve in curves]
+        windows.append(window_record(
+            start, index, episodes=[episodes] * len(curves), arrivals=arrivals, return_sum=arrivals,
+            environment_return_sum=arrivals, length_sum=[episodes * limit] * len(curves),
+            steps_to_goal_sum=[40 * arrived for arrived in arrivals],
+            first_goal_step=[-1] * len(curves), coverage=[1.0] * len(curves)))
+    return windows
+
+
 def write_shard(run_dir, unit_records, complete=True):
     """Write one unit's records as a shard of the run folder; returns the shard's path."""
     start = next(record for record in unit_records if record['record'] == 'unit_start')

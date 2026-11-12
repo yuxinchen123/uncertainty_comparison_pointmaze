@@ -46,6 +46,36 @@ def test_best_environments_per_policy_is_the_width_of_the_best_configuration():
     assert width == 16 and best is groups[3]
 
 
+def rising(first_window, windows, weight):
+    """A two-seed configuration whose curve is 0 before window `first_window` (from 0) and 1 from it on."""
+    return configuration([0.0] * first_window + [1.0] * (windows - first_window), weight)
+
+
+def test_budget_rule_doubles_the_largest_step_and_rounds_up_to_a_power_of_two():
+    """Runs of 4,000 steps: the three best reach 95% at steps 200, 300 and 400, so the budget is 1,024."""
+    groups = [rising(0, 40, 1.0), rising(1, 40, 2.0), rising(2, 40, 4.0), rising(20, 40, 8.0)]
+    proposal = compare.propose_budget(groups, 4000)
+    # The range of 200 steps holds two windows; the configuration that rises at window 21 is not among the three.
+    assert [(group, step) for group, step in proposal['configurations']] == [
+        (groups[0], 200), (groups[1], 300), (groups[2], 400)]
+    assert (proposal['largest'], proposal['rounded'], proposal['budget']) == (400, 1024, 1024)
+    assert proposal['capped'] is False and proposal['never'] == []
+
+
+def test_budget_rule_is_capped_at_the_run_and_says_when_a_configuration_never_arrives():
+    """A budget above the run's length is cut to it; a configuration at the never-reached return counts as the run."""
+    groups = [rising(0, 10, 1.0), rising(1, 10, 2.0), rising(6, 10, 4.0)]
+    proposal = compare.propose_budget(groups, 1000)
+    assert [step for _, step in proposal['configurations']] == [100, 200, 700]
+    assert (proposal['largest'], proposal['rounded'], proposal['budget'], proposal['capped']) == (700, 2048, 1000, True)
+    # Twice 256 would stay 512; here twice 300 is 600 and rounds up to 1,024, still above the run of 1,000 steps.
+    assert compare.propose_budget([rising(2, 10, 1.0)], 1000)['rounded'] == 1024
+    flat = configuration([0.0] * 10, 8.0)
+    proposal = compare.propose_budget([groups[0], groups[1], flat], 1000)
+    assert proposal['never'] == [flat] and proposal['configurations'][2] == (flat, None)
+    assert (proposal['largest'], proposal['budget'], proposal['capped']) == (1000, 1000, True)
+
+
 def test_seed_for_is_the_low_32_bits_of_the_sha256_of_the_joined_parts():
     """The seed depends only on the names, so adding another quantity never moves an existing one."""
     expected = int(hashlib.sha256(b'maze_campaign::W::30000').hexdigest(), 16) & 0xFFFFFFFF

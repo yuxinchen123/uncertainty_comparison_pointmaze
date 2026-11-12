@@ -75,6 +75,15 @@ def test_generate_report(request):
                       f"L {report.with_error(row['final_level'], row['final_level_error'])} | "
                       f"policies that reached the goal {100 * row['reached_goal_share']:.0f}% | seeds {row['seeds']}")
 
+    # What the budget rule proposes from each finished sweep of the baseline.
+    for proposal in built.budgets:
+        reached = '; '.join(f"{report.row_name(group, report.MAIN_SETTINGS, False, False)}: "
+                            f"{'never' if step is None else format(step, ',')}"
+                            for group, step in proposal['configurations'])
+        print(f"budget rule, {proposal['case']}: first steps at 95% of the final level: {reached} | proposed budget "
+              f"{proposal['budget']:,} of {proposal['run_steps']:,} run steps"
+              + (' (capped at the run\'s length)' if proposal['capped'] else ''))
+
     check_dir = request.config.getoption('--latex-check-dir')
     if check_dir:
         overfull = compile_results(run_dir, Path(check_dir).resolve())

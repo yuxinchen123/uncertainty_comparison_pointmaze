@@ -128,7 +128,8 @@ def smoothed_curve(grid, curve, width):
     """A step curve averaged over the `width` steps that end at each of its steps from `width` on: steps, values."""
     # before: window ends [100, 200, 300, 400] with values [0, 1, 1, 0], width 200
     # after:  steps [200, 300, 400], values [0.5, 1.0, 0.5]; no value before step 200, where the range is not full.
-    ends = grid[grid >= width]
+    # The small allowance keeps a step that equals the width when the width was computed as a share of a budget.
+    ends = grid[grid >= width * (1 - 1e-12)]
     values = np.asarray([steps_inside(grid, end - width, end) @ curve / width for end in ends])
     return ends, values
 
@@ -146,6 +147,13 @@ def steps_to_final_level_share(policies, run_steps, share=BUDGET_LEVEL_SHARE, sm
     ends, values = smoothed_curve(grid, curve, smoothing * run_steps)
     reached = np.flatnonzero(values - floor >= share * (level - floor))
     return int(ends[reached[0]]) if len(reached) else None
+
+
+def earliest_smoothed_step(policies, run_steps, smoothing=BUDGET_SMOOTHING_SHARE):
+    """The first logged step with a full smoothing range before it: the budget rule cannot read a rise earlier."""
+    # before: windows of 262,144 steps in a run of 50,331,648 (the range is 2,516,582 steps); after: 2,621,440.
+    grid, curve, _ = mean_curve(policies, run_steps)
+    return int(smoothed_curve(grid, curve, smoothing * run_steps)[0][0])
 
 
 def standard_error(values):

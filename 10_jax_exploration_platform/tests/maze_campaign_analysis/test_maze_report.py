@@ -6,7 +6,7 @@ import shutil
 
 import pytest
 
-from maze_record_examples import goal_windows, start_record, write_shard
+from maze_record_examples import curve_windows, goal_windows, start_record, write_shard
 from maze_campaign.analysis import contents, records, report
 
 ENVIRONMENTS = (('pointmaze', 'medium', 400), ('pointmaze', 'large', 400), ('antmaze', 'umaze', 700),
@@ -55,7 +55,7 @@ def test_report_on_a_made_up_study(tmp_path, request):
     write_study(run)
     result = report.generate(run)
     assert list(result['sections']) == [
-        'measures', 'records-read', 'development-sweeps', 'training-curves',
+        'measures', 'records-read', 'development-sweeps', 'budget', 'training-curves',
         'comparison-with-the-baseline-on-the-confirmation-seeds', 'final-level-against-the-training-length',
         'decline-check']
     assert set(result['sections'].values()) == {'unread'}
@@ -72,8 +72,20 @@ def test_report_on_a_made_up_study(tmp_path, request):
     assert rows[1].startswith('| intrinsic weight 4 | <u>0.719</u> ± 0.031 | **1.000** ± 0.000 | ')
     assert rows[2].startswith('| intrinsic weight 0.25 | 0.125 ± 0.072 | <u>0.500</u> ± 0.289 | ') and rows[2].endswith('| 4 |')
     assert '3 configurations with 4 seeds each, compared at 800 environment steps per policy.' in sweep
-    assert 'Chosen (highest $W$, ties by $L$): **intrinsic weight 1, learning rate 0.0001, entropy coefficient 0.001**.\n' in sweep
+    assert ('Chosen (highest $W$, ties by $L$): **intrinsic weight 1, learning rate 0.0001, entropy coefficient '
+            '0.001**. Place in the sweep: intrinsic weight 1 is inside its 3 swept values.\n') in sweep
     assert 'edge rule' not in sweep and '**Unfinished runs:**' not in text
+
+    # Budget rule, same case: the three weights reach 95% of their final level at steps 300, 400 and 700 of 800,
+    # so twice the largest rounds up to 2,048 and the cap at the run's length applies.
+    budget = text.split('## Budget')[1].split('\n## ')[0].split('### PointMaze Medium, reward 1 on arrival\n')[1].split('###')[0]
+    assert '| intrinsic weight 1 | 0.812 ± 0.036 | 1.000 | 0.950 | 300 |' in budget
+    assert '| intrinsic weight 4 | 0.719 ± 0.031 | 1.000 | 0.950 | 400 |' in budget
+    assert '| intrinsic weight 0.25 | 0.125 ± 0.072 | 0.500 | 0.475 | 700 |' in budget
+    assert ("Proposed budget: **800 steps per policy**, the run's own length. Twice the largest step count is 1,400, "
+            'which rounds up to 2,048, above the 800 steps of the run, so the cap applies.') in budget
+    assert 'the measures at the budget are those of the sweep table' in budget and 'recomputed' not in budget
+    assert [proposal['budget'] for proposal in result['report'].budgets] == [800] * 10
 
     # Comparison, same case: W is 0.8125 for the method and 0.5625 for RND; every seed's L is 1 for both.
     comparison = text.split('## Comparison with the baseline on the confirmation seeds')[1].split('\n## ')[0]
@@ -102,7 +114,12 @@ def test_report_on_a_made_up_study(tmp_path, request):
     assert '| CleanRL PPO-RND | 0.000 | 0.500 | 1.000 | 1.000 |' in lengths
     assert '| even start | 0.500; +0.500 [' in lengths
     assert '- **even start:** not behind the baseline in $L$ at any of the 4 lengths compared.' in lengths
-    assert 'Checked: 30 chosen configurations (' in text and 'None is below 90%.' in text
+    # No curve of this study falls: every chosen configuration has both ratios at 100% and no LaTeX decline table.
+    decline = text.split('## Decline check')[1]
+    assert ('both ratios of each of the 30 chosen configurations (the choice of every development sweep and every '
+            'confirmation row): 0 below 90% of the smoothed peak, 0 below 90% of the highest single window only.') in decline
+    assert decline.count('| 100.0% |') == 60 and decline.count('| no decline |') == 30
+    assert 'tab:maze-decline-check' not in (run / 'analysis/results.tex').read_text()
 
     # Files: the LaTeX tables, the figures as PNG and PDF, and the page with colours.
     tex = (run / 'analysis/results.tex').read_text()
@@ -119,6 +136,112 @@ def test_report_on_a_made_up_study(tmp_path, request):
     assert set(report.generate(run)['sections'].values()) == {'read'}
 
 
+def test_budget_section_recomputes_every_configuration_at_a_budget_below_the_run(tmp_path):
+    """Runs of 3,200 steps whose three weights reach 95% at steps 300, 400 and 600: the budget is 2,048 steps."""
+    sweep = start_record('sweep', iterations=32, cells=((1e-4, 1.0), (1e-4, 4.0), (1e-4, 16.0)))
+    write_shard(tmp_path, [sweep] + goal_windows(sweep, [1, 1, 2, 2, 4, 4]))
+    built = report.generate(tmp_path)['report']
+    section = (tmp_path / 'analysis/analysis.md').read_text().split('## Budget')[1].split('\n## ')[0]
+    # The smoothing range of 160 steps is full of the level 1 one window after the rise.
+    assert '| intrinsic weight 1 | 0.969 ± 0.000 | 1.000 | 0.950 | 300 |' in section
+    assert '| intrinsic weight 16 | 0.875 ± 0.000 | 1.000 | 0.950 | 600 |' in section
+    assert ('Proposed budget: **2,048 steps per policy**: twice the largest step count is 1,200, rounded up to a '
+            'power of two.') in section
+    assert 'recomputed at 2,048 steps and sorted by $W$' in section and 'cap applies' not in section
+    # At 2,048 steps the weight 1 has W = 1,948 / 2,048 and the weight 4 has 1,848 / 2,048.
+    assert '| intrinsic weight 1 | **0.951** ± 0.000 | 1.000 ± 0.000 |' in section
+    assert '| intrinsic weight 4 | <u>0.902</u> ± 0.000 | 1.000 ± 0.000 |' in section
+    assert ('At the budget the highest $W$ belongs to **intrinsic weight 1**, the configuration that is also the '
+            "best at the run's length, so the choice does not change.") in section
+    assert built.budgets[0]['budget'] == 2048 and built.budgets[0]['capped'] is False
+    assert built.budgets[0]['choice_changes'] is False
+    assert '_measures-at-the-budget}' in (tmp_path / 'analysis/results.tex').read_text()
+
+
+def test_budget_section_says_when_the_choice_changes_at_the_budget(tmp_path):
+    """One weight is ahead early and falls to half; another rises later and stays higher: the best depends on the length."""
+    early = [1.0] * 16 + [0.5] * 16
+    late = [0.0] * 4 + [0.875] * 28
+    low = [0.25] * 32
+    start = start_record('sweep', iterations=32, cells=((1e-4, 1.0), (1e-4, 4.0), (3e-4, 4.0)))
+    write_shard(tmp_path, [start] + curve_windows(start, [early, early, late, late, low, low], episodes=16))
+    built = report.generate(tmp_path)['report']
+    text = (tmp_path / 'analysis/analysis.md').read_text()
+    section = text.split('## Budget')[1].split('\n## ')[0]
+    # At 3,200 steps W is 0.766 for the late one and 0.75 for the early one, so the late one is chosen. Their
+    # smoothed curves reach 95% of their final levels at steps 600 and 200, so the budget is 2,048 steps.
+    assert '| intrinsic weight 4, learning rate 0.0001 | 0.766 ± 0.000 | 0.875 | 0.831 | 600 |' in section
+    # The early one is at its level from the first window on: 200 is the first step with a full range of 160 steps.
+    assert ('| intrinsic weight 1, learning rate 0.0001 | 0.750 ± 0.000 | 0.500 | 0.475 | 200 (the earliest step the '
+            'rule can read) |') in section
+    assert 'Every step count is the earliest' not in section and built.budgets[0]['every_step_is_the_earliest'] is False
+    assert built.budgets[0]['budget'] == 2048 and built.budgets[0]['choice_changes'] is True
+    # At 2,048 steps the early one has W = (1,600 + 224) / 2,048 and the late one 1,648 x 0.875 / 2,048.
+    assert '| intrinsic weight 1, learning rate 0.0001 | **0.891** ± 0.000 |' in section
+    assert '| intrinsic weight 4, learning rate 0.0001 | <u>0.704</u> ± 0.000 |' in section
+    assert ('At the budget the highest $W$ belongs to **intrinsic weight 1, learning rate 0.0001**, while at the '
+            "run's length it belongs to **intrinsic weight 4, learning rate 0.0001**: the choice changes. At the "
+            'budget their $W$ are 0.891 ± 0.000 and 0.704 ± 0.000.') in section
+    # The chosen settings' places in the sweep: two values each, so no edge rule for the intrinsic weight.
+    assert ('Place in the sweep: intrinsic weight 4 is the largest of its 2 swept values; learning rate 0.0001 is '
+            'the smallest of its 2 swept values.\n') in text
+
+
+def test_budget_section_says_when_every_step_count_is_the_earliest_the_rule_can_read(tmp_path):
+    """Curves that are at their level from the first window on give the rule's smallest budget, and the section says so."""
+    sweep = start_record('sweep', iterations=32, cells=((1e-4, 1.0), (1e-4, 4.0), (1e-4, 16.0)))
+    write_shard(tmp_path, [sweep] + goal_windows(sweep, [0, 0, 0, 0, 0, 0]))
+    built = report.generate(tmp_path)['report']
+    section = (tmp_path / 'analysis/analysis.md').read_text().split('## Budget')[1].split('\n## ')[0]
+    assert section.count('| 200 (the earliest step the rule can read) |') == 3
+    assert ('Proposed budget: **512 steps per policy**: twice the largest step count is 400, rounded up to a power '
+            'of two. Every step count is the earliest the rule can read from this run (200: one full range of 5% of '
+            'its steps), so the curves rise faster than this run can show, and a shorter run would give a smaller '
+            'budget.') in section
+    assert built.budgets[0]['every_step_is_the_earliest'] is True and built.budgets[0]['budget'] == 512
+
+
+def test_budget_section_says_when_a_configuration_never_reaches_its_level(tmp_path):
+    """A configuration that stays at the never-reached return counts as the whole run, and the section says so."""
+    sweep = start_record('sweep', iterations=8, cells=((1e-4, 1.0), (1e-4, 4.0)))
+    write_shard(tmp_path, [sweep] + goal_windows(sweep, [1, 1, None, None]))
+    report.generate(tmp_path)
+    section = (tmp_path / 'analysis/analysis.md').read_text().split('## Budget')[1].split('\n## ')[0]
+    assert 'Only 2 configurations have trained the whole length, so the rule reads them.' in section
+    assert '| intrinsic weight 4 | 0.000 ± 0.000 | 0.000 | 0.000 | never: its final level is $R_0$ |' in section
+    assert ('Never at 95% of its final level: intrinsic weight 4. Such a configuration counts as the whole run, so '
+            "the largest step count is the run's length.") in section
+    assert "Proposed budget: **800 steps per policy**, the run's own length." in section
+
+
+def test_decline_check_gives_the_ratio_with_the_smoothed_peak_and_with_the_highest_window(tmp_path, request):
+    """A curve that falls is listed by the smoothed peak; one with a single high window by that window only."""
+    kept = request.config.getoption('--example-study-dir')
+    if kept:
+        tmp_path = Path(kept).resolve() / 'decline-example'
+        if tmp_path.exists():
+            shutil.rmtree(tmp_path)
+    falls = [0.0, 0.0, 1.0] + [0.625] * 17
+    one_high_window = [0.0, 0.0, 1.0, 0.75] + [0.875] * 16
+    for map_name, curve in (('large', falls), ('medium', one_high_window)):
+        start = start_record(f'pointmaze-{map_name}', map_name=map_name, envs=2, iterations=20)
+        write_shard(tmp_path, [start] + curve_windows(start, [curve, curve], episodes=16))
+    report.generate(tmp_path)
+    text = (tmp_path / 'analysis/analysis.md').read_text()
+    section = text.split('## Decline check')[1]
+    name = 'CleanRL PPO-RND, intrinsic weight 1, learning rate 0.0001, entropy coefficient 0.001'
+    # Windows of 50 steps, a smoothing range of 100: the range with the windows at 1 and 0.625 has the mean 0.8125.
+    assert (f'| PointMaze Large, reward 1 on arrival | development | {name} | 0.625 | 0.812 at 200 | 76.9% | '
+            '1.000 at 150 | 62.5% | declines: below 90% of the smoothed peak | 1.0K |') in section
+    # The range with the windows at 1 and 0.75 has the mean 0.875, the final level: no decline by the smoothed peak.
+    assert (f'| PointMaze Medium, reward 1 on arrival | development | {name} | 0.875 | 0.875 at 200 | 100.0% | '
+            '1.000 at 150 | 87.5% | below 90% of the highest single window only | 1.0K |') in section
+    assert ('both ratios of each of the 2 chosen configurations (the choice of every development sweep and every '
+            'confirmation row): 1 below 90% of the smoothed peak, 1 below 90% of the highest single window only.') in section
+    # The sweep table's column is the ratio with the smoothed peak.
+    assert '| 0.625 ± 0.000 | 76.9% |' in text and '\\label{tab:maze-decline-check}' in (tmp_path / 'analysis/results.tex').read_text()
+
+
 def test_rows_that_have_not_reached_the_step_count_are_listed_under_the_table(tmp_path):
     """With one finished row the table is read at the planned steps; an unfinished row is listed, not ranked."""
     done = start_record('finished', cells=((1e-4, 1.0), (1e-4, 4.0)))
@@ -131,7 +254,8 @@ def test_rows_that_have_not_reached_the_step_count_are_listed_under_the_table(tm
     assert 'Not at this step count yet:\n\n- intrinsic weight 16: 200 steps so far.\n' in text
     assert '**Unfinished runs:**' not in text and '2 units, 1 complete; 6 policies' in text
     # The chosen weight 1 is the smallest of the three swept values, so the edge rule is named.
-    assert 'Its intrinsic weight is the smallest of the 3 swept values' in text
+    assert ('Place in the sweep: intrinsic weight 1 is the smallest of its 3 swept values. The intrinsic weight is '
+            'at an end of its grid, so the edge rule of the protocol asks for three more values on that side') in text
 
 
 def test_a_table_of_unfinished_rows_is_read_at_the_steps_every_policy_has(tmp_path):
