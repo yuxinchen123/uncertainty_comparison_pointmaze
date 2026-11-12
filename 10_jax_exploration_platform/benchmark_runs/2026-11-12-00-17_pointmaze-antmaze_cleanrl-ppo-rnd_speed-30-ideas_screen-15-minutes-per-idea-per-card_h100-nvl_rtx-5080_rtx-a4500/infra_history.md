@@ -13,3 +13,9 @@ Times are Pacific.
 - 2026-11-12 00:24 PT: environment build job 6873344 failed within a second: that conda starts with
   `#!/usr/bin/env python` and puma01 has no `python` on its path. The script now puts miniforge's own `bin` first
   on the path.
+- 2026-11-12 01:10 to 01:25 PT: the third ant profile unit waits for serval02 card 1. The card is held by an
+  evaluation of another session of this account (`evaluate_single_pool.py play`, RLforOR project, process 1052761,
+  started about 01:07 PT, no holder file). serval05's card is held by another account. The rule allows stopping that
+  evaluation; I let it finish, because evaluations on this card are limited to 30 minutes, so the wait is short and
+  stopping it would lose about 17 minutes of its work. If it is still running after 30 minutes of its own time, it
+  is stopped under `serval-profiling-priority.md`, with its command line and folder recorded first.
