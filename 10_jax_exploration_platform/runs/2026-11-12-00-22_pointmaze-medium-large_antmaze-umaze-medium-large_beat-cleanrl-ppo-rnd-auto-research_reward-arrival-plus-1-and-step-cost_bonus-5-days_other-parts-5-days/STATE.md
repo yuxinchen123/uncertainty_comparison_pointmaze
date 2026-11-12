@@ -158,6 +158,27 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   Two things to check with the full summary: (1) how much of the control's missing whole-curve mean (0.115) is
   before the first arrival (median 192 thousand steps, 2.3% of the budget) and how much is the rise after it;
   (2) whether the bonus left in the far corner keeps policies away from the goal after they have found it.
+- 2026-11-12 14:28 PT: PointMaze Large with the step cost, development at the budget (33,554,432 steps, 16
+  seeds, learning rates 2e-3 to 6e-3, weights 2 to 8, both intrinsic discounts). Per seed the whole-curve mean
+  takes one of two values: about −0.717 (the policy reaches the goal in about 285 of 400 steps, close to the
+  shortest time) or about −0.90. A configuration's mean is decided by how many of its 16 seeds end at −0.90: the
+  earlier best (intrinsic discount 0.999, learning rate 3e-3, weight 4: −0.718 with 16 of 16 at the higher value)
+  gave −0.766 in its repeat (12 of 16). The intrinsic discount 0.999 is therefore not kept.
+  **RND's configuration for this case: learning rate 2e-3, entropy 0.01, weight 4, intrinsic discount 0.99
+  (−0.7247 ± 0.0009, final level −0.712, 16 of 16).** Confirmation units built (1,024 fresh seeds, with the two
+  reference rows); four went to Gilbreth and seven UVA workers were submitted (6889111 to 6889117, 4-hour limit,
+  because one unit takes about 2 hours on an RTX 2080 Ti).
+  For the comparison this means: with the step cost a method can gain mostly by having fewer seeds at −0.90.
+- 2026-11-12 14:25 PT: more first readings of the batch 1 screen. Error length as the bonus: 0.845 ± 0.008 (weight
+  0.0625). Separate predictor step size at 4 times: 0.878 ± 0.010 (weight 4). Scheduled last layer with decay 1:
+  about 0.0004 at every weight. Its grid records show why: after the first 32,768 steps the bonus is 0.02 at
+  visited cells and 0.03 at cells never visited (it started at 1 everywhere), so fitting the visited inputs lowers
+  the error everywhere (the fixed random features of different maze positions are nearly the same vector), and
+  later the bonus rises again to 0.1 to 1.0 as the input statistics move. Both causes were named as risks in
+  `ideas.md`.
+- 2026-11-12 14:25 PT: where the control (weight 2) loses its whole-curve mean of 0.115: 0.058 in the first 524
+  thousand steps (curve at most 0.32), 0.026 between 524 thousand and 1.05 million, 0.013 between 1.05 and 2.1
+  million, 0.018 from there to the end (the curve is 0.944 at 2.1 million and 0.990 at 6.3 million).
 
 ## Next
 

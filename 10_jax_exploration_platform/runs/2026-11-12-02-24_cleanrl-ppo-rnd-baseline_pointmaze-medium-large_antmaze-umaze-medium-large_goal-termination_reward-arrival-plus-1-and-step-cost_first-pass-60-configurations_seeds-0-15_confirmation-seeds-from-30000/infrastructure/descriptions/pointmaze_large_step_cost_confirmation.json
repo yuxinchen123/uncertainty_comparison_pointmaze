@@ -1,0 +1,70 @@
+{
+  "study": "cleanrl-ppo-rnd-baseline",
+  "phase": "confirmation",
+  "configuration_files": {
+    "pointmaze": "configs/experiments/pointmaze_large_cleanrl-ppo-rnd_goal-termination_reward-arrival-plus-one_example_steps-1024000.toml"
+  },
+  "environments": [
+    "pointmaze-large"
+  ],
+  "reward_settings": [
+    "step_cost"
+  ],
+  "environments_per_policy": {
+    "pointmaze": 4
+  },
+  "steps_per_policy": 33554432,
+  "windows_per_unit": 256,
+  "seeds": {
+    "first": 30000,
+    "count": 1024
+  },
+  "policies_per_unit": 256,
+  "minimum_card_memory_mb": 7000,
+  "sweeps": [
+    {
+      "method": "cleanrl-ppo-rnd",
+      "bonus": "rnd_next_state",
+      "cells": {
+        "kind": "list",
+        "cells": [
+          {
+            "learning_rate": 0.002,
+            "entropy_coefficient": 0.01,
+            "intrinsic_weight": 4.0,
+            "clip_coefficient": 0.1
+          }
+        ]
+      }
+    },
+    {
+      "method": "cleanrl-ppo-rnd-at-cleanrl-defaults",
+      "bonus": "rnd_next_state",
+      "cells": {
+        "kind": "list",
+        "cells": [
+          {
+            "learning_rate": 0.0001,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 1.0,
+            "clip_coefficient": 0.1
+          }
+        ]
+      }
+    },
+    {
+      "method": "ppo-without-a-bonus",
+      "bonus": "none",
+      "cells": {
+        "kind": "list",
+        "cells": [
+          {
+            "learning_rate": 0.002,
+            "entropy_coefficient": 0.01,
+            "clip_coefficient": 0.1
+          }
+        ]
+      }
+    }
+  ]
+}
