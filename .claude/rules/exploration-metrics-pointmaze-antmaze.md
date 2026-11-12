@@ -59,6 +59,35 @@ seeds from 30000 (1,024 on PointMaze, 256 on AntMaze); intervals resample seeds 
 differences. A method succeeds when it beats RND in all five environments in setting A, or in all
 five in setting B.
 
+## The secondary metric: mean capped first-goal time (user decision 2026-11-12)
+
+The primary metric measures discovery and optimization together. The secondary metric measures discovery alone: how
+soon a policy first reaches the goal. It is the metric of the straight and snake grids.
+
+Define $T_i$ as the training step at which policy $i$ first reaches the goal ($T_i = \infty$ if it never does).
+
+$$M(B) = \dfrac{1}{K} \sum_{i=1}^{K} \min(T_i, B)$$
+
+Smaller is better. A policy that never reaches the goal counts as $B$. Ties are broken by the larger goal discovery
+rate $F(B) = \dfrac{1}{K} \sum_{i=1}^{K} \mathbf{1}[T_i \le B]$.
+
+1. **Its own configuration.** For this metric each method's configuration, and RND's, is the one with the smallest
+   $M(B)$ on the development seeds. It may differ from the configuration chosen for $W$.
+2. **Two tables in every report.** One for the primary metric and one for the secondary metric, each with its own
+   chosen configurations; the two are never mixed in one row.
+3. **Ahead on discovery** (one environment, one reward setting, same fresh seeds): the 95% interval of the
+   difference in $M$ (method minus RND, each at its own configuration for $M$) is entirely below zero.
+4. **Noted in the report, not part of the success rule:** every method that is ahead of RND on discovery in all
+   five environments. Reading of the session, not the user's words: "all environments" is counted per reward
+   setting, as for the primary metric (all five in setting A, or all five in setting B), and both counts are shown.
+5. Seeds, intervals and budgets are those of the primary metric.
+
+User's words (2026-11-12): "i also want to introudce an secnodnary metrics that is the first step reached the goal
+(the one we used in straitghe and snake env) if any algorihtm beats RND on all envs on this, also note it in the
+report. (the aglortihm who acehive this may have different hyeperaters configuraiton then the one acheived the final
+perofmrance, it is fine, just put those into two tables), this one is to understand the ability to discover, and the
+tradiciton extrin metrics is to discouvner + optmizaiton."
+
 ## The four parts of `exploration-metrics.md`
 
 | part | definition here |
@@ -68,7 +97,7 @@ five in setting B.
 | evaluation episode | none separate: the measures are read from the training episodes |
 | budget $B$ | fixed per environment and reward setting from the RND baseline's curves before any method is compared, and written in the study's `program.md` |
 
-Reported beside the primary metric, never used to choose: the mean capped first-goal time $M(B)$,
-the goal discovery rate $F(B)$, coverage, mean steps to the goal, and the share of training
+Reported beside the two metrics, never used to choose: the goal discovery rate $F(B)$ (except as
+the tie-break of the secondary metric), coverage, mean steps to the goal, and the share of training
 episodes that reach the goal in the last 10% of the budget. The final level against the training
 length gets its own report section, because it depends on how many steps are trained.

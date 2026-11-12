@@ -68,9 +68,18 @@ Intervals: 10,000 resamples of seeds on the paired differences.
 
 **Fresh seeds:** from 30000; 1,024 on PointMaze, 256 on AntMaze (1,024 if the speed work makes it affordable).
 
-**Reported beside, never used to choose:** mean capped first-goal time, share of policies that ever reach the goal,
-maze-cell coverage, mean steps to the goal, share of training episodes reaching the goal in the last 10%; the final
-level at 25%, 50%, 75% and 100% of the budget and the curve to twice the budget for one map per family.
+**Secondary measure, discovery alone (user, 2026-11-12):** the mean capped first-goal time
+$M(B) = \dfrac{1}{K}\sum_{i=1}^{K} \min(T_i, B)$, with $T_i$ the training step at which policy $i$ first reaches the
+goal ($B$ if it never does); smaller is better. For this measure every method, RND included, has its own
+configuration: the one with the smallest $M(B)$ on the development seeds (ties: more policies that reach the goal).
+A method is ahead on discovery in one environment and reward setting when the 95% interval of the difference in $M$
+(method minus RND) on the same fresh seeds is entirely below zero. Every report has two tables, one per measure,
+each with its own configurations. A method that is ahead on discovery in all five environments is noted in the
+report; it is not part of the success rule.
+
+**Reported beside, never used to choose:** share of policies that ever reach the goal, maze-cell coverage, mean steps
+to the goal, share of training episodes reaching the goal in the last 10%; the final level at 25%, 50%, 75% and 100%
+of the budget and the curve to twice the budget for one map per family.
 
 ## Budgets (set during the baseline, then fixed)
 

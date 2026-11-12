@@ -10,6 +10,10 @@ first-goal time defined below stays the primary metric on the grids and is still
 reported beside the primary one on PointMaze and AntMaze. Definitions for those two families:
 `exploration-metrics-pointmaze-antmaze.md`.
 
+**Amended 2026-11-12 (user decision): on PointMaze and AntMaze the mean capped first-goal time is the secondary
+metric.** It has its own configuration choice and its own table beside the primary one, and a method that is ahead
+of RND on it in all five environments is noted in the report. Definitions: `exploration-metrics-pointmaze-antmaze.md`.
+
 ## The primary metric: mean capped first-goal time
 
 Every configuration choice (intrinsic weight, learning rate, entropy, or any other swept setting)

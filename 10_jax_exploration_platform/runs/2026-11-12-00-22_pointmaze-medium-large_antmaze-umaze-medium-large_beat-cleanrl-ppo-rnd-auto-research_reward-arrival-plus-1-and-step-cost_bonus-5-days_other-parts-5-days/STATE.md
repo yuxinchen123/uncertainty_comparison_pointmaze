@@ -244,6 +244,13 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   layer on local features: it has no bias input (a bias would give far inputs a shared part of about 0.5), and
   with 512 features an input far from every fitted input keeps 0.93 to 0.98 of its squared error, not above 0.99,
   because random features of far inputs still overlap by about 0.044.
+- 2026-11-12 15:45 PT: **user decision: a secondary metric, the mean capped first-goal time** (the grids'
+  metric), to read discovery alone; the primary metric stays the whole-curve mean (discovery and optimization).
+  Each method and RND get their own configuration for it; reports carry two tables; a method ahead of RND on it in
+  all five environments is noted. Written into the rule file, `program.md` and the memory note. Work it adds:
+  (1) RND's own configuration for discovery in every case (a development sweep toward larger intrinsic weights,
+  then its confirmation); (2) a second table in the baseline report and in every batch summary; (3) each idea's
+  best weight for discovery in the screens.
 
 ## Next
 
