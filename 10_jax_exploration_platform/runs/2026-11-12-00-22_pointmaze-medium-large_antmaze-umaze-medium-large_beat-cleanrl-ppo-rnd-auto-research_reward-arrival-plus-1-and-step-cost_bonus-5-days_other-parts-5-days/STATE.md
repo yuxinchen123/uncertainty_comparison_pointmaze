@@ -56,6 +56,29 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   policies (8 configurations each) from the frozen code copy of commit `6ad2fa46`. Workers 6874063, 6874076 to
   6874078, 6874082 (yuxinchen) and 6874080, 6874081 (sl5nw) hold 16 cards (RTX 5080, A40, RTX 4000 Ada, RTX A4000);
   persistent monitor job 6874083. All 16 units started within a minute.
+- 2026-11-12 02:40 to 10:30 PT: no work by this session (its usage limit was reached at 02:40 PT; four background
+  workers stopped with it and were resumed at 10:32 PT: analysis additions, PointMaze speed ideas, the Warp
+  measurement, the faster settings of the current ant simulator). The jobs kept running by themselves.
+- 2026-11-12 10:30 PT: **PointMaze first pass complete**: 16 of 16 units done, none failed (RTX 5080 units 48 minutes,
+  A40 units 1 h 37 min, RTX 4000 Ada and RTX A4000 units 2 h 11 min to 2 h 18 min). Rollout-shape units with 1 and
+  2 environments per policy also complete. My quick reading of the records at 50.3 million steps (the analysis
+  code's report replaces it):
+  - Large, reward 1 on arrival: best learning rate 1e-3, entropy 0.01, intrinsic weight 1: whole-curve mean 0.967,
+    final level 0.999, 16 of 16 reach the goal, median first-goal step 421 thousand; the curve is at 0.35 after 1.0
+    million steps, 0.75 after 1.6 million, 0.92 after 2.1 million, 0.96 after 4.2 million. With intrinsic weight
+    0.00024 no policy reaches the goal, so the bonus is needed here.
+  - Large, step cost: best learning rate 1e-3, entropy 0.01, weight 4: whole-curve mean -0.717, final level -0.706
+    (about 283 of 400 steps per episode); with weight 0.00024, 10 of 16 reach the goal and the final level is -0.82.
+  - Medium, reward 1 on arrival: best learning rate 1e-3, entropy 0.01, weight 1: whole-curve mean 0.998; the curve
+    is at 0.63 in the first window (262 thousand steps) and 1.00 by the third; median first-goal step 25 thousand.
+    With weight 0.00024, 15 of 16 reach the goal but the final level is 0.69.
+  - Medium, step cost: every good configuration ends at -0.30 (about 121 steps per episode) within two windows,
+    with intrinsic weights from 0.00024 to 0.25 among the best ten: the bonus makes no difference there.
+  - Consequences: (1) the budgets from the rule will be small (about 8 million steps for Large with reward 1 on
+    arrival, about 1 to 2 million for Medium), so Medium needs finer logging windows; (2) Medium with the step cost
+    cannot separate bonus methods, so reward setting 1-on-arrival is the one where success in all five
+    environments is possible; (3) the chosen learning rate and entropy sit at the top of their grids, so the second
+    pass extends both.
 
 ## Next
 
