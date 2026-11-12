@@ -261,6 +261,16 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   with reward 1 on arrival and PointMaze Medium with both rewards; PointMaze Large with the step cost follows
   around the best cells, because one unit there takes about 50 minutes).
   A worker is adding the second table to the batch summary and to the baseline report.
+- 2026-11-12 15:50 PT: **validation block, PointMaze Large with reward 1 on arrival (256 seeds, 10000 to 10255;
+  quick script, the generated summary will replace it).** Control: whole-curve mean 0.8759 ± 0.0022 at weight 1,
+  0.8781 ± 0.0021 at weight 2, 0.8626 ± 0.0025 at weight 4; mean capped first-goal time 385, 269 and 205 thousand
+  steps. **Predictor with its own optimizer at 0.25 times 1e-4, weight 2: 0.8859 ± 0.0024, which is +0.0078 ±
+  0.0032 against the control at the same weight (the control's best) on the same seeds, final level 0.9954 against
+  0.9920, first-goal time 171 thousand against 269 thousand (−99 ± 16 thousand).** At 1 times: +0.0024 ± 0.0031 at
+  weight 2 and 0.8762 at weight 4 (below the control's best). The unit at 0.25 times and weight 1 is still running.
+  This is the first idea ahead of the control on the primary metric on seeds it was not chosen on, by a small
+  amount; four comparisons were made, so it needs the fresh seeds before it counts. Batch 2 has the slower
+  settings 0.0625 and 0.125.
 
 ## Next
 
