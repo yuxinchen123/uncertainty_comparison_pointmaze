@@ -80,7 +80,7 @@ of their final level, rounded up to a power of two. Written here before any meth
 | environment | setting A | setting B |
 |---|---|---|
 | PointMaze Medium | 1,048,576 (set 2026-11-12) | 1,048,576 (set 2026-11-12) |
-| PointMaze Large | 8,388,608 (set 2026-11-12) | (not set yet) |
+| PointMaze Large | 8,388,608 (set 2026-11-12) | 33,554,432 (set 2026-11-12) |
 | AntMaze U-maze | (not set yet) | (not set yet) |
 | AntMaze Medium | (not set yet) | (not set yet) |
 | AntMaze Large | (not set yet) | (not set yet) |
@@ -95,6 +95,8 @@ RND's chosen configuration (development runs trained for exactly the budget, 16 
 | case | learning rate | entropy | intrinsic weight | clip | whole-curve mean | final level |
 |---|---|---|---|---|---|---|
 | PointMaze Large, reward 1 on arrival | 2e-3 | 0.01 | 2 | 0.1 | 0.888 ± 0.008 | 0.994 |
+| PointMaze Medium, reward 1 on arrival | 6e-3 | 0.01 | 2 | 0.1 | 0.942 ± 0.007 | 0.999 |
+| PointMaze Medium, step cost | 6e-3 | 0.01 | 0.0078125 | 0.1 | −0.341 ± 0.005 | −0.306 |
 
 ## What may change, and when
 

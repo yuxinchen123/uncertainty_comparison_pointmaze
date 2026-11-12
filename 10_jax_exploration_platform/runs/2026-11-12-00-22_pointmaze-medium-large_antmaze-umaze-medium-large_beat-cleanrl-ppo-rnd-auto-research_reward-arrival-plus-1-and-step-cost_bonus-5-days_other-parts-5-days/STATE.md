@@ -126,6 +126,18 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   PointMaze Large with reward 1 on arrival at 8,388,608 steps; description
   `batches/01_.../screen_pointmaze-large_reward-arrival-plus-one.json`). Workers 6887738 to 6887755, monitor
   6887756. The first unit started at 13:35 PT on ai02.
+- 2026-11-12 13:48 PT: PointMaze Medium with reward 1 on arrival, higher learning rates at the budget (16 seeds):
+  learning rate 1e-2 with weight 2 gave 0.917 ± 0.011 in this unit against 0.944 ± 0.006 in the earlier unit (same
+  settings and seed numbers, another card model: the two differ by 0.027, about twice the standard error of the
+  difference); 2e-2 and 3e-2 are far lower (0.81 and 0.54). **RND's configuration for this case: learning rate
+  6e-3, entropy 0.01, weight 2 (0.942 ± 0.007, final level 0.999)**: inside the range of the learning rate and of
+  the weight, and above the mean of the two runs at 1e-2 (0.930). Confirmation units built (1,024 fresh seeds, with
+  the two reference rows).
+  Observation to keep: two runs with the same settings and seed numbers on different cards are separate samples
+  (their curves part after the first rounding difference), so "the same seeds" pairs the comparison by seed number
+  only.
+- 2026-11-12 13:45 PT: Gilbreth (Purdue, standby cards) runs units of the baseline folder: 9 done and verified, 4
+  running. Gautschi's L40S queue estimates a start on 2026-11-14, so no unit waits there.
 
 ## Next
 
