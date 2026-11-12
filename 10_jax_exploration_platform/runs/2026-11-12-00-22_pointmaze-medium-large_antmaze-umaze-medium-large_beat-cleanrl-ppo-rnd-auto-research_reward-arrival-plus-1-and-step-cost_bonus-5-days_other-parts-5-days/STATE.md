@@ -79,6 +79,24 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
     cannot separate bonus methods, so reward setting 1-on-arrival is the one where success in all five
     environments is possible; (3) the chosen learning rate and entropy sit at the top of their grids, so the second
     pass extends both.
+- 2026-11-12 10:48 PT: PointMaze second pass submitted (16 units; weights at factor 2, learning rate to 3e-3,
+  entropy to 0.03, clip 0.1 and 0.2, intrinsic discount 0.99 and 0.999; 256 logging windows; 4.2, 16.8 and 33.6
+  million steps). Workers ask for 2 processors and 4 GiB per card now (measured need: one processor, 2.6 GiB). 12 of
+  16 units done at 11:44 PT.
+- 2026-11-12 11:45 PT: **the ant will use MuJoCo's Warp implementation** (inside MJX 3.11.0, environment
+  `platform_jax_warp`). Measured on an H100 NVL: 0.93 million steps per second at 4,096 environments, 2.2 million at
+  32,768, 2.4 million at 65,536, against 0.30 million at best for the JAX implementation. Checks: one step against
+  C MuJoCo within 1.4e-6 m without contact and 1.3e-2 m in contact (the JAX implementation: 6.8e-5 and 2.75e-2;
+  gates 1e-4 and 5e-2); resting height 0.382481 m; reward, termination and reset equal to the JAX environment; no
+  non-finite state in 189 million random-torque steps; nothing dropped from its contact pool (at most 8% used).
+  Open: its speed on RTX cards, and one case where a NaN written into the torso quaternion is not respawned. Not yet
+  wired into the training command.
+- 2026-11-12 11:45 PT: three background workers stopped a second time on the usage limit (PointMaze speed ideas,
+  faster settings of the JAX ant, the Warp measurement). Their edits are in the working tree, not committed; the
+  full test suites are running on it (jobs 6885610 to 6885612) before anything is committed. Speed ideas measured
+  so far: 16 for PointMaze or both families and 5 for the ant; only "target features once per iteration" gains
+  anything for PointMaze (3% to 6%).
+- 2026-11-12 11:50 PT: batch 1 written (`batches/01_start-scale-and-decay-of-the-bonus-on-continuous-inputs/ideas.md`).
 
 ## Next
 
@@ -100,3 +118,7 @@ visited, per maze cell, for RND.
   halve every count and disagrees with the doubling rule's own outcome on the 2026-11-10 series).
 - Every proxy factor in the skill's `card_facts.json` for cards outside the UVA survey is a guess until that card's
   first two real units correct it.
+- The ant uses MuJoCo's Warp implementation, because it passes the environment's gates with better agreement with
+  C MuJoCo than the JAX implementation and is about 8 times faster in total (user, 2026-11-11: another simulator is
+  allowed after a time breakdown).
+- PointMaze workers ask for 2 processors and 4 GiB per card, from the measured need.
