@@ -95,3 +95,32 @@ Times are Pacific.
      higher-priority jobs. Only the first three small workers fitted.
   `submit.py` and `monitor.py` got the options `--worker-hours` (and the monitor passes the request size, the time
   limit and the card types on to its top-ups).
+- 2026-11-12 13:26 to 13:34 PT: Gilbreth's first unit is complete and correct, and Gilbreth now holds four more.
+  Job 12344581 ran 13:26:41 to 13:32:08 PT on gilbreth-d004, one A30 (24 GB): PointMaze Medium, step cost, CleanRL
+  PPO with RND at CleanRL's defaults, seeds 30512 to 30767, 256 policies, 2,048 iterations. 212 s in the trainer
+  (52 s build and warm-up, 116 s for the first iteration with compilation, 0.0470 s per iteration afterwards);
+  host memory at most 1.8 GB, card memory at most 1.4 GB. The tick of 13:33:46 PT copied the records to UVA and
+  checked them: a `unit_complete` record, 256 of 256 windows, and the same record kinds, keys and kinds of values
+  as UVA's unit `development-at-the-budget_pointmaze-medium_reward-step-cost_cleanrl-ppo-rnd_cells-01-to-12-of-12_seeds-0-to-15`
+  (0 differences; result in the server table under `first_unit`). The unit is in `queue/done`, and its line is in
+  `device/observed/pointmaze-medium_environments-per-policy-4_update-epoch-minibatch_bonus-rnd-next-state.jsonl`.
+  UVA's record of the unit holds the server's result but not its two attempts there (the failed one of job
+  12344547 and this one); those are in the server's `queue/done` record. The same tick handed over four units
+  (PointMaze Medium, step cost, PPO without a bonus, seeds 30000 to 31023) and submitted jobs 12344707 to
+  12344710, which all started at 13:33:53 PT, one A10 each (gilbreth-h000 and gilbreth-h014, two jobs on each).
+- 2026-11-12 13:34 to 13:38 PT: Gilbreth's four units of PPO without a bonus are done. Jobs 12344707 to 12344710
+  ran 13:33:53 to 13:37:04 PT, one A10 each: 256 policies, 2,048 iterations, 0.0218 to 0.0222 s per iteration,
+  88 to 89 s in the trainer. The tick of 13:37:43 PT copied and checked the records (256 of 256 windows each) and
+  moved the units to `queue/done`; their lines are in
+  `device/observed/pointmaze-medium_environments-per-policy-4_update-epoch-minibatch_bonus-none.jsonl`. No unit
+  of PPO without a bonus trained on UVA is done yet, so their format was compared by hand with UVA's RND unit
+  named above: 0 differences. The same tick handed over four more units (PointMaze Medium, step cost: three of
+  CleanRL PPO with RND at CleanRL's defaults, seeds 30000 to 30511 and 30768 to 31023, and one of CleanRL PPO
+  with RND at learning rate 0.006, entropy 0.01, intrinsic weight 0.0078125, seeds 30768 to 31023) and
+  submitted jobs 12344746, 12344748, 12344749 and 12344750, which all started at 13:38:01 PT, one A10 each.
+  Every job id is in `slurm/submitted_jobids_gilbreth.txt` (10 ids) or `slurm/submitted_jobids_gautschi.txt` (1 id).
+  No recurring monitor was created by the session that did this; the tick command has to run at each
+  monitoring tick.
+- 2026-11-12 13:35 PT: the 17 baseline workers still waiting were cancelled by id from the ledgers (none had
+  started): the 7 running workers are enough for the units left, and the next free cards go to the batch 1 screen
+  of the auto research folder.
