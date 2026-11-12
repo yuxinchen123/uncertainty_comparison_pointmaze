@@ -140,3 +140,13 @@ Times are Pacific.
   their limit was lowered to 2 hours (same ids); a unit that does not finish in 2 hours continues from its
   checkpoint in the next job. Gilbreth's limit for this folder raised from 4 to 8 units at once (standby cards,
   not charged; the per-user limit there is 24 cards).
+- 2026-11-12 15:06 PT: fault in the remote fleet, found and corrected. Both run folders (the baseline and the auto
+  research) named their Gilbreth jobs with the same first part, and a folder takes jobs with its name for its own.
+  So each folder wrote the other's job ids into its Gilbreth ledger, and the auto research folder submitted no job
+  for its three validation units handed over at 14:45 PT (it counted the baseline's eight jobs as its own); they
+  waited 21 minutes. Nothing was cancelled or lost. Correction: the name now carries eight characters taken from
+  the run folder's name (`job_prefix` in `scripts/maze_campaign/remote_fleet.py`, with a test); the ledgers were
+  set right by the working folder of each job as the scheduler records it (12345010 belongs to the auto research
+  folder, every other id to the baseline); the earlier files are kept beside them as
+  `submitted_jobids_gilbreth.txt.before_ledger_correction_2026-11-12-15-08`. The auto research folder then
+  submitted jobs 12346016 to 12346018 for its units.

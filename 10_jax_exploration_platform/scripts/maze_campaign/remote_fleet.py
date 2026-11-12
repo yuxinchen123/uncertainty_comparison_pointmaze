@@ -37,6 +37,7 @@ H100 and H200 work goes to the first server of SERVER_ORDER that can start it (r
 h100-h200-server-order.md). This file offers no cancel command (see cancel_ledger.py).
 """
 import argparse
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -540,7 +541,16 @@ def hand_over_tick(run_dir, table, dry_run):
           + ", ".join(f"{folder} {count}" for folder, count in unit_queue.counts(run_dir).items()))
 
 
-def adapt():
+def job_prefix(run_dir):
+    """The first part of the name of every remote job of one run folder."""
+    # before: .../runs/2026-11-12-02-24_cleanrl-ppo-rnd-baseline_...  ; after: "mazefleet-3f9a1c2e"
+    # The eight characters come from the folder's name, so two run folders never share a prefix. With one
+    # shared prefix (until 2026-11-12 15:05 PT) each folder took the other's jobs on a server for its own:
+    # it wrote their ids into its ledger and submitted no job for its own waiting units.
+    return "mazefleet-" + hashlib.sha1(Path(run_dir).resolve().name.encode()).hexdigest()[:8]
+
+
+def adapt(run_dir):
     """Give the grid campaign's remote fleet this study's worker job, preparation, status, checks and returns."""
     fleet.WORKER_TEMPLATE = WORKER_TEMPLATE
     fleet.REMOTE_FOLDERS = REMOTE_FOLDERS
@@ -550,8 +560,8 @@ def adapt():
     fleet.parse_status = parse_status
     fleet.result_block = result_block
     fleet.bring_back = bring_back
-    # jobs of this study are told from the grid study's by their name
-    fleet.JOB_PREFIX = "mazefleet"
+    # jobs of this run folder are told from every other folder's and from the grid study's by their name
+    fleet.JOB_PREFIX = job_prefix(run_dir)
     # a unit whose job ended continues from its checkpoint on the same server, so it may be put
     # back in that server's queue more often than a grid unit, which started again from zero
     fleet.RECOVERY_LIMIT = 20
@@ -562,7 +572,9 @@ def main():
     arguments = sys.argv[1:]
     if "cancel-pending" in arguments:
         raise SystemExit("this file offers no cancel command; see cancel_ledger.py")
-    adapt()
+    if "--run-dir" not in arguments or arguments.index("--run-dir") + 1 >= len(arguments):
+        raise SystemExit("give --run-dir RUN before the command")
+    adapt(arguments[arguments.index("--run-dir") + 1])
     if "prepare" in arguments or "hand-over-tick" in arguments:
         parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
         parser.add_argument("--run-dir", type=Path, required=True)

@@ -20,7 +20,7 @@ class RemoteWrappers(unittest.TestCase):
 
     def test_the_worker_job_script_starts_this_studys_worker(self):
         """The grid campaign's script writer fills this study's template; bash accepts the result."""
-        remote.adapt()
+        remote.adapt("/runs/folder-one")
         entry = {"remote_run": "/scratch/maze/run", "python": "/scratch/env/bin/python",
                  "code": "/scratch/maze/code/current/10_jax_exploration_platform", "unit_seconds": 1800}
         pool = {"gpu_class": "h100_mit", "time_limit": "12:00:00"}
@@ -31,7 +31,21 @@ class RemoteWrappers(unittest.TestCase):
         self.assertNotIn("train_unit.py", text)
         self.assertEqual(subprocess.run(["bash", "-n"], input=text, text=True, capture_output=True).returncode, 0)
         self.assertEqual((fleet.JOB_PREFIX, fleet.prepare, fleet.verify_unit),
-                         ("mazefleet", remote.prepare, remote.verify_unit))
+                         (remote.job_prefix("/runs/folder-one"), remote.prepare, remote.verify_unit))
+
+    def test_two_run_folders_never_share_a_job_name_prefix(self):
+        """The prefix comes from the folder's name: the same for one folder, different for another, and a job
+        named for one folder is not among the other's jobs unless its id is in that folder's ledger."""
+        one, two = remote.job_prefix("/runs/folder-one"), remote.job_prefix("/elsewhere/runs/folder-two")
+        self.assertEqual(one, remote.job_prefix("/other/place/folder-one"))
+        self.assertNotEqual(one, two)
+        self.assertRegex(one, r"^mazefleet-[0-9a-f]{8}$")
+        remote.adapt("/runs/folder-one")
+        status = {"jobs": {"11": {"name": f"{one}-gilbreth-standby-20261112-150000-1", "state": "RUNNING"},
+                           "12": {"name": f"{two}-gilbreth-standby-20261112-150000-1", "state": "RUNNING"},
+                           "13": {"name": "mazefleet-gilbreth-standby-20261112-134302-1", "state": "RUNNING"}}}
+        self.assertEqual(sorted(fleet.fleet_jobs("gilbreth", status, set())), ["11"])
+        self.assertEqual(sorted(fleet.fleet_jobs("gilbreth", status, {"13"})), ["11", "13"])
 
     def test_a_pulled_unit_is_checked_by_its_shard(self):
         """A complete shard replaces UVA's partial one, the old checkpoint goes, and the observed line is added."""
@@ -69,7 +83,7 @@ class RemoteWrappers(unittest.TestCase):
 
     def test_the_status_call_reads_each_units_progress(self):
         """The status script stays valid bash, and its progress section is read beside the grid campaign's."""
-        remote.adapt()
+        remote.adapt("/runs/folder-one")
         entry = {"remote_run": "/scratch/maze/run", "pools": {"l40s": {}}}
         script = fleet.status_script("gautschi", entry, ["unit-a", "unit-b"])
         self.assertEqual(subprocess.run(["bash", "-n"], input=script, text=True, capture_output=True).returncode, 0)
@@ -77,7 +91,8 @@ class RemoteWrappers(unittest.TestCase):
         answer = "\n".join([
             "", "@@fleet:queue", "running unit-a", "pending unit-b", "", "@@fleet:claims",
             "running unit-a job=12 host=g003 gpu=NVIDIA_L40S started=2026-11-12T16:30:00-05:00", "", "@@fleet:jobs",
-            "12|RUNNING|None|mazefleet-gautschi-l40s-20261112-133000-1|5:02|smallgpu", "", "@@fleet:squeue_exit 0",
+            f"12|RUNNING|None|{remote.job_prefix('/runs/folder-one')}-gautschi-l40s-20261112-133000-1|5:02|smallgpu",
+            "", "@@fleet:squeue_exit 0",
             "", "@@fleet:progress", "unit-a window=41 complete=no checkpoint=yes",
             "unit-b window= complete=no checkpoint=no", "", "@@fleet:estimates", "13 207000", "14 unknown",
             "", "@@fleet:end"])
