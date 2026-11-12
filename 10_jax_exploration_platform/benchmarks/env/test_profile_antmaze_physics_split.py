@@ -143,7 +143,9 @@ def test_render_full_record_and_missing_cells():
     text = split.render(record)
     assert "| 7. reward, reset and observation | 8.300 | 0.200 | 2.4% | 18.000 | 0.200 | 1.1% |" in text
     assert "| whole environment step |" in text
-    assert "| 4,096 | 18.500 | 18.000 | +2.8% | 8.0 |" in text
+    assert "| 4,096 | 18.500 | 18.000 | +2.8% | 8.0 |" in text   # U-maze 18.0 from the settings cell
+    assert "| 1,024 | 8.500 | not measured |  | 8.0 |" in text      # no whole-step U-maze cell at 1,024
+    assert "| 6. integration | -0.067 | 0.260 | not resolved | not resolved |" in text
     assert "| solver iterations 1 | 4,096 | 17.000 | 94.4% |" in text
     assert "| 16,384 | not measured |" in text
     assert "20 s were left of the 15-minute unit" in text
@@ -170,6 +172,12 @@ def test_split_uses_back_to_back_times_when_every_function_has_them():
     assert "| 7. reward, reset and observation | 16.200 | 0.180 | 1.1% |" in text
     assert "| environment step | 18.000 | 16.200 | +11.1% |" in text
     assert "split of the physics step, umaze, 4,096 environments, timed back to back |" in text
+    # the split cell reads 18.0 in turn where a whole-step cell reads 17.0 (5.9% apart): the note is printed
+    whole = {"kind": "wide batch", "name": split.wide_name(4096), "status": "measured",
+             "measured_pacific": "2026-11-12 01:06 PT", "env_steps_per_call": split.ENV_STEPS_PER_CALL,
+             "rounds_done": 11, "other_processes_on_card": [], "functions": {
+                 split.ENVIRONMENT_STEP: timed(17.0, environments=4096, start_state=start_state())}}
+    assert "The reason was not found" in split.render({"runs": [run_record([cell, whole])]})
     # edge case: one function with too few back-to-back rounds sends the whole cell back to the in-turn times
     cell["functions"][split.ENVIRONMENT_STEP]["call_seconds_back_to_back"] = [0.1] * 3
     assert split.split_order(cell) == "in turn"
@@ -199,6 +207,8 @@ def test_render_uses_the_cell_that_timed_all_batch_sizes_in_turn():
     # both readings of the default step at 4,096 environments are listed
     assert "| 4,096 | 18.000 | split of the physics step, umaze, 4,096 environments, timed in turn |" in text
     assert "| 4,096 | 17.500 | batch sizes, umaze, whole environment step |" in text
+    # one whole-step reading (17.5) and a split reading 2.9% above it: no note about a difference
+    assert "The reason was not found" not in text
     # edge case: with no settings cell the solver estimates are left out
     assert "What the settings rows say about the solver" not in text
 

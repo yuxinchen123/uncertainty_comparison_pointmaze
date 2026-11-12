@@ -320,7 +320,8 @@ def render_split(cells, sizes):
             f"A line through the two batch sizes: with $a_k(n)$ as above, the slope is"
             f" $b_k = \\dfrac{{a_k({large}) - a_k({small})}}{{{large} - {small}}}$ and the fixed part is"
             f" $f_k = a_k({small}) - {small} \\times b_k$, the time the piece would take at a batch of"
-            " zero. Two points give no check of the line, so read the fixed part as approximate.", "",
+            " zero. Two points give no check of the line, so read the fixed part as approximate; a piece"
+            " whose two times differ by less than the spread of the timings is marked not resolved.", "",
             "| piece | fixed part<br>(ms) | per 1,000<br>environments (ms) |"
             f" fixed part as a share<br>of the piece at {small:,} | at {large:,} |",
             "|---|---:|---:|---:|---:|"]
@@ -329,8 +330,10 @@ def render_split(cells, sizes):
             a_small, a_large = tables[small][k]["added_ms"], tables[large][k]["added_ms"]
             fixed, per_thousand = two_point_line(a_small, a_large, small, large)
             totals = [totals[0] + fixed, totals[1] + per_thousand]
-            lines.append(f"| {k + 1}. {piece} | {fixed:.3f} | {per_thousand:.3f} |"
-                         f" {100 * fixed / a_small:.0f}% | {100 * fixed / a_large:.0f}% |")
+            resolved = 0.0 <= fixed <= min(a_small, a_large)
+            lines.append(f"| {k + 1}. {piece} | {fixed:.3f} | {per_thousand:.3f} | " + (
+                f"{100 * fixed / a_small:.0f}% | {100 * fixed / a_large:.0f}% |" if resolved
+                else "not resolved | not resolved |"))
         env_small, env_large = tables[small][6]["prefix_ms"], tables[large][6]["prefix_ms"]
         lines += [f"| whole environment step | {totals[0]:.3f} | {totals[1]:.3f} |"
                   f" {100 * totals[0] / env_small:.0f}% | {100 * totals[0] / env_large:.0f}% |", ""]
@@ -471,6 +474,13 @@ def render_wide(cells, sizes):
                     text += (f"; the split cell timed {order} reads {ms:.3f} ms,"
                              f" {100 * (ms / statistics.median(whole) - 1):+.1f}% from their median")
             lines.append(text + ".")
+        split_ms = [(n, ms) for n, ms, _, _, kind in readings if kind.startswith("split")]
+        whole_median = {n: statistics.median([ms for m, ms, _, _, kind in readings if m == n and kind == "whole"])
+                        for n, _ in split_ms if any(m == n and kind == "whole" for m, _, _, _, kind in readings)}
+        if any(ms > 1.03 * whole_median[n] for n, ms in split_ms if n in whole_median):
+            lines += ["", "The split cells read the whole environment step higher than the cells that time only"
+                      " whole steps. The reason was not found. The shares in the split table are ratios of times"
+                      " taken inside one cell; the milliseconds of the split table carry this difference."]
         lines.append("")
     return lines
 
@@ -483,18 +493,21 @@ def render_large(cells, split_sizes):
         return lines + ["Not measured.", ""]
     lines += [f"The Large map has 31 wall boxes, the U-maze 8. Measured on {where_and_when(cell)},"
               f" {cell['rounds_done']} rounds of {cell['env_steps_per_call']} environment steps. The U-maze"
-              " column is the environment step of the split table above.", "",
+              " column is the median of the U-maze readings from the cells that time only whole environment"
+              " steps (listed under the wider batches); the two maps were not timed in turn in one cell.", "",
               "| environments | Large map:<br>environment step (ms) | U-maze:<br>environment step (ms) |"
               " Large against<br>U-maze | Large: first<br>call (s) |",
               "|---:|---:|---:|---:|---:|"]
+    readings = default_readings(cells, split_sizes)
     for n in sorted(split_sizes):
         name = f"large, {n:,} environments"
         if name not in cell["functions"]:
             continue
-        large_ms, umaze = median_ms(cell, name), cells.get(split_name("umaze", n))
+        large_ms = median_ms(cell, name)
+        whole = [ms for m, ms, _, _, kind in readings if m == n and kind == "whole"]
         umaze_text, ratio_text = "not measured", ""
-        if umaze is not None:
-            umaze_ms = median_ms(umaze, ENVIRONMENT_STEP)
+        if whole:
+            umaze_ms = statistics.median(whole)
             umaze_text, ratio_text = f"{umaze_ms:.3f}", f"{100 * (large_ms / umaze_ms - 1):+.1f}%"
         lines.append(f"| {n:,} | {large_ms:.3f} | {umaze_text} | {ratio_text} |"
                      f" {cell['functions'][name]['first_call_seconds']:.1f} |")
