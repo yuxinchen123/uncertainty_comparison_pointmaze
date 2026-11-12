@@ -176,3 +176,15 @@ def test_final_over_peak_is_measured_from_the_never_reached_return():
     # A curve that never leaves the floor has no ratio.
     flat = make_policy([100], [10], [-10], arrivals=[0], reward_setting='step_cost')
     assert measures.configuration_measures([flat], 100)['final_over_peak'] is None
+
+
+def test_the_median_first_goal_step_counts_a_policy_with_no_arrival_as_infinitely_late():
+    """First arrivals at 100, 300, none and 200: the two middle values are 200 and 300."""
+    def policies(first_steps):
+        return [make_policy([100, 200, 300, 400], [1] * 4, [0] * 4, first_goal_step=step, seed=seed)
+                for seed, step in enumerate(first_steps)]
+    assert measures.median_first_goal_step(policies([100, 300, -1, 200]), 400) == 250.0
+    # At a budget of 300 steps the arrival at step 350 does not count, so two of four have none: the median
+    # falls on a policy with no arrival.
+    assert measures.median_first_goal_step(policies([100, 350, -1, 200]), 300) == np.inf
+    assert measures.median_first_goal_step(policies([100, 350, -1, 200]), 400) == 275.0

@@ -77,6 +77,15 @@ def capped_first_goal_step(policy, budget):
     return float(policy.first_goal_step) if reached_goal(policy, budget) else float(budget)
 
 
+def median_first_goal_step(policies, budget):
+    """The median over policies of the training step of the first arrival; infinite when it falls on a policy with none."""
+    # before: first arrivals at steps [100, 300, none, 200] within the budget; after: 250.0, the mean of the two
+    #         middle values 200 and 300, a policy with no arrival counting as infinitely late.
+    #         With [100, none, none, 200] the two middle values are 200 and none, so the median is infinite.
+    steps = [float(policy.first_goal_step) if reached_goal(policy, budget) else np.inf for policy in policies]
+    return float(np.median(steps))
+
+
 def coverage_at(policy, budget):
     """Share of open maze cells reached by the last window end at or before the budget; None when not recorded."""
     require_steps(policy, budget)

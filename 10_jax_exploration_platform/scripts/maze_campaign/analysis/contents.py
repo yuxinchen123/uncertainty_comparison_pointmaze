@@ -13,6 +13,9 @@ read. The states follow from content alone:
 `analysis.md` carries the contents table with the states in words; `analysis.html` carries the colours. Nothing
 marks itself read: `python -m maze_campaign.analysis.contents --analysis-dir <dir> --mark-read all` (or section
 identifiers) does, when the reader says so. It reads and writes text files only.
+
+A report with another file name (a batch's `summary.md` and `summary.html`) passes that name without its ending as
+`name` (`--name summary` on the command line); the manifest stays `section_history.json` in the report's folder.
 """
 
 import argparse
@@ -94,7 +97,7 @@ def update_history(history, preamble, sections, analysis_dir, timestamp):
     return history
 
 
-def contents_table(history):
+def contents_table(history, name='analysis'):
     """The contents table in Markdown: one row per section, in document order."""
     rows = ['## Contents\n\n| section | first written | last changed | status |\n|---|---|---|---|\n']
     for identifier in history['order']:
@@ -103,7 +106,7 @@ def contents_table(history):
                     f"{pacific(record['last_changed'])} | {status_of(record)} |\n")
     rows.append('\nTimes are Pacific, converted from machines running Eastern, and come from this report\'s own '
                 'history of regenerations. [The same report with unread sections in blue and changed text in '
-                'brown](analysis.html). No section marks itself read.\n\n')
+                f'brown]({name}.html). No section marks itself read.\n\n')
     return ''.join(rows)
 
 
@@ -182,12 +185,12 @@ def highlight_changes(current, previous):
     return ''.join(writer.parts)
 
 
-def render(analysis_dir, history, title):
-    """Write analysis.md with its contents table, and analysis.html with the colours of the three states."""
+def render(analysis_dir, history, title, name='analysis'):
+    """Write <name>.md with its contents table, and <name>.html with the colours of the three states."""
     from markdown_it import MarkdownIt
     analysis_dir = Path(analysis_dir)
     renderer = MarkdownIt('commonmark', {'html': True}).enable('table')
-    contents = contents_table(history)
+    contents = contents_table(history, name)
     markdown, pages = [history['preamble'], contents], []
     for identifier in history['order']:
         record = history['sections'][identifier]
@@ -197,19 +200,19 @@ def render(analysis_dir, history, title):
         if state == 'updated':
             body = highlight_changes(body, renderer.render(record.get('last_read_text') or ''))
             # A figure whose image file changed since the last read gets a small label under it.
-            for name, digest in record['current_figures'].items():
-                if digest != record.get('last_read_figures', {}).get(name):
-                    body = re.sub(r'(<img[^>]*src="' + re.escape(name) + r'"[^>]*>)',
+            for image, digest in record['current_figures'].items():
+                if digest != record.get('last_read_figures', {}).get(image):
+                    body = re.sub(r'(<img[^>]*src="' + re.escape(image) + r'"[^>]*>)',
                                   r'\1<small class="figure-updated">updated</small>', body)
         pages.append(f'<section id="{identifier}" class="{state}"><h2>{html.escape(record["title"])}</h2>{body}</section>')
-    (analysis_dir / 'analysis.md').write_text(''.join(markdown))
+    (analysis_dir / f'{name}.md').write_text(''.join(markdown))
 
     # The contents rows of unread sections are blue as well.
     contents_page = renderer.render(contents)
     for identifier in history['order']:
         state = status_of(history['sections'][identifier])
         contents_page = contents_page.replace(f'href="#{identifier}"', f'class="{state}" href="#{identifier}"')
-    (analysis_dir / 'analysis.html').write_text(
+    (analysis_dir / f'{name}.html').write_text(
         f'<!doctype html><html lang="en"><meta charset="utf-8"><title>{html.escape(title)}</title>'
         f'<style>{STYLE}</style>{MATH}{renderer.render(history["preamble"])}{contents_page}{"".join(pages)}</html>\n')
 
@@ -225,16 +228,16 @@ def write_history(analysis_dir, history):
     (Path(analysis_dir) / HISTORY_FILE).write_text(json.dumps(history, indent=1) + '\n')
 
 
-def write_report(analysis_dir, markdown, title):
+def write_report(analysis_dir, markdown, title, name='analysis'):
     """Write a regenerated report: update the manifest from its sections, then render both files."""
     preamble, sections = split_sections(markdown)
     history = update_history(read_history(analysis_dir), preamble, sections, analysis_dir, now())
     write_history(analysis_dir, history)
-    render(analysis_dir, history, title)
+    render(analysis_dir, history, title, name)
     return {identifier: status_of(history['sections'][identifier]) for identifier in history['order']}
 
 
-def mark_read(analysis_dir, identifiers, title='Report'):
+def mark_read(analysis_dir, identifiers, title='Report', name='analysis'):
     """Mark the named sections (or 'all') as read in their current state, and render the report again."""
     history = read_history(analysis_dir)
     chosen = history['order'] if 'all' in identifiers else list(identifiers)
@@ -246,7 +249,7 @@ def mark_read(analysis_dir, identifiers, title='Report'):
         record.update(last_read_digest=record['content_digest'], last_read_text=record['current_text'],
                       last_read_figures=record['current_figures'], marked_read_at=now())
     write_history(analysis_dir, history)
-    render(analysis_dir, history, title)
+    render(analysis_dir, history, title, name)
     return chosen
 
 
@@ -255,10 +258,12 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--analysis-dir', type=Path, required=True)
     parser.add_argument('--mark-read', nargs='+', required=True, help="section identifiers, or 'all'")
+    parser.add_argument('--name', default='analysis', help="the report's file name without its ending (summary for a batch)")
     arguments = parser.parse_args()
     # The page's title is the report's first heading.
     heading = re.match(r'# (.+)', read_history(arguments.analysis_dir)['preamble'])
-    marked = mark_read(arguments.analysis_dir, arguments.mark_read, heading.group(1) if heading else 'Report')
+    marked = mark_read(arguments.analysis_dir, arguments.mark_read, heading.group(1) if heading else 'Report',
+                       arguments.name)
     print(f'marked as read: {", ".join(marked)}')
 
 

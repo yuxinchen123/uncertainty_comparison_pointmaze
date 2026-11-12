@@ -1,0 +1,269 @@
+# Batch 1 screen on PointMaze Large with reward 1 on arrival: the start, the scale and the decay of the bonus
+
+Generated 2026-11-12 14:29 PT by the command below. This file is generated: regenerate it, do not edit it. Times are Pacific, converted from machines running Eastern. Run folder: `2026-11-12-00-22_pointmaze-medium-large_antmaze-umaze-medium-large_beat-cleanrl-ppo-rnd-auto-research_reward-arrival-plus-1-and-step-cost_bonus-5-days_other-parts-5-days`; batch folder: `batches/01_start-scale-and-decay-of-the-bonus-on-continuous-inputs`.
+
+```bash
+cd /p/rlprojects/RND/10_jax_exploration_platform
+bash "benchmark_runs/2026-11-12-00-17_pointmaze-antmaze_cleanrl-ppo-rnd_speed-30-ideas_screen-15-minutes-per-idea-per-card_h100-nvl_rtx-5080_rtx-a4500/infrastructure/submit_tests.sh" -s scripts/maze_campaign/analysis/batch_summary_job.py \
+    --run-dir=runs/2026-11-12-00-22_pointmaze-medium-large_antmaze-umaze-medium-large_beat-cleanrl-ppo-rnd-auto-research_reward-arrival-plus-1-and-step-cost_bonus-5-days_other-parts-5-days \
+    --batch=01_start-scale-and-decay-of-the-bonus-on-continuous-inputs
+```
+
+## Contents
+
+| section | first written | last changed | status |
+|---|---|---|---|
+| [Units](#units) | 2026-11-12 14:12 PT | 2026-11-12 14:29 PT | unread |
+| [Measures](#measures) | 2026-11-12 14:12 PT | 2026-11-12 14:12 PT | unread |
+| [Screen table](#screen-table) | 2026-11-12 14:12 PT | 2026-11-12 14:26 PT | unread |
+| [Whole-curve mean at every intrinsic weight](#whole-curve-mean-at-every-intrinsic-weight) | 2026-11-12 14:12 PT | 2026-11-12 14:26 PT | unread |
+| [Training curves](#training-curves) | 2026-11-12 14:12 PT | 2026-11-12 14:26 PT | unread |
+| [Properties of the bonus on the maze grid](#properties-of-the-bonus-on-the-maze-grid) | 2026-11-12 14:12 PT | 2026-11-12 14:26 PT | unread |
+| [Predictions](#predictions) | 2026-11-12 14:12 PT | 2026-11-12 14:29 PT | unread |
+| [Ideas against the control](#ideas-against-the-control) | 2026-11-12 14:12 PT | 2026-11-12 14:26 PT | unread |
+| [Consistency check against the baseline run](#consistency-check-against-the-baseline-run) | 2026-11-12 14:12 PT | 2026-11-12 14:12 PT | unread |
+| [Records that need a look](#records-that-need-a-look) | 2026-11-12 14:12 PT | 2026-11-12 14:29 PT | unread |
+
+Times are Pacific, converted from machines running Eastern, and come from this report's own history of regenerations. [The same report with unread sections in blue and changed text in brown](summary.html). No section marks itself read.
+
+## Units
+
+9 of 14 units are complete. Only complete units enter the tables and figures below; nothing is estimated for the others. Left out: fast last layer inside the rollout, step size 0.1 of the exact fit; fast last layer inside the rollout, step size 0.3 of the exact fit; fast last layer inside the rollout, step size 1 of the exact fit; scheduled last layer on fixed features, decay 0.5; scheduled last layer on fixed features, decay 0.75.
+
+| unit | method | state | logging windows written | card | finished | place in the queue |
+|---|---|---|---|---|---|---|
+| 1 | control | complete | 256 of 256 | NVIDIA GeForce RTX 2080 Ti | 2026-11-12 13:52 PT | `queue/done` |
+| 2 | even start | complete | 256 of 256 | NVIDIA GeForce RTX 2080 Ti | 2026-11-12 13:55 PT | `queue/done` |
+| 3 | fixed scale | complete | 256 of 256 | NVIDIA GeForce RTX 2080 Ti | 2026-11-12 14:00 PT | `queue/done` |
+| 4 | even start with no divisor | complete | 256 of 256 | NVIDIA RTX 4000 Ada Generation | 2026-11-12 14:01 PT | `queue/done` |
+| 5 | separate predictor step size, predictor learning rate 0.25 times 1e-4 | complete | 256 of 256 | NVIDIA RTX 4000 Ada Generation | 2026-11-12 14:05 PT | `queue/done` |
+| 6 | separate predictor step size, predictor learning rate 1 times 1e-4 | complete | 256 of 256 | NVIDIA GeForce RTX 2080 Ti | 2026-11-12 14:04 PT | `queue/done` |
+| 7 | separate predictor step size, predictor learning rate 4 times 1e-4 | complete | 256 of 256 | NVIDIA GeForce RTX 2080 Ti | 2026-11-12 14:06 PT | `queue/done` |
+| 8 | error length as the bonus | complete | 256 of 256 | NVIDIA GeForce RTX 2080 Ti | 2026-11-12 14:10 PT | `queue/done` |
+| 9 | fast last layer inside the rollout, step size 0.1 of the exact fit | unfinished | 202 of 256 | NVIDIA RTX 4000 Ada Generation | not finished | `queue/running` |
+| 10 | fast last layer inside the rollout, step size 0.3 of the exact fit | unfinished | 143 of 256 | NVIDIA GeForce RTX 2080 Ti | not finished | `queue/running` |
+| 11 | fast last layer inside the rollout, step size 1 of the exact fit | unfinished | 113 of 256 | NVIDIA GeForce RTX 2080 Ti | not finished | `queue/running` |
+| 12 | scheduled last layer on fixed features, decay 0.5 | unfinished | 231 of 256 | NVIDIA RTX 4000 Ada Generation | not finished | `queue/running` |
+| 13 | scheduled last layer on fixed features, decay 0.75 | unfinished | 119 of 256 | NVIDIA GeForce RTX 2080 Ti | not finished | `queue/running` |
+| 14 | scheduled last layer on fixed features, decay 1 | complete | 256 of 256 | NVIDIA A30 | 2026-11-12 14:08 PT | `queue/done` |
+
+Unit names, by the number in the first column:
+
+1. `batch-01-screen_pointmaze-large_reward-arrival-plus-one_control-cleanrl-ppo-rnd_cells-01-to-12-of-12_seeds-0-to-15`
+2. `batch-01-screen_pointmaze-large_reward-arrival-plus-one_even-start_cells-01-to-12-of-12_seeds-0-to-15`
+3. `batch-01-screen_pointmaze-large_reward-arrival-plus-one_fixed-scale_cells-01-to-12-of-12_seeds-0-to-15`
+4. `batch-01-screen_pointmaze-large_reward-arrival-plus-one_even-start-with-no-divisor_cells-01-to-12-of-12_seeds-0-to-15`
+5. `batch-01-screen_pointmaze-large_reward-arrival-plus-one_separate-predictor-step-size-multiple-0-point-25_cells-01-to-12-of-12_seeds-0-to-15`
+6. `batch-01-screen_pointmaze-large_reward-arrival-plus-one_separate-predictor-step-size-multiple-1_cells-01-to-12-of-12_seeds-0-to-15`
+7. `batch-01-screen_pointmaze-large_reward-arrival-plus-one_separate-predictor-step-size-multiple-4_cells-01-to-12-of-12_seeds-0-to-15`
+8. `batch-01-screen_pointmaze-large_reward-arrival-plus-one_error-length-as-the-bonus_cells-01-to-12-of-12_seeds-0-to-15`
+9. `batch-01-screen_pointmaze-large_reward-arrival-plus-one_fast-last-layer-inside-the-rollout-step-0-point-1_cells-01-to-12-of-12_seeds-0-to-15`
+10. `batch-01-screen_pointmaze-large_reward-arrival-plus-one_fast-last-layer-inside-the-rollout-step-0-point-3_cells-01-to-12-of-12_seeds-0-to-15`
+11. `batch-01-screen_pointmaze-large_reward-arrival-plus-one_fast-last-layer-inside-the-rollout-step-1_cells-01-to-12-of-12_seeds-0-to-15`
+12. `batch-01-screen_pointmaze-large_reward-arrival-plus-one_scheduled-last-layer-on-fixed-features-decay-0-point-5_cells-01-to-12-of-12_seeds-0-to-15`
+13. `batch-01-screen_pointmaze-large_reward-arrival-plus-one_scheduled-last-layer-on-fixed-features-decay-0-point-75_cells-01-to-12-of-12_seeds-0-to-15`
+14. `batch-01-screen_pointmaze-large_reward-arrival-plus-one_scheduled-last-layer-on-fixed-features-decay-1_cells-01-to-12-of-12_seeds-0-to-15`
+
+## Measures
+
+Define $K$ as the number of policies (seeds) of one method at one intrinsic weight ($K = 16$, the development seeds 0 to 15), $B$ as the budget in environment steps per policy ($B$ = 8,388,608), $R_i(s)$ as the mean return of the training episodes of policy $i$ that end in the logging window containing step $s$, and $\Delta s$ as the number of that window's steps inside the range being averaged. An episode returns 1 if it reaches the goal and 0 otherwise. A window in which no episode ends takes the value of the window before it; before a policy's first finished episode the value is 0.
+
+1. **Whole-curve mean:** $W(B) = \dfrac{1}{K}\sum_{i=1}^{K} \dfrac{1}{B}\sum_{s \le B} R_i(s) \thinspace \Delta s$, the area under the training curve divided by the budget.
+2. **Final level:** $L(B) = \dfrac{1}{K}\sum_{i=1}^{K} \dfrac{1}{0.1 B}\sum_{0.9 B \lt s \le B} R_i(s) \thinspace \Delta s$, the same mean over the last 10% of the budget.
+3. **Best intrinsic weight:** per method, the one of its 12 intrinsic weights with the highest $W$; ties go to the higher $L$.
+4. **Difference from the control:** define $d_i$ as the value of seed $i$ under the method at its best weight minus its value under the control at the control's own best weight. The tables give $\bar d = \dfrac{1}{K}\sum_{i=1}^{K} d_i$ for $W$ and for $L$, each with a 95% interval: the 2.5% and 97.5% points of the means of 10,000 resamples of the $K$ seeds, drawn with replacement. An idea is ahead of the control when the interval is entirely above zero, behind when it is entirely below zero, and within the interval otherwise.
+5. **Median first-arrival step:** define $T_i$ as the training step of policy $i$'s first arrival at the goal ($T_i = \infty$ if it has none by step $B$). The measure is the median of $T_i$ over the $K$ policies; it reads "none" when the median falls on a policy with no arrival.
+6. **Policies that reach the goal:** the number of the $K$ policies with $T_i \le B$.
+
+Standard errors are over the $K$ policies.
+
+## Screen table
+
+Define $W$, $L$ and the other columns as in the section Measures. One row per method at its best intrinsic weight, read at 8,388,608 environment steps per policy. The control is the first row; the ideas follow, sorted by $W$. Per column, the best value is bold and the second best underlined; for the median first-arrival step the smallest value is the best. Differences are the method minus the control at the control's own best intrinsic weight (2), on the 16 seeds both have; the brackets hold the 95% interval. The seeds are the development seeds, on which each best weight was also chosen: this table is a screen and not a verdict.
+
+| method | best intrinsic weight | whole-curve mean $W$ ↑ ± standard error | difference in $W$ from the control [95% interval] | final level $L$ | difference in $L$ from the control [95% interval] | median first-arrival step | policies that reach the goal |
+|---|---|---|---|---|---|---|---|
+| control | 2 | <u>0.885</u> ± 0.010 | control | <u>0.994</u> | control | <u>191.9K</u> | **16 of 16** |
+| separate predictor step size, predictor learning rate 0.25 times 1e-4 | 1 | **0.887** ± 0.012 | **+0.003** [-0.027, +0.034] | **0.998** | **+0.003** [+0.001, +0.006] | 195.1K | **16 of 16** |
+| separate predictor step size, predictor learning rate 1 times 1e-4 | 4 | 0.881 ± 0.006 | <u>-0.003</u> [-0.028, +0.024] | <u>0.994</u> | -0.001 [-0.004, +0.002] | **152.7K** | **16 of 16** |
+| separate predictor step size, predictor learning rate 4 times 1e-4 | 4 | 0.878 ± 0.010 | -0.006 [-0.036, +0.025] | 0.991 | -0.004 [-0.012, +0.002] | 223.9K | **16 of 16** |
+| error length as the bonus | 0.0625 | 0.845 ± 0.008 | -0.040 [-0.064, -0.013] | <u>0.994</u> | <u>-0.000</u> [-0.003, +0.003] | 527.2K | **16 of 16** |
+| fixed scale | 16 | 0.547 ± 0.096 | -0.338 [-0.523, -0.171] | 0.687 | -0.307 [-0.558, -0.118] | 902.3K | <u>13 of 16</u> |
+| even start with no divisor | 0.25 | 0.327 ± 0.099 | -0.557 [-0.737, -0.372] | 0.437 | -0.557 [-0.806, -0.308] | 1.67M | 10 of 16 |
+| even start | 0.25 | 0.186 ± 0.085 | -0.698 [-0.841, -0.533] | 0.247 | -0.748 [-0.933, -0.503] | 2.59M | 9 of 16 |
+| scheduled last layer on fixed features, decay 1 | 1 | 0.000 ± 0.000 | -0.884 [-0.901, -0.863] | 0.000 | -0.994 [-0.996, -0.992] | 5.16M | 9 of 16 |
+
+## Whole-curve mean at every intrinsic weight
+
+Define $W$ as in the section Measures. Rows are in the order of the screen table. The 12 weights are split over two tables so that each fits the width of a printed page. Per weight (column), the highest $W$ among the methods is bold and the second highest underlined. The last column names each method's best weight and says when it is the smallest or the largest weight of the grid.
+
+| method | weight $4^{-6}$ | weight $4^{-5}$ | weight $4^{-4}$ | weight $4^{-3}$ | weight 0.0625 | weight 0.25 | best intrinsic weight |
+|---|---|---|---|---|---|---|---|
+| control | <u>0.000</u> | <u>0.000</u> | <u>0.000</u> | <u>0.090</u> | 0.159 | 0.728 | 2 |
+| separate predictor step size, predictor learning rate 0.25 times 1e-4 | <u>0.000</u> | **0.025** | <u>0.000</u> | 0.000 | 0.176 | <u>0.744</u> | 1 |
+| separate predictor step size, predictor learning rate 1 times 1e-4 | **0.059** | <u>0.000</u> | <u>0.000</u> | 0.000 | 0.096 | 0.686 | 4 |
+| separate predictor step size, predictor learning rate 4 times 1e-4 | <u>0.000</u> | <u>0.000</u> | <u>0.000</u> | 0.000 | <u>0.227</u> | 0.699 | 4 |
+| error length as the bonus | <u>0.000</u> | <u>0.000</u> | **0.051** | **0.607** | **0.845** | **0.793** | 0.0625 |
+| fixed scale | <u>0.000</u> | <u>0.000</u> | <u>0.000</u> | 0.000 | 0.000 | 0.038 | 16 |
+| even start with no divisor | <u>0.000</u> | <u>0.000</u> | <u>0.000</u> | 0.000 | 0.129 | 0.327 | 0.25 |
+| even start | <u>0.000</u> | <u>0.000</u> | <u>0.000</u> | 0.000 | 0.000 | 0.186 | 0.25 |
+| scheduled last layer on fixed features, decay 1 | <u>0.000</u> | <u>0.000</u> | <u>0.000</u> | 0.000 | 0.000 | 0.000 | 1 |
+
+| method | weight 0.5 | weight 1 | weight 2 | weight 4 | weight 16 | weight 64 | best intrinsic weight |
+|---|---|---|---|---|---|---|---|
+| control | <u>0.846</u> | 0.860 | **0.885** | 0.867 | 0.575 | 0.065 | 2 |
+| separate predictor step size, predictor learning rate 0.25 times 1e-4 | **0.860** | **0.887** | <u>0.883</u> | 0.870 | **0.739** | **0.194** | 1 |
+| separate predictor step size, predictor learning rate 1 times 1e-4 | 0.821 | <u>0.865</u> | 0.874 | **0.881** | <u>0.722</u> | <u>0.175</u> | 4 |
+| separate predictor step size, predictor learning rate 4 times 1e-4 | 0.832 | 0.860 | 0.860 | <u>0.878</u> | 0.718 | 0.153 | 4 |
+| error length as the bonus | 0.571 | 0.259 | 0.071 | 0.028 | 0.021 | 0.018 | 0.0625 |
+| fixed scale | 0.115 | 0.131 | 0.274 | 0.370 | 0.547 | 0.002 | 16 |
+| even start with no divisor | 0.199 | 0.182 | 0.037 | 0.000 | 0.000 | 0.000 | 0.25 |
+| even start | 0.184 | 0.086 | 0.016 | 0.000 | 0.000 | 0.000 | 0.25 |
+| scheduled last layer on fixed features, decay 1 | 0.000 | 0.000 | 0.000 | 0.000 | 0.000 | 0.000 | 1 |
+
+No method has its best weight at an end of the grid.
+
+## Training curves
+
+Define $\bar R(s) = \dfrac{1}{K}\sum_{i=1}^{K} R_i(s)$, with $R_i(s)$ and $K$ as in the section Measures. One panel per idea in the order of the screen table: the idea at its best intrinsic weight in blue, the control at its best intrinsic weight (2) in grey; bands are one standard error over the 16 seeds.
+
+![training curves](plots/training-curves_control-against-each-idea_best-intrinsic-weights.png)
+
+## Properties of the bonus on the maze grid
+
+Every unit records, per policy and per open maze cell (46 cells), the bonus at one probe observation (the cell's centre, zero velocity) at the end of every logging window, and the visits to the cell. Define $b_i(c, w)$ as the bonus before the divisor of policy $i$ at the probe of cell $c$ at the end of logging window $w$, with $w = 0$ for the record written after the random-action rollouts and before the first training iteration; $r_i(c, w)$ as the same bonus after the divisor (the intrinsic reward); $n_i(c, w)$ as the number of states of policy $i$'s rollouts in cell $c$ from the first window to window $w$; $\beta$ as the intrinsic weight; $C$ as the number of open cells ($C = 46$); and $w_f$ as the last logging window that ends at or before the share $f$ of the budget (5% is read at step 393,216, 25% is read at step 2,097,152, 100% is read at step 8,388,608).
+
+1. **Start ratio:** $E_i = \dfrac{\max_c b_i(c, 0)}{\min_c b_i(c, 0)}$, the largest over the smallest start bonus on the grid. The table gives the median over all policies of the unit (every weight).
+2. **Decay slope:** define $x_w = \log(1 + n_i(c, w))$ and $y_w = \log b_i(c, w)$, and $\bar x$ and $\bar y$ as their means over the windows $w \ge 1$ with $n_i(c, w) \ge 1$. Per policy and cell, $a_i(c) = \dfrac{\sum_w (x_w - \bar x)(y_w - \bar y)}{\sum_w (x_w - \bar x)^2}$ over those windows: the least-squares slope of the logarithm of the bonus on the logarithm of one plus the cumulative visits. A slope of $-1$ means the bonus falls in proportion to $1/(1 + n)$. The table gives the median over the policies and cells at the method's best weight, and the smallest and the largest of the per-weight medians with the weights they belong to: when the two differ, the slope depends on the weight.
+3. **Bonus at unvisited cells over its start:** $u_i(c, f) = \dfrac{b_i(c, w_f)}{b_i(c, 0)}$ for the (policy, cell) pairs with $n_i(c, w_f) = 0$, at the method's best weight. The table gives the median over those pairs and their number; a median over fewer than 20 pairs is not printed. A value below 1 means that training on other cells lowered the bonus of a cell with no visit.
+4. **Weighted intrinsic reward:** $q(w) = \dfrac{\beta}{K C}\sum_{i=1}^{K}\sum_{c=1}^{C} r_i(c, w)$, at the method's best weight: the intrinsic reward a first visit to a cell would pay, times the intrinsic weight, averaged over cells and policies. It is read at the start ($w = 0$), at the end of the first logging window (step 32,768) and at 25% and 100% of the budget. The task pays 1 on arrival. The second table also gives the divisor (the median over the policies) in the start record and at the end of the first logging window. A divisor that follows the running standard deviation is 1 in the start record, because no rollout has entered its statistics yet, and the trainer updates it with each rollout before it divides that rollout's rewards; for such a method the start column is the bonus itself times the weight, and the first logging window is the earliest reading with a divisor the learner used.
+
+Rows are in the order of the screen table. These columns describe the bonus and have no better or worse direction, so no value is marked.
+
+| method | start ratio, median over policies | decay slope at the best weight, median | decay slope, smallest and largest median over the weights (at weight) | bonus at unvisited cells over its start at 5% of the budget | bonus at unvisited cells over its start at 25% of the budget | bonus at unvisited cells over its start at 100% of the budget |
+|---|---|---|---|---|---|---|
+| control | 87.88 | -0.41 | -0.97 ($4^{-4}$) to -0.35 (1) | 0.00173 (73 pairs) | 0.000963 (29 pairs) | 0.00107 (29 pairs) |
+| separate predictor step size, predictor learning rate 0.25 times 1e-4 | 87.86 | -0.41 | -1.07 ($4^{-4}$) to -0.41 (0.5) | 0.00957 (115 pairs) | 0.00614 (22 pairs) | 0.00662 (22 pairs) |
+| separate predictor step size, predictor learning rate 1 times 1e-4 | 87.88 | -0.45 | -0.82 ($4^{-3}$) to -0.35 (1) | 0.00455 (51 pairs) | not printed: 11 pairs | not printed: 11 pairs |
+| separate predictor step size, predictor learning rate 4 times 1e-4 | 87.88 | -0.44 | -0.89 ($4^{-3}$) to -0.17 ($4^{-6}$) | 0.00231 (60 pairs) | not printed: 5 pairs | not printed: 5 pairs |
+| error length as the bonus | 9.37 | -0.24 | -0.53 ($4^{-5}$) to -0.21 ($4^{-3}$) | 0.0588 (342 pairs) | 0.0285 (33 pairs) | 0.0325 (33 pairs) |
+| fixed scale | 87.88 | -0.45 | -0.71 (0.25) to 0.13 ($4^{-6}$) | 0.00512 (320 pairs) | 0.000518 (57 pairs) | 0.000201 (52 pairs) |
+| even start with no divisor | 1.00 | -0.21 | -0.51 ($4^{-3}$) to 0.00 (4) | 0.104 (440 pairs) | 0.0514 (219 pairs) | 0.0278 (184 pairs) |
+| even start | 1.00 | -0.27 | -0.68 ($4^{-3}$) to -0.09 ($4^{-4}$) | 0.0933 (446 pairs) | 0.0318 (193 pairs) | 0.037 (146 pairs) |
+| scheduled last layer on fixed features, decay 1 | 1.00 | 0.43 | -0.34 ($4^{-6}$) to 0.53 (0.25) | 0.0924 (334 pairs) | 0.178 (213 pairs) | 0.33 (177 pairs) |
+
+| method | best intrinsic weight | divisor at the start, and at the end of the first logging window | weighted intrinsic reward at the start | weighted intrinsic reward at the end of the first logging window | weighted intrinsic reward at 25% of the budget | weighted intrinsic reward at 100% of the budget |
+|---|---|---|---|---|---|---|
+| control | 2 | 1 and 51 | 70 | 0.0156 | 0.00248 | 0.00451 |
+| separate predictor step size, predictor learning rate 0.25 times 1e-4 | 1 | 1 and 351 | 35.7 | 0.0117 | 0.000649 | 0.00145 |
+| separate predictor step size, predictor learning rate 1 times 1e-4 | 4 | 1 and 188 | 141 | 0.0182 | 0.00257 | 0.00503 |
+| separate predictor step size, predictor learning rate 4 times 1e-4 | 4 | 1 and 86.7 | 141 | 0.0194 | 0.00311 | 0.00607 |
+| error length as the bonus | 0.0625 | 1 and 37.9 | 0.505 | 0.00212 | 0.000806 | 0.00143 |
+| fixed scale | 16 | 236 and 236 | 2.36 | 0.0199 | 0.000965 | 0.000615 |
+| even start with no divisor | 0.25 | 1 and 1 | 0.125 | 0.155 | 0.0258 | 0.0033 |
+| even start | 0.25 | 1 and 5.38 | 0.125 | 0.02 | 0.0127 | 0.00841 |
+| scheduled last layer on fixed features, decay 1 | 1 | 1 and 1 | 1 | 0.153 | 0.462 | 0.883 |
+
+### Bonus against cumulative visits
+
+One panel per method in the order of the screen table, at the method's best intrinsic weight. Each point is the median of $b_i(c, w)$ over the policies, cells and logging windows whose $1 + n_i(c, w)$ falls in one bin (each bin a factor of two wide; pairs with no visit are left out); the band holds the middle half of the same points. Both axes are logarithmic, and every panel shows the same range of visits and the same number of decades of the bonus, so equal slopes look equal. The dashed line has slope $-1$ and passes through the first bin.
+
+![bonus against cumulative visits](plots/bonus-at-the-probes-against-cumulative-visits_best-intrinsic-weights.png)
+
+## Predictions
+
+The predictions were written in `ideas.md` before the runs. Each is quoted, then read part by part: a part held or did not hold on the numbers given, or cannot be read yet because a unit it needs is not complete. A prediction held when every part held, and did not hold when at least one part did not. Where a prediction leaves a choice, it is read as follows. Every method is read at its best intrinsic weight unless a weight is named. "Large weights" are 16 and 64. "Well above 2" is read as above 2. "Same final level" and "changes by less than its interval" are read as: the 95% interval of the difference from the control contains zero. The three separate predictor step sizes are compared with the middle one (1 times). The fast last layer is read at the step size with the highest $W$. "The highest final level at $a$ = 0.5" is read among the three decay values.
+
+### Prediction 1: even start
+
+> **Even start alone** changes the whole-curve mean by less than its interval; its start ratio is 1.00 against well above 2 for the control.
+
+Observed: **did not hold**.
+
+- The interval of the difference in $W$ from the control contains zero: **did not hold**. Difference in $W$ from the control: -0.698 [-0.841, -0.533].
+- The start ratio of even start is 1.00: **held**. Median start ratio: 1.00.
+- The start ratio of the control is above 2: **held**. Median start ratio: 87.88.
+
+### Prediction 2: fixed scale, and even start with no divisor
+
+> **Fixed scale** and **even start with no divisor** raise the final level at large weights (no late fall) and move the best weight upward; at the best weight the whole-curve mean rises by 0.02 to 0.05, because the bonus stops competing with the task reward once the maze is familiar.
+
+Observed: **did not hold**.
+
+- Fixed scale: the final level at the large weights is above the control's: **did not hold**. Final level at weight 16: 0.687 against 0.670 for the control; at weight 64: 0.000 against 0.112 for the control.
+- Fixed scale: the best intrinsic weight is above the control's: **held**. Best intrinsic weight 16 against 2 for the control.
+- Fixed scale: at the best weights, $W$ is 0.02 to 0.05 above the control's: **did not hold**. Difference in $W$ from the control: -0.338 [-0.523, -0.171].
+- Even start with no divisor: the final level at the large weights is above the control's: **did not hold**. Final level at weight 16: 0.000 against 0.670 for the control; at weight 64: 0.000 against 0.112 for the control.
+- Even start with no divisor: the best intrinsic weight is above the control's: **did not hold**. Best intrinsic weight 0.25 against 2 for the control.
+- Even start with no divisor: at the best weights, $W$ is 0.02 to 0.05 above the control's: **did not hold**. Difference in $W$ from the control: -0.557 [-0.737, -0.372].
+
+### Prediction 3: separate predictor step size
+
+> **Separate predictor step size:** a faster predictor (4 times) lowers the median first-arrival step but lowers the final level; a slower one does the opposite; the best whole-curve mean is at 1 or 4 times.
+
+Observed: **did not hold**.
+
+- 4 times: lower median first-arrival step than 1 times: **did not hold**. Median first-arrival step 223.9K against 152.7K at 1 times.
+- 4 times: lower final level than 1 times: **held**. Final level 0.991 against 0.994 at 1 times.
+- 0.25 times: higher median first-arrival step than 1 times: **held**. Median first-arrival step 195.1K against 152.7K at 1 times.
+- 0.25 times: higher final level than 1 times: **held**. Final level 0.998 against 0.994 at 1 times.
+- The highest $W$ of the three step sizes is at 1 or 4 times: **did not hold**. $W$ 0.887 at 0.25 times; 0.881 at 1 times; 0.878 at 4 times.
+- Beside: separate predictor step size, predictor learning rate 0.25 times 1e-4: $W$ 0.887, $L$ 0.998, median first arrival 195.1K; separate predictor step size, predictor learning rate 1 times 1e-4: $W$ 0.881, $L$ 0.994, median first arrival 152.7K; separate predictor step size, predictor learning rate 4 times 1e-4: $W$ 0.878, $L$ 0.991, median first arrival 223.9K.
+
+### Prediction 4: error length as the bonus
+
+> **Error length** behaves like a slower decay: later first arrival, same final level.
+
+Observed: **held**.
+
+- Later median first arrival than the control: **held**. Median first-arrival step 527.2K against 191.9K for the control.
+- Same final level as the control: **held**. Difference in $L$ from the control: -0.000 [-0.003, +0.003].
+- Beside: median decay slope -0.24 against -0.41 for the control (a slope nearer zero is a slower decay).
+
+### Prediction 5: fast last layer inside the rollout
+
+> **Fast last layer inside the rollout** lowers the median first-arrival step by at least 15%.
+
+Observed: **cannot be read yet**.
+
+- The median first-arrival step is at least 15% below the control's, at the step size with the highest $W$: **cannot be read yet**. Waiting for: fast last layer inside the rollout, step size 0.1 of the exact fit; fast last layer inside the rollout, step size 0.3 of the exact fit; fast last layer inside the rollout, step size 1 of the exact fit.
+
+### Prediction 6: scheduled last layer on fixed features
+
+> **Scheduled last layer on fixed features** has the earliest median first arrival of the batch at $a$ = 1, and the highest final level at $a$ = 0.5; whether its whole-curve mean is ahead of the control depends on how much one input's fit lowers the error at inputs not yet visited, which the diagnostic measures.
+
+Observed: **did not hold**.
+
+- Decay 1 has the earliest median first arrival of the batch: **did not hold**. Median first-arrival step 5.16M; the earliest of the other complete methods is separate predictor step size, predictor learning rate 1 times 1e-4 at 152.7K.
+- Decay 0.5 has the highest final level of the three decay values: **cannot be read yet**. Waiting for: scheduled last layer on fixed features, decay 0.5; scheduled last layer on fixed features, decay 0.75.
+
+## Ideas against the control
+
+By the 95% interval of the difference in $W$ from the control (section Measures, item 4), on the development seeds. After each name: the difference in $W$ and its interval.
+
+- **Ahead of the control** (interval entirely above zero): none.
+- **Within the interval** (it contains zero): separate predictor step size, predictor learning rate 0.25 times 1e-4 (+0.003 [-0.027, +0.034]); separate predictor step size, predictor learning rate 1 times 1e-4 (-0.003 [-0.028, +0.024]); separate predictor step size, predictor learning rate 4 times 1e-4 (-0.006 [-0.036, +0.025]).
+- **Behind the control** (interval entirely below zero): error length as the bonus (-0.040 [-0.064, -0.013]); fixed scale (-0.338 [-0.523, -0.171]); even start with no divisor (-0.557 [-0.737, -0.372]); even start (-0.698 [-0.841, -0.533]); scheduled last layer on fixed features, decay 1 (-0.884 [-0.901, -0.863]).
+- **Not compared yet** (unit not complete): fast last layer inside the rollout, step size 0.1 of the exact fit; fast last layer inside the rollout, step size 0.3 of the exact fit; fast last layer inside the rollout, step size 1 of the exact fit; scheduled last layer on fixed features, decay 0.5; scheduled last layer on fixed features, decay 0.75.
+
+## Consistency check against the baseline run
+
+The control's cell with intrinsic weight 2, learning rate 0.002 has the settings and seeds of one cell of the unit `development-at-the-budget_pointmaze-large_reward-arrival-plus-one_cleanrl-ppo-rnd_cells-1-to-9-of-9_seeds-0-to-15` in the run folder `2026-11-12-02-24_cleanrl-ppo-rnd-baseline_pointmaze-medium-large_antmaze-umaze-medium-large_goal-termination_reward-arrival-plus-1-and-step-cost_first-pass-60-configurations_seeds-0-15_confirmation-seeds-from-30000`. Reported earlier for that cell: whole-curve mean 0.888 ± 0.008, final level 0.994 (`program.md`, RND's chosen configuration). Define $W$ and $L$ as in the section Measures; both rows are read at 8,388,608 steps per policy.
+
+| run | whole-curve mean $W$ ± standard error | final level $L$ ± standard error | seeds | card |
+|---|---|---|---|---|
+| control of this batch (control) | 0.885 ± 0.010 | 0.994 ± 0.001 | 16 | NVIDIA GeForce RTX 2080 Ti |
+| the baseline run's unit | 0.888 ± 0.008 | 0.994 ± 0.001 | 16 | NVIDIA GeForce GTX 1080 Ti |
+
+Paired difference (this batch minus the baseline run's unit) on the 16 seeds both have, with its 95% interval from 10,000 resamples of the seeds: in $W$: -0.003 [-0.019, +0.013]; the interval contains zero. in $L$: +0.000 [-0.002, +0.002]; the interval contains zero.
+
+Settings that only the control records (its code has options the other did not have yet): `action_noise_generator` = threefry, `actor_critic_joint_trunk` = False, `advantage_scan_unroll` = 1, `intrinsic_sums_by_matrix_product` = False, `next_values_from_shifted_values` = False, `permutation_draw` = argsort_uniform, `skip_reset_draws_at_zero_noise` = False, `target_features_once_per_iteration` = False.
+
+## Records that need a look
+
+Per unit read: starts after the first one, continuations from a checkpoint, recorded values the measures cannot use (they are left out of the measure and counted here), and a bonus at a probe that rose above the largest bonus of the start record. A unit whose records lack a field stops the generation with an error that names it.
+
+- even start (`batch-01-screen_pointmaze-large_reward-arrival-plus-one_even-start_cells-01-to-12-of-12_seeds-0-to-15`): the largest bonus at a probe in a logging window is 25.8, above the largest at the start (0.5), over all intrinsic weights.
+- even start with no divisor (`batch-01-screen_pointmaze-large_reward-arrival-plus-one_even-start-with-no-divisor_cells-01-to-12-of-12_seeds-0-to-15`): the largest bonus at a probe in a logging window is 37.6, above the largest at the start (0.5), over all intrinsic weights.
+- scheduled last layer on fixed features, decay 1 (`batch-01-screen_pointmaze-large_reward-arrival-plus-one_scheduled-last-layer-on-fixed-features-decay-1_cells-01-to-12-of-12_seeds-0-to-15`): the largest bonus at a probe in a logging window is 82.5, above the largest at the start (1), over all intrinsic weights.
+

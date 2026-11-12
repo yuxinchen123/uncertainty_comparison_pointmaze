@@ -82,3 +82,14 @@ def test_section_identifiers_and_a_repeated_title(tmp_path):
     else:
         raise AssertionError('an unknown section was marked as read')
     assert json.loads((tmp_path / contents.HISTORY_FILE).read_text())['order'] == ['measures', 'results-first-table']
+
+
+def test_a_report_with_another_file_name_keeps_its_own_files(tmp_path):
+    """A batch summary is written as summary.md and summary.html, and marking it read renders the same files."""
+    assert contents.write_report(tmp_path, REPORT, 'Title', name='summary') == {
+        'measures': 'unread', 'results-first-table': 'unread'}
+    assert (tmp_path / 'summary.html').exists() and not (tmp_path / 'analysis.md').exists()
+    assert 'brown](summary.html)' in (tmp_path / 'summary.md').read_text()
+    contents.mark_read(tmp_path, ['all'], 'Title', name='summary')
+    assert states(tmp_path) == {'measures': 'read', 'results-first-table': 'read'}
+    assert '| read |' in (tmp_path / 'summary.md').read_text() and not (tmp_path / 'analysis.md').exists()

@@ -35,8 +35,12 @@ def flat_policy(values, *, seed, window=100, episodes=10, **more):
 
 def start_record(unit_id, *, family='pointmaze', map_name='large', step_limit=400, bonus='rnd_next_state', envs=4,
                  rollout=25, iterations=4, window_iterations=1, cells=((1e-4, 1.0),),
-                 names=('learning_rate', 'int_coef'), seeds=(0, 1), trainer=None):
-    """A unit_start record with the fields the reader uses: every cell holds every seed."""
+                 names=('learning_rate', 'int_coef'), seeds=(0, 1), trainer=None, probe_cells=None):
+    """A unit_start record with the fields the reader uses: every cell holds every seed.
+
+    `probe_cells` (open maze cells as (row, column)) makes it the start of a unit that records the bonus on the
+    maze grid.
+    """
     # before: 2 cells and seeds (0, 1); after: copy_cell [0, 0, 1, 1] and copy_seed_index [0, 1, 0, 1].
     copy_cell = [cell for cell in range(len(cells)) for _ in seeds]
     trainer_config = {'learning_rate': 3e-4, 'int_coef': 1.0, 'ent_coef': 0.001, 'clip_coef': 0.1, 'gamma_int': 0.99,
@@ -51,7 +55,35 @@ def start_record(unit_id, *, family='pointmaze', map_name='large', step_limit=40
             'rollout_steps': rollout, 'iterations': iterations, 'window_iterations': window_iterations,
             'cell_settings': [list(cell) for cell in cells], 'cell_setting_names': list(names),
             'copy_cell': copy_cell, 'copy_seed_index': [seed for _ in cells for seed in seeds],
-            'lr_anneal_iterations': iterations}
+            'lr_anneal_iterations': iterations,
+            **({'maze_grid_probe_cells': [list(cell) for cell in probe_cells]} if probe_cells is not None else {})}
+
+
+def grid_fields(start, bonus, visits, divisor=1.0):
+    """The maze-grid fields of one record: every policy has the same bonus and visits per open cell.
+
+    before: bonus [8.0, 2.0], visits [1, 0], divisor 2.0 in a unit of 2 policies
+    after:  probe_bonus_per_copy [[8.0, 2.0], [8.0, 2.0]], probe_intrinsic_reward_per_copy [[4.0, 1.0], [4.0, 1.0]],
+            intrinsic_reward_divisor_per_copy [2.0, 2.0], cell_visits_per_copy [[1, 0], [1, 0]].
+    """
+    copies = start['copies']
+    return {'probe_bonus_per_copy': [list(bonus) for _ in range(copies)],
+            'probe_intrinsic_reward_per_copy': [[value / divisor for value in bonus] for _ in range(copies)],
+            'intrinsic_reward_divisor_per_copy': [divisor] * copies,
+            'cell_visits_per_copy': [list(visits) for _ in range(copies)]}
+
+
+def grid_records(start, windows, start_bonus, bonus_of, visits_of, divisor=1.0):
+    """A unit's records with the maze-grid fields: the start record, the grid at the start, then the windows.
+
+    `bonus_of(index)` and `visits_of(index)` give the bonus at the end of window `index` and the visits during
+    it, one value per open cell. before: 2 windows; after: [unit_start, maze_grid_at_start, window 0, window 1].
+    """
+    cells = len(start['maze_grid_probe_cells'])
+    at_start = {'record': 'maze_grid_at_start', 'unit_id': start['unit_id'],
+                **grid_fields(start, start_bonus, [0] * cells, divisor)}
+    return [start, at_start] + [{**window, **grid_fields(start, bonus_of(index), visits_of(index), divisor)}
+                                for index, window in enumerate(windows)]
 
 
 def window_record(start, index, **per_copy):
@@ -111,12 +143,16 @@ def curve_windows(start, curves, episodes=20):
     return windows
 
 
-def write_shard(run_dir, unit_records, complete=True):
-    """Write one unit's records as a shard of the run folder; returns the shard's path."""
+def write_shard(run_dir, unit_records, complete=True, finished=None):
+    """Write one unit's records as a shard of the run folder; returns the shard's path.
+
+    `finished` is the finishing time the completion record names (a timestamp with its offset).
+    """
     start = next(record for record in unit_records if record['record'] == 'unit_start')
     lines = [{'record': 'job', 'unit_id': start['unit_id']}] + list(unit_records)
     if complete:
-        lines.append({'record': 'unit_complete', 'unit_id': start['unit_id'], 'nan_respawned_episodes': None})
+        lines.append({'record': 'unit_complete', 'unit_id': start['unit_id'], 'nan_respawned_episodes': None,
+                      **({'attempt_finished': finished} if finished else {})})
     path = Path(run_dir) / 'data' / f"{start['unit_id']}.jsonl"
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(''.join(json.dumps(line) + '\n' for line in lines))

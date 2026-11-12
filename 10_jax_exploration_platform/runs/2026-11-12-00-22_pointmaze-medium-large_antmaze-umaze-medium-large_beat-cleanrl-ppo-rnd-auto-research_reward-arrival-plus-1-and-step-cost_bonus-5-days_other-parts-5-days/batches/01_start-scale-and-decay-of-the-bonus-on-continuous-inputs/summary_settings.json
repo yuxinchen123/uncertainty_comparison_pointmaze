@@ -1,0 +1,28 @@
+{
+  "title": "Batch 1 screen on PointMaze Large with reward 1 on arrival: the start, the scale and the decay of the bonus",
+  "study_description": "screen_pointmaze-large_reward-arrival-plus-one.json",
+  "control": "control-cleanrl-ppo-rnd",
+  "method_names": {
+    "control-cleanrl-ppo-rnd": "control",
+    "even-start": "even start",
+    "fixed-scale": "fixed scale",
+    "even-start-with-no-divisor": "even start with no divisor",
+    "separate-predictor-step-size-multiple-0-point-25": "separate predictor step size, predictor learning rate 0.25 times 1e-4",
+    "separate-predictor-step-size-multiple-1": "separate predictor step size, predictor learning rate 1 times 1e-4",
+    "separate-predictor-step-size-multiple-4": "separate predictor step size, predictor learning rate 4 times 1e-4",
+    "error-length-as-the-bonus": "error length as the bonus",
+    "fast-last-layer-inside-the-rollout-step-0-point-1": "fast last layer inside the rollout, step size 0.1 of the exact fit",
+    "fast-last-layer-inside-the-rollout-step-0-point-3": "fast last layer inside the rollout, step size 0.3 of the exact fit",
+    "fast-last-layer-inside-the-rollout-step-1": "fast last layer inside the rollout, step size 1 of the exact fit",
+    "scheduled-last-layer-on-fixed-features-decay-0-point-5": "scheduled last layer on fixed features, decay 0.5",
+    "scheduled-last-layer-on-fixed-features-decay-0-point-75": "scheduled last layer on fixed features, decay 0.75",
+    "scheduled-last-layer-on-fixed-features-decay-1": "scheduled last layer on fixed features, decay 1"
+  },
+  "consistency_check": {
+    "run_folder": "2026-11-12-02-24_cleanrl-ppo-rnd-baseline_pointmaze-medium-large_antmaze-umaze-medium-large_goal-termination_reward-arrival-plus-1-and-step-cost_first-pass-60-configurations_seeds-0-15_confirmation-seeds-from-30000",
+    "unit": "development-at-the-budget_pointmaze-large_reward-arrival-plus-one_cleanrl-ppo-rnd_cells-1-to-9-of-9_seeds-0-to-15",
+    "settings": {"learning_rate": 0.002, "int_coef": 2.0},
+    "reported": "whole-curve mean 0.888 ± 0.008, final level 0.994 (`program.md`, RND's chosen configuration)"
+  },
+  "predictions": "predictions_batch_01"
+}

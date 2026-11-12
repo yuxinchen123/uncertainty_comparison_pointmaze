@@ -1,7 +1,8 @@
 """Generate a maze-campaign run folder's report: analysis/analysis.md, analysis/results.tex and analysis/plots/.
 
 Sections of analysis.md (each top-level section has a row in the contents table, marked read / unread / updated):
-the measures; the records read; the rollout-shape check (when a folder holds several numbers of environments per
+the measures; the records read; the configurations trained more than once (only when report_settings.json allows
+them with "repeated_configurations": "show"); the rollout-shape check (when a folder holds several numbers of environments per
 policy); the development sweeps (configurations in rows sorted by the whole-curve mean); the budget the plan's rule
 proposes from each finished sweep of the baseline; the training curves; the comparison with the baseline on the
 confirmation seeds; the final level against the training length; the decline check (chosen configurations whose
@@ -229,7 +230,12 @@ class Report:
     def __init__(self, run, plots, folder_name, at_steps=None):
         """Group the policies of each stage into configurations once; every section reads these groups."""
         self.run, self.plots, self.folder_name, self.at_steps = run, plots, folder_name, at_steps
-        self.groups = {stage: sorted(records.configurations([policy for policy in run.policies if policy.stage == stage]),
+        # Where the report settings allow repeated configurations, the unit that finished first is the one every
+        # table, choice and figure uses; the other runs are kept for their own section.
+        used, self.repeats = run.policies, []
+        if run.settings.get('repeated_configurations') == 'show':
+            used, self.repeats = records.split_repeats(run.policies, {unit['unit_id']: unit['finished'] for unit in run.units})
+        self.groups = {stage: sorted(records.configurations([policy for policy in used if policy.stage == stage]),
                                      key=lambda group: (*case_position(group.environment, group.reward_setting),
                                                         group.planned_steps, group.method,
                                                         group.environments_per_policy, compare.settings_order(group.settings)))
@@ -315,17 +321,79 @@ class Report:
                          str(unit['policies']), f"{unit['steps_reached']:,}",
                          'not known yet' if planned is None else f'{planned:,}', state])
         complete = sum(unit['state'] == 'complete' for unit in units)
+        repeated = (f' {len(self.repeats):,} of these policies repeat a configuration and seed that another unit '
+                    'finished earlier; they are left out of the tables and figures and shown in the section '
+                    'Configurations trained more than once.' if self.repeats else '')
         text = [f"## Records read\n\n{len(units)} units, {complete} complete; {len(self.run.policies):,} policies with at "
                 'least one logging window. A unit that was continued from a checkpoint keeps one unbroken sequence of '
                 'windows; a unit that was started again from zero is read from its last start. Episodes restarted '
                 'after a non-finite physics state count as episodes that reach the step limit, and stay in every '
-                'sum (the records hold sums per window, not single episodes).\n\n', markdown_table(header, rows),
+                f'sum (the records hold sums per window, not single episodes).{repeated}\n\n', markdown_table(header, rows),
                 'Unit names, by the number in the first column:\n\n']
         # A unit of another run folder (named in report_settings.json) is listed with that folder.
         for index, unit in enumerate(units, start=1):
             other = '' if unit['folder'] == self.folder_name else f" (run folder `{unit['folder']}`)"
             text.append(f"{index}. `{unit['unit_id']}`{other}\n")
         return ''.join(text) + '\n'
+
+    def repeats_section(self):
+        """Configurations more than one unit trained on the same seeds: each run's W and L, and their paired difference."""
+        if not self.repeats:
+            return ''
+        number = {unit['unit_id']: index for index, unit in enumerate(self.run.units, start=1)}
+        finished = {unit['unit_id']: unit['finished'] for unit in self.run.units}
+        text = ['## Configurations trained more than once\n\n'
+                'The report settings allow repeated configurations (`"repeated_configurations": "show"`). Where more '
+                'than one unit trained the same configuration on the same seed, every table, choice and figure of '
+                'this report uses the unit that finished first. A unit that has not finished counts as later than '
+                'every finished one, and units with the same finishing time are taken in the order of their names. '
+                'The other runs are shown here only. Define $W$ and $L$ as in the section Measures. Each difference '
+                'is a later run minus the run that is used, paired by seed, with its 95% interval from 10,000 '
+                'resamples of the seeds. Unit numbers are those of the section Records read.\n\n']
+        header = ['run', 'finished', 'used in the tables', 'whole-curve mean $W$ ± standard error',
+                  'final level $L$ ± standard error', 'seeds']
+        # One block per repeated configuration, in the order of the records.
+        for key in dict.fromkeys(policy.configuration_key for policy in self.repeats):
+            # The runs of this configuration: per unit, its policies of the seeds that were trained more than once.
+            # before: unit A with seeds 0 to 15 and unit B with seeds 0 to 15; after: {A: 16 policies, B: 16 policies},
+            #         the unit that finished first in front.
+            seeds = {policy.seed_key for policy in self.repeats if policy.configuration_key == key}
+            runs = grouped([policy for policy in self.run.policies
+                            if policy.configuration_key == key and policy.seed_key in seeds], lambda policy: policy.unit_id)
+            order = sorted(runs, key=lambda unit_id: records.finish_order(unit_id, finished))
+            groups = {unit_id: records.configurations(runs[unit_id])[0] for unit_id in order}
+            first = groups[order[0]]
+            steps = min(first.planned_steps, measures.common_steps([policy for unit_id in order for policy in runs[unit_id]]))
+            rows, sentences = [], []
+            for unit_id in order:
+                row = measures.configuration_measures(groups[unit_id].policies, steps)
+                rows.append([f'unit {number[unit_id]}: {records.unit_words(unit_id)}',
+                             contents.pacific(finished[unit_id]) if finished[unit_id] else 'not finished',
+                             'yes' if unit_id == order[0] else 'no',
+                             with_error(row['whole_curve_mean'], row['whole_curve_mean_error']),
+                             with_error(row['final_level'], row['final_level_error']), str(row['seeds'])])
+            for unit_id in order[1:]:
+                result = compare.compare_with_baseline(groups[unit_id].policies, first.policies, steps,
+                                                       'repeated configuration', unit_id, order[0])
+                if result['seeds'] < 2:
+                    sentences.append(f'Unit {number[unit_id]} and unit {number[order[0]]} have fewer than two seeds '
+                                     'in common, so no interval is given.')
+                    continue
+                parts = [f"in {symbol} {interval_text(result[quantity]).rsplit(',', 1)[0]}"
+                         + (' (the interval contains zero)' if result[quantity]['side'] == 'level'
+                            else ' (the interval does not contain zero)')
+                         for quantity, symbol in (('whole_curve_mean', '$W$'), ('final_level', '$L$'))]
+                sentences.append(f"Unit {number[unit_id]} minus unit {number[order[0]]}, on the {result['seeds']} "
+                                 f"seeds both have: {'; '.join(parts)}.")
+            title = (f'{first.environment}, {REWARD_SETTING_NAMES[first.reward_setting]}, {first.method}, '
+                     f'{records.describe_settings(first, MAIN_SETTINGS)}, trained for {first.planned_steps:,} steps')
+            text.append(f'### {title}\n\nRead at {steps:,} environment steps per policy.'
+                        f'{unfinished_note(steps, first.planned_steps)}\n\n' + markdown_table(header, rows)
+                        + ' '.join(sentences) + '\n\n')
+            self.tex.append(latex_table(header, rows, f'Configuration trained more than once: {title}, read at '
+                                        f'{steps:,} environment steps per policy. ' + ' '.join(sentences),
+                                        figures.file_slug('repeated', title), first_width=4.0))
+        return ''.join(text)
 
     def rollout_shape_section(self):
         """The rollout-shape check: W and L per number of environments per policy at equal environment steps."""
@@ -989,7 +1057,7 @@ class Report:
         """The whole report in Markdown, section by section."""
         parts = [f'# {title}\n\nGenerated {contents.pacific(contents.now())}; times are Pacific, converted from '
                  f'machines running Eastern. Run folder: `{self.folder_name}`.\n\n', MEASURES_TEXT,
-                 self.records_section()]
+                 self.records_section(), self.repeats_section()]
         # The development section runs before the others because it makes the choices they read; its LaTeX
         # tables still follow the rollout-shape tables, as its Markdown does.
         heading, self.tex = self.tex, []

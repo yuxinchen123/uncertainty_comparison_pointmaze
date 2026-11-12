@@ -353,3 +353,51 @@ def test_a_run_folder_without_a_window_is_refused(tmp_path):
     with pytest.raises(ValueError, match='has written a logging window yet'):
         report.generate(tmp_path)
     assert records.read_report_settings(tmp_path) == {}
+
+
+def write_repeated_run(run):
+    """A sweep over the weights 1 and 4, and a unit that repeats the weight 4 on the same two seeds and finished first."""
+    sweep = start_record('sweep', cells=((1e-4, 1.0), (1e-4, 4.0)))
+    write_shard(run, [sweep] + goal_windows(sweep, [0, 0, 1, 1]), finished='2026-11-12T13:00:00-05:00')
+    again = start_record('zz-repeat_weight-4', cells=((1e-4, 4.0),))
+    write_shard(run, [again] + goal_windows(again, [2, 3]), finished='2026-11-12T09:30:00-08:00')
+
+
+def test_a_repeated_configuration_is_an_error_unless_the_report_settings_allow_it(tmp_path):
+    """Without the key the report refuses the folder and names the seed and both units."""
+    write_repeated_run(tmp_path)
+    with pytest.raises(ValueError, match="Seed 0 was trained more than once for one configuration, in units "
+                                         "\\['sweep', 'zz-repeat_weight-4'\\]"):
+        report.generate(tmp_path)
+    (tmp_path / 'report_settings.json').write_text(json.dumps({'repeated_configurations': 'hide'}))
+    with pytest.raises(ValueError, match="repeated_configurations is 'hide'; the only value is \"show\""):
+        report.generate(tmp_path)
+
+
+def test_a_repeated_configuration_uses_the_unit_that_finished_first_and_gets_a_section(tmp_path):
+    """The repeat finished at 09:30 PT and the sweep at 10:00 PT, so the tables hold the repeat's weight 4."""
+    write_repeated_run(tmp_path)
+    (tmp_path / 'report_settings.json').write_text(json.dumps({'repeated_configurations': 'show'}))
+    result = report.generate(tmp_path)
+    text = (tmp_path / 'analysis/analysis.md').read_text()
+    assert list(result['sections'])[:3] == ['measures', 'records-read', 'configurations-trained-more-than-once']
+    assert '2 units, 2 complete; 6 policies with at least one logging window.' in text
+    assert ' 2 of these policies repeat a configuration and seed that another unit finished earlier;' in text
+
+    # The sweep table: W of the weight 4 is 0.375 (the repeat: goal from windows 2 and 3 of 4), not the sweep's 0.75.
+    sweep = text.split('## Development sweeps')[1].split('\n## ')[0]
+    assert '| intrinsic weight 1 | **1.000** ± 0.000 |' in sweep and '| intrinsic weight 4 | <u>0.375</u> ± 0.125 |' in sweep
+    assert '0.750' not in sweep and '2 configurations with 2 seeds each' in sweep
+
+    # The section: both runs side by side, the one that finished first in front, and the paired difference
+    # 0.75 - 0.5 and 0.75 - 0.25 of the later run minus the one that is used.
+    section = text.split('## Configurations trained more than once\n')[1].split('\n## ')[0]
+    assert 'uses the unit that finished first' in section
+    assert ('### PointMaze Large, reward 1 on arrival, CleanRL PPO-RND, intrinsic weight 4, learning rate 0.0001, '
+            'entropy coefficient 0.001, trained for 400 steps\n\nRead at 400 environment steps per policy.') in section
+    rows = [line for line in section.splitlines() if line.startswith('| unit')]
+    assert rows == ['| unit 2: zz repeat, weight 4 | 2026-11-12 09:30 PT | yes | 0.375 ± 0.125 | 1.000 ± 0.000 | 2 |',
+                    '| unit 1: sweep | 2026-11-12 10:00 PT | no | 0.750 ± 0.000 | 1.000 ± 0.000 | 2 |']
+    assert ('Unit 1 minus unit 2, on the 2 seeds both have: in $W$ +0.375 [+0.250, +0.500] (the interval does not '
+            'contain zero); in $L$ +0.000 [+0.000, +0.000] (the interval contains zero).') in section
+    assert 'Configuration trained more than once: PointMaze Large' in (tmp_path / 'analysis/results.tex').read_text()

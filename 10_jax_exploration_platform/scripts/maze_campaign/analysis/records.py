@@ -28,11 +28,15 @@ The run folder's optional `report_settings.json` (every key optional):
 - `methods`: a list of `{"name": words, "bonus": the unit's bonus (optional), "unit_id_pattern": a shell
   pattern on the unit id (optional), "reference": true for a row that never decides success (optional)}`;
 - `reference_methods`: names (in words) of further methods that never decide success;
-- `exclude_units`: shell patterns of unit ids that are left out of the report.
+- `exclude_units`: shell patterns of unit ids that are left out of the report;
+- `repeated_configurations`: "show" when units repeat a configuration on the same seeds on purpose. The report
+  then uses, for each such seed, the unit that finished first (`split_repeats`) and lists the other runs in a
+  section of their own. Without the key a repeat is an error, because an unplanned repeat is a mistake.
 """
 
 from collections import defaultdict
 from dataclasses import dataclass
+from datetime import datetime, timezone
 import fnmatch
 import json
 import math
@@ -74,7 +78,7 @@ SETTING_WORDS = {'int_coef': 'intrinsic weight', 'learning_rate': 'learning rate
 SETTING_ORDER = ('int_coef', 'learning_rate', 'ent_coef', 'clip_coef', 'gamma_int')
 WINDOW_SUMS = ('episodes', 'arrivals', 'return_sum', 'environment_return_sum', 'length_sum', 'steps_to_goal_sum')
 REPORT_SETTING_KEYS = {'title', 'other_run_folders', 'baseline_method', 'methods', 'reference_methods',
-                       'exclude_units'}
+                       'exclude_units', 'repeated_configurations'}
 
 
 @dataclass(frozen=True, eq=False)
@@ -254,11 +258,16 @@ def window_arrays(start, windows):
 
 def read_unit(path, methods=()):
     """One shard as (a summary of the unit, its policies); a unit with no window yet has no policies."""
-    records = read_lines(path)
+    return unit_from_records(path, read_lines(path), methods)
+
+
+def unit_from_records(path, records, methods=()):
+    """A shard's records, already read, as (a summary of the unit, its policies); for a caller that reads a shard once."""
     attempt = latest_attempt(records)
     summary = {'unit_id': Path(path).stem, 'state': 'no start record yet', 'environment': None, 'method': None,
                'environments_per_policy': None, 'reward_settings': [], 'policies': 0, 'planned_steps': None,
                'windows': 0, 'steps_reached': 0, 'continued_from_a_checkpoint': 0, 'respawned_episodes': None,
+               'finished': None,
                'started_from_zero_again': max(0, sum(record.get('record') == 'unit_start' for record in records) - 1)}
     if not attempt:
         return summary, []
@@ -281,6 +290,8 @@ def read_unit(path, methods=()):
         reward_settings=sorted(set(rewards), key=REWARD_SETTING_ORDER.index), windows=len(windows),
         state='complete' if completion else 'unfinished',
         continued_from_a_checkpoint=sum(record['record'] == 'unit_resume' for record in attempt),
+        # When the unit finished, as its completion record says (the time the record was written when it names none).
+        finished=(completion[0].get('attempt_finished') or completion[0].get('written_at')) if completion else None,
         respawned_episodes=completion[0].get('nan_respawned_episodes') if completion else None)
     if not windows:
         return summary, []
@@ -309,6 +320,9 @@ def read_report_settings(run_dir):
     unknown = set(settings) - REPORT_SETTING_KEYS
     if unknown:
         raise ValueError(f'{path} holds unknown keys {sorted(unknown)}; allowed: {sorted(REPORT_SETTING_KEYS)}.')
+    if settings.get('repeated_configurations', 'show') != 'show':
+        raise ValueError(f"{path}: repeated_configurations is {settings['repeated_configurations']!r}; the only "
+                         'value is "show" (leave the key out to refuse repeated configurations).')
     return settings
 
 
@@ -338,6 +352,41 @@ def load_run(run_dir):
         raise ValueError(f'The units hold different environment configurations under the name {mixed[0]}: '
                          f'{sorted(identities[mixed[0]])}.')
     return Run(policies=tuple(policies), units=tuple(units), settings=settings)
+
+
+def finish_order(unit_id, finished):
+    """A sort key that puts the unit that finished first in front: finished units by time, then the others by name."""
+    # before: {'b': '2026-11-12T10:00:00-05:00', 'a': '2026-11-12T09:00:00-08:00', 'c': None}
+    # after:  'b' (15:00 UTC) sorts before 'a' (17:00 UTC), and 'c', which has not finished, after both.
+    stamp = finished[unit_id]
+    moment = datetime.fromisoformat(stamp).astimezone(timezone.utc) if stamp else datetime.max.replace(tzinfo=timezone.utc)
+    return (moment, unit_id)
+
+
+def split_repeats(policies, finished):
+    """Policies split into those a report uses and the repeats: of a seed trained by several units, the first to finish is used."""
+    # before: units A (finished 10:00) and B (finished 09:00) both hold seeds 0 and 1 of one configuration, and A
+    #         also holds another configuration; after: (B's two policies and A's other policies, A's two repeats).
+    # `finished` maps every unit id to its finishing time (None when it has not finished).
+    groups = defaultdict(list)
+    for policy in policies:
+        groups[(policy.configuration_key, policy.seed_key)].append(policy)
+    repeats = []
+    for (_, (_, seed)), members in groups.items():
+        units = [policy.unit_id for policy in members]
+        if len(set(units)) != len(units):
+            raise ValueError(f'Seed {seed} was trained more than once for one configuration inside the unit '
+                             f'{next(unit for unit in units if units.count(unit) > 1)}.')
+        repeats += sorted(members, key=lambda policy: finish_order(policy.unit_id, finished))[1:]
+    left_out = {id(policy) for policy in repeats}
+    return [policy for policy in policies if id(policy) not in left_out], repeats
+
+
+def unit_words(unit_id):
+    """A unit's name in words: its parts separated by commas, the words of a part by spaces."""
+    # before: 'development-at-the-budget_pointmaze-medium_seeds-0-to-15'
+    # after:  'development at the budget, pointmaze medium, seeds 0 to 15'.
+    return unit_id.replace('_', ', ').replace('-', ' ')
 
 
 def configurations(policies):

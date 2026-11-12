@@ -185,3 +185,41 @@ def test_a_unit_that_has_not_written_a_window_has_no_policies(tmp_path):
     assert records.read_unit(empty)[0]['state'] == 'no start record yet'
     with pytest.raises(ValueError, match="not one of the study's five environments"):
         records.read_unit(write_shard(tmp_path, [start_record('unit-c', family='montezuma', map_name='room1')]))
+
+
+def test_records_that_were_read_already_give_the_same_unit(tmp_path):
+    """A caller that reads a shard once passes its records on; the unit is the one read_unit gives."""
+    start = start_record('read once', seeds=(0, 1))
+    path = write_shard(tmp_path, [start] + goal_windows(start, [1, None]))
+    lines = records.read_lines(path)
+    summary, policies = records.unit_from_records(path, lines)
+    again, same = records.read_unit(path)
+    assert summary == again and summary['state'] == 'complete' and summary['windows'] == 4
+    assert [policy.first_goal_step for policy in policies] == [policy.first_goal_step for policy in same] == [108, -1]
+
+
+def test_of_a_seed_trained_by_several_units_the_unit_that_finished_first_is_used(tmp_path):
+    """Finishing times are compared as moments, not as text; a unit that has not finished comes last."""
+    first = start_record('b-sweep', cells=((1e-4, 1.0), (1e-4, 4.0)))
+    second = start_record('a-repeat_weight-4', cells=((1e-4, 4.0),))
+    third = start_record('c-unfinished_weight-4', cells=((1e-4, 4.0),))
+    write_shard(tmp_path, [first] + goal_windows(first, [0, 0, 1, 1]), finished='2026-11-12T10:00:00-05:00')
+    write_shard(tmp_path, [second] + goal_windows(second, [2, 3]), finished='2026-11-12T09:00:00-08:00')
+    write_shard(tmp_path, [third] + goal_windows(third, [0, 0])[:2], complete=False)
+    run = records.load_run(tmp_path)
+    finished = {unit['unit_id']: unit['finished'] for unit in run.units}
+    assert finished == {'a-repeat_weight-4': '2026-11-12T09:00:00-08:00', 'b-sweep': '2026-11-12T10:00:00-05:00',
+                        'c-unfinished_weight-4': None}
+    # 10:00 at five hours behind UTC is 15:00 UTC; 09:00 at eight hours behind is 17:00 UTC: the sweep is first.
+    assert sorted(finished, key=lambda unit: records.finish_order(unit, finished)) == [
+        'b-sweep', 'a-repeat_weight-4', 'c-unfinished_weight-4']
+    used, repeats = records.split_repeats(run.policies, finished)
+    assert [(policy.unit_id, policy.seed) for policy in used] == [('b-sweep', 0), ('b-sweep', 1)] * 2
+    assert [(policy.unit_id, policy.seed) for policy in repeats] == [
+        ('a-repeat_weight-4', 0), ('c-unfinished_weight-4', 0), ('a-repeat_weight-4', 1), ('c-unfinished_weight-4', 1)]
+    assert len(records.configurations(used)) == 2
+    assert records.unit_words('development-at-the-budget_pointmaze-medium_seeds-0-to-15') == (
+        'development at the budget, pointmaze medium, seeds 0 to 15')
+    # The same seed twice inside one unit is never a planned repeat (the first policy read is of the unit a-repeat).
+    with pytest.raises(ValueError, match='Seed 0 was trained more than once for one configuration inside the unit a-repeat_weight-4'):
+        records.split_repeats(list(run.policies) + [run.policies[0]], finished)
