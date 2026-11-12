@@ -1,6 +1,6 @@
 # Batch 1 screen on PointMaze Large with reward 1 on arrival: the start, the scale and the decay of the bonus
 
-Generated 2026-11-12 14:29 PT by the command below. This file is generated: regenerate it, do not edit it. Times are Pacific, converted from machines running Eastern. Run folder: `2026-11-12-00-22_pointmaze-medium-large_antmaze-umaze-medium-large_beat-cleanrl-ppo-rnd-auto-research_reward-arrival-plus-1-and-step-cost_bonus-5-days_other-parts-5-days`; batch folder: `batches/01_start-scale-and-decay-of-the-bonus-on-continuous-inputs`.
+Generated 2026-11-12 15:04 PT by the command below. This file is generated: regenerate it, do not edit it. Times are Pacific, converted from machines running Eastern. Run folder: `2026-11-12-00-22_pointmaze-medium-large_antmaze-umaze-medium-large_beat-cleanrl-ppo-rnd-auto-research_reward-arrival-plus-1-and-step-cost_bonus-5-days_other-parts-5-days`; batch folder: `batches/01_start-scale-and-decay-of-the-bonus-on-continuous-inputs`.
 
 ```bash
 cd /p/rlprojects/RND/10_jax_exploration_platform
@@ -13,22 +13,22 @@ bash "benchmark_runs/2026-11-12-00-17_pointmaze-antmaze_cleanrl-ppo-rnd_speed-30
 
 | section | first written | last changed | status |
 |---|---|---|---|
-| [Units](#units) | 2026-11-12 14:12 PT | 2026-11-12 14:29 PT | unread |
+| [Units](#units) | 2026-11-12 14:12 PT | 2026-11-12 15:04 PT | unread |
 | [Measures](#measures) | 2026-11-12 14:12 PT | 2026-11-12 14:12 PT | unread |
-| [Screen table](#screen-table) | 2026-11-12 14:12 PT | 2026-11-12 14:26 PT | unread |
-| [Whole-curve mean at every intrinsic weight](#whole-curve-mean-at-every-intrinsic-weight) | 2026-11-12 14:12 PT | 2026-11-12 14:26 PT | unread |
-| [Training curves](#training-curves) | 2026-11-12 14:12 PT | 2026-11-12 14:26 PT | unread |
-| [Properties of the bonus on the maze grid](#properties-of-the-bonus-on-the-maze-grid) | 2026-11-12 14:12 PT | 2026-11-12 14:26 PT | unread |
-| [Predictions](#predictions) | 2026-11-12 14:12 PT | 2026-11-12 14:29 PT | unread |
-| [Ideas against the control](#ideas-against-the-control) | 2026-11-12 14:12 PT | 2026-11-12 14:26 PT | unread |
+| [Screen table](#screen-table) | 2026-11-12 14:12 PT | 2026-11-12 15:04 PT | unread |
+| [Whole-curve mean at every intrinsic weight](#whole-curve-mean-at-every-intrinsic-weight) | 2026-11-12 14:12 PT | 2026-11-12 15:04 PT | unread |
+| [Training curves](#training-curves) | 2026-11-12 14:12 PT | 2026-11-12 15:04 PT | unread |
+| [Properties of the bonus on the maze grid](#properties-of-the-bonus-on-the-maze-grid) | 2026-11-12 14:12 PT | 2026-11-12 15:04 PT | unread |
+| [Predictions](#predictions) | 2026-11-12 14:12 PT | 2026-11-12 15:04 PT | unread |
+| [Ideas against the control](#ideas-against-the-control) | 2026-11-12 14:12 PT | 2026-11-12 15:04 PT | unread |
 | [Consistency check against the baseline run](#consistency-check-against-the-baseline-run) | 2026-11-12 14:12 PT | 2026-11-12 14:12 PT | unread |
-| [Records that need a look](#records-that-need-a-look) | 2026-11-12 14:12 PT | 2026-11-12 14:29 PT | unread |
+| [Records that need a look](#records-that-need-a-look) | 2026-11-12 14:12 PT | 2026-11-12 15:04 PT | unread |
 
 Times are Pacific, converted from machines running Eastern, and come from this report's own history of regenerations. [The same report with unread sections in blue and changed text in brown](summary.html). No section marks itself read.
 
 ## Units
 
-9 of 14 units are complete. Only complete units enter the tables and figures below; nothing is estimated for the others. Left out: fast last layer inside the rollout, step size 0.1 of the exact fit; fast last layer inside the rollout, step size 0.3 of the exact fit; fast last layer inside the rollout, step size 1 of the exact fit; scheduled last layer on fixed features, decay 0.5; scheduled last layer on fixed features, decay 0.75.
+14 of 14 units are complete. Only complete units enter the tables and figures below; nothing is estimated for the others. No unit is left out.
 
 | unit | method | state | logging windows written | card | finished | place in the queue |
 |---|---|---|---|---|---|---|
@@ -40,11 +40,11 @@ Times are Pacific, converted from machines running Eastern, and come from this r
 | 6 | separate predictor step size, predictor learning rate 1 times 1e-4 | complete | 256 of 256 | NVIDIA GeForce RTX 2080 Ti | 2026-11-12 14:04 PT | `queue/done` |
 | 7 | separate predictor step size, predictor learning rate 4 times 1e-4 | complete | 256 of 256 | NVIDIA GeForce RTX 2080 Ti | 2026-11-12 14:06 PT | `queue/done` |
 | 8 | error length as the bonus | complete | 256 of 256 | NVIDIA GeForce RTX 2080 Ti | 2026-11-12 14:10 PT | `queue/done` |
-| 9 | fast last layer inside the rollout, step size 0.1 of the exact fit | unfinished | 202 of 256 | NVIDIA RTX 4000 Ada Generation | not finished | `queue/running` |
-| 10 | fast last layer inside the rollout, step size 0.3 of the exact fit | unfinished | 143 of 256 | NVIDIA GeForce RTX 2080 Ti | not finished | `queue/running` |
-| 11 | fast last layer inside the rollout, step size 1 of the exact fit | unfinished | 113 of 256 | NVIDIA GeForce RTX 2080 Ti | not finished | `queue/running` |
-| 12 | scheduled last layer on fixed features, decay 0.5 | unfinished | 231 of 256 | NVIDIA RTX 4000 Ada Generation | not finished | `queue/running` |
-| 13 | scheduled last layer on fixed features, decay 0.75 | unfinished | 119 of 256 | NVIDIA GeForce RTX 2080 Ti | not finished | `queue/running` |
+| 9 | fast last layer inside the rollout, step size 0.1 of the exact fit | complete | 256 of 256 | NVIDIA RTX 4000 Ada Generation | 2026-11-12 14:36 PT | `queue/done` |
+| 10 | fast last layer inside the rollout, step size 0.3 of the exact fit | complete | 256 of 256 | NVIDIA GeForce RTX 2080 Ti | 2026-11-12 14:54 PT | `queue/done` |
+| 11 | fast last layer inside the rollout, step size 1 of the exact fit | complete | 256 of 256 | NVIDIA GeForce RTX 2080 Ti | 2026-11-12 15:01 PT | `queue/done` |
+| 12 | scheduled last layer on fixed features, decay 0.5 | complete | 256 of 256 | NVIDIA RTX 4000 Ada Generation | 2026-11-12 14:31 PT | `queue/done` |
+| 13 | scheduled last layer on fixed features, decay 0.75 | complete | 256 of 256 | NVIDIA GeForce RTX 2080 Ti | 2026-11-12 14:54 PT | `queue/done` |
 | 14 | scheduled last layer on fixed features, decay 1 | complete | 256 of 256 | NVIDIA A30 | 2026-11-12 14:08 PT | `queue/done` |
 
 Unit names, by the number in the first column:
@@ -83,14 +83,19 @@ Define $W$, $L$ and the other columns as in the section Measures. One row per me
 
 | method | best intrinsic weight | whole-curve mean $W$ ↑ ± standard error | difference in $W$ from the control [95% interval] | final level $L$ | difference in $L$ from the control [95% interval] | median first-arrival step | policies that reach the goal |
 |---|---|---|---|---|---|---|---|
-| control | 2 | <u>0.885</u> ± 0.010 | control | <u>0.994</u> | control | <u>191.9K</u> | **16 of 16** |
+| control | 2 | <u>0.885</u> ± 0.010 | control | <u>0.994</u> | control | 191.9K | **16 of 16** |
 | separate predictor step size, predictor learning rate 0.25 times 1e-4 | 1 | **0.887** ± 0.012 | **+0.003** [-0.027, +0.034] | **0.998** | **+0.003** [+0.001, +0.006] | 195.1K | **16 of 16** |
-| separate predictor step size, predictor learning rate 1 times 1e-4 | 4 | 0.881 ± 0.006 | <u>-0.003</u> [-0.028, +0.024] | <u>0.994</u> | -0.001 [-0.004, +0.002] | **152.7K** | **16 of 16** |
+| separate predictor step size, predictor learning rate 1 times 1e-4 | 4 | 0.881 ± 0.006 | <u>-0.003</u> [-0.028, +0.024] | <u>0.994</u> | -0.001 [-0.004, +0.002] | <u>152.7K</u> | **16 of 16** |
 | separate predictor step size, predictor learning rate 4 times 1e-4 | 4 | 0.878 ± 0.010 | -0.006 [-0.036, +0.025] | 0.991 | -0.004 [-0.012, +0.002] | 223.9K | **16 of 16** |
+| fast last layer inside the rollout, step size 0.3 of the exact fit | 0.25 | 0.869 ± 0.008 | -0.016 [-0.036, +0.005] | 0.991 | -0.004 [-0.007, -0.000] | 166.1K | **16 of 16** |
+| fast last layer inside the rollout, step size 0.1 of the exact fit | 0.5 | 0.862 ± 0.016 | -0.023 [-0.064, +0.013] | 0.984 | -0.010 [-0.016, -0.005] | **99.1K** | **16 of 16** |
 | error length as the bonus | 0.0625 | 0.845 ± 0.008 | -0.040 [-0.064, -0.013] | <u>0.994</u> | <u>-0.000</u> [-0.003, +0.003] | 527.2K | **16 of 16** |
+| fast last layer inside the rollout, step size 1 of the exact fit | 0.25 | 0.798 ± 0.056 | -0.086 [-0.205, -0.009] | 0.926 | -0.068 [-0.196, -0.001] | 336.7K | **16 of 16** |
 | fixed scale | 16 | 0.547 ± 0.096 | -0.338 [-0.523, -0.171] | 0.687 | -0.307 [-0.558, -0.118] | 902.3K | <u>13 of 16</u> |
 | even start with no divisor | 0.25 | 0.327 ± 0.099 | -0.557 [-0.737, -0.372] | 0.437 | -0.557 [-0.806, -0.308] | 1.67M | 10 of 16 |
+| scheduled last layer on fixed features, decay 0.5 | $4^{-3}$ | 0.247 ± 0.083 | -0.637 [-0.799, -0.471] | 0.378 | -0.616 [-0.854, -0.372] | 1.86M | 11 of 16 |
 | even start | 0.25 | 0.186 ± 0.085 | -0.698 [-0.841, -0.533] | 0.247 | -0.748 [-0.933, -0.503] | 2.59M | 9 of 16 |
+| scheduled last layer on fixed features, decay 0.75 | $4^{-3}$ | 0.106 ± 0.067 | -0.779 [-0.882, -0.641] | 0.166 | -0.829 [-0.994, -0.643] | 3.24M | 11 of 16 |
 | scheduled last layer on fixed features, decay 1 | 1 | 0.000 ± 0.000 | -0.884 [-0.901, -0.863] | 0.000 | -0.994 [-0.996, -0.992] | 5.16M | 9 of 16 |
 
 ## Whole-curve mean at every intrinsic weight
@@ -99,26 +104,36 @@ Define $W$ as in the section Measures. Rows are in the order of the screen table
 
 | method | weight $4^{-6}$ | weight $4^{-5}$ | weight $4^{-4}$ | weight $4^{-3}$ | weight 0.0625 | weight 0.25 | best intrinsic weight |
 |---|---|---|---|---|---|---|---|
-| control | <u>0.000</u> | <u>0.000</u> | <u>0.000</u> | <u>0.090</u> | 0.159 | 0.728 | 2 |
-| separate predictor step size, predictor learning rate 0.25 times 1e-4 | <u>0.000</u> | **0.025** | <u>0.000</u> | 0.000 | 0.176 | <u>0.744</u> | 1 |
-| separate predictor step size, predictor learning rate 1 times 1e-4 | **0.059** | <u>0.000</u> | <u>0.000</u> | 0.000 | 0.096 | 0.686 | 4 |
-| separate predictor step size, predictor learning rate 4 times 1e-4 | <u>0.000</u> | <u>0.000</u> | <u>0.000</u> | 0.000 | <u>0.227</u> | 0.699 | 4 |
-| error length as the bonus | <u>0.000</u> | <u>0.000</u> | **0.051** | **0.607** | **0.845** | **0.793** | 0.0625 |
-| fixed scale | <u>0.000</u> | <u>0.000</u> | <u>0.000</u> | 0.000 | 0.000 | 0.038 | 16 |
-| even start with no divisor | <u>0.000</u> | <u>0.000</u> | <u>0.000</u> | 0.000 | 0.129 | 0.327 | 0.25 |
-| even start | <u>0.000</u> | <u>0.000</u> | <u>0.000</u> | 0.000 | 0.000 | 0.186 | 0.25 |
-| scheduled last layer on fixed features, decay 1 | <u>0.000</u> | <u>0.000</u> | <u>0.000</u> | 0.000 | 0.000 | 0.000 | 1 |
+| control | <u>0.000</u> | 0.000 | 0.000 | 0.090 | 0.159 | 0.728 | 2 |
+| separate predictor step size, predictor learning rate 0.25 times 1e-4 | <u>0.000</u> | 0.025 | 0.000 | 0.000 | 0.176 | 0.744 | 1 |
+| separate predictor step size, predictor learning rate 1 times 1e-4 | **0.059** | 0.000 | 0.000 | 0.000 | 0.096 | 0.686 | 4 |
+| separate predictor step size, predictor learning rate 4 times 1e-4 | <u>0.000</u> | 0.000 | 0.000 | 0.000 | 0.227 | 0.699 | 4 |
+| fast last layer inside the rollout, step size 0.3 of the exact fit | <u>0.000</u> | **0.050** | **0.156** | <u>0.507</u> | 0.740 | **0.869** | 0.25 |
+| fast last layer inside the rollout, step size 0.1 of the exact fit | <u>0.000</u> | <u>0.047</u> | 0.050 | 0.478 | <u>0.790</u> | <u>0.852</u> | 0.5 |
+| error length as the bonus | <u>0.000</u> | 0.000 | <u>0.051</u> | **0.607** | **0.845** | 0.793 | 0.0625 |
+| fast last layer inside the rollout, step size 1 of the exact fit | <u>0.000</u> | 0.000 | 0.000 | 0.315 | 0.677 | 0.798 | 0.25 |
+| fixed scale | <u>0.000</u> | 0.000 | 0.000 | 0.000 | 0.000 | 0.038 | 16 |
+| even start with no divisor | <u>0.000</u> | 0.000 | 0.000 | 0.000 | 0.129 | 0.327 | 0.25 |
+| scheduled last layer on fixed features, decay 0.5 | <u>0.000</u> | 0.000 | 0.039 | 0.247 | 0.166 | 0.001 | $4^{-3}$ |
+| even start | <u>0.000</u> | 0.000 | 0.000 | 0.000 | 0.000 | 0.186 | 0.25 |
+| scheduled last layer on fixed features, decay 0.75 | <u>0.000</u> | 0.000 | 0.037 | 0.106 | 0.000 | 0.001 | $4^{-3}$ |
+| scheduled last layer on fixed features, decay 1 | <u>0.000</u> | 0.000 | 0.000 | 0.000 | 0.000 | 0.000 | 1 |
 
 | method | weight 0.5 | weight 1 | weight 2 | weight 4 | weight 16 | weight 64 | best intrinsic weight |
 |---|---|---|---|---|---|---|---|
-| control | <u>0.846</u> | 0.860 | **0.885** | 0.867 | 0.575 | 0.065 | 2 |
-| separate predictor step size, predictor learning rate 0.25 times 1e-4 | **0.860** | **0.887** | <u>0.883</u> | 0.870 | **0.739** | **0.194** | 1 |
+| control | 0.846 | 0.860 | **0.885** | 0.867 | 0.575 | 0.065 | 2 |
+| separate predictor step size, predictor learning rate 0.25 times 1e-4 | <u>0.860</u> | **0.887** | <u>0.883</u> | 0.870 | **0.739** | **0.194** | 1 |
 | separate predictor step size, predictor learning rate 1 times 1e-4 | 0.821 | <u>0.865</u> | 0.874 | **0.881** | <u>0.722</u> | <u>0.175</u> | 4 |
 | separate predictor step size, predictor learning rate 4 times 1e-4 | 0.832 | 0.860 | 0.860 | <u>0.878</u> | 0.718 | 0.153 | 4 |
+| fast last layer inside the rollout, step size 0.3 of the exact fit | 0.830 | 0.702 | 0.400 | 0.170 | 0.015 | 0.013 | 0.25 |
+| fast last layer inside the rollout, step size 0.1 of the exact fit | **0.862** | 0.834 | 0.635 | 0.345 | 0.036 | 0.021 | 0.5 |
 | error length as the bonus | 0.571 | 0.259 | 0.071 | 0.028 | 0.021 | 0.018 | 0.0625 |
+| fast last layer inside the rollout, step size 1 of the exact fit | 0.780 | 0.725 | 0.462 | 0.160 | 0.017 | 0.011 | 0.25 |
 | fixed scale | 0.115 | 0.131 | 0.274 | 0.370 | 0.547 | 0.002 | 16 |
 | even start with no divisor | 0.199 | 0.182 | 0.037 | 0.000 | 0.000 | 0.000 | 0.25 |
+| scheduled last layer on fixed features, decay 0.5 | 0.002 | 0.001 | 0.002 | 0.001 | 0.001 | 0.001 | $4^{-3}$ |
 | even start | 0.184 | 0.086 | 0.016 | 0.000 | 0.000 | 0.000 | 0.25 |
+| scheduled last layer on fixed features, decay 0.75 | 0.000 | 0.001 | 0.001 | 0.000 | 0.000 | 0.000 | $4^{-3}$ |
 | scheduled last layer on fixed features, decay 1 | 0.000 | 0.000 | 0.000 | 0.000 | 0.000 | 0.000 | 1 |
 
 No method has its best weight at an end of the grid.
@@ -146,10 +161,15 @@ Rows are in the order of the screen table. These columns describe the bonus and 
 | separate predictor step size, predictor learning rate 0.25 times 1e-4 | 87.86 | -0.41 | -1.07 ($4^{-4}$) to -0.41 (0.5) | 0.00957 (115 pairs) | 0.00614 (22 pairs) | 0.00662 (22 pairs) |
 | separate predictor step size, predictor learning rate 1 times 1e-4 | 87.88 | -0.45 | -0.82 ($4^{-3}$) to -0.35 (1) | 0.00455 (51 pairs) | not printed: 11 pairs | not printed: 11 pairs |
 | separate predictor step size, predictor learning rate 4 times 1e-4 | 87.88 | -0.44 | -0.89 ($4^{-3}$) to -0.17 ($4^{-6}$) | 0.00231 (60 pairs) | not printed: 5 pairs | not printed: 5 pairs |
+| fast last layer inside the rollout, step size 0.3 of the exact fit | 87.88 | -0.48 | -0.89 ($4^{-5}$) to -0.39 ($4^{-3}$) | 0.00191 (72 pairs) | not printed: 16 pairs | not printed: 16 pairs |
+| fast last layer inside the rollout, step size 0.1 of the exact fit | 87.86 | -0.51 | -1.04 ($4^{-6}$) to -0.35 (0.0625) | 0.00155 (85 pairs) | 0.000918 (23 pairs) | 0.000856 (23 pairs) |
 | error length as the bonus | 9.37 | -0.24 | -0.53 ($4^{-5}$) to -0.21 ($4^{-3}$) | 0.0588 (342 pairs) | 0.0285 (33 pairs) | 0.0325 (33 pairs) |
+| fast last layer inside the rollout, step size 1 of the exact fit | 87.88 | -0.44 | -1.05 ($4^{-6}$) to -0.44 (0.25) | 0.0023 (184 pairs) | 0.000968 (41 pairs) | 0.0011 (25 pairs) |
 | fixed scale | 87.88 | -0.45 | -0.71 (0.25) to 0.13 ($4^{-6}$) | 0.00512 (320 pairs) | 0.000518 (57 pairs) | 0.000201 (52 pairs) |
 | even start with no divisor | 1.00 | -0.21 | -0.51 ($4^{-3}$) to 0.00 (4) | 0.104 (440 pairs) | 0.0514 (219 pairs) | 0.0278 (184 pairs) |
+| scheduled last layer on fixed features, decay 0.5 | 1.00 | -0.06 | -0.08 ($4^{-6}$) to 0.57 (64) | 0.128 (463 pairs) | 0.128 (180 pairs) | 0.245 (132 pairs) |
 | even start | 1.00 | -0.27 | -0.68 ($4^{-3}$) to -0.09 ($4^{-4}$) | 0.0933 (446 pairs) | 0.0318 (193 pairs) | 0.037 (146 pairs) |
+| scheduled last layer on fixed features, decay 0.75 | 1.00 | 0.07 | -0.26 ($4^{-6}$) to 0.50 (64) | 0.12 (498 pairs) | 0.114 (227 pairs) | 0.197 (171 pairs) |
 | scheduled last layer on fixed features, decay 1 | 1.00 | 0.43 | -0.34 ($4^{-6}$) to 0.53 (0.25) | 0.0924 (334 pairs) | 0.178 (213 pairs) | 0.33 (177 pairs) |
 
 | method | best intrinsic weight | divisor at the start, and at the end of the first logging window | weighted intrinsic reward at the start | weighted intrinsic reward at the end of the first logging window | weighted intrinsic reward at 25% of the budget | weighted intrinsic reward at 100% of the budget |
@@ -158,10 +178,15 @@ Rows are in the order of the screen table. These columns describe the bonus and 
 | separate predictor step size, predictor learning rate 0.25 times 1e-4 | 1 | 1 and 351 | 35.7 | 0.0117 | 0.000649 | 0.00145 |
 | separate predictor step size, predictor learning rate 1 times 1e-4 | 4 | 1 and 188 | 141 | 0.0182 | 0.00257 | 0.00503 |
 | separate predictor step size, predictor learning rate 4 times 1e-4 | 4 | 1 and 86.7 | 141 | 0.0194 | 0.00311 | 0.00607 |
+| fast last layer inside the rollout, step size 0.3 of the exact fit | 0.25 | 1 and 1.25 | 8.84 | 0.0611 | 0.00721 | 0.0124 |
+| fast last layer inside the rollout, step size 0.1 of the exact fit | 0.5 | 1 and 3.36 | 17.9 | 0.037 | 0.00575 | 0.00933 |
 | error length as the bonus | 0.0625 | 1 and 37.9 | 0.505 | 0.00212 | 0.000806 | 0.00143 |
+| fast last layer inside the rollout, step size 1 of the exact fit | 0.25 | 1 and 0.632 | 8.84 | 0.191 | 0.0137 | 0.0231 |
 | fixed scale | 16 | 236 and 236 | 2.36 | 0.0199 | 0.000965 | 0.000615 |
 | even start with no divisor | 0.25 | 1 and 1 | 0.125 | 0.155 | 0.0258 | 0.0033 |
+| scheduled last layer on fixed features, decay 0.5 | $4^{-3}$ | 1 and 1 | 0.0156 | 0.00201 | 0.00167 | 0.00305 |
 | even start | 0.25 | 1 and 5.38 | 0.125 | 0.02 | 0.0127 | 0.00841 |
+| scheduled last layer on fixed features, decay 0.75 | $4^{-3}$ | 1 and 1 | 0.0156 | 0.00215 | 0.00264 | 0.00557 |
 | scheduled last layer on fixed features, decay 1 | 1 | 1 and 1 | 1 | 0.153 | 0.462 | 0.883 |
 
 ### Bonus against cumulative visits
@@ -224,9 +249,10 @@ Observed: **held**.
 
 > **Fast last layer inside the rollout** lowers the median first-arrival step by at least 15%.
 
-Observed: **cannot be read yet**.
+Observed: **did not hold**.
 
-- The median first-arrival step is at least 15% below the control's, at the step size with the highest $W$: **cannot be read yet**. Waiting for: fast last layer inside the rollout, step size 0.1 of the exact fit; fast last layer inside the rollout, step size 0.3 of the exact fit; fast last layer inside the rollout, step size 1 of the exact fit.
+- The median first-arrival step is at least 15% below the control's, at the step size with the highest $W$: **did not hold**. fast last layer inside the rollout, step size 0.3 of the exact fit: median first-arrival step 166.1K against 191.9K for the control, 13% lower.
+- Beside: fast last layer inside the rollout, step size 0.1 of the exact fit: $W$ 0.862, $L$ 0.984, median first arrival 99.1K; fast last layer inside the rollout, step size 0.3 of the exact fit: $W$ 0.869, $L$ 0.991, median first arrival 166.1K; fast last layer inside the rollout, step size 1 of the exact fit: $W$ 0.798, $L$ 0.926, median first arrival 336.7K.
 
 ### Prediction 6: scheduled last layer on fixed features
 
@@ -234,17 +260,18 @@ Observed: **cannot be read yet**.
 
 Observed: **did not hold**.
 
-- Decay 1 has the earliest median first arrival of the batch: **did not hold**. Median first-arrival step 5.16M; the earliest of the other complete methods is separate predictor step size, predictor learning rate 1 times 1e-4 at 152.7K.
-- Decay 0.5 has the highest final level of the three decay values: **cannot be read yet**. Waiting for: scheduled last layer on fixed features, decay 0.5; scheduled last layer on fixed features, decay 0.75.
+- Decay 1 has the earliest median first arrival of the batch: **did not hold**. Median first-arrival step 5.16M; the earliest of the other complete methods is fast last layer inside the rollout, step size 0.1 of the exact fit at 99.1K.
+- Decay 0.5 has the highest final level of the three decay values: **held**. Final level 0.378 at decay 0.5; 0.166 at decay 0.75; 0.000 at decay 1.
+- Beside: difference in $W$ from the control, decay 0.5: -0.637 [-0.799, -0.471]; decay 0.75: -0.779 [-0.882, -0.641]; decay 1: -0.884 [-0.901, -0.863]. Bonus at unvisited cells over its start (how much one input's fit lowers the error at inputs not yet visited), control: 0.00173 (73 pairs) at 5%, 0.000963 (29 pairs) at 25%; decay 0.5: 0.128 (463 pairs) at 5%, 0.128 (180 pairs) at 25%; decay 0.75: 0.12 (498 pairs) at 5%, 0.114 (227 pairs) at 25%; decay 1: 0.0924 (334 pairs) at 5%, 0.178 (213 pairs) at 25%.
 
 ## Ideas against the control
 
 By the 95% interval of the difference in $W$ from the control (section Measures, item 4), on the development seeds. After each name: the difference in $W$ and its interval.
 
 - **Ahead of the control** (interval entirely above zero): none.
-- **Within the interval** (it contains zero): separate predictor step size, predictor learning rate 0.25 times 1e-4 (+0.003 [-0.027, +0.034]); separate predictor step size, predictor learning rate 1 times 1e-4 (-0.003 [-0.028, +0.024]); separate predictor step size, predictor learning rate 4 times 1e-4 (-0.006 [-0.036, +0.025]).
-- **Behind the control** (interval entirely below zero): error length as the bonus (-0.040 [-0.064, -0.013]); fixed scale (-0.338 [-0.523, -0.171]); even start with no divisor (-0.557 [-0.737, -0.372]); even start (-0.698 [-0.841, -0.533]); scheduled last layer on fixed features, decay 1 (-0.884 [-0.901, -0.863]).
-- **Not compared yet** (unit not complete): fast last layer inside the rollout, step size 0.1 of the exact fit; fast last layer inside the rollout, step size 0.3 of the exact fit; fast last layer inside the rollout, step size 1 of the exact fit; scheduled last layer on fixed features, decay 0.5; scheduled last layer on fixed features, decay 0.75.
+- **Within the interval** (it contains zero): separate predictor step size, predictor learning rate 0.25 times 1e-4 (+0.003 [-0.027, +0.034]); separate predictor step size, predictor learning rate 1 times 1e-4 (-0.003 [-0.028, +0.024]); separate predictor step size, predictor learning rate 4 times 1e-4 (-0.006 [-0.036, +0.025]); fast last layer inside the rollout, step size 0.3 of the exact fit (-0.016 [-0.036, +0.005]); fast last layer inside the rollout, step size 0.1 of the exact fit (-0.023 [-0.064, +0.013]).
+- **Behind the control** (interval entirely below zero): error length as the bonus (-0.040 [-0.064, -0.013]); fast last layer inside the rollout, step size 1 of the exact fit (-0.086 [-0.205, -0.009]); fixed scale (-0.338 [-0.523, -0.171]); even start with no divisor (-0.557 [-0.737, -0.372]); scheduled last layer on fixed features, decay 0.5 (-0.637 [-0.799, -0.471]); even start (-0.698 [-0.841, -0.533]); scheduled last layer on fixed features, decay 0.75 (-0.779 [-0.882, -0.641]); scheduled last layer on fixed features, decay 1 (-0.884 [-0.901, -0.863]).
+- **Not compared yet** (unit not complete): none.
 
 ## Consistency check against the baseline run
 
@@ -265,5 +292,7 @@ Per unit read: starts after the first one, continuations from a checkpoint, reco
 
 - even start (`batch-01-screen_pointmaze-large_reward-arrival-plus-one_even-start_cells-01-to-12-of-12_seeds-0-to-15`): the largest bonus at a probe in a logging window is 25.8, above the largest at the start (0.5), over all intrinsic weights.
 - even start with no divisor (`batch-01-screen_pointmaze-large_reward-arrival-plus-one_even-start-with-no-divisor_cells-01-to-12-of-12_seeds-0-to-15`): the largest bonus at a probe in a logging window is 37.6, above the largest at the start (0.5), over all intrinsic weights.
+- scheduled last layer on fixed features, decay 0.5 (`batch-01-screen_pointmaze-large_reward-arrival-plus-one_scheduled-last-layer-on-fixed-features-decay-0-point-5_cells-01-to-12-of-12_seeds-0-to-15`): the largest bonus at a probe in a logging window is 37.6, above the largest at the start (1), over all intrinsic weights.
+- scheduled last layer on fixed features, decay 0.75 (`batch-01-screen_pointmaze-large_reward-arrival-plus-one_scheduled-last-layer-on-fixed-features-decay-0-point-75_cells-01-to-12-of-12_seeds-0-to-15`): the largest bonus at a probe in a logging window is 91.8, above the largest at the start (1), over all intrinsic weights.
 - scheduled last layer on fixed features, decay 1 (`batch-01-screen_pointmaze-large_reward-arrival-plus-one_scheduled-last-layer-on-fixed-features-decay-1_cells-01-to-12-of-12_seeds-0-to-15`): the largest bonus at a probe in a logging window is 82.5, above the largest at the start (1), over all intrinsic weights.
 

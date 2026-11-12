@@ -223,6 +223,13 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   waiting jobs on `mit_normal_gpu`, so new work would wait there; Gautschi's 2 H100 cards are in use by another
   session; ACES (portal05) and DeltaAI (portal11) connections are open. MIT has the earlier study's environment
   `~/orcd/scratch/envs/rnd_platform_jax` (no mujoco, no warp).
+- 2026-11-12 15:10 PT: **batch 1 is complete (14 of 14 units, none failed) and closed: no idea is ahead of the
+  control** (`batches/01_.../summary.md`). Within the interval: the three predictor step sizes (+0.003, −0.003,
+  −0.006) and the fast last layer at steps 0.3 (−0.016 [−0.036, +0.005]) and 0.1 (−0.023 [−0.064, +0.013]).
+  Behind: error length (−0.040), fast last layer at step 1 (−0.086), fixed scale (−0.338), even start with no
+  divisor (−0.557), the three scheduled last layers (−0.637, −0.779, −0.884), even start (−0.698). No idea goes to
+  the development sweep. Of the six predictions, one held (error length), five did not. What batch 1 leaves for
+  batch 2 is in `batches/02_.../ideas.md`, "What batch 1 showed".
 
 ## Next
 
@@ -238,8 +245,14 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
 
 ## Ideas (status)
 
-None yet. The first diagnostic (before batch 1): how much one predictor update lowers the error at states not yet
-visited, per maze cell, for RND.
+| batch | idea | status |
+|---|---|---|
+| 1 | separate predictor step size (0.25, 1, 4 times 1e-4) | within the control's interval on 16 seeds; not pursued alone; slower values are in batch 2 |
+| 1 | fast last layer inside the rollout (steps 0.1, 0.3, 1) | earlier arrivals at steps 0.1 and 0.3, lower final level; within or behind; kept in mind for a combination with a held divisor |
+| 1 | error length as the bonus | behind (−0.040) |
+| 1 | fixed scale; even start; even start with no divisor | far behind; closed |
+| 1 | scheduled last layer on the random body's features (decay 0.5, 0.75, 1) | far behind; the fit is not local and the input statistics move; local features are in batch 2 |
+| 2 | wider input clip; input statistics kept from the random-action rollouts; slower predictor; local features as the input of RND; scheduled last layer on local features; divisor held after a part of the run | written 2026-11-12; implementation running |
 
 ## Decisions I made (routine), with the reason
 
