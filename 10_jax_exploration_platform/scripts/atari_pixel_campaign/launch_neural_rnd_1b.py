@@ -79,7 +79,14 @@ def build_command(args):
     assert "total_timesteps" not in learner
     environment = dict(COMMON_ENVIRONMENT,
         reset_lane_budget=(16 if args.device == "h100" else 8))
-    directory = (args.out_root / args.device / args.variant /
+    # Encode variant hyperparameters so independent experiments cannot silently
+    # reuse a checkpoint directory belonging to another candidate.
+    variant_id = args.variant
+    if "power" in args.variant:
+        variant_id += f"_p{args.power_exponent:g}_lr{args.predictor_lr:g}"
+    elif "shrink" in args.variant:
+        variant_id += f"_a{args.decay_exponent:g}_lr{args.predictor_lr:g}"
+    directory = (args.out_root / args.device / variant_id /
                  f"seed-{args.seed_start:05d}_copies-{copies:02d}")
     command = [
         sys.executable, "-u", str(TRAIN),
@@ -123,6 +130,13 @@ def main():
     # Running without an allocated GPU is a bug, not a CPU fallback.
     if not args.assets.is_dir():
         p.error(f"corrected JAXtari asset pack not found: {args.assets}")
+    # Set compilation flags before importing JAX, not after device initialization.
+    os.environ["XLA_PYTHON_CLIENT_PREALLOCATE"] = "false"
+    os.environ["XLA_PYTHON_CLIENT_MEM_FRACTION"] = "0.85"
+    flags = os.environ.get("XLA_FLAGS", "").split()
+    if "--xla_gpu_exclude_nondeterministic_ops=true" not in flags:
+        flags.append("--xla_gpu_exclude_nondeterministic_ops=true")
+    os.environ["XLA_FLAGS"] = " ".join(flags)
     import jax
     devices = jax.devices("gpu")
     if len(devices) != 1:
