@@ -1,0 +1,15 @@
+schema_version: 1
+run_id: 2026-11-12-00-17_pointmaze-antmaze_cleanrl-ppo-rnd_speed-30-ideas_screen-15-minutes-per-idea-per-card_h100-nvl_rtx-5080_rtx-a4500
+description: >
+  Speed study of the JAX PPO-RND trainer on PointMaze and AntMaze: a time breakdown, 30 ideas each
+  profiled in at most 15 minutes per card, and the copies per process for three key cards.
+git:
+  commit: 1275b250
+  dirty: false
+specs:
+  env: pointmaze_medium, pointmaze_large, antmaze_umaze, antmaze_medium, antmaze_large (episode ends at the goal)
+  agent: cleanrl_ppo_rnd (clipped, 4 epochs x 4 minibatches)
+  bonus: rnd_next_state (predictor on the whole batch)
+artifacts:
+  ledger: ledger.md
+  profiles: profiles/
