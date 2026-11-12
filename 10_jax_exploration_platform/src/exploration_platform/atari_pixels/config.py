@@ -39,6 +39,13 @@ class PixelPPOConfig:
     intrinsic_coefficient: float = 1.0
     extrinsic_coefficient: float = 2.0
     predictor_update_proportion: float = 0.25
+    # Count-free image-RND ablations. All defaults preserve stock CleanRL behavior.
+    rnd_uniform_start: bool = False
+    rnd_predictor_loss: str = "mse"  # mse, power, shrink
+    rnd_power_exponent: float = 2.0
+    rnd_decay_exponent: float = 1.0
+    rnd_predictor_optimizer: str = "adam"  # adam, sgd (policy always Adam)
+    rnd_predictor_learning_rate: float = 1e-3  # used for SGD predictor only
     observation_warmup_iterations: int = 50
     per_copy_learning_rates: tuple[float, ...] = ()
     per_copy_intrinsic_coefficients: tuple[float, ...] = ()
@@ -140,6 +147,18 @@ class PixelPPOConfig:
             raise ValueError("the transition budget must contain at least one complete rollout")
         if not 0.0 <= self.predictor_update_proportion <= 1.0:
             raise ValueError("predictor_update_proportion must be in [0, 1]")
+        if self.rnd_predictor_loss not in ("mse", "power", "shrink"):
+            raise ValueError("rnd_predictor_loss must be mse, power, or shrink")
+        if self.rnd_predictor_optimizer not in ("adam", "sgd"):
+            raise ValueError("rnd_predictor_optimizer must be adam or sgd")
+        if not (math.isfinite(self.rnd_power_exponent) and self.rnd_power_exponent >= 1):
+            raise ValueError("rnd_power_exponent must be finite and >= 1")
+        if not (math.isfinite(self.rnd_decay_exponent) and self.rnd_decay_exponent > 0):
+            raise ValueError("rnd_decay_exponent must be finite and positive")
+        if not (math.isfinite(self.rnd_predictor_learning_rate) and self.rnd_predictor_learning_rate > 0):
+            raise ValueError("rnd_predictor_learning_rate must be finite and positive")
+        if self.rnd_predictor_optimizer == "sgd" and self.flat_parameters:
+            raise ValueError("SGD predictor requires named parameter buffers (flat_parameters=False)")
         if self.rollout_unroll < 1 or self.update_unroll < 1:
             raise ValueError("scan unroll factors must be positive")
         if self.observation_warmup_iterations < 0:
