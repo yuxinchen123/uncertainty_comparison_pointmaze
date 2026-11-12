@@ -1,0 +1,98 @@
+{
+  "study": "beat-cleanrl-ppo-rnd-auto-research",
+  "bonus": "rnd_next_state",
+  "configuration_files": {
+    "pointmaze": "configs/experiments/pointmaze_large_cleanrl-ppo-rnd_goal-termination_reward-arrival-plus-one_example_steps-1024000.toml"
+  },
+  "environments": [
+    "pointmaze-large"
+  ],
+  "reward_settings": [
+    "arrival_plus_one"
+  ],
+  "environments_per_policy": {
+    "pointmaze": 4
+  },
+  "steps_per_policy": 8388608,
+  "windows_per_unit": 256,
+  "seeds": {
+    "first": 0,
+    "count": 16
+  },
+  "policies_per_unit": 256,
+  "minimum_card_memory_mb": 7000,
+  "phase": "batch-01-screen-larger-weights",
+  "cells": {
+    "kind": "grid",
+    "values": {
+      "learning_rate": [
+        0.002
+      ],
+      "entropy_coefficient": [
+        0.01
+      ],
+      "intrinsic_weight": [
+        256.0,
+        1024.0,
+        4096.0
+      ],
+      "clip_coefficient": [
+        0.1
+      ]
+    }
+  },
+  "sweeps": [
+    {
+      "method": "control-cleanrl-ppo-rnd"
+    },
+    {
+      "method": "separate-predictor-step-size-multiple-0-point-25",
+      "extra_options": [
+        "--bonus-options",
+        "predictor_learning_rate_multiple=0.25"
+      ]
+    },
+    {
+      "method": "separate-predictor-step-size-multiple-1",
+      "extra_options": [
+        "--bonus-options",
+        "predictor_learning_rate_multiple=1"
+      ]
+    },
+    {
+      "method": "separate-predictor-step-size-multiple-4",
+      "extra_options": [
+        "--bonus-options",
+        "predictor_learning_rate_multiple=4"
+      ]
+    },
+    {
+      "method": "error-length-as-the-bonus",
+      "extra_options": [
+        "--bonus-options",
+        "bonus_form=error_length"
+      ]
+    },
+    {
+      "method": "fast-last-layer-inside-the-rollout-step-0-point-1",
+      "extra_options": [
+        "--bonus-options",
+        "fast_last_layer_step=0.1"
+      ]
+    },
+    {
+      "method": "fast-last-layer-inside-the-rollout-step-0-point-3",
+      "extra_options": [
+        "--bonus-options",
+        "fast_last_layer_step=0.3"
+      ]
+    },
+    {
+      "method": "fast-last-layer-inside-the-rollout-step-1",
+      "extra_options": [
+        "--bonus-options",
+        "fast_last_layer_step=1"
+      ]
+    }
+  ]
+}

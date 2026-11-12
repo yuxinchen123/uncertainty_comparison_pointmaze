@@ -1,0 +1,129 @@
+{
+  "study": "cleanrl-ppo-rnd-baseline",
+  "method": "cleanrl-ppo-rnd",
+  "bonus": "rnd_next_state",
+  "configuration_files": {
+    "pointmaze": "configs/experiments/pointmaze_large_cleanrl-ppo-rnd_goal-termination_reward-arrival-plus-one_example_steps-1024000.toml"
+  },
+  "environments_per_policy": {
+    "pointmaze": 4
+  },
+  "windows_per_unit": 256,
+  "seeds": {
+    "first": 0,
+    "count": 16
+  },
+  "policies_per_unit": 256,
+  "minimum_card_memory_mb": 7000,
+  "phase": "development-for-discovery",
+  "sweeps": [
+    {
+      "environments": [
+        "pointmaze-large"
+      ],
+      "reward_settings": [
+        "arrival_plus_one"
+      ],
+      "steps_per_policy": 8388608,
+      "cells": {
+        "kind": "grid",
+        "values": {
+          "learning_rate": [
+            0.001,
+            0.002,
+            0.003,
+            0.006
+          ],
+          "entropy_coefficient": [
+            0.01,
+            0.03,
+            0.1
+          ],
+          "intrinsic_weight": [
+            1.0,
+            4.0,
+            16.0,
+            64.0,
+            256.0,
+            1024.0
+          ],
+          "clip_coefficient": [
+            0.1
+          ]
+        }
+      }
+    },
+    {
+      "environments": [
+        "pointmaze-medium"
+      ],
+      "reward_settings": [
+        "arrival_plus_one"
+      ],
+      "steps_per_policy": 1048576,
+      "cells": {
+        "kind": "grid",
+        "values": {
+          "learning_rate": [
+            0.003,
+            0.006,
+            0.01,
+            0.02
+          ],
+          "entropy_coefficient": [
+            0.01,
+            0.03,
+            0.1
+          ],
+          "intrinsic_weight": [
+            1.0,
+            4.0,
+            16.0,
+            64.0,
+            256.0,
+            1024.0
+          ],
+          "clip_coefficient": [
+            0.1
+          ]
+        }
+      }
+    },
+    {
+      "environments": [
+        "pointmaze-medium"
+      ],
+      "reward_settings": [
+        "step_cost"
+      ],
+      "steps_per_policy": 1048576,
+      "cells": {
+        "kind": "grid",
+        "values": {
+          "learning_rate": [
+            0.003,
+            0.006,
+            0.01,
+            0.02
+          ],
+          "entropy_coefficient": [
+            0.01,
+            0.03,
+            0.1
+          ],
+          "intrinsic_weight": [
+            1.0,
+            4.0,
+            16.0,
+            64.0,
+            256.0,
+            1024.0
+          ],
+          "clip_coefficient": [
+            0.1
+          ]
+        }
+      }
+    }
+  ]
+}

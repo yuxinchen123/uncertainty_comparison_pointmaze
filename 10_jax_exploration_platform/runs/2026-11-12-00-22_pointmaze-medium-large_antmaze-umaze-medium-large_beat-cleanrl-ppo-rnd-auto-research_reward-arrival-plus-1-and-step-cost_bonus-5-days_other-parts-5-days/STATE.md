@@ -251,6 +251,16 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   (1) RND's own configuration for discovery in every case (a development sweep toward larger intrinsic weights,
   then its confirmation); (2) a second table in the baseline report and in every batch summary; (3) each idea's
   best weight for discovery in the screens.
+- 2026-11-12 15:50 PT: first reading of batch 1 on the secondary metric (quick script, 16 development seeds, each
+  idea at its own best weight for it; mean capped first-goal time in thousands of steps): fast last layer at step
+  0.1: 62 ± 13 (weight 16); error length: 88 ± 13 (64); fast last layer at step 1: 114 ± 22 (16), at step 0.3:
+  116 ± 30 (64); separate predictor step size at 1 times: 132 ± 25 (64), at 0.25 times: 137 ± 36 (64), at 4
+  times: 177 ± 30 (16); control: 190 ± 51 (64). Several best weights are the largest tried, so weights 256, 1,024
+  and 4,096 were queued for the control and these ideas (8 units), and RND's own development sweep for discovery
+  was queued in the baseline folder (learning rate × entropy 0.01, 0.03, 0.1 × weight 1 to 1,024; PointMaze Large
+  with reward 1 on arrival and PointMaze Medium with both rewards; PointMaze Large with the step cost follows
+  around the best cells, because one unit there takes about 50 minutes).
+  A worker is adding the second table to the batch summary and to the baseline report.
 
 ## Next
 
