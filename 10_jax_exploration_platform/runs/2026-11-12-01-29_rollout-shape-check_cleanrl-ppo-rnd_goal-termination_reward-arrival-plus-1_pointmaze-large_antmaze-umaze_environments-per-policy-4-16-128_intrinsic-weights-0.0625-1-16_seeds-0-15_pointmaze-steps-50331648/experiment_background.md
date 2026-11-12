@@ -31,3 +31,10 @@ with these options changed per unit: `--envs-per-copy`, `--intrinsic-weights 0.0
 ## Git state
 
 Commit `528081b5` (pushed): the trainer changes of the study.
+
+## Added 2026-11-12 01:47 PT: 1 and 2 environments per policy
+
+At equal environment steps (27.3 million per policy, intrinsic weight 1) the whole-curve mean was 0.84 with 4
+environments per policy, 0.59 with 16 and 0.14 with 128, so fewer environments per policy are better per step on
+PointMaze Large. Two more units (1 and 2 environments per policy, same budget, weights and seeds) check whether the
+trend continues below 4. Jobs are in the same ledger.
