@@ -179,6 +179,23 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
 - 2026-11-12 14:25 PT: where the control (weight 2) loses its whole-curve mean of 0.115: 0.058 in the first 524
   thousand steps (curve at most 0.32), 0.026 between 524 thousand and 1.05 million, 0.013 between 1.05 and 2.1
   million, 0.018 from there to the end (the curve is 0.944 at 2.1 million and 0.990 at 6.3 million).
+- 2026-11-12 14:29 PT: **baseline confirmation results so far** (1,024 fresh seeds; the baseline folder's
+  `analysis/analysis.md`): PointMaze Large with reward 1 on arrival: RND 0.881 ± 0.001 (final level 0.993), RND at
+  CleanRL's untouched settings 0.453 ± 0.010, PPO without a bonus 0.005. PointMaze Medium with reward 1 on arrival:
+  RND 0.932 ± 0.001 (final level 0.994). PointMaze Medium with the step cost: RND −0.351 ± 0.001, PPO without a
+  bonus −0.348 ± 0.001, which is ahead of RND by 0.003 [0.001, 0.005]. RND's chosen weight there (0.0078125) was
+  the lowest tried, so three lower weights were queued (edge rule); if one is better, RND's configuration and its
+  confirmation for that case are replaced.
+- 2026-11-12 14:29 PT: batch 1 summary generated with 9 of 14 units
+  (`batches/01_.../summary.md`; regenerate with `scripts/maze_campaign/analysis/batch_summary_job.py`). No idea is
+  ahead of the control; the three predictor step sizes are within the interval; the rest are behind.
+  A fact about the seeds found by the analysis: the random actions of the rollouts before training are drawn per
+  place in the process, not per seed number, so the same seed number starts slightly differently at each weight.
+  It is left as it is, because the baseline's runs used it.
+- 2026-11-12 14:45 PT: batch 2 written (`batches/02_.../ideas.md`, 15 units): wider input clip, input statistics
+  kept from the random-action rollouts, slower predictor, local (random Fourier) features as the input of RND,
+  scheduled last layer on local features. A validation block of 256 seeds (10000 to 10255) is added for ideas near
+  the control. Implementation started.
 
 ## Next
 

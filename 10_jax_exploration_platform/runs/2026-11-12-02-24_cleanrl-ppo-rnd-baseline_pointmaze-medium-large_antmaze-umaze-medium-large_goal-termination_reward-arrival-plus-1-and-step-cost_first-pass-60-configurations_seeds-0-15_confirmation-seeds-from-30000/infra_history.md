@@ -136,3 +136,7 @@ Times are Pacific.
 - 2026-11-12 14:29 PT: confirmation of PointMaze Large with the step cost: 12 units of 256 policies at 33,554,432
   steps. Four handed to Gilbreth; UVA workers 6889111 to 6889117 submitted with a 4-hour limit (2 processors,
   4 GiB), because one such unit takes about 2 hours on an RTX 2080 Ti and about 50 minutes on an A30.
+- 2026-11-12 14:34 PT: the seven UVA workers submitted with a 4-hour limit had planned starts on 2026-11-13, so
+  their limit was lowered to 2 hours (same ids); a unit that does not finish in 2 hours continues from its
+  checkpoint in the next job. Gilbreth's limit for this folder raised from 4 to 8 units at once (standby cards,
+  not charged; the per-user limit there is 24 cards).
