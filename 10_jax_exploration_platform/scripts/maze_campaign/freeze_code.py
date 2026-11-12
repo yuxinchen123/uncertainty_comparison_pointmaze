@@ -25,14 +25,18 @@ def git(repository, *arguments):
     return subprocess.check_output(["git", "-C", str(repository), *arguments], text=True)
 
 
-def freeze(run_dir, repository=common.PROJECT):
+def freeze(run_dir, repository=common.PROJECT, leave_out_uncommitted=False):
     """Copy the committed code into the run folder and write source.json; returns the commit."""
     run_dir = Path(run_dir).resolve()
     paths = [f"{PLATFORM_NAME}/{folder}" for folder in FOLDERS]
-    # every file the jobs run must be in the commit
+    # every file the jobs run must be in the commit. With leave_out_uncommitted the copy is still
+    # the commit alone (other work in progress in the tree is named and left out), so the jobs
+    # never run a line that is not in git.
     changed = git(repository, "status", "--porcelain", "--", *paths).strip()
-    if changed:
+    if changed and not leave_out_uncommitted:
         raise SystemExit("these code files are not committed; commit and push them first:\n" + changed)
+    if changed:
+        print("left out of the copy, because they are not committed:\n" + changed)
     commit = git(repository, "rev-parse", "HEAD").strip()
     target = run_dir / "code" / f"source_{commit}"
     if not target.exists():
@@ -60,8 +64,12 @@ def main(argv=None):
     """Freeze the committed code for one run folder."""
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--run-dir", type=Path, required=True)
+    parser.add_argument("--leave-out-uncommitted", action="store_true",
+                        help="freeze the last commit although the working tree holds uncommitted changes "
+                             "to the code folders (for example other work in progress); those changes "
+                             "are listed and are not in the copy")
     args = parser.parse_args(argv)
-    commit = freeze(args.run_dir)
+    commit = freeze(args.run_dir, leave_out_uncommitted=args.leave_out_uncommitted)
     print(f"jobs of {args.run_dir} now run the code of commit {commit} "
           f"({args.run_dir / 'code' / ('source_' + commit)})")
 

@@ -125,6 +125,15 @@ class FrozenCode(unittest.TestCase):
             freeze_code.freeze(self.run_dir, self.repository)
         self.assertIn("new_tool.py", str(refusal.exception))
 
+    def test_uncommitted_code_can_be_left_out_of_the_copy(self):
+        """With leave_out_uncommitted the copy is the commit alone: the uncommitted file is not in it."""
+        (self.repository / "10_jax_exploration_platform/scripts/tool.py").write_text("print('not committed')\n")
+        (self.repository / "10_jax_exploration_platform/scripts/new_tool.py").write_text("x = 1\n")
+        commit = freeze_code.freeze(self.run_dir, self.repository, leave_out_uncommitted=True)
+        platform = self.run_dir / "code" / f"source_{commit}" / "10_jax_exploration_platform"
+        self.assertEqual((platform / "scripts/tool.py").read_text(), "print('committed')\n")
+        self.assertFalse((platform / "scripts/new_tool.py").exists())
+
 
 if __name__ == "__main__":
     unittest.main()
