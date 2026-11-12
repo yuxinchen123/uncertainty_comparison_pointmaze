@@ -105,12 +105,14 @@ def initialize_adam(parameters):
 
 
 def adam_step(parameters, gradients, optimizer, learning_rates, max_norm, epsilon,
-              fuse_optimizer=False):
+              fuse_optimizer=False, predictor_optimizer="adam", predictor_learning_rate=1e-3):
     """Apply joint policy/predictor clipping per copy, then PyTorch-style Adam."""
     # Packing within each step is measured separately from keeping the whole update flat.
     if fuse_optimizer:
         layout = FlatParameterLayout(parameters)
         flat_optimizer = AdamState(layout.pack(optimizer.first), layout.pack(optimizer.second), optimizer.step)
+        if predictor_optimizer != "adam":
+            raise ValueError("SGD predictor cannot use the flat parameter optimizer")
         flat_parameters, flat_optimizer, norms = adam_step(
             layout.pack(parameters), layout.pack(gradients), flat_optimizer,
             learning_rates, max_norm, epsilon)
@@ -142,4 +144,16 @@ def adam_step(parameters, gradients, optimizer, learning_rates, max_norm, epsilo
             epsilon.reshape((copies,) + (1,) * (parameter.ndim - 1)))
         return parameter - (rate / correction1) * moment / (jnp.sqrt(variance) / correction2 + epsilon_value)
 
-    return jax.tree.map(update, parameters, first, second), AdamState(first, second, step), norms
+    updated = jax.tree.map(update, parameters, first, second)
+    if predictor_optimizer == "sgd":
+        # Use the already joint-clipped gradient so PPO's Adam behavior and
+        # clipping semantics remain defined. Predictor-only SGD (no momentum).
+        if not isinstance(parameters, dict) or "predictor" not in parameters:
+            raise ValueError("SGD predictor requires named policy and predictor dictionaries")
+        rate = jnp.asarray(predictor_learning_rate, jnp.float32)
+        updated["predictor"] = jax.tree.map(
+            lambda param, grad: param - rate * grad,
+            parameters["predictor"], gradients["predictor"])
+    elif predictor_optimizer != "adam":
+        raise ValueError(f"Unknown predictor optimizer: {predictor_optimizer}")
+    return updated, AdamState(first, second, step), norms

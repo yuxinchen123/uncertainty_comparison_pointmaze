@@ -8,6 +8,7 @@ import jax
 import jax.numpy as jnp
 
 from .config import PixelPPOConfig
+from .rnd_variants import target_features, predictor_error
 from .networks import (actor_logits, categorical_statistics, critic_values, initialize_networks,
                        policy_features, policy_forward, quantity_keys, rnd_forward,
                        rnd_pair_forward)
@@ -56,9 +57,11 @@ def intrinsic_reward(parameters, target, frames, statistics, configuration=None)
     normalized = normalize_frames(frames, statistics)
     if configuration is not None and configuration.paired_rnd_rollout_trunks:
         predicted, targets = rnd_pair_forward(parameters["predictor"], target, normalized, configuration)
-        differences = targets - predicted
+        differences = target_features(targets, uniform_start=configuration.rnd_uniform_start) - predicted
     else:
-        differences = (rnd_forward(target, normalized, configuration)
+        target_output = rnd_forward(target, normalized, configuration)
+        differences = (target_features(target_output, uniform_start=(
+            configuration.rnd_uniform_start if configuration is not None else False))
                        - rnd_forward(parameters["predictor"], normalized, configuration))
     return jnp.sum(differences ** 2, axis=-1) * 0.5
 
@@ -179,9 +182,14 @@ def minibatch_loss(parameters, target, batch, predictor_mask, config,
         """Sum of masked per-row feature errors for the given rows."""
         targets = (cached_targets if cached_targets is not None
                    else rnd_forward(target, frames, config))
-        targets = jax.lax.stop_gradient(targets)
-        # Upstream trains with MEAN feature error, although the rollout bonus uses SUM/2.
-        errors = ((predictor(parameters["predictor"], frames) - targets) ** 2).mean(axis=-1)
+        targets = jax.lax.stop_gradient(target_features(
+            targets, uniform_start=config.rnd_uniform_start))
+        # Default MSE is exactly upstream's mean-feature loss; alternate
+        # residual objectives are opt-in and count-free.
+        errors = predictor_error(predictor(parameters["predictor"], frames), targets,
+                                 mode=config.rnd_predictor_loss,
+                                 exponent=config.rnd_power_exponent,
+                                 decay_exponent=config.rnd_decay_exponent)
         return (errors * mask).sum(axis=1)
 
     cached = batch["target_features"] if config.cache_target_features else None
@@ -256,7 +264,8 @@ class PixelPPORND:
                                  else copy_seeds, jnp.uint32)
         if copy_seeds.shape != (config.n_copies,):
             raise ValueError("copy_seeds must have shape [n_copies]")
-        parameters, target = initialize_networks(copy_seeds, config.action_count)
+        parameters, target = initialize_networks(copy_seeds, config.action_count,
+                                                   rnd_uniform_start=config.rnd_uniform_start)
         environment_state, observations = self.environment.reset(copy_seeds)
         expected = (config.n_copies, config.n_envs, 4, 84, 84)
         if observations.shape != expected or observations.dtype != jnp.uint8:
@@ -434,6 +443,7 @@ class PixelPPORND:
             # Training targets use CURRENT frames and UPDATED statistics, unlike rollout targets.
             normalized = (normalize_frames(frames, observation_statistics)
                           if config.fuse_minibatch_image_preparation else batch["normalized_frames"])
+            # Cache RAW frozen features; normalize exactly once inside masked_error_sum.
             batch["target_features"] = jax.lax.stop_gradient(rnd_forward(state.target, normalized, config))
         return state._replace(observation_statistics=observation_statistics,
                               reward_statistics=reward_statistics, reward_filter=reward_filter), batch
@@ -500,7 +510,9 @@ class PixelPPORND:
             parameters, optimizer, gradient_norm = adam_step(
                 parameters, gradients, optimizer, learning_rates,
                 scalar_setting(config, "max_gradient_norm"), scalar_setting(config, "adam_epsilon"),
-                fuse_optimizer=config.fuse_optimizer and layout is None)
+                fuse_optimizer=config.fuse_optimizer and layout is None,
+                predictor_optimizer=config.rnd_predictor_optimizer,
+                predictor_learning_rate=config.rnd_predictor_learning_rate)
             return (parameters, optimizer), {**metrics, "gradient_norm": gradient_norm}
 
         def epoch(carry, epoch_index):

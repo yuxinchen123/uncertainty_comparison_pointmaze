@@ -49,7 +49,7 @@ def initialize_layer(copy_seeds, name, output_size, input_size, gain=2 ** 0.5,
     return {"weight": weights, "bias": jnp.zeros((len(copy_seeds), output_size), jnp.float32)}
 
 
-def initialize_networks(copy_seeds, action_count):
+def initialize_networks(copy_seeds, action_count, rnd_uniform_start=False):
     """Return trainable policy/predictor parameters and a separate frozen RND target."""
     # Use distinct names for every layer so adding a layer cannot move another layer's draws.
     def layer(name, output_size, input_size, gain=2 ** 0.5, kernel_size=None):
@@ -81,6 +81,14 @@ def initialize_networks(copy_seeds, action_count):
                                                                    (64, 64, 3)))),
         "dense": (layer("target/dense/0", 512, 3136),),
     }
+    if rnd_uniform_start:
+        # Preserve the predictor architecture and initial hidden features.
+        # Zero only the last prediction head; the per-image target feature
+        # normalization is applied in the reward and predictor-loss paths.
+        last = predictor["dense"][-1]
+        predictor["dense"] = (*predictor["dense"][:-1],
+                              {"weight": jnp.zeros_like(last["weight"]),
+                               "bias": jnp.zeros_like(last["bias"])})
     return {"agent": agent, "predictor": predictor}, target
 
 
