@@ -22,7 +22,7 @@ MuJoCo Warp, which it starts with `/p/rlprojects/RND/.venvs/platform_jax_warp/bi
 | `submit.py` | submits worker jobs on UVA under both accounts,<br>and the persistent monitor job |
 | `worker.py` | one process per card: claims a unit, runs `run_training.py`,<br>records how it ended, takes the next |
 | `monitor.py` | one pass or a loop: returns units of ended jobs to pending,<br>counts, progress, status files |
-| `remote_fleet.py` | Purdue Gautschi and Gilbreth, MIT, TAMU ACES, NCSA DeltaAI: the grid campaign's file of the same name<br>with this study's worker job, checks and returns, and `hand-over-tick`, the one command of a tick |
+| `remote_fleet.py` | Purdue Gautschi and Gilbreth, MIT, TAMU ACES, NCSA DeltaAI:<br>the grid campaign's file of the same name with this study's worker job,<br>checks and returns, and `hand-over-tick`, the one command of a tick |
 | `cancel_ledger.py` | the only cancel path: the jobs of one ledger file of a stopped run,<br>or single ids of one ledger |
 | `unit_queue.py` | the queue: claim by rename, return, finish, recover,<br>progress read from a shard |
 | `grid_campaign.py` | loads the grid campaign's functions that are reused here |

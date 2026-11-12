@@ -124,3 +124,12 @@ Times are Pacific.
 - 2026-11-12 13:35 PT: the 17 baseline workers still waiting were cancelled by id from the ledgers (none had
   started): the 7 running workers are enough for the units left, and the next free cards go to the batch 1 screen
   of the auto research folder.
+- 2026-11-12 13:38 to 13:43 PT: Gilbreth's third group of four units is done (jobs 12344746, 12344748, 12344749,
+  12344750, 13:38:01 to 13:42:26 PT, one A10 each; CleanRL PPO with RND on PointMaze Medium, 256 policies:
+  0.0690 to 0.0699 s per iteration, against 0.0470 on the A30). The tick of 13:42:58 PT checked the records
+  (256 of 256 windows each) and moved the units to `queue/done`: 9 units from Gilbreth are done. It handed over
+  the next four (the two units of "development at the budget" on PointMaze Large with the step cost, and CleanRL
+  PPO with RND at learning rate 0.006 on PointMaze Medium, seeds 30256 to 30767) and submitted jobs 12344842,
+  12344843, 12344844 and 12344851, which all started at 13:43:10 PT (three A30 cards on gilbreth-d001 and
+  gilbreth-d004, one A10 on gilbreth-h000). `slurm/submitted_jobids_gilbreth.txt` holds 14 ids. Gautschi's job
+  18433051 still waits (scheduler's estimate about 44 hours away); no unit is on Gautschi.
