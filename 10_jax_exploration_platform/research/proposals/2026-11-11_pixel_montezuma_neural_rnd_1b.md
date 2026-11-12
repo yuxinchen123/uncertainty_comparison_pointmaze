@@ -1,5 +1,5 @@
 # Pixel Montezuma: count-free neural RND, 1B-step screening protocol
-Date: 2026-11-11 PT. Status: **research protocol, not implemented or submitted**.
+Date: 2026-11-11 PT. Status: **prototype implementation on this branch; small mathematical CPU smoke checked, full Atari PPO tests and GPU training not run or submitted**.
 Branch: `research/montezuma-neural-rnd-1b-20261111`. Do not modify the completed baseline or the frozen `09_parallelization` directory.
 
 ## Objective and decision
@@ -39,6 +39,8 @@ Let `f(x)` be the frozen RND CNN target, `g_theta(x)` the trainable CNN predicto
 | U+D2 | Yes | residual-adaptive target + SGD | transfer count-free schedule idea to pixels |
 | U+D3 | Yes | one alternative normalizer/optimizer | optional controlled second wave |
 
+Implementation on this branch: `src/exploration_platform/atari_pixels/rnd_variants.py` introduces U, power, and shrink objectives; opt-in fields in `config.py`, `networks.py`, `training.py`, and predictor-only SGD in `state.py` preserve the stock default. `tests/atari_pixels/test_neural_rnd_variants.py` contains CPU tests that must still be executed in the full repository environment. `scripts/atari_pixel_campaign/launch_neural_rnd_1b.py` constructs exact A4500/H100 run commands without submitting jobs, and `scripts/atari_pixel_campaign/analyze_neural_rnd_1b.py` compares archived baseline and candidate metrics on matched seeds.
+
 If implementation requires a new configuration, add explicit defaults to `src/exploration_platform/atari_pixels/config.py`, behavior only under opt-in flags in `networks.py` and `training.py`, and focused tests in `tests/atari_pixels/`. Reuse the accepted `train_final.py` checkpoint/resume and selected GPU backend. Protect the stock B0 path with original numerical-parity tests; leave policy, intrinsic-reward RMS and frozen target disabled by default. Do not put an optimizer flag into `per_copy_scalar_settings`; optimizer choice changes the compiled program and should be one group per arm.
 
 ## Scientific diagnostics (offline only)
@@ -64,7 +66,7 @@ Construct a fixed, versioned bank of pixel observations from the completed basel
 
 Existing measured final-run throughput: RTX A4500 11.4–12.1k agent steps/s at **one copy per GPU** (~23–24.4 h per 1B seed); RTX 5080 13.0–13.3k at **one** (~20.9–21.4 h per 1B seed); H100 NVL 31.4k across **four packed** copies (~35.4 h to advance all four seeds by 1B). These are **baseline measurements**, not guaranteed for new predictor objectives. A4500 two-copy packing was slower in earlier experiments; RTX 5080 multi-copy packing is not established; H100 8/16-copy attempts exceeded memory. Preserve device-specific configurations and reprofile each new method's speed and peak memory. Use only authorized UVA/MIT/Purdue allocations and correct account/reservation limits.
 
-Jobs have **not** been submitted from this protocol. This GitHub connection permits repository work but not SSH/Slurm access to the GPU clusters. Before submitting, ensure: (i) new method correctness and baseline parity tests pass; (ii) JAXtari corrected sprite asset hashes match; (iii) per-method short GPU learning/speed smoke tests pass; (iv) the archived raw `metrics.jsonl` baseline is available to calculate true 1B paired AUC (the committed plots alone are insufficient); and (v) commands use the accepted locked GPU execution wrappers and never interfere with existing jobs.
+Jobs have **not** been submitted from this protocol; no GPU study results exist for the new candidate arms. Only a standalone local JAX CPU test of target normalization and residual-shrinkage gradients passed, not the full package/unit or end-to-end Montezuma tests. This GitHub connection permits repository work but not SSH/Slurm access to the GPU clusters. Before submitting, ensure: (i) new method correctness and baseline parity tests pass; (ii) JAXtari corrected sprite asset hashes match; (iii) per-method short GPU learning/speed smoke tests pass; (iv) the archived raw `metrics.jsonl` baseline is available to calculate true 1B paired AUC (the committed plots alone are insufficient); and (v) commands use the accepted locked GPU execution wrappers and never interfere with existing jobs.
 
 ## Reference records
 
