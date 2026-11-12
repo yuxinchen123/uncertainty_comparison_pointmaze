@@ -22,6 +22,18 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   (29 card models; `capacity.py` with 24 passing tests; the platform's `device/series.py`, not run yet). First
   rough table, from the existing survey alone: 2,048 copies on the H100 NVL and the 80 GB A100, 1,024 on the 40 GB
   A100, 512 or fewer on every other card; about 8,192 environments per process for the ant on an H100 NVL.
+- 2026-11-12 01:05 PT: ant physics time breakdown on an H100 NVL (serval02 card 1): the constraint solve is 63% to
+  72% of the environment step. Contact points 32 -> 16 take 64% of the time, solver passes 4 -> 2 take 67%,
+  line-search passes 8 -> 4 take 79%; frame-loop unroll and the compiler option give nothing. Total speed stops
+  growing near 8,192 environments per process (0.30 million steps per second). Table:
+  `benchmark_runs/2026-11-12-00-17_*/profiles/antmaze_physics_split/antmaze_physics_split.md`.
+- 2026-11-12 01:27 PT: trainer changes committed (`528081b5`): per-copy entropy, clip, value coefficient and reward
+  mapping; the two reward settings with goal termination; preset `antmaze_current`; episode log; gather per epoch;
+  checkpoint and resume; 131 tests pass, golden parity still bit-identical.
+- 2026-11-12 01:29 PT: rollout-shape check started for PointMaze Large (jobs 6873737, 6873738, 6873739 on jaguar03
+  RTX A4500s): 4, 16 and 128 environments per policy, intrinsic weights 0.0625, 1, 16, seeds 0 to 15, 50,331,648
+  steps per policy. Folder `runs/2026-11-12-01-29_rollout-shape-check_*`. The AntMaze part waits for the ant's
+  physics settings, because a kept physics change applies to every later run.
 
 ## Next
 
