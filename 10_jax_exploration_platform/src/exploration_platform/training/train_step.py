@@ -8,8 +8,11 @@ The iteration: roll out T steps, score the states the rollout reached, filter an
 intrinsic reward, compute both advantage streams backwards, assemble the update batch, and take
 the update.
 """
+from functools import partial
+
 import jax
 import jax.numpy as jnp
+import numpy as np
 
 from .. import F32, LOG2PI
 from ..agents.ppo.losses import (loss_coefficients, ppo_loss_per_copy,
@@ -33,6 +36,10 @@ def build_total_loss(cfg, bonus, layout, discrete: bool = False, sweep=None):
     coefficient it does not hold, the configuration's scalar is used.
     """
     agent_loss = ppo_loss_per_copy_discrete if discrete else ppo_loss_per_copy
+    if cfg.actor_critic_joint_trunk:
+        if discrete:
+            raise ValueError("actor_critic_joint_trunk is built for the continuous actor only")
+        agent_loss = partial(ppo_loss_per_copy, joint_trunk=True)
     coef = loss_coefficients(cfg, sweep)
 
     def total_loss(params, batch, style_a):
@@ -45,6 +52,60 @@ def build_total_loss(cfg, bonus, layout, discrete: bool = False, sweep=None):
     return total_loss
 
 
+def rollout_unroll(cfg) -> int:
+    """How many rollout steps one body of the rollout scan holds.
+
+    One rollout step does more work the more copies there are, so the point where a longer
+    program stops paying moves with the copy count: at 8 copies unrolling 32 steps beat 16 in 11
+    of 11 paired rounds, while at 32 and 128 copies 16 beat 32 in 11 of 11. Unrolling does not
+    change the arithmetic, and the parameters after one iteration are bit-identical at 4, 16 and
+    32 — EXCEPT with the rollout hoist off, where the in-scan critic and log-probability fuse
+    differently at 32 (4 against 32 deviates 3.9e-04, 4 against 16 stays exact). So 32 is taken
+    only where it is bit-neutral. A value given explicitly is used as given.
+
+    before: scan_unroll 0, 8 copies, hoist on -> 32;  scan_unroll 0, 256 copies -> 16
+    after:  scan_unroll 8, any copy count     -> 8
+    """
+    return cfg.scan_unroll or (32 if cfg.n_copies <= 8 and cfg.hoist_rollout else 16)
+
+
+def action_noise(cfg, key, shape):
+    """The standard normal action noise of one rollout, float32 of the given shape.
+
+    "threefry" is JAX's default generator: the same numbers on every machine. "rbg" keys the
+    compiler's own bit generator with four words drawn from the same key; it is another random
+    scheme, and its numbers may differ between card models and library versions.
+    """
+    if cfg.action_noise_generator == "threefry":
+        return jax.random.normal(key, shape, F32)
+    if cfg.action_noise_generator != "rbg":
+        raise ValueError(f"unknown action_noise_generator {cfg.action_noise_generator!r}; use "
+                         "'threefry' or 'rbg'")
+    words = jax.random.bits(key, (4,), jnp.uint32)
+    return jax.random.normal(jax.random.wrap_key_data(words, impl="rbg"), shape, F32)
+
+
+def intrinsic_sum_matrices(gamma_int: float, gae_lambda: float, steps: int):
+    """The fixed matrices that turn the intrinsic filter and the intrinsic advantage into products.
+
+    Filter: f[t] = gamma f[t-1] + r[t], so f[t] = sum over s <= t of gamma^(t-s) r[s]
+    + gamma^(t+1) f[-1]. Advantage: a[t] = d[t] + gamma lambda a[t+1], so a[t] = sum over
+    s >= t of (gamma lambda)^(s-t) d[s].
+
+    before: gamma 0.5, lambda 1, 3 steps
+    after:  filter [[1, 0, 0], [0.5, 1, 0], [0.25, 0.5, 1]], carry powers [0.5, 0.25, 0.125],
+            advantage [[1, 0.5, 0.25], [0, 1, 0.5], [0, 0, 1]]
+    Returns (filter [T, T], carry powers [T], advantage [T, T]), float32.
+    """
+    lag = np.arange(steps)[:, None] - np.arange(steps)[None, :]
+    filter_matrix = np.where(lag >= 0, float(gamma_int) ** np.maximum(lag, 0), 0.0)
+    carry_powers = float(gamma_int) ** (np.arange(steps) + 1.0)
+    advantage_matrix = np.where(lag <= 0, float(gamma_int * gae_lambda) ** np.maximum(-lag, 0),
+                                0.0)
+    return (jnp.asarray(filter_matrix, F32), jnp.asarray(carry_powers, F32),
+            jnp.asarray(advantage_matrix, F32))
+
+
 def build_iteration(cfg, env, bonus, sweep, layout, capture_batch: bool = False):
     """Return the unjitted iteration function for this configuration.
 
@@ -54,16 +115,7 @@ def build_iteration(cfg, env, bonus, sweep, layout, capture_batch: bool = False)
     """
     C, N, T = cfg.n_copies, cfg.n_envs, cfg.num_steps
     discrete = getattr(env, "action_kind", "continuous") == "discrete"
-
-    # how far to unroll the rollout scan. One rollout step does more work the more copies there
-    # are, so the point where a longer program stops paying moves with the copy count: at 8
-    # copies unrolling 32 steps beat 16 in 11 of 11 paired rounds, while at 32 and 128 copies 16
-    # beat 32 in 11 of 11. Unrolling does not change the arithmetic, and the parameters after one
-    # iteration are bit-identical at 4, 16 and 32 — EXCEPT with the rollout hoist off, where the
-    # in-scan critic and log-probability fuse differently at 32 (4 against 32 deviates 3.9e-04,
-    # 4 against 16 stays exact). So 32 is taken only where it is bit-neutral. A value given
-    # explicitly is used as given.
-    scan_unroll = cfg.scan_unroll or (32 if cfg.n_copies <= 8 and cfg.hoist_rollout else 16)
+    scan_unroll = rollout_unroll(cfg)
 
     if not cfg.hoist_rollout and bonus.rollout_step is None:
         raise ValueError(
@@ -95,6 +147,31 @@ def build_iteration(cfg, env, bonus, sweep, layout, capture_batch: bool = False)
                        and isinstance(reward_offset, (int, float)) and reward_offset == 0)
     if cfg.episode_log and not cfg.hoist_rollout:
         raise ValueError("episode_log is built only for the hoisted rollout")
+    # the speed keys of the reward filter and the advantage sums
+    if cfg.advantage_scan_unroll < 1:
+        raise ValueError(f"advantage_scan_unroll must be at least 1; it is "
+                         f"{cfg.advantage_scan_unroll}")
+    if cfg.action_noise_generator != "threefry" and discrete:
+        raise ValueError("action_noise_generator other than 'threefry' is built for the "
+                         "continuous actor only")
+    if cfg.intrinsic_sums_by_matrix_product:
+        filter_matrix, carry_powers, advantage_matrix = intrinsic_sum_matrices(
+            cfg.gamma_int, cfg.gae_lambda, T)
+
+    # next values read from the following step's values: possible only where no next value
+    # other than a truncated step's has to come from a final observation, and where one
+    # environment is truncated at most once in a rollout
+    shifted_values = cfg.next_values_from_shifted_values
+    if shifted_values:
+        if not cfg.hoist_rollout or cfg.intrinsic_bootstrap_observation != "reset_observation":
+            raise ValueError("next_values_from_shifted_values needs the hoisted rollout and "
+                             "intrinsic_bootstrap_observation='reset_observation'")
+        if (not getattr(env, "truncates_only_at_step_limit", False)
+                or env.cfg.max_episode_steps < T):
+            raise ValueError("next_values_from_shifted_values needs an environment whose only "
+                             "truncation is its step limit, with a limit of at least one "
+                             f"rollout ({T} steps), so that an environment is truncated at "
+                             "most once in a rollout")
 
     def iteration(state, lr):
         """Roll out, score, form advantages, update; returns (state, metrics)."""
@@ -115,7 +192,7 @@ def build_iteration(cfg, env, bonus, sweep, layout, capture_batch: bool = False)
             z_all = -jnp.log(-jnp.log(u))
             logstd = None
         else:
-            z_all = jax.random.normal(jax.random.fold_in(key, 0), (T, C, N, env.act_dim), F32)
+            z_all = action_noise(cfg, jax.random.fold_in(key, 0), (T, C, N, env.act_dim))
             logstd = agent_params["actor"]["logstd"]
         # The current PointMaze configuration may whiten its inputs; historical configurations do not.
         if cfg.normalize_agent_obs:
@@ -194,12 +271,38 @@ def build_iteration(cfg, env, bonus, sweep, layout, capture_batch: bool = False)
                 logp_buf = (-0.5 * z_all * z_all - logstd[None, :, None, :]
                             - 0.5 * LOG2PI).sum(-1)
             env_state, obs_last = rollout_carry[:2]
-            # one critic pass covers the on-step values and the bootstrap values together
             obs_flat, nobs_flat = flat(obs_buf), flat(nobs_buf)
-            vall_e, vall_i = critic_values(
-                agent_params["critic"], seen(jnp.concatenate([obs_flat, nobs_flat], axis=1)))
-            vext_buf, vint_buf = unflat(vall_e[:, :T * N]), unflat(vall_i[:, :T * N])
-            vext_next, vint_next = unflat(vall_e[:, T * N:]), unflat(vall_i[:, T * N:])
+            if shifted_values:
+                # A step's final observation IS the next step's observation unless the step
+                # ended an episode, so its value is already among the on-step values. A step that
+                # ended an episode needs: nothing after a termination (the extrinsic return stops
+                # there), the reset observation's intrinsic value (again the next step's value),
+                # and, after a truncation only, the extrinsic value of the final observation.
+                # An environment is truncated at most once in a rollout, so that is one
+                # observation per environment.
+                # before: critic rows per copy 2 x T*N (observations, final observations)
+                # after:  T*N + 2 x N (observations, the observation after the last step, each
+                #         environment's final observation at its truncated step)
+                trunc_buf = (done_buf - term_buf) > 0
+                trunc_step = jnp.argmax(trunc_buf, axis=0)
+                final_at_trunc = jnp.take_along_axis(
+                    nobs_buf, trunc_step[None, :, :, None], axis=0)[0]
+                vall_e, vall_i = critic_values(agent_params["critic"], seen(
+                    jnp.concatenate([obs_flat, obs_last, final_at_trunc], axis=1)))
+                vext_buf, vint_buf = unflat(vall_e[:, :T * N]), unflat(vall_i[:, :T * N])
+                vext_last, vint_last = vall_e[:, T * N:T * N + N], vall_i[:, T * N:T * N + N]
+                # before: values [T, C, N] and the value after the last step [C, N]
+                # after:  [T, C, N] where entry t is the value at step t + 1
+                following = lambda v, last: jnp.concatenate([v[1:], last[None]], axis=0)
+                vext_next = jnp.where(trunc_buf, vall_e[:, T * N + N:][None],
+                                      following(vext_buf, vext_last))
+                vint_next = following(vint_buf, vint_last)
+            else:
+                # one critic pass covers the on-step values and the bootstrap values together
+                vall_e, vall_i = critic_values(
+                    agent_params["critic"], seen(jnp.concatenate([obs_flat, nobs_flat], axis=1)))
+                vext_buf, vint_buf = unflat(vall_e[:, :T * N]), unflat(vall_i[:, :T * N])
+                vext_next, vint_next = unflat(vall_e[:, T * N:]), unflat(vall_i[:, T * N:])
             scored = None
         else:
             # round-1 form, kept so the hoist can be measured and checked against it
@@ -233,7 +336,7 @@ def build_iteration(cfg, env, bonus, sweep, layout, capture_batch: bool = False)
         # The current PointMaze configuration continues intrinsic returns from the reset state.
         # Historical configurations retain their final-observation calculation for reproduction.
         # Before: final observations at resets; after: reset observations only when selected.
-        if cfg.intrinsic_bootstrap_observation == "reset_observation":
+        if cfg.intrinsic_bootstrap_observation == "reset_observation" and not shifted_values:
             _, vint_last = critic_values(agent_params["critic"], seen(obs_last))
             vint_after_reset = jnp.concatenate([vint_buf[1:], vint_last[None]], axis=0)
             vint_next = jnp.where(done_buf.astype(bool), vint_after_reset, vint_next)
@@ -249,7 +352,15 @@ def build_iteration(cfg, env, bonus, sweep, layout, capture_batch: bool = False)
             """The discounted forward filter, one rollout step at a time."""
             f = cfg.gamma_int * f + r
             return f, f
-        int_filter, filt = jax.lax.scan(filt_body, state.agent_state["int_filter"], rint_buf)
+        if cfg.intrinsic_sums_by_matrix_product:
+            # before: rewards [T, C, N] and the filter value carried in, [C, N]
+            # after:  filt[t] = sum over s <= t of gamma^(t-s) r[s] + gamma^(t+1) x carried value
+            filt = (jnp.matmul(filter_matrix, rint_buf.reshape(T, C * N)).reshape(T, C, N)
+                    + carry_powers[:, None, None] * state.agent_state["int_filter"][None])
+            int_filter = filt[-1]
+        else:
+            int_filter, filt = jax.lax.scan(filt_body, state.agent_state["int_filter"], rint_buf,
+                                            unroll=cfg.advantage_scan_unroll)
         int_rms = rms_update(state.agent_state["int_rms"],
                              filt.transpose(1, 0, 2).reshape(C, T * N, 1), cfg.batch_stats_f32)
         int_std = jnp.sqrt(int_rms.var + 1e-8).astype(F32).reshape(1, C, 1)
@@ -297,10 +408,26 @@ def build_iteration(cfg, env, bonus, sweep, layout, capture_batch: bool = False)
             return (aext, aint), (aext, aint)
 
         zero = jnp.zeros((C, N), F32)
-        _, (aext_buf, aint_buf) = jax.lax.scan(
-            gae_body, (zero, zero),
-            (rext_used, vext_buf, vext_next, rint_hat, vint_buf, vint_next,
-             boot_mask, done_buf), reverse=True)
+        if cfg.intrinsic_sums_by_matrix_product:
+            def gae_ext_body(aext, xs):
+                """One backwards step of the extrinsic advantage, cut where an episode ended."""
+                r_e, v_e, vn_e, bm, dn = xs
+                d_ext = r_e + cfg.gamma_ext * vn_e * (1 - bm) - v_e
+                aext = d_ext + cfg.gamma_ext * cfg.gae_lambda * (1 - dn) * aext
+                return aext, aext
+
+            _, aext_buf = jax.lax.scan(
+                gae_ext_body, zero, (rext_used, vext_buf, vext_next, boot_mask, done_buf),
+                reverse=True, unroll=cfg.advantage_scan_unroll)
+            # before: one-step intrinsic differences d [T, C, N]
+            # after:  aint[t] = sum over s >= t of (gamma lambda)^(s-t) d[s]
+            d_int = rint_hat + cfg.gamma_int * vint_next - vint_buf
+            aint_buf = jnp.matmul(advantage_matrix, d_int.reshape(T, C * N)).reshape(T, C, N)
+        else:
+            _, (aext_buf, aint_buf) = jax.lax.scan(
+                gae_body, (zero, zero),
+                (rext_used, vext_buf, vext_next, rint_hat, vint_buf, vint_next,
+                 boot_mask, done_buf), reverse=True, unroll=cfg.advantage_scan_unroll)
 
         # No-bonus policies use task advantages only. Other bonuses use either a scalar
         # intrinsic weight or per-copy weights broadcast over the [T, C, N] rollout; a schedule

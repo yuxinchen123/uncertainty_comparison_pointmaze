@@ -50,9 +50,14 @@ class Composition:
 
         # the environment, with the sweep's seed streams: paired groups meet the same environments
         env_class = ENV_CLASSES[type(self.env_cfg)]
+        env_options = {}
+        if cfg.skip_reset_draws_at_zero_noise:
+            if env_class is not JaxPointMaze:
+                raise ValueError("skip_reset_draws_at_zero_noise is built for PointMaze only")
+            env_options["skip_zero_noise_draws"] = True
         self.env = env_class(self.env_cfg, cfg.n_copies, cfg.n_envs,
                              base_seed=cfg.base_seed,
-                             copy_seed_index=self.sweep.copy_seed_index)
+                             copy_seed_index=self.sweep.copy_seed_index, **env_options)
         self.open_cells, self.n_cells = self.env.open_cells, self.env.n_cells
 
         # the bonus binds to this run before anything is traced; saved constants are passed only

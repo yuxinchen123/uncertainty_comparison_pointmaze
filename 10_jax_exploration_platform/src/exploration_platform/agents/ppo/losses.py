@@ -10,7 +10,8 @@ import jax
 import jax.numpy as jnp
 
 from ... import LOG2PI
-from .networks import actor_logits, actor_mean, critic_values, logprob, logprob_discrete
+from .networks import (actor_logits, actor_mean, actor_mean_and_critic_values, critic_values,
+                       logprob, logprob_discrete)
 
 
 class LossCoefficients(NamedTuple):
@@ -53,23 +54,30 @@ def loss_coefficients(cfg, sweep=None) -> LossCoefficients:
         vf=value("vf_coef"))
 
 
-def ppo_loss_per_copy(coef: LossCoefficients, agent_params, batch, style_a: bool):
+def ppo_loss_per_copy(coef: LossCoefficients, agent_params, batch, style_a: bool,
+                      joint_trunk: bool = False):
     """Per-copy policy + value + entropy loss on one (mini)batch (spec 9 + the 11 correction).
 
     style_a is a Python constant chosen when the program is built, never a traced branch: style A
     (one update on the whole batch) keeps the probability ratio and drops the clip machinery,
-    style B (epochs of minibatches) is the clipped objective.
+    style B (epochs of minibatches) is the clipped objective. joint_trunk, also chosen when the
+    program is built, runs the actor's and the critic's hidden layers as one batched network.
     """
     # advantages are standardised within each copy's own batch, so a copy's scale never leaks
     # into another copy's gradient
     a = batch["adv"]
     a_n = (a - a.mean(axis=1, keepdims=True)) / (a.std(axis=1, ddof=1, keepdims=True) + 1e-8)
 
-    # one forward for the policy and one for both value heads
-    mean = actor_mean(agent_params["actor"], batch["obs"])
+    # one forward for the policy and one for both value heads, or one for all three
     logstd = agent_params["actor"]["logstd"]
-    newlogp = logprob(mean, logstd, batch["actions"])
-    vext, vint = critic_values(agent_params["critic"], batch["obs"])
+    if joint_trunk:
+        mean, vext, vint = actor_mean_and_critic_values(
+            agent_params["actor"], agent_params["critic"], batch["obs"])
+        newlogp = logprob(mean, logstd, batch["actions"])
+    else:
+        mean = actor_mean(agent_params["actor"], batch["obs"])
+        newlogp = logprob(mean, logstd, batch["actions"])
+        vext, vint = critic_values(agent_params["critic"], batch["obs"])
     ratio = jnp.exp(newlogp - batch["old_logprob"])
 
     # the policy-gradient term and the extrinsic value term differ between the two styles

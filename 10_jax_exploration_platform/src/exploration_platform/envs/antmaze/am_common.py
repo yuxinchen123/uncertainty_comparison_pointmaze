@@ -60,6 +60,17 @@ class AntMazeConfig:
     # reference ignores them, so the parity gates compare against the uncapped reference.
     max_geom_pairs: int = 8
     max_contact_points: int = 32
+    # ---- how the MJX stepper runs that model (speed only; `mjx_antmaze` reads these two) ----
+    # solver_loop: "while_loop" calls mjx.step as shipped, whose Newton passes run in a
+    # jax.lax.while_loop; "fixed_count" runs the same passes in a loop of exactly
+    # solver_iterations passes in which an environment whose stop test is met keeps its values,
+    # each pass its own copy in the compiled program; "fixed_count_scan" is that loop as one
+    # jax.lax.scan.
+    # carried_state: "whole_data" carries the whole MJX data from one step to the next;
+    # "next_step_inputs" carries only what the next step reads (positions, velocities, the
+    # solver's start values, the clock) and rebuilds the rest inside the step.
+    solver_loop: str = "while_loop"
+    carried_state: str = "whole_data"
 
 
 def preset(map_name: str) -> AntMazeConfig:

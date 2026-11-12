@@ -51,11 +51,21 @@ class JaxPointMaze:
     # the platform composer reads these to size the agent, the bonus and the noise draws
     obs_dim = 4
     act_dim = 2
+    # an episode is truncated only when its step count reaches the limit, so two truncations of
+    # one environment are at least max_episode_steps steps apart; the trainer's
+    # next_values_from_shifted_values key relies on it
+    truncates_only_at_step_limit = True
 
     def __init__(self, cfg: EnvConfig, n_copies: int, n_envs: int, base_seed: int = 0,
-                 dtype=jnp.float32, copy_seed_index=None):
+                 dtype=jnp.float32, copy_seed_index=None, skip_zero_noise_draws: bool = False):
         self.cfg, self.C, self.N, self.dtype = cfg, n_copies, n_envs, dtype
         validate_env_config(cfg)
+        # skip_zero_noise_draws: a reset places the ball and the goal at their cells' centres
+        # without drawing the keyed uniform numbers, which a noise of zero multiplies by zero
+        if skip_zero_noise_draws and cfg.position_noise != 0.0:
+            raise ValueError("skip_zero_noise_draws needs position_noise 0; it is "
+                             f"{cfg.position_noise}")
+        self.skip_zero_noise_draws = skip_zero_noise_draws
         geo = build_geometry(cfg.map_name)
         self.rows, self.cols = geo["rows"], geo["cols"]
         self.n_cells = self.rows * self.cols
@@ -84,6 +94,13 @@ class JaxPointMaze:
 
     def _spawn(self, reset_count):
         """Fresh (pos, vel, goal) for every env at the given reset generation."""
+        if self.skip_zero_noise_draws:
+            # before: reset_count [C, N]; after: pos [C, N, 2], every row the start cell's
+            # centre, and goal [C, N, 2], every row the goal cell's centre
+            shape = reset_count.shape + (2,)
+            pos = jnp.broadcast_to(jnp.asarray(self.start_center, self.dtype), shape)
+            goal = jnp.broadcast_to(jnp.asarray(self.goal_center, self.dtype), shape)
+            return pos, jnp.zeros_like(pos), goal
         pos = jnp.stack([self.start_center[0] + self._reset_noise(reset_count, _Q_START_X),
                          self.start_center[1] + self._reset_noise(reset_count, _Q_START_Y)], -1)
         goal = jnp.stack([self.goal_center[0] + self._reset_noise(reset_count, _Q_GOAL_X),

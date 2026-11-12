@@ -83,6 +83,28 @@ def critic_values(critic, x):
     return vext[..., 0], vint[..., 0]
 
 
+def actor_mean_and_critic_values(actor, critic, x):
+    """(action mean [C, M, act], Vext [C, M], Vint [C, M]) with the two hidden layers of the
+    actor and of the critic run as ONE batched network of twice the copies.
+
+    The arithmetic of every row is the same as in `actor_mean` and `critic_values`; the two
+    networks share each matrix product instead of running one after the other.
+
+    before: actor W0 [C, obs, 64] and critic W0 [C, obs, 64], x [C, M, obs], two forwards
+    after:  W0 [2C, obs, 64] on x repeated [2C, M, obs]; hidden rows 0..C-1 are the actor's,
+            rows C..2C-1 the critic's, and each network's own last layer follows
+    """
+    C = x.shape[0]
+    both = lambda name: jnp.concatenate([actor[name], critic[name]], axis=0)
+    h = jnp.tanh(jnp.matmul(jnp.concatenate([x, x], axis=0), both("W0"))
+                 + both("b0")[:, None, :])
+    h = jnp.tanh(jnp.matmul(h, both("W1")) + both("b1")[:, None, :])
+    mean = jnp.matmul(h[:C], actor["W2"]) + actor["b2"][:, None, :]
+    vext = jnp.matmul(h[C:], critic["Wext"]) + critic["bext"][:, None, :]
+    vint = jnp.matmul(h[C:], critic["Wint"]) + critic["bint"][:, None, :]
+    return mean, vext[..., 0], vint[..., 0]
+
+
 def logprob(mean, logstd, action):
     """Diagonal-Gaussian log-density summed over action dimensions -> [C, M]."""
     z = (action - mean) / jnp.exp(logstd)[:, None, :]

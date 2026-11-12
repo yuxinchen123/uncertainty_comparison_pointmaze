@@ -12,7 +12,7 @@ source_files = [
 source_record_sha256 = "c2775277b4796c7e9f76817cf3eef4340848afdac216848dde2745f6b64a946b"
 source_unit = "random-network-distillation_learning-rate-0.001_intrinsic-weight-100"
 notes = "The current preset uses the reset observation for continuing intrinsic returns and excludes intrinsic advantages for a no-bonus policy. This file selects the recorded distillation cell, not a new default."
-later_fields_recorded_explicitly = ["diagnostics", "total_iterations", "int_coef_schedule", "success_gate_rate", "normalize_ext_reward", "clip_per_network", "logstd_floor", "critic_lr_scale", "normalize_agent_obs", "setting_names", "ext_reward_scale", "ext_reward_offset", "episode_log", "gather_minibatches_per_epoch"]
+later_fields_recorded_explicitly = ["diagnostics", "total_iterations", "int_coef_schedule", "success_gate_rate", "normalize_ext_reward", "clip_per_network", "logstd_floor", "critic_lr_scale", "normalize_agent_obs", "setting_names", "ext_reward_scale", "ext_reward_offset", "episode_log", "gather_minibatches_per_epoch", "target_features_once_per_iteration", "permutation_draw", "next_values_from_shifted_values", "skip_reset_draws_at_zero_noise", "intrinsic_sums_by_matrix_product", "advantage_scan_unroll", "action_noise_generator", "actor_critic_joint_trunk"]
 source_steps_per_policy_copy = 100006400
 
 [trainer]
@@ -66,6 +66,14 @@ ext_reward_scale = 1.0
 ext_reward_offset = 0.0
 episode_log = false
 gather_minibatches_per_epoch = false
+target_features_once_per_iteration = false
+permutation_draw = "argsort_uniform"
+next_values_from_shifted_values = false
+skip_reset_draws_at_zero_noise = false
+intrinsic_sums_by_matrix_product = false
+advantage_scan_unroll = 1
+action_noise_generator = "threefry"
+actor_critic_joint_trunk = false
 
 [environment]
 map_name = "large"

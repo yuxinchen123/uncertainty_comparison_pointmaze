@@ -127,3 +127,46 @@ class PPOConfig:
     gather_minibatches_per_epoch: bool = False  # epoch-minibatch updates gather one epoch's
                                      # minibatches at a time, so one shuffled copy of the batch
                                      # is held instead of one per epoch
+
+    # ---- speed keys of the PointMaze and AntMaze study (2026-11-12). Every default keeps the
+    # program above. What each one gained on which card is recorded in the ledger of
+    # benchmark_runs/2026-11-12-00-17_pointmaze-antmaze_cleanrl-ppo-rnd_speed-30-ideas_... ----
+    target_features_once_per_iteration: bool = False  # random network distillation: the fixed
+                                     # target's features of the update batch are computed once
+                                     # after the rollout and gathered with the minibatches,
+                                     # instead of once in every gradient step (idea 20)
+    permutation_draw: str = "argsort_uniform"  # how each epoch's row order is drawn for every
+                                     # copy. "argsort_uniform": the positions that sort one
+                                     # uniform number per row, one sort per copy and epoch.
+                                     # "sort_packed_keys": one sort of 64-bit keys holding
+                                     # (epoch and copy, 32 random bits, row). Both read the same
+                                     # random bits, so the orders differ only between rows whose
+                                     # uniform numbers are equal (idea 19)
+    next_values_from_shifted_values: bool = False  # the value of a step's next observation is
+                                     # read from the value of the following step's observation
+                                     # instead of a second critic pass over the final
+                                     # observations; only an environment's truncated step gets
+                                     # its final observation's value (idea 14)
+    skip_reset_draws_at_zero_noise: bool = False  # PointMaze: with position_noise 0 the reset
+                                     # places the ball and the goal at their cells' centres
+                                     # without drawing the four keyed uniform numbers per
+                                     # environment and step that the zero noise multiplies
+                                     # (idea 15)
+    intrinsic_sums_by_matrix_product: bool = False  # the forward filter of the intrinsic reward
+                                     # and the intrinsic advantage are each one product with a
+                                     # fixed [T, T] matrix of discount powers instead of a
+                                     # 128-step loop; the extrinsic advantage, which is cut at
+                                     # episode ends, keeps its loop (idea 17)
+    advantage_scan_unroll: int = 1   # how many steps one body of the reward-filter loop and of
+                                     # the advantage loop holds; 1 is the loop as it always was
+                                     # (an addition to idea 17, not in the plan's list)
+    action_noise_generator: str = "threefry"  # where the rollout's action noise comes from.
+                                     # "threefry": JAX's default counter-based generator, the
+                                     # same numbers on every machine. "rbg": the compiler's own
+                                     # bit generator, keyed from the iteration's key; another
+                                     # random scheme, whose numbers may differ between card
+                                     # models and library versions (idea 16)
+    actor_critic_joint_trunk: bool = False  # in the update's loss, the two hidden layers of the
+                                     # actor and of the critic run as one batched network of
+                                     # twice the copies, instead of two networks one after the
+                                     # other (idea 21)

@@ -16,7 +16,8 @@ import jax.numpy as jnp
 from ...statistics import rms_init, rms_update
 from ..protocol import BonusFunctions
 from .config import RNDConfig
-from .networks import features, init_predictor, init_target, whiten
+from .networks import (features, init_predictor, init_target, predictor_features,
+                       target_features, whiten)
 
 
 def build(cfg, env_cfg, rnd_cfg: RNDConfig, n_copies: int, base_seed: int, copy_seed_index,
@@ -63,11 +64,20 @@ def build(cfg, env_cfg, rnd_cfg: RNDConfig, n_copies: int, base_seed: int, copy_
         """
         reward = score(params, state, next_obs_flat) if scored is None else scored
         obs_rms = rms_update(state["obs_rms"], next_obs_flat, cfg.batch_stats_f32)
-        return {"obs_rms": obs_rms}, reward, {"rnd_input": whiten(next_obs_flat, obs_rms)}
+        extra = {"rnd_input": whiten(next_obs_flat, obs_rms)}
+        # the target never changes, so its features of the update batch can be computed here,
+        # once, and travel with the batch: [C, T*N, feature_dim] beside the [C, T*N, obs] input
+        if cfg.target_features_once_per_iteration:
+            extra["rnd_target"] = target_features(target, extra["rnd_input"])
+        return {"obs_rms": obs_rms}, reward, extra
 
     def loss(params, batch):
         """Per-copy predictor error on the update batch, [C]."""
-        tf, pf = features(target, params["predictor"], batch["rnd_input"])
+        if cfg.target_features_once_per_iteration:
+            tf = batch["rnd_target"]
+            pf = predictor_features(params["predictor"], batch["rnd_input"])
+        else:
+            tf, pf = features(target, params["predictor"], batch["rnd_input"])
         return ((pf - tf) ** 2).mean(axis=2).mean(axis=1)
 
     def metrics(params, state):

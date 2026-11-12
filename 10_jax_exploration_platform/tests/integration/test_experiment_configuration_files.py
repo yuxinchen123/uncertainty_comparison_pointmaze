@@ -21,6 +21,8 @@ PART_B = CONFIGURATIONS / "pointmaze_large_entropy-0.01_learning-rate-0.0001_wit
 POINTMAZE_EXAMPLE = CONFIGURATIONS / "pointmaze_large_cleanrl-ppo-rnd_goal-termination_reward-arrival-plus-one_example_steps-1024000.toml"
 ANTMAZE_EXAMPLE = CONFIGURATIONS / "antmaze_umaze_cleanrl-ppo-rnd_goal-termination_reward-arrival-plus-one_example_steps-204800.toml"
 EXAMPLES = (POINTMAZE_EXAMPLE, ANTMAZE_EXAMPLE)
+# The number of trainer fields every recorded file must hold (the fields of PPOConfig).
+FIELDS = 58
 
 
 def small_parser():
@@ -52,13 +54,22 @@ class RecordedExperimentFiles(unittest.TestCase):
         self.assertEqual(len(paths), 6)
         documents = [read_experiment_configuration(path) for path in paths]
         for document in documents:
-            self.assertEqual(len(document["trainer"]), 50)
+            self.assertEqual(len(document["trainer"]), FIELDS)
             # The fields added on 2026-11-12 stay at the values that change nothing.
             self.assertEqual(document["trainer"]["setting_names"], ("learning_rate", "int_coef"))
             self.assertEqual((document["trainer"]["ext_reward_scale"],
                               document["trainer"]["ext_reward_offset"]), (1.0, 0.0))
             self.assertFalse(document["trainer"]["episode_log"])
             self.assertFalse(document["trainer"]["gather_minibatches_per_epoch"])
+            # The speed keys added on 2026-11-12 stay off in every recorded experiment.
+            self.assertFalse(document["trainer"]["target_features_once_per_iteration"])
+            self.assertEqual(document["trainer"]["permutation_draw"], "argsort_uniform")
+            self.assertFalse(document["trainer"]["next_values_from_shifted_values"])
+            self.assertFalse(document["trainer"]["skip_reset_draws_at_zero_noise"])
+            self.assertFalse(document["trainer"]["intrinsic_sums_by_matrix_product"])
+            self.assertEqual(document["trainer"]["advantage_scan_unroll"], 1)
+            self.assertEqual(document["trainer"]["action_noise_generator"], "threefry")
+            self.assertFalse(document["trainer"]["actor_critic_joint_trunk"])
             self.assertEqual(document["runtime"]["reward_setting"], "environment")
             self.assertTrue(document["metadata"]["source_files"])
             self.assertEqual(len(document["sha256"]), 64)
@@ -78,7 +89,7 @@ class RecordedExperimentFiles(unittest.TestCase):
                                     (ANTMAZE_EXAMPLE, "antmaze_current", 700)):
             document = read_experiment_configuration(path)
             trainer, environment = document["trainer"], document["environment"]
-            self.assertEqual(len(trainer), 50)
+            self.assertEqual(len(trainer), FIELDS)
             self.assertEqual(trainer["configuration_preset"], preset)
             self.assertEqual((trainer["update_style"], trainer["update_epochs"],
                               trainer["num_minibatches"]), ("epoch_minibatch", 4, 4))

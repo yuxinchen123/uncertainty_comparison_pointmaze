@@ -8,6 +8,7 @@ another unit is refused.
 
 Run on a compute node: PYTHONNOUSERSITE=1 JAX_PLATFORMS=cpu <platform_jax python> -m pytest <file>
 """
+import json
 import sys
 import tempfile
 from dataclasses import asdict, replace
@@ -124,6 +125,33 @@ def test_named_trees_round_trip():
     print("PASS named trees flatten and come back")
 
 
+def test_a_trainer_field_added_later_is_read_as_its_default():
+    """A checkpoint written before a trainer field existed continues when the field is at its
+    default, and is refused when the current unit has changed it."""
+    current = {"trainer_config": asdict(PPOConfig(n_copies=4)), "run_seed": 17}
+    later_fields = ("target_features_once_per_iteration", "permutation_draw",
+                    "next_values_from_shifted_values")
+    # before: the record of a unit saved before the three speed keys were added
+    older = {"trainer_config": {name: value for name, value in
+                                json.loads(json.dumps(current["trainer_config"])).items()
+                                if name not in later_fields}, "run_seed": 17}
+    check_identity(older, current)
+    for changed in (replace(PPOConfig(n_copies=4), permutation_draw="sort_packed_keys"),
+                    replace(PPOConfig(n_copies=4), target_features_once_per_iteration=True)):
+        try:
+            check_identity(older, {"trainer_config": asdict(changed), "run_seed": 17})
+            raise AssertionError("a changed later field was accepted")
+        except ValueError as error:
+            assert "trainer_config" in str(error)
+    # a field the saved record holds is still compared as before
+    try:
+        check_identity(older, {"trainer_config": asdict(PPOConfig(n_copies=8)), "run_seed": 17})
+        raise AssertionError("another copy count was accepted")
+    except ValueError as error:
+        assert "trainer_config" in str(error)
+    print("PASS a trainer field added after a checkpoint is read as its default")
+
+
 def test_pointmaze_resume_is_bit_identical():
     """The study's PointMaze options: clipped update, episode log, both reward settings."""
     env_cfg = EnvConfig(continuing_task=False, max_episode_steps=6)
@@ -148,5 +176,6 @@ def test_antmaze_resume_is_bit_identical():
 
 if __name__ == "__main__":
     test_named_trees_round_trip()
+    test_a_trainer_field_added_later_is_read_as_its_default()
     test_pointmaze_resume_is_bit_identical()
     test_antmaze_resume_is_bit_identical()

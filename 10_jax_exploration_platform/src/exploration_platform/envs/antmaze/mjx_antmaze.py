@@ -13,7 +13,12 @@ speed. Every MJX call here is therefore wrapped in `jax.enable_x64(False)`, whic
 trace time, so the compiled iteration contains a float32 physics program inside the platform's
 otherwise-unchanged float64-statistics world. `tests/envs/test_antmaze_mjx.py` checks that the
 boundary holds.
+
+Two configuration fields change how the same physics is run, not what it computes
+(`AntMazeConfig.solver_loop` and `AntMazeConfig.carried_state`; both default to the stepper as it
+was before they existed). `tests/envs/test_antmaze_mjx_options.py` compares each with the default.
 """
+import functools
 from typing import NamedTuple
 
 import jax
@@ -21,19 +26,103 @@ import jax.numpy as jnp
 import mujoco
 import numpy as np
 from mujoco import mjx
+from mujoco.mjx._src import math as mjx_math
+from mujoco.mjx._src import solver as mjx_solver
 
 from .am_common import SCALING, AntMazeConfig, build_antmaze_xml, cell_center
 from ..pointmaze.pm_common import MAPS
 
 F32 = jnp.float32
+SOLVER_LOOPS = ("while_loop", "fixed_count", "fixed_count_scan")
+CARRIED_STATES = ("whole_data", "next_step_inputs")
+
+
+class CarriedPhysics(NamedTuple):
+    """The physics arrays one step hands to the next under carried_state="next_step_inputs"."""
+    qpos: jnp.ndarray             # [B, 15] positions
+    qvel: jnp.ndarray             # [B, 14] velocities
+    qacc_warmstart: jnp.ndarray   # [B, 14] the solver's start values: the last step's accelerations
+    time: jnp.ndarray             # [B] the physics clock, seconds
+
+    def replace(self, **changes):
+        """A copy with some arrays replaced, the call mjx.Data offers under the same name."""
+        return self._replace(**changes)
 
 
 class EnvState(NamedTuple):
-    """All mutable env state. data is the batched MJX state over B = C*N environments."""
-    data: object               # mjx.Data, every array leading axis [C*N]
+    """All mutable env state. data is the batched physics state over B = C*N environments."""
+    data: object               # mjx.Data or CarriedPhysics, every array leading axis [C*N]
     step_count: jnp.ndarray    # [C, N] int32, steps since this environment's last reset
     reset_count: jnp.ndarray   # [C, N] int32, completed episodes (deterministic resets: metric only)
     nan_count: jnp.ndarray     # [C, N] int32, episodes ended by a non-finite physics state
+
+
+def wants_another_pass(model, ctx):
+    """mjx.solve's stop test for one environment: True while neither the cost improvement of the
+    last pass nor the gradient is under the solver tolerance."""
+    improvement = mjx_solver._rescale(model, ctx.prev_cost - ctx.cost)
+    gradient = mjx_solver._rescale(model, mjx_math.norm(ctx.grad))
+    return ~((improvement < model.opt.tolerance) | (gradient < model.opt.tolerance))
+
+
+def newton_passes(model, data, written_out=True):
+    """The solver context of one environment after mjx.solve's Newton passes, run in a loop of
+    fixed length.
+
+    mjx.solve runs the passes in jax.lax.while_loop, which under jax.vmap repeats while any
+    environment still wants a pass and gives every environment a select between its new and its
+    old values. This function is the same arithmetic in a loop of opt.iterations passes: every
+    pass is computed, and an environment whose stop test is met keeps its values. With
+    written_out the passes are separate copies in the compiled program; without, they are one
+    jax.lax.scan. The functions with a leading underscore are MJX's own.
+    """
+    m, d = model, data
+    # GOAL: the start point mjx.solve chooses: the warm start when its cost is the lower one.
+    warm = mjx_solver.Context.create(m, d.replace(qacc=d.qacc_warmstart), grad=False)
+    smooth = mjx_solver.Context.create(m, d.replace(qacc=d.qacc_smooth), grad=False)
+    d = d.replace(qacc=jnp.where(warm.cost < smooth.cost, d.qacc_warmstart, d.qacc_smooth))
+    ctx = mjx_solver.Context.create(m, d)
+    # GOAL: the passes of mjx.solve's loop body, each kept only where the stop test asks for it
+    # (mjx.solve's other stop test, on the pass count, can never be met inside this loop).
+    def one_pass(ctx, _=None):
+        """One pass of mjx.solve's loop body, kept only where the stop test asks for it."""
+        keep_going = wants_another_pass(m, ctx)
+        new = mjx_solver._linesearch(m, d, ctx)
+        new = mjx_solver._update_constraint(m, d, new)
+        new = mjx_solver._update_gradient(m, d, new)
+        new = new.replace(search=-new.Mgrad, solver_niter=new.solver_niter + 1)
+        return jax.tree.map(lambda n, o: jnp.where(keep_going, n, o), new, ctx), None
+
+    if written_out:
+        for _ in range(m.opt.iterations):
+            ctx, _ = one_pass(ctx)
+        return ctx
+    return jax.lax.scan(one_pass, ctx, None, length=m.opt.iterations)[0]
+
+
+def solve_fixed_count(model, data, written_out=True):
+    """mjx.solve for one environment through newton_passes.
+
+    Only the constraint force, the acceleration and the constraint-space force leave the solver,
+    so with the passes written out the gradient and the search direction of the last pass are
+    never read and the compiler drops their computation.
+    """
+    ctx = newton_passes(model, data, written_out)
+    return data.tree_replace({"qfrc_constraint": ctx.qfrc_constraint, "qacc": ctx.qacc,
+                              "_impl.efc_force": ctx.efc_force})
+
+
+def physics_step_fixed_count(model, data, written_out=True):
+    """mjx.step for one environment (implicitfast), from MJX's stages and solve_fixed_count."""
+    d = mjx.fwd_position(model, data)
+    d = mjx.sensor_pos(model, d)
+    d = mjx.fwd_velocity(model, d)
+    d = mjx.sensor_vel(model, d)
+    d = mjx.fwd_actuation(model, d)
+    d = mjx.fwd_acceleration(model, d)
+    d = solve_fixed_count(model, d, written_out)
+    d = mjx.sensor_acc(model, d)
+    return mjx.implicit(model, d)
 
 
 class JaxAntMaze:
@@ -52,6 +141,17 @@ class JaxAntMaze:
         """
         if dtype is not jnp.float32:
             raise ValueError("JaxAntMaze runs MJX in float32; float64 physics is not supported")
+        if cfg.solver_loop not in SOLVER_LOOPS:
+            raise ValueError(f"unknown solver_loop {cfg.solver_loop!r}; choose from {SOLVER_LOOPS}")
+        if cfg.carried_state not in CARRIED_STATES:
+            raise ValueError(f"unknown carried_state {cfg.carried_state!r}; choose from "
+                             f"{CARRIED_STATES}")
+        if cfg.solver_loop != "while_loop" and (cfg.integrator != "implicitfast"
+                                                or cfg.solver_iterations < 2):
+            raise ValueError("a fixed-count solver loop reproduces mjx.step only for the "
+                             "implicitfast integrator with 2 or more solver iterations (with 1 "
+                             f"MJX runs no loop); got integrator {cfg.integrator!r}, "
+                             f"solver_iterations {cfg.solver_iterations}")
         self.cfg, self.C, self.N, self.dtype = cfg, n_copies, n_envs, dtype
         self.B = n_copies * n_envs
 
@@ -63,7 +163,14 @@ class JaxAntMaze:
         mj_model = mujoco.MjModel.from_xml_string(build_antmaze_xml(cfg))
         with jax.enable_x64(False):
             self.model = mjx.put_model(mj_model)
+            if cfg.carried_state == "next_step_inputs":
+                # one environment's MJX data: the constant every physics step starts from
+                self._blank_data = mjx.make_data(self.model)
         self.nq, self.nv, self.nu = mj_model.nq, mj_model.nv, mj_model.nu
+        self._physics_step = {
+            "while_loop": mjx.step, "fixed_count": physics_step_fixed_count,
+            "fixed_count_scan": functools.partial(physics_step_fixed_count, written_out=False),
+        }[cfg.solver_loop]
 
         # the deterministic spawn: the model's qpos0 (torso z = 0.75, identity orientation,
         # zero joint angles) with the torso xy moved to the start cell's centre; zero velocity
@@ -75,11 +182,29 @@ class JaxAntMaze:
         self.goal = jnp.asarray(cell_center(cfg.goal_cell, self.rows, self.cols), F32)
 
     def _spawned_data(self):
-        """Fresh batched MJX data at the deterministic spawn, [B] on every leading axis."""
+        """Fresh batched physics state at the deterministic spawn, [B] on every leading axis."""
         with jax.enable_x64(False):
+            if self.cfg.carried_state == "next_step_inputs":
+                # four separate arrays: donation refuses a buffer that appears twice in the tree
+                return CarriedPhysics(jnp.tile(self.init_qpos[None], (self.B, 1)),
+                                      jnp.tile(self.init_qvel[None], (self.B, 1)),
+                                      jnp.zeros((self.B, self.nv), F32), jnp.zeros((self.B,), F32))
             data = jax.vmap(lambda _: mjx.make_data(self.model))(jnp.arange(self.B))
             return data.replace(qpos=jnp.tile(self.init_qpos[None], (self.B, 1)),
                                 qvel=jnp.tile(self.init_qvel[None], (self.B, 1)))
+
+    def _carried_physics_step(self, carried, ctrl):
+        """One physics step of one environment from the carried arrays alone.
+
+        before: carried = (qpos [15], qvel [14], qacc_warmstart [14], time []), ctrl [8]
+        after:  the same four arrays one physics step later; every other array of the MJX data
+                is computed from them inside the step and dropped
+        """
+        data = self._blank_data.replace(qpos=carried.qpos, qvel=carried.qvel,
+                                        qacc_warmstart=carried.qacc_warmstart,
+                                        time=carried.time, ctrl=ctrl)
+        data = self._physics_step(self.model, data)
+        return CarriedPhysics(data.qpos, data.qvel, data.qacc_warmstart, data.time)
 
     def reset(self) -> EnvState:
         """Initial state: every environment at the spawn, step and episode counters at zero.
@@ -120,11 +245,18 @@ class JaxAntMaze:
             # step into every compiled program and multiply the compile time by that factor
             # (measured: the whole benchmark grid stalled in compilation before this change)
             a = jnp.clip(act.astype(F32), -1.0, 1.0).reshape(self.B, self.nu)
-            data = state.data.replace(ctrl=a)
+            if self.cfg.carried_state == "whole_data":
+                data = state.data.replace(ctrl=a)
 
-            def frame(d, _):
-                """One physics step at the held ctrl."""
-                return jax.vmap(mjx.step, in_axes=(None, 0))(self.model, d), None
+                def frame(d, _):
+                    """One physics step at the held ctrl."""
+                    return jax.vmap(self._physics_step, in_axes=(None, 0))(self.model, d), None
+            else:
+                data = state.data
+
+                def frame(carried, _):
+                    """One physics step at the held ctrl, from the carried arrays alone."""
+                    return jax.vmap(self._carried_physics_step)(carried, a), None
             data, _ = jax.lax.scan(frame, data, None, length=self.cfg.frame_skip)
 
             step_count = state.step_count + 1
@@ -155,7 +287,8 @@ class JaxAntMaze:
 
             # deterministic auto-reset: put finished environments back at the spawn. Only the
             # state the next physics step reads is reset — positions, velocities, the solver
-            # warm start and the clock; everything else in `data` is recomputed by mjx.step.
+            # warm start and the clock; everything else in `data` is recomputed by mjx.step
+            # (and is not carried at all under carried_state="next_step_inputs").
             done_b = done.reshape(self.B)[:, None]
             data = data.replace(
                 qpos=jnp.where(done_b, self.init_qpos[None], data.qpos),

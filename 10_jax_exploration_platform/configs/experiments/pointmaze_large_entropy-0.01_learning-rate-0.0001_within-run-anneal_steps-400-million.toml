@@ -12,7 +12,7 @@ source_files = [
 source_record_sha256 = "f51b7d9eed8120229aac7aef08cea6f4ae5b80f9ac1c022a2cc16e8453d35344"
 source_unit = "lr-1e-4_steps-400M_c2_entropy-coefficient-0.01_anneal-in-run_rnd_next_state"
 notes = "Separate confirmed study choice. The per-unit header is authoritative; another unit overwrote run-level YAML. Entropy 0.01 is not a global or Atari default."
-later_fields_recorded_explicitly = ["setting_names", "ext_reward_scale", "ext_reward_offset", "episode_log", "gather_minibatches_per_epoch"]
+later_fields_recorded_explicitly = ["setting_names", "ext_reward_scale", "ext_reward_offset", "episode_log", "gather_minibatches_per_epoch", "target_features_once_per_iteration", "permutation_draw", "next_values_from_shifted_values", "skip_reset_draws_at_zero_noise", "intrinsic_sums_by_matrix_product", "advantage_scan_unroll", "action_noise_generator", "actor_critic_joint_trunk"]
 source_steps_per_policy_copy = 400000000
 
 [trainer]
@@ -66,6 +66,14 @@ ext_reward_scale = 1.0
 ext_reward_offset = 0.0
 episode_log = false
 gather_minibatches_per_epoch = false
+target_features_once_per_iteration = false
+permutation_draw = "argsort_uniform"
+next_values_from_shifted_values = false
+skip_reset_draws_at_zero_noise = false
+intrinsic_sums_by_matrix_product = false
+advantage_scan_unroll = 1
+action_noise_generator = "threefry"
+actor_critic_joint_trunk = false
 
 [environment]
 map_name = "large"

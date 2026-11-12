@@ -136,6 +136,46 @@ def _build_full_batch(cfg, loss_fn, lr_per_copy):
     return update
 
 
+def draw_permutations(cfg, key, n_rows: int):
+    """A shuffled order of a copy's rows for every epoch and copy, [epochs, C, n_rows] integers.
+
+    "argsort_uniform" draws one uniform number per row and takes the positions that sort them,
+    one sort per epoch and copy. "sort_packed_keys" gives every row a 64-bit key holding its
+    (epoch, copy) group in the high bits, 32 random bits in the middle and its own row number in
+    the low bits; ONE sort of all keys leaves each group's rows together, in the order of their
+    random bits, and the low bits of the sorted keys are the shuffled row numbers.
+
+    The two schemes read the same 32 random bits per row from the key. A uniform float32 number
+    keeps the leading 23 of them, and rows with equal numbers stay in row order (about
+    n_rows^2 / 2^24 pairs per group: 16 pairs at 16,384 rows). The packed keys sort on all 32
+    bits, so only those tied rows can come out in another order (still tied on 32 bits: about
+    n_rows^2 / 2^33 pairs per group). Where a group has no tie the two orders are the same.
+
+    before (sort_packed_keys): 2 groups of 4 rows, random bits [[7, 2, 9, 5], [1, 8, 3, 6]]
+    after:  keys sorted -> group 0 rows [1, 3, 0, 2], group 1 rows [0, 2, 3, 1]
+    """
+    groups = cfg.update_epochs * cfg.n_copies
+    if cfg.permutation_draw == "argsort_uniform":
+        return jnp.argsort(jax.random.uniform(key, (cfg.update_epochs, cfg.n_copies, n_rows), F32),
+                           axis=-1)
+    if cfg.permutation_draw != "sort_packed_keys":
+        raise ValueError(f"unknown permutation_draw {cfg.permutation_draw!r}; use "
+                         "'argsort_uniform' or 'sort_packed_keys'")
+    row_bits = max(1, (n_rows - 1).bit_length())
+    group_bits = max(1, (groups - 1).bit_length())
+    if group_bits + 32 + row_bits > 64:
+        raise ValueError(f"sort_packed_keys holds {groups} (epoch, copy) groups, 32 random bits "
+                         f"and {n_rows} rows in one 64-bit key, which needs "
+                         f"{group_bits + 32 + row_bits} bits")
+    draws = jax.random.bits(key, (groups, n_rows), jnp.uint32).astype(jnp.uint64)
+    group = jnp.arange(groups, dtype=jnp.uint64)[:, None]
+    row = jnp.arange(n_rows, dtype=jnp.uint64)[None, :]
+    packed = (group << (32 + row_bits)) | (draws << row_bits) | row
+    ordered = jnp.sort(packed.reshape(-1))
+    return (ordered & jnp.uint64((1 << row_bits) - 1)).astype(jnp.int32).reshape(
+        cfg.update_epochs, cfg.n_copies, n_rows)
+
+
 def scan_minibatches(cfg, batch, key, carry, body):
     """Shuffle each copy's rows once per epoch and run `body` over every minibatch, in order.
 
@@ -151,8 +191,8 @@ def scan_minibatches(cfg, batch, key, carry, body):
     n_steps = cfg.update_epochs * cfg.num_minibatches
 
     # permutations, independent per copy AND per epoch
-    # before: uniform draws (E, C, B); after: minibatch row indices (E, C, K, mb)
-    perm = jnp.argsort(jax.random.uniform(key, (cfg.update_epochs, C, Brows), F32), axis=-1)
+    # before: shuffled row orders (E, C, B); after: minibatch row indices (E, C, K, mb)
+    perm = draw_permutations(cfg, key, Brows)
     idx = perm.reshape(cfg.update_epochs, C, cfg.num_minibatches, mb_size)
 
     def gather(t, rows):

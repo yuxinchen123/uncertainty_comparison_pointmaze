@@ -114,8 +114,27 @@ def read_checkpoint(path) -> dict:
 
 
 def check_identity(saved: dict, current: dict) -> None:
-    """Refuse a checkpoint written by a different unit, naming every entry that differs."""
+    """Refuse a checkpoint written by a different unit, naming every entry that differs.
+
+    A trainer field added after the checkpoint was written is absent from its record. Such a
+    field is added with a default that keeps the earlier program, so the saved record is read as
+    holding that default: the checkpoint continues when the current unit holds the default too,
+    and is refused when the current unit has changed the field.
+
+    before: saved trainer_config has no "permutation_draw"; current holds "argsort_uniform"
+    after:  accepted; with current "sort_packed_keys" it is refused, naming trainer_config
+    """
+    from dataclasses import asdict
+
+    from ..agents.ppo.config import PPOConfig
+
     current = normalized(current)
+    saved_trainer, current_trainer = saved.get("trainer_config"), current.get("trainer_config")
+    if isinstance(saved_trainer, dict) and isinstance(current_trainer, dict):
+        defaults = normalized(asdict(PPOConfig()))
+        later = {name: defaults[name] for name in current_trainer
+                 if name not in saved_trainer and name in defaults}
+        saved = {**saved, "trainer_config": {**later, **saved_trainer}}
     differing = sorted(name for name in set(saved) | set(current)
                        if saved.get(name) != current.get(name))
     if differing:

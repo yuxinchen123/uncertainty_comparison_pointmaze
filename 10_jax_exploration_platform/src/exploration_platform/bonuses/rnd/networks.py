@@ -28,18 +28,27 @@ def init_predictor(rnd_cfg, n_copies: int, base_seed: int, copy_seed_index, obs_
         n_copies, base_seed, copy_seed_index)
 
 
-def features(target, predictor, x):
-    """(target features, predictor features), each [C, M, feature_dim].
+def target_features(target, x):
+    """The fixed target's features, [C, M, feature_dim].
 
-    The target's output carries no gradient by construction, so the predictor's loss can never
-    move the thing it is chasing.
+    They carry no gradient by construction, so the predictor's loss can never move the thing it
+    is chasing.
     """
     th = jax.nn.relu(jnp.matmul(x, target["W0"]) + target["b0"][:, None, :])
     tf = jnp.matmul(th, target["W1"]) + target["b1"][:, None, :]
+    return jax.lax.stop_gradient(tf)
+
+
+def predictor_features(predictor, x):
+    """The trained predictor's features, [C, M, feature_dim]."""
     ph = jax.nn.relu(jnp.matmul(x, predictor["W0"]) + predictor["b0"][:, None, :])
     ph = jax.nn.relu(jnp.matmul(ph, predictor["W1"]) + predictor["b1"][:, None, :])
-    pf = jnp.matmul(ph, predictor["W2"]) + predictor["b2"][:, None, :]
-    return jax.lax.stop_gradient(tf), pf
+    return jnp.matmul(ph, predictor["W2"]) + predictor["b2"][:, None, :]
+
+
+def features(target, predictor, x):
+    """(target features, predictor features), each [C, M, feature_dim]."""
+    return target_features(target, x), predictor_features(predictor, x)
 
 
 def whiten(obs, obs_rms):
