@@ -31,6 +31,19 @@ IDENTITIES = ("uva-sl5nw", "uva-yuxinchen")
 CPUS_PER_CARD = {"gpu": 8, "gnolim": 4}
 MEMORY_GIB_PER_CARD = 16
 MAX_WAITING_JOBS = 40    # per account; the scheduler tests only 50 waiting jobs of one user per pass
+
+
+def set_request_per_card(cpus=None, memory_gib=None):
+    """Replace the processors and host memory a worker asks for per card, for this process."""
+    # measured need of a PointMaze unit of 256 policies: about one busy processor and 2.6 GiB of host
+    # memory per card (sacct MaxRSS of jobs 6874063 and 6874078), far below the defaults; a smaller
+    # request fits on nodes whose memory is mostly held by other jobs
+    global MEMORY_GIB_PER_CARD
+    if cpus is not None:
+        for partition in CPUS_PER_CARD:
+            CPUS_PER_CARD[partition] = cpus
+    if memory_gib is not None:
+        MEMORY_GIB_PER_CARD = memory_gib
 OBSERVED = common.PROJECT / "10_jax_exploration_platform/device/observed"
 # the JAX job environment of skill rnd-jax-submission, section 7, for one worker process per card
 WORKER_ENVIRONMENT = """# Sourced by every job script of this run folder. Written by scripts/maze_campaign/submit.py.
@@ -342,6 +355,11 @@ def main(argv=None):
     parser.add_argument("--gpu-types", help="comma-separated card types (gres names) the workers may ask for; "
                                             "default: every type whose card can hold a pending unit")
     parser.add_argument("--max-new-cards", type=int, help="send at most this many worker cards in this call")
+    parser.add_argument("--cpus-per-card", type=int,
+                        help="processors a worker asks for per card (default 8 in gpu, 4 in gnolim)")
+    parser.add_argument("--memory-gib-per-card", type=int,
+                        help="host memory in GiB a worker asks for per card (default 16); size it from the "
+                             "measured MaxRSS of finished units of the same kind, plus a margin")
     parser.add_argument("--monitor", action="store_true", help="submit the persistent monitor job instead")
     parser.add_argument("--top-up-phase", help="with --monitor: every pass also submits workers under this phase")
     parser.add_argument("--complete-when-drained", action="store_true",
@@ -349,6 +367,7 @@ def main(argv=None):
     parser.add_argument("--dry-run", action="store_true", help="print the plan and the commands; submit nothing")
     args = parser.parse_args(argv)
     run_dir = args.run_dir.resolve()
+    set_request_per_card(args.cpus_per_card, args.memory_gib_per_card)
     if args.monitor:
         options = (["--top-up-phase", args.top_up_phase] if args.top_up_phase else []) + (
             ["--complete-when-drained"] if args.complete_when_drained else [])

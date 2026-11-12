@@ -70,6 +70,20 @@ class Plan(unittest.TestCase):
         # 8 processors per card in gpu, 4 in gnolim, 16 GiB per card
         self.assertEqual([(job["cpus"], job["memory_gib"]) for job in jobs[:3]], [(16, 32), (8, 16), (16, 64)])
 
+    def test_a_smaller_request_per_card_fits_a_node_with_little_free_memory(self):
+        """With 2 processors and 4 GiB per card, a node with 6 GiB of free memory takes one card; by default none."""
+        nodes = deepcopy(NODES)
+        nodes["nekomata01"]["memory_gib"] = 6
+        self.assertNotIn("nekomata01", [job["node"] for job in plan([7000] * 2, nodes=nodes)])
+        defaults = (dict(submit.CPUS_PER_CARD), submit.MEMORY_GIB_PER_CARD)
+        try:
+            submit.set_request_per_card(cpus=2, memory_gib=4)
+            first = plan([7000] * 2, nodes=nodes)[0]
+            self.assertEqual((first["node"], first["cards"], first["cpus"], first["memory_gib"]), ("nekomata01", 1, 2, 4))
+        finally:
+            submit.CPUS_PER_CARD.update(defaults[0])
+            submit.set_request_per_card(memory_gib=defaults[1])
+
     def test_never_more_worker_cards_than_units_without_a_worker(self):
         """Three pending units and one waiting worker of this run: two new cards; none when all are covered."""
         self.assertEqual(sum(job["cards"] for job in plan([7000] * 3, without_unit=1)), 2)
