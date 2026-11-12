@@ -26,8 +26,9 @@ independent of the tinker negotiation work under `/p/rlprojects/tinker/`.
   over each user's own pools) plus the local file work queue (sweep ids, seed-outermost run ids,
   per-run JSON logging). The project stubs `.claude/rules/slurm-submission.md` and
   `.claude/rules/run-id-and-logging.md` keep the RND-specific facts (paths, scripts, record
-  format). Collaborators adding workers to a live run follow that run's
-  `for_collaborator/README.md`.
+  format); both load only when a file under `07_reconstruction/` or a `train_runs/` folder is
+  opened, so read them before work-queue sweep work anywhere else. Collaborators adding workers
+  to a live run follow that run's `for_collaborator/README.md`.
 - The launch and worker scripts call the env's python by full path, so no conda activation is
   needed at `sbatch` time. The canonical project env is the SHARED
   `/p/rlprojects/RND/.venvs/exploration/bin/python` (registry: `.venvs/ENVS.md`; the old private

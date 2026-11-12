@@ -1,3 +1,9 @@
+---
+paths:
+  - "**/train_runs/**"
+  - "07_reconstruction/**"
+---
+
 # RND run-id & local-JSON logging convention — generic part in the SHARED uva-submit-cpu-sweep skill (2026-07-11); RND specifics kept here
 
 The generic work-queue convention lives in the SHARED skill
