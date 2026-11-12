@@ -21,3 +21,8 @@ Times are Pacific.
 - The planner's list of card classes is older than the hardware: lynx01, lynx02, lynx05 and affogato13 now hold
   RTX 4000 Ada cards, which it does not pin to. Workers that ask for that card type on any node are placed there by
   the scheduler.
+- 2026-11-12 12:07 to 12:25 PT: the three units of "development at the budget" waited 16 minutes with no worker.
+  The planner counted two cards of the four-card job 6884496 as idle workers, but their worker processes had ended
+  when the queue was empty (the job goes on for its other two cards). The planner now counts only the cards of
+  waiting jobs as workers without a unit. The pinned worker 6886277 (ai02) waits on priority; workers 6886680
+  (ai04) and 6886681 (any RTX 5080) were added at 12:25 PT.

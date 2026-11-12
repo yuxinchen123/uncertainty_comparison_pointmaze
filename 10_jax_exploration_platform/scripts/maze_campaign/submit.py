@@ -284,7 +284,8 @@ def scheduler_state(run_dir):
     waiting_jobs = [record for record in active if live[record["job_id"]][3] != "RUNNING"]
     waiting = {identity: sum(record["identity"] == identity for record in waiting_jobs) for identity in IDENTITIES}
     held_nodes = {record["node"] for record in waiting_jobs if record["node"]}
-    return {"active_cards": sum(record["cards"] for record in active), "classes": classes, "nodes": nodes,
+    return {"active_cards": sum(record["cards"] for record in active),
+            "waiting_cards": sum(record["cards"] for record in waiting_jobs), "classes": classes, "nodes": nodes,
             "budgets": budgets, "reservation_budgets": reservation_budgets, "held_nodes": held_nodes,
             "type_room": type_room, "waiting": waiting}
 
@@ -299,8 +300,11 @@ def top_up(run_dir, phase, gpu_types=None, max_new_cards=None, dry_run=False):
     pending = unit_queue.read_units(run_dir, "pending")
     running = unit_queue.counts(run_dir)["running"]
     state = scheduler_state(run_dir)
-    # worker cards of this run that hold no unit: waiting jobs, and running workers between two units
-    spare = max(0, state["active_cards"] - running)
+    # worker cards of this run that hold no unit: the cards of its waiting jobs. A running job's card
+    # whose worker found the queue empty has ended its worker (the job goes on for its other cards), so
+    # running cards beyond the running units are not workers any more and are not counted
+    # (2026-11-12: three new units waited 16 minutes behind two such cards of a four-card job).
+    spare = state["waiting_cards"]
     jobs = plan_jobs([unit["minimum_device_memory_mb"] for unit in pending], spare,
                      state["classes"], state["nodes"], state["budgets"], state["reservation_budgets"],
                      state["held_nodes"], state["type_room"], state["waiting"], gpu_types, max_new_cards)
