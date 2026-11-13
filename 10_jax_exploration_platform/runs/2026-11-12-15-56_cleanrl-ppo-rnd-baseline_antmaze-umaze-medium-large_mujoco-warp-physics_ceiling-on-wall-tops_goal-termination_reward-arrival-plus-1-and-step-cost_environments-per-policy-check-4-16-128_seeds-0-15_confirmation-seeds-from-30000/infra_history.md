@@ -394,3 +394,15 @@ Times are Pacific, read from the clock or from scheduler records.
   hand every unit whose 2-hour UVA job ends (about 15:11 PT) to Gilbreth, whose idle cards are mostly taken by
   other users; so the Gilbreth limit was pinned to the 4 units already there, and a one-time session step at 15:14
   PT starts new UVA workers on free cards and then hands what is left to Gilbreth.
+- 2026-11-13 14:25 PT: **where an RK4 ant iteration spends its time** (background worker, serval05 H100 NVL, 16
+  environments per policy; notes `benchmark_runs/2026-11-12-00-17_*/profiles/rk4_ant_iteration/notes.md`, commits
+  7f32e6cd and 3a633b79): 1.855 s per iteration at 128 policies and 1.514 s at 32, so about 1.40 s is fixed and
+  3.5 ms per policy; the bare physics is 98% of it (one RK4 physics step is 422 MuJoCo Warp kernel launches, about
+  4 microseconds each), the update under 1%. Consequence: a unit's wall time hardly depends on its number of
+  policies; at least about 1.4 s x 65,536 iterations, about 26 hours on this card, for 134 million steps per
+  policy. No idea that keeps results identical reaches 5% (best: the solver loop as a plain loop, +4.3%); 2
+  solver iterations would be 17% faster but change the physics (reported only). Two start-up options were added,
+  off by default (`--put-state-on-card`, `--compilation-cache-dir`): a resumed unit starts in about 35 s
+  instead of 68 s on the H100 (87 to 106 s for the first iteration on today's training nodes); worth about 1% of a
+  2-hour UVA job, so not switched on for the running units. No A100 row: every card on cheetah01 and cheetah04 was
+  taken by other users.

@@ -1353,6 +1353,12 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   10 minutes per window, so about 40 hours per unit; 4 on Gilbreth, just started). Because the wall time of an ant
   unit now sets the schedule, a background worker measures where the time of one RK4 ant iteration goes and the
   speed ideas that keep results identical (plan Part 3; serval05 profile units, started 13:30 PT).
+- 2026-11-13 14:25 PT: **RK4 ant speed:** the iteration is 98% physics and three quarters fixed cost (kernel launches),
+  so a unit at 134 million steps per policy needs at least about 26 hours on an H100 whatever its number of
+  policies; no identical-result idea reaches 5% (best +4.3%). Two start-up options added (off by default; about 1%
+  of a 2-hour UVA job). Details in the AntMaze folder's `infra_history.md`. For the schedule: the RTX A4500 units
+  (about 45 hours) are the slowest; near the end of the sweep they move to faster free cards
+  ([[move-slow-card-units-to-fast-cards-near-the-end]] in memory).
 
 ## Next
 
