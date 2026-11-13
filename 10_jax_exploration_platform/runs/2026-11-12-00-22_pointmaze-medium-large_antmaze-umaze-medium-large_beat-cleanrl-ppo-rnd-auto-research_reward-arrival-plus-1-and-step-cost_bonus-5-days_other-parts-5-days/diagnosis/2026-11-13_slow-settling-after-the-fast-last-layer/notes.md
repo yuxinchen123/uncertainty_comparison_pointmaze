@@ -126,6 +126,69 @@ With the second divisor the arm settles as RND does at the same weight (0.47 aga
 short-run return equals RND's (0.734 against 0.733; without it 0.247). Changing the divisor alone removes the
 failure.
 
+### 5. PointMaze Large with reward 1 on arrival (added 05:23 PT, after the coordinator's readings on 256 seeds)
+
+On the validation seeds the failure is stronger on Large: with RND's running divisor after the switch the final
+level is 0.24 at weight 4 where RND reaches 0.99. Four runs with the unit's configuration (learning rate 2e-3,
+entropy 0.01), 64 policies per weight (seeds 10000 to 10063), 2,048 iterations (1,048,576 steps, one eighth of
+the unit), logging windows of 8 iterations (4,096 steps), the learning rate annealed over the unit's 16,384
+iterations.
+
+**Is the predictor trained as in RND?** Yes. Its loss is the mean squared error of its own output on the update
+batch (`bonuses/rnd/implementation.py`, `loss`); the fast last layer is a temporary copy that is never trained
+on. Measured at weight 4: the predictor's own score during the fast phase follows RND's bonus at the same step.
+
+| quantity, by window from the start of the run | window 0 | 1 | 4 | 16 | 64 | 127 | 255 |
+|---|---|---|---|---|---|---|---|
+| RND: bonus | 1.08 | 0.177 | 0.046 | 0.020 | 0.0070 | 0.0033 | 0.0010 |
+| fast until the arrival: the predictor's own score | 1.11 | 0.214 | 0.057 | 0.013 | 0.0047 | 0.0027 | 0.0009 |
+| fast until the arrival: what the policy is rewarded with | 0.101 | 0.049 | 0.023 | 0.011 | 0.0048 | 0.0029 | 0.0018 |
+
+**The divisor and the reward the learner sees over time** (weight 4):
+
+| quantity | arm | window 0 | 4 | 16 | 64 | 127 | 255 |
+|---|---|---|---|---|---|---|---|
+| divisor | RND | 110 | 63.4 | 35.8 | 18.8 | 13.4 | 9.5 |
+| divisor | fast until the arrival, one divisor (the failing arm) | 6.2 | 4.3 | 2.9 | 1.75 | 1.33 | 0.99 |
+| divisor | fast until the arrival, second divisor | 6.2 | 6.1 | 22.1 | 18.8 | 13.7 | 9.7 |
+| reward seen | RND | 0.0108 | 0.00076 | 0.00057 | 0.00039 | 0.00025 | 0.00011 |
+| reward seen | fast until the arrival, one divisor | 0.0194 | 0.0055 | 0.0038 | 0.0028 | 0.0022 | 0.0019 |
+| reward seen | fast until the arrival, second divisor | 0.0193 | 0.0047 | 0.0013 | 0.00028 | 0.00021 | 0.00010 |
+| intrinsic advantage | RND | 0.95 | 0.081 | 0.059 | 0.032 | 0.017 | 0.0082 |
+| intrinsic advantage | fast until the arrival, one divisor | 1.22 | 0.29 | 0.19 | 0.15 | 0.10 | 0.086 |
+| intrinsic advantage | fast until the arrival, second divisor | 1.22 | 0.25 | 0.079 | 0.024 | 0.015 | 0.0082 |
+| share of episodes that arrive | RND | 0 | 0 | 0.001 | 0.021 | 0.19 | 0.71 |
+| share of episodes that arrive | fast until the arrival, one divisor | 0 | 0.010 | 0.011 | 0.014 | 0.023 | 0.029 |
+| share of episodes that arrive | fast until the arrival, second divisor | 0 | 0 | 0.002 | 0.045 | 0.30 | 0.76 |
+
+In the failing arm the divisor falls from 6.2 to 0.99 within the first 1.05 million steps, the reward the learner
+sees is 7 times RND's by window 4 and 17 times by window 255, and it stays there: the policy never turns to the
+goal. With the second divisor the reward seen and the intrinsic advantage meet RND's (0.00010 against 0.00011;
+0.0082 against 0.0082 at window 255), and more episodes arrive than in RND at the same weight.
+
+**All three weights:**
+
+| arm | intrinsic weight | mean first arrival, thousand steps | divisor 1 window after the arrival | share arriving 64 windows after | mean return of the short run |
+|---|---|---|---|---|---|
+| RND | 2 | 249 | 19.7 | 0.29 | 0.329 |
+| RND | 4 | 223 | 23.5 | 0.15 | 0.257 |
+| RND | 16 | 151 | 25.6 | 0.03 | 0.040 |
+| fast until the arrival, one divisor, running (the failing arm) | 2 | 96 | 2.9 | 0.02 | 0.050 |
+| fast until the arrival, one divisor, running (the failing arm) | 4 | 74 | 3.0 | 0.03 | 0.021 |
+| fast until the arrival, one divisor, running (the failing arm) | 16 | 90 | 2.8 | 0.02 | 0.017 |
+| fast until the arrival, second divisor, running | 2 | 101 | 33.0 | 0.14 | 0.353 |
+| fast until the arrival, second divisor, running | 4 | 76 | 39.0 | 0.12 | 0.348 |
+| fast until the arrival, second divisor, running | 16 | 108 | 36.2 | 0.02 | 0.042 |
+| fast until the arrival, second divisor, held from the arrival | 2 | 81 | 38.5 | 0.19 | 0.333 |
+| fast until the arrival, second divisor, held from the arrival | 4 | 114 | 38.8 | 0.10 | 0.285 |
+| fast until the arrival, second divisor, held from the arrival | 16 | 85 | 39.4 | 0.02 | 0.086 |
+
+With the second divisor the first arrival still comes 2 to 3 times sooner than RND's and the short-run return at
+weights 2 and 4 is at RND's best or above it (0.353 and 0.348 against 0.329). After the arrival the arm settles
+more slowly than RND at the same weight (0.14 against 0.29 of the episodes arrive 64 windows later at weight 2),
+as on Medium; the earlier arrival makes up for it within this short run. Weight 16 does not settle in any arm.
+These are 64 seeds and one eighth of the budget: a direction, not a result.
+
 ## What is ruled out
 
 1. **An inflated action standard deviation.** The log standard deviation is lower after the fast phase than after
@@ -164,5 +227,7 @@ first arrival). Commit 9aab504b. It is a change of how the bonus is scaled, so i
 
 ## Jobs
 
-Diagnosis runs (ids in the folder's `slurm/submitted_jobids_diagnosis_sl5nw.txt`, all ended): 6902210 to 6902213,
-6902407, 6902611, 6902613, 6902614, 6902615, each on one RTX 5080 of nekomata01 or nekomata02 for 6 to 8 minutes.
+Diagnosis runs (ids in the folder's `slurm/submitted_jobids_diagnosis_sl5nw.txt`, all ended): PointMaze Medium:
+6902210 to 6902213, 6902407, 6902611, 6902613, 6902614, 6902615; PointMaze Large: 6902855, 6902857, 6902858,
+6902885. Each ran 6 to 10 minutes on one RTX 5080 of nekomata01 or nekomata02, the last one on an RTX 4000 Ada of
+cheetah02. Job 6902856 waited more than two minutes for a card that had been taken and was cancelled by its id.

@@ -9,7 +9,7 @@ import statistics
 import sys
 
 OFFSETS = (-4, -2, -1, 0, 1, 2, 4, 8, 16, 32, 64)
-ABSOLUTE = (0, 1, 2, 4, 8, 16, 32, 64, 127)
+ABSOLUTE = (0, 1, 2, 4, 8, 16, 32, 64, 127, 255)
 FIELDS = ("arrival_share", "coverage", "rint_raw", "int_std", "rint_hat_mean", "adv_int_rms", "adv_ext_rms",
           "logstd_mean", "speed_mean", "grad_norm_actor", "grad_norm_critic", "grad_norm_bonus", "clip_scale",
           "approx_kl", "vext_mean")
