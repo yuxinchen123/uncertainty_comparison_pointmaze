@@ -1035,6 +1035,26 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   last layer does not help on the ant, with or without the hold.
 - 2026-11-13 04:47 PT: the last job of an older code copy on Gilbreth has ended (the batch 9 unit is complete), and
   the Gilbreth limit of this folder is open again (8 units at once) since 04:46 PT.
+- 2026-11-13 05:10 PT: **batch 11, the diagnostic units on PointMaze Large with reward 1 on arrival: prediction 8
+  failed.** Learning rate 2e-3, first validation block; RND's best: whole-curve mean 0.8781, final level 0.992,
+  first-goal time 269 thousand steps.
+
+  | fast last layer until the first arrival, then | weight | whole-curve mean | final level | first-goal time, thousand steps |
+  |---|---|---|---|---|
+  | RND's running divisor | 4 | 0.136 | 0.24 | 91 |
+  | RND's running divisor | 16 | 0.023 | 0.03 | 83 |
+  | divisor held after 1/16 of the run | 4 | 0.572 | 0.88 | 83 |
+  | divisor held from the first arrival | 4 | 0.787 | not read | 83 |
+
+  The early first arrival is kept and the goal is then not kept at all with the running divisor. The unit at
+  weight 2 with the running divisor was still running. The numbers were passed to the background worker that is
+  looking for the mechanism (started 04:31 PT, still running).
+- 2026-11-13 05:10 PT: **batch 12 is running** (`batches/12_smaller-steps-of-the-fast-last-layer_with-the-first-arrival-hold_four-pointmaze-cases/ideas.md`,
+  three predictions written before the runs): the fast last layer throughout with the first-arrival hold at steps
+  0.03 and 0.01 (so far only 0.1), one configuration in each of the four PointMaze cases, first validation block,
+  8 units (6 on Gilbreth, 2 on UVA). Reason: at step 0.1 and weight 2 on Large with reward 1 on arrival the arm is
+  level with RND on the whole-curve mean and finds the goal three times sooner; a smaller step may keep most of
+  the earlier arrival and lose less afterwards.
 
 ## Next
 

@@ -174,3 +174,8 @@ Times are Pacific.
   12352876 have ended with their units complete); the hand-over limit is open again at 8 units at once. Three UVA
   worker jobs of the copy bed45842 run until 05:00 PT at the latest (6900951, 6900952, 6900954); the units they
   hold use options that copy knows, and newer-copy jobs can continue them from their checkpoints.
+- 2026-11-13 05:07 PT: batch 12's eight units were built; six went to Gilbreth (jobs 12353238 to 12353243; four
+  started within two minutes, two were waiting) and two stayed on UVA, where two jobs on free cards started within
+  two minutes (6902810 on an A100 40 GB, 6902811 on an RTX 5080). Batch 10's two units on PointMaze Large with the
+  step cost left UVA when their workers reached the two-hour limit at 05:00 PT and continued on Gilbreth from
+  their checkpoints (jobs 12353198, 12353199).
