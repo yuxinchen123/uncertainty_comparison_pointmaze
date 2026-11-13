@@ -121,3 +121,20 @@ Times are Pacific, read from the clock or from scheduler records.
   16 environments per policy on an A30 about 4.7 s per iteration (12,288 environments), so about 10 hours. With
   the 160-row limit an A30 took 3.85 s per iteration at 16,384 environments, so the higher limit costs time; the
   windows record the largest number of rows in use, and the limit for later sweeps is set from that.
+- 2026-11-12 18:05 PT: **the physics diverges for trained ants; the running check cannot be used for a decision.**
+  Read from the partial records of all 8 units (copied from Gilbreth, standard-library reading):
+  1. untrained ants: largest torso speed 9 to 10 m/s; 0.4% of steps with the torso above 1.5 m;
+  2. once the policies learn (from window 45 to 110 of 256 with 128 environments per policy), 7% to 11% of steps
+     have the torso above 1.5 m, and in most configurations 2 to 9 of 16 policies show a largest torso speed
+     above 10,000 m/s at some window (from 1e6 up to 2.5e15 m/s). The two smallest intrinsic weights at learning
+     rate 1e-4 show none;
+  3. arrivals: 1% to 2% of episodes, after 550 to 580 of 700 steps on average, with and without such speeds;
+  4. no unit stopped on its constraint-row or contact limit, so the limits are not the cause.
+  The units run Warp with 4 solver iterations and 8 line-search iterations (MuJoCo's defaults: 100 and 50); that
+  is the first suspect, not a finding. C MuJoCo resets a simulation whose state is not finite or beyond 1e10;
+  this environment respawns on non-finite values only, so a diverged ant keeps values like 1e12 in its
+  observations until the episode ends, and the RND input statistics keep them for the rest of the run.
+  Decision: the 8 units keep running on Gilbreth's idle cards (no charge) for their records and checkpoints, which
+  the diagnosis uses; nothing is chosen from them. A separate diagnosis was started at 18:08 PT in
+  the speed study folder (`profiles/antmaze_warp_blow_up/`): reproduce, find the mechanism, measure corrections
+  with their cost, add a guard that respawns a state beyond a bound.

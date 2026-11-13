@@ -1,18 +1,18 @@
 # CleanRL PPO-RND baseline on PointMaze: development sweeps and confirmation
 
-Generated 2026-11-12 17:47 PT; times are Pacific, converted from machines running Eastern. Run folder: `2026-11-12-02-24_cleanrl-ppo-rnd-baseline_pointmaze-medium-large_antmaze-umaze-medium-large_goal-termination_reward-arrival-plus-1-and-step-cost_first-pass-60-configurations_seeds-0-15_confirmation-seeds-from-30000`.
+Generated 2026-11-12 18:01 PT; times are Pacific, converted from machines running Eastern. Run folder: `2026-11-12-02-24_cleanrl-ppo-rnd-baseline_pointmaze-medium-large_antmaze-umaze-medium-large_goal-termination_reward-arrival-plus-1-and-step-cost_first-pass-60-configurations_seeds-0-15_confirmation-seeds-from-30000`.
 
 ## Contents
 
 | section | first written | last changed | status |
 |---|---|---|---|
 | [Measures](#measures) | 2026-11-12 10:40 PT | 2026-11-12 16:14 PT | unread |
-| [Records read](#records-read) | 2026-11-12 10:40 PT | 2026-11-12 17:45 PT | unread |
-| [Configurations trained more than once](#configurations-trained-more-than-once) | 2026-11-12 14:20 PT | 2026-11-12 17:48 PT | unread |
-| [Development sweeps](#development-sweeps) | 2026-11-12 10:40 PT | 2026-11-12 17:48 PT | unread |
+| [Records read](#records-read) | 2026-11-12 10:40 PT | 2026-11-12 18:01 PT | unread |
+| [Configurations trained more than once](#configurations-trained-more-than-once) | 2026-11-12 14:20 PT | 2026-11-12 18:01 PT | unread |
+| [Development sweeps](#development-sweeps) | 2026-11-12 10:40 PT | 2026-11-12 18:01 PT | unread |
 | [Budget](#budget) | 2026-11-12 10:40 PT | 2026-11-12 17:48 PT | unread |
 | [Training curves](#training-curves) | 2026-11-12 10:40 PT | 2026-11-12 17:48 PT | unread |
-| [Comparison with the baseline on the confirmation seeds](#comparison-with-the-baseline-on-the-confirmation-seeds) | 2026-11-12 13:06 PT | 2026-11-12 17:48 PT | unread |
+| [Comparison with the baseline on the confirmation seeds](#comparison-with-the-baseline-on-the-confirmation-seeds) | 2026-11-12 13:06 PT | 2026-11-12 18:01 PT | unread |
 | [Final level against the training length](#final-level-against-the-training-length) | 2026-11-12 10:40 PT | 2026-11-12 17:45 PT | unread |
 | [Decline check](#decline-check) | 2026-11-12 10:40 PT | 2026-11-12 17:45 PT | unread |
 
@@ -44,7 +44,7 @@ Standard errors are over the $K$ policies. Measures 4 and 6 to 9 are reported be
 
 ## Records read
 
-105 units, 105 complete; 24,560 policies with at least one logging window. A unit that was continued from a checkpoint keeps one unbroken sequence of windows; a unit that was started again from zero is read from its last start. Episodes restarted after a non-finite physics state count as episodes that reach the step limit, and stay in every sum (the records hold sums per window, not single episodes). 560 of these policies repeat a configuration and seed that another unit finished earlier; they are left out of the tables and figures and shown in the section Configurations trained more than once.
+113 units, 109 complete; 26,608 policies with at least one logging window. A unit that was continued from a checkpoint keeps one unbroken sequence of windows; a unit that was started again from zero is read from its last start. Episodes restarted after a non-finite physics state count as episodes that reach the step limit, and stay in every sum (the records hold sums per window, not single episodes). 560 of these policies repeat a configuration and seed that another unit finished earlier; they are left out of the tables and figures and shown in the section Configurations trained more than once.
 
 | unit | environment | reward setting | method | environments per policy | policies | steps per policy so far | planned steps per policy | state |
 |---|---|---|---|---|---|---|---|---|
@@ -52,107 +52,115 @@ Standard errors are over the $K$ policies. Measures 4 and 6 to 9 are reported be
 | 2 | PointMaze Large | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 8,388,608 | 8,388,608 | complete |
 | 3 | PointMaze Large | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 8,388,608 | 8,388,608 | complete |
 | 4 | PointMaze Large | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 8,388,608 | 8,388,608 | complete |
-| 5 | PointMaze Medium | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
-| 6 | PointMaze Medium | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
-| 7 | PointMaze Medium | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
-| 8 | PointMaze Medium | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
-| 9 | PointMaze Medium | step cost | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
-| 10 | PointMaze Medium | step cost | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
-| 11 | PointMaze Medium | step cost | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
-| 12 | PointMaze Medium | step cost | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
-| 13 | PointMaze Large | reward 1 on arrival | cleanrl ppo rnd at cleanrl defaults | 4 | 256 | 8,388,608 | 8,388,608 | complete |
-| 14 | PointMaze Large | reward 1 on arrival | cleanrl ppo rnd at cleanrl defaults | 4 | 256 | 8,388,608 | 8,388,608 | complete |
-| 15 | PointMaze Large | reward 1 on arrival | cleanrl ppo rnd at cleanrl defaults | 4 | 256 | 8,388,608 | 8,388,608 | complete |
-| 16 | PointMaze Large | reward 1 on arrival | cleanrl ppo rnd at cleanrl defaults | 4 | 256 | 8,388,608 | 8,388,608 | complete |
-| 17 | PointMaze Large | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 8,388,608 | 8,388,608 | complete |
-| 18 | PointMaze Large | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 8,388,608 | 8,388,608 | complete |
-| 19 | PointMaze Large | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 8,388,608 | 8,388,608 | complete |
-| 20 | PointMaze Large | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 8,388,608 | 8,388,608 | complete |
-| 21 | PointMaze Large | reward 1 on arrival | ppo without a bonus | 4 | 256 | 8,388,608 | 8,388,608 | complete |
-| 22 | PointMaze Large | reward 1 on arrival | ppo without a bonus | 4 | 256 | 8,388,608 | 8,388,608 | complete |
-| 23 | PointMaze Large | reward 1 on arrival | ppo without a bonus | 4 | 256 | 8,388,608 | 8,388,608 | complete |
-| 24 | PointMaze Large | reward 1 on arrival | ppo without a bonus | 4 | 256 | 8,388,608 | 8,388,608 | complete |
-| 25 | PointMaze Large | step cost | cleanrl ppo rnd at cleanrl defaults | 4 | 256 | 33,554,432 | 33,554,432 | complete |
-| 26 | PointMaze Large | step cost | cleanrl ppo rnd at cleanrl defaults | 4 | 256 | 33,554,432 | 33,554,432 | complete |
-| 27 | PointMaze Large | step cost | cleanrl ppo rnd at cleanrl defaults | 4 | 256 | 33,554,432 | 33,554,432 | complete |
-| 28 | PointMaze Large | step cost | cleanrl ppo rnd at cleanrl defaults | 4 | 256 | 33,554,432 | 33,554,432 | complete |
-| 29 | PointMaze Large | step cost | CleanRL PPO-RND | 4 | 256 | 33,554,432 | 33,554,432 | complete |
-| 30 | PointMaze Large | step cost | CleanRL PPO-RND | 4 | 256 | 33,554,432 | 33,554,432 | complete |
-| 31 | PointMaze Large | step cost | CleanRL PPO-RND | 4 | 256 | 33,554,432 | 33,554,432 | complete |
-| 32 | PointMaze Large | step cost | CleanRL PPO-RND | 4 | 256 | 33,554,432 | 33,554,432 | complete |
-| 33 | PointMaze Large | step cost | ppo without a bonus | 4 | 256 | 33,554,432 | 33,554,432 | complete |
-| 34 | PointMaze Large | step cost | ppo without a bonus | 4 | 256 | 33,554,432 | 33,554,432 | complete |
-| 35 | PointMaze Large | step cost | ppo without a bonus | 4 | 256 | 33,554,432 | 33,554,432 | complete |
-| 36 | PointMaze Large | step cost | ppo without a bonus | 4 | 256 | 33,554,432 | 33,554,432 | complete |
-| 37 | PointMaze Medium | reward 1 on arrival | cleanrl ppo rnd at cleanrl defaults | 4 | 256 | 1,048,576 | 1,048,576 | complete |
-| 38 | PointMaze Medium | reward 1 on arrival | cleanrl ppo rnd at cleanrl defaults | 4 | 256 | 1,048,576 | 1,048,576 | complete |
-| 39 | PointMaze Medium | reward 1 on arrival | cleanrl ppo rnd at cleanrl defaults | 4 | 256 | 1,048,576 | 1,048,576 | complete |
-| 40 | PointMaze Medium | reward 1 on arrival | cleanrl ppo rnd at cleanrl defaults | 4 | 256 | 1,048,576 | 1,048,576 | complete |
-| 41 | PointMaze Medium | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
-| 42 | PointMaze Medium | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
-| 43 | PointMaze Medium | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
-| 44 | PointMaze Medium | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
-| 45 | PointMaze Medium | reward 1 on arrival | ppo without a bonus | 4 | 256 | 1,048,576 | 1,048,576 | complete |
-| 46 | PointMaze Medium | reward 1 on arrival | ppo without a bonus | 4 | 256 | 1,048,576 | 1,048,576 | complete |
-| 47 | PointMaze Medium | reward 1 on arrival | ppo without a bonus | 4 | 256 | 1,048,576 | 1,048,576 | complete |
-| 48 | PointMaze Medium | reward 1 on arrival | ppo without a bonus | 4 | 256 | 1,048,576 | 1,048,576 | complete |
-| 49 | PointMaze Medium | step cost | cleanrl ppo rnd at cleanrl defaults | 4 | 256 | 1,048,576 | 1,048,576 | complete |
-| 50 | PointMaze Medium | step cost | cleanrl ppo rnd at cleanrl defaults | 4 | 256 | 1,048,576 | 1,048,576 | complete |
-| 51 | PointMaze Medium | step cost | cleanrl ppo rnd at cleanrl defaults | 4 | 256 | 1,048,576 | 1,048,576 | complete |
-| 52 | PointMaze Medium | step cost | cleanrl ppo rnd at cleanrl defaults | 4 | 256 | 1,048,576 | 1,048,576 | complete |
-| 53 | PointMaze Medium | step cost | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
-| 54 | PointMaze Medium | step cost | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
-| 55 | PointMaze Medium | step cost | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
-| 56 | PointMaze Medium | step cost | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
-| 57 | PointMaze Medium | step cost | ppo without a bonus | 4 | 256 | 1,048,576 | 1,048,576 | complete |
-| 58 | PointMaze Medium | step cost | ppo without a bonus | 4 | 256 | 1,048,576 | 1,048,576 | complete |
-| 59 | PointMaze Medium | step cost | ppo without a bonus | 4 | 256 | 1,048,576 | 1,048,576 | complete |
-| 60 | PointMaze Medium | step cost | ppo without a bonus | 4 | 256 | 1,048,576 | 1,048,576 | complete |
-| 61 | PointMaze Medium | reward 1 on arrival | CleanRL PPO-RND | 4 | 96 | 1,048,576 | 1,048,576 | complete |
-| 62 | PointMaze Medium | step cost | CleanRL PPO-RND | 4 | 96 | 1,048,576 | 1,048,576 | complete |
-| 63 | PointMaze Large | reward 1 on arrival | CleanRL PPO-RND | 4 | 144 | 8,388,608 | 8,388,608 | complete |
-| 64 | PointMaze Large | step cost | cleanrl ppo rnd with intrinsic discount 0 point 999 | 4 | 192 | 33,554,432 | 33,554,432 | complete |
-| 65 | PointMaze Large | step cost | CleanRL PPO-RND | 4 | 192 | 33,554,432 | 33,554,432 | complete |
-| 66 | PointMaze Medium | reward 1 on arrival | CleanRL PPO-RND | 4 | 192 | 1,048,576 | 1,048,576 | complete |
-| 67 | PointMaze Medium | step cost | CleanRL PPO-RND | 4 | 192 | 1,048,576 | 1,048,576 | complete |
-| 68 | PointMaze Large | reward 1 on arrival | CleanRL PPO-RND | 4 | 192 | 8,388,608 | 8,388,608 | complete |
-| 69 | PointMaze Large | step cost | CleanRL PPO-RND | 4 | 256 | 33,554,432 | 33,554,432 | complete |
-| 70 | PointMaze Large | step cost | CleanRL PPO-RND | 4 | 32 | 33,554,432 | 33,554,432 | complete |
-| 71 | PointMaze Medium | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
-| 72 | PointMaze Medium | reward 1 on arrival | CleanRL PPO-RND | 4 | 32 | 1,048,576 | 1,048,576 | complete |
-| 73 | PointMaze Medium | step cost | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
-| 74 | PointMaze Medium | step cost | CleanRL PPO-RND | 4 | 32 | 1,048,576 | 1,048,576 | complete |
-| 75 | PointMaze Large | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 8,388,608 | 8,388,608 | complete |
-| 76 | PointMaze Large | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 8,388,608 | 8,388,608 | complete |
-| 77 | PointMaze Large | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 8,388,608 | 8,388,608 | complete |
-| 78 | PointMaze Large | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 8,388,608 | 8,388,608 | complete |
-| 79 | PointMaze Large | reward 1 on arrival | CleanRL PPO-RND | 4 | 128 | 8,388,608 | 8,388,608 | complete |
-| 80 | PointMaze Medium | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
-| 81 | PointMaze Medium | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
-| 82 | PointMaze Medium | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
-| 83 | PointMaze Medium | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
-| 84 | PointMaze Medium | reward 1 on arrival | CleanRL PPO-RND | 4 | 128 | 1,048,576 | 1,048,576 | complete |
-| 85 | PointMaze Medium | step cost | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
-| 86 | PointMaze Medium | step cost | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
-| 87 | PointMaze Medium | step cost | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
-| 88 | PointMaze Medium | step cost | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
-| 89 | PointMaze Medium | step cost | CleanRL PPO-RND | 4 | 128 | 1,048,576 | 1,048,576 | complete |
-| 90 | PointMaze Large | reward 1 on arrival | cleanrl ppo rnd with intrinsic discount 0 point 999 | 4 | 256 | 16,777,216 | 16,777,216 | complete |
-| 91 | PointMaze Large | reward 1 on arrival | cleanrl ppo rnd with intrinsic discount 0 point 999 | 4 | 256 | 16,777,216 | 16,777,216 | complete |
-| 92 | PointMaze Large | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 16,777,216 | 16,777,216 | complete |
-| 93 | PointMaze Large | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 16,777,216 | 16,777,216 | complete |
-| 94 | PointMaze Large | step cost | cleanrl ppo rnd with intrinsic discount 0 point 999 | 4 | 256 | 33,554,432 | 33,554,432 | complete |
-| 95 | PointMaze Large | step cost | cleanrl ppo rnd with intrinsic discount 0 point 999 | 4 | 128 | 33,554,432 | 33,554,432 | complete |
-| 96 | PointMaze Large | step cost | CleanRL PPO-RND | 4 | 256 | 33,554,432 | 33,554,432 | complete |
-| 97 | PointMaze Large | step cost | CleanRL PPO-RND | 4 | 128 | 33,554,432 | 33,554,432 | complete |
-| 98 | PointMaze Medium | reward 1 on arrival | cleanrl ppo rnd with intrinsic discount 0 point 999 | 4 | 256 | 4,194,304 | 4,194,304 | complete |
-| 99 | PointMaze Medium | reward 1 on arrival | cleanrl ppo rnd with intrinsic discount 0 point 999 | 4 | 256 | 4,194,304 | 4,194,304 | complete |
-| 100 | PointMaze Medium | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 4,194,304 | 4,194,304 | complete |
-| 101 | PointMaze Medium | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 4,194,304 | 4,194,304 | complete |
-| 102 | PointMaze Medium | step cost | cleanrl ppo rnd with intrinsic discount 0 point 999 | 4 | 256 | 4,194,304 | 4,194,304 | complete |
-| 103 | PointMaze Medium | step cost | cleanrl ppo rnd with intrinsic discount 0 point 999 | 4 | 128 | 4,194,304 | 4,194,304 | complete |
-| 104 | PointMaze Medium | step cost | CleanRL PPO-RND | 4 | 256 | 4,194,304 | 4,194,304 | complete |
-| 105 | PointMaze Medium | step cost | CleanRL PPO-RND | 4 | 128 | 4,194,304 | 4,194,304 | complete |
+| 5 | PointMaze Large | step cost | CleanRL PPO-RND | 4 | 256 | 4,456,448 | 33,554,432 | unfinished |
+| 6 | PointMaze Large | step cost | CleanRL PPO-RND | 4 | 256 | 3,014,656 | 33,554,432 | unfinished |
+| 7 | PointMaze Large | step cost | CleanRL PPO-RND | 4 | 256 | 2,883,584 | 33,554,432 | unfinished |
+| 8 | PointMaze Large | step cost | CleanRL PPO-RND | 4 | 256 | 2,883,584 | 33,554,432 | unfinished |
+| 9 | PointMaze Medium | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
+| 10 | PointMaze Medium | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
+| 11 | PointMaze Medium | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
+| 12 | PointMaze Medium | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
+| 13 | PointMaze Medium | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
+| 14 | PointMaze Medium | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
+| 15 | PointMaze Medium | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
+| 16 | PointMaze Medium | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
+| 17 | PointMaze Medium | step cost | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
+| 18 | PointMaze Medium | step cost | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
+| 19 | PointMaze Medium | step cost | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
+| 20 | PointMaze Medium | step cost | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
+| 21 | PointMaze Large | reward 1 on arrival | cleanrl ppo rnd at cleanrl defaults | 4 | 256 | 8,388,608 | 8,388,608 | complete |
+| 22 | PointMaze Large | reward 1 on arrival | cleanrl ppo rnd at cleanrl defaults | 4 | 256 | 8,388,608 | 8,388,608 | complete |
+| 23 | PointMaze Large | reward 1 on arrival | cleanrl ppo rnd at cleanrl defaults | 4 | 256 | 8,388,608 | 8,388,608 | complete |
+| 24 | PointMaze Large | reward 1 on arrival | cleanrl ppo rnd at cleanrl defaults | 4 | 256 | 8,388,608 | 8,388,608 | complete |
+| 25 | PointMaze Large | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 8,388,608 | 8,388,608 | complete |
+| 26 | PointMaze Large | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 8,388,608 | 8,388,608 | complete |
+| 27 | PointMaze Large | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 8,388,608 | 8,388,608 | complete |
+| 28 | PointMaze Large | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 8,388,608 | 8,388,608 | complete |
+| 29 | PointMaze Large | reward 1 on arrival | ppo without a bonus | 4 | 256 | 8,388,608 | 8,388,608 | complete |
+| 30 | PointMaze Large | reward 1 on arrival | ppo without a bonus | 4 | 256 | 8,388,608 | 8,388,608 | complete |
+| 31 | PointMaze Large | reward 1 on arrival | ppo without a bonus | 4 | 256 | 8,388,608 | 8,388,608 | complete |
+| 32 | PointMaze Large | reward 1 on arrival | ppo without a bonus | 4 | 256 | 8,388,608 | 8,388,608 | complete |
+| 33 | PointMaze Large | step cost | cleanrl ppo rnd at cleanrl defaults | 4 | 256 | 33,554,432 | 33,554,432 | complete |
+| 34 | PointMaze Large | step cost | cleanrl ppo rnd at cleanrl defaults | 4 | 256 | 33,554,432 | 33,554,432 | complete |
+| 35 | PointMaze Large | step cost | cleanrl ppo rnd at cleanrl defaults | 4 | 256 | 33,554,432 | 33,554,432 | complete |
+| 36 | PointMaze Large | step cost | cleanrl ppo rnd at cleanrl defaults | 4 | 256 | 33,554,432 | 33,554,432 | complete |
+| 37 | PointMaze Large | step cost | CleanRL PPO-RND | 4 | 256 | 33,554,432 | 33,554,432 | complete |
+| 38 | PointMaze Large | step cost | CleanRL PPO-RND | 4 | 256 | 33,554,432 | 33,554,432 | complete |
+| 39 | PointMaze Large | step cost | CleanRL PPO-RND | 4 | 256 | 33,554,432 | 33,554,432 | complete |
+| 40 | PointMaze Large | step cost | CleanRL PPO-RND | 4 | 256 | 33,554,432 | 33,554,432 | complete |
+| 41 | PointMaze Large | step cost | ppo without a bonus | 4 | 256 | 33,554,432 | 33,554,432 | complete |
+| 42 | PointMaze Large | step cost | ppo without a bonus | 4 | 256 | 33,554,432 | 33,554,432 | complete |
+| 43 | PointMaze Large | step cost | ppo without a bonus | 4 | 256 | 33,554,432 | 33,554,432 | complete |
+| 44 | PointMaze Large | step cost | ppo without a bonus | 4 | 256 | 33,554,432 | 33,554,432 | complete |
+| 45 | PointMaze Medium | reward 1 on arrival | cleanrl ppo rnd at cleanrl defaults | 4 | 256 | 1,048,576 | 1,048,576 | complete |
+| 46 | PointMaze Medium | reward 1 on arrival | cleanrl ppo rnd at cleanrl defaults | 4 | 256 | 1,048,576 | 1,048,576 | complete |
+| 47 | PointMaze Medium | reward 1 on arrival | cleanrl ppo rnd at cleanrl defaults | 4 | 256 | 1,048,576 | 1,048,576 | complete |
+| 48 | PointMaze Medium | reward 1 on arrival | cleanrl ppo rnd at cleanrl defaults | 4 | 256 | 1,048,576 | 1,048,576 | complete |
+| 49 | PointMaze Medium | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
+| 50 | PointMaze Medium | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
+| 51 | PointMaze Medium | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
+| 52 | PointMaze Medium | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
+| 53 | PointMaze Medium | reward 1 on arrival | ppo without a bonus | 4 | 256 | 1,048,576 | 1,048,576 | complete |
+| 54 | PointMaze Medium | reward 1 on arrival | ppo without a bonus | 4 | 256 | 1,048,576 | 1,048,576 | complete |
+| 55 | PointMaze Medium | reward 1 on arrival | ppo without a bonus | 4 | 256 | 1,048,576 | 1,048,576 | complete |
+| 56 | PointMaze Medium | reward 1 on arrival | ppo without a bonus | 4 | 256 | 1,048,576 | 1,048,576 | complete |
+| 57 | PointMaze Medium | step cost | cleanrl ppo rnd at cleanrl defaults | 4 | 256 | 1,048,576 | 1,048,576 | complete |
+| 58 | PointMaze Medium | step cost | cleanrl ppo rnd at cleanrl defaults | 4 | 256 | 1,048,576 | 1,048,576 | complete |
+| 59 | PointMaze Medium | step cost | cleanrl ppo rnd at cleanrl defaults | 4 | 256 | 1,048,576 | 1,048,576 | complete |
+| 60 | PointMaze Medium | step cost | cleanrl ppo rnd at cleanrl defaults | 4 | 256 | 1,048,576 | 1,048,576 | complete |
+| 61 | PointMaze Medium | step cost | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
+| 62 | PointMaze Medium | step cost | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
+| 63 | PointMaze Medium | step cost | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
+| 64 | PointMaze Medium | step cost | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
+| 65 | PointMaze Medium | step cost | ppo without a bonus | 4 | 256 | 1,048,576 | 1,048,576 | complete |
+| 66 | PointMaze Medium | step cost | ppo without a bonus | 4 | 256 | 1,048,576 | 1,048,576 | complete |
+| 67 | PointMaze Medium | step cost | ppo without a bonus | 4 | 256 | 1,048,576 | 1,048,576 | complete |
+| 68 | PointMaze Medium | step cost | ppo without a bonus | 4 | 256 | 1,048,576 | 1,048,576 | complete |
+| 69 | PointMaze Medium | reward 1 on arrival | CleanRL PPO-RND | 4 | 96 | 1,048,576 | 1,048,576 | complete |
+| 70 | PointMaze Medium | step cost | CleanRL PPO-RND | 4 | 96 | 1,048,576 | 1,048,576 | complete |
+| 71 | PointMaze Large | reward 1 on arrival | CleanRL PPO-RND | 4 | 144 | 8,388,608 | 8,388,608 | complete |
+| 72 | PointMaze Large | step cost | cleanrl ppo rnd with intrinsic discount 0 point 999 | 4 | 192 | 33,554,432 | 33,554,432 | complete |
+| 73 | PointMaze Large | step cost | CleanRL PPO-RND | 4 | 192 | 33,554,432 | 33,554,432 | complete |
+| 74 | PointMaze Medium | reward 1 on arrival | CleanRL PPO-RND | 4 | 192 | 1,048,576 | 1,048,576 | complete |
+| 75 | PointMaze Medium | step cost | CleanRL PPO-RND | 4 | 192 | 1,048,576 | 1,048,576 | complete |
+| 76 | PointMaze Large | reward 1 on arrival | CleanRL PPO-RND | 4 | 192 | 8,388,608 | 8,388,608 | complete |
+| 77 | PointMaze Large | step cost | CleanRL PPO-RND | 4 | 256 | 33,554,432 | 33,554,432 | complete |
+| 78 | PointMaze Large | step cost | CleanRL PPO-RND | 4 | 32 | 33,554,432 | 33,554,432 | complete |
+| 79 | PointMaze Medium | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
+| 80 | PointMaze Medium | reward 1 on arrival | CleanRL PPO-RND | 4 | 32 | 1,048,576 | 1,048,576 | complete |
+| 81 | PointMaze Medium | step cost | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
+| 82 | PointMaze Medium | step cost | CleanRL PPO-RND | 4 | 32 | 1,048,576 | 1,048,576 | complete |
+| 83 | PointMaze Large | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 8,388,608 | 8,388,608 | complete |
+| 84 | PointMaze Large | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 8,388,608 | 8,388,608 | complete |
+| 85 | PointMaze Large | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 8,388,608 | 8,388,608 | complete |
+| 86 | PointMaze Large | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 8,388,608 | 8,388,608 | complete |
+| 87 | PointMaze Large | reward 1 on arrival | CleanRL PPO-RND | 4 | 128 | 8,388,608 | 8,388,608 | complete |
+| 88 | PointMaze Medium | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
+| 89 | PointMaze Medium | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
+| 90 | PointMaze Medium | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
+| 91 | PointMaze Medium | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
+| 92 | PointMaze Medium | reward 1 on arrival | CleanRL PPO-RND | 4 | 128 | 1,048,576 | 1,048,576 | complete |
+| 93 | PointMaze Medium | step cost | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
+| 94 | PointMaze Medium | step cost | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
+| 95 | PointMaze Medium | step cost | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
+| 96 | PointMaze Medium | step cost | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
+| 97 | PointMaze Medium | step cost | CleanRL PPO-RND | 4 | 128 | 1,048,576 | 1,048,576 | complete |
+| 98 | PointMaze Large | reward 1 on arrival | cleanrl ppo rnd with intrinsic discount 0 point 999 | 4 | 256 | 16,777,216 | 16,777,216 | complete |
+| 99 | PointMaze Large | reward 1 on arrival | cleanrl ppo rnd with intrinsic discount 0 point 999 | 4 | 256 | 16,777,216 | 16,777,216 | complete |
+| 100 | PointMaze Large | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 16,777,216 | 16,777,216 | complete |
+| 101 | PointMaze Large | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 16,777,216 | 16,777,216 | complete |
+| 102 | PointMaze Large | step cost | cleanrl ppo rnd with intrinsic discount 0 point 999 | 4 | 256 | 33,554,432 | 33,554,432 | complete |
+| 103 | PointMaze Large | step cost | cleanrl ppo rnd with intrinsic discount 0 point 999 | 4 | 128 | 33,554,432 | 33,554,432 | complete |
+| 104 | PointMaze Large | step cost | CleanRL PPO-RND | 4 | 256 | 33,554,432 | 33,554,432 | complete |
+| 105 | PointMaze Large | step cost | CleanRL PPO-RND | 4 | 128 | 33,554,432 | 33,554,432 | complete |
+| 106 | PointMaze Medium | reward 1 on arrival | cleanrl ppo rnd with intrinsic discount 0 point 999 | 4 | 256 | 4,194,304 | 4,194,304 | complete |
+| 107 | PointMaze Medium | reward 1 on arrival | cleanrl ppo rnd with intrinsic discount 0 point 999 | 4 | 256 | 4,194,304 | 4,194,304 | complete |
+| 108 | PointMaze Medium | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 4,194,304 | 4,194,304 | complete |
+| 109 | PointMaze Medium | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 4,194,304 | 4,194,304 | complete |
+| 110 | PointMaze Medium | step cost | cleanrl ppo rnd with intrinsic discount 0 point 999 | 4 | 256 | 4,194,304 | 4,194,304 | complete |
+| 111 | PointMaze Medium | step cost | cleanrl ppo rnd with intrinsic discount 0 point 999 | 4 | 128 | 4,194,304 | 4,194,304 | complete |
+| 112 | PointMaze Medium | step cost | CleanRL PPO-RND | 4 | 256 | 4,194,304 | 4,194,304 | complete |
+| 113 | PointMaze Medium | step cost | CleanRL PPO-RND | 4 | 128 | 4,194,304 | 4,194,304 | complete |
 
 Unit names, by the number in the first column:
 
@@ -160,107 +168,115 @@ Unit names, by the number in the first column:
 2. `confirmation-for-discovery_pointmaze-large_reward-arrival-plus-one_cleanrl-ppo-rnd_learning-rate-0.01_entropy-coefficient-0.01_intrinsic-weight-64.0_clip-coefficient-0.1_seeds-30256-to-30511`
 3. `confirmation-for-discovery_pointmaze-large_reward-arrival-plus-one_cleanrl-ppo-rnd_learning-rate-0.01_entropy-coefficient-0.01_intrinsic-weight-64.0_clip-coefficient-0.1_seeds-30512-to-30767`
 4. `confirmation-for-discovery_pointmaze-large_reward-arrival-plus-one_cleanrl-ppo-rnd_learning-rate-0.01_entropy-coefficient-0.01_intrinsic-weight-64.0_clip-coefficient-0.1_seeds-30768-to-31023`
-5. `confirmation-for-discovery_pointmaze-medium_reward-arrival-plus-one_cleanrl-ppo-rnd_learning-rate-0.02_entropy-coefficient-0.1_intrinsic-weight-4.0_clip-coefficient-0.1_seeds-30000-to-30255`
-6. `confirmation-for-discovery_pointmaze-medium_reward-arrival-plus-one_cleanrl-ppo-rnd_learning-rate-0.02_entropy-coefficient-0.1_intrinsic-weight-4.0_clip-coefficient-0.1_seeds-30256-to-30511`
-7. `confirmation-for-discovery_pointmaze-medium_reward-arrival-plus-one_cleanrl-ppo-rnd_learning-rate-0.02_entropy-coefficient-0.1_intrinsic-weight-4.0_clip-coefficient-0.1_seeds-30512-to-30767`
-8. `confirmation-for-discovery_pointmaze-medium_reward-arrival-plus-one_cleanrl-ppo-rnd_learning-rate-0.02_entropy-coefficient-0.1_intrinsic-weight-4.0_clip-coefficient-0.1_seeds-30768-to-31023`
-9. `confirmation-for-discovery_pointmaze-medium_reward-step-cost_cleanrl-ppo-rnd_learning-rate-0.01_entropy-coefficient-0.01_intrinsic-weight-4.0_clip-coefficient-0.1_seeds-30000-to-30255`
-10. `confirmation-for-discovery_pointmaze-medium_reward-step-cost_cleanrl-ppo-rnd_learning-rate-0.01_entropy-coefficient-0.01_intrinsic-weight-4.0_clip-coefficient-0.1_seeds-30256-to-30511`
-11. `confirmation-for-discovery_pointmaze-medium_reward-step-cost_cleanrl-ppo-rnd_learning-rate-0.01_entropy-coefficient-0.01_intrinsic-weight-4.0_clip-coefficient-0.1_seeds-30512-to-30767`
-12. `confirmation-for-discovery_pointmaze-medium_reward-step-cost_cleanrl-ppo-rnd_learning-rate-0.01_entropy-coefficient-0.01_intrinsic-weight-4.0_clip-coefficient-0.1_seeds-30768-to-31023`
-13. `confirmation_pointmaze-large_reward-arrival-plus-one_cleanrl-ppo-rnd-at-cleanrl-defaults_learning-rate-0.0001_entropy-coefficient-0.001_intrinsic-weight-1.0_clip-coefficient-0.1_seeds-30000-to-30255`
-14. `confirmation_pointmaze-large_reward-arrival-plus-one_cleanrl-ppo-rnd-at-cleanrl-defaults_learning-rate-0.0001_entropy-coefficient-0.001_intrinsic-weight-1.0_clip-coefficient-0.1_seeds-30256-to-30511`
-15. `confirmation_pointmaze-large_reward-arrival-plus-one_cleanrl-ppo-rnd-at-cleanrl-defaults_learning-rate-0.0001_entropy-coefficient-0.001_intrinsic-weight-1.0_clip-coefficient-0.1_seeds-30512-to-30767`
-16. `confirmation_pointmaze-large_reward-arrival-plus-one_cleanrl-ppo-rnd-at-cleanrl-defaults_learning-rate-0.0001_entropy-coefficient-0.001_intrinsic-weight-1.0_clip-coefficient-0.1_seeds-30768-to-31023`
-17. `confirmation_pointmaze-large_reward-arrival-plus-one_cleanrl-ppo-rnd_learning-rate-0.002_entropy-coefficient-0.01_intrinsic-weight-2.0_clip-coefficient-0.1_seeds-30000-to-30255`
-18. `confirmation_pointmaze-large_reward-arrival-plus-one_cleanrl-ppo-rnd_learning-rate-0.002_entropy-coefficient-0.01_intrinsic-weight-2.0_clip-coefficient-0.1_seeds-30256-to-30511`
-19. `confirmation_pointmaze-large_reward-arrival-plus-one_cleanrl-ppo-rnd_learning-rate-0.002_entropy-coefficient-0.01_intrinsic-weight-2.0_clip-coefficient-0.1_seeds-30512-to-30767`
-20. `confirmation_pointmaze-large_reward-arrival-plus-one_cleanrl-ppo-rnd_learning-rate-0.002_entropy-coefficient-0.01_intrinsic-weight-2.0_clip-coefficient-0.1_seeds-30768-to-31023`
-21. `confirmation_pointmaze-large_reward-arrival-plus-one_ppo-without-a-bonus_learning-rate-0.002_entropy-coefficient-0.01_clip-coefficient-0.1_seeds-30000-to-30255`
-22. `confirmation_pointmaze-large_reward-arrival-plus-one_ppo-without-a-bonus_learning-rate-0.002_entropy-coefficient-0.01_clip-coefficient-0.1_seeds-30256-to-30511`
-23. `confirmation_pointmaze-large_reward-arrival-plus-one_ppo-without-a-bonus_learning-rate-0.002_entropy-coefficient-0.01_clip-coefficient-0.1_seeds-30512-to-30767`
-24. `confirmation_pointmaze-large_reward-arrival-plus-one_ppo-without-a-bonus_learning-rate-0.002_entropy-coefficient-0.01_clip-coefficient-0.1_seeds-30768-to-31023`
-25. `confirmation_pointmaze-large_reward-step-cost_cleanrl-ppo-rnd-at-cleanrl-defaults_learning-rate-0.0001_entropy-coefficient-0.001_intrinsic-weight-1.0_clip-coefficient-0.1_seeds-30000-to-30255`
-26. `confirmation_pointmaze-large_reward-step-cost_cleanrl-ppo-rnd-at-cleanrl-defaults_learning-rate-0.0001_entropy-coefficient-0.001_intrinsic-weight-1.0_clip-coefficient-0.1_seeds-30256-to-30511`
-27. `confirmation_pointmaze-large_reward-step-cost_cleanrl-ppo-rnd-at-cleanrl-defaults_learning-rate-0.0001_entropy-coefficient-0.001_intrinsic-weight-1.0_clip-coefficient-0.1_seeds-30512-to-30767`
-28. `confirmation_pointmaze-large_reward-step-cost_cleanrl-ppo-rnd-at-cleanrl-defaults_learning-rate-0.0001_entropy-coefficient-0.001_intrinsic-weight-1.0_clip-coefficient-0.1_seeds-30768-to-31023`
-29. `confirmation_pointmaze-large_reward-step-cost_cleanrl-ppo-rnd_learning-rate-0.002_entropy-coefficient-0.01_intrinsic-weight-4.0_clip-coefficient-0.1_seeds-30000-to-30255`
-30. `confirmation_pointmaze-large_reward-step-cost_cleanrl-ppo-rnd_learning-rate-0.002_entropy-coefficient-0.01_intrinsic-weight-4.0_clip-coefficient-0.1_seeds-30256-to-30511`
-31. `confirmation_pointmaze-large_reward-step-cost_cleanrl-ppo-rnd_learning-rate-0.002_entropy-coefficient-0.01_intrinsic-weight-4.0_clip-coefficient-0.1_seeds-30512-to-30767`
-32. `confirmation_pointmaze-large_reward-step-cost_cleanrl-ppo-rnd_learning-rate-0.002_entropy-coefficient-0.01_intrinsic-weight-4.0_clip-coefficient-0.1_seeds-30768-to-31023`
-33. `confirmation_pointmaze-large_reward-step-cost_ppo-without-a-bonus_learning-rate-0.002_entropy-coefficient-0.01_clip-coefficient-0.1_seeds-30000-to-30255`
-34. `confirmation_pointmaze-large_reward-step-cost_ppo-without-a-bonus_learning-rate-0.002_entropy-coefficient-0.01_clip-coefficient-0.1_seeds-30256-to-30511`
-35. `confirmation_pointmaze-large_reward-step-cost_ppo-without-a-bonus_learning-rate-0.002_entropy-coefficient-0.01_clip-coefficient-0.1_seeds-30512-to-30767`
-36. `confirmation_pointmaze-large_reward-step-cost_ppo-without-a-bonus_learning-rate-0.002_entropy-coefficient-0.01_clip-coefficient-0.1_seeds-30768-to-31023`
-37. `confirmation_pointmaze-medium_reward-arrival-plus-one_cleanrl-ppo-rnd-at-cleanrl-defaults_learning-rate-0.0001_entropy-coefficient-0.001_intrinsic-weight-1.0_clip-coefficient-0.1_seeds-30000-to-30255`
-38. `confirmation_pointmaze-medium_reward-arrival-plus-one_cleanrl-ppo-rnd-at-cleanrl-defaults_learning-rate-0.0001_entropy-coefficient-0.001_intrinsic-weight-1.0_clip-coefficient-0.1_seeds-30256-to-30511`
-39. `confirmation_pointmaze-medium_reward-arrival-plus-one_cleanrl-ppo-rnd-at-cleanrl-defaults_learning-rate-0.0001_entropy-coefficient-0.001_intrinsic-weight-1.0_clip-coefficient-0.1_seeds-30512-to-30767`
-40. `confirmation_pointmaze-medium_reward-arrival-plus-one_cleanrl-ppo-rnd-at-cleanrl-defaults_learning-rate-0.0001_entropy-coefficient-0.001_intrinsic-weight-1.0_clip-coefficient-0.1_seeds-30768-to-31023`
-41. `confirmation_pointmaze-medium_reward-arrival-plus-one_cleanrl-ppo-rnd_learning-rate-0.006_entropy-coefficient-0.01_intrinsic-weight-2.0_clip-coefficient-0.1_seeds-30000-to-30255`
-42. `confirmation_pointmaze-medium_reward-arrival-plus-one_cleanrl-ppo-rnd_learning-rate-0.006_entropy-coefficient-0.01_intrinsic-weight-2.0_clip-coefficient-0.1_seeds-30256-to-30511`
-43. `confirmation_pointmaze-medium_reward-arrival-plus-one_cleanrl-ppo-rnd_learning-rate-0.006_entropy-coefficient-0.01_intrinsic-weight-2.0_clip-coefficient-0.1_seeds-30512-to-30767`
-44. `confirmation_pointmaze-medium_reward-arrival-plus-one_cleanrl-ppo-rnd_learning-rate-0.006_entropy-coefficient-0.01_intrinsic-weight-2.0_clip-coefficient-0.1_seeds-30768-to-31023`
-45. `confirmation_pointmaze-medium_reward-arrival-plus-one_ppo-without-a-bonus_learning-rate-0.006_entropy-coefficient-0.01_clip-coefficient-0.1_seeds-30000-to-30255`
-46. `confirmation_pointmaze-medium_reward-arrival-plus-one_ppo-without-a-bonus_learning-rate-0.006_entropy-coefficient-0.01_clip-coefficient-0.1_seeds-30256-to-30511`
-47. `confirmation_pointmaze-medium_reward-arrival-plus-one_ppo-without-a-bonus_learning-rate-0.006_entropy-coefficient-0.01_clip-coefficient-0.1_seeds-30512-to-30767`
-48. `confirmation_pointmaze-medium_reward-arrival-plus-one_ppo-without-a-bonus_learning-rate-0.006_entropy-coefficient-0.01_clip-coefficient-0.1_seeds-30768-to-31023`
-49. `confirmation_pointmaze-medium_reward-step-cost_cleanrl-ppo-rnd-at-cleanrl-defaults_learning-rate-0.0001_entropy-coefficient-0.001_intrinsic-weight-1.0_clip-coefficient-0.1_seeds-30000-to-30255`
-50. `confirmation_pointmaze-medium_reward-step-cost_cleanrl-ppo-rnd-at-cleanrl-defaults_learning-rate-0.0001_entropy-coefficient-0.001_intrinsic-weight-1.0_clip-coefficient-0.1_seeds-30256-to-30511`
-51. `confirmation_pointmaze-medium_reward-step-cost_cleanrl-ppo-rnd-at-cleanrl-defaults_learning-rate-0.0001_entropy-coefficient-0.001_intrinsic-weight-1.0_clip-coefficient-0.1_seeds-30512-to-30767`
-52. `confirmation_pointmaze-medium_reward-step-cost_cleanrl-ppo-rnd-at-cleanrl-defaults_learning-rate-0.0001_entropy-coefficient-0.001_intrinsic-weight-1.0_clip-coefficient-0.1_seeds-30768-to-31023`
-53. `confirmation_pointmaze-medium_reward-step-cost_cleanrl-ppo-rnd_learning-rate-0.006_entropy-coefficient-0.01_intrinsic-weight-0.001953125_clip-coefficient-0.1_seeds-30000-to-30255`
-54. `confirmation_pointmaze-medium_reward-step-cost_cleanrl-ppo-rnd_learning-rate-0.006_entropy-coefficient-0.01_intrinsic-weight-0.001953125_clip-coefficient-0.1_seeds-30256-to-30511`
-55. `confirmation_pointmaze-medium_reward-step-cost_cleanrl-ppo-rnd_learning-rate-0.006_entropy-coefficient-0.01_intrinsic-weight-0.001953125_clip-coefficient-0.1_seeds-30512-to-30767`
-56. `confirmation_pointmaze-medium_reward-step-cost_cleanrl-ppo-rnd_learning-rate-0.006_entropy-coefficient-0.01_intrinsic-weight-0.001953125_clip-coefficient-0.1_seeds-30768-to-31023`
-57. `confirmation_pointmaze-medium_reward-step-cost_ppo-without-a-bonus_learning-rate-0.006_entropy-coefficient-0.01_clip-coefficient-0.1_seeds-30000-to-30255`
-58. `confirmation_pointmaze-medium_reward-step-cost_ppo-without-a-bonus_learning-rate-0.006_entropy-coefficient-0.01_clip-coefficient-0.1_seeds-30256-to-30511`
-59. `confirmation_pointmaze-medium_reward-step-cost_ppo-without-a-bonus_learning-rate-0.006_entropy-coefficient-0.01_clip-coefficient-0.1_seeds-30512-to-30767`
-60. `confirmation_pointmaze-medium_reward-step-cost_ppo-without-a-bonus_learning-rate-0.006_entropy-coefficient-0.01_clip-coefficient-0.1_seeds-30768-to-31023`
-61. `development-at-the-budget-higher-learning-rates_pointmaze-medium_reward-arrival-plus-one_cleanrl-ppo-rnd_cells-1-to-6-of-6_seeds-0-to-15`
-62. `development-at-the-budget-lower-intrinsic-weights_pointmaze-medium_reward-step-cost_cleanrl-ppo-rnd_cells-1-to-6-of-6_seeds-0-to-15`
-63. `development-at-the-budget_pointmaze-large_reward-arrival-plus-one_cleanrl-ppo-rnd_cells-1-to-9-of-9_seeds-0-to-15`
-64. `development-at-the-budget_pointmaze-large_reward-step-cost_cleanrl-ppo-rnd-with-intrinsic-discount-0-point-999_cells-01-to-12-of-12_seeds-0-to-15`
-65. `development-at-the-budget_pointmaze-large_reward-step-cost_cleanrl-ppo-rnd_cells-01-to-12-of-12_seeds-0-to-15`
-66. `development-at-the-budget_pointmaze-medium_reward-arrival-plus-one_cleanrl-ppo-rnd_cells-01-to-12-of-12_seeds-0-to-15`
-67. `development-at-the-budget_pointmaze-medium_reward-step-cost_cleanrl-ppo-rnd_cells-01-to-12-of-12_seeds-0-to-15`
-68. `development-for-discovery-extension_pointmaze-large_reward-arrival-plus-one_cleanrl-ppo-rnd_cells-01-to-12-of-12_seeds-0-to-15`
-69. `development-for-discovery-extension_pointmaze-large_reward-step-cost_cleanrl-ppo-rnd_cells-01-to-16-of-18_seeds-0-to-15`
-70. `development-for-discovery-extension_pointmaze-large_reward-step-cost_cleanrl-ppo-rnd_cells-17-to-18-of-18_seeds-0-to-15`
-71. `development-for-discovery-extension_pointmaze-medium_reward-arrival-plus-one_cleanrl-ppo-rnd_cells-01-to-16-of-18_seeds-0-to-15`
-72. `development-for-discovery-extension_pointmaze-medium_reward-arrival-plus-one_cleanrl-ppo-rnd_cells-17-to-18-of-18_seeds-0-to-15`
-73. `development-for-discovery-extension_pointmaze-medium_reward-step-cost_cleanrl-ppo-rnd_cells-01-to-16-of-18_seeds-0-to-15`
-74. `development-for-discovery-extension_pointmaze-medium_reward-step-cost_cleanrl-ppo-rnd_cells-17-to-18-of-18_seeds-0-to-15`
-75. `development-for-discovery_pointmaze-large_reward-arrival-plus-one_cleanrl-ppo-rnd_cells-01-to-16-of-72_seeds-0-to-15`
-76. `development-for-discovery_pointmaze-large_reward-arrival-plus-one_cleanrl-ppo-rnd_cells-17-to-32-of-72_seeds-0-to-15`
-77. `development-for-discovery_pointmaze-large_reward-arrival-plus-one_cleanrl-ppo-rnd_cells-33-to-48-of-72_seeds-0-to-15`
-78. `development-for-discovery_pointmaze-large_reward-arrival-plus-one_cleanrl-ppo-rnd_cells-49-to-64-of-72_seeds-0-to-15`
-79. `development-for-discovery_pointmaze-large_reward-arrival-plus-one_cleanrl-ppo-rnd_cells-65-to-72-of-72_seeds-0-to-15`
-80. `development-for-discovery_pointmaze-medium_reward-arrival-plus-one_cleanrl-ppo-rnd_cells-01-to-16-of-72_seeds-0-to-15`
-81. `development-for-discovery_pointmaze-medium_reward-arrival-plus-one_cleanrl-ppo-rnd_cells-17-to-32-of-72_seeds-0-to-15`
-82. `development-for-discovery_pointmaze-medium_reward-arrival-plus-one_cleanrl-ppo-rnd_cells-33-to-48-of-72_seeds-0-to-15`
-83. `development-for-discovery_pointmaze-medium_reward-arrival-plus-one_cleanrl-ppo-rnd_cells-49-to-64-of-72_seeds-0-to-15`
-84. `development-for-discovery_pointmaze-medium_reward-arrival-plus-one_cleanrl-ppo-rnd_cells-65-to-72-of-72_seeds-0-to-15`
-85. `development-for-discovery_pointmaze-medium_reward-step-cost_cleanrl-ppo-rnd_cells-01-to-16-of-72_seeds-0-to-15`
-86. `development-for-discovery_pointmaze-medium_reward-step-cost_cleanrl-ppo-rnd_cells-17-to-32-of-72_seeds-0-to-15`
-87. `development-for-discovery_pointmaze-medium_reward-step-cost_cleanrl-ppo-rnd_cells-33-to-48-of-72_seeds-0-to-15`
-88. `development-for-discovery_pointmaze-medium_reward-step-cost_cleanrl-ppo-rnd_cells-49-to-64-of-72_seeds-0-to-15`
-89. `development-for-discovery_pointmaze-medium_reward-step-cost_cleanrl-ppo-rnd_cells-65-to-72-of-72_seeds-0-to-15`
-90. `development-second-pass_pointmaze-large_reward-arrival-plus-one_cleanrl-ppo-rnd-with-intrinsic-discount-0-point-999_cells-01-to-16-of-32_seeds-0-to-15`
-91. `development-second-pass_pointmaze-large_reward-arrival-plus-one_cleanrl-ppo-rnd-with-intrinsic-discount-0-point-999_cells-17-to-32-of-32_seeds-0-to-15`
-92. `development-second-pass_pointmaze-large_reward-arrival-plus-one_cleanrl-ppo-rnd_cells-01-to-16-of-32_seeds-0-to-15`
-93. `development-second-pass_pointmaze-large_reward-arrival-plus-one_cleanrl-ppo-rnd_cells-17-to-32-of-32_seeds-0-to-15`
-94. `development-second-pass_pointmaze-large_reward-step-cost_cleanrl-ppo-rnd-with-intrinsic-discount-0-point-999_cells-01-to-16-of-24_seeds-0-to-15`
-95. `development-second-pass_pointmaze-large_reward-step-cost_cleanrl-ppo-rnd-with-intrinsic-discount-0-point-999_cells-17-to-24-of-24_seeds-0-to-15`
-96. `development-second-pass_pointmaze-large_reward-step-cost_cleanrl-ppo-rnd_cells-01-to-16-of-24_seeds-0-to-15`
-97. `development-second-pass_pointmaze-large_reward-step-cost_cleanrl-ppo-rnd_cells-17-to-24-of-24_seeds-0-to-15`
-98. `development-second-pass_pointmaze-medium_reward-arrival-plus-one_cleanrl-ppo-rnd-with-intrinsic-discount-0-point-999_cells-01-to-16-of-32_seeds-0-to-15`
-99. `development-second-pass_pointmaze-medium_reward-arrival-plus-one_cleanrl-ppo-rnd-with-intrinsic-discount-0-point-999_cells-17-to-32-of-32_seeds-0-to-15`
-100. `development-second-pass_pointmaze-medium_reward-arrival-plus-one_cleanrl-ppo-rnd_cells-01-to-16-of-32_seeds-0-to-15`
-101. `development-second-pass_pointmaze-medium_reward-arrival-plus-one_cleanrl-ppo-rnd_cells-17-to-32-of-32_seeds-0-to-15`
-102. `development-second-pass_pointmaze-medium_reward-step-cost_cleanrl-ppo-rnd-with-intrinsic-discount-0-point-999_cells-01-to-16-of-24_seeds-0-to-15`
-103. `development-second-pass_pointmaze-medium_reward-step-cost_cleanrl-ppo-rnd-with-intrinsic-discount-0-point-999_cells-17-to-24-of-24_seeds-0-to-15`
-104. `development-second-pass_pointmaze-medium_reward-step-cost_cleanrl-ppo-rnd_cells-01-to-16-of-24_seeds-0-to-15`
-105. `development-second-pass_pointmaze-medium_reward-step-cost_cleanrl-ppo-rnd_cells-17-to-24-of-24_seeds-0-to-15`
+5. `confirmation-for-discovery_pointmaze-large_reward-step-cost_cleanrl-ppo-rnd_learning-rate-0.0045_entropy-coefficient-0.01_intrinsic-weight-8.0_clip-coefficient-0.1_seeds-30000-to-30255`
+6. `confirmation-for-discovery_pointmaze-large_reward-step-cost_cleanrl-ppo-rnd_learning-rate-0.0045_entropy-coefficient-0.01_intrinsic-weight-8.0_clip-coefficient-0.1_seeds-30256-to-30511`
+7. `confirmation-for-discovery_pointmaze-large_reward-step-cost_cleanrl-ppo-rnd_learning-rate-0.0045_entropy-coefficient-0.01_intrinsic-weight-8.0_clip-coefficient-0.1_seeds-30512-to-30767`
+8. `confirmation-for-discovery_pointmaze-large_reward-step-cost_cleanrl-ppo-rnd_learning-rate-0.0045_entropy-coefficient-0.01_intrinsic-weight-8.0_clip-coefficient-0.1_seeds-30768-to-31023`
+9. `confirmation-for-discovery_pointmaze-medium_reward-arrival-plus-one_cleanrl-ppo-rnd_learning-rate-0.02_entropy-coefficient-0.01_intrinsic-weight-4.0_clip-coefficient-0.1_seeds-30000-to-30255`
+10. `confirmation-for-discovery_pointmaze-medium_reward-arrival-plus-one_cleanrl-ppo-rnd_learning-rate-0.02_entropy-coefficient-0.01_intrinsic-weight-4.0_clip-coefficient-0.1_seeds-30256-to-30511`
+11. `confirmation-for-discovery_pointmaze-medium_reward-arrival-plus-one_cleanrl-ppo-rnd_learning-rate-0.02_entropy-coefficient-0.01_intrinsic-weight-4.0_clip-coefficient-0.1_seeds-30512-to-30767`
+12. `confirmation-for-discovery_pointmaze-medium_reward-arrival-plus-one_cleanrl-ppo-rnd_learning-rate-0.02_entropy-coefficient-0.01_intrinsic-weight-4.0_clip-coefficient-0.1_seeds-30768-to-31023`
+13. `confirmation-for-discovery_pointmaze-medium_reward-arrival-plus-one_cleanrl-ppo-rnd_learning-rate-0.02_entropy-coefficient-0.1_intrinsic-weight-4.0_clip-coefficient-0.1_seeds-30000-to-30255`
+14. `confirmation-for-discovery_pointmaze-medium_reward-arrival-plus-one_cleanrl-ppo-rnd_learning-rate-0.02_entropy-coefficient-0.1_intrinsic-weight-4.0_clip-coefficient-0.1_seeds-30256-to-30511`
+15. `confirmation-for-discovery_pointmaze-medium_reward-arrival-plus-one_cleanrl-ppo-rnd_learning-rate-0.02_entropy-coefficient-0.1_intrinsic-weight-4.0_clip-coefficient-0.1_seeds-30512-to-30767`
+16. `confirmation-for-discovery_pointmaze-medium_reward-arrival-plus-one_cleanrl-ppo-rnd_learning-rate-0.02_entropy-coefficient-0.1_intrinsic-weight-4.0_clip-coefficient-0.1_seeds-30768-to-31023`
+17. `confirmation-for-discovery_pointmaze-medium_reward-step-cost_cleanrl-ppo-rnd_learning-rate-0.01_entropy-coefficient-0.01_intrinsic-weight-4.0_clip-coefficient-0.1_seeds-30000-to-30255`
+18. `confirmation-for-discovery_pointmaze-medium_reward-step-cost_cleanrl-ppo-rnd_learning-rate-0.01_entropy-coefficient-0.01_intrinsic-weight-4.0_clip-coefficient-0.1_seeds-30256-to-30511`
+19. `confirmation-for-discovery_pointmaze-medium_reward-step-cost_cleanrl-ppo-rnd_learning-rate-0.01_entropy-coefficient-0.01_intrinsic-weight-4.0_clip-coefficient-0.1_seeds-30512-to-30767`
+20. `confirmation-for-discovery_pointmaze-medium_reward-step-cost_cleanrl-ppo-rnd_learning-rate-0.01_entropy-coefficient-0.01_intrinsic-weight-4.0_clip-coefficient-0.1_seeds-30768-to-31023`
+21. `confirmation_pointmaze-large_reward-arrival-plus-one_cleanrl-ppo-rnd-at-cleanrl-defaults_learning-rate-0.0001_entropy-coefficient-0.001_intrinsic-weight-1.0_clip-coefficient-0.1_seeds-30000-to-30255`
+22. `confirmation_pointmaze-large_reward-arrival-plus-one_cleanrl-ppo-rnd-at-cleanrl-defaults_learning-rate-0.0001_entropy-coefficient-0.001_intrinsic-weight-1.0_clip-coefficient-0.1_seeds-30256-to-30511`
+23. `confirmation_pointmaze-large_reward-arrival-plus-one_cleanrl-ppo-rnd-at-cleanrl-defaults_learning-rate-0.0001_entropy-coefficient-0.001_intrinsic-weight-1.0_clip-coefficient-0.1_seeds-30512-to-30767`
+24. `confirmation_pointmaze-large_reward-arrival-plus-one_cleanrl-ppo-rnd-at-cleanrl-defaults_learning-rate-0.0001_entropy-coefficient-0.001_intrinsic-weight-1.0_clip-coefficient-0.1_seeds-30768-to-31023`
+25. `confirmation_pointmaze-large_reward-arrival-plus-one_cleanrl-ppo-rnd_learning-rate-0.002_entropy-coefficient-0.01_intrinsic-weight-2.0_clip-coefficient-0.1_seeds-30000-to-30255`
+26. `confirmation_pointmaze-large_reward-arrival-plus-one_cleanrl-ppo-rnd_learning-rate-0.002_entropy-coefficient-0.01_intrinsic-weight-2.0_clip-coefficient-0.1_seeds-30256-to-30511`
+27. `confirmation_pointmaze-large_reward-arrival-plus-one_cleanrl-ppo-rnd_learning-rate-0.002_entropy-coefficient-0.01_intrinsic-weight-2.0_clip-coefficient-0.1_seeds-30512-to-30767`
+28. `confirmation_pointmaze-large_reward-arrival-plus-one_cleanrl-ppo-rnd_learning-rate-0.002_entropy-coefficient-0.01_intrinsic-weight-2.0_clip-coefficient-0.1_seeds-30768-to-31023`
+29. `confirmation_pointmaze-large_reward-arrival-plus-one_ppo-without-a-bonus_learning-rate-0.002_entropy-coefficient-0.01_clip-coefficient-0.1_seeds-30000-to-30255`
+30. `confirmation_pointmaze-large_reward-arrival-plus-one_ppo-without-a-bonus_learning-rate-0.002_entropy-coefficient-0.01_clip-coefficient-0.1_seeds-30256-to-30511`
+31. `confirmation_pointmaze-large_reward-arrival-plus-one_ppo-without-a-bonus_learning-rate-0.002_entropy-coefficient-0.01_clip-coefficient-0.1_seeds-30512-to-30767`
+32. `confirmation_pointmaze-large_reward-arrival-plus-one_ppo-without-a-bonus_learning-rate-0.002_entropy-coefficient-0.01_clip-coefficient-0.1_seeds-30768-to-31023`
+33. `confirmation_pointmaze-large_reward-step-cost_cleanrl-ppo-rnd-at-cleanrl-defaults_learning-rate-0.0001_entropy-coefficient-0.001_intrinsic-weight-1.0_clip-coefficient-0.1_seeds-30000-to-30255`
+34. `confirmation_pointmaze-large_reward-step-cost_cleanrl-ppo-rnd-at-cleanrl-defaults_learning-rate-0.0001_entropy-coefficient-0.001_intrinsic-weight-1.0_clip-coefficient-0.1_seeds-30256-to-30511`
+35. `confirmation_pointmaze-large_reward-step-cost_cleanrl-ppo-rnd-at-cleanrl-defaults_learning-rate-0.0001_entropy-coefficient-0.001_intrinsic-weight-1.0_clip-coefficient-0.1_seeds-30512-to-30767`
+36. `confirmation_pointmaze-large_reward-step-cost_cleanrl-ppo-rnd-at-cleanrl-defaults_learning-rate-0.0001_entropy-coefficient-0.001_intrinsic-weight-1.0_clip-coefficient-0.1_seeds-30768-to-31023`
+37. `confirmation_pointmaze-large_reward-step-cost_cleanrl-ppo-rnd_learning-rate-0.002_entropy-coefficient-0.01_intrinsic-weight-4.0_clip-coefficient-0.1_seeds-30000-to-30255`
+38. `confirmation_pointmaze-large_reward-step-cost_cleanrl-ppo-rnd_learning-rate-0.002_entropy-coefficient-0.01_intrinsic-weight-4.0_clip-coefficient-0.1_seeds-30256-to-30511`
+39. `confirmation_pointmaze-large_reward-step-cost_cleanrl-ppo-rnd_learning-rate-0.002_entropy-coefficient-0.01_intrinsic-weight-4.0_clip-coefficient-0.1_seeds-30512-to-30767`
+40. `confirmation_pointmaze-large_reward-step-cost_cleanrl-ppo-rnd_learning-rate-0.002_entropy-coefficient-0.01_intrinsic-weight-4.0_clip-coefficient-0.1_seeds-30768-to-31023`
+41. `confirmation_pointmaze-large_reward-step-cost_ppo-without-a-bonus_learning-rate-0.002_entropy-coefficient-0.01_clip-coefficient-0.1_seeds-30000-to-30255`
+42. `confirmation_pointmaze-large_reward-step-cost_ppo-without-a-bonus_learning-rate-0.002_entropy-coefficient-0.01_clip-coefficient-0.1_seeds-30256-to-30511`
+43. `confirmation_pointmaze-large_reward-step-cost_ppo-without-a-bonus_learning-rate-0.002_entropy-coefficient-0.01_clip-coefficient-0.1_seeds-30512-to-30767`
+44. `confirmation_pointmaze-large_reward-step-cost_ppo-without-a-bonus_learning-rate-0.002_entropy-coefficient-0.01_clip-coefficient-0.1_seeds-30768-to-31023`
+45. `confirmation_pointmaze-medium_reward-arrival-plus-one_cleanrl-ppo-rnd-at-cleanrl-defaults_learning-rate-0.0001_entropy-coefficient-0.001_intrinsic-weight-1.0_clip-coefficient-0.1_seeds-30000-to-30255`
+46. `confirmation_pointmaze-medium_reward-arrival-plus-one_cleanrl-ppo-rnd-at-cleanrl-defaults_learning-rate-0.0001_entropy-coefficient-0.001_intrinsic-weight-1.0_clip-coefficient-0.1_seeds-30256-to-30511`
+47. `confirmation_pointmaze-medium_reward-arrival-plus-one_cleanrl-ppo-rnd-at-cleanrl-defaults_learning-rate-0.0001_entropy-coefficient-0.001_intrinsic-weight-1.0_clip-coefficient-0.1_seeds-30512-to-30767`
+48. `confirmation_pointmaze-medium_reward-arrival-plus-one_cleanrl-ppo-rnd-at-cleanrl-defaults_learning-rate-0.0001_entropy-coefficient-0.001_intrinsic-weight-1.0_clip-coefficient-0.1_seeds-30768-to-31023`
+49. `confirmation_pointmaze-medium_reward-arrival-plus-one_cleanrl-ppo-rnd_learning-rate-0.006_entropy-coefficient-0.01_intrinsic-weight-2.0_clip-coefficient-0.1_seeds-30000-to-30255`
+50. `confirmation_pointmaze-medium_reward-arrival-plus-one_cleanrl-ppo-rnd_learning-rate-0.006_entropy-coefficient-0.01_intrinsic-weight-2.0_clip-coefficient-0.1_seeds-30256-to-30511`
+51. `confirmation_pointmaze-medium_reward-arrival-plus-one_cleanrl-ppo-rnd_learning-rate-0.006_entropy-coefficient-0.01_intrinsic-weight-2.0_clip-coefficient-0.1_seeds-30512-to-30767`
+52. `confirmation_pointmaze-medium_reward-arrival-plus-one_cleanrl-ppo-rnd_learning-rate-0.006_entropy-coefficient-0.01_intrinsic-weight-2.0_clip-coefficient-0.1_seeds-30768-to-31023`
+53. `confirmation_pointmaze-medium_reward-arrival-plus-one_ppo-without-a-bonus_learning-rate-0.006_entropy-coefficient-0.01_clip-coefficient-0.1_seeds-30000-to-30255`
+54. `confirmation_pointmaze-medium_reward-arrival-plus-one_ppo-without-a-bonus_learning-rate-0.006_entropy-coefficient-0.01_clip-coefficient-0.1_seeds-30256-to-30511`
+55. `confirmation_pointmaze-medium_reward-arrival-plus-one_ppo-without-a-bonus_learning-rate-0.006_entropy-coefficient-0.01_clip-coefficient-0.1_seeds-30512-to-30767`
+56. `confirmation_pointmaze-medium_reward-arrival-plus-one_ppo-without-a-bonus_learning-rate-0.006_entropy-coefficient-0.01_clip-coefficient-0.1_seeds-30768-to-31023`
+57. `confirmation_pointmaze-medium_reward-step-cost_cleanrl-ppo-rnd-at-cleanrl-defaults_learning-rate-0.0001_entropy-coefficient-0.001_intrinsic-weight-1.0_clip-coefficient-0.1_seeds-30000-to-30255`
+58. `confirmation_pointmaze-medium_reward-step-cost_cleanrl-ppo-rnd-at-cleanrl-defaults_learning-rate-0.0001_entropy-coefficient-0.001_intrinsic-weight-1.0_clip-coefficient-0.1_seeds-30256-to-30511`
+59. `confirmation_pointmaze-medium_reward-step-cost_cleanrl-ppo-rnd-at-cleanrl-defaults_learning-rate-0.0001_entropy-coefficient-0.001_intrinsic-weight-1.0_clip-coefficient-0.1_seeds-30512-to-30767`
+60. `confirmation_pointmaze-medium_reward-step-cost_cleanrl-ppo-rnd-at-cleanrl-defaults_learning-rate-0.0001_entropy-coefficient-0.001_intrinsic-weight-1.0_clip-coefficient-0.1_seeds-30768-to-31023`
+61. `confirmation_pointmaze-medium_reward-step-cost_cleanrl-ppo-rnd_learning-rate-0.006_entropy-coefficient-0.01_intrinsic-weight-0.001953125_clip-coefficient-0.1_seeds-30000-to-30255`
+62. `confirmation_pointmaze-medium_reward-step-cost_cleanrl-ppo-rnd_learning-rate-0.006_entropy-coefficient-0.01_intrinsic-weight-0.001953125_clip-coefficient-0.1_seeds-30256-to-30511`
+63. `confirmation_pointmaze-medium_reward-step-cost_cleanrl-ppo-rnd_learning-rate-0.006_entropy-coefficient-0.01_intrinsic-weight-0.001953125_clip-coefficient-0.1_seeds-30512-to-30767`
+64. `confirmation_pointmaze-medium_reward-step-cost_cleanrl-ppo-rnd_learning-rate-0.006_entropy-coefficient-0.01_intrinsic-weight-0.001953125_clip-coefficient-0.1_seeds-30768-to-31023`
+65. `confirmation_pointmaze-medium_reward-step-cost_ppo-without-a-bonus_learning-rate-0.006_entropy-coefficient-0.01_clip-coefficient-0.1_seeds-30000-to-30255`
+66. `confirmation_pointmaze-medium_reward-step-cost_ppo-without-a-bonus_learning-rate-0.006_entropy-coefficient-0.01_clip-coefficient-0.1_seeds-30256-to-30511`
+67. `confirmation_pointmaze-medium_reward-step-cost_ppo-without-a-bonus_learning-rate-0.006_entropy-coefficient-0.01_clip-coefficient-0.1_seeds-30512-to-30767`
+68. `confirmation_pointmaze-medium_reward-step-cost_ppo-without-a-bonus_learning-rate-0.006_entropy-coefficient-0.01_clip-coefficient-0.1_seeds-30768-to-31023`
+69. `development-at-the-budget-higher-learning-rates_pointmaze-medium_reward-arrival-plus-one_cleanrl-ppo-rnd_cells-1-to-6-of-6_seeds-0-to-15`
+70. `development-at-the-budget-lower-intrinsic-weights_pointmaze-medium_reward-step-cost_cleanrl-ppo-rnd_cells-1-to-6-of-6_seeds-0-to-15`
+71. `development-at-the-budget_pointmaze-large_reward-arrival-plus-one_cleanrl-ppo-rnd_cells-1-to-9-of-9_seeds-0-to-15`
+72. `development-at-the-budget_pointmaze-large_reward-step-cost_cleanrl-ppo-rnd-with-intrinsic-discount-0-point-999_cells-01-to-12-of-12_seeds-0-to-15`
+73. `development-at-the-budget_pointmaze-large_reward-step-cost_cleanrl-ppo-rnd_cells-01-to-12-of-12_seeds-0-to-15`
+74. `development-at-the-budget_pointmaze-medium_reward-arrival-plus-one_cleanrl-ppo-rnd_cells-01-to-12-of-12_seeds-0-to-15`
+75. `development-at-the-budget_pointmaze-medium_reward-step-cost_cleanrl-ppo-rnd_cells-01-to-12-of-12_seeds-0-to-15`
+76. `development-for-discovery-extension_pointmaze-large_reward-arrival-plus-one_cleanrl-ppo-rnd_cells-01-to-12-of-12_seeds-0-to-15`
+77. `development-for-discovery-extension_pointmaze-large_reward-step-cost_cleanrl-ppo-rnd_cells-01-to-16-of-18_seeds-0-to-15`
+78. `development-for-discovery-extension_pointmaze-large_reward-step-cost_cleanrl-ppo-rnd_cells-17-to-18-of-18_seeds-0-to-15`
+79. `development-for-discovery-extension_pointmaze-medium_reward-arrival-plus-one_cleanrl-ppo-rnd_cells-01-to-16-of-18_seeds-0-to-15`
+80. `development-for-discovery-extension_pointmaze-medium_reward-arrival-plus-one_cleanrl-ppo-rnd_cells-17-to-18-of-18_seeds-0-to-15`
+81. `development-for-discovery-extension_pointmaze-medium_reward-step-cost_cleanrl-ppo-rnd_cells-01-to-16-of-18_seeds-0-to-15`
+82. `development-for-discovery-extension_pointmaze-medium_reward-step-cost_cleanrl-ppo-rnd_cells-17-to-18-of-18_seeds-0-to-15`
+83. `development-for-discovery_pointmaze-large_reward-arrival-plus-one_cleanrl-ppo-rnd_cells-01-to-16-of-72_seeds-0-to-15`
+84. `development-for-discovery_pointmaze-large_reward-arrival-plus-one_cleanrl-ppo-rnd_cells-17-to-32-of-72_seeds-0-to-15`
+85. `development-for-discovery_pointmaze-large_reward-arrival-plus-one_cleanrl-ppo-rnd_cells-33-to-48-of-72_seeds-0-to-15`
+86. `development-for-discovery_pointmaze-large_reward-arrival-plus-one_cleanrl-ppo-rnd_cells-49-to-64-of-72_seeds-0-to-15`
+87. `development-for-discovery_pointmaze-large_reward-arrival-plus-one_cleanrl-ppo-rnd_cells-65-to-72-of-72_seeds-0-to-15`
+88. `development-for-discovery_pointmaze-medium_reward-arrival-plus-one_cleanrl-ppo-rnd_cells-01-to-16-of-72_seeds-0-to-15`
+89. `development-for-discovery_pointmaze-medium_reward-arrival-plus-one_cleanrl-ppo-rnd_cells-17-to-32-of-72_seeds-0-to-15`
+90. `development-for-discovery_pointmaze-medium_reward-arrival-plus-one_cleanrl-ppo-rnd_cells-33-to-48-of-72_seeds-0-to-15`
+91. `development-for-discovery_pointmaze-medium_reward-arrival-plus-one_cleanrl-ppo-rnd_cells-49-to-64-of-72_seeds-0-to-15`
+92. `development-for-discovery_pointmaze-medium_reward-arrival-plus-one_cleanrl-ppo-rnd_cells-65-to-72-of-72_seeds-0-to-15`
+93. `development-for-discovery_pointmaze-medium_reward-step-cost_cleanrl-ppo-rnd_cells-01-to-16-of-72_seeds-0-to-15`
+94. `development-for-discovery_pointmaze-medium_reward-step-cost_cleanrl-ppo-rnd_cells-17-to-32-of-72_seeds-0-to-15`
+95. `development-for-discovery_pointmaze-medium_reward-step-cost_cleanrl-ppo-rnd_cells-33-to-48-of-72_seeds-0-to-15`
+96. `development-for-discovery_pointmaze-medium_reward-step-cost_cleanrl-ppo-rnd_cells-49-to-64-of-72_seeds-0-to-15`
+97. `development-for-discovery_pointmaze-medium_reward-step-cost_cleanrl-ppo-rnd_cells-65-to-72-of-72_seeds-0-to-15`
+98. `development-second-pass_pointmaze-large_reward-arrival-plus-one_cleanrl-ppo-rnd-with-intrinsic-discount-0-point-999_cells-01-to-16-of-32_seeds-0-to-15`
+99. `development-second-pass_pointmaze-large_reward-arrival-plus-one_cleanrl-ppo-rnd-with-intrinsic-discount-0-point-999_cells-17-to-32-of-32_seeds-0-to-15`
+100. `development-second-pass_pointmaze-large_reward-arrival-plus-one_cleanrl-ppo-rnd_cells-01-to-16-of-32_seeds-0-to-15`
+101. `development-second-pass_pointmaze-large_reward-arrival-plus-one_cleanrl-ppo-rnd_cells-17-to-32-of-32_seeds-0-to-15`
+102. `development-second-pass_pointmaze-large_reward-step-cost_cleanrl-ppo-rnd-with-intrinsic-discount-0-point-999_cells-01-to-16-of-24_seeds-0-to-15`
+103. `development-second-pass_pointmaze-large_reward-step-cost_cleanrl-ppo-rnd-with-intrinsic-discount-0-point-999_cells-17-to-24-of-24_seeds-0-to-15`
+104. `development-second-pass_pointmaze-large_reward-step-cost_cleanrl-ppo-rnd_cells-01-to-16-of-24_seeds-0-to-15`
+105. `development-second-pass_pointmaze-large_reward-step-cost_cleanrl-ppo-rnd_cells-17-to-24-of-24_seeds-0-to-15`
+106. `development-second-pass_pointmaze-medium_reward-arrival-plus-one_cleanrl-ppo-rnd-with-intrinsic-discount-0-point-999_cells-01-to-16-of-32_seeds-0-to-15`
+107. `development-second-pass_pointmaze-medium_reward-arrival-plus-one_cleanrl-ppo-rnd-with-intrinsic-discount-0-point-999_cells-17-to-32-of-32_seeds-0-to-15`
+108. `development-second-pass_pointmaze-medium_reward-arrival-plus-one_cleanrl-ppo-rnd_cells-01-to-16-of-32_seeds-0-to-15`
+109. `development-second-pass_pointmaze-medium_reward-arrival-plus-one_cleanrl-ppo-rnd_cells-17-to-32-of-32_seeds-0-to-15`
+110. `development-second-pass_pointmaze-medium_reward-step-cost_cleanrl-ppo-rnd-with-intrinsic-discount-0-point-999_cells-01-to-16-of-24_seeds-0-to-15`
+111. `development-second-pass_pointmaze-medium_reward-step-cost_cleanrl-ppo-rnd-with-intrinsic-discount-0-point-999_cells-17-to-24-of-24_seeds-0-to-15`
+112. `development-second-pass_pointmaze-medium_reward-step-cost_cleanrl-ppo-rnd_cells-01-to-16-of-24_seeds-0-to-15`
+113. `development-second-pass_pointmaze-medium_reward-step-cost_cleanrl-ppo-rnd_cells-17-to-24-of-24_seeds-0-to-15`
 
 ## Configurations trained more than once
 
@@ -272,10 +288,10 @@ Read at 1,048,576 environment steps per policy.
 
 | run | finished | used in the tables | whole-curve mean $W$ ± standard error | final level $L$ ± standard error | seeds |
 |---|---|---|---|---|---|
-| unit 66: development at the budget, pointmaze medium, reward arrival plus one, cleanrl ppo rnd, cells 01 to 12 of 12, seeds 0 to 15 | 2026-11-12 12:52 PT | yes | 0.944 ± 0.006 | 0.993 ± 0.004 | 16 |
-| unit 61: development at the budget higher learning rates, pointmaze medium, reward arrival plus one, cleanrl ppo rnd, cells 1 to 6 of 6, seeds 0 to 15 | 2026-11-12 13:45 PT | no | 0.917 ± 0.011 | 0.987 ± 0.005 | 16 |
+| unit 74: development at the budget, pointmaze medium, reward arrival plus one, cleanrl ppo rnd, cells 01 to 12 of 12, seeds 0 to 15 | 2026-11-12 12:52 PT | yes | 0.944 ± 0.006 | 0.993 ± 0.004 | 16 |
+| unit 69: development at the budget higher learning rates, pointmaze medium, reward arrival plus one, cleanrl ppo rnd, cells 1 to 6 of 6, seeds 0 to 15 | 2026-11-12 13:45 PT | no | 0.917 ± 0.011 | 0.987 ± 0.005 | 16 |
 
-Unit 61 minus unit 66, on the 16 seeds both have: in $W$ -0.027 [-0.050, -0.005] (the interval does not contain zero); in $L$ -0.006 [-0.018, +0.008] (the interval contains zero).
+Unit 69 minus unit 74, on the 16 seeds both have: in $W$ -0.027 [-0.050, -0.005] (the interval does not contain zero); in $L$ -0.006 [-0.018, +0.008] (the interval contains zero).
 
 ### PointMaze Medium, reward 1 on arrival, CleanRL PPO-RND, intrinsic weight 4, learning rate 0.01, entropy coefficient 0.01, trained for 1,048,576 steps
 
@@ -283,11 +299,11 @@ Read at 1,048,576 environment steps per policy.
 
 | run | finished | used in the tables | whole-curve mean $W$ ± standard error | final level $L$ ± standard error | seeds |
 |---|---|---|---|---|---|
-| unit 66: development at the budget, pointmaze medium, reward arrival plus one, cleanrl ppo rnd, cells 01 to 12 of 12, seeds 0 to 15 | 2026-11-12 12:52 PT | yes | 0.880 ± 0.009 | 0.949 ± 0.012 | 16 |
-| unit 61: development at the budget higher learning rates, pointmaze medium, reward arrival plus one, cleanrl ppo rnd, cells 1 to 6 of 6, seeds 0 to 15 | 2026-11-12 13:45 PT | no | 0.876 ± 0.014 | 0.965 ± 0.009 | 16 |
-| unit 82: development for discovery, pointmaze medium, reward arrival plus one, cleanrl ppo rnd, cells 33 to 48 of 72, seeds 0 to 15 | 2026-11-12 16:14 PT | no | 0.866 ± 0.018 | 0.967 ± 0.010 | 16 |
+| unit 74: development at the budget, pointmaze medium, reward arrival plus one, cleanrl ppo rnd, cells 01 to 12 of 12, seeds 0 to 15 | 2026-11-12 12:52 PT | yes | 0.880 ± 0.009 | 0.949 ± 0.012 | 16 |
+| unit 69: development at the budget higher learning rates, pointmaze medium, reward arrival plus one, cleanrl ppo rnd, cells 1 to 6 of 6, seeds 0 to 15 | 2026-11-12 13:45 PT | no | 0.876 ± 0.014 | 0.965 ± 0.009 | 16 |
+| unit 90: development for discovery, pointmaze medium, reward arrival plus one, cleanrl ppo rnd, cells 33 to 48 of 72, seeds 0 to 15 | 2026-11-12 16:14 PT | no | 0.866 ± 0.018 | 0.967 ± 0.010 | 16 |
 
-Unit 61 minus unit 66, on the 16 seeds both have: in $W$ -0.004 [-0.035, +0.021] (the interval contains zero); in $L$ +0.016 [-0.016, +0.048] (the interval contains zero). Unit 82 minus unit 66, on the 16 seeds both have: in $W$ -0.014 [-0.061, +0.024] (the interval contains zero); in $L$ +0.018 [-0.013, +0.049] (the interval contains zero).
+Unit 69 minus unit 74, on the 16 seeds both have: in $W$ -0.004 [-0.035, +0.021] (the interval contains zero); in $L$ +0.016 [-0.016, +0.048] (the interval contains zero). Unit 90 minus unit 74, on the 16 seeds both have: in $W$ -0.014 [-0.061, +0.024] (the interval contains zero); in $L$ +0.018 [-0.013, +0.049] (the interval contains zero).
 
 ### PointMaze Medium, reward 1 on arrival, CleanRL PPO-RND, intrinsic weight 4, learning rate 0.02, entropy coefficient 0.01, trained for 1,048,576 steps
 
@@ -295,10 +311,10 @@ Read at 1,048,576 environment steps per policy.
 
 | run | finished | used in the tables | whole-curve mean $W$ ± standard error | final level $L$ ± standard error | seeds |
 |---|---|---|---|---|---|
-| unit 61: development at the budget higher learning rates, pointmaze medium, reward arrival plus one, cleanrl ppo rnd, cells 1 to 6 of 6, seeds 0 to 15 | 2026-11-12 13:45 PT | yes | 0.655 ± 0.026 | 0.812 ± 0.021 | 16 |
-| unit 83: development for discovery, pointmaze medium, reward arrival plus one, cleanrl ppo rnd, cells 49 to 64 of 72, seeds 0 to 15 | 2026-11-12 15:57 PT | no | 0.645 ± 0.029 | 0.788 ± 0.025 | 16 |
+| unit 69: development at the budget higher learning rates, pointmaze medium, reward arrival plus one, cleanrl ppo rnd, cells 1 to 6 of 6, seeds 0 to 15 | 2026-11-12 13:45 PT | yes | 0.655 ± 0.026 | 0.812 ± 0.021 | 16 |
+| unit 91: development for discovery, pointmaze medium, reward arrival plus one, cleanrl ppo rnd, cells 49 to 64 of 72, seeds 0 to 15 | 2026-11-12 15:57 PT | no | 0.645 ± 0.029 | 0.788 ± 0.025 | 16 |
 
-Unit 83 minus unit 61, on the 16 seeds both have: in $W$ -0.010 [-0.070, +0.049] (the interval contains zero); in $L$ -0.024 [-0.068, +0.016] (the interval contains zero).
+Unit 91 minus unit 69, on the 16 seeds both have: in $W$ -0.010 [-0.070, +0.049] (the interval contains zero); in $L$ -0.024 [-0.068, +0.016] (the interval contains zero).
 
 ### PointMaze Large, reward 1 on arrival, CleanRL PPO-RND, intrinsic weight 1, learning rate 0.001, entropy coefficient 0.01, trained for 8,388,608 steps
 
@@ -306,10 +322,10 @@ Read at 8,388,608 environment steps per policy.
 
 | run | finished | used in the tables | whole-curve mean $W$ ± standard error | final level $L$ ± standard error | seeds |
 |---|---|---|---|---|---|
-| unit 63: development at the budget, pointmaze large, reward arrival plus one, cleanrl ppo rnd, cells 1 to 9 of 9, seeds 0 to 15 | 2026-11-12 12:46 PT | yes | 0.835 ± 0.018 | 0.996 ± 0.002 | 16 |
-| unit 75: development for discovery, pointmaze large, reward arrival plus one, cleanrl ppo rnd, cells 01 to 16 of 72, seeds 0 to 15 | 2026-11-12 16:20 PT | no | 0.854 ± 0.017 | 0.994 ± 0.002 | 16 |
+| unit 71: development at the budget, pointmaze large, reward arrival plus one, cleanrl ppo rnd, cells 1 to 9 of 9, seeds 0 to 15 | 2026-11-12 12:46 PT | yes | 0.835 ± 0.018 | 0.996 ± 0.002 | 16 |
+| unit 83: development for discovery, pointmaze large, reward arrival plus one, cleanrl ppo rnd, cells 01 to 16 of 72, seeds 0 to 15 | 2026-11-12 16:20 PT | no | 0.854 ± 0.017 | 0.994 ± 0.002 | 16 |
 
-Unit 75 minus unit 63, on the 16 seeds both have: in $W$ +0.019 [-0.017, +0.056] (the interval contains zero); in $L$ -0.002 [-0.006, +0.002] (the interval contains zero).
+Unit 83 minus unit 71, on the 16 seeds both have: in $W$ +0.019 [-0.017, +0.056] (the interval contains zero); in $L$ -0.002 [-0.006, +0.002] (the interval contains zero).
 
 ### PointMaze Large, reward 1 on arrival, CleanRL PPO-RND, intrinsic weight 4, learning rate 0.001, entropy coefficient 0.01, trained for 8,388,608 steps
 
@@ -317,10 +333,10 @@ Read at 8,388,608 environment steps per policy.
 
 | run | finished | used in the tables | whole-curve mean $W$ ± standard error | final level $L$ ± standard error | seeds |
 |---|---|---|---|---|---|
-| unit 63: development at the budget, pointmaze large, reward arrival plus one, cleanrl ppo rnd, cells 1 to 9 of 9, seeds 0 to 15 | 2026-11-12 12:46 PT | yes | 0.850 ± 0.013 | 0.986 ± 0.002 | 16 |
-| unit 75: development for discovery, pointmaze large, reward arrival plus one, cleanrl ppo rnd, cells 01 to 16 of 72, seeds 0 to 15 | 2026-11-12 16:20 PT | no | 0.844 ± 0.012 | 0.966 ± 0.009 | 16 |
+| unit 71: development at the budget, pointmaze large, reward arrival plus one, cleanrl ppo rnd, cells 1 to 9 of 9, seeds 0 to 15 | 2026-11-12 12:46 PT | yes | 0.850 ± 0.013 | 0.986 ± 0.002 | 16 |
+| unit 83: development for discovery, pointmaze large, reward arrival plus one, cleanrl ppo rnd, cells 01 to 16 of 72, seeds 0 to 15 | 2026-11-12 16:20 PT | no | 0.844 ± 0.012 | 0.966 ± 0.009 | 16 |
 
-Unit 75 minus unit 63, on the 16 seeds both have: in $W$ -0.006 [-0.036, +0.026] (the interval contains zero); in $L$ -0.020 [-0.040, -0.007] (the interval does not contain zero).
+Unit 83 minus unit 71, on the 16 seeds both have: in $W$ -0.006 [-0.036, +0.026] (the interval contains zero); in $L$ -0.020 [-0.040, -0.007] (the interval does not contain zero).
 
 ### PointMaze Large, reward 1 on arrival, CleanRL PPO-RND, intrinsic weight 1, learning rate 0.002, entropy coefficient 0.01, trained for 8,388,608 steps
 
@@ -328,10 +344,10 @@ Read at 8,388,608 environment steps per policy.
 
 | run | finished | used in the tables | whole-curve mean $W$ ± standard error | final level $L$ ± standard error | seeds |
 |---|---|---|---|---|---|
-| unit 63: development at the budget, pointmaze large, reward arrival plus one, cleanrl ppo rnd, cells 1 to 9 of 9, seeds 0 to 15 | 2026-11-12 12:46 PT | yes | 0.870 ± 0.007 | 0.996 ± 0.001 | 16 |
-| unit 76: development for discovery, pointmaze large, reward arrival plus one, cleanrl ppo rnd, cells 17 to 32 of 72, seeds 0 to 15 | 2026-11-12 16:19 PT | no | 0.866 ± 0.010 | 0.996 ± 0.001 | 16 |
+| unit 71: development at the budget, pointmaze large, reward arrival plus one, cleanrl ppo rnd, cells 1 to 9 of 9, seeds 0 to 15 | 2026-11-12 12:46 PT | yes | 0.870 ± 0.007 | 0.996 ± 0.001 | 16 |
+| unit 84: development for discovery, pointmaze large, reward arrival plus one, cleanrl ppo rnd, cells 17 to 32 of 72, seeds 0 to 15 | 2026-11-12 16:19 PT | no | 0.866 ± 0.010 | 0.996 ± 0.001 | 16 |
 
-Unit 76 minus unit 63, on the 16 seeds both have: in $W$ -0.004 [-0.030, +0.021] (the interval contains zero); in $L$ +0.000 [-0.002, +0.002] (the interval contains zero).
+Unit 84 minus unit 71, on the 16 seeds both have: in $W$ -0.004 [-0.030, +0.021] (the interval contains zero); in $L$ +0.000 [-0.002, +0.002] (the interval contains zero).
 
 ### PointMaze Large, reward 1 on arrival, CleanRL PPO-RND, intrinsic weight 4, learning rate 0.002, entropy coefficient 0.01, trained for 8,388,608 steps
 
@@ -339,10 +355,10 @@ Read at 8,388,608 environment steps per policy.
 
 | run | finished | used in the tables | whole-curve mean $W$ ± standard error | final level $L$ ± standard error | seeds |
 |---|---|---|---|---|---|
-| unit 63: development at the budget, pointmaze large, reward arrival plus one, cleanrl ppo rnd, cells 1 to 9 of 9, seeds 0 to 15 | 2026-11-12 12:46 PT | yes | 0.858 ± 0.009 | 0.981 ± 0.007 | 16 |
-| unit 76: development for discovery, pointmaze large, reward arrival plus one, cleanrl ppo rnd, cells 17 to 32 of 72, seeds 0 to 15 | 2026-11-12 16:19 PT | no | 0.880 ± 0.008 | 0.988 ± 0.003 | 16 |
+| unit 71: development at the budget, pointmaze large, reward arrival plus one, cleanrl ppo rnd, cells 1 to 9 of 9, seeds 0 to 15 | 2026-11-12 12:46 PT | yes | 0.858 ± 0.009 | 0.981 ± 0.007 | 16 |
+| unit 84: development for discovery, pointmaze large, reward arrival plus one, cleanrl ppo rnd, cells 17 to 32 of 72, seeds 0 to 15 | 2026-11-12 16:19 PT | no | 0.880 ± 0.008 | 0.988 ± 0.003 | 16 |
 
-Unit 76 minus unit 63, on the 16 seeds both have: in $W$ +0.022 [+0.005, +0.040] (the interval does not contain zero); in $L$ +0.006 [-0.005, +0.022] (the interval contains zero).
+Unit 84 minus unit 71, on the 16 seeds both have: in $W$ +0.022 [+0.005, +0.040] (the interval does not contain zero); in $L$ +0.006 [-0.005, +0.022] (the interval contains zero).
 
 ### PointMaze Large, reward 1 on arrival, CleanRL PPO-RND, intrinsic weight 1, learning rate 0.003, entropy coefficient 0.01, trained for 8,388,608 steps
 
@@ -350,10 +366,10 @@ Read at 8,388,608 environment steps per policy.
 
 | run | finished | used in the tables | whole-curve mean $W$ ± standard error | final level $L$ ± standard error | seeds |
 |---|---|---|---|---|---|
-| unit 63: development at the budget, pointmaze large, reward arrival plus one, cleanrl ppo rnd, cells 1 to 9 of 9, seeds 0 to 15 | 2026-11-12 12:46 PT | yes | 0.865 ± 0.015 | 0.995 ± 0.002 | 16 |
-| unit 77: development for discovery, pointmaze large, reward arrival plus one, cleanrl ppo rnd, cells 33 to 48 of 72, seeds 0 to 15 | 2026-11-12 16:19 PT | no | 0.891 ± 0.006 | 0.994 ± 0.002 | 16 |
+| unit 71: development at the budget, pointmaze large, reward arrival plus one, cleanrl ppo rnd, cells 1 to 9 of 9, seeds 0 to 15 | 2026-11-12 12:46 PT | yes | 0.865 ± 0.015 | 0.995 ± 0.002 | 16 |
+| unit 85: development for discovery, pointmaze large, reward arrival plus one, cleanrl ppo rnd, cells 33 to 48 of 72, seeds 0 to 15 | 2026-11-12 16:19 PT | no | 0.891 ± 0.006 | 0.994 ± 0.002 | 16 |
 
-Unit 77 minus unit 63, on the 16 seeds both have: in $W$ +0.026 [-0.005, +0.060] (the interval contains zero); in $L$ -0.001 [-0.006, +0.005] (the interval contains zero).
+Unit 85 minus unit 71, on the 16 seeds both have: in $W$ +0.026 [-0.005, +0.060] (the interval contains zero); in $L$ -0.001 [-0.006, +0.005] (the interval contains zero).
 
 ### PointMaze Large, reward 1 on arrival, CleanRL PPO-RND, intrinsic weight 4, learning rate 0.003, entropy coefficient 0.01, trained for 8,388,608 steps
 
@@ -361,10 +377,10 @@ Read at 8,388,608 environment steps per policy.
 
 | run | finished | used in the tables | whole-curve mean $W$ ± standard error | final level $L$ ± standard error | seeds |
 |---|---|---|---|---|---|
-| unit 63: development at the budget, pointmaze large, reward arrival plus one, cleanrl ppo rnd, cells 1 to 9 of 9, seeds 0 to 15 | 2026-11-12 12:46 PT | yes | 0.848 ± 0.011 | 0.961 ± 0.008 | 16 |
-| unit 77: development for discovery, pointmaze large, reward arrival plus one, cleanrl ppo rnd, cells 33 to 48 of 72, seeds 0 to 15 | 2026-11-12 16:19 PT | no | 0.834 ± 0.012 | 0.952 ± 0.013 | 16 |
+| unit 71: development at the budget, pointmaze large, reward arrival plus one, cleanrl ppo rnd, cells 1 to 9 of 9, seeds 0 to 15 | 2026-11-12 12:46 PT | yes | 0.848 ± 0.011 | 0.961 ± 0.008 | 16 |
+| unit 85: development for discovery, pointmaze large, reward arrival plus one, cleanrl ppo rnd, cells 33 to 48 of 72, seeds 0 to 15 | 2026-11-12 16:19 PT | no | 0.834 ± 0.012 | 0.952 ± 0.013 | 16 |
 
-Unit 77 minus unit 63, on the 16 seeds both have: in $W$ -0.014 [-0.038, +0.010] (the interval contains zero); in $L$ -0.009 [-0.043, +0.021] (the interval contains zero).
+Unit 85 minus unit 71, on the 16 seeds both have: in $W$ -0.014 [-0.038, +0.010] (the interval contains zero); in $L$ -0.009 [-0.043, +0.021] (the interval contains zero).
 
 ### PointMaze Large, step cost, cleanrl ppo rnd with intrinsic discount 0 point 999, intrinsic weight 2, learning rate 0.003, entropy coefficient 0.01, trained for 33,554,432 steps
 
@@ -372,10 +388,10 @@ Read at 33,554,432 environment steps per policy.
 
 | run | finished | used in the tables | whole-curve mean $W$ ± standard error | final level $L$ ± standard error | seeds |
 |---|---|---|---|---|---|
-| unit 94: development second pass, pointmaze large, reward step cost, cleanrl ppo rnd with intrinsic discount 0 point 999, cells 01 to 16 of 24, seeds 0 to 15 | 2026-11-12 13:00 PT | yes | -0.730 ± 0.012 | -0.715 ± 0.012 | 16 |
-| unit 64: development at the budget, pointmaze large, reward step cost, cleanrl ppo rnd with intrinsic discount 0 point 999, cells 01 to 12 of 12, seeds 0 to 15 | 2026-11-12 14:25 PT | no | -0.741 ± 0.016 | -0.726 ± 0.016 | 16 |
+| unit 102: development second pass, pointmaze large, reward step cost, cleanrl ppo rnd with intrinsic discount 0 point 999, cells 01 to 16 of 24, seeds 0 to 15 | 2026-11-12 13:00 PT | yes | -0.730 ± 0.012 | -0.715 ± 0.012 | 16 |
+| unit 72: development at the budget, pointmaze large, reward step cost, cleanrl ppo rnd with intrinsic discount 0 point 999, cells 01 to 12 of 12, seeds 0 to 15 | 2026-11-12 14:25 PT | no | -0.741 ± 0.016 | -0.726 ± 0.016 | 16 |
 
-Unit 64 minus unit 94, on the 16 seeds both have: in $W$ -0.012 [-0.048, +0.025] (the interval contains zero); in $L$ -0.011 [-0.050, +0.026] (the interval contains zero).
+Unit 72 minus unit 102, on the 16 seeds both have: in $W$ -0.012 [-0.048, +0.025] (the interval contains zero); in $L$ -0.011 [-0.050, +0.026] (the interval contains zero).
 
 ### PointMaze Large, step cost, cleanrl ppo rnd with intrinsic discount 0 point 999, intrinsic weight 4, learning rate 0.003, entropy coefficient 0.01, trained for 33,554,432 steps
 
@@ -383,10 +399,10 @@ Read at 33,554,432 environment steps per policy.
 
 | run | finished | used in the tables | whole-curve mean $W$ ± standard error | final level $L$ ± standard error | seeds |
 |---|---|---|---|---|---|
-| unit 94: development second pass, pointmaze large, reward step cost, cleanrl ppo rnd with intrinsic discount 0 point 999, cells 01 to 16 of 24, seeds 0 to 15 | 2026-11-12 13:00 PT | yes | -0.718 ± 0.001 | -0.704 ± 0.000 | 16 |
-| unit 64: development at the budget, pointmaze large, reward step cost, cleanrl ppo rnd with intrinsic discount 0 point 999, cells 01 to 12 of 12, seeds 0 to 15 | 2026-11-12 14:25 PT | no | -0.766 ± 0.021 | -0.748 ± 0.020 | 16 |
+| unit 102: development second pass, pointmaze large, reward step cost, cleanrl ppo rnd with intrinsic discount 0 point 999, cells 01 to 16 of 24, seeds 0 to 15 | 2026-11-12 13:00 PT | yes | -0.718 ± 0.001 | -0.704 ± 0.000 | 16 |
+| unit 72: development at the budget, pointmaze large, reward step cost, cleanrl ppo rnd with intrinsic discount 0 point 999, cells 01 to 12 of 12, seeds 0 to 15 | 2026-11-12 14:25 PT | no | -0.766 ± 0.021 | -0.748 ± 0.020 | 16 |
 
-Unit 64 minus unit 94, on the 16 seeds both have: in $W$ -0.048 [-0.092, -0.013] (the interval does not contain zero); in $L$ -0.044 [-0.089, -0.010] (the interval does not contain zero).
+Unit 72 minus unit 102, on the 16 seeds both have: in $W$ -0.048 [-0.092, -0.013] (the interval does not contain zero); in $L$ -0.044 [-0.089, -0.010] (the interval does not contain zero).
 
 ### PointMaze Large, step cost, cleanrl ppo rnd with intrinsic discount 0 point 999, intrinsic weight 8, learning rate 0.003, entropy coefficient 0.01, trained for 33,554,432 steps
 
@@ -394,10 +410,10 @@ Read at 33,554,432 environment steps per policy.
 
 | run | finished | used in the tables | whole-curve mean $W$ ± standard error | final level $L$ ± standard error | seeds |
 |---|---|---|---|---|---|
-| unit 95: development second pass, pointmaze large, reward step cost, cleanrl ppo rnd with intrinsic discount 0 point 999, cells 17 to 24 of 24, seeds 0 to 15 | 2026-11-12 11:20 PT | yes | -0.722 ± 0.001 | -0.708 ± 0.001 | 16 |
-| unit 64: development at the budget, pointmaze large, reward step cost, cleanrl ppo rnd with intrinsic discount 0 point 999, cells 01 to 12 of 12, seeds 0 to 15 | 2026-11-12 14:25 PT | no | -0.731 ± 0.010 | -0.716 ± 0.010 | 16 |
+| unit 103: development second pass, pointmaze large, reward step cost, cleanrl ppo rnd with intrinsic discount 0 point 999, cells 17 to 24 of 24, seeds 0 to 15 | 2026-11-12 11:20 PT | yes | -0.722 ± 0.001 | -0.708 ± 0.001 | 16 |
+| unit 72: development at the budget, pointmaze large, reward step cost, cleanrl ppo rnd with intrinsic discount 0 point 999, cells 01 to 12 of 12, seeds 0 to 15 | 2026-11-12 14:25 PT | no | -0.731 ± 0.010 | -0.716 ± 0.010 | 16 |
 
-Unit 64 minus unit 95, on the 16 seeds both have: in $W$ -0.009 [-0.031, +0.002] (the interval contains zero); in $L$ -0.008 [-0.029, +0.003] (the interval contains zero).
+Unit 72 minus unit 103, on the 16 seeds both have: in $W$ -0.009 [-0.031, +0.002] (the interval contains zero); in $L$ -0.008 [-0.029, +0.003] (the interval contains zero).
 
 ### PointMaze Large, step cost, CleanRL PPO-RND, intrinsic weight 4, learning rate 0.002, entropy coefficient 0.01, trained for 33,554,432 steps
 
@@ -405,10 +421,10 @@ Read at 33,554,432 environment steps per policy.
 
 | run | finished | used in the tables | whole-curve mean $W$ ± standard error | final level $L$ ± standard error | seeds |
 |---|---|---|---|---|---|
-| unit 65: development at the budget, pointmaze large, reward step cost, cleanrl ppo rnd, cells 01 to 12 of 12, seeds 0 to 15 | 2026-11-12 14:25 PT | yes | -0.725 ± 0.001 | -0.712 ± 0.002 | 16 |
-| unit 69: development for discovery extension, pointmaze large, reward step cost, cleanrl ppo rnd, cells 01 to 16 of 18, seeds 0 to 15 | 2026-11-12 17:25 PT | no | -0.725 ± 0.001 | -0.711 ± 0.002 | 16 |
+| unit 73: development at the budget, pointmaze large, reward step cost, cleanrl ppo rnd, cells 01 to 12 of 12, seeds 0 to 15 | 2026-11-12 14:25 PT | yes | -0.725 ± 0.001 | -0.712 ± 0.002 | 16 |
+| unit 77: development for discovery extension, pointmaze large, reward step cost, cleanrl ppo rnd, cells 01 to 16 of 18, seeds 0 to 15 | 2026-11-12 17:25 PT | no | -0.725 ± 0.001 | -0.711 ± 0.002 | 16 |
 
-Unit 69 minus unit 65, on the 16 seeds both have: in $W$ -0.000 [-0.004, +0.003] (the interval contains zero); in $L$ +0.001 [-0.004, +0.005] (the interval contains zero).
+Unit 77 minus unit 73, on the 16 seeds both have: in $W$ -0.000 [-0.004, +0.003] (the interval contains zero); in $L$ +0.001 [-0.004, +0.005] (the interval contains zero).
 
 ### PointMaze Large, step cost, CleanRL PPO-RND, intrinsic weight 2, learning rate 0.003, entropy coefficient 0.01, trained for 33,554,432 steps
 
@@ -416,10 +432,10 @@ Read at 33,554,432 environment steps per policy.
 
 | run | finished | used in the tables | whole-curve mean $W$ ± standard error | final level $L$ ± standard error | seeds |
 |---|---|---|---|---|---|
-| unit 96: development second pass, pointmaze large, reward step cost, cleanrl ppo rnd, cells 01 to 16 of 24, seeds 0 to 15 | 2026-11-12 13:01 PT | yes | -0.725 ± 0.001 | -0.711 ± 0.003 | 16 |
-| unit 65: development at the budget, pointmaze large, reward step cost, cleanrl ppo rnd, cells 01 to 12 of 12, seeds 0 to 15 | 2026-11-12 14:25 PT | no | -0.736 ± 0.009 | -0.708 ± 0.001 | 16 |
+| unit 104: development second pass, pointmaze large, reward step cost, cleanrl ppo rnd, cells 01 to 16 of 24, seeds 0 to 15 | 2026-11-12 13:01 PT | yes | -0.725 ± 0.001 | -0.711 ± 0.003 | 16 |
+| unit 73: development at the budget, pointmaze large, reward step cost, cleanrl ppo rnd, cells 01 to 12 of 12, seeds 0 to 15 | 2026-11-12 14:25 PT | no | -0.736 ± 0.009 | -0.708 ± 0.001 | 16 |
 
-Unit 65 minus unit 96, on the 16 seeds both have: in $W$ -0.011 [-0.033, +0.003] (the interval contains zero); in $L$ +0.003 [-0.001, +0.008] (the interval contains zero).
+Unit 73 minus unit 104, on the 16 seeds both have: in $W$ -0.011 [-0.033, +0.003] (the interval contains zero); in $L$ +0.003 [-0.001, +0.008] (the interval contains zero).
 
 ### PointMaze Large, step cost, CleanRL PPO-RND, intrinsic weight 4, learning rate 0.003, entropy coefficient 0.01, trained for 33,554,432 steps
 
@@ -427,10 +443,10 @@ Read at 33,554,432 environment steps per policy.
 
 | run | finished | used in the tables | whole-curve mean $W$ ± standard error | final level $L$ ± standard error | seeds |
 |---|---|---|---|---|---|
-| unit 96: development second pass, pointmaze large, reward step cost, cleanrl ppo rnd, cells 01 to 16 of 24, seeds 0 to 15 | 2026-11-12 13:01 PT | yes | -0.743 ± 0.004 | -0.733 ± 0.005 | 16 |
-| unit 65: development at the budget, pointmaze large, reward step cost, cleanrl ppo rnd, cells 01 to 12 of 12, seeds 0 to 15 | 2026-11-12 14:25 PT | no | -0.738 ± 0.003 | -0.724 ± 0.005 | 16 |
+| unit 104: development second pass, pointmaze large, reward step cost, cleanrl ppo rnd, cells 01 to 16 of 24, seeds 0 to 15 | 2026-11-12 13:01 PT | yes | -0.743 ± 0.004 | -0.733 ± 0.005 | 16 |
+| unit 73: development at the budget, pointmaze large, reward step cost, cleanrl ppo rnd, cells 01 to 12 of 12, seeds 0 to 15 | 2026-11-12 14:25 PT | no | -0.738 ± 0.003 | -0.724 ± 0.005 | 16 |
 
-Unit 65 minus unit 96, on the 16 seeds both have: in $W$ +0.005 [-0.003, +0.014] (the interval contains zero); in $L$ +0.009 [-0.004, +0.021] (the interval contains zero).
+Unit 73 minus unit 104, on the 16 seeds both have: in $W$ +0.005 [-0.003, +0.014] (the interval contains zero); in $L$ +0.009 [-0.004, +0.021] (the interval contains zero).
 
 ### PointMaze Large, step cost, CleanRL PPO-RND, intrinsic weight 8, learning rate 0.003, entropy coefficient 0.01, trained for 33,554,432 steps
 
@@ -438,10 +454,10 @@ Read at 33,554,432 environment steps per policy.
 
 | run | finished | used in the tables | whole-curve mean $W$ ± standard error | final level $L$ ± standard error | seeds |
 |---|---|---|---|---|---|
-| unit 97: development second pass, pointmaze large, reward step cost, cleanrl ppo rnd, cells 17 to 24 of 24, seeds 0 to 15 | 2026-11-12 12:05 PT | yes | -0.780 ± 0.007 | -0.788 ± 0.011 | 16 |
-| unit 65: development at the budget, pointmaze large, reward step cost, cleanrl ppo rnd, cells 01 to 12 of 12, seeds 0 to 15 | 2026-11-12 14:25 PT | no | -0.770 ± 0.007 | -0.778 ± 0.008 | 16 |
+| unit 105: development second pass, pointmaze large, reward step cost, cleanrl ppo rnd, cells 17 to 24 of 24, seeds 0 to 15 | 2026-11-12 12:05 PT | yes | -0.780 ± 0.007 | -0.788 ± 0.011 | 16 |
+| unit 73: development at the budget, pointmaze large, reward step cost, cleanrl ppo rnd, cells 01 to 12 of 12, seeds 0 to 15 | 2026-11-12 14:25 PT | no | -0.770 ± 0.007 | -0.778 ± 0.008 | 16 |
 
-Unit 65 minus unit 97, on the 16 seeds both have: in $W$ +0.010 [-0.006, +0.028] (the interval contains zero); in $L$ +0.010 [-0.011, +0.031] (the interval contains zero).
+Unit 73 minus unit 105, on the 16 seeds both have: in $W$ +0.010 [-0.006, +0.028] (the interval contains zero); in $L$ +0.010 [-0.011, +0.031] (the interval contains zero).
 
 ### PointMaze Large, step cost, CleanRL PPO-RND, intrinsic weight 4, learning rate 0.006, entropy coefficient 0.01, trained for 33,554,432 steps
 
@@ -449,10 +465,10 @@ Read at 33,554,432 environment steps per policy.
 
 | run | finished | used in the tables | whole-curve mean $W$ ± standard error | final level $L$ ± standard error | seeds |
 |---|---|---|---|---|---|
-| unit 65: development at the budget, pointmaze large, reward step cost, cleanrl ppo rnd, cells 01 to 12 of 12, seeds 0 to 15 | 2026-11-12 14:25 PT | yes | -0.853 ± 0.010 | -0.841 ± 0.010 | 16 |
-| unit 69: development for discovery extension, pointmaze large, reward step cost, cleanrl ppo rnd, cells 01 to 16 of 18, seeds 0 to 15 | 2026-11-12 17:25 PT | no | -0.840 ± 0.011 | -0.826 ± 0.011 | 16 |
+| unit 73: development at the budget, pointmaze large, reward step cost, cleanrl ppo rnd, cells 01 to 12 of 12, seeds 0 to 15 | 2026-11-12 14:25 PT | yes | -0.853 ± 0.010 | -0.841 ± 0.010 | 16 |
+| unit 77: development for discovery extension, pointmaze large, reward step cost, cleanrl ppo rnd, cells 01 to 16 of 18, seeds 0 to 15 | 2026-11-12 17:25 PT | no | -0.840 ± 0.011 | -0.826 ± 0.011 | 16 |
 
-Unit 69 minus unit 65, on the 16 seeds both have: in $W$ +0.013 [-0.006, +0.031] (the interval contains zero); in $L$ +0.016 [-0.004, +0.036] (the interval contains zero).
+Unit 77 minus unit 73, on the 16 seeds both have: in $W$ +0.013 [-0.006, +0.031] (the interval contains zero); in $L$ +0.016 [-0.004, +0.036] (the interval contains zero).
 
 ### PointMaze Medium, reward 1 on arrival, CleanRL PPO-RND, intrinsic weight 1, learning rate 0.003, entropy coefficient 0.01, trained for 1,048,576 steps
 
@@ -460,10 +476,10 @@ Read at 1,048,576 environment steps per policy.
 
 | run | finished | used in the tables | whole-curve mean $W$ ± standard error | final level $L$ ± standard error | seeds |
 |---|---|---|---|---|---|
-| unit 66: development at the budget, pointmaze medium, reward arrival plus one, cleanrl ppo rnd, cells 01 to 12 of 12, seeds 0 to 15 | 2026-11-12 12:52 PT | yes | 0.913 ± 0.016 | 1.000 ± 0.000 | 16 |
-| unit 80: development for discovery, pointmaze medium, reward arrival plus one, cleanrl ppo rnd, cells 01 to 16 of 72, seeds 0 to 15 | 2026-11-12 16:05 PT | no | 0.927 ± 0.015 | 1.000 ± 0.000 | 16 |
+| unit 74: development at the budget, pointmaze medium, reward arrival plus one, cleanrl ppo rnd, cells 01 to 12 of 12, seeds 0 to 15 | 2026-11-12 12:52 PT | yes | 0.913 ± 0.016 | 1.000 ± 0.000 | 16 |
+| unit 88: development for discovery, pointmaze medium, reward arrival plus one, cleanrl ppo rnd, cells 01 to 16 of 72, seeds 0 to 15 | 2026-11-12 16:05 PT | no | 0.927 ± 0.015 | 1.000 ± 0.000 | 16 |
 
-Unit 80 minus unit 66, on the 16 seeds both have: in $W$ +0.014 [-0.029, +0.055] (the interval contains zero); in $L$ +0.000 [+0.000, +0.000] (the interval contains zero).
+Unit 88 minus unit 74, on the 16 seeds both have: in $W$ +0.014 [-0.029, +0.055] (the interval contains zero); in $L$ +0.000 [+0.000, +0.000] (the interval contains zero).
 
 ### PointMaze Medium, reward 1 on arrival, CleanRL PPO-RND, intrinsic weight 4, learning rate 0.003, entropy coefficient 0.01, trained for 1,048,576 steps
 
@@ -471,10 +487,10 @@ Read at 1,048,576 environment steps per policy.
 
 | run | finished | used in the tables | whole-curve mean $W$ ± standard error | final level $L$ ± standard error | seeds |
 |---|---|---|---|---|---|
-| unit 66: development at the budget, pointmaze medium, reward arrival plus one, cleanrl ppo rnd, cells 01 to 12 of 12, seeds 0 to 15 | 2026-11-12 12:52 PT | yes | 0.931 ± 0.012 | 0.973 ± 0.009 | 16 |
-| unit 80: development for discovery, pointmaze medium, reward arrival plus one, cleanrl ppo rnd, cells 01 to 16 of 72, seeds 0 to 15 | 2026-11-12 16:05 PT | no | 0.937 ± 0.007 | 0.983 ± 0.006 | 16 |
+| unit 74: development at the budget, pointmaze medium, reward arrival plus one, cleanrl ppo rnd, cells 01 to 12 of 12, seeds 0 to 15 | 2026-11-12 12:52 PT | yes | 0.931 ± 0.012 | 0.973 ± 0.009 | 16 |
+| unit 88: development for discovery, pointmaze medium, reward arrival plus one, cleanrl ppo rnd, cells 01 to 16 of 72, seeds 0 to 15 | 2026-11-12 16:05 PT | no | 0.937 ± 0.007 | 0.983 ± 0.006 | 16 |
 
-Unit 80 minus unit 66, on the 16 seeds both have: in $W$ +0.006 [-0.019, +0.036] (the interval contains zero); in $L$ +0.011 [-0.007, +0.033] (the interval contains zero).
+Unit 88 minus unit 74, on the 16 seeds both have: in $W$ +0.006 [-0.019, +0.036] (the interval contains zero); in $L$ +0.011 [-0.007, +0.033] (the interval contains zero).
 
 ### PointMaze Medium, reward 1 on arrival, CleanRL PPO-RND, intrinsic weight 1, learning rate 0.006, entropy coefficient 0.01, trained for 1,048,576 steps
 
@@ -482,10 +498,10 @@ Read at 1,048,576 environment steps per policy.
 
 | run | finished | used in the tables | whole-curve mean $W$ ± standard error | final level $L$ ± standard error | seeds |
 |---|---|---|---|---|---|
-| unit 66: development at the budget, pointmaze medium, reward arrival plus one, cleanrl ppo rnd, cells 01 to 12 of 12, seeds 0 to 15 | 2026-11-12 12:52 PT | yes | 0.937 ± 0.018 | 1.000 ± 0.000 | 16 |
-| unit 81: development for discovery, pointmaze medium, reward arrival plus one, cleanrl ppo rnd, cells 17 to 32 of 72, seeds 0 to 15 | 2026-11-12 16:10 PT | no | 0.945 ± 0.010 | 0.999 ± 0.001 | 16 |
+| unit 74: development at the budget, pointmaze medium, reward arrival plus one, cleanrl ppo rnd, cells 01 to 12 of 12, seeds 0 to 15 | 2026-11-12 12:52 PT | yes | 0.937 ± 0.018 | 1.000 ± 0.000 | 16 |
+| unit 89: development for discovery, pointmaze medium, reward arrival plus one, cleanrl ppo rnd, cells 17 to 32 of 72, seeds 0 to 15 | 2026-11-12 16:10 PT | no | 0.945 ± 0.010 | 0.999 ± 0.001 | 16 |
 
-Unit 81 minus unit 66, on the 16 seeds both have: in $W$ +0.008 [-0.017, +0.037] (the interval contains zero); in $L$ -0.001 [-0.002, +0.000] (the interval contains zero).
+Unit 89 minus unit 74, on the 16 seeds both have: in $W$ +0.008 [-0.017, +0.037] (the interval contains zero); in $L$ -0.001 [-0.002, +0.000] (the interval contains zero).
 
 ### PointMaze Medium, reward 1 on arrival, CleanRL PPO-RND, intrinsic weight 4, learning rate 0.006, entropy coefficient 0.01, trained for 1,048,576 steps
 
@@ -493,10 +509,10 @@ Read at 1,048,576 environment steps per policy.
 
 | run | finished | used in the tables | whole-curve mean $W$ ± standard error | final level $L$ ± standard error | seeds |
 |---|---|---|---|---|---|
-| unit 66: development at the budget, pointmaze medium, reward arrival plus one, cleanrl ppo rnd, cells 01 to 12 of 12, seeds 0 to 15 | 2026-11-12 12:52 PT | yes | 0.941 ± 0.007 | 0.983 ± 0.005 | 16 |
-| unit 81: development for discovery, pointmaze medium, reward arrival plus one, cleanrl ppo rnd, cells 17 to 32 of 72, seeds 0 to 15 | 2026-11-12 16:10 PT | no | 0.919 ± 0.008 | 0.978 ± 0.007 | 16 |
+| unit 74: development at the budget, pointmaze medium, reward arrival plus one, cleanrl ppo rnd, cells 01 to 12 of 12, seeds 0 to 15 | 2026-11-12 12:52 PT | yes | 0.941 ± 0.007 | 0.983 ± 0.005 | 16 |
+| unit 89: development for discovery, pointmaze medium, reward arrival plus one, cleanrl ppo rnd, cells 17 to 32 of 72, seeds 0 to 15 | 2026-11-12 16:10 PT | no | 0.919 ± 0.008 | 0.978 ± 0.007 | 16 |
 
-Unit 81 minus unit 66, on the 16 seeds both have: in $W$ -0.022 [-0.042, -0.004] (the interval does not contain zero); in $L$ -0.005 [-0.025, +0.014] (the interval contains zero).
+Unit 89 minus unit 74, on the 16 seeds both have: in $W$ -0.022 [-0.042, -0.004] (the interval does not contain zero); in $L$ -0.005 [-0.025, +0.014] (the interval contains zero).
 
 ### PointMaze Medium, reward 1 on arrival, CleanRL PPO-RND, intrinsic weight 1, learning rate 0.01, entropy coefficient 0.01, trained for 1,048,576 steps
 
@@ -504,10 +520,10 @@ Read at 1,048,576 environment steps per policy.
 
 | run | finished | used in the tables | whole-curve mean $W$ ± standard error | final level $L$ ± standard error | seeds |
 |---|---|---|---|---|---|
-| unit 66: development at the budget, pointmaze medium, reward arrival plus one, cleanrl ppo rnd, cells 01 to 12 of 12, seeds 0 to 15 | 2026-11-12 12:52 PT | yes | 0.932 ± 0.010 | 0.999 ± 0.001 | 16 |
-| unit 82: development for discovery, pointmaze medium, reward arrival plus one, cleanrl ppo rnd, cells 33 to 48 of 72, seeds 0 to 15 | 2026-11-12 16:14 PT | no | 0.948 ± 0.009 | 0.990 ± 0.008 | 16 |
+| unit 74: development at the budget, pointmaze medium, reward arrival plus one, cleanrl ppo rnd, cells 01 to 12 of 12, seeds 0 to 15 | 2026-11-12 12:52 PT | yes | 0.932 ± 0.010 | 0.999 ± 0.001 | 16 |
+| unit 90: development for discovery, pointmaze medium, reward arrival plus one, cleanrl ppo rnd, cells 33 to 48 of 72, seeds 0 to 15 | 2026-11-12 16:14 PT | no | 0.948 ± 0.009 | 0.990 ± 0.008 | 16 |
 
-Unit 82 minus unit 66, on the 16 seeds both have: in $W$ +0.016 [-0.007, +0.040] (the interval contains zero); in $L$ -0.008 [-0.026, +0.002] (the interval contains zero).
+Unit 90 minus unit 74, on the 16 seeds both have: in $W$ +0.016 [-0.007, +0.040] (the interval contains zero); in $L$ -0.008 [-0.026, +0.002] (the interval contains zero).
 
 ### PointMaze Medium, reward 1 on arrival, CleanRL PPO-RND, intrinsic weight 4, learning rate 0.01, entropy coefficient 0.1, trained for 1,048,576 steps
 
@@ -515,10 +531,10 @@ Read at 1,048,576 environment steps per policy.
 
 | run | finished | used in the tables | whole-curve mean $W$ ± standard error | final level $L$ ± standard error | seeds |
 |---|---|---|---|---|---|
-| unit 83: development for discovery, pointmaze medium, reward arrival plus one, cleanrl ppo rnd, cells 49 to 64 of 72, seeds 0 to 15 | 2026-11-12 15:57 PT | yes | 0.012 ± 0.003 | 0.005 ± 0.001 | 16 |
-| unit 71: development for discovery extension, pointmaze medium, reward arrival plus one, cleanrl ppo rnd, cells 01 to 16 of 18, seeds 0 to 15 | 2026-11-12 16:47 PT | no | 0.011 ± 0.002 | 0.003 ± 0.001 | 16 |
+| unit 91: development for discovery, pointmaze medium, reward arrival plus one, cleanrl ppo rnd, cells 49 to 64 of 72, seeds 0 to 15 | 2026-11-12 15:57 PT | yes | 0.012 ± 0.003 | 0.005 ± 0.001 | 16 |
+| unit 79: development for discovery extension, pointmaze medium, reward arrival plus one, cleanrl ppo rnd, cells 01 to 16 of 18, seeds 0 to 15 | 2026-11-12 16:47 PT | no | 0.011 ± 0.002 | 0.003 ± 0.001 | 16 |
 
-Unit 71 minus unit 83, on the 16 seeds both have: in $W$ -0.001 [-0.007, +0.005] (the interval contains zero); in $L$ -0.002 [-0.005, +0.001] (the interval contains zero).
+Unit 79 minus unit 91, on the 16 seeds both have: in $W$ -0.001 [-0.007, +0.005] (the interval contains zero); in $L$ -0.002 [-0.005, +0.001] (the interval contains zero).
 
 ### PointMaze Medium, reward 1 on arrival, CleanRL PPO-RND, intrinsic weight 1024, learning rate 0.01, entropy coefficient 0.1, trained for 1,048,576 steps
 
@@ -526,10 +542,10 @@ Read at 1,048,576 environment steps per policy.
 
 | run | finished | used in the tables | whole-curve mean $W$ ± standard error | final level $L$ ± standard error | seeds |
 |---|---|---|---|---|---|
-| unit 83: development for discovery, pointmaze medium, reward arrival plus one, cleanrl ppo rnd, cells 49 to 64 of 72, seeds 0 to 15 | 2026-11-12 15:57 PT | yes | 0.008 ± 0.000 | 0.005 ± 0.001 | 16 |
-| unit 71: development for discovery extension, pointmaze medium, reward arrival plus one, cleanrl ppo rnd, cells 01 to 16 of 18, seeds 0 to 15 | 2026-11-12 16:47 PT | no | 0.007 ± 0.000 | 0.003 ± 0.001 | 16 |
+| unit 91: development for discovery, pointmaze medium, reward arrival plus one, cleanrl ppo rnd, cells 49 to 64 of 72, seeds 0 to 15 | 2026-11-12 15:57 PT | yes | 0.008 ± 0.000 | 0.005 ± 0.001 | 16 |
+| unit 79: development for discovery extension, pointmaze medium, reward arrival plus one, cleanrl ppo rnd, cells 01 to 16 of 18, seeds 0 to 15 | 2026-11-12 16:47 PT | no | 0.007 ± 0.000 | 0.003 ± 0.001 | 16 |
 
-Unit 71 minus unit 83, on the 16 seeds both have: in $W$ -0.001 [-0.002, +0.000] (the interval contains zero); in $L$ -0.003 [-0.005, +0.000] (the interval contains zero).
+Unit 79 minus unit 91, on the 16 seeds both have: in $W$ -0.001 [-0.002, +0.000] (the interval contains zero); in $L$ -0.003 [-0.005, +0.000] (the interval contains zero).
 
 ### PointMaze Medium, reward 1 on arrival, CleanRL PPO-RND, intrinsic weight 4, learning rate 0.02, entropy coefficient 0.1, trained for 1,048,576 steps
 
@@ -537,10 +553,10 @@ Read at 1,048,576 environment steps per policy.
 
 | run | finished | used in the tables | whole-curve mean $W$ ± standard error | final level $L$ ± standard error | seeds |
 |---|---|---|---|---|---|
-| unit 84: development for discovery, pointmaze medium, reward arrival plus one, cleanrl ppo rnd, cells 65 to 72 of 72, seeds 0 to 15 | 2026-11-12 15:57 PT | yes | 0.010 ± 0.002 | 0.000 ± 0.000 | 16 |
-| unit 71: development for discovery extension, pointmaze medium, reward arrival plus one, cleanrl ppo rnd, cells 01 to 16 of 18, seeds 0 to 15 | 2026-11-12 16:47 PT | no | 0.009 ± 0.001 | 0.000 ± 0.000 | 16 |
+| unit 92: development for discovery, pointmaze medium, reward arrival plus one, cleanrl ppo rnd, cells 65 to 72 of 72, seeds 0 to 15 | 2026-11-12 15:57 PT | yes | 0.010 ± 0.002 | 0.000 ± 0.000 | 16 |
+| unit 79: development for discovery extension, pointmaze medium, reward arrival plus one, cleanrl ppo rnd, cells 01 to 16 of 18, seeds 0 to 15 | 2026-11-12 16:47 PT | no | 0.009 ± 0.001 | 0.000 ± 0.000 | 16 |
 
-Unit 71 minus unit 84, on the 16 seeds both have: in $W$ -0.002 [-0.008, +0.003] (the interval contains zero); in $L$ +0.000 [+0.000, +0.000] (the interval contains zero).
+Unit 79 minus unit 92, on the 16 seeds both have: in $W$ -0.002 [-0.008, +0.003] (the interval contains zero); in $L$ +0.000 [+0.000, +0.000] (the interval contains zero).
 
 ### PointMaze Medium, reward 1 on arrival, CleanRL PPO-RND, intrinsic weight 1024, learning rate 0.02, entropy coefficient 0.1, trained for 1,048,576 steps
 
@@ -548,10 +564,10 @@ Read at 1,048,576 environment steps per policy.
 
 | run | finished | used in the tables | whole-curve mean $W$ ± standard error | final level $L$ ± standard error | seeds |
 |---|---|---|---|---|---|
-| unit 84: development for discovery, pointmaze medium, reward arrival plus one, cleanrl ppo rnd, cells 65 to 72 of 72, seeds 0 to 15 | 2026-11-12 15:57 PT | yes | 0.004 ± 0.000 | 0.000 ± 0.000 | 16 |
-| unit 71: development for discovery extension, pointmaze medium, reward arrival plus one, cleanrl ppo rnd, cells 01 to 16 of 18, seeds 0 to 15 | 2026-11-12 16:47 PT | no | 0.005 ± 0.000 | 0.000 ± 0.000 | 16 |
+| unit 92: development for discovery, pointmaze medium, reward arrival plus one, cleanrl ppo rnd, cells 65 to 72 of 72, seeds 0 to 15 | 2026-11-12 15:57 PT | yes | 0.004 ± 0.000 | 0.000 ± 0.000 | 16 |
+| unit 79: development for discovery extension, pointmaze medium, reward arrival plus one, cleanrl ppo rnd, cells 01 to 16 of 18, seeds 0 to 15 | 2026-11-12 16:47 PT | no | 0.005 ± 0.000 | 0.000 ± 0.000 | 16 |
 
-Unit 71 minus unit 84, on the 16 seeds both have: in $W$ +0.001 [-0.000, +0.002] (the interval contains zero); in $L$ +0.000 [+0.000, +0.000] (the interval contains zero).
+Unit 79 minus unit 92, on the 16 seeds both have: in $W$ +0.001 [-0.000, +0.002] (the interval contains zero); in $L$ +0.000 [+0.000, +0.000] (the interval contains zero).
 
 ### PointMaze Medium, step cost, CleanRL PPO-RND, intrinsic weight 4, learning rate 0.01, entropy coefficient 0.01, trained for 1,048,576 steps
 
@@ -559,10 +575,10 @@ Read at 1,048,576 environment steps per policy.
 
 | run | finished | used in the tables | whole-curve mean $W$ ± standard error | final level $L$ ± standard error | seeds |
 |---|---|---|---|---|---|
-| unit 87: development for discovery, pointmaze medium, reward step cost, cleanrl ppo rnd, cells 33 to 48 of 72, seeds 0 to 15 | 2026-11-12 15:53 PT | yes | -0.371 ± 0.009 | -0.320 ± 0.005 | 16 |
-| unit 73: development for discovery extension, pointmaze medium, reward step cost, cleanrl ppo rnd, cells 01 to 16 of 18, seeds 0 to 15 | 2026-11-12 16:53 PT | no | -0.371 ± 0.006 | -0.324 ± 0.004 | 16 |
+| unit 95: development for discovery, pointmaze medium, reward step cost, cleanrl ppo rnd, cells 33 to 48 of 72, seeds 0 to 15 | 2026-11-12 15:53 PT | yes | -0.371 ± 0.009 | -0.320 ± 0.005 | 16 |
+| unit 81: development for discovery extension, pointmaze medium, reward step cost, cleanrl ppo rnd, cells 01 to 16 of 18, seeds 0 to 15 | 2026-11-12 16:53 PT | no | -0.371 ± 0.006 | -0.324 ± 0.004 | 16 |
 
-Unit 73 minus unit 87, on the 16 seeds both have: in $W$ +0.000 [-0.020, +0.025] (the interval contains zero); in $L$ -0.005 [-0.018, +0.011] (the interval contains zero).
+Unit 81 minus unit 95, on the 16 seeds both have: in $W$ +0.000 [-0.020, +0.025] (the interval contains zero); in $L$ -0.005 [-0.018, +0.011] (the interval contains zero).
 
 ### PointMaze Medium, step cost, CleanRL PPO-RND, intrinsic weight 1024, learning rate 0.01, entropy coefficient 0.01, trained for 1,048,576 steps
 
@@ -570,10 +586,10 @@ Read at 1,048,576 environment steps per policy.
 
 | run | finished | used in the tables | whole-curve mean $W$ ± standard error | final level $L$ ± standard error | seeds |
 |---|---|---|---|---|---|
-| unit 87: development for discovery, pointmaze medium, reward step cost, cleanrl ppo rnd, cells 33 to 48 of 72, seeds 0 to 15 | 2026-11-12 15:53 PT | yes | -0.945 ± 0.003 | -0.950 ± 0.006 | 16 |
-| unit 73: development for discovery extension, pointmaze medium, reward step cost, cleanrl ppo rnd, cells 01 to 16 of 18, seeds 0 to 15 | 2026-11-12 16:53 PT | no | -0.944 ± 0.003 | -0.955 ± 0.005 | 16 |
+| unit 95: development for discovery, pointmaze medium, reward step cost, cleanrl ppo rnd, cells 33 to 48 of 72, seeds 0 to 15 | 2026-11-12 15:53 PT | yes | -0.945 ± 0.003 | -0.950 ± 0.006 | 16 |
+| unit 81: development for discovery extension, pointmaze medium, reward step cost, cleanrl ppo rnd, cells 01 to 16 of 18, seeds 0 to 15 | 2026-11-12 16:53 PT | no | -0.944 ± 0.003 | -0.955 ± 0.005 | 16 |
 
-Unit 73 minus unit 87, on the 16 seeds both have: in $W$ +0.000 [-0.008, +0.008] (the interval contains zero); in $L$ -0.005 [-0.019, +0.009] (the interval contains zero).
+Unit 81 minus unit 95, on the 16 seeds both have: in $W$ +0.000 [-0.008, +0.008] (the interval contains zero); in $L$ -0.005 [-0.019, +0.009] (the interval contains zero).
 
 ### PointMaze Medium, step cost, CleanRL PPO-RND, intrinsic weight 4, learning rate 0.01, entropy coefficient 0.1, trained for 1,048,576 steps
 
@@ -581,10 +597,10 @@ Read at 1,048,576 environment steps per policy.
 
 | run | finished | used in the tables | whole-curve mean $W$ ± standard error | final level $L$ ± standard error | seeds |
 |---|---|---|---|---|---|
-| unit 88: development for discovery, pointmaze medium, reward step cost, cleanrl ppo rnd, cells 49 to 64 of 72, seeds 0 to 15 | 2026-11-12 15:54 PT | yes | -0.995 ± 0.000 | -0.999 ± 0.000 | 16 |
-| unit 73: development for discovery extension, pointmaze medium, reward step cost, cleanrl ppo rnd, cells 01 to 16 of 18, seeds 0 to 15 | 2026-11-12 16:53 PT | no | -0.995 ± 0.000 | -0.999 ± 0.000 | 16 |
+| unit 96: development for discovery, pointmaze medium, reward step cost, cleanrl ppo rnd, cells 49 to 64 of 72, seeds 0 to 15 | 2026-11-12 15:54 PT | yes | -0.995 ± 0.000 | -0.999 ± 0.000 | 16 |
+| unit 81: development for discovery extension, pointmaze medium, reward step cost, cleanrl ppo rnd, cells 01 to 16 of 18, seeds 0 to 15 | 2026-11-12 16:53 PT | no | -0.995 ± 0.000 | -0.999 ± 0.000 | 16 |
 
-Unit 73 minus unit 88, on the 16 seeds both have: in $W$ +0.000 [-0.001, +0.001] (the interval contains zero); in $L$ +0.000 [-0.000, +0.001] (the interval contains zero).
+Unit 81 minus unit 96, on the 16 seeds both have: in $W$ +0.000 [-0.001, +0.001] (the interval contains zero); in $L$ +0.000 [-0.000, +0.001] (the interval contains zero).
 
 ### PointMaze Medium, step cost, CleanRL PPO-RND, intrinsic weight 1024, learning rate 0.01, entropy coefficient 0.1, trained for 1,048,576 steps
 
@@ -592,10 +608,10 @@ Read at 1,048,576 environment steps per policy.
 
 | run | finished | used in the tables | whole-curve mean $W$ ± standard error | final level $L$ ± standard error | seeds |
 |---|---|---|---|---|---|
-| unit 88: development for discovery, pointmaze medium, reward step cost, cleanrl ppo rnd, cells 49 to 64 of 72, seeds 0 to 15 | 2026-11-12 15:54 PT | yes | -0.999 ± 0.000 | -0.999 ± 0.000 | 16 |
-| unit 73: development for discovery extension, pointmaze medium, reward step cost, cleanrl ppo rnd, cells 01 to 16 of 18, seeds 0 to 15 | 2026-11-12 16:53 PT | no | -0.998 ± 0.000 | -0.999 ± 0.000 | 16 |
+| unit 96: development for discovery, pointmaze medium, reward step cost, cleanrl ppo rnd, cells 49 to 64 of 72, seeds 0 to 15 | 2026-11-12 15:54 PT | yes | -0.999 ± 0.000 | -0.999 ± 0.000 | 16 |
+| unit 81: development for discovery extension, pointmaze medium, reward step cost, cleanrl ppo rnd, cells 01 to 16 of 18, seeds 0 to 15 | 2026-11-12 16:53 PT | no | -0.998 ± 0.000 | -0.999 ± 0.000 | 16 |
 
-Unit 73 minus unit 88, on the 16 seeds both have: in $W$ +0.000 [+0.000, +0.001] (the interval does not contain zero); in $L$ +0.000 [-0.001, +0.001] (the interval contains zero).
+Unit 81 minus unit 96, on the 16 seeds both have: in $W$ +0.000 [+0.000, +0.001] (the interval does not contain zero); in $L$ +0.000 [-0.001, +0.001] (the interval contains zero).
 
 ### PointMaze Medium, step cost, CleanRL PPO-RND, intrinsic weight 4, learning rate 0.02, entropy coefficient 0.01, trained for 1,048,576 steps
 
@@ -603,10 +619,10 @@ Read at 1,048,576 environment steps per policy.
 
 | run | finished | used in the tables | whole-curve mean $W$ ± standard error | final level $L$ ± standard error | seeds |
 |---|---|---|---|---|---|
-| unit 88: development for discovery, pointmaze medium, reward step cost, cleanrl ppo rnd, cells 49 to 64 of 72, seeds 0 to 15 | 2026-11-12 15:54 PT | yes | -0.412 ± 0.006 | -0.342 ± 0.007 | 16 |
-| unit 73: development for discovery extension, pointmaze medium, reward step cost, cleanrl ppo rnd, cells 01 to 16 of 18, seeds 0 to 15 | 2026-11-12 16:53 PT | no | -0.408 ± 0.011 | -0.338 ± 0.008 | 16 |
+| unit 96: development for discovery, pointmaze medium, reward step cost, cleanrl ppo rnd, cells 49 to 64 of 72, seeds 0 to 15 | 2026-11-12 15:54 PT | yes | -0.412 ± 0.006 | -0.342 ± 0.007 | 16 |
+| unit 81: development for discovery extension, pointmaze medium, reward step cost, cleanrl ppo rnd, cells 01 to 16 of 18, seeds 0 to 15 | 2026-11-12 16:53 PT | no | -0.408 ± 0.011 | -0.338 ± 0.008 | 16 |
 
-Unit 73 minus unit 88, on the 16 seeds both have: in $W$ +0.004 [-0.025, +0.030] (the interval contains zero); in $L$ +0.004 [-0.019, +0.025] (the interval contains zero).
+Unit 81 minus unit 96, on the 16 seeds both have: in $W$ +0.004 [-0.025, +0.030] (the interval contains zero); in $L$ +0.004 [-0.019, +0.025] (the interval contains zero).
 
 ### PointMaze Medium, step cost, CleanRL PPO-RND, intrinsic weight 1024, learning rate 0.02, entropy coefficient 0.01, trained for 1,048,576 steps
 
@@ -614,10 +630,10 @@ Read at 1,048,576 environment steps per policy.
 
 | run | finished | used in the tables | whole-curve mean $W$ ± standard error | final level $L$ ± standard error | seeds |
 |---|---|---|---|---|---|
-| unit 88: development for discovery, pointmaze medium, reward step cost, cleanrl ppo rnd, cells 49 to 64 of 72, seeds 0 to 15 | 2026-11-12 15:54 PT | yes | -0.954 ± 0.003 | -0.956 ± 0.004 | 16 |
-| unit 73: development for discovery extension, pointmaze medium, reward step cost, cleanrl ppo rnd, cells 01 to 16 of 18, seeds 0 to 15 | 2026-11-12 16:53 PT | no | -0.954 ± 0.003 | -0.949 ± 0.006 | 16 |
+| unit 96: development for discovery, pointmaze medium, reward step cost, cleanrl ppo rnd, cells 49 to 64 of 72, seeds 0 to 15 | 2026-11-12 15:54 PT | yes | -0.954 ± 0.003 | -0.956 ± 0.004 | 16 |
+| unit 81: development for discovery extension, pointmaze medium, reward step cost, cleanrl ppo rnd, cells 01 to 16 of 18, seeds 0 to 15 | 2026-11-12 16:53 PT | no | -0.954 ± 0.003 | -0.949 ± 0.006 | 16 |
 
-Unit 73 minus unit 88, on the 16 seeds both have: in $W$ -0.001 [-0.010, +0.009] (the interval contains zero); in $L$ +0.007 [-0.008, +0.023] (the interval contains zero).
+Unit 81 minus unit 96, on the 16 seeds both have: in $W$ -0.001 [-0.010, +0.009] (the interval contains zero); in $L$ +0.007 [-0.008, +0.023] (the interval contains zero).
 
 ### PointMaze Medium, step cost, CleanRL PPO-RND, intrinsic weight 4, learning rate 0.02, entropy coefficient 0.1, trained for 1,048,576 steps
 
@@ -625,10 +641,10 @@ Read at 1,048,576 environment steps per policy.
 
 | run | finished | used in the tables | whole-curve mean $W$ ± standard error | final level $L$ ± standard error | seeds |
 |---|---|---|---|---|---|
-| unit 89: development for discovery, pointmaze medium, reward step cost, cleanrl ppo rnd, cells 65 to 72 of 72, seeds 0 to 15 | 2026-11-12 15:54 PT | yes | -0.997 ± 0.000 | -1.000 ± 0.000 | 16 |
-| unit 73: development for discovery extension, pointmaze medium, reward step cost, cleanrl ppo rnd, cells 01 to 16 of 18, seeds 0 to 15 | 2026-11-12 16:53 PT | no | -0.998 ± 0.000 | -1.000 ± 0.000 | 16 |
+| unit 97: development for discovery, pointmaze medium, reward step cost, cleanrl ppo rnd, cells 65 to 72 of 72, seeds 0 to 15 | 2026-11-12 15:54 PT | yes | -0.997 ± 0.000 | -1.000 ± 0.000 | 16 |
+| unit 81: development for discovery extension, pointmaze medium, reward step cost, cleanrl ppo rnd, cells 01 to 16 of 18, seeds 0 to 15 | 2026-11-12 16:53 PT | no | -0.998 ± 0.000 | -1.000 ± 0.000 | 16 |
 
-Unit 73 minus unit 89, on the 16 seeds both have: in $W$ -0.001 [-0.001, +0.000] (the interval contains zero); in $L$ +0.000 [+0.000, +0.000] (the interval contains zero).
+Unit 81 minus unit 97, on the 16 seeds both have: in $W$ -0.001 [-0.001, +0.000] (the interval contains zero); in $L$ +0.000 [+0.000, +0.000] (the interval contains zero).
 
 ### PointMaze Medium, step cost, CleanRL PPO-RND, intrinsic weight 1024, learning rate 0.02, entropy coefficient 0.1, trained for 1,048,576 steps
 
@@ -636,10 +652,10 @@ Read at 1,048,576 environment steps per policy.
 
 | run | finished | used in the tables | whole-curve mean $W$ ± standard error | final level $L$ ± standard error | seeds |
 |---|---|---|---|---|---|
-| unit 89: development for discovery, pointmaze medium, reward step cost, cleanrl ppo rnd, cells 65 to 72 of 72, seeds 0 to 15 | 2026-11-12 15:54 PT | yes | -0.999 ± 0.000 | -1.000 ± 0.000 | 16 |
-| unit 73: development for discovery extension, pointmaze medium, reward step cost, cleanrl ppo rnd, cells 01 to 16 of 18, seeds 0 to 15 | 2026-11-12 16:53 PT | no | -0.999 ± 0.000 | -1.000 ± 0.000 | 16 |
+| unit 97: development for discovery, pointmaze medium, reward step cost, cleanrl ppo rnd, cells 65 to 72 of 72, seeds 0 to 15 | 2026-11-12 15:54 PT | yes | -0.999 ± 0.000 | -1.000 ± 0.000 | 16 |
+| unit 81: development for discovery extension, pointmaze medium, reward step cost, cleanrl ppo rnd, cells 01 to 16 of 18, seeds 0 to 15 | 2026-11-12 16:53 PT | no | -0.999 ± 0.000 | -1.000 ± 0.000 | 16 |
 
-Unit 73 minus unit 89, on the 16 seeds both have: in $W$ +0.000 [-0.000, +0.001] (the interval contains zero); in $L$ +0.000 [+0.000, +0.000] (the interval contains zero).
+Unit 81 minus unit 97, on the 16 seeds both have: in $W$ +0.000 [-0.000, +0.001] (the interval contains zero); in $L$ +0.000 [+0.000, +0.000] (the interval contains zero).
 
 ## Development sweeps
 
@@ -670,7 +686,7 @@ Define $W$, $L$, $M$ and the other measures as in the section Measures. Each sub
 
 Chosen (highest $W$, ties by $L$): **intrinsic weight 2, learning rate 0.01, entropy coefficient 0.01**. Place in the sweep: intrinsic weight 2 is inside its 3 swept values; learning rate 0.01 is inside its 6 swept values.
 
-**Discovery (secondary metric).** 95 configurations with 16 seeds each, read at 1,048,576 environment steps per policy from units 61, 66, 71 to 72, 80 to 84 of the section Records read. The table holds the 5 configurations with the smallest $M$, sorted by $M$, with $W$ and $L$ of the same configurations beside. $M$ and its standard error are in thousands of steps. Per column the best value among these rows is bold and the second best underlined; for $M$ the smallest is the best.
+**Discovery (secondary metric).** 95 configurations with 16 seeds each, read at 1,048,576 environment steps per policy from units 69, 74, 79 to 80, 88 to 92 of the section Records read. The table holds the 5 configurations with the smallest $M$, sorted by $M$, with $W$ and $L$ of the same configurations beside. $M$ and its standard error are in thousands of steps. Per column the best value among these rows is bold and the second best underlined; for $M$ the smallest is the best.
 
 | configuration | $M$ ↓ ± standard error, thousand steps | policies that reach the goal | whole-curve mean $W$ ± standard error | final level $L$ ± standard error | seeds |
 |---|---|---|---|---|---|
@@ -723,7 +739,7 @@ Chosen for discovery (smallest $M$, ties by the larger share of policies that re
 
 Chosen (highest $W$, ties by $L$): **intrinsic weight 2, learning rate 0.003, entropy coefficient 0.01**. Place in the sweep: intrinsic weight 2 is inside its 4 swept values; learning rate 0.003 is the largest of its 2 swept values; entropy coefficient 0.01 is the smallest of its 2 swept values.
 
-**Discovery (secondary metric).** 32 configurations with 16 seeds each, read at 4,194,304 environment steps per policy from units 100 to 101 of the section Records read. The table holds the 5 configurations with the smallest $M$, sorted by $M$, with $W$ and $L$ of the same configurations beside. $M$ and its standard error are in thousands of steps. Per column the best value among these rows is bold and the second best underlined; for $M$ the smallest is the best.
+**Discovery (secondary metric).** 32 configurations with 16 seeds each, read at 4,194,304 environment steps per policy from units 108 to 109 of the section Records read. The table holds the 5 configurations with the smallest $M$, sorted by $M$, with $W$ and $L$ of the same configurations beside. $M$ and its standard error are in thousands of steps. Per column the best value among these rows is bold and the second best underlined; for $M$ the smallest is the best.
 
 | configuration | $M$ ↓ ± standard error, thousand steps | policies that reach the goal | whole-curve mean $W$ ± standard error | final level $L$ ± standard error | seeds |
 |---|---|---|---|---|---|
@@ -776,7 +792,7 @@ Chosen for discovery (smallest $M$, ties by the larger share of policies that re
 
 Chosen (highest $W$, ties by $L$): **intrinsic weight 2, learning rate 0.003, entropy coefficient 0.01**. Place in the sweep: intrinsic weight 2 is inside its 4 swept values; learning rate 0.003 is the largest of its 2 swept values; entropy coefficient 0.01 is the smallest of its 2 swept values.
 
-**Discovery (secondary metric).** 32 configurations with 16 seeds each, read at 4,194,304 environment steps per policy from units 98 to 99 of the section Records read. The table holds the 5 configurations with the smallest $M$, sorted by $M$, with $W$ and $L$ of the same configurations beside. $M$ and its standard error are in thousands of steps. Per column the best value among these rows is bold and the second best underlined; for $M$ the smallest is the best.
+**Discovery (secondary metric).** 32 configurations with 16 seeds each, read at 4,194,304 environment steps per policy from units 106 to 107 of the section Records read. The table holds the 5 configurations with the smallest $M$, sorted by $M$, with $W$ and $L$ of the same configurations beside. $M$ and its standard error are in thousands of steps. Per column the best value among these rows is bold and the second best underlined; for $M$ the smallest is the best.
 
 | configuration | $M$ ↓ ± standard error, thousand steps | policies that reach the goal | whole-curve mean $W$ ± standard error | final level $L$ ± standard error | seeds |
 |---|---|---|---|---|---|
@@ -815,7 +831,7 @@ Chosen for discovery (smallest $M$, ties by the larger share of policies that re
 
 Chosen (highest $W$, ties by $L$): **intrinsic weight 0.00195312, learning rate 0.006, entropy coefficient 0.01**. Place in the sweep: intrinsic weight 0.00195312 is inside its 7 swept values; learning rate 0.006 is the largest of its 3 swept values.
 
-**Discovery (secondary metric).** 100 configurations with 16 seeds each, read at 1,048,576 environment steps per policy from units 62, 67, 73 to 74, 85 to 89 of the section Records read. The table holds the 5 configurations with the smallest $M$, sorted by $M$, with $W$ and $L$ of the same configurations beside. $M$ and its standard error are in thousands of steps. Per column the best value among these rows is bold and the second best underlined; for $M$ the smallest is the best.
+**Discovery (secondary metric).** 100 configurations with 16 seeds each, read at 1,048,576 environment steps per policy from units 70, 75, 81 to 82, 93 to 97 of the section Records read. The table holds the 5 configurations with the smallest $M$, sorted by $M$, with $W$ and $L$ of the same configurations beside. $M$ and its standard error are in thousands of steps. Per column the best value among these rows is bold and the second best underlined; for $M$ the smallest is the best.
 
 | configuration | $M$ ↓ ± standard error, thousand steps | policies that reach the goal | whole-curve mean $W$ ± standard error | final level $L$ ± standard error | seeds |
 |---|---|---|---|---|---|
@@ -860,7 +876,7 @@ Chosen for discovery (smallest $M$, ties by the larger share of policies that re
 
 Chosen (highest $W$, ties by $L$): **intrinsic weight 0.03125, learning rate 0.001, entropy coefficient 0.01**. Place in the sweep: intrinsic weight 0.03125 is the largest of its 3 swept values; learning rate 0.001 is the largest of its 2 swept values; entropy coefficient 0.01 is the largest of its 2 swept values. The intrinsic weight is at an end of its grid, so the edge rule of the protocol asks for three more values on that side before anything is confirmed.
 
-**Discovery (secondary metric).** 24 configurations with 16 seeds each, read at 4,194,304 environment steps per policy from units 104 to 105 of the section Records read. The table holds the 5 configurations with the smallest $M$, sorted by $M$, with $W$ and $L$ of the same configurations beside. $M$ and its standard error are in thousands of steps. Per column the best value among these rows is bold and the second best underlined; for $M$ the smallest is the best.
+**Discovery (secondary metric).** 24 configurations with 16 seeds each, read at 4,194,304 environment steps per policy from units 112 to 113 of the section Records read. The table holds the 5 configurations with the smallest $M$, sorted by $M$, with $W$ and $L$ of the same configurations beside. $M$ and its standard error are in thousands of steps. Per column the best value among these rows is bold and the second best underlined; for $M$ the smallest is the best.
 
 | configuration | $M$ ↓ ± standard error, thousand steps | policies that reach the goal | whole-curve mean $W$ ± standard error | final level $L$ ± standard error | seeds |
 |---|---|---|---|---|---|
@@ -905,7 +921,7 @@ Chosen for discovery (smallest $M$, ties by the larger share of policies that re
 
 Chosen (highest $W$, ties by $L$): **intrinsic weight 0.015625, learning rate 0.001, entropy coefficient 0.01**. Place in the sweep: intrinsic weight 0.015625 is inside its 3 swept values; learning rate 0.001 is the largest of its 2 swept values; entropy coefficient 0.01 is the largest of its 2 swept values.
 
-**Discovery (secondary metric).** 24 configurations with 16 seeds each, read at 4,194,304 environment steps per policy from units 102 to 103 of the section Records read. The table holds the 5 configurations with the smallest $M$, sorted by $M$, with $W$ and $L$ of the same configurations beside. $M$ and its standard error are in thousands of steps. Per column the best value among these rows is bold and the second best underlined; for $M$ the smallest is the best.
+**Discovery (secondary metric).** 24 configurations with 16 seeds each, read at 4,194,304 environment steps per policy from units 110 to 111 of the section Records read. The table holds the 5 configurations with the smallest $M$, sorted by $M$, with $W$ and $L$ of the same configurations beside. $M$ and its standard error are in thousands of steps. Per column the best value among these rows is bold and the second best underlined; for $M$ the smallest is the best.
 
 | configuration | $M$ ↓ ± standard error, thousand steps | policies that reach the goal | whole-curve mean $W$ ± standard error | final level $L$ ± standard error | seeds |
 |---|---|---|---|---|---|
@@ -935,7 +951,7 @@ Chosen for discovery (smallest $M$, ties by the larger share of policies that re
 
 Chosen (highest $W$, ties by $L$): **intrinsic weight 2, learning rate 0.002, entropy coefficient 0.01**. Place in the sweep: intrinsic weight 2 is inside its 3 swept values; learning rate 0.002 is inside its 3 swept values.
 
-**Discovery (secondary metric).** 87 configurations with 16 seeds each, read at 8,388,608 environment steps per policy from units 63, 68, 75 to 79 of the section Records read. The table holds the 5 configurations with the smallest $M$, sorted by $M$, with $W$ and $L$ of the same configurations beside. $M$ and its standard error are in thousands of steps. Per column the best value among these rows is bold and the second best underlined; for $M$ the smallest is the best.
+**Discovery (secondary metric).** 87 configurations with 16 seeds each, read at 8,388,608 environment steps per policy from units 71, 76, 83 to 87 of the section Records read. The table holds the 5 configurations with the smallest $M$, sorted by $M$, with $W$ and $L$ of the same configurations beside. $M$ and its standard error are in thousands of steps. Per column the best value among these rows is bold and the second best underlined; for $M$ the smallest is the best.
 
 | configuration | $M$ ↓ ± standard error, thousand steps | policies that reach the goal | whole-curve mean $W$ ± standard error | final level $L$ ± standard error | seeds |
 |---|---|---|---|---|---|
@@ -988,7 +1004,7 @@ Chosen for discovery (smallest $M$, ties by the larger share of policies that re
 
 Chosen (highest $W$, ties by $L$): **intrinsic weight 2, learning rate 0.001, entropy coefficient 0.01**. Place in the sweep: intrinsic weight 2 is inside its 4 swept values; learning rate 0.001 is the smallest of its 2 swept values; entropy coefficient 0.01 is the smallest of its 2 swept values.
 
-**Discovery (secondary metric).** 32 configurations with 16 seeds each, read at 16,777,216 environment steps per policy from units 92 to 93 of the section Records read. The table holds the 5 configurations with the smallest $M$, sorted by $M$, with $W$ and $L$ of the same configurations beside. $M$ and its standard error are in thousands of steps. Per column the best value among these rows is bold and the second best underlined; for $M$ the smallest is the best.
+**Discovery (secondary metric).** 32 configurations with 16 seeds each, read at 16,777,216 environment steps per policy from units 100 to 101 of the section Records read. The table holds the 5 configurations with the smallest $M$, sorted by $M$, with $W$ and $L$ of the same configurations beside. $M$ and its standard error are in thousands of steps. Per column the best value among these rows is bold and the second best underlined; for $M$ the smallest is the best.
 
 | configuration | $M$ ↓ ± standard error, thousand steps | policies that reach the goal | whole-curve mean $W$ ± standard error | final level $L$ ± standard error | seeds |
 |---|---|---|---|---|---|
@@ -1041,7 +1057,7 @@ Chosen for discovery (smallest $M$, ties by the larger share of policies that re
 
 Chosen (highest $W$, ties by $L$): **intrinsic weight 4, learning rate 0.003, entropy coefficient 0.01**. Place in the sweep: intrinsic weight 4 is the largest of its 4 swept values; learning rate 0.003 is the largest of its 2 swept values; entropy coefficient 0.01 is the smallest of its 2 swept values. The intrinsic weight is at an end of its grid, so the edge rule of the protocol asks for three more values on that side before anything is confirmed.
 
-**Discovery (secondary metric).** 32 configurations with 16 seeds each, read at 16,777,216 environment steps per policy from units 90 to 91 of the section Records read. The table holds the 5 configurations with the smallest $M$, sorted by $M$, with $W$ and $L$ of the same configurations beside. $M$ and its standard error are in thousands of steps. Per column the best value among these rows is bold and the second best underlined; for $M$ the smallest is the best.
+**Discovery (secondary metric).** 32 configurations with 16 seeds each, read at 16,777,216 environment steps per policy from units 98 to 99 of the section Records read. The table holds the 5 configurations with the smallest $M$, sorted by $M$, with $W$ and $L$ of the same configurations beside. $M$ and its standard error are in thousands of steps. Per column the best value among these rows is bold and the second best underlined; for $M$ the smallest is the best.
 
 | configuration | $M$ ↓ ± standard error, thousand steps | policies that reach the goal | whole-curve mean $W$ ± standard error | final level $L$ ± standard error | seeds |
 |---|---|---|---|---|---|
@@ -1095,7 +1111,7 @@ Chosen for discovery (smallest $M$, ties by the larger share of policies that re
 
 Chosen (highest $W$, ties by $L$): **intrinsic weight 4, learning rate 0.002, entropy coefficient 0.01**. Place in the sweep: intrinsic weight 4 is inside its 3 swept values; learning rate 0.002 is inside its 5 swept values; entropy coefficient 0.01 is the smallest of its 2 swept values.
 
-**Discovery (secondary metric).** 49 configurations with 16 seeds each, read at 33,554,432 environment steps per policy from units 65, 69 to 70, 96 to 97 of the section Records read. The table holds the 5 configurations with the smallest $M$, sorted by $M$, with $W$ and $L$ of the same configurations beside. $M$ and its standard error are in thousands of steps. Per column the best value among these rows is bold and the second best underlined; for $M$ the smallest is the best.
+**Discovery (secondary metric).** 49 configurations with 16 seeds each, read at 33,554,432 environment steps per policy from units 73, 77 to 78, 104 to 105 of the section Records read. The table holds the 5 configurations with the smallest $M$, sorted by $M$, with $W$ and $L$ of the same configurations beside. $M$ and its standard error are in thousands of steps. Per column the best value among these rows is bold and the second best underlined; for $M$ the smallest is the best.
 
 | configuration | $M$ ↓ ± standard error, thousand steps | policies that reach the goal | whole-curve mean $W$ ± standard error | final level $L$ ± standard error | seeds |
 |---|---|---|---|---|---|
@@ -1149,7 +1165,7 @@ Chosen for discovery (smallest $M$, ties by the larger share of policies that re
 
 Chosen (highest $W$, ties by $L$): **intrinsic weight 4, learning rate 0.003, entropy coefficient 0.01**. Place in the sweep: intrinsic weight 4 is inside its 3 swept values; learning rate 0.003 is inside its 5 swept values; entropy coefficient 0.01 is the smallest of its 2 swept values.
 
-**Discovery (secondary metric).** 33 configurations with 16 seeds each, read at 33,554,432 environment steps per policy from units 64, 94 to 95 of the section Records read. The table holds the 5 configurations with the smallest $M$, sorted by $M$, with $W$ and $L$ of the same configurations beside. $M$ and its standard error are in thousands of steps. Per column the best value among these rows is bold and the second best underlined; for $M$ the smallest is the best.
+**Discovery (secondary metric).** 33 configurations with 16 seeds each, read at 33,554,432 environment steps per policy from units 72, 102 to 103 of the section Records read. The table holds the 5 configurations with the smallest $M$, sorted by $M$, with $W$ and $L$ of the same configurations beside. $M$ and its standard error are in thousands of steps. Per column the best value among these rows is bold and the second best underlined; for $M$ the smallest is the best.
 
 | configuration | $M$ ↓ ± standard error, thousand steps | policies that reach the goal | whole-curve mean $W$ ± standard error | final level $L$ ± standard error | seeds |
 |---|---|---|---|---|---|
@@ -1597,9 +1613,9 @@ Each cell gives the verdict on discovery, then the paired difference in $M$ (met
 
 | method | PointMaze Medium | PointMaze Large | AntMaze U-maze | AntMaze Medium | AntMaze Large | environments in which it is ahead on discovery |
 |---|---|---|---|---|---|---|
-| cleanrl ppo rnd at cleanrl defaults | the baseline is not confirmed yet | behind on discovery; $M$ +2,530 [+2,371, +2,705] (1,024 seeds) | not compared yet | not compared yet | not compared yet | 0 of 5 |
+| cleanrl ppo rnd at cleanrl defaults | behind on discovery; $M$ +192 [+175, +210] (1,024 seeds) | behind on discovery; $M$ +2,530 [+2,371, +2,705] (1,024 seeds) | not compared yet | not compared yet | not compared yet | 0 of 5 |
 | cleanrl ppo rnd with intrinsic discount 0 point 999 | not compared yet | not compared yet | not compared yet | not compared yet | not compared yet | 0 of 5 |
-| ppo without a bonus | the baseline is not confirmed yet | behind on discovery; $M$ +8,073 [+7,998, +8,139] (1,024 seeds) | not compared yet | not compared yet | not compared yet | 0 of 5 |
+| ppo without a bonus | behind on discovery; $M$ +438 [+410, +466] (1,024 seeds) | behind on discovery; $M$ +8,073 [+7,998, +8,139] (1,024 seeds) | not compared yet | not compared yet | not compared yet | 0 of 5 |
 
 **Step cost.**
 
@@ -1611,9 +1627,9 @@ Each cell gives the verdict on discovery, then the paired difference in $M$ (met
 
 Noted beside the success rule, and not part of it: a method that is ahead of the baseline on discovery in all five environments in one reward setting.
 
-- **cleanrl ppo rnd at cleanrl defaults:** not ahead on discovery in all five environments in one reward setting (reward 1 on arrival: ahead in 0 of 5, not compared, not confirmed or unfinished in 4; step cost: ahead in 0 of 5, not compared, not confirmed or unfinished in 4).
+- **cleanrl ppo rnd at cleanrl defaults:** not ahead on discovery in all five environments in one reward setting (reward 1 on arrival: ahead in 0 of 5, not compared, not confirmed or unfinished in 3; step cost: ahead in 0 of 5, not compared, not confirmed or unfinished in 4).
 - **cleanrl ppo rnd with intrinsic discount 0 point 999:** not ahead on discovery in all five environments in one reward setting (reward 1 on arrival: ahead in 0 of 5, not compared, not confirmed or unfinished in 5; step cost: ahead in 0 of 5, not compared, not confirmed or unfinished in 5).
-- **ppo without a bonus:** not ahead on discovery in all five environments in one reward setting (reward 1 on arrival: ahead in 0 of 5, not compared, not confirmed or unfinished in 4; step cost: ahead in 0 of 5, not compared, not confirmed or unfinished in 4).
+- **ppo without a bonus:** not ahead on discovery in all five environments in one reward setting (reward 1 on arrival: ahead in 0 of 5, not compared, not confirmed or unfinished in 3; step cost: ahead in 0 of 5, not compared, not confirmed or unfinished in 4).
 
 ### Discovery: PointMaze Medium, reward 1 on arrival
 
@@ -1621,12 +1637,9 @@ Confirmation seeds, read at 1,048,576 environment steps per policy. Each row is 
 
 | row | $M$ ↓ ± standard error, thousand steps | $M$ minus the baseline [95%], thousand steps | verdict | policies that reach the goal | seeds in common with the baseline |
 |---|---|---|---|---|---|
-| cleanrl ppo rnd at cleanrl defaults: its only configuration, no development sweep | **210** ± 8.96 | the baseline is not confirmed yet | the baseline is not confirmed yet | **93.5%** | not compared |
-| ppo without a bonus: its only configuration, no development sweep | <u>455</u> ± 14.5 | the baseline is not confirmed yet | the baseline is not confirmed yet | <u>64.6%</u> | not compared |
-
-Without a confirmation row at its configuration for $M$ (the configuration chosen for $W$ is never put in its place):
-
-- **CleanRL PPO-RND:** not confirmed yet for this configuration: intrinsic weight 4, learning rate 0.02, entropy coefficient 0.01. Its confirmation units hold: intrinsic weight 2, learning rate 0.006, entropy coefficient 0.01; intrinsic weight 4, learning rate 0.02, entropy coefficient 0.1.
+| CleanRL PPO-RND: intrinsic weight 4, learning rate 0.02, entropy coefficient 0.01 | **17.4** ± 0.504 | baseline | baseline | **100.0%** | 1024 |
+| cleanrl ppo rnd at cleanrl defaults: its only configuration, no development sweep | <u>210</u> ± 8.96 | **+192** [+175, +210] | behind on discovery | <u>93.5%</u> | 1024 |
+| ppo without a bonus: its only configuration, no development sweep | 455 ± 14.5 | <u>+438</u> [+410, +466] | behind on discovery | 64.6% | 1024 |
 
 ### Discovery: PointMaze Medium, step cost
 
@@ -1657,9 +1670,12 @@ Confirmation seeds, read at 33,554,432 environment steps per policy. Each row is
 | cleanrl ppo rnd at cleanrl defaults: its only configuration, no development sweep | **2,723** ± 179 | the baseline is not confirmed yet | the baseline is not confirmed yet | **97.8%** | not compared |
 | ppo without a bonus: its only configuration, no development sweep | <u>10,418</u> ± 467 | the baseline is not confirmed yet | the baseline is not confirmed yet | <u>70.7%</u> | not compared |
 
+Not at this step count yet:
+
+- CleanRL PPO-RND: 2,883,584 steps so far.
+
 Without a confirmation row at its configuration for $M$ (the configuration chosen for $W$ is never put in its place):
 
-- **CleanRL PPO-RND:** not confirmed yet for this configuration: intrinsic weight 8, learning rate 0.0045, entropy coefficient 0.01, clip coefficient 0.1. Its confirmation units hold: intrinsic weight 4, learning rate 0.002, entropy coefficient 0.01.
 - **cleanrl ppo rnd with intrinsic discount 0 point 999:** not confirmed yet for this configuration: intrinsic weight 4, learning rate 0.006, entropy coefficient 0.01, clip coefficient 0.1. It has no confirmation units in this case.
 
 ## Final level against the training length
