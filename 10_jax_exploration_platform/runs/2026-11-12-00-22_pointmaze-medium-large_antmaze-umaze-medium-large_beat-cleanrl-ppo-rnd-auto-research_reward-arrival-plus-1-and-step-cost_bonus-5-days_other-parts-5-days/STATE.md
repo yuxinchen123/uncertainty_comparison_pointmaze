@@ -343,6 +343,13 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   reward 1 on arrival; −0.339 against −0.341 with the step cost), within their intervals. To do: put RND's best
   few configurations per case on the validation block, as the ideas are, and confirm the winner, so that the
   baseline gets the same selection as a method.
+- 2026-11-12 16:45 PT: **ACES is prepared for ant units, not in use yet.** Environment
+  `/scratch/group/p.cis261532.000/envs/rnd_platform_jax_mujoco_warp` (the same package list as Gilbreth's, built on
+  the login node at no charge); the fleet's entry is in the AntMaze folder
+  (`infrastructure/remote_fleet_servers_aces_entry.json`, with a merge script beside the setup files) and is not
+  merged into the live table. No job was submitted there. Balance 71,499 SUs (525.7 H100-hours). No H100 node was
+  idle at 16:18 PT and 114 jobs waited, so ACES would not start units sooner than Gilbreth today. Whether JAX and
+  Warp run on an ACES card is known only after the first real unit.
 
 ## Next
 

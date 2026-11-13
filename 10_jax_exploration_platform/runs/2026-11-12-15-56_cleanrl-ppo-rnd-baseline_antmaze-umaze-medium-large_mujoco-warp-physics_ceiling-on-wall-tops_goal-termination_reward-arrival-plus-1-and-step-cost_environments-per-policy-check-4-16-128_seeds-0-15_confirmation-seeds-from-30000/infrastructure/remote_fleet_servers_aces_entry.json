@@ -1,0 +1,64 @@
+{
+  "aces": {
+    "ssh": [
+      "ssh",
+      "-o",
+      "BatchMode=yes",
+      "portal05",
+      "ssh",
+      "-o",
+      "BatchMode=yes",
+      "aces"
+    ],
+    "check": [
+      "ssh",
+      "-o",
+      "BatchMode=yes",
+      "portal05",
+      "ssh",
+      "-O",
+      "check",
+      "aces"
+    ],
+    "remote_run": "/scratch/user/u.sl359075/rnd_maze/runs/2026-11-12-15-56_cleanrl-ppo-rnd-baseline-antmaze",
+    "python": "/scratch/group/p.cis261532.000/envs/rnd_platform_jax_mujoco_warp/bin/python",
+    "code_root": "/scratch/user/u.sl359075/rnd_maze/code",
+    "unit_seconds": 1800,
+    "ready": true,
+    "failed_calls_in_a_row": 0,
+    "budget_command": "myproject 2>&1 | grep 158590754315",
+    "budget_field": 6,
+    "budget_unit": "SUs",
+    "charge_note": "one H100, 8 cores and 39 GB are charged 136 SUs per hour (rule tamu-aces-cluster-slurm.md); a job that runs its whole 24 hours costs 3,264 SUs",
+    "job_login_shell": true,
+    "job_setup_lines": [
+      "# TAMU ACES. A unit downloads nothing (MuJoCo Warp compiles its kernels on the node), so the module",
+      "# WebProxy/0000 is not loaded. The kernels go to the job's own folder on the node: the scheduler sets",
+      "# TMPDIR to /tmp/job.<job id>. The line printed next shows what the login shell brought with it.",
+      "export WARP_CACHE_PATH=\"${TMPDIR:-/tmp}/$(id -un)/warp_kernel_cache\"",
+      "echo \"TMPDIR=${TMPDIR:-not set}; WARP_CACHE_PATH=$WARP_CACHE_PATH; LD_LIBRARY_PATH before it is cleared: ${LD_LIBRARY_PATH:-not set}; modules: $(module -t list 2>&1 | tr '\\n' ' ')\""
+    ],
+    "pools": {
+      "gpu-h100": {
+        "gpu_class": "h100_pcie_aces",
+        "time_limit": "1-00:00:00",
+        "max_jobs": 2,
+        "sbatch_options": [
+          "--account=158590754315",
+          "-p",
+          "gpu",
+          "--nodes=1",
+          "--ntasks=1",
+          "--cpus-per-task=8",
+          "--mem=39G",
+          "--gres=gpu:h100:1"
+        ]
+      }
+    },
+    "hand_over": {
+      "units_at_once": 0,
+      "match": "antmaze",
+      "pool": "gpu-h100"
+    }
+  }
+}

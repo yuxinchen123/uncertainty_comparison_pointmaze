@@ -248,8 +248,13 @@ RUN=/p/rlprojects/RND/10_jax_exploration_platform/runs/<run folder>
    `<code_root>/source_<commit>/10_jax_exploration_platform`); `unit_seconds` is the least
    training time a job must have left to start a unit (units continue from checkpoints, so 1800 is
    enough). A server with a `hand_over` entry (`units_at_once`, `match`, `pool`) is served by
-   `hand-over-tick`. No probe, benchmark or canary job runs on these servers: a server's first
+   `hand-over-tick`; with `units_at_once` 0 the server is read at every tick and gets no unit.
+   No probe, benchmark or canary job runs on these servers: a server's first
    real unit is its check, and until that unit is verified the server holds one unit.
+   Two optional fields of a server's entry change its job script: `job_login_shell` (true: the
+   script starts with `#!/bin/bash -l`, which a server's `module` command needs) and
+   `job_setup_lines` (bash lines placed after the exports and before the library path is
+   cleared). TAMU ACES uses both.
 
    ```bash
    $PY $M/remote_fleet.py --run-dir $RUN prepare --server gautschi      # job scripts and the frozen code copy

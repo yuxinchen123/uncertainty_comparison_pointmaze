@@ -33,6 +33,31 @@ class RemoteWrappers(unittest.TestCase):
         self.assertEqual((fleet.JOB_PREFIX, fleet.prepare, fleet.verify_unit),
                          (remote.job_prefix("/runs/folder-one"), remote.prepare, remote.verify_unit))
 
+    def test_a_server_may_ask_for_a_login_shell_and_its_own_job_lines(self):
+        """Without the two table fields the script is the one every server had; with them (TAMU ACES) it starts
+        as a login shell and holds the server's lines before the library path is cleared, and nothing else differs."""
+        remote.adapt("/runs/folder-one")
+        entry = {"remote_run": "/scratch/maze/run", "python": "/scratch/env/bin/python",
+                 "code": "/scratch/maze/code/current/10_jax_exploration_platform", "unit_seconds": 1800}
+        pool = {"gpu_class": "h100_pcie_aces", "time_limit": "1-00:00:00"}
+        plain = fleet.worker_script("aces", entry, "gpu-h100", pool)
+        self.assertTrue(plain.startswith("#!/bin/bash\n# Worker job of the maze study on aces, pool gpu-h100."))
+        self.assertIn("MKL_NUM_THREADS=1\n# Module-provided CUDA libraries", plain)
+        # fields that are present and empty give the same script as fields that are absent
+        self.assertEqual(fleet.worker_script("aces", dict(entry, job_login_shell=False, job_setup_lines=[]),
+                                             "gpu-h100", pool), plain)
+        lines = ["module load WebProxy/0000", 'export WARP_CACHE_PATH="${TMPDIR:-/tmp}/$(id -un)/warp_kernel_cache"']
+        changed = fleet.worker_script("aces", dict(entry, job_login_shell=True, job_setup_lines=lines),
+                                      "gpu-h100", pool)
+        self.assertTrue(changed.startswith("#!/bin/bash -l\n# Worker job of the maze study on aces, pool gpu-h100."))
+        self.assertIn(f"MKL_NUM_THREADS=1\n{lines[0]}\n{lines[1]}\n# Module-provided CUDA libraries", changed)
+        self.assertLess(changed.index(lines[0]), changed.index("unset LD_LIBRARY_PATH"))
+        self.assertEqual(changed.replace("#!/bin/bash -l\n", "#!/bin/bash\n", 1)
+                         .replace(f"{lines[0]}\n{lines[1]}\n", "", 1), plain)
+        for text in (plain, changed):
+            self.assertNotIn("@", text)
+            self.assertEqual(subprocess.run(["bash", "-n"], input=text, text=True, capture_output=True).returncode, 0)
+
     def test_two_run_folders_never_share_a_job_name_prefix(self):
         """The prefix comes from the folder's name: the same for one folder, different for another, and a job
         named for one folder is not among the other's jobs unless its id is in that folder's ledger."""
@@ -205,8 +230,13 @@ class RemoteWrappers(unittest.TestCase):
             table = {"gautschi": {"hand_over": {"units_at_once": 4, "match": "pointmaze", "pool": "l40s"}}}
             # not checked yet: one unit, the last of the order that can be compared
             self.assertEqual(remote.hand_over(run_dir, table, "gautschi", dry_run=True), ["pointmaze-b"])
-            # verified: up to four, any workload, from the end of the order; the ant unit does not match
+            # a server set up with `units_at_once` 0 gets none, before its first unit is verified and after
+            table["gautschi"]["hand_over"]["units_at_once"] = 0
+            self.assertEqual(remote.hand_over(run_dir, table, "gautschi", dry_run=True), [])
             table["gautschi"]["first_unit"] = {"state": "passed"}
+            self.assertEqual(remote.hand_over(run_dir, table, "gautschi", dry_run=True), [])
+            # verified: up to four, any workload, from the end of the order; the ant unit does not match
+            table["gautschi"]["hand_over"]["units_at_once"] = 4
             self.assertEqual(remote.hand_over(run_dir, table, "gautschi", dry_run=True),
                              ["pointmaze-other-workload", "pointmaze-b", "pointmaze-a"])
             # a failed check: none

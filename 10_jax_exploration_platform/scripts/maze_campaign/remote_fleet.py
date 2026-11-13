@@ -16,6 +16,10 @@ described at the head of that file. This file replaces these parts of it:
 
   1. The worker job on a server starts this folder's worker.py (the frozen copy) with
      --remote-records, which writes the claim records and the completed-unit folders the tick reads.
+     Two fields of a server's table entry change its job script, and both default to nothing:
+     `job_login_shell` (true: the script starts with `#!/bin/bash -l`, which a server's `module`
+     command needs) and `job_setup_lines` (bash lines placed after the exports and before the
+     library path is cleared). TAMU ACES uses both.
   2. `prepare` sends the job scripts and the run's frozen code copy, and makes the folder above the
      copy a git repository there, because run_training.py records the commit of that folder and
      stops where git cannot read one. There is no first-unit comparison of arrays with UVA.
@@ -61,11 +65,11 @@ RECORD_KINDS = ("job", "unit_start", "episode_window", "unit_complete")
 # the grid campaign's own functions, kept once per process before adapt() replaces them
 if not hasattr(fleet, "grid_functions"):
     fleet.grid_functions = {"status_script": fleet.status_script, "parse_status": fleet.parse_status,
-                            "result_block": fleet.result_block}
+                            "result_block": fleet.result_block, "worker_script": fleet.worker_script}
 # the server table the running command holds, so a check made deep inside a tick changes that copy
 CURRENT = {"table": None}
 
-WORKER_TEMPLATE = r'''#!/bin/bash
+WORKER_TEMPLATE = r'''#!/bin/bash@SHELL_OPTION@
 # Worker job of the maze study on @SERVER@, pool @POOL@. Written by scripts/maze_campaign/remote_fleet.py:
 # change that, not this copy. One card per job. It checks the card, then runs the study's worker.py, which
 # takes units from queue/pending one at a time until none is left or too little of the job is left.
@@ -75,6 +79,7 @@ PY=@PYTHON@
 CODE=@CODE@
 export PYTHONNOUSERSITE=1 PYTHONUNBUFFERED=1 XLA_PYTHON_CLIENT_PREALLOCATE=false XLA_PYTHON_CLIENT_MEM_FRACTION=0.75
 export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
+@JOB_SETUP_LINES@
 # Module-provided CUDA libraries would be found before the environment's own (Gilbreth, DeltaAI).
 unset LD_LIBRARY_PATH
 JOB=${SLURM_JOB_ID:?this script runs only as a Slurm job}
@@ -103,6 +108,19 @@ print("jax devices:", jax.devices()); assert jax.default_backend() == "gpu"' \
 
 exec "$PY" "$CODE/scripts/maze_campaign/worker.py" --run-dir "$RUN" --remote-records --minimum-seconds @UNIT_SECONDS@
 '''
+
+
+def worker_script(name, entry, pool_name, pool):
+    """Write one pool's job script: the grid campaign's fields, then the server's own shell option and lines."""
+    # before: a table entry without "job_login_shell" and "job_setup_lines" (every server but TAMU ACES)
+    # after:  the script starts with "#!/bin/bash" and holds no added line
+    # before: {"job_login_shell": true, "job_setup_lines": ["export WARP_CACHE_PATH=/tmp/kernels"], ...}
+    # after:  the script starts with "#!/bin/bash -l" (a login shell, which a server's `module` command needs),
+    #         and the line stands after the exports and before the library path is cleared
+    setup = "".join(f"{line}\n" for line in entry.get("job_setup_lines", []))
+    return (fleet.grid_functions["worker_script"](name, entry, pool_name, pool)
+            .replace("@SHELL_OPTION@", " -l" if entry.get("job_login_shell") else "")
+            .replace("@JOB_SETUP_LINES@\n", setup))
 
 
 def repository_script(code_parent, commit):
@@ -366,9 +384,9 @@ def hand_over(run_dir, table, name, dry_run):
     entry, settings = table[name], table[name]["hand_over"]
     held = run_dir / "queue" / f"remote_{name}"
     # the server's first unit is its check: until that unit is verified the server holds one unit,
-    # and after a failed check it gets none
+    # and after a failed check it gets none; a server whose `units_at_once` is 0 gets none in any state
     first = entry.get("first_unit", {}).get("state")
-    limit = {"passed": settings["units_at_once"], "failed": 0}.get(first, 1)
+    limit = {"passed": settings["units_at_once"], "failed": 0}.get(first, min(1, settings["units_at_once"]))
     # the done records are read before the queue lock is taken, because reading them takes it too
     done = unit_queue.read_units(run_dir, "done")
     with common.queue_lock(run_dir):
@@ -554,6 +572,7 @@ def adapt(run_dir):
     """Give the grid campaign's remote fleet this study's worker job, preparation, status, checks and returns."""
     fleet.WORKER_TEMPLATE = WORKER_TEMPLATE
     fleet.REMOTE_FOLDERS = REMOTE_FOLDERS
+    fleet.worker_script = worker_script
     fleet.prepare = prepare
     fleet.verify_unit = verify_unit
     fleet.status_script = status_script
