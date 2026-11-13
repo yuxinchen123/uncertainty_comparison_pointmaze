@@ -646,6 +646,34 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   in `infra_history.md`; the rule is in the session's memory (note `pointmaze-antmaze-placement-gilbreth-first`)
   and in the 20-minute monitor's prompt (cron 9beed1f1 replaced 0a3e2261). At 22:18 PT this folder had 14 units on
   Gilbreth and 2 running on UVA.
+- 2026-11-12 22:46 PT: **batch 6, second validation block (seeds 20000 to 20255, used for no choice before),
+  PointMaze Medium with reward 1 on arrival.** RND at the best of its three on this block: 0.9308. Arms at
+  configurations fixed on the first block: held divisor alone after 1/64 (learning rate 1e-2, weight 2): 0.9417,
+  +0.0109 [+0.0039, +0.0182]; predictor at half speed with held divisor (6e-3, weight 2): 0.9416, +0.0108
+  [+0.0031, +0.0186], and at weight 1: 0.9410; held divisor alone after 1/16 (6e-3, weight 4): 0.9398, +0.0090
+  [+0.0021, +0.0160]. Final level +0.009 for all three (1.000 against 0.991). **All three are ahead of RND with
+  intervals above zero on seeds that chose nothing.** My prediction 1 (the gain shrinks and the interval reaches
+  zero) did not hold.
+- 2026-11-12 22:46 PT: batch 6, PointMaze Large with reward 1 on arrival, predictor at half speed with held
+  divisor (first validation block): best at weight 4: 0.8849, +0.0068 [+0.0005, +0.0128] against RND's 0.8781;
+  weight 2: 0.8821; weight 1: 0.8597. Prediction 2 held (within 0.005 of the slower predictor with held divisor,
+  and ahead of RND).
+- **Reading of batches 4 to 6 together: the part that is ahead of RND on the whole-curve mean in both PointMaze
+  cases with reward 1 on arrival is the held divisor.** Alone it gives +0.0095 [+0.004, +0.015] on Large (first
+  block) and +0.009 to +0.011 on Medium (second block). Slowing the predictor adds nothing consistent to that
+  measure (0.25 times: +0.0102 on Large, −0.0001 on Medium; 0.5 times: +0.0068 on Large, +0.0108 on Medium); it
+  shortens the first-goal time. For discovery alone the fast last layer leads (56 against RND's 119 thousand
+  steps on Large). Why the held divisor helps: RND divides the bonus by the running standard deviation of its
+  discounted sum, so as the bonus decays the divisor shrinks with it and the learner keeps seeing an intrinsic
+  reward of about the same size; holding the divisor lets the bonus really fall away, and the final level rises
+  from about 0.99 to 1.00.
+- 2026-11-12 22:48 PT: **batch 7 queued** (`batches/07_held-divisor-alone_in-the-two-step-cost-cases`, 11 units on
+  the first validation block): the held divisor alone in PointMaze Medium and Large with the step cost, with RND
+  and the half-speed arm beside it on Medium. Predictions in its `ideas.md`. 18 of this folder's units are on
+  Gilbreth (8 of batch 6 running there since 22:20 PT, at 25 to 100 of 256 windows at 22:46 PT) and 1 waits for
+  the one UVA card that could start a worker (lynx04).
+  Open before any finalist: `literature/novelty.md` for the held divisor (closest published work and the exact
+  difference), and `summary_settings.json` for batches 5 to 7.
 
 ## Next
 
