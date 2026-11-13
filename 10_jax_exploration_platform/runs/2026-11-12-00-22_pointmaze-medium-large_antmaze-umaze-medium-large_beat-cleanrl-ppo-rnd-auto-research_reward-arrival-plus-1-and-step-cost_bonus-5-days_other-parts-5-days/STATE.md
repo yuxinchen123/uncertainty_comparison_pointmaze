@@ -606,6 +606,13 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
 - 2026-11-12 21:04 PT: all of this folder's units now run on Gilbreth (6: batch 5, the larger weights, and the
   unit of all three parts on PointMaze Large with the step cost, which left UVA when its worker ended). With the
   18 AntMaze units that makes 24 jobs there, the account's limit for idle-card jobs.
+- 2026-11-12 21:21 PT: **batch 5, first two arms (16 development seeds, PointMaze Medium with reward 1 on arrival;
+  both units ran on Gilbreth in under 15 minutes):** held divisor alone, held after 1/16 of the run: best
+  whole-curve mean 0.962 (learning rate 6e-3, weight 2); held after 1/64: 0.964 (same configuration). RND's best on
+  these seeds is 0.9435 (0.9421 at that same configuration), so both read +0.02 here. On these seeds the two-part
+  finalist read +0.021 and the validation block then gave 0.000, so this is not a result yet: the two best
+  configurations of each arm were queued on the validation block (4 units). The arms with the slower predictor
+  (divisor held after 1/64) and with the predictor at half speed are running or waiting on Gilbreth.
 
 ## Next
 
