@@ -1,0 +1,150 @@
+{
+  "study": "cleanrl-ppo-rnd-baseline-antmaze",
+  "bonus": "rnd_next_state",
+  "configuration_files": {
+    "antmaze": "configs/experiments/antmaze_umaze_warp-physics_time-step-0.005_frame-skip-10_fault-guard-30-metres-and-100-radians-per-second_cleanrl-ppo-rnd_goal-termination_reward-arrival-plus-one_example_steps-204800.toml"
+  },
+  "environments": [
+    "antmaze-umaze"
+  ],
+  "reward_settings": [
+    "arrival_plus_one"
+  ],
+  "windows_per_unit": 256,
+  "seeds": {
+    "first": 0,
+    "count": 16
+  },
+  "minimum_card_memory_mb": 20000,
+  "phase": "budget-probe",
+  "sweeps": [
+    {
+      "method": "cleanrl-ppo-rnd-with-128-environments-per-policy",
+      "environments_per_policy": {
+        "antmaze": 128
+      },
+      "policies_per_unit": 128,
+      "workload": {
+        "antmaze": "antmaze-umaze_environments-per-policy-128_update-epoch-minibatch_bonus-rnd-next-state_physics-warp_time-step-0.005_frame-skip-10"
+      },
+      "steps_per_policy": 134217728,
+      "cells": {
+        "kind": "list",
+        "cells": [
+          {
+            "learning_rate": 0.01,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 1.0,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.01,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 4.0,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.01,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 16.0,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.01,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 64.0,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.03,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 1.0,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.03,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 4.0,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.03,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 16.0,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.03,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 64.0,
+            "clip_coefficient": 0.1
+          }
+        ]
+      }
+    },
+    {
+      "method": "cleanrl-ppo-rnd-with-16-environments-per-policy",
+      "environments_per_policy": {
+        "antmaze": 16
+      },
+      "policies_per_unit": 128,
+      "workload": {
+        "antmaze": "antmaze-umaze_environments-per-policy-16_update-epoch-minibatch_bonus-rnd-next-state_physics-warp_time-step-0.005_frame-skip-10"
+      },
+      "steps_per_policy": 67108864,
+      "cells": {
+        "kind": "list",
+        "cells": [
+          {
+            "learning_rate": 0.0003,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 0.0625,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.0003,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 16.0,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.01,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 1.0,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.01,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 16.0,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.0001,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 0.0625,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.0001,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 16.0,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.03,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 1.0,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.03,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 16.0,
+            "clip_coefficient": 0.1
+          }
+        ]
+      }
+    }
+  ]
+}
