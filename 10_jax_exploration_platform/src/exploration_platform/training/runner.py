@@ -60,6 +60,10 @@ class Runner:
         # own accumulators, and a configuration without them carries exactly the two it always did
         agent_state = {"int_filter": jnp.zeros((cfg.n_copies, cfg.n_envs), F32),
                        "int_rms": rms_init(cfg.n_copies, 1)}
+        if self.bonus.keeps_predictor_divisor:
+            # the second divisor's statistics, on the predictor's own scores (bonus protocol)
+            agent_state["int_filter_predictor"] = jnp.zeros((cfg.n_copies, cfg.n_envs), F32)
+            agent_state["int_rms_predictor"] = rms_init(cfg.n_copies, 1)
         if cfg.diagnostics or cfg.success_gate_rate > 0:
             agent_state["episode"] = diag.tracker_init(cfg.n_copies, cfg.n_envs)
         if cfg.success_gate_rate > 0:

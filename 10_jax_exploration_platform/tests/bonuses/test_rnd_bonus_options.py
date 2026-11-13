@@ -143,7 +143,9 @@ def test_options_at_their_defaults_change_nothing():
                 "fourier_feature_count": "256", "fourier_length_scale": 1.0,
                 "scheduled_last_layer_features": "body", "divisor_hold_fraction": 0,
                 # the option of batch 10
-                "fast_last_layer_until_first_arrival": "false"}
+                "fast_last_layer_until_first_arrival": "false",
+                # the option of the diagnosis of 2026-11-13
+                "predictor_divisor_after_first_arrival": "false"}
     for style in ("epoch_minibatch", "full_batch"):
         cfg = PPOConfig(**{**SMALL, "update_style": style}, episode_log=True)
         _, _, plain, _ = train(cfg, "rnd_next_state", env_cfg=SHORT_EPISODES)

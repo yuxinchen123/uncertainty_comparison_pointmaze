@@ -46,6 +46,7 @@ def build(cfg, env_cfg, rnd_cfg: RNDConfig, n_copies: int, base_seed: int, copy_
     scheduled = rnd_cfg.scheduled_last_layer_decay > 0
     fast = rnd_cfg.fast_last_layer_step > 0
     until_arrival = rnd_cfg.fast_last_layer_until_first_arrival
+    predictor_divisor = rnd_cfg.predictor_divisor_after_first_arrival
     frozen_statistics = rnd_cfg.input_statistics == "frozen_after_priming"
     fourier_input = rnd_cfg.input_features == "random_fourier"
     fourier_layer = rnd_cfg.scheduled_last_layer_features == "random_fourier"
@@ -188,6 +189,10 @@ def build(cfg, env_cfg, rnd_cfg: RNDConfig, n_copies: int, base_seed: int, copy_
         arrival: a copy that had reached the goal before this rollout is scored by the predictor
         alone. The temporary layer is rebuilt from the predictor at every rollout and dropped
         after it, so nothing of it is left to undo when a copy stops using it.
+
+        With predictor_divisor_after_first_arrival the predictor's own scores of the whole
+        rollout, [C, T*N], travel in the extras under "predictor_scores": the trainer takes them
+        out again before it builds the update batch and keeps its second divisor on them.
         """
         if scheduled:
             # the kept output layer is read and fitted step by step; there is no update batch,
@@ -199,6 +204,7 @@ def build(cfg, env_cfg, rnd_cfg: RNDConfig, n_copies: int, base_seed: int, copy_
             obs_rms = statistics_after(state, next_obs_flat)
             return ({"obs_rms": obs_rms, "output_layer": layer},
                     flat_rollout(squared).astype(F32), {})
+        own = None
         if scored is not None:
             reward = scored
         elif fast:
@@ -210,11 +216,14 @@ def build(cfg, env_cfg, rnd_cfg: RNDConfig, n_copies: int, base_seed: int, copy_
                                      "hand over")
                 # before: arrived [False, True]; fast scores and the predictor's own, [2, T*N]
                 # after:  copy 0 keeps its fast scores, copy 1 takes the predictor's own scores
-                reward = jnp.where(arrived[:, None], score(params, state, next_obs_flat), reward)
+                own = score(params, state, next_obs_flat)
+                reward = jnp.where(arrived[:, None], own, reward)
         else:
             reward = score(params, state, next_obs_flat)
         obs_rms = statistics_after(state, next_obs_flat)
         extra = {"rnd_input": network_input(next_obs_flat, obs_rms)}
+        if predictor_divisor:
+            extra["predictor_scores"] = own
         # the target never changes, so its features of the update batch can be computed here,
         # once, and travel with the batch: [C, T*N, feature_dim] beside the [C, T*N, obs] input
         # ([C, T*N, D] with random Fourier features)
@@ -253,4 +262,5 @@ def build(cfg, env_cfg, rnd_cfg: RNDConfig, n_copies: int, base_seed: int, copy_
                               if rnd_cfg.reward_divisor == "held_after_fraction" else None),
                           own_learning_rate=own_rate,
                           record_on_maze_grid=rnd_cfg.record_bonus_on_maze_grid,
-                          reads_first_arrival=until_arrival)
+                          reads_first_arrival=until_arrival,
+                          keeps_predictor_divisor=predictor_divisor)

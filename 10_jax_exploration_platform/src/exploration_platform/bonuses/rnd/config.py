@@ -115,6 +115,26 @@ class RNDConfig:
                                          # trainer's episode log and episodes that end at the
                                          # goal
 
+    # ---- the diagnosis of 2026-11-13 (a policy settles slowly after the fast last layer stops):
+    # the divisor built on the fast last layer's scores is 12 to 17 times smaller than the one
+    # built on the predictor's own scores, so after the switch the learner saw a reward 10 to 20
+    # times the size of random network distillation's ----
+    predictor_divisor_after_first_arrival: bool = False  # read with
+                                         # fast_last_layer_until_first_arrival only. False: one
+                                         # discounted-sum filter and one running standard
+                                         # deviation follow whatever a policy is rewarded with,
+                                         # so a policy that has arrived is divided by a statistic
+                                         # built on the fast last layer's scores. True: a second
+                                         # filter and running standard deviation follow the
+                                         # predictor's own scores of every rollout from the first
+                                         # one on (the statistics random network distillation
+                                         # keeps), and a policy that has arrived in an earlier
+                                         # rollout is divided by that second statistic; before
+                                         # its arrival nothing changes. With reward_divisor
+                                         # "held_after_first_arrival" it is the second statistic
+                                         # that is held from the first arrival. Adds two arrays
+                                         # per policy to the training state
+
 
 def resolved_rnd_config(rnd_cfg: RNDConfig) -> RNDConfig:
     """Refuse option values and combinations that are not built; fill in what one option implies.
@@ -146,6 +166,18 @@ def resolved_rnd_config(rnd_cfg: RNDConfig) -> RNDConfig:
     if rnd_cfg.fast_last_layer_until_first_arrival and rnd_cfg.fast_last_layer_step <= 0:
         raise ValueError("fast_last_layer_until_first_arrival says when the fast last layer "
                          "stops; set fast_last_layer_step above zero with it")
+    if rnd_cfg.predictor_divisor_after_first_arrival:
+        if not rnd_cfg.fast_last_layer_until_first_arrival:
+            raise ValueError("predictor_divisor_after_first_arrival says what a policy is divided "
+                             "by once the fast last layer has stopped; set "
+                             "fast_last_layer_until_first_arrival with it")
+        if rnd_cfg.reward_divisor not in ("running_std", "held_after_first_arrival"):
+            raise ValueError("predictor_divisor_after_first_arrival is built for reward_divisor "
+                             "'running_std' and 'held_after_first_arrival'; it is "
+                             f"{rnd_cfg.reward_divisor!r}")
+        if rnd_cfg.record_bonus_on_maze_grid:
+            raise ValueError("record_bonus_on_maze_grid records one divisor per policy and "
+                             "predictor_divisor_after_first_arrival keeps two; use one of them")
     if rnd_cfg.reward_divisor == "held_after_fraction":
         if not 0 < rnd_cfg.divisor_hold_fraction < 1:
             raise ValueError("divisor_hold_fraction must be above 0 and below 1 with "

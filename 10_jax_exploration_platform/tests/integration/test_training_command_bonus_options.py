@@ -40,7 +40,8 @@ DEFAULT_RECORD = {
     "record_bonus_on_maze_grid": False, "input_clip": 5.0, "input_statistics": "running",
     "input_features": "raw", "fourier_feature_count": 256, "fourier_length_scale": 1.0,
     "scheduled_last_layer_features": "body", "divisor_hold_fraction": 0.0,
-    "fast_last_layer_until_first_arrival": False}
+    "fast_last_layer_until_first_arrival": False,
+    "predictor_divisor_after_first_arrival": False}
 
 # The 18 units of batch 2 in the order of its ideas table: (name, the unit's --bonus-options,
 # what its start record must hold beside the defaults and the maze-grid record). Random Fourier

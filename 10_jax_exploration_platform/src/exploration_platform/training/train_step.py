@@ -188,6 +188,18 @@ def build_iteration(cfg, env, bonus, sweep, layout, capture_batch: bool = False)
             raise ValueError(f"the {bonus.name} bonus reads each copy's first arrival, which "
                              "needs episodes that end at the goal (continuing_task=False): "
                              "this environment records no arrival")
+    if bonus.keeps_predictor_divisor:
+        if not bonus.reads_first_arrival:
+            raise ValueError(f"the {bonus.name} bonus keeps a second divisor for copies that "
+                             "have arrived, so it must read each copy's first arrival "
+                             "(reads_first_arrival)")
+        if reward_divisor not in ("running_std", "held_after_first_arrival"):
+            raise ValueError("a second divisor on the predictor's own scores is built for the "
+                             "reward divisors 'running_std' and 'held_after_first_arrival'; "
+                             f"this one is {reward_divisor!r}")
+        if bonus.record_on_maze_grid:
+            raise ValueError("the maze-grid record holds one divisor per copy; a bonus that "
+                             "keeps a second divisor cannot be recorded on the maze grid")
 
     # the reward-decline study's switches, all decided here while the program is built
     if cfg.int_coef_schedule not in ("constant", "linear_decay"):
@@ -418,6 +430,12 @@ def build_iteration(cfg, env, bonus, sweep, layout, capture_batch: bool = False)
             bonus_state, rint_flat, batch_extra = bonus.post_rollout(
                 bonus_params, bonus_state_old, nobs_flat, scored)
         rint_buf = unflat(rint_flat)
+        if bonus.keeps_predictor_divisor:
+            # the predictor's own scores travel in the extras and never enter the update batch
+            # before: extras {"rnd_input": ..., "predictor_scores": [C, T*N]}
+            # after:  extras {"rnd_input": ...} and own_buf [T, C, N]
+            batch_extra = dict(batch_extra)
+            own_buf = unflat(batch_extra.pop("predictor_scores"))
 
         # intrinsic filter forward in time, then per-copy normalization (spec 5.2)
         if reward_divisor in ("running_std", "held_after_fraction",
@@ -458,6 +476,36 @@ def build_iteration(cfg, env, bonus, sweep, layout, capture_batch: bool = False)
                 int_rms = jax.tree.map(lambda kept, moved: jnp.where(held, kept, moved),
                                        state.agent_state["int_rms"], int_rms)
             int_std = jnp.sqrt(int_rms.var + 1e-8).astype(F32).reshape(1, C, 1)
+            if bonus.keeps_predictor_divisor:
+                # the second statistics follow the predictor's own scores of every rollout, as
+                # random network distillation's do; a copy that arrived in an EARLIER rollout
+                # is divided by them, and under the hold keeps the values the state holds (the
+                # rollout with the arrival itself still moved them)
+                # before: first arrival steps [-1, 40]; divisors of the rewarded scores [3.5, 3.4]
+                #         and of the predictor's own scores [60.0, 55.0]
+                # after:  copy 0 is divided by 3.5, copy 1 by 55.0
+                if cfg.intrinsic_sums_by_matrix_product:
+                    own_filt = (jnp.matmul(filter_matrix, own_buf.reshape(T, C * N)
+                                           ).reshape(T, C, N)
+                                + carry_powers[:, None, None]
+                                * state.agent_state["int_filter_predictor"][None])
+                    own_filter = own_filt[-1]
+                else:
+                    own_filter, own_filt = filtered_intrinsic_sum(
+                        cfg.gamma_int, state.agent_state["int_filter_predictor"], own_buf,
+                        cfg.advantage_scan_unroll)
+                own_rms = rms_update(state.agent_state["int_rms_predictor"],
+                                     own_filt.transpose(1, 0, 2).reshape(C, T * N, 1),
+                                     cfg.batch_stats_f32)
+                arrived_before = (state.agent_state["episode_log"]["first_goal_step"] >= 0)[:, None]
+                if reward_divisor == "held_after_first_arrival":
+                    own_filter = jnp.where(arrived_before,
+                                           state.agent_state["int_filter_predictor"], own_filter)
+                    own_rms = jax.tree.map(
+                        lambda kept, moved: jnp.where(arrived_before, kept, moved),
+                        state.agent_state["int_rms_predictor"], own_rms)
+                own_std = jnp.sqrt(own_rms.var + 1e-8).astype(F32).reshape(1, C, 1)
+                int_std = jnp.where(arrived_before.reshape(1, C, 1), own_std, int_std)
             rint_hat = rint_buf / int_std
         else:
             # the statistics are not moved: a frozen divisor keeps the value the priming
@@ -472,6 +520,9 @@ def build_iteration(cfg, env, bonus, sweep, layout, capture_batch: bool = False)
         # study additions: the episode tracker (and the running goal-reaching rate it feeds), and
         # the task reward scaled by its running discounted-sum std. Neither runs by default.
         agent_state = {"int_filter": int_filter, "int_rms": int_rms}
+        if bonus.keeps_predictor_divisor:
+            agent_state["int_filter_predictor"] = own_filter
+            agent_state["int_rms_predictor"] = own_rms
         if cfg.normalize_agent_obs:
             agent_state["obs_rms"] = rms_update(agent_rms, flat(obs_buf), cfg.batch_stats_f32)
         if track:

@@ -65,6 +65,13 @@ always did, so a family that sets none of them composes into the program it alwa
   first arrival as the state holds it when the iteration starts), so the rollout with the first
   arrival itself is still scored as the ones before it. The trainer needs its episode log and
   episodes that end at the goal for it, and refuses the family without them.
+- `keeps_predictor_divisor` — read with `reads_first_arrival` only. `post_rollout` puts the
+  predictor's own scores of the whole rollout, [C, T*N], into its extras under
+  "predictor_scores"; the trainer takes them out before it builds the update batch, keeps a second
+  discounted-sum filter and running standard deviation on them (two more arrays per copy in its
+  state), and divides the reward of a copy that had arrived in an earlier rollout by that second
+  statistic. Built for the divisors "running_std" and "held_after_first_arrival"; with the
+  latter the second statistic is the one held from the first arrival.
 """
 from dataclasses import dataclass
 from typing import Callable, Optional
@@ -87,3 +94,4 @@ class BonusFunctions:
     own_learning_rate: Optional[float] = None
     record_on_maze_grid: bool = False
     reads_first_arrival: bool = False
+    keeps_predictor_divisor: bool = False

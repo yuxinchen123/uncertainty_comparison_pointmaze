@@ -55,7 +55,11 @@ per copy from the rollout after the one in which the copy first reaches the goal
 `--episode-log` and an environment whose episodes end at the goal. A fast last layer that stops
 at the first arrival (`fast_last_layer_step=0.1,fast_last_layer_until_first_arrival=true`) scores
 a copy's rollouts with the fast last layer up to and including the one in which the copy first
-reaches the goal, and every later rollout by the predictor alone; it has the same two needs. With
+reaches the goal, and every later rollout by the predictor alone; it has the same two needs. Add
+`predictor_divisor_after_first_arrival=true` so that a copy that has arrived is divided by a
+second statistic kept on the predictor's own scores (the divisor random network distillation
+would have), not by the one built on the fast last layer's scores, which is many times smaller.
+With
 `record_bonus_on_maze_grid=true` each window record also carries, per copy, the bonus at one probe
 observation per open maze cell, the divisor of the intrinsic reward, and the window's visits to
 each cell (`training/maze_grid.py`); one `maze_grid_at_start` record holds the same fields before
