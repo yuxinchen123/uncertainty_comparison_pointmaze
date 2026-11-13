@@ -117,3 +117,8 @@ Times are Pacific.
   cancelled by its id from the monitor ledger, 6898944 submitted without a top-up phase (2 GiB, partitions
   `cpu,nolim`, limit 1 day). It was waiting on priority at 22:21 PT; until it runs, the session's 20-minute tick
   covers it. UVA workers are now submitted only by the tick, with `--only-cards-free-now`.
+- 2026-11-12 22:50 PT: first use of the new placement for a batch (batch 7, 11 units). The planner found one UVA
+  card that could start a worker (lynx04, GTX 1080 Ti); its job 6899067 was still waiting on priority after two
+  minutes, so it was cancelled by its ledger id and its unit went to Gilbreth with the others. "Can start at
+  once" is therefore checked after the fact: a pinned UVA job that has not started two minutes after submission
+  is cancelled and its unit handed over.
