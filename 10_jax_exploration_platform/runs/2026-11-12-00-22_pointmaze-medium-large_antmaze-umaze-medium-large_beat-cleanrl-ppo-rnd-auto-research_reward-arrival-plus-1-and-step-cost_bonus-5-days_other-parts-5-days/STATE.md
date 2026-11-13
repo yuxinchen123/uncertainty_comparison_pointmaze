@@ -801,6 +801,19 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   27 units, phase `discovery-validation`, first validation block): the fast last layer and RND, each at its own
   configurations for the first-goal time, in PointMaze Medium with both rewards and PointMaze Large with the
   step cost. Predictions in its `ideas.md`.
+- 2026-11-13 01:25 PT: **the option `reward_divisor=held_after_first_arrival` is in the platform** (background
+  work, commit eab85eba; 5 new tests, the golden, bonus, agent, integration, sweep-machinery and Warp training
+  suites pass; existing options give the same results bit for bit). How it works: each policy's divisor is
+  updated as in RND through the rollout that contains its first arrival, and is held from the next rollout on; a
+  policy that never arrives is exactly RND. The trainer reads the first-arrival step from the episode log it
+  already keeps. Card check on serval02 card 1 (00:49 to 00:54 PT, PointMaze Medium, 256 policies): every policy
+  arrived (first-arrival step: smallest 1,300, median 16,306, largest 169,568) and held within its arrival's
+  rollout (at most 508 steps later); 0.01558 s per iteration against 0.01560 s for the fraction hold, so no
+  slowdown.
+  **Its units are built only after this folder's jobs of the old code copy have ended on Gilbreth**, because a
+  worker does not check which code copy a unit needs: an old-copy job that took a unit with the new option would
+  fail it. Batch 9's 27 units run under the old copy now; then: freeze the code anew, build batch 8's first arm
+  (the divisor held from the first arrival) on the first validation block in the four PointMaze cases, hand over.
 
 ## Next
 
