@@ -1225,6 +1225,21 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   A background worker is checking late-training policies against reference MuJoCo (started 07:08 PT), to tell
   whether this motion is a property of the task or something only our physics allows. Until that is known, ant
   results are provisional for RND and for every arm.
+- 2026-11-13 07:26 PT: **batch 12, PointMaze Large with the step cost, step 0.03 with the hold (2e-3, weight 8; first
+  block):** −0.7223, against RND's best +0.0087 [+0.0039, +0.0136], final level +0.0100 [+0.005, +0.015],
+  first-goal time 83 against 191 thousand steps (−108 [−130, −87]). In this case the first-block means by step
+  are: 0.03: −0.7223; 0.01: −0.7250; 0.1: −0.7264; hold alone at the same configuration: −0.7268. So step 0.03 is
+  the one whose second-block result counts (its unit was at 40 of 256 windows at 07:26 PT). Batch 13's held arm
+  at (2e-3, weight 8): −0.7292, level with RND (+0.0018 [−0.005, +0.009]), first-goal time 105.
+- 2026-11-13 07:26 PT: **where the arm stands** (RND with the fast last layer at a step chosen per case and the
+  divisor held from the first arrival; whole-curve mean against RND, first-goal time in thousand steps):
+
+  | case | step chosen on the first block | second block against RND | first-goal time against RND's |
+  |---|---|---|---|
+  | Medium, reward 1 on arrival | 0 (hold alone) | +0.0095 [+0.0015, +0.0178] | 20.6 against 26.3 |
+  | Medium, step cost | 0 (hold alone) | +0.0065 [+0.0012, +0.0122]; +0.0040 [−0.0001, +0.0080] if RND chooses on the block | 14.7 against 19.9 |
+  | Large, reward 1 on arrival | 0.03 | +0.0153 [+0.0096, +0.0208] | 118 against 266 |
+  | Large, step cost | 0.03 | running (first block +0.0087; the hold alone has +0.0072 on the second block) | 83 against 191 (first block) |
 
 ## Next
 
