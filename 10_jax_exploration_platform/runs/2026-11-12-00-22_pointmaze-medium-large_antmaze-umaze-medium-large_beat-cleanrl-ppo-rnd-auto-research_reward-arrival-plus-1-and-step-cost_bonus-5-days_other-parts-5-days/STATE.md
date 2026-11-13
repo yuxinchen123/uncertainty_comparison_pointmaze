@@ -314,6 +314,22 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   already reach the U-maze goal; and policies trained with the bonus spend 0.7% to 8.2% of their steps within
   0.5 m of the ceiling (a random policy: about 0.33%), with largest torso speeds of 7.8 to 12.8 m/s. The bonus
   rewards leaving the floor. The Gymnasium AntMaze has no rule against it either.
+- 2026-11-12 16:25 PT: **RND's own sweep for discovery, first three cases complete** (72 configurations each, 16
+  seeds; mean capped first-goal time in thousands of steps). PointMaze Large with reward 1 on arrival: 111 ± 17 at
+  learning rate 6e-3, entropy 0.01, weight 64; the next five cells are 117 to 135, at weights 4 to 1,024. The best
+  learning rate is the largest tried, so 1e-2 and 2e-2 were queued. PointMaze Medium: 9.7 ± 1.8 with reward 1 on
+  arrival and 8.3 ± 1.5 with the step cost, and about 10 for very different settings: on Medium the goal is found
+  within about 20 rollouts whatever the bonus. Extensions queued there too (largest entropy and weight were best),
+  and PointMaze Large with the step cost around the best cells.
+- 2026-11-12 16:25 PT: **batch 2 on the secondary metric (16 development seeds, each arm at its best weight, all
+  at learning rate 2e-3 and entropy 0.01): the scheduled last layer on local features is the fastest so far.**
+  Decay 1, length 1: 45 ± 6 thousand steps (weight 4); decay 0.5: 59 ± 11 and 64 ± 11 (two lengths); local
+  features as the input of RND, length 2: 84 ± 14; wider input clip: 139 and 145; held divisor: 162 to 183;
+  control: 190 ± 51 (RND's own best over 72 configurations: 111 ± 17). All 16 policies reach the goal in each.
+  **On the primary metric the same arms are far behind:** scheduled last layer on local features 0.05, local
+  features as the input of RND 0.35, against the control's 0.885. They find the goal early and do not settle on
+  it: a bonus that only counts stays near 1 at rarely visited states for the whole run. Wider input clip: 0.887
+  (clip 10) and 0.883 (clip 20), like the control.
 
 ## Next
 
