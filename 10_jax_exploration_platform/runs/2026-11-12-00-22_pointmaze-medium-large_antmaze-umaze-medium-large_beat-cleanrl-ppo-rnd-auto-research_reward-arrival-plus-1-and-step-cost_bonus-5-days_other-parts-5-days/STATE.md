@@ -1180,6 +1180,33 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   per policy (4 units in the AntMaze baseline folder), and the second block on the two PointMaze Medium cases for
   step 0.01 with the hold (2 units). The standing page has two new families: the fast last layer throughout with
   the first-arrival hold, and the fast last layer until the first arrival with the predictor's own divisor.
+- 2026-11-13 06:49 PT: **ant U-maze screen with 16 environments per policy, complete** (batch 10's three units; 16
+  development seeds, 16,777,216 steps, 8 configurations each, against the check's RND unit at the same
+  configuration; RND's best over its 48 configurations is 0.0487).
+
+  | arm (step 0.1 where the fast last layer is used) | ahead of RND at the same configuration | differences in the whole-curve mean | arm's best | first-goal time against RND's | fault-guard respawns |
+  |---|---|---|---|---|---|
+  | fast last layer | 8 of 8 | +0.002 to +0.010 | 0.0516 | sooner in 8 of 8 (0.25 to 1.18 against 0.32 to 1.26 million steps) | 32 |
+  | fast last layer with the first-arrival hold | 8 of 8 | +0.002 to +0.008 | 0.0538 | sooner in 8 of 8 | 52 |
+  | first-arrival hold alone | 1 of 8 | −0.008 to +0.007 | 0.0558 | the same | 30 |
+
+  The hold alone is ahead only at RND's best configuration (learning rate 3e-4, weight 0.0625), where it has the
+  best mean and final level of any ant unit so far (0.0558 and 0.082 against 0.0487 and 0.062). With 128
+  environments per policy the same three arms were behind or level. So on the ant the fast last layer helps with
+  16 environments per policy and hurts with 128; predictions 5 and 6 of batch 10 hold for the first-goal time,
+  and its whole-curve mean is ahead where I predicted it would not be; prediction 4 (the hold) fails. These are
+  development seeds and one screen; the choice of the environment count is still open.
+- 2026-11-13 06:49 PT: **batch 14, second block on PointMaze Medium, step 0.01 with the hold:** reward 1 on arrival:
+  0.9403 against RND's 0.9308, +0.0095 [+0.0022, +0.0170], and equal to the hold alone (0.9404); first-goal time
+  17.8 against 26.3 thousand steps. Step cost: −0.3494 against RND's −0.3535, +0.0041 [−0.0017, +0.0105], level
+  (the hold alone has −0.3472 there, +0.0065); first-goal time 13.5 against 19.9. Prediction 3 of batch 14 holds.
+- 2026-11-13 06:49 PT: **batch 13, three more units (first block).** PointMaze Large with reward 1 on arrival: the
+  arm with the predictor's own divisor left running, weight 2: 0.8894, +0.0114 [+0.0054, +0.0173] against RND's
+  best, final level level, first-goal time 92 against 269 thousand steps; held, weight 1: 0.8284, behind (−0.050).
+  Held at weights 2 and 4 was level (0.8728, 0.8806), so here the running divisor is better than the held one and
+  prediction 6 fails in this case. PointMaze Large with the step cost, held at (2e-3, weight 4): −0.7409, behind
+  RND's best by 0.010, first-goal time 69 against 191 thousand steps. Three units on Large with the step cost
+  are running.
 
 ## Next
 
