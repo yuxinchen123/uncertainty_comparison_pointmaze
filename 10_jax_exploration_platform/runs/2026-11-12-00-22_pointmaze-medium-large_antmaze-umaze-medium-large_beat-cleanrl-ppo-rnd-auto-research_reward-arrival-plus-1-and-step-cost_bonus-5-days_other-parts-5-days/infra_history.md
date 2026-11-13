@@ -193,3 +193,7 @@ Times are Pacific.
   12 with the three units already there; twelve jobs, of which seven were running and five waiting two minutes
   later) and four stayed on UVA, where three jobs on four free cards started within two minutes (6903416 on an
   A100 40 GB, 6903417 on two RTX 5080, 6903418 on one RTX 5080).
+- 2026-11-13 05:46 PT: five units of batch 13 were still waiting on Gilbreth three minutes after the hand-over
+  (five jobs waiting on priority). I lowered the limit to 7, took the five back, and three UVA jobs on five free
+  cards started within two minutes and took them (6903458 on an RTX 5080, 6903459 on three A40, 6903460 on one
+  A40). The five waiting Gilbreth jobs stay in the queue; each ends at once when it starts and finds no unit.
