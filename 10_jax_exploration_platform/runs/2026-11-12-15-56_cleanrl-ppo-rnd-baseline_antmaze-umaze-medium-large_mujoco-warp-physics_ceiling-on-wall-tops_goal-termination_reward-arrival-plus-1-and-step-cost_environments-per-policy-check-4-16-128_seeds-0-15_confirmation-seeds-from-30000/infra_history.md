@@ -106,3 +106,18 @@ Times are Pacific, read from the clock or from scheduler records.
   the server holds it in no other queue folder.
 - 2026-11-12 17:24 PT: 8 fresh units handed to Gilbreth, 8 jobs submitted. The fleet step run again at 17:26 PT
   took nothing back and handed nothing over; the server held 8 waiting units and no `withdrawn` marker.
+- 2026-11-12 17:27 to 17:41 PT: two of the 8 fresh units failed three times each at their start (the unit with 4
+  environments per policy, jobs 12346600, 12346603, 12346606; the unit with 128 environments per policy and cells
+  41 to 48, jobs 12346625, 12346649, 12346665): the worker refuses a unit whose stored configuration file differs
+  from its specification, and the server still held those two units' configuration files with the 160-row limit
+  from the first hand-over (the folders set aside at 17:22 PT were `queue`, `data`, `checkpoints` and `logs`, not
+  `slurm/unit_configurations` and `specifications`). The other six units started once each and run.
+  Correction: the two stale configuration files, their specifications and failed records moved to
+  `replaced_2026-11-12_stale-unit-configurations/` on the server; the two failed queue records moved to a folder
+  of the same name here; the two units built again and handed over at 17:41 PT (jobs 12346670, 12346671). At
+  17:44 PT all 8 units ran, one job each, and the fleet step handed over nothing.
+- 2026-11-12 17:44 PT: speed with the 512-row limit, read from windows written: units with 128 environments per
+  policy on A10 cards about 5.2 s per iteration (16,384 environments), so about 1.5 hours per unit; the unit with
+  16 environments per policy on an A30 about 4.7 s per iteration (12,288 environments), so about 10 hours. With
+  the 160-row limit an A30 took 3.85 s per iteration at 16,384 environments, so the higher limit costs time; the
+  windows record the largest number of rows in use, and the limit for later sweeps is set from that.

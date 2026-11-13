@@ -403,6 +403,27 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   never handed to Gilbreth again (their fleet logs show no repeat after 16:36 PT).
   Lesson for the checks: after any hand-over, the next fleet step must report "0 handed over" and the server's
   waiting and running lists must not share a unit.
+- 2026-11-12 17:44 PT: all 8 AntMaze units run on Gilbreth, one job each (two had failed at their start on stale
+  configuration files left on the server and were built again). Units with 128 environments per policy take about
+  1.5 hours on an A10, the unit with 16 about 10 hours, the unit with 4 longer; the three counts can be compared
+  on their first 4.2 million steps well before all are done.
+- 2026-11-12 17:45 PT: **batch 3 complete (6 units, 16 development seeds).** Whole-curve mean, difference from
+  the control: all three parts with the divisor held after 1/16: +0.013 [−0.014, +0.042] (0.898 ± 0.008 at weight
+  0.5); held after 1/8: +0.010; fast last layer at step 0.3 with held divisor: +0.004; at step 0.1 with slower
+  predictor: −0.002; slower predictor with held divisor: −0.003; fast last layer at step 0.1 with held divisor:
+  −0.010. All within their intervals. Mean capped first-goal time: fast last layer at step 0.1 with held divisor
+  62 ± 13 thousand (weight 16; whole-curve mean 0.24 there), all three with the divisor held after 1/8: 63 ± 10
+  thousand (weight 4; whole-curve mean 0.714 and final level 0.973 there), both ahead of the control's 190.
+  Predictions: 1 did not hold (the two gains do not add); 2 held on the final level and the first-goal time, not
+  on the whole-curve mean; 3 held (all three: best whole-curve mean of the batch, first-goal time level with the
+  best, 1/8 against 1/16 within 0.01).
+- 2026-11-12 17:46 PT: **RND confirmed for the discovery table on 1,024 fresh seeds.** PointMaze Large with reward
+  1 on arrival (learning rate 1e-2, entropy 0.01, weight 64): mean capped first-goal time 136 ± 3 thousand steps
+  (the 16 development seeds had given 95 ± 21). PointMaze Medium with the step cost (learning rate 1e-2, entropy
+  0.01, weight 4): 14.1 ± 0.3 thousand (development: 8.3 ± 1.5); PPO without a bonus there: 19.1 ± 0.5. For
+  PointMaze Medium with reward 1 on arrival and PointMaze Large with the step cost the report names other
+  configurations than the ones run so far (it uses the first finished run of a repeated configuration, and the
+  extension units had not been marked as discovery units in its settings); their runs are queued.
 
 ## Next
 

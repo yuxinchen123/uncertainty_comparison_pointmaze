@@ -1,6 +1,6 @@
 # Batch 2 screen on PointMaze Large with reward 1 on arrival: where the bonus points at the start, and features that keep the fit local
 
-Generated 2026-11-12 17:01 PT by the command below. This file is generated: regenerate it, do not edit it. Times are Pacific, converted from machines running Eastern. Run folder: `2026-11-12-00-22_pointmaze-medium-large_antmaze-umaze-medium-large_beat-cleanrl-ppo-rnd-auto-research_reward-arrival-plus-1-and-step-cost_bonus-5-days_other-parts-5-days`; batch folder: `batches/02_where-the-bonus-points-at-the-start_and_features-that-keep-the-fit-local`.
+Generated 2026-11-12 17:45 PT by the command below. This file is generated: regenerate it, do not edit it. Times are Pacific, converted from machines running Eastern. Run folder: `2026-11-12-00-22_pointmaze-medium-large_antmaze-umaze-medium-large_beat-cleanrl-ppo-rnd-auto-research_reward-arrival-plus-1-and-step-cost_bonus-5-days_other-parts-5-days`; batch folder: `batches/02_where-the-bonus-points-at-the-start_and_features-that-keep-the-fit-local`.
 
 ```bash
 cd /p/rlprojects/RND/10_jax_exploration_platform
@@ -13,25 +13,25 @@ bash "benchmark_runs/2026-11-12-00-17_pointmaze-antmaze_cleanrl-ppo-rnd_speed-30
 
 | section | first written | last changed | status |
 |---|---|---|---|
-| [Units](#units) | 2026-11-12 16:20 PT | 2026-11-12 17:01 PT | unread |
+| [Units](#units) | 2026-11-12 16:20 PT | 2026-11-12 17:45 PT | unread |
 | [Measures](#measures) | 2026-11-12 16:20 PT | 2026-11-12 16:20 PT | unread |
-| [Discovery and optimization: whole-curve mean](#discovery-and-optimization-whole-curve-mean) | 2026-11-12 16:20 PT | 2026-11-12 17:01 PT | unread |
-| [Whole-curve mean at every intrinsic weight](#whole-curve-mean-at-every-intrinsic-weight) | 2026-11-12 16:20 PT | 2026-11-12 17:01 PT | unread |
-| [Discovery: mean capped first-goal time](#discovery-mean-capped-first-goal-time) | 2026-11-12 16:20 PT | 2026-11-12 17:01 PT | unread |
-| [Mean capped first-goal time at every intrinsic weight](#mean-capped-first-goal-time-at-every-intrinsic-weight) | 2026-11-12 16:20 PT | 2026-11-12 17:01 PT | unread |
-| [Training curves](#training-curves) | 2026-11-12 16:20 PT | 2026-11-12 17:01 PT | unread |
-| [Properties of the bonus on the maze grid](#properties-of-the-bonus-on-the-maze-grid) | 2026-11-12 16:20 PT | 2026-11-12 17:01 PT | unread |
+| [Discovery and optimization: whole-curve mean](#discovery-and-optimization-whole-curve-mean) | 2026-11-12 16:20 PT | 2026-11-12 17:45 PT | unread |
+| [Whole-curve mean at every intrinsic weight](#whole-curve-mean-at-every-intrinsic-weight) | 2026-11-12 16:20 PT | 2026-11-12 17:45 PT | unread |
+| [Discovery: mean capped first-goal time](#discovery-mean-capped-first-goal-time) | 2026-11-12 16:20 PT | 2026-11-12 17:45 PT | unread |
+| [Mean capped first-goal time at every intrinsic weight](#mean-capped-first-goal-time-at-every-intrinsic-weight) | 2026-11-12 16:20 PT | 2026-11-12 17:45 PT | unread |
+| [Training curves](#training-curves) | 2026-11-12 16:20 PT | 2026-11-12 17:45 PT | unread |
+| [Properties of the bonus on the maze grid](#properties-of-the-bonus-on-the-maze-grid) | 2026-11-12 16:20 PT | 2026-11-12 17:45 PT | unread |
 | [Predictions](#predictions) | 2026-11-12 16:20 PT | 2026-11-12 16:20 PT | unread |
-| [Ideas against the control](#ideas-against-the-control) | 2026-11-12 16:20 PT | 2026-11-12 17:01 PT | unread |
-| [Validation block](#validation-block) | 2026-11-12 16:20 PT | 2026-11-12 17:01 PT | unread |
+| [Ideas against the control](#ideas-against-the-control) | 2026-11-12 16:20 PT | 2026-11-12 17:45 PT | unread |
+| [Validation block](#validation-block) | 2026-11-12 16:20 PT | 2026-11-12 17:45 PT | unread |
 | [Consistency check against the baseline run](#consistency-check-against-the-baseline-run) | 2026-11-12 16:20 PT | 2026-11-12 16:20 PT | unread |
-| [Records that need a look](#records-that-need-a-look) | 2026-11-12 16:20 PT | 2026-11-12 17:01 PT | unread |
+| [Records that need a look](#records-that-need-a-look) | 2026-11-12 16:20 PT | 2026-11-12 17:45 PT | unread |
 
 Times are Pacific, converted from machines running Eastern, and come from this report's own history of regenerations. [The same report with unread sections in blue and changed text in brown](summary.html). No section marks itself read.
 
 ## Units
 
-17 of 18 units are complete. Only complete units enter the tables and figures below; nothing is estimated for the others. Left out: scheduled last layer on local features, decay 0.5, length 2.
+18 of 18 units are complete. Only complete units enter the tables and figures below; nothing is estimated for the others. No unit is left out.
 
 | unit | method | state | logging windows written | card | finished | place in the queue |
 |---|---|---|---|---|---|---|
@@ -48,7 +48,7 @@ Times are Pacific, converted from machines running Eastern, and come from this r
 | 11 | local features as the input of RND, length 2 | complete | 256 of 256 | NVIDIA A30 | 2026-11-12 16:02 PT | `queue/done` |
 | 12 | scheduled last layer on local features, decay 0.5, length 0.5 | complete | 256 of 256 | NVIDIA A30 | 2026-11-12 16:20 PT | `queue/done` |
 | 13 | scheduled last layer on local features, decay 0.5, length 1 | complete | 256 of 256 | NVIDIA A30 | 2026-11-12 16:20 PT | `queue/done` |
-| 14 | scheduled last layer on local features, decay 0.5, length 2 | not started (no shard) | 0 | none | not finished | `queue/remote_gilbreth` |
+| 14 | scheduled last layer on local features, decay 0.5, length 2 | complete | 256 of 256 | NVIDIA A10 | 2026-11-12 16:56 PT | `queue/done` |
 | 15 | scheduled last layer on local features, decay 1, length 1 | complete | 256 of 256 | NVIDIA A30 | 2026-11-12 16:10 PT | `queue/done` |
 | 16 | divisor held after one sixteenth of the run | complete | 256 of 256 | NVIDIA A10 | 2026-11-12 15:45 PT | `queue/done` |
 | 17 | divisor held after one eighth of the run | complete | 256 of 256 | NVIDIA A10 | 2026-11-12 15:45 PT | `queue/done` |
@@ -111,6 +111,7 @@ Define $W$, $L$ and the other columns as in the section Measures. One row per me
 | input statistics kept from the random-action rollouts, no clip | 0.25 | 0.831 ± 0.007 | -0.054 [-0.076, -0.026] | 0.991 | -0.003 [-0.012, +0.003] | 462.2K | **16 of 16** |
 | input statistics kept from the random-action rollouts, clip at 20 | 0.25 | 0.831 ± 0.007 | -0.054 [-0.076, -0.028] | 0.991 | -0.003 [-0.013, +0.003] | 462.2K | **16 of 16** |
 | local features as the input of RND, length 2 | 0.0625 | 0.352 ± 0.066 | -0.533 [-0.660, -0.405] | 0.402 | -0.592 [-0.813, -0.367] | 661.5K | **16 of 16** |
+| scheduled last layer on local features, decay 0.5, length 2 | $4^{-3}$ | 0.211 ± 0.060 | -0.673 [-0.781, -0.561] | 0.351 | -0.643 [-0.872, -0.405] | 411.9K | **16 of 16** |
 | local features as the input of RND, length 1 | $4^{-3}$ | 0.198 ± 0.063 | -0.687 [-0.800, -0.564] | 0.274 | -0.721 [-0.908, -0.498] | 1.25M | **16 of 16** |
 | local features as the input of RND, length 0.5 | $4^{-3}$ | 0.182 ± 0.074 | -0.702 [-0.834, -0.551] | 0.205 | -0.789 [-0.954, -0.600] | 1.03M | 12 of 16 |
 | scheduled last layer on local features, decay 0.5, length 1 | $4^{-3}$ | 0.069 ± 0.021 | -0.816 [-0.858, -0.766] | 0.122 | -0.873 [-0.950, -0.779] | 169.5K | **16 of 16** |
@@ -134,8 +135,9 @@ Define $W$ as in the section Measures. Rows are in the order of the table of the
 | divisor held after one eighth of the run | 0.000 | 0.000 | 0.000 | 0.000 | 0.213 | 0.787 | 4 |
 | input statistics kept from the random-action rollouts, no clip | 0.000 | 0.000 | 0.054 | 0.030 | **0.466** | <u>0.831</u> | 0.25 |
 | input statistics kept from the random-action rollouts, clip at 20 | 0.000 | 0.000 | 0.054 | 0.030 | **0.466** | <u>0.831</u> | 0.25 |
-| local features as the input of RND, length 2 | 0.000 | 0.000 | **0.086** | <u>0.183</u> | 0.352 | 0.008 | 0.0625 |
-| local features as the input of RND, length 1 | 0.000 | 0.000 | 0.048 | **0.198** | 0.068 | 0.003 | $4^{-3}$ |
+| local features as the input of RND, length 2 | 0.000 | 0.000 | **0.086** | 0.183 | 0.352 | 0.008 | 0.0625 |
+| scheduled last layer on local features, decay 0.5, length 2 | 0.000 | 0.000 | 0.003 | **0.211** | 0.046 | 0.006 | $4^{-3}$ |
+| local features as the input of RND, length 1 | 0.000 | 0.000 | 0.048 | <u>0.198</u> | 0.068 | 0.003 | $4^{-3}$ |
 | local features as the input of RND, length 0.5 | 0.000 | 0.000 | <u>0.082</u> | 0.182 | 0.059 | 0.003 | $4^{-3}$ |
 | scheduled last layer on local features, decay 0.5, length 1 | <u>0.009</u> | <u>0.005</u> | 0.047 | 0.069 | 0.021 | 0.013 | $4^{-3}$ |
 | scheduled last layer on local features, decay 1, length 1 | 0.000 | 0.001 | 0.031 | 0.052 | 0.026 | 0.013 | $4^{-3}$ |
@@ -155,6 +157,7 @@ Define $W$ as in the section Measures. Rows are in the order of the table of the
 | input statistics kept from the random-action rollouts, no clip | 0.782 | 0.551 | 0.316 | 0.071 | 0.021 | 0.015 | 0.25 |
 | input statistics kept from the random-action rollouts, clip at 20 | 0.782 | 0.551 | 0.316 | 0.071 | 0.021 | 0.015 | 0.25 |
 | local features as the input of RND, length 2 | 0.004 | 0.003 | 0.003 | 0.002 | 0.002 | 0.002 | 0.0625 |
+| scheduled last layer on local features, decay 0.5, length 2 | 0.004 | 0.004 | 0.004 | 0.003 | 0.003 | 0.004 | $4^{-3}$ |
 | local features as the input of RND, length 1 | 0.002 | 0.002 | 0.002 | 0.001 | 0.001 | 0.001 | $4^{-3}$ |
 | local features as the input of RND, length 0.5 | 0.001 | 0.001 | 0.001 | 0.001 | 0.001 | 0.001 | $4^{-3}$ |
 | scheduled last layer on local features, decay 0.5, length 1 | 0.013 | 0.015 | 0.013 | 0.012 | 0.011 | 0.014 | $4^{-3}$ |
@@ -180,6 +183,7 @@ Define $M$, $W$ and $L$ as in the section Measures. One row per method at its be
 | slower predictor, predictor learning rate 0.125 times 1e-4 | 16 | 108 ± 33.8 | -81.4 [-198, +22.1] | 16 of 16 | <u>0.713</u> ± 0.012 | <u>0.906</u> |
 | slower predictor, predictor learning rate 0.0625 times 1e-4 | 64 (largest of the grid) | 115 ± 25.8 | -74.1 [-170, +0.803] | 16 of 16 | 0.140 ± 0.007 | 0.248 |
 | local features as the input of RND, length 0.5 | 4 | 125 ± 21.8 | -64.3 [-165, +6.65] | 16 of 16 | 0.001 ± 0.000 | 0.000 |
+| scheduled last layer on local features, decay 0.5, length 2 | 0.5 | 130 ± 27.7 | -59.1 [-190, +42.1] | 16 of 16 | 0.004 ± 0.001 | 0.000 |
 | wider input clip, clip at 10 | 16 | 139 ± 20.6 | -50.1 [-175, +42.4] | 16 of 16 | 0.603 ± 0.032 | 0.757 |
 | wider input clip, clip at 20 | 16 | 145 ± 29.6 | -44.3 [-175, +59.5] | 16 of 16 | 0.607 ± 0.032 | 0.745 |
 | wider input clip, no clip | 16 | 145 ± 29.6 | -44.3 [-174, +57] | 16 of 16 | 0.607 ± 0.032 | 0.745 |
@@ -194,7 +198,7 @@ Define $M$ as in the section Measures; the cells give it in thousands of steps. 
 | method | weight $4^{-6}$ | weight $4^{-5}$ | weight $4^{-4}$ | weight $4^{-3}$ | weight 0.0625 | weight 0.25 | best intrinsic weight for $M$ |
 |---|---|---|---|---|---|---|---|
 | control | 7,376 | 8,389 | 8,389 | 7,050 | 3,980 | 1,289 | 64 (largest of the grid) |
-| scheduled last layer on local features, decay 1, length 1 | 7,868 | 7,015 | 5,225 | <u>592</u> | 162 | **89.3** | 4 |
+| scheduled last layer on local features, decay 1, length 1 | 7,868 | 7,015 | 5,225 | 592 | 162 | **89.3** | 4 |
 | scheduled last layer on local features, decay 0.5, length 1 | <u>6,617</u> | <u>3,516</u> | **669** | **209** | **83.3** | <u>96</u> | 64 (largest of the grid) |
 | scheduled last layer on local features, decay 0.5, length 0.5 | **2,699** | **1,098** | <u>945</u> | 1,328 | <u>90.6</u> | 603 | 1 |
 | input statistics kept from the random-action rollouts, no clip | 7,894 | 8,389 | 7,410 | 7,583 | 2,948 | 443 | 64 (largest of the grid) |
@@ -204,6 +208,7 @@ Define $M$ as in the section Measures; the cells give it in thousands of steps. 
 | slower predictor, predictor learning rate 0.125 times 1e-4 | 8,389 | 8,389 | 8,389 | 7,590 | 4,209 | 796 | 16 |
 | slower predictor, predictor learning rate 0.0625 times 1e-4 | 8,389 | 7,360 | 8,389 | 6,438 | 2,880 | 592 | 64 (largest of the grid) |
 | local features as the input of RND, length 0.5 | 8,389 | 6,946 | 5,253 | 2,859 | 587 | 339 | 4 |
+| scheduled last layer on local features, decay 0.5, length 2 | 8,389 | 7,935 | 2,533 | <u>494</u> | 494 | 230 | 0.5 |
 | wider input clip, clip at 10 | 7,145 | 7,908 | 7,491 | 8,389 | 4,828 | 1,032 | 16 |
 | wider input clip, clip at 20 | 8,389 | 7,911 | 7,422 | 8,389 | 5,663 | 1,226 | 16 |
 | wider input clip, no clip | 8,389 | 7,911 | 7,422 | 8,389 | 6,066 | 1,226 | 16 |
@@ -224,6 +229,7 @@ Define $M$ as in the section Measures; the cells give it in thousands of steps. 
 | slower predictor, predictor learning rate 0.125 times 1e-4 | 447 | 138 | 248 | 148 | 108 | 115 | 16 |
 | slower predictor, predictor learning rate 0.0625 times 1e-4 | 288 | 163 | 134 | 117 | 118 | 115 | 64 (largest of the grid) |
 | local features as the input of RND, length 0.5 | 392 | 300 | 338 | 125 | 197 | 200 | 4 |
+| scheduled last layer on local features, decay 0.5, length 2 | 130 | 563 | 372 | 262 | 229 | 371 | 0.5 |
 | wider input clip, clip at 10 | 466 | 386 | 271 | 203 | 139 | 172 | 16 |
 | wider input clip, clip at 20 | 426 | 391 | 320 | 217 | 145 | 160 | 16 |
 | wider input clip, no clip | 426 | 391 | 320 | 217 | 145 | 160 | 16 |
@@ -264,6 +270,7 @@ Rows are in the order of the table of the whole-curve mean. These columns descri
 | input statistics kept from the random-action rollouts, no clip | 521.70 | -0.29 | -1.02 ($4^{-3}$) to -0.29 (0.25) | 0.00451 (205 pairs) | not printed: 13 pairs | not printed: 13 pairs |
 | input statistics kept from the random-action rollouts, clip at 20 | 521.70 | -0.29 | -1.02 ($4^{-3}$) to -0.29 (0.25) | 0.00451 (205 pairs) | not printed: 13 pairs | not printed: 13 pairs |
 | local features as the input of RND, length 2 | 1.82 | -0.11 | -0.23 ($4^{-5}$) to -0.09 ($4^{-6}$) | 0.415 (365 pairs) | not printed: 16 pairs | not printed: 8 pairs |
+| scheduled last layer on local features, decay 0.5, length 2 | 1.00 | -0.15 | -0.19 ($4^{-6}$) to 0.01 (2) | 0.894 (229 pairs) | not printed: 15 pairs | not printed: 7 pairs |
 | local features as the input of RND, length 1 | 1.94 | -0.05 | -0.21 (16) to -0.05 ($4^{-3}$) | 0.392 (497 pairs) | 0.205 (99 pairs) | 0.186 (50 pairs) |
 | local features as the input of RND, length 0.5 | 1.94 | -0.12 | -0.23 (4) to -0.12 ($4^{-3}$) | 0.25 (442 pairs) | 0.151 (108 pairs) | 0.113 (98 pairs) |
 | scheduled last layer on local features, decay 0.5, length 1 | 1.00 | -0.03 | -0.30 ($4^{-6}$) to 0.01 (0.0625) | 1.07 (139 pairs) | not printed: 11 pairs | not printed: 7 pairs |
@@ -284,6 +291,7 @@ Rows are in the order of the table of the whole-curve mean. These columns descri
 | input statistics kept from the random-action rollouts, no clip | 0.25 | 1 and 45.9 | 29.6 | 0.0174 | 0.00266 | 0.00668 |
 | input statistics kept from the random-action rollouts, clip at 20 | 0.25 | 1 and 45.9 | 29.6 | 0.0174 | 0.00266 | 0.00668 |
 | local features as the input of RND, length 2 | 0.0625 | 1 and 10.6 | 0.0639 | 0.00258 | 0.00419 | 0.00676 |
+| scheduled last layer on local features, decay 0.5, length 2 | $4^{-3}$ | 1 and 1 | 0.0156 | 0.0114 | 0.00308 | 0.00501 |
 | local features as the input of RND, length 1 | $4^{-3}$ | 1 and 11.9 | 0.016 | 0.000526 | 0.000742 | 0.00101 |
 | local features as the input of RND, length 0.5 | $4^{-3}$ | 1 and 11.4 | 0.016 | 0.000493 | 0.000542 | 0.000605 |
 | scheduled last layer on local features, decay 0.5, length 1 | $4^{-3}$ | 1 and 1 | 0.0156 | 0.0148 | 0.0195 | 0.0177 |
@@ -346,35 +354,37 @@ By the 95% interval of the difference in $W$ from the control (section Measures,
 
 - **Ahead of the control** (interval entirely above zero): none.
 - **Within the interval** (it contains zero): slower predictor, predictor learning rate 0.0625 times 1e-4 (+0.012 [-0.010, +0.034]); divisor held after one sixteenth of the run (+0.010 [-0.009, +0.032]); divisor held after one quarter of the run (+0.002 [-0.017, +0.022]); wider input clip, clip at 10 (+0.002 [-0.017, +0.023]); wider input clip, clip at 20 (-0.001 [-0.023, +0.022]); wider input clip, no clip (-0.001 [-0.024, +0.022]); slower predictor, predictor learning rate 0.125 times 1e-4 (-0.002 [-0.024, +0.022]); divisor held after one eighth of the run (-0.012 [-0.046, +0.022]).
-- **Behind the control** (interval entirely below zero): input statistics kept from the random-action rollouts, no clip (-0.054 [-0.076, -0.026]); input statistics kept from the random-action rollouts, clip at 20 (-0.054 [-0.076, -0.028]); local features as the input of RND, length 2 (-0.533 [-0.660, -0.405]); local features as the input of RND, length 1 (-0.687 [-0.800, -0.564]); local features as the input of RND, length 0.5 (-0.702 [-0.834, -0.551]); scheduled last layer on local features, decay 0.5, length 1 (-0.816 [-0.858, -0.766]); scheduled last layer on local features, decay 1, length 1 (-0.833 [-0.861, -0.793]); scheduled last layer on local features, decay 0.5, length 0.5 (-0.868 [-0.892, -0.839]).
-- **Not compared yet** (unit not complete): scheduled last layer on local features, decay 0.5, length 2.
+- **Behind the control** (interval entirely below zero): input statistics kept from the random-action rollouts, no clip (-0.054 [-0.076, -0.026]); input statistics kept from the random-action rollouts, clip at 20 (-0.054 [-0.076, -0.028]); local features as the input of RND, length 2 (-0.533 [-0.660, -0.405]); scheduled last layer on local features, decay 0.5, length 2 (-0.673 [-0.781, -0.561]); local features as the input of RND, length 1 (-0.687 [-0.800, -0.564]); local features as the input of RND, length 0.5 (-0.702 [-0.834, -0.551]); scheduled last layer on local features, decay 0.5, length 1 (-0.816 [-0.858, -0.766]); scheduled last layer on local features, decay 1, length 1 (-0.833 [-0.861, -0.793]); scheduled last layer on local features, decay 0.5, length 0.5 (-0.868 [-0.892, -0.839]).
+- **Not compared yet** (unit not complete): none.
 
 ### Discovery: mean capped first-goal time
 
 By the 95% interval of the difference in $M$ from the control (section Measures, item 9), on the development seeds. After each name: the difference in $M$ and its interval, in thousands of steps; a negative difference means the goal was first reached earlier than under the control.
 
 - **Ahead of the control on discovery** (interval entirely below zero): scheduled last layer on local features, decay 1, length 1 (-144 [-256, -73.1]); scheduled last layer on local features, decay 0.5, length 1 (-131 [-245, -53.4]); scheduled last layer on local features, decay 0.5, length 0.5 (-125 [-234, -51.1]); input statistics kept from the random-action rollouts, no clip (-109 [-221, -28.7]); input statistics kept from the random-action rollouts, clip at 20 (-109 [-222, -28.2]); local features as the input of RND, length 2 (-106 [-221, -23.5]); local features as the input of RND, length 1 (-97.2 [-210, -24.3]).
-- **Within the interval** (it contains zero): slower predictor, predictor learning rate 0.125 times 1e-4 (-81.4 [-198, +22.1]); slower predictor, predictor learning rate 0.0625 times 1e-4 (-74.1 [-170, +0.803]); local features as the input of RND, length 0.5 (-64.3 [-165, +6.65]); wider input clip, clip at 10 (-50.1 [-175, +42.4]); wider input clip, clip at 20 (-44.3 [-175, +59.5]); wider input clip, no clip (-44.3 [-174, +57]); divisor held after one quarter of the run (-27.3 [-120, +50.4]); divisor held after one sixteenth of the run (-13 [-143, +92.1]); divisor held after one eighth of the run (-6.33 [-102, +89.6]).
+- **Within the interval** (it contains zero): slower predictor, predictor learning rate 0.125 times 1e-4 (-81.4 [-198, +22.1]); slower predictor, predictor learning rate 0.0625 times 1e-4 (-74.1 [-170, +0.803]); local features as the input of RND, length 0.5 (-64.3 [-165, +6.65]); scheduled last layer on local features, decay 0.5, length 2 (-59.1 [-190, +42.1]); wider input clip, clip at 10 (-50.1 [-175, +42.4]); wider input clip, clip at 20 (-44.3 [-175, +59.5]); wider input clip, no clip (-44.3 [-174, +57]); divisor held after one quarter of the run (-27.3 [-120, +50.4]); divisor held after one sixteenth of the run (-13 [-143, +92.1]); divisor held after one eighth of the run (-6.33 [-102, +89.6]).
 - **Behind the control on discovery** (interval entirely above zero): none.
-- **Not compared yet** (unit not complete): scheduled last layer on local features, decay 0.5, length 2.
+- **Not compared yet** (unit not complete): none.
 
 ## Validation block
 
-The units of the phase `validation-block` in the screen's environment and reward setting. Each trains one method at one intrinsic weight on 256 seeds, from 10000 to 10255: these are neither the development seeds of the screen nor the confirmation seeds. 11 of 13 method and weight pairs have a complete unit; a unit that is not complete is listed under the tables and left out. Define $W$, $L$ and $M$ as in the section Measures, here with $K$ the number of seeds of a row and read at 8,388,608 environment steps per policy. Differences are the method minus the control at the same intrinsic weight, on the seeds both have, each with its 95% interval from 10,000 resamples of those seeds. Rows: the control first, then the other methods, each by intrinsic weight. Per column the best value is bold and the second best underlined.
+The units of the phase `validation-block` in the screen's environment and reward setting. Each trains one method at one intrinsic weight on 256 seeds, from 10000 to 10255: these are neither the development seeds of the screen nor the confirmation seeds. 13 of 13 method and weight pairs have a complete unit; a unit that is not complete is listed under the tables and left out. Define $W$, $L$ and $M$ as in the section Measures, here with $K$ the number of seeds of a row and read at 8,388,608 environment steps per policy. Differences are the method minus the control at the same intrinsic weight, on the seeds both have, each with its 95% interval from 10,000 resamples of those seeds. Rows: the control first, then the other methods, each by intrinsic weight. Per column the best value is bold and the second best underlined.
 
 ### Discovery and optimization: whole-curve mean and final level
 
 | method | intrinsic weight | $W$ ± standard error | difference in $W$ from the control [95% interval] | $L$ ± standard error | difference in $L$ from the control [95% interval] | seeds in common with the control |
 |---|---|---|---|---|---|---|
-| control | 1 | 0.876 ± 0.002 | control | <u>0.995</u> ± 0.000 | control | 256 |
+| control | 1 | 0.876 ± 0.002 | control | 0.995 ± 0.000 | control | 256 |
 | control | 2 | 0.878 ± 0.002 | control | 0.992 ± 0.001 | control | 256 |
 | control | 4 | 0.863 ± 0.002 | control | 0.977 ± 0.002 | control | 256 |
 | separate predictor step size, predictor learning rate 0.25 times 1e-4 | 1 | 0.876 ± 0.003 | -0.000 [-0.008, +0.007] | **0.998** ± 0.000 | +0.002 [+0.001, +0.003] | 256 |
-| separate predictor step size, predictor learning rate 0.25 times 1e-4 | 2 | <u>0.886</u> ± 0.002 | +0.008 [+0.002, +0.014] | <u>0.995</u> ± 0.001 | +0.003 [+0.001, +0.005] | 256 |
-| separate predictor step size, predictor learning rate 1 times 1e-4 | 2 | 0.880 ± 0.002 | +0.002 [-0.004, +0.008] | <u>0.995</u> ± 0.000 | +0.003 [+0.002, +0.005] | 256 |
-| separate predictor step size, predictor learning rate 1 times 1e-4 | 4 | 0.876 ± 0.002 | <u>+0.014</u> [+0.007, +0.020] | 0.993 ± 0.000 | +0.017 [+0.013, +0.020] | 256 |
+| separate predictor step size, predictor learning rate 0.25 times 1e-4 | 2 | <u>0.886</u> ± 0.002 | +0.008 [+0.002, +0.014] | 0.995 ± 0.001 | +0.003 [+0.001, +0.005] | 256 |
+| separate predictor step size, predictor learning rate 0.25 times 1e-4 | 4 | 0.878 ± 0.002 | +0.016 [+0.009, +0.022] | 0.993 ± 0.000 | +0.016 [+0.013, +0.020] | 256 |
+| separate predictor step size, predictor learning rate 1 times 1e-4 | 2 | 0.880 ± 0.002 | +0.002 [-0.004, +0.008] | 0.995 ± 0.000 | +0.003 [+0.002, +0.005] | 256 |
+| separate predictor step size, predictor learning rate 1 times 1e-4 | 4 | 0.876 ± 0.002 | +0.014 [+0.007, +0.020] | 0.993 ± 0.000 | +0.017 [+0.013, +0.020] | 256 |
 | divisor held after one sixteenth of the run | 2 | **0.888** ± 0.002 | +0.009 [+0.004, +0.015] | **0.998** ± 0.000 | +0.006 [+0.005, +0.007] | 256 |
-| divisor held after one quarter of the run | 4 | 0.872 ± 0.002 | +0.009 [+0.008, +0.010] | <u>0.995</u> ± 0.000 | <u>+0.018</u> [+0.014, +0.022] | 256 |
+| divisor held after one sixteenth of the run | 4 | 0.882 ± 0.002 | <u>+0.019</u> [+0.014, +0.026] | <u>0.997</u> ± 0.000 | <u>+0.020</u> [+0.017, +0.024] | 256 |
+| divisor held after one quarter of the run | 4 | 0.872 ± 0.002 | +0.009 [+0.008, +0.010] | 0.995 ± 0.000 | +0.018 [+0.014, +0.022] | 256 |
 | slower predictor with held divisor (predictor learning rate 0.25 times 1e-4, divisor held after one sixteenth of the run) | 2 | 0.885 ± 0.003 | +0.007 [-0.001, +0.014] | **0.998** ± 0.000 | +0.006 [+0.005, +0.007] | 256 |
 | slower predictor with held divisor (predictor learning rate 0.25 times 1e-4, divisor held after one sixteenth of the run) | 4 | **0.888** ± 0.002 | **+0.026** [+0.020, +0.032] | **0.998** ± 0.000 | **+0.022** [+0.018, +0.026] | 256 |
 
@@ -388,18 +398,15 @@ $M$, its standard error and its differences are in thousands of steps; the small
 | control | 2 | 269 ± 10.8 | control | 256 of 256 | 256 |
 | control | 4 | 205 ± 8.2 | control | 256 of 256 | 256 |
 | separate predictor step size, predictor learning rate 0.25 times 1e-4 | 1 | 263 ± 15.4 | **-122** [-162, -81.7] | 256 of 256 | 256 |
-| separate predictor step size, predictor learning rate 0.25 times 1e-4 | 2 | <u>171</u> ± 11 | <u>-98.7</u> [-130, -67.3] | 256 of 256 | 256 |
+| separate predictor step size, predictor learning rate 0.25 times 1e-4 | 2 | 171 ± 11 | <u>-98.7</u> [-130, -67.3] | 256 of 256 | 256 |
+| separate predictor step size, predictor learning rate 0.25 times 1e-4 | 4 | **133** ± 7.88 | -71.9 [-93.4, -49.3] | 256 of 256 | 256 |
 | separate predictor step size, predictor learning rate 1 times 1e-4 | 2 | 238 ± 12.4 | -31.2 [-63.7, +0.464] | 256 of 256 | 256 |
 | separate predictor step size, predictor learning rate 1 times 1e-4 | 4 | 185 ± 10.1 | -19.8 [-44.4, +4.84] | 256 of 256 | 256 |
 | divisor held after one sixteenth of the run | 2 | 270 ± 10.5 | +0.579 [-28.1, +28.6] | 256 of 256 | 256 |
+| divisor held after one sixteenth of the run | 4 | 213 ± 8.15 | +8.39 [-13.5, +29.9] | 256 of 256 | 256 |
 | divisor held after one quarter of the run | 4 | 205 ± 8.2 | +0 [+0, +0] | 256 of 256 | 256 |
 | slower predictor with held divisor (predictor learning rate 0.25 times 1e-4, divisor held after one sixteenth of the run) | 2 | 182 ± 13.9 | -86.9 [-120, -51.4] | 256 of 256 | 256 |
-| slower predictor with held divisor (predictor learning rate 0.25 times 1e-4, divisor held after one sixteenth of the run) | 4 | **153** ± 9.69 | -52 [-75.7, -27.6] | 256 of 256 | 256 |
-
-Not complete, left out:
-
-- divisor held after one sixteenth of the run, intrinsic weight 4: unfinished, 238 logging windows written.
-- separate predictor step size, predictor learning rate 0.25 times 1e-4, intrinsic weight 4: unfinished, 219 logging windows written.
+| slower predictor with held divisor (predictor learning rate 0.25 times 1e-4, divisor held after one sixteenth of the run) | 4 | <u>153</u> ± 9.69 | -52 [-75.7, -27.6] | 256 of 256 | 256 |
 
 ## Consistency check against the baseline run
 
@@ -421,5 +428,6 @@ Per unit read: starts after the first one, continuations from a checkpoint, reco
 - wider input clip, no clip (`batch-02-screen_pointmaze-large_reward-arrival-plus-one_no-input-clip_cells-01-to-12-of-12_seeds-0-to-15`): the largest bonus at a probe in a logging window is 1730, above the largest at the start (475), over all intrinsic weights.
 - scheduled last layer on local features, decay 0.5, length 0.5 (`batch-02-screen_pointmaze-large_reward-arrival-plus-one_scheduled-last-layer-on-local-features-decay-0-point-5-length-0-point-5_cells-01-to-12-of-12_seeds-0-to-15`): the largest bonus at a probe in a logging window is 9.09, above the largest at the start (1), over all intrinsic weights.
 - scheduled last layer on local features, decay 0.5, length 1 (`batch-02-screen_pointmaze-large_reward-arrival-plus-one_scheduled-last-layer-on-local-features-decay-0-point-5-length-1_cells-01-to-12-of-12_seeds-0-to-15`): the largest bonus at a probe in a logging window is 12.7, above the largest at the start (1), over all intrinsic weights.
+- scheduled last layer on local features, decay 0.5, length 2 (`batch-02-screen_pointmaze-large_reward-arrival-plus-one_scheduled-last-layer-on-local-features-decay-0-point-5-length-2_cells-01-to-12-of-12_seeds-0-to-15`): the largest bonus at a probe in a logging window is 16.6, above the largest at the start (1), over all intrinsic weights.
 - scheduled last layer on local features, decay 1, length 1 (`batch-02-screen_pointmaze-large_reward-arrival-plus-one_scheduled-last-layer-on-local-features-decay-1-length-1_cells-01-to-12-of-12_seeds-0-to-15`): the largest bonus at a probe in a logging window is 19.6, above the largest at the start (1), over all intrinsic weights.
 

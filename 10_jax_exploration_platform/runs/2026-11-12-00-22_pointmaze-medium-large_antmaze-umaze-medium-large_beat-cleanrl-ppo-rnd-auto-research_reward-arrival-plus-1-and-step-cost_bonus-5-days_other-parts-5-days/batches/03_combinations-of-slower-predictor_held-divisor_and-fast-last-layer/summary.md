@@ -1,6 +1,6 @@
 # Batch 3 screen on PointMaze Large with reward 1 on arrival: combinations of the slower predictor, the held divisor and the fast last layer
 
-Generated 2026-11-12 17:00 PT by the command below. This file is generated: regenerate it, do not edit it. Times are Pacific, converted from machines running Eastern. Run folder: `2026-11-12-00-22_pointmaze-medium-large_antmaze-umaze-medium-large_beat-cleanrl-ppo-rnd-auto-research_reward-arrival-plus-1-and-step-cost_bonus-5-days_other-parts-5-days`; batch folder: `batches/03_combinations-of-slower-predictor_held-divisor_and-fast-last-layer`.
+Generated 2026-11-12 17:45 PT by the command below. This file is generated: regenerate it, do not edit it. Times are Pacific, converted from machines running Eastern. Run folder: `2026-11-12-00-22_pointmaze-medium-large_antmaze-umaze-medium-large_beat-cleanrl-ppo-rnd-auto-research_reward-arrival-plus-1-and-step-cost_bonus-5-days_other-parts-5-days`; batch folder: `batches/03_combinations-of-slower-predictor_held-divisor_and-fast-last-layer`.
 
 ```bash
 cd /p/rlprojects/RND/10_jax_exploration_platform
@@ -13,33 +13,33 @@ bash "benchmark_runs/2026-11-12-00-17_pointmaze-antmaze_cleanrl-ppo-rnd_speed-30
 
 | section | first written | last changed | status |
 |---|---|---|---|
-| [Units](#units) | 2026-11-12 16:21 PT | 2026-11-12 17:00 PT | unread |
+| [Units](#units) | 2026-11-12 16:21 PT | 2026-11-12 17:45 PT | unread |
 | [Measures](#measures) | 2026-11-12 16:21 PT | 2026-11-12 16:21 PT | unread |
-| [Discovery and optimization: whole-curve mean](#discovery-and-optimization-whole-curve-mean) | 2026-11-12 16:21 PT | 2026-11-12 17:00 PT | unread |
-| [Whole-curve mean at every intrinsic weight](#whole-curve-mean-at-every-intrinsic-weight) | 2026-11-12 16:21 PT | 2026-11-12 17:00 PT | unread |
-| [Discovery: mean capped first-goal time](#discovery-mean-capped-first-goal-time) | 2026-11-12 16:21 PT | 2026-11-12 17:00 PT | unread |
-| [Mean capped first-goal time at every intrinsic weight](#mean-capped-first-goal-time-at-every-intrinsic-weight) | 2026-11-12 16:21 PT | 2026-11-12 17:00 PT | unread |
-| [Training curves](#training-curves) | 2026-11-12 17:00 PT | 2026-11-12 17:00 PT | unread |
-| [Properties of the bonus on the maze grid](#properties-of-the-bonus-on-the-maze-grid) | 2026-11-12 16:21 PT | 2026-11-12 17:00 PT | unread |
+| [Discovery and optimization: whole-curve mean](#discovery-and-optimization-whole-curve-mean) | 2026-11-12 16:21 PT | 2026-11-12 17:45 PT | unread |
+| [Whole-curve mean at every intrinsic weight](#whole-curve-mean-at-every-intrinsic-weight) | 2026-11-12 16:21 PT | 2026-11-12 17:45 PT | unread |
+| [Discovery: mean capped first-goal time](#discovery-mean-capped-first-goal-time) | 2026-11-12 16:21 PT | 2026-11-12 17:45 PT | unread |
+| [Mean capped first-goal time at every intrinsic weight](#mean-capped-first-goal-time-at-every-intrinsic-weight) | 2026-11-12 16:21 PT | 2026-11-12 17:45 PT | unread |
+| [Training curves](#training-curves) | 2026-11-12 17:00 PT | 2026-11-12 17:45 PT | unread |
+| [Properties of the bonus on the maze grid](#properties-of-the-bonus-on-the-maze-grid) | 2026-11-12 16:21 PT | 2026-11-12 17:45 PT | unread |
 | [Predictions](#predictions) | 2026-11-12 16:21 PT | 2026-11-12 16:21 PT | unread |
-| [Ideas against the control](#ideas-against-the-control) | 2026-11-12 16:21 PT | 2026-11-12 17:00 PT | unread |
-| [Validation block](#validation-block) | 2026-11-12 16:21 PT | 2026-11-12 17:00 PT | unread |
-| [Records that need a look](#records-that-need-a-look) | 2026-11-12 16:21 PT | 2026-11-12 16:21 PT | unread |
+| [Ideas against the control](#ideas-against-the-control) | 2026-11-12 16:21 PT | 2026-11-12 17:45 PT | unread |
+| [Validation block](#validation-block) | 2026-11-12 16:21 PT | 2026-11-12 17:45 PT | unread |
+| [Records that need a look](#records-that-need-a-look) | 2026-11-12 16:21 PT | 2026-11-12 17:45 PT | unread |
 
 Times are Pacific, converted from machines running Eastern, and come from this report's own history of regenerations. [The same report with unread sections in blue and changed text in brown](summary.html). No section marks itself read.
 
 ## Units
 
-3 of 7 units are complete. Only complete units enter the tables and figures below; nothing is estimated for the others. Left out: fast last layer with held divisor, step 0.1; fast last layer with held divisor, step 0.3; fast last layer with slower predictor, step 0.1; fast last layer with slower predictor and held divisor, step 0.1.
+7 of 7 units are complete. Only complete units enter the tables and figures below; nothing is estimated for the others. No unit is left out.
 
 | unit | method | state | logging windows written | card | finished | place in the queue |
 |---|---|---|---|---|---|---|
 | 1 | control (the unit of batch 2) | complete | 256 of 256 | NVIDIA GeForce RTX 2080 Ti | 2026-11-12 16:14 PT | `queue/done` |
 | 2 | slower predictor with held divisor | complete | 256 of 256 | NVIDIA GeForce RTX 2080 Ti | 2026-11-12 16:42 PT | `queue/done` |
-| 3 | fast last layer with held divisor, step 0.1 | unfinished | 187 of 256 | NVIDIA RTX 4000 Ada Generation | not finished | `queue/running` |
-| 4 | fast last layer with held divisor, step 0.3 | unfinished | 120 of 256 | NVIDIA GeForce RTX 2080 Ti | not finished | `queue/running` |
-| 5 | fast last layer with slower predictor, step 0.1 | unfinished | 123 of 256 | NVIDIA GeForce RTX 2080 Ti | not finished | `queue/running` |
-| 6 | fast last layer with slower predictor and held divisor, step 0.1 | unfinished | 82 of 256 | NVIDIA GeForce RTX 2080 Ti | not finished | `queue/running` |
+| 3 | fast last layer with held divisor, step 0.1 | complete | 256 of 256 | NVIDIA RTX 4000 Ada Generation | 2026-11-12 17:11 PT | `queue/done` |
+| 4 | fast last layer with held divisor, step 0.3 | complete | 256 of 256 | NVIDIA GeForce RTX 2080 Ti | 2026-11-12 17:35 PT | `queue/done` |
+| 5 | fast last layer with slower predictor, step 0.1 | complete | 256 of 256 | NVIDIA GeForce RTX 2080 Ti | 2026-11-12 17:31 PT | `queue/done` |
+| 6 | fast last layer with slower predictor and held divisor, step 0.1 | complete | 256 of 256 | NVIDIA GeForce RTX 2080 Ti | 2026-11-12 17:39 PT | `queue/done` |
 | 7 | fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1 | complete | 256 of 256 | NVIDIA A30 | 2026-11-12 16:52 PT | `queue/done` |
 
 Unit names, by the number in the first column:
@@ -76,9 +76,13 @@ Define $W$, $L$ and the other columns as in the section Measures. One row per me
 
 | method | best intrinsic weight for $W$ | whole-curve mean $W$ ↑ ± standard error | difference in $W$ from the control [95% interval] | final level $L$ | difference in $L$ from the control [95% interval] | median first-arrival step | policies that reach the goal |
 |---|---|---|---|---|---|---|---|
-| control (the unit of batch 2) | 2 | <u>0.885</u> ± 0.010 | control | 0.994 | control | 191.9K | 16 of 16 |
-| fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1 | 0.5 | **0.894** ± 0.006 | **+0.010** [-0.014, +0.037] | <u>0.997</u> | <u>+0.003</u> [+0.000, +0.006] | **113.3K** | 16 of 16 |
-| slower predictor with held divisor | 4 | 0.881 ± 0.007 | <u>-0.003</u> [-0.028, +0.026] | **0.998** | **+0.004** [+0.001, +0.006] | <u>114.3K</u> | 16 of 16 |
+| control (the unit of batch 2) | 2 | 0.885 ± 0.010 | control | 0.994 | control | 191.9K | 16 of 16 |
+| fast last layer with slower predictor and held divisor, step 0.1 | 0.5 | **0.898** ± 0.008 | **+0.013** [-0.014, +0.042] | 0.996 | +0.002 [-0.002, +0.005] | 113.4K | 16 of 16 |
+| fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1 | 0.5 | <u>0.894</u> ± 0.006 | <u>+0.010</u> [-0.014, +0.037] | <u>0.997</u> | <u>+0.003</u> [+0.000, +0.006] | <u>113.3K</u> | 16 of 16 |
+| fast last layer with held divisor, step 0.3 | 0.25 | 0.889 ± 0.007 | +0.004 [-0.013, +0.022] | **0.998** | **+0.004** [+0.002, +0.006] | 166.1K | 16 of 16 |
+| fast last layer with slower predictor, step 0.1 | 0.5 | 0.883 ± 0.007 | -0.002 [-0.024, +0.025] | 0.990 | -0.004 [-0.009, +0.001] | 113.4K | 16 of 16 |
+| slower predictor with held divisor | 4 | 0.881 ± 0.007 | -0.003 [-0.028, +0.026] | **0.998** | **+0.004** [+0.001, +0.006] | 114.3K | 16 of 16 |
+| fast last layer with held divisor, step 0.1 | 1 | 0.875 ± 0.013 | -0.010 [-0.044, +0.025] | 0.995 | +0.000 [-0.004, +0.004] | **61.4K** | 16 of 16 |
 
 ## Whole-curve mean at every intrinsic weight
 
@@ -86,15 +90,23 @@ Define $W$ as in the section Measures. Rows are in the order of the table of the
 
 | method | weight $4^{-6}$ | weight $4^{-5}$ | weight $4^{-4}$ | weight $4^{-3}$ | weight 0.0625 | weight 0.25 | best intrinsic weight for $W$ |
 |---|---|---|---|---|---|---|---|
-| control (the unit of batch 2) | 0.000 | 0.000 | 0.000 | <u>0.090</u> | <u>0.159</u> | <u>0.728</u> | 2 |
-| fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1 | 0.000 | 0.000 | 0.000 | **0.442** | **0.821** | **0.866** | 0.5 |
-| slower predictor with held divisor | 0.000 | 0.000 | 0.000 | 0.000 | 0.087 | 0.547 | 4 |
+| control (the unit of batch 2) | <u>0.000</u> | 0.000 | 0.000 | 0.090 | 0.159 | 0.728 | 2 |
+| fast last layer with slower predictor and held divisor, step 0.1 | <u>0.000</u> | 0.000 | **0.107** | <u>0.407</u> | 0.759 | **0.889** | 0.5 |
+| fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1 | <u>0.000</u> | 0.000 | 0.000 | **0.442** | <u>0.821</u> | 0.866 | 0.5 |
+| fast last layer with held divisor, step 0.3 | <u>0.000</u> | 0.000 | 0.000 | 0.312 | 0.776 | **0.889** | 0.25 |
+| fast last layer with slower predictor, step 0.1 | <u>0.000</u> | 0.000 | <u>0.057</u> | 0.334 | **0.823** | <u>0.867</u> | 0.5 |
+| slower predictor with held divisor | <u>0.000</u> | 0.000 | 0.000 | 0.000 | 0.087 | 0.547 | 4 |
+| fast last layer with held divisor, step 0.1 | **0.100** | 0.000 | 0.043 | 0.354 | 0.807 | 0.863 | 1 |
 
 | method | weight 0.5 | weight 1 | weight 2 | weight 4 | weight 16 | weight 64 | best intrinsic weight for $W$ |
 |---|---|---|---|---|---|---|---|
-| control (the unit of batch 2) | <u>0.846</u> | <u>0.860</u> | **0.885** | <u>0.867</u> | <u>0.575</u> | <u>0.065</u> | 2 |
-| fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1 | **0.894** | **0.876** | 0.831 | 0.714 | 0.189 | 0.035 | 0.5 |
+| control (the unit of batch 2) | 0.846 | 0.860 | **0.885** | <u>0.867</u> | <u>0.575</u> | <u>0.065</u> | 2 |
+| fast last layer with slower predictor and held divisor, step 0.1 | **0.898** | **0.878** | 0.849 | 0.758 | 0.282 | 0.038 | 0.5 |
+| fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1 | <u>0.894</u> | <u>0.876</u> | 0.831 | 0.714 | 0.189 | 0.035 | 0.5 |
+| fast last layer with held divisor, step 0.3 | 0.815 | 0.819 | 0.671 | 0.579 | 0.091 | 0.018 | 0.25 |
+| fast last layer with slower predictor, step 0.1 | 0.883 | 0.848 | 0.764 | 0.427 | 0.055 | 0.019 | 0.5 |
 | slower predictor with held divisor | 0.795 | 0.848 | <u>0.861</u> | **0.881** | **0.833** | **0.588** | 4 |
+| fast last layer with held divisor, step 0.1 | 0.866 | 0.875 | 0.851 | 0.746 | 0.243 | 0.040 | 1 |
 
 No method has its best weight at an end of the grid.
 
@@ -105,8 +117,12 @@ Define $M$, $W$ and $L$ as in the section Measures. One row per method at its be
 | method | best intrinsic weight for $M$ | $M$ ↓ ± standard error, thousand steps | difference in $M$ from the control [95% interval], thousand steps | policies that reach the goal | $W$ at that weight ± standard error | $L$ at that weight |
 |---|---|---|---|---|---|---|
 | control (the unit of batch 2) | 64 (largest of the grid) | 190 ± 50.8 | control | 16 of 16 | 0.065 ± 0.014 | 0.112 |
-| fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1 | 4 | **63.4** ± 9.59 | **-126** [-236, -45.6] | 16 of 16 | **0.714** ± 0.016 | **0.973** |
-| slower predictor with held divisor | 64 (largest of the grid) | <u>110</u> ± 18 | <u>-79.2</u> [-198, +9.56] | 16 of 16 | <u>0.588</u> ± 0.017 | <u>0.966</u> |
+| fast last layer with held divisor, step 0.1 | 16 | **62** ± 12.7 | **-128** [-244, -49.6] | 16 of 16 | 0.243 ± 0.023 | 0.483 |
+| fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1 | 4 | <u>63.4</u> ± 9.59 | <u>-126</u> [-236, -45.6] | 16 of 16 | **0.714** ± 0.016 | **0.973** |
+| fast last layer with slower predictor, step 0.1 | 16 | 96 ± 24 | -93.5 [-221, +11.3] | 16 of 16 | 0.055 ± 0.007 | 0.102 |
+| fast last layer with slower predictor and held divisor, step 0.1 | 16 | 96 ± 24 | -93.5 [-227, +11.3] | 16 of 16 | 0.282 ± 0.025 | 0.688 |
+| slower predictor with held divisor | 64 (largest of the grid) | 110 ± 18 | -79.2 [-198, +9.56] | 16 of 16 | <u>0.588</u> ± 0.017 | <u>0.966</u> |
+| fast last layer with held divisor, step 0.3 | 64 (largest of the grid) | 116 ± 30.2 | -74 [-192, +25.1] | 16 of 16 | 0.018 ± 0.004 | 0.022 |
 
 ## Mean capped first-goal time at every intrinsic weight
 
@@ -114,17 +130,25 @@ Define $M$ as in the section Measures; the cells give it in thousands of steps. 
 
 | method | weight $4^{-6}$ | weight $4^{-5}$ | weight $4^{-4}$ | weight $4^{-3}$ | weight 0.0625 | weight 0.25 | best intrinsic weight for $M$ |
 |---|---|---|---|---|---|---|---|
-| control (the unit of batch 2) | **7,376** | <u>8,389</u> | <u>8,389</u> | <u>7,050</u> | <u>3,980</u> | <u>1,289</u> | 64 (largest of the grid) |
-| fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1 | 8,389 | <u>8,389</u> | **7,129** | **3,495** | **607** | **277** | 4 |
-| slower predictor with held divisor | <u>7,896</u> | **7,961** | <u>8,389</u> | 8,389 | 7,041 | 1,310 | 64 (largest of the grid) |
+| control (the unit of batch 2) | **7,376** | 8,389 | 8,389 | 7,050 | 3,980 | 1,289 | 64 (largest of the grid) |
+| fast last layer with held divisor, step 0.1 | <u>7,497</u> | **7,514** | 7,991 | 3,530 | 943 | <u>196</u> | 16 |
+| fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1 | 8,389 | 8,389 | 7,129 | 3,495 | **607** | 277 | 4 |
+| fast last layer with slower predictor, step 0.1 | 8,389 | 7,886 | <u>6,789</u> | **2,711** | <u>797</u> | **157** | 16 |
+| fast last layer with slower predictor and held divisor, step 0.1 | 7,947 | 7,886 | **6,109** | <u>3,426</u> | 1,195 | **157** | 16 |
+| slower predictor with held divisor | 7,896 | 7,961 | 8,389 | 8,389 | 7,041 | 1,310 | 64 (largest of the grid) |
+| fast last layer with held divisor, step 0.3 | 7,883 | <u>7,874</u> | 6,988 | 4,894 | 1,212 | 255 | 64 (largest of the grid) |
 
 | method | weight 0.5 | weight 1 | weight 2 | weight 4 | weight 16 | weight 64 | best intrinsic weight for $M$ |
 |---|---|---|---|---|---|---|---|
-| control (the unit of batch 2) | <u>604</u> | 453 | 220 | 220 | 236 | <u>190</u> | 64 (largest of the grid) |
-| fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1 | **177** | **85.2** | **106** | **63.4** | <u>136</u> | 643 | 4 |
-| slower predictor with held divisor | 790 | <u>330</u> | <u>194</u> | <u>160</u> | **111** | **110** | 64 (largest of the grid) |
+| control (the unit of batch 2) | 604 | 453 | 220 | 220 | 236 | 190 | 64 (largest of the grid) |
+| fast last layer with held divisor, step 0.1 | 371 | **80.6** | **78.8** | <u>67</u> | **62** | **87.9** | 16 |
+| fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1 | **177** | <u>85.2</u> | <u>106</u> | **63.4** | 136 | 643 | 4 |
+| fast last layer with slower predictor, step 0.1 | 187 | 117 | 110 | 97.8 | <u>96</u> | <u>97.1</u> | 16 |
+| fast last layer with slower predictor and held divisor, step 0.1 | 185 | 117 | 110 | 97.8 | <u>96</u> | <u>97.1</u> | 16 |
+| slower predictor with held divisor | 790 | 330 | 194 | 160 | 111 | 110 | 64 (largest of the grid) |
+| fast last layer with held divisor, step 0.3 | <u>181</u> | 283 | 614 | 129 | 753 | 116 | 64 (largest of the grid) |
 
-Best weight for $M$ at an end of the grid: control (the unit of batch 2) (64, the largest); slower predictor with held divisor (64, the largest). Larger or smaller weights must be tried on that side before anything is concluded from these rows (the edge rule of `program.md`).
+Best weight for $M$ at an end of the grid: control (the unit of batch 2) (64, the largest); slower predictor with held divisor (64, the largest); fast last layer with held divisor, step 0.3 (64, the largest). Larger or smaller weights must be tried on that side before anything is concluded from these rows (the edge rule of `program.md`).
 
 ## Training curves
 
@@ -146,14 +170,22 @@ Rows are in the order of the table of the whole-curve mean. These columns descri
 | method | start ratio, median over policies | decay slope at the best weight, median | decay slope, smallest and largest median over the weights (at weight) | bonus at unvisited cells over its start at 5% of the budget | bonus at unvisited cells over its start at 25% of the budget | bonus at unvisited cells over its start at 100% of the budget |
 |---|---|---|---|---|---|---|
 | control (the unit of batch 2) | 87.88 | -0.41 | -0.97 ($4^{-4}$) to -0.35 (1) | 0.00173 (73 pairs) | 0.000963 (29 pairs) | 0.00107 (29 pairs) |
+| fast last layer with slower predictor and held divisor, step 0.1 | 87.88 | -0.45 | -0.94 ($4^{-5}$) to -0.41 (0.0625) | 0.00704 (44 pairs) | not printed: 13 pairs | not printed: 13 pairs |
 | fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1 | 87.86 | -0.52 | -1.07 ($4^{-5}$) to -0.39 (0.0625) | 0.0106 (59 pairs) | 0.00489 (22 pairs) | not printed: 19 pairs |
+| fast last layer with held divisor, step 0.3 | 87.88 | -0.41 | -0.93 ($4^{-4}$) to -0.34 (0.0625) | 0.00191 (72 pairs) | 0.000979 (22 pairs) | 0.00139 (22 pairs) |
+| fast last layer with slower predictor, step 0.1 | 87.88 | -0.53 | -1.13 ($4^{-6}$) to -0.41 (0.0625) | 0.00704 (44 pairs) | not printed: 11 pairs | not printed: 11 pairs |
 | slower predictor with held divisor | 87.88 | -0.43 | -0.79 (0.0625) to -0.38 (1) | 0.0107 (44 pairs) | not printed: 10 pairs | not printed: 9 pairs |
+| fast last layer with held divisor, step 0.1 | 87.86 | -0.41 | -0.90 ($4^{-4}$) to -0.30 (0.0625) | 0.00205 (67 pairs) | not printed: 18 pairs | not printed: 18 pairs |
 
 | method | best intrinsic weight | divisor at the start, and at the end of the first logging window | weighted intrinsic reward at the start | weighted intrinsic reward at the end of the first logging window | weighted intrinsic reward at 25% of the budget | weighted intrinsic reward at 100% of the budget |
 |---|---|---|---|---|---|---|
 | control (the unit of batch 2) | 2 | 1 and 51 | 70 | 0.0156 | 0.00248 | 0.00451 |
+| fast last layer with slower predictor and held divisor, step 0.1 | 0.5 | 1 and 21 | 17.9 | 0.102 | 0.00221 | 0.00236 |
 | fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1 | 0.5 | 1 and 20.6 | 17.9 | 0.117 | 0.00282 | 0.00306 |
+| fast last layer with held divisor, step 0.3 | 0.25 | 1 and 1.25 | 8.84 | 0.0611 | 0.00427 | 0.00524 |
+| fast last layer with slower predictor, step 0.1 | 0.5 | 1 and 21 | 17.9 | 0.102 | 0.00339 | 0.00645 |
 | slower predictor with held divisor | 4 | 1 and 379 | 141 | 0.0402 | 0.00104 | 0.0014 |
+| fast last layer with held divisor, step 0.1 | 1 | 1 and 3.6 | 35.7 | 0.0552 | 0.0061 | 0.00646 |
 
 ### Bonus against cumulative visits
 
@@ -198,36 +230,38 @@ Two readings, one per metric, each with the methods at their own best weights fo
 By the 95% interval of the difference in $W$ from the control (section Measures, item 4), on the development seeds. After each name: the difference in $W$ and its interval.
 
 - **Ahead of the control** (interval entirely above zero): none.
-- **Within the interval** (it contains zero): fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1 (+0.010 [-0.014, +0.037]); slower predictor with held divisor (-0.003 [-0.028, +0.026]).
+- **Within the interval** (it contains zero): fast last layer with slower predictor and held divisor, step 0.1 (+0.013 [-0.014, +0.042]); fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1 (+0.010 [-0.014, +0.037]); fast last layer with held divisor, step 0.3 (+0.004 [-0.013, +0.022]); fast last layer with slower predictor, step 0.1 (-0.002 [-0.024, +0.025]); slower predictor with held divisor (-0.003 [-0.028, +0.026]); fast last layer with held divisor, step 0.1 (-0.010 [-0.044, +0.025]).
 - **Behind the control** (interval entirely below zero): none.
-- **Not compared yet** (unit not complete): fast last layer with held divisor, step 0.1; fast last layer with held divisor, step 0.3; fast last layer with slower predictor, step 0.1; fast last layer with slower predictor and held divisor, step 0.1.
+- **Not compared yet** (unit not complete): none.
 
 ### Discovery: mean capped first-goal time
 
 By the 95% interval of the difference in $M$ from the control (section Measures, item 9), on the development seeds. After each name: the difference in $M$ and its interval, in thousands of steps; a negative difference means the goal was first reached earlier than under the control.
 
-- **Ahead of the control on discovery** (interval entirely below zero): fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1 (-126 [-236, -45.6]).
-- **Within the interval** (it contains zero): slower predictor with held divisor (-79.2 [-198, +9.56]).
+- **Ahead of the control on discovery** (interval entirely below zero): fast last layer with held divisor, step 0.1 (-128 [-244, -49.6]); fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1 (-126 [-236, -45.6]).
+- **Within the interval** (it contains zero): fast last layer with slower predictor, step 0.1 (-93.5 [-221, +11.3]); fast last layer with slower predictor and held divisor, step 0.1 (-93.5 [-227, +11.3]); slower predictor with held divisor (-79.2 [-198, +9.56]); fast last layer with held divisor, step 0.3 (-74 [-192, +25.1]).
 - **Behind the control on discovery** (interval entirely above zero): none.
-- **Not compared yet** (unit not complete): fast last layer with held divisor, step 0.1; fast last layer with held divisor, step 0.3; fast last layer with slower predictor, step 0.1; fast last layer with slower predictor and held divisor, step 0.1.
+- **Not compared yet** (unit not complete): none.
 
 ## Validation block
 
-The units of the phase `validation-block` in the screen's environment and reward setting. Each trains one method at one intrinsic weight on 256 seeds, from 10000 to 10255: these are neither the development seeds of the screen nor the confirmation seeds. 11 of 13 method and weight pairs have a complete unit; a unit that is not complete is listed under the tables and left out. Define $W$, $L$ and $M$ as in the section Measures, here with $K$ the number of seeds of a row and read at 8,388,608 environment steps per policy. Differences are the method minus the control at the same intrinsic weight, on the seeds both have, each with its 95% interval from 10,000 resamples of those seeds. Rows: the control first, then the other methods, each by intrinsic weight. Per column the best value is bold and the second best underlined.
+The units of the phase `validation-block` in the screen's environment and reward setting. Each trains one method at one intrinsic weight on 256 seeds, from 10000 to 10255: these are neither the development seeds of the screen nor the confirmation seeds. 13 of 13 method and weight pairs have a complete unit; a unit that is not complete is listed under the tables and left out. Define $W$, $L$ and $M$ as in the section Measures, here with $K$ the number of seeds of a row and read at 8,388,608 environment steps per policy. Differences are the method minus the control at the same intrinsic weight, on the seeds both have, each with its 95% interval from 10,000 resamples of those seeds. Rows: the control first, then the other methods, each by intrinsic weight. Per column the best value is bold and the second best underlined.
 
 ### Discovery and optimization: whole-curve mean and final level
 
 | method | intrinsic weight | $W$ ± standard error | difference in $W$ from the control [95% interval] | $L$ ± standard error | difference in $L$ from the control [95% interval] | seeds in common with the control |
 |---|---|---|---|---|---|---|
-| control | 1 | 0.876 ± 0.002 | control | <u>0.995</u> ± 0.000 | control | 256 |
+| control | 1 | 0.876 ± 0.002 | control | 0.995 ± 0.000 | control | 256 |
 | control | 2 | 0.878 ± 0.002 | control | 0.992 ± 0.001 | control | 256 |
 | control | 4 | 0.863 ± 0.002 | control | 0.977 ± 0.002 | control | 256 |
 | separate predictor step size, predictor learning rate 0.25 times 1e-4 | 1 | 0.876 ± 0.003 | -0.000 [-0.008, +0.007] | **0.998** ± 0.000 | +0.002 [+0.001, +0.003] | 256 |
-| separate predictor step size, predictor learning rate 0.25 times 1e-4 | 2 | <u>0.886</u> ± 0.002 | +0.008 [+0.001, +0.014] | <u>0.995</u> ± 0.001 | +0.003 [+0.001, +0.005] | 256 |
-| separate predictor step size, predictor learning rate 1 times 1e-4 | 2 | 0.880 ± 0.002 | +0.002 [-0.004, +0.008] | <u>0.995</u> ± 0.000 | +0.003 [+0.002, +0.005] | 256 |
-| separate predictor step size, predictor learning rate 1 times 1e-4 | 4 | 0.876 ± 0.002 | <u>+0.014</u> [+0.007, +0.020] | 0.993 ± 0.000 | +0.017 [+0.013, +0.020] | 256 |
+| separate predictor step size, predictor learning rate 0.25 times 1e-4 | 2 | <u>0.886</u> ± 0.002 | +0.008 [+0.001, +0.014] | 0.995 ± 0.001 | +0.003 [+0.001, +0.005] | 256 |
+| separate predictor step size, predictor learning rate 0.25 times 1e-4 | 4 | 0.878 ± 0.002 | +0.016 [+0.009, +0.022] | 0.993 ± 0.000 | +0.016 [+0.013, +0.020] | 256 |
+| separate predictor step size, predictor learning rate 1 times 1e-4 | 2 | 0.880 ± 0.002 | +0.002 [-0.004, +0.008] | 0.995 ± 0.000 | +0.003 [+0.002, +0.005] | 256 |
+| separate predictor step size, predictor learning rate 1 times 1e-4 | 4 | 0.876 ± 0.002 | +0.014 [+0.007, +0.020] | 0.993 ± 0.000 | +0.017 [+0.013, +0.020] | 256 |
 | divisor held after one sixteenth of the run | 2 | **0.888** ± 0.002 | +0.009 [+0.004, +0.015] | **0.998** ± 0.000 | +0.006 [+0.005, +0.007] | 256 |
-| divisor held after one quarter of the run | 4 | 0.872 ± 0.002 | +0.009 [+0.008, +0.011] | <u>0.995</u> ± 0.000 | <u>+0.018</u> [+0.014, +0.022] | 256 |
+| divisor held after one sixteenth of the run | 4 | 0.882 ± 0.002 | <u>+0.019</u> [+0.014, +0.025] | <u>0.997</u> ± 0.000 | <u>+0.020</u> [+0.017, +0.024] | 256 |
+| divisor held after one quarter of the run | 4 | 0.872 ± 0.002 | +0.009 [+0.008, +0.011] | 0.995 ± 0.000 | +0.018 [+0.014, +0.022] | 256 |
 | slower predictor with held divisor (predictor learning rate 0.25 times 1e-4, divisor held after one sixteenth of the run) | 2 | 0.885 ± 0.003 | +0.007 [-0.000, +0.014] | **0.998** ± 0.000 | +0.006 [+0.005, +0.007] | 256 |
 | slower predictor with held divisor (predictor learning rate 0.25 times 1e-4, divisor held after one sixteenth of the run) | 4 | **0.888** ± 0.002 | **+0.026** [+0.020, +0.032] | **0.998** ± 0.000 | **+0.022** [+0.018, +0.026] | 256 |
 
@@ -241,22 +275,19 @@ $M$, its standard error and its differences are in thousands of steps; the small
 | control | 2 | 269 ± 10.8 | control | 256 of 256 | 256 |
 | control | 4 | 205 ± 8.2 | control | 256 of 256 | 256 |
 | separate predictor step size, predictor learning rate 0.25 times 1e-4 | 1 | 263 ± 15.4 | **-122** [-162, -80.2] | 256 of 256 | 256 |
-| separate predictor step size, predictor learning rate 0.25 times 1e-4 | 2 | <u>171</u> ± 11 | <u>-98.7</u> [-129, -67.3] | 256 of 256 | 256 |
+| separate predictor step size, predictor learning rate 0.25 times 1e-4 | 2 | 171 ± 11 | <u>-98.7</u> [-129, -67.3] | 256 of 256 | 256 |
+| separate predictor step size, predictor learning rate 0.25 times 1e-4 | 4 | **133** ± 7.88 | -71.9 [-93.8, -49.8] | 256 of 256 | 256 |
 | separate predictor step size, predictor learning rate 1 times 1e-4 | 2 | 238 ± 12.4 | -31.2 [-62.3, +1.19] | 256 of 256 | 256 |
 | separate predictor step size, predictor learning rate 1 times 1e-4 | 4 | 185 ± 10.1 | -19.8 [-43.4, +4.32] | 256 of 256 | 256 |
 | divisor held after one sixteenth of the run | 2 | 270 ± 10.5 | +0.579 [-27.2, +28.5] | 256 of 256 | 256 |
+| divisor held after one sixteenth of the run | 4 | 213 ± 8.15 | +8.39 [-13.7, +30.6] | 256 of 256 | 256 |
 | divisor held after one quarter of the run | 4 | 205 ± 8.2 | +0 [+0, +0] | 256 of 256 | 256 |
 | slower predictor with held divisor (predictor learning rate 0.25 times 1e-4, divisor held after one sixteenth of the run) | 2 | 182 ± 13.9 | -86.9 [-120, -51.4] | 256 of 256 | 256 |
-| slower predictor with held divisor (predictor learning rate 0.25 times 1e-4, divisor held after one sixteenth of the run) | 4 | **153** ± 9.69 | -52 [-76.2, -28.2] | 256 of 256 | 256 |
-
-Not complete, left out:
-
-- divisor held after one sixteenth of the run, intrinsic weight 4: unfinished, 232 logging windows written.
-- separate predictor step size, predictor learning rate 0.25 times 1e-4, intrinsic weight 4: unfinished, 213 logging windows written.
+| slower predictor with held divisor (predictor learning rate 0.25 times 1e-4, divisor held after one sixteenth of the run) | 4 | <u>153</u> ± 9.69 | -52 [-76.2, -28.2] | 256 of 256 | 256 |
 
 ## Records that need a look
 
 Per unit read: starts after the first one, continuations from a checkpoint, recorded values the measures cannot use (they are left out of the measure and counted here), and a bonus at a probe that rose above the largest bonus of the start record. A unit whose records lack a field stops the generation with an error that names it.
 
-No unit read so far was started again, no recorded value was unusable, and no bonus rose above the largest of its start record.
+- fast last layer with held divisor, step 0.3 (`batch-03-screen_pointmaze-large_reward-arrival-plus-one_fast-last-layer-step-0-point-3-with-held-divisor_cells-01-to-12-of-12_seeds-0-to-15`): continued from a checkpoint 1 time(s).
 
