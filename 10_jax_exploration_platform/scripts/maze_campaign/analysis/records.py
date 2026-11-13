@@ -32,6 +32,16 @@ The run folder's optional `report_settings.json` (every key optional):
 - `repeated_configurations`: "show" when units repeat a configuration on the same seeds on purpose. The report
   then uses, for each such seed, the unit that finished first (`split_repeats`) and lists the other runs in a
   section of their own. Without the key a repeat is an error, because an unplanned repeat is a mistake.
+- `discovery_units`: shell patterns of the unit ids of the sweep made for the secondary metric (the mean capped
+  first-goal step), for example `["development-for-discovery_*", "confirmation-for-discovery_*"]`. These units
+  are read for the secondary metric only: their configurations enter its choice, its tables and its comparison,
+  and stay out of every table, choice and figure of the primary metric, so that adding them never changes a
+  configuration that was chosen for the whole-curve mean and already confirmed. Every other unit is read for both
+  metrics. Where such a unit repeats a configuration and seed of another unit, the other unit is the one used.
+
+Development or confirmation: a policy belongs to the confirmation when its seed is 30000 or above. A unit whose
+specification names a phase starting with `development` or `confirmation` must agree with its seeds, or the
+reader stops with an error.
 """
 
 from collections import defaultdict
@@ -78,7 +88,7 @@ SETTING_WORDS = {'int_coef': 'intrinsic weight', 'learning_rate': 'learning rate
 SETTING_ORDER = ('int_coef', 'learning_rate', 'ent_coef', 'clip_coef', 'gamma_int')
 WINDOW_SUMS = ('episodes', 'arrivals', 'return_sum', 'environment_return_sum', 'length_sum', 'steps_to_goal_sum')
 REPORT_SETTING_KEYS = {'title', 'other_run_folders', 'baseline_method', 'methods', 'reference_methods',
-                       'exclude_units', 'repeated_configurations'}
+                       'exclude_units', 'repeated_configurations', 'discovery_units'}
 
 
 @dataclass(frozen=True, eq=False)
@@ -142,6 +152,12 @@ class Configuration:
     def setting(self, name):
         """One setting's value by name."""
         return dict(self.settings)[name]
+
+    @property
+    def key(self):
+        """Everything its policies share: two groups with equal keys are the same configuration."""
+        return (self.environment, self.reward_setting, self.method, self.environments_per_policy,
+                self.planned_steps, self.settings)
 
 
 @dataclass(frozen=True, eq=False)
@@ -209,10 +225,23 @@ def method_name(start, methods, specified=None):
     return BONUS_METHOD_NAMES.get(start['bonus'], start['bonus'].replace('_', ' '))
 
 
-def specified_method(shard):
-    """The method named in the unit's specification file beside the run folder's data; None without the file."""
+def specification_of(shard):
+    """The unit's specification file beside the run folder's data, as a dictionary; empty without the file."""
     path = Path(shard).parent.parent / 'specifications' / f'{Path(shard).stem}.json'
-    return json.loads(path.read_text())['method'] if path.exists() else None
+    return json.loads(path.read_text()) if path.exists() else {}
+
+
+def check_phase(unit_id, phase, seeds):
+    """Refuse a unit whose phase name says development or confirmation while its seeds say the other."""
+    # before: ('development-for-discovery', seeds 0 to 15) and ('confirmation', seeds 30000 on) pass, a phase
+    #         that starts with neither word passes; ('confirmation-for-discovery', seed 12) is refused.
+    named = next((stage for stage in ('development', 'confirmation') if (phase or '').startswith(stage)), None)
+    other = [seed for seed in seeds if named is not None
+             and ('confirmation' if seed >= CONFIRMATION_FIRST_SEED else 'development') != named]
+    if other:
+        raise ValueError(f'Unit {unit_id} has the phase {phase}, but its seed {other[0]} is a '
+                         f"{'confirmation' if other[0] >= CONFIRMATION_FIRST_SEED else 'development'} seed "
+                         f'(confirmation seeds start at {CONFIRMATION_FIRST_SEED}).')
 
 
 def cell_values(start, cell):
@@ -252,7 +281,9 @@ def window_arrays(start, windows):
     arrays['steps'] = np.asarray([window['env_steps_per_copy'] for window in windows], np.int64)
     arrays['coverage'] = (np.asarray([window['coverage_per_copy'] for window in windows], np.float64)
                           if 'coverage_per_copy' in windows[0] else None)
-    arrays['first_goal_step'] = np.asarray(windows[-1]['first_goal_step_per_copy'], np.int64)
+    # The last window holds each policy's first arrival so far; a policy with none has -1 or null.
+    arrays['first_goal_step'] = np.asarray([-1 if step is None else step
+                                            for step in windows[-1]['first_goal_step_per_copy']], np.int64)
     return arrays
 
 
@@ -283,9 +314,11 @@ def unit_from_records(path, records, methods=()):
     cells = [cell_values(start, cell) for cell in start['cell_settings']]
     rewards = [reward_setting_of(values['ext_reward_scale'], values['ext_reward_offset'], step_limit)
                for values in cells]
+    specification = specification_of(path)
+    check_phase(start['unit_id'], specification.get('phase'), [int(seed) for seed in start['copy_seed_index']])
     summary.update(
         unit_id=start['unit_id'], environment=environment_name(start),
-        method=method_name(start, methods, specified_method(path)),
+        method=method_name(start, methods, specification.get('method')),
         environments_per_policy=start['envs_per_copy'], policies=start['copies'], planned_steps=planned,
         reward_settings=sorted(set(rewards), key=REWARD_SETTING_ORDER.index), windows=len(windows),
         state='complete' if completion else 'unfinished',
@@ -363,11 +396,19 @@ def finish_order(unit_id, finished):
     return (moment, unit_id)
 
 
-def split_repeats(policies, finished):
+def use_order(unit_id, finished, last=()):
+    """A sort key that puts the unit a report uses in front: the first to finish, the units named in `last` after all others."""
+    # before: units 'a' (finished 10:00), 'b' (finished 09:00) and 'c' (finished 08:00), last = {'c'}
+    # after:  'b', 'a', 'c': a unit of `last` never takes the place of another unit, however early it finished.
+    return (unit_id in last, *finish_order(unit_id, finished))
+
+
+def split_repeats(policies, finished, last=()):
     """Policies split into those a report uses and the repeats: of a seed trained by several units, the first to finish is used."""
     # before: units A (finished 10:00) and B (finished 09:00) both hold seeds 0 and 1 of one configuration, and A
     #         also holds another configuration; after: (B's two policies and A's other policies, A's two repeats).
-    # `finished` maps every unit id to its finishing time (None when it has not finished).
+    # `finished` maps every unit id to its finishing time (None when it has not finished); a unit named in `last`
+    # is used only for the seeds no other unit trained (`use_order`).
     groups = defaultdict(list)
     for policy in policies:
         groups[(policy.configuration_key, policy.seed_key)].append(policy)
@@ -377,7 +418,7 @@ def split_repeats(policies, finished):
         if len(set(units)) != len(units):
             raise ValueError(f'Seed {seed} was trained more than once for one configuration inside the unit '
                              f'{next(unit for unit in units if units.count(unit) > 1)}.')
-        repeats += sorted(members, key=lambda policy: finish_order(policy.unit_id, finished))[1:]
+        repeats += sorted(members, key=lambda policy: use_order(policy.unit_id, finished, last))[1:]
     left_out = {id(policy) for policy in repeats}
     return [policy for policy in policies if id(policy) not in left_out], repeats
 

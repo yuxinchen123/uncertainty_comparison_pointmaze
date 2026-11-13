@@ -4,5 +4,9 @@
     "development-first-pass_*",
     "confirmation_pointmaze-medium_reward-step-cost_cleanrl-ppo-rnd_learning-rate-0.006_entropy-coefficient-0.01_intrinsic-weight-0.0078125_*"
   ],
-  "repeated_configurations": "show"
+  "repeated_configurations": "show",
+  "discovery_units": [
+    "development-for-discovery_*",
+    "confirmation-for-discovery_*"
+  ]
 }

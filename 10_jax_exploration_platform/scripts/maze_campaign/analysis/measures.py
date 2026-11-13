@@ -5,8 +5,10 @@ return (in the reward the learner sees) of the training episodes that ended in t
 range of steps weights each window by its steps inside the range, so a window that straddles an end of the
 range counts in proportion. Sums of episodes are split the same way.
 
-- Whole-curve mean W(B): the mean of the curve over steps (0, B].
+- Whole-curve mean W(B), the primary metric: the mean of the curve over steps (0, B].
 - Final level L(B): the mean of the curve over the last 10% of the budget, steps (0.9 B, B].
+- Mean capped first-goal step M(B), the secondary metric: the mean over the policies of the training step of the
+  first arrival at the goal, a policy with no arrival by step B counting as B. Smaller is better.
 - A budget shorter than the run reads the same records up to that step, so L(0.5 B) is the mean over
   (0.45 B, 0.5 B] of the run trained for B steps.
 - A smoothed curve is the seed-averaged curve averaged over a fixed number of steps that end at each logged
@@ -189,6 +191,7 @@ def configuration_measures(policies, budget):
     tail = [episode_sums(policy, budget - FINAL_SHARE * budget, budget) for policy in policies]
     arrivals = sum(sums['arrivals'] for sums in tail)
     coverage = [coverage_at(policy, budget) for policy in policies]
+    capped = [capped_first_goal_step(policy, budget) for policy in policies]
     return {
         'seeds': len(policies), 'budget': budget,
         'whole_curve_mean': float(np.mean(whole)), 'whole_curve_mean_error': standard_error(whole),
@@ -201,7 +204,7 @@ def configuration_measures(policies, budget):
         'final_over_peak': (level - floor) / (peak - floor) if peak > floor else None,
         'single_window_peak': window_peak, 'single_window_peak_step': int(grid[window_index]),
         'final_over_single_window_peak': (level - floor) / (window_peak - floor) if window_peak > floor else None,
-        'capped_first_goal_step': float(np.mean([capped_first_goal_step(policy, budget) for policy in policies])),
+        'capped_first_goal_step': float(np.mean(capped)), 'capped_first_goal_step_error': standard_error(capped),
         'reached_goal_share': float(np.mean([reached_goal(policy, budget) for policy in policies])),
         'coverage': None if any(value is None for value in coverage) else float(np.mean(coverage)),
         'steps_to_goal': sum(sums['steps_to_goal_sum'] for sums in tail) / arrivals if arrivals > 0 else None,

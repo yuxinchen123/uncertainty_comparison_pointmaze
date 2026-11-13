@@ -8,6 +8,15 @@ proposes from each finished sweep of the baseline; the training curves; the comp
 confirmation seeds; the final level against the training length; the decline check (chosen configurations whose
 final level is below 90% of the peak of their smoothed curve).
 
+Two metrics, each with its own chosen configurations and its own tables (user decision 2026-11-12):
+
+- primary: the whole-curve mean W of the training return, with the final level L (discovery and optimization);
+- secondary: the mean capped first-goal step M (discovery alone; smaller is better). Each development sweep gets
+  a second table, sorted by M, and its own choice (the smallest M). The comparison section gets a second block in
+  which every method, the baseline included, stands at its own configuration for M; a configuration for M that
+  has no confirmation units is reported as "not confirmed yet" and is never replaced by the one chosen for W.
+  `discovery_units` in report_settings.json (see records.py) names the units read for the secondary metric only.
+
 Usage, on a compute node (numpy and plotting never run on a login node):
   PYTHONPATH=<platform>/scripts <python> -m maze_campaign.analysis.report --run-dir <run folder> [--at-steps N]
 Through the test helper's Slurm job: see report_job.py beside this file.
@@ -15,6 +24,7 @@ Through the test helper's Slurm job: see report_job.py beside this file.
 
 import argparse
 from collections import defaultdict
+import fnmatch
 from pathlib import Path
 import re
 
@@ -25,6 +35,9 @@ from .records import ENVIRONMENT_ORDER, REWARD_SETTING_NAMES, REWARD_SETTING_ORD
 
 DECLINE_SHARE = 0.9
 LATEX_SWEEP_ROWS = 10
+# A development sweep's table of the secondary metric holds this many configurations: those with the smallest M.
+DISCOVERY_ROWS = 5
+STAGES = ('development', 'confirmation')
 # The rollout-shape check's table of every configuration has one column per setting; more than this many do not
 # fit across a page.
 MOST_SETTING_COLUMNS = 6
@@ -53,15 +66,17 @@ A window in which no episode ends takes the value of the window before it; befor
 2. **Whole-curve mean, which chooses configurations:** $W(B) = \dfrac{1}{K}\sum_{i=1}^{K} \dfrac{1}{B}\sum_{s \le B} R_i(s) \thinspace \Delta s$, the area under the curve divided by the budget.
 3. **Final level:** $L(B) = \dfrac{1}{K}\sum_{i=1}^{K} \dfrac{1}{0.1 B}\sum_{0.9 B \lt s \le B} R_i(s) \thinspace \Delta s$, the same mean over the last 10% of the budget. The final level at a share $f$ of the budget is $L(f B)$ read from the same runs: the mean over the steps from $0.9 f B$ to $f B$.
 4. **Final level over peak:** define $S(s)$ as the mean of the seed-averaged curve $\bar R$ over the $0.1 B$ steps that end at step $s$, and $P(B) = \max_{0.1 B \le s \le B} S(s)$ as its highest value. The ratio is $\dfrac{L(B) - R_0}{P(B) - R_0}$; both are measured from $R_0$, so the ratio means the same in both reward settings. The smoothing has the width of the final level, so $S(B) = L(B)$ and the ratio is at most 1. The decline check also gives the ratio with the highest single window of $\bar R$ in place of $P(B)$; that ratio is the stricter one, because one window of a few seeds is raised by noise.
-5. **Mean capped first-goal step:** define $T_i$ as the training step of policy $i$'s first arrival at the goal ($T_i = \infty$ if it has none). The measure is $M(B) = \dfrac{1}{K}\sum_{i=1}^{K} \min(T_i, B)$.
-6. **Policies that reach the goal:** $F(B) = \dfrac{1}{K}\sum_{i=1}^{K} \mathbf{1}[T_i \le B]$.
+5. **Mean capped first-goal step, the secondary metric, which chooses its own configurations:** define $T_i$ as the training step of policy $i$'s first arrival at the goal ($T_i = \infty$ if it has none). The measure is $M(B) = \dfrac{1}{K}\sum_{i=1}^{K} \min(T_i, B)$: a policy with no arrival by step $B$ counts as $B$, and smaller is better. $W$ measures discovery and optimization together; $M$ measures discovery alone.
+6. **Policies that reach the goal:** $F(B) = \dfrac{1}{K}\sum_{i=1}^{K} \mathbf{1}[T_i \le B]$. It breaks ties in $M$.
 7. **Maze cells reached:** the share of open maze cells a policy has reached in training by step $B$, averaged over the policies.
 8. **Mean steps to the goal, last 10%:** the mean length of the configuration's training episodes that reach the goal in the last 10% of the budget, over all its policies together.
 9. **Episodes that reach the goal, last 10%:** per policy, the share of its training episodes ending in the last 10% of the budget that reach the goal; then the mean over the policies.
 
-Standard errors are over the $K$ policies. Measures 4 to 9 are reported beside $W$ and $L$ and never choose a configuration.
+Standard errors are over the $K$ policies. Measures 4 and 6 to 9 are reported beside the two metrics and never choose a configuration, except that $F$ breaks ties in $M$.
 
-**Choice and comparison.** A configuration is chosen on the development seeds (below 30000) by the highest $W(B)$; ties go to the higher $L(B)$. On the confirmation seeds (30000 on), define $d_i$ as the value of seed $i$ under a method minus its value under the baseline, on the $K$ seeds both have. The tables give $\bar d = \dfrac{1}{K}\sum_{i=1}^{K} d_i$ for $W$ and for $L$, each with a 95% interval: the 2.5% and 97.5% points of the means of 10,000 resamples of the seeds, drawn with replacement. A difference is ahead when its interval is entirely above zero, behind when it is entirely below zero, and level otherwise. A method beats the baseline in one environment and reward setting when $W$ is ahead and $L$ is not behind. It succeeds when it beats the baseline in all five environments in one reward setting.
+**Choice and comparison, primary metric.** A configuration is chosen on the development seeds (below 30000) by the highest $W(B)$; ties go to the higher $L(B)$. On the confirmation seeds (30000 on), define $d_i$ as the value of seed $i$ under a method minus its value under the baseline, on the $K$ seeds both have. The tables give $\bar d = \dfrac{1}{K}\sum_{i=1}^{K} d_i$ for $W$ and for $L$, each with a 95% interval: the 2.5% and 97.5% points of the means of 10,000 resamples of the seeds, drawn with replacement. A difference is ahead when its interval is entirely above zero, behind when it is entirely below zero, and level otherwise. A method beats the baseline in one environment and reward setting when $W$ is ahead and $L$ is not behind. It succeeds when it beats the baseline in all five environments in one reward setting.
+
+**Choice and comparison, secondary metric.** For $M$ every method, the baseline included, has its own configuration: the one with the smallest $M(B)$ on the development seeds, ties going to the larger $F(B)$. It may differ from the configuration chosen for $W$. Each metric has its own tables with its own chosen configurations; the two are never mixed in one row. On the confirmation seeds, $d_i$ is the capped first-goal step $\min(T_i, B)$ of seed $i$ under a method at its configuration for $M$ minus the same under the baseline at the baseline's configuration for $M$, and $\bar d$ gets the same 95% interval. A method is ahead on discovery when the interval is entirely below zero (it first reaches the goal earlier), behind when it is entirely above zero, and within the interval otherwise. A method that is ahead on discovery in all five environments in one reward setting is noted; this is not part of the success rule. A configuration for $M$ that has no confirmation units is reported as not confirmed yet; the configuration chosen for $W$ is never put in its place. The tables of the secondary metric give $M$, its standard error and its differences in thousands of steps.
 
 **Unfinished runs.** A table compares its rows at one step count: the planned steps per policy when at least one row has trained that far, else the largest step count every policy of the table has reached. Rows that have not reached it are listed under the table without measures. The learning rate falls to zero over the planned steps, so the measures of an unfinished run are not those of a run trained for fewer steps.
 
@@ -90,6 +105,38 @@ def compact_steps(value):
 def with_error(value, error):
     """A mean with its standard error; the mean alone when there is one seed."""
     return f'{value:.3f}' if error is None else f'{value:.3f} ± {error:.3f}'
+
+
+def thousands(steps, signed=False):
+    """A step count in thousands of steps for a table cell: whole thousands from 100 thousand on, else three digits."""
+    # before: 62412.0, 1246300.0, 508.0 and (-128400.0, signed); after: '62.4', '1,246', '0.508' and '-128'.
+    value = steps / 1e3
+    return format(value, ('+' if signed else '') + (',.0f' if abs(value) >= 99.95 else '.3g'))
+
+
+def thousands_with_error(value, error, style=None):
+    """A mean step count with its standard error, in thousands of steps; the mean bold or underlined."""
+    # before: (62412.0, 13050.0, 'best'); after: '**62.4** ± 13.1'. One seed has no standard error.
+    return styled(thousands(value), style) + ('' if error is None else f' ± {thousands(error)}')
+
+
+def discovery_interval_text(result, style=None):
+    """A paired difference in the capped first-goal step with its 95% interval, in thousands of steps."""
+    # before: {'mean': -128400.0, 'interval': [-232000.0, -30200.0]}; after: '-128 [-232, -30.2]'.
+    low, high = result['interval']
+    return f"{styled(thousands(result['mean'], True), style)} [{thousands(low, True)}, {thousands(high, True)}]"
+
+
+def number_ranges(numbers):
+    """Numbers as text, a run of consecutive ones written as its first and last."""
+    # before: [3, 4, 5, 9, 11, 12]; after: '3 to 5, 9, 11 to 12'.
+    runs = []
+    for number in sorted(numbers):
+        if runs and number == runs[-1][1] + 1:
+            runs[-1][1] = number
+        else:
+            runs.append([number, number])
+    return ', '.join(str(first) if first == last else f'{first} to {last}' for first, last in runs)
 
 
 def format_measure(name, value):
@@ -159,7 +206,7 @@ def latex_text(text):
         piece = re.sub(r'<u>(.+?)</u>', r'\\underline{\1}', piece)
         piece = re.sub(r'(?<![\w.])-(?=\d)', '$-$', piece)
         for symbol, command in (('%', '\\%'), ('&', '\\&'), ('#', '\\#'), ('_', '\\_'), ('±', '$\\pm$'),
-                                ('↑', '$\\uparrow$'), ('×', '$\\times$')):
+                                ('↑', '$\\uparrow$'), ('↓', '$\\downarrow$'), ('×', '$\\times$')):
             piece = piece.replace(symbol, command)
         pieces[index] = piece
     return ''.join(pieces)
@@ -230,18 +277,39 @@ class Report:
     def __init__(self, run, plots, folder_name, at_steps=None):
         """Group the policies of each stage into configurations once; every section reads these groups."""
         self.run, self.plots, self.folder_name, self.at_steps = run, plots, folder_name, at_steps
+        self.unit_number = {unit['unit_id']: index for index, unit in enumerate(run.units, start=1)}
+        # The units of the sweep made for the secondary metric: read for that metric only (records.py).
+        patterns = run.settings.get('discovery_units', ())
+        self.discovery_units = {unit['unit_id'] for unit in run.units
+                                if any(fnmatch.fnmatchcase(unit['unit_id'], pattern) for pattern in patterns)}
         # Where the report settings allow repeated configurations, the unit that finished first is the one every
-        # table, choice and figure uses; the other runs are kept for their own section.
+        # table, choice and figure uses; the other runs are kept for their own section. A unit read for the
+        # secondary metric only never takes the place of another unit.
         used, self.repeats = run.policies, []
         if run.settings.get('repeated_configurations') == 'show':
-            used, self.repeats = records.split_repeats(run.policies, {unit['unit_id']: unit['finished'] for unit in run.units})
-        self.groups = {stage: sorted(records.configurations([policy for policy in used if policy.stage == stage]),
-                                     key=lambda group: (*case_position(group.environment, group.reward_setting),
-                                                        group.planned_steps, group.method,
-                                                        group.environments_per_policy, compare.settings_order(group.settings)))
-                       for stage in ('development', 'confirmation')}
+            used, self.repeats = records.split_repeats(
+                run.policies, {unit['unit_id']: unit['finished'] for unit in run.units}, self.discovery_units)
+        order = lambda group: (*case_position(group.environment, group.reward_setting), group.planned_steps,
+                               group.method, group.environments_per_policy, compare.settings_order(group.settings))
+        primary = [policy for policy in used if policy.unit_id not in self.discovery_units]
+        self.groups = {stage: sorted(records.configurations([policy for policy in primary if policy.stage == stage]),
+                                     key=order) for stage in STAGES}
+        # The secondary metric reads every unit. A configuration that holds the same policies in both readings is
+        # one object, so its measures are computed once and the two choices can be compared by identity.
+        # before: primary groups {A: 16 policies, B: 16}, every unit's groups {A: 16, B: 32, C: 16}
+        # after:  [A (the primary object), B (a new object of 32 policies), C (a new object)].
+        self.discovery_groups = {}
+        for stage in STAGES:
+            known = {group.key: group for group in self.groups[stage]}
+            every = records.configurations([policy for policy in used if policy.stage == stage])
+            same = lambda group: group.key in known and len(known[group.key].policies) == len(group.policies)
+            self.discovery_groups[stage] = sorted([known[group.key] if same(group) else group for group in every],
+                                                  key=order)
         self.cache = {}
         self.choices = {}      # (environment, reward setting, planned steps, method) -> the development choice
+        self.discovery_choices = {}   # the same key -> the development choice for the secondary metric
+        self.discovery_notes = {}     # the same key -> that choice in words, the steps and units it was read from
+        self.discovery_status = {}    # the same key -> whether the confirmation seeds hold that configuration
         self.budgets = []      # what the budget rule proposes per finished sweep of the baseline
         self.checked = []      # rows of the decline check: (case words, stage words, group, steps)
         self.tex = ['% Generated by scripts/maze_campaign/analysis/report.py; do not edit.\n'
@@ -349,7 +417,10 @@ class Report:
                 'every finished one, and units with the same finishing time are taken in the order of their names. '
                 'The other runs are shown here only. Define $W$ and $L$ as in the section Measures. Each difference '
                 'is a later run minus the run that is used, paired by seed, with its 95% interval from 10,000 '
-                'resamples of the seeds. Unit numbers are those of the section Records read.\n\n']
+                'resamples of the seeds. Unit numbers are those of the section Records read.'
+                + (' A unit read for the secondary metric only (`discovery_units` in `report_settings.json`) is '
+                   'used only for the seeds no other unit trained, whenever it finished.'
+                   if self.discovery_units else '') + '\n\n']
         header = ['run', 'finished', 'used in the tables', 'whole-curve mean $W$ ± standard error',
                   'final level $L$ ± standard error', 'seeds']
         # One block per repeated configuration, in the order of the records.
@@ -360,7 +431,7 @@ class Report:
             seeds = {policy.seed_key for policy in self.repeats if policy.configuration_key == key}
             runs = grouped([policy for policy in self.run.policies
                             if policy.configuration_key == key and policy.seed_key in seeds], lambda policy: policy.unit_id)
-            order = sorted(runs, key=lambda unit_id: records.finish_order(unit_id, finished))
+            order = sorted(runs, key=lambda unit_id: records.use_order(unit_id, finished, self.discovery_units))
             groups = {unit_id: records.configurations(runs[unit_id])[0] for unit_id in order}
             first = groups[order[0]]
             steps = min(first.planned_steps, measures.common_steps([policy for unit_id in order for policy in runs[unit_id]]))
@@ -533,52 +604,143 @@ class Report:
         figures.curve_figure(panels, legend, self.plots, name, 'mean return of training episodes')
 
     def development_section(self):
-        """One sweep table per environment, reward setting, training length and method, sorted by W."""
+        """Per environment, reward setting, training length and method: the sweep sorted by W, then its smallest M."""
         text = []
-        cases = grouped(self.groups['development'], lambda group: (group.environment, group.reward_setting,
-                                                                   group.planned_steps, group.method))
+        case_of = lambda group: (group.environment, group.reward_setting, group.planned_steps, group.method)
+        primary = grouped(self.groups['development'], case_of)
+        cases = grouped(self.discovery_groups['development'], case_of)
         lengths = defaultdict(set)
         for environment, setting, planned, _ in cases:
             lengths[(environment, setting)].add(planned)
-        for (environment, setting, planned, method), groups in cases.items():
-            steps, ready, waiting = self.evaluation(groups)
-            names, with_width = self.naming(groups)
+        for key, every in cases.items():
+            environment, setting, planned, method = key
             title = f'{environment}, {REWARD_SETTING_NAMES[setting]}, {method}'
             if len(lengths[(environment, setting)]) > 1:
                 title += f', trained for {planned:,} steps'
-            if not ready:
-                text.append(f'### {title}\n\nNo configuration has reached {steps:,} steps yet.\n\n'
-                            + self.waiting_list(waiting, names, with_width))
-                continue
-            ranked = [row[2] for row in compare.rank_configurations(ready, steps)]
-            chosen = ranked[0]
-            self.choices[(environment, setting, planned, method)] = chosen
-            self.checked.append((f'{environment}, {REWARD_SETTING_NAMES[setting]}', 'development', chosen, steps))
-            header = (['configuration', 'whole-curve mean $W$ ↑ ± standard error', 'final level $L$ ± standard error']
-                      + [words for _, _, words in OTHER_MEASURES] + ['seeds'])
-            rows = [[cells['name'], cells['whole_curve_mean'], cells['final_level'], *cells['others'], cells['seeds']]
-                    for cells in self.measure_rows(ranked, steps, lambda group: row_name(group, names, False, with_width))]
-            chosen_words = row_name(chosen, MAIN_SETTINGS, False, with_width)
-            text.append(
-                f'### {title}\n\n{len(ready)} configurations with {seeds_text(ready)} each, compared at {steps:,} '
+            # The primary metric reads the units outside the sweep for the secondary metric; that metric reads all.
+            groups = primary.get(key, [])
+            text.append(f'### {title}\n\n'
+                        + (self.sweep_block(key, groups) if groups else
+                           'Every unit of this sweep is read for the secondary metric only (`discovery_units` in '
+                           '`report_settings.json`), so no configuration is chosen for $W$ here.\n\n')
+                        + self.discovery_block(key, every, groups))
+        if not text:
+            return ''
+        return ('## Development sweeps\n\nDefine $W$, $L$, $M$ and the other measures as in the section Measures. '
+                'Each subsection holds one method\'s configurations in one environment and reward setting, trained on '
+                'the development seeds (below 30000): first the table of the primary metric, sorted by $W$, with the '
+                'configuration chosen for $W$; then the table of the secondary metric, sorted by $M$, with the '
+                'configuration chosen for $M$. The two choices can differ.\n\n' + ''.join(text))
+
+    def sweep_block(self, key, groups):
+        """The primary metric of one development sweep: every configuration sorted by W, and the choice by W."""
+        environment, setting, planned, method = key
+        steps, ready, waiting = self.evaluation(groups)
+        names, with_width = self.naming(groups)
+        if not ready:
+            return f'No configuration has reached {steps:,} steps yet.\n\n' + self.waiting_list(waiting, names, with_width)
+        ranked = [row[2] for row in compare.rank_configurations(ready, steps)]
+        chosen = ranked[0]
+        self.choices[key] = chosen
+        self.checked.append((f'{environment}, {REWARD_SETTING_NAMES[setting]}', 'development', chosen, steps))
+        header = (['configuration', 'whole-curve mean $W$ ↑ ± standard error', 'final level $L$ ± standard error']
+                  + [words for _, _, words in OTHER_MEASURES] + ['seeds'])
+        rows = [[cells['name'], cells['whole_curve_mean'], cells['final_level'], *cells['others'], cells['seeds']]
+                for cells in self.measure_rows(ranked, steps, lambda group: row_name(group, names, False, with_width))]
+        chosen_words = row_name(chosen, MAIN_SETTINGS, False, with_width)
+        label = figures.file_slug('sweep', environment, REWARD_SETTING_NAMES[setting], method, f'steps {planned}')
+        shown = min(len(rows), LATEX_SWEEP_ROWS)
+        self.tex.append(latex_table(header, rows[:shown],
+            f'Development sweep, {environment}, {REWARD_SETTING_NAMES[setting]}, {method}: '
+            f'{shown_words(shown, len(rows))}, at {steps:,} environment steps per policy '
+            f'({seeds_text(ready)} each). Best value of each column bold, second best underlined; for the first-goal '
+            'step and the steps to the goal the smallest is the best.', label,
+            shares=[1.4, 1.4] + [1.0] * len(OTHER_MEASURES) + [0.75]))
+        return (f'{len(ready)} configurations with {seeds_text(ready)} each, compared at {steps:,} '
                 f'environment steps per policy.{unfinished_note(steps, planned)} Rows are sorted by $W$; the best '
                 'value of each column is bold and the second best underlined. For the mean capped first-goal step '
                 'and the mean steps to the goal the smallest value is the best.\n\n' + markdown_table(header, rows)
                 + f'Chosen (highest $W$, ties by $L$): **{chosen_words}**.{self.edge_sentence(chosen, groups)}\n\n'
                 + self.waiting_list(waiting, names, with_width))
-            label = figures.file_slug('sweep', environment, REWARD_SETTING_NAMES[setting], method, f'steps {planned}')
-            shown = min(len(rows), LATEX_SWEEP_ROWS)
-            self.tex.append(latex_table(header, rows[:shown],
-                f'Development sweep, {environment}, {REWARD_SETTING_NAMES[setting]}, {method}: '
-                f'{shown_words(shown, len(rows))}, at {steps:,} environment steps per policy '
-                f'({seeds_text(ready)} each). Best value of each column bold, second best underlined; for the first-goal '
-                'step and the steps to the goal the smallest is the best.', label,
-                shares=[1.4, 1.4] + [1.0] * len(OTHER_MEASURES) + [0.75]))
-        if not text:
-            return ''
-        return ('## Development sweeps\n\nDefine $W$, $L$ and the other measures as in the section Measures. Each '
-                'table holds one method\'s configurations in one environment and reward setting, trained on the '
-                'development seeds (below 30000).\n\n' + ''.join(text))
+
+    def discovery_block(self, key, groups, primary):
+        """The secondary metric of one development sweep: the configurations with the smallest M, and the choice by M."""
+        environment, setting, planned, method = key
+        steps, ready, waiting = self.evaluation(groups)
+        names, with_width = self.naming(groups)
+        lead = '**Discovery (secondary metric).** '
+        if not ready:
+            return f'{lead}No configuration has reached {steps:,} steps yet.\n\n' + self.waiting_list(waiting, names, with_width)
+        ranked = [row[2] for row in compare.rank_for_discovery(ready, steps)]
+        chosen = ranked[0]
+        # The choice is named with the main settings and every other setting that differs among the rows read.
+        chosen_words = row_name(chosen, list(dict.fromkeys([*MAIN_SETTINGS, *names])), False, with_width)
+        units = sorted({self.unit_number[policy.unit_id] for group in ready for policy in group.policies})
+        self.discovery_choices[key] = chosen
+        self.discovery_notes[key] = {'words': chosen_words, 'steps': steps, 'units': number_ranges(units),
+                                     'configurations': len(ranked)}
+
+        # The few configurations with the smallest M; the marks are those of the rows shown.
+        shown = ranked[:DISCOVERY_ROWS]
+        table = [self.measured(group, steps) for group in shown]
+        marks = {name: mean_marks([row[name] for row in table]) for name in ('whole_curve_mean', 'final_level')}
+        marks['capped'] = column_marks([row['capped_first_goal_step'] for row in table],
+                                       [thousands(row['capped_first_goal_step']) for row in table], False)
+        marks['reached'] = column_marks([row['reached_goal_share'] for row in table],
+                                        [format_measure('reached_goal_share', row['reached_goal_share']) for row in table], True)
+        header = ['configuration', '$M$ ↓ ± standard error, thousand steps', 'policies that reach the goal',
+                  'whole-curve mean $W$ ± standard error', 'final level $L$ ± standard error', 'seeds']
+        rows = [[row_name(group, names, False, with_width),
+                 thousands_with_error(row['capped_first_goal_step'], row['capped_first_goal_step_error'], marks['capped'][index]),
+                 styled(format_measure('reached_goal_share', row['reached_goal_share']), marks['reached'][index]),
+                 marked_mean(row['whole_curve_mean'], row['whole_curve_mean_error'], marks['whole_curve_mean'][index]),
+                 marked_mean(row['final_level'], row['final_level_error'], marks['final_level'][index]), str(row['seeds'])]
+                for index, (group, row) in enumerate(zip(shown, table))]
+
+        # Where the configuration chosen for W stands by M, and whether a unit read for the secondary metric only
+        # holds a higher W than that choice (the choice for W does not read such a unit).
+        chosen_for_whole = self.choices.get(key)
+        place = next((index for index, group in enumerate(ranked, 1)
+                      if chosen_for_whole is not None and group.key == chosen_for_whole.key), None)
+        if chosen_for_whole is None:
+            relation = ' No configuration is chosen for $W$ in this case.'
+        elif chosen.key == chosen_for_whole.key:
+            relation = ' It is also the configuration chosen for $W$.'
+        elif place is None:
+            relation = ' The configuration chosen for $W$ has not reached this step count among the rows read here.'
+        else:
+            row = self.measured(ranked[place - 1], steps)
+            relation = (f' The configuration chosen for $W$ ({row_name(chosen_for_whole, MAIN_SETTINGS, False, with_width)}) '
+                        f"has $M$ = {thousands_with_error(row['capped_first_goal_step'], row['capped_first_goal_step_error'])} "
+                        f'thousand steps: place {place} of {len(ranked)} by $M$.')
+        highest = compare.rank_configurations(ready, steps)[0][2]
+        if chosen_for_whole is not None and highest.key not in {group.key for group in primary}:
+            ours, theirs = self.measured(highest, steps), self.measured(chosen_for_whole, steps)
+            relation += (f' Among the units read for the secondary metric only, '
+                         f'{row_name(highest, names, False, with_width)} has the highest $W$ of all configurations '
+                         f"read here ({with_error(ours['whole_curve_mean'], ours['whole_curve_mean_error'])}), against "
+                         f"{with_error(theirs['whole_curve_mean'], theirs['whole_curve_mean_error'])} for the "
+                         'configuration chosen for $W$, whose choice does not read those units.')
+
+        held = (f'the {len(shown)} configurations with the smallest $M$' if len(shown) < len(ranked) else
+                'every configuration' if len(shown) > 1 else 'its only configuration')
+        case = f'{environment}, {REWARD_SETTING_NAMES[setting]}, {method}'
+        self.tex.append(latex_table(header, rows,
+            f'Development sweep, secondary metric, {case}: {held} ({len(ranked)} read) at {steps:,} environment steps '
+            f'per policy ({seeds_text(ready)} each), sorted by the mean capped first-goal step $M$ in thousands of '
+            'steps, with $W$ and $L$ of the same configurations. Best value of each column bold, second best '
+            'underlined; for $M$ the smallest is the best.',
+            figures.file_slug('discovery sweep', environment, REWARD_SETTING_NAMES[setting], method, f'steps {planned}'),
+            shares=[1.3, 1.0, 1.3, 1.3, 0.6]))
+        return (f'{lead}{len(ready)} configurations with {seeds_text(ready)} each, read at {steps:,} environment '
+                f"steps per policy from unit{'' if len(units) == 1 else 's'} {number_ranges(units)} of the section "
+                f'Records read.{unfinished_note(steps, planned)} The table holds {held}, sorted by $M$, with $W$ and '
+                '$L$ of the same configurations beside. $M$ and its standard error are in thousands of steps. Per '
+                'column the best value among these rows is bold and the second best underlined; for $M$ the smallest '
+                'is the best.\n\n' + markdown_table(header, rows)
+                + 'Chosen for discovery (smallest $M$, ties by the larger share of policies that reach the goal): '
+                f'**{chosen_words}**.{self.edge_sentence(chosen, groups)}{relation}\n\n'
+                + self.waiting_list(waiting, names, with_width))
 
     def edge_sentence(self, chosen, groups):
         """Where the chosen intrinsic weight, learning rate and entropy coefficient stand among their swept values."""
@@ -731,12 +893,39 @@ class Report:
             rows[method] = members[0] if len(members) == 1 else matching[0] if matching else None
         return rows
 
+    def choice_notes(self, case, confirmed):
+        """A sentence for every confirmation row whose configuration is not the one the development seeds choose for W."""
+        # A method with one configuration on the confirmation seeds is compared at that configuration; when a later
+        # development sweep moved the choice, the row is still shown, and this note says that it is not the choice.
+        notes = []
+        for method, row in confirmed.items():
+            choice = self.choices.get((*case, method))
+            if row is None or choice is None or (row.settings, row.environments_per_policy) == (
+                    choice.settings, choice.environments_per_policy):
+                continue
+            names = list(dict.fromkeys([*MAIN_SETTINGS, *records.varying_settings([row, choice])]))
+            notes.append(f'**Not the chosen configuration:** the confirmation row of {method} holds '
+                         f'{records.describe_settings(row, names)}, while the development seeds now choose '
+                         f'{records.describe_settings(choice, names)} for $W$.')
+        return ' '.join(notes) + '\n\n' if notes else ''
+
     def confirmation_cases(self):
         """The confirmation configurations by environment, reward setting and training length, in report order."""
         return grouped(self.groups['confirmation'], lambda group: (group.environment, group.reward_setting,
                                                                    group.planned_steps))
 
     def comparison_section(self):
+        """The confirmation seeds: the block of the primary metric, then the block of the secondary metric."""
+        blocks = self.primary_comparison() + self.discovery_comparison()
+        if not blocks:
+            return ''
+        return ('## Comparison with the baseline on the confirmation seeds\n\nDefine $W$, $L$ and $M$ as in the '
+                'section Measures. Each method\'s configuration was chosen on the development seeds; the rows below '
+                'are trained on the confirmation seeds (30000 on). The first block compares by the primary metric '
+                '$W$, with $L$. The second block, whose headings start with "Discovery", compares by the secondary '
+                'metric $M$, each method at its own configuration for $M$.\n\n' + blocks)
+
+    def primary_comparison(self):
         """Per case: every confirmation row with its paired differences to the baseline; then the verdicts together."""
         cases = self.confirmation_cases()
         if not cases:
@@ -793,6 +982,7 @@ class Report:
                 f'{unfinished_note(steps, planned)} Rows are sorted by $W$; differences are the row minus the baseline '
                 f'({baseline_method}) on the seeds both have.\n\n' + markdown_table(header, rows)
                 + 'The measures reported beside $W$ and $L$, same rows:\n\n' + markdown_table(other_header, other_rows)
+                + self.choice_notes((environment, setting, planned), confirmed)
                 + self.waiting_list(waiting, names, with_width, True))
             label = figures.file_slug('comparison', environment, REWARD_SETTING_NAMES[setting], f'steps {planned}')
             case_tex.append(latex_table(header, rows,
@@ -807,19 +997,16 @@ class Report:
                 label + '_other-measures', first_width=2.2))
         summary = self.verdict_summary(verdicts)
         self.tex += case_tex
-        return ('## Comparison with the baseline on the confirmation seeds\n\nDefine $W$ and $L$ as in the section '
-                'Measures. Each method\'s configuration was chosen on the development seeds; the rows below are '
-                'trained on the confirmation seeds (30000 on).\n\n' + summary + ''.join(text))
+        return summary + ''.join(text)
 
-    def verdict_summary(self, verdicts):
-        """Methods in rows and the five environments in columns, one table per reward setting, then the success rule."""
-        methods = sorted({method for method, _, _ in verdicts})
-        if not methods:
-            return ''
+    def summary_tables(self, verdicts, flag, cell_of, last_header, caption_of, label):
+        """Methods in rows and the five environments in columns, one table per reward setting: (tables, method -> case -> flag)."""
+        # before: verdicts {('even start', 'PointMaze Large', 'arrival_plus_one'): {'beats': True, ...}, ...}, flag 'beats'
+        # after:  one table per reward setting with a cell per environment, and {'even start': {('PointMaze Large',
+        #         'arrival_plus_one'): True, ...}}; a case of unfinished runs has the flag None.
         references = self.run.reference_methods
-        text = ['### All environments\n\nEach cell gives the verdict, then the paired differences in $W$ and in $L$ '
-                'with their sides, and the seeds in common. A cell of unfinished runs says so.\n\n']
-        beats = {method: {} for method in methods}
+        methods = sorted({method for method, _, _ in verdicts})
+        text, flags = [], {method: {} for method in methods}
         for setting in REWARD_SETTING_ORDER:
             if not any(key[2] == setting for key in verdicts):
                 continue
@@ -828,28 +1015,41 @@ class Report:
                 cells = [method]
                 for environment in ENVIRONMENT_ORDER:
                     result = verdicts.get((method, environment, setting))
-                    if result is None:
-                        cells.append('not compared yet')
-                        continue
-                    if result['beats'] is None:
+                    # A case without a comparison says why: no row at all, or the reason it was given in words.
+                    if result is None or isinstance(result, str):
+                        cells.append(result or 'not compared yet')
+                    elif result[flag] is None:
                         cells.append(result['verdict'])
-                        continue
-                    beats[method][(environment, setting)] = None if result['unfinished'] else result['beats']
-                    cells.append(('unfinished runs: ' if result['unfinished'] else '') + f"{result['verdict']}; "
-                                 f"$W$ {result['whole_curve_mean']['mean']:+.3f}, {result['whole_curve_mean']['side']}; "
-                                 f"$L$ {result['final_level']['mean']:+.3f}, {result['final_level']['side']} "
-                                 f"({result['seeds']:,} seeds)")
-                won = sum(bool(beats[method].get((environment, setting))) for environment in ENVIRONMENT_ORDER)
+                    else:
+                        flags[method][(environment, setting)] = None if result['unfinished'] else result[flag]
+                        cells.append(('unfinished runs: ' if result['unfinished'] else '') + cell_of(result))
+                won = sum(bool(flags[method].get((environment, setting))) for environment in ENVIRONMENT_ORDER)
                 rows.append(cells + ['reference row' if method in references else f'{won} of {len(ENVIRONMENT_ORDER)}'])
-            header = ['method'] + list(ENVIRONMENT_ORDER) + ['environments in which it beats the baseline']
+            header = ['method'] + list(ENVIRONMENT_ORDER) + [last_header]
             text.append(f'**{REWARD_SETTING_NAMES[setting].capitalize()}.**\n\n' + markdown_table(header, rows))
-            self.tex.append(latex_table(header, rows,
-                f'Verdicts on the confirmation seeds, {REWARD_SETTING_NAMES[setting]}: per environment the verdict, the '
-                'paired differences in $W$ and in $L$ (method minus baseline) with their sides, and the seeds in common.',
-                figures.file_slug('verdicts', REWARD_SETTING_NAMES[setting]), first_width=1.8))
-        # The success rule, one list item per method that can succeed.
-        text.append('Success rule (the method beats the baseline in all five environments in one reward setting):\n\n')
-        for method in methods:
+            self.tex.append(latex_table(header, rows, caption_of(REWARD_SETTING_NAMES[setting]),
+                                        figures.file_slug(label, REWARD_SETTING_NAMES[setting]), first_width=1.8))
+        return ''.join(text), flags
+
+    def verdict_summary(self, verdicts):
+        """The primary metric's verdicts of every case together, then the success rule."""
+        if not verdicts:
+            return ''
+        references = self.run.reference_methods
+        cell_of = lambda result: (f"{result['verdict']}; "
+                                  f"$W$ {result['whole_curve_mean']['mean']:+.3f}, {result['whole_curve_mean']['side']}; "
+                                  f"$L$ {result['final_level']['mean']:+.3f}, {result['final_level']['side']} "
+                                  f"({result['seeds']:,} seeds)")
+        tables, beats = self.summary_tables(
+            verdicts, 'beats', cell_of, 'environments in which it beats the baseline',
+            lambda setting: (f'Verdicts on the confirmation seeds, {setting}: per environment the verdict, the paired '
+                             'differences in $W$ and in $L$ (method minus baseline) with their sides, and the seeds in '
+                             'common.'), 'verdicts')
+        text = ['### All environments\n\nEach cell gives the verdict, then the paired differences in $W$ and in $L$ '
+                'with their sides, and the seeds in common. A cell of unfinished runs says so.\n\n', tables,
+                # The success rule, one list item per method that can succeed.
+                'Success rule (the method beats the baseline in all five environments in one reward setting):\n\n']
+        for method in sorted(beats):
             if method in references:
                 continue
             outcome = compare.study_success(beats[method])
@@ -857,6 +1057,154 @@ class Report:
                      f"{len(ENVIRONMENT_ORDER)}, not compared or unfinished in {len(outcome[setting]['not_compared'])}"
                      for setting in REWARD_SETTING_ORDER]
             text.append(f"- **{method}:** {'met' if outcome['success'] else 'not met'} ({'; '.join(parts)}).\n")
+        return ''.join(text) + '\n'
+
+    def discovery_rows(self, case, groups):
+        """Per method of one case: its confirmation row at the configuration chosen for M, or why it has none."""
+        # before: confirmation rows of RND at intrinsic weight 2 and of PPO without a bonus (which has no
+        #         development sweep), while RND's choice for M is intrinsic weight 64
+        # after:  ({'PPO without a bonus': its only row}, {'CleanRL PPO-RND': 'not confirmed yet for this
+        #         configuration: intrinsic weight 64, ...'}): the row at weight 2 is never put in its place.
+        by_method = grouped(groups, lambda group: group.method)
+        chosen = {key[3]: choice for key, choice in self.discovery_choices.items() if key[:3] == case}
+        found, missing = {}, {}
+        for method in sorted({*by_method, *chosen}, key=lambda name: (name != self.run.baseline_method, name)):
+            members, choice = by_method.get(method, []), chosen.get(method)
+            if choice is None:
+                # No development sweep of this training length: one confirmation configuration leaves nothing to choose.
+                if len(members) == 1:
+                    found[method] = members[0]
+                else:
+                    missing[method] = ('no configuration is chosen for $M$: it has no development sweep of this '
+                                       f'training length, and {len(members)} configurations on the confirmation seeds')
+                continue
+            matching = [group for group in members if group.settings == choice.settings
+                        and group.environments_per_policy == choice.environments_per_policy]
+            self.discovery_status[(*case, method)] = 'confirmation units exist' if matching else 'not confirmed yet'
+            if matching:
+                found[method] = matching[0]
+                continue
+            held = '; '.join(records.describe_settings(group, MAIN_SETTINGS) for group in members)
+            missing[method] = (f"not confirmed yet for this configuration: {self.discovery_notes[(*case, method)]['words']}. "
+                               + (f'Its confirmation units hold: {held}' if members else
+                                  'It has no confirmation units in this case'))
+        return found, missing
+
+    def discovery_comparison(self):
+        """The secondary metric on the confirmation seeds: each method at its own configuration for M, then all cases together."""
+        cases = grouped(self.discovery_groups['confirmation'],
+                        lambda group: (group.environment, group.reward_setting, group.planned_steps))
+        if not cases:
+            return ''
+        baseline_method, references = self.run.baseline_method, self.run.reference_methods
+        shortest = {}
+        for environment, setting, planned in cases:
+            shortest[(environment, setting)] = min(planned, shortest.get((environment, setting), planned))
+        text, verdicts, case_tex = [], {}, []
+        header = ['row', '$M$ ↓ ± standard error, thousand steps', '$M$ minus the baseline [95%], thousand steps',
+                  'verdict', 'policies that reach the goal', 'seeds in common with the baseline']
+        for (environment, setting, planned), groups in cases.items():
+            case, counted = (environment, setting, planned), planned == shortest[(environment, setting)]
+            title = f'{environment}, {REWARD_SETTING_NAMES[setting]}' + ('' if counted else f', trained for {planned:,} steps')
+            found, missing = self.discovery_rows(case, groups)
+            part = [f'### Discovery: {title}\n\n']
+            if counted:
+                verdicts.update({(method, environment, setting): 'not confirmed yet'
+                                 for method in missing if method != baseline_method})
+            if found:
+                steps, ready, waiting = self.evaluation(list(found.values()))
+                ranked = [row[2] for row in compare.rank_for_discovery(ready, steps)]
+                baseline = found.get(baseline_method)
+                compared = baseline is not None and any(group is baseline for group in ready)
+                # Each row's paired difference from the baseline at the baseline's own configuration for M.
+                results = []
+                for group in ranked:
+                    result = ('baseline' if group is baseline else
+                              'the baseline is not confirmed yet' if not compared else
+                              compare.compare_discovery(group.policies, baseline.policies, steps, environment, setting,
+                                                        group.method, baseline_method, 'discovery'))
+                    results.append(result)
+                    if counted and group is not baseline:
+                        verdicts[(group.method, environment, setting)] = (
+                            result if isinstance(result, str) else {**result, 'unfinished': steps < planned})
+                table = [self.measured(group, steps) for group in ranked]
+                means = [None if isinstance(result, str) or result['ahead'] is None
+                         else result['capped_first_goal_step']['mean'] for result in results]
+                marks = {'capped': column_marks([row['capped_first_goal_step'] for row in table],
+                                                [thousands(row['capped_first_goal_step']) for row in table], False),
+                         'difference': column_marks(means, [None if mean is None else thousands(mean, True) for mean in means], False),
+                         'reached': column_marks([row['reached_goal_share'] for row in table],
+                                                 [format_measure('reached_goal_share', row['reached_goal_share']) for row in table], True)}
+                rows = []
+                for index, (group, row, result) in enumerate(zip(ranked, table, results)):
+                    words = (self.discovery_notes[(*case, group.method)]['words'] if (*case, group.method) in self.discovery_notes
+                             else 'its only configuration, no development sweep')
+                    if isinstance(result, str):
+                        cells = [result, result, str(row['seeds']) if group is baseline else 'not compared']
+                    elif result['ahead'] is None:
+                        cells = [result['verdict'], result['verdict'], str(result['seeds'])]
+                    else:
+                        cells = [discovery_interval_text(result['capped_first_goal_step'], marks['difference'][index]),
+                                 result['verdict'] + (' (reference row)' if group.method in references else ''),
+                                 str(result['seeds'])]
+                    rows.append([f'{group.method}: {words}',
+                                 thousands_with_error(row['capped_first_goal_step'], row['capped_first_goal_step_error'],
+                                                      marks['capped'][index]), cells[0], cells[1],
+                                 styled(format_measure('reached_goal_share', row['reached_goal_share']), marks['reached'][index]),
+                                 cells[2]])
+                part.append(
+                    f'Confirmation seeds, read at {steps:,} environment steps per policy.{unfinished_note(steps, planned)} '
+                    'Each row is a method at its own configuration for $M$ (section Development sweeps); rows are '
+                    'sorted by $M$. $M$, its standard error and its differences are in thousands of steps. '
+                    f'Differences are the row minus the baseline ({baseline_method}) on the seeds both have; a '
+                    'negative difference means the goal was first reached earlier than under the baseline.\n\n'
+                    + markdown_table(header, rows) + self.waiting_list(waiting, [], False, True))
+                case_tex.append(latex_table(header, rows,
+                    f'Secondary metric on the confirmation seeds, {title}, at {steps:,} environment steps per policy: '
+                    'each method at its own configuration for the mean capped first-goal step $M$ (thousands of '
+                    f'steps). Differences are the row minus the baseline ({baseline_method}) on the seeds both have, '
+                    'with 95% intervals from 10,000 resamples of the seeds; a row is ahead on discovery when the '
+                    'interval is entirely below zero.',
+                    figures.file_slug('discovery comparison', environment, REWARD_SETTING_NAMES[setting], f'steps {planned}'),
+                    first_width=3.2, shares=[1.2, 1.5, 1.2, 1.0, 1.0]))
+            if missing:
+                part.append('Without a confirmation row at its configuration for $M$ (the configuration chosen for $W$ '
+                            'is never put in its place):\n\n'
+                            + ''.join(f'- **{method}:** {reason}.\n' for method, reason in missing.items()) + '\n')
+            text.append(''.join(part))
+        summary = self.discovery_summary(verdicts)
+        self.tex += case_tex
+        return summary + ''.join(text)
+
+    def discovery_summary(self, verdicts):
+        """The secondary metric's verdicts of every case together, and the methods ahead on discovery in all five environments."""
+        if not verdicts:
+            return ''
+        references = self.run.reference_methods
+        cell_of = lambda result: (f"{result['verdict']}; $M$ {discovery_interval_text(result['capped_first_goal_step'])} "
+                                  f"({result['seeds']:,} seeds)")
+        tables, ahead = self.summary_tables(
+            verdicts, 'ahead', cell_of, 'environments in which it is ahead on discovery',
+            lambda setting: (f'Secondary metric on the confirmation seeds, {setting}: per environment the verdict on '
+                             'discovery, the paired difference in the mean capped first-goal step $M$ (method minus '
+                             'baseline, each at its own configuration for $M$, thousands of steps) with its 95% '
+                             'interval, and the seeds in common.'), 'discovery verdicts')
+        text = ['### Discovery: all environments\n\nEach cell gives the verdict on discovery, then the paired difference '
+                'in $M$ (method minus baseline, each at its own configuration for $M$, in thousands of steps) with its '
+                '95% interval, and the seeds in common. "Not confirmed yet" means that the method\'s configuration for '
+                '$M$ has no confirmation units; "the baseline is not confirmed yet" means the same of the baseline\'s. '
+                'A cell of unfinished runs says so.\n\n', tables,
+                'Noted beside the success rule, and not part of it: a method that is ahead of the baseline on '
+                'discovery in all five environments in one reward setting.\n\n']
+        for method in sorted(ahead):
+            if method in references:
+                continue
+            outcome = compare.study_success(ahead[method])
+            parts = [f"{REWARD_SETTING_NAMES[setting]}: ahead in {len(outcome[setting]['beaten'])} of "
+                     f"{len(ENVIRONMENT_ORDER)}, not compared, not confirmed or unfinished in "
+                     f"{len(outcome[setting]['not_compared'])}" for setting in REWARD_SETTING_ORDER]
+            text.append(f"- **{method}:** {'ahead' if outcome['success'] else 'not ahead'} on discovery in all five "
+                        f"environments in one reward setting ({'; '.join(parts)}).\n")
         return ''.join(text) + '\n'
 
     def curves_section(self):

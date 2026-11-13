@@ -24,5 +24,18 @@
     "settings": {"learning_rate": 0.002, "int_coef": 2.0},
     "reported": "whole-curve mean 0.888 ± 0.008, final level 0.994 (`program.md`, RND's chosen configuration)"
   },
-  "predictions": "predictions_batch_01"
+  "predictions": "predictions_batch_01",
+  "more_intrinsic_weights": ["screen_larger-intrinsic-weights_pointmaze-large_reward-arrival-plus-one.json"],
+  "validation_block": {
+    "phase": "validation-block",
+    "control": "control-cleanrl-ppo-rnd",
+    "method_names": {
+      "control-cleanrl-ppo-rnd": "control",
+      "predictor-own-step-size-0-point-25": "separate predictor step size, predictor learning rate 0.25 times 1e-4",
+      "predictor-own-step-size-1": "separate predictor step size, predictor learning rate 1 times 1e-4",
+      "divisor-held-after-one-sixteenth": "divisor held after one sixteenth of the run",
+      "divisor-held-after-one-quarter": "divisor held after one quarter of the run",
+      "slower-predictor-with-held-divisor": "slower predictor with held divisor (predictor learning rate 0.25 times 1e-4, divisor held after one sixteenth of the run)"
+    }
+  }
 }

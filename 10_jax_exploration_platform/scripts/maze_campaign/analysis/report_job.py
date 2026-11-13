@@ -75,6 +75,19 @@ def test_generate_report(request):
                       f"L {report.with_error(row['final_level'], row['final_level_error'])} | "
                       f"policies that reached the goal {100 * row['reached_goal_share']:.0f}% | seeds {row['seeds']}")
 
+    # The secondary metric: each development sweep's choice by M, where it was read, and its confirmation.
+    for key, group in built.discovery_choices.items():
+        environment, setting, planned, method = key
+        notes, row = built.discovery_notes[key], built.measured(group, built.discovery_notes[key]['steps'])
+        capped = report.thousands_with_error(row['capped_first_goal_step'], row['capped_first_goal_step_error'])
+        print(f"discovery choice | {environment}, {report.REWARD_SETTING_NAMES[setting]}, {method}, {planned:,} planned "
+              f"steps | {notes['words']} | M {capped} thousand steps at {notes['steps']:,} steps | policies that "
+              f"reached the goal {100 * row['reached_goal_share']:.0f}% | "
+              f"W {report.with_error(row['whole_curve_mean'], row['whole_curve_mean_error'])} | "
+              f"L {report.with_error(row['final_level'], row['final_level_error'])} | {notes['configurations']} "
+              f"configurations from units {notes['units']} | confirmation: "
+              f"{built.discovery_status.get(key, 'no confirmation unit of this case and training length')}")
+
     # What the budget rule proposes from each finished sweep of the baseline.
     for proposal in built.budgets:
         reached = '; '.join(f"{report.row_name(group, report.MAIN_SETTINGS, False, False)}: "

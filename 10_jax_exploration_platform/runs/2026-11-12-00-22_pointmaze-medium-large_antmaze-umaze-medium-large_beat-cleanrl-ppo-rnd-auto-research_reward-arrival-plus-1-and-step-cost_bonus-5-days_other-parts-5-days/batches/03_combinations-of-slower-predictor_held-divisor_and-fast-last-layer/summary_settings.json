@@ -1,0 +1,27 @@
+{
+  "title": "Batch 3 screen on PointMaze Large with reward 1 on arrival: combinations of the slower predictor, the held divisor and the fast last layer",
+  "study_description": "screen_pointmaze-large_reward-arrival-plus-one.json",
+  "control": "control-cleanrl-ppo-rnd",
+  "control_study_description": "../02_where-the-bonus-points-at-the-start_and_features-that-keep-the-fit-local/screen_pointmaze-large_reward-arrival-plus-one.json",
+  "method_names": {
+    "control-cleanrl-ppo-rnd": "control (the unit of batch 2)",
+    "slower-predictor-with-held-divisor": "slower predictor with held divisor",
+    "fast-last-layer-step-0-point-1-with-held-divisor": "fast last layer with held divisor, step 0.1",
+    "fast-last-layer-step-0-point-3-with-held-divisor": "fast last layer with held divisor, step 0.3",
+    "fast-last-layer-step-0-point-1-with-slower-predictor": "fast last layer with slower predictor, step 0.1",
+    "fast-last-layer-step-0-point-1-slower-predictor-held-divisor": "fast last layer with slower predictor and held divisor, step 0.1",
+    "fast-last-layer-step-0-point-1-slower-predictor-divisor-held-after-one-eighth": "fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1"
+  },
+  "validation_block": {
+    "phase": "validation-block",
+    "control": "control-cleanrl-ppo-rnd",
+    "method_names": {
+      "control-cleanrl-ppo-rnd": "control",
+      "predictor-own-step-size-0-point-25": "separate predictor step size, predictor learning rate 0.25 times 1e-4",
+      "predictor-own-step-size-1": "separate predictor step size, predictor learning rate 1 times 1e-4",
+      "divisor-held-after-one-sixteenth": "divisor held after one sixteenth of the run",
+      "divisor-held-after-one-quarter": "divisor held after one quarter of the run",
+      "slower-predictor-with-held-divisor": "slower predictor with held divisor (predictor learning rate 0.25 times 1e-4, divisor held after one sixteenth of the run)"
+    }
+  }
+}

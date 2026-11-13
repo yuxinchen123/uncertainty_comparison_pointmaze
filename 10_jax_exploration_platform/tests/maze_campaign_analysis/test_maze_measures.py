@@ -106,6 +106,8 @@ def test_configuration_measures_on_two_seeds():
     assert row['single_window_peak'] == pytest.approx(0.5) and row['single_window_peak_step'] == 300
     assert row['final_over_single_window_peak'] == pytest.approx(0.8)
     assert row['capped_first_goal_step'] == pytest.approx((120 + 400) / 2) and row['reached_goal_share'] == 0.5
+    # The policy with no arrival counts as the 400 steps of the budget, in the mean and in its standard error.
+    assert row['capped_first_goal_step_error'] == pytest.approx(np.std([120, 400], ddof=1) / np.sqrt(2))
     assert row['coverage'] == pytest.approx(0.6) and row['final_goal_share'] == pytest.approx(0.4)
     # In the last tenth the first seed's 8 arrivals of window 4 took 320 steps together: 40 steps each.
     assert row['steps_to_goal'] == pytest.approx(40.0)

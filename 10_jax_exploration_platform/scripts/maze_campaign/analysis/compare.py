@@ -9,6 +9,11 @@
 - Verdict: the method beats the baseline when the W interval is entirely above zero and the L interval is not
   entirely below zero.
 - Success: the method beats the baseline in all five environments in one reward setting.
+- Secondary metric (discovery alone): the mean capped first-goal step M. Its choice is the smallest M; ties go to
+  the larger share of policies that reach the goal, then to the same last keys as above. Its comparison is the
+  per-seed difference in the capped first-goal step (method minus baseline) with the same interval; the method
+  is ahead on discovery when that interval is entirely below zero, behind when it is entirely above zero. A
+  method ahead on discovery in all five environments in one reward setting is noted; it is not part of success.
 - Budget rule: of the three configurations with the highest W, the largest first step at which the smoothed
   seed-averaged curve reaches 95% of the final level; twice that, rounded up to a power of two, and at most the
   run's own length. A configuration that never reaches 95% counts as the whole run.
@@ -23,6 +28,7 @@ from .records import ENVIRONMENT_ORDER, REWARD_SETTING_ORDER
 
 RESAMPLES = 10_000
 MEASURES = {'whole_curve_mean': measures.whole_curve_mean, 'final_level': measures.final_level}
+DISCOVERY_VERDICTS = {'ahead': 'ahead on discovery', 'level': 'within the interval', 'behind': 'behind on discovery'}
 
 
 def seed_for(*parts):
@@ -51,6 +57,22 @@ def rank_configurations(configurations, budget):
 def choose_configuration(configurations, budget):
     """The configuration with the highest whole-curve mean at the budget (ties: the higher final level)."""
     return rank_configurations(configurations, budget)[0][2]
+
+
+def rank_for_discovery(configurations, budget):
+    """Configurations from the earliest discovery on: by M, then the larger share of policies that reach the goal."""
+    # before: three configurations with M 300, 300 and 120 steps, of which 2, 4 and 4 of 4 policies reach the goal
+    # after:  [(120.0, 1.0, third), (300.0, 1.0, second), (300.0, 0.5, first)]: equal M, so the larger share decides.
+    scored = [(float(np.mean([measures.capped_first_goal_step(policy, budget) for policy in group.policies])),
+               float(np.mean([measures.reached_goal(policy, budget) for policy in group.policies])), group)
+              for group in configurations]
+    return sorted(scored, key=lambda row: (row[0], -row[1], row[2].environments_per_policy,
+                                           settings_order(row[2].settings)))
+
+
+def choose_for_discovery(configurations, budget):
+    """The configuration with the smallest mean capped first-goal step at the budget (ties: more policies arrive)."""
+    return rank_for_discovery(configurations, budget)[0][2]
 
 
 def best_environments_per_policy(configurations, budget):
@@ -120,8 +142,31 @@ def compare_with_baseline(method_policies, baseline_policies, budget, *name):
     return {**result, 'beats': beats, 'verdict': 'beats' if beats else 'does not beat'}
 
 
+def discovery_side(interval):
+    """Where a difference in the first-goal step stands: 'ahead' when its interval is entirely below zero (earlier)."""
+    # before: [-120.0, -30.0], [-50.0, 40.0], [10.0, 90.0]; after: 'ahead', 'level', 'behind'.
+    low, high = interval
+    return 'ahead' if high < 0 else 'behind' if low > 0 else 'level'
+
+
+def compare_discovery(method_policies, baseline_policies, budget, *name):
+    """The paired difference in the capped first-goal step with its interval and side, and the verdict on discovery."""
+    seeds, differences = paired_differences(method_policies, baseline_policies, measures.capped_first_goal_step, budget)
+    found = difference_interval(differences, *name, 'capped_first_goal_step', budget)
+    if len(seeds) < 2:
+        return {'capped_first_goal_step': found, 'seeds': len(seeds), 'ahead': None,
+                'verdict': 'fewer than two seeds in common'}
+    # A negative difference means the method first reached the goal earlier than the baseline.
+    found['side'] = discovery_side(found['interval'])
+    return {'capped_first_goal_step': found, 'seeds': len(seeds), 'ahead': found['side'] == 'ahead',
+            'verdict': DISCOVERY_VERDICTS[found['side']]}
+
+
 def study_success(beats):
-    """Whether a method succeeds: it beats the baseline in all five environments in one reward setting."""
+    """Whether a method succeeds: it beats the baseline in all five environments in one reward setting.
+
+    The secondary metric counts the same way, with "ahead on discovery" in place of "beats".
+    """
     # before: {('PointMaze Large', 'arrival_plus_one'): True, ...}, a case not compared yet being absent;
     # after:  per reward setting the environments beaten, not beaten and not compared, and the overall answer.
     result = {}

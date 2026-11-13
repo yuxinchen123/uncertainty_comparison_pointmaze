@@ -5,7 +5,7 @@ import json
 import pytest
 
 from maze_record_examples import flat_policy, goal_windows, grid_records, start_record, write_shard
-from maze_campaign.analysis import batch_summary, compare, figures, predictions_batch_01, records
+from maze_campaign.analysis import batch_summary, compare, figures, predictions_batch_01, records, report
 
 BATCH = '01_made-up-batch'
 CONTROL, EVEN, FIXED = 'control-cleanrl-ppo-rnd', 'even-start', 'fixed-scale'
@@ -47,6 +47,7 @@ def made_up_screen(tmp_path):
     (folder / 'ideas.md').write_text(IDEAS)
     (folder / 'screen.json').write_text(json.dumps({
         'phase': 'batch-01-screen', 'steps_per_policy': 2000, 'seeds': {'first': 0, 'count': 2},
+        'environments': ['pointmaze-large'], 'reward_settings': ['arrival_plus_one'],
         'sweeps': [{'method': method} for method in METHODS]}))
     (folder / 'summary_settings.json').write_text(json.dumps({
         'title': 'Made-up screen', 'study_description': 'screen.json', 'control': CONTROL,
@@ -80,6 +81,7 @@ def made_up_screen(tmp_path):
 def test_a_made_up_screen_end_to_end(tmp_path, monkeypatch):
     """Complete units enter the tables, the others are listed and left out; every number is computed by hand."""
     monkeypatch.setattr(batch_summary, 'FEWEST_PAIRS', 2)
+    monkeypatch.setattr(batch_summary, 'MOST_WEIGHT_COLUMNS', 2)
     run = made_up_screen(tmp_path)
     result = batch_summary.generate(run, BATCH)
     folder = run / 'batches' / BATCH
@@ -98,10 +100,10 @@ def test_a_made_up_screen_end_to_end(tmp_path, monkeypatch):
             '| in no queue folder |') in units
     assert '| 4 | even start with no divisor | no unit was built | 0 | none | not finished | no unit |' in units
     assert set(result['screen'].methods) == {CONTROL, EVEN, FIXED}
-    tables = text.split('## Screen table\n')[1].split('## Properties')[0]
-    assert 'error length' not in tables and 'fast last layer' not in tables
+    tables = text.split('## Discovery and optimization: whole-curve mean\n')[1].split('## Properties')[0]
+    assert 'error length' not in tables and 'fast last layer' not in tables and '## Screen table' not in text
 
-    # Screen table. Control: W 0.8 and 0.7 at weight 1. Even start: W 0.9 twice at weight 16, so its differences
+    # The table of the primary metric. Control: W 0.8 and 0.7 at weight 1. Even start: W 0.9 twice at weight 16, so its differences
     # are 0.1 and 0.2. Fixed scale: W 0 and 0.4 at weight 64, L 0 and 1, one policy of two arrives.
     rows = [line for line in tables.split('\n## ')[0].splitlines() if line.startswith('| ')][1:]
     assert rows == [
@@ -114,12 +116,38 @@ def test_a_made_up_screen_end_to_end(tmp_path, monkeypatch):
 
     # W at every weight, in two tables; the best weight's place in the grid is named.
     weights = tables.split('## Whole-curve mean at every intrinsic weight\n')[1].split('\n## ')[0]
-    assert '| method | weight 1 | weight 16 | best intrinsic weight |' in weights
+    assert '| method | weight 1 | weight 16 | best intrinsic weight for $W$ |' in weights
+    assert 'The 3 weights are split over two tables' in weights
     assert '| control | **0.750** | <u>0.500</u> | 1 (smallest of the grid) |' in weights
     assert '| even start | <u>0.450</u> | **0.900** | 16 |' in weights
     assert '| fixed scale | 0.000 | 0.125 | 64 (largest of the grid) |' in weights
-    assert '| method | weight 64 | best intrinsic weight |' in weights and '| even start | **0.500** | 16 |' in weights
+    assert '| method | weight 64 | best intrinsic weight for $W$ |' in weights and '| even start | **0.500** | 16 |' in weights
     assert 'Best weight at an end of the grid: control (1, the smallest); fixed scale (64, the largest).' in weights
+
+    # The table of the secondary metric, in thousands of steps. First arrivals at the best weight for M: control
+    # (weight 1) at steps 408 and 608, so M = 508 with a standard error of 100; even start (weight 16) at step 208
+    # twice, so its differences from the control are -200 and -400; fixed scale (weight 64) never and at step
+    # 1,208, so M = (2,000 + 1,208) / 2 = 1,604 and its differences are +1,592 and +600.
+    discovery = tables.split('## Discovery: mean capped first-goal time\n')[1].split('\n## ')[0]
+    assert [line for line in discovery.splitlines() if line.startswith('| ')][1:] == [
+        '| control | 1 (smallest of the grid) | <u>0.508</u> ± 0.1 | control | **2 of 2** | <u>0.750</u> ± 0.050 | **1.000** |',
+        '| even start | 16 | **0.208** ± 0 | **-0.3** [-0.4, -0.2] | **2 of 2** | **0.900** ± 0.000 | **1.000** |',
+        '| fixed scale | 64 (largest of the grid) | 1.6 ± 0.396 | <u>+1.1</u> [+0.6, +1.59] | <u>1 of 2</u> | 0.200 ± 0.200 '
+        '| <u>0.500</u> |']
+    assert "at the control's own best intrinsic weight for $M$ (1), on the 2 seeds both have" in discovery
+    assert 'larger or smaller weights must be tried' in discovery and 'a screen and not a verdict' in discovery
+    assert '| $M$ ↓ ± standard error, thousand steps |' in discovery and discovery.count('↓') == 1
+
+    # M at every weight: the smallest per weight is bold; a policy with no arrival counts as the 2,000 steps.
+    capped = tables.split('## Mean capped first-goal time at every intrinsic weight\n')[1].split('\n## ')[0]
+    assert '| method | weight 1 | weight 16 | best intrinsic weight for $M$ |' in capped
+    assert '| control | **0.508** | <u>1.01</u> | 1 (smallest of the grid) |' in capped
+    assert '| even start | <u>1.11</u> | **0.208** | 16 |' in capped
+    assert '| fixed scale | 2 | 1.75 | 64 (largest of the grid) |' in capped
+    assert '| method | weight 64 | best intrinsic weight for $M$ |' in capped and '| even start | **1.01** | 16 |' in capped
+    assert 'Best weight for $M$ at an end of the grid: control (1, the smallest); fixed scale (64, the largest).' in capped
+    # The formula of M stands in the section Measures, where it is first introduced.
+    assert '$M(B) = \\dfrac{1}{K}\\sum_{i=1}^{K} \\min(T_i, B)$' in text.split('## Measures\n')[1].split('\n## ')[0]
 
     # Properties: the control's start bonus is 8 and 2 (ratio 4) and falls as 1 / (1 + visits) at the visited cell;
     # its unvisited cell holds half its start. Even start: ratio 1, slope -0.5, the unvisited cell keeps its
@@ -162,6 +190,14 @@ def test_a_made_up_screen_end_to_end(tmp_path, monkeypatch):
     assert '- **Within the interval** (it contains zero): none.' in sides
     assert '- **Behind the control** (interval entirely below zero): fixed scale (-0.550 [-0.800, -0.300]).' in sides
     assert '- **Not compared yet** (unit not complete): even start with no divisor; ' in sides
+    # The same lists by the interval of the difference in M: below zero is ahead on discovery.
+    by_discovery = sides.split('### Discovery: mean capped first-goal time\n')[1]
+    assert ('- **Ahead of the control on discovery** (interval entirely below zero): even start '
+            '(-0.3 [-0.4, -0.2]).') in by_discovery
+    assert ('- **Behind the control on discovery** (interval entirely above zero): fixed scale '
+            '(+1.1 [+0.6, +1.59]).') in by_discovery
+    assert '- **Within the interval** (it contains zero): none.' in by_discovery
+    assert '## Validation block' not in text
 
     # Consistency check: the baseline unit's W is 0.8 and 0.65, so the control is 0 and 0.05 above it.
     check = text.split('## Consistency check against the baseline run\n')[1].split('\n## ')[0]
@@ -185,7 +221,7 @@ def test_no_complete_unit_gives_a_summary_that_only_lists_the_units(tmp_path):
         shard.write_text(''.join(line + '\n' for line in shard.read_text().splitlines()[:-1]))
     batch_summary.generate(run, BATCH)
     text = (run / 'batches' / BATCH / 'summary.md').read_text()
-    assert '0 of 14 units are complete.' in text and '## Screen table' not in text and '![' not in text
+    assert '0 of 14 units are complete.' in text and '## Discovery' not in text and '![' not in text
     assert "The control's unit is not complete, so the check cannot be made yet." in text
     assert text.count('**cannot be read yet**') >= 6 and 'did not hold' not in text.split('## Predictions\n')[1].split('### ')[1]
 
@@ -199,6 +235,33 @@ def test_the_best_weight_is_chosen_by_w_and_a_tie_goes_to_the_higher_final_level
     scores, best = batch_summary.score_weights(groups, 400)
     assert scores == {1.0: (0.5, 0.0), 4.0: (0.5, 1.0), 16.0: (0.25, 1.0)}
     assert batch_summary.weight_of(best) == 4.0
+
+
+def test_the_best_weight_for_discovery_is_the_smallest_m_and_can_differ_from_the_best_weight_for_w():
+    """Weight 1 arrives first and its return then falls; weight 4 arrives later and stays: M takes 1, W takes 4."""
+    def policies(values, first_steps, weight):
+        return [flat_policy(values, seed=seed, first_goal_step=first, settings=(('int_coef', weight),))
+                for seed, first in enumerate(first_steps)]
+    # Weights 16 and 64 both have M = 260 (one policy of weight 16 never arrives and counts as the 400 steps of
+    # the budget), so the weight at which more policies arrive stands first of the two.
+    groups = records.configurations(
+        policies([1, 0, 0, 0], [50, 70], 1.0) + policies([0, 1, 1, 1], [150, 170], 4.0)
+        + policies([0, 0, 0, 1], [120, -1], 16.0) + policies([0, 0, 1, 1], [260, 260], 64.0))
+    scores, best = batch_summary.score_weights_for_discovery(groups, 400)
+    assert scores == {1.0: (60.0, 1.0), 4.0: (160.0, 1.0), 16.0: (260.0, 0.5), 64.0: (260.0, 1.0)}
+    assert list(scores) == [1.0, 4.0, 64.0, 16.0] and batch_summary.weight_of(best) == 1.0
+    assert batch_summary.weight_of(batch_summary.score_weights(groups, 400)[1]) == 4.0
+    # At a budget of 100 steps only the weight 1 has arrived; the others count as the budget.
+    assert batch_summary.score_weights_for_discovery(groups, 100)[0][4.0] == (100.0, 0.0)
+
+
+def test_a_best_weight_at_an_end_of_the_weights_is_marked():
+    """The smallest and the largest weight a method was trained at are marked; a weight inside is not."""
+    assert batch_summary.end_of_grid([1.0, 16.0, 64.0], 64.0) == 'largest'
+    assert batch_summary.end_of_grid([1.0, 16.0, 64.0], 1.0) == 'smallest'
+    assert batch_summary.end_of_grid([1.0, 16.0, 64.0, 256.0], 64.0) is None
+    method = fake_screen({CONTROL: (0.5, 0.5, 100.0, -1.0)}).methods[CONTROL]
+    assert batch_summary.weight_cell(method, 2.0) == '2 (smallest of the grid)'
 
 
 def test_cells_and_words():
@@ -275,12 +338,14 @@ def fake_screen(values, differences=None):
     for slug, (whole, level, arrival, slope) in values.items():
         best = records.Configuration('PointMaze Large', 'arrival_plus_one', slug, 4, 100, (('int_coef', 2.0),), ())
         unvisited = {share: {'pairs': 40, 'median': 0.5, 'step': 0} for share in batch_summary.UNVISITED_SHARES}
+        measured = {'whole_curve_mean': whole, 'final_level': level, 'median_first_goal_step': arrival}
         methods[slug] = batch_summary.Method(
-            slug=slug, name=slug, unit_id=slug, budget=100, groups=(best,), scores={}, best=best,
-            measures={'whole_curve_mean': whole, 'final_level': level, 'median_first_goal_step': arrival},
-            grid={'start_ratio': 3.0, 'decay_slope': slope, 'unvisited': unvisited})
+            slug=slug, name=slug, unit_id=slug, budget=100, groups=(best,), scores={}, best=best, measures=measured,
+            discovery_scores={}, discovery_best=best, discovery_measures=measured,
+            grid={'start_ratio': 3.0, 'decay_slope': slope, 'unvisited': unvisited, 'weight': 2.0})
     return batch_summary.Screen(batch='made up', control=CONTROL, order=tuple(METHODS), names={slug: slug for slug in METHODS},
-                                units=(), methods=methods, differences=differences or {}, budget=100, seeds=(0, 1))
+                                units=(), methods=methods, differences=differences or {}, discovery_differences={},
+                                budget=100, seeds=(0, 1))
 
 
 def difference(mean, low, high):
@@ -351,3 +416,197 @@ def test_a_bonus_that_rises_above_its_start_is_named_with_the_records(tmp_path):
     look = (run / 'batches' / BATCH / 'summary.md').read_text().split('## Records that need a look\n')[1]
     assert (f'- even start (`{unit_name(EVEN)}`): the largest bonus at a probe in a logging window is 60, above the '
             'largest at the start (1), over all intrinsic weights.') in look
+
+
+LARGER = 'batch-01-screen-larger-weights'
+
+
+def add_larger_weights(run, control_goal_windows=(0, 0, None, None), complete=True):
+    """Add to the made-up screen a study description of two larger weights, and the control's unit of it."""
+    folder = run / 'batches' / BATCH
+    (folder / 'screen_larger.json').write_text(json.dumps({
+        'phase': LARGER, 'steps_per_policy': 2000, 'seeds': {'first': 0, 'count': 2},
+        'cells': {'kind': 'grid', 'values': {'intrinsic_weight': [256.0, 1024.0]}},
+        'sweeps': [{'method': CONTROL}, {'method': EVEN}]}))
+    settings = json.loads((folder / 'summary_settings.json').read_text())
+    (folder / 'summary_settings.json').write_text(json.dumps({**settings, 'more_intrinsic_weights': ['screen_larger.json']}))
+    unit = f'{LARGER}_pointmaze-large_{CONTROL}_cells-1-to-2-of-2_seeds-0-to-1'
+    (run / 'specifications' / f'{unit}.json').write_text(json.dumps({'unit_id': unit, 'phase': LARGER, 'method': CONTROL}))
+    # The unit has no maze-grid records, and its code has no `permutation_draw` option.
+    start = start_record(unit, iterations=20, cells=((1e-4, 256.0), (1e-4, 1024.0)))
+    write_shard(run, [start] + goal_windows(start, list(control_goal_windows)), complete=complete)
+    return unit
+
+
+def test_units_with_larger_weights_extend_a_method_and_leave_the_others_cells_empty(tmp_path, monkeypatch):
+    """The control is also trained at the weights 256 and 1,024: its best weights are chosen over all five."""
+    monkeypatch.setattr(batch_summary, 'FEWEST_PAIRS', 2)
+    monkeypatch.setattr(batch_summary, 'MOST_WEIGHT_COLUMNS', 3)
+    run = made_up_screen(tmp_path)
+    unit = add_larger_weights(run)
+    screen = batch_summary.generate(run, BATCH)['screen']
+    text = (run / 'batches' / BATCH / 'summary.md').read_text()
+
+    # Units: the control's further unit is complete; even start's was never built and is listed.
+    units = text.split('## Units\n')[1].split('\n## ')[0]
+    assert '4 of 16 units are complete.' in units
+    assert '| 15 | control, at the intrinsic weights 256, 1024 | complete | 20 of 20 |' in units
+    assert '| 16 | even start, at the intrinsic weights 256, 1024 | no unit was built | 0 |' in units
+    assert f'15. `{unit}`' in units
+
+    # At the weight 256 both policies of the control arrive at step 8 and W is 1: the best weight of both metrics,
+    # and no longer at an end of the control's five weights. The other methods keep their three weights.
+    control = screen.methods[CONTROL]
+    assert control.weights == [1.0, 16.0, 64.0, 256.0, 1024.0] and screen.methods[EVEN].weights == [1.0, 16.0, 64.0]
+    assert control.best_weight == control.discovery_weight == 256.0 and control.grid['weight'] == 1.0
+    assert control.discovery_scores[256.0] == (8.0, 1.0) and control.discovery_scores[1024.0] == (2000.0, 0.0)
+    primary = text.split('## Discovery and optimization: whole-curve mean\n')[1].split('\n## ')[0]
+    assert '| control | 256 | **1.000** ± 0.000 | control |' in primary and 'best intrinsic weight (256)' in primary
+    discovery = text.split('## Discovery: mean capped first-goal time\n')[1].split('\n## ')[0]
+    assert '| control | 256 | **0.008** ± 0 | control | **2 of 2** | **1.000** ± 0.000 | **1.000** |' in discovery
+    # Even start at its weight 16 (step 208 twice) against the control at 256 (step 8 twice): +200 steps, behind.
+    assert '| even start | 16 | <u>0.208</u> ± 0 | **+0.2** [+0.2, +0.2] | **2 of 2** |' in discovery
+    assert screen.discovery_differences[EVEN]['verdict'] == 'behind on discovery'
+
+    # Both tables at every weight: five weights in two tables, and empty cells where a method has no unit.
+    for heading, mark in (('## Whole-curve mean at every intrinsic weight\n', '$W$'),
+                          ('## Mean capped first-goal time at every intrinsic weight\n', '$M$')):
+        section = text.split(heading)[1].split('\n## ')[0]
+        assert 'The 5 weights are split over two tables' in section and 'has an empty cell there' in section
+        assert f'| method | weight 1 | weight 16 | weight 64 | best intrinsic weight for {mark} |' in section
+        assert f'| method | weight 256 | weight 1024 | best intrinsic weight for {mark} |' in section
+        assert '| even start |  |  | 16 |' in section and '| fixed scale |  |  | 64 (largest of the grid) |' in section
+    assert '| control | 1.000 | 0.000 | 256 |' in text.split('## Whole-curve mean at every intrinsic weight\n')[1]
+    assert '| control | 0.008 | 2 | 256 |' in text.split('## Mean capped first-goal time at every intrinsic weight\n')[1]
+
+    # The property measures stay those of the screen's own unit, at its best weight among its own weights.
+    properties = text.split('## Properties of the bonus on the maze grid\n')[1].split('\n## ')[0]
+    assert 'It differs from the best weight for $W$ over all weights for: control.' in properties
+    assert '| control | 1 | 2 and 2 | 2.5 | 1.25 | 0.583 | 0.345 |' in properties
+    # A setting that only one of the two units records is named with the records.
+    look = text.split('## Records that need a look\n')[1]
+    assert (f"- control, at the intrinsic weights 256, 1024 (`{unit}`): settings that only the method's first unit "
+            'records: `permutation_draw` = x.') in look
+
+
+def test_a_further_unit_is_left_out_while_it_or_its_methods_own_unit_is_not_complete(tmp_path, monkeypatch):
+    """An unfinished unit with larger weights changes nothing; a complete one without its screen unit is left out."""
+    monkeypatch.setattr(batch_summary, 'FEWEST_PAIRS', 2)
+    run = made_up_screen(tmp_path)
+    add_larger_weights(run, complete=False)
+    screen = batch_summary.generate(run, BATCH)['screen']
+    assert screen.methods[CONTROL].weights == [1.0, 16.0, 64.0] and screen.methods[CONTROL].best_weight == 1.0
+    assert '3 of 16 units are complete.' in (run / 'batches' / BATCH / 'summary.md').read_text()
+    # The further unit complete, the control's own unit of the screen unfinished: nothing of the control is read.
+    add_larger_weights(run)
+    shard = run / 'data' / f'{unit_name(CONTROL)}.jsonl'
+    shard.write_text(''.join(line + '\n' for line in shard.read_text().splitlines()[:-1]))
+    screen = batch_summary.generate(run, BATCH)['screen']
+    text = (run / 'batches' / BATCH / 'summary.md').read_text()
+    assert CONTROL not in screen.methods and 'Left out: control; even start with no divisor; ' in text
+    assert "complete, but left out: the method's own unit of the screen is not complete." in text
+    # A further unit that differs from its method's unit in another setting than the weight is refused.
+    with pytest.raises(ValueError, match="settings recorded with other values \\['clip_coef'\\]"):
+        first = records.configurations([flat_policy([1], seed=0, settings=(('clip_coef', 0.1), ('int_coef', 1.0)))])
+        other = records.configurations([flat_policy([1], seed=0, settings=(('clip_coef', 0.2), ('int_coef', 4.0)))])
+        batch_summary.join_further_weights(first, other, {'unit_id': 'u', 'notes': []})
+
+
+def add_validation_block(run):
+    """Add to the made-up screen a validation block: the control at the weights 1 and 2, an idea at 1 and 4."""
+    folder = run / 'batches' / BATCH
+    settings = json.loads((folder / 'summary_settings.json').read_text())
+    idea = 'predictor-own-step-size-1'
+    (folder / 'summary_settings.json').write_text(json.dumps({**settings, 'validation_block': {
+        'phase': 'validation-block', 'control': CONTROL,
+        'method_names': {idea: 'separate predictor step size', CONTROL: 'control'}}}))
+    # Goal from the given window on, per seed; the control's unit at the weight 2 has written half its windows.
+    units = ((CONTROL, 1.0, [4, 6, 4, 6], True, 'pointmaze-large'), (CONTROL, 2.0, [1, 1, 1, 1], False, 'pointmaze-large'),
+             (idea, 1.0, [2, 2, 2, 2], True, 'pointmaze-large'), (idea, 4.0, [10, 10, 10, 10], True, 'pointmaze-large'),
+             (idea, 16.0, [0, 0, 0, 0], True, 'pointmaze-medium'),
+             ('method-of-another-batch', 1.0, [0, 0, 0, 0], True, 'pointmaze-large'))
+    for method, weight, goal, complete, environment in units:
+        unit = f'validation-block_{environment}_{method}_intrinsic-weight-{weight}_seeds-10000-to-10003'
+        (run / 'specifications' / f'{unit}.json').write_text(json.dumps({
+            'unit_id': unit, 'phase': 'validation-block', 'method': method, 'environment': environment,
+            'reward_setting': 'arrival_plus_one', 'cell_setting_names': ['learning_rate', 'int_coef'],
+            'cells': [[1e-4, weight]]}))
+        start = start_record(unit, iterations=20, cells=((1e-4, weight),), seeds=(10000, 10001, 10002, 10003))
+        windows = goal_windows(start, goal)
+        write_shard(run, [start] + (windows if complete else windows[:10]), complete=complete)
+
+
+def test_the_validation_block_lists_each_method_and_weight_against_the_control_at_the_same_weight(tmp_path, monkeypatch):
+    """Complete units of the block's phase in the screen's environment enter two tables; the others are listed."""
+    monkeypatch.setattr(batch_summary, 'FEWEST_PAIRS', 2)
+    run = made_up_screen(tmp_path)
+    add_validation_block(run)
+    batch_summary.generate(run, BATCH)
+    text = (run / 'batches' / BATCH / 'summary.md').read_text()
+    # The screen still reads its own three complete units only.
+    assert '3 of 14 units are complete.' in text
+    block = text.split('## Validation block\n')[1].split('\n## ')[0]
+    assert '4 seeds, from 10000 to 10003' in block and '3 of 4 method and weight pairs have a complete unit' in block
+    assert 'read at 2,000 environment steps per policy' in block and 'pointmaze-medium' not in block
+    # W of the control at the weight 1 is 0.8 and 0.7 by seed, of the idea 0.9: differences +0.1 and +0.2.
+    primary = block.split('### Discovery and optimization: whole-curve mean and final level\n')[1].split('###')[0]
+    assert '| control | 1 | <u>0.750</u> ± 0.029 | control | 1.000 ± 0.000 | control | 4 |' in primary
+    assert '| separate predictor step size | 1 | **0.900** ± 0.000 | +0.150 [+0.100, +0.200] | 1.000 ± 0.000 |' in primary
+    assert ('| separate predictor step size | 4 | 0.500 ± 0.000 | no complete control unit at this weight | 1.000 ± 0.000 '
+            '| no complete control unit at this weight | not compared |') in primary
+    # First arrivals: the control at steps 408 and 608, the idea at step 208, so it is 200 and 400 steps earlier.
+    secondary = block.split('### Discovery: mean capped first-goal time\n')[1]
+    assert '| control | 1 | <u>0.508</u> ± 0.0577 | control | 4 of 4 | 4 |' in secondary
+    assert '| separate predictor step size | 1 | **0.208** ± 0 | -0.3 [-0.4, -0.2] | 4 of 4 | 4 |' in secondary
+    assert '| separate predictor step size | 4 | 1.01 ± 0 | no complete control unit at this weight | 4 of 4 | not compared |' in secondary
+    assert 'Not complete, left out:\n\n- control, intrinsic weight 2: unfinished, 10 logging windows written.' in block
+    # A unit of the phase whose method the block does not name belongs to another batch: named, not read.
+    assert 'they are not read here: method of another batch.' in block and block.count('method of another batch') == 1
+    # A block of the settings with a key it does not know is refused.
+    with pytest.raises(ValueError, match="validation_block: unknown keys \\['colour'\\], missing keys \\['control'\\]"):
+        batch_summary.validation_section(None, run, {}, {'phase': 'p', 'method_names': {}, 'colour': 'blue'})
+
+
+def test_a_batch_that_takes_its_control_from_another_batch_and_has_no_predictions_module(tmp_path, monkeypatch):
+    """The second batch reads the control's unit of the first batch's study description; its predictions are quoted."""
+    monkeypatch.setattr(batch_summary, 'FEWEST_PAIRS', 2)
+    run = made_up_screen(tmp_path)
+    other, idea = '02_made-up-batch', 'slower-predictor-with-held-divisor'
+    folder = run / 'batches' / other
+    folder.mkdir()
+    (run / 'specifications' / f'{unit_name(idea)}.json').write_text(json.dumps(
+        {'unit_id': unit_name(idea), 'phase': 'batch-02-screen', 'method': idea}))
+    # Every policy of the idea reaches the goal from window 2 on, at every weight: W = 0.9 and first arrival at step 208.
+    write_shard(run, screen_unit(idea, [2] * 6, [8.0, 2.0], lambda index: [8.0 / (index + 2), 1.0], lambda index: [1, 0]))
+    description = {'phase': 'batch-02-screen', 'steps_per_policy': 2000, 'seeds': {'first': 0, 'count': 2},
+                   'sweeps': [{'method': idea}]}
+    (folder / 'screen.json').write_text(json.dumps(description))
+    (folder / 'ideas.md').write_text('# Second batch\n\n## Predictions (written before the runs)\n\n'
+                                     '1. **First:** text one.\n2. **Second:** text\n   two.\n')
+    settings = {'title': 'Second made-up screen', 'study_description': 'screen.json', 'control': CONTROL,
+                'control_study_description': f'../{BATCH}/screen.json',
+                'method_names': {CONTROL: 'control (the unit of batch 1)', idea: 'slower predictor with held divisor'}}
+    (folder / 'summary_settings.json').write_text(json.dumps(settings))
+    screen = batch_summary.generate(run, other)['screen']
+    text = (folder / 'summary.md').read_text()
+    assert screen.order == (CONTROL, idea) and set(screen.methods) == {CONTROL, idea}
+    assert '2 of 2 units are complete.' in text and '| 1 | control (the unit of batch 1) | complete | 20 of 20 |' in text
+    # Both tables compare with the first batch's control: W 0.9 against 0.8 and 0.7, arrivals at 208 against 408 and 608.
+    primary = text.split('## Discovery and optimization: whole-curve mean\n')[1].split('\n## ')[0]
+    assert '| slower predictor with held divisor | 1 | **0.900** ± 0.000 | +0.150 [+0.100, +0.200] |' in primary
+    discovery = text.split('## Discovery: mean capped first-goal time\n')[1].split('\n## ')[0]
+    assert ('| slower predictor with held divisor | 1 (smallest of the grid) | **0.208** ± 0 | -0.3 [-0.4, -0.2] '
+            '| 2 of 2 | **0.900** ± 0.000 | 1.000 |') in discovery
+    # Without a predictions module the predictions of ideas.md are quoted and not read.
+    predictions = text.split('## Predictions\n')[1].split('\n## ')[0]
+    assert 'this batch has no predictions module' in predictions
+    assert '### Prediction 1\n\n> **First:** text one.\n\nObserved: **not read yet**.' in predictions
+    assert '### Prediction 2\n\n> **Second:** text two.\n\nObserved: **not read yet**.' in predictions
+    assert '## Consistency check' not in text and '## Validation block' not in text
+    # The other study description must have the same seeds and budget, and the batch must not train the control itself.
+    (folder / 'screen.json').write_text(json.dumps({**description, 'steps_per_policy': 4000}))
+    with pytest.raises(ValueError, match='cannot give this batch its control'):
+        batch_summary.generate(run, other)
+    (folder / 'screen.json').write_text(json.dumps({**description, 'sweeps': [{'method': CONTROL}, {'method': idea}]}))
+    with pytest.raises(ValueError, match='cannot give this batch its control'):
+        batch_summary.generate(run, other)

@@ -65,7 +65,8 @@ def test_report_on_a_made_up_study(tmp_path, request):
 
     # Development sweep, PointMaze Medium with reward 1 on arrival: W is 0.8125, 0.71875 and 0.125 for the weights
     # 1, 4 and 0.25, so the rows come in that order and the weight 1 is chosen; it is not at an end of the grid.
-    sweep = text.split('### PointMaze Medium, reward 1 on arrival, CleanRL PPO-RND\n')[1].split('###')[0]
+    whole = text.split('### PointMaze Medium, reward 1 on arrival, CleanRL PPO-RND\n')[1].split('###')[0]
+    sweep, discovery = whole.split('**Discovery (secondary metric).** ')
     rows = [line for line in sweep.splitlines() if line.startswith('| intrinsic weight')]
     assert [line.split(' | ')[0] for line in rows] == ['| intrinsic weight 1', '| intrinsic weight 4', '| intrinsic weight 0.25']
     assert rows[0].startswith('| intrinsic weight 1 | **0.812** ± 0.036 | **1.000** ± 0.000 | ')
@@ -74,7 +75,23 @@ def test_report_on_a_made_up_study(tmp_path, request):
     assert '3 configurations with 4 seeds each, compared at 800 environment steps per policy.' in sweep
     assert ('Chosen (highest $W$, ties by $L$): **intrinsic weight 1, learning rate 0.0001, entropy coefficient '
             '0.001**. Place in the sweep: intrinsic weight 1 is inside its 3 swept values.\n') in sweep
-    assert 'edge rule' not in sweep and '**Unfinished runs:**' not in text
+    assert 'edge rule' not in whole and '**Unfinished runs:**' not in text
+
+    # The secondary metric of the same sweep, in thousands of steps. First arrivals: weight 1 at steps 108, 208,
+    # 108 and 208 (M = 158); weight 4 at 208, 208, 308 and 208 (M = 233); weight 0.25 never, 608, never and 608,
+    # a policy with no arrival counting as the 800 steps of the budget (M = 704).
+    assert ('3 configurations with 4 seeds each, read at 800 environment steps per policy from unit 15 of the '
+            'section Records read. The table holds every configuration, sorted by $M$') in discovery
+    assert [line for line in discovery.splitlines() if line.startswith('| intrinsic weight')] == [
+        '| intrinsic weight 1 | **0.158** ± 0.0289 | **100.0%** | **0.812** ± 0.036 | **1.000** ± 0.000 | 4 |',
+        '| intrinsic weight 4 | <u>0.233</u> ± 0.025 | **100.0%** | <u>0.719</u> ± 0.031 | **1.000** ± 0.000 | 4 |',
+        '| intrinsic weight 0.25 | 0.704 ± 0.0554 | <u>50.0%</u> | 0.125 ± 0.072 | <u>0.500</u> ± 0.289 | 4 |']
+    assert ('Chosen for discovery (smallest $M$, ties by the larger share of policies that reach the goal): '
+            '**intrinsic weight 1, learning rate 0.0001, entropy coefficient 0.001**. Place in the sweep: intrinsic '
+            'weight 1 is inside its 3 swept values. It is also the configuration chosen for $W$.\n') in discovery
+    built = result['report']
+    key = ('PointMaze Medium', 'arrival_plus_one', 800, 'CleanRL PPO-RND')
+    assert built.discovery_choices[key] is built.choices[key] and built.discovery_status[key] == 'confirmation units exist'
 
     # Budget rule, same case: the three weights reach 95% of their final level at steps 300, 400 and 700 of 800,
     # so twice the largest rounds up to 2,048 and the cap at the run's length applies.
@@ -107,6 +124,28 @@ def test_report_on_a_made_up_study(tmp_path, request):
     assert '**Reward 1 on arrival.**' in comparison and '**Step cost.**' in comparison
     assert ('- **even start:** not met (reward 1 on arrival: beats in 4 of 5, not compared or unfinished in 0; '
             'step cost: beats in 4 of 5, not compared or unfinished in 0).') in comparison
+
+    # The block of the secondary metric, same case. RND stands at its own configuration for M (weight 1, which
+    # the confirmation seeds hold): first arrivals at steps 308 and 408, M = 358. The method arrives at steps 108
+    # and 208 (M = 158): 100 to 300 steps earlier on every seed, so its interval is entirely below zero.
+    case = comparison.split('### Discovery: PointMaze Medium, reward 1 on arrival\n')[1].split('###')[0]
+    method_row, baseline_row = [line for line in case.splitlines() if line.startswith(('| even start', '| CleanRL'))]
+    assert method_row.startswith('| even start: its only configuration, no development sweep | **0.158** ± 0.0189 | -0.2 [-0.')
+    assert method_row.endswith('] | ahead on discovery | 100.0% | 8 |')
+    assert baseline_row == ('| CleanRL PPO-RND: intrinsic weight 1, learning rate 0.0001, entropy coefficient 0.001 '
+                            '| <u>0.358</u> ± 0.0189 | baseline | baseline | 100.0% | 8 |')
+    assert 'Without a confirmation row' not in comparison and 'not confirmed yet' not in case
+    # In AntMaze Large the method arrives at the same steps as RND: the interval holds zero.
+    large = comparison.split('### Discovery: AntMaze Large, reward 1 on arrival\n')[1].split('###')[0]
+    assert '| +0 [+0, +0] | within the interval | 100.0% | 8 |' in large
+    together = comparison.split('### Discovery: all environments\n')[1].split('### Discovery: PointMaze Medium')[0]
+    for line in [line for line in together.splitlines() if line.startswith('| even start | ')]:
+        assert line.count('| ahead on discovery; $M$ -0.2 [-0.') == 4
+        assert line.endswith('| within the interval; $M$ +0 [+0, +0] (8 seeds) | 4 of 5 |')
+    assert ('- **even start:** not ahead on discovery in all five environments in one reward setting (reward 1 on '
+            'arrival: ahead in 4 of 5, not compared, not confirmed or unfinished in 0; step cost: ahead in 4 of 5, '
+            'not compared, not confirmed or unfinished in 0).') in together
+    assert 'not part of it' in together and together.count('**Reward 1 on arrival.**') == 1
 
     # Final level against the training length: at 25% of the steps no RND seed has arrived and half the method's
     # seeds have; at 50% half the RND seeds have.
@@ -339,6 +378,16 @@ def test_cells_for_latex_and_small_helpers():
     assert report.mean_marks([0.00004, 0.0, 0.069]) == ['second', 'second', 'best']
     assert [report.compact_steps(value) for value in (950, 387100, 1480000)] == ['950', '387.1K', '1.48M']
     assert report.interval_text({'mean': 0.021, 'interval': [0.004, 0.038], 'side': 'ahead'}) == '+0.021 [+0.004, +0.038], ahead'
+    # Step counts in thousands of steps: three digits below 100 thousand, whole thousands with separators above.
+    assert [report.thousands(value) for value in (62412.0, 1246300.0, 508.0, 0.0, 99960.0)] == ['62.4', '1,246', '0.508', '0', '100']
+    assert report.thousands(-128400.0, True) == '-128' and report.thousands(600.0, True) == '+0.6'
+    assert report.thousands_with_error(62412.0, 13050.0, 'best') == '**62.4** ± 13.1'
+    assert report.thousands_with_error(62412.0, None) == '62.4'
+    assert report.discovery_interval_text({'mean': -128400.0, 'interval': [-232000.0, -30200.0]}, 'second') == (
+        '<u>-128</u> [-232, -30.2]')
+    assert report.number_ranges([12, 3, 4, 5, 9, 11]) == '3 to 5, 9, 11 to 12' and report.number_ranges([7]) == '7'
+    assert report.latex_text('$M$ ↓ ± standard error, -128 [-232, -30.2]') == (
+        '$M$ $\\downarrow$ $\\pm$ standard error, $-$128 [$-$232, $-$30.2]')
     table = report.latex_table(['row', '$W$ ↑'], [['a', '**0.5**'], ['b', '0.4']], 'Caption with 95%.', 'example')
     assert table.count('\\\\\n') == 2 and '\\caption{Caption with 95\\%.}\\label{tab:maze-example}' in table
     assert 'a & \\textbf{0.5} \\\\' in table and table.count('p{') == 2
@@ -401,3 +450,119 @@ def test_a_repeated_configuration_uses_the_unit_that_finished_first_and_gets_a_s
     assert ('Unit 1 minus unit 2, on the 2 seeds both have: in $W$ +0.375 [+0.250, +0.500] (the interval does not '
             'contain zero); in $L$ +0.000 [+0.000, +0.000] (the interval contains zero).') in section
     assert 'Configuration trained more than once: PointMaze Large' in (tmp_path / 'analysis/results.tex').read_text()
+
+
+def write_discovery_study(run):
+    """A sweep whose weight 4 has the higher W and whose weight 1 arrives first; RND confirmed at the weight 4 only."""
+    fresh = (30000, 30001, 30002, 30003)
+    sweep = start_record('development_sweep', iterations=8, cells=((1e-4, 1.0), (1e-4, 4.0)))
+    windows = goal_windows(sweep, [4, 4, 2, 2])
+    # Weight 1 first reaches the goal at steps 50 and 70 and only keeps reaching it from window 4 on.
+    windows[-1]['first_goal_step_per_copy'] = [50, 70, 208, 208]
+    write_shard(run, [sweep] + windows)
+    baseline = start_record('confirmation_rnd_weight-4', iterations=8, cells=((1e-4, 4.0),), seeds=fresh)
+    write_shard(run, [baseline] + goal_windows(baseline, [3, 3, 3, 3]))
+    method = start_record('confirmation_even-start', iterations=8, seeds=fresh, bonus='rnd_even_start')
+    write_shard(run, [method] + goal_windows(method, [1, 1, 1, 1]))
+    (run / 'report_settings.json').write_text(json.dumps({'methods': [{'name': 'even start', 'bonus': 'rnd_even_start'}]}))
+
+
+def discovery_parts(run):
+    """The report's development subsection and its two comparison blocks, after generating it."""
+    built = report.generate(run)['report']
+    text = (run / 'analysis/analysis.md').read_text()
+    development = text.split('## Development sweeps')[1].split('\n## ')[0]
+    comparison = text.split('## Comparison with the baseline on the confirmation seeds')[1].split('\n## ')[0]
+    primary, discovery = comparison.split('### Discovery: all environments\n')
+    return built, development, primary, discovery
+
+
+def test_a_configuration_for_discovery_without_confirmation_units_is_not_replaced_by_the_one_for_w(tmp_path):
+    """RND's smallest M is at the weight 1, its confirmation units hold the weight 4: it is reported as not confirmed."""
+    write_discovery_study(tmp_path)
+    built, development, primary, discovery = discovery_parts(tmp_path)
+    key = ('PointMaze Large', 'arrival_plus_one', 800, 'CleanRL PPO-RND')
+    # W: weight 4 (goal from window 2 of 8, W = 0.75) before weight 1 (W = 0.5). M: weight 1 (60 steps) before 4 (208).
+    assert built.choices[key].setting('int_coef') == 4.0 and built.discovery_choices[key].setting('int_coef') == 1.0
+    assert built.discovery_status[key] == 'not confirmed yet'
+    assert 'Chosen (highest $W$, ties by $L$): **intrinsic weight 4, learning rate 0.0001, entropy coefficient 0.001**' in development
+    rows = [line for line in development.split('**Discovery (secondary metric).**')[1].splitlines() if line.startswith('| intrinsic')]
+    assert rows == ['| intrinsic weight 1 | **0.06** ± 0.01 | 100.0% | <u>0.500</u> ± 0.000 | 1.000 ± 0.000 | 2 |',
+                    '| intrinsic weight 4 | <u>0.208</u> ± 0 | 100.0% | **0.750** ± 0.000 | 1.000 ± 0.000 | 2 |']
+    assert ('Chosen for discovery (smallest $M$, ties by the larger share of policies that reach the goal): '
+            '**intrinsic weight 1, learning rate 0.0001, entropy coefficient 0.001**. Place in the sweep: intrinsic '
+            'weight 1 is the smallest of its 2 swept values. The configuration chosen for $W$ (intrinsic weight 4, '
+            'learning rate 0.0001, entropy coefficient 0.001) has $M$ = 0.208 ± 0 thousand steps: place 2 of 2 by $M$.') in development
+
+    # The primary block compares with RND at the weight 4, as before.
+    assert '| CleanRL PPO-RND | <u>0.625</u> ± 0.000 | baseline |' in primary and '| even start | **0.875** ± 0.000 | +0.250 [' in primary
+    # The secondary block has no row for RND and compares nothing with the weight 4.
+    case = discovery.split('### Discovery: PointMaze Large, reward 1 on arrival\n')[1]
+    assert ('- **CleanRL PPO-RND:** not confirmed yet for this configuration: intrinsic weight 1, learning rate 0.0001, '
+            'entropy coefficient 0.001. Its confirmation units hold: intrinsic weight 4, learning rate 0.0001, entropy '
+            'coefficient 0.001.') in case
+    assert 'the configuration chosen for $W$ is never put in its place' in case and '| CleanRL PPO-RND' not in case
+    assert ('| even start: its only configuration, no development sweep | 0.108 ± 0 | the baseline is not confirmed yet '
+            '| the baseline is not confirmed yet | 100.0% | not compared |') in case
+    together = discovery.split('### Discovery: PointMaze Large')[0]
+    assert '| even start | not compared yet | the baseline is not confirmed yet | not compared yet |' in together
+    assert ('- **even start:** not ahead on discovery in all five environments in one reward setting (reward 1 on '
+            'arrival: ahead in 0 of 5, not compared, not confirmed or unfinished in 5;') in together
+
+
+def test_units_of_the_discovery_sweep_are_read_for_the_secondary_metric_only(tmp_path):
+    """Units named by `discovery_units` confirm RND's configuration for M and never enter the tables of W."""
+    write_discovery_study(tmp_path)
+    fresh = (30000, 30001, 30002, 30003)
+    confirmed = start_record('confirmation-for-discovery_rnd_weight-1', iterations=8, cells=((1e-4, 1.0),), seeds=fresh)
+    write_shard(tmp_path, [confirmed] + goal_windows(confirmed, [2, 2, 2, 2]))
+    # A development unit of the discovery sweep: the weight 16 has the highest W of all (0.875) and M = 108.
+    wider = start_record('development-for-discovery_sweep', iterations=8, cells=((1e-4, 16.0),))
+    write_shard(tmp_path, [wider] + goal_windows(wider, [1, 1]))
+    (tmp_path / 'report_settings.json').write_text(json.dumps({
+        'methods': [{'name': 'even start', 'bonus': 'rnd_even_start'}],
+        'discovery_units': ['development-for-discovery_*', 'confirmation-for-discovery_*']}))
+    built, development, primary, discovery = discovery_parts(tmp_path)
+    key = ('PointMaze Large', 'arrival_plus_one', 800, 'CleanRL PPO-RND')
+    # The choice for W still reads the first sweep only; the choice for M reads all three configurations.
+    assert built.choices[key].setting('int_coef') == 4.0 and built.discovery_choices[key].setting('int_coef') == 1.0
+    assert '2 configurations with 2 seeds each, compared at 800' in development
+    assert ('3 configurations with 2 seeds each, read at 800 environment steps per policy from units 4 to 5 of the '
+            'section Records read.') in development
+    assert ('Among the units read for the secondary metric only, intrinsic weight 16 has the highest $W$ of all '
+            'configurations read here (0.875 ± 0.000), against 0.750 ± 0.000 for the configuration chosen for $W$, '
+            'whose choice does not read those units.') in development
+    assert built.discovery_status[key] == 'confirmation units exist'
+
+    # The primary block holds one RND row (the weight 4); the secondary block compares at the weight 1:
+    # the method arrives at step 108 and RND at step 208 on every seed.
+    # (One RND row in each of the case's two tables: the differences, and the measures reported beside.)
+    assert sum(line.startswith('| CleanRL PPO-RND') for line in primary.splitlines()) == 2
+    assert 'intrinsic weight 1' not in primary
+    assert '| CleanRL PPO-RND | <u>0.625</u> ± 0.000 | baseline |' in primary
+    case = discovery.split('### Discovery: PointMaze Large, reward 1 on arrival\n')[1]
+    assert ('| even start: its only configuration, no development sweep | **0.108** ± 0 | -0.1 [-0.1, -0.1] '
+            '| ahead on discovery | 100.0% | 4 |') in case
+    assert ('| CleanRL PPO-RND: intrinsic weight 1, learning rate 0.0001, entropy coefficient 0.001 | <u>0.208</u> ± 0 '
+            '| baseline | baseline | 100.0% | 4 |') in case
+    assert 'not confirmed yet' not in case
+    together = discovery.split('### Discovery: PointMaze Large')[0]
+    assert 'ahead on discovery; $M$ -0.1 [-0.1, -0.1] (4 seeds)' in together and '| 1 of 5 |' in together
+    assert 'tab:maze-discovery-comparison' in (tmp_path / 'analysis/results.tex').read_text()
+
+
+def test_a_confirmation_row_that_is_not_the_choice_for_w_is_named(tmp_path):
+    """RND has one configuration on the confirmation seeds (weight 1) and the sweep chooses the weight 4: the row says so."""
+    sweep = start_record('development_sweep', iterations=8, cells=((1e-4, 1.0), (1e-4, 4.0)))
+    write_shard(tmp_path, [sweep] + goal_windows(sweep, [4, 4, 2, 2]))
+    baseline = start_record('confirmation_rnd_weight-1', iterations=8, seeds=(30000, 30001))
+    write_shard(tmp_path, [baseline] + goal_windows(baseline, [3, 3]))
+    report.generate(tmp_path)
+    comparison = (tmp_path / 'analysis/analysis.md').read_text().split('## Comparison with the baseline')[1].split('\n## ')[0]
+    assert ('**Not the chosen configuration:** the confirmation row of CleanRL PPO-RND holds intrinsic weight 1, learning '
+            'rate 0.0001, entropy coefficient 0.001, while the development seeds now choose intrinsic weight 4, learning '
+            'rate 0.0001, entropy coefficient 0.001 for $W$.') in comparison
+    # The weight 4 is also the choice for M (first arrivals at step 208 against 408), and it has no confirmation units.
+    assert ('- **CleanRL PPO-RND:** not confirmed yet for this configuration: intrinsic weight 4, learning rate 0.0001, '
+            'entropy coefficient 0.001. Its confirmation units hold: intrinsic weight 1,') in comparison
+    assert '### Discovery: all environments' not in comparison and 'Not the chosen configuration' not in comparison.split('### Discovery')[1]

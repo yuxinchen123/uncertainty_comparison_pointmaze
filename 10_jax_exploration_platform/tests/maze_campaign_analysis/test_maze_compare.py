@@ -163,3 +163,54 @@ def test_study_success_needs_all_five_environments_in_one_reward_setting():
     assert outcome['arrival_plus_one']['not_beaten'] == ['AntMaze Large']
     assert outcome['step_cost']['not_compared'] == ['AntMaze Large'] and len(outcome['step_cost']['beaten']) == 4
     assert compare.study_success({**four, ('AntMaze Large', 'step_cost'): True})['success'] is True
+
+
+def arrivals(first_steps, weight=1.0, first_seed=0):
+    """One policy per listed first-arrival step (-1: none) with four windows of 100 steps, named by its intrinsic weight."""
+    settings = (('ent_coef', 0.001), ('int_coef', weight), ('learning_rate', 1e-4))
+    return [flat_policy([0, 0, 0, 0], seed=first_seed + index, first_goal_step=step, settings=settings)
+            for index, step in enumerate(first_steps)]
+
+
+def test_discovery_ranks_by_the_mean_capped_first_goal_step_and_counts_no_arrival_as_the_budget():
+    """M is the mean of the first-arrival steps with a policy that never arrives counted as the 400 steps of the budget."""
+    groups = records.configurations(arrivals([100, -1], 1.0) + arrivals([200, 300], 4.0) + arrivals([120, 380], 16.0))
+    ranked = compare.rank_for_discovery(groups, 400)
+    # Weight 1: (100 + 400) / 2 = 250 with one of two policies arriving; weights 4 and 16: 250 with both arriving.
+    assert [(capped, share, group.setting('int_coef')) for capped, share, group in ranked] == [
+        (250.0, 1.0, 4.0), (250.0, 1.0, 16.0), (250.0, 0.5, 1.0)]
+    # Equal M: the larger share of policies that reach the goal stands first, then the smaller setting value.
+    assert compare.choose_for_discovery(groups, 400).setting('int_coef') == 4.0
+    # At a budget of 150 steps only the arrivals at steps 100 and 120 count: weight 1 has M = 125, weight 16 has 135.
+    assert [group.setting('int_coef') for _, _, group in compare.rank_for_discovery(groups, 150)] == [1.0, 16.0, 4.0]
+    assert compare.rank_for_discovery(groups, 150)[2][:2] == (150.0, 0.0)
+    # The choice by M can differ from the choice by W: here every curve is flat at zero, so W takes the smallest setting.
+    assert compare.choose_configuration(groups, 400).setting('int_coef') == 1.0
+
+
+def test_a_difference_in_the_first_goal_step_is_ahead_when_its_interval_is_entirely_below_zero():
+    """The difference is method minus baseline, so a negative one means the method reached the goal earlier."""
+    baseline = arrivals([300, 320, 340], first_seed=30000)
+    earlier = compare.compare_discovery(arrivals([100, 220, 140], first_seed=30000), baseline, 400, 'test')
+    assert earlier['seeds'] == 3 and earlier['capped_first_goal_step']['mean'] == pytest.approx(-500 / 3)
+    low, high = earlier['capped_first_goal_step']['interval']
+    assert -200 <= low <= high <= -100 and earlier['capped_first_goal_step']['side'] == 'ahead'
+    assert earlier['ahead'] is True and earlier['verdict'] == 'ahead on discovery'
+    # Later on every seed (one policy never arrives and counts as the budget): entirely above zero, so behind.
+    later = compare.compare_discovery(arrivals([350, -1, 390], first_seed=30000), baseline, 400, 'test')
+    assert later['capped_first_goal_step']['mean'] == pytest.approx((50 + 80 + 50) / 3)
+    assert later['capped_first_goal_step']['interval'][0] > 0 and later['ahead'] is False
+    assert later['verdict'] == 'behind on discovery'
+    # Earlier on one seed and later on another: the interval holds zero.
+    mixed = compare.compare_discovery(arrivals([200, 420, 340], first_seed=30000), baseline, 400, 'test')
+    assert mixed['capped_first_goal_step']['side'] == 'level' and mixed['verdict'] == 'within the interval'
+    assert mixed['ahead'] is False
+    # One seed in common: no interval and no verdict.
+    one = compare.compare_discovery(arrivals([100], first_seed=30002), baseline, 400, 'test')
+    assert one['seeds'] == 1 and one['ahead'] is None and one['verdict'] == 'fewer than two seeds in common'
+    assert compare.discovery_side([-120.0, -30.0]) == 'ahead' and compare.discovery_side([10.0, 90.0]) == 'behind'
+    assert compare.discovery_side([-50.0, 40.0]) == 'level' and compare.discovery_side([-50.0, 0.0]) == 'level'
+    # The same count as the success rule serves "ahead on discovery in all five environments".
+    every = {(name, 'step_cost'): True for name in records.ENVIRONMENT_ORDER}
+    assert compare.study_success(every)['success'] is True
+    assert compare.study_success({**every, ('AntMaze Large', 'step_cost'): None})['success'] is False

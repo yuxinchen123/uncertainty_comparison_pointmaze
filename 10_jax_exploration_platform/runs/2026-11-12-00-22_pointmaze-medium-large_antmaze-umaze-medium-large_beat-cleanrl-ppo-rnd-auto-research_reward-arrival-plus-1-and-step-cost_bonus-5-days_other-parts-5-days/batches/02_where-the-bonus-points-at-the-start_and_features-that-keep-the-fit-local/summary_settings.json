@@ -1,0 +1,43 @@
+{
+  "title": "Batch 2 screen on PointMaze Large with reward 1 on arrival: where the bonus points at the start, and features that keep the fit local",
+  "study_description": "screen_pointmaze-large_reward-arrival-plus-one.json",
+  "control": "control-cleanrl-ppo-rnd",
+  "method_names": {
+    "control-cleanrl-ppo-rnd": "control",
+    "wider-input-clip-10": "wider input clip, clip at 10",
+    "wider-input-clip-20": "wider input clip, clip at 20",
+    "no-input-clip": "wider input clip, no clip",
+    "input-statistics-kept-from-the-random-action-rollouts-no-clip": "input statistics kept from the random-action rollouts, no clip",
+    "input-statistics-kept-from-the-random-action-rollouts-clip-20": "input statistics kept from the random-action rollouts, clip at 20",
+    "slower-predictor-0-point-0625-times-1e-4": "slower predictor, predictor learning rate 0.0625 times 1e-4",
+    "slower-predictor-0-point-125-times-1e-4": "slower predictor, predictor learning rate 0.125 times 1e-4",
+    "local-features-as-the-input-of-rnd-length-0-point-5": "local features as the input of RND, length 0.5",
+    "local-features-as-the-input-of-rnd-length-1": "local features as the input of RND, length 1",
+    "local-features-as-the-input-of-rnd-length-2": "local features as the input of RND, length 2",
+    "scheduled-last-layer-on-local-features-decay-0-point-5-length-0-point-5": "scheduled last layer on local features, decay 0.5, length 0.5",
+    "scheduled-last-layer-on-local-features-decay-0-point-5-length-1": "scheduled last layer on local features, decay 0.5, length 1",
+    "scheduled-last-layer-on-local-features-decay-0-point-5-length-2": "scheduled last layer on local features, decay 0.5, length 2",
+    "scheduled-last-layer-on-local-features-decay-1-length-1": "scheduled last layer on local features, decay 1, length 1",
+    "divisor-held-after-one-sixteenth-of-the-run": "divisor held after one sixteenth of the run",
+    "divisor-held-after-one-eighth-of-the-run": "divisor held after one eighth of the run",
+    "divisor-held-after-one-quarter-of-the-run": "divisor held after one quarter of the run"
+  },
+  "consistency_check": {
+    "run_folder": "2026-11-12-02-24_cleanrl-ppo-rnd-baseline_pointmaze-medium-large_antmaze-umaze-medium-large_goal-termination_reward-arrival-plus-1-and-step-cost_first-pass-60-configurations_seeds-0-15_confirmation-seeds-from-30000",
+    "unit": "development-at-the-budget_pointmaze-large_reward-arrival-plus-one_cleanrl-ppo-rnd_cells-1-to-9-of-9_seeds-0-to-15",
+    "settings": {"learning_rate": 0.002, "int_coef": 2.0},
+    "reported": "whole-curve mean 0.888 ± 0.008, final level 0.994 (`program.md`, RND's chosen configuration)"
+  },
+  "validation_block": {
+    "phase": "validation-block",
+    "control": "control-cleanrl-ppo-rnd",
+    "method_names": {
+      "control-cleanrl-ppo-rnd": "control",
+      "predictor-own-step-size-0-point-25": "separate predictor step size, predictor learning rate 0.25 times 1e-4",
+      "predictor-own-step-size-1": "separate predictor step size, predictor learning rate 1 times 1e-4",
+      "divisor-held-after-one-sixteenth": "divisor held after one sixteenth of the run",
+      "divisor-held-after-one-quarter": "divisor held after one quarter of the run",
+      "slower-predictor-with-held-divisor": "slower predictor with held divisor (predictor learning rate 0.25 times 1e-4, divisor held after one sixteenth of the run)"
+    }
+  }
+}

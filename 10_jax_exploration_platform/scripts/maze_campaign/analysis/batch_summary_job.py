@@ -38,3 +38,17 @@ def test_generate_batch_summary(request):
               f"W {method.measures['whole_curve_mean']:.3f} | L {method.measures['final_level']:.3f}{against} | "
               f"median start ratio per weight from {min(ratios):.2f} to {max(ratios):.2f} | slopes fitted at the best "
               f"weight for {method.grid['decay_slope_pairs']} of {method.grid['pairs']} pairs")
+
+    # The secondary metric: every complete method at its best weight for M, in the order of its table.
+    report = batch_summary.report
+    for slug in batch_summary.discovery_order(screen):
+        method, difference, row = screen.methods[slug], screen.discovery_differences.get(slug), screen.methods[slug].discovery_measures
+        against = ('' if difference is None or difference['ahead'] is None else
+                   f" | difference in M {report.discovery_interval_text(difference['capped_first_goal_step'])}, "
+                   f"{difference['verdict']}")
+        end = batch_summary.end_of_grid(method.weights, method.discovery_weight)
+        print(f"discovery | {method.name} | best weight for M {method.discovery_weight:g}"
+              f"{f' ({end} of {len(method.weights)} weights)' if end else ''} | "
+              f"M {report.thousands_with_error(row['capped_first_goal_step'], row['capped_first_goal_step_error'])} "
+              f"thousand steps | policies that reach the goal {round(row['reached_goal_share'] * row['seeds'])} of "
+              f"{row['seeds']} | W {row['whole_curve_mean']:.3f} | L {row['final_level']:.3f}{against}")

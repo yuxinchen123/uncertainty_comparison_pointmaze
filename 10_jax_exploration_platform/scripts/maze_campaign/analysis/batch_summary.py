@@ -1,11 +1,18 @@
 """Generate one screening batch's summary: <run folder>/batches/<batch>/summary.md, summary.html and plots/.
 
 A screen trains one unit per method: every unit holds the same grid of intrinsic weights (its cells) and the same
-development seeds. The summary reads each shard once and holds, for the complete units only: the screen table (each
-method at its best intrinsic weight, with its paired difference from the control), the whole-curve mean at every
-weight, the property measures of the bonus on the maze grid (`maze_grid.py`), two figures, the batch's written
-predictions with what was observed, and a consistency check of the control against a unit of another run folder.
-A unit that is not complete is listed and left out; nothing is estimated for it.
+development seeds. The summary reads each shard once and holds, for the complete units only: the two screen tables,
+the property measures of the bonus on the maze grid (`maze_grid.py`), two figures, the batch's written predictions
+with what was observed, and a consistency check of the control against a unit of another run folder. A unit that
+is not complete is listed and left out; nothing is estimated for it.
+
+Two metrics, each with its own table and its own best intrinsic weight per method (user decision 2026-11-12):
+
+- "Discovery and optimization: whole-curve mean": each method at the weight with the highest whole-curve mean W
+  (ties: the higher final level L), with its paired difference from the control, and W at every weight;
+- "Discovery: mean capped first-goal time": each method at the weight with the smallest mean capped first-goal
+  step M (ties: more policies that reach the goal), with its paired difference in M from the control at the
+  control's own best weight for M, W and L at that same weight, and M at every weight.
 
 The batch folder holds `summary_settings.json`:
 
@@ -13,12 +20,27 @@ The batch folder holds `summary_settings.json`:
 - `study_description`: the file name, in the batch folder, of the screen's study description; its `phase` selects
   the batch's units among the run folder's `specifications/`, and its `sweeps` name the methods in order;
 - `control`: the `method` of the control's sweep;
+- `control_study_description` (optional): for a batch that trains no control of its own, the study description
+  of another batch (a path relative to the batch folder, for example `../02_<name>/screen_<...>.json`) whose
+  phase holds the control's unit; it must have the screen's seeds and budget;
 - `method_names`: the name in words of every sweep's `method`;
 - `consistency_check` (optional): `run_folder` (the name of a run folder beside this one), `unit` (a unit of
   it), `settings` (setting name -> value: the cell of that unit and of the control that are compared) and
   `reported` (what was written about that cell earlier, in words);
 - `predictions` (optional): the module of this package that checks the predictions written in the batch's
-  `ideas.md` (for example `predictions_batch_01`).
+  `ideas.md` (for example `predictions_batch_01`). Without it, the predictions of `ideas.md` are quoted and
+  marked "not read yet";
+- `more_intrinsic_weights` (optional): file names, in the batch folder, of the study descriptions of further units
+  that train some of the screen's methods at more intrinsic weights, with the same seeds, budget and other
+  settings. Each one's `phase` selects its units, one per method. A method's best weight per metric is chosen
+  over every weight of its complete units; a method without such a unit keeps the screen's weights, and the
+  tables at every weight leave its cells at the further weights empty. These units need no maze-grid records:
+  the property measures are read from the screen's own units, at the best weight among their weights;
+- `validation_block` (optional): `phase` (the phase of units that each train one method at one intrinsic weight
+  on other seeds, in the screen's environment and reward setting), `control` (the `method` of the control among
+  them) and `method_names` (the name in words of each method of this batch among them). The summary then lists,
+  per method and weight, W, L and M with the paired differences from the control at the same weight. Units of
+  the phase whose method is not in `method_names` belong to another batch: they are named and not read.
 
 Through the test helper's Slurm job (numpy and plotting never run on a login node): see batch_summary_job.py.
 """
@@ -38,8 +60,13 @@ from . import compare, contents, figures, maze_grid, measures, records, report
 # The test helper that runs the job, relative to the platform folder; the summary names the whole command.
 SUBMITTER = ('benchmark_runs/2026-11-12-00-17_pointmaze-antmaze_cleanrl-ppo-rnd_speed-30-ideas_'
              'screen-15-minutes-per-idea-per-card_h100-nvl_rtx-5080_rtx-a4500/infrastructure/submit_tests.sh')
-SETTING_KEYS = {'title', 'study_description', 'control', 'method_names', 'consistency_check', 'predictions'}
+SETTING_KEYS = {'title', 'study_description', 'control', 'control_study_description', 'method_names',
+                'consistency_check', 'predictions', 'more_intrinsic_weights', 'validation_block'}
 REQUIRED_KEYS = {'title', 'study_description', 'control', 'method_names'}
+VALIDATION_KEYS = {'phase', 'control', 'method_names'}
+# A table of one value per intrinsic weight holds at most this many weights, so that it fits a printed page.
+MOST_WEIGHT_COLUMNS = 6
+TABLE_COUNT_WORDS = {1: 'one table', 2: 'two tables', 3: 'three tables', 4: 'four tables'}
 # Shares of the budget at which the unvisited cells and the size of the intrinsic reward are read.
 UNVISITED_SHARES = (0.05, 0.25, 1.0)
 REWARD_SHARES = (0.25, 1.0)
@@ -50,25 +77,33 @@ VERDICT_WORDS = {True: 'held', False: 'did not hold', None: 'cannot be read yet'
 
 @dataclass(frozen=True, eq=False)
 class Method:
-    """One complete unit of a screen: a method's configurations over the intrinsic weights, and what was measured."""
+    """One method of a screen whose own unit is complete: its configurations over the intrinsic weights, and what was measured."""
     slug: str                  # the method as the study description spells it
     name: str                  # the method in words
-    unit_id: str
+    unit_id: str               # its unit of the screen's own study description
     budget: int                # environment steps per policy
-    groups: tuple              # the method's configurations, one per intrinsic weight, in weight order
+    groups: tuple              # its configurations, one per intrinsic weight, in weight order, of all its complete units
     scores: dict               # intrinsic weight -> (W, L) at the budget
-    best: records.Configuration
-    measures: dict             # the best configuration's measures at the budget, with 'median_first_goal_step'
-    grid: dict                 # the property measures of the bonus on the maze grid (grid_measures)
+    best: records.Configuration             # the configuration with the highest W
+    measures: dict             # that configuration's measures at the budget, with 'median_first_goal_step'
+    discovery_scores: dict     # intrinsic weight -> (M, share of policies that reach the goal) at the budget
+    discovery_best: records.Configuration   # the configuration with the smallest M
+    discovery_measures: dict   # that configuration's measures at the budget
+    grid: dict                 # the property measures of the bonus on the maze grid (grid_measures), and their 'weight'
 
     @property
     def best_weight(self):
-        """The intrinsic weight of the method's best configuration."""
+        """The intrinsic weight of the method's best configuration for W."""
         return weight_of(self.best)
 
     @property
+    def discovery_weight(self):
+        """The intrinsic weight of the method's best configuration for M."""
+        return weight_of(self.discovery_best)
+
+    @property
     def weights(self):
-        """The intrinsic weights of the method's cells, in order."""
+        """The intrinsic weights the method was trained at, in order."""
         return [weight_of(group) for group in self.groups]
 
 
@@ -79,9 +114,10 @@ class Screen:
     control: str               # the control's method, as the study description spells it
     order: tuple               # every method of the study description, in its order
     names: dict                # method -> its name in words
-    units: tuple               # one row per method for the units table
-    methods: dict              # method -> Method, the complete units only
+    units: tuple               # one row per unit for the units table
+    methods: dict              # method -> Method, the methods whose own unit is complete
     differences: dict          # idea -> its paired differences from the control (compare.compare_with_baseline)
+    discovery_differences: dict   # idea -> its paired difference in M from the control (compare.compare_discovery)
     budget: int
     seeds: tuple               # the screen's seeds
 
@@ -141,6 +177,20 @@ def score_weights(groups, budget):
     return {weight_of(group): (whole, final) for whole, final, group in ranked}, ranked[0][2]
 
 
+def score_weights_for_discovery(groups, budget):
+    """A method's configurations with their M and share of arriving policies: (intrinsic weight -> (M, share), the best one)."""
+    # before: configurations at the weights 1 and 4 with M 300 and 300 steps, of which 1 and 2 of 2 policies arrive
+    # after:  ({1: (300.0, 0.5), 4: (300.0, 1.0)}, the configuration at weight 4): equal M, so the larger share decides.
+    ranked = compare.rank_for_discovery(groups, budget)
+    return {weight_of(group): (capped, share) for capped, share, group in ranked}, ranked[0][2]
+
+
+def measured_at(group, budget):
+    """Every measure of one configuration at the budget, with the median first-arrival step."""
+    return {**measures.configuration_measures(group.policies, budget),
+            'median_first_goal_step': measures.median_first_goal_step(group.policies, budget)}
+
+
 def grid_measures(grid, cell_weights, best_weight, budget):
     """The property measures of one unit's maze-grid records: at the best intrinsic weight, and across the weights."""
     # The policies of each weight. before: copy_cell [0, 0, 1, 1], cell weights [1.0, 4.0]; after: {1.0: [0, 1],
@@ -182,8 +232,11 @@ def finite_median(values):
     return float(np.median(finite)) if len(finite) else None
 
 
-def read_method(shard, slug, name, budget):
-    """One unit's shard, read once: (its row of the units table, the Method when the unit is complete else None)."""
+def read_unit(shard, slug, name, budget):
+    """One unit's shard, read once: (its row of the units table, its configurations in weight order, its last attempt).
+
+    The configurations are None when the unit is not complete.
+    """
     # What the units table shows of any unit, complete or not.
     lines = records.read_lines(shard)
     summary, policies = records.unit_from_records(shard, lines, [{'name': name, 'unit_id_pattern': shard.stem}])
@@ -194,9 +247,9 @@ def read_method(shard, slug, name, budget):
            'card': jobs[-1].get('device_kind', 'not recorded') if jobs else 'not recorded',
            'finished': summary['finished'],
            'started_again': summary['started_from_zero_again'], 'continued': summary['continued_from_a_checkpoint'],
-           'respawned': summary['respawned_episodes'], 'problems': {}, 'largest_bonus': None}
+           'respawned': summary['respawned_episodes'], 'problems': {}, 'largest_bonus': None, 'notes': []}
     if summary['state'] != 'complete':
-        return row, None
+        return row, None, attempt
     if summary['planned_steps'] != budget:
         raise ValueError(f"Unit {shard.stem} trains {summary['planned_steps']:,} steps per policy; the screen's "
                          f'study description says {budget:,}.')
@@ -206,60 +259,126 @@ def read_method(shard, slug, name, budget):
     if records.varying_settings(groups) != ['int_coef']:
         raise ValueError(f'The cells of unit {shard.stem} differ in {records.varying_settings(groups)}; a screen '
                          'summary reads units whose cells differ in the intrinsic weight only.')
-    scores, best = score_weights(groups, budget)
-    measured = measures.configuration_measures(best.policies, budget)
-    measured['median_first_goal_step'] = measures.median_first_goal_step(best.policies, budget)
-
-    # The maze-grid records, reduced to the property measures so that the arrays of one unit are not kept.
-    start = attempt[0]
-    position = start['cell_setting_names'].index('int_coef')
-    grid = grid_measures(maze_grid.read_grid(attempt), [cell[position] for cell in start['cell_settings']],
-                         weight_of(best), budget)
     not_finite = sum(int((~np.isfinite(getattr(policy, name_of_sum))).sum())
                      for policy in policies for name_of_sum in ('episodes', 'return_sum'))
-    row['problems'] = {**grid['problems'], **({'episode counts or return sums that are not finite': not_finite}
-                                              if not_finite else {})}
-    row['largest_bonus'] = grid['largest_bonus']
-    return row, Method(slug=slug, name=name, unit_id=shard.stem, budget=budget, groups=tuple(groups), scores=scores,
-                       best=best, measures=measured, grid=grid)
+    if not_finite:
+        row['problems']['episode counts or return sums that are not finite'] = not_finite
+    return row, groups, attempt
+
+
+def listed_unit(run_dir, unit_id, slug, name, budget, row_name=None):
+    """One unit for the units table, with its configurations when it is complete; a unit with no shard is not read."""
+    shard = run_dir / 'data' / f'{unit_id}.jsonl'
+    if unit_id is None or not shard.exists():
+        return {'slug': slug, 'name': row_name or name, 'unit_id': unit_id,
+                'state': 'no unit was built' if unit_id is None else 'not started (no shard)',
+                'queue': 'no unit' if unit_id is None else queue_place(run_dir, unit_id)}, None, None
+    row, groups, attempt = read_unit(shard, slug, name, budget)
+    return {**row, 'name': row_name or name, 'queue': queue_place(run_dir, unit_id)}, groups, attempt
+
+
+def join_further_weights(first, further, row):
+    """A method's configurations with those of a further unit added, after checking the two differ in the weight only."""
+    # before: the screen unit's configurations at the weights [1, 16, 64], a further unit's at [256, 1024]
+    # after:  the five configurations in weight order. A setting recorded with two values is refused; a setting
+    #         only one of the two units records (an option its code did not have yet) is noted in the unit's row.
+    found = setting_differences(first[0], further[0])
+    changed = sorted(set(found['different']) - {'int_coef'})
+    repeated = sorted({weight_of(group) for group in first} & {weight_of(group) for group in further})
+    if changed or repeated:
+        raise ValueError(f"Unit {row['unit_id']} cannot extend its method's weights: settings recorded with other "
+                         f'values {changed}, intrinsic weights trained twice {repeated}.')
+    for key, words in (('only_first', "the method's first unit"), ('only_second', 'this unit')):
+        if found[key]:
+            row['notes'].append(f'settings that only {words} records: '
+                                + ', '.join(f'`{name}` = {value}' for name, value in found[key].items()))
+    return sorted(first + further, key=weight_of)
 
 
 def read_screen(run_dir, batch, settings):
     """Read every unit of the batch's screen and compare each complete idea with the control."""
     # The screen's methods and their units; every method needs a name in words.
     run_dir = Path(run_dir)
-    description = json.loads((run_dir / 'batches' / batch / settings['study_description']).read_text())
+    folder = run_dir / 'batches' / batch
+    description = json.loads((folder / settings['study_description']).read_text())
     units = batch_units(run_dir, description)
+    # A batch that trains no control of its own takes the control's unit from another batch's study description.
+    if 'control_study_description' in settings:
+        other = json.loads((folder / settings['control_study_description']).read_text())
+        found = batch_units(run_dir, other)
+        if (settings['control'] in units or settings['control'] not in found
+                or (other['steps_per_policy'], other['seeds']) != (description['steps_per_policy'], description['seeds'])):
+            raise ValueError(f"summary_settings.json: {settings['control_study_description']} cannot give this batch "
+                             f"its control {settings['control']}: the batch trains that method itself, or the other "
+                             'study description does not, or it has other seeds or another budget.')
+        units = {settings['control']: found[settings['control']], **units}
     unnamed = sorted(set(units) - set(settings['method_names']))
     if unnamed or settings['control'] not in units:
         raise ValueError(f"summary_settings.json: no name in words for the methods {unnamed}, or the control "
                          f"{settings['control']} is not a method of the study description.")
-    # One row per method for the units table; a unit with no shard is listed without being read.
+    # One row per unit of the screen's own study description. The maze-grid records of a complete unit are reduced
+    # to the property measures at once, at the best weight for W among the unit's own weights, so that the
+    # arrays of one unit are not kept.
     budget = description['steps_per_policy']
-    rows, methods = [], {}
+    rows, found, grids = [], {}, {}
     for slug, unit_id in units.items():
-        name = settings['method_names'][slug]
-        shard = run_dir / 'data' / f'{unit_id}.jsonl'
-        if unit_id is None or not shard.exists():
-            rows.append({'slug': slug, 'name': name, 'unit_id': unit_id,
-                         'state': 'no unit was built' if unit_id is None else 'not started (no shard)',
-                         'queue': 'no unit' if unit_id is None else queue_place(run_dir, unit_id)})
+        row, groups, attempt = listed_unit(run_dir, unit_id, slug, settings['method_names'][slug], budget)
+        rows.append(row)
+        if groups is None:
             continue
-        row, method = read_method(shard, slug, name, budget)
-        rows.append({**row, 'queue': queue_place(run_dir, unit_id)})
-        if method is not None:
-            methods[slug] = method
+        weight = weight_of(score_weights(groups, budget)[1])
+        position = attempt[0]['cell_setting_names'].index('int_coef')
+        grid = grid_measures(maze_grid.read_grid(attempt), [cell[position] for cell in attempt[0]['cell_settings']],
+                             weight, budget)
+        row['problems'], row['largest_bonus'] = {**grid['problems'], **row['problems']}, grid['largest_bonus']
+        found[slug], grids[slug] = groups, {**grid, 'weight': weight}
 
-    # Every complete idea against the control at the control's own best weight, on the seeds both have.
-    differences = {}
+    # Further units that train some of the methods at more intrinsic weights, with the same seeds and budget.
+    for file_name in settings.get('more_intrinsic_weights', ()):
+        further = json.loads((folder / file_name).read_text())
+        if (further['steps_per_policy'], further['seeds']) != (budget, description['seeds']):
+            raise ValueError(f'{file_name} has other seeds or another budget than the screen: its units cannot '
+                             "extend the screen's intrinsic weights.")
+        weights = ', '.join(weight_text(weight) for weight in further['cells']['values']['intrinsic_weight'])
+        for slug, unit_id in batch_units(run_dir, further).items():
+            if slug not in units:
+                raise ValueError(f'{file_name} names the method {slug}, which is not a method of the screen.')
+            name = settings['method_names'][slug]
+            row, groups, _ = listed_unit(run_dir, unit_id, slug, name, budget, f'{name}, at the intrinsic weights {weights}')
+            rows.append(row)
+            if groups is not None and slug in found:
+                found[slug] = join_further_weights(found[slug], groups, row)
+            elif groups is not None:
+                # Nothing is read from a further unit while the method's own unit of the screen is not complete.
+                row['left_out'] = True
+
+    # Per method, the best weight for each metric over every weight it was trained at.
+    methods = {}
+    for slug, groups in found.items():
+        scores, best = score_weights(groups, budget)
+        discovery_scores, discovery_best = score_weights_for_discovery(groups, budget)
+        measured = measured_at(best, budget)
+        methods[slug] = Method(
+            slug=slug, name=settings['method_names'][slug], unit_id=units[slug], budget=budget, groups=tuple(groups),
+            scores=scores, best=best, measures=measured, discovery_scores=discovery_scores,
+            discovery_best=discovery_best, grid=grids[slug],
+            discovery_measures=measured if discovery_best is best else measured_at(discovery_best, budget))
+
+    # Every complete idea against the control on the seeds both have: for W and L at the two best weights for W,
+    # for M at the two best weights for M.
+    differences, discovery_differences = {}, {}
     if settings['control'] in methods:
         control = methods[settings['control']]
-        differences = {slug: compare.compare_with_baseline(method.best.policies, control.best.policies, budget,
-                                                           'batch screen', batch, slug)
-                       for slug, method in methods.items() if slug != settings['control']}
+        for slug, method in methods.items():
+            if slug != settings['control']:
+                differences[slug] = compare.compare_with_baseline(method.best.policies, control.best.policies, budget,
+                                                                  'batch screen', batch, slug)
+                discovery_differences[slug] = compare.compare_discovery(
+                    method.discovery_best.policies, control.discovery_best.policies, budget, 'batch screen', batch, slug)
     seeds = tuple(range(description['seeds']['first'], description['seeds']['first'] + description['seeds']['count']))
     return Screen(batch=batch, control=settings['control'], order=tuple(units), names=dict(settings['method_names']),
-                  units=tuple(rows), methods=methods, differences=differences, budget=budget, seeds=seeds)
+                  units=tuple(rows), methods=methods, differences=differences,
+                  discovery_differences=discovery_differences, budget=budget, seeds=seeds)
 
 
 # ---- words and cells ----------------------------------------------------------------------------------------------
@@ -298,10 +417,26 @@ def row_order(screen):
     return ([screen.control] if screen.control in screen.methods else []) + ideas
 
 
-def end_of_grid(method):
-    """'smallest' or 'largest' when the method's best weight is at an end of its grid, else None."""
-    weights = method.weights
-    return 'smallest' if method.best_weight == weights[0] else 'largest' if method.best_weight == weights[-1] else None
+def discovery_order(screen):
+    """The complete methods in the order of the discovery table: the control first, then the ideas from the smallest M up."""
+    # Ties in M go to the method of which more policies reach the goal, then to the study description's order.
+    ideas = [slug for slug in screen.order if slug in screen.methods and slug != screen.control]
+    ideas.sort(key=lambda slug: (screen.methods[slug].discovery_measures['capped_first_goal_step'],
+                                 -screen.methods[slug].discovery_measures['reached_goal_share'], screen.order.index(slug)))
+    return ([screen.control] if screen.control in screen.methods else []) + ideas
+
+
+def end_of_grid(weights, weight):
+    """'smallest' or 'largest' when a weight is at an end of the weights a method was trained at, else None."""
+    # before: ([1, 16, 64], 64), ([1, 16, 64], 16); after: 'largest', None.
+    return 'smallest' if weight == weights[0] else 'largest' if weight == weights[-1] else None
+
+
+def weight_cell(method, weight):
+    """A method's best weight as a table cell, marked when it is at an end of the weights the method was trained at."""
+    # before: weights [1, 16, 64] and the weight 64; after: '64 (largest of the grid)'.
+    end = end_of_grid(method.weights, weight)
+    return weight_text(weight) + (f' ({end} of the grid)' if end else '')
 
 
 # ---- sections -----------------------------------------------------------------------------------------------------
@@ -319,11 +454,13 @@ def units_section(screen):
             'time not recorded' if unit['state'] == 'complete' else 'not finished')
         written = f"{unit['windows']} of {unit['planned_windows']}" if unit['planned_windows'] else '0'
         rows.append([str(index), unit['name'], unit['state'], written, unit['card'], finished, unit['queue']])
-    # The methods left out of the tables by name, and the unit ids under the table.
-    left_out = [unit['name'] for unit in screen.units if unit['slug'] not in screen.methods]
+    # The units left out of the tables by name, and the unit ids under the table. A complete unit with further
+    # weights is left out too while its method's own unit of the screen is not complete.
+    complete = sum(unit['state'] == 'complete' for unit in screen.units)
+    left_out = [unit['name'] for unit in screen.units if unit['state'] != 'complete' or unit.get('left_out')]
     names = ''.join(f"{index}. `{unit['unit_id']}`\n" for index, unit in enumerate(screen.units, 1))
     return ('## Units\n\n'
-            f'{len(screen.methods)} of {len(screen.units)} units are complete. Only complete units enter the tables and '
+            f'{complete} of {len(screen.units)} units are complete. Only complete units enter the tables and '
             'figures below; nothing is estimated for the others. '
             + (f"Left out: {'; '.join(left_out)}.\n\n" if left_out else 'No unit is left out.\n\n')
             + report.markdown_table(header, rows) + 'Unit names, by the number in the first column:\n\n' + names + '\n')
@@ -331,9 +468,12 @@ def units_section(screen):
 
 def measures_section(screen):
     """The definitions the tables use, each with its formula."""
-    count, weights = len(screen.seeds), len(next(iter(screen.methods.values())).weights)
+    count = len(screen.seeds)
     return (
         '## Measures\n\n'
+        'Two metrics are reported, each in its own table with its own best intrinsic weight per method: the '
+        'whole-curve mean $W$ measures discovery and optimization together, and the mean capped first-goal time $M$ '
+        'measures discovery alone. The two are never mixed in one choice.\n\n'
         f'Define $K$ as the number of policies (seeds) of one method at one intrinsic weight ($K = {count}$, the '
         f'development seeds {screen.seeds[0]} to {screen.seeds[-1]}), $B$ as the budget in environment steps per '
         f'policy ($B$ = {screen.budget:,}), $R_i(s)$ as the mean return of the training episodes of policy $i$ that '
@@ -345,10 +485,10 @@ def measures_section(screen):
         '\\thinspace \\Delta s$, the area under the training curve divided by the budget.\n'
         '2. **Final level:** $L(B) = \\dfrac{1}{K}\\sum_{i=1}^{K} \\dfrac{1}{0.1 B}\\sum_{0.9 B \\lt s \\le B} R_i(s) '
         '\\thinspace \\Delta s$, the same mean over the last 10% of the budget.\n'
-        f'3. **Best intrinsic weight:** per method, the one of its {weights} intrinsic weights with the highest $W$; '
-        'ties go to the higher $L$.\n'
+        '3. **Best intrinsic weight for the whole-curve mean:** per method, the one of the intrinsic weights it was '
+        'trained at with the highest $W$; ties go to the higher $L$.\n'
         '4. **Difference from the control:** define $d_i$ as the value of seed $i$ under the method at its best '
-        'weight minus its value under the control at the control\'s own best weight. The tables give '
+        'weight for $W$ minus its value under the control at the control\'s own best weight for $W$. The tables give '
         '$\\bar d = \\dfrac{1}{K}\\sum_{i=1}^{K} d_i$ for $W$ and for $L$, each with a 95% interval: the 2.5% and '
         '97.5% points of the means of 10,000 resamples of the $K$ seeds, drawn with replacement. An idea is ahead '
         'of the control when the interval is entirely above zero, behind when it is entirely below zero, and '
@@ -356,12 +496,23 @@ def measures_section(screen):
         '5. **Median first-arrival step:** define $T_i$ as the training step of policy $i$\'s first arrival at the '
         'goal ($T_i = \\infty$ if it has none by step $B$). The measure is the median of $T_i$ over the $K$ '
         'policies; it reads "none" when the median falls on a policy with no arrival.\n'
-        '6. **Policies that reach the goal:** the number of the $K$ policies with $T_i \\le B$.\n\n'
+        '6. **Policies that reach the goal:** the number of the $K$ policies with $T_i \\le B$.\n'
+        '7. **Mean capped first-goal time, the secondary metric:** $M(B) = \\dfrac{1}{K}\\sum_{i=1}^{K} \\min(T_i, B)$, '
+        'the mean over the policies of the training step of the first arrival at the goal, a policy with no arrival '
+        'by step $B$ counting as $B$. Smaller is better. The tables give $M$ in thousands of steps.\n'
+        '8. **Best intrinsic weight for the mean capped first-goal time:** per method, the one of the intrinsic '
+        'weights it was trained at with the smallest $M$; ties go to the weight at which more policies reach the '
+        'goal. It can differ from the best weight of item 3.\n'
+        '9. **Difference in the mean capped first-goal time from the control:** as item 4, with $d_i$ the value of '
+        '$\\min(T_i, B)$ of seed $i$ under the method at its best weight for $M$ minus the same under the control at '
+        'the control\'s own best weight for $M$. A negative $\\bar d$ means the goal was first reached earlier than '
+        'under the control. An idea is ahead of the control on discovery when the 95% interval is entirely below '
+        'zero, behind when it is entirely above zero, and within the interval otherwise.\n\n'
         'Standard errors are over the $K$ policies.\n\n')
 
 
 def screen_section(screen, order):
-    """The screen table: each method at its best intrinsic weight, the control first, the ideas sorted by W."""
+    """The table of the primary metric: each method at its best weight for W, the control first, the ideas sorted by W."""
     table = [screen.methods[slug] for slug in order]
     results = [screen.differences.get(slug) for slug in order]
     compared = [result if result and result['seeds'] >= 2 else None for result in results]
@@ -381,7 +532,7 @@ def screen_section(screen, order):
     reached_marks = report.column_marks(reached, [str(value) for value in reached], True)
 
     # One row per method; the control's two difference cells say that it is the control.
-    header = ['method', 'best intrinsic weight', 'whole-curve mean $W$ ↑ ± standard error',
+    header = ['method', 'best intrinsic weight for $W$', 'whole-curve mean $W$ ↑ ± standard error',
               'difference in $W$ from the control [95% interval]', 'final level $L$',
               'difference in $L$ from the control [95% interval]', 'median first-arrival step',
               'policies that reach the goal']
@@ -406,47 +557,141 @@ def screen_section(screen, order):
                f'({weight_text(control.best_weight)}), on the {len(screen.seeds)} seeds both have; the brackets hold '
                'the 95% interval.' if control else
                'The control\'s unit is not complete, so no difference from the control can be given yet.')
-    return ('## Screen table\n\n'
+    return ('## Discovery and optimization: whole-curve mean\n\n'
             'Define $W$, $L$ and the other columns as in the section Measures. One row per method at its best '
-            f'intrinsic weight, read at {screen.budget:,} environment steps per policy. The control is the first '
-            'row; the ideas follow, sorted by $W$. Per column, the best value is bold and the second best '
+            f'intrinsic weight for $W$, read at {screen.budget:,} environment steps per policy. The control is the '
+            'first row; the ideas follow, sorted by $W$. Per column, the best value is bold and the second best '
             f'underlined; for the median first-arrival step the smallest value is the best. {against} The seeds are '
             'the development seeds, on which each best weight was also chosen: this table is a screen and not a '
             'verdict.\n\n' + report.markdown_table(header, rows))
 
 
+def weight_tables(table, value_of, text_of, higher_better, best_of, last_header):
+    """One value per method and intrinsic weight, in tables that fit a printed page.
+
+    Returns the tables, the number of weights, the number of tables, and the methods whose best weight is the
+    smallest or the largest weight they were trained at.
+    """
+    # The columns are every weight any method was trained at; a method without a weight has an empty cell there.
+    # before: methods trained at [1, 16, 64] and at [1, 16, 64, 256], at most 2 weights per table
+    # after:  two tables, with the weights [1, 16] and [64, 256]; the first method's cell under 256 is empty.
+    weights = sorted({weight for method in table for weight in method.weights})
+    count = math.ceil(len(weights) / MOST_WEIGHT_COLUMNS)
+    size = math.ceil(len(weights) / count)
+    text = []
+    for first in range(0, len(weights), size):
+        part = weights[first:first + size]
+        # Per weight, the best and the second best among the methods trained at it.
+        marks = {}
+        for weight in part:
+            trained = [index for index, method in enumerate(table) if weight in method.weights]
+            values = [value_of(table[index], weight) for index in trained]
+            found = report.column_marks(values, [text_of(value) for value in values], higher_better)
+            marks[weight] = dict(zip(trained, found))
+        rows = [[method.name]
+                + [report.styled(text_of(value_of(method, weight)), marks[weight][index]) if weight in method.weights
+                   else '' for weight in part]
+                + [weight_cell(method, best_of(method))] for index, method in enumerate(table)]
+        text.append(report.markdown_table(
+            ['method'] + [f'weight {weight_text(weight)}' for weight in part] + [last_header], rows))
+    at_end = [f'{method.name} ({weight_text(best_of(method))}, the {end_of_grid(method.weights, best_of(method))})'
+              for method in table if end_of_grid(method.weights, best_of(method))]
+    return ''.join(text), len(weights), count, at_end
+
+
+def split_words(weights, count):
+    """How the weights are spread over the tables, in words."""
+    return (f'The {weights} weights are in one table.' if count == 1 else
+            f'The {weights} weights are split over {TABLE_COUNT_WORDS.get(count, f"{count} tables")} so that each '
+            'fits the width of a printed page.')
+
+
 def weights_section(screen, order):
-    """W of every method at every intrinsic weight, in two tables of half the weights each."""
-    # Every method must have been trained on the same grid of weights.
+    """W of every method at every intrinsic weight it was trained at."""
     table = [screen.methods[slug] for slug in order]
-    weights = table[0].weights
-    different = [method.name for method in table if method.weights != weights]
-    if different:
-        raise ValueError(f'The methods {different} were trained on another grid of intrinsic weights than {table[0].name}.')
-    text = ['## Whole-curve mean at every intrinsic weight\n\n'
-            f'Define $W$ as in the section Measures. Rows are in the order of the screen table. The {len(weights)} '
-            'weights are split over two tables so that each fits the width of a printed page. Per weight (column), '
-            'the highest $W$ among the methods is bold and the second highest underlined. The last column names '
-            'each method\'s best weight and says when it is the smallest or the largest weight of the grid.\n\n']
-    # One table per half of the grid; per weight, the best and second best method are marked.
-    half = (len(weights) + 1) // 2
-    for part in (weights[:half], weights[half:]):
-        marks = {weight: report.mean_marks([method.scores[weight][0] for method in table]) for weight in part}
-        rows = []
-        for index, method in enumerate(table):
-            end = end_of_grid(method)
-            rows.append([method.name]
-                        + [report.styled(f'{method.scores[weight][0]:.3f}', marks[weight][index]) for weight in part]
-                        + [weight_text(method.best_weight) + (f' ({end} of the grid)' if end else '')])
-        header = ['method'] + [f'weight {weight_text(weight)}' for weight in part] + ['best intrinsic weight']
-        text.append(report.markdown_table(header, rows))
-    # The methods whose best weight is the smallest or the largest of the grid.
-    at_end = [f'{method.name} ({weight_text(method.best_weight)}, the {end_of_grid(method)})'
-              for method in table if end_of_grid(method)]
-    text.append(('Best weight at an end of the grid: ' + '; '.join(at_end) + '. The protocol\'s edge rule '
-                 '(`program.md`) asks for three more values on that side before anything is confirmed.\n\n')
-                if at_end else 'No method has its best weight at an end of the grid.\n\n')
-    return ''.join(text)
+    tables, weights, count, at_end = weight_tables(
+        table, lambda method, weight: method.scores[weight][0], lambda value: f'{value:.3f}', True,
+        lambda method: method.best_weight, 'best intrinsic weight for $W$')
+    return ('## Whole-curve mean at every intrinsic weight\n\n'
+            'Define $W$ as in the section Measures. Rows are in the order of the table of the whole-curve mean. '
+            f'{split_words(weights, count)} A method that was not trained at a weight has an empty cell there. Per '
+            'weight (column), the highest $W$ among the methods is bold and the second highest underlined. The last '
+            'column names each method\'s best weight for $W$ and says when it is the smallest or the largest of the '
+            'weights the method was trained at.\n\n' + tables
+            + (('Best weight at an end of the grid: ' + '; '.join(at_end) + '. The protocol\'s edge rule '
+                '(`program.md`) asks for three more values on that side before anything is confirmed.\n\n')
+               if at_end else 'No method has its best weight at an end of the grid.\n\n'))
+
+
+def discovery_section(screen, order):
+    """The table of the secondary metric: each method at its best weight for M, the control first, the ideas sorted by M."""
+    table = [screen.methods[slug] for slug in order]
+    results = [screen.discovery_differences.get(slug) for slug in order]
+    compared = [result if result and result['seeds'] >= 2 else None for result in results]
+
+    # The marks of every metric column: the smallest is the best for M and for its difference, the largest for
+    # the policies that reach the goal and for W and L; the control has no difference and takes no mark there.
+    capped = [method.discovery_measures['capped_first_goal_step'] for method in table]
+    capped_marks = report.column_marks(capped, [report.thousands(value) for value in capped], False)
+    means = [result['capped_first_goal_step']['mean'] if result else None for result in compared]
+    mean_marks = report.column_marks(means, [None if mean is None else report.thousands(mean, True) for mean in means], False)
+    reached = [round(method.discovery_measures['reached_goal_share'] * method.discovery_measures['seeds']) for method in table]
+    reached_marks = report.column_marks(reached, [str(value) for value in reached], True)
+    whole = report.mean_marks([method.discovery_measures['whole_curve_mean'] for method in table])
+    final = report.mean_marks([method.discovery_measures['final_level'] for method in table])
+
+    # One row per method; the control's difference cell says that it is the control.
+    header = ['method', 'best intrinsic weight for $M$', '$M$ ↓ ± standard error, thousand steps',
+              'difference in $M$ from the control [95% interval], thousand steps', 'policies that reach the goal',
+              '$W$ at that weight ± standard error', '$L$ at that weight']
+    rows = []
+    for index, (slug, method, result) in enumerate(zip(order, table, compared)):
+        row = method.discovery_measures
+        difference = ('control' if slug == screen.control else 'not compared' if result is None else
+                      report.discovery_interval_text(result['capped_first_goal_step'], mean_marks[index]))
+        rows.append([method.name, weight_cell(method, method.discovery_weight),
+                     report.thousands_with_error(row['capped_first_goal_step'], row['capped_first_goal_step_error'],
+                                                 capped_marks[index]),
+                     difference, report.styled(f"{reached[index]} of {row['seeds']}", reached_marks[index]),
+                     report.marked_mean(row['whole_curve_mean'], row['whole_curve_mean_error'], whole[index]),
+                     report.styled(f"{row['final_level']:.3f}", final[index])])
+    control = screen.methods.get(screen.control)
+    against = (f'Differences are the method minus the control at the control\'s own best intrinsic weight for $M$ '
+               f'({weight_text(control.discovery_weight)}), on the {len(screen.seeds)} seeds both have; the brackets '
+               'hold the 95% interval, and a negative difference means the goal was first reached earlier than under '
+               'the control.' if control else
+               'The control\'s unit is not complete, so no difference from the control can be given yet.')
+    return ('## Discovery: mean capped first-goal time\n\n'
+            'Define $M$, $W$ and $L$ as in the section Measures. One row per method at its best intrinsic weight for '
+            f'$M$ (the smallest $M$; ties go to the weight at which more policies reach the goal), read at '
+            f'{screen.budget:,} environment steps per policy. This weight can differ from the best weight for $W$ in '
+            'the table of the whole-curve mean. $M$, its standard error and its differences are in thousands of '
+            'steps. The control is the first row; the ideas follow, sorted by $M$ from the smallest. Per column, the '
+            'best value is bold and the second best underlined: the smallest for $M$ and for its difference, the '
+            'largest for the other columns. The columns $W$ and $L$ are read at the same weight as $M$, so they show '
+            f'what the configuration that is best for discovery gives on the primary metric. {against} A best '
+            'weight marked "largest of the grid" or "smallest of the grid" is at an end of the weights the method '
+            'was trained at: larger or smaller weights must be tried before anything is concluded from that row. '
+            'The seeds are the development seeds, on which each best weight was also chosen: this table is a screen '
+            'and not a verdict.\n\n' + report.markdown_table(header, rows))
+
+
+def discovery_weights_section(screen, order):
+    """M of every method at every intrinsic weight it was trained at."""
+    table = [screen.methods[slug] for slug in order]
+    tables, weights, count, at_end = weight_tables(
+        table, lambda method, weight: method.discovery_scores[weight][0], report.thousands, False,
+        lambda method: method.discovery_weight, 'best intrinsic weight for $M$')
+    return ('## Mean capped first-goal time at every intrinsic weight\n\n'
+            'Define $M$ as in the section Measures; the cells give it in thousands of steps. Rows are in the order '
+            f'of the table of the mean capped first-goal time. {split_words(weights, count)} A method that was not '
+            'trained at a weight has an empty cell there. Per weight (column), the smallest $M$ among the methods is '
+            'bold and the second smallest underlined. The last column names each method\'s best weight for $M$ and '
+            'says when it is the smallest or the largest of the weights the method was trained at.\n\n' + tables
+            + (('Best weight for $M$ at an end of the grid: ' + '; '.join(at_end) + '. Larger or smaller weights must '
+                'be tried on that side before anything is concluded from these rows (the edge rule of '
+                '`program.md`).\n\n')
+               if at_end else 'No method has its best weight for $M$ at an end of the grid.\n\n'))
 
 
 def slope_range(by_weight):
@@ -475,6 +720,12 @@ def properties_section(screen, order, visits_figure_name):
     cells = first['pairs'] // len(table[0].best.policies)
     steps = {share: first['unvisited'][share]['step'] for share in UNVISITED_SHARES}
     shares = ', '.join(f'{100 * share:g}% is read at step {steps[share]:,}' for share in UNVISITED_SHARES)
+    # The maze-grid records belong to the screen's own units, so a best weight of a further unit cannot be read here.
+    moved = [method.name for method in table if method.grid['weight'] != method.best_weight]
+    grid_note = ('In this section "the best weight" of a method is its best weight for $W$ among the weights of '
+                 'its own unit of the screen, which records the bonus on the maze grid; the units with further '
+                 'weights have no such records. It differs from the best weight for $W$ over all weights for: '
+                 + '; '.join(moved) + '.\n\n' if moved else '')
     text = [
         '## Properties of the bonus on the maze grid\n\n'
         f'Every unit records, per policy and per open maze cell ({cells} cells), the bonus at one probe observation '
@@ -508,7 +759,8 @@ def properties_section(screen, order, visits_figure_name):
         'record, because no rollout has entered its statistics yet, and the trainer updates it with each rollout '
         'before it divides that rollout\'s rewards; for such a method the start column is the bonus itself times '
         'the weight, and the first logging window is the earliest reading with a divisor the learner used.\n\n'
-        'Rows are in the order of the screen table. These columns describe the bonus and have no better or worse '
+        + grid_note +
+        'Rows are in the order of the table of the whole-curve mean. These columns describe the bonus and have no better or worse '
         'direction, so no value is marked.\n\n']
 
     # First table: the start, the decay and the unvisited cells.
@@ -529,13 +781,14 @@ def properties_section(screen, order, visits_figure_name):
     header = (['method', 'best intrinsic weight', 'divisor at the start, and at the end of the first logging window',
                'weighted intrinsic reward at the start', 'weighted intrinsic reward at the end of the first logging window']
               + [f'weighted intrinsic reward at {100 * share:g}% of the budget' for share in REWARD_SHARES])
-    rows = [[method.name, weight_text(method.best_weight),
+    rows = [[method.name, weight_text(method.grid['weight']),
              f"{short(method.grid['divisor']['start'])} and {short(method.grid['divisor']['first_window'])}"]
             + [short(method.grid['intrinsic_reward'][key]) for key in ('start', 'first_window') + REWARD_SHARES]
             for method in table]
     text.append(report.markdown_table(header, rows))
     text.append('### Bonus against cumulative visits\n\n'
-                'One panel per method in the order of the screen table, at the method\'s best intrinsic weight. Each '
+                'One panel per method in the order of the table of the whole-curve mean, at the best intrinsic '
+                'weight of this section. Each '
                 'point is the median of $b_i(c, w)$ over the policies, cells and logging windows whose '
                 '$1 + n_i(c, w)$ falls in one bin (each bin a factor of two wide; pairs with no visit are left '
                 'out); the band holds the middle half of the same points. Both axes are logarithmic, and every '
@@ -554,32 +807,49 @@ def curves_section(screen, name):
             else 'the control is not complete and is not drawn')
     return ('## Training curves\n\n'
             'Define $\\bar R(s) = \\dfrac{1}{K}\\sum_{i=1}^{K} R_i(s)$, with $R_i(s)$ and $K$ as in the section '
-            'Measures. One panel per idea in the order of the screen table: the idea at its best intrinsic weight '
-            f'in blue, {grey}; bands are one standard error over the {len(screen.seeds)} seeds.\n\n'
+            'Measures. One panel per idea in the order of the table of the whole-curve mean: the idea at its best '
+            f'intrinsic weight for $W$ in blue, {grey}; bands are one standard error over the {len(screen.seeds)} '
+            'seeds.\n\n'
             f'![training curves](plots/{name}.png)\n\n')
 
 
-def sides_section(screen, order):
-    """Which ideas are ahead of the control, within the interval, or behind, by the interval of the difference in W."""
-    if screen.control not in screen.methods:
-        return '## Ideas against the control\n\nThe control\'s unit is not complete, so no idea can be compared yet.\n\n'
-    # Every compared idea under the side of its interval, with the difference and the interval.
+def side_lists(screen, order, results, quantity, text_of, ahead, behind):
+    """The ideas under the side of one difference's interval: ahead of the control, within the interval, behind, waiting."""
+    # before: results {'even-start': {quantity: {'side': 'ahead', ...}, 'seeds': 16}, ...}
+    # after:  four list items; `ahead` and `behind` are (label, rule) of the two sides, as their sign depends on the metric.
     lists = {'ahead': [], 'level': [], 'behind': []}
     for slug in order:
-        result = screen.differences.get(slug)
+        result = results.get(slug)
         if result and result['seeds'] >= 2:
-            lists[result['whole_curve_mean']['side']].append(
-                f"{screen.methods[slug].name} ({report.interval_text(result['whole_curve_mean']).rsplit(',', 1)[0]})")
+            lists[result[quantity]['side']].append(f'{screen.methods[slug].name} ({text_of(result[quantity])})')
     waiting = [screen.names[slug] for slug in screen.order if slug not in screen.methods]
-    rows = [('Ahead of the control', 'interval entirely above zero', lists['ahead']),
-            ('Within the interval', 'it contains zero', lists['level']),
-            ('Behind the control', 'interval entirely below zero', lists['behind']),
-            ('Not compared yet', 'unit not complete', waiting)]
+    rows = [(*ahead, lists['ahead']), ('Within the interval', 'it contains zero', lists['level']),
+            (*behind, lists['behind']), ('Not compared yet', 'unit not complete', waiting)]
+    return ''.join(f"- **{label}** ({rule}): {'; '.join(names) if names else 'none'}.\n" for label, rule, names in rows) + '\n'
+
+
+def sides_section(screen, order, discovery):
+    """Which ideas are ahead of the control, within the interval, or behind: by the difference in W, then by the difference in M."""
+    if screen.control not in screen.methods:
+        return '## Ideas against the control\n\nThe control\'s unit is not complete, so no idea can be compared yet.\n\n'
     return ('## Ideas against the control\n\n'
+            'Two readings, one per metric, each with the methods at their own best weights for that metric. Both '
+            'are on the development seeds, on which the best weights were also chosen: a screen, not a verdict.\n\n'
+            '### Discovery and optimization: whole-curve mean\n\n'
             'By the 95% interval of the difference in $W$ from the control (section Measures, item 4), on the '
             'development seeds. After each name: the difference in $W$ and its interval.\n\n'
-            + ''.join(f"- **{label}** ({rule}): {'; '.join(names) if names else 'none'}.\n" for label, rule, names in rows)
-            + '\n')
+            + side_lists(screen, order, screen.differences, 'whole_curve_mean',
+                         lambda result: report.interval_text(result).rsplit(',', 1)[0],
+                         ('Ahead of the control', 'interval entirely above zero'),
+                         ('Behind the control', 'interval entirely below zero'))
+            + '### Discovery: mean capped first-goal time\n\n'
+            'By the 95% interval of the difference in $M$ from the control (section Measures, item 9), on the '
+            'development seeds. After each name: the difference in $M$ and its interval, in thousands of steps; a '
+            'negative difference means the goal was first reached earlier than under the control.\n\n'
+            + side_lists(screen, discovery, screen.discovery_differences, 'capped_first_goal_step',
+                         report.discovery_interval_text,
+                         ('Ahead of the control on discovery', 'interval entirely below zero'),
+                         ('Behind the control on discovery', 'interval entirely above zero')))
 
 
 # ---- predictions --------------------------------------------------------------------------------------------------
@@ -617,10 +887,17 @@ def overall(rows):
     return VERDICT_WORDS[False if False in verdicts else None if None in verdicts else True]
 
 
-def predictions_section(screen, ideas_text, module_name):
-    """Every written prediction with what was observed, part by part."""
-    module = importlib.import_module(f'{__package__}.{module_name}')
+def predictions_section(screen, ideas_text, module_name=None):
+    """Every written prediction with what was observed, part by part; without a module each is quoted and not read yet."""
     written = written_predictions(ideas_text)
+    if module_name is None:
+        return ('## Predictions\n\n'
+                'The predictions were written in `ideas.md` before the runs. Their readings from the records have not '
+                'been written yet (this batch has no predictions module), so each is quoted and marked not read yet. '
+                'The tables of this summary hold the numbers the predictions speak of.\n\n'
+                + ''.join(f'### Prediction {number}\n\n> {quoted}\n\nObserved: **not read yet**.\n\n'
+                          for number, quoted in enumerate(written, 1)))
+    module = importlib.import_module(f'{__package__}.{module_name}')
     if len(written) != len(module.PREDICTIONS):
         raise ValueError(f'ideas.md holds {len(written)} predictions; {module_name} checks {len(module.PREDICTIONS)}.')
     text = ['## Predictions\n\n'
@@ -637,6 +914,141 @@ def predictions_section(screen, ideas_text, module_name):
                 text.append(f'- Beside: {words(screen)}\n')
         text.append('\n')
     return ''.join(text)
+
+
+# ---- validation block ---------------------------------------------------------------------------------------------
+
+def validation_units(run_dir, description, block):
+    """The validation block's complete units as {(method, intrinsic weight): configuration}, and what is left out.
+
+    Left out: the block's units that are not complete, in words, and the methods of the phase that the block does
+    not name (they belong to another batch).
+    """
+    # before: specifications of the block's phase for the control at the weights 1 and 2 (complete), for an idea
+    #         at the weight 2 (still training) and for a method of another batch, all in the screen's environment
+    # after:  ({('control', 1.0): ..., ('control', 2.0): ...}, ['the idea, intrinsic weight 2: unfinished, ...'],
+    #          ['the method of another batch']).
+    groups, waiting, others = {}, [], []
+    for path in sorted((Path(run_dir) / 'specifications').glob('*.json')):
+        specification = json.loads(path.read_text())
+        if (specification.get('phase') != block['phase']
+                or specification['environment'] not in description['environments']
+                or specification['reward_setting'] not in description['reward_settings']):
+            continue
+        slug = specification['method']
+        if slug not in block['method_names']:
+            others.append(slug.replace('-', ' '))
+            continue
+        name = block['method_names'][slug]
+        position = specification['cell_setting_names'].index('int_coef')
+        words = f"{name}, intrinsic weight {', '.join(weight_text(cell[position]) for cell in specification['cells'])}"
+        shard = Path(run_dir) / 'data' / f"{specification['unit_id']}.jsonl"
+        if not shard.exists():
+            waiting.append(f'{words}: not started (no shard)')
+            continue
+        summary, policies = records.read_unit(shard, [{'name': name, 'unit_id_pattern': shard.stem}])
+        if summary['state'] != 'complete':
+            waiting.append(f"{words}: {summary['state']}, {summary['windows']} logging windows written")
+            continue
+        for group in records.configurations(policies):
+            if (slug, weight_of(group)) in groups:
+                raise ValueError(f"Two units of the phase {block['phase']} train {slug} at the intrinsic weight "
+                                 f'{weight_of(group):g}; a validation block reads one unit per method and weight.')
+            groups[(slug, weight_of(group))] = group
+    return groups, waiting, sorted(set(others))
+
+
+def validation_section(screen, run_dir, description, block):
+    """The validation block: per method and weight, W, L and M on its seeds, and the paired differences from the control."""
+    unknown, missing = set(block) - VALIDATION_KEYS, VALIDATION_KEYS - set(block)
+    if unknown or missing:
+        raise ValueError(f'summary_settings.json, validation_block: unknown keys {sorted(unknown)}, missing keys {sorted(missing)}.')
+    title = '## Validation block\n\n'
+    groups, waiting, others = validation_units(run_dir, description, block)
+    left_out = ('Not complete, left out:\n\n' + ''.join(f'- {words}.\n' for words in waiting) + '\n') if waiting else ''
+    if others:
+        left_out += ('The phase also holds units of methods that this batch does not name; they are not read here: '
+                     + '; '.join(others) + '.\n\n')
+    if not groups:
+        return title + f"No unit of the phase `{block['phase']}` is complete yet.\n\n" + left_out
+    budgets = sorted({group.planned_steps for group in groups.values()})
+    if len(budgets) > 1:
+        raise ValueError(f"The units of the phase {block['phase']} train {budgets} steps per policy; one length is needed.")
+    budget = budgets[0]
+    seeds = sorted({policy.seed for group in groups.values() for policy in group.policies})
+
+    # The control first, then the other methods in the order of the settings; each method by intrinsic weight.
+    slugs = [block['control']] + [slug for slug in block['method_names'] if slug != block['control']]
+    keys = sorted(groups, key=lambda key: (slugs.index(key[0]), key[1]))
+    table = [measures.configuration_measures(groups[key].policies, budget) for key in keys]
+    # Each row against the control at the same weight, on the seeds both have: W and L, then M.
+    results = []
+    for slug, weight in keys:
+        control = groups.get((block['control'], weight))
+        if slug == block['control']:
+            results.append('control')
+        elif control is None:
+            results.append('no complete control unit at this weight')
+        else:
+            name = ('batch validation block', screen.batch, slug, weight)
+            results.append({**compare.compare_with_baseline(groups[(slug, weight)].policies, control.policies, budget, *name),
+                            **compare.compare_discovery(groups[(slug, weight)].policies, control.policies, budget, *name)})
+    compared = [result if isinstance(result, dict) and result['seeds'] >= 2 else None for result in results]
+
+    # The marks of every metric column over all rows; a row with no difference takes no mark there.
+    marks = {name: report.mean_marks([row[name] for row in table]) for name in ('whole_curve_mean', 'final_level')}
+    for quantity in ('whole_curve_mean', 'final_level'):
+        values = [result[quantity]['mean'] if result else None for result in compared]
+        marks[f'{quantity} difference'] = report.column_marks(
+            values, [None if value is None else f'{value:+.3f}' for value in values], True)
+    capped = [row['capped_first_goal_step'] for row in table]
+    marks['capped'] = report.column_marks(capped, [report.thousands(value) for value in capped], False)
+    values = [result['capped_first_goal_step']['mean'] if result else None for result in compared]
+    marks['capped difference'] = report.column_marks(
+        values, [None if value is None else report.thousands(value, True) for value in values], False)
+    reached = [round(row['reached_goal_share'] * row['seeds']) for row in table]
+    marks['reached'] = report.column_marks([row['reached_goal_share'] for row in table],
+                                           [f"{count} of {row['seeds']}" for count, row in zip(reached, table)], True)
+
+    # Two tables with the same rows: the primary metric with the final level, then the secondary metric.
+    first, second = [], []
+    for index, ((slug, weight), row, result, found) in enumerate(zip(keys, table, results, compared)):
+        lead = [block['method_names'][slug], weight_text(weight)]
+        words = result if isinstance(result, str) else 'fewer than two seeds in common'
+        common = str(row['seeds']) if slug == block['control'] else str(found['seeds']) if found else 'not compared'
+        differences = {quantity: difference_cell(found, quantity, marks[f'{quantity} difference'][index]) if found else words
+                       for quantity in ('whole_curve_mean', 'final_level')}
+        first.append(lead + [report.marked_mean(row['whole_curve_mean'], row['whole_curve_mean_error'], marks['whole_curve_mean'][index]),
+                             differences['whole_curve_mean'],
+                             report.marked_mean(row['final_level'], row['final_level_error'], marks['final_level'][index]),
+                             differences['final_level'], common])
+        second.append(lead + [report.thousands_with_error(capped[index], row['capped_first_goal_step_error'], marks['capped'][index]),
+                              report.discovery_interval_text(found['capped_first_goal_step'], marks['capped difference'][index])
+                              if found else words,
+                              report.styled(f"{reached[index]} of {row['seeds']}", marks['reached'][index]), common])
+    total = len(keys) + len(waiting)
+    return (title
+            + f"The units of the phase `{block['phase']}` in the screen's environment and reward setting. Each trains "
+            f'one method at one intrinsic weight on {len(seeds)} seeds, from {seeds[0]} to {seeds[-1]}: these are '
+            'neither the development seeds of the screen nor the confirmation seeds. '
+            f'{len(keys)} of {total} method and weight pairs have a complete unit; a unit that is not complete is '
+            'listed under the tables and left out. Define $W$, $L$ and $M$ as in the section Measures, here with $K$ '
+            f'the number of seeds of a row and read at {budget:,} environment steps per policy. Differences are the '
+            'method minus the control at the same intrinsic weight, on the seeds both have, each with its 95% '
+            'interval from 10,000 resamples of those seeds. Rows: the control first, then the other methods, each '
+            'by intrinsic weight. Per column the best value is bold and the second best underlined.\n\n'
+            '### Discovery and optimization: whole-curve mean and final level\n\n'
+            + report.markdown_table(['method', 'intrinsic weight', '$W$ ± standard error',
+                                     'difference in $W$ from the control [95% interval]', '$L$ ± standard error',
+                                     'difference in $L$ from the control [95% interval]',
+                                     'seeds in common with the control'], first)
+            + '### Discovery: mean capped first-goal time\n\n'
+            '$M$, its standard error and its differences are in thousands of steps; the smallest value is the best, '
+            'and a negative difference means the goal was first reached earlier than under the control.\n\n'
+            + report.markdown_table(['method', 'intrinsic weight', '$M$ ± standard error, thousand steps',
+                                     'difference in $M$ from the control [95% interval], thousand steps',
+                                     'policies that reach the goal', 'seeds in common with the control'], second)
+            + left_out)
 
 
 # ---- consistency check ----------------------------------------------------------------------------------------------
@@ -741,6 +1153,8 @@ def records_section(screen):
         if unit['respawned']:
             found.append(f"{unit['respawned']} episodes started again after a value that was not a number")
         found += [f'{count:,} {kind}' for kind, count in unit['problems'].items()]
+        found += unit['notes'] + (["complete, but left out: the method's own unit of the screen is not complete"]
+                                  if unit.get('left_out') else [])
         largest = unit['largest_bonus']
         if largest and largest['windows'] > largest['start']:
             found.append(f"the largest bonus at a probe in a logging window is {short(largest['windows'])}, above the "
@@ -791,7 +1205,7 @@ def visits_figure(screen, order, plots):
     for slug in order:
         method = screen.methods[slug]
         slope = method.grid['decay_slope']
-        words = figures.wrapped(f'{method.name}, intrinsic weight {weight_text(method.best_weight)}', 28)
+        words = figures.wrapped(f"{method.name}, intrinsic weight {weight_text(method.grid['weight'])}", 28)
         panels.append({'title': words + ('\nno slope' if slope is None else f'\nmedian slope {slope:.2f}'),
                        **method.grid['bins']})
     name = figures.file_slug('bonus at the probes against cumulative visits', 'best intrinsic weights')
@@ -809,7 +1223,7 @@ def command(run_dir, batch):
 def build(screen, run_dir, settings, plots):
     """The whole summary in Markdown, section by section; the figures are written on the way."""
     run_dir, folder = Path(run_dir), Path(run_dir) / 'batches' / screen.batch
-    order = row_order(screen)
+    order, discovery = row_order(screen), discovery_order(screen)
     parts = [f"# {settings['title']}\n\n"
              f'Generated {contents.pacific(contents.now())} by the command below. This file is generated: regenerate '
              'it, do not edit it. Times are Pacific, converted from machines running Eastern. Run folder: '
@@ -817,12 +1231,18 @@ def build(screen, run_dir, settings, plots):
              units_section(screen)]
     if order:
         parts += [measures_section(screen), screen_section(screen, order), weights_section(screen, order),
+                  discovery_section(screen, discovery), discovery_weights_section(screen, discovery),
                   curves_section(screen, curves_figure(screen, order, plots)),
                   properties_section(screen, order, visits_figure(screen, order, plots))]
-    if 'predictions' in settings:
-        parts.append(predictions_section(screen, (folder / 'ideas.md').read_text(), settings['predictions']))
+    # The predictions: read by the batch's module when it has one, else quoted when `ideas.md` holds any.
+    ideas = (folder / 'ideas.md').read_text() if (folder / 'ideas.md').exists() else ''
+    if 'predictions' in settings or re.search(r'(?m)^## Predictions', ideas):
+        parts.append(predictions_section(screen, ideas, settings.get('predictions')))
     if order:
-        parts.append(sides_section(screen, order))
+        parts.append(sides_section(screen, order, discovery))
+    if 'validation_block' in settings:
+        description = json.loads((folder / settings['study_description']).read_text())
+        parts.append(validation_section(screen, run_dir, description, settings['validation_block']))
     if 'consistency_check' in settings:
         parts.append(consistency_section(screen, run_dir, settings['consistency_check']))
     parts.append(records_section(screen))

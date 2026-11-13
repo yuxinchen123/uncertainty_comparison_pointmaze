@@ -223,3 +223,47 @@ def test_of_a_seed_trained_by_several_units_the_unit_that_finished_first_is_used
     # The same seed twice inside one unit is never a planned repeat (the first policy read is of the unit a-repeat).
     with pytest.raises(ValueError, match='Seed 0 was trained more than once for one configuration inside the unit a-repeat_weight-4'):
         records.split_repeats(list(run.policies) + [run.policies[0]], finished)
+
+
+def test_a_unit_named_last_never_takes_the_place_of_another_unit(tmp_path):
+    """A unit read for the secondary metric only is used for the seeds no other unit trained, whenever it finished."""
+    sweep = start_record('sweep', cells=((1e-4, 4.0),))
+    early = start_record('development-for-discovery_sweep', cells=((1e-4, 4.0), (1e-4, 16.0)))
+    write_shard(tmp_path, [sweep] + goal_windows(sweep, [1, 1]), finished='2026-11-12T10:00:00-08:00')
+    write_shard(tmp_path, [early] + goal_windows(early, [0, 0, 2, 2]), finished='2026-11-12T08:00:00-08:00')
+    run = records.load_run(tmp_path)
+    finished = {unit['unit_id']: unit['finished'] for unit in run.units}
+    last = {'development-for-discovery_sweep'}
+    assert sorted(finished, key=lambda unit: records.use_order(unit, finished, last)) == [
+        'sweep', 'development-for-discovery_sweep']
+    used, repeats = records.split_repeats(run.policies, finished, last)
+    # Weight 4 comes from the sweep although the other unit finished two hours earlier; weight 16 from that unit.
+    assert sorted((policy.unit_id, dict(policy.settings)['int_coef']) for policy in used) == [
+        ('development-for-discovery_sweep', 16.0)] * 2 + [('sweep', 4.0)] * 2
+    assert {policy.unit_id for policy in repeats} == last and len(repeats) == 2
+    # Without the name the unit that finished first is used, as before.
+    used, _ = records.split_repeats(run.policies, finished)
+    assert {policy.unit_id for policy in used} == last
+
+
+def test_a_phase_must_agree_with_the_seeds_and_a_null_first_arrival_means_none(tmp_path):
+    """A unit of a development phase on confirmation seeds is refused; a first arrival written as null reads as none."""
+    records.check_phase('u', 'development-for-discovery', [0, 15])
+    records.check_phase('u', 'confirmation-for-discovery', [30000, 31023])
+    records.check_phase('u', 'validation-block', [10000])
+    records.check_phase('u', None, [0, 30000])
+    with pytest.raises(ValueError, match='has the phase confirmation-for-discovery, but its seed 12 is a development seed'):
+        records.check_phase('u', 'confirmation-for-discovery', [30000, 12])
+    # The reader applies the check to a unit that has a specification file.
+    start = start_record('development-for-discovery_unit', seeds=(30000, 30001))
+    windows = goal_windows(start, [1, None])
+    windows[-1]['first_goal_step_per_copy'] = [108, None]
+    path = write_shard(tmp_path, [start] + windows)
+    summary, policies = records.read_unit(path)
+    assert [policy.first_goal_step for policy in policies] == [108, -1]
+    (tmp_path / 'specifications').mkdir()
+    (tmp_path / 'specifications' / 'development-for-discovery_unit.json').write_text(
+        json.dumps({'unit_id': 'development-for-discovery_unit', 'phase': 'development-for-discovery', 'method': 'cleanrl-ppo-rnd'}))
+    with pytest.raises(ValueError, match='its seed 30000 is a confirmation seed'):
+        records.read_unit(path)
+    assert records.configurations(policies)[0].key == policies[0].configuration_key
