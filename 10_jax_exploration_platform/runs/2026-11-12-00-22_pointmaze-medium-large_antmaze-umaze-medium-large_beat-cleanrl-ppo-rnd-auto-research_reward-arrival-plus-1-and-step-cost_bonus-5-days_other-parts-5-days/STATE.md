@@ -1093,6 +1093,25 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   screens run at both counts (the AntMaze baseline folder's `infra_history.md`). **Ant screen, third complete
   unit** (first-arrival hold alone, 128 environments per policy): level with RND in all 8 configurations (−0.003
   to +0.001); 12 fault-guard respawns. Prediction 4 of batch 10 failed at this count.
+- 2026-11-13 05:30 PT: **the slow settling after the fast-last-layer phase is explained, and a fix exists**
+  (`diagnosis/2026-11-13_slow-settling-after-the-fast-last-layer/notes.md`; option
+  `predictor_divisor_after_first_arrival`, commit 9aab504b; a diagnostics field in bb07d8fa).
+  1. Mechanism: RND's divisor remembers the predictor's first, large errors (93 at the start of PointMaze Medium,
+     still 60 at the first arrival). The fast last layer's scores are about 14 times smaller from the start, so
+     its divisor is about 4. When the fast last layer stops, the predictor's own scores are divided by that small
+     divisor and the learner sees 10 to 20 times RND's intrinsic reward for the rest of the run.
+  2. Ruled out: a larger action spread (it is smaller), a predictor in another state, the switch itself.
+  3. Fix: a second divisor follows the predictor's own scores from the first rollout and is used once a policy has
+     arrived. On short runs with 64 seeds the failure is gone (Medium, weight 4: return 0.734 against RND's 0.733
+     with the first arrival after 16 against 23 thousand steps; Large, weight 2: 0.353 against 0.329 with 101
+     against 249 thousand steps). These runs show the mechanism, not a lead.
+  4. To know before use: the option adds four arrays per policy to the saved state, so a unit that uses it can
+     only be continued by a code copy that has it; weights of fast-last-layer arms are not RND's weights (before
+     the arrival the learner sees 2 to 3 times RND's reward at the same weight).
+  **Batch 13 is written** (ideas and six predictions,
+  `batches/13_fast-last-layer-until-the-first-arrival_then-the-predictors-own-divisor_four-pointmaze-cases/`): 13
+  units on the first validation block. It is not built yet: jobs of the code copy 2017e2b8 are still running for
+  this folder and would fail units of the new option.
 
 ## Next
 
