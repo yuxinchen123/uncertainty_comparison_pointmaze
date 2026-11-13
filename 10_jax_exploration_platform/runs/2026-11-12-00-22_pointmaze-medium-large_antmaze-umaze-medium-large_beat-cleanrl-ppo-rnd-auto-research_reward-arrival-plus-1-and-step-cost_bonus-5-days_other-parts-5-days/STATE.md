@@ -492,6 +492,13 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   contract test pass. The human-readable resource document is not regenerated yet.
 - 2026-11-12 19:00 PT: this folder's new monitor job 6894373 is running (on heartpiece) since the memory request
   was lowered.
+- 2026-11-12 19:15 PT: **AntMaze physics: cause found and setting decided.** The integrator (`implicitfast` at
+  0.01 s) adds rotational energy to fast-turning ants in the air; more solver iterations do not help; RK4 and a
+  0.005 s time step remove it. Decision: 0.005 s with 10 physics steps per environment step, plus the guard at
+  30 m/s and 100 rad/s; cost 1.97 times per iteration. Details and numbers in the AntMaze folder's
+  `infra_history.md`. The old check is stopped; the time-step configuration field, its gates (now including a
+  gate with trained policies) and the throughput of the final setting are being done in the background since
+  19:17 PT. Then: freeze, rebuild the rollout-shape check under a new phase name, first unit by hand.
 
 ## Next
 

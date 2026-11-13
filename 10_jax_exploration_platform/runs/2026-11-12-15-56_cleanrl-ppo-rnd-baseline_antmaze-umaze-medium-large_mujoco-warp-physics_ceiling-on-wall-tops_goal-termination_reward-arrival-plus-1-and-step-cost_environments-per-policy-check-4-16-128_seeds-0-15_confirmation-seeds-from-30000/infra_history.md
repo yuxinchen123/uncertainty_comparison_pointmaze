@@ -144,3 +144,29 @@ Times are Pacific, read from the clock or from scheduler records.
   18:41 PT copied, verified and moved 5 units to `queue/done` (the units with 128 environments per policy, cells
   1 to 40; 3,764 to 4,049 s each on A10 and A30 cards). Nothing was lost: the records stayed on the server until
   the copy succeeded. These units are records for the physics diagnosis only (entry of 18:00 to 18:04 PT).
+- 2026-11-12 19:15 PT: **the diagnosis of the diverging physics is done** (speed study folder,
+  `profiles/antmaze_warp_blow_up/notes.md`, commit ccd16d50; I checked its key numbers in the records).
+  1. Cause: the integrator, not the solver (my first suspect is refuted). `implicitfast` at a 0.01 s time step
+     adds rotational energy to a fast-turning ant in the air: the torso's turning rate grows over about 24 steps
+     (32, 55, 94, 138, 188, 326 rad/s) and the speed follows in the last few steps.
+  2. Replay of 33 recorded runaways in C MuJoCo: `implicitfast` and Euler repeat 20 to 32 of them at every
+     solver setting; RK4 (the reference model's integrator) repeats none; `implicitfast` at 0.005 s repeats 1
+     or 2 when started 8 or more steps before.
+  3. On the H100 NVL with the same trained policies: training physics, 33 runaways in 362 million steps (largest
+     5.7e13 m/s); RK4, none in 104 million (largest 14.6 m/s); `implicitfast` at 0.005 s with 10 physics steps,
+     none in 127 million (largest 14.3 m/s). Seconds per training iteration at 16,384 environments: 1.374, 4.927
+     and 2.707.
+  4. A guard was added, off by default: an environment whose torso passes a speed or turning-rate bound, or
+     leaves the maze's volume, is respawned without an arrival and counted
+     (`physics_fault_respawns_per_copy`).
+  **Decision (mine, reported to the user, reversible):** the AntMaze baseline runs `implicitfast` at 0.005 s
+  with 10 physics steps per environment step, and the guard at 30 m/s and 100 rad/s as a second line of defence.
+  With the guard alone the turning below the bounds stays inflated (0.53% of steps at 20 to 40 rad/s against
+  0.28% with RK4 and 0.29% at 0.005 s). Cost: 1.97 times the time per iteration; RK4 would cost 3.59 times.
+  Also seen: under the stable physics the same policies still spend about 7% of their steps with the torso above
+  1.5 m, so launching itself is something this strong ant really does, not a fault of the integration.
+- 2026-11-12 19:16 PT: the two old check units still running on Gilbreth (16 and 4 environments per policy) were
+  stopped: hand-overs from this folder set to 0 units at once, jobs 12346602 and 12346671 cancelled by their ids
+  from this folder's Gilbreth ledger (the fleet's take-back moves waiting units only). The 6 finished units stay
+  as records; no result of this check is used. The check starts again under a new phase name once the time step
+  is a recorded configuration field with its gates (work started 19:17 PT) and the code is frozen anew.
