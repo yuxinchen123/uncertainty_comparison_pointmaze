@@ -39,7 +39,8 @@ The batch folder holds `summary_settings.json`:
 - `validation_block` (optional): `phase` (the phase of units that each train one method at one intrinsic weight
   on other seeds, in the screen's environment and reward setting), `control` (the `method` of the control among
   them) and `method_names` (the name in words of each method of this batch among them). The summary then lists,
-  per method and weight, W, L and M with the paired differences from the control at the same weight. Units of
+  per method and weight, W, L and M with the paired differences from the control at the same weight, and after
+  that each method at its best weight against the control at the control's best weight, per metric. Units of
   the phase whose method is not in `method_names` belong to another batch: they are named and not read.
 
 Through the test helper's Slurm job (numpy and plotting never run on a login node): see batch_summary_job.py.
@@ -958,6 +959,154 @@ def validation_units(run_dir, description, block):
     return groups, waiting, sorted(set(others))
 
 
+def validation_best(groups, block, budget, batch):
+    """Each method of the validation block at its best intrinsic weight per metric, against the control at its own.
+
+    Returns {'whole': rows, 'discovery': rows}. One row per method with a complete unit: the control first, then
+    the others from the best value on. A row holds the method, its best weight for the metric, the weights it
+    was run at, its measures at the best weight, and its paired differences from the control at the control's
+    own best weight for the same metric (None for the control, and when the control has no complete unit).
+    """
+    # The configurations of each method in weight order.
+    # before: {('control', 2.0): b, ('control', 1.0): a, ('idea', 2.0): c}; after: {'control': [a, b], 'idea': [c]}.
+    by_method = defaultdict(list)
+    for (slug, _), group in sorted(groups.items(), key=lambda item: item[0][1]):
+        by_method[slug].append(group)
+    order = list(block['method_names'])
+    tables = {}
+    for metric, rank, value in (('whole', compare.rank_configurations, lambda row: -row['measures']['whole_curve_mean']),
+                                ('discovery', compare.rank_for_discovery, lambda row: row['measures']['capped_first_goal_step'])):
+        # W: the highest whole-curve mean (ties: the higher final level); M: the smallest (ties: more policies arrive).
+        best = {slug: rank(found, budget)[0][2] for slug, found in by_method.items()}
+        control = best.get(block['control'])
+        rows = []
+        for slug, group in best.items():
+            result = None
+            if control is not None and slug != block['control']:
+                name = ('batch validation block at the best weights', batch, slug, metric)
+                result = {**compare.compare_with_baseline(group.policies, control.policies, budget, *name),
+                          **compare.compare_discovery(group.policies, control.policies, budget, *name)}
+            rows.append({'slug': slug, 'weight': weight_of(group), 'weights': [weight_of(member) for member in by_method[slug]],
+                         'measures': measures.configuration_measures(group.policies, budget), 'result': result})
+        tables[metric] = sorted(rows, key=lambda row: (row['slug'] != block['control'], value(row), order.index(row['slug'])))
+    return tables
+
+
+def chosen_weight_cell(row):
+    """A best weight with the weights it was chosen among, as a table cell."""
+    # before: weight 0.5 of the weights [0.25, 0.5, 1.0]; after: '0.5 (of 0.25, 0.5, 1)'. One weight: '2 (its only weight)'.
+    if len(row['weights']) == 1:
+        return f"{weight_text(row['weight'])} (its only weight)"
+    return f"{weight_text(row['weight'])} (of {', '.join(weight_text(weight) for weight in row['weights'])})"
+
+
+def fine_difference(found, digits, style=None):
+    """A paired difference with its 95% interval at a chosen number of decimals; the mean bold or underlined."""
+    # before: ({'mean': 0.0137, 'interval': [0.0072, 0.0203]}, 4, 'best'); after: '**+0.0137** [+0.0072, +0.0203]'.
+    low, high = found['interval']
+    return f"{report.styled(format(found['mean'], f'+.{digits}f'), style)} [{low:+.{digits}f}, {high:+.{digits}f}]"
+
+
+def fine_mean(value, error, digits, style=None):
+    """A mean with its standard error at a chosen number of decimals; the mean alone with one seed."""
+    # before: (0.8917, 0.0031, 4, 'best'); after: '**0.8917** ± 0.0031'.
+    return report.styled(f'{value:.{digits}f}', style) + ('' if error is None else f' ± {error:.{digits}f}')
+
+
+def validation_best_text(tables, block):
+    """The two tables of the validation block that compare best weight with best weight, one per metric."""
+    names, control = block['method_names'], block['control']
+    # Differences of a few thousandths need four decimals once the seeds are many; a small block keeps three.
+    digits = 4 if max(row['measures']['seeds'] for row in tables['whole']) >= 100 else 3
+    compared = {metric: [row['result'] if row['result'] and row['result']['seeds'] >= 2 else None for row in rows]
+                for metric, rows in tables.items()}
+
+    def cell(row, found, text):
+        """A difference cell: the control's word, why there is none, or the difference itself."""
+        if row['slug'] == control:
+            return 'control'
+        if row['result'] is None:
+            return 'no complete control unit'
+        return text if found else 'fewer than two seeds in common'
+
+    def common(row, found):
+        """The number of seeds a row shares with the control."""
+        return str(row['measures']['seeds']) if row['slug'] == control else str(found['seeds']) if found else 'not compared'
+
+    def marks(values, text_of, higher_better):
+        """The marks of one column; a row without a value takes none."""
+        return report.column_marks(values, [None if value is None else text_of(value) for value in values], higher_better)
+
+    # The table of the primary metric, at the best weights for W.
+    rows, found = tables['whole'], compared['whole']
+    number = lambda value: f'{value:.{digits}f}'
+    signed = lambda value: format(value, f'+.{digits}f')
+    whole = marks([row['measures']['whole_curve_mean'] for row in rows], number, True)
+    final = marks([row['measures']['final_level'] for row in rows], number, True)
+    differences = {quantity: marks([result[quantity]['mean'] if result else None for result in found], signed, True)
+                   for quantity in ('whole_curve_mean', 'final_level')}
+    capped = marks([result['capped_first_goal_step']['mean'] if result else None for result in found],
+                   lambda value: report.thousands(value, True), False)
+    first = []
+    for index, (row, result) in enumerate(zip(rows, found)):
+        measured = row['measures']
+        first.append([
+            names[row['slug']], chosen_weight_cell(row),
+            fine_mean(measured['whole_curve_mean'], measured['whole_curve_mean_error'], digits, whole[index]),
+            cell(row, result, result and fine_difference(result['whole_curve_mean'], digits, differences['whole_curve_mean'][index])),
+            fine_mean(measured['final_level'], measured['final_level_error'], digits, final[index]),
+            cell(row, result, result and fine_difference(result['final_level'], digits, differences['final_level'][index])),
+            cell(row, result, result and report.discovery_interval_text(result['capped_first_goal_step'], capped[index])),
+            common(row, result)])
+
+    # The table of the secondary metric, at the best weights for M.
+    rows, found = tables['discovery'], compared['discovery']
+    capped = marks([row['measures']['capped_first_goal_step'] for row in rows], report.thousands, False)
+    differences = marks([result['capped_first_goal_step']['mean'] if result else None for result in found],
+                        lambda value: report.thousands(value, True), False)
+    reached = [round(row['measures']['reached_goal_share'] * row['measures']['seeds']) for row in rows]
+    reached_marks = report.column_marks([row['measures']['reached_goal_share'] for row in rows],
+                                        [f"{count} of {row['measures']['seeds']}" for count, row in zip(reached, rows)], True)
+    whole = marks([row['measures']['whole_curve_mean'] for row in rows], number, True)
+    final = marks([row['measures']['final_level'] for row in rows], number, True)
+    second = []
+    for index, (row, result) in enumerate(zip(rows, found)):
+        measured = row['measures']
+        second.append([
+            names[row['slug']], chosen_weight_cell(row),
+            report.thousands_with_error(measured['capped_first_goal_step'], measured['capped_first_goal_step_error'], capped[index]),
+            cell(row, result, result and report.discovery_interval_text(result['capped_first_goal_step'], differences[index])),
+            report.styled(f"{reached[index]} of {measured['seeds']}", reached_marks[index]),
+            report.styled(number(measured['whole_curve_mean']), whole[index]),
+            report.styled(number(measured['final_level']), final[index]), common(row, result)])
+    return ('### Each method at its best intrinsic weight against the control at its best weight\n\n'
+            'The two tables above compare at equal intrinsic weights. A method and the control need not have the '
+            'same best weight, so here each method stands at its own best weight for the metric and the control at '
+            'its own: for $W$ the weight with the highest $W$ (ties: the higher $L$), for $M$ the weight with the '
+            'smallest $M$ (ties: more policies reach the goal). The weight column names the weights each was chosen '
+            'among. Each best weight was chosen on these same seeds, among the weights the method was run at in '
+            'this block, and the control\'s was chosen the same way: a side that was run at more weights had more '
+            'chances, so these differences lean slightly towards it. They are a second selection step, not the '
+            'comparison on the confirmation seeds. Differences are the method minus the control on the seeds both '
+            'have, with the 95% interval from 10,000 resamples of those seeds. The control is the first row; the '
+            'other methods follow from the best value of the sorted column on. Per column the best value is bold '
+            'and the second best underlined.\n\n'
+            '**Whole-curve mean, at the best weights for $W$.** The last difference column gives the mean capped '
+            'first-goal time at these same weights, in thousands of steps (negative: the goal was first reached '
+            'earlier than under the control).\n\n'
+            + report.markdown_table(['method', 'best intrinsic weight for $W$', '$W$ ↑ ± standard error',
+                                     'difference in $W$ from the control [95% interval]', '$L$ ± standard error',
+                                     'difference in $L$ from the control [95% interval]',
+                                     'difference in $M$ at these weights [95% interval], thousand steps',
+                                     'seeds in common with the control'], first)
+            + '**Mean capped first-goal time, at the best weights for $M$.** $M$, its standard error and its '
+            'difference are in thousands of steps; $W$ and $L$ are read at the same weight as $M$.\n\n'
+            + report.markdown_table(['method', 'best intrinsic weight for $M$', '$M$ ↓ ± standard error, thousand steps',
+                                     'difference in $M$ from the control [95% interval], thousand steps',
+                                     'policies that reach the goal', '$W$ at that weight', '$L$ at that weight',
+                                     'seeds in common with the control'], second))
+
+
 def validation_section(screen, run_dir, description, block):
     """The validation block: per method and weight, W, L and M on its seeds, and the paired differences from the control."""
     unknown, missing = set(block) - VALIDATION_KEYS, VALIDATION_KEYS - set(block)
@@ -1048,6 +1197,7 @@ def validation_section(screen, run_dir, description, block):
             + report.markdown_table(['method', 'intrinsic weight', '$M$ ± standard error, thousand steps',
                                      'difference in $M$ from the control [95% interval], thousand steps',
                                      'policies that reach the goal', 'seeds in common with the control'], second)
+            + validation_best_text(validation_best(groups, block, budget, screen.batch), block)
             + left_out)
 
 

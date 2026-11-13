@@ -562,9 +562,70 @@ def test_the_validation_block_lists_each_method_and_weight_against_the_control_a
     assert 'Not complete, left out:\n\n- control, intrinsic weight 2: unfinished, 10 logging windows written.' in block
     # A unit of the phase whose method the block does not name belongs to another batch: named, not read.
     assert 'they are not read here: method of another batch.' in block and block.count('method of another batch') == 1
+    # Best weight against best weight: the control has one complete weight (1); the idea's best weight is 1 for both
+    # metrics (W 0.9 against 0.5 at the weight 4, first arrival at step 208 against 1,008).
+    best = block.split('### Each method at its best intrinsic weight against the control at its best weight\n')[1]
+    assert 'Each best weight was chosen on these same seeds' in best
+    primary, secondary = best.split('**Mean capped first-goal time, at the best weights for $M$.**')
+    assert '| control | 1 (its only weight) | <u>0.750</u> ± 0.029 | control | 1.000 ± 0.000 | control | control | 4 |' in primary
+    assert ('| separate predictor step size | 1 (of 1, 4) | **0.900** ± 0.000 | +0.150 [+0.100, +0.200] | 1.000 ± 0.000 '
+            '| +0.000 [+0.000, +0.000] | -0.3 [-0.4, -0.2] | 4 |') in primary
+    assert '| control | 1 (its only weight) | <u>0.508</u> ± 0.0577 | control | 4 of 4 | <u>0.750</u> | 1.000 | 4 |' in secondary
+    assert '| separate predictor step size | 1 (of 1, 4) | **0.208** ± 0 | -0.3 [-0.4, -0.2] | 4 of 4 | **0.900** | 1.000 | 4 |' in secondary
     # A block of the settings with a key it does not know is refused.
     with pytest.raises(ValueError, match="validation_block: unknown keys \\['colour'\\], missing keys \\['control'\\]"):
         batch_summary.validation_section(None, run, {}, {'phase': 'p', 'method_names': {}, 'colour': 'blue'})
+
+
+def weight_group(method, weight, curves, first_steps, seeds=None):
+    """One configuration in memory: a method at one intrinsic weight, one training curve and first arrival per seed."""
+    seeds = range(len(curves)) if seeds is None else seeds
+    return records.configurations([
+        flat_policy(curve, seed=seed, first_goal_step=first, method=method, settings=(('int_coef', weight),))
+        for seed, curve, first in zip(seeds, curves, first_steps)])[0]
+
+
+def test_the_best_weights_of_a_validation_block_are_chosen_per_metric_and_compared_on_the_common_seeds():
+    """The idea's best weight is 2 for W and 8 for M; the control's is 1 for both; an idea on other seeds is not compared."""
+    block = {'phase': 'p', 'control': 'c', 'method_names': {'c': 'control', 'a': 'idea a', 'b': 'idea b', 'd': 'idea d'}}
+    groups = {
+        # The control: W 0.5 at the weight 1 (arrivals at steps 150 and 250) and 0.25 at the weight 4.
+        ('c', 1.0): weight_group('c', 1.0, [[0, 1], [0, 1]], [150, 250]),
+        ('c', 4.0): weight_group('c', 4.0, [[0, 0.5], [0, 0.5]], [180, 260]),
+        # Idea a: W 0.75 and 0.65 at the weight 2 (arrivals at 100 and 140); at the weight 8 it arrives at steps 20
+        # and 40 and ends at 0.
+        ('a', 2.0): weight_group('a', 2.0, [[0.5, 1], [0.3, 1]], [100, 140]),
+        ('a', 8.0): weight_group('a', 8.0, [[1, 0], [1, 0]], [20, 40]),
+        # Idea b has one weight and one seed in common with the control (seed 1); idea d was trained on other seeds.
+        ('b', 2.0): weight_group('b', 2.0, [[1, 1], [1, 1]], [10, 10], seeds=(1, 7)),
+        ('d', 2.0): weight_group('d', 2.0, [[1, 1], [1, 1]], [10, 10], seeds=(8, 9))}
+    tables = batch_summary.validation_best(groups, block, 200, 'made-up batch')
+    whole = {row['slug']: row for row in tables['whole']}
+    discovery = {row['slug']: row for row in tables['discovery']}
+    # Rows: the control first, then from the best value on (ties in the settings' order).
+    assert [row['slug'] for row in tables['whole']] == ['c', 'b', 'd', 'a']
+    assert [row['slug'] for row in tables['discovery']] == ['c', 'b', 'd', 'a']
+    assert (whole['c']['weight'], whole['a']['weight'], discovery['c']['weight'], discovery['a']['weight']) == (1.0, 2.0, 1.0, 8.0)
+    assert whole['a']['weights'] == [2.0, 8.0] and whole['c']['result'] is None
+    # W of idea a at the weight 2 minus the control's at the weight 1: 0.75 - 0.5 and 0.65 - 0.5.
+    assert whole['a']['result']['whole_curve_mean']['mean'] == pytest.approx(0.2) and whole['a']['result']['seeds'] == 2
+    # M at the best weights for M: 30 steps against the control's 175 (its second arrival counts as the budget, 200).
+    assert discovery['a']['measures']['capped_first_goal_step'] == 30.0
+    assert discovery['a']['result']['capped_first_goal_step']['mean'] == pytest.approx(-145.0)
+    assert whole['b']['result']['seeds'] == 1 and whole['d']['result']['seeds'] == 0
+    text = batch_summary.validation_best_text(tables, block)
+    assert '| idea a | 2 (of 2, 8) | <u>0.700</u> ± 0.050 | +0.200 [+0.150, +0.250] |' in text
+    assert '| idea b | 2 (its only weight) | **1.000** ± 0.000 | fewer than two seeds in common |' in text
+    assert '| idea a | 8 (of 2, 8) | <u>0.03</u> ± 0.01 | -0.145 [-0.16, -0.13] | **2 of 2** |' in text
+    # Without a complete control unit every method is listed and none is compared.
+    alone = batch_summary.validation_best({key: group for key, group in groups.items() if key[0] != 'c'}, block, 200, 'made-up batch')
+    assert all(row['result'] is None for row in alone['whole'])
+    assert '| idea a | 2 (of 2, 8) | <u>0.700</u> ± 0.050 | no complete control unit |' in batch_summary.validation_best_text(alone, block)
+    # Many seeds: four decimals.
+    many = {('c', 1.0): weight_group('c', 1.0, [[0, 1]] * 100, [150] * 100),
+            ('a', 2.0): weight_group('a', 2.0, [[0.5, 1]] * 100, [100] * 100)}
+    text = batch_summary.validation_best_text(batch_summary.validation_best(many, block, 200, 'made-up batch'), block)
+    assert '| idea a | 2 (its only weight) | **0.7500** ± 0.0000 | +0.2500 [+0.2500, +0.2500] |' in text
 
 
 def test_a_batch_that_takes_its_control_from_another_batch_and_has_no_predictions_module(tmp_path, monkeypatch):
