@@ -1,0 +1,21 @@
+{
+  "title": "Batch 4: the two finalists' development sweeps in the other three PointMaze cases",
+  "development_sweeps": {
+    "study_description": "development-at-the-budget_two-finalists_three-pointmaze-cases.json",
+    "method_names": {
+      "fast-last-layer-step-0-point-1-slower-predictor-held-divisor": "fast last layer with slower predictor and held divisor, step 0.1",
+      "slower-predictor-with-held-divisor": "slower predictor with held divisor"
+    },
+    "baseline": {
+      "run_folder": "2026-11-12-02-24_cleanrl-ppo-rnd-baseline_pointmaze-medium-large_antmaze-umaze-medium-large_goal-termination_reward-arrival-plus-1-and-step-cost_first-pass-60-configurations_seeds-0-15_confirmation-seeds-from-30000",
+      "method": "cleanrl-ppo-rnd",
+      "name": "CleanRL PPO-RND",
+      "phases": [
+        "development-at-the-budget*"
+      ],
+      "confirmation_phases": [
+        "confirmation"
+      ]
+    }
+  }
+}

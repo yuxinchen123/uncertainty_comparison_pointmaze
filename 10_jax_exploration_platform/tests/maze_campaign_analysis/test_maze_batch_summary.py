@@ -574,7 +574,7 @@ def test_the_validation_block_lists_each_method_and_weight_against_the_control_a
     assert '| separate predictor step size | 1 (of 1, 4) | **0.208** ± 0 | -0.3 [-0.4, -0.2] | 4 of 4 | **0.900** | 1.000 | 4 |' in secondary
     # A block of the settings with a key it does not know is refused.
     with pytest.raises(ValueError, match="validation_block: unknown keys \\['colour'\\], missing keys \\['control'\\]"):
-        batch_summary.validation_section(None, run, {}, {'phase': 'p', 'method_names': {}, 'colour': 'blue'})
+        batch_summary.read_validation(run, {}, {'phase': 'p', 'method_names': {}, 'colour': 'blue'}, BATCH)
 
 
 def weight_group(method, weight, curves, first_steps, seeds=None):

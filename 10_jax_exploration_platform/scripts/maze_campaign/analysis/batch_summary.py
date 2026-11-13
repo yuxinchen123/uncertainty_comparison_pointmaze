@@ -41,13 +41,19 @@ The batch folder holds `summary_settings.json`:
   them) and `method_names` (the name in words of each method of this batch among them). The summary then lists,
   per method and weight, W, L and M with the paired differences from the control at the same weight, and after
   that each method at its best weight against the control at the control's best weight, per metric. Units of
-  the phase whose method is not in `method_names` belong to another batch: they are named and not read.
+  the phase whose method is not in `method_names` belong to another batch: they are named and not read;
+- `development_sweeps` (optional): development sweeps of the batch's methods in one or more cases, each against
+  the baseline's development sweeps in the same case (keys in `case_sweeps.py`). A batch that only has such
+  sweeps is not a screen: it leaves out `study_description`, `control` and `method_names`, and its summary holds
+  the measures, this section and the predictions;
+- `discovery` (optional): discovery checks in one case, on the validation seeds and on the development seeds
+  (keys in `case_sweeps.py`).
 
 Through the test helper's Slurm job (numpy and plotting never run on a login node): see batch_summary_job.py.
 """
 
 from collections import defaultdict
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 import importlib
 import json
 import math
@@ -56,14 +62,20 @@ import re
 
 import numpy as np
 
-from . import compare, contents, figures, maze_grid, measures, records, report
+from . import case_sweeps, compare, contents, figures, maze_grid, measures, records, report
 
 # The test helper that runs the job, relative to the platform folder; the summary names the whole command.
 SUBMITTER = ('benchmark_runs/2026-11-12-00-17_pointmaze-antmaze_cleanrl-ppo-rnd_speed-30-ideas_'
              'screen-15-minutes-per-idea-per-card_h100-nvl_rtx-5080_rtx-a4500/infrastructure/submit_tests.sh')
 SETTING_KEYS = {'title', 'study_description', 'control', 'control_study_description', 'method_names',
-                'consistency_check', 'predictions', 'more_intrinsic_weights', 'validation_block'}
+                'consistency_check', 'predictions', 'more_intrinsic_weights', 'validation_block',
+                'development_sweeps', 'discovery'}
 REQUIRED_KEYS = {'title', 'study_description', 'control', 'method_names'}
+# What a batch without a screen needs: its sweeps are in `development_sweeps`.
+REQUIRED_WITHOUT_A_SCREEN = {'title', 'development_sweeps'}
+# The keys that only mean something beside a screen.
+SCREEN_ONLY_KEYS = {'control', 'control_study_description', 'method_names', 'consistency_check',
+                    'more_intrinsic_weights', 'validation_block', 'discovery'}
 VALIDATION_KEYS = {'phase', 'control', 'method_names'}
 # A table of one value per intrinsic weight holds at most this many weights, so that it fits a printed page.
 MOST_WEIGHT_COLUMNS = 6
@@ -121,6 +133,8 @@ class Screen:
     discovery_differences: dict   # idea -> its paired difference in M from the control (compare.compare_discovery)
     budget: int
     seeds: tuple               # the screen's seeds
+    validation: dict = None    # the validation block as read (read_validation); None without one
+    cases: dict = None         # the development sweeps case by case (case_sweeps.read_development); None without them
 
     def complete(self, *slugs):
         """Whether every named method's unit is complete."""
@@ -133,7 +147,11 @@ def read_settings(folder):
     """The batch folder's summary_settings.json, with its keys checked."""
     path = Path(folder) / 'summary_settings.json'
     settings = json.loads(path.read_text())
-    unknown, missing = set(settings) - SETTING_KEYS, REQUIRED_KEYS - set(settings)
+    # A batch whose only runs are development sweeps has no screen and none of the keys that belong to one.
+    without_screen = 'development_sweeps' in settings and 'study_description' not in settings
+    required = REQUIRED_WITHOUT_A_SCREEN if without_screen else REQUIRED_KEYS
+    unknown = set(settings) - SETTING_KEYS | (set(settings) & SCREEN_ONLY_KEYS if without_screen else set())
+    missing = required - set(settings)
     if unknown or missing:
         raise ValueError(f'{path}: unknown keys {sorted(unknown)}, missing keys {sorted(missing)}.')
     return settings
@@ -1107,23 +1125,31 @@ def validation_best_text(tables, block):
                                      'seeds in common with the control'], second))
 
 
-def validation_section(screen, run_dir, description, block):
-    """The validation block: per method and weight, W, L and M on its seeds, and the paired differences from the control."""
+def read_validation(run_dir, description, block, batch):
+    """The validation block as read: its complete configurations, what is left out, its budget, and the best weights."""
     unknown, missing = set(block) - VALIDATION_KEYS, VALIDATION_KEYS - set(block)
     if unknown or missing:
         raise ValueError(f'summary_settings.json, validation_block: unknown keys {sorted(unknown)}, missing keys {sorted(missing)}.')
-    title = '## Validation block\n\n'
     groups, waiting, others = validation_units(run_dir, description, block)
+    budgets = sorted({group.planned_steps for group in groups.values()})
+    if len(budgets) > 1:
+        raise ValueError(f"The units of the phase {block['phase']} train {budgets} steps per policy; one length is needed.")
+    budget = budgets[0] if budgets else None
+    return {'groups': groups, 'waiting': waiting, 'others': others, 'budget': budget, 'batch': batch,
+            'best': validation_best(groups, block, budget, batch) if groups else None}
+
+
+def validation_section(read, block):
+    """The validation block as read (read_validation): per method and weight W, L and M with the paired differences
+    from the control at the same weight, then each method at its best weight against the control at its own."""
+    title = '## Validation block\n\n'
+    groups, waiting, others, budget = read['groups'], read['waiting'], read['others'], read['budget']
     left_out = ('Not complete, left out:\n\n' + ''.join(f'- {words}.\n' for words in waiting) + '\n') if waiting else ''
     if others:
         left_out += ('The phase also holds units of methods that this batch does not name; they are not read here: '
                      + '; '.join(others) + '.\n\n')
     if not groups:
         return title + f"No unit of the phase `{block['phase']}` is complete yet.\n\n" + left_out
-    budgets = sorted({group.planned_steps for group in groups.values()})
-    if len(budgets) > 1:
-        raise ValueError(f"The units of the phase {block['phase']} train {budgets} steps per policy; one length is needed.")
-    budget = budgets[0]
     seeds = sorted({policy.seed for group in groups.values() for policy in group.policies})
 
     # The control first, then the other methods in the order of the settings; each method by intrinsic weight.
@@ -1139,7 +1165,7 @@ def validation_section(screen, run_dir, description, block):
         elif control is None:
             results.append('no complete control unit at this weight')
         else:
-            name = ('batch validation block', screen.batch, slug, weight)
+            name = ('batch validation block', read['batch'], slug, weight)
             results.append({**compare.compare_with_baseline(groups[(slug, weight)].policies, control.policies, budget, *name),
                             **compare.compare_discovery(groups[(slug, weight)].policies, control.policies, budget, *name)})
     compared = [result if isinstance(result, dict) and result['seeds'] >= 2 else None for result in results]
@@ -1197,7 +1223,7 @@ def validation_section(screen, run_dir, description, block):
             + report.markdown_table(['method', 'intrinsic weight', '$M$ ± standard error, thousand steps',
                                      'difference in $M$ from the control [95% interval], thousand steps',
                                      'policies that reach the goal', 'seeds in common with the control'], second)
-            + validation_best_text(validation_best(groups, block, budget, screen.batch), block)
+            + validation_best_text(read['best'], block)
             + left_out)
 
 
@@ -1373,30 +1399,56 @@ def command(run_dir, batch):
 def build(screen, run_dir, settings, plots):
     """The whole summary in Markdown, section by section; the figures are written on the way."""
     run_dir, folder = Path(run_dir), Path(run_dir) / 'batches' / screen.batch
+    has_screen = 'study_description' in settings
     order, discovery = row_order(screen), discovery_order(screen)
     parts = [f"# {settings['title']}\n\n"
              f'Generated {contents.pacific(contents.now())} by the command below. This file is generated: regenerate '
              'it, do not edit it. Times are Pacific, converted from machines running Eastern. Run folder: '
-             f'`{run_dir.name}`; batch folder: `batches/{screen.batch}`.\n\n```bash\n{command(run_dir, screen.batch)}```\n\n',
-             units_section(screen)]
+             f'`{run_dir.name}`; batch folder: `batches/{screen.batch}`.\n\n```bash\n{command(run_dir, screen.batch)}```\n\n']
+    if has_screen:
+        parts.append(units_section(screen))
+    else:
+        parts.append(case_sweeps.measures_section())
     if order:
         parts += [measures_section(screen), screen_section(screen, order), weights_section(screen, order),
                   discovery_section(screen, discovery), discovery_weights_section(screen, discovery),
                   curves_section(screen, curves_figure(screen, order, plots)),
                   properties_section(screen, order, visits_figure(screen, order, plots))]
+    if screen.cases is not None:
+        parts.append(case_sweeps.development_section(run_dir, screen.cases, settings['development_sweeps']))
     # The predictions: read by the batch's module when it has one, else quoted when `ideas.md` holds any.
     ideas = (folder / 'ideas.md').read_text() if (folder / 'ideas.md').exists() else ''
     if 'predictions' in settings or re.search(r'(?m)^## Predictions', ideas):
         parts.append(predictions_section(screen, ideas, settings.get('predictions')))
     if order:
         parts.append(sides_section(screen, order, discovery))
-    if 'validation_block' in settings:
-        description = json.loads((folder / settings['study_description']).read_text())
-        parts.append(validation_section(screen, run_dir, description, settings['validation_block']))
+    if screen.validation is not None:
+        parts.append(validation_section(screen.validation, settings['validation_block']))
+    if 'discovery' in settings:
+        parts.append(case_sweeps.discovery_section(run_dir, screen.batch, settings['discovery']))
     if 'consistency_check' in settings:
         parts.append(consistency_section(screen, run_dir, settings['consistency_check']))
-    parts.append(records_section(screen))
+    if has_screen:
+        parts.append(records_section(screen))
     return ''.join(parts)
+
+
+def read_batch(run_dir, batch, settings):
+    """Everything a batch summary reads: the screen (empty for a batch without one), the validation block, the sweeps."""
+    run_dir = Path(run_dir)
+    folder = run_dir / 'batches' / batch
+    if 'study_description' in settings:
+        screen = read_screen(run_dir, batch, settings)
+    else:
+        screen = Screen(batch=batch, control=None, order=(), names={}, units=(), methods={}, differences={},
+                        discovery_differences={}, budget=None, seeds=())
+    validation = cases = None
+    if 'validation_block' in settings:
+        description = json.loads((folder / settings['study_description']).read_text())
+        validation = read_validation(run_dir, description, settings['validation_block'], batch)
+    if 'development_sweeps' in settings:
+        cases = case_sweeps.read_development(run_dir, batch, folder, settings['development_sweeps'])
+    return replace(screen, validation=validation, cases=cases)
 
 
 def generate(run_dir, batch):
@@ -1404,7 +1456,7 @@ def generate(run_dir, batch):
     run_dir = Path(run_dir).resolve()
     folder = run_dir / 'batches' / batch
     settings = read_settings(folder)
-    screen = read_screen(run_dir, batch, settings)
+    screen = read_batch(run_dir, batch, settings)
     plots = folder / 'plots'
     plots.mkdir(exist_ok=True)
     markdown = build(screen, run_dir, settings, plots)

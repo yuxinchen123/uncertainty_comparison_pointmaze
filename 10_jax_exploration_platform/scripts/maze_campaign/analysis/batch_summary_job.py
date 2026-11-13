@@ -39,6 +39,17 @@ def test_generate_batch_summary(request):
               f"median start ratio per weight from {min(ratios):.2f} to {max(ratios):.2f} | slopes fitted at the best "
               f"weight for {method.grid['decay_slope_pairs']} of {method.grid['pairs']} pairs")
 
+    # What is read beside the screen: the table rows of the validation block at the best weights, of the
+    # development sweeps and of the discovery checks, as the summary shows them.
+    text = result['summary'].read_text()
+    for heading in ('### Each method at its best intrinsic weight against the control at its best weight\n',
+                    '## Development sweeps against the baseline, case by case\n', '## Discovery checks beyond the screen\n'):
+        if heading in text:
+            body = text.split(heading)[1].split('\n## ')[0]
+            print(f'\n{heading.strip()}')
+            print('\n'.join(line for line in body.splitlines() if line.startswith(('| ', '#', '**')) or 'confirmation seeds' in line
+                            or 'at an end of its grid' in line or 'Not read yet' in line))
+
     # The secondary metric: every complete method at its best weight for M, in the order of its table.
     report = batch_summary.report
     for slug in batch_summary.discovery_order(screen):
