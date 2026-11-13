@@ -16,6 +16,7 @@ import argparse
 from copy import deepcopy
 import json
 from pathlib import Path
+import re
 import shlex
 import subprocess
 import sys
@@ -295,6 +296,52 @@ def plan_jobs(unit_memories, workers_without_unit, classes, nodes, budgets, rese
     return jobs
 
 
+def live_card_types(output):
+    """The card type each node holds now, read from the text of `scontrol show nodes -o`.
+
+    before: "NodeName=lynx02 Arch=x86_64 ... Gres=gpu:nvidia_rtx_4000_ada_generation:4(S:0-1) ..."
+    after:  {"lynx02": "nvidia_rtx_4000_ada_generation"}; a node with no typed card is left out
+    """
+    types = {}
+    for row in output.splitlines():
+        name = re.search(r"NodeName=(\S+)", row)
+        card = re.search(r"\bGres=gpu:([^,:()\s]+):\d+", row)
+        if name and card:
+            types[name.group(1)] = card.group(1)
+    return types
+
+
+def classes_as_the_scheduler_has_them(classes, live_types):
+    """The card classes with each node under the card type it holds NOW.
+
+    The resource file is written once and a node's cards can be replaced after that. A request that
+    names the old type on a pinned node is refused at submit ("Requested node configuration is not
+    available"; 2026-11-12: lynx02 and affogato13, listed with GTX 1080 Ti cards, hold RTX 4000 Ada
+    cards). A node whose live type differs moves to the first class of that type in its own partition,
+    and is left out when the file has no such class. A node the scheduler does not list keeps its place
+    (the planner skips it, since it has no free cards to read).
+
+    before: classes [{"gres_type": "a", "partition": "gpu", "nodes": ["n1", "n2", "n4"]},
+                     {"gres_type": "b", "partition": "gpu", "nodes": ["n3"]}],
+            live types {"n1": "a", "n2": "b", "n3": "c"}
+    after:  [{"gres_type": "a", "partition": "gpu", "nodes": ["n1", "n4"]},
+             {"gres_type": "b", "partition": "gpu", "nodes": ["n2"]}]
+    """
+    result = [dict(record, nodes=[node for node in record["nodes"]
+                                  if live_types.get(node, record["gres_type"]) == record["gres_type"]])
+              for record in classes]
+    for record in classes:
+        for node in record["nodes"]:
+            live = live_types.get(node, record["gres_type"])
+            if live == record["gres_type"]:
+                continue
+            home = next((other for other in result
+                         if other["gres_type"] == live and other["partition"] == record["partition"]), None)
+            if home is not None and node not in home["nodes"]:
+                home["nodes"].append(node)
+    return result
+
+
 def scheduler_state(run_dir):
     """Read what a submission plan needs: this run's live jobs, the accounts' free room, and the nodes."""
     live = common.own_live_jobs(run_dir)
@@ -305,8 +352,11 @@ def scheduler_state(run_dir):
         [sys.executable, str(common.ACCOUNTS / "capacity.py"), "--no-mit", "--json"], text=True))
     common.write_json(Path(run_dir) / "slurm/capacity_latest.json", capacity)
     budgets = grid_submit.capacity_budgets(capacity, submissions, live)
-    nodes = grid_submit.node_resources(subprocess.check_output(["scontrol", "show", "nodes", "-o"], text=True))
-    classes = common.read_json(grid_submit.RESOURCE_FILE)["classes"]
+    listing = subprocess.check_output(["scontrol", "show", "nodes", "-o"], text=True)
+    nodes = grid_submit.node_resources(listing)
+    # the card type of every node comes from the scheduler, not from the resource file's node lists
+    classes = classes_as_the_scheduler_has_them(common.read_json(grid_submit.RESOURCE_FILE)["classes"],
+                                                live_card_types(listing))
     # the owner's reservation is read live; its nodes are planned last and from their own free resources
     reservation = grid_submit.owner_reservation()
     reservation_budgets = {
@@ -361,20 +411,27 @@ def top_up(run_dir, phase, gpu_types=None, max_new_cards=None, dry_run=False):
     if not dry_run and jobs:
         (run_dir / "slurm").mkdir(exist_ok=True)
         (run_dir / "slurm/worker_env.sh").write_text(WORKER_ENVIRONMENT)
-    python, job_ids = canonical_python(), []
+    python, sent = canonical_python(), []
     for index, job in enumerate(jobs):
         # at most ten submissions, then a pause of 30 seconds, for the scheduler's request rate
         if index and index % 10 == 0 and not dry_run:
             time.sleep(30)
         print(f"  {job['identity']} {job['partition']} {job['node'] or 'any node'} {job['cards']} x {job['gpu_type']}"
               + (f" reservation {job['reservation']}" if job["reservation"] else ""))
-        job_ids.append(submit_job(run_dir, phase, job, worker_job_text(run_dir, platform, python, job["cards"]), dry_run))
+        try:
+            job_id = submit_job(run_dir, phase, job, worker_job_text(run_dir, platform, python, job["cards"]), dry_run)
+        except subprocess.CalledProcessError as error:
+            # one refused job stops neither the other jobs nor the monitor that called this (2026-11-12: a
+            # request refused for its card type ended a monitor job, and two units then waited with no worker)
+            print(f"  NOT SUBMITTED: the scheduler refused this job (exit {error.returncode}); the next ones are still sent")
+            continue
+        sent.append((job, job_id))
     # every job that was sent must be in its account's ledger before this call reports success
-    for job, job_id in zip(jobs, job_ids):
+    for job, job_id in sent:
         account = job["identity"].removeprefix("uva-")
         if not dry_run and job_id not in ledger(run_dir, phase, account).read_text().split():
             raise RuntimeError(f"job {job_id} is missing from {ledger(run_dir, phase, account)}")
-    return job_ids
+    return [job_id for _, job_id in sent]
 
 
 def submit_monitor(run_dir, options, dry_run=False):

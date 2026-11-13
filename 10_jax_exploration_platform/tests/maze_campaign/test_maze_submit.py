@@ -151,6 +151,66 @@ class Plan(unittest.TestCase):
         self.assertEqual((NODES, BUDGETS, RESERVED, ROOM), before)
 
 
+class CardTypesFromTheScheduler(unittest.TestCase):
+    """A node is planned under the card type the scheduler reports for it now."""
+
+    LISTING = ("NodeName=lynx02 Arch=x86_64 CPUTot=32 Gres=gpu:nvidia_rtx_4000_ada_generation:4(S:0-1) State=MIXED\n"
+               "NodeName=ai01 Arch=x86_64 CPUTot=32 Gres=gpu:nvidia_geforce_rtx_2080_ti:4(S:0-1) State=IDLE\n"
+               "NodeName=cortado01 Arch=x86_64 CPUTot=24 Gres=(null) State=IDLE\n")
+
+    def test_live_card_types(self):
+        """One type per node that holds typed cards; a node without cards is left out."""
+        self.assertEqual(submit.live_card_types(self.LISTING),
+                         {"lynx02": "nvidia_rtx_4000_ada_generation", "ai01": "nvidia_geforce_rtx_2080_ti"})
+
+    def test_a_node_with_replaced_cards_moves_to_the_class_of_its_live_type(self):
+        """Moved within its partition, left out when no class has the type, kept when the scheduler lists no type."""
+        classes = [{"gres_type": "a", "partition": "gpu", "nodes": ["n1", "n2", "n4", "n5"]},
+                   {"gres_type": "b", "partition": "gnolim", "nodes": ["n6"]},
+                   {"gres_type": "b", "partition": "gpu", "nodes": ["n3"]}]
+        before = deepcopy(classes)
+        result = submit.classes_as_the_scheduler_has_them(classes, {"n1": "a", "n2": "b", "n3": "c", "n5": "c"})
+        self.assertEqual(result, [{"gres_type": "a", "partition": "gpu", "nodes": ["n1", "n4"]},
+                                  {"gres_type": "b", "partition": "gnolim", "nodes": ["n6"]},
+                                  {"gres_type": "b", "partition": "gpu", "nodes": ["n2"]}])
+        self.assertEqual(classes, before)
+
+    def test_a_refused_job_does_not_stop_the_others(self):
+        """top_up sends the remaining jobs after one refusal and returns only the ids that were sent."""
+        jobs = [{"identity": "uva-sl5nw", "partition": "gpu", "node": name, "gpu_type": "a", "cards": 1,
+                 "reservation": None} for name in ("refused", "accepted")]
+        with tempfile.TemporaryDirectory() as folder:
+            run_dir = Path(folder)
+            (run_dir / "slurm").mkdir()
+            for state in ("pending", "running", "done", "failed"):
+                (run_dir / "queue" / state).mkdir(parents=True)
+
+            def send(run, phase, job, text, dry_run=False):
+                if job["node"] == "refused":
+                    raise subprocess.CalledProcessError(1, ["sbatch"])
+                with submit.ledger(run, phase, "sl5nw").open("a") as handle:
+                    handle.write("4242\n")
+                return "4242"
+
+            originals = {name: getattr(submit, name) for name in
+                         ("frozen_code", "scheduler_state", "plan_jobs", "submit_job", "worker_job_text")}
+            state = {key: None for key in ("classes", "nodes", "budgets", "reservation_budgets", "held_nodes",
+                                           "type_room", "waiting")}
+            try:
+                submit.frozen_code = lambda run: (Path("/p/code"), "abc")
+                submit.scheduler_state = lambda run: dict(state, waiting_cards=0)
+                submit.plan_jobs = lambda *arguments: jobs
+                submit.submit_job = send
+                submit.worker_job_text = lambda *arguments: "#!/bin/bash\n"
+                with contextlib.redirect_stdout(io.StringIO()) as printed:
+                    sent = submit.top_up(run_dir, "development")
+            finally:
+                for name, function in originals.items():
+                    setattr(submit, name, function)
+        self.assertEqual(sent, ["4242"])
+        self.assertIn("NOT SUBMITTED", printed.getvalue())
+
+
 class Scripts(unittest.TestCase):
     """The text of the job scripts and the names of the ledgers."""
 
