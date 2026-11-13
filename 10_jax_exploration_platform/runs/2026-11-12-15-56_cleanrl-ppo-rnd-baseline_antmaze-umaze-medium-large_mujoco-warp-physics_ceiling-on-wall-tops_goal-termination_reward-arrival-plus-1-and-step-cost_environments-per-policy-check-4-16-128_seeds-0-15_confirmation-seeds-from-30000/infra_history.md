@@ -387,3 +387,10 @@ Times are Pacific, read from the clock or from scheduler records.
   switched off until their caps have room. Measured speed on an A100 for 128 policies under RK4: 2.17 s per
   iteration, so one unit of about 112 to 144 policies needs about 1.5 to 2 days of card time and continues from
   its checkpoints across the 2-hour UVA jobs and 4-hour Gilbreth jobs. The fleet loop was restarted at 13:14 PT.
+- 2026-11-13 13:51 PT: speeds of the RK4 units after 39 minutes (windows of 256; each window is 256 iterations): RTX
+  5080 5 to 6 windows (about 6.5 minutes per window, about 28 hours per unit), RTX A4500 3 to 4 (10 to 12 minutes,
+  about 45 hours), Gilbreth A10 2 windows after 20 minutes, the 128-environment unit on an A30 6. No fault-guard
+  respawn in any unit so far. This folder's monitor job (6891245) starts no UVA workers, and the fleet loop would
+  hand every unit whose 2-hour UVA job ends (about 15:11 PT) to Gilbreth, whose idle cards are mostly taken by
+  other users; so the Gilbreth limit was pinned to the 4 units already there, and a one-time session step at 15:14
+  PT starts new UVA workers on free cards and then hands what is left to Gilbreth.
