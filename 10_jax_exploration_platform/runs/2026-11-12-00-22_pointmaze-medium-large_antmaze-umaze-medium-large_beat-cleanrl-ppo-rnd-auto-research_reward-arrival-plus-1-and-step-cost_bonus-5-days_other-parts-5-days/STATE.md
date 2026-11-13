@@ -855,6 +855,22 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   and three RTX 2080 Ti: 6900604, 6900605, 6900607); two that were still waiting after two minutes were cancelled
   by their ledger ids (6900603, 6900606). PointMaze Large with the step cost follows when its first-block units
   are complete (102 to 141 of 256 windows at 02:26 PT).
+- 2026-11-13 02:50 PT: **the divisor held from the first arrival on the second validation block (seeds 20000 to
+  20255, configurations fixed on the first block), the two PointMaze Medium cases.**
+
+  | case | first-arrival hold | RND at its first-block best | difference [95%] | against the fixed hold, same seeds |
+  |---|---|---|---|---|
+  | Medium, reward 1 on arrival | 0.9404 (learning rate 6e-3, weight 4) | 0.9308 | +0.0095 [+0.0015, +0.0178] | +0.0005 [−0.007, +0.008] |
+  | Medium, step cost | −0.3470 (learning rate 6e-3, weight 1) | −0.3535 | +0.0065 [+0.0012, +0.0122] | +0.0007 [−0.003, +0.004] |
+
+  Ahead of RND in both under equal rules (each side's configuration fixed on the first block); final level not
+  behind in either (+0.0092 [+0.004, +0.018] and +0.0013 [−0.001, +0.004]). On Medium with the step cost, when RND
+  is instead given its best configuration on the second block itself, the difference is +0.0040 [−0.0001,
+  +0.0080], level; the fixed hold had the same pattern there (+0.0058 and +0.0033). On Medium with reward 1 on
+  arrival RND's first-block best is also its best on the second block. Level with the fixed hold in both cases.
+  The standing page (`analysis/standing.md`) now has the first-arrival hold as its own family. Still running: its
+  second block on PointMaze Large with reward 1 on arrival (162 of 256 windows at 02:46 PT) and its first block on
+  PointMaze Large with the step cost (142 to 201).
 
 ## Next
 

@@ -2,6 +2,7 @@
   "title": "Standing of the bonus arms against CleanRL PPO-RND on the validation seeds, the four PointMaze cases",
   "families": [
     "held divisor alone",
+    "divisor held from the first arrival",
     "slower predictor with held divisor",
     "predictor at half speed with held divisor",
     "all three parts"
@@ -32,6 +33,12 @@
         "name": "held divisor alone, held after one quarter of the run",
         "family": "held divisor alone",
         "first_block": "divisor-held-after-one-quarter"
+      },
+      {
+        "name": "divisor held from each policy's own first arrival",
+        "family": "divisor held from the first arrival",
+        "first_block": "divisor-held-from-first-arrival",
+        "second_block": "held-from-first-arrival"
       },
       {
         "name": "slower predictor with held divisor (divisor held after one sixteenth of the run)",
@@ -66,6 +73,10 @@
       {
         "name": "separate predictor step size, predictor learning rate 1 times 1e-4",
         "first_block": "predictor-own-step-size-1"
+      },
+      {
+        "name": "error length as the bonus, with the divisor held after one sixteenth of the run",
+        "first_block": "error-length-with-held-divisor"
       }
     ],
     "cases": [
