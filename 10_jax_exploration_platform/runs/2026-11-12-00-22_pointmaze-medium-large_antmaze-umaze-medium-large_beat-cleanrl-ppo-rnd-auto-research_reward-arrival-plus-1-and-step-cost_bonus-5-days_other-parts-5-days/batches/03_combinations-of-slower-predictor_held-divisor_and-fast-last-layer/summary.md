@@ -1,6 +1,6 @@
 # Batch 3 screen on PointMaze Large with reward 1 on arrival: combinations of the slower predictor, the held divisor and the fast last layer
 
-Generated 2026-11-12 17:45 PT by the command below. This file is generated: regenerate it, do not edit it. Times are Pacific, converted from machines running Eastern. Run folder: `2026-11-12-00-22_pointmaze-medium-large_antmaze-umaze-medium-large_beat-cleanrl-ppo-rnd-auto-research_reward-arrival-plus-1-and-step-cost_bonus-5-days_other-parts-5-days`; batch folder: `batches/03_combinations-of-slower-predictor_held-divisor_and-fast-last-layer`.
+Generated 2026-11-12 19:04 PT by the command below. This file is generated: regenerate it, do not edit it. Times are Pacific, converted from machines running Eastern. Run folder: `2026-11-12-00-22_pointmaze-medium-large_antmaze-umaze-medium-large_beat-cleanrl-ppo-rnd-auto-research_reward-arrival-plus-1-and-step-cost_bonus-5-days_other-parts-5-days`; batch folder: `batches/03_combinations-of-slower-predictor_held-divisor_and-fast-last-layer`.
 
 ```bash
 cd /p/rlprojects/RND/10_jax_exploration_platform
@@ -23,7 +23,7 @@ bash "benchmark_runs/2026-11-12-00-17_pointmaze-antmaze_cleanrl-ppo-rnd_speed-30
 | [Properties of the bonus on the maze grid](#properties-of-the-bonus-on-the-maze-grid) | 2026-11-12 16:21 PT | 2026-11-12 17:45 PT | unread |
 | [Predictions](#predictions) | 2026-11-12 16:21 PT | 2026-11-12 16:21 PT | unread |
 | [Ideas against the control](#ideas-against-the-control) | 2026-11-12 16:21 PT | 2026-11-12 17:45 PT | unread |
-| [Validation block](#validation-block) | 2026-11-12 16:21 PT | 2026-11-12 17:45 PT | unread |
+| [Validation block](#validation-block) | 2026-11-12 16:21 PT | 2026-11-12 19:04 PT | unread |
 | [Records that need a look](#records-that-need-a-look) | 2026-11-12 16:21 PT | 2026-11-12 17:45 PT | unread |
 
 Times are Pacific, converted from machines running Eastern, and come from this report's own history of regenerations. [The same report with unread sections in blue and changed text in brown](summary.html). No section marks itself read.
@@ -245,7 +245,7 @@ By the 95% interval of the difference in $M$ from the control (section Measures,
 
 ## Validation block
 
-The units of the phase `validation-block` in the screen's environment and reward setting. Each trains one method at one intrinsic weight on 256 seeds, from 10000 to 10255: these are neither the development seeds of the screen nor the confirmation seeds. 13 of 13 method and weight pairs have a complete unit; a unit that is not complete is listed under the tables and left out. Define $W$, $L$ and $M$ as in the section Measures, here with $K$ the number of seeds of a row and read at 8,388,608 environment steps per policy. Differences are the method minus the control at the same intrinsic weight, on the seeds both have, each with its 95% interval from 10,000 resamples of those seeds. Rows: the control first, then the other methods, each by intrinsic weight. Per column the best value is bold and the second best underlined.
+The units of the phase `validation-block` in the screen's environment and reward setting. Each trains one method at one intrinsic weight on 256 seeds, from 10000 to 10255: these are neither the development seeds of the screen nor the confirmation seeds. 19 of 19 method and weight pairs have a complete unit; a unit that is not complete is listed under the tables and left out. Define $W$, $L$ and $M$ as in the section Measures, here with $K$ the number of seeds of a row and read at 8,388,608 environment steps per policy. Differences are the method minus the control at the same intrinsic weight, on the seeds both have, each with its 95% interval from 10,000 resamples of those seeds. Rows: the control first, then the other methods, each by intrinsic weight. Per column the best value is bold and the second best underlined.
 
 ### Discovery and optimization: whole-curve mean and final level
 
@@ -255,15 +255,21 @@ The units of the phase `validation-block` in the screen's environment and reward
 | control | 2 | 0.878 ± 0.002 | control | 0.992 ± 0.001 | control | 256 |
 | control | 4 | 0.863 ± 0.002 | control | 0.977 ± 0.002 | control | 256 |
 | separate predictor step size, predictor learning rate 0.25 times 1e-4 | 1 | 0.876 ± 0.003 | -0.000 [-0.008, +0.007] | **0.998** ± 0.000 | +0.002 [+0.001, +0.003] | 256 |
-| separate predictor step size, predictor learning rate 0.25 times 1e-4 | 2 | <u>0.886</u> ± 0.002 | +0.008 [+0.001, +0.014] | 0.995 ± 0.001 | +0.003 [+0.001, +0.005] | 256 |
+| separate predictor step size, predictor learning rate 0.25 times 1e-4 | 2 | 0.886 ± 0.002 | +0.008 [+0.001, +0.014] | 0.995 ± 0.001 | +0.003 [+0.001, +0.005] | 256 |
 | separate predictor step size, predictor learning rate 0.25 times 1e-4 | 4 | 0.878 ± 0.002 | +0.016 [+0.009, +0.022] | 0.993 ± 0.000 | +0.016 [+0.013, +0.020] | 256 |
 | separate predictor step size, predictor learning rate 1 times 1e-4 | 2 | 0.880 ± 0.002 | +0.002 [-0.004, +0.008] | 0.995 ± 0.000 | +0.003 [+0.002, +0.005] | 256 |
 | separate predictor step size, predictor learning rate 1 times 1e-4 | 4 | 0.876 ± 0.002 | +0.014 [+0.007, +0.020] | 0.993 ± 0.000 | +0.017 [+0.013, +0.020] | 256 |
-| divisor held after one sixteenth of the run | 2 | **0.888** ± 0.002 | +0.009 [+0.004, +0.015] | **0.998** ± 0.000 | +0.006 [+0.005, +0.007] | 256 |
+| divisor held after one sixteenth of the run | 2 | <u>0.888</u> ± 0.002 | +0.009 [+0.004, +0.015] | **0.998** ± 0.000 | +0.006 [+0.005, +0.007] | 256 |
 | divisor held after one sixteenth of the run | 4 | 0.882 ± 0.002 | <u>+0.019</u> [+0.014, +0.025] | <u>0.997</u> ± 0.000 | <u>+0.020</u> [+0.017, +0.024] | 256 |
 | divisor held after one quarter of the run | 4 | 0.872 ± 0.002 | +0.009 [+0.008, +0.011] | 0.995 ± 0.000 | +0.018 [+0.014, +0.022] | 256 |
 | slower predictor with held divisor (predictor learning rate 0.25 times 1e-4, divisor held after one sixteenth of the run) | 2 | 0.885 ± 0.003 | +0.007 [-0.000, +0.014] | **0.998** ± 0.000 | +0.006 [+0.005, +0.007] | 256 |
-| slower predictor with held divisor (predictor learning rate 0.25 times 1e-4, divisor held after one sixteenth of the run) | 4 | **0.888** ± 0.002 | **+0.026** [+0.020, +0.032] | **0.998** ± 0.000 | **+0.022** [+0.018, +0.026] | 256 |
+| slower predictor with held divisor (predictor learning rate 0.25 times 1e-4, divisor held after one sixteenth of the run) | 4 | <u>0.888</u> ± 0.002 | **+0.026** [+0.020, +0.032] | **0.998** ± 0.000 | **+0.022** [+0.018, +0.026] | 256 |
+| fast last layer with slower predictor and held divisor, step 0.1 (divisor held after one sixteenth of the run) | 0.25 | 0.878 ± 0.005 | no complete control unit at this weight | <u>0.997</u> ± 0.000 | no complete control unit at this weight | not compared |
+| fast last layer with slower predictor and held divisor, step 0.1 (divisor held after one sixteenth of the run) | 0.5 | **0.892** ± 0.003 | no complete control unit at this weight | <u>0.997</u> ± 0.000 | no complete control unit at this weight | not compared |
+| fast last layer with slower predictor and held divisor, step 0.1 (divisor held after one sixteenth of the run) | 1 | 0.878 ± 0.002 | +0.002 [-0.004, +0.008] | 0.995 ± 0.000 | -0.001 [-0.002, +0.000] | 256 |
+| fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1 | 0.25 | 0.885 ± 0.003 | no complete control unit at this weight | <u>0.997</u> ± 0.001 | no complete control unit at this weight | not compared |
+| fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1 | 0.5 | 0.886 ± 0.002 | no complete control unit at this weight | 0.995 ± 0.001 | no complete control unit at this weight | not compared |
+| fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1 | 1 | 0.871 ± 0.002 | -0.005 [-0.011, +0.002] | 0.993 ± 0.000 | -0.002 [-0.003, -0.001] | 256 |
 
 ### Discovery: mean capped first-goal time
 
@@ -274,16 +280,22 @@ $M$, its standard error and its differences are in thousands of steps; the small
 | control | 1 | 385 ± 13.1 | control | 256 of 256 | 256 |
 | control | 2 | 269 ± 10.8 | control | 256 of 256 | 256 |
 | control | 4 | 205 ± 8.2 | control | 256 of 256 | 256 |
-| separate predictor step size, predictor learning rate 0.25 times 1e-4 | 1 | 263 ± 15.4 | **-122** [-162, -80.2] | 256 of 256 | 256 |
-| separate predictor step size, predictor learning rate 0.25 times 1e-4 | 2 | 171 ± 11 | <u>-98.7</u> [-129, -67.3] | 256 of 256 | 256 |
-| separate predictor step size, predictor learning rate 0.25 times 1e-4 | 4 | **133** ± 7.88 | -71.9 [-93.8, -49.8] | 256 of 256 | 256 |
+| separate predictor step size, predictor learning rate 0.25 times 1e-4 | 1 | 263 ± 15.4 | -122 [-162, -80.2] | 256 of 256 | 256 |
+| separate predictor step size, predictor learning rate 0.25 times 1e-4 | 2 | 171 ± 11 | -98.7 [-129, -67.3] | 256 of 256 | 256 |
+| separate predictor step size, predictor learning rate 0.25 times 1e-4 | 4 | 133 ± 7.88 | -71.9 [-93.8, -49.8] | 256 of 256 | 256 |
 | separate predictor step size, predictor learning rate 1 times 1e-4 | 2 | 238 ± 12.4 | -31.2 [-62.3, +1.19] | 256 of 256 | 256 |
 | separate predictor step size, predictor learning rate 1 times 1e-4 | 4 | 185 ± 10.1 | -19.8 [-43.4, +4.32] | 256 of 256 | 256 |
 | divisor held after one sixteenth of the run | 2 | 270 ± 10.5 | +0.579 [-27.2, +28.5] | 256 of 256 | 256 |
 | divisor held after one sixteenth of the run | 4 | 213 ± 8.15 | +8.39 [-13.7, +30.6] | 256 of 256 | 256 |
 | divisor held after one quarter of the run | 4 | 205 ± 8.2 | +0 [+0, +0] | 256 of 256 | 256 |
 | slower predictor with held divisor (predictor learning rate 0.25 times 1e-4, divisor held after one sixteenth of the run) | 2 | 182 ± 13.9 | -86.9 [-120, -51.4] | 256 of 256 | 256 |
-| slower predictor with held divisor (predictor learning rate 0.25 times 1e-4, divisor held after one sixteenth of the run) | 4 | <u>153</u> ± 9.69 | -52 [-76.2, -28.2] | 256 of 256 | 256 |
+| slower predictor with held divisor (predictor learning rate 0.25 times 1e-4, divisor held after one sixteenth of the run) | 4 | 153 ± 9.69 | -52 [-76.2, -28.2] | 256 of 256 | 256 |
+| fast last layer with slower predictor and held divisor, step 0.1 (divisor held after one sixteenth of the run) | 0.25 | 284 ± 20.3 | no complete control unit at this weight | 256 of 256 | not compared |
+| fast last layer with slower predictor and held divisor, step 0.1 (divisor held after one sixteenth of the run) | 0.5 | 160 ± 11.2 | no complete control unit at this weight | 256 of 256 | not compared |
+| fast last layer with slower predictor and held divisor, step 0.1 (divisor held after one sixteenth of the run) | 1 | <u>124</u> ± 9.81 | <u>-261</u> [-291, -229] | 256 of 256 | 256 |
+| fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1 | 0.25 | 243 ± 13.5 | no complete control unit at this weight | 256 of 256 | not compared |
+| fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1 | 0.5 | 172 ± 11.1 | no complete control unit at this weight | 256 of 256 | not compared |
+| fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1 | 1 | **120** ± 7.9 | **-265** [-293, -236] | 256 of 256 | 256 |
 
 ## Records that need a look
 
