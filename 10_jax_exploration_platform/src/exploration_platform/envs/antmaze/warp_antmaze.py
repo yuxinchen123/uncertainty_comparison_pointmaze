@@ -145,8 +145,17 @@ class WarpAntMaze:
 
     def __init__(self, cfg: AntMazeConfig, n_copies: int, n_envs: int, base_seed: int = 0,
                  dtype=jnp.float32, copy_seed_index=None, contacts_per_env: int = None,
-                 njmax: int = None, graph_mode: str = "WARP", naconmax: int = None):
+                 njmax: int = None, graph_mode: str = "WARP", naconmax: int = None,
+                 frame_unroll: int = 1):
         """Build the Warp model and the deterministic spawn for one (C, N) shape.
+
+        frame_unroll is how many of the frame_skip physics steps one body of the frame loop
+        holds (1: a loop of frame_skip bodies, the training command's program; frame_skip: no loop
+        left). It changes how the program is laid out and no number. Measured on the RK4 unit
+        (`benchmark_runs/2026-11-12-00-17_*/profiles/rk4_ant_iteration/notes.md`): no gain with
+        the rollout unrolled 4 steps, and with the rollout's 16 steps it puts 80 physics calls in
+        one program, which makes MuJoCo Warp capture its graphs again on every call (7 times
+        slower). Only the measurement scripts set it.
 
         The shared pool holds naconmax = C*N*contacts_per_env slots and one environment at most
         njmax constraint rows; both sizes come from the configuration
@@ -165,6 +174,9 @@ class WarpAntMaze:
         # the environment's own record of its configuration names the physics that runs
         self.cfg, self.C, self.N, self.dtype = replace(cfg, physics="warp"), n_copies, n_envs, dtype
         self.B = n_copies * n_envs
+        if not 1 <= frame_unroll <= cfg.frame_skip:
+            raise ValueError(f"frame_unroll must lie in 1..frame_skip ({cfg.frame_skip}), got {frame_unroll}")
+        self.frame_unroll = frame_unroll
         if contacts_per_env is None:
             contacts_per_env = cfg.warp_contact_slots_per_environment
         self.naconmax = self.B * contacts_per_env if naconmax is None else naconmax
@@ -257,7 +269,8 @@ class WarpAntMaze:
                            *faults.torso_height_and_speed(d.qpos, d.qvel), d.qpos[:, 0:2],
                            faults.torso_angular_speed(d.qvel))
             finite_before = finite(data)
-            data, outs = jax.lax.scan(frame, data, None, length=self.cfg.frame_skip)
+            data, outs = jax.lax.scan(frame, data, None, length=self.cfg.frame_skip,
+                                      unroll=self.frame_unroll)
             nacon, ncollision, nefc, finite_after, heights, speeds, xy, spins = outs
 
             step_count = state.step_count + 1

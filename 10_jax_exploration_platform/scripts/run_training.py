@@ -385,6 +385,17 @@ def parse_args(argv=None) -> argparse.Namespace:
                              "told to stop; re-running the command continues from the save")
     parser.add_argument("--time-limit-seconds", type=float, default=0.0,
                         help="> 0: after this many seconds, save the unit's state and stop")
+    parser.add_argument("--put-state-on-card", action="store_true",
+                        help="before the first iteration and after every window end, put the "
+                             "training state on the card as the arrays a compiled iteration "
+                             "returns (jax.device_put), so the iteration is compiled once instead "
+                             "of again on its second call and after the first window end. Changes "
+                             "no number")
+    parser.add_argument("--compilation-cache-dir", default="",
+                        help="a folder for JAX's persistent compilation cache: a process that "
+                             "compiles a program another process on the same card model already "
+                             "compiled reads it from there instead of compiling it again. Changes "
+                             "no number. Empty (the default): no cache")
     parser.add_argument("--bonus-options", default="",
                         help="options of the bonus family this unit changes, as comma-separated "
                              "name=value pairs, e.g. even_start=true,reward_divisor=none (the "
@@ -802,6 +813,12 @@ def main() -> None:
     """Create the run folder, train, write one record per phase, then aggregate."""
     args = parse_args()
     process_start = time.time()
+    if args.compilation_cache_dir:
+        # JAX's persistent compilation cache, every program in it; JAX decides at its first
+        # compilation whether a process uses the cache, so this comes before any other import
+        import jax
+        jax.config.update("jax_compilation_cache_dir", args.compilation_cache_dir)
+        jax.config.update("jax_persistent_cache_min_compile_time_secs", 0.0)
     if args.episode_steps == 0:
         args.episode_steps = ENVIRONMENTS[args.env]["episode_steps"]
     run_dir = Path(args.run_dir).resolve()
@@ -886,6 +903,19 @@ def main() -> None:
     build_start = time.time()
     trainer = Runner(config, bonus=make_bonus(args.bonus, bonus_options), env_cfg=env_cfg,
                      bonus_constants=saved["bonus_constants"] if saved else None)
+    if args.compilation_cache_dir or args.put_state_on_card:
+        say(f"JAX compilation cache: {args.compilation_cache_dir or 'off'}; state put on the card "
+            f"before calls: {'yes' if args.put_state_on_card else 'no'}")
+
+    def on_card(tree):
+        """With --put-state-on-card, the tree as arrays placed on the card (the form a compiled
+        iteration returns); otherwise the tree as it is. The values do not change.
+
+        before: a state whose arrays were made outside a compiled program (reset, restore, a
+        window's counters set back to zero); a jitted call on it compiles once more
+        after:  the same values, placed on jax.devices()[0]
+        """
+        return jax.device_put(tree, jax.devices()[0]) if args.put_state_on_card else tree
     config = trainer.cfg
     sweep = trainer.sweep
     # the program that scores the maze-grid probes, only when the bonus's options ask for it
@@ -1014,7 +1044,7 @@ def main() -> None:
     window_index = 0
     window_first_iteration = 1
     if saved is None:
-        state = trainer.init_state(run_seed=args.run_seed)
+        state = on_card(trainer.init_state(run_seed=args.run_seed))
         prime_start = time.time()
         state = trainer.prime(state)
         jax.block_until_ready(state.obs)
@@ -1067,6 +1097,7 @@ def main() -> None:
         for number in (signal.SIGTERM, signal.SIGINT):
             signal.signal(number, lambda *_: STOP.update(requested=True))
 
+    state = on_card(state)
     start = time.time()
     last_pool_check = start
     first_iteration_seconds = None
@@ -1196,6 +1227,8 @@ def main() -> None:
             rint_in_window = jnp.zeros((config.n_copies,))
             window_index += 1
             window_first_iteration = iteration + 1
+            # the window's counters were set back to zero outside the compiled program
+            state = on_card(state)
 
         # save when told to stop, at the time limit, or at a window end once the interval has
         # passed; a stop ends the process here, and the same command continues the unit later
