@@ -17,7 +17,7 @@
       "standby-a100-80gb-a30-a10": {
         "gpu_class": "a100_80gb_or_a30_or_a10_gilbreth",
         "time_limit": "04:00:00",
-        "max_jobs": 8,
+        "max_jobs": 11,
         "sbatch_options": [
           "-p",
           "a100-80gb,a30,a10",
@@ -34,7 +34,7 @@
       }
     },
     "hand_over": {
-      "units_at_once": 8,
+      "units_at_once": 18,
       "match": "pointmaze",
       "pool": "standby-a100-80gb-a30-a10",
       "note": "2 since 2026-11-12 20:42 PT: UVA has not started this folder's worker jobs for an hour or more (about 1,300 waiting jobs of other users are ahead of ours and the scheduler tests few per pass), so PointMaze units that lose their UVA worker continue on Gilbreth from their checkpoints. It was 0 from 16:40 PT, when UVA still started workers within a minute."
