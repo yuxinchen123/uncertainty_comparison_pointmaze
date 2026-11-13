@@ -1284,6 +1284,34 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   policies x 16 environments at that budget is about 21 card-hours on an A100 (0.224 million steps per second; 256
   policies per unit give 0.34 million). A first sweep of 28 RND configurations in each reward setting is about 160
   card-hours, and a validation block of 256 seeds about 40 card-hours per configuration.
+- 2026-11-13 11:54 PT: **the user's decisions** (multiple-choice dialog after background with data; plan "Change
+  2"):
+  1. the divisor frozen at each policy's first arrival counts as part of the method; the baseline stays plain
+     RND; its closeness to public practice is disclosed (`literature/novelty.md`);
+  2. the AntMaze comparison on Medium and Large is decided after RND probes there;
+  3. the ant integrator is measured first (MuJoCo Warp's RK4 and implicit: speed, gates, runaways with trained
+     policies; background worker started 11:56 PT); no ant sweep starts before the user has seen it;
+  4. ant work: H100/H200 servers allowed in the order MIT, Purdue, ACCESS (a background worker prepares MIT and
+     Gautschi `ai` for ant units, started 11:56 PT, servers left not ready); full protocol on the U-maze first,
+     Medium and Large only the RND probe until it shows RND reaches the goal; 128 seeds per validation block on
+     the ant, 256 fresh seeds; the budget stays at the rule's value (134,217,728 steps per policy on the U-maze).
+- 2026-11-13 11:56 PT: **batch summaries 8 to 14 are written** (each batch folder's `summary.md`, generated; generator
+  change 032f6313, summaries a642c1fe; 118 analysis tests pass). Corrections to entries above, from the summaries:
+  1. batch 12, prediction 1 did not hold (on Medium with the step cost the first-goal time does not rise from
+     step 0.03 to 0.01, 14.0 then 13.8 thousand steps; on both Large cases the whole-curve mean is highest at
+     step 0.03, not at the smallest step);
+  2. batch 13, prediction 6 holds on Large with reward 1 on arrival when read as written, on the final level
+     (0.9945 held against 0.9931 running, within noise); the entry of 06:49 judged it on the whole-curve mean;
+  3. batch 14, prediction 4 did not hold if "a few per unit" means at most 10 (13, 23, 8 and 38 respawns);
+  4. batch 8, prediction 2, PointMaze Medium: with each side at its best first-goal time the error length reaches
+     the goal sooner (18.2 against 21.0 thousand steps, −2.8 [−5.6, −0.1]); the prediction as a whole still did
+     not hold (the whole-curve mean is behind);
+  5. interval ends can differ in the third figure from the quick readings above (other resampling seeds); the
+     means agree.
+- 2026-11-13 11:56 PT: the longer ant run (`budget-probe`): the 16-environment unit is complete (35 ant units done);
+  the 128-environment unit continues on Gilbreth. **One reading for question 3:** in the 128-environment run the
+  guard respawns rose from 4,992 at 83 million steps to 177,192 at 122 million (78 per 10,000 episodes, 212 in the
+  configuration with learning rate 1e-2 and weight 64, which is 2% of its episodes).
 
 ## Next
 
