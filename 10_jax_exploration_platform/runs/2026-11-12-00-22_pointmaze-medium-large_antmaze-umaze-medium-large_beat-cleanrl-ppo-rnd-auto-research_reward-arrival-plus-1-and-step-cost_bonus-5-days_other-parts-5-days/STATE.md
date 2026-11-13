@@ -718,6 +718,19 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   A longer run was queued (phase `budget-probe` in the AntMaze folder: 8 times the steps with 128 environments
   per policy and 4 times with 16, learning rates up to 3e-2) to see whether the share keeps rising.
   Open for the user: what the ant comparison should be if RND stays at a few percent (the plan's Part 5, item 2).
+- 2026-11-12 23:47 PT: **held divisor alone, PointMaze Medium with the step cost.**
+  First block, by weight (learning rate 6e-3): 0.5: −0.3495; 2: −0.3463; 4: −0.3520; 8: −0.3667; 16: −0.3935. Its
+  best weight (2) is now inside its grid.
+  Second block (seeds 20000 to 20255, held divisor at weights 2, 4, 8 fixed beforehand): weight 2: −0.3477 ±
+  0.0012. Against RND at the configuration chosen on the first block (weight 0.00195: −0.3535), which is the rule
+  the arm was held to: +0.0058 [+0.0009, +0.0114]. Against RND at its best of three on this second block (weight
+  0.0078: −0.3510), which favours RND: +0.0033 [−0.0003, +0.0069], an interval that just reaches zero. First-goal
+  time −5.3 thousand steps [−7.2, −3.5] against that same row. Reading: ahead under equal rules, by a small
+  margin; not ahead beyond doubt when RND is given the choice on the block.
+- 2026-11-12 23:47 PT: **PointMaze Large with the step cost, first block, predictor at half speed with held
+  divisor** (learning rate 3e-3, weight 8): −0.7216, +0.0094 [+0.0050, +0.0140] against RND's best of two
+  (−0.7310); final level +0.0111; first-goal time −59 thousand. The slower predictor with held divisor has +0.0081
+  there. The held divisor alone and all three parts are at 143 to 244 of 256 windows.
 
 ## Next
 
