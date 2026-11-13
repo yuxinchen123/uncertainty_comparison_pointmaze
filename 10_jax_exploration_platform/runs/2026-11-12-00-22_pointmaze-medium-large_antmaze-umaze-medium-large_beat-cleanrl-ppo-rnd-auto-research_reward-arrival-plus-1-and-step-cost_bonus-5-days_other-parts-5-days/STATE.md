@@ -749,6 +749,26 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   | all three parts | ahead, +0.0137 | behind, −0.029 | level, −0.0010 | level on 16 seeds |
 
   The half-speed arm is the one that could be ahead everywhere; its missing cell is queued (3 units).
+- 2026-11-13 00:25 PT: **literature note written (`literature/novelty.md`, background search of about 30 queries
+  and 60 pages; not a systematic review). Both ideas are "close" to public work.**
+  1. Held divisor: no paper was found that proposes or evaluates stopping the updates of RND's reward divisor
+     part-way through training. But (a) Schwarke, Klemm, van der Boon, Bjelonic and Hutter (Conference on Robot
+     Learning 2023) report that RND's running reward normalisation keeps the intrinsic reward from falling, and
+     run RND without it at a fixed weight; (b) the RND module of the RSL-RL library builds its reward normaliser
+     with `until=int(1.0e8)`, that is, it stops updating after 100 million samples (I opened that file and
+     checked the line; the paper's title, authors and venue I checked on the proceedings page, its sentence on the
+     normalisation I did not check myself). The difference left: the hold after a set fraction of the run inside
+     CleanRL's PPO-RND, and an evaluation of it. In batch 1 the arm with no divisor at all was not ahead of RND
+     here, so the time of the hold matters in these mazes.
+  2. Fast last layer inside the rollout: no work was found where the last layer of an RND predictor takes a
+     gradient step at every environment step of an on-policy rollout with the usual epoch updates kept. Updating a
+     novelty estimate at every step is published in several forms (elliptical episodic bonuses, neural density
+     models; a 2026 arXiv paper trains the whole RND predictor one step per input as a comparison method).
+  **Consequence (my reading; the bar itself is the user's):** the held divisor is known practice in public code
+  and should not be presented as the study's new method. It can be used and credited, and it raises the question
+  whether "beat CleanRL RND" should also be shown against RND with a held divisor. The part of the work that is
+  new so far is the fast last layer, which wins on discovery and not on the whole-curve mean. The slowed
+  predictor is a setting, not an idea.
 
 ## Next
 
