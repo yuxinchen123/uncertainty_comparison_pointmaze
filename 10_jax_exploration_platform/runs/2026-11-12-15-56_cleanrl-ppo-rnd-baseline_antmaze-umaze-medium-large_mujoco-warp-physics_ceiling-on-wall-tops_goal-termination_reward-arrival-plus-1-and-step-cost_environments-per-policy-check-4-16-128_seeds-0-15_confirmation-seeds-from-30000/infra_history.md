@@ -274,3 +274,8 @@ Times are Pacific, read from the clock or from scheduler records.
   (67,108,864) when both units reach that point; until then ant screens run at both counts. Both best
   configurations sit at an end of the grid (the highest learning rate with 128, the lowest learning rate and
   weight with 16), so the edge rule applies before any sweep is called final.
+- 2026-11-13 06:27 PT: four more units of the auto research folder run here under the phase `bonus-arms-screen`
+  (its batch 14): the fast last layer at steps 0.03 and 0.01 with the first-arrival hold, with 128 and with 16
+  environments per policy, the same eight configurations and seeds as the earlier screen units. The options exist
+  in this folder's frozen copy (a2df3c12), so it was not frozen anew. Handed to Gilbreth at 06:27 PT with four
+  jobs.

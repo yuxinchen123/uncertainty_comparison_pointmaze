@@ -1155,6 +1155,31 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   96 against 269 thousand steps (−173 [−197, −149]). Weights 1 and 2 are running. PointMaze Medium with reward 1
   on arrival at weight 2, divisor left running against held: whole-curve mean 0.9385 against 0.9445 (−0.006
   [−0.013, +0.001]), final level 0.996 against 1.000 (−0.004 [−0.005, −0.003]); prediction 6 holds there.
+- 2026-11-13 06:30 PT: **PointMaze Large with reward 1 on arrival: the fast last layer at step 0.03 with the
+  first-arrival hold is ahead of RND on the second validation block too** (seeds 20000 to 20255, learning rate
+  2e-3, weight 2, configuration fixed on the first block; RND 0.8842, hold alone 0.8839 on this block).
+
+  | step | first block against RND's best | second block against RND | second block: final level, first-goal time against RND |
+  |---|---|---|---|
+  | 0.03 | 0.8976: +0.0195 [+0.0136, +0.0254] | 0.8995: +0.0153 [+0.0096, +0.0208] | +0.0041 [+0.003, +0.005]; 118 against 266 thousand steps (−148 [−172, −125]) |
+  | 0.01 | 0.8928: +0.0148 [+0.0082, +0.0212] | 0.8945: +0.0103 [+0.0049, +0.0158] | +0.0047; 180 against 266 (−86 [−113, −61]) |
+
+  Step 0.03 has the higher first-block mean, so its second-block result is the one that counts by the rule fixed
+  before the runs; against the hold alone on the second block it is +0.0156 [+0.009, +0.022]. With this the
+  whole-curve mean is ahead of RND on a second block in all four PointMaze cases, by one arm with one setting of
+  its own: RND with the fast last layer at a step chosen per case (0 on the two Medium cases and, so far, on Large
+  with the step cost; 0.03 on Large with reward 1 on arrival) and the divisor held from the first arrival. Fresh
+  seeds are still kept for the end.
+- 2026-11-13 06:30 PT: batch 13, PointMaze Large with reward 1 on arrival, the held arm at weight 2 (first block):
+  whole-curve mean 0.8728 (−0.005 [−0.018, +0.005] against RND's best, level), final level 0.995, first-goal time
+  85 against 269 thousand steps (−184 [−208, −161]). With weight 4 (0.8806, 96) this arm is level with RND on
+  return and about three times sooner; prediction 3 of batch 13 does not hold so far (weight 1 is running). On
+  return the small step throughout (batch 12) is the better arm in this case.
+- 2026-11-13 06:30 PT: **batch 14 is running** (`batches/14_smaller-steps-of-the-fast-last-layer-with-the-hold_ant-umaze-screen_and-medium-second-block/ideas.md`):
+  the ant U-maze screen of the fast last layer at steps 0.03 and 0.01 with the hold, at 128 and 16 environments
+  per policy (4 units in the AntMaze baseline folder), and the second block on the two PointMaze Medium cases for
+  step 0.01 with the hold (2 units). The standing page has two new families: the fast last layer throughout with
+  the first-arrival hold, and the fast last layer until the first arrival with the predictor's own divisor.
 
 ## Next
 

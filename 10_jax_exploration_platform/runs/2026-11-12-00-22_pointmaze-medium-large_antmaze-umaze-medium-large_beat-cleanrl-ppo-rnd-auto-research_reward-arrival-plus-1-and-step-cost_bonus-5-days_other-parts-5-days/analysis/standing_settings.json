@@ -3,6 +3,8 @@
   "families": [
     "held divisor alone",
     "divisor held from the first arrival",
+    "fast last layer throughout with the first-arrival hold",
+    "fast last layer until the first arrival, then the predictor's own divisor",
     "slower predictor with held divisor",
     "predictor at half speed with held divisor",
     "all three parts"
@@ -41,6 +43,33 @@
         "second_block": "held-from-first-arrival"
       },
       {
+        "name": "fast last layer at step 0.03 throughout, divisor held from the first arrival",
+        "family": "fast last layer throughout with the first-arrival hold",
+        "first_block": "fast-step-0-point-03-with-hold",
+        "second_block": "fast-step-0-point-03-with-hold"
+      },
+      {
+        "name": "fast last layer at step 0.01 throughout, divisor held from the first arrival",
+        "family": "fast last layer throughout with the first-arrival hold",
+        "first_block": "fast-step-0-point-01-with-hold",
+        "second_block": "fast-step-0-point-01-with-hold"
+      },
+      {
+        "name": "fast last layer at step 0.1 throughout, divisor held from the first arrival",
+        "family": "fast last layer throughout with the first-arrival hold",
+        "first_block": "fast-layer-first-arrival-hold"
+      },
+      {
+        "name": "fast last layer (step 0.1) until the first arrival, then the predictor's own divisor, held",
+        "family": "fast last layer until the first arrival, then the predictor's own divisor",
+        "first_block": "fast-then-predictor-divisor-held"
+      },
+      {
+        "name": "fast last layer (step 0.1) until the first arrival, then the predictor's own divisor, left running",
+        "family": "fast last layer until the first arrival, then the predictor's own divisor",
+        "first_block": "fast-then-predictor-divisor"
+      },
+      {
         "name": "slower predictor with held divisor (divisor held after one sixteenth of the run)",
         "family": "slower predictor with held divisor",
         "first_block": "slower-predictor-with-held-divisor"
@@ -77,6 +106,18 @@
       {
         "name": "error length as the bonus, with the divisor held after one sixteenth of the run",
         "first_block": "error-length-with-held-divisor"
+      },
+      {
+        "name": "fast last layer (step 0.1) until the first arrival, then the divisor of the fast scores held (batch 11)",
+        "first_block": "fast-until-arrival-then-hold"
+      },
+      {
+        "name": "fast last layer (step 0.1) until the first arrival, then the divisor of the fast scores left running (batch 11)",
+        "first_block": "fast-until-arrival-no-hold"
+      },
+      {
+        "name": "fast last layer (step 0.1) until the first arrival, then the divisor of the fast scores held after one sixteenth of the run (batch 11)",
+        "first_block": "fast-until-arrival-fixed-hold"
       }
     ],
     "cases": [
