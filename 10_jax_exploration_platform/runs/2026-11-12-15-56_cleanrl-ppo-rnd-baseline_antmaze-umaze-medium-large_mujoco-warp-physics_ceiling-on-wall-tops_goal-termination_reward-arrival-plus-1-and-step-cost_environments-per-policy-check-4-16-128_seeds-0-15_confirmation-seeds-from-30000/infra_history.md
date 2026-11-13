@@ -239,3 +239,10 @@ Times are Pacific, read from the clock or from scheduler records.
   100, so the guard did act). The 12 other units run, one job each. The units with 4 environments per policy are
   at 67 to 82 of 256 windows after 2.5 hours; their jobs reach the 4-hour limit at about 00:28 PT and continue in
   new jobs from their checkpoints.
+- 2026-11-12 23:26 PT: the six units with 16 environments per policy are done, copied back and verified (about 3
+  hours each on A100 80 GB cards). Fault guard over them: 43 respawns in 12.9 billion environment steps; largest
+  torso speed 17.0 m/s. The six units with 4 environments per policy run (78 to 92 of 256 windows), one job each.
+- 2026-11-12 23:28 PT: two units of the phase `budget-probe` built and handed to Gilbreth (study description
+  `infrastructure/descriptions/antmaze_umaze_budget_probe_stable_physics.json`): RND's leading configurations for
+  134,217,728 steps per policy with 128 environments per policy and for 67,108,864 with 16, learning rates up to
+  3e-2 (the best one of the check was at the top of its grid). Each needs several 4-hour jobs.

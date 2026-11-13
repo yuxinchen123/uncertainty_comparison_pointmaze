@@ -691,6 +691,33 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   m/s; 7.6% of steps with the torso above 1.5 m. So with 128 environments per policy RND barely learns the U-maze
   in this budget; the units with 16 environments per policy (225 to 228 of 256 windows) and with 4 (67 to 82)
   will say whether more updates per step change that.
+- 2026-11-12 23:27 PT: **held divisor alone, PointMaze Medium with the step cost, larger weights (first validation
+  block):** weight 2: −0.3463 ± 0.0012 against RND's best −0.3505: +0.0042 [+0.0006, +0.0079], first-goal time
+  −6.1 thousand [−8.7, −4.1] (13.9 against 20.0); weight 0.5: −0.3495; 0.125: −0.3518. Its best is again the
+  largest weight run, a thousand times RND's, so 4, 8 and 16 are queued, and a second block (seeds 20000 to
+  20255) with RND at its three configurations and the held divisor at weights 2, 4 and 8 fixed beforehand,
+  because −0.3463 is the best of eight configurations on the first block.
+- 2026-11-12 23:27 PT: **PointMaze Large with the step cost, first validation block, slower predictor with held
+  divisor:** −0.7230 (learning rate 3e-3, weight 8) against RND's best of two −0.7310: +0.0081 [+0.0033, +0.0130];
+  final level +0.0105 [+0.006, +0.015]; first-goal time −64 thousand. The held divisor alone, the half-speed arm
+  and all three parts are still running there (73 to 249 of 256 windows at 23:26 PT).
+  **Standing on the whole-curve mean, validation seeds:** an arm with the held divisor is ahead of RND in each of
+  the four PointMaze cases: Large with reward 1 on arrival (held alone +0.0095), Medium with reward 1 on arrival
+  (held alone +0.009 to +0.011, second block), Large with the step cost (slower predictor with held divisor
+  +0.0081; held alone pending), Medium with the step cost (held alone at weight 2 +0.0042; second block queued).
+- 2026-11-12 23:28 PT: **AntMaze check: 128 and 16 environments per policy are complete; 4 is at 78 to 92 of 256
+  windows.** Best whole-curve mean at 16,777,216 steps: 0.0487 ± 0.0014 with 128 (learning rate 1e-2, weight 16)
+  and 0.0487 ± 0.0027 with 16 (learning rate 3e-4, weight 0.0625). At the common point of 4,980,736 steps: 0.029
+  with 4, 0.029 with 16, 0.033 with 128. First arrivals: about 0.3 million steps with 4 and 16, 1.9 million with
+  128. Fault guard: 43 and 32 respawns in 12.9 billion steps each.
+  **RND does not learn to reach the ant U-maze goal in this budget with any count:** in the best configurations
+  the share of episodes that reach the goal rises slowly (1.4%, 3.8%, 5.1%, 5.9%, 6.3% over the run) and is 3% to
+  10% for every seed at the end; arrivals still take about 530 of the 700 steps; the ants spend 12% to 14% of
+  their steps above 1.5 m, that is they throw themselves about and sometimes land at the goal. The best
+  configuration with 16 environments has a bonus weight of 0.0625, so the bonus hardly matters for this measure.
+  A longer run was queued (phase `budget-probe` in the AntMaze folder: 8 times the steps with 128 environments
+  per policy and 4 times with 16, learning rates up to 3e-2) to see whether the share keeps rising.
+  Open for the user: what the ant comparison should be if RND stays at a few percent (the plan's Part 5, item 2).
 
 ## Next
 
