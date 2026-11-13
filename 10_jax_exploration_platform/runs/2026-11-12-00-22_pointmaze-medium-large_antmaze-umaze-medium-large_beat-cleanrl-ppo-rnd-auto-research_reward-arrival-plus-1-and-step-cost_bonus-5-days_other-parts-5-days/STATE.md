@@ -1270,6 +1270,13 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   folder's `diagnosis/2026-11-13_what-the-trained-ants-do_against-reference-mujoco/notes.md`): the same policies
   in reference MuJoCo hop as much and arrive as often (within −0.017 and +0.021). The 07:08 PT caveat is withdrawn
   for the motion. The guard's runaways come from the implicitfast integrator at 4 solver iterations and are rare.
+- 2026-11-13 11:06 PT: **discovery second block (seeds 20000 to 20255), the two PointMaze Medium cases**; the fast
+  last layer (step 0.1) and RND each at its first-block best for the first-goal time. Reward 1 on arrival: 13.0
+  against 16.8 thousand steps, −3.8 [−7.2, −1.0]; ahead, as on the first block (−5.0). Step cost: 11.4 against
+  13.2, −1.8 [−3.1, −0.4]; ahead here although it was level on the first block (−1.0 [−2.3, +0.3]); I count it as
+  ahead on one block and level on the other. At these configurations both sides keep the goal badly (whole-curve
+  mean 0.12 and 0.008 with reward 1 on arrival), which is why the first-goal time has its own configurations. The
+  two Large units of each side run on UVA (12 to 133 of 256 windows at 11:06 PT).
 
 ## Next
 
