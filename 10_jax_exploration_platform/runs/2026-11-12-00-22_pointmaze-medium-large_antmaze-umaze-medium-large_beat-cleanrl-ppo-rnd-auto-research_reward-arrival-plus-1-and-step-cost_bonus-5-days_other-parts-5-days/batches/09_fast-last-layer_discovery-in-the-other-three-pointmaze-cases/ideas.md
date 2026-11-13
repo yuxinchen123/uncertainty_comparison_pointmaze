@@ -34,3 +34,15 @@ case is the best of 8 or 3 on these seeds, so a difference counts only after a s
    arrival except through the value network's start.
 2. **The two PointMaze Medium cases:** it is ahead of RND by a few thousand steps at most; the interval is below
    zero in at least one of the two.
+
+## Addendum, written 2026-11-13 10:53 PT: the second block for discovery
+
+On the first discovery block the fast last layer (step 0.1) is ahead of RND on the mean capped first-goal time in
+three PointMaze cases and level in the fourth, each side at its own best configuration for that measure among
+3 to 8. By the rule of this study a best-of-several reading counts only after a second block of unused seeds.
+Queued: each side's first-block best for the first-goal time, fixed, on seeds 20000 to 20255 (phase
+`discovery-validation-two`, 8 units).
+
+Prediction: the fast last layer is ahead with the interval below zero in the same three cases (both Large cases by
+more than 40 thousand steps, Medium with reward 1 on arrival by 2 to 6 thousand) and level on Medium with the step
+cost.
