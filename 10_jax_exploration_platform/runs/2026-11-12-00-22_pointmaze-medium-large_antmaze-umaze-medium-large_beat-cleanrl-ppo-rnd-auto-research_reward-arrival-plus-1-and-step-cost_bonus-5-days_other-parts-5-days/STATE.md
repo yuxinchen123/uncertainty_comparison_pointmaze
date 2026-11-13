@@ -749,7 +749,7 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   | all three parts | ahead, +0.0137 | behind, −0.029 | level, −0.0010 | level on 16 seeds |
 
   The half-speed arm is the one that could be ahead everywhere; its missing cell is queued (3 units).
-- 2026-11-13 00:25 PT: **literature note written (`literature/novelty.md`, background search of about 30 queries
+- 2026-11-13 00:08 PT (the note itself is dated 00:03 PT): **literature note written (`literature/novelty.md`, background search of about 30 queries
   and 60 pages; not a systematic review). Both ideas are "close" to public work.**
   1. Held divisor: no paper was found that proposes or evaluates stopping the updates of RND's reward divisor
      part-way through training. But (a) Schwarke, Klemm, van der Boon, Bjelonic and Hutter (Conference on Robot
