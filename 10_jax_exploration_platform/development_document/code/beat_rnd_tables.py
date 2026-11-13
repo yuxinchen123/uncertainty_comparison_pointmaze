@@ -51,13 +51,15 @@ FIXED_HOLD = ('divisor-held-after-one-sixteenth', 'divisor-held-one-sixteenth')
 FAST_STEP_003 = ('fast-step-0-point-03-with-hold', 'fast-step-0-point-03-with-hold')
 FAST_DISCOVERY = ('fast-last-layer-step-0-point-1', 'fast-layer-step-0-point-1')
 FAST_STEP_001 = ('fast-step-0-point-01-with-hold', 'fast-step-0-point-01-with-hold')
-# The method as the user fixed it on 2026-11-13: the divisor held from each policy's first arrival, plus the fast
-# last layer at a step chosen per case on the first block (0 on the two Medium cases, 0.03 on the two Large cases).
+# The method (the user decided on 2026-11-13 that the divisor held from each policy's first arrival counts as part
+# of it): that divisor, plus the fast last layer at the step with the highest whole-curve mean on the first block
+# among 0, 0.01, 0.03 and 0.1 (the session's rule, fixed before the second blocks were read): 0 on PointMaze Medium
+# with reward 1 on arrival, 0.01 on Medium with the step cost, 0.03 on the two Large cases.
 CASES = (
     {'environment': 'pointmaze-medium', 'reward_setting': 'arrival_plus_one', 'method': FIRST_ARRIVAL_HOLD,
      'step': '0', 'hold_alone': None},
-    {'environment': 'pointmaze-medium', 'reward_setting': 'step_cost', 'method': FIRST_ARRIVAL_HOLD,
-     'step': '0', 'hold_alone': None},
+    {'environment': 'pointmaze-medium', 'reward_setting': 'step_cost', 'method': FAST_STEP_001,
+     'step': '0.01', 'hold_alone': FIRST_ARRIVAL_HOLD},
     {'environment': 'pointmaze-large', 'reward_setting': 'arrival_plus_one', 'method': FAST_STEP_003,
      'step': '0.03', 'hold_alone': FIRST_ARRIVAL_HOLD},
     {'environment': 'pointmaze-large', 'reward_setting': 'step_cost', 'method': FAST_STEP_003,
