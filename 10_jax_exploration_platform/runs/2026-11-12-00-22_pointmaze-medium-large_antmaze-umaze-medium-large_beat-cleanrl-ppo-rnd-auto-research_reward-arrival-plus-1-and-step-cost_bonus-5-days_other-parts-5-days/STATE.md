@@ -935,6 +935,31 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   exactly equal in only 43 of 207 policies that have not arrived. On different card models it is equal in none.
   Rounding differences grow to visible differences within the first updates. So "the same seeds" pairs the start
   of two runs, not their paths, and a paired interval is hardly narrower than an unpaired one.
+- 2026-11-13 03:47 PT: **first-arrival hold, first block on PointMaze Large with the step cost, all three units
+  complete:** −0.7236 (learning rate 3e-3, weight 8), −0.7268 (2e-3, weight 8), −0.7335 (2e-3, weight 4); best
+  against RND's best (−0.7310): +0.0074 [+0.0020, +0.0128]. The unit already running on the second block is the
+  best one, so nothing is added there.
+- 2026-11-13 03:47 PT: **batch 10, PointMaze Large with reward 1 on arrival, learning rate 2e-3, weight 16** (first
+  block): the fast last layer with the hold against the fast last layer alone: whole-curve mean 0.5725 against
+  0.036, first-goal time 86.1 against 77.7 thousand steps (+8.4 [−5.7, +22.8], level; prediction 1). Against
+  RND's best for the whole-curve mean (2e-3, weight 2): −0.306 on the whole-curve mean, final level 0.85 against
+  0.99, first-goal time 86 against 269 thousand steps (−183 [−208, −158]). So at weight 16 the goal is found three
+  times sooner and then kept slowly. Whether that slowness comes from the fast last layer after the arrival or
+  from the weight is what the option in progress separates.
+- 2026-11-13 03:47 PT: **ant U-maze screen, a PARTIAL look** (records copied from Gilbreth at 03:47 PT; 16 development
+  seeds; each arm against the check's RND unit over the same first windows; scratchpad script
+  `quick_ant_partial.py`). Not a result yet.
+  1. First-arrival hold: level with RND at both environment counts (differences in the whole-curve mean between
+     −0.006 and +0.008 over the first 3.4 and 5.1 million steps). Prediction 4 is not holding so far.
+  2. Fast last layer with 16 environments per policy: ahead of RND in all 8 configurations over the first 3.1
+     million steps (+0.002 to +0.009 on a level of 0.015 to 0.025), with earlier first arrivals (0.25 to 0.55
+     against 0.32 to 0.83 million steps). The arm with the hold added looks the same.
+  3. Fast last layer with 128 environments per policy: behind RND in all 8 configurations (−0.003 to −0.017) and
+     later first arrivals (2.2 to 4.1 against 1.9 to 2.75 million steps); the same with the hold added, at 9.8
+     million steps.
+  4. Fault-guard respawns so far: 0, 0, 0, 0, 1, 1 in the six units.
+  If this holds at the end, the choice of environments per policy decides whether the fast last layer helps on
+  the ant.
 
 ## Next
 
