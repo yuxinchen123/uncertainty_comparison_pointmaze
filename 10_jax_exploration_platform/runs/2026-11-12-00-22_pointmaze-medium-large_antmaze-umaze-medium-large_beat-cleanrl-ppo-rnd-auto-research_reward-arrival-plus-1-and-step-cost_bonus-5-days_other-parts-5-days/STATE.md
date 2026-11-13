@@ -1118,6 +1118,21 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   (commit 42b327e7; `infra_history.md`). The three units of batch 12 that were running on jobs of the older copy
   (Large with reward 1 on arrival at step 0.01, Large with the step cost at steps 0.03 and 0.01) were interrupted
   after 35 minutes and continue from their checkpoints under the new copy.
+- 2026-11-13 05:50 PT: **batch 12, PointMaze Large with reward 1 on arrival: the fast last layer at step 0.03 with
+  the first-arrival hold is ahead of RND's best by +0.0195 on the first validation block** (learning rate 2e-3,
+  weight 2, 256 seeds; the only configuration of this step in this case).
+
+  | compared with | whole-curve mean | final level | first-goal time, thousand steps |
+  |---|---|---|---|
+  | RND's best (0.8781) | 0.8976: +0.0195 [+0.0136, +0.0254] | +0.0048 [+0.0036, +0.0060] | 128 against 269: −141 [−165, −117] |
+  | the hold alone (0.8874) | +0.0101 [+0.0041, +0.0164] | −0.0009 [−0.0017, −0.0002] | 128 against 259: −131 [−155, −108] |
+
+  Step by step in this case (whole-curve mean, first-goal time): step 0.1: 0.8707, 91; step 0.03: 0.8976, 128;
+  hold alone: 0.8874, 259; RND: 0.8781, 269. The step 0.01 unit continues on Gilbreth. Prediction 2 of the batch
+  holds. This is the largest lead so far in the case where the hold alone was only level on the second block.
+  **Second block queued** (seeds 20000 to 20255, same configuration, steps 0.03 and 0.01; RND and the hold alone
+  already have their units there: 0.8842 and 0.8839). Rule fixed now: the step with the higher whole-curve mean
+  on the first block is the one whose second-block result counts.
 
 ## Next
 
