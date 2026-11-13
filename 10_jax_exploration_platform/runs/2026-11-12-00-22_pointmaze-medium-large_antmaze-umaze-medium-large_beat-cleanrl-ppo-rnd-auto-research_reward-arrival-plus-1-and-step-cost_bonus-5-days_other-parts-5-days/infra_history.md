@@ -204,3 +204,11 @@ Times are Pacific.
   and handed to Gilbreth (limit 7, four units there before) with two jobs.
 - 2026-11-13 07:06 PT: three second-block units of batch 12 (PointMaze Large with the step cost, the fast last layer
   at steps 0.1, 0.03 and 0.01 with the hold) were built and handed to Gilbreth with three jobs.
+- 2026-11-13 10:54 PT: eight units of the discovery second block (phase `discovery-block-two`) were built. The four
+  PointMaze Medium units went to two UVA jobs on free cards (6908666 on two A100 40 GB, 6908667 on two RTX 5080),
+  which started at once. The four PointMaze Large units went to Gilbreth, where the idle-card partitions were full
+  (more than 1,200 jobs of other users waiting; our four jobs 12357079 to 12357082 had no planned start), so at
+  10:55 PT I set the limit to 0, took the four back, and two UVA jobs on four free cards took them (6908671 on two
+  RTX 5080, 6908672 on two A40). The four Gilbreth jobs stay queued; each ends at once if it starts with nothing
+  to take. The PointMaze Large units need more than one 2-hour UVA job (Large with the step cost: 33.5 million
+  steps); they continue from their checkpoints on the next free card or on Gilbreth.
