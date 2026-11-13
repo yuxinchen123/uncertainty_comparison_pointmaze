@@ -1149,6 +1149,12 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   at weight 4. With the step cost it is level with the hold alone and with RND on the whole-curve mean (+0.0016
   [−0.004, +0.006] against RND) and 7 thousand steps sooner than RND's configuration. Predictions 2 and 5 hold.
   The nine units on the two Large cases are running.
+- 2026-11-13 06:06 PT: batch 13, two more units (first validation block). PointMaze Large with reward 1 on
+  arrival, the held arm at weight 4: whole-curve mean 0.8806 (against RND's best +0.0025 [−0.004, +0.009], level;
+  batch 11's arm without the second divisor had 0.787), final level 0.998 (+0.0059 against RND), first-goal time
+  96 against 269 thousand steps (−173 [−197, −149]). Weights 1 and 2 are running. PointMaze Medium with reward 1
+  on arrival at weight 2, divisor left running against held: whole-curve mean 0.9385 against 0.9445 (−0.006
+  [−0.013, +0.001]), final level 0.996 against 1.000 (−0.004 [−0.005, −0.003]); prediction 6 holds there.
 
 ## Next
 
