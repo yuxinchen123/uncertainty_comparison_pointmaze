@@ -871,18 +871,46 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   The standing page (`analysis/standing.md`) now has the first-arrival hold as its own family. Still running: its
   second block on PointMaze Large with reward 1 on arrival (162 of 256 windows at 02:46 PT) and its first block on
   PointMaze Large with the step cost (142 to 201).
+- 2026-11-13 03:02 PT: **batch 10 is running** (`batches/10_fast-last-layer-with-the-first-arrival-hold_pointmaze_and-ant-umaze-screen-of-the-bonus-arms/ideas.md`,
+  seven predictions written before the runs).
+  1. PointMaze: the fast last layer together with the first-arrival hold, two configurations in each of the four
+     cases on the first validation block; one is paired with the hold alone and one with the fast last layer alone
+     on the same seeds. Four units are on Gilbreth and four on UVA.
+  2. Ant U-maze, the first screen of bonus arms on the ant: the first-arrival hold, the fast last layer, and both,
+     with 128 and 16 environments per policy, 8 configurations and 16 development seeds per unit, against the
+     rollout-shape check's RND units at the same configurations and seeds. The six units run in the AntMaze
+     baseline folder under the phase `bonus-arms-screen` (routine decision: that folder holds the ant's server
+     settings; its code was frozen anew at a2df3c12 for the new option).
+  Why now: on the ant U-maze RND finds the goal in every policy (after 0.3 to 2.6 million steps) and does not keep
+  it (whole-curve mean 0.04 to 0.05, final level 0.05 to 0.065, the same for intrinsic weights 1 to 64), which is
+  where a bonus that falls away after the first arrival should matter most.
 
 ## Next
 
-1. Batch 1 screen: read each unit as it finishes (whole-curve mean, final level, median first arrival, the two
-   property measures); write `batches/01_.../summary.md`; ideas ahead of the control go to the development sweep.
-2. RND baseline: confirmation of PointMaze Large with reward 1 on arrival and of Medium with the step cost
-   (running); Medium with reward 1 on arrival after its higher learning rates; Large with the step cost at
-   33,554,432 steps (development at the budget, then confirmation).
-3. AntMaze with the Warp physics: rollout-shape check, first-pass sweep, budgets (H100 work: MIT, then Purdue, then
-   the ACCESS servers).
-4. Purdue fleet for the PointMaze units (Gautschi L40S, Gilbreth standby cards).
-5. The remaining speed ideas and the copies per card for the production workloads.
+Rewritten 2026-11-13 03:02 PT.
+
+1. **Batch 10, PointMaze (8 units, first validation block):** read each against the first-arrival hold alone, the
+   fast last layer alone (phase `discovery-validation`, same seeds) and RND's best (predictions 1 to 3). A unit of
+   the new option must not be waiting on Gilbreth when the old-copy job 12352113 finishes its unit (about 04:40
+   PT): take waiting units back to UVA at about 04:20 PT (`infra_history.md`).
+2. **Batch 10, ant U-maze (6 units, phase `bonus-arms-screen` in the AntMaze baseline folder):** read each
+   against the check's RND unit at the same configurations and seeds (scratchpad script `quick_ant_cells.py`
+   prints a unit's configurations); read the fault-guard count of every unit (predictions 4 to 7).
+3. **First-arrival hold:** its second block on PointMaze Large with reward 1 on arrival and its first block on
+   PointMaze Large with the step cost are running; then its second block on Large with the step cost, together
+   with RND and the fixed hold on the same seeds.
+4. **AntMaze baseline:** the count of environments per policy when the six units with 4 are complete (128 and 16
+   tie on the whole-curve mean; 16 finds the goal sooner); the longer run for the budget; the edge rule; then the
+   Medium and Large maps, which have no configuration file and no check with trained policies yet.
+5. **Summaries:** `summary_settings.json` and summaries for batches 8, 9 and 10; the standing page after each
+   reading.
+6. **If prediction 3 of batch 10 holds:** a fast last layer that stops at a policy's first arrival (code change,
+   tests, a new frozen copy; a worker does not check which code copy a unit needs, so units of a new option go to
+   a server only when no job of an older copy can pick them up).
+7. **Waiting for the user:** how strict to be about the held divisor's closeness to public practice; what the
+   AntMaze comparison is if RND stays at a few percent on the U-maze.
+8. Fresh seeds (from 30000) only for the method as it stands at the end. Re-create the monitoring cron before
+   2026-11-19.
 
 ## Ideas (status)
 
@@ -893,7 +921,14 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
 | 1 | error length as the bonus | behind (−0.040) |
 | 1 | fixed scale; even start; even start with no divisor | far behind; closed |
 | 1 | scheduled last layer on the random body's features (decay 0.5, 0.75, 1) | far behind; the fit is not local and the input statistics move; local features are in batch 2 |
-| 2 | wider input clip; input statistics kept from the random-action rollouts; slower predictor; local features as the input of RND; scheduled last layer on local features; divisor held after a part of the run | written 2026-11-12; implementation running |
+| 2 | wider input clip; input statistics kept from the random-action rollouts; local features as the input of RND; scheduled last layer on local features | see `batches/02_.../summary.md`; none went further |
+| 2, 5, 7 | divisor held after a part of the run (1/16) | ahead of RND on the whole-curve mean in all four PointMaze cases on the validation seeds (+0.006 to +0.011); close to public practice (`literature/novelty.md`) |
+| 2, 5, 6 | slower predictor, or predictor at half speed, with the held divisor | ahead in some cases, level in others; not better than the held divisor alone |
+| 3 | all three parts (fast last layer, slower predictor, held divisor) | ahead on Large with reward 1 on arrival (+0.0137), behind on Medium with reward 1 on arrival (−0.029), level on Large with the step cost |
+| 8 | error length with the held divisor | behind RND at every weight; closed for the whole-curve mean |
+| 8 | divisor held from each policy's first arrival | level with the fixed hold, nothing to set; ahead of RND on both Medium cases (second block) and on Large with reward 1 on arrival (first block); the rest is running |
+| 3, 9 | fast last layer, for discovery | first-goal time ahead of RND in three PointMaze cases (−63, −61, −5.0 thousand steps), level on Medium with the step cost; its whole-curve mean is far behind at those configurations |
+| 10 | fast last layer with the first-arrival hold (PointMaze); first-arrival hold, fast last layer, and both on the ant U-maze | running since 2026-11-13 02:58 PT |
 
 ## Decisions I made (routine), with the reason
 

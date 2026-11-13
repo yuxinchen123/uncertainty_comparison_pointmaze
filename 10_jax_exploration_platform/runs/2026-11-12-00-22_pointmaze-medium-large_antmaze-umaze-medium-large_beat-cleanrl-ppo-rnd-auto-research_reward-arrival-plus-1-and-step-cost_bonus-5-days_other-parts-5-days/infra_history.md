@@ -134,3 +134,14 @@ Times are Pacific.
   within two minutes (6900129 to 6900132, 6900134, 6900135: two RTX 4000 Ada, two RTX 2080 Ti, two GTX 1080 Ti);
   the seventh (6900133, a Quadro RTX 4000 on adriatic02) was still waiting after two minutes and was cancelled by
   its ledger id. The six workers took the six PointMaze Medium units first.
+- 2026-11-13 02:58 PT: batch 10's eight PointMaze units (fast last layer with the first-arrival hold) were built and
+  the Gilbreth hand-over limit, pinned to 0 since 01:28 PT, was opened again (9: the one unit there and the eight).
+  One job of the old code copy d7054945 is left on Gilbreth (12352113, on an A10, started 01:11 PT, about 1.5
+  hours of its own unit to go). Eight jobs were submitted (12352872 to 12352879); one started within a minute and
+  the scheduler's planned starts of the other seven were 0.7 to 1.7 hours away, with the account at 13 running
+  and 14 waiting idle-card jobs against its limit of 24. At 03:00 PT I lowered the limit to 5 and took four
+  waiting units back to UVA, where three worker jobs on four cards that were free started within two minutes
+  (6900951 on two A40 cards, 6900952 on an RTX 2080 Ti, 6900954 on a GTX 1080 Ti). **To watch:** a unit of the new
+  option must not be waiting on Gilbreth when job 12352113 finishes its own unit (about 04:40 PT), because that
+  job would take it and fail it; a unit still waiting there at about 04:20 PT is taken back to UVA
+  (`remote_fleet.py take-back`, after lowering the limit).

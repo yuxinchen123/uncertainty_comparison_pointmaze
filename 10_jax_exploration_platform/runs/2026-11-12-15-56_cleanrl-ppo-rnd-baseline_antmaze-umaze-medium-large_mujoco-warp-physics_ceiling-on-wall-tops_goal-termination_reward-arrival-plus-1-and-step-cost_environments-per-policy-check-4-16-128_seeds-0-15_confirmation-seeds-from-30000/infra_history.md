@@ -250,3 +250,16 @@ Times are Pacific, read from the clock or from scheduler records.
   4-hour limit and stopped with its state saved at window 112 of 256; the fleet step submitted its next job,
   which was waiting on priority at 00:06 PT. The other five units of that count reach their limit at about
   00:28 PT. The two units of the longer run are at 4 and 6 of 256 windows on A30 cards.
+- 2026-11-13 02:57 PT: **this folder's code was frozen anew at commit a2df3c12** (before: f490e70d), so that it
+  holds the option `reward_divisor=held_after_first_arrival`. Between the two commits the trainer changed only by
+  that option, which adds nothing to the saved state, so a unit started under the old copy continues from its
+  checkpoint under the new one with the same results. Units of the baseline still running at that time: the six
+  check units with 4 environments per policy and the two longer-run units.
+- 2026-11-13 02:58 PT: **six units of the auto research folder's batch 10 run here under the phase
+  `bonus-arms-screen`** (the ant's server settings live in this folder): on the U-maze, the divisor held from the
+  first arrival, the fast last layer, and both together, each with 128 and with 16 environments per policy, 8
+  configurations and 16 development seeds per unit, 16,777,216 steps. Description and predictions:
+  `batches/10_fast-last-layer-with-the-first-arrival-hold_pointmaze_and-ant-umaze-screen-of-the-bonus-arms/` of the
+  auto research folder 2026-11-12-00-22. Handed to Gilbreth at 02:58 PT with jobs 12352864 to 12352869; three
+  started within a minute. These units are not part of the RND baseline and its reports read only their own
+  phases.
