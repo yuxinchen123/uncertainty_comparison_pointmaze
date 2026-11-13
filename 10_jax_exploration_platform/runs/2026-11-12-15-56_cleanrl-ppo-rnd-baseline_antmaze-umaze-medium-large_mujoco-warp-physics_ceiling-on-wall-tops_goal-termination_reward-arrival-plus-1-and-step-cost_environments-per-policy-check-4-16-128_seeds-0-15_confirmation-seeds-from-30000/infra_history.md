@@ -306,3 +306,14 @@ Times are Pacific, read from the clock or from scheduler records.
   This holds for RND and would hold for any method alike, but it may mean that the return is earned by motion a
   reference simulator would not allow. A check with late-training policies against reference MuJoCo was started
   at 07:08 PT (background worker; results to be added here).
+- 2026-11-13 10:53 PT: **the motion check is done** (`diagnosis/2026-11-13_what-the-trained-ants-do_against-reference-mujoco/notes.md`;
+  measured 08:46 to 10:35 PT by a background worker that stopped at a usage limit before writing its notes; the
+  notes were written from its records at 10:52 PT). The hopping (about 80% of states with no contact, 33 to 50%
+  above 1 m) and the arrival rates are reproduced by reference MuJoCo (RK4, 0.01 s, 100 solver iterations): the
+  arrival rate under the reference settings is within −0.017 and +0.021 of ours in all 16 configurations of the
+  two `budget-probe` checkpoints. The guard's runaways come from the implicitfast integrator at 4 solver
+  iterations (in C MuJoCo too; none with RK4 or the implicit integrator at the same step), at most 9 of 1,024
+  episodes, mostly with 128 environments per policy and learning rate 1e-2. The 07:08 PT caveat is withdrawn for
+  the motion; a change of integrator would change the environment for every method and is left to the user.
+- 2026-11-13 10:53 PT: no ticks from 07:26 to 10:47 PT (the session's model reached its usage limit); the 5-minute
+  fleet loop ended at 08:48 PT after its 12-hour limit and was restarted at 10:53 PT. Nothing failed in the gap.

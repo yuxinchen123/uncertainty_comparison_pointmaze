@@ -1240,6 +1240,36 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   | Medium, step cost | 0 (hold alone) | +0.0065 [+0.0012, +0.0122]; +0.0040 [−0.0001, +0.0080] if RND chooses on the block | 14.7 against 19.9 |
   | Large, reward 1 on arrival | 0.03 | +0.0153 [+0.0096, +0.0208] | 118 against 266 |
   | Large, step cost | 0.03 | running (first block +0.0087; the hold alone has +0.0072 on the second block) | 83 against 191 (first block) |
+- 2026-11-13 10:53 PT: **PointMaze Large with the step cost, second validation block: step 0.03 with the hold is
+  ahead of RND** (seeds 20000 to 20255, learning rate 2e-3, weight 8, fixed on the first block; RND −0.7328 at its
+  first-block best, learning rate 2e-3, weight 4): −0.7216, +0.0112 [+0.0065, +0.0160]; final level +0.0119
+  [+0.007, +0.017]; first-goal time 89 against 203 thousand steps (−114 [−138, −91]). Against the hold alone on
+  the same block: +0.0039 [−0.0015, +0.0097]; against the fixed hold +0.0017. Steps 0.01 and 0.1 are ahead of RND
+  on this block too (+0.0095, +0.0083). **So the arm (RND, divisor held from each policy's first arrival, fast
+  last layer at a step chosen per case on the first block) is ahead of RND on a second validation block in all
+  four PointMaze cases.** With one step for every case (0.01) it is ahead in three and level on Medium with the
+  step cost (+0.0041 [−0.0017, +0.0105]).
+
+  | case | step chosen on the first block | second block against RND | first-goal time, thousand steps, against RND's |
+  |---|---|---|---|
+  | Medium, reward 1 on arrival | 0 (hold alone) | +0.0095 [+0.0015, +0.0178] | 20.6 against 26.3 |
+  | Medium, step cost | 0 (hold alone) | +0.0065 [+0.0012, +0.0122]; level (+0.0040) if RND chooses on the block | 14.7 against 19.9 |
+  | Large, reward 1 on arrival | 0.03 | +0.0153 [+0.0096, +0.0208] | 118 against 266 |
+  | Large, step cost | 0.03 | +0.0112 [+0.0065, +0.0160] | 89 against 203 |
+
+- 2026-11-13 10:53 PT: batch 13's last two units (PointMaze Large with the step cost, first block, against RND's
+  best): the held arm at (3e-3, weight 8) −0.7243, +0.0067 [+0.0008, +0.0124]; the running divisor at (2e-3,
+  weight 8) −0.7386, behind (−0.0076). Batch 13's arm is not better than the small step throughout in any case; it
+  stays as an explanation of the slow settling, not as a lead.
+- 2026-11-13 10:53 PT: **batch 14, ant U-maze screen of the smaller steps (16 development seeds, against RND at the
+  same configuration):** with 16 environments per policy step 0.03 is ahead in 8 of 8 configurations (+0.0005 to
+  +0.0049; best 0.0530 against RND's best 0.0487) and step 0.01 is level (−0.0026 to +0.0023); with 128
+  environments per policy step 0.01 is level (−0.0026 to +0.0008) and step 0.03 behind in 8 of 8 (−0.003 to
+  −0.010). Fault-guard respawns 8 to 38 per unit. Predictions 1, 2 and 4 hold.
+- 2026-11-13 10:53 PT: **the ant motion check is done; the hopping is a property of the task** (the AntMaze baseline
+  folder's `diagnosis/2026-11-13_what-the-trained-ants-do_against-reference-mujoco/notes.md`): the same policies
+  in reference MuJoCo hop as much and arrive as often (within −0.017 and +0.021). The 07:08 PT caveat is withdrawn
+  for the motion. The guard's runaways come from the implicitfast integrator at 4 solver iterations and are rare.
 
 ## Next
 
