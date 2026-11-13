@@ -189,3 +189,27 @@ Times are Pacific, read from the clock or from scheduler records.
   nothing of these runs is used. In all, 6 jobs were started for the two stopped units between 19:18 and 19:21 PT
   by two steps running five minutes apart; marking the server not ready BEFORE cancelling would have prevented
   all of them.
+- 2026-11-12 19:58 PT: the stable physics is a recorded configuration (commit f490e70d; report of the background
+  work, whose test and gate numbers are in the speed study folder's `profiles/antmaze_warp_blow_up/notes.md`):
+  1. new field `physics_time_step`; the baseline's file is
+     `configs/experiments/antmaze_umaze_warp-physics_time-step-0.005_frame-skip-10_fault-guard-30-metres-and-100-radians-per-second_…toml`;
+  2. gates at 0.005 s against C MuJoCo pass in both implementations (one step without contact 9.3e-7 m against a
+     bound of 1e-4 m; with contact 8.4e-3 m against 5e-2 m);
+  3. gate with trained policies through the real code path (serval02 card 1, 19:29 to 19:36 PT): 228.6 million
+     environment steps, 0 physics-fault respawns, 0 non-finite respawns, largest torso speed 14.8 m/s, largest
+     turning rate 61.9 rad/s, 6.9% of steps with the torso above 1.5 m, at most 179 of 512 constraint rows;
+  4. throughput on an H100 NVL at 16,384 environments (serval02 card 1, 19:37 to 19:43 PT): 2.72 s per training
+     iteration with 128 environments per policy and 2.74 s with 16; 0.77 million steps per second in total; peak
+     card memory 17.8 and 18.3 GiB.
+- 2026-11-12 20:00 PT: **the rollout-shape check starts again with the stable physics.** Code frozen at f490e70d;
+  study description `infrastructure/descriptions/antmaze_umaze_rollout_shape_check_stable_physics.json`, phase
+  `rollout-shape-check-stable-physics`: 4, 16 and 128 environments per policy; 48 configurations (learning rates
+  3e-4, 1e-3, 3e-3, 1e-2; entropy 0.001 and 0.01; intrinsic weights 0.0625 to 64); 16 seeds; 16,777,216 steps per
+  policy; 18 units of 8 configurations each, so every count runs as 6 units side by side. The learning rates start
+  one step higher than in the stopped check, whose records (not used for any decision) had 1e-4 last and 3e-3,
+  the top of its grid, first. The units' speed records go under workload names that carry the time step.
+  The 48 configurations of the chosen count also serve as RND's first development sweep on the U-maze.
+- 2026-11-12 20:01 PT: Gilbreth ready again for this folder with a limit of ONE unit; the unit with 4 environments
+  per policy and cells 41 to 48 was handed over (job 12347248). Its records are read by hand before the limit is
+  raised to 18. (With the first-unit state "waiting" the fleet hands over nothing, because it wants a UVA unit to
+  compare with; as before, the state is "passed" by hand and the limit does the gating.)

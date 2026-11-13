@@ -536,6 +536,14 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   2), so the baseline gets the same second selection step as the methods.
 - 2026-11-12 19:41 PT: three units of the RND-grid discovery sweep stopped with their state saved when their
   workers neared the 2-hour limit; they continue from their checkpoints with the next workers.
+- 2026-11-12 20:01 PT: **AntMaze: stable physics recorded and gated (commit f490e70d); the rollout-shape check
+  runs again** under the phase `rollout-shape-check-stable-physics` (18 units; first unit on Gilbreth, job
+  12347248, to be read by hand before the other 17 go). Gate with trained policies: 0 fault respawns in 229
+  million steps, largest torso speed 14.8 m/s. Throughput on an H100 NVL: 2.72 s per iteration at 16,384
+  environments, 0.77 million steps per second. Seen in the stopped check's records (old physics, not a result):
+  with 128 environments per policy the best configurations reached the goal in only about 4% of episodes after
+  16.8 million steps, while the units with 16 and 4 environments per policy had their first arrivals 4 to 10 times
+  earlier in steps; so the count of environments per policy is likely to matter a great deal for the ant.
 
 ## Next
 

@@ -37,20 +37,20 @@
       }
     },
     "hand_over": {
-      "units_at_once": 18,
+      "units_at_once": 1,
       "match": "antmaze",
       "pool": "standby-a100-80gb-a30"
     },
     "first_unit": {
-      "state": "waiting",
+      "state": "passed",
       "unit": null,
       "compared_with_uva_unit": null,
       "differences": [],
       "checked_at": null,
-      "note": "2026-11-12 20:00 PT: new code copy f490e70d with the stable physics; the first unit's records (fault counters, speeds, seconds per iteration) are read by hand before the other 17 go"
+      "note": "set by hand 2026-11-12: no AntMaze unit runs on UVA cards, so the automatic comparison with a UVA unit has nothing to read. New code copy f490e70d with the stable physics: ONE unit is handed over first (units_at_once 1) and its records (fault counters, speeds, seconds per iteration) are read by hand before the limit is raised to 18"
     },
-    "code": "/scratch/gilbreth/liu4869/rnd_maze/code/source_5c7407bbb59a8e52b90aa9f19255c71a14298737/10_jax_exploration_platform",
-    "prepared_commit": "5c7407bbb59a8e52b90aa9f19255c71a14298737",
-    "code_repository_commit": "ef93b14596f2c08910282536591574dfa8889148"
+    "code": "/scratch/gilbreth/liu4869/rnd_maze/code/source_f490e70d129758156f147e4fcaafb44a5ff58673/10_jax_exploration_platform",
+    "prepared_commit": "f490e70d129758156f147e4fcaafb44a5ff58673",
+    "code_repository_commit": "3a9d5e739d125b29ee4980422c318e638a21182b"
   }
 }
