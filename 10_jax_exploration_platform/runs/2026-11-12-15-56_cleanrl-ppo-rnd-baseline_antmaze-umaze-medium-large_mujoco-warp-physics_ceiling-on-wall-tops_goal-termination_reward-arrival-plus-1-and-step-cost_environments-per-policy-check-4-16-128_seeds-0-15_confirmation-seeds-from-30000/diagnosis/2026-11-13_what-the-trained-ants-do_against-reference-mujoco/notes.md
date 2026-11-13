@@ -2,8 +2,8 @@
 
 Measurements of 2026-11-13, 08:46 to 10:35 PT (Slurm jobs 6905236 to 6905566, ledger
 `slurm/submitted_jobids_motion-check_sl5nw.txt` of this folder). The measurements and scripts are by a background
-worker of the main session; it stopped before writing these notes, and the main session wrote them from its records
-at 10:58 PT. Times are Pacific, converted from machines running Eastern.
+worker of the main session; it stopped (usage limit) before writing these notes, and the main session wrote them
+from its records between 10:49 and 10:52 PT. Times are Pacific, converted from machines running Eastern.
 
 ## Question
 
