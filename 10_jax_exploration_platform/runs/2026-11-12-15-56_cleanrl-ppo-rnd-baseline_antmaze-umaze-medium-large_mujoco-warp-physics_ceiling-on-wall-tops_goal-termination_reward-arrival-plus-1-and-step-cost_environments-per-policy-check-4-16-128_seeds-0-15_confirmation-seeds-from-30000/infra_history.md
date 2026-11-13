@@ -181,3 +181,11 @@ Times are Pacific, read from the clock or from scheduler records.
   two jobs ran about a minute; nothing of theirs is used.
   To stop a unit that runs on a server: mark the server not ready first, then cancel its job, then set the unit
   aside. A take-back only moves units no job holds.
+- 2026-11-12 19:42 PT: one more job for the stopped old units was still running on Gilbreth, found at the 19:40 PT
+  tick: the five-minute hand-over loop's step of 19:18:45 PT, two minutes after the first cancel, had submitted
+  jobs 12346964 and 12346965 for the two units (the fleet log shows it). 12346964 ended by itself at 19:21 PT when
+  its unit's queue file was set aside; 12346965 had claimed the unit with 4 environments per policy and ran it for
+  23 minutes. Cancelled by its id from this folder's Gilbreth ledger. No maze fleet job is left on Gilbreth, and
+  nothing of these runs is used. In all, 6 jobs were started for the two stopped units between 19:18 and 19:21 PT
+  by two steps running five minutes apart; marking the server not ready BEFORE cancelling would have prevented
+  all of them.
