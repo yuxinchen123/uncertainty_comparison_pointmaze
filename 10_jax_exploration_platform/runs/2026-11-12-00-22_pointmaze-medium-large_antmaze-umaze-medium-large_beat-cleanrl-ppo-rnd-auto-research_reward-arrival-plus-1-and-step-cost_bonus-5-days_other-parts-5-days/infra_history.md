@@ -122,3 +122,15 @@ Times are Pacific.
   minutes, so it was cancelled by its ledger id and its unit went to Gilbreth with the others. "Can start at
   once" is therefore checked after the fact: a pinned UVA job that has not started two minutes after submission
   is cancelled and its unit handed over.
+- 2026-11-13 01:27 PT: **this folder's code was frozen anew at commit bed45842** (it holds the option
+  `reward_divisor=held_after_first_arrival`, commit eab85eba, and the planner corrections of 2026-11-12). Earlier
+  copies: 2b84cab1, d7054945. Five units of batch 9 (PointMaze Large with the step cost, discovery check) were
+  running on Gilbreth under the copy d7054945 at that time; the hand-over limit for Gilbreth was set to 0 so that
+  no unit of the new option can be taken there by a job of the old copy (a worker does not check which copy a
+  unit needs). If one of those five is continued by a later job, it will have attempts under two copies; the
+  trainer gives the same results for the old options under both (the golden and bonus tests pass on the new code).
+- 2026-11-13 01:28 PT: the 12 units of the new arm (batch 8, the divisor held from the first arrival) were built
+  and stay on UVA. `submit.py --only-cards-free-now` found 7 cards that could start a worker; 6 jobs started
+  within two minutes (6900129 to 6900132, 6900134, 6900135: two RTX 4000 Ada, two RTX 2080 Ti, two GTX 1080 Ti);
+  the seventh (6900133, a Quadro RTX 4000 on adriatic02) was still waiting after two minutes and was cancelled by
+  its ledger id. The six workers took the six PointMaze Medium units first.

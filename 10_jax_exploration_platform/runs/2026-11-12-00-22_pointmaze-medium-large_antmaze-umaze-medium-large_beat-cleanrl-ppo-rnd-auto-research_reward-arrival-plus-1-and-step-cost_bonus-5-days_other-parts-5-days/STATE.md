@@ -814,6 +814,16 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   worker does not check which code copy a unit needs: an old-copy job that took a unit with the new option would
   fail it. Batch 9's 27 units run under the old copy now; then: freeze the code anew, build batch 8's first arm
   (the divisor held from the first arrival) on the first validation block in the four PointMaze cases, hand over.
+- 2026-11-13 01:27 PT: **batch 9, the two PointMaze Medium cases (discovery check, 256 validation seeds; mean
+  capped first-goal time in thousand steps, each side at its best configuration on the block).** Reward 1 on
+  arrival: fast last layer 12.5 ± 0.6 (learning rate 1e-2, entropy 0.03, weight 16; best of 8) against RND 17.5 ±
+  1.4 (best of 3): −5.0 [−8.3, −2.3]. Step cost: fast last layer 11.4 ± 0.5 against RND 12.4 ± 0.5: −1.0
+  [−2.3, +0.3], level. Prediction 2 held (a few thousand steps at most, interval below zero in one of the two).
+  The five units on PointMaze Large with the step cost run on Gilbreth (11 to 66 of 256 windows at 01:26 PT).
+- 2026-11-13 01:30 PT: **batch 8's main arm is running: the divisor held from the first arrival, 12 units on the
+  first validation block in the four PointMaze cases** (code frozen at bed45842). Six UVA workers started at once
+  and took the six PointMaze Medium units; the six PointMaze Large units follow on the same workers. Nothing of
+  this arm goes to Gilbreth until the five old-copy jobs there have ended.
 
 ## Next
 
