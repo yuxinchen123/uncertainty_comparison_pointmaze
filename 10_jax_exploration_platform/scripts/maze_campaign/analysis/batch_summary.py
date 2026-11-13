@@ -51,6 +51,10 @@ The batch folder holds `summary_settings.json`:
 - `validation_of_configurations` (optional): every configuration of one phase on the validation seeds in one
   case, each method's best against the control's best for both metrics (keys in `case_sweeps.py`). Unlike
   `validation_block` it also counts units at other settings than the screen's.
+- `validation_seeds` (optional): picked configurations on the validation seeds case by case, on a first block of
+  seeds (each side at its best there) and, where it was run, on a second block on which nothing was chosen (keys
+  in `validation_seeds.py`). A batch whose only runs are such units leaves out the screen's keys and
+  `development_sweeps`.
 
 Through the test helper's Slurm job (numpy and plotting never run on a login node): see batch_summary_job.py.
 """
@@ -65,17 +69,18 @@ import re
 
 import numpy as np
 
-from . import case_sweeps, compare, contents, figures, maze_grid, measures, records, report
+from . import case_sweeps, compare, contents, figures, maze_grid, measures, records, report, validation_seeds
 
 # The test helper that runs the job, relative to the platform folder; the summary names the whole command.
 SUBMITTER = ('benchmark_runs/2026-11-12-00-17_pointmaze-antmaze_cleanrl-ppo-rnd_speed-30-ideas_'
              'screen-15-minutes-per-idea-per-card_h100-nvl_rtx-5080_rtx-a4500/infrastructure/submit_tests.sh')
 SETTING_KEYS = {'title', 'study_description', 'control', 'control_study_description', 'method_names',
                 'consistency_check', 'predictions', 'more_intrinsic_weights', 'validation_block',
-                'development_sweeps', 'discovery', 'validation_of_configurations'}
+                'development_sweeps', 'discovery', 'validation_of_configurations', 'validation_seeds'}
 REQUIRED_KEYS = {'title', 'study_description', 'control', 'method_names'}
-# What a batch without a screen needs: its sweeps are in `development_sweeps`.
-REQUIRED_WITHOUT_A_SCREEN = {'title', 'development_sweeps'}
+# What a batch without a screen needs: a title, and its runs in `development_sweeps` or in `validation_seeds`.
+REQUIRED_WITHOUT_A_SCREEN = {'title'}
+RUNS_WITHOUT_A_SCREEN = {'development_sweeps', 'validation_seeds'}
 # The keys that only mean something beside a screen.
 SCREEN_ONLY_KEYS = {'control', 'control_study_description', 'method_names', 'consistency_check',
                     'more_intrinsic_weights', 'validation_block', 'discovery'}
@@ -138,6 +143,7 @@ class Screen:
     seeds: tuple               # the screen's seeds
     validation: dict = None    # the validation block as read (read_validation); None without one
     cases: dict = None         # the development sweeps case by case (case_sweeps.read_development); None without them
+    validation_cases: dict = None   # the validation seeds case by case (validation_seeds.read_cases); None without them
 
     def complete(self, *slugs):
         """Whether every named method's unit is complete."""
@@ -150,8 +156,9 @@ def read_settings(folder):
     """The batch folder's summary_settings.json, with its keys checked."""
     path = Path(folder) / 'summary_settings.json'
     settings = json.loads(path.read_text())
-    # A batch whose only runs are development sweeps has no screen and none of the keys that belong to one.
-    without_screen = 'development_sweeps' in settings and 'study_description' not in settings
+    # A batch whose only runs are development sweeps or validation units has no screen and none of the keys that
+    # belong to one.
+    without_screen = bool(RUNS_WITHOUT_A_SCREEN & set(settings)) and 'study_description' not in settings
     required = REQUIRED_WITHOUT_A_SCREEN if without_screen else REQUIRED_KEYS
     unknown = set(settings) - SETTING_KEYS | (set(settings) & SCREEN_ONLY_KEYS if without_screen else set())
     missing = required - set(settings)
@@ -1455,7 +1462,9 @@ def build(screen, run_dir, settings, plots):
                   curves_section(screen, curves_figure(screen, order, plots)),
                   properties_section(screen, order, visits_figure(screen, order, plots))]
     if screen.cases is not None:
-        parts.append(case_sweeps.development_section(run_dir, screen.batch, screen.cases, settings['development_sweeps']))
+        parts.append(case_sweeps.development_section(run_dir, screen.cases, settings['development_sweeps']))
+    if screen.validation_cases is not None:
+        parts.append(validation_seeds.section(settings['validation_seeds'], screen.validation_cases))
     # The predictions: read by the batch's module when it has one, else quoted when `ideas.md` holds any.
     ideas = (folder / 'ideas.md').read_text() if (folder / 'ideas.md').exists() else ''
     if 'predictions' in settings or re.search(r'(?m)^## Predictions', ideas):
@@ -1465,7 +1474,7 @@ def build(screen, run_dir, settings, plots):
     if screen.validation is not None:
         parts.append(validation_section(screen.validation, settings['validation_block']))
     if 'validation_of_configurations' in settings:
-        parts.append(case_sweeps.validation_section(run_dir, screen.batch, settings['validation_of_configurations']))
+        parts.append(case_sweeps.validation_section(run_dir, settings['validation_of_configurations']))
     if 'discovery' in settings:
         parts.append(case_sweeps.discovery_section(run_dir, screen.batch, settings['discovery']))
     if 'consistency_check' in settings:
@@ -1484,13 +1493,15 @@ def read_batch(run_dir, batch, settings):
     else:
         screen = Screen(batch=batch, control=None, order=(), names={}, units=(), methods={}, differences={},
                         discovery_differences={}, budget=None, seeds=())
-    validation = cases = None
+    validation = cases = validation_cases = None
+    if 'validation_seeds' in settings:
+        validation_cases = validation_seeds.read_cases(run_dir, settings['validation_seeds'])
     if 'validation_block' in settings:
         description = json.loads((folder / settings['study_description']).read_text())
         validation = read_validation(run_dir, description, settings['validation_block'], batch)
     if 'development_sweeps' in settings:
         cases = case_sweeps.read_development(run_dir, batch, folder, settings['development_sweeps'])
-    return replace(screen, validation=validation, cases=cases)
+    return replace(screen, validation=validation, cases=cases, validation_cases=validation_cases)
 
 
 def generate(run_dir, batch):

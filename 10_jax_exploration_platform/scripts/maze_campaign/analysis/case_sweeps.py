@@ -502,7 +502,7 @@ def read_development(run_dir, batch, folder, block):
     return cases
 
 
-def development_section(run_dir, batch, cases, block):
+def development_section(run_dir, cases, block):
     """The section of the development sweeps: the units, then per case the two tables, the methods' grids, and the
     picked configurations on the validation seeds where the settings name such a phase and the case has units of it."""
     ours = read_specifications(run_dir) if 'validation' in block else None
@@ -532,7 +532,7 @@ def development_section(run_dir, batch, cases, block):
         if 'validation' in block:
             # Appended after the case's own tables below; read here so that a case with no complete sweep shows it too.
             checked = validation_part(
-                run_dir, batch, block['validation'], environment, reward_setting, ours, METRICS,
+                run_dir, block['validation'], environment, reward_setting, ours, METRICS,
                 '#### On the validation seeds: picked configurations of this case\n\n',
                 'these configurations were picked as the leading ones of each side\'s sweep', budget)
         else:
@@ -600,7 +600,12 @@ CASE_VALIDATION_KEYS = VALIDATION_KEYS | {'environment', 'reward_setting'}
 METRIC_WORDS = {'whole': ('$W$', 'the highest'), 'discovery': ('$M$', 'the smallest')}
 
 
-def validation_part(run_dir, batch, block, environment, reward_setting, specifications, metrics, heading, picked, budget=None):
+def validation_name(phase, environment, reward_setting):
+    """The words the resamples of a comparison on the validation seeds are named by, before the method and the metric."""
+    return 'picked configurations on the validation seeds', phase, environment, reward_setting
+
+
+def validation_part(run_dir, block, environment, reward_setting, specifications, metrics, heading, picked, budget=None):
     """Picked configurations on the validation seeds in one case: every unit's measures, then best against best per metric.
 
     `metrics` names the metrics the units were picked for; `heading` is the part's whole heading line; `picked` says
@@ -608,6 +613,16 @@ def validation_part(run_dir, batch, block, environment, reward_setting, specific
     """
     sides = {slug: read_side(run_dir, select(specifications, [block['phase']], slug, environment, reward_setting, budget), slug, name)
              for slug, name in block['method_names'].items()}
+    return validation_text(block['phase'], block['control'], sides, environment, reward_setting, metrics, heading, picked)
+
+
+def validation_text(phase, control_slug, sides, environment, reward_setting, metrics, heading, picked):
+    """The text of validation_part from sides that are already read ({method: Side}, the control among them).
+
+    The resamples of a comparison are named by the phase and the case, not by the batch whose page shows it, so
+    every page gives one comparison the same interval.
+    """
+    block = {'phase': phase, 'control': control_slug}
     if not any(side.units for side in sides.values()):
         return None
     control = sides[block['control']]
@@ -618,8 +633,8 @@ def validation_part(run_dir, batch, block, environment, reward_setting, specific
     if not read:
         return heading + f"No unit of the phase `{block['phase']}` is complete yet.\n\n" + units
     budget = one_budget(sides.values(), f"the phase {block['phase']}")
-    entries = [(side, compare_at_best(side, control, budget, 'picked configurations on the validation seeds', batch,
-                                      environment, reward_setting)) for side in others if side.groups]
+    entries = [(side, compare_at_best(side, control, budget, *validation_name(phase, environment, reward_setting)))
+               for side in others if side.groups]
     names = described_settings(read)
     seeds = sorted({policy.seed for side in read for group in side.groups for policy in group.policies})
     waiting = [f'{side.name}: {read_words(side)}' for side in sides.values() if len(side.groups) < side.planned]
@@ -644,7 +659,7 @@ def validation_part(run_dir, batch, block, environment, reward_setting, specific
     return ''.join(text)
 
 
-def validation_section(run_dir, batch, block):
+def validation_section(run_dir, block):
     """A section of its own: every configuration of one phase on the validation seeds in one case, best against best."""
     check_keys(block, CASE_VALIDATION_KEYS, CASE_VALIDATION_KEYS, 'validation_of_configurations')
     heading = ('## Validation seeds: each side at the best of all its configurations\n\n'
@@ -652,17 +667,17 @@ def validation_section(run_dir, batch, block):
                'differs. Here every configuration of the phase counts, also one at another learning rate or entropy '
                'coefficient, so each side, the control included, stands at the best of everything it was run at on '
                'these seeds.\n\n')
-    found = validation_part(run_dir, batch, {key: block[key] for key in VALIDATION_KEYS}, block['environment'],
+    found = validation_part(run_dir, {key: block[key] for key in VALIDATION_KEYS}, block['environment'],
                             block['reward_setting'], read_specifications(run_dir), METRICS, heading,
                             'these configurations were picked from each side\'s screens and sweeps')
     return found or heading + f"The phase `{block['phase']}` has no unit in this case.\n\n"
 
 
-def discovery_validation(run_dir, batch, block, environment, reward_setting, specifications):
+def discovery_validation(run_dir, block, environment, reward_setting, specifications):
     """The discovery check on the validation seeds: every unit's M, then each method's best against the control's best."""
     check_keys(block, VALIDATION_KEYS, VALIDATION_KEYS, 'discovery, validation')
     heading = '### On the validation seeds: the leading configurations for the first-goal time\n\n'
-    found = validation_part(run_dir, batch, block, environment, reward_setting, specifications, ('discovery',), heading,
+    found = validation_part(run_dir, block, environment, reward_setting, specifications, ('discovery',), heading,
                             "these configurations were picked as the leading ones of each method's discovery sweep")
     return found or heading + f"The phase `{block['phase']}` has no unit in this case.\n\n"
 
@@ -718,7 +733,7 @@ def discovery_section(run_dir, batch, block):
              f"{case_words(block['environment'], block['reward_setting'])}: sweeps of whole configurations on the "
              'development seeds, and the leading configurations of each sweep again on the validation seeds.\n\n']
     if 'validation' in block:
-        parts.append(discovery_validation(run_dir, batch, block['validation'], block['environment'],
+        parts.append(discovery_validation(run_dir, block['validation'], block['environment'],
                                           block['reward_setting'], specifications))
     if 'development' in block:
         parts.append(discovery_development(run_dir, batch, block['development'], block['environment'],

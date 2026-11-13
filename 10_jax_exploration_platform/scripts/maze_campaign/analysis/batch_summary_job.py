@@ -43,11 +43,12 @@ def test_generate_batch_summary(request):
     # development sweeps and of the discovery checks, as the summary shows them.
     text = result['summary'].read_text()
     for heading in ('### Each method at its best intrinsic weight against the control at its best weight\n',
-                    '## Development sweeps against the baseline, case by case\n', '## Discovery checks beyond the screen\n'):
+                    '## Development sweeps against the baseline, case by case\n', '## Discovery checks beyond the screen\n',
+                    '## Validation seeds, case by case\n', '## Predictions\n'):
         if heading in text:
             body = text.split(heading)[1].split('\n## ')[0]
             print(f'\n{heading.strip()}')
-            print('\n'.join(line for line in body.splitlines() if line.startswith(('| ', '#', '**')) or 'confirmation seeds' in line
+            print('\n'.join(line for line in body.splitlines() if line.startswith(('| ', '#', '**', 'Observed', '- ')) or 'confirmation seeds' in line
                             or 'at an end of its grid' in line or 'Not read yet' in line))
 
     # The secondary metric: every complete method at its best weight for M, in the order of its table.

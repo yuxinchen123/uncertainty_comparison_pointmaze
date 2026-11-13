@@ -303,13 +303,13 @@ def test_the_discovery_checks_on_the_validation_seeds_and_on_the_development_see
     assert ("CleanRL PPO-RND's best configuration here has no complete unit on the confirmation seeds (phases "
             '`confirmation-for-discovery`): the confirmation units of this case hold intrinsic weight 1, learning rate 0.0001.') in later
     # The same units as a section of their own, for both metrics: the control's best for W is its first configuration.
-    own = case_sweeps.validation_section(run, 'made-up batch', {**block['validation'], 'environment': 'pointmaze-medium',
+    own = case_sweeps.validation_section(run, {**block['validation'], 'environment': 'pointmaze-medium',
                                                                'reward_setting': 'arrival_plus_one'})
     assert own.startswith('## Validation seeds: each side at the best of all its configurations\n') and '### Units' in own
     assert 'Best against best for $W$ (the highest is the best):' in own and 'Best against best for $M$' in own
     assert '| control | intrinsic weight 1, learning rate 0.0001 (best of 2) | <u>0.750</u> ± 0.050 | control |' in own
     with pytest.raises(ValueError, match="validation_of_configurations: unknown keys \\[\\], missing keys \\['environment', 'reward_setting'\\]"):
-        case_sweeps.validation_section(run, 'made-up batch', block['validation'])
+        case_sweeps.validation_section(run, block['validation'])
     # With no complete unit a part says so and still lists its units; an unknown key of a block is refused.
     empty = case_sweeps.discovery_section(tmp_path / 'baseline-run', 'made-up batch', block)
     assert 'The phase `discovery-validation` has no unit in this case.' in empty and 'No unit of these sweeps is complete yet.' in empty
