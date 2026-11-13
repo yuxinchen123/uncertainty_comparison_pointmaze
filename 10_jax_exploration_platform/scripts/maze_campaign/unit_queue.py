@@ -4,6 +4,17 @@ A unit's queue record is one JSON file. It is in exactly one folder of RUN/queue
 pending, running, done or failed (and remote_<server> or deferred while the remote fleet holds
 it). Every change of state is one rename of that file. The unit's definition is a second file,
 RUN/specifications/<unit id>.json, which never changes. Standard library only.
+
+Code copies. Every frozen code copy of a run folder has a copy number that grows with each freeze
+(freeze_code.py writes it into the copy as SOURCE_COPY_NUMBER). A unit's record names the lowest
+copy number that may run it (`minimum_copy_number`; a record without the field counts as 0):
+  - the builder writes the number of the copy the unit was built against;
+  - a worker never claims a unit that needs a higher number than its own copy's, so a job of an
+    older copy leaves a unit with a newer option alone;
+  - a claim raises the unit's number to the claiming worker's, so a unit a newer copy has saved a
+    checkpoint for is never taken over by an older copy.
+The field is part of the record, so it goes wherever the record goes: back to pending, to a
+remote server and back.
 """
 import json
 import os
@@ -17,8 +28,23 @@ FAILURE_LIMIT = 3     # a unit whose process failed this many times goes to fail
 RECOVERY_LIMIT = 5    # a unit whose job ended without a result more often than this goes to failed
 # what a claim adds to a unit's record; an ended attempt moves these fields into the record's history
 CLAIM_FIELDS = ("job_id", "restart_count", "account", "hostname", "card", "card_memory_mb",
-                "source_commit", "started_at")
+                "source_commit", "copy_number", "started_at")
 TAIL_BYTES = 4 * 2 ** 20   # how much of a shard's end is read for its progress
+# the file in a frozen code copy's platform folder that holds the copy's number, beside SOURCE_COMMIT
+COPY_NUMBER_FILE = "SOURCE_COPY_NUMBER"
+
+
+def copy_number(platform):
+    """Read the copy number of a platform folder; 0 where none is written."""
+    # before: <run>/code/source_<commit>/10_jax_exploration_platform/SOURCE_COPY_NUMBER holds "3\n"; after: 3
+    # the working tree, and a copy frozen before copy numbers existed, have no such file and count as 0
+    marker = Path(platform) / COPY_NUMBER_FILE
+    return int(marker.read_text()) if marker.exists() else 0
+
+
+def required_copy(unit):
+    """The lowest copy number that may run a unit; a record without the field counts as 0."""
+    return unit.get("minimum_copy_number", 0)
 
 
 def unit_path(run_dir, state, name):
@@ -80,8 +106,13 @@ def move(run_dir, unit, source, target):
 
 
 def claim(run_dir, card_memory_mb, claimant):
-    """Claim the first pending unit this card can hold; the rename into running/ is the claim."""
+    """Claim the first pending unit this card can hold and this worker's code copy may run.
+
+    The rename into running/ is the claim. `claimant` holds the claim's fields; its `copy_number`
+    is the number of the code copy the worker runs from (0 when it names none).
+    """
     run_dir = Path(run_dir)
+    own_copy = claimant.get("copy_number", 0)
     with common.queue_lock(run_dir):
         # units are taken in the order the builder gave them, then by name
         units = sorted((common.read_json(path) for path in (run_dir / "queue/pending").glob("*.json")),
@@ -89,14 +120,27 @@ def claim(run_dir, card_memory_mb, claimant):
         for unit in units:
             if unit["minimum_device_memory_mb"] > card_memory_mb:
                 continue
+            # a unit built against a newer code copy, or already run by one, is left to workers of that copy
+            if required_copy(unit) > own_copy:
+                continue
             os.rename(unit_path(run_dir, "pending", unit["name"]), unit_path(run_dir, "running", unit["name"]))
             # a unit put back by a remote server's tick still carries the claim of its ended job
             if "job_id" in unit:
                 close_attempt(unit, "job_ended_without_a_result")
             unit.update(claimant, started_at=common.now(), attempts=unit["attempts"] + 1)
+            # this copy may now save a checkpoint for the unit, which no older copy can continue
+            # before: {"name": "u", "minimum_copy_number": 1}, claimed by a worker of copy 3
+            # after:  {"name": "u", "minimum_copy_number": 3, "copy_number": 3, "job_id": "71", ...}
+            if own_copy > required_copy(unit):
+                unit["minimum_copy_number"] = own_copy
             common.write_json(unit_path(run_dir, "running", unit["name"]), unit)
             return unit
     return None
+
+
+def pending_for_newer_copies(run_dir, own_copy):
+    """Count the pending units that need a newer code copy than the given one."""
+    return sum(required_copy(unit) > own_copy for unit in read_units(run_dir, "pending"))
 
 
 def next_folder(unit, counts_as_failure):

@@ -16,6 +16,12 @@ process runs with this worker's own interpreter, or with the one the unit's spec
 The worker ends when nothing it can run is pending, when too little of the job is left, after a
 unit that did not complete, or when RUN/STOP exists. A queued job holds no unit: the claim is made
 here, after the job has started. The worker itself imports no numerical library.
+
+A worker takes only units its own code copy may run. It reads its copy number from the file
+SOURCE_COPY_NUMBER of the frozen copy it was started from (0 for the working tree and for a copy
+frozen before copy numbers existed). A pending unit that needs a higher number is left where it is:
+it uses an option this copy may not know, or a newer copy has saved its checkpoint. When only such
+units are pending, the worker ends as it does when the queue is empty (unit_queue.py, "Code copies").
 """
 import argparse
 from datetime import datetime
@@ -57,6 +63,11 @@ def source_commit():
     """Name the frozen code copy this worker runs from; a worker started from the working tree says so."""
     marker = PLATFORM / "SOURCE_COMMIT"
     return marker.read_text().strip() if marker.exists() else "working tree"
+
+
+def source_copy_number():
+    """The copy number of the frozen code copy this worker runs from; 0 for the working tree."""
+    return unit_queue.copy_number(PLATFORM)
 
 
 def job_end(job_id):
@@ -259,7 +270,7 @@ def main(argv=None, card=None, trainer=TRAINER, sample_memory=card_memory_used_m
         handle.write(f"{job_id} {card['hostname']} {common.now()} restart={restart_count}\n")
     claimant = {"job_id": job_id, "restart_count": restart_count, "account": os.environ.get("USER"),
                 "hostname": card["hostname"], "card": card["gpu"], "card_memory_mb": card["memory_mb"],
-                "source_commit": source_commit()}
+                "source_commit": source_commit(), "copy_number": source_copy_number()}
     # a requeued job starts again under the same id: what its earlier start claimed goes back to pending
     for name in unit_queue.release_claims_of_job(run_dir, job_id, restart_count):
         print(f"[{common.pacific()}] released {name}, claimed by an earlier start of this job", flush=True)
@@ -279,7 +290,12 @@ def main(argv=None, card=None, trainer=TRAINER, sample_memory=card_memory_used_m
                 break
             unit = unit_queue.claim(run_dir, card["memory_mb"], claimant)
             if unit is None:
-                print(f"[{common.pacific()}] nothing this card can run is pending; this worker ends", flush=True)
+                # units of a newer code copy are not this worker's to take; it says so and ends, it never waits
+                newer = unit_queue.pending_for_newer_copies(run_dir, claimant["copy_number"])
+                print(f"[{common.pacific()}] nothing this card can run is pending"
+                      + (f" ({newer} pending unit(s) need a newer code copy than this worker's, "
+                         f"copy number {claimant['copy_number']})" if newer else "")
+                      + "; this worker ends", flush=True)
                 break
             print(f"[{common.pacific()}] start {unit['name']} (attempt {unit['attempts']})", flush=True)
             common.write_json(folder / "assignment.json", unit)

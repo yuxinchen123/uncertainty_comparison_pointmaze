@@ -180,5 +180,78 @@ class RemoteRecords(WorkerCase):
         self.assertEqual(len(list((self.run_dir / "logs").glob(f"{self.names[0]}_local_released_*.job"))), 1)
 
 
+class CodeCopies(WorkerCase):
+    """A worker takes only units its own code copy may run."""
+
+    def work_from_copy(self, number, mode="complete"):
+        """Run one worker as if started from a frozen copy with the given copy number; returns (exit code, output)."""
+        copy = self.run_dir.parent / f"copy_{number}"
+        copy.mkdir(exist_ok=True)
+        (copy / unit_queue.COPY_NUMBER_FILE).write_text(f"{number}\n")
+        (copy / "SOURCE_COMMIT").write_text(f"commit-of-copy-{number}\n")
+        environment = {key: value for key, value in os.environ.items() if not key.startswith("SLURM_")}
+        environment["FAKE_TRAINER_MODE"] = mode
+        printed = io.StringIO()
+        with mock.patch.dict(os.environ, environment, clear=True), contextlib.redirect_stdout(printed), \
+                mock.patch.object(worker, "PLATFORM", copy):
+            code = worker.main(["--run-dir", str(self.run_dir), "--max-seconds", "7200",
+                                "--observed-dir", str(self.observed)],
+                               card=CARD, trainer=self.trainer, sample_memory=None)
+        return code, printed.getvalue()
+
+    def need(self, name, number):
+        """Give one pending unit's record a lowest copy number."""
+        path = unit_queue.unit_path(self.run_dir, "pending", name)
+        common.write_json(path, dict(common.read_json(path), minimum_copy_number=number))
+
+    def test_a_worker_of_an_older_copy_takes_no_newer_unit_and_ends(self):
+        """Both pending units need copy 2: a worker of copy 1 starts nothing, says why, and ends with code 0."""
+        for name in self.names:
+            self.need(name, 2)
+        code, printed = self.work_from_copy(1)
+        self.assertEqual(code, 0)
+        self.assertIn("2 pending unit(s) need a newer code copy than this worker's, copy number 1", printed)
+        self.assertEqual(unit_queue.counts(self.run_dir), {"done": 0, "failed": 0, "pending": 2, "running": 0})
+        self.assertEqual([self.record("pending", name)["attempts"] for name in self.names], [0, 0])
+        self.assertFalse((self.run_dir / "data").exists())
+
+    def test_an_older_worker_takes_what_it_may_and_leaves_the_rest(self):
+        """One unit needs copy 2, the other none: a worker of copy 1 completes the second and leaves the first."""
+        self.need(self.names[0], 2)
+        code, printed = self.work_from_copy(1)
+        self.assertEqual(code, 0)
+        self.assertEqual((self.record("pending", self.names[0])["attempts"],
+                          self.record("done", self.names[1])["minimum_copy_number"]), (0, 1))
+        self.assertIn("1 pending unit(s) need a newer code copy", printed)
+
+    def test_a_worker_of_a_newer_copy_takes_older_units_and_raises_their_number(self):
+        """A worker of copy 3 completes units built for copies 0 and 2; each then needs copy 3 and names it in its history."""
+        self.need(self.names[1], 2)
+        code, printed = self.work_from_copy(3)
+        self.assertEqual(code, 0)
+        self.assertNotIn("newer code copy", printed)
+        for name in self.names:
+            record = self.record("done", name)
+            self.assertEqual((record["minimum_copy_number"], record["history"][-1]["copy_number"],
+                              record["history"][-1]["source_commit"]), (3, 3, "commit-of-copy-3"))
+
+    def test_a_stopped_unit_of_a_newer_copy_is_not_continued_by_an_older_one(self):
+        """A unit copy 3 stopped with its state saved waits for copy 3: copy 2 leaves it, copy 3 completes it."""
+        code, _ = self.work_from_copy(3, mode="stop")
+        self.assertEqual(code, 0)
+        self.assertEqual(self.record("pending", self.names[0])["minimum_copy_number"], 3)
+        self.need(self.names[1], 3)
+        code, printed = self.work_from_copy(2)
+        self.assertIn("2 pending unit(s) need a newer code copy", printed)
+        self.assertEqual(self.record("pending", self.names[0])["attempts"], 1)
+        self.assertEqual(self.work_from_copy(3)[0], 0)
+        self.assertEqual([attempt["outcome"] for attempt in self.record("done", self.names[0])["history"]],
+                         ["stopped_with_state_saved", "complete"])
+
+    def test_the_working_tree_counts_as_copy_zero(self):
+        """A worker started from the working tree has no number file: its copy number is 0."""
+        self.assertEqual(worker.source_copy_number(), 0)
+
+
 if __name__ == "__main__":
     unittest.main()

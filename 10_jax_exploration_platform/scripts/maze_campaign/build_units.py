@@ -17,6 +17,11 @@ A unit's configuration file lists every field of the trainer, so units are built
 copy that will run them: the run folder's frozen copy (freeze_code.py) when it exists. After a new
 frozen copy, `--replace-pending` rebuilds the pending units that never started.
 
+Each queue record names the lowest code copy number that may run the unit (`minimum_copy_number`):
+the number of the copy the unit was built against (0 for the working tree and for a copy frozen
+before copy numbers existed). A worker of an older copy never claims it (unit_queue.py, "Code
+copies").
+
 The description's keys, the three kinds of cells and one example are in README.md of this folder.
 """
 import argparse
@@ -407,13 +412,17 @@ def study_units(description, estimates_dir=ESTIMATES, platform=common.PLATFORM):
     return specifications
 
 
-def queue_record(specification, order):
-    """The small record of a unit that moves between the queue folders."""
+def queue_record(specification, order, copy_number=0):
+    """The small record of a unit that moves between the queue folders.
+
+    copy_number: the number of the code copy the unit was built against; no older copy may run it.
+    """
     record = {key: specification[key] for key in (
         "phase", "environment", "reward_setting", "method", "workload", "policies", "iterations",
         "windows_expected")}
     return {"name": specification["unit_id"], "order": order,
             "minimum_device_memory_mb": specification["minimum_card_memory_mb"],
+            "minimum_copy_number": copy_number,
             "specification": f"specifications/{specification['unit_id']}.json", **record,
             "attempts": 0, "failures": 0, "recoveries": 0, "history": []}
 
@@ -446,7 +455,9 @@ def main(argv=None):
     platform = args.platform or common.PLATFORM
     if not args.platform and (run_dir / "source.json").exists():
         platform = Path(common.read_json(run_dir / "source.json")["snapshot"]) / "10_jax_exploration_platform"
-    print(f"units are built against {platform}")
+    # the units need at least the copy they are built against: an older copy may not know their options
+    copy_number = unit_queue.copy_number(platform)
+    print(f"units are built against {platform} (code copy number {copy_number})")
     specifications = study_units(json.loads(args.study.read_text()), args.estimates_dir, platform)
     for specification in specifications:
         print(f"{specification['unit_id']}\n    {specification['policies']} policies ("
@@ -460,7 +471,7 @@ def main(argv=None):
         return
     # later builds queue behind earlier ones; a unit that already exists keeps its place and its state
     first = next_order(run_dir)
-    added = [unit_queue.enqueue(run_dir, specification, queue_record(specification, first + index),
+    added = [unit_queue.enqueue(run_dir, specification, queue_record(specification, first + index, copy_number),
                                 args.replace_pending)
              for index, specification in enumerate(specifications)]
     stamp = datetime.now().astimezone(ZoneInfo("America/Los_Angeles")).strftime("%Y-%m-%d-%H-%M")

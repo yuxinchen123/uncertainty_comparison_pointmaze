@@ -6,6 +6,7 @@ from pathlib import Path
 import tempfile
 import tomllib
 import unittest
+from unittest import mock
 
 from maze_test_support import ANTMAZE, ANTMAZE_WARP, PLATFORM, description, units_of
 from grid_campaign import common
@@ -385,6 +386,34 @@ class QueueFiles(unittest.TestCase):
             record = common.read_json(unit_queue.unit_path(run_dir, "pending", second))
             self.assertEqual((record["order"], record["windows_expected"]), (2, 100))
             self.assertIn("window_iterations = 984", unit_queue.configuration_path(run_dir, second).read_text())
+
+
+class CodeCopyNumber(unittest.TestCase):
+    """The lowest code copy number a unit's queue record names."""
+
+    def test_the_record_names_the_copy_the_unit_was_built_against(self):
+        """queue_record writes the number it is given (0 by default); main reads it from the platform it builds against."""
+        with tempfile.TemporaryDirectory() as folder:
+            run_dir, study = Path(folder) / "run", Path(folder) / "development.json"
+            study.write_text(json.dumps(description()))
+            arguments = ["--run-dir", str(run_dir), "--study", str(study), "--estimates-dir", folder]
+            # the working tree has no number file: its units need no particular copy
+            with contextlib.redirect_stdout(io.StringIO()) as printed:
+                build_units.main(arguments)
+            self.assertIn("(code copy number 0)", printed.getvalue())
+            self.assertEqual({record["minimum_copy_number"] for record in unit_queue.read_units(run_dir, "pending")}, {0})
+            # after a freeze the copy holds number 4: units that never started are rebuilt for it
+            with mock.patch.object(unit_queue, "copy_number", return_value=4) as read, \
+                    contextlib.redirect_stdout(io.StringIO()) as printed:
+                build_units.main(arguments + ["--replace-pending"])
+            read.assert_called_once_with(build_units.common.PLATFORM)
+            self.assertIn("(code copy number 4)", printed.getvalue())
+            self.assertEqual({record["minimum_copy_number"] for record in unit_queue.read_units(run_dir, "pending")}, {4})
+        specification = {"unit_id": "u", "minimum_card_memory_mb": 7000, **{key: 0 for key in (
+            "phase", "environment", "reward_setting", "method", "workload", "policies", "iterations",
+            "windows_expected")}}
+        self.assertEqual((build_units.queue_record(specification, 1)["minimum_copy_number"],
+                          build_units.queue_record(specification, 1, 5)["minimum_copy_number"]), (0, 5))
 
 
 if __name__ == "__main__":

@@ -35,6 +35,15 @@ described at the head of that file. This file replaces these parts of it:
      the server once, pull and verify finished units, move pending units from UVA to the server up
      to its limit, submit worker jobs for units no job will take, and print one line per unit.
 
+  6. Code copies. `prepare` sends the frozen copy with its SOURCE_COPY_NUMBER file, so a worker on
+     a server knows its copy number as one on UVA does and takes only units its copy may run
+     (unit_queue.py, "Code copies"). A unit's record goes to the server with its
+     `minimum_copy_number`, the worker there raises it when it claims the unit, and a unit that
+     returns brings the server's record back; UVA keeps the larger of the two numbers. Job scripts
+     are rewritten at `prepare`, so jobs submitted to a server before a new copy was sent still
+     run the older copy: they leave newer units alone, and they still count as waiting jobs
+     until they start and end.
+
 Job ids go to RUN/slurm/submitted_jobids_<server>.txt (one file per server). A name with a phase
 in it (submitted_jobids_<phase>_<server>.txt) would be read by UVA's monitor as UVA job ids.
 H100 and H200 work goes to the first server of SERVER_ORDER that can start it (rule
@@ -166,10 +175,12 @@ def prepare(run_dir, table, name, again=False):
     answer = fleet.remote(run_dir, table, name, repository_script(code_parent, commit))
     remote_commit, changed = next(line for line in answer.splitlines()
                                   if line.startswith(f"{fleet.MARK}repository ")).split()[1:]
-    entry.update(prepared_commit=commit, code_repository_commit=remote_commit)
+    # the copy's number went with it (SOURCE_COPY_NUMBER in the platform folder); the table notes it for the reader
+    number = source.get("copy_number", 0)
+    entry.update(prepared_commit=commit, prepared_copy_number=number, code_repository_commit=remote_commit)
     common.write_json(fleet.table_path(run_dir), table)
-    fleet.log(run_dir, f"{name} | prepare | job scripts and the code copy of commit {commit} are on the server; "
-              f"the copy's own git commit there is {remote_commit} ({changed} file(s) differ from it)")
+    fleet.log(run_dir, f"{name} | prepare | job scripts and the code copy of commit {commit} (copy number {number}) "
+              f"are on the server; the copy's own git commit there is {remote_commit} ({changed} file(s) differ from it)")
 
 
 def status_script(name, entry, assigned):
@@ -372,7 +383,17 @@ def bring_back(run_dir, table, name, returned, command, folder="pending"):
                 os.replace(source, target / source.name)
         # the server's record holds the unit's attempts there; UVA's record takes them over
         record = landing / f"{unit}.json"
-        fleet.move_unit(run_dir, unit, f"remote_{name}", folder, common.read_json(record) if record.exists() else None)
+        returned_record = common.read_json(record) if record.exists() else None
+        if returned_record is not None:
+            # the lowest code copy that may run the unit never falls: a worker on the server may have
+            # raised it, and UVA's own record may hold a number the server's copy of it never had
+            # before: UVA's record {"minimum_copy_number": 2}, the server's {"minimum_copy_number": 3, "attempts": 1}
+            # after:  UVA's record {"minimum_copy_number": 3, "attempts": 1}
+            held_record = common.read_json(run_dir / "queue" / f"remote_{name}" / f"{unit}.json")
+            needed = max(unit_queue.required_copy(returned_record), unit_queue.required_copy(held_record))
+            if needed:
+                returned_record["minimum_copy_number"] = needed
+        fleet.move_unit(run_dir, unit, f"remote_{name}", folder, returned_record)
         fleet.finish_assignment(run_dir, [unit], "returned")
         fleet.log(run_dir, f"{name} | {command} | {unit} is back in queue/{folder} on UVA, "
                   + ("with its checkpoint and shard: it continues" if saved else

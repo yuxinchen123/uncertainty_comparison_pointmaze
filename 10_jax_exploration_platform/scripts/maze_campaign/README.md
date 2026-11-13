@@ -18,13 +18,13 @@ MuJoCo Warp, which it starts with `/p/rlprojects/RND/.venvs/platform_jax_warp/bi
 | file | what it does |
 |---|---|
 | `build_units.py` | study description (JSON) → units in `RUN/queue/pending/` |
-| `freeze_code.py` | copies the committed code into `RUN/code/source_<commit>/`;<br>jobs run that copy |
+| `freeze_code.py` | copies the committed code into `RUN/code/source_<commit>/`;<br>jobs run that copy; every new copy gets the next copy number |
 | `submit.py` | submits worker jobs on UVA under both accounts,<br>and the persistent monitor job |
 | `worker.py` | one process per card: claims a unit, runs `run_training.py`,<br>records how it ended, takes the next |
 | `monitor.py` | one pass or a loop: returns units of ended jobs to pending,<br>counts, progress, status files |
 | `remote_fleet.py` | Purdue Gautschi and Gilbreth, MIT, TAMU ACES, NCSA DeltaAI:<br>the grid campaign's file of the same name with this study's worker job,<br>checks and returns, and `hand-over-tick`, the one command of a tick |
 | `cancel_ledger.py` | the only cancel path: the jobs of one ledger file of a stopped run,<br>or single ids of one ledger |
-| `unit_queue.py` | the queue: claim by rename, return, finish, recover,<br>progress read from a shard |
+| `unit_queue.py` | the queue: claim by rename, return, finish, recover,<br>progress read from a shard; which code copy may take a unit |
 | `grid_campaign.py` | loads the grid campaign's functions that are reused here |
 | `analysis/` | records, measures and the report: a separate piece of work with its own files;<br>nothing above imports it |
 
@@ -197,6 +197,8 @@ RUN=/p/rlprojects/RND/10_jax_exploration_platform/runs/<run folder>
    $PY $M/freeze_code.py --run-dir $RUN
    ```
 
+   A folder may be frozen again while jobs of an older copy still run (section "Code copies").
+
 2. **Build units.** Look first, then write. Building the same description again adds nothing.
    A unit's configuration file lists every field of the trainer, so it must be built against the
    code copy that runs it: the builder reads the run folder's frozen copy. After a later freeze
@@ -311,6 +313,42 @@ RUN=/p/rlprojects/RND/10_jax_exploration_platform/runs/<run folder>
    5. To go on later: remove `STOP`, run a monitor pass (it returns the units of the cancelled jobs
       to pending), and submit workers; every unit continues from its checkpoint.
 
+## Code copies: which worker may take which unit
+
+A run folder is frozen again whenever the code gets a new option. Jobs submitted before keep the
+copy they were submitted with, so workers of several copies can be alive at once. Three rules keep
+an older worker away from a unit it cannot run:
+
+1. **Every new copy has a copy number, one above the highest the folder has had.** `freeze_code.py`
+   writes it into `RUN/source.json` (`copy_number`, `highest_copy_number`) and into the copy itself
+   (`SOURCE_COPY_NUMBER` in the copy's `10_jax_exploration_platform/`, beside `SOURCE_COMMIT`), so the
+   number goes with the copy to a remote server. A folder or copy from before the numbers counts as 0.
+   Freezing again at a commit that already has a copy keeps that copy's number.
+2. **A unit names the lowest copy number that may run it** (`minimum_copy_number` in its queue
+   record; no field counts as 0). `build_units.py` writes the number of the copy the unit is built
+   against.
+3. **A worker claims only units whose number is not above its own, and a claim raises the unit's
+   number to the worker's.** So a unit with a newer option is never started by an older copy, and a
+   unit whose checkpoint a newer copy has written is never continued by an older one. A newer
+   worker may take an older unit. A worker that finds only units of newer copies ends, as it does
+   when the queue is empty, and says how many it left.
+
+The number is part of the unit's queue record, so it stays with the unit through every move:
+back to pending (stopped, failed, recovered, released), to a server, and back from it (UVA keeps
+the larger of its own number and the server's).
+
+What the rules do not do:
+
+- **Workers started from a copy without the check ignore the field.** The check is in the copy a
+  worker runs, so it holds only for workers of copies frozen at or after the commit that added it.
+- **Waiting jobs of an older copy still count as workers.** `submit.py` (the cards of waiting UVA
+  jobs) and the remote fleet (waiting jobs on a server) do not know which copy a waiting job
+  runs. Such a job starts, finds nothing it may take and ends; only then are jobs of the new copy
+  planned for the units it left. Cancelling the waiting jobs of the older copy by their ledger ids
+  after a freeze avoids that wait.
+- **Going back to an older commit** gives new jobs the older copy's lower number, and they leave
+  the units built or run since. Freeze forward.
+
 ## What a worker does with a unit
 
 | how the unit's process ended | where the unit goes | counts toward the 3 failures |
@@ -322,7 +360,7 @@ RUN=/p/rlprojects/RND/10_jax_exploration_platform/runs/<run folder>
 | its job ended without a result | `pending` at the next monitor pass;<br>`failed` after 6 such ends | no |
 
 After a unit that did not complete, the worker takes no further unit. Every attempt is kept in the
-unit's record (`history`: job, node, card, code copy, start, end, outcome, log).
+unit's record (`history`: job, node, card, code copy and its copy number, start, end, outcome, log).
 
 ## Tests
 

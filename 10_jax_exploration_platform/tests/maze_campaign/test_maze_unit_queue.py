@@ -205,5 +205,94 @@ class ShardProgress(unittest.TestCase):
             self.assertIsNone(unit_queue.shard_progress(write_shard(self.run_dir, "cut", windows=50))["windows_written"])
 
 
+class CodeCopies(QueueCase):
+    """Which code copy may take a unit: the unit's lowest copy number against the worker's own."""
+
+    def need(self, name, number, state="pending"):
+        """Give one unit's record a lowest copy number."""
+        path = unit_queue.unit_path(self.run_dir, state, name)
+        common.write_json(path, dict(common.read_json(path), minimum_copy_number=number))
+
+    def record(self, state, name):
+        """Read a unit's record from one queue folder."""
+        return common.read_json(unit_queue.unit_path(self.run_dir, state, name))
+
+    def test_the_copy_number_is_read_from_the_copy_and_is_zero_without_a_file(self):
+        """A platform folder with SOURCE_COPY_NUMBER gives its number; the working tree and old copies give 0."""
+        self.assertEqual(unit_queue.copy_number(self.run_dir), 0)
+        (self.run_dir / unit_queue.COPY_NUMBER_FILE).write_text("3\n")
+        self.assertEqual(unit_queue.copy_number(self.run_dir), 3)
+        self.assertEqual((unit_queue.required_copy({}), unit_queue.required_copy({"minimum_copy_number": 2})), (0, 2))
+
+    def test_an_older_worker_leaves_a_newer_unit_alone(self):
+        """A worker of copy 1 passes over a unit that needs copy 2, and gets None when only such units wait."""
+        self.need(self.names[0], 2)
+        older = dict(CLAIMANT, copy_number=1)
+        self.assertEqual(unit_queue.claim(self.run_dir, 20470, older)["name"], self.names[1])
+        self.need(self.names[2], 2)
+        self.assertIsNone(unit_queue.claim(self.run_dir, 20470, older))
+        self.assertEqual(unit_queue.pending_for_newer_copies(self.run_dir, 1), 2)
+        self.assertEqual(unit_queue.pending_for_newer_copies(self.run_dir, 2), 0)
+        # the units it left are untouched: still pending, never attempted
+        self.assertEqual([(self.state_of(name), self.record("pending", name)["attempts"])
+                          for name in (self.names[0], self.names[2])], [("pending", 0), ("pending", 0)])
+        # a worker of the unit's own copy takes it
+        self.assertEqual(unit_queue.claim(self.run_dir, 20470, dict(CLAIMANT, copy_number=2))["name"], self.names[0])
+
+    def test_a_newer_worker_takes_an_older_unit_and_raises_its_number(self):
+        """A worker of copy 3 claims a unit built for copy 1; from then on the unit needs copy 3."""
+        self.need(self.names[0], 1)
+        unit = unit_queue.claim(self.run_dir, 20470, dict(CLAIMANT, copy_number=3))
+        self.assertEqual((unit["name"], unit["minimum_copy_number"], unit["copy_number"]), (self.names[0], 3, 3))
+        self.assertEqual(self.record("running", self.names[0])["minimum_copy_number"], 3)
+        # a claim never lowers the number: a unit of copy 3 claimed by a worker of copy 3 stays at 3
+        self.need(self.names[1], 3)
+        self.assertEqual(unit_queue.claim(self.run_dir, 20470, dict(CLAIMANT, copy_number=3))["minimum_copy_number"], 3)
+
+    def test_a_record_and_a_claimant_without_the_field_count_as_zero(self):
+        """A unit built before the numbers and a worker that names no copy number meet as before."""
+        path = unit_queue.unit_path(self.run_dir, "pending", self.names[0])
+        record = common.read_json(path)
+        del record["minimum_copy_number"]
+        common.write_json(path, record)
+        unit = unit_queue.claim(self.run_dir, 20470, CLAIMANT)
+        self.assertEqual(unit["name"], self.names[0])
+        self.assertNotIn("minimum_copy_number", unit)
+        self.assertNotIn("copy_number", unit)
+        # a numbered worker takes such a unit too, and then it needs that worker's copy
+        self.need(self.names[1], 0)
+        self.assertEqual(unit_queue.claim(self.run_dir, 20470, dict(CLAIMANT, copy_number=1))["minimum_copy_number"], 1)
+
+    def test_the_number_stays_with_the_unit_through_every_return(self):
+        """Stopped, failed, released, recovered and finished: the unit keeps the number its last claim gave it."""
+        newer = dict(CLAIMANT, copy_number=3)
+        # stopped with its state saved: back to pending, and an older worker may not continue it
+        unit = unit_queue.claim(self.run_dir, 20470, newer)
+        unit_queue.give_back(self.run_dir, unit, "stopped_with_state_saved")
+        record = self.record("pending", unit["name"])
+        self.assertEqual((record["minimum_copy_number"], record["history"][-1]["copy_number"]), (3, 3))
+        self.assertNotIn("copy_number", record)
+        other = unit_queue.claim(self.run_dir, 20470, dict(CLAIMANT, job_id="72", copy_number=2))
+        self.assertEqual(other["name"], self.names[1])
+        # failed once: the same
+        unit = unit_queue.claim(self.run_dir, 20470, newer)
+        self.assertEqual(unit["name"], self.names[0])
+        unit_queue.give_back(self.run_dir, unit, "failed", counts_as_failure=True, log="x.log")
+        self.assertEqual(self.record("pending", unit["name"])["minimum_copy_number"], 3)
+        # the job starts again and releases its earlier claim
+        unit = unit_queue.claim(self.run_dir, 20470, newer)
+        self.assertEqual(unit_queue.release_claims_of_job(self.run_dir, "71", 1), [unit["name"]])
+        self.assertEqual(self.record("pending", unit["name"])["minimum_copy_number"], 3)
+        # its job ended without a result and the monitor returns the unit to pending
+        unit = unit_queue.claim(self.run_dir, 20470, dict(newer, job_id="88"))
+        self.assertEqual(unit_queue.recover_claims(self.run_dir, {}), {unit["name"]: "pending", self.names[1]: "pending"})
+        self.assertEqual(self.record("pending", unit["name"])["minimum_copy_number"], 3)
+        # complete
+        unit = unit_queue.claim(self.run_dir, 20470, newer)
+        unit_queue.finish(self.run_dir, unit, {"wall_seconds": 1.0})
+        done = self.record("done", unit["name"])
+        self.assertEqual((done["minimum_copy_number"], done["history"][-1]["copy_number"]), (3, 3))
+
+
 if __name__ == "__main__":
     unittest.main()
