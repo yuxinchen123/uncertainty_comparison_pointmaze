@@ -1359,6 +1359,11 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   of a 2-hour UVA job). Details in the AntMaze folder's `infra_history.md`. For the schedule: the RTX A4500 units
   (about 45 hours) are the slowest; near the end of the sweep they move to faster free cards
   ([[move-slow-card-units-to-fast-cards-near-the-end]] in memory).
+- 2026-11-13 15:50 PT: **RND probes on AntMaze Medium and Large, an early reading** (RK4 physics, 16 environments per
+  policy, 15 of 256 windows = 7.9 of 134 million steps per policy, 8 configurations x 16 seeds): on Medium all 128
+  policies have reached the goal at least once, and 0.5 to 0.9% of the latest episodes arrive; on Large 1 of 128
+  policies has reached the goal (learning rate 1e-2, weight 1). Not a result yet; the question for the user (what
+  the comparison is where RND rarely reaches the goal) waits for the full probes.
 
 ## Next
 
