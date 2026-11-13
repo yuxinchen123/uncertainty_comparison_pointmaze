@@ -656,6 +656,10 @@ def build_iteration(cfg, env, bonus, sweep, layout, capture_batch: bool = False)
                  "speed_mean": speed.mean(axis=1),
                  **{f"episode_{name}": value for name, value in ended.items()},
                  **updated[3]}
+            if bonus.keeps_predictor_divisor:
+                # the predictor's own score of the rollout, also for copies still rewarded with
+                # the fast last layer's scores, beside "rint_mean" (what the copy was rewarded with)
+                d["predictor_score_mean"] = own_buf.mean(axis=(0, 2))
             if cfg.success_gate_rate > 0:
                 d["success_rate"] = agent_state["success_rate"]
             if cfg.normalize_ext_reward:

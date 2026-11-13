@@ -35,7 +35,9 @@ def value(window, name, copy):
         return window["coverage_per_copy"][copy]
     if name == "rint_raw":
         return window["rint_mean_per_copy"][copy]
-    return window["diagnostics_per_copy"][name][copy]
+    # a quantity this run did not record (the predictor's own score is recorded only with the second divisor)
+    series = window["diagnostics_per_copy"].get(name)
+    return None if series is None else series[copy]
 
 
 def table(start, windows, absolute, fields, copies):
