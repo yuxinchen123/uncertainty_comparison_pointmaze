@@ -246,3 +246,7 @@ Times are Pacific, read from the clock or from scheduler records.
   `infrastructure/descriptions/antmaze_umaze_budget_probe_stable_physics.json`): RND's leading configurations for
   134,217,728 steps per policy with 128 environments per policy and for 67,108,864 with 16, learning rates up to
   3e-2 (the best one of the check was at the top of its grid). Each needs several 4-hour jobs.
+- 2026-11-13 00:06 PT: the first unit with 4 environments per policy (job 12347248, started 20:15 PT) reached the
+  4-hour limit and stopped with its state saved at window 112 of 256; the fleet step submitted its next job,
+  which was waiting on priority at 00:06 PT. The other five units of that count reach their limit at about
+  00:28 PT. The two units of the longer run are at 4 and 6 of 256 windows on A30 cards.

@@ -731,6 +731,24 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   divisor** (learning rate 3e-3, weight 8): −0.7216, +0.0094 [+0.0050, +0.0140] against RND's best of two
   (−0.7310); final level +0.0111; first-goal time −59 thousand. The slower predictor with held divisor has +0.0081
   there. The held divisor alone and all three parts are at 143 to 244 of 256 windows.
+- 2026-11-13 00:06 PT: **PointMaze Large with the step cost, first validation block (9 of 11 units complete; RND's
+  best of two −0.7310):** predictor at half speed with held divisor (learning rate 3e-3, weight 8): −0.7216,
+  +0.0094 [+0.0050, +0.0141]; slower predictor with held divisor (3e-3, weight 8): −0.7230, +0.0081
+  [+0.0033, +0.0132]; held divisor alone (2e-3, weight 4): −0.7255, +0.0055 [−0.0003, +0.0111], and (3e-3, weight
+  8): −0.7270; all three parts (4.5e-3, weight 0.5): −0.7320, −0.0010 [−0.008, +0.006], so its +0.006 on the 16
+  development seeds did not hold. Batch 6's prediction 3 did not hold (all three parts is level, the two-part arm
+  is ahead); batch 7's prediction 1 (held divisor alone ahead with its interval above zero) is not met so far:
+  the interval's lower end is −0.0003.
+  **Standing by arm on the whole-curve mean (validation seeds):**
+
+  | arm | Large, reward 1 on arrival | Medium, reward 1 on arrival | Large, step cost | Medium, step cost |
+  |---|---|---|---|---|
+  | held divisor alone | ahead, +0.0095 | ahead, +0.009 (second block) | +0.0055, interval reaches zero | ahead under equal rules, +0.0058 (second block); +0.0033 reaching zero when RND chooses on the block |
+  | predictor at half speed with held divisor | ahead, +0.0068 | ahead, +0.0108 (second block) | ahead, +0.0094 | only run with RND's tiny weights (level); weights 1, 2, 4 queued |
+  | slower predictor with held divisor | ahead, +0.0102 | level, −0.0001 | ahead, +0.0081 | level on 16 seeds with tiny weights |
+  | all three parts | ahead, +0.0137 | behind, −0.029 | level, −0.0010 | level on 16 seeds |
+
+  The half-speed arm is the one that could be ahead everywhere; its missing cell is queued (3 units).
 
 ## Next
 
