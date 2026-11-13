@@ -491,6 +491,18 @@ def unit_lines(run_dir, name, status, assigned, handed):
     return lines
 
 
+def stranded_units(assigned, queue):
+    """Name the assigned units that a server withdrew and holds in no other queue folder."""
+    # before: assigned ["a", "b", "c"]; the server's withdrawn ["a", "b"], pending ["b"] ; after: ["a"]
+    # A withdrawn marker stays on the server after a take-back. A unit handed to the same server AGAIN is
+    # then in withdrawn (the old marker) and in incoming, pending or running (the new hand-over), and it
+    # must stay there. On 2026-11-12 the old marker alone decided: every tick took six such units back and
+    # handed them over again, the server's waiting queue got them anew each time, and two or three jobs
+    # ran one unit at once.
+    held = set().union(*(queue[state] for state in ("incoming", "pending", "running", "done", "failed")))
+    return sorted((set(assigned) & set(queue["withdrawn"])) - held)
+
+
 def hand_over_tick(run_dir, table, dry_run):
     """One whole tick: read each server once, pull and verify, hand over pending units, submit jobs, print."""
     CURRENT["table"] = table
@@ -508,7 +520,7 @@ def hand_over_tick(run_dir, table, dry_run):
             # whose job ended put back, long-waiting units returned to UVA
             status, assigned = fleet.tick_server(run_dir, table, name, dry_run)
             # units an earlier tick withdrew on the server but could not copy back
-            stranded = sorted(set(assigned) & set(status["queue"]["withdrawn"]))
+            stranded = stranded_units(assigned, status["queue"])
             if stranded and not dry_run:
                 bring_back(run_dir, table, name, [(unit, False) for unit in stranded], "tick")
             pool_name = entry["hand_over"]["pool"]

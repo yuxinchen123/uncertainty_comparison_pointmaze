@@ -58,6 +58,14 @@ class RemoteWrappers(unittest.TestCase):
             self.assertNotIn("@", text)
             self.assertEqual(subprocess.run(["bash", "-n"], input=text, text=True, capture_output=True).returncode, 0)
 
+    def test_a_unit_handed_over_again_is_not_taken_back_for_its_old_withdrawn_marker(self):
+        """Only a unit the server holds in withdrawn ALONE is stranded; a unit handed over again stays."""
+        queue = {"incoming": ["d"], "pending": ["b"], "running": ["c"], "done": [], "failed": [],
+                 "withdrawn": ["a", "b", "c", "d", "x"]}
+        self.assertEqual(remote.stranded_units(["a", "b", "c", "d"], queue), ["a"])
+        self.assertEqual(remote.stranded_units(["b", "c"], queue), [])
+        self.assertEqual(remote.stranded_units([], queue), [])
+
     def test_two_run_folders_never_share_a_job_name_prefix(self):
         """The prefix comes from the folder's name: the same for one folder, different for another, and a job
         named for one folder is not among the other's jobs unless its id is in that folder's ledger."""
