@@ -70,3 +70,14 @@ Times are Pacific.
   partition in use over all sessions, so at most 5 more can run at once.
   Two planner faults to correct: it pins jobs to nodes whose free processors are only the 2 that a full node
   shows, and its unpinned jobs name one card type instead of leaving the choice between the allowed types open.
+- 2026-11-12 19:46 PT: of the 11 worker jobs submitted at 19:43 PT, 8 were unpinned and asked for RTX 4000 Ada
+  cards while 16 RTX 2080 Ti cards were free; six of them were switched to RTX 2080 Ti with `scontrol update`
+  (ids checked against the validation-block ledger; their submission records carry the change). At 19:48 PT 12
+  worker jobs of this folder waited with reason `Priority` although cards were free, and 2 had started: the
+  account's fair-share value is low after today's use (0.0012; the other account's is 0.0008, so submitting there
+  would not help). The units do not depend on these jobs: running workers take the next waiting unit when theirs
+  ends (waiting units went from 14 to 8 in four minutes).
+  Correction of the note of 19:07 PT: the planner naming one card type for its unpinned jobs is not a fault by
+  itself. It asks for a type at most as often as that type has cards outside reservations, counting this folder's
+  own running and waiting jobs; when the RTX 2080 Ti count is used up by our own jobs it turns to the next type.
+  The open fault is the other one: pinning to a node whose only idle processors are the 2 a full node shows.
