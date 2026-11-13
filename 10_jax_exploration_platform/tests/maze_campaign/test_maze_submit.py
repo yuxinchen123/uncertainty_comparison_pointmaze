@@ -98,6 +98,18 @@ class Plan(unittest.TestCase):
         finally:
             submit.set_worker_hours(None)
 
+    def test_new_workers_can_be_limited_to_one_account(self):
+        """With one account named, every planned job is that account's; an unknown name is refused."""
+        both = {job["identity"] for job in plan([7000] * 6)}
+        self.assertEqual(both, {"uva-sl5nw", "uva-yuxinchen"})
+        try:
+            submit.set_identities(["uva-sl5nw"])
+            self.assertEqual({job["identity"] for job in plan([7000] * 6)}, {"uva-sl5nw"})
+            with self.assertRaises(ValueError):
+                submit.set_identities(["uva-someone-else"])
+        finally:
+            submit.IDENTITIES = submit.ALL_IDENTITIES
+
     def test_never_more_worker_cards_than_units_without_a_worker(self):
         """Three pending units and one waiting worker of this run: two new cards; none when all are covered."""
         self.assertEqual(sum(job["cards"] for job in plan([7000] * 3, without_unit=1)), 2)

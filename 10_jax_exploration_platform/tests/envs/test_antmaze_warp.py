@@ -37,13 +37,13 @@ def test_reset_shapes_and_spawn():
     start = cell_center((3, 1), env.rows, env.cols)
     np.testing.assert_array_equal(np.asarray(s.data.qpos[:, 0:2]), np.tile(np.float32(start), (6, 1)))
     assert float(s.data.qpos[:, 2].min()) == 0.75 and float(jnp.abs(s.data.qvel).max()) == 0.0
-    # one pool of 6 x 48 contact slots for all six environments, and 160 rows for each of them
+    # one pool of 6 x 48 contact slots for all six environments, and 512 rows for each of them
     assert s.data._impl.contact__dist.shape == (6 * 48,)
-    assert s.data._impl.efc__force.shape == (6, 160)
+    assert s.data._impl.efc__force.shape == (6, 512)
     _, obs = env.respawn(s)
     assert obs.shape == (2, 3, 29) and obs.dtype == jnp.float32
     # the environment's own record of its configuration names the physics that runs
-    assert env.cfg.physics == "warp" and (env.naconmax, env.njmax) == (6 * 48, 160)
+    assert env.cfg.physics == "warp" and (env.naconmax, env.njmax) == (6 * 48, 512)
 
 
 def test_pool_sizes_come_from_the_configuration():

@@ -116,7 +116,7 @@ class RecordedExperimentFiles(unittest.TestCase):
         self.assertEqual((warp_example["trainer"], warp_example["runtime"]),
                          (jax_example["trainer"], jax_example["runtime"]))
         self.assertEqual((jax_example["environment"]["warp_contact_slots_per_environment"],
-                          jax_example["environment"]["warp_constraint_rows_per_environment"]), (48, 160))
+                          jax_example["environment"]["warp_constraint_rows_per_environment"]), (48, 512))
         self.assertEqual((argument_defaults(jax_example)["physics"],
                           argument_defaults(warp_example)["physics"]), ("jax", "warp"))
         self.assertNotIn("physics", argument_defaults(pointmaze))

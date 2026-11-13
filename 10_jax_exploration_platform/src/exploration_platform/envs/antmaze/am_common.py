@@ -105,7 +105,10 @@ class AntMazeConfig:
     # drops what does not fit, and the trainer then stops the unit.
     physics: str = "jax"
     warp_contact_slots_per_environment: int = 48
-    warp_constraint_rows_per_environment: int = 160
+    # 512 since 2026-11-12: with 160 (sized from random torques, which needed 49) the first training unit
+    # stopped at 161 rows after 2.4 million steps per policy; one ant pressed into a corner under the
+    # ceiling can hold several dozen contacts of 4 rows each
+    warp_constraint_rows_per_environment: int = 512
 
 
 def preset(map_name: str) -> AntMazeConfig:

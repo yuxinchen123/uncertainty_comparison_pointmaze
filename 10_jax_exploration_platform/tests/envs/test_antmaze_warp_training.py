@@ -101,7 +101,7 @@ def test_runner_trains_with_the_step_limit_the_episode_log_and_both_reward_setti
     np.testing.assert_array_equal(log["first_goal_step"], [-1, -1])
     # the pool is sized from the batch (4 environments x 48 slots) and nothing was dropped
     report = runner.check_environment(state)
-    assert (report["naconmax"], report["njmax"], report["dropped"]) == (4 * 48, 160, False)
+    assert (report["naconmax"], report["njmax"], report["dropped"]) == (4 * 48, 512, False)
     assert int(np.asarray(state.env_state.nan_count).sum()) == 0
 
 
@@ -184,7 +184,7 @@ def test_the_command_runs_the_warp_example_in_both_reward_settings():
             assert last["episodes_per_copy"] == [0, 0] and last["arrivals_per_copy"] == [0, 0]
             # the pool: 2 policies x 4 environments x 48 slots; its largest use grows or stays
             pools = [r["physics_pool"] for r in records[2:]]
-            assert all(pool["pool_slots"] == 2 * 4 * 48 and pool["constraint_row_limit"] == 160
+            assert all(pool["pool_slots"] == 2 * 4 * 48 and pool["constraint_row_limit"] == 512
                        for pool in pools)
             assert 0 < pools[0]["candidate_pairs_largest"] <= pools[1]["candidate_pairs_largest"]
             assert complete["physics_pool"] == pools[1]

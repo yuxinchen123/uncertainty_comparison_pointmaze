@@ -330,12 +330,14 @@ def main(argv=None):
     parser.add_argument("--memory-gib-per-card", type=int,
                         help="host memory in GiB each worker job of a top-up asks for per card")
     parser.add_argument("--worker-hours", type=float, help="time limit in hours of each worker job of a top-up")
+    parser.add_argument("--accounts", help="comma-separated accounts a top-up submits under; default: both")
     parser.add_argument("--gpu-types", help="comma-separated card types (gres names) a top-up may ask for; "
                                             "default: every type whose card can hold a pending unit")
     args = parser.parse_args(argv)
     # the request of the workers this monitor submits: the same three settings as submit.py's own options
     own("submit").set_request_per_card(args.cpus_per_card, args.memory_gib_per_card)
     own("submit").set_worker_hours(args.worker_hours)
+    own("submit").set_identities(args.accounts.split(",") if args.accounts else None)
     while True:
         started = time.monotonic()
         complete, cadence = one_pass(args.run_dir.resolve(), args.top_up_phase, args.complete_when_drained,

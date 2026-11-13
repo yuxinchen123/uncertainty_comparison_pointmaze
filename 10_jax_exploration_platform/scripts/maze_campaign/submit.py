@@ -25,7 +25,8 @@ from grid_campaign import common, load
 import unit_queue
 
 grid_submit = load("submit")
-IDENTITIES = ("uva-sl5nw", "uva-yuxinchen")
+ALL_IDENTITIES = ("uva-sl5nw", "uva-yuxinchen")
+IDENTITIES = ALL_IDENTITIES    # the accounts new workers go to; `set_identities` narrows it
 # processors per card: 8 where the per-user caps allow it (skill rnd-jax-submission, section 7);
 # gnolim's cap is 80 processors for 20 cards
 CPUS_PER_CARD = {"gpu": 8, "gnolim": 4}
@@ -47,6 +48,21 @@ def set_request_per_card(cpus=None, memory_gib=None):
 
 
 WORKER_HOURS = None    # None: a worker job asks for the longest time its partition allows
+
+
+def set_identities(names=None):
+    """Limit the accounts that new worker jobs are submitted under, for this process."""
+    # read 2026-11-12: workers under the second account waited for hours on Priority while the same
+    # request under the first account started within a minute, so a top-up can be limited to one
+    # before: None ; after: both accounts, as always
+    # before: ["uva-sl5nw"] ; after: plans, counts and submits under uva-sl5nw only
+    global IDENTITIES
+    if names is None:
+        return
+    unknown = [name for name in names if name not in ALL_IDENTITIES]
+    if unknown or not names:
+        raise ValueError(f"accounts must be chosen from {list(ALL_IDENTITIES)}; got {list(names)}")
+    IDENTITIES = tuple(name for name in ALL_IDENTITIES if name in names)
 
 
 def set_worker_hours(hours=None):
@@ -393,6 +409,8 @@ def main(argv=None):
     parser.add_argument("--worker-hours", type=float,
                         help="time limit of each worker job in hours (default: the longest the partition allows); "
                              "a short limit lets the scheduler place a low-priority worker on a free card")
+    parser.add_argument("--accounts", help="comma-separated accounts new workers are submitted under "
+                                           "(uva-sl5nw, uva-yuxinchen); default: both")
     parser.add_argument("--monitor", action="store_true", help="submit the persistent monitor job instead")
     parser.add_argument("--top-up-phase", help="with --monitor: every pass also submits workers under this phase")
     parser.add_argument("--complete-when-drained", action="store_true",
@@ -402,11 +420,12 @@ def main(argv=None):
     run_dir = args.run_dir.resolve()
     set_request_per_card(args.cpus_per_card, args.memory_gib_per_card)
     set_worker_hours(args.worker_hours)
+    set_identities(args.accounts.split(",") if args.accounts else None)
     if args.monitor:
         options = (["--top-up-phase", args.top_up_phase] if args.top_up_phase else []) + (
             ["--complete-when-drained"] if args.complete_when_drained else [])
         # the monitor's top-ups ask for what this call's workers would: the same request and time limit
-        for name in ("cpus_per_card", "memory_gib_per_card", "worker_hours", "gpu_types"):
+        for name in ("cpus_per_card", "memory_gib_per_card", "worker_hours", "gpu_types", "accounts"):
             if getattr(args, name) is not None:
                 options += ["--" + name.replace("_", "-"), str(getattr(args, name))]
         print(submit_monitor(run_dir, options, args.dry_run))

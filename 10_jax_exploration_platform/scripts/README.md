@@ -59,7 +59,7 @@ A unit with the Warp physics:
    missing: `WARP_CACHE_PATH` when the job sets it, else `/localtmp/<user>/warp_kernel_cache`,
    else `<temporary folder>/<user>/warp_kernel_cache`;
 2. sizes the contact pool that all environments share from the batch: 48 slots per environment
-   (`warp_contact_slots_per_environment` in the file's `[environment]`), and at most 160 constraint
+   (`warp_contact_slots_per_environment` in the file's `[environment]`), and at most 512 constraint
    rows per environment (`warp_constraint_rows_per_environment`);
 3. records the largest pool use in every window record and in `unit_complete` (`physics_pool`);
 4. stops with an error, written to its log as `STOPPED: ...`, when MuJoCo Warp dropped a contact

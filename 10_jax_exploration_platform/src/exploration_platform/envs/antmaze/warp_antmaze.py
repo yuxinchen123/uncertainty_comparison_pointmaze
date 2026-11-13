@@ -18,7 +18,7 @@ Three things differ from the JAX implementation and are visible here:
    it after priming, at every window end, before every checkpoint, and between window ends about
    once a minute (`Runner.check_environment`).
 2. Constraint rows are limited per environment by `njmax`
-   (`warp_constraint_rows_per_environment`, 160); rows beyond it are dropped and flagged the
+   (`warp_constraint_rows_per_environment`, 512); rows beyond it are dropped and flagged the
    same way.
 3. The MJX-JAX contact caps of the model (`max_geom_pairs`, `max_contact_points`) are custom
    numerics that only MJX's JAX implementation reads; MuJoCo Warp ignores them. The

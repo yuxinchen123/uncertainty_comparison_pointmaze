@@ -112,7 +112,7 @@ learned to leave the floor.
 It needs an interpreter with warp-lang (`/p/rlprojects/RND/.venvs/platform_jax_warp/bin/python`).
 
 1. **One contact pool for all environments**, of `warp_contact_slots_per_environment` (48) slots
-   per environment, and at most `warp_constraint_rows_per_environment` (160) constraint rows per
+   per environment, and at most `warp_constraint_rows_per_environment` (512) constraint rows per
    environment. MuJoCo Warp drops what does not fit; `raise_on_overflow` then raises, and the
    training command calls it after priming, at every window end, before every checkpoint, and
    between window ends about once a minute. The torso-ceiling pair enters the pool only while the
