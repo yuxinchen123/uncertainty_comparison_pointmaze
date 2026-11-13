@@ -55,6 +55,10 @@ The batch folder holds `summary_settings.json`:
   seeds (each side at its best there) and, where it was run, on a second block on which nothing was chosen (keys
   in `validation_seeds.py`). A batch whose only runs are such units leaves out the screen's keys and
   `development_sweeps`.
+- `same_configuration` (optional): arms compared with other sides at the configurations both trained, on the same
+  seeds, also with units of other phases or of another run folder (keys in `same_configuration.py`).
+- Predictions: those of the section of `ideas.md` whose heading starts with "## Predictions", then those of each
+  section whose heading starts with "## Addendum", in order (see `written_predictions`).
 
 Through the test helper's Slurm job (numpy and plotting never run on a login node): see batch_summary_job.py.
 """
@@ -69,18 +73,20 @@ import re
 
 import numpy as np
 
-from . import case_sweeps, compare, contents, figures, maze_grid, measures, records, report, validation_seeds
+from . import (case_sweeps, compare, contents, figures, maze_grid, measures, records, report, same_configuration,
+               validation_seeds)
 
 # The test helper that runs the job, relative to the platform folder; the summary names the whole command.
 SUBMITTER = ('benchmark_runs/2026-11-12-00-17_pointmaze-antmaze_cleanrl-ppo-rnd_speed-30-ideas_'
              'screen-15-minutes-per-idea-per-card_h100-nvl_rtx-5080_rtx-a4500/infrastructure/submit_tests.sh')
 SETTING_KEYS = {'title', 'study_description', 'control', 'control_study_description', 'method_names',
                 'consistency_check', 'predictions', 'more_intrinsic_weights', 'validation_block',
-                'development_sweeps', 'discovery', 'validation_of_configurations', 'validation_seeds'}
+                'development_sweeps', 'discovery', 'validation_of_configurations', 'validation_seeds',
+                'same_configuration'}
 REQUIRED_KEYS = {'title', 'study_description', 'control', 'method_names'}
 # What a batch without a screen needs: a title, and its runs in `development_sweeps` or in `validation_seeds`.
 REQUIRED_WITHOUT_A_SCREEN = {'title'}
-RUNS_WITHOUT_A_SCREEN = {'development_sweeps', 'validation_seeds'}
+RUNS_WITHOUT_A_SCREEN = {'development_sweeps', 'validation_seeds', 'same_configuration'}
 # The keys that only mean something beside a screen.
 SCREEN_ONLY_KEYS = {'control', 'control_study_description', 'method_names', 'consistency_check',
                     'more_intrinsic_weights', 'validation_block', 'discovery'}
@@ -144,6 +150,7 @@ class Screen:
     validation: dict = None    # the validation block as read (read_validation); None without one
     cases: dict = None         # the development sweeps case by case (case_sweeps.read_development); None without them
     validation_cases: dict = None   # the validation seeds case by case (validation_seeds.read_cases); None without them
+    same_configuration: list = None   # arms at the same configuration (same_configuration.read); None without them
 
     def complete(self, *slugs):
         """Whether every named method's unit is complete."""
@@ -887,16 +894,37 @@ def sides_section(screen, order, discovery):
 
 # ---- predictions --------------------------------------------------------------------------------------------------
 
+def numbered_items(body):
+    """The numbered items of a piece of Markdown, each as one line of text."""
+    # before: '\n1. **Even start alone** changes ...\n   above 2 ...\n2. ...'; after: ['**Even start alone** changes ... above 2 ...', '...'].
+    return [' '.join(item.split()) for item in re.split(r'(?m)^\d+\. ', body)[1:]]
+
+
+def addendum_predictions(body):
+    """The predictions of one addendum of ideas.md: the numbered items after its line that starts "**Predictions",
+    or else its paragraph that starts "Prediction:"; none when it has neither."""
+    # before: '... 1. At the switch ... **Predictions of the addendum.**\n\n6. Under reading (a) ...\n7. ...'
+    # after:  ['Under reading (a) ...', '...'] (the numbered items before that line are findings, not predictions).
+    # before: '... Queued: ...\n\nPrediction: the fast last layer is ahead ...\ncost.'; after: ['the fast last layer is ahead ... cost.'].
+    listed = re.split(r'(?m)^\*\*Predictions[^\n]*\n', body)
+    if len(listed) == 2:
+        return numbered_items(listed[1])
+    single = re.search(r'(?ms)^Prediction: (.*?)(?:\n\n|\Z)', body)
+    return [' '.join(single.group(1).split())] if single else []
+
+
 def written_predictions(ideas_text):
-    """The numbered predictions of a batch's ideas.md, each as one line of text."""
-    # before: '## Predictions (written before the runs)\n\n1. **Even start alone** changes ...\n   above 2 ...\n2. ...'
-    # after:  ['**Even start alone** changes ... above 2 ...', '...'].
+    """The predictions of a batch's ideas.md, each as one line of text: those of its section "## Predictions", then
+    those of each section "## Addendum ..." in order."""
+    # before: '## Predictions (written before the runs)\n\n1. ...\n2. ...\n## Addendum 1 ...\n**Predictions of the addendum.**\n\n3. ...'
+    # after:  the texts of items 1, 2 and 3.
     section = re.split(r'(?m)^## Predictions[^\n]*\n', ideas_text)
     if len(section) != 2:
         raise ValueError('ideas.md has no single section whose heading starts with "## Predictions".')
-    body = re.split(r'(?m)^## ', section[1])[0]
-    items = re.split(r'(?m)^\d+\. ', body)[1:]
-    return [' '.join(item.split()) for item in items]
+    found = numbered_items(re.split(r'(?m)^## ', section[1])[0])
+    for addendum in re.split(r'(?m)^## Addendum[^\n]*\n', ideas_text)[1:]:
+        found += addendum_predictions(re.split(r'(?m)^## ', addendum)[0])
+    return found
 
 
 def evaluate(parts, screen):
@@ -1465,6 +1493,8 @@ def build(screen, run_dir, settings, plots):
         parts.append(case_sweeps.development_section(run_dir, screen.cases, settings['development_sweeps']))
     if screen.validation_cases is not None:
         parts.append(validation_seeds.section(settings['validation_seeds'], screen.validation_cases))
+    if screen.same_configuration is not None:
+        parts.append(same_configuration.section(screen.same_configuration))
     # The predictions: read by the batch's module when it has one, else quoted when `ideas.md` holds any.
     ideas = (folder / 'ideas.md').read_text() if (folder / 'ideas.md').exists() else ''
     if 'predictions' in settings or re.search(r'(?m)^## Predictions', ideas):
@@ -1493,15 +1523,17 @@ def read_batch(run_dir, batch, settings):
     else:
         screen = Screen(batch=batch, control=None, order=(), names={}, units=(), methods={}, differences={},
                         discovery_differences={}, budget=None, seeds=())
-    validation = cases = validation_cases = None
+    validation = cases = validation_cases = same = None
     if 'validation_seeds' in settings:
         validation_cases = validation_seeds.read_cases(run_dir, settings['validation_seeds'])
+    if 'same_configuration' in settings:
+        same = same_configuration.read(run_dir, settings['same_configuration'])
     if 'validation_block' in settings:
         description = json.loads((folder / settings['study_description']).read_text())
         validation = read_validation(run_dir, description, settings['validation_block'], batch)
     if 'development_sweeps' in settings:
         cases = case_sweeps.read_development(run_dir, batch, folder, settings['development_sweeps'])
-    return replace(screen, validation=validation, cases=cases, validation_cases=validation_cases)
+    return replace(screen, validation=validation, cases=cases, validation_cases=validation_cases, same_configuration=same)
 
 
 def generate(run_dir, batch):

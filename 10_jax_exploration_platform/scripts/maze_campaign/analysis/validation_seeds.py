@@ -17,8 +17,10 @@ the control.
 
 The block `validation_seeds` of a batch's summary_settings.json (and the settings of the standing page):
 
-- `first_block`: the phase of the first block's units;
-- `second_block` (optional): the phase of the second block's units;
+- `first_block`: the phase of the first block's units, or a list of phases whose units train on the same seeds
+  (for example the units picked for the whole-curve mean and those picked for the first-goal time, so that the
+  control stands at its best for each metric among both);
+- `second_block` (optional): the phase or phases of the second block's units;
 - `arms`: a list, each with `name` (in words) and at least one of `first_block` and `second_block` (the method as
   the unit specifications of that phase spell it); exactly one arm has `"control": true`; `family` (optional) is
   read by the standing page only;
@@ -69,7 +71,8 @@ def compared(mine, theirs, budget, *name):
 def read_sides(run_dir, specifications, phase, arms, key, environment, reward_setting):
     """Every arm's side on one block in one case, by the method name the arm has on that block."""
     return {arm[key]: case_sweeps.read_side(
-        run_dir, case_sweeps.select(specifications, [phase], arm[key], environment, reward_setting), arm[key], arm['name'])
+        run_dir, case_sweeps.select(specifications, case_sweeps.phase_names(phase), arm[key], environment, reward_setting),
+        arm[key], arm['name'])
         for arm in arms if key in arm}
 
 
@@ -112,7 +115,7 @@ def read_second(first, sides, control, arms, phase, environment, reward_setting)
         return {'sides': sides, 'budget': budget, 'control': reference, 'earlier': earlier,
                 'metrics': {metric: {'wanted': None, 'fixed': None, 'best': None, 'rows': {}, 'between': None, 'reverse': None}
                             for metric in METRICS}}
-    name = ('second validation block', phase, environment, reward_setting)
+    name = ('second validation block', case_sweeps.phase_key(phase), environment, reward_setting)
     found = {}
     for metric in METRICS:
         # The control twice: at the configuration that was its best on the first block, and at its best here.
@@ -309,12 +312,12 @@ def second_text(read, phase, environment, reward_setting, heading):
     listed = [read['control']] + [side for side in sides.values() if side is not read['control']]
     complete = [side for side in listed if side.groups]
     if not complete:
-        return heading + f'No unit of the phase `{phase}` is complete yet.\n\n' + units
+        return heading + f'No unit of {case_sweeps.phase_words(phase)} is complete yet.\n\n' + units
     names = described(read)
     seeds = sorted({policy.seed for side in complete for group in side.groups for policy in group.policies})
     waiting = [f'{side.name}: {case_sweeps.read_words(side)}' for side in sides.values() if len(side.groups) < side.planned]
     text = [heading
-            + f'The units of the phase `{phase}` in {case_sweeps.case_words(environment, reward_setting)}. Each trains one '
+            + f'The units of {case_sweeps.phase_words(phase)} in {case_sweeps.case_words(environment, reward_setting)}. Each trains one '
             f'configuration on {len(seeds)} seeds, from {seeds[0]} to {seeds[-1]}. Nothing was chosen on these seeds '
             f"before they were read. Read at {read['budget']:,} environment steps per policy. Define $W$, $L$ and $M$ as "
             'in the section Measures. First table: every configuration run on this block, the control first; per '
@@ -351,7 +354,7 @@ def case_text(block, environment, reward_setting, case, level='###'):
             block['first_block'], control['first_block'], case['first']['sides'], environment, reward_setting, METRICS,
             f'{level}# First block: each side at its best configuration there\n\n',
             'the configurations run here were picked from each side\'s sweeps and screens')
-    text.append(first or f"The phase `{block['first_block']}` has no unit of these methods in this case.\n\n")
+    text.append(first or f"{case_sweeps.phase_words(block['first_block']).capitalize()} has no unit of these methods in this case.\n\n")
     if case['second'] is not None:
         text.append(second_text(case['second'], block['second_block'], environment, reward_setting,
                                 f'{level}# Second block: seeds that chose nothing\n\n'))

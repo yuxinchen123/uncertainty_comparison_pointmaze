@@ -88,6 +88,26 @@ def select(specifications, phases, method, environment, reward_setting, budget=N
             and (budget is None or specification['steps_per_policy'] == budget)]
 
 
+def phase_names(phase):
+    """The phases a settings block names: one phase as a string, or several as a list."""
+    # before: 'validation-block' and ['validation-block', 'discovery-validation'];
+    # after:  ['validation-block'] and ['validation-block', 'discovery-validation'].
+    return [phase] if isinstance(phase, str) else list(phase)
+
+
+def phase_key(phase):
+    """One phase, or several joined by commas: the words resamples are named by (one phase stays as it was)."""
+    return phase if isinstance(phase, str) else ', '.join(phase)
+
+
+def phase_words(phase):
+    """The phase or phases in a sentence: 'the phase `a`', or 'the phases `a` and `b`'."""
+    names = phase_names(phase)
+    if len(names) == 1:
+        return f'the phase `{names[0]}`'
+    return 'the phases ' + ', '.join(f'`{name}`' for name in names[:-1]) + f' and `{names[-1]}`'
+
+
 def case_words(environment, reward_setting):
     """A case in words, from the names the unit specifications use."""
     # before: ('pointmaze-medium', 'step_cost'); after: 'PointMaze Medium, step cost'.
@@ -602,7 +622,7 @@ METRIC_WORDS = {'whole': ('$W$', 'the highest'), 'discovery': ('$M$', 'the small
 
 def validation_name(phase, environment, reward_setting):
     """The words the resamples of a comparison on the validation seeds are named by, before the method and the metric."""
-    return 'picked configurations on the validation seeds', phase, environment, reward_setting
+    return 'picked configurations on the validation seeds', phase_key(phase), environment, reward_setting
 
 
 def validation_part(run_dir, block, environment, reward_setting, specifications, metrics, heading, picked, budget=None):
@@ -631,8 +651,8 @@ def validation_text(phase, control_slug, sides, environment, reward_setting, met
     units = f'{level} Units\n\n' + units_table([(side, case_words(environment, reward_setting)) for side in sides.values()])
     read = [side for side in [control] + others if side.groups]
     if not read:
-        return heading + f"No unit of the phase `{block['phase']}` is complete yet.\n\n" + units
-    budget = one_budget(sides.values(), f"the phase {block['phase']}")
+        return heading + f"No unit of {phase_words(phase)} is complete yet.\n\n" + units
+    budget = one_budget(sides.values(), phase_words(phase).replace('`', ''))
     entries = [(side, compare_at_best(side, control, budget, *validation_name(phase, environment, reward_setting)))
                for side in others if side.groups]
     names = described_settings(read)
@@ -640,7 +660,7 @@ def validation_text(phase, control_slug, sides, environment, reward_setting, met
     waiting = [f'{side.name}: {read_words(side)}' for side in sides.values() if len(side.groups) < side.planned]
     symbols = ' and '.join(METRIC_WORDS[metric][0] for metric in metrics)
     text = [heading
-            + f"The units of the phase `{block['phase']}` in {case_words(environment, reward_setting)}. Each trains one "
+            + f"The units of {phase_words(phase)} in {case_words(environment, reward_setting)}. Each trains one "
             f'configuration on {len(seeds)} seeds, from {seeds[0]} to {seeds[-1]}: neither the development seeds, on '
             f'which {picked}, nor the confirmation seeds. Read at {budget:,} environment steps per policy. Define '
             '$W$, $L$ and $M$ as in the section Measures. First table: every configuration, the control first, each '
