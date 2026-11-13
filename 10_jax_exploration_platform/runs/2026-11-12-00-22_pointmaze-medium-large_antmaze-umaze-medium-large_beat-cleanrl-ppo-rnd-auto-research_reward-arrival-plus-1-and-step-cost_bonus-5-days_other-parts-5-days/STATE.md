@@ -436,12 +436,12 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   inside their intervals; the validation block's control is 0.878 at weight 2. The validation-block unit names
   use the short method names `three-parts-held-one-sixteenth` and `three-parts-held-one-eighth` (the unit name
   limit of 200 characters); the batch summary maps them to their full names.
-- 2026-11-12 17:42 PT (report regenerated): RND confirmed for the discovery table on PointMaze Medium with reward 1 on arrival (1,024
+- 2026-11-12 18:02 PT (report regenerated): RND confirmed for the discovery table on PointMaze Medium with reward 1 on arrival (1,024
   fresh seeds; learning rate 2e-2, entropy 0.01, weight 4): mean capped first-goal time 17.4 ± 0.5 thousand
   steps; RND at CleanRL's defaults 210 ± 9, PPO without a bonus 455 ± 15. Three of the four PointMaze cases now
   have RND's row in the discovery table; PointMaze Large with the step cost is running (4 units at 20 to 31 of
   256 windows).
-- 2026-11-12 17:42 PT (records copied): **AntMaze: the physics diverges for trained ants** (largest torso speeds of 1e6 to 1e15 m/s
+- 2026-11-12, between 18:00 and 18:04 PT: **AntMaze: the physics diverges for trained ants** (largest torso speeds of 1e6 to 1e15 m/s
   in 2 to 9 of 16 policies of most configurations, starting once the policies learn; 7% to 11% of steps with the
   torso above 1.5 m). Details in the AntMaze folder's `infra_history.md`. The rollout-shape check keeps running
   for its records, but nothing is chosen from it. Diagnosis started 18:04 PT (speed study folder,

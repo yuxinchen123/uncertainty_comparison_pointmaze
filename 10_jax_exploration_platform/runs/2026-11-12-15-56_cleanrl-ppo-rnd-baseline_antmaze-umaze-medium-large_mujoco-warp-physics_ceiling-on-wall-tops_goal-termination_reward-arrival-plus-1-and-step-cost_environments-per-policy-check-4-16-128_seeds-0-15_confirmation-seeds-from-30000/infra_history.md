@@ -121,7 +121,7 @@ Times are Pacific, read from the clock or from scheduler records.
   16 environments per policy on an A30 about 4.7 s per iteration (12,288 environments), so about 10 hours. With
   the 160-row limit an A30 took 3.85 s per iteration at 16,384 environments, so the higher limit costs time; the
   windows record the largest number of rows in use, and the limit for later sweeps is set from that.
-- 2026-11-12 17:42 PT (records copied; read in the minutes after): **the physics diverges for trained ants; the running check cannot be used for a decision.**
+- 2026-11-12, between 18:00 and 18:04 PT (the tick's start and the commit of this note; the copy keeps the server's file times): **the physics diverges for trained ants; the running check cannot be used for a decision.**
   Read from the partial records of all 8 units (copied from Gilbreth, standard-library reading):
   1. untrained ants: largest torso speed 9 to 10 m/s; 0.4% of steps with the torso above 1.5 m;
   2. once the policies learn (from window 45 to 110 of 256 with 128 environments per policy), 7% to 11% of steps
