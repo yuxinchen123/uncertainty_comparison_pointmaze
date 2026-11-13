@@ -1,0 +1,53 @@
+{
+  "study": "beat-cleanrl-ppo-rnd-auto-research",
+  "bonus": "rnd_next_state",
+  "configuration_files": {
+    "pointmaze": "configs/experiments/pointmaze_large_cleanrl-ppo-rnd_goal-termination_reward-arrival-plus-one_example_steps-1024000.toml"
+  },
+  "environments_per_policy": {
+    "pointmaze": 4
+  },
+  "windows_per_unit": 256,
+  "seeds": {
+    "first": 0,
+    "count": 16
+  },
+  "policies_per_unit": 256,
+  "minimum_card_memory_mb": 7000,
+  "phase": "development-at-the-budget",
+  "sweeps": [
+    {
+      "method": "slower-predictor-with-held-divisor",
+      "environments": [
+        "pointmaze-large"
+      ],
+      "reward_settings": [
+        "step_cost"
+      ],
+      "steps_per_policy": 33554432,
+      "cells": {
+        "kind": "grid",
+        "values": {
+          "learning_rate": [
+            0.003,
+            0.0045
+          ],
+          "entropy_coefficient": [
+            0.01
+          ],
+          "intrinsic_weight": [
+            16.0,
+            32.0
+          ],
+          "clip_coefficient": [
+            0.1
+          ]
+        }
+      },
+      "extra_options": [
+        "--bonus-options",
+        "predictor_learning_rate_multiple=0.25,reward_divisor=held_after_fraction,divisor_hold_fraction=0.0625"
+      ]
+    }
+  ]
+}
