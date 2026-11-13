@@ -824,6 +824,28 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   first validation block in the four PointMaze cases** (code frozen at bed45842). Six UVA workers started at once
   and took the six PointMaze Medium units; the six PointMaze Large units follow on the same workers. Nothing of
   this arm goes to Gilbreth until the five old-copy jobs there have ended.
+- 2026-11-13 02:07 PT: **batch 8, the divisor held from the first arrival (first validation block, 256 seeds; 9 of
+  12 units complete).**
+
+  | case | its best whole-curve mean | against RND's best | against the hold after 1/16, same configuration |
+  |---|---|---|---|
+  | PointMaze Large, reward 1 on arrival | 0.8874 (weight 2) | +0.0094 [+0.0033, +0.0155] | −0.0001 [−0.006, +0.006] |
+  | PointMaze Medium, reward 1 on arrival | 0.9435 (learning rate 6e-3, weight 4) | +0.0085 [+0.0009, +0.0160] | +0.0053 [−0.001, +0.011] at weight 4; −0.0040 [−0.011, +0.003] at weight 2 |
+  | PointMaze Medium, step cost | −0.3476 (weight 1) | +0.0029 [−0.0016, +0.0074] | −0.0020 [−0.006, +0.001] at weight 2; +0.0016 at weight 4 |
+
+  Reading: it behaves like the fixed hold (no difference outside its interval in any case), with nothing to set.
+  Ahead of RND in the two cases with reward 1 on arrival; level on Medium with the step cost on this block (the
+  fixed hold had +0.0042 there). Prediction 1: its first part held (level with the fixed hold on Large and ahead
+  of RND); its second part did not (on Medium it is not ahead of the fixed hold beyond noise). The three units on
+  PointMaze Large with the step cost run on UVA (61 to 82 of 256 windows at 02:06 PT); one Large unit at weight 4
+  was at 249.
+- 2026-11-13 02:07 PT: **batch 9, PointMaze Large with the step cost (discovery check).** RND's best of two: 120.3 ±
+  5.6 thousand steps (learning rate 6e-3, weight 8). Fast last layer: 58.9 (6e-3, entropy 0.03, weight 16), 62.1
+  and 76.4 thousand; best against RND's best −61 [−73, −50]. Its three units are still running on Gilbreth (62 to
+  139 of 256 windows), but every policy has already arrived, so these first-goal times are final. Prediction 1
+  held. **Discovery standing on the validation seeds: the fast last layer is ahead of RND in three PointMaze cases
+  (Large with reward 1 on arrival −63, Large with the step cost −61, Medium with reward 1 on arrival −5.0) and
+  level in the fourth (Medium with the step cost −1.0 [−2.3, +0.3]).**
 
 ## Next
 
