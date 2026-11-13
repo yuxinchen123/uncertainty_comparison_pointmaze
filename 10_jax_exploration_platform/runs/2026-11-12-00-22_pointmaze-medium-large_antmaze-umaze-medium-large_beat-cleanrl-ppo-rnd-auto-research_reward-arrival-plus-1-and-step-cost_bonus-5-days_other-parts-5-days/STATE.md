@@ -569,6 +569,17 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   grid-end flags; the discovery checks; the readings of the predictions of batches 2 to 4. From the prediction
   readings: batch 4's prediction 1 did not hold (neither finalist reaches the goal sooner than RND's own best for
   that measure in PointMaze Medium), prediction 2 held (Medium with the step cost is level), prediction 3 waits.
+- 2026-11-12 20:28 PT: **AntMaze check with the stable physics: first unit passed its check by hand** (0 fault
+  respawns, largest torso speed 13.0 m/s, all values finite, settings as intended), and the other 17 units were
+  handed to Gilbreth (17 jobs waiting on priority at 20:28 PT). Speed on an A30: 1.09 s per iteration at 512
+  environments; a unit with 4 environments per policy takes about 10 hours. Details in the AntMaze folder's
+  `infra_history.md`.
+- 2026-11-12 20:21 PT: validation block, PointMaze Large with reward 1 on arrival, with RND's two further
+  configurations: learning rate 3e-3 gives 0.8701 and 1e-3 gives 0.8695, both below 0.8781 at 2e-3 (weight 2). So
+  RND's best of five on the validation seeds is unchanged and the finalists' differences stand (all three parts
+  +0.0137 [+0.007, +0.020]; slower predictor with held divisor +0.0102 [+0.005, +0.016]).
+  PointMaze Medium with reward 1 on arrival, all three parts, third configuration: 0.893; its best of three stays
+  0.906, behind RND's 0.9349 by 0.029 [−0.040, −0.018].
 
 ## Next
 

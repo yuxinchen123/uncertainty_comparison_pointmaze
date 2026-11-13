@@ -213,3 +213,18 @@ Times are Pacific, read from the clock or from scheduler records.
   per policy and cells 41 to 48 was handed over (job 12347248). Its records are read by hand before the limit is
   raised to 18. (With the first-unit state "waiting" the fleet hands over nothing, because it wants a UVA unit to
   compare with; as before, the state is "passed" by hand and the limit does the gating.)
+- 2026-11-12 20:28 PT: **first unit with the stable physics read by hand; the other 17 released.** Job 12347248
+  waited on priority from 20:01 to 20:15 PT, started on an A30 (gilbreth-b010), compiled the Warp kernels (no
+  cache on that node) and began iterating at about 20:19 PT. Read at window 2 of 256 (unit with 4 environments per
+  policy, cells 41 to 48): settings as intended in the start record (time step 0.005 s, frame skip 10, guard 30
+  m/s and 100 rad/s, solver 4 / line search 8, 512 rows); record kinds job, unit_start, episode_window; 128 values
+  per policy field, all finite; 0 fault respawns; largest torso speed 13.0 m/s; largest turning rate 40.0 rad/s;
+  1.3% and 2.8% of steps with the torso above 1.5 m; contact pool use 9.1%; at most 41 of 512 constraint rows.
+  Speed: 1.087 s per iteration at 512 environments, so a unit with 4 environments per policy (32,768 iterations)
+  takes about 9.9 hours, in three jobs of at most 4 hours. Already in window 2 (131 thousand steps per policy),
+  20 of 128 policies had reached the goal, arrivals taking 470 to 620 steps.
+  At 20:28 PT the limit was raised to 18: 17 units handed over, 17 jobs submitted (all waiting at 20:28 PT). The
+  five-minute hand-over loop runs again (`hand_over_loop.sh` in the session's scratchpad, background task of the
+  session, at most 12 hours).
+  A stale claim file of the old unit with 4 environments per policy, left in the server's running folder by the
+  job cancelled at 19:41 PT, was set aside with the other old files.
