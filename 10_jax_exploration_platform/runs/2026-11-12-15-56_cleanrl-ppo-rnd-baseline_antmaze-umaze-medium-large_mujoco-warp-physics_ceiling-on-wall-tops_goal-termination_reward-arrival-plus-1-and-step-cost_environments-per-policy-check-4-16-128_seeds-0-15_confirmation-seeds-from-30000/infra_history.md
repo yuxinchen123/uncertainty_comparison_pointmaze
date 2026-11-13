@@ -317,3 +317,18 @@ Times are Pacific, read from the clock or from scheduler records.
   the motion; a change of integrator would change the environment for every method and is left to the user.
 - 2026-11-13 10:53 PT: no ticks from 07:26 to 10:47 PT (the session's model reached its usage limit); the 5-minute
   fleet loop ended at 08:48 PT after its 12-hour limit and was restarted at 10:53 PT. Nothing failed in the gap.
+- 2026-11-13 11:29 PT: **AntMaze Medium and Large are ready for units** (background worker, 10:59 to 11:28 PT; notes
+  `diagnosis/2026-11-13_medium-and-large-readiness/notes.md`, commits e54ab8e8 and b9c320e8; job ids in
+  `slurm/submitted_jobids_medium-large-readiness_sl5nw.txt`, all ended). Both maps pass every environment gate
+  against C MuJoCo at the stable physics (start, goal termination at 0.45 m, the 1,000-step limit as truncation,
+  walls, ceiling, contact-free and in-contact steps, the fault guard); nothing map-specific was wrong, and the
+  environment code is unchanged (one docstring count corrected). New configuration files
+  `configs/experiments/antmaze_{medium,large}_warp-physics_time-step-0.005_frame-skip-10_fault-guard-30-metres-and-100-radians-per-second_cleanrl-ppo-rnd_goal-termination_reward-arrival-plus-one_example_steps-204800.toml`
+  (126 and 30 tests pass). A unit costs the same as on the U-maze: 1.17 s per iteration for 128 policies of 16
+  environments on an A100 40 GB (0.224 million steps per second); about 2.8 hours per 16.8 million steps per
+  policy on an A100 and 3.6 on an A30. 128 policies of 16 environments need 7,000 MB of card memory (20,000 used
+  so far is safe). No contact-pool or constraint-row overflow with untrained ants (at most 42 rows of 512; a
+  trained U-maze unit once passed 160, so the first units' records are to be read). A study description for
+  these maps must name the workload with the time step and give `policies_per_unit` and
+  `minimum_card_memory_mb` as numbers. Noted for the user, not changed: the policy and value networks see the
+  torso position unscaled, a range that grows from 10 m (U-maze) to 24 m (Large).
