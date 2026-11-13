@@ -424,6 +424,18 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   PointMaze Medium with reward 1 on arrival and PointMaze Large with the step cost the report names other
   configurations than the ones run so far (it uses the first finished run of a repeated configuration, and the
   extension units had not been marked as discovery units in its settings); their runs are queued.
+- 2026-11-12 17:48 PT: RND's fresh-seed runs for the discovery table queued in the two remaining cases, at the
+  configurations the report names (PointMaze Medium with reward 1 on arrival: learning rate 2e-2, entropy 0.01,
+  weight 4; PointMaze Large with the step cost: learning rate 4.5e-3, entropy 0.01, weight 8): 8 units in the
+  baseline folder, UVA jobs 6894023 to 6894025. The report's settings now also read the extension units as part
+  of the discovery sweep.
+- 2026-11-12 17:50 PT: **validation block (256 seeds) for the two three-part combinations of batch 3** (fast
+  last layer at step 0.1, predictor at 0.25 times 1e-4 with its own optimizer, divisor held after 1/16 or after
+  1/8 of the run), intrinsic weights 0.25, 0.5 and 1: 6 units, UVA jobs 6894042 to 6894045, all started within
+  a minute. Reason: on 16 seeds both are the best of the batch on the whole-curve mean (+0.013 and +0.010) but
+  inside their intervals; the validation block's control is 0.878 at weight 2. The validation-block unit names
+  use the short method names `three-parts-held-one-sixteenth` and `three-parts-held-one-eighth` (the unit name
+  limit of 200 characters); the batch summary maps them to their full names.
 
 ## Next
 
