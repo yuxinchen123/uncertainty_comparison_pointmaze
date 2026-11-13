@@ -846,6 +846,15 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   held. **Discovery standing on the validation seeds: the fast last layer is ahead of RND in three PointMaze cases
   (Large with reward 1 on arrival −63, Large with the step cost −61, Medium with reward 1 on arrival −5.0) and
   level in the fourth (Medium with the step cost −1.0 [−2.3, +0.3]).**
+- 2026-11-13 02:29 PT: first-arrival hold, PointMaze Large with reward 1 on arrival, all three weights complete
+  (first block): 0.8874 at weight 2, 0.8852 at weight 4, 0.8680 at weight 1; its best weight is inside its grid.
+  **Second block queued for it** (seeds 20000 to 20255, configurations fixed on the first block; 6 units, phase
+  `validation-block-two`): PointMaze Medium with reward 1 on arrival (learning rate 6e-3, weight 4), Medium with
+  the step cost (weights 1 and 2), and PointMaze Large with reward 1 on arrival together with RND and the fixed
+  hold at weight 2, which had no second-block units yet. Three UVA jobs with four cards started at once (an A40
+  and three RTX 2080 Ti: 6900604, 6900605, 6900607); two that were still waiting after two minutes were cancelled
+  by their ledger ids (6900603, 6900606). PointMaze Large with the step cost follows when its first-block units
+  are complete (102 to 141 of 256 windows at 02:26 PT).
 
 ## Next
 
