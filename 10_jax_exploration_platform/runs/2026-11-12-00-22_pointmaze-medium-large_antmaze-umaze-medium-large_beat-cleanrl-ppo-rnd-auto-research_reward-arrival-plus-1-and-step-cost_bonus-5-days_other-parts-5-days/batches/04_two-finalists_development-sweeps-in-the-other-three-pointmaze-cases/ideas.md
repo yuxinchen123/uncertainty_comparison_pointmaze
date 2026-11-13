@@ -1,6 +1,6 @@
 # Batch 4: the two finalists in the other three PointMaze cases
 
-Written 2026-11-12 19:08 PT, before any run of the batch. Bonus-only changes (program.md, days 1 to 5); the
+Written 2026-11-12 19:06 PT, before any run of the batch. Bonus-only changes (program.md, days 1 to 5); the
 options exist in the frozen code of batch 2 (commit d7054945). No new idea is introduced here: the batch asks
 whether what is ahead on PointMaze Large with reward 1 on arrival is also ahead in the other cases.
 

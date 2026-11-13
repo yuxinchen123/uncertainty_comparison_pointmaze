@@ -472,6 +472,26 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   The corrected planner used lynx01, lynx02 and lynx05 (RTX 4000 Ada) for 11 of the cards.
 - 2026-11-12 18:41 PT: AntMaze: 5 finished units copied back after two failed fleet steps (missing `data/` folder
   on UVA after my clean-up); they are records for the physics diagnosis only.
+- 2026-11-12 19:04 PT: **validation block (256 seeds) for the three-part combinations read.** Each method at its
+  best weight against the control at its best weight (weight 2: whole-curve mean 0.8781), paired on the same
+  seeds: all three parts with the divisor held after 1/16, weight 0.5: 0.8917, +0.0137 [+0.0072, +0.0203], final
+  level +0.0049 [+0.0036, +0.0063], first-goal time −109 thousand [−139, −79]; slower predictor with held divisor,
+  weight 4: +0.0102 [+0.0047, +0.0159]; divisor held after 1/16, weight 2: +0.0095; predictor at 0.25 times 1e-4,
+  weight 2: +0.0078; all three with the divisor held after 1/8, weight 0.5: +0.0078. The batch summary's
+  validation section compares only at equal weights; the comparison at each one's best weight was computed by a
+  quick script and is tabled in batch 4's `ideas.md` (to be moved into the summary code).
+  **Finalists for the whole-curve mean: all three parts (divisor held after 1/16), and the slower predictor with
+  held divisor.** The gain is small (about 0.010 to 0.014 on 0.878) but its interval is above zero on 256 seeds
+  and the final level is not behind: the form of the success rule in this one case. Fresh seeds are not used yet:
+  they are kept for the method as it stands at the end, and the validation block serves until then.
+- 2026-11-12 19:06 PT: **batch 4 queued** (`batches/04_two-finalists_...`): both finalists' development sweeps
+  in the other three PointMaze cases (15 configurations each, 16 seeds; 6 units; UVA jobs 6895891 and 6895892 plus
+  the workers already running). Predictions are in its `ideas.md`.
+- 2026-11-12 19:02 PT: the shared resource file was regenerated from the live scheduler (shared repository commit
+  0c179c7): affogato13, lynx01, lynx02 and lynx05 are now listed with RTX 4000 Ada cards; its self-check and the
+  contract test pass. The human-readable resource document is not regenerated yet.
+- 2026-11-12 19:00 PT: this folder's new monitor job 6894373 is running (on heartpiece) since the memory request
+  was lowered.
 
 ## Next
 
