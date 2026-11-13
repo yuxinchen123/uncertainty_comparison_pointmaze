@@ -39,6 +39,17 @@ def test_the_spill_over_ratio_is_read_at_pairs_with_no_visit():
     assert len(maze_grid.unvisited_ratios(np.ones((2, 2)), np.ones((2, 2)), np.ones((2, 2), np.int64))) == 0
 
 
+def test_the_bonus_at_unvisited_cells_over_the_bonus_at_visited_cells():
+    """The median of the pairs with no visit over the median of the pairs with one; none when either kind is too few."""
+    bonus = np.asarray([[4.0, 0.2], [6.0, 0.3]])
+    visits = np.asarray([[0, 5], [0, 9]])
+    assert maze_grid.unvisited_over_visited(bonus, visits, 2) == (20.0, 2, 2)
+    assert maze_grid.unvisited_over_visited(bonus, visits, 3) == (None, 2, 2)
+    # A value that is zero or not a number is in neither kind.
+    bonus[1, 0] = float('nan')
+    assert maze_grid.unvisited_over_visited(bonus, visits, 1) == (16.0, 1, 2)
+
+
 def test_the_evenness_ratio_is_the_largest_over_the_smallest_start_bonus():
     """Per policy; a policy with a start bonus that is zero has no ratio."""
     ratios = maze_grid.start_ratio(np.asarray([[0.5, 0.5, 0.5], [1.0, 4.0, 2.0], [0.0, 1.0, 2.0]]))

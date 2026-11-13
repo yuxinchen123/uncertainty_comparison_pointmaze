@@ -1,6 +1,6 @@
 # Batch 1 screen on PointMaze Large with reward 1 on arrival: the start, the scale and the decay of the bonus
 
-Generated 2026-11-12 17:45 PT by the command below. This file is generated: regenerate it, do not edit it. Times are Pacific, converted from machines running Eastern. Run folder: `2026-11-12-00-22_pointmaze-medium-large_antmaze-umaze-medium-large_beat-cleanrl-ppo-rnd-auto-research_reward-arrival-plus-1-and-step-cost_bonus-5-days_other-parts-5-days`; batch folder: `batches/01_start-scale-and-decay-of-the-bonus-on-continuous-inputs`.
+Generated 2026-11-12 19:55 PT by the command below. This file is generated: regenerate it, do not edit it. Times are Pacific, converted from machines running Eastern. Run folder: `2026-11-12-00-22_pointmaze-medium-large_antmaze-umaze-medium-large_beat-cleanrl-ppo-rnd-auto-research_reward-arrival-plus-1-and-step-cost_bonus-5-days_other-parts-5-days`; batch folder: `batches/01_start-scale-and-decay-of-the-bonus-on-continuous-inputs`.
 
 ```bash
 cd /p/rlprojects/RND/10_jax_exploration_platform
@@ -23,7 +23,7 @@ bash "benchmark_runs/2026-11-12-00-17_pointmaze-antmaze_cleanrl-ppo-rnd_speed-30
 | [Properties of the bonus on the maze grid](#properties-of-the-bonus-on-the-maze-grid) | 2026-11-12 14:12 PT | 2026-11-12 16:13 PT | unread |
 | [Predictions](#predictions) | 2026-11-12 14:12 PT | 2026-11-12 15:04 PT | unread |
 | [Ideas against the control](#ideas-against-the-control) | 2026-11-12 14:12 PT | 2026-11-12 17:01 PT | unread |
-| [Validation block](#validation-block) | 2026-11-12 16:13 PT | 2026-11-12 17:45 PT | unread |
+| [Validation block](#validation-block) | 2026-11-12 16:13 PT | 2026-11-12 19:55 PT | unread |
 | [Consistency check against the baseline run](#consistency-check-against-the-baseline-run) | 2026-11-12 14:12 PT | 2026-11-12 16:21 PT | unread |
 | [Records that need a look](#records-that-need-a-look) | 2026-11-12 14:12 PT | 2026-11-12 15:04 PT | unread |
 
@@ -407,7 +407,7 @@ By the 95% interval of the difference in $M$ from the control (section Measures,
 
 ## Validation block
 
-The units of the phase `validation-block` in the screen's environment and reward setting. Each trains one method at one intrinsic weight on 256 seeds, from 10000 to 10255: these are neither the development seeds of the screen nor the confirmation seeds. 13 of 13 method and weight pairs have a complete unit; a unit that is not complete is listed under the tables and left out. Define $W$, $L$ and $M$ as in the section Measures, here with $K$ the number of seeds of a row and read at 8,388,608 environment steps per policy. Differences are the method minus the control at the same intrinsic weight, on the seeds both have, each with its 95% interval from 10,000 resamples of those seeds. Rows: the control first, then the other methods, each by intrinsic weight. Per column the best value is bold and the second best underlined.
+The units of the phase `validation-block` in the screen's environment and reward setting. Each trains one method at one intrinsic weight on 256 seeds, from 10000 to 10255: these are neither the development seeds of the screen nor the confirmation seeds. 13 of 15 method and weight pairs have a complete unit; a unit that is not complete is listed under the tables and left out. Define $W$, $L$ and $M$ as in the section Measures, here with $K$ the number of seeds of a row and read at 8,388,608 environment steps per policy. Differences are the method minus the control at the same intrinsic weight, on the seeds both have, each with its 95% interval from 10,000 resamples of those seeds. Rows: the control first, then the other methods, each by intrinsic weight. Per column the best value is bold and the second best underlined.
 
 ### Discovery and optimization: whole-curve mean and final level
 
@@ -446,6 +446,39 @@ $M$, its standard error and its differences are in thousands of steps; the small
 | divisor held after one quarter of the run | 4 | 205 ± 8.2 | +0 [+0, +0] | 256 of 256 | 256 |
 | slower predictor with held divisor (predictor learning rate 0.25 times 1e-4, divisor held after one sixteenth of the run) | 2 | 182 ± 13.9 | -86.9 [-120, -50.6] | 256 of 256 | 256 |
 | slower predictor with held divisor (predictor learning rate 0.25 times 1e-4, divisor held after one sixteenth of the run) | 4 | <u>153</u> ± 9.69 | -52 [-75.8, -28.3] | 256 of 256 | 256 |
+
+### Each method at its best intrinsic weight against the control at its best weight
+
+The two tables above compare at equal intrinsic weights. A method and the control need not have the same best weight, so here each method stands at its own best weight for the metric and the control at its own: for $W$ the weight with the highest $W$ (ties: the higher $L$), for $M$ the weight with the smallest $M$ (ties: more policies reach the goal). The weight column names the weights each was chosen among. Each best weight was chosen on these same seeds, among the weights the method was run at in this block, and the control's was chosen the same way: a side that was run at more weights had more chances, so these differences lean slightly towards it. They are a second selection step, not the comparison on the confirmation seeds. Differences are the method minus the control on the seeds both have, with the 95% interval from 10,000 resamples of those seeds. The control is the first row; the other methods follow from the best value of the sorted column on. Per column the best value is bold and the second best underlined.
+
+**Whole-curve mean, each side at its best weight for it.** The last difference column gives the mean capped first-goal time at these same weights, in thousands of steps (negative: the goal was first reached earlier than under the control).
+
+| method | best intrinsic weight for $W$ | $W$ ↑ ± standard error | difference in $W$ from the control [95% interval] | $L$ ± standard error | difference in $L$ from the control [95% interval] | difference in $M$ at these weights [95% interval], thousand steps | seeds in common with the control |
+|---|---|---|---|---|---|---|---|
+| control | 2 (of 1, 2, 4) | 0.8781 ± 0.0021 | control | 0.9920 ± 0.0005 | control | control | 256 |
+| slower predictor with held divisor (predictor learning rate 0.25 times 1e-4, divisor held after one sixteenth of the run) | 4 (of 2, 4) | **0.8883** ± 0.0021 | **+0.0102** [+0.0046, +0.0157] | **0.9982** ± 0.0002 | **+0.0062** [+0.0052, +0.0073] | **-117** [-145, -86.9] | 256 |
+| divisor held after one sixteenth of the run | 2 (of 2, 4) | <u>0.8876</u> ± 0.0021 | <u>+0.0095</u> [+0.0040, +0.0150] | <u>0.9976</u> ± 0.0003 | <u>+0.0056</u> [+0.0045, +0.0067] | +0.579 [-27.2, +28.3] | 256 |
+| separate predictor step size, predictor learning rate 0.25 times 1e-4 | 2 (of 1, 2, 4) | 0.8859 ± 0.0024 | +0.0078 [+0.0014, +0.0143] | 0.9954 ± 0.0007 | +0.0033 [+0.0014, +0.0050] | <u>-98.7</u> [-129, -66.8] | 256 |
+| separate predictor step size, predictor learning rate 1 times 1e-4 | 2 (of 2, 4) | 0.8804 ± 0.0024 | +0.0024 [-0.0036, +0.0082] | 0.9954 ± 0.0004 | +0.0034 [+0.0022, +0.0047] | -31.2 [-63.4, +0.646] | 256 |
+| divisor held after one quarter of the run | 4 (its only weight) | 0.8718 ± 0.0024 | -0.0063 [-0.0125, +0.0001] | 0.9946 ± 0.0005 | +0.0026 [+0.0012, +0.0039] | -64.5 [-90.4, -39.5] | 256 |
+
+**Mean capped first-goal time, each side at its best weight for it.** $M$, its standard error and its difference are in thousands of steps; $W$ and $L$ are read at the same weight as $M$.
+
+| method | best intrinsic weight for $M$ | $M$ ↓ ± standard error, thousand steps | difference in $M$ from the control [95% interval], thousand steps | policies that reach the goal | $W$ at that weight | $L$ at that weight | seeds in common with the control |
+|---|---|---|---|---|---|---|---|
+| control | 4 (of 1, 2, 4) | 205 ± 8.2 | control | 256 of 256 | 0.8626 | 0.9765 | 256 |
+| separate predictor step size, predictor learning rate 0.25 times 1e-4 | 4 (of 1, 2, 4) | **133** ± 7.88 | **-71.9** [-94.1, -49.3] | 256 of 256 | 0.8783 | 0.9927 | 256 |
+| slower predictor with held divisor (predictor learning rate 0.25 times 1e-4, divisor held after one sixteenth of the run) | 4 (of 2, 4) | <u>153</u> ± 9.69 | <u>-52</u> [-76.1, -27.3] | 256 of 256 | **0.8883** | **0.9982** | 256 |
+| separate predictor step size, predictor learning rate 1 times 1e-4 | 4 (of 2, 4) | 185 ± 10.1 | -19.8 [-43.2, +4.17] | 256 of 256 | 0.8762 | 0.9931 | 256 |
+| divisor held after one quarter of the run | 4 (its only weight) | 205 ± 8.2 | +0 [+0, +0] | 256 of 256 | 0.8718 | 0.9946 | 256 |
+| divisor held after one sixteenth of the run | 4 (of 2, 4) | 213 ± 8.15 | +8.39 [-13.6, +29.6] | 256 of 256 | <u>0.8821</u> | <u>0.9970</u> | 256 |
+
+Not complete, left out:
+
+- control, intrinsic weight 2: no start record yet, 0 logging windows written.
+- control, intrinsic weight 2: unfinished, 0 logging windows written.
+
+The phase also holds units of methods that this batch does not name; they are not read here: three parts held one eighth; three parts held one sixteenth.
 
 ## Consistency check against the baseline run
 

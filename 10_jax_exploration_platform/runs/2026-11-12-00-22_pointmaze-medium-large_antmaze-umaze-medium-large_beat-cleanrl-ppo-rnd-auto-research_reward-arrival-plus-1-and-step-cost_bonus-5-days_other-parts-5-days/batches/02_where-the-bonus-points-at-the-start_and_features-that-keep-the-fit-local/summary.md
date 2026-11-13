@@ -1,6 +1,6 @@
 # Batch 2 screen on PointMaze Large with reward 1 on arrival: where the bonus points at the start, and features that keep the fit local
 
-Generated 2026-11-12 17:45 PT by the command below. This file is generated: regenerate it, do not edit it. Times are Pacific, converted from machines running Eastern. Run folder: `2026-11-12-00-22_pointmaze-medium-large_antmaze-umaze-medium-large_beat-cleanrl-ppo-rnd-auto-research_reward-arrival-plus-1-and-step-cost_bonus-5-days_other-parts-5-days`; batch folder: `batches/02_where-the-bonus-points-at-the-start_and_features-that-keep-the-fit-local`.
+Generated 2026-11-12 19:55 PT by the command below. This file is generated: regenerate it, do not edit it. Times are Pacific, converted from machines running Eastern. Run folder: `2026-11-12-00-22_pointmaze-medium-large_antmaze-umaze-medium-large_beat-cleanrl-ppo-rnd-auto-research_reward-arrival-plus-1-and-step-cost_bonus-5-days_other-parts-5-days`; batch folder: `batches/02_where-the-bonus-points-at-the-start_and_features-that-keep-the-fit-local`.
 
 ```bash
 cd /p/rlprojects/RND/10_jax_exploration_platform
@@ -21,9 +21,9 @@ bash "benchmark_runs/2026-11-12-00-17_pointmaze-antmaze_cleanrl-ppo-rnd_speed-30
 | [Mean capped first-goal time at every intrinsic weight](#mean-capped-first-goal-time-at-every-intrinsic-weight) | 2026-11-12 16:20 PT | 2026-11-12 17:45 PT | unread |
 | [Training curves](#training-curves) | 2026-11-12 16:20 PT | 2026-11-12 17:45 PT | unread |
 | [Properties of the bonus on the maze grid](#properties-of-the-bonus-on-the-maze-grid) | 2026-11-12 16:20 PT | 2026-11-12 17:45 PT | unread |
-| [Predictions](#predictions) | 2026-11-12 16:20 PT | 2026-11-12 16:20 PT | unread |
+| [Predictions](#predictions) | 2026-11-12 16:20 PT | 2026-11-12 19:54 PT | unread |
 | [Ideas against the control](#ideas-against-the-control) | 2026-11-12 16:20 PT | 2026-11-12 17:45 PT | unread |
-| [Validation block](#validation-block) | 2026-11-12 16:20 PT | 2026-11-12 17:45 PT | unread |
+| [Validation block](#validation-block) | 2026-11-12 16:20 PT | 2026-11-12 19:55 PT | unread |
 | [Consistency check against the baseline run](#consistency-check-against-the-baseline-run) | 2026-11-12 16:20 PT | 2026-11-12 16:20 PT | unread |
 | [Records that need a look](#records-that-need-a-look) | 2026-11-12 16:20 PT | 2026-11-12 17:45 PT | unread |
 
@@ -306,43 +306,68 @@ One panel per method in the order of the table of the whole-curve mean, at the b
 
 ## Predictions
 
-The predictions were written in `ideas.md` before the runs. Their readings from the records have not been written yet (this batch has no predictions module), so each is quoted and marked not read yet. The tables of this summary hold the numbers the predictions speak of.
+The predictions were written in `ideas.md` before the runs. Each is quoted, then read part by part: a part held or did not hold on the numbers given, or cannot be read yet because a unit it needs is not complete. A prediction held when every part held, and did not hold when at least one part did not. Where a prediction leaves a choice, it is read as follows. Every method is read at its best intrinsic weight for $W$ unless a weight is named. "Arrivals at weight 2 are earlier" is read on the mean capped first-goal time $M$ at the intrinsic weight 2. "Within the interval" is read as: the 95% interval of the difference in $W$ from the control contains zero. A prediction that names two possible outcomes holds when one of the two occurred, and the numbers say which. "Stays above 0.9 until they are visited" is read on the bonus at unvisited cells over its start at 5% and at 25% of the budget, where enough pairs are left to print a median. "More than 10 times the bonus at visited cells through the first quarter" is read on the median bonus of the (policy, cell) pairs with no visit so far over the median of the pairs with a visit, at 5% and at 25% of the budget, where both kinds have enough pairs; with no such share the part cannot be read. The held divisor's whole-curve mean is read at the hold fraction with the highest $W$. "The highest of the batch" is read among the methods of this batch other than the control.
 
-### Prediction 1
+### Prediction 1: wider input clip
 
 > **Wider input clip:** the largest over the smallest starting bonus rises above 300 at c = 10 and above 1,000 with no clip. The median first arrival at the best weight is at least 15% earlier than the control's at c = 20 or with no clip. The whole-curve mean moves by less than 0.02 either way.
 
-Observed: **not read yet**.
+Observed: **did not hold**.
 
-### Prediction 2
+- The start ratio is above 300 with the clip at 10: **held**. Median start ratio: 321.30.
+- The start ratio is above 1,000 with no clip: **did not hold**. Median start ratio: 521.70.
+- With the clip at 20 or with no clip, the median first arrival is at least 15% earlier than the control's: **did not hold**. Median first-arrival step: clip at 20 247.0K; no clip 247.0K; control 191.9K.
+- The whole-curve mean moves by less than 0.02 either way: **held**. Difference in $W$ from the control: clip at 10 +0.002 [-0.017, +0.023]; clip at 20 -0.001 [-0.023, +0.022]; no clip -0.001 [-0.024, +0.022].
+
+### Prediction 2: input statistics kept from the random-action rollouts
 
 > **Input statistics kept from the random-action rollouts:** the bonus at cells never visited stays more than 10 times the bonus at visited cells through the first quarter of the budget. Either the whole-curve mean is 0.01 to 0.03 ahead with earlier arrivals, or it is behind because the predictor's very large errors at far inputs take over the shared gradient clip; the records will show which (the divisor after the first window, and the final level).
 
-Observed: **not read yet**.
+Observed: **did not hold**.
 
-### Prediction 3
+- The bonus at cells never visited stays more than 10 times the bonus at visited cells through the first quarter of the budget: **did not hold**. Median bonus at unvisited cells over the median at visited cells, at the best weight: no clip: 5.96 (205 pairs without a visit, 531 with one) at 5%, too few pairs for a median (13 pairs without a visit, 723 with one) at 25%; clip at 20: 5.96 (205 pairs without a visit, 531 with one) at 5%, too few pairs for a median (13 pairs without a visit, 723 with one) at 25%.
+- One of the two written outcomes occurs: 0.01 to 0.03 ahead with earlier arrivals, or behind: **held**. no clip: behind (difference in $W$ -0.054 [-0.076, -0.026]; median first arrival 462.2K against 191.9K for the control; divisor after the first logging window 45.9; final level 0.991); clip at 20: behind (difference in $W$ -0.054 [-0.076, -0.028]; median first arrival 462.2K against 191.9K for the control; divisor after the first logging window 45.9; final level 0.991).
+
+### Prediction 3: slower predictor
 
 > **Slower predictor:** arrivals at weight 2 are earlier than the control's; the whole-curve mean is within the interval.
 
-Observed: **not read yet**.
+Observed: **did not hold**.
 
-### Prediction 4
+- Arrivals at the intrinsic weight 2 are earlier than the control's: **did not hold**. $M$ at the intrinsic weight 2, in thousands of steps: 134 at 0.0625 times 1e-4; 248 at 0.125 times 1e-4; control 220.
+- The whole-curve mean is within the interval: **held**. Difference in $W$ from the control: 0.0625 times 1e-4: +0.012 [-0.010, +0.034]; 0.125 times 1e-4: -0.002 [-0.024, +0.022].
+
+### Prediction 4: local features as the input of RND
 
 > **Local features as the input of RND** separates the two readings of the even start's failure. Its starting bonus is nearly even (largest over smallest below 3). If all 16 policies reach the goal and the whole-curve mean is above 0.8, the even start failed because fitting visited inputs lowered the bonus elsewhere, not because the slope was missing. If it fails like the even start (12 of 16 or fewer), the slope is what RND needs here.
 
-Observed: **not read yet**.
+Observed: **did not hold**.
 
-### Prediction 5
+- The start ratio is below 3: **held**. Median start ratio: 1.94 at length 0.5; 1.94 at length 1; 1.82 at length 2.
+- One of the two written outcomes occurs: every policy reaches the goal with $W$ above 0.8, or 12 of 16 or fewer reach it: **did not hold**. length 0.5: three quarters of the policies or fewer reach the goal (12 of 16 policies reach the goal, $W$ 0.182); length 1: neither written outcome (16 of 16 policies reach the goal, $W$ 0.198); length 2: neither written outcome (16 of 16 policies reach the goal, $W$ 0.352).
+
+### Prediction 5: scheduled last layer on local features
 
 > **Scheduled last layer on local features:** at $\ell$ = 0.5 and 1 the bonus at cells never visited stays above 0.9 until they are visited, and the decay slope is within 0.1 of $-a$. All 16 policies reach the goal at some weight. Its whole-curve mean is the highest of the batch if a bonus that only counts is enough; if it is behind the control with every policy reaching the goal late, the missing slope costs time at the start.
 
-Observed: **not read yet**.
+Observed: **did not hold**.
 
-### Prediction 6
+- At the lengths 0.5 and 1 the bonus at cells never visited stays above 0.9 of its start: **held**. Bonus at unvisited cells over its start: decay 0.5, length 0.5: 1.23 (140 pairs) at 5%, 1.27 (68 pairs) at 25%; decay 0.5, length 1: 1.07 (139 pairs) at 5%, not printed: 11 pairs at 25%; decay 1, length 1: 1.08 (328 pairs) at 5%, not printed: 12 pairs at 25%.
+- At the lengths 0.5 and 1 the decay slope is within 0.1 of minus the decay: **did not hold**. Median decay slope: -0.01 at decay 0.5, length 0.5; -0.03 at decay 0.5, length 1; -0.02 at decay 1, length 1.
+- At the lengths 0.5 and 1 every policy reaches the goal at some intrinsic weight: **held**. Intrinsic weights at which every policy reaches the goal: decay 0.5, length 0.5: 0.000976562, 0.0625, 1, 2, 16, 64; decay 0.5, length 1: 0.00390625, 0.015625, 0.0625, 0.25, 0.5, 1, 2, 4, 16, 64; decay 1, length 1: 0.015625, 0.0625, 0.25, 0.5, 1, 2, 4, 16, 64.
+- Beside: decay 0.5, length 0.5: $W$ 0.016, difference from the control -0.868 [-0.892, -0.839], median first arrival 199.0K; decay 0.5, length 1: $W$ 0.069, difference from the control -0.816 [-0.858, -0.766], median first arrival 169.5K; decay 0.5, length 2: $W$ 0.211, difference from the control -0.673 [-0.781, -0.561], median first arrival 411.9K; decay 1, length 1: $W$ 0.052, difference from the control -0.833 [-0.861, -0.793], median first arrival 563.1K. The highest $W$ among the complete methods of the batch other than the control: slower predictor, predictor learning rate 0.0625 times 1e-4 (0.897); the control has 0.885.
+
+### Prediction 6: divisor held after a part of the run
 
 > **Divisor held after a part of the run** (written 2026-11-12 14:50 PT): intrinsic weight times the reward at the probes at the end of the run is below its value at a quarter of the budget (in the control it is 1.8 times higher). The final level at weights 4 and 16 is higher than the control's at the same weights. At the best weight the whole-curve mean is 0.005 to 0.015 ahead (a difference the validation block must resolve); $f$ = 1/16 (524 thousand steps, about when the first arrivals happen) may be too early and lose arrivals.
 
-Observed: **not read yet**.
+Observed: **did not hold**.
+
+- The weighted intrinsic reward at the end of the run is below its value at a quarter of the budget: **did not hold**. Weighted intrinsic reward at a quarter of the budget and at the end: held after one sixteenth: 0.00237 and 0.00266; held after one eighth: 0.00291 and 0.00335; held after one quarter: 0.00361 and 0.00437.
+- The final level at the weights 4 and 16 is higher than the control's at the same weights: **held**. Final level: held after one sixteenth: 0.998 at weight 4, 0.993 at weight 16; held after one eighth: 0.995 at weight 4, 0.986 at weight 16; held after one quarter: 0.996 at weight 4, 0.966 at weight 16; control: 0.990 at weight 4, 0.670 at weight 16.
+- At the best weight the whole-curve mean is 0.005 to 0.015 ahead of the control: **held**. Held after one sixteenth (the highest $W$ of the three): difference in $W$ from the control +0.010 [-0.009, +0.032].
+- Beside: control: 0.00248 at a quarter of the budget and 0.00451 at the end, 1.8 times as much.
+- Beside: held after one sixteenth: 16 of 16 policies reach the goal, median first arrival 174.4K; held after one eighth: 16 of 16 policies reach the goal, median first arrival 191.7K; held after one quarter: 16 of 16 policies reach the goal, median first arrival 139.9K; control: median first arrival 191.9K. Held after one sixteenth: On the validation block (256 seeds), at its best weight 2 against the control at the control's best weight: difference in $W$ +0.0095 [+0.0040, +0.0150], in $L$ +0.0056 [+0.0045, +0.0067]. Held after one quarter: On the validation block (256 seeds), at its best weight 4 against the control at the control's best weight: difference in $W$ -0.0063 [-0.0126, -0.0001], in $L$ +0.0026 [+0.0012, +0.0039].
 
 ## Ideas against the control
 
@@ -368,7 +393,7 @@ By the 95% interval of the difference in $M$ from the control (section Measures,
 
 ## Validation block
 
-The units of the phase `validation-block` in the screen's environment and reward setting. Each trains one method at one intrinsic weight on 256 seeds, from 10000 to 10255: these are neither the development seeds of the screen nor the confirmation seeds. 13 of 13 method and weight pairs have a complete unit; a unit that is not complete is listed under the tables and left out. Define $W$, $L$ and $M$ as in the section Measures, here with $K$ the number of seeds of a row and read at 8,388,608 environment steps per policy. Differences are the method minus the control at the same intrinsic weight, on the seeds both have, each with its 95% interval from 10,000 resamples of those seeds. Rows: the control first, then the other methods, each by intrinsic weight. Per column the best value is bold and the second best underlined.
+The units of the phase `validation-block` in the screen's environment and reward setting. Each trains one method at one intrinsic weight on 256 seeds, from 10000 to 10255: these are neither the development seeds of the screen nor the confirmation seeds. 13 of 15 method and weight pairs have a complete unit; a unit that is not complete is listed under the tables and left out. Define $W$, $L$ and $M$ as in the section Measures, here with $K$ the number of seeds of a row and read at 8,388,608 environment steps per policy. Differences are the method minus the control at the same intrinsic weight, on the seeds both have, each with its 95% interval from 10,000 resamples of those seeds. Rows: the control first, then the other methods, each by intrinsic weight. Per column the best value is bold and the second best underlined.
 
 ### Discovery and optimization: whole-curve mean and final level
 
@@ -407,6 +432,39 @@ $M$, its standard error and its differences are in thousands of steps; the small
 | divisor held after one quarter of the run | 4 | 205 ± 8.2 | +0 [+0, +0] | 256 of 256 | 256 |
 | slower predictor with held divisor (predictor learning rate 0.25 times 1e-4, divisor held after one sixteenth of the run) | 2 | 182 ± 13.9 | -86.9 [-120, -51.4] | 256 of 256 | 256 |
 | slower predictor with held divisor (predictor learning rate 0.25 times 1e-4, divisor held after one sixteenth of the run) | 4 | <u>153</u> ± 9.69 | -52 [-75.7, -27.6] | 256 of 256 | 256 |
+
+### Each method at its best intrinsic weight against the control at its best weight
+
+The two tables above compare at equal intrinsic weights. A method and the control need not have the same best weight, so here each method stands at its own best weight for the metric and the control at its own: for $W$ the weight with the highest $W$ (ties: the higher $L$), for $M$ the weight with the smallest $M$ (ties: more policies reach the goal). The weight column names the weights each was chosen among. Each best weight was chosen on these same seeds, among the weights the method was run at in this block, and the control's was chosen the same way: a side that was run at more weights had more chances, so these differences lean slightly towards it. They are a second selection step, not the comparison on the confirmation seeds. Differences are the method minus the control on the seeds both have, with the 95% interval from 10,000 resamples of those seeds. The control is the first row; the other methods follow from the best value of the sorted column on. Per column the best value is bold and the second best underlined.
+
+**Whole-curve mean, each side at its best weight for it.** The last difference column gives the mean capped first-goal time at these same weights, in thousands of steps (negative: the goal was first reached earlier than under the control).
+
+| method | best intrinsic weight for $W$ | $W$ ↑ ± standard error | difference in $W$ from the control [95% interval] | $L$ ± standard error | difference in $L$ from the control [95% interval] | difference in $M$ at these weights [95% interval], thousand steps | seeds in common with the control |
+|---|---|---|---|---|---|---|---|
+| control | 2 (of 1, 2, 4) | 0.8781 ± 0.0021 | control | 0.9920 ± 0.0005 | control | control | 256 |
+| slower predictor with held divisor (predictor learning rate 0.25 times 1e-4, divisor held after one sixteenth of the run) | 4 (of 2, 4) | **0.8883** ± 0.0021 | **+0.0102** [+0.0048, +0.0158] | **0.9982** ± 0.0002 | **+0.0062** [+0.0052, +0.0073] | **-117** [-146, -86.2] | 256 |
+| divisor held after one sixteenth of the run | 2 (of 2, 4) | <u>0.8876</u> ± 0.0021 | <u>+0.0095</u> [+0.0040, +0.0150] | <u>0.9976</u> ± 0.0003 | <u>+0.0056</u> [+0.0045, +0.0067] | +0.579 [-26.9, +28.2] | 256 |
+| separate predictor step size, predictor learning rate 0.25 times 1e-4 | 2 (of 1, 2, 4) | 0.8859 ± 0.0024 | +0.0078 [+0.0016, +0.0142] | 0.9954 ± 0.0007 | +0.0033 [+0.0015, +0.0050] | <u>-98.7</u> [-130, -67.9] | 256 |
+| separate predictor step size, predictor learning rate 1 times 1e-4 | 2 (of 2, 4) | 0.8804 ± 0.0024 | +0.0024 [-0.0038, +0.0083] | 0.9954 ± 0.0004 | +0.0034 [+0.0021, +0.0047] | -31.2 [-63, +0.0246] | 256 |
+| divisor held after one quarter of the run | 4 (its only weight) | 0.8718 ± 0.0024 | -0.0063 [-0.0126, -0.0001] | 0.9946 ± 0.0005 | +0.0026 [+0.0012, +0.0039] | -64.5 [-90, -38.5] | 256 |
+
+**Mean capped first-goal time, each side at its best weight for it.** $M$, its standard error and its difference are in thousands of steps; $W$ and $L$ are read at the same weight as $M$.
+
+| method | best intrinsic weight for $M$ | $M$ ↓ ± standard error, thousand steps | difference in $M$ from the control [95% interval], thousand steps | policies that reach the goal | $W$ at that weight | $L$ at that weight | seeds in common with the control |
+|---|---|---|---|---|---|---|---|
+| control | 4 (of 1, 2, 4) | 205 ± 8.2 | control | 256 of 256 | 0.8626 | 0.9765 | 256 |
+| separate predictor step size, predictor learning rate 0.25 times 1e-4 | 4 (of 1, 2, 4) | **133** ± 7.88 | **-71.9** [-93.9, -49.6] | 256 of 256 | 0.8783 | 0.9927 | 256 |
+| slower predictor with held divisor (predictor learning rate 0.25 times 1e-4, divisor held after one sixteenth of the run) | 4 (of 2, 4) | <u>153</u> ± 9.69 | <u>-52</u> [-75.5, -28.5] | 256 of 256 | **0.8883** | **0.9982** | 256 |
+| separate predictor step size, predictor learning rate 1 times 1e-4 | 4 (of 2, 4) | 185 ± 10.1 | -19.8 [-43.3, +3.84] | 256 of 256 | 0.8762 | 0.9931 | 256 |
+| divisor held after one quarter of the run | 4 (its only weight) | 205 ± 8.2 | +0 [+0, +0] | 256 of 256 | 0.8718 | 0.9946 | 256 |
+| divisor held after one sixteenth of the run | 4 (of 2, 4) | 213 ± 8.15 | +8.39 [-13, +29.7] | 256 of 256 | <u>0.8821</u> | <u>0.9970</u> | 256 |
+
+Not complete, left out:
+
+- control, intrinsic weight 2: no start record yet, 0 logging windows written.
+- control, intrinsic weight 2: unfinished, 0 logging windows written.
+
+The phase also holds units of methods that this batch does not name; they are not read here: three parts held one eighth; three parts held one sixteenth.
 
 ## Consistency check against the baseline run
 

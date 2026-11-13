@@ -220,13 +220,16 @@ def grid_measures(grid, cell_weights, best_weight, budget):
     ratios = maze_grid.start_ratio(grid.start_bonus)
     slopes = maze_grid.decay_slopes(grid.bonus, grid.visits)
 
-    # Unvisited cells, read at the last logging window that ends at or before each share of the budget.
-    unvisited = {}
+    # Unvisited cells, read at the last logging window that ends at or before each share of the budget: their bonus
+    # over its start, and their bonus over the bonus of the visited cells at the same window.
+    unvisited, apart = {}, {}
     for share in UNVISITED_SHARES:
         window = maze_grid.window_at(grid.steps, share * budget)
         found = maze_grid.unvisited_ratios(grid.bonus[window][best], grid.start_bonus[best], grid.visits[window][best])
         unvisited[share] = {'pairs': len(found), 'step': int(grid.steps[window]),
                             'median': float(np.median(found)) if len(found) >= FEWEST_PAIRS else None}
+        ratio, never, seen = maze_grid.unvisited_over_visited(grid.bonus[window][best], grid.visits[window][best], FEWEST_PAIRS)
+        apart[share] = {'ratio': ratio, 'unvisited_pairs': never, 'visited_pairs': seen}
     # The size of the intrinsic reward and its divisor: at the start, after the first window, and at the shares.
     reward = {'start': maze_grid.weighted_intrinsic_reward(grid.start_reward[best], best_weight),
               'first_window': maze_grid.weighted_intrinsic_reward(grid.reward[0][best], best_weight)}
@@ -238,7 +241,8 @@ def grid_measures(grid, cell_weights, best_weight, budget):
             'start_ratio_by_weight': {weight: finite_median(ratios[rows]) for weight, rows in members.items()},
             'decay_slope': finite_median(slopes[best]), 'decay_slope_pairs': int(np.isfinite(slopes[best]).sum()),
             'decay_slope_by_weight': {weight: finite_median(slopes[rows]) for weight, rows in members.items()},
-            'unvisited': unvisited, 'intrinsic_reward': reward, 'divisor': divisor, 'first_window_step': int(grid.steps[0]),
+            'unvisited': unvisited, 'unvisited_over_visited': apart, 'intrinsic_reward': reward, 'divisor': divisor,
+            'first_window_step': int(grid.steps[0]),
             'bins': maze_grid.visit_bins(grid.bonus[:, best], grid.visits[:, best]),
             'pairs': int(len(best) * len(grid.cells)), 'problems': maze_grid.problems(grid),
             'largest_bonus': {'start': float(np.nanmax(grid.start_bonus)), 'windows': float(np.nanmax(grid.bonus))}}
@@ -1109,16 +1113,16 @@ def validation_best_text(tables, block):
             'have, with the 95% interval from 10,000 resamples of those seeds. The control is the first row; the '
             'other methods follow from the best value of the sorted column on. Per column the best value is bold '
             'and the second best underlined.\n\n'
-            '**Whole-curve mean, at the best weights for $W$.** The last difference column gives the mean capped '
-            'first-goal time at these same weights, in thousands of steps (negative: the goal was first reached '
-            'earlier than under the control).\n\n'
+            '**Whole-curve mean, each side at its best weight for it.** The last difference column gives the mean '
+            'capped first-goal time at these same weights, in thousands of steps (negative: the goal was first '
+            'reached earlier than under the control).\n\n'
             + report.markdown_table(['method', 'best intrinsic weight for $W$', '$W$ ↑ ± standard error',
                                      'difference in $W$ from the control [95% interval]', '$L$ ± standard error',
                                      'difference in $L$ from the control [95% interval]',
                                      'difference in $M$ at these weights [95% interval], thousand steps',
                                      'seeds in common with the control'], first)
-            + '**Mean capped first-goal time, at the best weights for $M$.** $M$, its standard error and its '
-            'difference are in thousands of steps; $W$ and $L$ are read at the same weight as $M$.\n\n'
+            + '**Mean capped first-goal time, each side at its best weight for it.** $M$, its standard error and '
+            'its difference are in thousands of steps; $W$ and $L$ are read at the same weight as $M$.\n\n'
             + report.markdown_table(['method', 'best intrinsic weight for $M$', '$M$ ↓ ± standard error, thousand steps',
                                      'difference in $M$ from the control [95% interval], thousand steps',
                                      'policies that reach the goal', '$W$ at that weight', '$L$ at that weight',

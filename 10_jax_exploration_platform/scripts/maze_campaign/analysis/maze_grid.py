@@ -123,6 +123,20 @@ def unvisited_ratios(bonus_now, start_bonus, visits_now):
     return bonus_now[unvisited] / start_bonus[unvisited]
 
 
+def unvisited_over_visited(bonus_now, visits_now, fewest):
+    """The median bonus of the (policy, cell) pairs with no visit so far over the median of the pairs with a visit.
+
+    Returns (the ratio, the number of usable pairs without a visit, the number with a visit); the ratio is None
+    when either kind has fewer than `fewest` pairs.
+    """
+    # before: bonus [[4.0, 0.2], [6.0, 0.3]], cumulative visits [[0, 5], [0, 9]], fewest 2
+    # after:  (5.0 / 0.25 = 20.0, 2, 2).
+    good = usable(bonus_now)
+    never, seen = bonus_now[good & (visits_now == 0)], bonus_now[good & (visits_now > 0)]
+    ratio = float(np.median(never) / np.median(seen)) if min(len(never), len(seen)) >= fewest else None
+    return ratio, len(never), len(seen)
+
+
 def window_at(steps, at_steps):
     """The index of the last logging window that ends at or before a step count."""
     # before: window ends [100, 200, 300], step count 250; after: 1, the window that ends at step 200.

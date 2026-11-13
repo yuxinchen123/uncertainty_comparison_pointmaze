@@ -566,7 +566,7 @@ def test_the_validation_block_lists_each_method_and_weight_against_the_control_a
     # metrics (W 0.9 against 0.5 at the weight 4, first arrival at step 208 against 1,008).
     best = block.split('### Each method at its best intrinsic weight against the control at its best weight\n')[1]
     assert 'Each best weight was chosen on these same seeds' in best
-    primary, secondary = best.split('**Mean capped first-goal time, at the best weights for $M$.**')
+    primary, secondary = best.split('**Mean capped first-goal time, each side at its best weight for it.**')
     assert '| control | 1 (its only weight) | <u>0.750</u> ± 0.029 | control | 1.000 ± 0.000 | control | control | 4 |' in primary
     assert ('| separate predictor step size | 1 (of 1, 4) | **0.900** ± 0.000 | +0.150 [+0.100, +0.200] | 1.000 ± 0.000 '
             '| +0.000 [+0.000, +0.000] | -0.3 [-0.4, -0.2] | 4 |') in primary

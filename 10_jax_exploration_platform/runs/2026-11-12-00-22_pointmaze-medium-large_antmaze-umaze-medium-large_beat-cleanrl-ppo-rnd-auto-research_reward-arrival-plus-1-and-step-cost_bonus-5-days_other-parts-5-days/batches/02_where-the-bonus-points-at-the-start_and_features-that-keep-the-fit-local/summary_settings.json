@@ -25,8 +25,11 @@
   "consistency_check": {
     "run_folder": "2026-11-12-02-24_cleanrl-ppo-rnd-baseline_pointmaze-medium-large_antmaze-umaze-medium-large_goal-termination_reward-arrival-plus-1-and-step-cost_first-pass-60-configurations_seeds-0-15_confirmation-seeds-from-30000",
     "unit": "development-at-the-budget_pointmaze-large_reward-arrival-plus-one_cleanrl-ppo-rnd_cells-1-to-9-of-9_seeds-0-to-15",
-    "settings": {"learning_rate": 0.002, "int_coef": 2.0},
-    "reported": "whole-curve mean 0.888 ± 0.008, final level 0.994 (`program.md`, RND's chosen configuration)"
+    "settings": {
+      "learning_rate": 0.002,
+      "int_coef": 2.0
+    },
+    "reported": "whole-curve mean 0.888 \u00b1 0.008, final level 0.994 (`program.md`, RND's chosen configuration)"
   },
   "validation_block": {
     "phase": "validation-block",
@@ -39,5 +42,6 @@
       "divisor-held-after-one-quarter": "divisor held after one quarter of the run",
       "slower-predictor-with-held-divisor": "slower predictor with held divisor (predictor learning rate 0.25 times 1e-4, divisor held after one sixteenth of the run)"
     }
-  }
+  },
+  "predictions": "predictions_batch_02"
 }
