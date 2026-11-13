@@ -233,3 +233,9 @@ Times are Pacific, read from the clock or from scheduler records.
   policy (largest turning rate seen 120.4 rad/s, above the bound of 100), in about 1.2 billion environment steps of
   those units; none in the units with 4 and with 128 environments per policy. Largest torso speed anywhere: 15.0
   m/s. The guard's count per unit goes into every later reading.
+- 2026-11-12 23:06 PT: the six units with 128 environments per policy are done, copied back and verified (five by
+  22:00 PT on A100 80 GB cards, the one on an A30 by 23:06 PT). Fault guard over these six: 32 respawns in 12.9
+  billion environment steps; largest torso speed 16.9 m/s; largest turning rate 145.5 rad/s (above the bound of
+  100, so the guard did act). The 12 other units run, one job each. The units with 4 environments per policy are
+  at 67 to 82 of 256 windows after 2.5 hours; their jobs reach the 4-hour limit at about 00:28 PT and continue in
+  new jobs from their checkpoints.

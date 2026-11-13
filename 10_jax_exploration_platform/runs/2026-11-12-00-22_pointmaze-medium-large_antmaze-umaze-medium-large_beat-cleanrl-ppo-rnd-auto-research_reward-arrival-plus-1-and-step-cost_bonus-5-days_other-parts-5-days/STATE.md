@@ -674,6 +674,23 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   the one UVA card that could start a worker (lynx04).
   Open before any finalist: `literature/novelty.md` for the held divisor (closest published work and the exact
   difference), and `summary_settings.json` for batches 5 to 7.
+- 2026-11-12 23:06 PT: **batch 7, PointMaze Medium with the step cost (first validation block, 256 seeds).** RND's
+  best of three: −0.3505 (learning rate 6e-3, weight 0.00195). Held divisor alone: −0.3499 at weight 0.03125,
+  +0.0006 [−0.004, +0.005], level; −0.3518 at 0.00195; −0.3534 at 0.0078. Predictor at half speed with held
+  divisor: −0.3539, −0.0034 [−0.008, +0.002]. Prediction 2: level, as predicted; but its second part did not hold:
+  the largest weight run (0.03125, sixteen times RND's) is the held divisor's best, not behind. So the held
+  divisor makes a real bonus usable where RND needs it nearly off; weights 0.125, 0.5 and 2 are queued (edge
+  rule; 5 units).
+  PointMaze Large with the step cost: RND's confirmed configuration gives −0.7310 ± 0.0018 on the validation
+  block (−0.732 on the fresh seeds); the other 9 units of that case are at 3 to 157 of 256 windows.
+- 2026-11-12 23:07 PT: **AntMaze check, the six units with 128 environments per policy are complete (stable
+  physics, 16 seeds, 16,777,216 steps per policy).** Best whole-curve mean 0.049 ± 0.001 (learning rate 1e-2,
+  entropy 0.001, weight 16), final level 0.065: at the end only about 6% of episodes reach the goal. Every one of
+  the eight best configurations has the largest learning rate of the grid. First arrivals at about 1.9 million
+  steps. Fault guard: 32 respawns in 12.9 billion environment steps (2.5 per billion); largest torso speed 16.9
+  m/s; 7.6% of steps with the torso above 1.5 m. So with 128 environments per policy RND barely learns the U-maze
+  in this budget; the units with 16 environments per policy (225 to 228 of 256 windows) and with 4 (67 to 82)
+  will say whether more updates per step change that.
 
 ## Next
 

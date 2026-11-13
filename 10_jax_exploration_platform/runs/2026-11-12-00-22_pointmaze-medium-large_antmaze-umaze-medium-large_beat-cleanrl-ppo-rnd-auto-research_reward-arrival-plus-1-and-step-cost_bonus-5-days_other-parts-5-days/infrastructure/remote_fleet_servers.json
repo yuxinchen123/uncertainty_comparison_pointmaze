@@ -17,7 +17,7 @@
       "standby-a100-80gb-a30-a10": {
         "gpu_class": "a100_80gb_or_a30_or_a10_gilbreth",
         "time_limit": "04:00:00",
-        "max_jobs": 11,
+        "max_jobs": 18,
         "sbatch_options": [
           "-p",
           "a100-80gb,a30,a10",
@@ -34,7 +34,7 @@
       }
     },
     "hand_over": {
-      "units_at_once": 19,
+      "units_at_once": 15,
       "match": "pointmaze",
       "pool": "standby-a100-80gb-a30-a10",
       "note": "Placement decided with the user 2026-11-12 22:18 PT: Gilbreth by default; UVA only for workers that start at once (submit.py --only-cards-free-now); no worker job is left waiting in UVA's queue. At each change the limit is set to the units on Gilbreth plus the waiting units, less the UVA cards that can start now."
