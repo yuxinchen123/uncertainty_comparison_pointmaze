@@ -499,6 +499,27 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   `infra_history.md`. The old check is stopped; the time-step configuration field, its gates (now including a
   gate with trained policies) and the throughput of the final setting are being done in the background since
   19:17 PT. Then: freeze, rebuild the rollout-shape check under a new phase name, first unit by hand.
+- 2026-11-12 19:22 PT: **RND's discovery baseline is confirmed in all four PointMaze cases** (1,024 fresh seeds;
+  mean capped first-goal time in thousand steps): Medium with reward 1 on arrival 17.4 ± 0.5; Medium with the
+  step cost 14.1 ± 0.3; Large with reward 1 on arrival 136 ± 3; Large with the step cost 131 ± 3 (learning rate
+  4.5e-3, weight 8; RND at CleanRL's defaults 2,723 ± 179, PPO without a bonus 10,418 ± 467). The PointMaze
+  baseline folder has no unit left (133 done).
+- 2026-11-12 19:24 PT: **batch 4, first three units (16 development seeds, against RND's sweeps at the budget on
+  the same seeds; quick script `quick_compare_dev.py`, not yet in the summary code).**
+  1. PointMaze Medium, reward 1 on arrival, slower predictor with held divisor: best whole-curve mean 0.965
+     (learning rate 6e-3, weight 0.5) against RND's best 0.9435 (learning rate 1e-2, weight 2): +0.021
+     [+0.008, +0.036]; final level 1.000 against 0.9935.
+  2. Same case, all three parts: best 0.946 (learning rate 1e-2, weight 0.25): +0.002 [−0.017, +0.021]; its best
+     is at the highest learning rate and the lowest weight of its grid, so the edge rule applies.
+  3. PointMaze Medium, step cost, slower predictor with held divisor: best −0.3422 (learning rate 1e-2, weight
+     0.00195) against RND's −0.3405: −0.002 [−0.010, +0.007]. Every configuration of the method lies between
+     −0.342 and −0.368; no weight is ahead. Prediction 2 of the batch holds so far: a bonus-only change is level
+     with RND's nearly bonus-free configuration there, not ahead.
+  First reading: the finalist with two parts is at least as good as the one with three outside PointMaze Large.
+  On discovery in Medium with reward 1 on arrival both are behind RND's best for that measure (11 to 13 thousand
+  steps against 8.7), but these sweeps were not aimed at discovery (weights up to 4 only).
+- 2026-11-12 19:21 PT: AntMaze folder: the fleet step had started the two stopped old units again; stopped for
+  good (server marked not ready, jobs cancelled by ledger id, units set aside). Details in its `infra_history.md`.
 
 ## Next
 

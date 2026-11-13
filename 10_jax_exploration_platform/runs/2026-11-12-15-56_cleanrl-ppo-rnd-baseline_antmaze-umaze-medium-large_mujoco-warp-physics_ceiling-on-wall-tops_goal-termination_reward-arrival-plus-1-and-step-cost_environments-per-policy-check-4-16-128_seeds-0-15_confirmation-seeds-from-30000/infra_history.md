@@ -170,3 +170,14 @@ Times are Pacific, read from the clock or from scheduler records.
   from this folder's Gilbreth ledger (the fleet's take-back moves waiting units only). The 6 finished units stay
   as records; no result of this check is used. The check starts again under a new phase name once the time step
   is a recorded configuration field with its gates (work started 19:17 PT) and the code is frozen anew.
+- 2026-11-12 19:20 PT: **the fleet step started the two stopped units again.** After their jobs were cancelled
+  (19:16 PT) the units stood in the server's waiting queue, and the step of 19:20 PT submitted two jobs for them
+  (12346977, 12346978): a hand-over limit of 0 stops new hand-overs, it does not stop jobs for units the server
+  already holds. The take-back of 19:21 PT moved nothing because the new jobs had claimed the units.
+  What was done (19:21 PT): Gilbreth marked not ready for this folder (the step then does nothing there); both
+  jobs cancelled by their ids from this folder's Gilbreth ledger; the two units' queue files set aside on the
+  server and their queue records and assignment records set aside here
+  (`set_aside_2026-11-12_old-physics-check-units/`). The step of 19:22 PT reports "not part of this tick". The
+  two jobs ran about a minute; nothing of theirs is used.
+  To stop a unit that runs on a server: mark the server not ready first, then cancel its job, then set the unit
+  aside. A take-back only moves units no job holds.

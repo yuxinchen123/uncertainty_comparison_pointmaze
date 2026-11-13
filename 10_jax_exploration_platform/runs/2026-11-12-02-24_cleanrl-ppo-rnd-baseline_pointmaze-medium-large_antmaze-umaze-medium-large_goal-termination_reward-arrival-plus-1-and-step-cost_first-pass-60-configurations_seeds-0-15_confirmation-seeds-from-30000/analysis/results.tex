@@ -1020,11 +1020,11 @@ ppo without a bonus & behind on discovery; $M$ +438 [+410, +466] (1,024 seeds) &
 \caption{Secondary metric on the confirmation seeds, step cost: per environment the verdict on discovery, the paired difference in the mean capped first-goal step $M$ (method minus baseline, each at its own configuration for $M$, thousands of steps) with its 95\% interval, and the seeds in common.}\label{tab:maze-discovery-verdicts_step-cost}\vspace{3pt}
 \begin{tabular}{@{}>{\raggedright\arraybackslash\hspace{0pt}}p{1.80cm}>{\raggedright\arraybackslash\hspace{0pt}}p{1.81cm}>{\raggedright\arraybackslash\hspace{0pt}}p{1.81cm}>{\raggedright\arraybackslash\hspace{0pt}}p{1.81cm}>{\raggedright\arraybackslash\hspace{0pt}}p{1.81cm}>{\raggedright\arraybackslash\hspace{0pt}}p{1.81cm}>{\raggedright\arraybackslash\hspace{0pt}}p{1.81cm}@{}}\toprule
 method & PointMaze Medium & PointMaze Large & AntMaze U-maze & AntMaze Medium & AntMaze Large & environments in which it is ahead on discovery \\\midrule
-cleanrl ppo rnd at cleanrl defaults & behind on discovery; $M$ +16.3 [+14.2, +18.9] (1,024 seeds) & the baseline is not confirmed yet & not compared yet & not compared yet & not compared yet & 0 of 5 \\
+cleanrl ppo rnd at cleanrl defaults & behind on discovery; $M$ +16.3 [+14.2, +18.9] (1,024 seeds) & behind on discovery; $M$ +2,592 [+2,246, +2,957] (1,024 seeds) & not compared yet & not compared yet & not compared yet & 0 of 5 \\
 \addlinespace[2pt]
 cleanrl ppo rnd with intrinsic discount 0 point 999 & not compared yet & not confirmed yet & not compared yet & not compared yet & not compared yet & 0 of 5 \\
 \addlinespace[2pt]
-ppo without a bonus & behind on discovery; $M$ +4.98 [+3.96, +6.03] (1,024 seeds) & the baseline is not confirmed yet & not compared yet & not compared yet & not compared yet & 0 of 5 \\
+ppo without a bonus & behind on discovery; $M$ +4.98 [+3.96, +6.03] (1,024 seeds) & behind on discovery; $M$ +10,287 [+9,366, +11,184] (1,024 seeds) & not compared yet & not compared yet & not compared yet & 0 of 5 \\
 \bottomrule\end{tabular}\end{table}
 \begin{table}[H]\centering\scriptsize\setlength{\tabcolsep}{3pt}
 \caption{Secondary metric on the confirmation seeds, PointMaze Medium, reward 1 on arrival, at 1,048,576 environment steps per policy: each method at its own configuration for the mean capped first-goal step $M$ (thousands of steps). Differences are the row minus the baseline (CleanRL PPO-RND) on the seeds both have, with 95\% intervals from 10,000 resamples of the seeds; a row is ahead on discovery when the interval is entirely below zero.}\label{tab:maze-discovery-comparison_pointmaze-medium_reward-1-on-arrival_steps-1048576}\vspace{3pt}
@@ -1060,9 +1060,11 @@ ppo without a bonus: its only configuration, no development sweep & 8,209 $\pm$ 
 \caption{Secondary metric on the confirmation seeds, PointMaze Large, step cost, at 33,554,432 environment steps per policy: each method at its own configuration for the mean capped first-goal step $M$ (thousands of steps). Differences are the row minus the baseline (CleanRL PPO-RND) on the seeds both have, with 95\% intervals from 10,000 resamples of the seeds; a row is ahead on discovery when the interval is entirely below zero.}\label{tab:maze-discovery-comparison_pointmaze-large_step-cost_steps-33554432}\vspace{3pt}
 \begin{tabular}{@{}>{\raggedright\arraybackslash\hspace{0pt}}p{3.20cm}>{\raggedright\arraybackslash\hspace{0pt}}p{1.96cm}>{\raggedright\arraybackslash\hspace{0pt}}p{2.46cm}>{\raggedright\arraybackslash\hspace{0pt}}p{1.96cm}>{\raggedright\arraybackslash\hspace{0pt}}p{1.64cm}>{\raggedright\arraybackslash\hspace{0pt}}p{1.64cm}@{}}\toprule
 row & $M$ $\downarrow$ $\pm$ standard error, thousand steps & $M$ minus the baseline [95\%], thousand steps & verdict & policies that reach the goal & seeds in common with the baseline \\\midrule
-cleanrl ppo rnd at cleanrl defaults: its only configuration, no development sweep & \textbf{2,723} $\pm$ 179 & the baseline is not confirmed yet & the baseline is not confirmed yet & \textbf{97.8\%} & not compared \\
+CleanRL PPO-RND: intrinsic weight 8, learning rate 0.0045, entropy coefficient 0.01, clip coefficient 0.1 & \textbf{131} $\pm$ 3.29 & baseline & baseline & \textbf{100.0\%} & 1024 \\
 \addlinespace[2pt]
-ppo without a bonus: its only configuration, no development sweep & \underline{10,418} $\pm$ 467 & the baseline is not confirmed yet & the baseline is not confirmed yet & \underline{70.7\%} & not compared \\
+cleanrl ppo rnd at cleanrl defaults: its only configuration, no development sweep & \underline{2,723} $\pm$ 179 & \textbf{+2,592} [+2,246, +2,957] & behind on discovery & \underline{97.8\%} & 1024 \\
+\addlinespace[2pt]
+ppo without a bonus: its only configuration, no development sweep & 10,418 $\pm$ 467 & \underline{+10,287} [+9,366, +11,184] & behind on discovery & 70.7\% & 1024 \\
 \bottomrule\end{tabular}\end{table}
 \begin{table}[H]\centering\scriptsize\setlength{\tabcolsep}{3pt}
 \caption{Final level $L$ against the training length, PointMaze Medium, reward 1 on arrival, 1,048,576 planned steps (confirmation seeds): $L$ over the last 10\% of each share of the planned steps and, for a method, its paired difference to the baseline with the 95\% interval and its side.}\label{tab:maze-final-level_pointmaze-medium_reward-1-on-arrival_steps-1048576}\vspace{3pt}

@@ -1,18 +1,18 @@
 # CleanRL PPO-RND baseline on PointMaze: development sweeps and confirmation
 
-Generated 2026-11-12 18:01 PT; times are Pacific, converted from machines running Eastern. Run folder: `2026-11-12-02-24_cleanrl-ppo-rnd-baseline_pointmaze-medium-large_antmaze-umaze-medium-large_goal-termination_reward-arrival-plus-1-and-step-cost_first-pass-60-configurations_seeds-0-15_confirmation-seeds-from-30000`.
+Generated 2026-11-12 19:21 PT; times are Pacific, converted from machines running Eastern. Run folder: `2026-11-12-02-24_cleanrl-ppo-rnd-baseline_pointmaze-medium-large_antmaze-umaze-medium-large_goal-termination_reward-arrival-plus-1-and-step-cost_first-pass-60-configurations_seeds-0-15_confirmation-seeds-from-30000`.
 
 ## Contents
 
 | section | first written | last changed | status |
 |---|---|---|---|
 | [Measures](#measures) | 2026-11-12 10:40 PT | 2026-11-12 16:14 PT | unread |
-| [Records read](#records-read) | 2026-11-12 10:40 PT | 2026-11-12 18:01 PT | unread |
+| [Records read](#records-read) | 2026-11-12 10:40 PT | 2026-11-12 19:22 PT | unread |
 | [Configurations trained more than once](#configurations-trained-more-than-once) | 2026-11-12 14:20 PT | 2026-11-12 18:01 PT | unread |
 | [Development sweeps](#development-sweeps) | 2026-11-12 10:40 PT | 2026-11-12 18:01 PT | unread |
 | [Budget](#budget) | 2026-11-12 10:40 PT | 2026-11-12 17:48 PT | unread |
 | [Training curves](#training-curves) | 2026-11-12 10:40 PT | 2026-11-12 17:48 PT | unread |
-| [Comparison with the baseline on the confirmation seeds](#comparison-with-the-baseline-on-the-confirmation-seeds) | 2026-11-12 13:06 PT | 2026-11-12 18:01 PT | unread |
+| [Comparison with the baseline on the confirmation seeds](#comparison-with-the-baseline-on-the-confirmation-seeds) | 2026-11-12 13:06 PT | 2026-11-12 19:22 PT | unread |
 | [Final level against the training length](#final-level-against-the-training-length) | 2026-11-12 10:40 PT | 2026-11-12 17:45 PT | unread |
 | [Decline check](#decline-check) | 2026-11-12 10:40 PT | 2026-11-12 17:45 PT | unread |
 
@@ -44,7 +44,7 @@ Standard errors are over the $K$ policies. Measures 4 and 6 to 9 are reported be
 
 ## Records read
 
-113 units, 109 complete; 26,608 policies with at least one logging window. A unit that was continued from a checkpoint keeps one unbroken sequence of windows; a unit that was started again from zero is read from its last start. Episodes restarted after a non-finite physics state count as episodes that reach the step limit, and stay in every sum (the records hold sums per window, not single episodes). 560 of these policies repeat a configuration and seed that another unit finished earlier; they are left out of the tables and figures and shown in the section Configurations trained more than once.
+113 units, 113 complete; 26,608 policies with at least one logging window. A unit that was continued from a checkpoint keeps one unbroken sequence of windows; a unit that was started again from zero is read from its last start. Episodes restarted after a non-finite physics state count as episodes that reach the step limit, and stay in every sum (the records hold sums per window, not single episodes). 560 of these policies repeat a configuration and seed that another unit finished earlier; they are left out of the tables and figures and shown in the section Configurations trained more than once.
 
 | unit | environment | reward setting | method | environments per policy | policies | steps per policy so far | planned steps per policy | state |
 |---|---|---|---|---|---|---|---|---|
@@ -52,10 +52,10 @@ Standard errors are over the $K$ policies. Measures 4 and 6 to 9 are reported be
 | 2 | PointMaze Large | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 8,388,608 | 8,388,608 | complete |
 | 3 | PointMaze Large | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 8,388,608 | 8,388,608 | complete |
 | 4 | PointMaze Large | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 8,388,608 | 8,388,608 | complete |
-| 5 | PointMaze Large | step cost | CleanRL PPO-RND | 4 | 256 | 4,456,448 | 33,554,432 | unfinished |
-| 6 | PointMaze Large | step cost | CleanRL PPO-RND | 4 | 256 | 3,014,656 | 33,554,432 | unfinished |
-| 7 | PointMaze Large | step cost | CleanRL PPO-RND | 4 | 256 | 2,883,584 | 33,554,432 | unfinished |
-| 8 | PointMaze Large | step cost | CleanRL PPO-RND | 4 | 256 | 2,883,584 | 33,554,432 | unfinished |
+| 5 | PointMaze Large | step cost | CleanRL PPO-RND | 4 | 256 | 33,554,432 | 33,554,432 | complete |
+| 6 | PointMaze Large | step cost | CleanRL PPO-RND | 4 | 256 | 33,554,432 | 33,554,432 | complete |
+| 7 | PointMaze Large | step cost | CleanRL PPO-RND | 4 | 256 | 33,554,432 | 33,554,432 | complete |
+| 8 | PointMaze Large | step cost | CleanRL PPO-RND | 4 | 256 | 33,554,432 | 33,554,432 | complete |
 | 9 | PointMaze Medium | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
 | 10 | PointMaze Medium | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
 | 11 | PointMaze Medium | reward 1 on arrival | CleanRL PPO-RND | 4 | 256 | 1,048,576 | 1,048,576 | complete |
@@ -1621,15 +1621,15 @@ Each cell gives the verdict on discovery, then the paired difference in $M$ (met
 
 | method | PointMaze Medium | PointMaze Large | AntMaze U-maze | AntMaze Medium | AntMaze Large | environments in which it is ahead on discovery |
 |---|---|---|---|---|---|---|
-| cleanrl ppo rnd at cleanrl defaults | behind on discovery; $M$ +16.3 [+14.2, +18.9] (1,024 seeds) | the baseline is not confirmed yet | not compared yet | not compared yet | not compared yet | 0 of 5 |
+| cleanrl ppo rnd at cleanrl defaults | behind on discovery; $M$ +16.3 [+14.2, +18.9] (1,024 seeds) | behind on discovery; $M$ +2,592 [+2,246, +2,957] (1,024 seeds) | not compared yet | not compared yet | not compared yet | 0 of 5 |
 | cleanrl ppo rnd with intrinsic discount 0 point 999 | not compared yet | not confirmed yet | not compared yet | not compared yet | not compared yet | 0 of 5 |
-| ppo without a bonus | behind on discovery; $M$ +4.98 [+3.96, +6.03] (1,024 seeds) | the baseline is not confirmed yet | not compared yet | not compared yet | not compared yet | 0 of 5 |
+| ppo without a bonus | behind on discovery; $M$ +4.98 [+3.96, +6.03] (1,024 seeds) | behind on discovery; $M$ +10,287 [+9,366, +11,184] (1,024 seeds) | not compared yet | not compared yet | not compared yet | 0 of 5 |
 
 Noted beside the success rule, and not part of it: a method that is ahead of the baseline on discovery in all five environments in one reward setting.
 
-- **cleanrl ppo rnd at cleanrl defaults:** not ahead on discovery in all five environments in one reward setting (reward 1 on arrival: ahead in 0 of 5, not compared, not confirmed or unfinished in 3; step cost: ahead in 0 of 5, not compared, not confirmed or unfinished in 4).
+- **cleanrl ppo rnd at cleanrl defaults:** not ahead on discovery in all five environments in one reward setting (reward 1 on arrival: ahead in 0 of 5, not compared, not confirmed or unfinished in 3; step cost: ahead in 0 of 5, not compared, not confirmed or unfinished in 3).
 - **cleanrl ppo rnd with intrinsic discount 0 point 999:** not ahead on discovery in all five environments in one reward setting (reward 1 on arrival: ahead in 0 of 5, not compared, not confirmed or unfinished in 5; step cost: ahead in 0 of 5, not compared, not confirmed or unfinished in 5).
-- **ppo without a bonus:** not ahead on discovery in all five environments in one reward setting (reward 1 on arrival: ahead in 0 of 5, not compared, not confirmed or unfinished in 3; step cost: ahead in 0 of 5, not compared, not confirmed or unfinished in 4).
+- **ppo without a bonus:** not ahead on discovery in all five environments in one reward setting (reward 1 on arrival: ahead in 0 of 5, not compared, not confirmed or unfinished in 3; step cost: ahead in 0 of 5, not compared, not confirmed or unfinished in 3).
 
 ### Discovery: PointMaze Medium, reward 1 on arrival
 
@@ -1667,12 +1667,9 @@ Confirmation seeds, read at 33,554,432 environment steps per policy. Each row is
 
 | row | $M$ ↓ ± standard error, thousand steps | $M$ minus the baseline [95%], thousand steps | verdict | policies that reach the goal | seeds in common with the baseline |
 |---|---|---|---|---|---|
-| cleanrl ppo rnd at cleanrl defaults: its only configuration, no development sweep | **2,723** ± 179 | the baseline is not confirmed yet | the baseline is not confirmed yet | **97.8%** | not compared |
-| ppo without a bonus: its only configuration, no development sweep | <u>10,418</u> ± 467 | the baseline is not confirmed yet | the baseline is not confirmed yet | <u>70.7%</u> | not compared |
-
-Not at this step count yet:
-
-- CleanRL PPO-RND: 2,883,584 steps so far.
+| CleanRL PPO-RND: intrinsic weight 8, learning rate 0.0045, entropy coefficient 0.01, clip coefficient 0.1 | **131** ± 3.29 | baseline | baseline | **100.0%** | 1024 |
+| cleanrl ppo rnd at cleanrl defaults: its only configuration, no development sweep | <u>2,723</u> ± 179 | **+2,592** [+2,246, +2,957] | behind on discovery | <u>97.8%</u> | 1024 |
+| ppo without a bonus: its only configuration, no development sweep | 10,418 ± 467 | <u>+10,287</u> [+9,366, +11,184] | behind on discovery | 70.7% | 1024 |
 
 Without a confirmation row at its configuration for $M$ (the configuration chosen for $W$ is never put in its place):
 
