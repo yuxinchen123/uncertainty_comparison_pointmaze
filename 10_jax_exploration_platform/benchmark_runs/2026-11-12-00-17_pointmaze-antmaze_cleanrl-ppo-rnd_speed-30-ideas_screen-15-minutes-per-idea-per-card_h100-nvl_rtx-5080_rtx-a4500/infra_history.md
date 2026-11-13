@@ -135,3 +135,9 @@ Times are Pacific.
   6. The working tree is shared: commit d7054945 of another session (15:26 PT) took in the 8 lines this work
      inserted into `scripts/run_training.py` (the fault record in the window record). Without the environment
      files of this work, which were not committed, those lines do nothing.
+- 2026-11-12 17:53 PT: the AntMaze Warp training profile for the RTX 5080 (job 6886965, pinned to nekomata02,
+  4 processors, 12 GB, 15 minutes) has waited since 12:43 PT with reason `Priority`. Both RTX 5080 nodes
+  (nekomata01, nekomata02) show both cards free but 22 of 24 processors allocated to other users' processor-only
+  jobs, the longest with about 2 days left; a node with exactly 2 idle processors takes no further job. The job
+  holds nothing while it waits and stays queued. Until it runs, the RTX 5080's copies per process for the ant
+  come from the calculated estimate, not a measurement.
