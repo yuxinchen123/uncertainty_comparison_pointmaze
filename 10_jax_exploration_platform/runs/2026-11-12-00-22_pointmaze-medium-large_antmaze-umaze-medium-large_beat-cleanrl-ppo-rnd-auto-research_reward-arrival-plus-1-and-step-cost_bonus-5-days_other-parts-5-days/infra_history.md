@@ -37,3 +37,17 @@ Times are Pacific.
   taken back to UVA's queue, this folder's waiting Gilbreth jobs were cancelled by exact id from its Gilbreth
   ledger, and UVA workers were submitted under the sl5nw account only (new option `--accounts` of `submit.py`).
   Units already running on Gilbreth finish there.
+- 2026-11-12 18:15 PT: **the folder's monitor job (6887756) ended in state FAILED**, read from its log at the
+  18:20 PT tick. At its pass it planned one worker under the yuxinchen account on lynx02 with card type GTX 1080 Ti;
+  the scheduler refused the request ("Requested node configuration is not available"), because lynx02 now holds
+  RTX 4000 Ada cards, and the uncaught error ended the job. The shared resource file
+  (`/p/rlprojects/.claude/skills/uva-submit-gpu-sweep/school_compute_resource/server_introduction.json`) is out
+  of date for four nodes whose cards were replaced: affogato13, lynx01, lynx02 and lynx05 all hold RTX 4000 Ada
+  cards now. Effect: two discovery-sweep units, whose workers had reached their 2-hour limit, waited without a
+  worker from about 18:15 to 18:22 PT; they continue from their checkpoints.
+  What was done: workers 6894353 and 6894354 submitted at 18:22 PT (both started within three minutes); the
+  planner corrected (commit 28c6681f, three tests, 97 pass): a node's card type is read from the scheduler, and a
+  refused job is reported and skipped. A new monitor job (6894373) submitted at 18:25 PT. It runs this folder's
+  frozen code copy, which does not have the correction, so its card types are limited to RTX 2080 Ti and RTX 4000
+  Ada, whose node lists in the resource file are right. The folder's code is frozen anew, with the correction,
+  when no unit of it is part-way through.

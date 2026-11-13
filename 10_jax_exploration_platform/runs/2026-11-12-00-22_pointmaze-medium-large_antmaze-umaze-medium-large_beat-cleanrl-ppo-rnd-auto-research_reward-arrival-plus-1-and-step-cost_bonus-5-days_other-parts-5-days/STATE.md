@@ -449,6 +449,11 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   8 line-search iterations) is the first suspect. This is the third environment problem the gates with random
   torques did not show (walls crossed from above, the constraint-row limit, now this): every later ant gate also
   runs trained policies, not only random torques.
+- 2026-11-12 18:25 PT: this folder's monitor job had ended on a refused submission at 18:15 PT (the planner's
+  card table is out of date for four nodes); two discovery-sweep units waited about 7 minutes without a worker.
+  Planner corrected (commit 28c6681f), workers and a new monitor job submitted; details in `infra_history.md`.
+  Open: regenerate the shared resource document for affogato13, lynx01, lynx02, lynx05; freeze this folder's code
+  anew at a moment when no unit is part-way through.
 
 ## Next
 
