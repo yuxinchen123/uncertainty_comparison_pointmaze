@@ -1,0 +1,644 @@
+{
+ "setting": "rk4_time-step-0.005_frame-skip-10",
+ "configuration_file": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-11-12-15-56_cleanrl-ppo-rnd-baseline_antmaze-umaze-medium-large_mujoco-warp-physics_ceiling-on-wall-tops_goal-termination_reward-arrival-plus-1-and-step-cost_environments-per-policy-check-4-16-128_seeds-0-15_confirmation-seeds-from-30000/diagnosis/2026-11-13_ant-integrators-in-mujoco-warp/configurations/antmaze_umaze_rk4_time-step-0.005_frame-skip-10_guard-30-and-100.toml",
+ "configuration": {
+  "map_name": "umaze",
+  "start_cell": [
+   3,
+   1
+  ],
+  "goal_cell": [
+   1,
+   1
+  ],
+  "max_episode_steps": 700,
+  "continuing_task": false,
+  "reward_shift": 0.0,
+  "goal_radius": 0.45,
+  "frame_skip": 10,
+  "integrator": "RK4",
+  "solver_iterations": 4,
+  "ls_iterations": 8,
+  "max_geom_pairs": 8,
+  "max_contact_points": 32,
+  "solver_loop": "while_loop",
+  "carried_state": "whole_data",
+  "physics": "warp",
+  "warp_contact_slots_per_environment": 48,
+  "warp_constraint_rows_per_environment": 512,
+  "fault_torso_speed": 30.0,
+  "fault_torso_angular_speed": 100.0,
+  "physics_time_step": 0.005
+ },
+ "warp_model_integrator_number": 1,
+ "started_at": "2026-11-13T15:08:59-05:00",
+ "gates": {
+  "reset": {
+   "start_xy": [
+    -4.0,
+    -4.0
+   ],
+   "largest_xy_difference": 0.0,
+   "torso_heights": [
+    0.75
+   ],
+   "largest_speed": 0.0,
+   "observation_shape": [
+    2,
+    3,
+    29
+   ],
+   "observation_xy_equals_start": true,
+   "passed": true,
+   "seconds": 2.1
+  },
+  "goal": {
+   "goal_xy": [
+    -4.0,
+    4.0
+   ],
+   "placed_distances": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.2,
+    0.2,
+    0.2,
+    0.2,
+    0.4,
+    0.4,
+    0.4,
+    0.4,
+    0.44,
+    0.44,
+    0.44,
+    0.44,
+    0.46,
+    0.46,
+    0.46,
+    0.46,
+    0.5,
+    0.5,
+    0.5,
+    0.5,
+    1.0,
+    1.0,
+    1.0,
+    1.0
+   ],
+   "distance_after_the_step": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.2,
+    0.2,
+    0.2,
+    0.2,
+    0.4,
+    0.4,
+    0.4,
+    0.4,
+    0.44,
+    0.44,
+    0.44,
+    0.44,
+    0.46,
+    0.46,
+    0.46,
+    0.46,
+    0.5,
+    0.5,
+    0.5,
+    0.5,
+    1.0,
+    1.0,
+    1.0,
+    1.0
+   ],
+   "largest_move_during_the_step": 1.9073486329235223e-07,
+   "terminated": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "reward": [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "terminated_exactly_within_the_radius": true,
+   "reward_one_exactly_when_terminated": true,
+   "no_truncation": true,
+   "terminated_restart_at_the_spawn": true,
+   "others_continue": true,
+   "episodes_counted": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "passed": true,
+   "seconds": 4.8
+  },
+  "step_limit": {
+   "step_limit": 700,
+   "steps_with_a_truncation": [
+    [
+     699
+    ],
+    [
+     699
+    ]
+   ],
+   "terminations": 0,
+   "respawns_for_a_broken_state": [
+    0,
+    0
+   ],
+   "episodes_counted": [
+    1,
+    1
+   ],
+   "observation_after_the_limit_is_the_spawn": true,
+   "largest_distance_from_the_start": 4.116142749786377,
+   "pool": {
+    "nacon_peak": 8,
+    "ncollision_peak": 12,
+    "naconmax": 96,
+    "nefc_peak": 20,
+    "njmax": 512,
+    "overflow_bits": 0,
+    "dropped": false,
+    "reasons": []
+   },
+   "passed": true,
+   "seconds": 147.5
+  },
+  "guard": {
+   "ants": [
+    "at the spawn, at rest",
+    "at the spawn, moving at 60 m/s along the corridor",
+    "at the goal, at rest",
+    "at the goal, moving upward at 40 m/s",
+    "2 m outside the outer wall, at rest",
+    "at the spawn, turning at 150 rad/s about the vertical"
+   ],
+   "respawned": [
+    1,
+    3,
+    4,
+    5
+   ],
+   "expected_respawned": [
+    1,
+    3,
+    4,
+    5
+   ],
+   "reward": [
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "terminated": [
+    false,
+    false,
+    true,
+    false,
+    false,
+    false
+   ],
+   "physics_fault_respawns_per_copy": [
+    0,
+    1,
+    0,
+    1,
+    1,
+    1
+   ],
+   "outside_wall_ant_xy": [
+    12.0,
+    0.0
+   ],
+   "volume_bound_inside_outside": [
+    false,
+    true,
+    false,
+    true
+   ],
+   "half_extent": [
+    10.0,
+    10.0
+   ],
+   "bounds": [
+    30.0,
+    100.0
+   ],
+   "passed": true,
+   "seconds": 1.9
+  },
+  "walls": {
+   "cases": 16,
+   "throw_speed_m_per_s": 8.0,
+   "physics_steps": 300,
+   "wall_boxes": 8,
+   "warp": {
+    "cases_with_a_wall_contact": 16,
+    "deepest_body_origin_in_a_wall_m": -0.0924525260925293,
+    "deepest_ant_geom_centre_in_a_wall_m": -0.07547473907470703,
+    "torso_centre_closest_to_a_wall_face_m": 0.4265594482421875,
+    "torso_steps_in_a_wall_cell": 0,
+    "largest_torso_height_m": 0.9969108700752258
+   },
+   "c_mujoco": {
+    "cases_with_a_wall_contact": 16,
+    "deepest_body_origin_in_a_wall_m": -0.09245192253834933,
+    "deepest_ant_geom_centre_in_a_wall_m": -0.07547366176750359,
+    "torso_centre_closest_to_a_wall_face_m": 0.4265614101532016,
+    "torso_steps_in_a_wall_cell": 0,
+    "largest_torso_height_m": 0.9969118749847392
+   },
+   "warp_respawns": 0,
+   "warp_pool": {
+    "nacon_peak": 112,
+    "ncollision_peak": 144,
+    "naconmax": 768,
+    "nefc_peak": 28,
+    "njmax": 512,
+    "overflow_bits": 0,
+    "dropped": false,
+    "reasons": []
+   },
+   "one_physics_step_from_c_wall_contact_states": {
+    "states": 64,
+    "largest_m": 1.844129493555613e-07,
+    "median_m": 1.1920928955078125e-07
+   },
+   "wall_boxes_touched_in_c_mujoco": 8,
+   "passed": true,
+   "seconds": 17.9
+  },
+  "ceiling": {
+   "cells": [
+    [
+     3,
+     1
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     1,
+     3
+    ],
+    [
+     3,
+     3
+    ]
+   ],
+   "throws": [
+    {
+     "cell": [
+      3,
+      1
+     ],
+     "launch_speed": 10.0,
+     "warp_largest_height_m": 1.7974,
+     "c_largest_height_m": 1.7974,
+     "warp_steps_touching_the_ceiling": 14,
+     "c_steps_touching_the_ceiling": 14
+    },
+    {
+     "cell": [
+      3,
+      1
+     ],
+     "launch_speed": 20.0,
+     "warp_largest_height_m": 1.8975,
+     "c_largest_height_m": 1.8975,
+     "warp_steps_touching_the_ceiling": 15,
+     "c_steps_touching_the_ceiling": 15
+    },
+    {
+     "cell": [
+      3,
+      1
+     ],
+     "launch_speed": 30.0,
+     "warp_largest_height_m": 1.9251,
+     "c_largest_height_m": 1.9251,
+     "warp_steps_touching_the_ceiling": 15,
+     "c_steps_touching_the_ceiling": 15
+    },
+    {
+     "cell": [
+      1,
+      1
+     ],
+     "launch_speed": 10.0,
+     "warp_largest_height_m": 1.7974,
+     "c_largest_height_m": 1.7974,
+     "warp_steps_touching_the_ceiling": 14,
+     "c_steps_touching_the_ceiling": 14
+    },
+    {
+     "cell": [
+      1,
+      1
+     ],
+     "launch_speed": 20.0,
+     "warp_largest_height_m": 1.8975,
+     "c_largest_height_m": 1.8975,
+     "warp_steps_touching_the_ceiling": 15,
+     "c_steps_touching_the_ceiling": 15
+    },
+    {
+     "cell": [
+      1,
+      1
+     ],
+     "launch_speed": 30.0,
+     "warp_largest_height_m": 1.9251,
+     "c_largest_height_m": 1.9251,
+     "warp_steps_touching_the_ceiling": 15,
+     "c_steps_touching_the_ceiling": 15
+    },
+    {
+     "cell": [
+      1,
+      3
+     ],
+     "launch_speed": 10.0,
+     "warp_largest_height_m": 1.7974,
+     "c_largest_height_m": 1.7974,
+     "warp_steps_touching_the_ceiling": 14,
+     "c_steps_touching_the_ceiling": 14
+    },
+    {
+     "cell": [
+      1,
+      3
+     ],
+     "launch_speed": 20.0,
+     "warp_largest_height_m": 1.8975,
+     "c_largest_height_m": 1.8975,
+     "warp_steps_touching_the_ceiling": 15,
+     "c_steps_touching_the_ceiling": 15
+    },
+    {
+     "cell": [
+      1,
+      3
+     ],
+     "launch_speed": 30.0,
+     "warp_largest_height_m": 1.9251,
+     "c_largest_height_m": 1.9251,
+     "warp_steps_touching_the_ceiling": 15,
+     "c_steps_touching_the_ceiling": 15
+    },
+    {
+     "cell": [
+      3,
+      3
+     ],
+     "launch_speed": 10.0,
+     "warp_largest_height_m": 1.7974,
+     "c_largest_height_m": 1.7974,
+     "warp_steps_touching_the_ceiling": 14,
+     "c_steps_touching_the_ceiling": 14
+    },
+    {
+     "cell": [
+      3,
+      3
+     ],
+     "launch_speed": 20.0,
+     "warp_largest_height_m": 1.8975,
+     "c_largest_height_m": 1.8975,
+     "warp_steps_touching_the_ceiling": 15,
+     "c_steps_touching_the_ceiling": 15
+    },
+    {
+     "cell": [
+      3,
+      3
+     ],
+     "launch_speed": 30.0,
+     "warp_largest_height_m": 1.9251,
+     "c_largest_height_m": 1.9251,
+     "warp_steps_touching_the_ceiling": 15,
+     "c_steps_touching_the_ceiling": 15
+    },
+    {
+     "cell": [
+      3,
+      1
+     ],
+     "launch_speed": 0.0,
+     "warp_largest_height_m": 0.774,
+     "c_largest_height_m": 0.774,
+     "warp_steps_touching_the_ceiling": 0,
+     "c_steps_touching_the_ceiling": 0
+    }
+   ],
+   "warp_respawns_per_ant": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "warp_pool": {
+    "nacon_peak": 48,
+    "ncollision_peak": 52,
+    "naconmax": 624,
+    "nefc_peak": 20,
+    "njmax": 512,
+    "overflow_bits": 0,
+    "dropped": false,
+    "reasons": []
+   },
+   "passed": true,
+   "seconds": 17.2
+  },
+  "parity": {
+   "one_step": {
+    "states": 50,
+    "warp_changes": {},
+    "non_finite_resets": 0,
+    "contact_free": {
+     "warp_against_c": {
+      "count": 20,
+      "largest": 6.802514498360779e-07,
+      "median": 3.367792060782193e-07
+     }
+    },
+    "in_contact": {
+     "warp_against_c": {
+      "count": 30,
+      "largest": 0.022718607813291887,
+      "median": 4.146821153572233e-06
+     }
+    },
+    "pool": {
+     "nacon_peak": 22,
+     "ncollision_peak": 91,
+     "naconmax": 2400,
+     "nefc_peak": 19,
+     "njmax": 512,
+     "overflow_bits": 0,
+     "dropped": false,
+     "reasons": []
+    }
+   },
+   "trajectory": {
+    "steps": 20,
+    "first_state_with_a_contact": 4,
+    "warp": {
+     "largest_before_the_first_contact": 3.2791489656958106e-07,
+     "largest_over_all_steps": 0.33825908303622576,
+     "at_the_last_step": 0.33825908303622576,
+     "all_finite": true,
+     "per_step": [
+      3.127000391955903e-07,
+      2.8168396648542426e-07,
+      3.2791489656958106e-07,
+      0.00010008588595850597,
+      0.0006002636974273834,
+      0.010829808854695998,
+      0.023749042497619253,
+      0.03637107533647055,
+      0.04063763804392817,
+      0.0642347831155119,
+      0.088025725206756,
+      0.11087661197799825,
+      0.1354835157473362,
+      0.16112963971043293,
+      0.18699472951813334,
+      0.21106894703106693,
+      0.23317861335545498,
+      0.25545298880341605,
+      0.30929204999466187,
+      0.33825908303622576
+     ]
+    }
+   },
+   "resting": {
+    "steps": 1200,
+    "reference_height": 0.38248,
+    "c_mujoco": {
+     "height": 0.3824809872182393,
+     "largest_speed": 6.523221881746689e-11
+    },
+    "warp_pool": {
+     "nacon_peak": 4,
+     "ncollision_peak": 4,
+     "naconmax": 48,
+     "nefc_peak": 20,
+     "njmax": 512,
+     "overflow_bits": 0,
+     "dropped": false,
+     "reasons": []
+    },
+    "warp": {
+     "height": 0.3824809789657593,
+     "largest_speed": 2.7735004550777376e-06,
+     "largest_position_difference_from_c_settled_state": 6.57302605263413e-07,
+     "c_settled_state_moved_by": 1.6127925106523833e-08
+    }
+   },
+   "passed": true,
+   "seconds": 272.1
+  }
+ },
+ "all_passed": true,
+ "finished_at": "2026-11-13T15:16:43-05:00"
+}

@@ -1,0 +1,174 @@
+{
+ "time step 0.005 s x 10": {
+  "warp_integrator_numbers": [
+   2,
+   3
+  ],
+  "pairs": {
+   "c_implicit against c_implicitfast": {
+    "contact_free": {
+     "count": 24,
+     "largest": 0.0025208346563394546,
+     "median": 0.0005788971323629349
+    },
+    "in_contact": {
+     "count": 26,
+     "largest": 0.0065673972283370186,
+     "median": 0.000530327782817256
+    }
+   },
+   "c_implicit against warp_implicit": {
+    "contact_free": {
+     "count": 24,
+     "largest": 0.005046293852145639,
+     "median": 0.0011547422957011722
+    },
+    "in_contact": {
+     "count": 26,
+     "largest": 0.006560667792802177,
+     "median": 0.0015869910590015127
+    }
+   },
+   "c_implicit against warp_implicitfast": {
+    "contact_free": {
+     "count": 24,
+     "largest": 0.0025208227012705475,
+     "median": 0.0005788608443328402
+    },
+    "in_contact": {
+     "count": 26,
+     "largest": 0.006567373315339409,
+     "median": 0.0009314223330028626
+    }
+   },
+   "c_implicitfast against warp_implicit": {
+    "contact_free": {
+     "count": 24,
+     "largest": 0.0025254591958061845,
+     "median": 0.0005791499980055334
+    },
+    "in_contact": {
+     "count": 26,
+     "largest": 0.005904169160781625,
+     "median": 0.000808604210083122
+    }
+   },
+   "c_implicitfast against warp_implicitfast": {
+    "contact_free": {
+     "count": 24,
+     "largest": 1.165419147852731e-06,
+     "median": 3.6945591697090663e-07
+    },
+    "in_contact": {
+     "count": 26,
+     "largest": 0.005887928316690605,
+     "median": 2.7708944474805208e-05
+    }
+   },
+   "warp_implicit against warp_implicitfast": {
+    "contact_free": {
+     "count": 24,
+     "largest": 0.0025254711508750916,
+     "median": 0.0005791410803794861
+    },
+    "in_contact": {
+     "count": 26,
+     "largest": 0.0019320249557495117,
+     "median": 0.000507778488099575
+    }
+   }
+  },
+  "implicit_correction_warp_against_c_contact_free": {
+   "cosine_median": -0.9998687777064502,
+   "cosine_largest": -0.9993273929149861,
+   "cosine_smallest": -0.9999728791183339,
+   "length_ratio_median": 0.9966345539205876
+  }
+ },
+ "time step 0.01 s x 5": {
+  "warp_integrator_numbers": [
+   2,
+   3
+  ],
+  "pairs": {
+   "c_implicit against c_implicitfast": {
+    "contact_free": {
+     "count": 27,
+     "largest": 0.008334088857048005,
+     "median": 0.0016898875044697448
+    },
+    "in_contact": {
+     "count": 23,
+     "largest": 0.01975348353954243,
+     "median": 0.0015274156474962552
+    }
+   },
+   "c_implicit against warp_implicit": {
+    "contact_free": {
+     "count": 27,
+     "largest": 0.016564923228906014,
+     "median": 0.003329775643955646
+    },
+    "in_contact": {
+     "count": 23,
+     "largest": 0.01872251286611576,
+     "median": 0.00327503480977806
+    }
+   },
+   "c_implicit against warp_implicitfast": {
+    "contact_free": {
+     "count": 27,
+     "largest": 0.008333998622582772,
+     "median": 0.001689932656895099
+    },
+    "in_contact": {
+     "count": 23,
+     "largest": 0.0197540811400177,
+     "median": 0.001812497609864669
+    }
+   },
+   "c_implicitfast against warp_implicit": {
+    "contact_free": {
+     "count": 27,
+     "largest": 0.008230834371858009,
+     "median": 0.001639888139485901
+    },
+    "in_contact": {
+     "count": 23,
+     "largest": 0.010589337417978684,
+     "median": 0.001575275298317358
+    }
+   },
+   "c_implicitfast against warp_implicitfast": {
+    "contact_free": {
+     "count": 27,
+     "largest": 1.2745944100167605e-06,
+     "median": 2.4394469333444135e-07
+    },
+    "in_contact": {
+     "count": 23,
+     "largest": 0.010290907795199922,
+     "median": 3.9918846095332583e-07
+    }
+   },
+   "warp_implicit against warp_implicitfast": {
+    "contact_free": {
+     "count": 27,
+     "largest": 0.008230924606323242,
+     "median": 0.0016398429870605469
+    },
+    "in_contact": {
+     "count": 23,
+     "largest": 0.008966445922851562,
+     "median": 0.0015170574188232422
+    }
+   }
+  },
+  "implicit_correction_warp_against_c_contact_free": {
+   "cosine_median": -0.9994545556103741,
+   "cosine_largest": -0.9974699142223535,
+   "cosine_smallest": -0.9998970494315242,
+   "length_ratio_median": 0.9913182841391471
+  }
+ }
+}

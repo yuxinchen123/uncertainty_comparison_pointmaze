@@ -1,0 +1,644 @@
+{
+ "setting": "implicit_time-step-0.01_frame-skip-5",
+ "configuration_file": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-11-12-15-56_cleanrl-ppo-rnd-baseline_antmaze-umaze-medium-large_mujoco-warp-physics_ceiling-on-wall-tops_goal-termination_reward-arrival-plus-1-and-step-cost_environments-per-policy-check-4-16-128_seeds-0-15_confirmation-seeds-from-30000/diagnosis/2026-11-13_ant-integrators-in-mujoco-warp/configurations/antmaze_umaze_implicit_time-step-0.01_frame-skip-5_guard-30-and-100.toml",
+ "configuration": {
+  "map_name": "umaze",
+  "start_cell": [
+   3,
+   1
+  ],
+  "goal_cell": [
+   1,
+   1
+  ],
+  "max_episode_steps": 700,
+  "continuing_task": false,
+  "reward_shift": 0.0,
+  "goal_radius": 0.45,
+  "frame_skip": 5,
+  "integrator": "implicit",
+  "solver_iterations": 4,
+  "ls_iterations": 8,
+  "max_geom_pairs": 8,
+  "max_contact_points": 32,
+  "solver_loop": "while_loop",
+  "carried_state": "whole_data",
+  "physics": "warp",
+  "warp_contact_slots_per_environment": 48,
+  "warp_constraint_rows_per_environment": 512,
+  "fault_torso_speed": 30.0,
+  "fault_torso_angular_speed": 100.0,
+  "physics_time_step": 0.01
+ },
+ "warp_model_integrator_number": 2,
+ "started_at": "2026-11-13T15:08:59-05:00",
+ "gates": {
+  "reset": {
+   "start_xy": [
+    -4.0,
+    -4.0
+   ],
+   "largest_xy_difference": 0.0,
+   "torso_heights": [
+    0.75
+   ],
+   "largest_speed": 0.0,
+   "observation_shape": [
+    2,
+    3,
+    29
+   ],
+   "observation_xy_equals_start": true,
+   "passed": true,
+   "seconds": 2.1
+  },
+  "goal": {
+   "goal_xy": [
+    -4.0,
+    4.0
+   ],
+   "placed_distances": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.2,
+    0.2,
+    0.2,
+    0.2,
+    0.4,
+    0.4,
+    0.4,
+    0.4,
+    0.44,
+    0.44,
+    0.44,
+    0.44,
+    0.46,
+    0.46,
+    0.46,
+    0.46,
+    0.5,
+    0.5,
+    0.5,
+    0.5,
+    1.0,
+    1.0,
+    1.0,
+    1.0
+   ],
+   "distance_after_the_step": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.2,
+    0.2,
+    0.2,
+    0.2,
+    0.4,
+    0.4,
+    0.4,
+    0.4,
+    0.44,
+    0.44,
+    0.44,
+    0.44,
+    0.46,
+    0.46,
+    0.46,
+    0.46,
+    0.5,
+    0.5,
+    0.5,
+    0.5,
+    1.0,
+    1.0,
+    1.0,
+    1.0
+   ],
+   "largest_move_during_the_step": 1.9073486329235223e-07,
+   "terminated": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "reward": [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "terminated_exactly_within_the_radius": true,
+   "reward_one_exactly_when_terminated": true,
+   "no_truncation": true,
+   "terminated_restart_at_the_spawn": true,
+   "others_continue": true,
+   "episodes_counted": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "passed": true,
+   "seconds": 4.5
+  },
+  "step_limit": {
+   "step_limit": 700,
+   "steps_with_a_truncation": [
+    [
+     699
+    ],
+    [
+     699
+    ]
+   ],
+   "terminations": 0,
+   "respawns_for_a_broken_state": [
+    0,
+    0
+   ],
+   "episodes_counted": [
+    1,
+    1
+   ],
+   "observation_after_the_limit_is_the_spawn": true,
+   "largest_distance_from_the_start": 4.164031028747559,
+   "pool": {
+    "nacon_peak": 8,
+    "ncollision_peak": 12,
+    "naconmax": 96,
+    "nefc_peak": 20,
+    "njmax": 512,
+    "overflow_bits": 0,
+    "dropped": false,
+    "reasons": []
+   },
+   "passed": true,
+   "seconds": 35.4
+  },
+  "guard": {
+   "ants": [
+    "at the spawn, at rest",
+    "at the spawn, moving at 60 m/s along the corridor",
+    "at the goal, at rest",
+    "at the goal, moving upward at 40 m/s",
+    "2 m outside the outer wall, at rest",
+    "at the spawn, turning at 150 rad/s about the vertical"
+   ],
+   "respawned": [
+    1,
+    3,
+    4,
+    5
+   ],
+   "expected_respawned": [
+    1,
+    3,
+    4,
+    5
+   ],
+   "reward": [
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "terminated": [
+    false,
+    false,
+    true,
+    false,
+    false,
+    false
+   ],
+   "physics_fault_respawns_per_copy": [
+    0,
+    1,
+    0,
+    1,
+    1,
+    1
+   ],
+   "outside_wall_ant_xy": [
+    12.0,
+    0.0
+   ],
+   "volume_bound_inside_outside": [
+    false,
+    true,
+    false,
+    true
+   ],
+   "half_extent": [
+    10.0,
+    10.0
+   ],
+   "bounds": [
+    30.0,
+    100.0
+   ],
+   "passed": true,
+   "seconds": 1.7
+  },
+  "walls": {
+   "cases": 16,
+   "throw_speed_m_per_s": 8.0,
+   "physics_steps": 300,
+   "wall_boxes": 8,
+   "warp": {
+    "cases_with_a_wall_contact": 16,
+    "deepest_body_origin_in_a_wall_m": -0.09905576705932617,
+    "deepest_ant_geom_centre_in_a_wall_m": -0.08967757225036621,
+    "torso_centre_closest_to_a_wall_face_m": 0.3189096450805664,
+    "torso_steps_in_a_wall_cell": 0,
+    "largest_torso_height_m": 0.9564236402511597
+   },
+   "c_mujoco": {
+    "cases_with_a_wall_contact": 16,
+    "deepest_body_origin_in_a_wall_m": -0.09394911604228451,
+    "deepest_ant_geom_centre_in_a_wall_m": -0.08967173269279538,
+    "torso_centre_closest_to_a_wall_face_m": 0.2681259010398369,
+    "torso_steps_in_a_wall_cell": 0,
+    "largest_torso_height_m": 0.9971647535560306
+   },
+   "warp_respawns": 0,
+   "warp_pool": {
+    "nacon_peak": 96,
+    "ncollision_peak": 144,
+    "naconmax": 768,
+    "nefc_peak": 26,
+    "njmax": 512,
+    "overflow_bits": 0,
+    "dropped": false,
+    "reasons": []
+   },
+   "one_physics_step_from_c_wall_contact_states": {
+    "states": 64,
+    "largest_m": 7.101158608256025e-05,
+    "median_m": 6.787559444165758e-06
+   },
+   "wall_boxes_touched_in_c_mujoco": 8,
+   "passed": true,
+   "seconds": 12.0
+  },
+  "ceiling": {
+   "cells": [
+    [
+     3,
+     1
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     1,
+     3
+    ],
+    [
+     3,
+     3
+    ]
+   ],
+   "throws": [
+    {
+     "cell": [
+      3,
+      1
+     ],
+     "launch_speed": 10.0,
+     "warp_largest_height_m": 1.7749,
+     "c_largest_height_m": 1.7759,
+     "warp_steps_touching_the_ceiling": 4,
+     "c_steps_touching_the_ceiling": 5
+    },
+    {
+     "cell": [
+      3,
+      1
+     ],
+     "launch_speed": 20.0,
+     "warp_largest_height_m": 1.7851,
+     "c_largest_height_m": 1.7853,
+     "warp_steps_touching_the_ceiling": 4,
+     "c_steps_touching_the_ceiling": 4
+    },
+    {
+     "cell": [
+      3,
+      1
+     ],
+     "launch_speed": 30.0,
+     "warp_largest_height_m": 1.9813,
+     "c_largest_height_m": 1.9814,
+     "warp_steps_touching_the_ceiling": 4,
+     "c_steps_touching_the_ceiling": 4
+    },
+    {
+     "cell": [
+      1,
+      1
+     ],
+     "launch_speed": 10.0,
+     "warp_largest_height_m": 1.7749,
+     "c_largest_height_m": 1.7759,
+     "warp_steps_touching_the_ceiling": 4,
+     "c_steps_touching_the_ceiling": 5
+    },
+    {
+     "cell": [
+      1,
+      1
+     ],
+     "launch_speed": 20.0,
+     "warp_largest_height_m": 1.7851,
+     "c_largest_height_m": 1.7853,
+     "warp_steps_touching_the_ceiling": 4,
+     "c_steps_touching_the_ceiling": 4
+    },
+    {
+     "cell": [
+      1,
+      1
+     ],
+     "launch_speed": 30.0,
+     "warp_largest_height_m": 1.9813,
+     "c_largest_height_m": 1.9814,
+     "warp_steps_touching_the_ceiling": 4,
+     "c_steps_touching_the_ceiling": 4
+    },
+    {
+     "cell": [
+      1,
+      3
+     ],
+     "launch_speed": 10.0,
+     "warp_largest_height_m": 1.7749,
+     "c_largest_height_m": 1.7759,
+     "warp_steps_touching_the_ceiling": 4,
+     "c_steps_touching_the_ceiling": 5
+    },
+    {
+     "cell": [
+      1,
+      3
+     ],
+     "launch_speed": 20.0,
+     "warp_largest_height_m": 1.7851,
+     "c_largest_height_m": 1.7853,
+     "warp_steps_touching_the_ceiling": 4,
+     "c_steps_touching_the_ceiling": 4
+    },
+    {
+     "cell": [
+      1,
+      3
+     ],
+     "launch_speed": 30.0,
+     "warp_largest_height_m": 1.9813,
+     "c_largest_height_m": 1.9814,
+     "warp_steps_touching_the_ceiling": 4,
+     "c_steps_touching_the_ceiling": 4
+    },
+    {
+     "cell": [
+      3,
+      3
+     ],
+     "launch_speed": 10.0,
+     "warp_largest_height_m": 1.7749,
+     "c_largest_height_m": 1.7759,
+     "warp_steps_touching_the_ceiling": 4,
+     "c_steps_touching_the_ceiling": 5
+    },
+    {
+     "cell": [
+      3,
+      3
+     ],
+     "launch_speed": 20.0,
+     "warp_largest_height_m": 1.7851,
+     "c_largest_height_m": 1.7853,
+     "warp_steps_touching_the_ceiling": 4,
+     "c_steps_touching_the_ceiling": 4
+    },
+    {
+     "cell": [
+      3,
+      3
+     ],
+     "launch_speed": 30.0,
+     "warp_largest_height_m": 1.9813,
+     "c_largest_height_m": 1.9814,
+     "warp_steps_touching_the_ceiling": 4,
+     "c_steps_touching_the_ceiling": 4
+    },
+    {
+     "cell": [
+      3,
+      1
+     ],
+     "launch_speed": 0.0,
+     "warp_largest_height_m": 0.7872,
+     "c_largest_height_m": 0.7876,
+     "warp_steps_touching_the_ceiling": 0,
+     "c_steps_touching_the_ceiling": 0
+    }
+   ],
+   "warp_respawns_per_ant": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "warp_pool": {
+    "nacon_peak": 52,
+    "ncollision_peak": 52,
+    "naconmax": 624,
+    "nefc_peak": 20,
+    "njmax": 512,
+    "overflow_bits": 0,
+    "dropped": false,
+    "reasons": []
+   },
+   "passed": true,
+   "seconds": 9.3
+  },
+  "parity": {
+   "one_step": {
+    "states": 50,
+    "warp_changes": {},
+    "non_finite_resets": 0,
+    "contact_free": {
+     "warp_against_c": {
+      "count": 27,
+      "largest": 0.016564923228906014,
+      "median": 0.003329775643955646
+     }
+    },
+    "in_contact": {
+     "warp_against_c": {
+      "count": 23,
+      "largest": 0.01872251286611576,
+      "median": 0.00327503480977806
+     }
+    },
+    "pool": {
+     "nacon_peak": 15,
+     "ncollision_peak": 51,
+     "naconmax": 2400,
+     "nefc_peak": 11,
+     "njmax": 512,
+     "overflow_bits": 0,
+     "dropped": false,
+     "reasons": []
+    }
+   },
+   "trajectory": {
+    "steps": 20,
+    "first_state_with_a_contact": 5,
+    "warp": {
+     "largest_before_the_first_contact": 0.04101890881373926,
+     "largest_over_all_steps": 0.5822114330620107,
+     "at_the_last_step": 0.5564599875558587,
+     "all_finite": true,
+     "per_step": [
+      0.0009014005248100254,
+      0.0072602261489217446,
+      0.04101890881373926,
+      0.020259687470342014,
+      0.02048005567302047,
+      0.035551890854895074,
+      0.057810815382360214,
+      0.10118877496104367,
+      0.13199177106661208,
+      0.1826459779733418,
+      0.21646631311346454,
+      0.2791800885381037,
+      0.34110576437156004,
+      0.39152678615598235,
+      0.4402709582135862,
+      0.5039894059441918,
+      0.5617392472773375,
+      0.5790167552024901,
+      0.5822114330620107,
+      0.5564599875558587
+     ]
+    }
+   },
+   "resting": {
+    "steps": 1200,
+    "reference_height": 0.38248,
+    "c_mujoco": {
+     "height": 0.3824809872182392,
+     "largest_speed": 2.40730147799998e-10
+    },
+    "warp_pool": {
+     "nacon_peak": 4,
+     "ncollision_peak": 4,
+     "naconmax": 48,
+     "nefc_peak": 20,
+     "njmax": 512,
+     "overflow_bits": 0,
+     "dropped": false,
+     "reasons": []
+    },
+    "warp": {
+     "height": 0.3824809789657593,
+     "largest_speed": 2.673644530659658e-06,
+     "largest_position_difference_from_c_settled_state": 0.002541825175211445,
+     "c_settled_state_moved_by": 1.6127977842117502e-08
+    }
+   },
+   "passed": false,
+   "seconds": 69.8
+  }
+ },
+ "all_passed": false,
+ "finished_at": "2026-11-13T15:11:14-05:00"
+}

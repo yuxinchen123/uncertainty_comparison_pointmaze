@@ -1,0 +1,644 @@
+{
+ "setting": "rk4_time-step-0.01_frame-skip-5",
+ "configuration_file": "/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-11-12-15-56_cleanrl-ppo-rnd-baseline_antmaze-umaze-medium-large_mujoco-warp-physics_ceiling-on-wall-tops_goal-termination_reward-arrival-plus-1-and-step-cost_environments-per-policy-check-4-16-128_seeds-0-15_confirmation-seeds-from-30000/diagnosis/2026-11-13_ant-integrators-in-mujoco-warp/configurations/antmaze_umaze_rk4_time-step-0.01_frame-skip-5_guard-30-and-100.toml",
+ "configuration": {
+  "map_name": "umaze",
+  "start_cell": [
+   3,
+   1
+  ],
+  "goal_cell": [
+   1,
+   1
+  ],
+  "max_episode_steps": 700,
+  "continuing_task": false,
+  "reward_shift": 0.0,
+  "goal_radius": 0.45,
+  "frame_skip": 5,
+  "integrator": "RK4",
+  "solver_iterations": 4,
+  "ls_iterations": 8,
+  "max_geom_pairs": 8,
+  "max_contact_points": 32,
+  "solver_loop": "while_loop",
+  "carried_state": "whole_data",
+  "physics": "warp",
+  "warp_contact_slots_per_environment": 48,
+  "warp_constraint_rows_per_environment": 512,
+  "fault_torso_speed": 30.0,
+  "fault_torso_angular_speed": 100.0,
+  "physics_time_step": 0.01
+ },
+ "warp_model_integrator_number": 1,
+ "started_at": "2026-11-13T15:08:59-05:00",
+ "gates": {
+  "reset": {
+   "start_xy": [
+    -4.0,
+    -4.0
+   ],
+   "largest_xy_difference": 0.0,
+   "torso_heights": [
+    0.75
+   ],
+   "largest_speed": 0.0,
+   "observation_shape": [
+    2,
+    3,
+    29
+   ],
+   "observation_xy_equals_start": true,
+   "passed": true,
+   "seconds": 1.8
+  },
+  "goal": {
+   "goal_xy": [
+    -4.0,
+    4.0
+   ],
+   "placed_distances": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.2,
+    0.2,
+    0.2,
+    0.2,
+    0.4,
+    0.4,
+    0.4,
+    0.4,
+    0.44,
+    0.44,
+    0.44,
+    0.44,
+    0.46,
+    0.46,
+    0.46,
+    0.46,
+    0.5,
+    0.5,
+    0.5,
+    0.5,
+    1.0,
+    1.0,
+    1.0,
+    1.0
+   ],
+   "distance_after_the_step": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.2,
+    0.2,
+    0.2,
+    0.2,
+    0.4,
+    0.4,
+    0.4,
+    0.4,
+    0.44,
+    0.44,
+    0.44,
+    0.44,
+    0.46,
+    0.46,
+    0.46,
+    0.46,
+    0.5,
+    0.5,
+    0.5,
+    0.5,
+    1.0,
+    1.0,
+    1.0,
+    1.0
+   ],
+   "largest_move_during_the_step": 1.9073486329235223e-07,
+   "terminated": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "reward": [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "terminated_exactly_within_the_radius": true,
+   "reward_one_exactly_when_terminated": true,
+   "no_truncation": true,
+   "terminated_restart_at_the_spawn": true,
+   "others_continue": true,
+   "episodes_counted": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "passed": true,
+   "seconds": 4.2
+  },
+  "step_limit": {
+   "step_limit": 700,
+   "steps_with_a_truncation": [
+    [
+     699
+    ],
+    [
+     699
+    ]
+   ],
+   "terminations": 0,
+   "respawns_for_a_broken_state": [
+    0,
+    0
+   ],
+   "episodes_counted": [
+    1,
+    1
+   ],
+   "observation_after_the_limit_is_the_spawn": true,
+   "largest_distance_from_the_start": 1.4238622188568115,
+   "pool": {
+    "nacon_peak": 8,
+    "ncollision_peak": 12,
+    "naconmax": 96,
+    "nefc_peak": 20,
+    "njmax": 512,
+    "overflow_bits": 0,
+    "dropped": false,
+    "reasons": []
+   },
+   "passed": true,
+   "seconds": 77.3
+  },
+  "guard": {
+   "ants": [
+    "at the spawn, at rest",
+    "at the spawn, moving at 60 m/s along the corridor",
+    "at the goal, at rest",
+    "at the goal, moving upward at 40 m/s",
+    "2 m outside the outer wall, at rest",
+    "at the spawn, turning at 150 rad/s about the vertical"
+   ],
+   "respawned": [
+    1,
+    3,
+    4,
+    5
+   ],
+   "expected_respawned": [
+    1,
+    3,
+    4,
+    5
+   ],
+   "reward": [
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "terminated": [
+    false,
+    false,
+    true,
+    false,
+    false,
+    false
+   ],
+   "physics_fault_respawns_per_copy": [
+    0,
+    1,
+    0,
+    1,
+    1,
+    1
+   ],
+   "outside_wall_ant_xy": [
+    12.0,
+    0.0
+   ],
+   "volume_bound_inside_outside": [
+    false,
+    true,
+    false,
+    true
+   ],
+   "half_extent": [
+    10.0,
+    10.0
+   ],
+   "bounds": [
+    30.0,
+    100.0
+   ],
+   "passed": true,
+   "seconds": 1.9
+  },
+  "walls": {
+   "cases": 16,
+   "throw_speed_m_per_s": 8.0,
+   "physics_steps": 300,
+   "wall_boxes": 8,
+   "warp": {
+    "cases_with_a_wall_contact": 16,
+    "deepest_body_origin_in_a_wall_m": -0.09151268005371094,
+    "deepest_ant_geom_centre_in_a_wall_m": -0.08746099472045898,
+    "torso_centre_closest_to_a_wall_face_m": 0.402362585067749,
+    "torso_steps_in_a_wall_cell": 0,
+    "largest_torso_height_m": 0.9906219244003296
+   },
+   "c_mujoco": {
+    "cases_with_a_wall_contact": 16,
+    "deepest_body_origin_in_a_wall_m": -0.09151212051847235,
+    "deepest_ant_geom_centre_in_a_wall_m": -0.08746016274740409,
+    "torso_centre_closest_to_a_wall_face_m": 0.40236589648638077,
+    "torso_steps_in_a_wall_cell": 0,
+    "largest_torso_height_m": 0.9906223475732355
+   },
+   "warp_respawns": 0,
+   "warp_pool": {
+    "nacon_peak": 96,
+    "ncollision_peak": 144,
+    "naconmax": 768,
+    "nefc_peak": 28,
+    "njmax": 512,
+    "overflow_bits": 0,
+    "dropped": false,
+    "reasons": []
+   },
+   "one_physics_step_from_c_wall_contact_states": {
+    "states": 64,
+    "largest_m": 2.4360163308756455e-07,
+    "median_m": 1.3351440308895235e-07
+   },
+   "wall_boxes_touched_in_c_mujoco": 8,
+   "passed": true,
+   "seconds": 17.8
+  },
+  "ceiling": {
+   "cells": [
+    [
+     3,
+     1
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     1,
+     3
+    ],
+    [
+     3,
+     3
+    ]
+   ],
+   "throws": [
+    {
+     "cell": [
+      3,
+      1
+     ],
+     "launch_speed": 10.0,
+     "warp_largest_height_m": 1.8171,
+     "c_largest_height_m": 1.8171,
+     "warp_steps_touching_the_ceiling": 7,
+     "c_steps_touching_the_ceiling": 7
+    },
+    {
+     "cell": [
+      3,
+      1
+     ],
+     "launch_speed": 20.0,
+     "warp_largest_height_m": 1.8912,
+     "c_largest_height_m": 1.8912,
+     "warp_steps_touching_the_ceiling": 8,
+     "c_steps_touching_the_ceiling": 8
+    },
+    {
+     "cell": [
+      3,
+      1
+     ],
+     "launch_speed": 30.0,
+     "warp_largest_height_m": 1.9571,
+     "c_largest_height_m": 1.9571,
+     "warp_steps_touching_the_ceiling": 7,
+     "c_steps_touching_the_ceiling": 7
+    },
+    {
+     "cell": [
+      1,
+      1
+     ],
+     "launch_speed": 10.0,
+     "warp_largest_height_m": 1.8171,
+     "c_largest_height_m": 1.8171,
+     "warp_steps_touching_the_ceiling": 7,
+     "c_steps_touching_the_ceiling": 7
+    },
+    {
+     "cell": [
+      1,
+      1
+     ],
+     "launch_speed": 20.0,
+     "warp_largest_height_m": 1.8912,
+     "c_largest_height_m": 1.8912,
+     "warp_steps_touching_the_ceiling": 8,
+     "c_steps_touching_the_ceiling": 8
+    },
+    {
+     "cell": [
+      1,
+      1
+     ],
+     "launch_speed": 30.0,
+     "warp_largest_height_m": 1.9571,
+     "c_largest_height_m": 1.9571,
+     "warp_steps_touching_the_ceiling": 7,
+     "c_steps_touching_the_ceiling": 7
+    },
+    {
+     "cell": [
+      1,
+      3
+     ],
+     "launch_speed": 10.0,
+     "warp_largest_height_m": 1.8171,
+     "c_largest_height_m": 1.8171,
+     "warp_steps_touching_the_ceiling": 7,
+     "c_steps_touching_the_ceiling": 7
+    },
+    {
+     "cell": [
+      1,
+      3
+     ],
+     "launch_speed": 20.0,
+     "warp_largest_height_m": 1.8912,
+     "c_largest_height_m": 1.8912,
+     "warp_steps_touching_the_ceiling": 8,
+     "c_steps_touching_the_ceiling": 8
+    },
+    {
+     "cell": [
+      1,
+      3
+     ],
+     "launch_speed": 30.0,
+     "warp_largest_height_m": 1.9571,
+     "c_largest_height_m": 1.9571,
+     "warp_steps_touching_the_ceiling": 7,
+     "c_steps_touching_the_ceiling": 7
+    },
+    {
+     "cell": [
+      3,
+      3
+     ],
+     "launch_speed": 10.0,
+     "warp_largest_height_m": 1.8171,
+     "c_largest_height_m": 1.8171,
+     "warp_steps_touching_the_ceiling": 7,
+     "c_steps_touching_the_ceiling": 7
+    },
+    {
+     "cell": [
+      3,
+      3
+     ],
+     "launch_speed": 20.0,
+     "warp_largest_height_m": 1.8912,
+     "c_largest_height_m": 1.8912,
+     "warp_steps_touching_the_ceiling": 8,
+     "c_steps_touching_the_ceiling": 8
+    },
+    {
+     "cell": [
+      3,
+      3
+     ],
+     "launch_speed": 30.0,
+     "warp_largest_height_m": 1.9571,
+     "c_largest_height_m": 1.9571,
+     "warp_steps_touching_the_ceiling": 7,
+     "c_steps_touching_the_ceiling": 7
+    },
+    {
+     "cell": [
+      3,
+      1
+     ],
+     "launch_speed": 0.0,
+     "warp_largest_height_m": 0.774,
+     "c_largest_height_m": 0.774,
+     "warp_steps_touching_the_ceiling": 0,
+     "c_steps_touching_the_ceiling": 0
+    }
+   ],
+   "warp_respawns_per_ant": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "warp_pool": {
+    "nacon_peak": 52,
+    "ncollision_peak": 52,
+    "naconmax": 624,
+    "nefc_peak": 20,
+    "njmax": 512,
+    "overflow_bits": 0,
+    "dropped": false,
+    "reasons": []
+   },
+   "passed": true,
+   "seconds": 16.0
+  },
+  "parity": {
+   "one_step": {
+    "states": 50,
+    "warp_changes": {},
+    "non_finite_resets": 0,
+    "contact_free": {
+     "warp_against_c": {
+      "count": 22,
+      "largest": 5.074079048870972e-05,
+      "median": 2.58859992996463e-07
+     }
+    },
+    "in_contact": {
+     "warp_against_c": {
+      "count": 28,
+      "largest": 0.01090904183135604,
+      "median": 1.635764039809029e-05
+     }
+    },
+    "pool": {
+     "nacon_peak": 19,
+     "ncollision_peak": 81,
+     "naconmax": 2400,
+     "nefc_peak": 14,
+     "njmax": 512,
+     "overflow_bits": 0,
+     "dropped": false,
+     "reasons": []
+    }
+   },
+   "trajectory": {
+    "steps": 20,
+    "first_state_with_a_contact": 4,
+    "warp": {
+     "largest_before_the_first_contact": 3.273309232554311e-07,
+     "largest_over_all_steps": 0.38369020265820314,
+     "at_the_last_step": 0.38369020265820314,
+     "all_finite": true,
+     "per_step": [
+      3.273309232554311e-07,
+      2.1139611705578432e-07,
+      2.5867684660951795e-07,
+      5.414658157398833e-07,
+      0.00041477582198954505,
+      0.01171859689998607,
+      0.026478972808538673,
+      0.03320920907560772,
+      0.05079913567891392,
+      0.0808422077686819,
+      0.09819338430253222,
+      0.1105838276787523,
+      0.1261540715069982,
+      0.14615815907231688,
+      0.1688213598961772,
+      0.22617690881981067,
+      0.28526574597040877,
+      0.3323909686858768,
+      0.36138690592310774,
+      0.38369020265820314
+     ]
+    }
+   },
+   "resting": {
+    "steps": 1200,
+    "reference_height": 0.38248,
+    "c_mujoco": {
+     "height": 0.3824809872184248,
+     "largest_speed": 4.1487191989877665e-12
+    },
+    "warp_pool": {
+     "nacon_peak": 4,
+     "ncollision_peak": 4,
+     "naconmax": 48,
+     "nefc_peak": 20,
+     "njmax": 512,
+     "overflow_bits": 0,
+     "dropped": false,
+     "reasons": []
+    },
+    "warp": {
+     "height": 0.3824809789657593,
+     "largest_speed": 1.3832008107783622e-06,
+     "largest_position_difference_from_c_settled_state": 5.441509121120555e-07,
+     "c_settled_state_moved_by": 1.6128159696648936e-08
+    }
+   },
+   "passed": true,
+   "seconds": 140.1
+  }
+ },
+ "all_passed": true,
+ "finished_at": "2026-11-13T15:13:18-05:00"
+}
