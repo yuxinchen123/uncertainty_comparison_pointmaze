@@ -792,6 +792,15 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   one run in both cases, so weights 0.125, 0.25 and 0.5 are queued (6 units, edge rule). Reading: the error
   length decays more slowly than the squared error, so at the same weight the policy keeps exploring; it is a
   discovery arm, like the fast last layer.
+- 2026-11-13 01:07 PT: **batch 8, the error length with a held divisor at smaller weights (first validation
+  block):** PointMaze Large with reward 1 on arrival: 0.8714 at weight 0.25 and 0.8695 at 0.125 (0.5 still
+  running), against RND's 0.8781: −0.0066 [−0.012, −0.002]. PointMaze Medium: 0.9256 at weight 0.5, 0.9177 at
+  0.25, 0.8794 at 0.125, against RND's 0.9349: −0.0093 [−0.017, −0.002]. Its best weight is now inside its grid on
+  Medium. **Behind RND on the whole-curve mean at every weight; the arm is closed for that measure.**
+- 2026-11-13 01:08 PT: **batch 9 queued** (`batches/09_fast-last-layer_discovery-in-the-other-three-pointmaze-cases`,
+  27 units, phase `discovery-validation`, first validation block): the fast last layer and RND, each at its own
+  configurations for the first-goal time, in PointMaze Medium with both rewards and PointMaze Large with the
+  step cost. Predictions in its `ideas.md`.
 
 ## Next
 
