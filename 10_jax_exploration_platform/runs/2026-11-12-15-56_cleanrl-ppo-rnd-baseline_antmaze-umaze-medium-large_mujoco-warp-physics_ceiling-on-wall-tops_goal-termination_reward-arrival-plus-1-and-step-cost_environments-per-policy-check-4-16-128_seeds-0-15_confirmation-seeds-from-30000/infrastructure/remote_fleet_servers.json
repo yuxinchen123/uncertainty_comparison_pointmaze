@@ -1,0 +1,56 @@
+{
+  "gilbreth": {
+    "ssh": [
+      "ssh",
+      "-o",
+      "BatchMode=yes",
+      "-o",
+      "ConnectTimeout=60",
+      "gilbreth"
+    ],
+    "check": [],
+    "remote_run": "/scratch/gilbreth/liu4869/rnd_maze/runs/2026-11-12-15-56_cleanrl-ppo-rnd-baseline-antmaze",
+    "python": "/scratch/gilbreth/liu4869/envs/rnd_platform_jax_mujoco_warp/bin/python",
+    "code_root": "/scratch/gilbreth/liu4869/rnd_maze/code",
+    "unit_seconds": 1800,
+    "ready": true,
+    "failed_calls_in_a_row": 0,
+    "budget_note": "standby, not charged",
+    "pools": {
+      "standby-a100-80gb-a30": {
+        "gpu_class": "a100_80gb_or_a30_or_a10_gilbreth",
+        "time_limit": "04:00:00",
+        "max_jobs": 18,
+        "sbatch_options": [
+          "-p",
+          "a100-80gb,a30,a10",
+          "-q",
+          "standby",
+          "-A",
+          "dsmichil",
+          "-N1",
+          "-n1",
+          "-c4",
+          "--gres=gpu:1",
+          "--mem=24G"
+        ]
+      }
+    },
+    "hand_over": {
+      "units_at_once": 18,
+      "match": "antmaze",
+      "pool": "standby-a100-80gb-a30"
+    },
+    "first_unit": {
+      "state": "waiting",
+      "unit": null,
+      "compared_with_uva_unit": null,
+      "differences": [],
+      "checked_at": null,
+      "note": "2026-11-12 20:00 PT: new code copy f490e70d with the stable physics; the first unit's records (fault counters, speeds, seconds per iteration) are read by hand before the other 17 go"
+    },
+    "code": "/scratch/gilbreth/liu4869/rnd_maze/code/source_5c7407bbb59a8e52b90aa9f19255c71a14298737/10_jax_exploration_platform",
+    "prepared_commit": "5c7407bbb59a8e52b90aa9f19255c71a14298737",
+    "code_repository_commit": "ef93b14596f2c08910282536591574dfa8889148"
+  }
+}

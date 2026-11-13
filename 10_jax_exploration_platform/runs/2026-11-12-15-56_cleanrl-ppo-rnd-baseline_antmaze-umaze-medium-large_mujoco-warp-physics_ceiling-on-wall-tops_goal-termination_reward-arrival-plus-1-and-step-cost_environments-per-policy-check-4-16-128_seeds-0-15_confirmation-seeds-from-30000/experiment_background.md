@@ -54,3 +54,9 @@ Measured before these runs (H100 NVL, U-maze, this learner, with the ceiling): 1
 ## Git state
 
 Commit `30b2c609` (pushed) at folder creation; `source.json` names the frozen copy new jobs run.
+
+- Change of 2026-11-12 20:00 PT: the code was frozen anew at commit `f490e70d` for the rollout-shape check with
+  the stable physics (phase `rollout-shape-check-stable-physics`): `implicitfast` at a physics time step of
+  0.005 s with 10 physics steps per environment step, and the fault guard at 30 m/s and 100 rad/s. The units of
+  the first check (phase `rollout-shape-check`, commit `5c7407bb`, time step 0.01 s, no guard) diverged for
+  trained ants and are kept as records only; the report leaves them out (`report_settings.json`).

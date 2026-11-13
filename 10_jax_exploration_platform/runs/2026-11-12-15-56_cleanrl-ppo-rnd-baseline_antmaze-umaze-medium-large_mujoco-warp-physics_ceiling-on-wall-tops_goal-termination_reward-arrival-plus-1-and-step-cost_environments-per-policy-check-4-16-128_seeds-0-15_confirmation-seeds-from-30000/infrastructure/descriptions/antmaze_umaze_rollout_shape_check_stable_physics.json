@@ -1,0 +1,79 @@
+{
+  "study": "cleanrl-ppo-rnd-baseline-antmaze",
+  "phase": "rollout-shape-check-stable-physics",
+  "bonus": "rnd_next_state",
+  "configuration_files": {
+    "antmaze": "configs/experiments/antmaze_umaze_warp-physics_time-step-0.005_frame-skip-10_fault-guard-30-metres-and-100-radians-per-second_cleanrl-ppo-rnd_goal-termination_reward-arrival-plus-one_example_steps-204800.toml"
+  },
+  "environments": [
+    "antmaze-umaze"
+  ],
+  "reward_settings": [
+    "arrival_plus_one"
+  ],
+  "steps_per_policy": 16777216,
+  "windows_per_unit": 256,
+  "seeds": {
+    "first": 0,
+    "count": 16
+  },
+  "minimum_card_memory_mb": 20000,
+  "cells": {
+    "kind": "grid",
+    "values": {
+      "learning_rate": [
+        0.0003,
+        0.001,
+        0.003,
+        0.01
+      ],
+      "entropy_coefficient": [
+        0.001,
+        0.01
+      ],
+      "intrinsic_weight": [
+        0.0625,
+        0.25,
+        1.0,
+        4.0,
+        16.0,
+        64.0
+      ],
+      "clip_coefficient": [
+        0.1
+      ]
+    }
+  },
+  "sweeps": [
+    {
+      "method": "cleanrl-ppo-rnd-with-128-environments-per-policy",
+      "environments_per_policy": {
+        "antmaze": 128
+      },
+      "policies_per_unit": 128,
+      "workload": {
+        "antmaze": "antmaze-umaze_environments-per-policy-128_update-epoch-minibatch_bonus-rnd-next-state_physics-warp_time-step-0.005_frame-skip-10"
+      }
+    },
+    {
+      "method": "cleanrl-ppo-rnd-with-16-environments-per-policy",
+      "environments_per_policy": {
+        "antmaze": 16
+      },
+      "policies_per_unit": 128,
+      "workload": {
+        "antmaze": "antmaze-umaze_environments-per-policy-16_update-epoch-minibatch_bonus-rnd-next-state_physics-warp_time-step-0.005_frame-skip-10"
+      }
+    },
+    {
+      "method": "cleanrl-ppo-rnd-with-4-environments-per-policy",
+      "environments_per_policy": {
+        "antmaze": 4
+      },
+      "policies_per_unit": 128,
+      "workload": {
+        "antmaze": "antmaze-umaze_environments-per-policy-4_update-epoch-minibatch_bonus-rnd-next-state_physics-warp_time-step-0.005_frame-skip-10"
+      }
+    }
+  ]
+}
