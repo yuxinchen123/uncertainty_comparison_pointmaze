@@ -332,3 +332,21 @@ Times are Pacific, read from the clock or from scheduler records.
   these maps must name the workload with the time step and give `policies_per_unit` and
   `minimum_card_memory_mb` as numbers. Noted for the user, not changed: the policy and value networks see the
   torso position unscaled, a range that grows from 10 m (U-maze) to 24 m (Large).
+- 2026-11-13 11:31 PT: **the budget rule on the longer run (records of 11:30 PT; scratchpad script
+  `ant_budget_rule.py`).** Define R(s) as the mean return of a configuration's 16 policies in the window containing
+  step s, smoothed over 5 windows; L as its mean over the last 10% of the run; s95 as the first step where R(s)
+  reaches 0.95 L. The plan's budget is B = 2 x max(s95 of the three configurations with the highest whole-curve
+  mean), rounded up to a power of two.
+  1. 16 environments per policy (65.5 of 67.1 million steps done): s95 = 35.9, 9.7 and 15.7 million for the best
+     three, so B = 134,217,728 steps per policy. Best configuration: learning rate 1e-4, entropy 0.001, weight
+     0.0625, whole-curve mean 0.0862, final level 0.103 (at the lowest learning rate and weight of its grid).
+  2. 128 environments per policy (122.2 of 134.2 million done): two of the best three have not levelled off
+     inside the run (s95 in its last tenth), so the rule gives at least 268,435,456. Best: learning rate 1e-2,
+     weight 16, whole-curve mean 0.0722, final level 0.100.
+  **Why this does not settle the environment count:** the two runs had different budgets (67 and 134 million
+  steps) and the learning rate falls to zero over each run's own budget, so at 65 million steps the
+  16-environment run has finished its schedule and the 128-environment run is halfway. At equal budgets (16.8
+  million, the check) the two counts tie. The plan's rule compares at the same number of steps; the next RND sweep
+  on the U-maze at B = 134 million with 16 environments per policy gives that comparison against the
+  128-environment run of the same length, and its result decides the count. Until then, ant work uses 16
+  environments per policy (the cheaper choice to correct: its sweep is needed for the comparison anyway).

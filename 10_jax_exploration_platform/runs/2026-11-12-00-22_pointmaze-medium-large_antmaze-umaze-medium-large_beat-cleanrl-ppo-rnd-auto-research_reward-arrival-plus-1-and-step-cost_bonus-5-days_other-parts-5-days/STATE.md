@@ -1277,6 +1277,13 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   ahead on one block and level on the other. At these configurations both sides keep the goal badly (whole-curve
   mean 0.12 and 0.008 with reward 1 on arrival), which is why the first-goal time has its own configurations. The
   two Large units of each side run on UVA (12 to 133 of 256 windows at 11:06 PT).
+- 2026-11-13 11:31 PT: **AntMaze: Medium and Large are ready** (gates against C MuJoCo pass; configuration files in
+  commit e54ab8e8; same cost per unit as the U-maze), and **the plan's budget rule gives B = 134,217,728 steps per
+  policy on the U-maze** with 16 environments per policy (details and why this does not yet settle the count of
+  environments per policy: the AntMaze baseline folder's `infra_history.md`). Cost, measured: one unit of 128
+  policies x 16 environments at that budget is about 21 card-hours on an A100 (0.224 million steps per second; 256
+  policies per unit give 0.34 million). A first sweep of 28 RND configurations in each reward setting is about 160
+  card-hours, and a validation block of 256 seeds about 40 card-hours per configuration.
 
 ## Next
 
@@ -1292,9 +1299,13 @@ Rewritten 2026-11-13 03:02 PT.
 3. **First-arrival hold:** its second block on PointMaze Large with reward 1 on arrival and its first block on
    PointMaze Large with the step cost are running; then its second block on Large with the step cost, together
    with RND and the fixed hold on the same seeds.
-4. **AntMaze baseline:** the count of environments per policy when the six units with 4 are complete (128 and 16
-   tie on the whole-curve mean; 16 finds the goal sooner); the longer run for the budget; the edge rule; then the
-   Medium and Large maps, which have no configuration file and no check with trained policies yet.
+4. **AntMaze baseline** (after the two `budget-probe` units and their jobs of the older code copy have ended):
+   freeze the AntMaze baseline folder anew (it then gets its first numbered code copy and the Medium and Large
+   configuration files); RND sweep on the U-maze at 16 environments per policy, B = 134,217,728, learning rates
+   3e-5, 1e-4, 3e-4, 1e-2, weights 1/256 to 16 (factor 4), entropy 0.001, 16 development seeds, both reward
+   settings; its whole-curve mean against the 128-environment run of the same length decides the count. RND
+   probes on Medium and Large with reward 1 on arrival at 67 million steps (does RND reach the goal at all).
+   Placement on Gilbreth; when Gilbreth is full for about 2 hours, the next server in the order.
 5. **Summaries:** `summary_settings.json` and summaries for batches 8, 9 and 10; the standing page after each
    reading.
 6. **Batches 12 and 13:** read batch 12's four PointMaze Large units (steps 0.03 and 0.01 of the fast last
