@@ -64,3 +64,52 @@ could take them.
   the hold alone on the same seeds.
 - If prediction 4 holds, the arm is screened on the ant U-maze with 16 environments per policy, where the fast
   last layer looks ahead in the partial reading of batch 10.
+
+## Addendum 1, written 2026-11-13 04:09 PT after the four PointMaze Medium units and before the units it adds
+
+**What the Medium units showed (256 validation seeds).** Prediction 2 failed. With reward 1 on arrival at learning
+rate 6e-3 and weight 4 the arm's whole-curve mean is 0.700, against 0.9435 for the hold alone and 0.842 for batch
+10's arm (the fast last layer throughout, with the hold); with the step cost it is behind the hold alone by 0.034
+and 0.080 at weights 2 and 4. Prediction 1 held (first-goal time 14.6 against 15.7 thousand steps, −1.1 [−3.0,
++0.8]).
+
+**What the records say about the cause.** The logged mean intrinsic reward of a policy, by logging window counted
+from the window of its first arrival (median over the 256 policies, same configuration):
+
+| arm | 1 before | at | 1 after | 4 after | 16 after | 64 after | mean return 32 windows into the run |
+|---|---|---|---|---|---|---|---|
+| fast last layer until the first arrival, then the hold | 0.028 | 0.048 | 0.058 | 0.031 | 0.0125 | 0.0048 | 0.35 |
+| fast last layer throughout, with the hold | 0.029 | 0.025 | 0.018 | 0.010 | 0.0046 | 0.0014 | 0.60 |
+| first-arrival hold alone | 0.103 | 0.103 | 0.054 | 0.023 | 0.0031 | 0.0006 | 0.91 |
+| RND | 0.090 | 0.098 | 0.052 | 0.024 | 0.0033 | 0.0010 | 0.91 |
+
+1. At the switch the reward the learner sees doubles (0.028 to 0.058): the divisor was built on the fast scores,
+   which are about half the predictor's own, and is then frozen.
+2. One window after the arrival the reward is the same size as the hold's alone (0.058 against 0.054), but it then
+   falls four to eight times more slowly, and the return rises slowly with it.
+
+Two readings fit: (a) the frozen divisor of the wrong scale keeps the bonus too large for the policy to settle;
+(b) the fast phase leaves the policy or its value heads in a state that settles slowly whatever the divisor does.
+
+**Units added to tell them apart** (first validation block; existing options only):
+
+| arm | options | configurations |
+|---|---|---|
+| fast last layer until the first arrival, then RND's running divisor | `fast_last_layer_step=0.1,fast_last_layer_until_first_arrival=true` | Medium with reward 1 on arrival: (6e-3, 0.01, 2), (6e-3, 0.01, 4); Large with reward 1 on arrival: (2e-3, 0.01, 2), (2e-3, 0.01, 4), (2e-3, 0.01, 16) |
+| fast last layer until the first arrival, divisor held after 1/16 of the run | the same with `reward_divisor=held_after_fraction,divisor_hold_fraction=0.0625` | Medium with reward 1 on arrival: (6e-3, 0.01, 4); Large with reward 1 on arrival: (2e-3, 0.01, 4) |
+
+In the second arm the divisor follows the predictor's own scores from the switch (about 15 thousand steps on
+Medium) until it is held (66 thousand steps on Medium, 524 thousand on Large). These units replace the second
+description of this batch (the arm with the first-arrival hold on Large with the step cost is not run).
+
+**Predictions of the addendum.**
+
+6. Under reading (a), the arm with RND's running divisor is within 0.03 of RND at the same configuration on
+   Medium with reward 1 on arrival (RND: 0.9349 at weight 2), where the arm with the first-arrival hold is 0.24
+   behind. Under reading (b) it stays more than 0.05 behind. I expect (a), with a small loss left from the
+   rollouts in which the running divisor is still catching up.
+7. The arm with the divisor held after 1/16 is at least as good as the arm with the running divisor at the same
+   configuration, as the fixed hold is for RND.
+8. On Large with reward 1 on arrival the arm with the running divisor keeps the early first arrival (below 150
+   thousand steps at weights 4 and 16, against 269 for RND's best) and its whole-curve mean is ahead of RND's
+   best (0.8781) at one of the three weights. I am unsure: at weight 16 RND itself may settle too slowly.
