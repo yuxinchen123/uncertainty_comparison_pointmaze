@@ -406,3 +406,9 @@ Times are Pacific, read from the clock or from scheduler records.
   instead of 68 s on the H100 (87 to 106 s for the first iteration on today's training nodes); worth about 1% of a
   2-hour UVA job, so not switched on for the running units. No A100 row: every card on cheetah01 and cheetah04 was
   taken by other users.
+- 2026-11-13 15:10 PT: the four UVA worker jobs ended on their own after 1 h 50 min (they stop before the 2-hour
+  limit); the 13 units went back to pending with their checkpoints. Five new UVA jobs on cards free at once took
+  all 13 within two minutes (6909545 and 6909546 on two RTX 5080 each, 6909547 on an A40, 6909548 on an RTX 4000
+  Ada, 6909549 on seven RTX A4500 on jaguar03 through the reservation). The one-time step planned for 15:14 PT
+  was not needed and was removed. This restart is due every 1 h 50 min; each monitoring tick submits workers on
+  free cards for any unit left pending.
