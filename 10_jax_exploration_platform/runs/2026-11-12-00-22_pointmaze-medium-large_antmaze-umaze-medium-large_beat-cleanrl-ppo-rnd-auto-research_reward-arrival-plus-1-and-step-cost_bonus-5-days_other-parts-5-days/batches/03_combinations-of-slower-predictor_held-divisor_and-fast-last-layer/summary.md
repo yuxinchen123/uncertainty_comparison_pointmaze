@@ -1,6 +1,6 @@
 # Batch 3 screen on PointMaze Large with reward 1 on arrival: combinations of the slower predictor, the held divisor and the fast last layer
 
-Generated 2026-11-12 16:21 PT by the command below. This file is generated: regenerate it, do not edit it. Times are Pacific, converted from machines running Eastern. Run folder: `2026-11-12-00-22_pointmaze-medium-large_antmaze-umaze-medium-large_beat-cleanrl-ppo-rnd-auto-research_reward-arrival-plus-1-and-step-cost_bonus-5-days_other-parts-5-days`; batch folder: `batches/03_combinations-of-slower-predictor_held-divisor_and-fast-last-layer`.
+Generated 2026-11-12 16:27 PT by the command below. This file is generated: regenerate it, do not edit it. Times are Pacific, converted from machines running Eastern. Run folder: `2026-11-12-00-22_pointmaze-medium-large_antmaze-umaze-medium-large_beat-cleanrl-ppo-rnd-auto-research_reward-arrival-plus-1-and-step-cost_bonus-5-days_other-parts-5-days`; batch folder: `batches/03_combinations-of-slower-predictor_held-divisor_and-fast-last-layer`.
 
 ```bash
 cd /p/rlprojects/RND/10_jax_exploration_platform
@@ -13,7 +13,7 @@ bash "benchmark_runs/2026-11-12-00-17_pointmaze-antmaze_cleanrl-ppo-rnd_speed-30
 
 | section | first written | last changed | status |
 |---|---|---|---|
-| [Units](#units) | 2026-11-12 16:21 PT | 2026-11-12 16:21 PT | unread |
+| [Units](#units) | 2026-11-12 16:21 PT | 2026-11-12 16:27 PT | unread |
 | [Measures](#measures) | 2026-11-12 16:21 PT | 2026-11-12 16:21 PT | unread |
 | [Discovery and optimization: whole-curve mean](#discovery-and-optimization-whole-curve-mean) | 2026-11-12 16:21 PT | 2026-11-12 16:21 PT | unread |
 | [Whole-curve mean at every intrinsic weight](#whole-curve-mean-at-every-intrinsic-weight) | 2026-11-12 16:21 PT | 2026-11-12 16:21 PT | unread |
@@ -34,12 +34,12 @@ Times are Pacific, converted from machines running Eastern, and come from this r
 | unit | method | state | logging windows written | card | finished | place in the queue |
 |---|---|---|---|---|---|---|
 | 1 | control (the unit of batch 2) | complete | 256 of 256 | NVIDIA GeForce RTX 2080 Ti | 2026-11-12 16:14 PT | `queue/done` |
-| 2 | slower predictor with held divisor | not started (no shard) | 0 | none | not finished | `queue/pending` |
+| 2 | slower predictor with held divisor | unfinished | 10 of 256 | NVIDIA GeForce RTX 2080 Ti | not finished | `queue/running` |
 | 3 | fast last layer with held divisor, step 0.1 | not started (no shard) | 0 | none | not finished | `queue/pending` |
 | 4 | fast last layer with held divisor, step 0.3 | not started (no shard) | 0 | none | not finished | `queue/pending` |
 | 5 | fast last layer with slower predictor, step 0.1 | not started (no shard) | 0 | none | not finished | `queue/pending` |
 | 6 | fast last layer with slower predictor and held divisor, step 0.1 | not started (no shard) | 0 | none | not finished | `queue/pending` |
-| 7 | fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1 | not started (no shard) | 0 | none | not finished | `queue/pending` |
+| 7 | fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1 | not started (no shard) | 0 | none | not finished | `queue/remote_gilbreth` |
 
 Unit names, by the number in the first column:
 

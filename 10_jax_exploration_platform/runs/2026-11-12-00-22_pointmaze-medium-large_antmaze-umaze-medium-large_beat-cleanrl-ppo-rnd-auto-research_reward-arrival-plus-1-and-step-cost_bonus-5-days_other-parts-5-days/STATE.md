@@ -330,6 +330,19 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   features as the input of RND 0.35, against the control's 0.885. They find the goal early and do not settle on
   it: a bonus that only counts stays near 1 at rarely visited states for the whole run. Wider input clip: 0.887
   (clip 10) and 0.883 (clip 20), like the control.
+- 2026-11-12 16:35 PT: **the process that ran this session before the 16:14 PT restart was still alive** and
+  told this one so (it had fired one more monitoring tick at 16:23 PT and its own copy of the report worker had
+  finished there). It made no submission, table edit or commit after the restart and has stood down. The report
+  worker therefore ran in both processes on the same files; the combined working tree was checked
+  (`tests/maze_campaign_analysis` and `tests/maze_campaign`: 185 passed), committed as 52059227, and the three
+  batch summaries and the baseline report were generated again from it.
+- 2026-11-12 16:35 PT: **reports now carry both metrics** (baseline `analysis/analysis.md`; `summary.md` of batches
+  1, 2 and 3, each with the validation block). RND's configurations for the secondary metric are named there as
+  "not confirmed yet". Open point raised by the report: on PointMaze Medium two configurations of the discovery
+  sweep have a slightly higher whole-curve mean than RND's chosen one (0.948 ± 0.009 against 0.944 ± 0.006 with
+  reward 1 on arrival; −0.339 against −0.341 with the step cost), within their intervals. To do: put RND's best
+  few configurations per case on the validation block, as the ideas are, and confirm the winner, so that the
+  baseline gets the same selection as a method.
 
 ## Next
 

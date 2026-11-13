@@ -1,6 +1,6 @@
 # Batch 1 screen on PointMaze Large with reward 1 on arrival: the start, the scale and the decay of the bonus
 
-Generated 2026-11-12 16:22 PT by the command below. This file is generated: regenerate it, do not edit it. Times are Pacific, converted from machines running Eastern. Run folder: `2026-11-12-00-22_pointmaze-medium-large_antmaze-umaze-medium-large_beat-cleanrl-ppo-rnd-auto-research_reward-arrival-plus-1-and-step-cost_bonus-5-days_other-parts-5-days`; batch folder: `batches/01_start-scale-and-decay-of-the-bonus-on-continuous-inputs`.
+Generated 2026-11-12 16:27 PT by the command below. This file is generated: regenerate it, do not edit it. Times are Pacific, converted from machines running Eastern. Run folder: `2026-11-12-00-22_pointmaze-medium-large_antmaze-umaze-medium-large_beat-cleanrl-ppo-rnd-auto-research_reward-arrival-plus-1-and-step-cost_bonus-5-days_other-parts-5-days`; batch folder: `batches/01_start-scale-and-decay-of-the-bonus-on-continuous-inputs`.
 
 ```bash
 cd /p/rlprojects/RND/10_jax_exploration_platform
@@ -13,16 +13,16 @@ bash "benchmark_runs/2026-11-12-00-17_pointmaze-antmaze_cleanrl-ppo-rnd_speed-30
 
 | section | first written | last changed | status |
 |---|---|---|---|
-| [Units](#units) | 2026-11-12 14:12 PT | 2026-11-12 16:21 PT | unread |
+| [Units](#units) | 2026-11-12 14:12 PT | 2026-11-12 16:27 PT | unread |
 | [Measures](#measures) | 2026-11-12 14:12 PT | 2026-11-12 16:13 PT | unread |
 | [Discovery and optimization: whole-curve mean](#discovery-and-optimization-whole-curve-mean) | 2026-11-12 16:13 PT | 2026-11-12 16:13 PT | unread |
-| [Whole-curve mean at every intrinsic weight](#whole-curve-mean-at-every-intrinsic-weight) | 2026-11-12 14:12 PT | 2026-11-12 16:21 PT | unread |
-| [Discovery: mean capped first-goal time](#discovery-mean-capped-first-goal-time) | 2026-11-12 16:13 PT | 2026-11-12 16:21 PT | unread |
-| [Mean capped first-goal time at every intrinsic weight](#mean-capped-first-goal-time-at-every-intrinsic-weight) | 2026-11-12 16:13 PT | 2026-11-12 16:21 PT | unread |
+| [Whole-curve mean at every intrinsic weight](#whole-curve-mean-at-every-intrinsic-weight) | 2026-11-12 14:12 PT | 2026-11-12 16:27 PT | unread |
+| [Discovery: mean capped first-goal time](#discovery-mean-capped-first-goal-time) | 2026-11-12 16:13 PT | 2026-11-12 16:27 PT | unread |
+| [Mean capped first-goal time at every intrinsic weight](#mean-capped-first-goal-time-at-every-intrinsic-weight) | 2026-11-12 16:13 PT | 2026-11-12 16:27 PT | unread |
 | [Training curves](#training-curves) | 2026-11-12 14:12 PT | 2026-11-12 16:13 PT | unread |
 | [Properties of the bonus on the maze grid](#properties-of-the-bonus-on-the-maze-grid) | 2026-11-12 14:12 PT | 2026-11-12 16:13 PT | unread |
 | [Predictions](#predictions) | 2026-11-12 14:12 PT | 2026-11-12 15:04 PT | unread |
-| [Ideas against the control](#ideas-against-the-control) | 2026-11-12 14:12 PT | 2026-11-12 16:21 PT | unread |
+| [Ideas against the control](#ideas-against-the-control) | 2026-11-12 14:12 PT | 2026-11-12 16:27 PT | unread |
 | [Validation block](#validation-block) | 2026-11-12 16:13 PT | 2026-11-12 16:21 PT | unread |
 | [Consistency check against the baseline run](#consistency-check-against-the-baseline-run) | 2026-11-12 14:12 PT | 2026-11-12 16:21 PT | unread |
 | [Records that need a look](#records-that-need-a-look) | 2026-11-12 14:12 PT | 2026-11-12 15:04 PT | unread |
@@ -31,7 +31,7 @@ Times are Pacific, converted from machines running Eastern, and come from this r
 
 ## Units
 
-19 of 22 units are complete. Only complete units enter the tables and figures below; nothing is estimated for the others. Left out: control, at the intrinsic weights 256, 1024, 4096; separate predictor step size, predictor learning rate 0.25 times 1e-4, at the intrinsic weights 256, 1024, 4096; error length as the bonus, at the intrinsic weights 256, 1024, 4096.
+20 of 22 units are complete. Only complete units enter the tables and figures below; nothing is estimated for the others. Left out: control, at the intrinsic weights 256, 1024, 4096; separate predictor step size, predictor learning rate 0.25 times 1e-4, at the intrinsic weights 256, 1024, 4096.
 
 | unit | method | state | logging windows written | card | finished | place in the queue |
 |---|---|---|---|---|---|---|
@@ -49,11 +49,11 @@ Times are Pacific, converted from machines running Eastern, and come from this r
 | 12 | scheduled last layer on fixed features, decay 0.5 | complete | 256 of 256 | NVIDIA RTX 4000 Ada Generation | 2026-11-12 14:31 PT | `queue/done` |
 | 13 | scheduled last layer on fixed features, decay 0.75 | complete | 256 of 256 | NVIDIA GeForce RTX 2080 Ti | 2026-11-12 14:54 PT | `queue/done` |
 | 14 | scheduled last layer on fixed features, decay 1 | complete | 256 of 256 | NVIDIA A30 | 2026-11-12 14:08 PT | `queue/done` |
-| 15 | control, at the intrinsic weights 256, 1024, 4096 | unfinished | 0 of 256 | NVIDIA RTX 4000 Ada Generation | not finished | `queue/running` |
-| 16 | separate predictor step size, predictor learning rate 0.25 times 1e-4, at the intrinsic weights 256, 1024, 4096 | not started (no shard) | 0 | none | not finished | `queue/pending` |
+| 15 | control, at the intrinsic weights 256, 1024, 4096 | unfinished | 157 of 256 | NVIDIA RTX 4000 Ada Generation | not finished | `queue/running` |
+| 16 | separate predictor step size, predictor learning rate 0.25 times 1e-4, at the intrinsic weights 256, 1024, 4096 | unfinished | 58 of 256 | NVIDIA GeForce RTX 2080 Ti | not finished | `queue/running` |
 | 17 | separate predictor step size, predictor learning rate 1 times 1e-4, at the intrinsic weights 256, 1024, 4096 | complete | 256 of 256 | NVIDIA A10 | 2026-11-12 16:14 PT | `queue/done` |
 | 18 | separate predictor step size, predictor learning rate 4 times 1e-4, at the intrinsic weights 256, 1024, 4096 | complete | 256 of 256 | NVIDIA A30 | 2026-11-12 16:15 PT | `queue/done` |
-| 19 | error length as the bonus, at the intrinsic weights 256, 1024, 4096 | not started (no shard) | 0 | none | not finished | `queue/remote_gilbreth` |
+| 19 | error length as the bonus, at the intrinsic weights 256, 1024, 4096 | complete | 256 of 256 | NVIDIA A10 | 2026-11-12 16:21 PT | `queue/done` |
 | 20 | fast last layer inside the rollout, step size 0.1 of the exact fit, at the intrinsic weights 256, 1024, 4096 | complete | 256 of 256 | NVIDIA A10 | 2026-11-12 16:07 PT | `queue/done` |
 | 21 | fast last layer inside the rollout, step size 0.3 of the exact fit, at the intrinsic weights 256, 1024, 4096 | complete | 256 of 256 | NVIDIA A10 | 2026-11-12 16:02 PT | `queue/done` |
 | 22 | fast last layer inside the rollout, step size 1 of the exact fit, at the intrinsic weights 256, 1024, 4096 | complete | 256 of 256 | NVIDIA A10 | 2026-11-12 16:02 PT | `queue/done` |
@@ -164,11 +164,11 @@ Define $W$ as in the section Measures. Rows are in the order of the table of the
 |---|---|---|---|---|---|---|
 | control | 0.575 | 0.065 |  |  |  | 2 |
 | separate predictor step size, predictor learning rate 0.25 times 1e-4 | **0.739** | **0.194** |  |  |  | 1 |
-| separate predictor step size, predictor learning rate 1 times 1e-4 | <u>0.722</u> | <u>0.175</u> | <u>0.016</u> | 0.010 | <u>0.011</u> | 4 |
-| separate predictor step size, predictor learning rate 4 times 1e-4 | 0.718 | 0.153 | 0.013 | <u>0.011</u> | <u>0.011</u> | 4 |
+| separate predictor step size, predictor learning rate 1 times 1e-4 | <u>0.722</u> | <u>0.175</u> | <u>0.016</u> | 0.010 | 0.011 | 4 |
+| separate predictor step size, predictor learning rate 4 times 1e-4 | 0.718 | 0.153 | 0.013 | 0.011 | 0.011 | 4 |
 | fast last layer inside the rollout, step size 0.3 of the exact fit | 0.015 | 0.013 | 0.008 | 0.009 | 0.008 | 0.25 |
-| fast last layer inside the rollout, step size 0.1 of the exact fit | 0.036 | 0.021 | **0.017** | **0.017** | **0.016** | 0.5 |
-| error length as the bonus | 0.021 | 0.018 |  |  |  | 0.0625 |
+| fast last layer inside the rollout, step size 0.1 of the exact fit | 0.036 | 0.021 | **0.017** | **0.017** | <u>0.016</u> | 0.5 |
+| error length as the bonus | 0.021 | 0.018 | **0.017** | <u>0.016</u> | **0.017** | 0.0625 |
 | fast last layer inside the rollout, step size 1 of the exact fit | 0.017 | 0.011 | 0.010 | 0.008 | 0.008 | 0.25 |
 | fixed scale | 0.547 | 0.002 |  |  |  | 16 |
 | even start with no divisor | 0.000 | 0.000 |  |  |  | 0.25 |
@@ -187,8 +187,8 @@ Define $M$, $W$ and $L$ as in the section Measures. One row per method at its be
 |---|---|---|---|---|---|---|
 | control | 64 (largest of the grid) | 190 ± 50.8 | control | **16 of 16** | 0.065 ± 0.014 | 0.112 |
 | fast last layer inside the rollout, step size 0.1 of the exact fit | 4096 (largest of the grid) | **49.7** ± 9.98 | **-140** [-249, -57.1] | **16 of 16** | 0.016 ± 0.001 | 0.012 |
-| fast last layer inside the rollout, step size 0.3 of the exact fit | 256 | <u>67.9</u> ± 11.3 | <u>-122</u> [-242, -36.1] | **16 of 16** | 0.008 ± 0.001 | 0.006 |
-| error length as the bonus | 64 (largest of the grid) | 88.4 ± 12.7 | -101 [-223, -13.3] | **16 of 16** | 0.018 ± 0.001 | 0.020 |
+| error length as the bonus | 4096 (largest of the grid) | <u>64.1</u> ± 9.59 | <u>-125</u> [-229, -55.4] | **16 of 16** | 0.017 ± 0.001 | 0.019 |
+| fast last layer inside the rollout, step size 0.3 of the exact fit | 256 | 67.9 ± 11.3 | -122 [-242, -36.1] | **16 of 16** | 0.008 ± 0.001 | 0.006 |
 | fast last layer inside the rollout, step size 1 of the exact fit | 16 | 114 ± 21.7 | -75.6 [-195, +13.9] | **16 of 16** | 0.017 ± 0.003 | 0.021 |
 | separate predictor step size, predictor learning rate 1 times 1e-4 | 64 | 132 ± 25.5 | -57.7 [-131, +1.86] | **16 of 16** | 0.175 ± 0.023 | <u>0.291</u> |
 | separate predictor step size, predictor learning rate 0.25 times 1e-4 | 64 (largest of the grid) | 137 ± 36.3 | -52.4 [-193, +71] | **16 of 16** | <u>0.194</u> ± 0.017 | **0.348** |
@@ -208,8 +208,8 @@ Define $M$ as in the section Measures; the cells give it in thousands of steps. 
 |---|---|---|---|---|---|---|
 | control | **7,376** | 8,389 | 8,389 | 7,050 | 3,980 | 64 (largest of the grid) |
 | fast last layer inside the rollout, step size 0.1 of the exact fit | 8,389 | 7,449 | 7,518 | 2,343 | <u>994</u> | 4096 (largest of the grid) |
+| error length as the bonus | 8,389 | 8,389 | 6,690 | <u>2,306</u> | **577** | 4096 (largest of the grid) |
 | fast last layer inside the rollout, step size 0.3 of the exact fit | 7,883 | **7,418** | 6,066 | **2,090** | 1,191 | 256 |
-| error length as the bonus | 8,389 | 8,389 | 6,690 | <u>2,306</u> | **577** | 64 (largest of the grid) |
 | fast last layer inside the rollout, step size 1 of the exact fit | <u>7,563</u> | 7,996 | 8,389 | 4,220 | 1,705 | 16 |
 | separate predictor step size, predictor learning rate 1 times 1e-4 | 7,868 | 8,389 | 8,389 | 8,389 | 6,021 | 64 |
 | separate predictor step size, predictor learning rate 0.25 times 1e-4 | 7,893 | 7,604 | 7,895 | 7,531 | 6,788 | 64 (largest of the grid) |
@@ -225,8 +225,8 @@ Define $M$ as in the section Measures; the cells give it in thousands of steps. 
 |---|---|---|---|---|---|---|
 | control | 1,289 | 604 | 453 | 220 | 220 | 64 (largest of the grid) |
 | fast last layer inside the rollout, step size 0.1 of the exact fit | **198** | 255 | **80.6** | **78.8** | **67** | 4096 (largest of the grid) |
+| error length as the bonus | <u>225</u> | <u>212</u> | <u>101</u> | <u>109</u> | <u>104</u> | 4096 (largest of the grid) |
 | fast last layer inside the rollout, step size 0.3 of the exact fit | 245 | **182** | 701 | 614 | 138 | 256 |
-| error length as the bonus | <u>225</u> | <u>212</u> | <u>101</u> | <u>109</u> | <u>104</u> | 64 (largest of the grid) |
 | fast last layer inside the rollout, step size 1 of the exact fit | 901 | 789 | 171 | 207 | 139 | 16 |
 | separate predictor step size, predictor learning rate 1 times 1e-4 | 1,699 | 643 | 370 | 274 | 214 | 64 |
 | separate predictor step size, predictor learning rate 0.25 times 1e-4 | 1,434 | 294 | 286 | 196 | 177 | 64 (largest of the grid) |
@@ -241,13 +241,13 @@ Define $M$ as in the section Measures; the cells give it in thousands of steps. 
 | method | weight 16 | weight 64 | weight 256 | weight 1024 | weight 4096 | best intrinsic weight for $M$ |
 |---|---|---|---|---|---|---|
 | control | 236 | 190 |  |  |  | 64 (largest of the grid) |
-| fast last layer inside the rollout, step size 0.1 of the exact fit | **62** | **87.9** | <u>99.6</u> | **100** | **49.7** | 4096 (largest of the grid) |
+| fast last layer inside the rollout, step size 0.1 of the exact fit | **62** | **87.9** | 99.6 | **100** | **49.7** | 4096 (largest of the grid) |
+| error length as the bonus | <u>89</u> | <u>88.4</u> | <u>74.6</u> | <u>103</u> | <u>64.1</u> | 4096 (largest of the grid) |
 | fast last layer inside the rollout, step size 0.3 of the exact fit | 1,194 | 116 | **67.9** | 168 | 598 | 256 |
-| error length as the bonus | <u>89</u> | <u>88.4</u> |  |  |  | 64 (largest of the grid) |
 | fast last layer inside the rollout, step size 1 of the exact fit | 114 | 1,456 | 601 | 257 | 149 | 16 |
-| separate predictor step size, predictor learning rate 1 times 1e-4 | 200 | 132 | 161 | 159 | <u>138</u> | 64 |
+| separate predictor step size, predictor learning rate 1 times 1e-4 | 200 | 132 | 161 | 159 | 138 | 64 |
 | separate predictor step size, predictor learning rate 0.25 times 1e-4 | 140 | 137 |  |  |  | 64 (largest of the grid) |
-| separate predictor step size, predictor learning rate 4 times 1e-4 | 177 | 241 | 157 | <u>151</u> | 168 | 1024 |
+| separate predictor step size, predictor learning rate 4 times 1e-4 | 177 | 241 | 157 | 151 | 168 | 1024 |
 | fixed scale | 2,233 | 1,246 |  |  |  | 64 (largest of the grid) |
 | scheduled last layer on fixed features, decay 0.5 | 1,793 | 2,014 |  |  |  | 0.5 |
 | even start with no divisor | 4,706 | 5,120 |  |  |  | 0.5 |
@@ -255,7 +255,7 @@ Define $M$ as in the section Measures; the cells give it in thousands of steps. 
 | even start | 4,711 | 4,124 |  |  |  | 1 |
 | scheduled last layer on fixed features, decay 1 | 5,126 | 5,376 |  |  |  | 0.0625 |
 
-Best weight for $M$ at an end of the grid: control (64, the largest); fast last layer inside the rollout, step size 0.1 of the exact fit (4096, the largest); error length as the bonus (64, the largest); separate predictor step size, predictor learning rate 0.25 times 1e-4 (64, the largest); fixed scale (64, the largest). Larger or smaller weights must be tried on that side before anything is concluded from these rows (the edge rule of `program.md`).
+Best weight for $M$ at an end of the grid: control (64, the largest); fast last layer inside the rollout, step size 0.1 of the exact fit (4096, the largest); error length as the bonus (4096, the largest); separate predictor step size, predictor learning rate 0.25 times 1e-4 (64, the largest); fixed scale (64, the largest). Larger or smaller weights must be tried on that side before anything is concluded from these rows (the edge rule of `program.md`).
 
 ## Training curves
 
@@ -400,7 +400,7 @@ By the 95% interval of the difference in $W$ from the control (section Measures,
 
 By the 95% interval of the difference in $M$ from the control (section Measures, item 9), on the development seeds. After each name: the difference in $M$ and its interval, in thousands of steps; a negative difference means the goal was first reached earlier than under the control.
 
-- **Ahead of the control on discovery** (interval entirely below zero): fast last layer inside the rollout, step size 0.1 of the exact fit (-140 [-249, -57.1]); fast last layer inside the rollout, step size 0.3 of the exact fit (-122 [-242, -36.1]); error length as the bonus (-101 [-223, -13.3]).
+- **Ahead of the control on discovery** (interval entirely below zero): fast last layer inside the rollout, step size 0.1 of the exact fit (-140 [-249, -57.1]); error length as the bonus (-125 [-229, -55.4]); fast last layer inside the rollout, step size 0.3 of the exact fit (-122 [-242, -36.1]).
 - **Within the interval** (it contains zero): fast last layer inside the rollout, step size 1 of the exact fit (-75.6 [-195, +13.9]); separate predictor step size, predictor learning rate 1 times 1e-4 (-57.7 [-131, +1.86]); separate predictor step size, predictor learning rate 0.25 times 1e-4 (-52.4 [-193, +71]); separate predictor step size, predictor learning rate 4 times 1e-4 (-38.5 [-177, +72.7]).
 - **Behind the control on discovery** (interval entirely above zero): fixed scale (+1,057 [+406, +2,132]); scheduled last layer on fixed features, decay 0.5 (+1,533 [+434, +2,866]); even start with no divisor (+2,553 [+1,119, +4,133]); scheduled last layer on fixed features, decay 0.75 (+2,781 [+1,321, +4,432]); even start (+3,540 [+1,868, +5,355]); scheduled last layer on fixed features, decay 1 (+4,272 [+2,564, +5,971]).
 - **Not compared yet** (unit not complete): none.

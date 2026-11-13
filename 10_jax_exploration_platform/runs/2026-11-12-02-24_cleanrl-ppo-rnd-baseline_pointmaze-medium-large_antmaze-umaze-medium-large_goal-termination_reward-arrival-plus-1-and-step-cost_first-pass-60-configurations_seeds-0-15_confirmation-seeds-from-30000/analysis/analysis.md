@@ -1,18 +1,18 @@
 # CleanRL PPO-RND baseline on PointMaze: development sweeps and confirmation
 
-Generated 2026-11-12 16:22 PT; times are Pacific, converted from machines running Eastern. Run folder: `2026-11-12-02-24_cleanrl-ppo-rnd-baseline_pointmaze-medium-large_antmaze-umaze-medium-large_goal-termination_reward-arrival-plus-1-and-step-cost_first-pass-60-configurations_seeds-0-15_confirmation-seeds-from-30000`.
+Generated 2026-11-12 16:27 PT; times are Pacific, converted from machines running Eastern. Run folder: `2026-11-12-02-24_cleanrl-ppo-rnd-baseline_pointmaze-medium-large_antmaze-umaze-medium-large_goal-termination_reward-arrival-plus-1-and-step-cost_first-pass-60-configurations_seeds-0-15_confirmation-seeds-from-30000`.
 
 ## Contents
 
 | section | first written | last changed | status |
 |---|---|---|---|
 | [Measures](#measures) | 2026-11-12 10:40 PT | 2026-11-12 16:14 PT | unread |
-| [Records read](#records-read) | 2026-11-12 10:40 PT | 2026-11-12 16:22 PT | unread |
+| [Records read](#records-read) | 2026-11-12 10:40 PT | 2026-11-12 16:27 PT | unread |
 | [Configurations trained more than once](#configurations-trained-more-than-once) | 2026-11-12 14:20 PT | 2026-11-12 16:22 PT | unread |
 | [Development sweeps](#development-sweeps) | 2026-11-12 10:40 PT | 2026-11-12 16:22 PT | unread |
 | [Budget](#budget) | 2026-11-12 10:40 PT | 2026-11-12 16:14 PT | unread |
 | [Training curves](#training-curves) | 2026-11-12 10:40 PT | 2026-11-12 16:14 PT | unread |
-| [Comparison with the baseline on the confirmation seeds](#comparison-with-the-baseline-on-the-confirmation-seeds) | 2026-11-12 13:06 PT | 2026-11-12 16:22 PT | unread |
+| [Comparison with the baseline on the confirmation seeds](#comparison-with-the-baseline-on-the-confirmation-seeds) | 2026-11-12 13:06 PT | 2026-11-12 16:27 PT | unread |
 | [Final level against the training length](#final-level-against-the-training-length) | 2026-11-12 10:40 PT | 2026-11-12 16:22 PT | unread |
 | [Decline check](#decline-check) | 2026-11-12 10:40 PT | 2026-11-12 16:14 PT | unread |
 
@@ -66,7 +66,7 @@ Standard errors are over the $K$ policies. Measures 4 and 6 to 9 are reported be
 | 16 | PointMaze Large | step cost | cleanrl ppo rnd at cleanrl defaults | 4 | 256 | 33,554,432 | 33,554,432 | complete |
 | 17 | PointMaze Large | step cost | CleanRL PPO-RND | 4 | 256 | 33,554,432 | 33,554,432 | complete |
 | 18 | PointMaze Large | step cost | CleanRL PPO-RND | 4 | 256 | 33,554,432 | 33,554,432 | complete |
-| 19 | PointMaze Large | step cost | CleanRL PPO-RND | 4 | 256 | 28,049,408 | 33,554,432 | unfinished |
+| 19 | PointMaze Large | step cost | CleanRL PPO-RND | 4 | 256 | 29,884,416 | 33,554,432 | unfinished |
 | 20 | PointMaze Large | step cost | CleanRL PPO-RND | 4 | 256 | 33,554,432 | 33,554,432 | complete |
 | 21 | PointMaze Large | step cost | ppo without a bonus | 4 | 256 | 33,554,432 | 33,554,432 | complete |
 | 22 | PointMaze Large | step cost | ppo without a bonus | 4 | 256 | 33,554,432 | 33,554,432 | complete |
@@ -1397,7 +1397,7 @@ The measures reported beside $W$ and $L$, same rows:
 
 Not at this step count yet:
 
-- CleanRL PPO-RND, intrinsic weight 4, learning rate 0.002, entropy coefficient 0.01: 28,049,408 steps so far.
+- CleanRL PPO-RND, intrinsic weight 4, learning rate 0.002, entropy coefficient 0.01: 29,884,416 steps so far.
 
 ### Discovery: all environments
 
