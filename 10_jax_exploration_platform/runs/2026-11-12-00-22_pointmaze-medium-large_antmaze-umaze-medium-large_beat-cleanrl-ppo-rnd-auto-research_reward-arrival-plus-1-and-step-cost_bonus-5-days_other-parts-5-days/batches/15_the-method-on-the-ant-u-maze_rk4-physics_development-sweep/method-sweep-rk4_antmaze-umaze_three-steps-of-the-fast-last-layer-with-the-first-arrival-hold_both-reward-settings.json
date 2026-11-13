@@ -1,0 +1,476 @@
+{
+  "study": "cleanrl-ppo-rnd-baseline-antmaze",
+  "bonus": "rnd_next_state",
+  "steps_per_policy": 134217728,
+  "windows_per_unit": 256,
+  "seeds": {
+    "first": 0,
+    "count": 16
+  },
+  "configuration_files": {
+    "antmaze": "configs/experiments/antmaze_umaze_warp-physics_rk4_time-step-0.01_frame-skip-5_fault-guard-30-metres-and-100-radians-per-second_cleanrl-ppo-rnd_goal-termination_reward-arrival-plus-one_example_steps-204800.toml"
+  },
+  "environments": [
+    "antmaze-umaze"
+  ],
+  "minimum_card_memory_mb": 14000,
+  "phase": "method-sweep-rk4",
+  "sweeps": [
+    {
+      "method": "first-arrival-hold-with-16-environments-per-policy",
+      "environments_per_policy": {
+        "antmaze": 16
+      },
+      "policies_per_unit": 144,
+      "workload": {
+        "antmaze": "antmaze-umaze_environments-per-policy-16_update-epoch-minibatch_bonus-rnd-next-state_physics-warp_integrator-rk4_time-step-0.01_frame-skip-5"
+      },
+      "cells": {
+        "kind": "list",
+        "cells": [
+          {
+            "learning_rate": 0.0001,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 0.0625,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.0001,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 1.0,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.0001,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 16.0,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.0003,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 0.0625,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.0003,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 1.0,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.0003,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 16.0,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.01,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 0.0625,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.01,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 1.0,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.01,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 16.0,
+            "clip_coefficient": 0.1
+          }
+        ]
+      },
+      "extra_options": [
+        "--bonus-options",
+        "reward_divisor=held_after_first_arrival"
+      ],
+      "reward_settings": [
+        "arrival_plus_one"
+      ]
+    },
+    {
+      "method": "fast-step-0-point-03-with-hold-with-16-environments-per-policy",
+      "environments_per_policy": {
+        "antmaze": 16
+      },
+      "policies_per_unit": 144,
+      "workload": {
+        "antmaze": "antmaze-umaze_environments-per-policy-16_update-epoch-minibatch_bonus-rnd-next-state_physics-warp_integrator-rk4_time-step-0.01_frame-skip-5"
+      },
+      "cells": {
+        "kind": "list",
+        "cells": [
+          {
+            "learning_rate": 0.0001,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 0.0625,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.0001,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 1.0,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.0001,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 16.0,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.0003,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 0.0625,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.0003,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 1.0,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.0003,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 16.0,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.01,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 0.0625,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.01,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 1.0,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.01,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 16.0,
+            "clip_coefficient": 0.1
+          }
+        ]
+      },
+      "extra_options": [
+        "--bonus-options",
+        "fast_last_layer_step=0.03,reward_divisor=held_after_first_arrival"
+      ],
+      "reward_settings": [
+        "arrival_plus_one"
+      ]
+    },
+    {
+      "method": "fast-step-0-point-1-with-hold-with-16-environments-per-policy",
+      "environments_per_policy": {
+        "antmaze": 16
+      },
+      "policies_per_unit": 144,
+      "workload": {
+        "antmaze": "antmaze-umaze_environments-per-policy-16_update-epoch-minibatch_bonus-rnd-next-state_physics-warp_integrator-rk4_time-step-0.01_frame-skip-5"
+      },
+      "cells": {
+        "kind": "list",
+        "cells": [
+          {
+            "learning_rate": 0.0001,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 0.0625,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.0001,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 1.0,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.0001,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 16.0,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.0003,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 0.0625,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.0003,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 1.0,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.0003,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 16.0,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.01,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 0.0625,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.01,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 1.0,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.01,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 16.0,
+            "clip_coefficient": 0.1
+          }
+        ]
+      },
+      "extra_options": [
+        "--bonus-options",
+        "fast_last_layer_step=0.1,reward_divisor=held_after_first_arrival"
+      ],
+      "reward_settings": [
+        "arrival_plus_one"
+      ]
+    },
+    {
+      "method": "first-arrival-hold-with-16-environments-per-policy",
+      "environments_per_policy": {
+        "antmaze": 16
+      },
+      "policies_per_unit": 144,
+      "workload": {
+        "antmaze": "antmaze-umaze_environments-per-policy-16_update-epoch-minibatch_bonus-rnd-next-state_physics-warp_integrator-rk4_time-step-0.01_frame-skip-5"
+      },
+      "cells": {
+        "kind": "list",
+        "cells": [
+          {
+            "learning_rate": 0.0001,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 0.0625,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.0001,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 1.0,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.0001,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 16.0,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.0003,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 0.0625,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.0003,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 1.0,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.0003,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 16.0,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.01,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 0.0625,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.01,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 1.0,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.01,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 16.0,
+            "clip_coefficient": 0.1
+          }
+        ]
+      },
+      "extra_options": [
+        "--bonus-options",
+        "reward_divisor=held_after_first_arrival"
+      ],
+      "reward_settings": [
+        "step_cost"
+      ]
+    },
+    {
+      "method": "fast-step-0-point-03-with-hold-with-16-environments-per-policy",
+      "environments_per_policy": {
+        "antmaze": 16
+      },
+      "policies_per_unit": 144,
+      "workload": {
+        "antmaze": "antmaze-umaze_environments-per-policy-16_update-epoch-minibatch_bonus-rnd-next-state_physics-warp_integrator-rk4_time-step-0.01_frame-skip-5"
+      },
+      "cells": {
+        "kind": "list",
+        "cells": [
+          {
+            "learning_rate": 0.0001,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 0.0625,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.0001,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 1.0,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.0001,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 16.0,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.0003,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 0.0625,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.0003,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 1.0,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.0003,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 16.0,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.01,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 0.0625,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.01,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 1.0,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.01,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 16.0,
+            "clip_coefficient": 0.1
+          }
+        ]
+      },
+      "extra_options": [
+        "--bonus-options",
+        "fast_last_layer_step=0.03,reward_divisor=held_after_first_arrival"
+      ],
+      "reward_settings": [
+        "step_cost"
+      ]
+    },
+    {
+      "method": "fast-step-0-point-1-with-hold-with-16-environments-per-policy",
+      "environments_per_policy": {
+        "antmaze": 16
+      },
+      "policies_per_unit": 144,
+      "workload": {
+        "antmaze": "antmaze-umaze_environments-per-policy-16_update-epoch-minibatch_bonus-rnd-next-state_physics-warp_integrator-rk4_time-step-0.01_frame-skip-5"
+      },
+      "cells": {
+        "kind": "list",
+        "cells": [
+          {
+            "learning_rate": 0.0001,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 0.0625,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.0001,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 1.0,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.0001,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 16.0,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.0003,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 0.0625,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.0003,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 1.0,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.0003,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 16.0,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.01,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 0.0625,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.01,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 1.0,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.01,
+            "entropy_coefficient": 0.001,
+            "intrinsic_weight": 16.0,
+            "clip_coefficient": 0.1
+          }
+        ]
+      },
+      "extra_options": [
+        "--bonus-options",
+        "fast_last_layer_step=0.1,reward_divisor=held_after_first_arrival"
+      ],
+      "reward_settings": [
+        "step_cost"
+      ]
+    }
+  ]
+}
