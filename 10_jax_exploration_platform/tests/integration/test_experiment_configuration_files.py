@@ -36,7 +36,14 @@ ANTMAZE_STABLE_PHYSICS_MAPS = {
         "cleanrl-ppo-rnd_goal-termination_reward-arrival-plus-one_example_steps-204800.toml")
     for name in ("medium", "large")}
 STABLE_PHYSICS_FILES = (ANTMAZE_STABLE_PHYSICS_EXAMPLE, *ANTMAZE_STABLE_PHYSICS_MAPS.values())
-EXAMPLES = (POINTMAZE_EXAMPLE, ANTMAZE_EXAMPLE, ANTMAZE_WARP_EXAMPLE, *STABLE_PHYSICS_FILES)
+# The physics of the AntMaze work from 2026-11-13 (user decision): each stable-physics file with the RK4
+# integrator at a time step of 0.01 s and 5 physics steps per environment step, and nothing else changed.
+RK4_PHYSICS_MAPS = {
+    name: CONFIGURATIONS / (
+        f"antmaze_{name}_warp-physics_rk4_time-step-0.01_frame-skip-5_fault-guard-30-metres-and-100-radians-per-second_"
+        "cleanrl-ppo-rnd_goal-termination_reward-arrival-plus-one_example_steps-204800.toml")
+    for name in ("umaze", "medium", "large")}
+EXAMPLES = (POINTMAZE_EXAMPLE, ANTMAZE_EXAMPLE, ANTMAZE_WARP_EXAMPLE, *STABLE_PHYSICS_FILES, *RK4_PHYSICS_MAPS.values())
 # The number of trainer fields every recorded file must hold (the fields of PPOConfig).
 FIELDS = 58
 
@@ -158,10 +165,10 @@ class RecordedExperimentFiles(unittest.TestCase):
         AntMaze baseline uses (one per map); the U-maze one differs from the Warp example in exactly four
         environment values."""
         ant_files = [path for path in CONFIGURATIONS.glob("antmaze_*.toml")]
-        self.assertEqual(len(ant_files), 6)
+        self.assertEqual(len(ant_files), 9)
         for path in ant_files:
             environment = read_experiment_configuration(path)["environment"]
-            if path in STABLE_PHYSICS_FILES:
+            if path in STABLE_PHYSICS_FILES or path in RK4_PHYSICS_MAPS.values():
                 continue
             self.assertEqual((environment["physics_time_step"], environment["frame_skip"],
                               environment["fault_torso_speed"], environment["fault_torso_angular_speed"]),
@@ -203,6 +210,24 @@ class RecordedExperimentFiles(unittest.TestCase):
                 'environment = "antmaze-large"', 'environment = "antmaze-medium"'))
             with self.assertRaisesRegex(ValueError, "recorded maze map disagree"):
                 read_experiment_configuration(path)
+
+    def test_the_rk4_files_are_the_stable_physics_files_with_three_physics_values_changed(self):
+        """Each RK4 file holds its stable-physics file's learner, runtime, bonus and map values, and in [environment]
+        only the integrator (RK4), the time step (0.01 s) and the physics steps per environment step (5) differ."""
+        for name, path in RK4_PHYSICS_MAPS.items():
+            stable_path = ANTMAZE_STABLE_PHYSICS_EXAMPLE if name == "umaze" else ANTMAZE_STABLE_PHYSICS_MAPS[name]
+            stable, rk4 = map(read_experiment_configuration, (stable_path, path))
+            # before: implicitfast, 0.005 s x 10 ; after: RK4, 0.01 s x 5
+            self.assertEqual(rk4["environment"], {**stable["environment"], "integrator": "RK4",
+                                                  "physics_time_step": 0.01, "frame_skip": 5})
+            self.assertEqual((rk4["trainer"], rk4["runtime"], rk4["bonus_options"]),
+                             (stable["trainer"], stable["runtime"], stable["bonus_options"]))
+            # one environment step still lasts 0.05 s, and the guard stays on
+            self.assertAlmostEqual(rk4["environment"]["physics_time_step"] * rk4["environment"]["frame_skip"], 0.05,
+                                   places=12)
+            self.assertEqual((rk4["environment"]["fault_torso_speed"], rk4["environment"]["fault_torso_angular_speed"]),
+                             (30.0, 100.0))
+            self.assertEqual(argument_defaults(rk4)["physics"], "warp")
 
     def test_named_reward_settings_fix_the_scale_and_offset(self):
         """A file's reward scale and offset must be the ones its named reward setting means."""
