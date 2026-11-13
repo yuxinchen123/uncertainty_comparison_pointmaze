@@ -60,3 +60,13 @@ Times are Pacific.
   start was 2026-11-13 20:39 PT. The earlier monitor job used 130 MB at most (`sacct` MaxRSS of 6887756). Changes
   to the waiting job (id from the monitor ledger): partitions `cpu,nolim` (18:41 PT), memory 2 GB (18:47 PT). The
   submission script now asks for 2 GiB for a monitor job. At 18:50 PT the job was still waiting.
+- 2026-11-12 19:07 PT: six worker jobs of this folder waited (four since 18:45 PT, reason `Priority`): they asked
+  for RTX 4000 Ada cards, and every RTX 4000 Ada card with free processors was in use (most by this folder's own
+  workers), while RTX 2080 Ti cards were free on ai03, ai06 and lynx10. The planner had also pinned one job to
+  affogato13, which had 2 free cards but only 2 idle processors (a full node). Changed with `scontrol update`
+  (ids checked against this folder's ledgers; the jobs keep their age): 6894925 to 6894928 and 6895892 now ask for
+  one RTX 2080 Ti on any node; 6895891 is pinned to lynx10 with an RTX 2080 Ti. Their submission records carry the
+  change. At 19:09 PT they were still waiting on `Priority`. The account had 35 of its 40 cards of the `gpu`
+  partition in use over all sessions, so at most 5 more can run at once.
+  Two planner faults to correct: it pins jobs to nodes whose free processors are only the 2 that a full node
+  shows, and its unpinned jobs name one card type instead of leaving the choice between the allowed types open.
