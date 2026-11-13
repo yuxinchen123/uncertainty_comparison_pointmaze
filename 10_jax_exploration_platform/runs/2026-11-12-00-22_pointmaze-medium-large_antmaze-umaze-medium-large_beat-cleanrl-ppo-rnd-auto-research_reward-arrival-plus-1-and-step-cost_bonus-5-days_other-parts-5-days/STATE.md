@@ -1316,6 +1316,20 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   entropy 0.03, weight 16) 57.3 against RND (6e-3, 0.01, weight 64) 129.8 thousand steps, −72.5 [−84.3, −61.1]
   (first block −63). Ahead on both blocks. Large with the step cost: RND's unit is complete, the fast last layer's
   at 152 of 256 windows (UVA, job 6908671).
+- 2026-11-13 12:06 PT: **discovery second block, PointMaze Large with the step cost:** fast last layer 58.2 against
+  RND 120.9 thousand steps, −62.7 [−74.5, −51.2] (final: all 256 policies have arrived; the unit's remaining
+  windows cannot change it; first block −61). **On discovery the fast last layer is ahead of RND on both blocks in
+  three PointMaze cases and on the second block in the fourth:**
+
+  | case | first block, thousand steps [95%] | second block, thousand steps [95%] |
+  |---|---|---|
+  | Medium, reward 1 on arrival | −5.0 [−8.3, −2.4] | −3.8 [−7.2, −1.0] |
+  | Medium, step cost | −1.0 [−2.3, +0.3] (level) | −1.8 [−3.1, −0.4] |
+  | Large, reward 1 on arrival | −63 [−75, −52] | −72.5 [−84.3, −61.1] |
+  | Large, step cost | −61 [−73, −50] | −62.7 [−74.5, −51.2] |
+
+  Each side at its own best configuration for the first-goal time. Prediction of batch 9's addendum: the three
+  cases held; Medium with the step cost was predicted level and is ahead on this block.
 
 ## Next
 
