@@ -884,6 +884,33 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   Why now: on the ant U-maze RND finds the goal in every policy (after 0.3 to 2.6 million steps) and does not keep
   it (whole-curve mean 0.04 to 0.05, final level 0.05 to 0.065, the same for intrinsic weights 1 to 64), which is
   where a bonus that falls away after the first arrival should matter most.
+- 2026-11-13 03:10 PT: **correction: on the second validation block neither hold is ahead of RND on PointMaze Large
+  with reward 1 on arrival.** Seeds 20000 to 20255, learning rate 2e-3, weight 2 for all three, fixed on the first
+  block:
+
+  | arm | whole-curve mean | difference from RND (0.8842) [95%] | final level against RND |
+  |---|---|---|---|
+  | divisor held from the first arrival | 0.8839 | −0.0003 [−0.0067, +0.0059] | +0.0048 [+0.0038, +0.0059] |
+  | divisor held after 1/16 of the run | 0.8819 | −0.0023 [−0.0096, +0.0042] | +0.0042 [+0.0028, +0.0056] |
+
+  The first block had +0.0094 and +0.0095 with intervals above zero. Between the blocks RND's mean rose by 0.006
+  and the holds' fell by 0.004 to 0.006, each within about two standard errors. By the rule of this study (a
+  best-of-several arm counts only after a second block) the lead on this case does not stand: **the holds are
+  ahead of RND on the two PointMaze Medium cases (second block) and level on Large with reward 1 on arrival; Large
+  with the step cost has the first block only** (fixed hold +0.0095 [+0.0057, +0.0137]; first-arrival hold +0.0074
+  [+0.0020, +0.0128] with two of three units). The final level is ahead in every reading. My reading: on Large the
+  hold's gain is a higher final level, worth about 0.003 to 0.005 of whole-curve mean, which 256 seeds cannot
+  resolve; a larger gain there has to come from finding the goal sooner. Second block on Large with the step cost
+  queued at 03:08 PT: RND (2e-3, weight 4), the fixed hold (2e-3, weight 8), the first-arrival hold (3e-3, weight
+  8; its third first-block unit, 2e-3 with weight 4, was at 183 of 256 windows and is added if it turns out best).
+- 2026-11-13 03:10 PT: **batch 10, first reading: PointMaze Medium with reward 1 on arrival, learning rate 6e-3,
+  weight 4, first validation block.** The fast last layer with the first-arrival hold against the hold alone on
+  the same seeds: whole-curve mean 0.8424 against 0.9435 (−0.101 [−0.115, −0.089]); final level 0.975 against
+  1.000; first-goal time 15.7 against 18.5 thousand steps (−2.8 [−5.4, −0.3]). Against RND's best on the block:
+  −0.093 on the whole-curve mean, −9.3 [−12.6, −6.2] thousand steps on the first-goal time. Prediction 3 holds for
+  this case: the fast last layer finds the goal sooner and costs return after it. As written in the batch's ideas
+  file, the next code change is a fast last layer that stops at each policy's first arrival
+  (`fast_last_layer_until_first_arrival`); a background worker is adding and testing it (started 03:09 PT).
 
 ## Next
 
@@ -922,11 +949,11 @@ Rewritten 2026-11-13 03:02 PT.
 | 1 | fixed scale; even start; even start with no divisor | far behind; closed |
 | 1 | scheduled last layer on the random body's features (decay 0.5, 0.75, 1) | far behind; the fit is not local and the input statistics move; local features are in batch 2 |
 | 2 | wider input clip; input statistics kept from the random-action rollouts; local features as the input of RND; scheduled last layer on local features | see `batches/02_.../summary.md`; none went further |
-| 2, 5, 7 | divisor held after a part of the run (1/16) | ahead of RND on the whole-curve mean in all four PointMaze cases on the validation seeds (+0.006 to +0.011); close to public practice (`literature/novelty.md`) |
+| 2, 5, 7 | divisor held after a part of the run (1/16) | ahead of RND on the whole-curve mean on the two Medium cases (second block: +0.011, +0.006); level on Large with reward 1 on arrival on the second block (−0.002; +0.0095 on the first); Large with the step cost +0.0095 on the first block only; final level ahead everywhere; close to public practice (`literature/novelty.md`) |
 | 2, 5, 6 | slower predictor, or predictor at half speed, with the held divisor | ahead in some cases, level in others; not better than the held divisor alone |
 | 3 | all three parts (fast last layer, slower predictor, held divisor) | ahead on Large with reward 1 on arrival (+0.0137), behind on Medium with reward 1 on arrival (−0.029), level on Large with the step cost |
 | 8 | error length with the held divisor | behind RND at every weight; closed for the whole-curve mean |
-| 8 | divisor held from each policy's first arrival | level with the fixed hold, nothing to set; ahead of RND on both Medium cases (second block) and on Large with reward 1 on arrival (first block); the rest is running |
+| 8 | divisor held from each policy's first arrival | level with the fixed hold, nothing to set; ahead of RND on both Medium cases (second block: +0.0095, +0.0065); level on Large with reward 1 on arrival on the second block (−0.0003; +0.0094 on the first); Large with the step cost +0.0074 on the first block, second block running |
 | 3, 9 | fast last layer, for discovery | first-goal time ahead of RND in three PointMaze cases (−63, −61, −5.0 thousand steps), level on Medium with the step cost; its whole-curve mean is far behind at those configurations |
 | 10 | fast last layer with the first-arrival hold (PointMaze); first-arrival hold, fast last layer, and both on the ant U-maze | running since 2026-11-13 02:58 PT |
 

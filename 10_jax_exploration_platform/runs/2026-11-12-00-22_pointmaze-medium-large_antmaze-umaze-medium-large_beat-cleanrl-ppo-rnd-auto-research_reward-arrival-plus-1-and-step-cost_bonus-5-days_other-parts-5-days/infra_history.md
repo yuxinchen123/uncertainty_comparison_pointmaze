@@ -145,3 +145,7 @@ Times are Pacific.
   option must not be waiting on Gilbreth when job 12352113 finishes its own unit (about 04:40 PT), because that
   job would take it and fail it; a unit still waiting there at about 04:20 PT is taken back to UVA
   (`remote_fleet.py take-back`, after lowering the limit).
+- 2026-11-13 03:08 PT: three units of the second validation block on PointMaze Large with the step cost were built
+  and handed to Gilbreth (limit 7), where seven jobs of this folder were already waiting and two were running;
+  no new job was needed. Two of the three are units of old options, which the old-copy job 12352113 could also
+  run; the third (first-arrival hold) is of the new option and falls under the watch item above.
