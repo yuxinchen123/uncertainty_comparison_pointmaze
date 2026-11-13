@@ -124,7 +124,7 @@ def test_cases_of_a_study_description_and_the_selection_of_units():
     assert len(case_sweeps.select(specifications, ['development-at-the-budget'], 'm', 'pointmaze-medium', 'step_cost')) == 2
     with pytest.raises(ValueError, match="development_sweeps: unknown keys \\['colour'\\], missing keys \\['baseline'\\]"):
         case_sweeps.check_keys({'colour': 1, 'study_description': 's', 'method_names': {}}, case_sweeps.DEVELOPMENT_KEYS,
-                               case_sweeps.DEVELOPMENT_KEYS, 'development_sweeps')
+                               case_sweeps.DEVELOPMENT_KEYS - {'validation'}, 'development_sweeps')
 
 
 def made_up_sweeps(tmp_path):
@@ -151,11 +151,20 @@ def made_up_sweeps(tmp_path):
         'title': 'Made-up sweeps', 'development_sweeps': {
             'study_description': 'sweeps.json', 'method_names': {'idea-a': 'idea a', 'idea-b': 'idea b'},
             'baseline': {'run_folder': 'baseline-run', 'method': 'cleanrl-ppo-rnd', 'name': 'CleanRL PPO-RND',
-                         'phases': ['development-at-the-budget*'], 'confirmation_phases': ['confirmation']}}}))
+                         'phases': ['development-at-the-budget*'], 'confirmation_phases': ['confirmation']},
+            'validation': {'phase': 'validation-block', 'control': 'control',
+                           'method_names': {'control': 'control', 'idea-a': 'idea a'}}}}))
     # The baseline in the first case only: two units of two phases. W 0.8 and 0.7 (arrivals at steps 408 and 608),
     # then 0.4 twice; in the second unit 0.6 twice. Its best configuration for both metrics is the first one.
     add_unit(baseline, 'development-at-the-budget', 'cleanrl-ppo-rnd', ((1e-4, 1.0), (1e-4, 4.0)), [4, 6, 12, 12])
     add_unit(baseline, 'development-at-the-budget-higher-learning-rates', 'cleanrl-ppo-rnd', ((3e-4, 1.0),), [8, 8])
+    # Picked configurations of the first case on two validation seeds: the control (W 0.8 and 0.7; first arrivals at
+    # steps 408 and 608) and idea a at two configurations (W 0.9 twice with arrivals at step 208; W 1.0 twice with
+    # arrivals at step 8).
+    seeds = (10000, 10001)
+    add_unit(run, 'validation-block', 'control', ((1e-4, 1.0),), [4, 6], seeds=seeds)
+    add_unit(run, 'validation-block', 'idea-a', ((3e-4, 1.0),), [2, 2], seeds=seeds, tag='_first')
+    add_unit(run, 'validation-block', 'idea-a', ((3e-4, 4.0),), [0, 0], seeds=seeds, tag='_second')
     # A unit of another method and a unit of another length are not the baseline's sweep.
     add_unit(baseline, 'development-at-the-budget', 'another-method', ((1e-4, 1.0),), [0, 0])
     # The baseline's first configuration on two confirmation seeds: W 0.9 twice, first arrival at step 208.
@@ -204,6 +213,20 @@ def test_a_made_up_batch_of_development_sweeps_end_to_end(tmp_path):
     assert '| method and its other settings | weight 1 | weight 4 |' in grids
     assert '| idea a, learning rate 0.0001 | 0.500 | <u>0.750</u> |' in grids and '| idea a, learning rate 0.0003 | **0.900** | 0.500 |' in grids
     assert '| idea a, learning rate 0.0003 | **0.208** | 1 |' in grids.split('#### Mean capped first-goal time on every configuration')[1]
+    # The picked configurations of the case on the validation seeds: every configuration, then best against best for
+    # both metrics, the control's only configuration against idea a's better one (weight 4: W 1.0, arrival at step 8).
+    picked = first.split('#### On the validation seeds: picked configurations of this case\n')[1]
+    assert 'on 2 seeds, from 10000 to 10001' in picked and 'picked as the leading ones of each side\'s sweep' in picked
+    assert '| idea a | intrinsic weight 4, learning rate 0.0003 | **1.000** ± 0.000 | 1.000 ± 0.000 | **0.008** ± 0 | 2 of 2 |' in picked
+    assert '| control | intrinsic weight 1, learning rate 0.0001 | 0.750 ± 0.050 | 1.000 ± 0.000 | 0.508 ± 0.1 | 2 of 2 |' in picked
+    whole_best, discovery_best = picked.split('Best against best for $W$ (the highest is the best):')[1].split(
+        'Best against best for $M$ (the smallest is the best):')
+    assert ('| idea a | intrinsic weight 4, learning rate 0.0003 (best of 2) | **1.000** ± 0.000 | +0.250 [+0.200, +0.300] '
+            '| 1.000 ± 0.000 | +0.000 [+0.000, +0.000] | 2 |') in whole_best
+    assert '| control | intrinsic weight 1, learning rate 0.0001 (the only configuration read) | <u>0.750</u> ± 0.050 | control |' in whole_best
+    assert '| idea a | intrinsic weight 4, learning rate 0.0003 (best of 2) | **0.008** ± 0 | -0.5 [-0.6, -0.4] | 2 of 2 |' in discovery_best
+    assert 'at an end of its grid' not in picked and '##### Units' in picked
+    assert '#### On the validation seeds' not in section.split('### PointMaze Large, step cost\n')[1]
 
     # Second case: the step cost, no baseline unit. A policy that arrives from the first window on has the return
     # (1 - 40) / 400 = -0.0975 throughout; the other has -1 in the first half: W -0.0975 and -0.54875.
@@ -248,12 +271,15 @@ def test_the_discovery_checks_on_the_validation_seeds_and_on_the_development_see
     # The validation seeds: every configuration, then best against best (208 twice against 408 and 608).
     validation = text.split('### On the validation seeds: the leading configurations for the first-goal time\n')[1].split('### On the development seeds')[0]
     assert 'on 2 seeds, from 10000 to 10001' in validation and 'Read at 2,000 environment steps per policy' in validation
-    assert '| control | intrinsic weight 1, learning rate 0.0001 | <u>0.508</u> ± 0.1 | 2 of 2 | <u>0.750</u> ± 0.050 | 1.000 |' in validation
-    assert '| control | intrinsic weight 1, learning rate 0.0003 | 0.808 ± 0 | 2 of 2 | 0.600 ± 0.000 | 1.000 |' in validation
-    assert '| the idea | intrinsic weight 4, learning rate 0.0001 | **0.208** ± 0 | 2 of 2 | **0.900** ± 0.000 | 1.000 |' in validation
+    assert '| control | intrinsic weight 1, learning rate 0.0001 | <u>0.750</u> ± 0.050 | 1.000 ± 0.000 | <u>0.508</u> ± 0.1 | 2 of 2 |' in validation
+    assert '| control | intrinsic weight 1, learning rate 0.0003 | 0.600 ± 0.000 | 1.000 ± 0.000 | 0.808 ± 0 | 2 of 2 |' in validation
+    assert '| the idea | intrinsic weight 4, learning rate 0.0001 | **0.900** ± 0.000 | 1.000 ± 0.000 | **0.208** ± 0 | 2 of 2 |' in validation
+    assert 'Best against best for $M$ (the smallest is the best):' in validation and 'Best against best for $W$' not in validation
     assert ('| the idea | intrinsic weight 4, learning rate 0.0001 (the only configuration read) | **0.208** ± 0 '
-            '| -0.3 [-0.4, -0.2] | 2 of 2 | **0.900** | 1.000 | no | 2 |') in validation
-    assert '| control | intrinsic weight 1, learning rate 0.0001 (best of 2) | <u>0.508</u> ± 0.1 | control | 2 of 2 |' in validation
+            '| -0.3 [-0.4, -0.2] | 2 of 2 | **0.900** | 1.000 | 2 |') in validation
+    assert ('| control | intrinsic weight 1, learning rate 0.0001 (best of 2) | <u>0.508</u> ± 0.1 | control | 2 of 2 '
+            '| <u>0.750</u> | 1.000 | 2 |') in validation
+    assert 'at an end of its grid' not in validation
     assert 'difference in $M$ from the control [95% interval], thousand steps' in validation
     assert 'Not complete, left out: the idea: 1 of 2 configurations read (1 of 2 units complete).' in validation
     assert '| 4 | the idea | PointMaze Medium, reward 1 on arrival | 1 | unfinished | 10 of 20 |' in validation
@@ -276,8 +302,21 @@ def test_the_discovery_checks_on_the_validation_seeds_and_on_the_development_see
     later = case_sweeps.discovery_section(run, 'made-up batch', block)
     assert ("CleanRL PPO-RND's best configuration here has no complete unit on the confirmation seeds (phases "
             '`confirmation-for-discovery`): the confirmation units of this case hold intrinsic weight 1, learning rate 0.0001.') in later
+    # The same units as a section of their own, for both metrics: the control's best for W is its first configuration.
+    own = case_sweeps.validation_section(run, 'made-up batch', {**block['validation'], 'environment': 'pointmaze-medium',
+                                                               'reward_setting': 'arrival_plus_one'})
+    assert own.startswith('## Validation seeds: each side at the best of all its configurations\n') and '### Units' in own
+    assert 'Best against best for $W$ (the highest is the best):' in own and 'Best against best for $M$' in own
+    assert '| control | intrinsic weight 1, learning rate 0.0001 (best of 2) | <u>0.750</u> ± 0.050 | control |' in own
+    with pytest.raises(ValueError, match="validation_of_configurations: unknown keys \\[\\], missing keys \\['environment', 'reward_setting'\\]"):
+        case_sweeps.validation_section(run, 'made-up batch', block['validation'])
     # With no complete unit a part says so and still lists its units; an unknown key of a block is refused.
     empty = case_sweeps.discovery_section(tmp_path / 'baseline-run', 'made-up batch', block)
-    assert 'No unit of the phase `discovery-validation` is complete yet.' in empty and 'No unit of these sweeps is complete yet.' in empty
+    assert 'The phase `discovery-validation` has no unit in this case.' in empty and 'No unit of these sweeps is complete yet.' in empty
+    # Units of the phase that have not finished: the part lists them and reads nothing.
+    late = tmp_path / 'late-run'
+    add_unit(late, 'discovery-validation', 'control', ((1e-4, 1.0),), [4, 6], seeds=seeds, complete=False)
+    assert 'No unit of the phase `discovery-validation` is complete yet.' in case_sweeps.discovery_section(
+        late, 'made-up batch', {key: value for key, value in block.items() if key != 'development'})
     with pytest.raises(ValueError, match="discovery: unknown keys \\['colour'\\]"):
         case_sweeps.discovery_section(run, 'made-up batch', {**block, 'colour': 'blue'})

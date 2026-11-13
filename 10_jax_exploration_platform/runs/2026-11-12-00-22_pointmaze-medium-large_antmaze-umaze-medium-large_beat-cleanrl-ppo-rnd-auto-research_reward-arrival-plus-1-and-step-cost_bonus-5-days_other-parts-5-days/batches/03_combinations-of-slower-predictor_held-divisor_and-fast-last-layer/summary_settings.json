@@ -62,5 +62,21 @@
       }
     }
   },
-  "predictions": "predictions_batch_03"
+  "predictions": "predictions_batch_03",
+  "validation_of_configurations": {
+    "environment": "pointmaze-large",
+    "reward_setting": "arrival_plus_one",
+    "phase": "validation-block",
+    "control": "control-cleanrl-ppo-rnd",
+    "method_names": {
+      "control-cleanrl-ppo-rnd": "control",
+      "predictor-own-step-size-0-point-25": "separate predictor step size, predictor learning rate 0.25 times 1e-4",
+      "predictor-own-step-size-1": "separate predictor step size, predictor learning rate 1 times 1e-4",
+      "divisor-held-after-one-sixteenth": "divisor held after one sixteenth of the run",
+      "divisor-held-after-one-quarter": "divisor held after one quarter of the run",
+      "slower-predictor-with-held-divisor": "slower predictor with held divisor (predictor learning rate 0.25 times 1e-4, divisor held after one sixteenth of the run)",
+      "three-parts-held-one-sixteenth": "fast last layer with slower predictor and held divisor, step 0.1 (divisor held after one sixteenth of the run)",
+      "three-parts-held-one-eighth": "fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1"
+    }
+  }
 }

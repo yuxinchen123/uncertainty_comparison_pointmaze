@@ -541,8 +541,21 @@ def test_the_validation_block_lists_each_method_and_weight_against_the_control_a
     monkeypatch.setattr(batch_summary, 'FEWEST_PAIRS', 2)
     run = made_up_screen(tmp_path)
     add_validation_block(run)
+    # The screen's control unit names its cells (learning rate 0.0001 at three weights). A unit of the phase that
+    # trains the control at another learning rate is then no unit of this block, though its weight is taken.
+    (run / 'specifications' / f'{unit_name(CONTROL)}.json').write_text(json.dumps({
+        'unit_id': unit_name(CONTROL), 'phase': 'batch-01-screen', 'method': CONTROL,
+        'cell_setting_names': ['learning_rate', 'int_coef'], 'cells': [[1e-4, 1.0], [1e-4, 16.0], [1e-4, 64.0]]}))
+    other = 'validation-block_pointmaze-large_control_other-learning-rate_seeds-10000-to-10003'
+    (run / 'specifications' / f'{other}.json').write_text(json.dumps({
+        'unit_id': other, 'phase': 'validation-block', 'method': CONTROL, 'environment': 'pointmaze-large',
+        'reward_setting': 'arrival_plus_one', 'cell_setting_names': ['learning_rate', 'int_coef'], 'cells': [[3e-4, 1.0]]}))
+    start = start_record(other, iterations=20, cells=((3e-4, 1.0),), seeds=(10000, 10001, 10002, 10003))
+    write_shard(run, [start] + goal_windows(start, [0, 0, 0, 0]))
     batch_summary.generate(run, BATCH)
     text = (run / 'batches' / BATCH / 'summary.md').read_text()
+    assert ("at settings other than the screen's, beside the intrinsic weight. This block compares at the screen's settings, "
+            'so they are not read here: control, intrinsic weight 1 (learning rate 0.0003).') in text
     # The screen still reads its own three complete units only.
     assert '3 of 14 units are complete.' in text
     block = text.split('## Validation block\n')[1].split('\n## ')[0]

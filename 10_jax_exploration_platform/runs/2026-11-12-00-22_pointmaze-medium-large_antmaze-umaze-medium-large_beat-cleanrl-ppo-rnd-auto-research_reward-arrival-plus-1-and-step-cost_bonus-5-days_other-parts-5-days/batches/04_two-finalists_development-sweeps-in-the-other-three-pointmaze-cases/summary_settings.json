@@ -16,6 +16,15 @@
       "confirmation_phases": [
         "confirmation"
       ]
+    },
+    "validation": {
+      "phase": "validation-block",
+      "control": "control-cleanrl-ppo-rnd",
+      "method_names": {
+        "control-cleanrl-ppo-rnd": "control (CleanRL PPO-RND)",
+        "three-parts-held-one-sixteenth": "fast last layer with slower predictor and held divisor, step 0.1",
+        "slower-predictor-with-held-divisor": "slower predictor with held divisor"
+      }
     }
   },
   "predictions": "predictions_batch_04"

@@ -47,7 +47,10 @@ The batch folder holds `summary_settings.json`:
   sweeps is not a screen: it leaves out `study_description`, `control` and `method_names`, and its summary holds
   the measures, this section and the predictions;
 - `discovery` (optional): discovery checks in one case, on the validation seeds and on the development seeds
-  (keys in `case_sweeps.py`).
+  (keys in `case_sweeps.py`);
+- `validation_of_configurations` (optional): every configuration of one phase on the validation seeds in one
+  case, each method's best against the control's best for both metrics (keys in `case_sweeps.py`). Unlike
+  `validation_block` it also counts units at other settings than the screen's.
 
 Through the test helper's Slurm job (numpy and plotting never run on a login node): see batch_summary_job.py.
 """
@@ -69,7 +72,7 @@ SUBMITTER = ('benchmark_runs/2026-11-12-00-17_pointmaze-antmaze_cleanrl-ppo-rnd_
              'screen-15-minutes-per-idea-per-card_h100-nvl_rtx-5080_rtx-a4500/infrastructure/submit_tests.sh')
 SETTING_KEYS = {'title', 'study_description', 'control', 'control_study_description', 'method_names',
                 'consistency_check', 'predictions', 'more_intrinsic_weights', 'validation_block',
-                'development_sweeps', 'discovery'}
+                'development_sweeps', 'discovery', 'validation_of_configurations'}
 REQUIRED_KEYS = {'title', 'study_description', 'control', 'method_names'}
 # What a batch without a screen needs: its sweeps are in `development_sweeps`.
 REQUIRED_WITHOUT_A_SCREEN = {'title', 'development_sweeps'}
@@ -941,19 +944,44 @@ def predictions_section(screen, ideas_text, module_name=None):
 
 # ---- validation block ---------------------------------------------------------------------------------------------
 
+def screen_other_settings(specifications, description):
+    """The values every setting but the intrinsic weight takes in the screen's units; None when no unit names its cells."""
+    # before: a screen unit with the cell names ['learning_rate', 'ent_coef', 'int_coef'] and the cells
+    #         [[0.002, 0.01, 1.0], [0.002, 0.01, 2.0]]; after: {'learning_rate': {0.002}, 'ent_coef': {0.01}}.
+    for specification in specifications:
+        if specification.get('phase') == description['phase'] and 'cells' in specification:
+            return {name: {cell[index] for cell in specification['cells']}
+                    for index, name in enumerate(specification['cell_setting_names']) if name != 'int_coef'}
+    return None
+
+
+def other_settings_words(specification, fixed):
+    """The settings of a unit's cells that the screen does not have, in words; empty when every cell is the screen's."""
+    # before: a unit with the cell [0.001, 0.01, 2.0] against a screen whose learning rate is 0.002
+    # after:  'learning rate 0.001'.
+    found = {}
+    for index, name in enumerate(specification['cell_setting_names']):
+        if name != 'int_coef' and name in fixed:
+            found.update({(name, cell[index]): None for cell in specification['cells'] if cell[index] not in fixed[name]})
+    return ', '.join(f"{records.SETTING_WORDS.get(name, name.replace('_', ' '))} {value:g}" for name, value in found)
+
+
 def validation_units(run_dir, description, block):
     """The validation block's complete units as {(method, intrinsic weight): configuration}, and what is left out.
 
-    Left out: the block's units that are not complete, in words, and the methods of the phase that the block does
-    not name (they belong to another batch).
+    Left out: the block's units that are not complete, in words; the methods of the phase that the block does not
+    name (they belong to another batch); and the units whose settings other than the intrinsic weight are not the
+    screen's (they belong to another reading: the block compares at the screen's settings).
     """
     # before: specifications of the block's phase for the control at the weights 1 and 2 (complete), for an idea
-    #         at the weight 2 (still training) and for a method of another batch, all in the screen's environment
+    #         at the weight 2 (still training), for a method of another batch, and for the control at another
+    #         learning rate, all in the screen's environment
     # after:  ({('control', 1.0): ..., ('control', 2.0): ...}, ['the idea, intrinsic weight 2: unfinished, ...'],
-    #          ['the method of another batch']).
-    groups, waiting, others = {}, [], []
-    for path in sorted((Path(run_dir) / 'specifications').glob('*.json')):
-        specification = json.loads(path.read_text())
+    #          ['the method of another batch'], ['control, intrinsic weight 2 (learning rate 0.001)']).
+    specifications = [json.loads(path.read_text()) for path in sorted((Path(run_dir) / 'specifications').glob('*.json'))]
+    fixed = screen_other_settings(specifications, description)
+    groups, waiting, others, elsewhere = {}, [], [], []
+    for specification in specifications:
         if (specification.get('phase') != block['phase']
                 or specification['environment'] not in description['environments']
                 or specification['reward_setting'] not in description['reward_settings']):
@@ -965,6 +993,10 @@ def validation_units(run_dir, description, block):
         name = block['method_names'][slug]
         position = specification['cell_setting_names'].index('int_coef')
         words = f"{name}, intrinsic weight {', '.join(weight_text(cell[position]) for cell in specification['cells'])}"
+        apart = other_settings_words(specification, fixed) if fixed is not None else ''
+        if apart:
+            elsewhere.append(f'{words} ({apart})')
+            continue
         shard = Path(run_dir) / 'data' / f"{specification['unit_id']}.jsonl"
         if not shard.exists():
             waiting.append(f'{words}: not started (no shard)')
@@ -978,7 +1010,7 @@ def validation_units(run_dir, description, block):
                 raise ValueError(f"Two units of the phase {block['phase']} train {slug} at the intrinsic weight "
                                  f'{weight_of(group):g}; a validation block reads one unit per method and weight.')
             groups[(slug, weight_of(group))] = group
-    return groups, waiting, sorted(set(others))
+    return groups, waiting, sorted(set(others)), elsewhere
 
 
 def validation_best(groups, block, budget, batch):
@@ -1134,12 +1166,12 @@ def read_validation(run_dir, description, block, batch):
     unknown, missing = set(block) - VALIDATION_KEYS, VALIDATION_KEYS - set(block)
     if unknown or missing:
         raise ValueError(f'summary_settings.json, validation_block: unknown keys {sorted(unknown)}, missing keys {sorted(missing)}.')
-    groups, waiting, others = validation_units(run_dir, description, block)
+    groups, waiting, others, elsewhere = validation_units(run_dir, description, block)
     budgets = sorted({group.planned_steps for group in groups.values()})
     if len(budgets) > 1:
         raise ValueError(f"The units of the phase {block['phase']} train {budgets} steps per policy; one length is needed.")
     budget = budgets[0] if budgets else None
-    return {'groups': groups, 'waiting': waiting, 'others': others, 'budget': budget, 'batch': batch,
+    return {'groups': groups, 'waiting': waiting, 'others': others, 'elsewhere': elsewhere, 'budget': budget, 'batch': batch,
             'best': validation_best(groups, block, budget, batch) if groups else None}
 
 
@@ -1152,6 +1184,10 @@ def validation_section(read, block):
     if others:
         left_out += ('The phase also holds units of methods that this batch does not name; they are not read here: '
                      + '; '.join(others) + '.\n\n')
+    if read['elsewhere']:
+        left_out += ('The phase also holds units of these methods at settings other than the screen\'s, beside the '
+                     'intrinsic weight. This block compares at the screen\'s settings, so they are not read here: '
+                     + '; '.join(read['elsewhere']) + '.\n\n')
     if not groups:
         return title + f"No unit of the phase `{block['phase']}` is complete yet.\n\n" + left_out
     seeds = sorted({policy.seed for group in groups.values() for policy in group.policies})
@@ -1419,7 +1455,7 @@ def build(screen, run_dir, settings, plots):
                   curves_section(screen, curves_figure(screen, order, plots)),
                   properties_section(screen, order, visits_figure(screen, order, plots))]
     if screen.cases is not None:
-        parts.append(case_sweeps.development_section(run_dir, screen.cases, settings['development_sweeps']))
+        parts.append(case_sweeps.development_section(run_dir, screen.batch, screen.cases, settings['development_sweeps']))
     # The predictions: read by the batch's module when it has one, else quoted when `ideas.md` holds any.
     ideas = (folder / 'ideas.md').read_text() if (folder / 'ideas.md').exists() else ''
     if 'predictions' in settings or re.search(r'(?m)^## Predictions', ideas):
@@ -1428,6 +1464,8 @@ def build(screen, run_dir, settings, plots):
         parts.append(sides_section(screen, order, discovery))
     if screen.validation is not None:
         parts.append(validation_section(screen.validation, settings['validation_block']))
+    if 'validation_of_configurations' in settings:
+        parts.append(case_sweeps.validation_section(run_dir, screen.batch, settings['validation_of_configurations']))
     if 'discovery' in settings:
         parts.append(case_sweeps.discovery_section(run_dir, screen.batch, settings['discovery']))
     if 'consistency_check' in settings:

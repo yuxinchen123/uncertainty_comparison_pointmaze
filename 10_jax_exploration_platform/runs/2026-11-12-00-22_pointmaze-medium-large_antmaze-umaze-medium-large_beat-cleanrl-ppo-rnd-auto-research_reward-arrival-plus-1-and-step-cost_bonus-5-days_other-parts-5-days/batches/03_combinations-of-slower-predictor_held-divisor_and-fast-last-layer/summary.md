@@ -1,6 +1,6 @@
 # Batch 3 screen on PointMaze Large with reward 1 on arrival: combinations of the slower predictor, the held divisor and the fast last layer
 
-Generated 2026-11-12 19:55 PT by the command below. This file is generated: regenerate it, do not edit it. Times are Pacific, converted from machines running Eastern. Run folder: `2026-11-12-00-22_pointmaze-medium-large_antmaze-umaze-medium-large_beat-cleanrl-ppo-rnd-auto-research_reward-arrival-plus-1-and-step-cost_bonus-5-days_other-parts-5-days`; batch folder: `batches/03_combinations-of-slower-predictor_held-divisor_and-fast-last-layer`.
+Generated 2026-11-12 20:01 PT by the command below. This file is generated: regenerate it, do not edit it. Times are Pacific, converted from machines running Eastern. Run folder: `2026-11-12-00-22_pointmaze-medium-large_antmaze-umaze-medium-large_beat-cleanrl-ppo-rnd-auto-research_reward-arrival-plus-1-and-step-cost_bonus-5-days_other-parts-5-days`; batch folder: `batches/03_combinations-of-slower-predictor_held-divisor_and-fast-last-layer`.
 
 ```bash
 cd /p/rlprojects/RND/10_jax_exploration_platform
@@ -23,8 +23,9 @@ bash "benchmark_runs/2026-11-12-00-17_pointmaze-antmaze_cleanrl-ppo-rnd_speed-30
 | [Properties of the bonus on the maze grid](#properties-of-the-bonus-on-the-maze-grid) | 2026-11-12 16:21 PT | 2026-11-12 17:45 PT | unread |
 | [Predictions](#predictions) | 2026-11-12 16:21 PT | 2026-11-12 19:54 PT | unread |
 | [Ideas against the control](#ideas-against-the-control) | 2026-11-12 16:21 PT | 2026-11-12 17:45 PT | unread |
-| [Validation block](#validation-block) | 2026-11-12 16:21 PT | 2026-11-12 19:55 PT | unread |
-| [Discovery checks beyond the screen](#discovery-checks-beyond-the-screen) | 2026-11-12 19:44 PT | 2026-11-12 19:55 PT | unread |
+| [Validation block](#validation-block) | 2026-11-12 16:21 PT | 2026-11-12 20:02 PT | unread |
+| [Validation seeds: each side at the best of all its configurations](#validation-seeds-each-side-at-the-best-of-all-its-configurations) | 2026-11-12 20:02 PT | 2026-11-12 20:02 PT | unread |
+| [Discovery checks beyond the screen](#discovery-checks-beyond-the-screen) | 2026-11-12 19:44 PT | 2026-11-12 20:02 PT | unread |
 | [Records that need a look](#records-that-need-a-look) | 2026-11-12 16:21 PT | 2026-11-12 17:45 PT | unread |
 
 Times are Pacific, converted from machines running Eastern, and come from this report's own history of regenerations. [The same report with unread sections in blue and changed text in brown](summary.html). No section marks itself read.
@@ -264,7 +265,7 @@ By the 95% interval of the difference in $M$ from the control (section Measures,
 
 ## Validation block
 
-The units of the phase `validation-block` in the screen's environment and reward setting. Each trains one method at one intrinsic weight on 256 seeds, from 10000 to 10255: these are neither the development seeds of the screen nor the confirmation seeds. 19 of 21 method and weight pairs have a complete unit; a unit that is not complete is listed under the tables and left out. Define $W$, $L$ and $M$ as in the section Measures, here with $K$ the number of seeds of a row and read at 8,388,608 environment steps per policy. Differences are the method minus the control at the same intrinsic weight, on the seeds both have, each with its 95% interval from 10,000 resamples of those seeds. Rows: the control first, then the other methods, each by intrinsic weight. Per column the best value is bold and the second best underlined.
+The units of the phase `validation-block` in the screen's environment and reward setting. Each trains one method at one intrinsic weight on 256 seeds, from 10000 to 10255: these are neither the development seeds of the screen nor the confirmation seeds. 19 of 19 method and weight pairs have a complete unit; a unit that is not complete is listed under the tables and left out. Define $W$, $L$ and $M$ as in the section Measures, here with $K$ the number of seeds of a row and read at 8,388,608 environment steps per policy. Differences are the method minus the control at the same intrinsic weight, on the seeds both have, each with its 95% interval from 10,000 resamples of those seeds. Rows: the control first, then the other methods, each by intrinsic weight. Per column the best value is bold and the second best underlined.
 
 ### Discovery and optimization: whole-curve mean and final level
 
@@ -346,10 +347,115 @@ The two tables above compare at equal intrinsic weights. A method and the contro
 | divisor held after one quarter of the run | 4 (its only weight) | 205 ± 8.2 | +0 [+0, +0] | 256 of 256 | 0.8718 | 0.9946 | 256 |
 | divisor held after one sixteenth of the run | 4 (of 2, 4) | 213 ± 8.15 | +8.39 [-13.2, +30] | 256 of 256 | <u>0.8821</u> | <u>0.9970</u> | 256 |
 
-Not complete, left out:
+The phase also holds units of these methods at settings other than the screen's, beside the intrinsic weight. This block compares at the screen's settings, so they are not read here: control, intrinsic weight 2 (learning rate 0.001); control, intrinsic weight 2 (learning rate 0.003).
 
-- control, intrinsic weight 2: no start record yet, 0 logging windows written.
-- control, intrinsic weight 2: unfinished, 0 logging windows written.
+## Validation seeds: each side at the best of all its configurations
+
+The section Validation block compares at the screen's settings, where only the intrinsic weight differs. Here every configuration of the phase counts, also one at another learning rate or entropy coefficient, so each side, the control included, stands at the best of everything it was run at on these seeds.
+
+The units of the phase `validation-block` in PointMaze Large, reward 1 on arrival. Each trains one configuration on 256 seeds, from 10000 to 10255: neither the development seeds, on which these configurations were picked from each side's screens and sweeps, nor the confirmation seeds. Read at 8,388,608 environment steps per policy. Define $W$, $L$ and $M$ as in the section Measures. First table: every configuration, the control first, each method from its best on for $W$; per column the best value is bold and the second best underlined (the smallest for $M$).
+
+| method | configuration | $W$ ± standard error | $L$ ± standard error | $M$ ± standard error, thousand steps | policies that reach the goal |
+|---|---|---|---|---|---|
+| control | intrinsic weight 2 | 0.8781 ± 0.0021 | 0.9920 ± 0.0005 | 269 ± 10.8 | 256 of 256 |
+| control | intrinsic weight 1 | 0.8759 ± 0.0022 | 0.9955 ± 0.0004 | 385 ± 13.1 | 256 of 256 |
+| control | intrinsic weight 4 | 0.8626 ± 0.0025 | 0.9765 ± 0.0019 | 205 ± 8.2 | 256 of 256 |
+| separate predictor step size, predictor learning rate 0.25 times 1e-4 | intrinsic weight 2 | 0.8859 ± 0.0024 | 0.9954 ± 0.0007 | 171 ± 11 | 256 of 256 |
+| separate predictor step size, predictor learning rate 0.25 times 1e-4 | intrinsic weight 4 | 0.8783 ± 0.0022 | 0.9927 ± 0.0005 | 133 ± 7.88 | 256 of 256 |
+| separate predictor step size, predictor learning rate 0.25 times 1e-4 | intrinsic weight 1 | 0.8756 ± 0.0030 | 0.9977 ± 0.0002 | 263 ± 15.4 | 256 of 256 |
+| separate predictor step size, predictor learning rate 1 times 1e-4 | intrinsic weight 2 | 0.8804 ± 0.0024 | 0.9954 ± 0.0004 | 238 ± 12.4 | 256 of 256 |
+| separate predictor step size, predictor learning rate 1 times 1e-4 | intrinsic weight 4 | 0.8762 ± 0.0022 | 0.9931 ± 0.0003 | 185 ± 10.1 | 256 of 256 |
+| divisor held after one sixteenth of the run | intrinsic weight 2 | 0.8876 ± 0.0021 | 0.9976 ± 0.0003 | 270 ± 10.5 | 256 of 256 |
+| divisor held after one sixteenth of the run | intrinsic weight 4 | 0.8821 ± 0.0020 | 0.9970 ± 0.0002 | 213 ± 8.15 | 256 of 256 |
+| divisor held after one quarter of the run | intrinsic weight 4 | 0.8718 ± 0.0024 | 0.9946 ± 0.0005 | 205 ± 8.2 | 256 of 256 |
+| slower predictor with held divisor (predictor learning rate 0.25 times 1e-4, divisor held after one sixteenth of the run) | intrinsic weight 4 | <u>0.8883</u> ± 0.0021 | **0.9982** ± 0.0002 | 153 ± 9.69 | 256 of 256 |
+| slower predictor with held divisor (predictor learning rate 0.25 times 1e-4, divisor held after one sixteenth of the run) | intrinsic weight 2 | 0.8851 ± 0.0029 | <u>0.9981</u> ± 0.0003 | 182 ± 13.9 | 256 of 256 |
+| fast last layer with slower predictor and held divisor, step 0.1 (divisor held after one sixteenth of the run) | intrinsic weight 0.5 | **0.8917** ± 0.0026 | 0.9969 ± 0.0004 | 160 ± 11.2 | 256 of 256 |
+| fast last layer with slower predictor and held divisor, step 0.1 (divisor held after one sixteenth of the run) | intrinsic weight 1 | 0.8779 ± 0.0021 | 0.9948 ± 0.0004 | <u>124</u> ± 9.81 | 256 of 256 |
+| fast last layer with slower predictor and held divisor, step 0.1 (divisor held after one sixteenth of the run) | intrinsic weight 0.25 | 0.8778 ± 0.0052 | 0.9974 ± 0.0004 | 284 ± 20.3 | 256 of 256 |
+| fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1 | intrinsic weight 0.5 | 0.8859 ± 0.0025 | 0.9954 ± 0.0005 | 172 ± 11.1 | 256 of 256 |
+| fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1 | intrinsic weight 0.25 | 0.8853 ± 0.0031 | 0.9969 ± 0.0005 | 243 ± 13.5 | 256 of 256 |
+| fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1 | intrinsic weight 1 | 0.8712 ± 0.0021 | 0.9935 ± 0.0004 | **120** ± 7.9 | 256 of 256 |
+
+Then, for $W$ and $M$: each method at its best configuration on these seeds against the control at its own, paired on the seeds both have, with the 95% interval from 10,000 resamples of those seeds. Each best configuration was chosen on these same seeds, among the few run here: a second selection step, not the comparison on the confirmation seeds.
+
+Best against best for $W$ (the highest is the best):
+
+| method | best configuration for $W$ | $W$ ↑ ± standard error | difference in $W$ from the control [95% interval] | $L$ ± standard error | difference in $L$ from the control [95% interval] | seeds in common with the control |
+|---|---|---|---|---|---|---|
+| control | intrinsic weight 2 (best of 3) | 0.8781 ± 0.0021 | control | 0.9920 ± 0.0005 | control | 256 |
+| fast last layer with slower predictor and held divisor, step 0.1 (divisor held after one sixteenth of the run) | intrinsic weight 0.5 (best of 3) | **0.8917** ± 0.0026 | **+0.0137** [+0.0070, +0.0201] | 0.9969 ± 0.0004 | +0.0049 [+0.0036, +0.0063] | 256 |
+| slower predictor with held divisor (predictor learning rate 0.25 times 1e-4, divisor held after one sixteenth of the run) | intrinsic weight 4 (best of 2) | <u>0.8883</u> ± 0.0021 | <u>+0.0102</u> [+0.0046, +0.0156] | **0.9982** ± 0.0002 | **+0.0062** [+0.0052, +0.0073] | 256 |
+| divisor held after one sixteenth of the run | intrinsic weight 2 (best of 2) | 0.8876 ± 0.0021 | +0.0095 [+0.0040, +0.0151] | <u>0.9976</u> ± 0.0003 | <u>+0.0056</u> [+0.0045, +0.0067] | 256 |
+| separate predictor step size, predictor learning rate 0.25 times 1e-4 | intrinsic weight 2 (best of 3) | 0.8859 ± 0.0024 | +0.0078 [+0.0016, +0.0141] | 0.9954 ± 0.0007 | +0.0033 [+0.0015, +0.0050] | 256 |
+| fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1 | intrinsic weight 0.5 (best of 3) | 0.8859 ± 0.0025 | +0.0078 [+0.0011, +0.0143] | 0.9954 ± 0.0005 | +0.0033 [+0.0019, +0.0047] | 256 |
+| separate predictor step size, predictor learning rate 1 times 1e-4 | intrinsic weight 2 (best of 2) | 0.8804 ± 0.0024 | +0.0024 [-0.0036, +0.0084] | 0.9954 ± 0.0004 | +0.0034 [+0.0021, +0.0047] | 256 |
+| divisor held after one quarter of the run | intrinsic weight 4 (the only configuration read) | 0.8718 ± 0.0024 | -0.0063 [-0.0125, -0.0000] | 0.9946 ± 0.0005 | +0.0026 [+0.0012, +0.0039] | 256 |
+
+Best against best for $M$ (the smallest is the best):
+
+| method | best configuration for $M$ | $M$ ↓ ± standard error, thousand steps | difference in $M$ from the control [95% interval], thousand steps | policies that reach the goal | $W$ at that configuration | $L$ at that configuration | seeds in common with the control |
+|---|---|---|---|---|---|---|---|
+| control | intrinsic weight 4 (best of 3) | 205 ± 8.2 | control | 256 of 256 | 0.8626 | 0.9765 | 256 |
+| fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1 | intrinsic weight 1 (best of 3) | **120** ± 7.9 | **-84.7** [-106, -63.4] | 256 of 256 | 0.8712 | 0.9935 | 256 |
+| fast last layer with slower predictor and held divisor, step 0.1 (divisor held after one sixteenth of the run) | intrinsic weight 1 (best of 3) | <u>124</u> ± 9.81 | <u>-80.7</u> [-104, -55.9] | 256 of 256 | 0.8779 | 0.9948 | 256 |
+| separate predictor step size, predictor learning rate 0.25 times 1e-4 | intrinsic weight 4 (best of 3) | 133 ± 7.88 | -71.9 [-93.9, -49.5] | 256 of 256 | 0.8783 | 0.9927 | 256 |
+| slower predictor with held divisor (predictor learning rate 0.25 times 1e-4, divisor held after one sixteenth of the run) | intrinsic weight 4 (best of 2) | 153 ± 9.69 | -52 [-75.7, -28] | 256 of 256 | **0.8883** | **0.9982** | 256 |
+| separate predictor step size, predictor learning rate 1 times 1e-4 | intrinsic weight 4 (best of 2) | 185 ± 10.1 | -19.8 [-43.2, +4.74] | 256 of 256 | 0.8762 | 0.9931 | 256 |
+| divisor held after one quarter of the run | intrinsic weight 4 (the only configuration read) | 205 ± 8.2 | +0 [+0, +0] | 256 of 256 | 0.8718 | 0.9946 | 256 |
+| divisor held after one sixteenth of the run | intrinsic weight 4 (best of 2) | 213 ± 8.15 | +8.39 [-13.3, +29.6] | 256 of 256 | <u>0.8821</u> | <u>0.9970</u> | 256 |
+
+Not complete, left out: control: 3 of 5 configurations read (3 of 5 units complete).
+
+### Units
+
+| unit | method | case | configurations | state | logging windows written | finished | restarts |
+|---|---|---|---|---|---|---|---|
+| 1 | control | PointMaze Large, reward 1 on arrival | 1 | unfinished | 45 of 256 | not finished | none |
+| 2 | control | PointMaze Large, reward 1 on arrival | 1 | complete | 256 of 256 | 2026-11-12 15:26 PT | none |
+| 3 | control | PointMaze Large, reward 1 on arrival | 1 | complete | 256 of 256 | 2026-11-12 15:26 PT | none |
+| 4 | control | PointMaze Large, reward 1 on arrival | 1 | complete | 256 of 256 | 2026-11-12 15:27 PT | none |
+| 5 | control | PointMaze Large, reward 1 on arrival | 1 | unfinished | 59 of 256 | not finished | none |
+| 6 | separate predictor step size, predictor learning rate 0.25 times 1e-4 | PointMaze Large, reward 1 on arrival | 1 | complete | 256 of 256 | 2026-11-12 15:57 PT | none |
+| 7 | separate predictor step size, predictor learning rate 0.25 times 1e-4 | PointMaze Large, reward 1 on arrival | 1 | complete | 256 of 256 | 2026-11-12 15:42 PT | none |
+| 8 | separate predictor step size, predictor learning rate 0.25 times 1e-4 | PointMaze Large, reward 1 on arrival | 1 | complete | 256 of 256 | 2026-11-12 17:04 PT | none |
+| 9 | separate predictor step size, predictor learning rate 1 times 1e-4 | PointMaze Large, reward 1 on arrival | 1 | complete | 256 of 256 | 2026-11-12 15:42 PT | none |
+| 10 | separate predictor step size, predictor learning rate 1 times 1e-4 | PointMaze Large, reward 1 on arrival | 1 | complete | 256 of 256 | 2026-11-12 15:42 PT | none |
+| 11 | divisor held after one sixteenth of the run | PointMaze Large, reward 1 on arrival | 1 | complete | 256 of 256 | 2026-11-12 16:41 PT | none |
+| 12 | divisor held after one sixteenth of the run | PointMaze Large, reward 1 on arrival | 1 | complete | 256 of 256 | 2026-11-12 17:02 PT | none |
+| 13 | divisor held after one quarter of the run | PointMaze Large, reward 1 on arrival | 1 | complete | 256 of 256 | 2026-11-12 16:37 PT | none |
+| 14 | slower predictor with held divisor (predictor learning rate 0.25 times 1e-4, divisor held after one sixteenth of the run) | PointMaze Large, reward 1 on arrival | 1 | complete | 256 of 256 | 2026-11-12 16:29 PT | none |
+| 15 | slower predictor with held divisor (predictor learning rate 0.25 times 1e-4, divisor held after one sixteenth of the run) | PointMaze Large, reward 1 on arrival | 1 | complete | 256 of 256 | 2026-11-12 16:37 PT | none |
+| 16 | fast last layer with slower predictor and held divisor, step 0.1 (divisor held after one sixteenth of the run) | PointMaze Large, reward 1 on arrival | 1 | complete | 256 of 256 | 2026-11-12 18:49 PT | none |
+| 17 | fast last layer with slower predictor and held divisor, step 0.1 (divisor held after one sixteenth of the run) | PointMaze Large, reward 1 on arrival | 1 | complete | 256 of 256 | 2026-11-12 19:03 PT | none |
+| 18 | fast last layer with slower predictor and held divisor, step 0.1 (divisor held after one sixteenth of the run) | PointMaze Large, reward 1 on arrival | 1 | complete | 256 of 256 | 2026-11-12 19:02 PT | none |
+| 19 | fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1 | PointMaze Large, reward 1 on arrival | 1 | complete | 256 of 256 | 2026-11-12 19:04 PT | none |
+| 20 | fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1 | PointMaze Large, reward 1 on arrival | 1 | complete | 256 of 256 | 2026-11-12 19:01 PT | none |
+| 21 | fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1 | PointMaze Large, reward 1 on arrival | 1 | complete | 256 of 256 | 2026-11-12 19:02 PT | none |
+
+Unit names, by the number in the first column:
+
+1. `validation-block_pointmaze-large_reward-arrival-plus-one_control-cleanrl-ppo-rnd_learning-rate-0.001_entropy-coefficient-0.01_intrinsic-weight-2.0_clip-coefficient-0.1_seeds-10000-to-10255`
+2. `validation-block_pointmaze-large_reward-arrival-plus-one_control-cleanrl-ppo-rnd_learning-rate-0.002_entropy-coefficient-0.01_intrinsic-weight-1.0_clip-coefficient-0.1_seeds-10000-to-10255`
+3. `validation-block_pointmaze-large_reward-arrival-plus-one_control-cleanrl-ppo-rnd_learning-rate-0.002_entropy-coefficient-0.01_intrinsic-weight-2.0_clip-coefficient-0.1_seeds-10000-to-10255`
+4. `validation-block_pointmaze-large_reward-arrival-plus-one_control-cleanrl-ppo-rnd_learning-rate-0.002_entropy-coefficient-0.01_intrinsic-weight-4.0_clip-coefficient-0.1_seeds-10000-to-10255`
+5. `validation-block_pointmaze-large_reward-arrival-plus-one_control-cleanrl-ppo-rnd_learning-rate-0.003_entropy-coefficient-0.01_intrinsic-weight-2.0_clip-coefficient-0.1_seeds-10000-to-10255`
+6. `validation-block_pointmaze-large_reward-arrival-plus-one_predictor-own-step-size-0-point-25_learning-rate-0.002_entropy-coefficient-0.01_intrinsic-weight-1.0_clip-coefficient-0.1_seeds-10000-to-10255`
+7. `validation-block_pointmaze-large_reward-arrival-plus-one_predictor-own-step-size-0-point-25_learning-rate-0.002_entropy-coefficient-0.01_intrinsic-weight-2.0_clip-coefficient-0.1_seeds-10000-to-10255`
+8. `validation-block_pointmaze-large_reward-arrival-plus-one_predictor-own-step-size-0-point-25_learning-rate-0.002_entropy-coefficient-0.01_intrinsic-weight-4.0_clip-coefficient-0.1_seeds-10000-to-10255`
+9. `validation-block_pointmaze-large_reward-arrival-plus-one_predictor-own-step-size-1_learning-rate-0.002_entropy-coefficient-0.01_intrinsic-weight-2.0_clip-coefficient-0.1_seeds-10000-to-10255`
+10. `validation-block_pointmaze-large_reward-arrival-plus-one_predictor-own-step-size-1_learning-rate-0.002_entropy-coefficient-0.01_intrinsic-weight-4.0_clip-coefficient-0.1_seeds-10000-to-10255`
+11. `validation-block_pointmaze-large_reward-arrival-plus-one_divisor-held-after-one-sixteenth_learning-rate-0.002_entropy-coefficient-0.01_intrinsic-weight-2.0_clip-coefficient-0.1_seeds-10000-to-10255`
+12. `validation-block_pointmaze-large_reward-arrival-plus-one_divisor-held-after-one-sixteenth_learning-rate-0.002_entropy-coefficient-0.01_intrinsic-weight-4.0_clip-coefficient-0.1_seeds-10000-to-10255`
+13. `validation-block_pointmaze-large_reward-arrival-plus-one_divisor-held-after-one-quarter_learning-rate-0.002_entropy-coefficient-0.01_intrinsic-weight-4.0_clip-coefficient-0.1_seeds-10000-to-10255`
+14. `validation-block_pointmaze-large_reward-arrival-plus-one_slower-predictor-with-held-divisor_learning-rate-0.002_entropy-coefficient-0.01_intrinsic-weight-2.0_clip-coefficient-0.1_seeds-10000-to-10255`
+15. `validation-block_pointmaze-large_reward-arrival-plus-one_slower-predictor-with-held-divisor_learning-rate-0.002_entropy-coefficient-0.01_intrinsic-weight-4.0_clip-coefficient-0.1_seeds-10000-to-10255`
+16. `validation-block_pointmaze-large_reward-arrival-plus-one_three-parts-held-one-sixteenth_learning-rate-0.002_entropy-coefficient-0.01_intrinsic-weight-0.25_clip-coefficient-0.1_seeds-10000-to-10255`
+17. `validation-block_pointmaze-large_reward-arrival-plus-one_three-parts-held-one-sixteenth_learning-rate-0.002_entropy-coefficient-0.01_intrinsic-weight-0.5_clip-coefficient-0.1_seeds-10000-to-10255`
+18. `validation-block_pointmaze-large_reward-arrival-plus-one_three-parts-held-one-sixteenth_learning-rate-0.002_entropy-coefficient-0.01_intrinsic-weight-1.0_clip-coefficient-0.1_seeds-10000-to-10255`
+19. `validation-block_pointmaze-large_reward-arrival-plus-one_three-parts-held-one-eighth_learning-rate-0.002_entropy-coefficient-0.01_intrinsic-weight-0.25_clip-coefficient-0.1_seeds-10000-to-10255`
+20. `validation-block_pointmaze-large_reward-arrival-plus-one_three-parts-held-one-eighth_learning-rate-0.002_entropy-coefficient-0.01_intrinsic-weight-0.5_clip-coefficient-0.1_seeds-10000-to-10255`
+21. `validation-block_pointmaze-large_reward-arrival-plus-one_three-parts-held-one-eighth_learning-rate-0.002_entropy-coefficient-0.01_intrinsic-weight-1.0_clip-coefficient-0.1_seeds-10000-to-10255`
 
 ## Discovery checks beyond the screen
 
@@ -357,27 +463,29 @@ The screen reads each method on one grid of intrinsic weights at the control's o
 
 ### On the validation seeds: the leading configurations for the first-goal time
 
-The units of the phase `discovery-validation` in PointMaze Large, reward 1 on arrival. Each trains one configuration on 256 seeds, from 10000 to 10255: neither the development seeds, on which these configurations were picked as the leading ones of each method's discovery sweep, nor the confirmation seeds. Read at 8,388,608 environment steps per policy. Define $M$, $W$ and $L$ as in the section Measures. First table: every configuration, the control first, each method from its smallest $M$ on; per column the best value is bold and the second best underlined (the smallest for $M$).
+The units of the phase `discovery-validation` in PointMaze Large, reward 1 on arrival. Each trains one configuration on 256 seeds, from 10000 to 10255: neither the development seeds, on which these configurations were picked as the leading ones of each method's discovery sweep, nor the confirmation seeds. Read at 8,388,608 environment steps per policy. Define $W$, $L$ and $M$ as in the section Measures. First table: every configuration, the control first, each method from its best on for $M$; per column the best value is bold and the second best underlined (the smallest for $M$).
 
-| method | configuration | $M$ ± standard error, thousand steps | policies that reach the goal | $W$ ± standard error | $L$ |
+| method | configuration | $W$ ± standard error | $L$ ± standard error | $M$ ± standard error, thousand steps | policies that reach the goal |
 |---|---|---|---|---|---|
-| control (CleanRL PPO-RND) | intrinsic weight 64, learning rate 0.006, entropy coefficient 0.01 | 119 ± 5.46 | **256 of 256** | 0.0054 ± 0.0002 | 0.0000 |
-| control (CleanRL PPO-RND) | intrinsic weight 64, learning rate 0.01, entropy coefficient 0.01 | 135 ± 6.06 | **256 of 256** | <u>0.0063</u> ± 0.0002 | <u>0.0015</u> |
-| control (CleanRL PPO-RND) | intrinsic weight 256, learning rate 0.001, entropy coefficient 0.03 | 245 ± 45.9 | <u>254 of 256</u> | 0.0006 ± 0.0000 | 0.0000 |
-| fast last layer inside the rollout, step 0.1 | intrinsic weight 16, learning rate 0.006, entropy coefficient 0.03 | **55.8** ± 2.19 | **256 of 256** | 0.0010 ± 0.0000 | 0.0000 |
-| fast last layer inside the rollout, step 0.1 | intrinsic weight 4, learning rate 0.002, entropy coefficient 0.03 | 66.3 ± 3.17 | **256 of 256** | 0.0025 ± 0.0001 | 0.0000 |
-| fast last layer inside the rollout, step 0.1 | intrinsic weight 16, learning rate 0.002, entropy coefficient 0.01 | 77.7 ± 4.54 | **256 of 256** | **0.0360** ± 0.0012 | **0.0417** |
-| fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1 | intrinsic weight 16, learning rate 0.006, entropy coefficient 0.03 | <u>65.3</u> ± 2.63 | **256 of 256** | 0.0014 ± 0.0000 | 0.0000 |
-| fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1 | intrinsic weight 64, learning rate 0.002, entropy coefficient 0.03 | 72.8 ± 2.96 | **256 of 256** | 0.0025 ± 0.0000 | 0.0000 |
-| fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1 | intrinsic weight 4, learning rate 0.01, entropy coefficient 0.03 | 75.6 ± 2.79 | **256 of 256** | 0.0009 ± 0.0000 | 0.0000 |
+| control (CleanRL PPO-RND) | intrinsic weight 64, learning rate 0.006, entropy coefficient 0.01 | 0.0054 ± 0.0002 | 0.0000 ± 0.0000 | 119 ± 5.46 | **256 of 256** |
+| control (CleanRL PPO-RND) | intrinsic weight 64, learning rate 0.01, entropy coefficient 0.01 | <u>0.0063</u> ± 0.0002 | <u>0.0015</u> ± 0.0003 | 135 ± 6.06 | **256 of 256** |
+| control (CleanRL PPO-RND) | intrinsic weight 256, learning rate 0.001, entropy coefficient 0.03 | 0.0006 ± 0.0000 | 0.0000 ± 0.0000 | 245 ± 45.9 | <u>254 of 256</u> |
+| fast last layer inside the rollout, step 0.1 | intrinsic weight 16, learning rate 0.006, entropy coefficient 0.03 | 0.0010 ± 0.0000 | 0.0000 ± 0.0000 | **55.8** ± 2.19 | **256 of 256** |
+| fast last layer inside the rollout, step 0.1 | intrinsic weight 4, learning rate 0.002, entropy coefficient 0.03 | 0.0025 ± 0.0001 | 0.0000 ± 0.0000 | 66.3 ± 3.17 | **256 of 256** |
+| fast last layer inside the rollout, step 0.1 | intrinsic weight 16, learning rate 0.002, entropy coefficient 0.01 | **0.0360** ± 0.0012 | **0.0417** ± 0.0021 | 77.7 ± 4.54 | **256 of 256** |
+| fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1 | intrinsic weight 16, learning rate 0.006, entropy coefficient 0.03 | 0.0014 ± 0.0000 | 0.0000 ± 0.0000 | <u>65.3</u> ± 2.63 | **256 of 256** |
+| fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1 | intrinsic weight 64, learning rate 0.002, entropy coefficient 0.03 | 0.0025 ± 0.0000 | 0.0000 ± 0.0000 | 72.8 ± 2.96 | **256 of 256** |
+| fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1 | intrinsic weight 4, learning rate 0.01, entropy coefficient 0.03 | 0.0009 ± 0.0000 | 0.0000 ± 0.0000 | 75.6 ± 2.79 | **256 of 256** |
 
-Second table: each method at its best configuration for $M$ on these seeds against the control at its own, paired on the seeds both have, with the 95% interval from 10,000 resamples of those seeds. Each best configuration was chosen on these same seeds, among the few run here: a second selection step, not the comparison on the confirmation seeds.
+Then, for $M$: each method at its best configuration on these seeds against the control at its own, paired on the seeds both have, with the 95% interval from 10,000 resamples of those seeds. Each best configuration was chosen on these same seeds, among the few run here: a second selection step, not the comparison on the confirmation seeds.
 
-| method | best configuration for $M$ | $M$ ↓ ± standard error, thousand steps | difference in $M$ from the control [95% interval], thousand steps | policies that reach the goal | $W$ at that configuration | $L$ at that configuration | best configuration at an end of its grid | seeds in common with the control |
-|---|---|---|---|---|---|---|---|---|
-| control (CleanRL PPO-RND) | intrinsic weight 64, learning rate 0.006, entropy coefficient 0.01 (best of 3) | 119 ± 5.46 | control | 256 of 256 | **0.0054** | 0.0000 | intrinsic weight at the smallest of its grid; entropy coefficient at the smallest | 256 |
-| fast last layer inside the rollout, step 0.1 | intrinsic weight 16, learning rate 0.006, entropy coefficient 0.03 (best of 3) | **55.8** ± 2.19 | **-63.4** [-75.7, -52] | 256 of 256 | 0.0010 | 0.0000 | intrinsic weight at the largest of its grid; learning rate at the largest; entropy coefficient at the largest | 256 |
-| fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1 | intrinsic weight 16, learning rate 0.006, entropy coefficient 0.03 (best of 3) | <u>65.3</u> ± 2.63 | <u>-54</u> [-65.8, -42.9] | 256 of 256 | <u>0.0014</u> | 0.0000 | no | 256 |
+Best against best for $M$ (the smallest is the best):
+
+| method | best configuration for $M$ | $M$ ↓ ± standard error, thousand steps | difference in $M$ from the control [95% interval], thousand steps | policies that reach the goal | $W$ at that configuration | $L$ at that configuration | seeds in common with the control |
+|---|---|---|---|---|---|---|---|
+| control (CleanRL PPO-RND) | intrinsic weight 64, learning rate 0.006, entropy coefficient 0.01 (best of 3) | 119 ± 5.46 | control | 256 of 256 | **0.0054** | 0.0000 | 256 |
+| fast last layer inside the rollout, step 0.1 | intrinsic weight 16, learning rate 0.006, entropy coefficient 0.03 (best of 3) | **55.8** ± 2.19 | **-63.4** [-75.5, -52.1] | 256 of 256 | 0.0010 | 0.0000 | 256 |
+| fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1 | intrinsic weight 16, learning rate 0.006, entropy coefficient 0.03 (best of 3) | <u>65.3</u> ± 2.63 | <u>-54</u> [-65.7, -42.9] | 256 of 256 | <u>0.0014</u> | 0.0000 | 256 |
 
 #### Units
 
@@ -429,15 +537,15 @@ Best configuration for $M$ at an end of its grid: fast last layer inside the rol
 | 2 | fast last layer inside the rollout, step 0.1 | PointMaze Large, reward 1 on arrival | 18 | complete | 256 of 256 | 2026-11-12 19:54 PT | none |
 | 3 | fast last layer inside the rollout, step 0.1 | PointMaze Large, reward 1 on arrival | 18 | complete | 256 of 256 | 2026-11-12 19:54 PT | none |
 | 4 | fast last layer inside the rollout, step 0.1 | PointMaze Large, reward 1 on arrival | 18 | complete | 256 of 256 | 2026-11-12 19:55 PT | none |
-| 5 | fast last layer inside the rollout, step 0.1 | PointMaze Large, reward 1 on arrival | 18 | unfinished | 232 of 256 | not finished | 1 continued from a checkpoint |
+| 5 | fast last layer inside the rollout, step 0.1 | PointMaze Large, reward 1 on arrival | 18 | unfinished | 253 of 256 | not finished | 1 continued from a checkpoint |
 | 6 | fast last layer inside the rollout, step 0.1 | PointMaze Large, reward 1 on arrival | 18 | complete | 256 of 256 | 2026-11-12 18:34 PT | 1 continued from a checkpoint |
-| 7 | fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1 | PointMaze Large, reward 1 on arrival | 12 | unfinished | 210 of 256 | not finished | 1 continued from a checkpoint |
-| 8 | fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1 | PointMaze Large, reward 1 on arrival | 18 | unfinished | 206 of 256 | not finished | none |
-| 9 | fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1 | PointMaze Large, reward 1 on arrival | 18 | unfinished | 211 of 256 | not finished | none |
-| 10 | fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1 | PointMaze Large, reward 1 on arrival | 18 | unfinished | 155 of 256 | not finished | 1 continued from a checkpoint |
-| 11 | fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1 | PointMaze Large, reward 1 on arrival | 18 | unfinished | 156 of 256 | not finished | 1 continued from a checkpoint |
+| 7 | fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1 | PointMaze Large, reward 1 on arrival | 12 | unfinished | 253 of 256 | not finished | 1 continued from a checkpoint |
+| 8 | fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1 | PointMaze Large, reward 1 on arrival | 18 | unfinished | 226 of 256 | not finished | none |
+| 9 | fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1 | PointMaze Large, reward 1 on arrival | 18 | unfinished | 232 of 256 | not finished | none |
+| 10 | fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1 | PointMaze Large, reward 1 on arrival | 18 | unfinished | 180 of 256 | not finished | 1 continued from a checkpoint |
+| 11 | fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1 | PointMaze Large, reward 1 on arrival | 18 | unfinished | 181 of 256 | not finished | 1 continued from a checkpoint |
 | 12 | fast last layer with slower predictor and divisor held after one eighth of the run, step 0.1 | PointMaze Large, reward 1 on arrival | 18 | complete | 256 of 256 | 2026-11-12 18:31 PT | none |
-| 13 | scheduled last layer on local features, decay 1, length 1 | PointMaze Large, reward 1 on arrival | 18 | unfinished | 211 of 256 | not finished | 1 continued from a checkpoint |
+| 13 | scheduled last layer on local features, decay 1, length 1 | PointMaze Large, reward 1 on arrival | 18 | unfinished | 219 of 256 | not finished | 1 continued from a checkpoint |
 
 Unit names, by the number in the first column:
 

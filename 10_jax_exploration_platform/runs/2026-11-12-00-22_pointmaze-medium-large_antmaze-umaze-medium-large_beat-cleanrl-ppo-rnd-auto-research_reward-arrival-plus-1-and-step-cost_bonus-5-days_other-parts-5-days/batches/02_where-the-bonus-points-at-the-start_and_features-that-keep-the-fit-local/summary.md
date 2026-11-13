@@ -1,6 +1,6 @@
 # Batch 2 screen on PointMaze Large with reward 1 on arrival: where the bonus points at the start, and features that keep the fit local
 
-Generated 2026-11-12 19:55 PT by the command below. This file is generated: regenerate it, do not edit it. Times are Pacific, converted from machines running Eastern. Run folder: `2026-11-12-00-22_pointmaze-medium-large_antmaze-umaze-medium-large_beat-cleanrl-ppo-rnd-auto-research_reward-arrival-plus-1-and-step-cost_bonus-5-days_other-parts-5-days`; batch folder: `batches/02_where-the-bonus-points-at-the-start_and_features-that-keep-the-fit-local`.
+Generated 2026-11-12 20:02 PT by the command below. This file is generated: regenerate it, do not edit it. Times are Pacific, converted from machines running Eastern. Run folder: `2026-11-12-00-22_pointmaze-medium-large_antmaze-umaze-medium-large_beat-cleanrl-ppo-rnd-auto-research_reward-arrival-plus-1-and-step-cost_bonus-5-days_other-parts-5-days`; batch folder: `batches/02_where-the-bonus-points-at-the-start_and_features-that-keep-the-fit-local`.
 
 ```bash
 cd /p/rlprojects/RND/10_jax_exploration_platform
@@ -23,7 +23,7 @@ bash "benchmark_runs/2026-11-12-00-17_pointmaze-antmaze_cleanrl-ppo-rnd_speed-30
 | [Properties of the bonus on the maze grid](#properties-of-the-bonus-on-the-maze-grid) | 2026-11-12 16:20 PT | 2026-11-12 17:45 PT | unread |
 | [Predictions](#predictions) | 2026-11-12 16:20 PT | 2026-11-12 19:54 PT | unread |
 | [Ideas against the control](#ideas-against-the-control) | 2026-11-12 16:20 PT | 2026-11-12 17:45 PT | unread |
-| [Validation block](#validation-block) | 2026-11-12 16:20 PT | 2026-11-12 19:55 PT | unread |
+| [Validation block](#validation-block) | 2026-11-12 16:20 PT | 2026-11-12 20:02 PT | unread |
 | [Consistency check against the baseline run](#consistency-check-against-the-baseline-run) | 2026-11-12 16:20 PT | 2026-11-12 16:20 PT | unread |
 | [Records that need a look](#records-that-need-a-look) | 2026-11-12 16:20 PT | 2026-11-12 17:45 PT | unread |
 
@@ -393,7 +393,7 @@ By the 95% interval of the difference in $M$ from the control (section Measures,
 
 ## Validation block
 
-The units of the phase `validation-block` in the screen's environment and reward setting. Each trains one method at one intrinsic weight on 256 seeds, from 10000 to 10255: these are neither the development seeds of the screen nor the confirmation seeds. 13 of 15 method and weight pairs have a complete unit; a unit that is not complete is listed under the tables and left out. Define $W$, $L$ and $M$ as in the section Measures, here with $K$ the number of seeds of a row and read at 8,388,608 environment steps per policy. Differences are the method minus the control at the same intrinsic weight, on the seeds both have, each with its 95% interval from 10,000 resamples of those seeds. Rows: the control first, then the other methods, each by intrinsic weight. Per column the best value is bold and the second best underlined.
+The units of the phase `validation-block` in the screen's environment and reward setting. Each trains one method at one intrinsic weight on 256 seeds, from 10000 to 10255: these are neither the development seeds of the screen nor the confirmation seeds. 13 of 13 method and weight pairs have a complete unit; a unit that is not complete is listed under the tables and left out. Define $W$, $L$ and $M$ as in the section Measures, here with $K$ the number of seeds of a row and read at 8,388,608 environment steps per policy. Differences are the method minus the control at the same intrinsic weight, on the seeds both have, each with its 95% interval from 10,000 resamples of those seeds. Rows: the control first, then the other methods, each by intrinsic weight. Per column the best value is bold and the second best underlined.
 
 ### Discovery and optimization: whole-curve mean and final level
 
@@ -459,12 +459,9 @@ The two tables above compare at equal intrinsic weights. A method and the contro
 | divisor held after one quarter of the run | 4 (its only weight) | 205 ± 8.2 | +0 [+0, +0] | 256 of 256 | 0.8718 | 0.9946 | 256 |
 | divisor held after one sixteenth of the run | 4 (of 2, 4) | 213 ± 8.15 | +8.39 [-13, +29.7] | 256 of 256 | <u>0.8821</u> | <u>0.9970</u> | 256 |
 
-Not complete, left out:
-
-- control, intrinsic weight 2: no start record yet, 0 logging windows written.
-- control, intrinsic weight 2: unfinished, 0 logging windows written.
-
 The phase also holds units of methods that this batch does not name; they are not read here: three parts held one eighth; three parts held one sixteenth.
+
+The phase also holds units of these methods at settings other than the screen's, beside the intrinsic weight. This block compares at the screen's settings, so they are not read here: control, intrinsic weight 2 (learning rate 0.001); control, intrinsic weight 2 (learning rate 0.003).
 
 ## Consistency check against the baseline run
 

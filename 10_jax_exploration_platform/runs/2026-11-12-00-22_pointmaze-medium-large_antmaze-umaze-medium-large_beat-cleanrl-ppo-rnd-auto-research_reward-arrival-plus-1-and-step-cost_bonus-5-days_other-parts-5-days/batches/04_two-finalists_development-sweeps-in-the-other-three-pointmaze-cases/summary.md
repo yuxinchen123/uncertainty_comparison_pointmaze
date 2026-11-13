@@ -1,6 +1,6 @@
 # Batch 4: the two finalists' development sweeps in the other three PointMaze cases
 
-Generated 2026-11-12 19:55 PT by the command below. This file is generated: regenerate it, do not edit it. Times are Pacific, converted from machines running Eastern. Run folder: `2026-11-12-00-22_pointmaze-medium-large_antmaze-umaze-medium-large_beat-cleanrl-ppo-rnd-auto-research_reward-arrival-plus-1-and-step-cost_bonus-5-days_other-parts-5-days`; batch folder: `batches/04_two-finalists_development-sweeps-in-the-other-three-pointmaze-cases`.
+Generated 2026-11-12 20:01 PT by the command below. This file is generated: regenerate it, do not edit it. Times are Pacific, converted from machines running Eastern. Run folder: `2026-11-12-00-22_pointmaze-medium-large_antmaze-umaze-medium-large_beat-cleanrl-ppo-rnd-auto-research_reward-arrival-plus-1-and-step-cost_bonus-5-days_other-parts-5-days`; batch folder: `batches/04_two-finalists_development-sweeps-in-the-other-three-pointmaze-cases`.
 
 ```bash
 cd /p/rlprojects/RND/10_jax_exploration_platform
@@ -14,7 +14,7 @@ bash "benchmark_runs/2026-11-12-00-17_pointmaze-antmaze_cleanrl-ppo-rnd_speed-30
 | section | first written | last changed | status |
 |---|---|---|---|
 | [Measures](#measures) | 2026-11-12 19:43 PT | 2026-11-12 19:43 PT | unread |
-| [Development sweeps against the baseline, case by case](#development-sweeps-against-the-baseline-case-by-case) | 2026-11-12 19:43 PT | 2026-11-12 19:55 PT | unread |
+| [Development sweeps against the baseline, case by case](#development-sweeps-against-the-baseline-case-by-case) | 2026-11-12 19:43 PT | 2026-11-12 20:01 PT | unread |
 | [Predictions](#predictions) | 2026-11-12 19:43 PT | 2026-11-12 19:50 PT | unread |
 
 Times are Pacific, converted from machines running Eastern, and come from this report's own history of regenerations. [The same report with unread sections in blue and changed text in brown](summary.html). No section marks itself read.
@@ -45,8 +45,8 @@ A case is one environment with one reward setting. In each case every method of 
 | 2 | slower predictor with held divisor | PointMaze Medium, reward 1 on arrival | 15 | complete | 256 of 256 | 2026-11-12 19:17 PT | none |
 | 3 | fast last layer with slower predictor and held divisor, step 0.1 | PointMaze Medium, step cost | 15 | complete | 256 of 256 | 2026-11-12 19:21 PT | none |
 | 4 | slower predictor with held divisor | PointMaze Medium, step cost | 15 | complete | 256 of 256 | 2026-11-12 19:16 PT | none |
-| 5 | fast last layer with slower predictor and held divisor, step 0.1 | PointMaze Large, step cost | 15 | unfinished | 37 of 256 | not finished | none |
-| 6 | slower predictor with held divisor | PointMaze Large, step cost | 15 | unfinished | 115 of 256 | not finished | none |
+| 5 | fast last layer with slower predictor and held divisor, step 0.1 | PointMaze Large, step cost | 15 | unfinished | 43 of 256 | not finished | none |
+| 6 | slower predictor with held divisor | PointMaze Large, step cost | 15 | unfinished | 136 of 256 | not finished | none |
 
 Unit names, by the number in the first column:
 
@@ -108,6 +108,63 @@ The same rows and columns, $M$ in thousands of steps; over each method's whole g
 | slower predictor with held divisor, learning rate 0.003 | 48 | 14.3 | 19.4 | 12.6 | 21.7 |
 | slower predictor with held divisor, learning rate 0.006 | 76.2 | 14.5 | <u>12.5</u> | **10.9** | 19 |
 | slower predictor with held divisor, learning rate 0.01 | 15.6 | 27.1 | 13.9 | 12.8 | 12.9 |
+
+#### On the validation seeds: picked configurations of this case
+
+The units of the phase `validation-block` in PointMaze Medium, reward 1 on arrival. Each trains one configuration on 256 seeds, from 10000 to 10255: neither the development seeds, on which these configurations were picked as the leading ones of each side's sweep, nor the confirmation seeds. Read at 1,048,576 environment steps per policy. Define $W$, $L$ and $M$ as in the section Measures. First table: every configuration, the control first, each method from its best on for $W$; per column the best value is bold and the second best underlined (the smallest for $M$).
+
+| method | configuration | $W$ ± standard error | $L$ ± standard error | $M$ ± standard error, thousand steps | policies that reach the goal |
+|---|---|---|---|---|---|
+| control (CleanRL PPO-RND) | intrinsic weight 2, learning rate 0.006 | **0.9349** ± 0.0031 | 0.9950 ± 0.0010 | 25 ± 1.46 | 256 of 256 |
+| control (CleanRL PPO-RND) | intrinsic weight 2, learning rate 0.01 | 0.9275 ± 0.0027 | 0.9892 ± 0.0015 | 23.5 ± 1.28 | 256 of 256 |
+| control (CleanRL PPO-RND) | intrinsic weight 4, learning rate 0.006 | 0.9194 ± 0.0023 | 0.9794 ± 0.0023 | <u>19.9</u> ± 1.16 | 256 of 256 |
+| slower predictor with held divisor | intrinsic weight 2, learning rate 0.003 | <u>0.9348</u> ± 0.0030 | <u>0.9999</u> ± 0.0000 | **17.9** ± 1 | 256 of 256 |
+| slower predictor with held divisor | intrinsic weight 0.5, learning rate 0.006 | 0.9284 ± 0.0040 | **1.0000** ± 0.0000 | 33.9 ± 2.64 | 256 of 256 |
+| slower predictor with held divisor | intrinsic weight 0.25, learning rate 0.01 | 0.9195 ± 0.0042 | **1.0000** ± 0.0000 | 36.2 ± 2.53 | 256 of 256 |
+
+Then, for $W$ and $M$: each method at its best configuration on these seeds against the control at its own, paired on the seeds both have, with the 95% interval from 10,000 resamples of those seeds. Each best configuration was chosen on these same seeds, among the few run here: a second selection step, not the comparison on the confirmation seeds.
+
+Best against best for $W$ (the highest is the best):
+
+| method | best configuration for $W$ | $W$ ↑ ± standard error | difference in $W$ from the control [95% interval] | $L$ ± standard error | difference in $L$ from the control [95% interval] | seeds in common with the control |
+|---|---|---|---|---|---|---|
+| control (CleanRL PPO-RND) | intrinsic weight 2, learning rate 0.006 (best of 3) | **0.9349** ± 0.0031 | control | <u>0.9950</u> ± 0.0010 | control | 256 |
+| slower predictor with held divisor | intrinsic weight 2, learning rate 0.003 (best of 3) | <u>0.9348</u> ± 0.0030 | -0.0001 [-0.0084, +0.0082] | **0.9999** ± 0.0000 | +0.0049 [+0.0033, +0.0071] | 256 |
+
+Best against best for $M$ (the smallest is the best):
+
+| method | best configuration for $M$ | $M$ ↓ ± standard error, thousand steps | difference in $M$ from the control [95% interval], thousand steps | policies that reach the goal | $W$ at that configuration | $L$ at that configuration | seeds in common with the control |
+|---|---|---|---|---|---|---|---|
+| control (CleanRL PPO-RND) | intrinsic weight 4, learning rate 0.006 (best of 3) | <u>19.9</u> ± 1.16 | control | 256 of 256 | <u>0.9194</u> | <u>0.9794</u> | 256 |
+| slower predictor with held divisor | intrinsic weight 2, learning rate 0.003 (best of 3) | **17.9** ± 1 | -1.98 [-4.95, +1.04] | 256 of 256 | **0.9348** | **0.9999** | 256 |
+
+Not complete, left out: fast last layer with slower predictor and held divisor, step 0.1: 0 of 3 configurations read (0 of 3 units complete).
+
+##### Units
+
+| unit | method | case | configurations | state | logging windows written | finished | restarts |
+|---|---|---|---|---|---|---|---|
+| 1 | control (CleanRL PPO-RND) | PointMaze Medium, reward 1 on arrival | 1 | complete | 256 of 256 | 2026-11-12 19:52 PT | none |
+| 2 | control (CleanRL PPO-RND) | PointMaze Medium, reward 1 on arrival | 1 | complete | 256 of 256 | 2026-11-12 19:53 PT | none |
+| 3 | control (CleanRL PPO-RND) | PointMaze Medium, reward 1 on arrival | 1 | complete | 256 of 256 | 2026-11-12 19:52 PT | none |
+| 4 | fast last layer with slower predictor and held divisor, step 0.1 | PointMaze Medium, reward 1 on arrival | 1 | unfinished | 180 of 256 | not finished | none |
+| 5 | fast last layer with slower predictor and held divisor, step 0.1 | PointMaze Medium, reward 1 on arrival | 1 | unfinished | 222 of 256 | not finished | none |
+| 6 | fast last layer with slower predictor and held divisor, step 0.1 | PointMaze Medium, reward 1 on arrival | 1 | unfinished | 222 of 256 | not finished | none |
+| 7 | slower predictor with held divisor | PointMaze Medium, reward 1 on arrival | 1 | complete | 256 of 256 | 2026-11-12 19:56 PT | none |
+| 8 | slower predictor with held divisor | PointMaze Medium, reward 1 on arrival | 1 | complete | 256 of 256 | 2026-11-12 19:52 PT | none |
+| 9 | slower predictor with held divisor | PointMaze Medium, reward 1 on arrival | 1 | complete | 256 of 256 | 2026-11-12 19:56 PT | none |
+
+Unit names, by the number in the first column:
+
+1. `validation-block_pointmaze-medium_reward-arrival-plus-one_control-cleanrl-ppo-rnd_learning-rate-0.006_entropy-coefficient-0.01_intrinsic-weight-2.0_clip-coefficient-0.1_seeds-10000-to-10255`
+2. `validation-block_pointmaze-medium_reward-arrival-plus-one_control-cleanrl-ppo-rnd_learning-rate-0.006_entropy-coefficient-0.01_intrinsic-weight-4.0_clip-coefficient-0.1_seeds-10000-to-10255`
+3. `validation-block_pointmaze-medium_reward-arrival-plus-one_control-cleanrl-ppo-rnd_learning-rate-0.01_entropy-coefficient-0.01_intrinsic-weight-2.0_clip-coefficient-0.1_seeds-10000-to-10255`
+4. `validation-block_pointmaze-medium_reward-arrival-plus-one_three-parts-held-one-sixteenth_learning-rate-0.003_entropy-coefficient-0.01_intrinsic-weight-1.0_clip-coefficient-0.1_seeds-10000-to-10255`
+5. `validation-block_pointmaze-medium_reward-arrival-plus-one_three-parts-held-one-sixteenth_learning-rate-0.01_entropy-coefficient-0.01_intrinsic-weight-0.25_clip-coefficient-0.1_seeds-10000-to-10255`
+6. `validation-block_pointmaze-medium_reward-arrival-plus-one_three-parts-held-one-sixteenth_learning-rate-0.01_entropy-coefficient-0.01_intrinsic-weight-0.5_clip-coefficient-0.1_seeds-10000-to-10255`
+7. `validation-block_pointmaze-medium_reward-arrival-plus-one_slower-predictor-with-held-divisor_learning-rate-0.003_entropy-coefficient-0.01_intrinsic-weight-2.0_clip-coefficient-0.1_seeds-10000-to-10255`
+8. `validation-block_pointmaze-medium_reward-arrival-plus-one_slower-predictor-with-held-divisor_learning-rate-0.006_entropy-coefficient-0.01_intrinsic-weight-0.5_clip-coefficient-0.1_seeds-10000-to-10255`
+9. `validation-block_pointmaze-medium_reward-arrival-plus-one_slower-predictor-with-held-divisor_learning-rate-0.01_entropy-coefficient-0.01_intrinsic-weight-0.25_clip-coefficient-0.1_seeds-10000-to-10255`
 
 ### PointMaze Medium, step cost
 

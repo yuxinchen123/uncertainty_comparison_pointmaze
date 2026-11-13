@@ -15,11 +15,18 @@ Two sections of a batch summary are built here, each from one block of the batch
 - `development_sweeps`: the development sweeps of the batch's methods in one or more cases, each against the
   baseline's development sweeps in the same case. Keys: `study_description` (the file name, in the batch folder,
   of the study description: its `phase` selects the units, and every sweep names its `method`, `environments`,
-  `reward_settings` and `steps_per_policy`), `method_names` (the name in words of every method) and `baseline`.
+  `reward_settings` and `steps_per_policy`), `method_names` (the name in words of every method), `baseline`, and
+  optionally `validation` (`phase`, `control`, `method_names`): units that each train one picked configuration
+  on the validation seeds; a case that has units of that phase at the case's budget shows them after its grids,
+  every configuration and then each method's best against the control's best for both metrics.
 - `discovery`: discovery checks in one case. Keys: `environment` and `reward_setting` as the unit specifications
   spell them; `validation` (optional: `phase`, `control`, `method_names`), units that each train one
   configuration on the validation seeds, compared with the control's units of the same phase; `development`
   (optional: `phases` as shell patterns, `method_names`, `baseline`), sweeps on the development seeds.
+
+A third section, from the block `validation_of_configurations` (`environment`, `reward_setting`, `phase`,
+`control`, `method_names`), reads every configuration of one phase on the validation seeds in one case and
+compares each method's best with the control's best for both metrics (`validation_section`).
 
 A `baseline` block names another run folder's sweeps: `run_folder` (a run folder beside this one), `method` (the
 method as its unit specifications spell it), `name` (in words), `phases` (shell patterns) and, optionally,
@@ -39,7 +46,7 @@ from . import compare, contents, measures, records, report
 METRICS = ('whole', 'discovery')
 # A table of one value per intrinsic weight holds at most this many weights, so that it fits a printed page.
 MOST_WEIGHT_COLUMNS = 6
-DEVELOPMENT_KEYS = {'study_description', 'method_names', 'baseline'}
+DEVELOPMENT_KEYS = {'study_description', 'method_names', 'baseline', 'validation'}
 DISCOVERY_KEYS = {'environment', 'reward_setting', 'validation', 'development'}
 BASELINE_KEYS = {'run_folder', 'method', 'name', 'phases', 'confirmation_phases'}
 
@@ -274,11 +281,12 @@ def fine_difference(found, digits, style=None):
     return f"{report.styled(format(found['mean'], f'+.{digits}f'), style)} [{low:+.{digits}f}, {high:+.{digits}f}]"
 
 
-def metric_table(metric, baseline, entries, names, budget, against='baseline'):
+def metric_table(metric, baseline, entries, names, budget, against='baseline', ends=True):
     """One metric's table for one case: the baseline at its best configuration first, then each method at its own.
 
     `entries` holds (side, its comparison from compare_at_best) for the methods with a complete configuration;
-    `against` is the word for the side they are compared with ('baseline', or 'control' inside one run folder).
+    `against` is the word for the side they are compared with ('baseline', or 'control' inside one run folder);
+    `ends` is False where the configurations are a few picked ones and not a grid, so no end of a grid is named.
     """
     # The rows: the baseline (when it has a configuration), then the methods from the best value on.
     value = ((lambda row: -row['measures']['whole_curve_mean']) if metric == 'whole'
@@ -304,9 +312,10 @@ def metric_table(metric, baseline, entries, names, budget, against='baseline'):
 
     # The cells shared by both metrics: the method, its best configuration among those read, and the last two.
     lead = [[row['side'].name, best_words(row['side'], row['best'], names)] for row in rows]
-    tail = [[ends_words(row['ends']),
-             str(row['measures']['seeds']) if row['result'] == 'baseline' else str(found['seeds']) if found else 'not compared']
+    tail = [([ends_words(row['ends'])] if ends else [])
+            + [str(row['measures']['seeds']) if row['result'] == 'baseline' else str(found['seeds']) if found else 'not compared']
             for row, found in zip(rows, compared)]
+    end_header = ['best configuration at an end of its grid'] if ends else []
     whole = marks([row['measures']['whole_curve_mean'] for row in rows], number, True)
     final = marks([row['measures']['final_level'] for row in rows], number, True)
     if metric == 'whole':
@@ -319,8 +328,7 @@ def metric_table(metric, baseline, entries, names, budget, against='baseline'):
                 for index, (row, found) in enumerate(zip(rows, compared))]
         header = ['method', 'best configuration for $W$', '$W$ ↑ ± standard error',
                   f'difference in $W$ from the {against} [95% interval]', '$L$ ± standard error',
-                  f'difference in $L$ from the {against} [95% interval]', 'best configuration at an end of its grid',
-                  f'seeds in common with the {against}']
+                  f'difference in $L$ from the {against} [95% interval]', *end_header, f'seeds in common with the {against}']
     else:
         capped = marks([row['measures']['capped_first_goal_step'] for row in rows], report.thousands, False)
         gaps = marks([found['capped_first_goal_step']['mean'] if found else None for found in compared],
@@ -337,8 +345,7 @@ def metric_table(metric, baseline, entries, names, budget, against='baseline'):
                 for index, (row, found) in enumerate(zip(rows, compared))]
         header = ['method', 'best configuration for $M$', '$M$ ↓ ± standard error, thousand steps',
                   f'difference in $M$ from the {against} [95% interval], thousand steps', 'policies that reach the goal',
-                  '$W$ at that configuration', '$L$ at that configuration', 'best configuration at an end of its grid',
-                  f'seeds in common with the {against}']
+                  '$W$ at that configuration', '$L$ at that configuration', *end_header, f'seeds in common with the {against}']
     return report.markdown_table(header, [first + middle + last for first, middle, last in zip(lead, body, tail)])
 
 
@@ -473,7 +480,9 @@ def study_cases(description):
 
 def read_development(run_dir, batch, folder, block):
     """Every case of a batch's development sweeps: each method's side, the baseline's side, and their comparisons."""
-    check_keys(block, DEVELOPMENT_KEYS, DEVELOPMENT_KEYS, 'development_sweeps')
+    check_keys(block, DEVELOPMENT_KEYS, DEVELOPMENT_KEYS - {'validation'}, 'development_sweeps')
+    if 'validation' in block:
+        check_keys(block['validation'], VALIDATION_KEYS, VALIDATION_KEYS, 'development_sweeps, validation')
     check_keys(block['baseline'], BASELINE_KEYS, BASELINE_KEYS - {'confirmation_phases'}, 'development_sweeps, baseline')
     description = json.loads((Path(folder) / block['study_description']).read_text())
     ours = read_specifications(run_dir)
@@ -493,8 +502,10 @@ def read_development(run_dir, batch, folder, block):
     return cases
 
 
-def development_section(run_dir, cases, block):
-    """The section of the development sweeps: the units, then per case the two tables and the methods' grids."""
+def development_section(run_dir, batch, cases, block):
+    """The section of the development sweeps: the units, then per case the two tables, the methods' grids, and the
+    picked configurations on the validation seeds where the settings name such a phase and the case has units of it."""
+    ours = read_specifications(run_dir) if 'validation' in block else None
     baseline_block = block['baseline']
     phases = ', '.join(f'`{phase}`' for phase in baseline_block['phases'])
     text = ['## Development sweeps against the baseline, case by case\n\n'
@@ -518,7 +529,16 @@ def development_section(run_dir, cases, block):
                     f'Read at {budget:,} environment steps per policy. {baseline.name}: {read_words(baseline)}. '
                     + ' '.join(f'{side.name}: {read_words(side)}.' for side in case['sides'].values())
                     + (f" Not read yet, no complete unit: {'; '.join(waiting)}." if waiting else '') + '\n\n')
+        if 'validation' in block:
+            # Appended after the case's own tables below; read here so that a case with no complete sweep shows it too.
+            checked = validation_part(
+                run_dir, batch, block['validation'], environment, reward_setting, ours, METRICS,
+                '#### On the validation seeds: picked configurations of this case\n\n',
+                'these configurations were picked as the leading ones of each side\'s sweep', budget)
+        else:
+            checked = None
         if not entries:
+            text.append(checked or '')
             continue
         names = described_settings([baseline] + [side for side, _ in entries])
         for metric, title in zip(METRICS, ('Discovery and optimization: whole-curve mean', 'Discovery: mean capped first-goal time')):
@@ -535,17 +555,19 @@ def development_section(run_dir, cases, block):
                     + grid_tables('whole', sides, budget)
                     + '#### Mean capped first-goal time on every configuration of the methods\n\n'
                     'The same rows and columns, $M$ in thousands of steps; over each method\'s whole grid the smallest '
-                    'is bold and the second smallest underlined.\n\n' + grid_tables('discovery', sides, budget))
+                    'is bold and the second smallest underlined.\n\n' + grid_tables('discovery', sides, budget)
+                    + (checked or ''))
     return ''.join(text)
 
 
 # ---- discovery ----------------------------------------------------------------------------------------------------
 
-def unit_values_table(sides, names, budget):
-    """Every configuration of several sides with its M, the policies that reach the goal, W and L: one row each."""
-    # The rows: the sides in their order, each side's configurations from the smallest M on.
+def unit_values_table(sides, names, budget, metric):
+    """Every configuration of several sides with its W, L, M and the policies that reach the goal: one row each."""
+    # The rows: the sides in their order, each side's configurations from its best on for the metric named.
+    rank = compare.rank_configurations if metric == 'whole' else compare.rank_for_discovery
     rows = [(side, group, measures.configuration_measures(group.policies, budget))
-            for side in sides for _, _, group in compare.rank_for_discovery(side.groups, budget)]
+            for side in sides for _, _, group in rank(side.groups, budget)]
     digits = decimals(max(row['seeds'] for _, _, row in rows))
     number = lambda value: f'{value:.{digits}f}'
     capped = marks([row['capped_first_goal_step'] for _, _, row in rows], report.thousands, False)
@@ -555,13 +577,13 @@ def unit_values_table(sides, names, budget):
     whole = marks([row['whole_curve_mean'] for _, _, row in rows], number, True)
     final = marks([row['final_level'] for _, _, row in rows], number, True)
     return report.markdown_table(
-        ['method', 'configuration', '$M$ ± standard error, thousand steps', 'policies that reach the goal',
-         '$W$ ± standard error', '$L$'],
+        ['method', 'configuration', '$W$ ± standard error', '$L$ ± standard error', '$M$ ± standard error, thousand steps',
+         'policies that reach the goal'],
         [[side.name, configuration_words(group, names),
-          report.thousands_with_error(row['capped_first_goal_step'], row['capped_first_goal_step_error'], capped[index]),
-          report.styled(f"{reached[index]} of {row['seeds']}", reached_marks[index]),
           fine_mean(row['whole_curve_mean'], row['whole_curve_mean_error'], digits, whole[index]),
-          report.styled(number(row['final_level']), final[index])]
+          fine_mean(row['final_level'], row['final_level_error'], digits, final[index]),
+          report.thousands_with_error(row['capped_first_goal_step'], row['capped_first_goal_step_error'], capped[index]),
+          report.styled(f"{reached[index]} of {row['seeds']}", reached_marks[index])]
          for index, (side, group, row) in enumerate(rows)])
 
 
@@ -573,40 +595,76 @@ def one_budget(sides, where):
     return budgets[0]
 
 
-def discovery_validation(run_dir, batch, block, environment, reward_setting, specifications):
-    """The discovery check on the validation seeds: every unit's M, then each method's best against the control's best."""
-    check_keys(block, {'phase', 'control', 'method_names'}, {'phase', 'control', 'method_names'}, 'discovery, validation')
-    sides = {slug: read_side(run_dir, select(specifications, [block['phase']], slug, environment, reward_setting), slug, name)
+VALIDATION_KEYS = {'phase', 'control', 'method_names'}
+CASE_VALIDATION_KEYS = VALIDATION_KEYS | {'environment', 'reward_setting'}
+METRIC_WORDS = {'whole': ('$W$', 'the highest'), 'discovery': ('$M$', 'the smallest')}
+
+
+def validation_part(run_dir, batch, block, environment, reward_setting, specifications, metrics, heading, picked, budget=None):
+    """Picked configurations on the validation seeds in one case: every unit's measures, then best against best per metric.
+
+    `metrics` names the metrics the units were picked for; `heading` is the part's whole heading line; `picked` says
+    in words where the configurations come from. Returns the text, or None when the phase has no unit in the case.
+    """
+    sides = {slug: read_side(run_dir, select(specifications, [block['phase']], slug, environment, reward_setting, budget), slug, name)
              for slug, name in block['method_names'].items()}
+    if not any(side.units for side in sides.values()):
+        return None
     control = sides[block['control']]
     others = [side for slug, side in sides.items() if slug != block['control']]
-    title = '### On the validation seeds: the leading configurations for the first-goal time\n\n'
-    units = '#### Units\n\n' + units_table([(side, case_words(environment, reward_setting)) for side in sides.values()])
+    level = heading.split(' ')[0] + '#'
+    units = f'{level} Units\n\n' + units_table([(side, case_words(environment, reward_setting)) for side in sides.values()])
     read = [side for side in [control] + others if side.groups]
     if not read:
-        return title + f"No unit of the phase `{block['phase']}` is complete yet.\n\n" + units
+        return heading + f"No unit of the phase `{block['phase']}` is complete yet.\n\n" + units
     budget = one_budget(sides.values(), f"the phase {block['phase']}")
-    entries = [(side, compare_at_best(side, control, budget, 'discovery on the validation seeds', batch)) for side in others if side.groups]
+    entries = [(side, compare_at_best(side, control, budget, 'picked configurations on the validation seeds', batch,
+                                      environment, reward_setting)) for side in others if side.groups]
     names = described_settings(read)
     seeds = sorted({policy.seed for side in read for group in side.groups for policy in group.policies})
     waiting = [f'{side.name}: {read_words(side)}' for side in sides.values() if len(side.groups) < side.planned]
-    return (title
+    symbols = ' and '.join(METRIC_WORDS[metric][0] for metric in metrics)
+    text = [heading
             + f"The units of the phase `{block['phase']}` in {case_words(environment, reward_setting)}. Each trains one "
             f'configuration on {len(seeds)} seeds, from {seeds[0]} to {seeds[-1]}: neither the development seeds, on '
-            'which these configurations were picked as the leading ones of each method\'s discovery sweep, nor the '
-            f'confirmation seeds. Read at {budget:,} environment steps per policy. Define $M$, $W$ and $L$ as in '
-            'the section Measures. First table: every configuration, the control first, each method from its '
-            'smallest $M$ on; per column the best value is bold and the second best underlined (the smallest for '
-            '$M$).\n\n'
-            + unit_values_table(read, names, budget)
-            + 'Second table: each method at its best configuration for $M$ on these seeds against the control at its '
+            f'which {picked}, nor the confirmation seeds. Read at {budget:,} environment steps per policy. Define '
+            '$W$, $L$ and $M$ as in the section Measures. First table: every configuration, the control first, each '
+            f"method from its best on for {METRIC_WORDS[metrics[0]][0]}; per column the best value is bold and the "
+            'second best underlined (the smallest for $M$).\n\n'
+            + unit_values_table(read, names, budget, metrics[0])
+            + f'Then, for {symbols}: each method at its best configuration on these seeds against the control at its '
             'own, paired on the seeds both have, with the 95% interval from 10,000 resamples of those seeds. Each '
             'best configuration was chosen on these same seeds, among the few run here: a second selection step, '
-            'not the comparison on the confirmation seeds.\n\n'
-            + (metric_table('discovery', control, entries, names, budget, 'control') if entries else
-               'No method other than the control has a complete unit yet.\n\n')
-            + (('Not complete, left out: ' + '; '.join(waiting) + '.\n\n') if waiting else '')
-            + units)
+            'not the comparison on the confirmation seeds.\n\n']
+    for metric in metrics:
+        text.append(f'Best against best for {METRIC_WORDS[metric][0]} ({METRIC_WORDS[metric][1]} is the best):\n\n'
+                    + (metric_table(metric, control, entries, names, budget, 'control', ends=False) if entries else
+                       'No method other than the control has a complete unit yet.\n\n'))
+    text.append((('Not complete, left out: ' + '; '.join(waiting) + '.\n\n') if waiting else '') + units)
+    return ''.join(text)
+
+
+def validation_section(run_dir, batch, block):
+    """A section of its own: every configuration of one phase on the validation seeds in one case, best against best."""
+    check_keys(block, CASE_VALIDATION_KEYS, CASE_VALIDATION_KEYS, 'validation_of_configurations')
+    heading = ('## Validation seeds: each side at the best of all its configurations\n\n'
+               'The section Validation block compares at the screen\'s settings, where only the intrinsic weight '
+               'differs. Here every configuration of the phase counts, also one at another learning rate or entropy '
+               'coefficient, so each side, the control included, stands at the best of everything it was run at on '
+               'these seeds.\n\n')
+    found = validation_part(run_dir, batch, {key: block[key] for key in VALIDATION_KEYS}, block['environment'],
+                            block['reward_setting'], read_specifications(run_dir), METRICS, heading,
+                            'these configurations were picked from each side\'s screens and sweeps')
+    return found or heading + f"The phase `{block['phase']}` has no unit in this case.\n\n"
+
+
+def discovery_validation(run_dir, batch, block, environment, reward_setting, specifications):
+    """The discovery check on the validation seeds: every unit's M, then each method's best against the control's best."""
+    check_keys(block, VALIDATION_KEYS, VALIDATION_KEYS, 'discovery, validation')
+    heading = '### On the validation seeds: the leading configurations for the first-goal time\n\n'
+    found = validation_part(run_dir, batch, block, environment, reward_setting, specifications, ('discovery',), heading,
+                            "these configurations were picked as the leading ones of each method's discovery sweep")
+    return found or heading + f"The phase `{block['phase']}` has no unit in this case.\n\n"
 
 
 def discovery_development(run_dir, batch, block, environment, reward_setting, specifications):
