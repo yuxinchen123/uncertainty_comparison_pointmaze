@@ -197,3 +197,6 @@ Times are Pacific.
   (five jobs waiting on priority). I lowered the limit to 7, took the five back, and three UVA jobs on five free
   cards started within two minutes and took them (6903458 on an RTX 5080, 6903459 on three A40, 6903460 on one
   A40). The five waiting Gilbreth jobs stay in the queue; each ends at once when it starts and finds no unit.
+- 2026-11-13 05:52 PT: the two second-block units of batch 12 (PointMaze Large with reward 1 on arrival, steps 0.03
+  and 0.01) were built at 05:50 PT and stayed on UVA; two jobs on free cards were submitted for them (6903561 on
+  an A100 40 GB, 6903562 on an RTX 4000 Ada).
