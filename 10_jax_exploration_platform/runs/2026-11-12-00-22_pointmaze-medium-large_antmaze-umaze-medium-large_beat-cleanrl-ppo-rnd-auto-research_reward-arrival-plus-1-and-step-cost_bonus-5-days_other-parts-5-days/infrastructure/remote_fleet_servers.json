@@ -34,17 +34,17 @@
       }
     },
     "hand_over": {
-      "units_at_once": 28,
+      "units_at_once": 0,
       "match": "pointmaze",
       "pool": "standby-a100-80gb-a30-a10",
-      "note": "Placement decided with the user 2026-11-12 22:18 PT: Gilbreth by default; UVA only for workers that start at once (submit.py --only-cards-free-now); no worker job is left waiting in UVA's queue. At each change the limit is set to the units on Gilbreth plus the waiting units, less the UVA cards that can start now."
+      "note": "Placement decided with the user 2026-11-12 22:18 PT: Gilbreth by default; UVA only for workers that start at once; no worker job is left waiting in UVA's queue. From 2026-11-13 01:28 PT the limit is pinned to the units already there: units of the new option (held_after_first_arrival, code copy eab85eba or later) must not reach Gilbreth while jobs of the old code copy d7054945 run there, because a worker does not check which code copy a unit needs."
     },
     "ready": true,
     "failed_calls_in_a_row": 0,
     "budget_note": "standby, not charged",
-    "code": "/scratch/gilbreth/liu4869/rnd_maze/code/source_d7054945b292c2fb2b0d8a6d4d7f8407659f59f5/10_jax_exploration_platform",
-    "prepared_commit": "d7054945b292c2fb2b0d8a6d4d7f8407659f59f5",
-    "code_repository_commit": "aaf18fec726ee2825e2ef4a9785abffc62abef94",
+    "code": "/scratch/gilbreth/liu4869/rnd_maze/code/source_bed45842af55ebca96c4394f3461206f86ab597a/10_jax_exploration_platform",
+    "prepared_commit": "bed45842af55ebca96c4394f3461206f86ab597a",
+    "code_repository_commit": "7f07dfa063611d56bfc706de89c537ae41bdb145",
     "first_unit": {
       "state": "passed",
       "unit": "batch-01-screen_pointmaze-large_reward-arrival-plus-one_scheduled-last-layer-on-fixed-features-decay-1_cells-01-to-12-of-12_seeds-0-to-15",
