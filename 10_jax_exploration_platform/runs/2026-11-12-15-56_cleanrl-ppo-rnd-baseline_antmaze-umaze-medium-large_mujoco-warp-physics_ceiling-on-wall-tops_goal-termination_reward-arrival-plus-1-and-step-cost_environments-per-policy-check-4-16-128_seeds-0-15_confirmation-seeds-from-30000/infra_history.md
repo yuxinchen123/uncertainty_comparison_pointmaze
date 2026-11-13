@@ -279,3 +279,10 @@ Times are Pacific, read from the clock or from scheduler records.
   environments per policy, the same eight configurations and seeds as the earlier screen units. The options exist
   in this folder's frozen copy (a2df3c12), so it was not frozen anew. Handed to Gilbreth at 06:27 PT with four
   jobs.
+- 2026-11-13 06:31 PT: anomaly, harmless: about three minutes after the hand-over the 5-minute fleet step submitted
+  four more jobs for the same four units (12353497, 12353499, 12353500, 12353501), although the first four jobs
+  (12353491 to 12353494) were already running; they had started but not yet claimed their units when the step
+  read the server, so the units still counted as having no job. All four units run on the first four jobs.
+  12353497 started, found nothing and ended after 8 seconds; the other three wait and will do the same, or will
+  continue the two screen units with 16 environments per policy if those reach their jobs' 4-hour limit at 06:58
+  PT before finishing (they were at 240 and 243 of 256 windows at 06:26 PT). Not cancelled for that reason.
