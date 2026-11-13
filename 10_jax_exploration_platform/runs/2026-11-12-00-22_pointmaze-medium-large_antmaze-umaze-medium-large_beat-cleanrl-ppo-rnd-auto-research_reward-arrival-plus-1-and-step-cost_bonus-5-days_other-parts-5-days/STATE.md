@@ -776,7 +776,7 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   block under equal rules; Large with reward 1 on arrival +0.0095 and Large with the step cost +0.0095
   [+0.0057, +0.0137] at weight 8, first block). The half-speed arm is level on Medium with the step cost (+0.0014
   at weights 1, 2, 4), so it is not ahead everywhere. All 167 units of this folder were done at 00:26 PT.
-- 2026-11-13 00:29 PT: **batch 8 written** (`batches/08_divisor-held-from-the-first-arrival_…`): (1) the divisor
+- 2026-11-13 00:28 PT: **batch 8 written** (`batches/08_divisor-held-from-the-first-arrival_…`): (1) the divisor
   held from each policy's own first arrival, a new option being added and tested in the background (no fraction
   to set; not what the public code does); (2) the error length with a held divisor, existing options, 6 units on
   the validation block handed to Gilbreth now. Predictions in its `ideas.md`. This folder's code is frozen anew
