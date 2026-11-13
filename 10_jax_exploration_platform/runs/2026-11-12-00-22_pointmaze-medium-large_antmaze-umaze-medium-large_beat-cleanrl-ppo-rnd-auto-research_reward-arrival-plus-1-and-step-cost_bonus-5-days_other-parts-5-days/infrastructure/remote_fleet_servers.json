@@ -1,0 +1,56 @@
+{
+  "gilbreth": {
+    "ssh": [
+      "ssh",
+      "-o",
+      "BatchMode=yes",
+      "-o",
+      "ConnectTimeout=60",
+      "gilbreth"
+    ],
+    "check": [],
+    "remote_run": "/scratch/gilbreth/liu4869/rnd_maze/runs/2026-11-12-00-22_beat-cleanrl-ppo-rnd-auto-research",
+    "python": "/scratch/gilbreth/liu4869/envs/rnd_platform_jax_mujoco_warp/bin/python",
+    "code_root": "/scratch/gilbreth/liu4869/rnd_maze/code",
+    "unit_seconds": 1800,
+    "pools": {
+      "standby-a100-80gb-a30-a10": {
+        "gpu_class": "a100_80gb_or_a30_or_a10_gilbreth",
+        "time_limit": "04:00:00",
+        "max_jobs": 8,
+        "sbatch_options": [
+          "-p",
+          "a100-80gb,a30,a10",
+          "-q",
+          "standby",
+          "-A",
+          "dsmichil",
+          "-N1",
+          "-n1",
+          "-c2",
+          "--gres=gpu:1",
+          "--mem=8G"
+        ]
+      }
+    },
+    "hand_over": {
+      "units_at_once": 2,
+      "match": "pointmaze",
+      "pool": "standby-a100-80gb-a30-a10",
+      "note": "2 since 2026-11-12 20:42 PT: UVA has not started this folder's worker jobs for an hour or more (about 1,300 waiting jobs of other users are ahead of ours and the scheduler tests few per pass), so PointMaze units that lose their UVA worker continue on Gilbreth from their checkpoints. It was 0 from 16:40 PT, when UVA still started workers within a minute."
+    },
+    "ready": true,
+    "failed_calls_in_a_row": 0,
+    "budget_note": "standby, not charged",
+    "code": "/scratch/gilbreth/liu4869/rnd_maze/code/source_d7054945b292c2fb2b0d8a6d4d7f8407659f59f5/10_jax_exploration_platform",
+    "prepared_commit": "d7054945b292c2fb2b0d8a6d4d7f8407659f59f5",
+    "code_repository_commit": "aaf18fec726ee2825e2ef4a9785abffc62abef94",
+    "first_unit": {
+      "state": "passed",
+      "unit": "batch-01-screen_pointmaze-large_reward-arrival-plus-one_scheduled-last-layer-on-fixed-features-decay-1_cells-01-to-12-of-12_seeds-0-to-15",
+      "compared_with_uva_unit": "batch-01-screen_pointmaze-large_reward-arrival-plus-one_error-length-as-the-bonus_cells-01-to-12-of-12_seeds-0-to-15",
+      "differences": [],
+      "checked_at": "2026-11-12T17:23:22.856295-05:00"
+    }
+  }
+}

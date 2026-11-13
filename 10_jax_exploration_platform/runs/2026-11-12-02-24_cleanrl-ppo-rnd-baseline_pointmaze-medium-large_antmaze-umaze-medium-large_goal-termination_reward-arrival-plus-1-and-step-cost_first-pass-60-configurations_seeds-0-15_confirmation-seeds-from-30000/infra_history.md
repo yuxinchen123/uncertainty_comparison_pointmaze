@@ -156,3 +156,7 @@ Times are Pacific.
   taken back to UVA's queue, this folder's waiting Gilbreth jobs were cancelled by exact id from its Gilbreth
   ledger, and UVA workers were submitted under the sl5nw account only (new option `--accounts` of `submit.py`).
   Units already running on Gilbreth finish there.
+- 2026-11-12 20:42 PT: this folder's last waiting job on Gautschi (18433051, `smallgpu`, submitted 13:20 PT, never
+  started) was cancelled by its id from the Gautschi ledger. The folder has no unit left (133 done), so the job
+  could do no work, and a waiting job there takes one of the account's four places that gain age, which other
+  sessions' jobs need.

@@ -81,3 +81,16 @@ Times are Pacific.
   itself. It asks for a type at most as often as that type has cards outside reservations, counting this folder's
   own running and waiting jobs; when the RTX 2080 Ti count is used up by our own jobs it turns to the next type.
   The open fault is the other one: pinning to a node whose only idle processors are the 2 a full node shows.
+- 2026-11-12 20:41 PT: **why UVA no longer starts this folder's worker jobs.** Three jobs pinned to nodes with
+  free RTX 2080 Ti cards and idle processors (6897191 to 6897193, submitted 19:43 PT) had waited an hour with
+  reason `Priority`. Read at 20:41 PT: 3,015 waiting jobs in the cluster, 1,324 of them with a higher priority
+  than ours (one user alone has 2,560 waiting); our jobs' priority is 1,462, of which the fair-share part is
+  about 1,215 after today's use. The scheduler tests 50 jobs in its main pass and at most 500 in a backfill pass,
+  in priority order, so jobs this far down are tested rarely, whatever is free. Jobs of the reservation still
+  start at once (the test jobs on puma01 do), but the reservation's cards on jaguar03 are all held by another
+  session's job. The account had 9 cards in use over all sessions, far below its cap of 40.
+  Effect: the unit of batch 4 on PointMaze Large with the step cost (slower predictor with held divisor) stopped
+  with its state saved at window 198 of 256 when its worker reached the 2-hour limit, and no worker took it.
+  What was done (20:42 PT): Gilbreth's hand-over limit for this folder raised from 0 to 2; the unit was handed
+  over with its checkpoint (job 12347874). The other unit of that case continues there the same way if its UVA
+  worker ends. The waiting UVA jobs stay queued and gain age.
