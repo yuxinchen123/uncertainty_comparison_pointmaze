@@ -454,6 +454,24 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   Planner corrected (commit 28c6681f), workers and a new monitor job submitted; details in `infra_history.md`.
   Open: regenerate the shared resource document for affogato13, lynx01, lynx02, lynx05; freeze this folder's code
   anew at a moment when no unit is part-way through.
+- 2026-11-12 18:44 PT: **discovery sweeps of two leading ideas done** (18 configurations each, 16 development
+  seeds, PointMaze Large with reward 1 on arrival). Mean capped first-goal time at each idea's best configuration:
+  fast last layer at step 0.1: 46 ± 5 thousand steps (learning rate 2e-3, entropy 0.01, weight 16); all three parts
+  with the divisor held after 1/8: 58 ± 9 thousand (learning rate 6e-3, entropy 0.03, weight 16). RND's best of 84
+  configurations on the same seeds was 95 ± 21 thousand, and 136 ± 3 thousand on 1,024 fresh seeds, so a best
+  value from 16 seeds is too low by a wide margin; the ideas' numbers carry the same effect and are not a verdict.
+  The sweep of the scheduled last layer on local features is at 112 of 256 windows.
+- 2026-11-12 18:45 PT: two studies queued in this folder (19 units, UVA jobs 6894918 to 6894928; 12 cards started
+  within a minute, 7 wait):
+  1. `discovery-validation`: the three best configurations for the first-goal time of RND, of the fast last layer
+     and of all three parts (divisor held after 1/8), each on the 256 seeds of the validation block (9 units). It
+     gives the baseline and the ideas the same second selection step before any fresh seed is used.
+  2. `development-for-discovery-grid-of-rnd`: the two ideas on the 84 configurations RND's discovery sweeps had
+     in this case (72 + 12; 10 units), because the ideas' first sweep had only 18 and each one's best was at an
+     end of its grid (lowest learning rate; highest entropy).
+  The corrected planner used lynx01, lynx02 and lynx05 (RTX 4000 Ada) for 11 of the cards.
+- 2026-11-12 18:41 PT: AntMaze: 5 finished units copied back after two failed fleet steps (missing `data/` folder
+  on UVA after my clean-up); they are records for the physics diagnosis only.
 
 ## Next
 

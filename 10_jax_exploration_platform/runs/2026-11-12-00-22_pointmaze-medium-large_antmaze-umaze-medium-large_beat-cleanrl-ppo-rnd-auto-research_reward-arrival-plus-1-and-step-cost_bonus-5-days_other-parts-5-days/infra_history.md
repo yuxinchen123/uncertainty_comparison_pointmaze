@@ -55,3 +55,8 @@ Times are Pacific.
   under its 20-day limit; its limit was lowered to 1 day (`scontrol update`, id from the monitor ledger). At
   18:29 PT it was still waiting. Until it starts, the session's 20-minute tick does its work (the tick submits
   workers for waiting units itself).
+- 2026-11-12 18:47 PT: why the new monitor job 6894373 does not start: it asks for 16 GB of memory, the account's
+  fair-share priority is low after today's use (1,215 of the job's 1,301 points), and the scheduler's planned
+  start was 2026-11-13 20:39 PT. The earlier monitor job used 130 MB at most (`sacct` MaxRSS of 6887756). Changes
+  to the waiting job (id from the monitor ledger): partitions `cpu,nolim` (18:41 PT), memory 2 GB (18:47 PT). The
+  submission script now asks for 2 GiB for a monitor job. At 18:50 PT the job was still waiting.

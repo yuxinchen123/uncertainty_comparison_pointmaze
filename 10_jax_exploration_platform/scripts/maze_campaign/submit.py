@@ -444,8 +444,10 @@ def submit_monitor(run_dir, options, dry_run=False):
         if record["kind"] == "monitor" and record["job_id"] in live:
             print(f"monitor job {record['job_id']} of this run folder is still live; no second one is submitted")
             return record["job_id"]
+    # 2 GiB: a monitor job used 130 MB at most (sacct MaxRSS of job 6887756, 4 h 40 min). The earlier request
+    # of 16 GiB kept a new monitor waiting for over a day's planned start on 2026-11-12, since few nodes had it free.
     job = {"identity": IDENTITIES[0], "partition": "nolim", "node": None, "gpu_type": None, "cards": 0, "cpus": 1,
-           "memory_gib": 16, "reservation": None, "kind": "monitor"}
+           "memory_gib": 2, "reservation": None, "kind": "monitor"}
     return submit_job(run_dir, "monitor", job, monitor_job_text(Path(run_dir), platform, canonical_python(), options),
                       dry_run)
 

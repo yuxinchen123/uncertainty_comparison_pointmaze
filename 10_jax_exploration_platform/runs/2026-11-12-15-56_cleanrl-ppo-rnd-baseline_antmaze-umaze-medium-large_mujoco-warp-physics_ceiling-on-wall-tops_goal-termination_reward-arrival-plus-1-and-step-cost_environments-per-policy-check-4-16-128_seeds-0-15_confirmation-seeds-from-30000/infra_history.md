@@ -138,3 +138,9 @@ Times are Pacific, read from the clock or from scheduler records.
   the diagnosis uses; nothing is chosen from them. A separate diagnosis was started at 18:04 PT in
   the speed study folder (`profiles/antmaze_warp_blow_up/`): reproduce, find the mechanism, measure corrections
   with their cost, add a guard that respawns a state beyond a bound.
+- 2026-11-12 18:38 and 18:40 PT: the fleet step could not copy finished units back (`rsync ... exit 11`, "mkdir
+  .../data/research failed: No such file or directory"): the folders `data/` and `checkpoints/` did not exist in
+  this run folder on UVA after the clean-up of 17:22 PT. Created `data/research/` and `checkpoints/`; the step of
+  18:41 PT copied, verified and moved 5 units to `queue/done` (the units with 128 environments per policy, cells
+  1 to 40; 3,764 to 4,049 s each on A10 and A30 cards). Nothing was lost: the records stayed on the server until
+  the copy succeeded. These units are records for the physics diagnosis only (entry of 18:00 to 18:04 PT).

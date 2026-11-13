@@ -141,3 +141,8 @@ Times are Pacific.
   jobs, the longest with about 2 days left; a node with exactly 2 idle processors takes no further job. The job
   holds nothing while it waits and stays queued. Until it runs, the RTX 5080's copies per process for the ant
   come from the calculated estimate, not a measurement.
+- 2026-11-12 18:39 PT: the AntMaze Warp training profile for the RTX 5080 (job 6886965) started on nekomata02 at
+  18:28 PT and ended after 649 s with its recorded outcome "the card's memory ran out": 16,384 environments (1,024
+  policies with 16 environments each, 512 constraint rows per environment) do not fit in the card's 16 GB (one
+  allocation of 6.12 GiB failed). Not a fault of the job. The next RTX 5080 profile uses 8,192 and 4,096
+  environments, and runs after the physics settings are settled by the diagnosis in `profiles/antmaze_warp_blow_up/`.
