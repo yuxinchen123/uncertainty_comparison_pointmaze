@@ -544,6 +544,31 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   with 128 environments per policy the best configurations reached the goal in only about 4% of episodes after
   16.8 million steps, while the units with 16 and 4 environments per policy had their first arrivals 4 to 10 times
   earlier in steps; so the count of environments per policy is likely to matter a great deal for the ant.
+- 2026-11-12 20:02 PT: **PointMaze Medium with reward 1 on arrival, validation block (256 seeds): the gain seen on
+  the 16 development seeds did not hold.** RND's best of three: whole-curve mean 0.9349 (learning rate 6e-3,
+  weight 2, the confirmed configuration; 0.932 on the fresh seeds). Slower predictor with held divisor, best of
+  three: 0.9348 (learning rate 3e-3, weight 2), difference −0.0001 [−0.008, +0.008]; its final level is ahead
+  (+0.005; 0.9999 against 0.995), and at these configurations it reaches the goal 7 thousand steps sooner (18
+  against 25). Its development-best configuration (learning rate 6e-3, weight 0.5; 0.965 on 16 seeds, "+0.021")
+  gives 0.928 here. All three parts: 0.906 at its two finished configurations, behind RND by 0.029
+  [−0.040, −0.018].
+  What this means: (a) a difference of 0.02 on 16 seeds in this case is noise, so every claim goes through the
+  validation block first; (b) in this case the method reaches the goal sooner and ends higher but its whole-curve
+  mean is only level, so the time between the first arrival and a settled policy is what is left to gain; (c) the
+  finalist with two parts is the better of the two outside PointMaze Large.
+  Standing of the two-part finalist on the whole-curve mean: PointMaze Large with reward 1 on arrival ahead
+  (+0.010 [+0.005, +0.016], validation block); Medium with reward 1 on arrival level; Medium with the step cost
+  level (16 seeds); Large with the step cost running.
+- 2026-11-12 20:03 PT: the fast last layer on RND's discovery grid is complete (102 configurations with the
+  repeats of its first sweep, 16 development seeds): best mean capped first-goal time 43.6 ± 6.9 thousand steps
+  (learning rate 2e-3, entropy 0.1, weight 256), then 46.2 (2e-3, 0.01, 16). On the validation seeds its best of
+  three was 55.8 ± 2.2 against RND's 119 ± 6, so the wider grid adds little beyond what was already checked.
+- 2026-11-12 20:02 PT: **the batch summaries now carry these comparisons** (analysis work in the background,
+  commits 82196cbe, 77c651f7, a5fafeba, 73087778; 104 analysis tests pass): each method at its best weight against
+  the control at its best on the validation seeds; batch 4 case by case against RND's development sweeps with
+  grid-end flags; the discovery checks; the readings of the predictions of batches 2 to 4. From the prediction
+  readings: batch 4's prediction 1 did not hold (neither finalist reaches the goal sooner than RND's own best for
+  that measure in PointMaze Medium), prediction 2 held (Medium with the step cost is level), prediction 3 waits.
 
 ## Next
 
