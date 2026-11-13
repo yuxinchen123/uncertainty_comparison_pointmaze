@@ -783,6 +783,15 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   when the new option's tests pass; no unit of it is part-way through then except these 6 short ones.
   Waiting for the user: how strict to be about the held divisor's closeness to public practice, and what the
   AntMaze comparison should be if RND stays at a few percent.
+- 2026-11-13 00:47 PT: **batch 8, the error length with a held divisor (first validation block, weights 1, 2, 4).**
+  Far behind on the whole-curve mean: PointMaze Large with reward 1 on arrival 0.656 at weight 1 (held divisor
+  alone 0.8876; −0.232 [−0.239, −0.225]), 0.352 at weight 2, 0.119 at weight 4; PointMaze Medium 0.877 at weight 1
+  (held divisor alone 0.9382; −0.062). First-goal time: 125 thousand steps on Large against 270 for the held
+  divisor alone (−145 [−167, −124]); on Medium 23.8 against 21.0 (not sooner). Prediction 2 did not hold: it is
+  sooner only on Large, and not level on the whole-curve mean at these weights. Its best weight is the smallest
+  one run in both cases, so weights 0.125, 0.25 and 0.5 are queued (6 units, edge rule). Reading: the error
+  length decays more slowly than the squared error, so at the same weight the policy keeps exploring; it is a
+  discovery arm, like the fast last layer.
 
 ## Next
 
