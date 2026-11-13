@@ -112,3 +112,8 @@ Times are Pacific.
   option `--only-cards-free-now` (commit below, 98 tests pass). During the first take-back the five-minute loop
   handed the units over again within a second, before the limit was lowered; with the corrected fleet that is
   harmless (no unit had two jobs), but the limit is now lowered BEFORE a take-back.
+- 2026-11-12 22:21 PT: this folder's monitor job was replaced so that it no longer submits UVA workers by itself
+  (its top-ups sent unpinned jobs that wait in UVA's queue, which the placement of 22:18 PT rules out): 6894373
+  cancelled by its id from the monitor ledger, 6898944 submitted without a top-up phase (2 GiB, partitions
+  `cpu,nolim`, limit 1 day). It was waiting on priority at 22:21 PT; until it runs, the session's 20-minute tick
+  covers it. UVA workers are now submitted only by the tick, with `--only-cards-free-now`.
