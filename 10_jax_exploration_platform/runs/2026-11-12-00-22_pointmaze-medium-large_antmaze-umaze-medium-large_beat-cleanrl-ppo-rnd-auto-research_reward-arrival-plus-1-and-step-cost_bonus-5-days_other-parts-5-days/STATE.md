@@ -286,6 +286,22 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   (48 configurations: learning rate 1e-4 to 3e-3, entropy 0.001 and 0.01, weight 0.0625 to 64; 16 seeds;
   16,777,216 steps; 8 units). MIT and Gautschi cannot start H100 work now (other sessions hold this account's
   limits), so the units run on Gilbreth's standby A100 and A30 cards.
+- 2026-11-12 16:05 PT: **the test on PointMaze Medium with the step cost refutes the gradient-clip suspicion**
+  (256 seeds, 10000 to 10255; RND at weight 0.00195): RND −0.3524 ± 0.0018, PPO without a bonus −0.3471 ± 0.0014
+  (RND is behind by 0.0053 ± 0.0022 on the same seeds), predictor with its own optimizer outside the clip −0.3548
+  ± 0.0016 at 0.25 times and −0.3555 ± 0.0021 at 1 times, which is no better than RND as it is. So what a
+  nearly weightless RND costs there is not the predictor's share of the clip. What is left in the RND program and
+  absent without a bonus: the intrinsic value head (its loss shares the critic and the clip) and the reward's
+  running statistics. That belongs to days 6 to 10 (how the bonus enters PPO, the value heads).
+- 2026-11-12 16:05 PT: batch 2, first units (16 development seeds, quick script): **divisor held after 1/16 of the
+  run: whole-curve mean 0.895 ± 0.005 at weight 4 and 0.892 ± 0.009 at weight 2** (final levels 0.998 and 0.997;
+  batch 1's control: 0.885 at weight 2, and 0.867 with a final level of 0.990 at weight 4); held after 1/4: 0.887 ±
+  0.005 at weight 4; held after 1/8: 0.873 ± 0.013 at weight 4. Mean capped first-goal times 162 to 183 thousand
+  steps, like the control's 190. Prediction 6 holds so far (higher final level at weight 4; best weight moves up).
+- 2026-11-12 16:10 PT: queued (a) on the validation block: divisor held after 1/16 at weights 2 and 4, held after
+  1/4 at weight 4, slower predictor with held divisor at weights 2 and 4, slower predictor alone at weight 4;
+  (b) **batch 3** (`batches/03_.../ideas.md`, 6 units): combinations of the slower predictor, the held divisor
+  and the fast last layer, with predictions.
 
 ## Next
 

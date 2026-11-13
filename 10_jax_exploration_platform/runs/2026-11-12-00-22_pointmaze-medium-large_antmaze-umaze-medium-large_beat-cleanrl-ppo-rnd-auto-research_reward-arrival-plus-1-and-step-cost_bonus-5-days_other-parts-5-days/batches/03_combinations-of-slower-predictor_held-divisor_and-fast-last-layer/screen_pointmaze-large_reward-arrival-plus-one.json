@@ -1,0 +1,97 @@
+{
+  "study": "beat-cleanrl-ppo-rnd-auto-research",
+  "phase": "batch-03-screen",
+  "bonus": "rnd_next_state",
+  "configuration_files": {
+    "pointmaze": "configs/experiments/pointmaze_large_cleanrl-ppo-rnd_goal-termination_reward-arrival-plus-one_example_steps-1024000.toml"
+  },
+  "environments": [
+    "pointmaze-large"
+  ],
+  "reward_settings": [
+    "arrival_plus_one"
+  ],
+  "environments_per_policy": {
+    "pointmaze": 4
+  },
+  "steps_per_policy": 8388608,
+  "windows_per_unit": 256,
+  "seeds": {
+    "first": 0,
+    "count": 16
+  },
+  "policies_per_unit": 256,
+  "minimum_card_memory_mb": 7000,
+  "cells": {
+    "kind": "grid",
+    "values": {
+      "learning_rate": [
+        0.002
+      ],
+      "entropy_coefficient": [
+        0.01
+      ],
+      "intrinsic_weight": [
+        0.000244140625,
+        0.0009765625,
+        0.00390625,
+        0.015625,
+        0.0625,
+        0.25,
+        0.5,
+        1.0,
+        2.0,
+        4.0,
+        16.0,
+        64.0
+      ],
+      "clip_coefficient": [
+        0.1
+      ]
+    }
+  },
+  "sweeps": [
+    {
+      "method": "slower-predictor-with-held-divisor",
+      "extra_options": [
+        "--bonus-options",
+        "predictor_learning_rate_multiple=0.25,reward_divisor=held_after_fraction,divisor_hold_fraction=0.0625,record_bonus_on_maze_grid=true"
+      ]
+    },
+    {
+      "method": "fast-last-layer-step-0-point-1-with-held-divisor",
+      "extra_options": [
+        "--bonus-options",
+        "fast_last_layer_step=0.1,reward_divisor=held_after_fraction,divisor_hold_fraction=0.0625,record_bonus_on_maze_grid=true"
+      ]
+    },
+    {
+      "method": "fast-last-layer-step-0-point-3-with-held-divisor",
+      "extra_options": [
+        "--bonus-options",
+        "fast_last_layer_step=0.3,reward_divisor=held_after_fraction,divisor_hold_fraction=0.0625,record_bonus_on_maze_grid=true"
+      ]
+    },
+    {
+      "method": "fast-last-layer-step-0-point-1-with-slower-predictor",
+      "extra_options": [
+        "--bonus-options",
+        "fast_last_layer_step=0.1,predictor_learning_rate_multiple=0.25,record_bonus_on_maze_grid=true"
+      ]
+    },
+    {
+      "method": "fast-last-layer-step-0-point-1-slower-predictor-held-divisor",
+      "extra_options": [
+        "--bonus-options",
+        "fast_last_layer_step=0.1,predictor_learning_rate_multiple=0.25,reward_divisor=held_after_fraction,divisor_hold_fraction=0.0625,record_bonus_on_maze_grid=true"
+      ]
+    },
+    {
+      "method": "fast-last-layer-step-0-point-1-slower-predictor-divisor-held-after-one-eighth",
+      "extra_options": [
+        "--bonus-options",
+        "fast_last_layer_step=0.1,predictor_learning_rate_multiple=0.25,reward_divisor=held_after_fraction,divisor_hold_fraction=0.125,record_bonus_on_maze_grid=true"
+      ]
+    }
+  ]
+}
