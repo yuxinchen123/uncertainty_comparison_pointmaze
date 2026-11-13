@@ -641,6 +641,11 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   (RND, all three parts, the two-part finalist and the predictor at half speed, two configurations each).
   Predictions in its `ideas.md`.
   Open: `summary_settings.json` for batches 5 and 6, so their summaries are generated like batch 4's.
+- 2026-11-12 22:18 PT: **placement decided with the user: Gilbreth by default; UVA only for workers that start
+  at once (any suitable card type); no worker jobs left waiting in UVA's queue.** Reasons and what was done are
+  in `infra_history.md`; the rule is in the session's memory (note `pointmaze-antmaze-placement-gilbreth-first`)
+  and in the 20-minute monitor's prompt (cron 9beed1f1 replaced 0a3e2261). At 22:18 PT this folder had 14 units on
+  Gilbreth and 2 running on UVA.
 
 ## Next
 

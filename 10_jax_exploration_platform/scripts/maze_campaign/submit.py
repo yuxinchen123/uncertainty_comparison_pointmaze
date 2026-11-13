@@ -382,8 +382,13 @@ def scheduler_state(run_dir):
             "type_room": type_room, "waiting": waiting}
 
 
-def top_up(run_dir, phase, gpu_types=None, max_new_cards=None, dry_run=False):
-    """Submit worker jobs for the pending units that have no worker yet; returns the new job ids."""
+def top_up(run_dir, phase, gpu_types=None, max_new_cards=None, dry_run=False, only_free_now=False):
+    """Submit worker jobs for the pending units that have no worker yet; returns the new job ids.
+
+    only_free_now: send only jobs pinned to nodes that have a free card, the processors and the memory now,
+    and none that would wait in the scheduler's queue (placement of 2026-11-12: UVA is used only where a
+    worker starts at once; the units without such a card go to another server).
+    """
     run_dir = Path(run_dir)
     if (run_dir / "STOP").exists() or (run_dir / "SWEEP_COMPLETE").exists():
         print("RUN/STOP or RUN/SWEEP_COMPLETE exists: nothing is submitted")
@@ -399,7 +404,8 @@ def top_up(run_dir, phase, gpu_types=None, max_new_cards=None, dry_run=False):
     spare = state["waiting_cards"]
     jobs = plan_jobs([unit["minimum_device_memory_mb"] for unit in pending], spare,
                      state["classes"], state["nodes"], state["budgets"], state["reservation_budgets"],
-                     state["held_nodes"], state["type_room"], state["waiting"], gpu_types, max_new_cards)
+                     state["held_nodes"], state["type_room"], state["waiting"], gpu_types, max_new_cards,
+                     0 if only_free_now else MAX_WAITING_JOBS)
     # the depth of the submission, said before anything is sent
     pinned = sum(job["cards"] for job in jobs if job["node"])
     print(f"{len(pending)} units pending, {running} running; {spare} worker cards of this "
@@ -460,6 +466,9 @@ def main(argv=None):
     parser.add_argument("--gpu-types", help="comma-separated card types (gres names) the workers may ask for; "
                                             "default: every type whose card can hold a pending unit")
     parser.add_argument("--max-new-cards", type=int, help="send at most this many worker cards in this call")
+    parser.add_argument("--only-cards-free-now", action="store_true",
+                        help="send only jobs pinned to nodes with a free card, processors and memory now; "
+                             "none that would wait in the scheduler's queue")
     parser.add_argument("--cpus-per-card", type=int,
                         help="processors a worker asks for per card (default 8 in gpu, 4 in gnolim)")
     parser.add_argument("--memory-gib-per-card", type=int,
@@ -490,7 +499,7 @@ def main(argv=None):
         print(submit_monitor(run_dir, options, args.dry_run))
     elif args.phase:
         print(top_up(run_dir, args.phase, args.gpu_types.split(",") if args.gpu_types else None,
-                     args.max_new_cards, args.dry_run))
+                     args.max_new_cards, args.dry_run, args.only_cards_free_now))
     else:
         parser.error("give --phase to submit workers, or --monitor")
 

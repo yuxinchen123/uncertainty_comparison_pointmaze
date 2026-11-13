@@ -175,6 +175,13 @@ class CardTypesFromTheScheduler(unittest.TestCase):
                                   {"gres_type": "b", "partition": "gpu", "nodes": ["n2"]}])
         self.assertEqual(classes, before)
 
+    def test_only_cards_free_now_sends_no_job_that_would_wait(self):
+        """With the limit of waiting jobs at zero every planned job is pinned to a node."""
+        jobs = plan([7000] * 20, max_waiting=0)
+        self.assertTrue(jobs)
+        self.assertTrue(all(job["node"] for job in jobs))
+        self.assertTrue(any(job["node"] is None for job in plan([7000] * 20)))
+
     def test_a_refused_job_does_not_stop_the_others(self):
         """top_up sends the remaining jobs after one refusal and returns only the ids that were sent."""
         jobs = [{"identity": "uva-sl5nw", "partition": "gpu", "node": name, "gpu_type": "a", "cards": 1,

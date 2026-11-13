@@ -34,10 +34,10 @@
       }
     },
     "hand_over": {
-      "units_at_once": 18,
+      "units_at_once": 14,
       "match": "pointmaze",
       "pool": "standby-a100-80gb-a30-a10",
-      "note": "2 since 2026-11-12 20:42 PT: UVA has not started this folder's worker jobs for an hour or more (about 1,300 waiting jobs of other users are ahead of ours and the scheduler tests few per pass), so PointMaze units that lose their UVA worker continue on Gilbreth from their checkpoints. It was 0 from 16:40 PT, when UVA still started workers within a minute."
+      "note": "14 since 2026-11-12 22:18 PT. Placement decided with the user that evening: Gilbreth by default (jobs started within 12 to 15 minutes there, mostly on A100 80 GB cards); UVA only for workers that start at once, that is a job pinned to a node with a free card, 2 idle processors and free memory; no worker job is left waiting in UVA's queue. The step of 22:18 PT handed over all 10 waiting units; UVA's two running workers end after their units."
     },
     "ready": true,
     "failed_calls_in_a_row": 0,

@@ -94,3 +94,21 @@ Times are Pacific.
   What was done (20:42 PT): Gilbreth's hand-over limit for this folder raised from 0 to 2; the unit was handed
   over with its checkpoint (job 12347874). The other unit of that case continues there the same way if its UVA
   worker ends. The waiting UVA jobs stay queued and gain age.
+- 2026-11-12 22:10 to 22:19 PT: **placement changed after two messages from the user.**
+  1. The user pointed to free UVA cards (4 RTX 5080, 12 Quadro RTX 4000) and asked to use such cards or better
+     ones. Read at 22:14 PT: those cards are free, but their nodes have no usable processor left
+     (`CPUAlloc` equals `CPUEfctv` on nekomata01 and 02, adriatic02, 05 and 06, jaguar05): on the RTX 5080 nodes
+     other users' processor-only jobs hold them; on adriatic05 a job of the yuxinchen account holds all 30, on
+     adriatic06 jobs of sl5nw hold all 30, on adriatic02 sl5nw holds 20 of 30 (processor-only work of other
+     sessions). Elsewhere memory is the limit: most nodes with free cards have under 3 GiB that a job may still
+     take. With every suitable card type allowed, the planner found 2 cards a worker could start on at once
+     (ai01, RTX 2080 Ti; lynx04, GTX 1080 Ti); both jobs started within 30 seconds (6898887, 6898888).
+  2. The user then proposed Gilbreth by default and UVA only where something starts at once; agreed and applied.
+  What was done: the worker type limit of two card types was dropped (every type from GTX 1080 Ti up, except
+  H100 NVL, which these small units leave to work that needs it); 12 waiting units had been taken back from
+  Gilbreth for UVA and went to Gilbreth again at 22:18 PT; all this folder's waiting UVA jobs were cancelled by
+  their ledger ids (the stuck three-card job 6897193, three and then ten unpinned jobs of this evening; also the
+  baseline folder's stuck three-card job 6891971 through that folder's ledger). The submission script has a new
+  option `--only-cards-free-now` (commit below, 98 tests pass). During the first take-back the five-minute loop
+  handed the units over again within a second, before the limit was lowered; with the corrected fleet that is
+  harmless (no unit had two jobs), but the limit is now lowered BEFORE a take-back.
