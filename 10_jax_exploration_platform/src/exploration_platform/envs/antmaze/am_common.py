@@ -109,6 +109,15 @@ class AntMazeConfig:
     # stopped at 161 rows after 2.4 million steps per policy; one ant pressed into a corner under the
     # ceiling can hold several dozen contacts of 4 rows each
     warp_constraint_rows_per_environment: int = 512
+    # ---- the physics fault guard (`faults.py`; spec.md, deviation 9) ----
+    # Both at 0.0: off; only a non-finite state is respawned, as in every run before 2026-11-12.
+    # With either above zero the guard is on: an environment whose torso moved faster than
+    # fault_torso_speed (metres per second) or turned faster than fault_torso_angular_speed
+    # (radians per second) after any physics step, or whose torso centre left the maze's volume
+    # (outer walls, floor, ceiling), is respawned like a non-finite one: no reward, no arrival, a
+    # truncation that shows the spawn. A bound left at 0 is not tested.
+    fault_torso_speed: float = 0.0
+    fault_torso_angular_speed: float = 0.0
 
 
 def preset(map_name: str) -> AntMazeConfig:
@@ -132,6 +141,16 @@ def cell_center(cell: Tuple[int, int], rows: int, cols: int) -> Tuple[float, flo
     """World (x, y) of a cell centre, in metres. Example: large map (7,1) -> (-18.0, -12.0)."""
     i, j = cell
     return ((j + 0.5) - cols / 2.0) * SCALING, (rows / 2.0 - (i + 0.5)) * SCALING
+
+
+def maze_half_extent(map_name: str) -> Tuple[float, float]:
+    """Half the maze's width and half its depth in metres: the outer faces of its outer walls.
+
+    before: "umaze" (5 x 5 cells of 4 m)   after: (10.0, 10.0)
+    before: "large" (9 rows x 12 columns)   after: (24.0, 18.0)
+    """
+    maze_map = MAPS[map_name]
+    return len(maze_map[0]) / 2.0 * SCALING, len(maze_map) / 2.0 * SCALING
 
 
 def merged_wall_boxes(map_name: str):

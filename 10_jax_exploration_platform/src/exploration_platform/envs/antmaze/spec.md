@@ -44,6 +44,8 @@ and its `assets/ant.xml`. The `ant.xml` vendored in `assets/` here is a byte cop
    NaNs in float32), while at `iterations=4` the tuned model shares the reference's resting
    equilibrium exactly — settled 1,200 env steps, both models rest at z = 0.38248 m and a
    state settled under either stays settled under the other to 3.7e-11 (gate 3 below).
+   That evidence is about an ant at rest. For an ant that turns fast in the air `implicitfast`
+   at 0.01 s is not stable, which the reference's RK4 is (measured 2026-11-12; deviation 9).
 4. **Wall boxes merged.** The reference emits one box geom per wall cell; here horizontal runs
    of wall cells are merged into single boxes (62 wall cells -> 31 boxes on the large map,
    38 -> 20 on the medium, 18 -> 8 on the umaze). The union of
@@ -64,7 +66,8 @@ and its `assets/ant.xml`. The `ant.xml` vendored in `assets/` here is a byte cop
 7. **Non-finite states respawn.** A float32 contact solve can fail on a knife-edge state and
    leave NaNs — measured at order one event per hundred thousand copy-iterations under a
    training policy, and not reproducible (the card's non-deterministic reductions decide
-   whether the edge tips). Such an environment is treated as an infrastructure truncation:
+   whether the edge tips). (The measurement of 2026-11-12 under deviation 9 found another source
+   of non-finite states that IS reproducible: an ant turning fast in the air.) Such an environment is treated as an infrastructure truncation:
    respawned at the spawn, reward forced to 0 for that step, its observation sanitised so the
    networks never see a NaN, and counted in the state's `nan_count` so a run can report how
    often it happened. The C-MuJoCo reference in float64 does not need this.
@@ -86,6 +89,69 @@ and its `assets/ant.xml`. The `ant.xml` vendored in `assets/` here is a byte cop
    centre above 1.5 m after any physics step, and the largest torso speed; the training command
    writes both into every window record (`ceiling_zone_steps_per_copy`,
    `largest_torso_speed_per_copy`). Checks: `tests/envs/test_antmaze_ceiling.py`.
+9. **A physics fault guard, off by default (added 2026-11-12 in the session and reported to the
+   user, who may reverse it; `fault_torso_speed`, `fault_torso_angular_speed`).** The reference
+   has none in its own code; C MuJoCo itself puts a simulation back to the model's default state
+   when a position, velocity or acceleration is not finite or above 1e10.
+   - **What was seen.** In training with RND on the U-maze (MuJoCo Warp, `implicitfast`, time
+     step 0.01 s) most configurations had, at some logging window, a policy whose largest torso
+     speed was above 10,000 m/s (up to 2.5e15 m/s). The policies of one checkpoint (iteration 336
+     of 1,024; 128 policies x 128 environments) rolled out without learning on an H100 NVL gave
+     33 such episodes in 362 million environment steps (0.09 per million) and 26 respawns for a
+     non-finite state.
+   - **The mechanism.** An ant that is off the floor (median torso height 1.1 to 1.3 m) and
+     turning. `implicitfast`, like Euler, takes the forces that depend on the turning rate
+     (Coriolis and centrifugal) from the start of the physics step. For a body that turns fast
+     this adds rotational energy at every step, and in the air nothing takes it away: over the 24
+     environment steps before an episode's torso speed first passed 100 m/s, the median angular
+     speed of the torso rose from 32 to 55 (12 steps before), 94 (4 before), 138, 188 and
+     326 rad/s. Contacts, joint limits and the solver are not the cause: the growth happens with
+     no contact, and from the recorded states C MuJoCo does the same with `implicitfast` at 4/8,
+     8/16, 16/16 and 100/50 solver and line-search iterations and with `Euler` (32 of 33 episodes
+     from 2 or 4 environment steps before, 20 of 33 from 24 steps before). With the reference's
+     `RK4`, or with the integrator `implicit` (which includes the turning-rate derivatives of
+     those forces), C MuJoCo reaches 100 m/s in none of the 33 from any of these starts; from 24
+     steps before, the largest torso speed stays near 5 m/s and the largest angular speed near
+     45 rad/s (medians).
+   - **Other physics settings in MuJoCo Warp, same policies** (H100 NVL, 16,384 environments;
+     seconds per training iteration measured on serval02 card 1):
+
+     | physics | environment steps rolled out | episodes above 100 m/s | largest torso speed after any physics step | environment steps ending above 60 rad/s | seconds per training iteration |
+     |---|---|---|---|---|---|
+     | `implicitfast`, 0.01 s (training) | 362 million | 33 | 5.7e13 m/s | not counted in that run | 1.374 |
+     | `RK4`, 0.01 s | 104 million | 0 | 14.6 m/s | 0 | 4.927 |
+     | `implicitfast`, 0.005 s, 10 physics steps per environment step | 127 million | 0 | 14.3 m/s | 1 | 2.707 |
+
+     With `implicitfast` at 0.01 s and only the speed bound on, 298 of 109 million environment
+     steps ended above 60 rad/s, and 0.53% between 20 and 40 rad/s against 0.28% with `RK4` and
+     0.29% at 0.005 s: the integrator inflates the turning of airborne ants also below the level
+     at which an episode runs away. MJX 3.11.0 refuses the integrator `implicit` for both of its
+     implementations; forced past that check, MuJoCo Warp's step did not agree with C MuJoCo
+     (one step at contact-free states differed by up to 6.9e-3 m against the gate's 1e-4) and
+     still ran away in 30 to 33 of the 33 episodes, so it is not used.
+   - **The guard.** With `fault_torso_speed` or `fault_torso_angular_speed` above zero, an
+     environment whose torso, after any physics step of an environment step, moved faster than
+     the first, turned faster than the second, or had its centre outside the maze's volume
+     (outer faces of the outer walls, floor, ceiling plane) is treated exactly like a non-finite
+     one (deviation 7): respawned, reward 0, no arrival, a truncation whose final observation is
+     the spawn, counted in `nan_count` and in the window record's
+     `physics_fault_respawns_per_copy`. The window record also holds
+     `largest_torso_angular_speed_per_copy`.
+   - **The bounds the study uses: 30 m/s and 100 rad/s.** With `RK4` and with `implicitfast` at
+     0.005 s the same policies never passed 14.6 m/s after any physics step and never ended an
+     environment step above 80 rad/s (one step in 231 million above 60). 30 m/s is twice that
+     speed; 100 rad/s is above every turning rate the two stable settings showed and below the
+     138 rad/s (median) of two steps before a runaway. With both bounds on and the training
+     physics, the same policies gave 22 respawns in 92 million environment steps (0.24 per
+     million, about one episode in 6,000), no environment step ending above 100 rad/s, and a
+     largest torso speed after any physics step of 17.9 m/s. The guard costs nothing measurable
+     (1.380 s per training iteration against 1.374 s).
+   - **What the guard does not do.** It ends a runaway; it does not correct the inflated turning
+     below its bounds. Only a stable integration does (the 0.005 s time step at 1.97 times the
+     time, or `RK4` at 3.59 times).
+   Measurements, scripts and records:
+   `benchmark_runs/2026-11-12-00-17_pointmaze-antmaze_cleanrl-ppo-rnd_speed-30-ideas_*/profiles/antmaze_warp_blow_up/notes.md`.
+   Checks: `tests/envs/test_antmaze_fault_guard.py`.
 
 ## Correctness gates
 

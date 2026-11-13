@@ -33,7 +33,7 @@ from mujoco.mjx._src import math as mjx_math
 from mujoco.mjx._src import solver as mjx_solver
 
 from . import faults
-from .am_common import SCALING, AntMazeConfig, build_antmaze_xml, cell_center
+from .am_common import SCALING, AntMazeConfig, build_antmaze_xml, cell_center, maze_half_extent
 from ..pointmaze.pm_common import MAPS
 
 F32 = jnp.float32
@@ -58,10 +58,13 @@ class EnvState(NamedTuple):
     data: object               # mjx.Data or CarriedPhysics, every array leading axis [C*N]
     step_count: jnp.ndarray    # [C, N] int32, steps since this environment's last reset
     reset_count: jnp.ndarray   # [C, N] int32, completed episodes (deterministic resets: metric only)
-    nan_count: jnp.ndarray     # [C, N] int32, episodes ended by a non-finite physics state
+    nan_count: jnp.ndarray     # [C, N] int32, episodes ended by a broken physics state (not finite, or
+                               # beyond the fault guard's bounds when the guard is on)
     # the fault record of `faults.py`, per policy, since the driver last read it
     ceiling_zone_steps: jnp.ndarray    # [C] int32, environment steps with the torso above 1.5 m
     largest_torso_speed: jnp.ndarray   # [C] float32, metres per second
+    physics_fault_respawns: jnp.ndarray  # [C] int32, respawns for a broken physics state
+    largest_torso_angular_speed: jnp.ndarray  # [C] float32, radians per second
 
 
 def wants_another_pass(model, ctx):
@@ -164,6 +167,8 @@ class JaxAntMaze:
 
         maze_map = MAPS[cfg.map_name]
         self.rows, self.cols = len(maze_map), len(maze_map[0])
+        # the outer faces of the outer walls, for the physics fault guard
+        self.half_extent = maze_half_extent(cfg.map_name)
         self.n_cells = self.rows * self.cols
         self.open_cells = jnp.asarray(np.asarray(maze_map).reshape(-1) == 0)
 
@@ -258,20 +263,25 @@ class JaxAntMaze:
                 data = state.data.replace(ctrl=a)
 
                 def frame(d, _):
-                    """One physics step at the held ctrl; outputs the torso's height and speed."""
+                    """One physics step at the held ctrl; outputs the torso's height, speed, place
+                    on the floor plane and angular speed."""
                     d = jax.vmap(self._physics_step, in_axes=(None, 0))(self.model, d)
-                    return d, faults.torso_height_and_speed(d.qpos, d.qvel)
+                    return d, (*faults.torso_height_and_speed(d.qpos, d.qvel), d.qpos[:, 0:2],
+                               faults.torso_angular_speed(d.qvel))
             else:
                 data = state.data
 
                 def frame(carried, _):
                     """One physics step at the held ctrl, from the carried arrays alone; outputs
-                    the torso's height and speed."""
+                    the torso's height, speed, place on the floor plane and angular speed."""
                     carried = jax.vmap(self._carried_physics_step)(carried, a)
-                    return carried, faults.torso_height_and_speed(carried.qpos, carried.qvel)
+                    return carried, (*faults.torso_height_and_speed(carried.qpos, carried.qvel),
+                                     carried.qpos[:, 0:2], faults.torso_angular_speed(carried.qvel))
             # before: data at the start of the step; after: data 5 physics steps later, and the
-            # torso's height and speed after each of them, [frame_skip, B] each
-            data, (heights, speeds) = jax.lax.scan(frame, data, None, length=self.cfg.frame_skip)
+            # torso's height, speed, angular speed [frame_skip, B] and xy [frame_skip, B, 2] after
+            # each of them
+            data, (heights, speeds, xy, spins) = jax.lax.scan(frame, data, None,
+                                                              length=self.cfg.frame_skip)
 
             step_count = state.step_count + 1
 
@@ -279,8 +289,12 @@ class JaxAntMaze:
             # (order one event in a hundred thousand copy-iterations, and not reproducible:
             # the card's non-deterministic reductions decide whether the edge tips), but one
             # poisoned copy would otherwise train on garbage forever. Such an environment is
-            # respawned like a truncation, pays no reward, and is counted.
-            bad = (~jnp.isfinite(data.qpos).all(-1) | ~jnp.isfinite(data.qvel).all(-1)
+            # respawned like a truncation, pays no reward, and is counted. With the guard on
+            # (`fault_torso_speed` or `fault_torso_angular_speed` above 0) a torso beyond the
+            # guard's bounds after any physics step is treated the same way.
+            bad = ((~jnp.isfinite(data.qpos).all(-1) | ~jnp.isfinite(data.qvel).all(-1))
+                   | faults.beyond_bounds(heights, speeds, xy, spins, self.cfg.fault_torso_speed,
+                                          self.cfg.fault_torso_angular_speed, self.half_extent)
                    ).reshape(self.C, self.N)
 
             # sparse goal reward on the torso's xy after the step
@@ -316,15 +330,19 @@ class JaxAntMaze:
             obs = self._obs(data)
             return (EnvState(data, step_count, reset_count, nan_count,
                              *faults.add_step(state.ceiling_zone_steps, state.largest_torso_speed,
-                                              heights, speeds, self.C, self.N)),
+                                              heights, speeds, self.C, self.N),
+                             faults.add_respawns(state.physics_fault_respawns, bad, self.C, self.N),
+                             faults.add_spin(state.largest_torso_angular_speed, spins,
+                                             self.C, self.N)),
                     obs, reward, terminated, truncated, final_obs)
 
     def fault_window(self, state: EnvState):
         """The fault record of the window that ends now, and the state with it set back to zero.
 
         Returns ({"ceiling_zone_steps_per_copy": [C numbers], "largest_torso_speed_per_copy":
-        [C numbers]}, state). Reading waits for the device, so the training command calls this
-        once per logging window, where it waits anyway.
+        [C numbers], "physics_fault_respawns_per_copy": [C numbers],
+        "largest_torso_angular_speed_per_copy": [C numbers]}, state). Reading waits for the
+        device, so the training command calls this once per logging window, where it waits anyway.
         """
         return faults.read_window(state), faults.clear_window(state)
 

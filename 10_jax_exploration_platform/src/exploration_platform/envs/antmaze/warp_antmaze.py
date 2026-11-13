@@ -68,7 +68,7 @@ from mujoco.mjx import warp as mjx_warp
 from mujoco.mjx.warp import types as mjx_warp_types
 
 from . import faults
-from .am_common import SCALING, AntMazeConfig, build_antmaze_xml, cell_center
+from .am_common import SCALING, AntMazeConfig, build_antmaze_xml, cell_center, maze_half_extent
 from ..pointmaze.pm_common import MAPS
 
 F32 = jnp.float32
@@ -123,7 +123,8 @@ class WarpEnvState(NamedTuple):
     data: object                  # mjx.Data; per-environment arrays lead with [C*N], pools do not
     step_count: jnp.ndarray       # [C, N] int32, steps since this environment's last reset
     reset_count: jnp.ndarray      # [C, N] int32, completed episodes
-    nan_count: jnp.ndarray        # [C, N] int32, episodes ended by a non-finite physics state
+    nan_count: jnp.ndarray        # [C, N] int32, episodes ended by a broken physics state (not
+                                  # finite, or beyond the fault guard's bounds when it is on)
     nacon_peak: jnp.ndarray       # [] int32, most contacts in the shared pool at any physics step
     ncollision_peak: jnp.ndarray  # [] int32, most candidate pairs in the shared pool
     nefc_peak: jnp.ndarray        # [] int32, most constraint rows of one environment
@@ -131,6 +132,8 @@ class WarpEnvState(NamedTuple):
     # the fault record of `faults.py`, per policy, since the driver last read it
     ceiling_zone_steps: jnp.ndarray    # [C] int32, environment steps with the torso above 1.5 m
     largest_torso_speed: jnp.ndarray   # [C] float32, metres per second
+    physics_fault_respawns: jnp.ndarray  # [C] int32, respawns for a broken physics state
+    largest_torso_angular_speed: jnp.ndarray  # [C] float32, radians per second
 
 
 class WarpAntMaze:
@@ -171,6 +174,8 @@ class WarpAntMaze:
 
         maze_map = MAPS[cfg.map_name]
         self.rows, self.cols = len(maze_map), len(maze_map[0])
+        # the outer faces of the outer walls, for the physics fault guard
+        self.half_extent = maze_half_extent(cfg.map_name)
         self.n_cells = self.rows * self.cols
         self.open_cells = jnp.asarray(np.asarray(maze_map).reshape(-1) == 0)
 
@@ -222,10 +227,12 @@ class WarpAntMaze:
     def respawn(self, state: WarpEnvState):
         """Every environment back at the spawn with step counts and the fault record zeroed (the
         first window's fault record then holds no warm-up step); other counters kept."""
-        zone_steps, largest_speed = faults.window_init(self.C)
+        zone_steps, largest_speed, respawns, largest_spin = faults.window_init(self.C)
         state = state._replace(data=self._spawned_data(),
                                step_count=jnp.zeros_like(state.step_count),
-                               ceiling_zone_steps=zone_steps, largest_torso_speed=largest_speed)
+                               ceiling_zone_steps=zone_steps, largest_torso_speed=largest_speed,
+                               physics_fault_respawns=respawns,
+                               largest_torso_angular_speed=largest_spin)
         return state, self._obs(state.data)
 
     def step(self, state: WarpEnvState, act):
@@ -242,14 +249,16 @@ class WarpAntMaze:
 
             def frame(d, _):
                 """One physics step at the held ctrl; outputs the pool use, the row count, which
-                environments are finite after it, and the torso's height and speed."""
+                environments are finite after it, and the torso's height, speed, place on the
+                floor plane and angular speed."""
                 d = jax.vmap(mjx.step, in_axes=(None, 0))(self.model, d)
                 impl = d._impl
                 return d, (impl.nacon.max(), impl.ncollision.max(), impl.nefc.max(), finite(d),
-                           *faults.torso_height_and_speed(d.qpos, d.qvel))
+                           *faults.torso_height_and_speed(d.qpos, d.qvel), d.qpos[:, 0:2],
+                           faults.torso_angular_speed(d.qvel))
             finite_before = finite(data)
-            data, (nacon, ncollision, nefc, finite_after, heights, speeds) = jax.lax.scan(
-                frame, data, None, length=self.cfg.frame_skip)
+            data, outs = jax.lax.scan(frame, data, None, length=self.cfg.frame_skip)
+            nacon, ncollision, nefc, finite_after, heights, speeds, xy, spins = outs
 
             step_count = state.step_count + 1
 
@@ -258,8 +267,13 @@ class WarpAntMaze:
             # each physics step, because MuJoCo Warp turns a torso quaternion that holds a NaN
             # into a valid one at the start of a physics step: testing only the end of the step
             # would let that environment go on from a state the physics never produced.
+            # With the guard on (`fault_torso_speed` or `fault_torso_angular_speed` above 0) a
+            # torso beyond the guard's bounds after any physics step is treated the same way.
             # before: finite_before [B], finite_after [frame_skip, B]; after: bad [C, N]
-            bad = ~(finite_before & finite_after.all(0)).reshape(self.C, self.N)
+            bad = (~(finite_before & finite_after.all(0))
+                   | faults.beyond_bounds(heights, speeds, xy, spins, self.cfg.fault_torso_speed,
+                                          self.cfg.fault_torso_angular_speed, self.half_extent)
+                   ).reshape(self.C, self.N)
 
             # sparse goal reward on the torso's xy after the step
             delta = data.qpos[:, 0:2].reshape(self.C, self.N, 2) - self.goal
@@ -295,15 +309,18 @@ class WarpAntMaze:
                 jnp.maximum(state.nefc_peak, nefc.max()),
                 state.overflow | data._impl.overflow.reshape(self.C, self.N),
                 *faults.add_step(state.ceiling_zone_steps, state.largest_torso_speed,
-                                 heights, speeds, self.C, self.N))
+                                 heights, speeds, self.C, self.N),
+                faults.add_respawns(state.physics_fault_respawns, bad, self.C, self.N),
+                faults.add_spin(state.largest_torso_angular_speed, spins, self.C, self.N))
             return stepped, obs, reward, terminated, truncated, final_obs
 
     def fault_window(self, state: WarpEnvState):
         """The fault record of the window that ends now, and the state with it set back to zero.
 
         Returns ({"ceiling_zone_steps_per_copy": [C numbers], "largest_torso_speed_per_copy":
-        [C numbers]}, state). Reading waits for the device, so the training command calls this
-        once per logging window, where it waits anyway.
+        [C numbers], "physics_fault_respawns_per_copy": [C numbers],
+        "largest_torso_angular_speed_per_copy": [C numbers]}, state). Reading waits for the
+        device, so the training command calls this once per logging window, where it waits anyway.
         """
         return faults.read_window(state), faults.clear_window(state)
 

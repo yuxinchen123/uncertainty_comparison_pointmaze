@@ -100,6 +100,8 @@ carried_state = "whole_data"
 physics = "warp"
 warp_contact_slots_per_environment = 48
 warp_constraint_rows_per_environment = 512
+fault_torso_speed = 0.0
+fault_torso_angular_speed = 0.0
 
 [runtime]
 environment = "antmaze-umaze"

@@ -422,14 +422,15 @@ def run_command(*options) -> None:
 
 
 def test_window_records_hold_the_fault_fields_for_antmaze_only():
-    """The AntMaze example's window records hold one count and one speed per policy; the PointMaze
-    example's records hold neither field, and the PointMaze environment has no fault record."""
+    """The AntMaze example's window records hold two counts and two speeds per policy; the PointMaze
+    example's records hold none of these fields, and the PointMaze environment has no fault record."""
     from exploration_platform.envs.pointmaze.jax_pointmaze import JaxPointMaze
     assert not hasattr(JaxPointMaze, "fault_window")
     short = ["--copies", "2", "--iterations", "2", "--window-iterations", "1",
              "--prime-iterations", "1", "--rollout-steps", "16"]
     names = set(faults.RECORD_NAMES.values())
-    assert names == {"ceiling_zone_steps_per_copy", "largest_torso_speed_per_copy"}
+    assert names == {"ceiling_zone_steps_per_copy", "largest_torso_speed_per_copy",
+                     "physics_fault_respawns_per_copy", "largest_torso_angular_speed_per_copy"}
     cases = (("pointmaze_large_cleanrl-ppo-rnd_goal-termination_reward-arrival-plus-one_example"
               "_steps-1024000.toml", False),
              ("antmaze_umaze_cleanrl-ppo-rnd_goal-termination_reward-arrival-plus-one_example"
@@ -453,3 +454,7 @@ def test_window_records_hold_the_fault_fields_for_antmaze_only():
                     # 16 steps x 4 environments per policy in a window: the count cannot exceed it
                     assert all(x <= 16 * 4 for x in steps)
                     assert len(speed) == 2 and all(0.0 < x < 100.0 for x in speed)
+                    # the examples run with the guard off and no state is non-finite: no respawn
+                    assert window["physics_fault_respawns_per_copy"] == [0, 0]
+                    turning = window["largest_torso_angular_speed_per_copy"]
+                    assert len(turning) == 2 and all(0.0 < x < 100.0 for x in turning)

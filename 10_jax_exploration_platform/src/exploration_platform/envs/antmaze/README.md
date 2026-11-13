@@ -77,21 +77,42 @@ over a wall cell.
 Measurements: section "After the ceiling" of
 `benchmark_runs/2026-11-12-00-17_pointmaze-antmaze_cleanrl-ppo-rnd_speed-30-ideas_*/profiles/antmaze_warp_training/antmaze_warp_training.md`.
 
+## The physics fault guard
+
+Two fields of the configuration, both 0 by default (guard off): `fault_torso_speed` in metres per
+second and `fault_torso_angular_speed` in radians per second. With either above zero, an
+environment is respawned exactly like one whose state is not finite (no reward, no arrival, a
+truncation whose final observation is the spawn, one more in `nan_count` and in the window's
+`physics_fault_respawns`) when, after any physics step of the environment step,
+
+1. the torso centre moved faster than `fault_torso_speed` (when above zero), or
+2. the torso turned faster than `fault_torso_angular_speed` (when above zero), or
+3. the torso centre was outside the maze's volume: beyond the outer faces of the outer walls,
+   below the floor or above the ceiling plane.
+
+Why, the measurements and the values the study uses (30 m/s and 100 rad/s): spec.md, deviation 9.
+Tests: `tests/envs/test_antmaze_fault_guard.py`.
+
 ## The fault record
 
-A policy that learns to get itself thrown upward would still reach the ceiling. Both
-implementations therefore keep two numbers per policy in the environment state, summed inside
+A policy that learns to get itself thrown upward would still reach the ceiling, and an ant that
+turns fast in the air can be sped up by the integrator itself (spec.md, deviation 9). Both
+implementations therefore keep four numbers per policy in the environment state, summed inside
 the compiled rollout (`faults.py`):
 
 | field of the state | window record of the training command | what it holds |
 |---|---|---|
 | `ceiling_zone_steps` | `ceiling_zone_steps_per_copy` | environment steps in which the torso centre was above 1.5 m (`CEILING_ZONE_HEIGHT`: 0.5 m under the ceiling, 0.24 m under first contact) after any of the step's physics steps |
 | `largest_torso_speed` | `largest_torso_speed_per_copy` | the largest speed of the torso centre after any physics step, in metres per second |
+| `physics_fault_respawns` | `physics_fault_respawns_per_copy` | environment steps that ended in a respawn because the physics state was not finite or, with the guard on, beyond the guard's bounds |
+| `largest_torso_angular_speed` | `largest_torso_angular_speed_per_copy` | the largest angular speed of the torso after any physics step, in radians per second |
 
-- The training command reads both at the end of each logging window and sets them back to zero
-  (`fault_window`); they are part of the state, so a unit that is stopped and continued keeps the
-  window's partial numbers.
+- The training command reads all four at the end of each logging window and sets them back to
+  zero (`fault_window`); they are part of the state, so a unit that is stopped and continued
+  keeps the window's partial numbers.
 - `respawn` sets them to zero, so the first window holds no priming step.
+- The two largest speeds include the physics steps of an environment step that ended in a
+  respawn, so a window shows what the guard stopped; the policy never sees those values.
 - A height or speed that is not a finite number counts as outside the zone and as speed 0; that
   environment is put back at the start and counted in `nan_count`, as before.
 - PointMaze has no such record and its window records are unchanged.
