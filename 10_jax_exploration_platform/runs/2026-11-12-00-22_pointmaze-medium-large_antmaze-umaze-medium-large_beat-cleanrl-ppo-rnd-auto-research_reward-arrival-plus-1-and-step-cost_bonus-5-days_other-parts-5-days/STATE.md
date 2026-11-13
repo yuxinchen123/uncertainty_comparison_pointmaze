@@ -1133,6 +1133,22 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   **Second block queued** (seeds 20000 to 20255, same configuration, steps 0.03 and 0.01; RND and the hold alone
   already have their units there: 0.8842 and 0.8839). Rule fixed now: the step with the higher whole-curve mean
   on the first block is the one whose second-block result counts.
+- 2026-11-13 05:55 PT: **batch 13, the two PointMaze Medium cases: the failure of batch 11 is gone at full length**
+  (the fast last layer until the first arrival, then the predictor's own divisor, held; first validation block,
+  256 seeds, learning rate 6e-3). Whole-curve mean, final level, first-goal time in thousand steps:
+
+  | case, weight | the arm | the hold alone, same weight | RND's best |
+  |---|---|---|---|
+  | reward 1 on arrival, weight 2 | 0.9445, 1.000, 16.0 | 0.9334, 1.000, 29.4 | 0.9349, 0.995, 25.0 |
+  | reward 1 on arrival, weight 4 | 0.9416, 1.000, 14.7 | 0.9435, 1.000, 18.5 | (same) |
+  | step cost, weight 1 | −0.3489, −0.307, 13.1 | −0.3476, −0.307, 15.4 | −0.3505, −0.308, 20.0 |
+  | step cost, weight 2 | −0.3476, −0.307, 12.7 | −0.3484, −0.306, 14.2 | (same) |
+
+  With reward 1 on arrival at weight 2 the arm is ahead of RND's best on the whole-curve mean (+0.0095 [+0.0023,
+  +0.0168]) and on the first-goal time (−9.0 [−12.5, −5.7]); batch 11's arm without the second divisor had 0.700
+  at weight 4. With the step cost it is level with the hold alone and with RND on the whole-curve mean (+0.0016
+  [−0.004, +0.006] against RND) and 7 thousand steps sooner than RND's configuration. Predictions 2 and 5 hold.
+  The nine units on the two Large cases are running.
 
 ## Next
 
