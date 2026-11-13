@@ -394,6 +394,15 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   Queued for the ideas that lead on discovery (scheduled last layer on local features with decay 1 and length 1;
   fast last layer at step 0.1; all three parts with the divisor held after 1/8): learning rate 2e-3, 6e-3, 1e-2 ×
   entropy 0.01, 0.03 × weight 4, 16, 64, so that they are tuned as RND was.
+- 2026-11-12 17:20 to 17:26 PT: **second restart of the AntMaze check, caused by a fault in the fleet.** After
+  the take-back and the second hand-over of the rebuilt units, every fleet step took six units back and handed
+  them over again because of a marker the take-back had left on the server; two or three jobs then ran one unit
+  at once from 17:01 to 17:20 PT. All of it is discarded (set aside in labelled folders on both sides). The fleet
+  is corrected (commit 89cd0c5b, test added, 94 pass) and the 8 units were built fresh and handed over at 17:24 PT;
+  a second step at 17:26 PT changed nothing. The PointMaze folders were not affected: their taken-back units were
+  never handed to Gilbreth again (their fleet logs show no repeat after 16:36 PT).
+  Lesson for the checks: after any hand-over, the next fleet step must report "0 handed over" and the server's
+  waiting and running lists must not share a unit.
 
 ## Next
 

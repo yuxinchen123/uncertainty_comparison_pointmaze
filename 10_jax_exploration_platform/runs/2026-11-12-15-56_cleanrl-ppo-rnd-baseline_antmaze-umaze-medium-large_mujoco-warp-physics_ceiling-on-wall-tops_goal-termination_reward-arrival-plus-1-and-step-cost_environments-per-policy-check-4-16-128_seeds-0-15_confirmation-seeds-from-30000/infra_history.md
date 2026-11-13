@@ -89,3 +89,20 @@ Times are Pacific, read from the clock or from scheduler records.
   cards. They may now also take A10 cards (24 GB), and the PointMaze folders stopped handing units to Gilbreth
   (their waiting jobs there were cancelled by ledger id), so that this account's standby places go to the ant.
 - 2026-11-12 16:57 PT: 8 rebuilt units handed to Gilbreth again, 8 jobs submitted.
+- 2026-11-12 17:01 to 17:20 PT: **two or three jobs ran one unit at once; everything of that period is discarded.**
+  Cause: the take-back of 16:39 PT left a `withdrawn` marker per unit on the server. After the units were handed
+  to the same server again (16:57 PT), every fleet step read the old marker as "withdrawn but not copied back",
+  took six units back and handed them over again (17:01, 17:06, 17:11, 17:16 and 17:20 PT in `fleet_log.txt`).
+  Each repeat put the unit into the server's waiting queue again while a job was running it, and the next free
+  job started it a second time (the unit logs show the same window twice with different numbers; the unit with
+  16 environments per policy was started three times). The two units built anew at 16:55 PT had no marker and
+  were not affected, but they had not started.
+  Found at the 17:20 PT tick from the remote listing (every unit "pending" with windows written).
+  What was done: hand-overs stopped and the server marked not ready (17:22 PT); the 8 running jobs 12346505 to
+  12346512 cancelled by ledger id; on Gilbreth the run folder's `queue`, `data`, `checkpoints` and `logs` moved to
+  `replaced_2026-11-12_two-jobs-on-one-unit/`; on UVA the queue records, specifications, unit configurations and
+  the fleet's assignment records moved to a folder of the same name here; the 8 units built fresh.
+  Correction in the fleet (commit 89cd0c5b, with a test): a unit is taken back for a `withdrawn` marker only when
+  the server holds it in no other queue folder.
+- 2026-11-12 17:24 PT: 8 fresh units handed to Gilbreth, 8 jobs submitted. The fleet step run again at 17:26 PT
+  took nothing back and handed nothing over; the server held 8 waiting units and no `withdrawn` marker.
