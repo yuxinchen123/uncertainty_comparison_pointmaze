@@ -19,7 +19,8 @@ mechanical energy that appeared without the motors supplying it while the ant ha
 
 Energy bookkeeping, per environment step t: define E(t) as the kinetic plus potential energy of the state
 before step t (MuJoCo's own energy functions, joint armature included) and W(t) as the work of the motors
-during step t (the sum over physics steps and joints of torque x mean joint speed x physics time step).
+during step t (the sum over physics steps and joints of MuJoCo's actuator torque on the joint x the mean of the
+joint's speed before and after the physics step x the physics time step).
 Damping and friction only remove energy, so E(t+1) - E(t) - W(t) cannot be positive in exact physics while
 nothing touches the ant. The record sums its positive values over the steps that begin and end with no
 contact ("energy created in the air"), and the motors' work over the whole episode for scale.
@@ -51,7 +52,7 @@ COLUMNS = ("policy", "episode", "length", "arrived", "largest_height", "largest_
            "physics_steps_beyond_guard", "unstable_resets", "energy_created_in_the_air", "motor_work_absolute",
            "largest_kinetic_energy", "mean_speed", "mean_height")
 MAZE = ((1, 1, 1, 1, 1), (1, 0, 0, 0, 1), (1, 1, 1, 0, 1), (1, 0, 0, 0, 1), (1, 1, 1, 1, 1))
-GOAL, GOAL_RADIUS, EPISODE_STEPS, GEAR = (-4.0, 4.0), 0.45, 700, 150.0
+GOAL, GOAL_RADIUS, EPISODE_STEPS = (-4.0, 4.0), 0.45, 700
 CACHE = {}
 
 
@@ -120,7 +121,7 @@ def episodes_of(task):
                 joint_speed_before = data.qvel[6:14].copy()
                 mujoco.mj_step(model, data)
                 touched = touched or data.ncon > 0
-                work += float(GEAR * data.ctrl @ (joint_speed_before + data.qvel[6:14])) * 0.5 * dt
+                work += float(data.qfrc_actuator[6:14] @ (joint_speed_before + data.qvel[6:14])) * 0.5 * dt
                 speed = float(np.linalg.norm(data.qvel[0:3]))
                 turning = float(np.linalg.norm(data.qvel[3:6]))
                 row["largest_speed"] = max(row["largest_speed"], speed)

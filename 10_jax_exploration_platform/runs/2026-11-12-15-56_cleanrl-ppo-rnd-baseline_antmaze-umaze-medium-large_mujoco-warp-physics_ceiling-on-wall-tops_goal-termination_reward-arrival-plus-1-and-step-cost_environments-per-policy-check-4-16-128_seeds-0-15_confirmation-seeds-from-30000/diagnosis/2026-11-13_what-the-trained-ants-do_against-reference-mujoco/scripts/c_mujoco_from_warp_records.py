@@ -10,9 +10,11 @@ Three measurements, all on processors:
    there.
 3. **Open loop.** The recorded actions of each recorded environment's first episode are replayed from the
    spawn in C MuJoCo with our settings, with our settings from a start moved by one micrometre, and with
-   the reference settings. The record says after how many environment steps the torso is more than 0.1 m
-   away from where it was in Warp, and how far C MuJoCo is from its own moved copy at the same time (two
-   runs of a chaotic system part anyway; only a much earlier parting than that says the physics differ).
+   the reference settings, and with our settings and the state rounded to single precision after every
+   environment step (the precision Warp computes in). The record says after how many environment steps the
+   torso is more than 0.1 m away from where it was in Warp, and after how many steps C MuJoCo is that far
+   from its own copies (two runs of a chaotic system part anyway; only a much earlier parting than that
+   says the physics differ).
 
 Run on a compute node's processors, never on a login node:
   <platform_jax_warp python> c_mujoco_from_warp_records.py --name <records/warp_rollout_...> --out <file>
@@ -78,14 +80,17 @@ def replay(task):
     """One environment's first episode in C MuJoCo under the recorded actions, three ways.
 
     Returns per environment step the torso's distance from the Warp recording for our settings and for the
-    reference settings, and the distance between our settings and their copy started one micrometre higher.
+    reference settings, the distance between our settings and their copy started one micrometre higher, between
+    our settings and their copy whose state is rounded to single precision after every environment step, and
+    between our settings and the reference settings.
     """
     import mujoco
     import numpy as np
     states, actions = task          # [L + 1, 29] recorded states (the last one may be the reset spawn), [L, 8]
     steps = len(actions)
     paths = {}
-    for name, setting, lift in (("ours", OURS, 0.0), ("ours_moved", OURS, 1e-6), ("reference", REFERENCE, 0.0)):
+    for name, setting, lift, single in (("ours", OURS, 0.0, False), ("ours_moved", OURS, 1e-6, False),
+                                        ("reference", REFERENCE, 0.0, False), ("ours_single", OURS, 0.0, True)):
         model = model_of(setting)
         data = mujoco.MjData(model)
         data.qpos[:], data.qvel[:] = states[0, :15], states[0, 15:]
@@ -95,12 +100,17 @@ def replay(task):
             data.ctrl[:] = np.clip(actions[t], -1.0, 1.0)
             for _ in range(setting[4]):
                 mujoco.mj_step(model, data)
+            if single:
+                # the state as single precision would hold it: before 0.123456789012 after 0.12345679104
+                data.qpos[:] = data.qpos.astype(np.float32)
+                data.qvel[:] = data.qvel.astype(np.float32)
             path[t] = data.qpos[0:3]
         paths[name] = path
     recorded = states[1:steps + 1, 0:3].astype(np.float64)
     usable = steps - 1              # the state after the last step is the reset spawn, not the step's end
     gap = lambda a, b: np.linalg.norm(a[:usable] - b[:usable], axis=1)
-    return gap(paths["ours"], recorded), gap(paths["reference"], recorded), gap(paths["ours"], paths["ours_moved"])
+    return (gap(paths["ours"], recorded), gap(paths["reference"], recorded), gap(paths["ours"], paths["ours_moved"]),
+            gap(paths["ours"], paths["ours_single"]), gap(paths["ours"], paths["reference"]))
 
 
 def first_beyond(gaps, bound):
@@ -208,14 +218,18 @@ def main():
         gaps = pool.map(replay, tasks, chunksize=4)
     parted = {"warp_against_c_mujoco_ours": [first_beyond(g[0], 0.1) for g in gaps],
               "warp_against_c_mujoco_reference": [first_beyond(g[1], 0.1) for g in gaps],
-              "c_mujoco_ours_against_its_copy_moved_by_one_micrometre": [first_beyond(g[2], 0.1) for g in gaps]}
+              "c_mujoco_ours_against_its_copy_moved_by_one_micrometre": [first_beyond(g[2], 0.1) for g in gaps],
+              "c_mujoco_ours_against_its_copy_rounded_to_single_precision": [first_beyond(g[3], 0.1) for g in gaps],
+              "c_mujoco_ours_against_c_mujoco_reference": [first_beyond(g[4], 0.1) for g in gaps]}
     record["open_loop"] = {"episodes_replayed": len(tasks), "bound_metres": 0.1,
                            "first_step_beyond_the_bound_quantiles_10_50_90": {
                                name: np.quantile(values, [0.1, 0.5, 0.9]).round(0).tolist() for name, values in parted.items()},
                            "gap_after_5_10_20_steps_median_metres": {
                                name: [float(np.median([g[i][k] for g in gaps if len(g[i]) > k])) for k in (5, 10, 20)]
                                for i, name in enumerate(("warp_against_c_mujoco_ours", "warp_against_c_mujoco_reference",
-                                                         "c_mujoco_ours_against_its_copy_moved_by_one_micrometre"))}}
+                                                         "c_mujoco_ours_against_its_copy_moved_by_one_micrometre",
+                                                         "c_mujoco_ours_against_its_copy_rounded_to_single_precision",
+                                                         "c_mujoco_ours_against_c_mujoco_reference"))}}
     print("== open loop:", json.dumps(record["open_loop"]), flush=True)
     record["seconds"] = time.time() - started
     args.out.parent.mkdir(parents=True, exist_ok=True)
