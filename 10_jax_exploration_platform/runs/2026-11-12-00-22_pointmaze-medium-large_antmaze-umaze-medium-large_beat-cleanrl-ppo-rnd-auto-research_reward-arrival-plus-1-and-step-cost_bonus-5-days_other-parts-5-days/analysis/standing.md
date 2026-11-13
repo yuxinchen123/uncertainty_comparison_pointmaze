@@ -1,6 +1,6 @@
 # Standing of the bonus arms against CleanRL PPO-RND on the validation seeds, the four PointMaze cases
 
-Generated 2026-11-13 03:09 PT by the command below. This file is generated: regenerate it, do not edit it. Times are Pacific, converted from machines running Eastern. Run folder: `2026-11-12-00-22_pointmaze-medium-large_antmaze-umaze-medium-large_beat-cleanrl-ppo-rnd-auto-research_reward-arrival-plus-1-and-step-cost_bonus-5-days_other-parts-5-days`.
+Generated 2026-11-13 04:29 PT by the command below. This file is generated: regenerate it, do not edit it. Times are Pacific, converted from machines running Eastern. Run folder: `2026-11-12-00-22_pointmaze-medium-large_antmaze-umaze-medium-large_beat-cleanrl-ppo-rnd-auto-research_reward-arrival-plus-1-and-step-cost_bonus-5-days_other-parts-5-days`.
 
 ```bash
 cd /p/rlprojects/RND/10_jax_exploration_platform
@@ -12,12 +12,12 @@ bash "benchmark_runs/2026-11-12-00-17_pointmaze-antmaze_cleanrl-ppo-rnd_speed-30
 
 | section | first written | last changed | status |
 |---|---|---|---|
-| [Standing in one table](#standing-in-one-table) | 2026-11-13 00:10 PT | 2026-11-13 03:10 PT | unread |
+| [Standing in one table](#standing-in-one-table) | 2026-11-13 00:10 PT | 2026-11-13 04:30 PT | unread |
 | [Measures](#measures) | 2026-11-13 00:10 PT | 2026-11-13 00:10 PT | unread |
 | [PointMaze Medium, reward 1 on arrival](#pointmaze-medium-reward-1-on-arrival) | 2026-11-13 00:10 PT | 2026-11-13 02:48 PT | unread |
 | [PointMaze Medium, step cost](#pointmaze-medium-step-cost) | 2026-11-13 00:10 PT | 2026-11-13 02:48 PT | unread |
 | [PointMaze Large, reward 1 on arrival](#pointmaze-large-reward-1-on-arrival) | 2026-11-13 00:10 PT | 2026-11-13 03:10 PT | unread |
-| [PointMaze Large, step cost](#pointmaze-large-step-cost) | 2026-11-13 00:10 PT | 2026-11-13 03:10 PT | unread |
+| [PointMaze Large, step cost](#pointmaze-large-step-cost) | 2026-11-13 00:10 PT | 2026-11-13 04:30 PT | unread |
 
 Times are Pacific, converted from machines running Eastern, and come from this report's own history of regenerations. [The same report with unread sections in blue and changed text in brown](standing.html). No section marks itself read.
 
@@ -27,8 +27,8 @@ Each cell gives a verdict word, the paired difference from the control (CleanRL 
 
 | family of arms | PointMaze Medium, reward 1 on arrival | PointMaze Medium, step cost | PointMaze Large, reward 1 on arrival | PointMaze Large, step cost |
 |---|---|---|---|---|
-| held divisor alone (whole-curve mean) | ahead: +0.0109 [+0.0037, +0.0183], second block under equal rules | ahead: +0.0058 [+0.0007, +0.0115], second block under equal rules | level: -0.0023 [-0.0098, +0.0043], second block under equal rules | ahead: +0.0095 [+0.0057, +0.0137], first block |
-| divisor held from the first arrival (whole-curve mean) | ahead: +0.0095 [+0.0015, +0.0178], second block under equal rules | ahead: +0.0065 [+0.0012, +0.0122], second block under equal rules | level: -0.0003 [-0.0066, +0.0059], second block under equal rules | ahead: +0.0074 [+0.0017, +0.0128], first block; not final, units still running |
+| held divisor alone (whole-curve mean) | ahead: +0.0109 [+0.0037, +0.0183], second block under equal rules | ahead: +0.0058 [+0.0007, +0.0115], second block under equal rules | level: -0.0023 [-0.0098, +0.0043], second block under equal rules | ahead: +0.0095 [+0.0051, +0.0141], second block under equal rules |
+| divisor held from the first arrival (whole-curve mean) | ahead: +0.0095 [+0.0015, +0.0178], second block under equal rules | ahead: +0.0065 [+0.0012, +0.0122], second block under equal rules | level: -0.0003 [-0.0066, +0.0059], second block under equal rules | ahead: +0.0072 [+0.0013, +0.0131], second block under equal rules |
 | slower predictor with held divisor (whole-curve mean) | level: +0.0013 [-0.0070, +0.0097], first block | not run | ahead: +0.0102 [+0.0048, +0.0159], first block | ahead: +0.0081 [+0.0032, +0.0129], first block |
 | predictor at half speed with held divisor (whole-curve mean) | ahead: +0.0102 [+0.0012, +0.0186], second block under equal rules | level: +0.0014 [-0.0033, +0.0059], first block | ahead: +0.0068 [+0.0007, +0.0129], first block | ahead: +0.0094 [+0.0048, +0.0140], first block |
 | all three parts (whole-curve mean) | behind: -0.0288 [-0.0401, -0.0180], first block | not run | ahead: +0.0137 [+0.0071, +0.0202], first block | level: +0.0019 [-0.0041, +0.0077], first block |
@@ -39,11 +39,11 @@ Which arm each cell is for:
 - **held divisor alone, PointMaze Medium, reward 1 on arrival:** held divisor alone, held after one sixty-fourth of the run; the control's first-block best is also its best on the second block. Other arms of the family on the second block under equal rules: held divisor alone, held after one sixteenth of the run +0.0090 [+0.0023, +0.0159] (ahead).
 - **held divisor alone, PointMaze Medium, step cost:** held divisor alone, held after one sixteenth of the run; with the control at its best on the second block the difference is +0.0033 [-0.0004, +0.0069] (level).
 - **held divisor alone, PointMaze Large, reward 1 on arrival:** held divisor alone, held after one sixteenth of the run; the control's first-block best is also its best on the second block.
-- **held divisor alone, PointMaze Large, step cost:** held divisor alone, held after one sixteenth of the run.
+- **held divisor alone, PointMaze Large, step cost:** held divisor alone, held after one sixteenth of the run; the control's first-block best is also its best on the second block.
 - **divisor held from the first arrival, PointMaze Medium, reward 1 on arrival:** divisor held from each policy's own first arrival; the control's first-block best is also its best on the second block.
 - **divisor held from the first arrival, PointMaze Medium, step cost:** divisor held from each policy's own first arrival; with the control at its best on the second block the difference is +0.0040 [-0.0001, +0.0080] (level).
 - **divisor held from the first arrival, PointMaze Large, reward 1 on arrival:** divisor held from each policy's own first arrival; the control's first-block best is also its best on the second block.
-- **divisor held from the first arrival, PointMaze Large, step cost:** divisor held from each policy's own first arrival. Not final: divisor held from each policy's own first arrival: 2 of 3 configurations read (2 of 3 units complete).
+- **divisor held from the first arrival, PointMaze Large, step cost:** divisor held from each policy's own first arrival; the control's first-block best is also its best on the second block.
 - **slower predictor with held divisor, PointMaze Medium, reward 1 on arrival:** slower predictor with divisor held after one sixty-fourth of the run. Other arms of the family on the first block: slower predictor with held divisor (divisor held after one sixteenth of the run) -0.0001 [-0.0084, +0.0083] (level).
 - **slower predictor with held divisor, PointMaze Large, reward 1 on arrival:** slower predictor with held divisor (divisor held after one sixteenth of the run).
 - **slower predictor with held divisor, PointMaze Large, step cost:** slower predictor with held divisor (divisor held after one sixteenth of the run).
@@ -808,6 +808,7 @@ The units of the phase `validation-block` in PointMaze Large, step cost. Each tr
 | held divisor alone, held after one sixteenth of the run | intrinsic weight 8, learning rate 0.003 | -0.7270 ± 0.0003 | -0.7055 ± 0.0002 | 147 ± 6.83 | 256 of 256 |
 | divisor held from each policy's own first arrival | intrinsic weight 8, learning rate 0.003 | -0.7236 ± 0.0021 | -0.7079 ± 0.0021 | 163 ± 8.72 | 256 of 256 |
 | divisor held from each policy's own first arrival | intrinsic weight 8, learning rate 0.002 | -0.7268 ± 0.0025 | -0.7115 ± 0.0025 | 189 ± 9.38 | 256 of 256 |
+| divisor held from each policy's own first arrival | intrinsic weight 4, learning rate 0.002 | -0.7335 ± 0.0034 | -0.7198 ± 0.0035 | 206 ± 11.5 | 256 of 256 |
 | slower predictor with held divisor (divisor held after one sixteenth of the run) | intrinsic weight 8, learning rate 0.003 | -0.7230 ± 0.0016 | -0.7058 ± 0.0015 | 127 ± 7.73 | 256 of 256 |
 | slower predictor with held divisor (divisor held after one sixteenth of the run) | intrinsic weight 16, learning rate 0.003 | -0.7243 ± 0.0006 | <u>-0.7027</u> ± 0.0003 | <u>125</u> ± 7.29 | 256 of 256 |
 | predictor at half speed with held divisor | intrinsic weight 8, learning rate 0.003 | <u>-0.7216</u> ± 0.0014 | -0.7053 ± 0.0014 | 132 ± 9.08 | 256 of 256 |
@@ -825,7 +826,7 @@ Best against best for $W$ (the highest is the best):
 | held divisor alone, held after one sixteenth of the run | intrinsic weight 8, learning rate 0.002 (best of 3) | **-0.7215** ± 0.0008 | **+0.0095** [+0.0057, +0.0137] | **-0.7025** ± 0.0009 | **+0.0139** [+0.0102, +0.0178] | 256 |
 | predictor at half speed with held divisor | intrinsic weight 8, learning rate 0.003 (best of 2) | <u>-0.7216</u> ± 0.0014 | <u>+0.0094</u> [+0.0048, +0.0140] | <u>-0.7053</u> ± 0.0014 | <u>+0.0111</u> [+0.0067, +0.0155] | 256 |
 | slower predictor with held divisor (divisor held after one sixteenth of the run) | intrinsic weight 8, learning rate 0.003 (best of 2) | -0.7230 ± 0.0016 | +0.0081 [+0.0032, +0.0129] | -0.7058 ± 0.0015 | +0.0105 [+0.0061, +0.0149] | 256 |
-| divisor held from each policy's own first arrival | intrinsic weight 8, learning rate 0.003 (best of 2) | -0.7236 ± 0.0021 | +0.0074 [+0.0017, +0.0128] | -0.7079 ± 0.0021 | +0.0084 [+0.0030, +0.0138] | 256 |
+| divisor held from each policy's own first arrival | intrinsic weight 8, learning rate 0.003 (best of 3) | -0.7236 ± 0.0021 | +0.0074 [+0.0017, +0.0128] | -0.7079 ± 0.0021 | +0.0084 [+0.0030, +0.0138] | 256 |
 | all three parts (fast last layer with slower predictor and held divisor, step 0.1), divisor held after one sixteenth of the run | intrinsic weight 1, learning rate 0.002 (best of 2) | -0.7291 ± 0.0025 | +0.0019 [-0.0041, +0.0077] | -0.7116 ± 0.0025 | +0.0047 [-0.0013, +0.0102] | 256 |
 
 Best against best for $M$ (the smallest is the best):
@@ -837,9 +838,7 @@ Best against best for $M$ (the smallest is the best):
 | slower predictor with held divisor (divisor held after one sixteenth of the run) | intrinsic weight 16, learning rate 0.003 (best of 2) | <u>125</u> ± 7.29 | <u>-66.3</u> [-90.8, -41.5] | 256 of 256 | -0.7243 | **-0.7027** | 256 |
 | predictor at half speed with held divisor | intrinsic weight 8, learning rate 0.003 (best of 2) | 132 ± 9.08 | -58.9 [-85.7, -32] | 256 of 256 | **-0.7216** | <u>-0.7053</u> | 256 |
 | held divisor alone, held after one sixteenth of the run | intrinsic weight 8, learning rate 0.003 (best of 3) | 147 ± 6.83 | -43.8 [-68, -20.2] | 256 of 256 | -0.7270 | -0.7055 | 256 |
-| divisor held from each policy's own first arrival | intrinsic weight 8, learning rate 0.003 (best of 2) | 163 ± 8.72 | -28.1 [-52.5, -3.09] | 256 of 256 | <u>-0.7236</u> | -0.7079 | 256 |
-
-Not complete, left out: divisor held from each policy's own first arrival: 2 of 3 configurations read (2 of 3 units complete).
+| divisor held from each policy's own first arrival | intrinsic weight 8, learning rate 0.003 (best of 3) | 163 ± 8.72 | -28.1 [-52.5, -3.09] | 256 of 256 | <u>-0.7236</u> | -0.7079 | 256 |
 
 #### Units
 
@@ -850,7 +849,7 @@ Not complete, left out: divisor held from each policy's own first arrival: 2 of 
 | 3 | held divisor alone, held after one sixteenth of the run | PointMaze Large, step cost | 1 | complete | 256 of 256 | 2026-11-12 23:50 PT | none |
 | 4 | held divisor alone, held after one sixteenth of the run | PointMaze Large, step cost | 1 | complete | 256 of 256 | 2026-11-13 00:19 PT | none |
 | 5 | held divisor alone, held after one sixteenth of the run | PointMaze Large, step cost | 1 | complete | 256 of 256 | 2026-11-12 23:54 PT | none |
-| 6 | divisor held from each policy's own first arrival | PointMaze Large, step cost | 1 | unfinished | 190 of 256 | not finished | none |
+| 6 | divisor held from each policy's own first arrival | PointMaze Large, step cost | 1 | complete | 256 of 256 | 2026-11-13 03:32 PT | 1 continued from a checkpoint |
 | 7 | divisor held from each policy's own first arrival | PointMaze Large, step cost | 1 | complete | 256 of 256 | 2026-11-13 03:04 PT | none |
 | 8 | divisor held from each policy's own first arrival | PointMaze Large, step cost | 1 | complete | 256 of 256 | 2026-11-13 03:05 PT | none |
 | 9 | slower predictor with held divisor (divisor held after one sixteenth of the run) | PointMaze Large, step cost | 1 | complete | 256 of 256 | 2026-11-12 23:24 PT | none |
@@ -879,15 +878,44 @@ Unit names, by the number in the first column:
 
 ### Second block: seeds that chose nothing
 
-No unit of the phase `validation-block-two` is complete yet.
+The units of the phase `validation-block-two` in PointMaze Large, step cost. Each trains one configuration on 256 seeds, from 20000 to 20255. Nothing was chosen on these seeds before they were read. Read at 33,554,432 environment steps per policy. Define $W$, $L$ and $M$ as in the section Measures. First table: every configuration run on this block, the control first; per column the best value is bold and the second best underlined (the smallest for $M$).
+
+| method | configuration | $W$ ± standard error | $L$ ± standard error | $M$ ± standard error, thousand steps | policies that reach the goal |
+|---|---|---|---|---|---|
+| control (CleanRL PPO-RND) | intrinsic weight 4, learning rate 0.002 | -0.7328 ± 0.0020 | -0.7175 ± 0.0021 | 203 ± 10.8 | 256 of 256 |
+| held divisor alone, held after one sixteenth of the run | intrinsic weight 8, learning rate 0.002 | **-0.7232** ± 0.0011 | **-0.7045** ± 0.0011 | <u>184</u> ± 9.22 | 256 of 256 |
+| divisor held from each policy's own first arrival | intrinsic weight 8, learning rate 0.003 | <u>-0.7255</u> ± 0.0023 | <u>-0.7101</u> ± 0.0023 | **152** ± 7.71 | 256 of 256 |
+
+Then one table per metric. A method stands at the configuration that was its best for that metric on the first block; a row says so when that configuration was not run here, and the method then stands at its best on this block, which favours it. Each method is compared twice with the control, paired on the seeds both have, with the 95% interval from 10,000 resamples of those seeds:
+
+1. **Equal rules:** against the control at the configuration that was its best on the first block. Both sides were fixed before this block was read.
+2. **Favouring the control:** against the control at its best configuration on this block, chosen among those run here after the block was read.
+
+The control's rows come first, then the methods from the best value on.
+
+Second block, $W$ (the highest is the best):
+
+| method | configuration and how it was fixed | $W$ ↑ ± standard error | difference in $W$, equal rules [95% interval] | difference in $W$, favouring the control [95% interval] | $L$ ± standard error | difference in $L$, equal rules [95% interval] | seeds in common |
+|---|---|---|---|---|---|---|---|
+| control (CleanRL PPO-RND) | intrinsic weight 4, learning rate 0.002 (its best on the first block and on this block) | -0.7328 ± 0.0020 | control | control | -0.7175 ± 0.0021 | control | 256 |
+| held divisor alone, held after one sixteenth of the run | intrinsic weight 8, learning rate 0.002 (its best on the first block) | **-0.7232** ± 0.0011 | **+0.0095** [+0.0051, +0.0141] | **+0.0095** [+0.0051, +0.0141] | **-0.7045** ± 0.0011 | **+0.0130** [+0.0084, +0.0179] | 256 |
+| divisor held from each policy's own first arrival | intrinsic weight 8, learning rate 0.003 (its best on the first block) | <u>-0.7255</u> ± 0.0023 | <u>+0.0072</u> [+0.0013, +0.0131] | <u>+0.0072</u> [+0.0013, +0.0131] | <u>-0.7101</u> ± 0.0023 | <u>+0.0074</u> [+0.0013, +0.0135] | 256 |
+
+Second block, $M$ (the smallest is the best):
+
+| method | configuration and how it was fixed | $M$ ↓ ± standard error, thousand steps | difference in $M$, equal rules [95% interval], thousand steps | difference in $M$, favouring the control [95% interval], thousand steps | policies that reach the goal | seeds in common |
+|---|---|---|---|---|---|---|
+| control (CleanRL PPO-RND) | intrinsic weight 4, learning rate 0.002 (its best on the first block and on this block) | 203 ± 10.8 | control | control | 256 of 256 | 256 |
+| divisor held from each policy's own first arrival | intrinsic weight 8, learning rate 0.003 (its best on the first block) | **152** ± 7.71 | **-51.1** [-78, -24.9] | **-51.1** [-78, -24.9] | 256 of 256 | 256 |
+| held divisor alone, held after one sixteenth of the run | intrinsic weight 8, learning rate 0.002 (its best on this block: its first-block best, intrinsic weight 8, learning rate 0.003, was not run here) | <u>184</u> ± 9.22 | <u>-19.3</u> [-46.1, +7] | <u>-19.3</u> [-46.1, +7] | 256 of 256 | 256 |
 
 #### Units
 
 | unit | method | case | configurations | state | logging windows written | finished | restarts |
 |---|---|---|---|---|---|---|---|
-| 1 | control (CleanRL PPO-RND) | PointMaze Large, step cost | 1 | not started (no shard) | 0 of 256 | not finished | none |
-| 2 | held divisor alone, held after one sixteenth of the run | PointMaze Large, step cost | 1 | not started (no shard) | 0 of 256 | not finished | none |
-| 3 | divisor held from each policy's own first arrival | PointMaze Large, step cost | 1 | not started (no shard) | 0 of 256 | not finished | none |
+| 1 | control (CleanRL PPO-RND) | PointMaze Large, step cost | 1 | complete | 256 of 256 | 2026-11-13 04:00 PT | none |
+| 2 | held divisor alone, held after one sixteenth of the run | PointMaze Large, step cost | 1 | complete | 256 of 256 | 2026-11-13 04:25 PT | none |
+| 3 | divisor held from each policy's own first arrival | PointMaze Large, step cost | 1 | complete | 256 of 256 | 2026-11-13 04:25 PT | none |
 
 Unit names, by the number in the first column:
 

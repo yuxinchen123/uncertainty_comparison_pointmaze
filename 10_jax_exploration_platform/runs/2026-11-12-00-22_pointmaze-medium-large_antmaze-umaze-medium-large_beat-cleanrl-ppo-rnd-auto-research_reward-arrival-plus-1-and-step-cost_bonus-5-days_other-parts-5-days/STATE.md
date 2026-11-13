@@ -988,6 +988,39 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   since 04:10 PT** (existing options): the same arm with RND's running divisor (Medium and Large with reward 1 on
   arrival, 5 configurations) and with the divisor held after 1/16 of the run (2 configurations); predictions 6 to
   8 in the addendum. The batch's planned units on Large with the step cost are not run.
+- 2026-11-13 04:30 PT: **second validation block on PointMaze Large with the step cost: both holds are ahead of RND**
+  (seeds 20000 to 20255, configurations fixed on the first block; RND −0.7328 at learning rate 2e-3, weight 4).
+  First-arrival hold (3e-3, weight 8): −0.7255, +0.0072 [+0.0013, +0.0130]; final level +0.0074 [+0.0011, +0.0135];
+  first-goal time 152 against 203 thousand steps (−51 [−77, −24]). Fixed hold (2e-3, weight 8): −0.7232, +0.0095
+  [+0.0051, +0.0142]; final level +0.0129. **Standing of the holds on second blocks: ahead of RND on Medium with
+  reward 1 on arrival, Medium with the step cost (level there when RND chooses on the block) and Large with the
+  step cost; level on Large with reward 1 on arrival.** Both cases with the step cost are ahead.
+- 2026-11-13 04:30 PT: **batch 11, the units of addendum 1 on PointMaze Medium with reward 1 on arrival: prediction 6
+  failed; the frozen divisor is not the cause.** Whole-curve mean, learning rate 6e-3 (256 validation seeds):
+
+  | arm | weight 4 | weight 2 |
+  |---|---|---|
+  | RND | 0.9194 | 0.9349 |
+  | fast last layer until the first arrival, then RND's running divisor | 0.4487 | 0.6403 |
+  | fast last layer until the first arrival, divisor held after 1/16 of the run | 0.6610 | not run |
+  | fast last layer until the first arrival, then the first-arrival hold | 0.7001 | not run |
+  | fast last layer throughout, with the first-arrival hold (batch 10) | 0.8424 | not run |
+
+  With RND's own divisor after the switch the arm is the worst of all, 0.47 behind RND at the same configuration.
+  So the phase with the fast last layer leaves the learner in a state that settles slowly (reading (b) of the
+  addendum). What the records show for learning rate 6e-3 and weight 4, by logging window counted from each
+  policy's first arrival: 16 windows after it the share of episodes that reach the goal is 0.26 in both arms
+  that stop the fast last layer and 0.80 for RND; the maze cells covered are 0.999 against 0.967; the logged
+  intrinsic reward is 0.013 against 0.0065. The policies go on to cover the whole maze where RND's policies turn
+  to the goal. Prediction 7 held (the divisor held after 1/16 is better than the running divisor, +0.21).
+- 2026-11-13 04:30 PT: **batch 11 on PointMaze Large with reward 1 on arrival, the arm with the first-arrival hold**
+  (learning rate 2e-3; RND's best 0.8781 with first-goal time 269 thousand steps): weight 2: 0.8496 (−0.028
+  [−0.037, −0.021]), first-goal time 106; weight 4: 0.7871, 83; weight 16: 0.3370, 89. The goal is found 2.5 to
+  3 times sooner and the return is behind at every weight; prediction 4 failed.
+- 2026-11-13 04:30 PT: **ant U-maze screen, first complete unit** (fast last layer with the first-arrival hold, 128
+  environments per policy, 16 development seeds, 16,777,216 steps): behind RND at the same configuration in all 8
+  configurations (−0.008 to −0.018 on the whole-curve mean; best 0.0385 against RND's best 0.0487), first
+  arrivals later (2.1 to 4.1 against 1.9 to 2.75 million steps); 7 fault-guard respawns in the unit.
 
 ## Next
 
