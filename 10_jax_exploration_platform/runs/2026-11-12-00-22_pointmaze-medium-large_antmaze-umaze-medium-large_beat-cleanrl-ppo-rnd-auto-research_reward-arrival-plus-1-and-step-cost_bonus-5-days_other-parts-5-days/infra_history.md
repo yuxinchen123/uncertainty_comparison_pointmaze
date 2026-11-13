@@ -149,3 +149,19 @@ Times are Pacific.
   and handed to Gilbreth (limit 7), where seven jobs of this folder were already waiting and two were running;
   no new job was needed. Two of the three are units of old options, which the old-copy job 12352113 could also
   run; the third (first-arrival hold) is of the new option and falls under the watch item above.
+- 2026-11-13 03:53 PT: **this folder's code was frozen anew at commit 2017e2b8** (it holds the option
+  `fast_last_layer_until_first_arrival`, commit 3abfe847; before: bed45842). What the new copy changes for
+  running units (from the worker that added the option, who tested both):
+  1. new code continues a checkpoint written by an older copy, for units that leave the new option off (a bonus
+     option missing from a saved record is read as its default);
+  2. the reverse is refused: a job of an older copy that picks up a unit already checkpointed by the new copy
+     stops at once with "the checkpoint belongs to a different unit: bonus_options" if the unit sets any bonus
+     option, and leaves the checkpoint as it was. So jobs of older copies must not take over such units, and must
+     not find units of the new option waiting.
+  Jobs of older copies alive at 03:53 PT: on Gilbreth 12352113 (copy d7054945) and 12352874 to 12352876 (copy
+  bed45842); on UVA 6900951, 6900952, 6900954 (copy bed45842, all their cards busy until about 04:48 PT at the
+  earliest, limit 05:00 PT). The Gilbreth hand-over limit is pinned to 0 until the four Gilbreth jobs have ended.
+- 2026-11-13 03:53 PT: batch 11's first seven units were built and stayed on UVA: `submit.py
+  --only-cards-free-now` placed five jobs on seven cards (6901667 on an A100 40 GB, 6901668 and 6901669 on two RTX
+  5080 each, 6901670 and 6901671 on an RTX 4000 Ada each); all five started within two minutes and took the seven
+  units, so no unit of the new option is waiting anywhere.

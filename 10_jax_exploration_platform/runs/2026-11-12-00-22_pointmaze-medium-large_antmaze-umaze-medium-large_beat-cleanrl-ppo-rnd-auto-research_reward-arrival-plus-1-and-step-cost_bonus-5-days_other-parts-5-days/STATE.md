@@ -960,6 +960,15 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   4. Fault-guard respawns so far: 0, 0, 0, 0, 1, 1 in the six units.
   If this holds at the end, the choice of environments per policy decides whether the fast last layer helps on
   the ant.
+- 2026-11-13 03:55 PT: **the option `fast_last_layer_until_first_arrival` exists (commit 3abfe847) and batch 11 is
+  running** (`batches/11_fast-last-layer-until-the-first-arrival_with-the-first-arrival-hold_four-pointmaze-cases/ideas.md`,
+  five predictions written before the runs). The option: per policy, the fast last layer scores the bonus until
+  the rollout that contains the policy's first arrival; from the next rollout the predictor alone scores it, as in
+  RND. The fast last layer is a temporary copy of the predictor's output layer, so nothing is carried over at the
+  switch and the saved state is unchanged. Tests: 7 new and 62 existing ones pass, and the golden comparison is
+  identical. First seven units (the two Medium cases and Large with reward 1 on arrival, first validation block)
+  run on seven UVA cards since 03:54 PT. Four more units (Large with the step cost, and the arm without the hold)
+  follow when the four jobs of older code copies on Gilbreth have ended (`infra_history.md`).
 
 ## Next
 
@@ -980,9 +989,12 @@ Rewritten 2026-11-13 03:02 PT.
    Medium and Large maps, which have no configuration file and no check with trained policies yet.
 5. **Summaries:** `summary_settings.json` and summaries for batches 8, 9 and 10; the standing page after each
    reading.
-6. **If prediction 3 of batch 10 holds:** a fast last layer that stops at a policy's first arrival (code change,
-   tests, a new frozen copy; a worker does not check which code copy a unit needs, so units of a new option go to
-   a server only when no job of an older copy can pick them up).
+6. **Batch 11** (the fast last layer until each policy's first arrival, then the hold): read its seven running
+   units against the hold alone and against batch 10's arm on the same seeds (scratchpad script `quick_pair.py`).
+   Build its second description (4 units: Large with the step cost, and the arm without the hold) and open the
+   Gilbreth limit again (`units_at_once` = held + pending) only when Gilbreth jobs 12352113 and 12352874 to
+   12352876 have ended; until then nothing of the new option may wait on Gilbreth or in UVA's queue (a worker does
+   not check which code copy a unit needs). The folder's code is frozen at 2017e2b8.
 7. **Waiting for the user:** how strict to be about the held divisor's closeness to public practice; what the
    AntMaze comparison is if RND stays at a few percent on the U-maze.
 8. Fresh seeds (from 30000) only for the method as it stands at the end. Re-create the monitoring cron before
