@@ -113,20 +113,26 @@ def read_checkpoint(path) -> dict:
             "bonus_constants": constants or None, "driver": driver}
 
 
-def check_identity(saved: dict, current: dict, environment_defaults: dict = None) -> None:
+def check_identity(saved: dict, current: dict, environment_defaults: dict = None,
+                   bonus_option_defaults: dict = None) -> None:
     """Refuse a checkpoint written by a different unit, naming every entry that differs.
 
-    A trainer or environment field added after the checkpoint was written is absent from its
-    record. Such a field is added with a default that keeps the earlier program, so the saved
-    record is read as holding that default: the checkpoint continues when the current unit holds
-    the default too, and is refused when the current unit has changed the field.
+    A trainer, environment or bonus-option field added after the checkpoint was written is
+    absent from its record. Such a field is added with a default that keeps the earlier program,
+    so the saved record is read as holding that default: the checkpoint continues when the
+    current unit holds the default too, and is refused when the current unit has changed the
+    field.
     environment_defaults: the default fields of the current unit's environment configuration
     class; without them a later environment field is refused.
+    bonus_option_defaults: every option of the current unit's bonus family at its default;
+    without them a later bonus option is refused.
 
     before: saved trainer_config has no "permutation_draw"; current holds "argsort_uniform"
     after:  accepted; with current "sort_packed_keys" it is refused, naming trainer_config
     before: saved environment_config has no "physics"; current holds "jax"
     after:  accepted; with current "warp" it is refused, naming environment_config
+    before: saved bonus_options has no "fast_last_layer_until_first_arrival"; current holds False
+    after:  accepted; with current True it is refused, naming bonus_options
     """
     from dataclasses import asdict
 
@@ -134,7 +140,8 @@ def check_identity(saved: dict, current: dict, environment_defaults: dict = None
 
     current = normalized(current)
     defaults = {"trainer_config": normalized(asdict(PPOConfig())),
-                "environment_config": normalized(environment_defaults or {})}
+                "environment_config": normalized(environment_defaults or {}),
+                "bonus_options": normalized(bonus_option_defaults or {})}
     for part, part_defaults in defaults.items():
         saved_part, current_part = saved.get(part), current.get(part)
         if isinstance(saved_part, dict) and isinstance(current_part, dict):

@@ -36,7 +36,7 @@ to [C, T*N], or `None` when the rollout did not score anything and the family mu
 That is the whole difference between the two rollout shapes, and it is decided once, in Python,
 when the program is built.
 
-Five further fields say how the trainer treats the family. Their defaults are what the trainer
+Six further fields say how the trainer treats the family. Their defaults are what the trainer
 always did, so a family that sets none of them composes into the program it always did:
 
 - `score_alone` — `(params, state, obs [C, M, obs]) -> [C, M]`: the bonus each given observation
@@ -60,6 +60,11 @@ always did, so a family that sets none of them composes into the program it alwa
   rate (never annealed) with their own moments, and their gradient is left out of the clip.
 - `record_on_maze_grid` — the trainer counts the visits to every maze cell, and the driver
   records the bonus at one probe observation per open cell once per logging window.
+- `reads_first_arrival` — the trainer hands `post_rollout` a fifth argument, `arrived`: [C]
+  booleans, true for a copy that had reached the goal in an EARLIER rollout (the episode log's
+  first arrival as the state holds it when the iteration starts), so the rollout with the first
+  arrival itself is still scored as the ones before it. The trainer needs its episode log and
+  episodes that end at the goal for it, and refuses the family without them.
 """
 from dataclasses import dataclass
 from typing import Callable, Optional
@@ -81,3 +86,4 @@ class BonusFunctions:
     divisor_hold_fraction: Optional[float] = None
     own_learning_rate: Optional[float] = None
     record_on_maze_grid: bool = False
+    reads_first_arrival: bool = False

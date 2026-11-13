@@ -12,7 +12,8 @@ one optimizer over {agent, bonus}, which is what the frozen 09_parallelization b
 
 The options of `RNDConfig` change one part each, and every one is decided here, in Python, before
 the program is compiled: an even start, the form of the bonus, a temporary output layer that
-learns inside the rollout, and an output layer fitted in closed form on a body that is never
+learns inside the rollout (for the whole run, or per policy until its first arrival at the
+goal), and an output layer fitted in closed form on a body that is never
 trained (`last_layer.py` holds the two fits and says why they run in float64); the bound of the
 input clip, input statistics that stop moving after the priming rollouts, and random Fourier
 features of the whitened input, read either by both networks or by the output layer fitted in
@@ -44,6 +45,7 @@ def build(cfg, env_cfg, rnd_cfg: RNDConfig, n_copies: int, base_seed: int, copy_
     rnd_cfg = resolved_rnd_config(rnd_cfg)
     scheduled = rnd_cfg.scheduled_last_layer_decay > 0
     fast = rnd_cfg.fast_last_layer_step > 0
+    until_arrival = rnd_cfg.fast_last_layer_until_first_arrival
     frozen_statistics = rnd_cfg.input_statistics == "frozen_after_priming"
     fourier_input = rnd_cfg.input_features == "random_fourier"
     fourier_layer = rnd_cfg.scheduled_last_layer_features == "random_fourier"
@@ -174,13 +176,18 @@ def build(cfg, env_cfg, rnd_cfg: RNDConfig, n_copies: int, base_seed: int, copy_
         return {**state,
                 "obs_rms": rms_update(state["obs_rms"], next_obs_flat, cfg.batch_stats_f32)}
 
-    def post_rollout(params, state, next_obs_flat, scored):
+    def post_rollout(params, state, next_obs_flat, scored, arrived=None):
         """Reward the rollout, then move the statistics on and whiten the update batch's input.
 
         The reward uses the statistics as they stood at the START of the iteration — the same
         whitening the agent's actions were taken under — while the batch the update will see is
         whitened with the statistics that now include this rollout. Statistics frozen after
         priming are the same at both points.
+
+        arrived, [C] booleans, is read only by the fast last layer that stops at the first
+        arrival: a copy that had reached the goal before this rollout is scored by the predictor
+        alone. The temporary layer is rebuilt from the predictor at every rollout and dropped
+        after it, so nothing of it is left to undo when a copy stops using it.
         """
         if scheduled:
             # the kept output layer is read and fitted step by step; there is no update batch,
@@ -196,6 +203,14 @@ def build(cfg, env_cfg, rnd_cfg: RNDConfig, n_copies: int, base_seed: int, copy_
             reward = scored
         elif fast:
             reward = fast_scores(params, state, next_obs_flat)
+            if until_arrival:
+                if arrived is None:
+                    raise ValueError("fast_last_layer_until_first_arrival needs each copy's "
+                                     "first arrival, which this caller of post_rollout did not "
+                                     "hand over")
+                # before: arrived [False, True]; fast scores and the predictor's own, [2, T*N]
+                # after:  copy 0 keeps its fast scores, copy 1 takes the predictor's own scores
+                reward = jnp.where(arrived[:, None], score(params, state, next_obs_flat), reward)
         else:
             reward = score(params, state, next_obs_flat)
         obs_rms = statistics_after(state, next_obs_flat)
@@ -237,4 +252,5 @@ def build(cfg, env_cfg, rnd_cfg: RNDConfig, n_copies: int, base_seed: int, copy_
                               rnd_cfg.divisor_hold_fraction
                               if rnd_cfg.reward_divisor == "held_after_fraction" else None),
                           own_learning_rate=own_rate,
-                          record_on_maze_grid=rnd_cfg.record_bonus_on_maze_grid)
+                          record_on_maze_grid=rnd_cfg.record_bonus_on_maze_grid,
+                          reads_first_arrival=until_arrival)

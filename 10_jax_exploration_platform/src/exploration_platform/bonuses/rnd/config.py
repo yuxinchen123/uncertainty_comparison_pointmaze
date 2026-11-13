@@ -102,6 +102,19 @@ class RNDConfig:
                                          # divide as "running_std" does; from that iteration on
                                          # the divisor's statistics are not moved
 
+    # ---- batch 10 of the same study (2026-11-13): the fast last layer reaches the goal sooner
+    # and loses return afterwards, so it may stop at the goal ----
+    fast_last_layer_until_first_arrival: bool = False  # read with fast_last_layer_step above 0
+                                         # only. False: every rollout of every policy is scored
+                                         # with the fast last layer. True, per policy: rollouts
+                                         # up to and including the one in which the policy first
+                                         # reaches the goal are scored with the fast last layer,
+                                         # every later rollout by the predictor alone, exactly
+                                         # as with fast_last_layer_step 0; a policy that never
+                                         # arrives keeps the fast last layer. Needs the
+                                         # trainer's episode log and episodes that end at the
+                                         # goal
+
 
 def resolved_rnd_config(rnd_cfg: RNDConfig) -> RNDConfig:
     """Refuse option values and combinations that are not built; fill in what one option implies.
@@ -130,6 +143,9 @@ def resolved_rnd_config(rnd_cfg: RNDConfig) -> RNDConfig:
     if rnd_cfg.scheduled_last_layer_decay < 0:
         raise ValueError("scheduled_last_layer_decay must be zero (off) or positive; it is "
                          f"{rnd_cfg.scheduled_last_layer_decay}")
+    if rnd_cfg.fast_last_layer_until_first_arrival and rnd_cfg.fast_last_layer_step <= 0:
+        raise ValueError("fast_last_layer_until_first_arrival says when the fast last layer "
+                         "stops; set fast_last_layer_step above zero with it")
     if rnd_cfg.reward_divisor == "held_after_fraction":
         if not 0 < rnd_cfg.divisor_hold_fraction < 1:
             raise ValueError("divisor_hold_fraction must be above 0 and below 1 with "

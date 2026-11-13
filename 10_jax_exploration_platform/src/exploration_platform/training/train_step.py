@@ -178,6 +178,16 @@ def build_iteration(cfg, env, bonus, sweep, layout, capture_batch: bool = False)
             raise ValueError("a reward divisor held after the first arrival needs episodes "
                              "that end at the goal (continuing_task=False): this environment "
                              "records no arrival, so the divisor would never be held")
+    if bonus.reads_first_arrival:
+        # the same two needs as the divisor held after the first arrival, for the same reason
+        if not cfg.episode_log:
+            raise ValueError(f"the {bonus.name} bonus reads each copy's first arrival, which "
+                             "needs episode_log: the trainer keeps each copy's first arrival "
+                             "there")
+        if env.cfg.continuing_task:
+            raise ValueError(f"the {bonus.name} bonus reads each copy's first arrival, which "
+                             "needs episodes that end at the goal (continuing_task=False): "
+                             "this environment records no arrival")
 
     # the reward-decline study's switches, all decided here while the program is built
     if cfg.int_coef_schedule not in ("constant", "linear_decay"):
@@ -397,8 +407,16 @@ def build_iteration(cfg, env, bonus, sweep, layout, capture_batch: bool = False)
 
         # the bonus scores the rollout (or takes the scores the scan already made), moves its own
         # state on, and hands over whatever extra fields its loss will need in the update batch
-        bonus_state, rint_flat, batch_extra = bonus.post_rollout(
-            bonus_params, bonus_state_old, nobs_flat, scored)
+        if bonus.reads_first_arrival:
+            # the log read here is the state's, that is, of the rollouts before this one: the
+            # rollout in which a copy first arrives is still scored as the ones before it
+            # before: first arrival steps [-1, 40] ; after: arrived [False, True]
+            arrived = state.agent_state["episode_log"]["first_goal_step"] >= 0
+            bonus_state, rint_flat, batch_extra = bonus.post_rollout(
+                bonus_params, bonus_state_old, nobs_flat, scored, arrived)
+        else:
+            bonus_state, rint_flat, batch_extra = bonus.post_rollout(
+                bonus_params, bonus_state_old, nobs_flat, scored)
         rint_buf = unflat(rint_flat)
 
         # intrinsic filter forward in time, then per-copy normalization (spec 5.2)

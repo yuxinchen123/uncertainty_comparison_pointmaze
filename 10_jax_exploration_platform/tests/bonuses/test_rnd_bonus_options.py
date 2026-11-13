@@ -112,6 +112,8 @@ def test_options_are_read_checked_and_recorded():
                ("rnd_next_state", {"even_start": "yes"}, "true or false"),
                ("rnd_next_state", {"fast_last_layer_step": "fast"}, "a number"),
                ("rnd_next_state", {"fast_last_layer_step": 1.5}, "between 0"),
+               ("rnd_next_state", {"fast_last_layer_until_first_arrival": True},
+                "fast_last_layer_step above zero"),
                ("rnd_next_state", {"reward_divisor": "frozen"}, "unknown reward_divisor"),
                ("rnd_next_state", {"bonus_form": 3}, "a word"),
                ("rnd_next_state", {"scheduled_last_layer_decay": 1, "fast_last_layer_step": 1},
@@ -139,7 +141,9 @@ def test_options_at_their_defaults_change_nothing():
                 # the options of batch 2
                 "input_clip": "5", "input_statistics": "running", "input_features": "raw",
                 "fourier_feature_count": "256", "fourier_length_scale": 1.0,
-                "scheduled_last_layer_features": "body", "divisor_hold_fraction": 0}
+                "scheduled_last_layer_features": "body", "divisor_hold_fraction": 0,
+                # the option of batch 10
+                "fast_last_layer_until_first_arrival": "false"}
     for style in ("epoch_minibatch", "full_batch"):
         cfg = PPOConfig(**{**SMALL, "update_style": style}, episode_log=True)
         _, _, plain, _ = train(cfg, "rnd_next_state", env_cfg=SHORT_EPISODES)
