@@ -170,7 +170,8 @@ def merged_wall_boxes(map_name: str):
             per wall cell)
     after:  one box centred on the run, 20 m wide
     The union of boxes is identical, so the collision geometry is the reference's; merging only
-    cuts the number of geoms MJX pairs against the ant (45 -> 20 on the large map).
+    cuts the number of geoms MJX pairs against the ant (62 -> 31 on the large map, 38 -> 20 on the
+    medium map, 18 -> 8 on the umaze; spec.md, deviation 4).
     """
     maze_map = MAPS[map_name]
     rows, cols = len(maze_map), len(maze_map[0])

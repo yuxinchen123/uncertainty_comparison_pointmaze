@@ -1,6 +1,7 @@
 """Check recorded experiment files and CLI merging using the standard library only."""
 
 import argparse
+import ast
 from pathlib import Path
 import sys
 import tempfile
@@ -27,9 +28,32 @@ ANTMAZE_WARP_EXAMPLE = CONFIGURATIONS / "antmaze_umaze_warp-physics_cleanrl-ppo-
 ANTMAZE_STABLE_PHYSICS_EXAMPLE = CONFIGURATIONS / (
     "antmaze_umaze_warp-physics_time-step-0.005_frame-skip-10_fault-guard-30-metres-and-100-radians-per-second_"
     "cleanrl-ppo-rnd_goal-termination_reward-arrival-plus-one_example_steps-204800.toml")
-EXAMPLES = (POINTMAZE_EXAMPLE, ANTMAZE_EXAMPLE, ANTMAZE_WARP_EXAMPLE, ANTMAZE_STABLE_PHYSICS_EXAMPLE)
+# The same file on the Medium and Large maps (added 2026-11-13): the map, its start and goal cells, its
+# step limit and the runtime selector differ from the U-maze file, and nothing else.
+ANTMAZE_STABLE_PHYSICS_MAPS = {
+    name: CONFIGURATIONS / (
+        f"antmaze_{name}_warp-physics_time-step-0.005_frame-skip-10_fault-guard-30-metres-and-100-radians-per-second_"
+        "cleanrl-ppo-rnd_goal-termination_reward-arrival-plus-one_example_steps-204800.toml")
+    for name in ("medium", "large")}
+STABLE_PHYSICS_FILES = (ANTMAZE_STABLE_PHYSICS_EXAMPLE, *ANTMAZE_STABLE_PHYSICS_MAPS.values())
+EXAMPLES = (POINTMAZE_EXAMPLE, ANTMAZE_EXAMPLE, ANTMAZE_WARP_EXAMPLE, *STABLE_PHYSICS_FILES)
 # The number of trainer fields every recorded file must hold (the fields of PPOConfig).
 FIELDS = 58
+
+
+def antmaze_presets():
+    """The maps' presets of the environment code, read from am_common.py without importing it.
+
+    before: presets = {"umaze": AntMazeConfig("umaze", (3, 1), (1, 1), 700), ...} in `preset`
+    after:  {"umaze": {"map_name": "umaze", "start_cell": (3, 1), "goal_cell": (1, 1), "max_episode_steps": 700}, ...}
+    """
+    source = (ROOT / "src/exploration_platform/envs/antmaze/am_common.py").read_text()
+    function = next(node for node in ast.parse(source).body
+                    if isinstance(node, ast.FunctionDef) and node.name == "preset")
+    table = next(node.value for node in function.body if isinstance(node, ast.Assign))
+    names = ("map_name", "start_cell", "goal_cell", "max_episode_steps")
+    return {ast.literal_eval(key): dict(zip(names, map(ast.literal_eval, call.args)))
+            for key, call in zip(table.keys, table.values)}
 
 
 def small_parser():
@@ -98,7 +122,9 @@ class RecordedExperimentFiles(unittest.TestCase):
         for path, preset, limit in ((POINTMAZE_EXAMPLE, "pointmaze_current", 400),
                                     (ANTMAZE_EXAMPLE, "antmaze_current", 700),
                                     (ANTMAZE_WARP_EXAMPLE, "antmaze_current", 700),
-                                    (ANTMAZE_STABLE_PHYSICS_EXAMPLE, "antmaze_current", 700)):
+                                    (ANTMAZE_STABLE_PHYSICS_EXAMPLE, "antmaze_current", 700),
+                                    (ANTMAZE_STABLE_PHYSICS_MAPS["medium"], "antmaze_current", 1000),
+                                    (ANTMAZE_STABLE_PHYSICS_MAPS["large"], "antmaze_current", 1000)):
             document = read_experiment_configuration(path)
             trainer, environment = document["trainer"], document["environment"]
             self.assertEqual(len(trainer), FIELDS)
@@ -128,13 +154,14 @@ class RecordedExperimentFiles(unittest.TestCase):
         self.assertNotIn("physics", argument_defaults(pointmaze))
 
     def test_the_physics_time_step_is_0_01_everywhere_but_in_the_stable_physics_example(self):
-        """Every AntMaze file keeps 0.01 s, 5 physics steps and the guard off, except the one file the
-        AntMaze baseline uses, which differs from the Warp example in exactly four environment values."""
+        """Every AntMaze file keeps 0.01 s, 5 physics steps and the guard off, except the three files the
+        AntMaze baseline uses (one per map); the U-maze one differs from the Warp example in exactly four
+        environment values."""
         ant_files = [path for path in CONFIGURATIONS.glob("antmaze_*.toml")]
-        self.assertEqual(len(ant_files), 4)
+        self.assertEqual(len(ant_files), 6)
         for path in ant_files:
             environment = read_experiment_configuration(path)["environment"]
-            if path == ANTMAZE_STABLE_PHYSICS_EXAMPLE:
+            if path in STABLE_PHYSICS_FILES:
                 continue
             self.assertEqual((environment["physics_time_step"], environment["frame_skip"],
                               environment["fault_torso_speed"], environment["fault_torso_angular_speed"]),
@@ -150,6 +177,32 @@ class RecordedExperimentFiles(unittest.TestCase):
             environment = document["environment"]
             self.assertAlmostEqual(environment["physics_time_step"] * environment["frame_skip"], 0.05, places=12)
         self.assertEqual(argument_defaults(stable)["physics"], "warp")
+
+    def test_the_medium_and_large_files_are_the_u_maze_file_on_their_own_map(self):
+        """The Medium and Large stable-physics files hold the U-maze file's learner, physics and runtime
+        values, and the map, start and goal cells and step limit of the environment's own preset."""
+        umaze = read_experiment_configuration(ANTMAZE_STABLE_PHYSICS_EXAMPLE)
+        presets = antmaze_presets()
+        self.assertEqual(presets["umaze"], {key: umaze["environment"][key] for key in presets["umaze"]})
+        for name, path in ANTMAZE_STABLE_PHYSICS_MAPS.items():
+            document = read_experiment_configuration(path)
+            # before: the U-maze file's [environment]; after: the same with the map's four values
+            self.assertEqual(document["environment"], {**umaze["environment"], **presets[name]})
+            self.assertEqual(document["trainer"], umaze["trainer"])
+            self.assertEqual(document["runtime"], {**umaze["runtime"], "environment": f"antmaze-{name}"})
+            self.assertEqual(document["bonus_options"], umaze["bonus_options"])
+            self.assertEqual(document["metadata"]["source_files"], umaze["metadata"]["source_files"])
+            self.assertEqual(argument_defaults(document)["episode_steps"], 1000)
+            self.assertEqual(argument_defaults(document)["physics"], "warp")
+        self.assertEqual((presets["medium"]["start_cell"], presets["medium"]["goal_cell"]), ((6, 1), (1, 6)))
+        self.assertEqual((presets["large"]["start_cell"], presets["large"]["goal_cell"]), ((7, 1), (1, 10)))
+        # a file whose map and runtime selector disagree is refused
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "configuration.toml"
+            path.write_text(ANTMAZE_STABLE_PHYSICS_MAPS["large"].read_text().replace(
+                'environment = "antmaze-large"', 'environment = "antmaze-medium"'))
+            with self.assertRaisesRegex(ValueError, "recorded maze map disagree"):
+                read_experiment_configuration(path)
 
     def test_named_reward_settings_fix_the_scale_and_offset(self):
         """A file's reward scale and offset must be the ones its named reward setting means."""

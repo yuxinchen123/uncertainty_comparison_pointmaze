@@ -103,7 +103,11 @@ the physics of every run before 2026-11-12. The AntMaze baseline of the study th
 the fault guard at 30 m/s and 100 rad/s, because `implicitfast` at 0.01 s lets a fast-turning ant
 in the air gain rotational energy until its torso speed runs away (spec.md, deviation 10). The
 recorded configuration file with these values:
-`configs/experiments/antmaze_umaze_warp-physics_time-step-0.005_frame-skip-10_fault-guard-30-metres-and-100-radians-per-second_cleanrl-ppo-rnd_goal-termination_reward-arrival-plus-one_example_steps-204800.toml`.
+`configs/experiments/antmaze_umaze_warp-physics_time-step-0.005_frame-skip-10_fault-guard-30-metres-and-100-radians-per-second_cleanrl-ppo-rnd_goal-termination_reward-arrival-plus-one_example_steps-204800.toml`,
+and the same file on the other two maps, `antmaze_medium_...` and `antmaze_large_...` (only the map,
+its start and goal cells, its step limit and the runtime selector differ). The gates of the Medium and
+Large maps (reset, goal, step limit, walls, ceiling, agreement with C MuJoCo, the guard):
+`runs/2026-11-12-15-56_cleanrl-ppo-rnd-baseline_antmaze-umaze-medium-large_*/diagnosis/2026-11-13_medium-and-large-readiness/notes.md`.
 
 Any positive time step is accepted with any frame skip of at least 1. A combination whose
 environment step is not 0.05 s is another control cadence than the reference's; nothing refuses
