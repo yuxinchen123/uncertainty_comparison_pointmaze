@@ -1,0 +1,166 @@
+{
+  "title": "Batch 12: smaller steps of the fast last layer, with the first-arrival hold",
+  "validation_seeds": {
+    "first_block": [
+      "validation-block",
+      "discovery-validation"
+    ],
+    "arms": [
+      {
+        "name": "control (CleanRL PPO-RND)",
+        "first_block": "control-cleanrl-ppo-rnd",
+        "second_block": "control-cleanrl-ppo-rnd",
+        "control": true
+      },
+      {
+        "name": "fast last layer at step 0.03 with the first-arrival hold",
+        "first_block": "fast-step-0-point-03-with-hold",
+        "second_block": "fast-step-0-point-03-with-hold"
+      },
+      {
+        "name": "fast last layer at step 0.01 with the first-arrival hold",
+        "first_block": "fast-step-0-point-01-with-hold",
+        "second_block": "fast-step-0-point-01-with-hold"
+      },
+      {
+        "name": "fast last layer (step 0.1) with the first-arrival hold",
+        "first_block": "fast-layer-first-arrival-hold",
+        "second_block": "fast-step-0-point-1-with-hold"
+      },
+      {
+        "name": "divisor held from each policy's first arrival",
+        "first_block": "divisor-held-from-first-arrival",
+        "second_block": "held-from-first-arrival"
+      }
+    ],
+    "cases": [
+      {
+        "environment": "pointmaze-medium",
+        "reward_setting": "arrival_plus_one"
+      },
+      {
+        "environment": "pointmaze-medium",
+        "reward_setting": "step_cost"
+      },
+      {
+        "environment": "pointmaze-large",
+        "reward_setting": "arrival_plus_one"
+      },
+      {
+        "environment": "pointmaze-large",
+        "reward_setting": "step_cost"
+      }
+    ],
+    "second_block": [
+      "validation-block-two",
+      "discovery-block-two"
+    ]
+  },
+  "same_configuration": [
+    {
+      "title": "Fast last layer at step 0.03 with the first-arrival hold, first validation block",
+      "arm": {
+        "name": "fast last layer at step 0.03 with the first-arrival hold",
+        "method": "fast-step-0-point-03-with-hold",
+        "phases": [
+          "validation-block"
+        ]
+      },
+      "against": [
+        {
+          "name": "divisor held from each policy's first arrival",
+          "method": "divisor-held-from-first-arrival",
+          "phases": [
+            "validation-block"
+          ]
+        },
+        {
+          "name": "fast last layer (step 0.1) with the first-arrival hold",
+          "method": "fast-layer-first-arrival-hold",
+          "phases": [
+            "validation-block"
+          ]
+        },
+        {
+          "name": "CleanRL PPO-RND",
+          "method": "control-cleanrl-ppo-rnd",
+          "phases": [
+            "validation-block",
+            "discovery-validation"
+          ]
+        }
+      ],
+      "cases": [
+        {
+          "environment": "pointmaze-medium",
+          "reward_setting": "arrival_plus_one"
+        },
+        {
+          "environment": "pointmaze-medium",
+          "reward_setting": "step_cost"
+        },
+        {
+          "environment": "pointmaze-large",
+          "reward_setting": "arrival_plus_one"
+        },
+        {
+          "environment": "pointmaze-large",
+          "reward_setting": "step_cost"
+        }
+      ]
+    },
+    {
+      "title": "Fast last layer at step 0.01 with the first-arrival hold, first validation block",
+      "arm": {
+        "name": "fast last layer at step 0.01 with the first-arrival hold",
+        "method": "fast-step-0-point-01-with-hold",
+        "phases": [
+          "validation-block"
+        ]
+      },
+      "against": [
+        {
+          "name": "divisor held from each policy's first arrival",
+          "method": "divisor-held-from-first-arrival",
+          "phases": [
+            "validation-block"
+          ]
+        },
+        {
+          "name": "fast last layer at step 0.03 with the first-arrival hold",
+          "method": "fast-step-0-point-03-with-hold",
+          "phases": [
+            "validation-block"
+          ]
+        },
+        {
+          "name": "CleanRL PPO-RND",
+          "method": "control-cleanrl-ppo-rnd",
+          "phases": [
+            "validation-block",
+            "discovery-validation"
+          ]
+        }
+      ],
+      "cases": [
+        {
+          "environment": "pointmaze-medium",
+          "reward_setting": "arrival_plus_one"
+        },
+        {
+          "environment": "pointmaze-medium",
+          "reward_setting": "step_cost"
+        },
+        {
+          "environment": "pointmaze-large",
+          "reward_setting": "arrival_plus_one"
+        },
+        {
+          "environment": "pointmaze-large",
+          "reward_setting": "step_cost"
+        }
+      ]
+    }
+  ],
+  "predictions": "predictions_batch_12"
+}

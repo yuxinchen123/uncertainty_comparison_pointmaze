@@ -1,0 +1,266 @@
+{
+  "title": "Batch 10: the fast last layer with the first-arrival hold on PointMaze, and the first AntMaze U-maze screen of the bonus arms",
+  "validation_seeds": {
+    "first_block": [
+      "validation-block",
+      "discovery-validation"
+    ],
+    "arms": [
+      {
+        "name": "control (CleanRL PPO-RND)",
+        "first_block": "control-cleanrl-ppo-rnd",
+        "second_block": "control-cleanrl-ppo-rnd",
+        "control": true
+      },
+      {
+        "name": "fast last layer (step 0.1) with the first-arrival hold",
+        "first_block": "fast-layer-first-arrival-hold",
+        "second_block": "fast-step-0-point-1-with-hold"
+      },
+      {
+        "name": "divisor held from each policy's first arrival",
+        "first_block": "divisor-held-from-first-arrival",
+        "second_block": "held-from-first-arrival"
+      }
+    ],
+    "cases": [
+      {
+        "environment": "pointmaze-medium",
+        "reward_setting": "arrival_plus_one"
+      },
+      {
+        "environment": "pointmaze-medium",
+        "reward_setting": "step_cost"
+      },
+      {
+        "environment": "pointmaze-large",
+        "reward_setting": "arrival_plus_one"
+      },
+      {
+        "environment": "pointmaze-large",
+        "reward_setting": "step_cost"
+      }
+    ],
+    "second_block": [
+      "validation-block-two",
+      "discovery-block-two"
+    ]
+  },
+  "same_configuration": [
+    {
+      "title": "Fast last layer (step 0.1) with the first-arrival hold, first validation block",
+      "arm": {
+        "name": "fast last layer (step 0.1) with the first-arrival hold",
+        "method": "fast-layer-first-arrival-hold",
+        "phases": [
+          "validation-block"
+        ]
+      },
+      "against": [
+        {
+          "name": "divisor held from each policy's first arrival",
+          "method": "divisor-held-from-first-arrival",
+          "phases": [
+            "validation-block"
+          ]
+        },
+        {
+          "name": "fast last layer alone (step 0.1)",
+          "method": "fast-last-layer-step-0-point-1",
+          "phases": [
+            "discovery-validation"
+          ]
+        },
+        {
+          "name": "CleanRL PPO-RND",
+          "method": "control-cleanrl-ppo-rnd",
+          "phases": [
+            "validation-block",
+            "discovery-validation"
+          ]
+        }
+      ],
+      "cases": [
+        {
+          "environment": "pointmaze-medium",
+          "reward_setting": "arrival_plus_one"
+        },
+        {
+          "environment": "pointmaze-medium",
+          "reward_setting": "step_cost"
+        },
+        {
+          "environment": "pointmaze-large",
+          "reward_setting": "arrival_plus_one"
+        },
+        {
+          "environment": "pointmaze-large",
+          "reward_setting": "step_cost"
+        }
+      ]
+    },
+    {
+      "title": "AntMaze U-maze, 128 environments per policy: divisor held from each policy's first arrival against RND",
+      "arm": {
+        "name": "divisor held from each policy's first arrival",
+        "method": "divisor-held-from-first-arrival-with-128-environments-per-policy",
+        "phases": [
+          "bonus-arms-screen"
+        ],
+        "run_folder": "2026-11-12-15-56_cleanrl-ppo-rnd-baseline_antmaze-umaze-medium-large_mujoco-warp-physics_ceiling-on-wall-tops_goal-termination_reward-arrival-plus-1-and-step-cost_environments-per-policy-check-4-16-128_seeds-0-15_confirmation-seeds-from-30000"
+      },
+      "against": [
+        {
+          "name": "CleanRL PPO-RND (environments-per-policy check)",
+          "method": "cleanrl-ppo-rnd-with-128-environments-per-policy",
+          "phases": [
+            "rollout-shape-check-stable-physics"
+          ],
+          "run_folder": "2026-11-12-15-56_cleanrl-ppo-rnd-baseline_antmaze-umaze-medium-large_mujoco-warp-physics_ceiling-on-wall-tops_goal-termination_reward-arrival-plus-1-and-step-cost_environments-per-policy-check-4-16-128_seeds-0-15_confirmation-seeds-from-30000"
+        }
+      ],
+      "cases": [
+        {
+          "environment": "antmaze-umaze",
+          "reward_setting": "arrival_plus_one"
+        }
+      ]
+    },
+    {
+      "title": "AntMaze U-maze, 128 environments per policy: fast last layer (step 0.1) against RND",
+      "arm": {
+        "name": "fast last layer (step 0.1)",
+        "method": "fast-last-layer-with-128-environments-per-policy",
+        "phases": [
+          "bonus-arms-screen"
+        ],
+        "run_folder": "2026-11-12-15-56_cleanrl-ppo-rnd-baseline_antmaze-umaze-medium-large_mujoco-warp-physics_ceiling-on-wall-tops_goal-termination_reward-arrival-plus-1-and-step-cost_environments-per-policy-check-4-16-128_seeds-0-15_confirmation-seeds-from-30000"
+      },
+      "against": [
+        {
+          "name": "CleanRL PPO-RND (environments-per-policy check)",
+          "method": "cleanrl-ppo-rnd-with-128-environments-per-policy",
+          "phases": [
+            "rollout-shape-check-stable-physics"
+          ],
+          "run_folder": "2026-11-12-15-56_cleanrl-ppo-rnd-baseline_antmaze-umaze-medium-large_mujoco-warp-physics_ceiling-on-wall-tops_goal-termination_reward-arrival-plus-1-and-step-cost_environments-per-policy-check-4-16-128_seeds-0-15_confirmation-seeds-from-30000"
+        }
+      ],
+      "cases": [
+        {
+          "environment": "antmaze-umaze",
+          "reward_setting": "arrival_plus_one"
+        }
+      ]
+    },
+    {
+      "title": "AntMaze U-maze, 128 environments per policy: fast last layer (step 0.1) with the first-arrival hold against RND",
+      "arm": {
+        "name": "fast last layer (step 0.1) with the first-arrival hold",
+        "method": "fast-last-layer-and-first-arrival-hold-with-128-environments-per-policy",
+        "phases": [
+          "bonus-arms-screen"
+        ],
+        "run_folder": "2026-11-12-15-56_cleanrl-ppo-rnd-baseline_antmaze-umaze-medium-large_mujoco-warp-physics_ceiling-on-wall-tops_goal-termination_reward-arrival-plus-1-and-step-cost_environments-per-policy-check-4-16-128_seeds-0-15_confirmation-seeds-from-30000"
+      },
+      "against": [
+        {
+          "name": "CleanRL PPO-RND (environments-per-policy check)",
+          "method": "cleanrl-ppo-rnd-with-128-environments-per-policy",
+          "phases": [
+            "rollout-shape-check-stable-physics"
+          ],
+          "run_folder": "2026-11-12-15-56_cleanrl-ppo-rnd-baseline_antmaze-umaze-medium-large_mujoco-warp-physics_ceiling-on-wall-tops_goal-termination_reward-arrival-plus-1-and-step-cost_environments-per-policy-check-4-16-128_seeds-0-15_confirmation-seeds-from-30000"
+        }
+      ],
+      "cases": [
+        {
+          "environment": "antmaze-umaze",
+          "reward_setting": "arrival_plus_one"
+        }
+      ]
+    },
+    {
+      "title": "AntMaze U-maze, 16 environments per policy: divisor held from each policy's first arrival against RND",
+      "arm": {
+        "name": "divisor held from each policy's first arrival",
+        "method": "divisor-held-from-first-arrival-with-16-environments-per-policy",
+        "phases": [
+          "bonus-arms-screen"
+        ],
+        "run_folder": "2026-11-12-15-56_cleanrl-ppo-rnd-baseline_antmaze-umaze-medium-large_mujoco-warp-physics_ceiling-on-wall-tops_goal-termination_reward-arrival-plus-1-and-step-cost_environments-per-policy-check-4-16-128_seeds-0-15_confirmation-seeds-from-30000"
+      },
+      "against": [
+        {
+          "name": "CleanRL PPO-RND (environments-per-policy check)",
+          "method": "cleanrl-ppo-rnd-with-16-environments-per-policy",
+          "phases": [
+            "rollout-shape-check-stable-physics"
+          ],
+          "run_folder": "2026-11-12-15-56_cleanrl-ppo-rnd-baseline_antmaze-umaze-medium-large_mujoco-warp-physics_ceiling-on-wall-tops_goal-termination_reward-arrival-plus-1-and-step-cost_environments-per-policy-check-4-16-128_seeds-0-15_confirmation-seeds-from-30000"
+        }
+      ],
+      "cases": [
+        {
+          "environment": "antmaze-umaze",
+          "reward_setting": "arrival_plus_one"
+        }
+      ]
+    },
+    {
+      "title": "AntMaze U-maze, 16 environments per policy: fast last layer (step 0.1) against RND",
+      "arm": {
+        "name": "fast last layer (step 0.1)",
+        "method": "fast-last-layer-with-16-environments-per-policy",
+        "phases": [
+          "bonus-arms-screen"
+        ],
+        "run_folder": "2026-11-12-15-56_cleanrl-ppo-rnd-baseline_antmaze-umaze-medium-large_mujoco-warp-physics_ceiling-on-wall-tops_goal-termination_reward-arrival-plus-1-and-step-cost_environments-per-policy-check-4-16-128_seeds-0-15_confirmation-seeds-from-30000"
+      },
+      "against": [
+        {
+          "name": "CleanRL PPO-RND (environments-per-policy check)",
+          "method": "cleanrl-ppo-rnd-with-16-environments-per-policy",
+          "phases": [
+            "rollout-shape-check-stable-physics"
+          ],
+          "run_folder": "2026-11-12-15-56_cleanrl-ppo-rnd-baseline_antmaze-umaze-medium-large_mujoco-warp-physics_ceiling-on-wall-tops_goal-termination_reward-arrival-plus-1-and-step-cost_environments-per-policy-check-4-16-128_seeds-0-15_confirmation-seeds-from-30000"
+        }
+      ],
+      "cases": [
+        {
+          "environment": "antmaze-umaze",
+          "reward_setting": "arrival_plus_one"
+        }
+      ]
+    },
+    {
+      "title": "AntMaze U-maze, 16 environments per policy: fast last layer (step 0.1) with the first-arrival hold against RND",
+      "arm": {
+        "name": "fast last layer (step 0.1) with the first-arrival hold",
+        "method": "fast-last-layer-and-first-arrival-hold-with-16-environments-per-policy",
+        "phases": [
+          "bonus-arms-screen"
+        ],
+        "run_folder": "2026-11-12-15-56_cleanrl-ppo-rnd-baseline_antmaze-umaze-medium-large_mujoco-warp-physics_ceiling-on-wall-tops_goal-termination_reward-arrival-plus-1-and-step-cost_environments-per-policy-check-4-16-128_seeds-0-15_confirmation-seeds-from-30000"
+      },
+      "against": [
+        {
+          "name": "CleanRL PPO-RND (environments-per-policy check)",
+          "method": "cleanrl-ppo-rnd-with-16-environments-per-policy",
+          "phases": [
+            "rollout-shape-check-stable-physics"
+          ],
+          "run_folder": "2026-11-12-15-56_cleanrl-ppo-rnd-baseline_antmaze-umaze-medium-large_mujoco-warp-physics_ceiling-on-wall-tops_goal-termination_reward-arrival-plus-1-and-step-cost_environments-per-policy-check-4-16-128_seeds-0-15_confirmation-seeds-from-30000"
+        }
+      ],
+      "cases": [
+        {
+          "environment": "antmaze-umaze",
+          "reward_setting": "arrival_plus_one"
+        }
+      ]
+    }
+  ],
+  "predictions": "predictions_batch_10"
+}

@@ -1,0 +1,156 @@
+{
+  "title": "Batch 13: the fast last layer until the first arrival, then the divisor of the predictor's own scores",
+  "validation_seeds": {
+    "first_block": [
+      "validation-block",
+      "discovery-validation"
+    ],
+    "arms": [
+      {
+        "name": "control (CleanRL PPO-RND)",
+        "first_block": "control-cleanrl-ppo-rnd",
+        "second_block": "control-cleanrl-ppo-rnd",
+        "control": true
+      },
+      {
+        "name": "fast last layer until the first arrival, then the predictor's own divisor, held",
+        "first_block": "fast-then-predictor-divisor-held"
+      },
+      {
+        "name": "fast last layer until the first arrival, then the predictor's own divisor, left running",
+        "first_block": "fast-then-predictor-divisor"
+      },
+      {
+        "name": "divisor held from each policy's first arrival",
+        "first_block": "divisor-held-from-first-arrival",
+        "second_block": "held-from-first-arrival"
+      },
+      {
+        "name": "fast last layer (step 0.1) with the first-arrival hold",
+        "first_block": "fast-layer-first-arrival-hold",
+        "second_block": "fast-step-0-point-1-with-hold"
+      }
+    ],
+    "cases": [
+      {
+        "environment": "pointmaze-medium",
+        "reward_setting": "arrival_plus_one"
+      },
+      {
+        "environment": "pointmaze-medium",
+        "reward_setting": "step_cost"
+      },
+      {
+        "environment": "pointmaze-large",
+        "reward_setting": "arrival_plus_one"
+      },
+      {
+        "environment": "pointmaze-large",
+        "reward_setting": "step_cost"
+      }
+    ]
+  },
+  "same_configuration": [
+    {
+      "title": "Fast last layer until the first arrival, then the predictor's own divisor, held",
+      "arm": {
+        "name": "fast last layer until the first arrival, then the predictor's own divisor, held",
+        "method": "fast-then-predictor-divisor-held",
+        "phases": [
+          "validation-block"
+        ]
+      },
+      "against": [
+        {
+          "name": "divisor held from each policy's first arrival",
+          "method": "divisor-held-from-first-arrival",
+          "phases": [
+            "validation-block"
+          ]
+        },
+        {
+          "name": "fast last layer until the first arrival, then the first-arrival hold",
+          "method": "fast-until-arrival-then-hold",
+          "phases": [
+            "validation-block"
+          ]
+        },
+        {
+          "name": "fast last layer (step 0.1) with the first-arrival hold",
+          "method": "fast-layer-first-arrival-hold",
+          "phases": [
+            "validation-block"
+          ]
+        },
+        {
+          "name": "CleanRL PPO-RND",
+          "method": "control-cleanrl-ppo-rnd",
+          "phases": [
+            "validation-block",
+            "discovery-validation"
+          ]
+        }
+      ],
+      "cases": [
+        {
+          "environment": "pointmaze-medium",
+          "reward_setting": "arrival_plus_one"
+        },
+        {
+          "environment": "pointmaze-medium",
+          "reward_setting": "step_cost"
+        },
+        {
+          "environment": "pointmaze-large",
+          "reward_setting": "arrival_plus_one"
+        },
+        {
+          "environment": "pointmaze-large",
+          "reward_setting": "step_cost"
+        }
+      ]
+    },
+    {
+      "title": "The predictor's own divisor left running",
+      "arm": {
+        "name": "fast last layer until the first arrival, then the predictor's own divisor, left running",
+        "method": "fast-then-predictor-divisor",
+        "phases": [
+          "validation-block"
+        ]
+      },
+      "against": [
+        {
+          "name": "fast last layer until the first arrival, then the predictor's own divisor, held",
+          "method": "fast-then-predictor-divisor-held",
+          "phases": [
+            "validation-block"
+          ]
+        },
+        {
+          "name": "CleanRL PPO-RND",
+          "method": "control-cleanrl-ppo-rnd",
+          "phases": [
+            "validation-block",
+            "discovery-validation"
+          ]
+        }
+      ],
+      "cases": [
+        {
+          "environment": "pointmaze-medium",
+          "reward_setting": "arrival_plus_one"
+        },
+        {
+          "environment": "pointmaze-large",
+          "reward_setting": "arrival_plus_one"
+        },
+        {
+          "environment": "pointmaze-large",
+          "reward_setting": "step_cost"
+        }
+      ]
+    }
+  ],
+  "predictions": "predictions_batch_13"
+}

@@ -1,0 +1,39 @@
+{
+  "title": "Batch 9: the fast last layer for discovery in the four PointMaze cases, on two validation blocks",
+  "validation_seeds": {
+    "first_block": "discovery-validation",
+    "second_block": "discovery-block-two",
+    "arms": [
+      {
+        "name": "control (CleanRL PPO-RND)",
+        "first_block": "control-cleanrl-ppo-rnd",
+        "second_block": "control-cleanrl-ppo-rnd",
+        "control": true
+      },
+      {
+        "name": "fast last layer inside the rollout, step 0.1",
+        "first_block": "fast-last-layer-step-0-point-1",
+        "second_block": "fast-layer-step-0-point-1"
+      }
+    ],
+    "cases": [
+      {
+        "environment": "pointmaze-medium",
+        "reward_setting": "arrival_plus_one"
+      },
+      {
+        "environment": "pointmaze-medium",
+        "reward_setting": "step_cost"
+      },
+      {
+        "environment": "pointmaze-large",
+        "reward_setting": "arrival_plus_one"
+      },
+      {
+        "environment": "pointmaze-large",
+        "reward_setting": "step_cost"
+      }
+    ]
+  },
+  "predictions": "predictions_batch_09"
+}

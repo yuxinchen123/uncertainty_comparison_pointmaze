@@ -1,0 +1,185 @@
+{
+  "title": "Batch 11: the fast last layer until each policy's first arrival, with the divisor held from then on",
+  "validation_seeds": {
+    "first_block": [
+      "validation-block",
+      "discovery-validation"
+    ],
+    "arms": [
+      {
+        "name": "control (CleanRL PPO-RND)",
+        "first_block": "control-cleanrl-ppo-rnd",
+        "second_block": "control-cleanrl-ppo-rnd",
+        "control": true
+      },
+      {
+        "name": "fast last layer until the first arrival, then the first-arrival hold",
+        "first_block": "fast-until-arrival-then-hold"
+      },
+      {
+        "name": "fast last layer until the first arrival, then RND's running divisor",
+        "first_block": "fast-until-arrival-no-hold"
+      },
+      {
+        "name": "fast last layer until the first arrival, divisor held after one sixteenth of the run",
+        "first_block": "fast-until-arrival-fixed-hold"
+      },
+      {
+        "name": "divisor held from each policy's first arrival",
+        "first_block": "divisor-held-from-first-arrival",
+        "second_block": "held-from-first-arrival"
+      },
+      {
+        "name": "fast last layer (step 0.1) with the first-arrival hold",
+        "first_block": "fast-layer-first-arrival-hold",
+        "second_block": "fast-step-0-point-1-with-hold"
+      }
+    ],
+    "cases": [
+      {
+        "environment": "pointmaze-medium",
+        "reward_setting": "arrival_plus_one"
+      },
+      {
+        "environment": "pointmaze-medium",
+        "reward_setting": "step_cost"
+      },
+      {
+        "environment": "pointmaze-large",
+        "reward_setting": "arrival_plus_one"
+      }
+    ]
+  },
+  "same_configuration": [
+    {
+      "title": "Fast last layer until the first arrival, then the first-arrival hold",
+      "arm": {
+        "name": "fast last layer until the first arrival, then the first-arrival hold",
+        "method": "fast-until-arrival-then-hold",
+        "phases": [
+          "validation-block"
+        ]
+      },
+      "against": [
+        {
+          "name": "divisor held from each policy's first arrival",
+          "method": "divisor-held-from-first-arrival",
+          "phases": [
+            "validation-block"
+          ]
+        },
+        {
+          "name": "fast last layer (step 0.1) with the first-arrival hold",
+          "method": "fast-layer-first-arrival-hold",
+          "phases": [
+            "validation-block"
+          ]
+        },
+        {
+          "name": "CleanRL PPO-RND",
+          "method": "control-cleanrl-ppo-rnd",
+          "phases": [
+            "validation-block",
+            "discovery-validation"
+          ]
+        }
+      ],
+      "cases": [
+        {
+          "environment": "pointmaze-medium",
+          "reward_setting": "arrival_plus_one"
+        },
+        {
+          "environment": "pointmaze-medium",
+          "reward_setting": "step_cost"
+        },
+        {
+          "environment": "pointmaze-large",
+          "reward_setting": "arrival_plus_one"
+        }
+      ]
+    },
+    {
+      "title": "Fast last layer until the first arrival, then RND's running divisor (addendum 1)",
+      "arm": {
+        "name": "fast last layer until the first arrival, then RND's running divisor",
+        "method": "fast-until-arrival-no-hold",
+        "phases": [
+          "validation-block"
+        ]
+      },
+      "against": [
+        {
+          "name": "CleanRL PPO-RND",
+          "method": "control-cleanrl-ppo-rnd",
+          "phases": [
+            "validation-block",
+            "discovery-validation"
+          ]
+        },
+        {
+          "name": "fast last layer until the first arrival, then the first-arrival hold",
+          "method": "fast-until-arrival-then-hold",
+          "phases": [
+            "validation-block"
+          ]
+        }
+      ],
+      "cases": [
+        {
+          "environment": "pointmaze-medium",
+          "reward_setting": "arrival_plus_one"
+        },
+        {
+          "environment": "pointmaze-large",
+          "reward_setting": "arrival_plus_one"
+        }
+      ]
+    },
+    {
+      "title": "Fast last layer until the first arrival, divisor held after one sixteenth of the run (addendum 1)",
+      "arm": {
+        "name": "fast last layer until the first arrival, divisor held after one sixteenth of the run",
+        "method": "fast-until-arrival-fixed-hold",
+        "phases": [
+          "validation-block"
+        ]
+      },
+      "against": [
+        {
+          "name": "fast last layer until the first arrival, then RND's running divisor",
+          "method": "fast-until-arrival-no-hold",
+          "phases": [
+            "validation-block"
+          ]
+        },
+        {
+          "name": "fast last layer until the first arrival, then the first-arrival hold",
+          "method": "fast-until-arrival-then-hold",
+          "phases": [
+            "validation-block"
+          ]
+        },
+        {
+          "name": "CleanRL PPO-RND",
+          "method": "control-cleanrl-ppo-rnd",
+          "phases": [
+            "validation-block",
+            "discovery-validation"
+          ]
+        }
+      ],
+      "cases": [
+        {
+          "environment": "pointmaze-medium",
+          "reward_setting": "arrival_plus_one"
+        },
+        {
+          "environment": "pointmaze-large",
+          "reward_setting": "arrival_plus_one"
+        }
+      ]
+    }
+  ],
+  "predictions": "predictions_batch_11"
+}

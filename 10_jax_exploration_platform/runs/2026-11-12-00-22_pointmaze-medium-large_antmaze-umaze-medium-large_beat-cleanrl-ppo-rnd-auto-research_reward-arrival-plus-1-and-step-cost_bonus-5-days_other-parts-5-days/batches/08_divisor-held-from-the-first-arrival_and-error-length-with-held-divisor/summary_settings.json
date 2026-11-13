@@ -1,0 +1,138 @@
+{
+  "title": "Batch 8: the divisor held from each policy's first arrival, and the error length with a held divisor",
+  "validation_seeds": {
+    "first_block": [
+      "validation-block",
+      "discovery-validation"
+    ],
+    "arms": [
+      {
+        "name": "control (CleanRL PPO-RND)",
+        "first_block": "control-cleanrl-ppo-rnd",
+        "second_block": "control-cleanrl-ppo-rnd",
+        "control": true
+      },
+      {
+        "name": "divisor held from each policy's first arrival",
+        "first_block": "divisor-held-from-first-arrival",
+        "second_block": "held-from-first-arrival"
+      },
+      {
+        "name": "divisor held after one sixteenth of the run",
+        "first_block": "divisor-held-after-one-sixteenth",
+        "second_block": "divisor-held-one-sixteenth"
+      },
+      {
+        "name": "error length as the bonus, divisor held after one sixteenth of the run",
+        "first_block": "error-length-with-held-divisor"
+      }
+    ],
+    "cases": [
+      {
+        "environment": "pointmaze-medium",
+        "reward_setting": "arrival_plus_one"
+      },
+      {
+        "environment": "pointmaze-large",
+        "reward_setting": "arrival_plus_one"
+      },
+      {
+        "environment": "pointmaze-medium",
+        "reward_setting": "step_cost"
+      },
+      {
+        "environment": "pointmaze-large",
+        "reward_setting": "step_cost"
+      }
+    ],
+    "second_block": [
+      "validation-block-two",
+      "discovery-block-two"
+    ]
+  },
+  "same_configuration": [
+    {
+      "title": "Divisor held from each policy's first arrival, first validation block",
+      "arm": {
+        "name": "divisor held from each policy's first arrival",
+        "method": "divisor-held-from-first-arrival",
+        "phases": [
+          "validation-block"
+        ]
+      },
+      "against": [
+        {
+          "name": "divisor held after one sixteenth of the run",
+          "method": "divisor-held-after-one-sixteenth",
+          "phases": [
+            "validation-block"
+          ]
+        },
+        {
+          "name": "CleanRL PPO-RND",
+          "method": "control-cleanrl-ppo-rnd",
+          "phases": [
+            "validation-block",
+            "discovery-validation"
+          ]
+        }
+      ],
+      "cases": [
+        {
+          "environment": "pointmaze-medium",
+          "reward_setting": "arrival_plus_one"
+        },
+        {
+          "environment": "pointmaze-large",
+          "reward_setting": "arrival_plus_one"
+        },
+        {
+          "environment": "pointmaze-medium",
+          "reward_setting": "step_cost"
+        },
+        {
+          "environment": "pointmaze-large",
+          "reward_setting": "step_cost"
+        }
+      ]
+    },
+    {
+      "title": "Error length with a held divisor, first validation block",
+      "arm": {
+        "name": "error length as the bonus, divisor held after one sixteenth of the run",
+        "method": "error-length-with-held-divisor",
+        "phases": [
+          "validation-block"
+        ]
+      },
+      "against": [
+        {
+          "name": "divisor held after one sixteenth of the run",
+          "method": "divisor-held-after-one-sixteenth",
+          "phases": [
+            "validation-block"
+          ]
+        },
+        {
+          "name": "CleanRL PPO-RND",
+          "method": "control-cleanrl-ppo-rnd",
+          "phases": [
+            "validation-block",
+            "discovery-validation"
+          ]
+        }
+      ],
+      "cases": [
+        {
+          "environment": "pointmaze-medium",
+          "reward_setting": "arrival_plus_one"
+        },
+        {
+          "environment": "pointmaze-large",
+          "reward_setting": "arrival_plus_one"
+        }
+      ]
+    }
+  ],
+  "predictions": "predictions_batch_08"
+}
