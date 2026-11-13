@@ -499,12 +499,12 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   `infra_history.md`. The old check is stopped; the time-step configuration field, its gates (now including a
   gate with trained policies) and the throughput of the final setting are being done in the background since
   19:17 PT. Then: freeze, rebuild the rollout-shape check under a new phase name, first unit by hand.
-- 2026-11-12 19:22 PT: **RND's discovery baseline is confirmed in all four PointMaze cases** (1,024 fresh seeds;
+- 2026-11-12 19:22 PT (report regenerated): **RND's discovery baseline is confirmed in all four PointMaze cases** (1,024 fresh seeds;
   mean capped first-goal time in thousand steps): Medium with reward 1 on arrival 17.4 ± 0.5; Medium with the
   step cost 14.1 ± 0.3; Large with reward 1 on arrival 136 ± 3; Large with the step cost 131 ± 3 (learning rate
   4.5e-3, weight 8; RND at CleanRL's defaults 2,723 ± 179, PPO without a bonus 10,418 ± 467). The PointMaze
   baseline folder has no unit left (133 done).
-- 2026-11-12 19:24 PT: **batch 4, first three units (16 development seeds, against RND's sweeps at the budget on
+- 2026-11-12 19:22 PT (the reading ran in the minute after the script was written): **batch 4, first three units (16 development seeds, against RND's sweeps at the budget on
   the same seeds; quick script `quick_compare_dev.py`, not yet in the summary code).**
   1. PointMaze Medium, reward 1 on arrival, slower predictor with held divisor: best whole-curve mean 0.965
      (learning rate 6e-3, weight 0.5) against RND's best 0.9435 (learning rate 1e-2, weight 2): +0.021
