@@ -51,3 +51,7 @@ Times are Pacific.
   frozen code copy, which does not have the correction, so its card types are limited to RTX 2080 Ti and RTX 4000
   Ada, whose node lists in the resource file are right. The folder's code is frozen anew, with the correction,
   when no unit of it is part-way through.
+- 2026-11-12 18:28 PT: the new monitor job 6894373 (partition `nolim`, 1 processor) waited with reason `Priority`
+  under its 20-day limit; its limit was lowered to 1 day (`scontrol update`, id from the monitor ledger). At
+  18:29 PT it was still waiting. Until it starts, the session's 20-minute tick does its work (the tick submits
+  workers for waiting units itself).
