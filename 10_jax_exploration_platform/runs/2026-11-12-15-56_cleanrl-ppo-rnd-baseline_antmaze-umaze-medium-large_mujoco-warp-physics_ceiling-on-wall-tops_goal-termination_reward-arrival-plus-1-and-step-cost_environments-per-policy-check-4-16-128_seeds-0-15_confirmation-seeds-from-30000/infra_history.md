@@ -350,3 +350,17 @@ Times are Pacific, read from the clock or from scheduler records.
   on the U-maze at B = 134 million with 16 environments per policy gives that comparison against the
   128-environment run of the same length, and its result decides the count. Until then, ant work uses 16
   environments per policy (the cheaper choice to correct: its sweep is needed for the comparison anyway).
+- 2026-11-13 12:28 PT: **MIT and Gautschi `ai` are set up for ant units and left switched off** (background worker,
+  12:00 to 12:27 PT; notes `infrastructure/h100-h200-servers_setup_notes.md`, commit 0457ba73). MIT: a MuJoCo Warp
+  environment built on `mit_quicktest` (job 28985995) at `/orcd/scratch/orcd/008/shuzel/envs/rnd_platform_jax_mujoco_warp`,
+  the same 79 packages as Gautschi's; checked on one Advanced H100 (job 28987093: the card guard found 1 card,
+  jax and Warp see an H100 80 GB); entry `mit` with four pools (Advanced H100/H200 on `mit_normal_gpu`,
+  preemptable H100/H200 leaving out the 79 nodes shared with `mit_normal_gpu`), 4 cores, 24 GB, card guard with
+  requeue. Gautschi: the existing Warp environment (imports checked, job 18521082 on `cpu` standby); entry
+  `gautschi`, pool `ai-h100` (`-p ai -q normal`, 14 cores, 2 jobs). Both `ready: false`. At setup time both
+  servers' caps were full with another session's jobs (MIT: 4 of 4 preemptable H100s and 8 Advanced jobs waiting;
+  Gautschi: both H100s until about 20:07 PT). Before a unit goes there: freeze this folder anew, set `first_unit`
+  by hand (no UVA ant unit exists for the automatic check), `prepare`, then `ready: true`.
+- 2026-11-13 12:28 PT: the setup worker found that both fleet scripts read the server table before taking the fleet
+  lock, so a step that waited on the lock could write back an older table and drop entries added meanwhile.
+  Fixed (the table is now read under the lock) with a test in each script; 144 tests pass (job 6909084).
