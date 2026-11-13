@@ -364,3 +364,26 @@ Times are Pacific, read from the clock or from scheduler records.
 - 2026-11-13 12:28 PT: the setup worker found that both fleet scripts read the server table before taking the fleet
   lock, so a step that waited on the lock could write back an older table and drop entries added meanwhile.
   Fixed (the table is now read under the lock) with a test in each script; 144 tests pass (job 6909084).
+- 2026-11-13 13:08 PT: **this folder's code was frozen anew at commit ef844a20, its first numbered code copy (copy
+  number 1)**; it holds the RK4 configuration files (the user's decision of 2026-11-13: MuJoCo Warp with RK4 at
+  0.01 s x 5), the Medium and Large files and the copy-number rule of the queue. No job of an older copy was
+  alive (all 36 earlier units done).
+- 2026-11-13 13:10 PT: **17 RK4 units built** (minimum copy number 1; interpreter `platform_jax_warp`), all at
+  134,217,728 steps per policy, 16 development seeds, 256 windows:
+  1. RND sweep on the U-maze, 16 environments per policy, 28 configurations per reward setting (learning rates
+     3e-5, 1e-4, 3e-4, 1e-2 x weights 1/256 to 16 by factors of 4, entropy 0.001): 8 units of 112 policies (phase
+     `rnd-sweep-rk4`);
+  2. one RND unit with 128 environments per policy, reward 1 on arrival, learning rate 1e-2 x weights 1, 4, 16, 64
+     (64 policies, phase `environment-count-check-rk4`), for the equal-steps rule;
+  3. RND probes on Medium and Large, reward 1 on arrival, 8 configurations (128 policies each, phase
+     `rnd-probe-rk4`);
+  4. the auto research folder's batch 15: the method on the U-maze at steps 0, 0.03 and 0.1 with the first-arrival
+     hold, 9 configurations each, both reward settings (6 units of 144 policies, phase `method-sweep-rk4`).
+- 2026-11-13 13:11 PT: 13 units started on UVA cards free at once (6909227 and 6909228 on two RTX 5080 each,
+  6909229 on an A40, 6909232 on eight RTX A4500 on jaguar03 through the reservation `sl5nw_168`); two jobs on RTX
+  4000 Ada cards (6909230, 6909231) still waited after two minutes and were cancelled by their ledger ids. The
+  other four units (the 128-environment unit and three method units with the step cost) went to Gilbreth at 13:13
+  PT (jobs submitted by the fleet; the copy number 1 was sent there by `prepare`). MIT and Gautschi stay
+  switched off until their caps have room. Measured speed on an A100 for 128 policies under RK4: 2.17 s per
+  iteration, so one unit of about 112 to 144 policies needs about 1.5 to 2 days of card time and continues from
+  its checkpoints across the 2-hour UVA jobs and 4-hour Gilbreth jobs. The fleet loop was restarted at 13:14 PT.

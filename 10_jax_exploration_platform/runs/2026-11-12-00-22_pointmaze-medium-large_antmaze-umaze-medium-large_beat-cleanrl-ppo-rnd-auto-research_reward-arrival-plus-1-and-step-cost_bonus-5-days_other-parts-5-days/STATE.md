@@ -1330,6 +1330,25 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
 
   Each side at its own best configuration for the first-goal time. Prediction of batch 9's addendum: the three
   cases held; Medium with the step cost was predicted level and is ahead on this block.
+- 2026-11-13 12:59 PT: **the user's decisions after the integrator measurement** (plan "Change 3"): the ant runs
+  MuJoCo Warp with RK4 at 0.01 s x 5 from now on (no runaways, every check passes, 1.85 times the time; units of
+  the old physics are not compared with new ones); 16 environments per policy, settled against one
+  128-environment RND unit at the same budget by the equal-steps rule. Integrator notes: the AntMaze folder's
+  `diagnosis/2026-11-13_ant-integrators-in-mujoco-warp/notes.md`.
+- 2026-11-13 13:13 PT: **the RK4 ant work is running**: RND sweep on the U-maze in both reward settings, the
+  128-environment unit, RND probes on Medium and Large, and batch 15 (the method on the U-maze; ideas and six
+  predictions written before the runs), 17 units at 134,217,728 steps per policy; 13 on UVA, 4 on Gilbreth (the
+  AntMaze folder's `infra_history.md`). Each unit needs about 1.5 to 2 days of card time.
+- 2026-11-13 13:18 PT: **correction: on the second block the method is ahead of RND in three PointMaze cases, not
+  four.** On Medium with the step cost the rule fixed before the second blocks were read (the step with the highest
+  first-block whole-curve mean) chooses step 0.01 (−0.3470 against −0.3476 for step 0), and step 0.01 is level on
+  the second block: +0.0041 [−0.0017, +0.0103]. The table of 10:53 PT listed step 0 there, chosen after both
+  second-block readings were known; that is a choice on the test seeds and does not count. In reward setting B the
+  PointMaze part of the success rule is therefore not met yet. Found by the worker that wrote the development
+  document's section, which now follows the rule (commit 6f7aa0af).
+- 2026-11-13 13:18 PT: **the development document has the study's section** (`development_document/beat_rnd_pointmaze_antmaze.tex`,
+  section 6, PDF pages 108 to 122; every number generated from the records by `development_document/code/beat_rnd_tables.py`;
+  compiles with no overfull box and no undefined reference).
 
 ## Next
 
