@@ -1055,6 +1055,44 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   8 units (6 on Gilbreth, 2 on UVA). Reason: at step 0.1 and weight 2 on Large with reward 1 on arrival the arm is
   level with RND on the whole-curve mean and finds the goal three times sooner; a smaller step may keep most of
   the earlier arrival and lose less afterwards.
+- 2026-11-13 05:28 PT: **batch 10, PointMaze Large with the step cost, learning rate 2e-3, weight 8: the fast last
+  layer (step 0.1) with the first-arrival hold is level with the hold alone on return and finds the goal 2.7
+  times sooner** (first validation block, 256 seeds).
+
+  | compared with | whole-curve mean | final level | first-goal time, thousand steps |
+  |---|---|---|---|
+  | the hold alone, same configuration | −0.7264 against −0.7268: +0.0004 [−0.005, +0.007] | +0.0084 [+0.002, +0.015] | 71.5 against 189: −117 [−139, −97] |
+  | RND's best for the whole-curve mean (2e-3, weight 4) | −0.7264 against −0.7310: +0.0046 [−0.0002, +0.0095] | +0.0132 [+0.008, +0.018] | 71.5 against 191: −120 [−142, −98] |
+
+  RND's best configuration for discovery in this case has 120 thousand steps (batch 9), so the arm is ahead on
+  discovery as well. On the whole-curve mean it is at the edge of being ahead of RND (first block, one of two
+  configurations; the other, learning rate 4.5e-3, is at 234 of 256 windows).
+- 2026-11-13 05:28 PT: **batch 12, the two PointMaze Medium cases (steps 0.03 and 0.01 of the fast last layer, with
+  the first-arrival hold; first validation block).** Whole-curve mean and first-goal time in thousand steps:
+
+  | case and configuration | step 0.1 | step 0.03 | step 0.01 | hold alone (step 0) | RND's best |
+  |---|---|---|---|---|---|
+  | reward 1 on arrival (6e-3, weight 4) | 0.8424, 15.7 | 0.9194, 17.3 | 0.9400, 18.5 | 0.9435, 18.5 | 0.9349, 25.0 |
+  | step cost (6e-3, weight 2) | −0.3692, 12.9 | −0.3491, 14.0 | −0.3470, 13.8 | −0.3484, 14.2 | −0.3505, 20.0 |
+
+  Predictions 1 and 3 hold: both measures move with the step, toward the hold alone. On Medium the fast last
+  layer buys little (the hold alone already arrives within 14 to 19 thousand steps) and step 0.01 costs nothing
+  measurable (−0.0035 [−0.011, +0.004] and +0.0013 [−0.002, +0.005] against the hold alone).
+- 2026-11-13 05:28 PT: batch 11, the last diagnostic unit (PointMaze Large with reward 1 on arrival, fast until the
+  first arrival then RND's running divisor, weight 2): whole-curve mean 0.426, final level 0.63, first-goal time
+  96 thousand steps. Same failure as at weights 4 and 16.
+- 2026-11-13 05:28 PT: **the picture after batches 10 to 12:** RND with the fast last layer throughout and the divisor
+  held from the first arrival is one arm with one setting of its own, the step. The step trades return against
+  discovery; on the two Large cases step 0.1 at the hold's weights is level with RND on return (−0.007 and +0.005)
+  with first arrivals 2.7 to 3 times sooner; on the two Medium cases a small step gives the hold alone. The Large
+  units at steps 0.03 and 0.01 are running.
+- 2026-11-13 05:28 PT: **ant U-maze: the rollout-shape check is complete and does not decide between 128 and 16
+  environments per policy.** Best whole-curve mean 0.0487 with 128 (final level 0.065, first-goal time 2.1
+  million steps), 0.0487 with 16 (0.063, 1.3 million), 0.0341 with 4, which is out. Fault-guard respawns in the
+  six units of each count: 32, 43, 16. The longer run will compare 128 and 16 at equal steps; until then ant
+  screens run at both counts (the AntMaze baseline folder's `infra_history.md`). **Ant screen, third complete
+  unit** (first-arrival hold alone, 128 environments per policy): level with RND in all 8 configurations (−0.003
+  to +0.001); 12 fault-guard respawns. Prediction 4 of batch 10 failed at this count.
 
 ## Next
 

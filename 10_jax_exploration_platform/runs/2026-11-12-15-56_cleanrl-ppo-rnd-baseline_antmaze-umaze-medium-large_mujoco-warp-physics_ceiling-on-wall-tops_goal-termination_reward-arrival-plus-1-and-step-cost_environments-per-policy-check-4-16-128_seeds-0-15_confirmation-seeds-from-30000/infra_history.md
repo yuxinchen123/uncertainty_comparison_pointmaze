@@ -263,3 +263,14 @@ Times are Pacific, read from the clock or from scheduler records.
   auto research folder 2026-11-12-00-22. Handed to Gilbreth at 02:58 PT with jobs 12352864 to 12352869; three
   started within a minute. These units are not part of the RND baseline and its reports read only their own
   phases.
+- 2026-11-13 05:28 PT: **the rollout-shape check on the U-maze is complete** (stable physics, 48 configurations and
+  16 development seeds per environment count, 16,777,216 steps per policy). Best whole-curve mean per count:
+  128 environments per policy 0.0487 ± 0.0014 (learning rate 1e-2, entropy 0.001, weight 16; final level 0.065;
+  first-goal time 2.1 million steps); 16 environments 0.0487 ± 0.0027 (3e-4, 0.001, weight 0.0625; final level
+  0.063; 1.3 million steps); 4 environments 0.0341 ± 0.0008 (3e-4, 0.001, weight 64; final level 0.036; 0.34
+  million steps). Every policy reaches the goal at least once in all three. Fault-guard respawns in the six units
+  of each count: 32, 43 and 16. **4 environments per policy is out; 128 and 16 tie** on the whole-curve mean and
+  on the final level. Not decided yet: the longer run (phase `budget-probe`) compares the two at equal steps
+  (67,108,864) when both units reach that point; until then ant screens run at both counts. Both best
+  configurations sit at an end of the grid (the highest learning rate with 128, the lowest learning rate and
+  weight with 16), so the edge rule applies before any sweep is called final.
