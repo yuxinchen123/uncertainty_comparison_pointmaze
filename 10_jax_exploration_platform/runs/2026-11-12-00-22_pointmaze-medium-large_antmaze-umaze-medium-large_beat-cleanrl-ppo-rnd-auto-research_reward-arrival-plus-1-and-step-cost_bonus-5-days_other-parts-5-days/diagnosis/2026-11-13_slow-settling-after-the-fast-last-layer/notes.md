@@ -210,7 +210,10 @@ first arrival). Commit 9aab504b. It is a change of how the bonus is scaled, so i
    a policy is bit for bit unchanged through the iteration of its first arrival; from the next one it is divided
    by the second divisor; the second statistics after the first iteration equal RND's; with the hold they stay
    from the first arrival; saved units continue exactly before and after the switch; what is refused. The golden
-   comparison is bit-identical with the option off (job 6902632).
+   comparison is bit-identical with the option off (job 6902632). All 73 tests of `tests/bonuses`, the resume
+   tests and the two integration files for bonus options and configuration files pass (job 6902612). With the
+   option on and the trainer's diagnostics on, each window record also holds `predictor_score_mean`, the
+   predictor's own score of the rollout (commit bb07d8fa; the 4 new tests pass again with it, job 6902859).
 2. **The training state grows with the option on** (a second filter and the mean, variance and count of its
    statistics, per policy). A unit that uses the option can only be continued by a code copy that has it; units
    without the option are unchanged.
