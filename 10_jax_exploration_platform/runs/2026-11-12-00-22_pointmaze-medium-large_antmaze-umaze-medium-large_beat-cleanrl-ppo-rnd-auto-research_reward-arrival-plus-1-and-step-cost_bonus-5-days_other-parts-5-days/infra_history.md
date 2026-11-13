@@ -170,3 +170,7 @@ Times are Pacific.
   6901864 on one RTX 4000 Ada, 6901865 on four RTX 4000 Ada) all started within two minutes and took them. No unit
   is waiting. The Gilbreth limit stays at 0 (jobs 12352113, 12352875 and 12352876 of older code copies were still
   running there at 04:06 PT).
+- 2026-11-13 04:46 PT: no job of an older code copy is left on Gilbreth for this folder (12352113, 12352875 and
+  12352876 have ended with their units complete); the hand-over limit is open again at 8 units at once. Three UVA
+  worker jobs of the copy bed45842 run until 05:00 PT at the latest (6900951, 6900952, 6900954); the units they
+  hold use options that copy knows, and newer-copy jobs can continue them from their checkpoints.

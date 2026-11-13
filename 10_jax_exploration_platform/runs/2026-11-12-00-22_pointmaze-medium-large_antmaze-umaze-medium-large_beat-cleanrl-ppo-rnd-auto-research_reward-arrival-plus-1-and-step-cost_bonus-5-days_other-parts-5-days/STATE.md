@@ -1021,6 +1021,19 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   environments per policy, 16 development seeds, 16,777,216 steps): behind RND at the same configuration in all 8
   configurations (−0.008 to −0.018 on the whole-curve mean; best 0.0385 against RND's best 0.0487), first
   arrivals later (2.1 to 4.1 against 1.9 to 2.75 million steps); 7 fault-guard respawns in the unit.
+- 2026-11-13 04:47 PT: **batch 10, PointMaze Large with reward 1 on arrival, learning rate 2e-3, weight 2** (the
+  fast last layer throughout, with the first-arrival hold; first validation block): whole-curve mean 0.8707,
+  against the hold alone −0.017 [−0.031, −0.005], against RND's best −0.0074 [−0.020, +0.0035] (level); final
+  level 0.987 against RND's 0.992 (level); first-goal time 90.7 thousand steps against 269 for RND's best
+  configuration for the whole-curve mean (−179 [−201, −156]). It is the first single configuration that is level
+  with RND's best on the whole-curve mean and finds the goal about three times sooner (first block; the
+  comparison with RND's best configuration for discovery, 119 thousand steps, is in the tick report of this time).
+- 2026-11-13 04:47 PT: **ant U-maze screen, second complete unit** (fast last layer alone, 128 environments per
+  policy): behind RND in all 8 configurations (−0.005 to −0.016 on the whole-curve mean), first arrivals later (2.2
+  to 4.1 against 1.9 to 2.75 million steps); 5 fault-guard respawns. With 128 environments per policy the fast
+  last layer does not help on the ant, with or without the hold.
+- 2026-11-13 04:47 PT: the last job of an older code copy on Gilbreth has ended (the batch 9 unit is complete), and
+  the Gilbreth limit of this folder is open again (8 units at once) since 04:46 PT.
 
 ## Next
 
