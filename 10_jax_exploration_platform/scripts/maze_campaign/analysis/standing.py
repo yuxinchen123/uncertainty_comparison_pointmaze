@@ -123,7 +123,7 @@ def family_cell(block, case, family):
 
 
 def discovery_cell(found, block):
-    """The cell of the first-goal-time family in one case: (text, which method it is for)."""
+    """The cell of the first-goal-time family in one case: (text, which method it is for and how the others stand)."""
     if found is None:
         return 'not run', None
     entries = [(slug, entry['discovery']) for slug, entry in found['comparisons'].items()
@@ -132,8 +132,12 @@ def discovery_cell(found, block):
         return 'no complete comparison yet', None
     slug, entry = min(entries, key=lambda pair: pair[1]['measures']['capped_first_goal_step'])
     result = entry['result']['capped_first_goal_step']
+    words = lambda found: f"{report.discovery_interval_text(found)} thousand steps ({found['side']})"
+    others = [f"{block['method_names'][other]} {words(found['result']['capped_first_goal_step'])}"
+              for other, found in entries if other != slug]
     return (f"{result['side']}: {report.discovery_interval_text(result)} thousand steps, first block of the discovery check",
-            block['method_names'][slug])
+            block['method_names'][slug] + ', the method of the check with the smallest $M$'
+            + (f". Other methods of the check: {'; '.join(others)}" if others else ''))
 
 
 def top_table(settings, cases, discovery):
@@ -183,7 +187,8 @@ def build(run_dir, settings, cases, discovery):
              'interval, and the block of validation seeds it rests on. For the whole-curve mean $W$: "ahead" when the '
              'interval is entirely above zero, "behind" when entirely below, else "level". For the mean capped '
              'first-goal time $M$: "ahead" when the interval is entirely below zero. A cell is for the family\'s arm '
-             'with the highest $W$ on the first block. It rests on the second block when an arm of the family was '
+             'with the highest $W$ on the first block, among its arms run on the block the cell rests on. It rests '
+             'on the second block when an arm of the family was '
              'run there (the method at the configuration fixed on the first block, against the control at the '
              'configuration that was its best on the first block), else on the first block (each side at its best '
              'configuration there, chosen on those same seeds, which is a second selection step). "no complete '

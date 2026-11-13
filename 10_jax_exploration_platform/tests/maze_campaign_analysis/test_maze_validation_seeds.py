@@ -239,7 +239,7 @@ def test_the_standing_page_on_a_made_up_run_folder(tmp_path):
             'discovery check | not run |') in top
     assert ('- **family a, PointMaze Medium, reward 1 on arrival:** idea a; with the control at its best on the second block '
             'the difference is +0.0500 [+0.0000, +0.1000] (level).') in top
-    assert '- **fast last layer, PointMaze Medium, reward 1 on arrival:** fast last layer.' in top
+    assert '- **fast last layer, PointMaze Medium, reward 1 on arrival:** fast last layer, the method of the check with the smallest $M$.' in top
     # One section per case with both blocks, the discovery check under the case that has it.
     first, second = text.split('## PointMaze Medium, reward 1 on arrival\n')[1].split('## PointMaze Large, step cost\n')
     assert '### First block: each side at its best configuration there' in first and '### Second block: seeds that chose nothing' in first

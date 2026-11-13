@@ -49,7 +49,7 @@ def test_generate_batch_summary(request):
             body = text.split(heading)[1].split('\n## ')[0]
             print(f'\n{heading.strip()}')
             print('\n'.join(line for line in body.splitlines() if line.startswith(('| ', '#', '**', 'Observed', '- ')) or 'confirmation seeds' in line
-                            or 'at an end of its grid' in line or 'Not read yet' in line))
+                            or 'at an end of its grid' in line or 'Not read yet' in line or 'Not complete' in line))
 
     # The secondary metric: every complete method at its best weight for M, in the order of its table.
     report = batch_summary.report
