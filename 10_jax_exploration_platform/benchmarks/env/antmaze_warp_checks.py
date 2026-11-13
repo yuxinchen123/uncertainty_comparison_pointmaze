@@ -94,8 +94,11 @@ def spread(values):
 # a: one environment step against C MuJoCo and against the JAX implementation
 # ----------------------------------------------------------------------------------------------
 
-def one_step_parity(n_states=50, warp_options=None, changes=None, with_jax=True):
+def one_step_parity(n_states=50, warp_options=None, changes=None, with_jax=True, cfg=None):
     """One environment step from each of n_states C-MuJoCo states, in C, in Warp and in JAX.
+
+    `cfg` is the specified model of all three (default: the U-maze preset; the stable physics of
+    the AntMaze baseline is `test_antmaze_parity_cpu_mujoco.STABLE`).
 
     Returns, for contact-free and in-contact states separately (a state is in contact when any of
     the 5 physics steps of the C window saw a contact), the largest and the median of the largest
@@ -106,16 +109,17 @@ def one_step_parity(n_states=50, warp_options=None, changes=None, with_jax=True)
     with_jax=False leaves the JAX environment out.
     """
     from test_antmaze_parity_cpu_mujoco import CFG, c_env_step, c_trajectory
+    cfg = CFG if cfg is None else cfg
     # GOAL: the reference states and what C MuJoCo makes of each of them in one environment step.
-    warp_env = WarpAntMaze(dataclasses.replace(CFG, **(changes or {})), n_states, 1, **(warp_options or {}))
-    qs, vs, acts, _, model = c_trajectory(warp_env, n_states, jax.random.PRNGKey(11))
+    warp_env = WarpAntMaze(dataclasses.replace(cfg, **(changes or {})), n_states, 1, **(warp_options or {}))
+    qs, vs, acts, _, model = c_trajectory(warp_env, n_states, jax.random.PRNGKey(11), cfg)
     data = mujoco.MjData(model)
     c_next, in_contact = [], []
     for k in range(n_states):
         mujoco.mj_resetData(model, data)
         data.qpos[:], data.qvel[:] = qs[k], vs[k]
         mujoco.mj_forward(model, data)
-        in_contact.append(c_env_step(model, data, acts[k]) > 0)
+        in_contact.append(c_env_step(model, data, acts[k], cfg.frame_skip) > 0)
         c_next.append(data.qpos.copy())
     c_next, in_contact = np.stack(c_next), np.asarray(in_contact)
 
@@ -129,7 +133,7 @@ def one_step_parity(n_states=50, warp_options=None, changes=None, with_jax=True)
     warp_next, warp_state = stepped_positions(warp_env)
     pairs = {"warp_against_c": np.abs(warp_next - c_next).max(-1)}
     if with_jax:
-        jax_next, _ = stepped_positions(JaxAntMaze(CFG, n_states, 1))
+        jax_next, _ = stepped_positions(JaxAntMaze(cfg, n_states, 1))
         pairs.update(jax_against_c=np.abs(jax_next - c_next).max(-1),
                      warp_against_jax=np.abs(warp_next - jax_next).max(-1))
     return {"states": n_states, "warp_changes": changes or {},
@@ -139,16 +143,19 @@ def one_step_parity(n_states=50, warp_options=None, changes=None, with_jax=True)
             "pool": warp_env.overflow_report(warp_state)}
 
 
-def trajectory_divergence(steps=20, warp_options=None):
+def trajectory_divergence(steps=20, warp_options=None, cfg=None):
     """Shared random torques from the spawn in C MuJoCo, in Warp and in JAX (gate 2 of spec.md).
+
+    `cfg` is the specified model of all three (default: the U-maze preset).
 
     Returns per implementation the largest position difference from the C trajectory before the
     first contact, over all steps, and at the last step. The gate: roundoff before the first
     contact (below 1e-4 m), and below one maze cell (4 m) over the 20 steps.
     """
     from test_antmaze_parity_cpu_mujoco import CFG, c_trajectory
-    envs = {"warp": WarpAntMaze(CFG, 1, 1, **(warp_options or {})), "jax": JaxAntMaze(CFG, 1, 1)}
-    qs, _, acts, ncons, _ = c_trajectory(envs["jax"], steps, jax.random.PRNGKey(5))
+    cfg = CFG if cfg is None else cfg
+    envs = {"warp": WarpAntMaze(cfg, 1, 1, **(warp_options or {})), "jax": JaxAntMaze(cfg, 1, 1)}
+    qs, _, acts, ncons, _ = c_trajectory(envs["jax"], steps, jax.random.PRNGKey(5), cfg)
     first_contact = int(np.argmax(ncons > 0)) if (ncons > 0).any() else len(ncons)
     result = {"steps": steps, "first_state_with_a_contact": first_contact}
     for name, env in envs.items():

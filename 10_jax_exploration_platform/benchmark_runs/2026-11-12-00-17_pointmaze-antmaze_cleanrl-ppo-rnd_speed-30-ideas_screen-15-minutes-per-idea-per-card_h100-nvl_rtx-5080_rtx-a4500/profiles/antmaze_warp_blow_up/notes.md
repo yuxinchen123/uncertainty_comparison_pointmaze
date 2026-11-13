@@ -142,6 +142,68 @@ Bounds for the study: **30 m/s and 100 rad/s**.
 - With both bounds: about 0.2 respawns per million environment steps for these policies (one
   episode in about 6,000).
 
+## The stable time step as a recorded configuration
+
+Decided in the session at 19:15 PT and reported to the user, who may reverse it: the AntMaze
+baseline runs with `implicitfast` at a physics time step of **0.005 s with 10 physics steps per
+environment step** (the environment step stays 0.05 s), 4 solver and 8 line-search iterations,
+and the guard at 30 m/s and 100 rad/s as a second line of defence.
+
+- **Code.** `physics_time_step` is a field of the environment's configuration (default 0.01 s;
+  the model of the default configuration is unchanged, character for character). Units 7 and 10
+  above had set the time step through a changed model builder inside the rollout script; that is
+  removed, and `--timestep` of the script now sets the field.
+- **The recorded configuration file of the baseline:**
+  `configs/experiments/antmaze_umaze_warp-physics_time-step-0.005_frame-skip-10_fault-guard-30-metres-and-100-radians-per-second_cleanrl-ppo-rnd_goal-termination_reward-arrival-plus-one_example_steps-204800.toml`,
+  the Warp example with four values changed. Every other recorded AntMaze file keeps 0.01 s, 5
+  physics steps and the guard off.
+- **Gates on processors** (puma01, jobs 6896603 and 6896604, 19:27 to 19:42 PT): the three C
+  MuJoCo gates at 0.005 s with 10 physics steps for both implementations, the guard's two main
+  tests at both time steps, and thrown ants under the ceiling at 0.005 s; the numbers are in
+  `spec.md` of the environment, deviation 10. 60 passed and 11 skipped (the Warp cases) with the
+  `platform_jax` interpreter, 53 passed with `platform_jax_warp`.
+
+**Gate with trained policies** (unit 14, serval02 card 1, H100 NVL, 19:29 to 19:36 PT; no other
+process on the card): the 128 policies of the checkpoint, 128 environments each, rolled out for
+301 s in the environment the recorded file describes, built by the environment's own code.
+
+| environment steps | physics-fault respawns | non-finite respawns | largest torso speed after any physics step | largest angular speed after any physics step | environment steps ending above 60 rad/s | share ending at 20 to 40 rad/s | share of steps with the torso above 1.5 m | most constraint rows in one environment |
+|---|---|---|---|---|---|---|---|---|
+| 228.6 million | 0 | 0 | 14.8 m/s | 61.9 rad/s | 0 | 0.29% | 6.9% | 179 of 512 |
+
+The same policies with the training physics gave 33 runaways and 26 non-finite respawns in 362
+million steps (unit 1). The torso is still above 1.5 m in 6.9% of the steps (8.2% with the
+training physics): these policies throw the ant upward, which the ant's motors allow; the
+integrator is not the cause of that.
+
+**Cost** (unit 12 of `profiles/antmaze_warp_training`, serval02 card 1, 19:37 to 19:43 PT; no
+other process on the card): whole training iterations, untrained policies, 16,384 environments,
+512 constraint rows, guard on. The last column is $\dfrac{10^{6}}{3600 \times r}$ with $r$ the
+steps per second of one copy.
+
+| copies | environments per copy | seconds per iteration | total steps per second (millions) | steps per second per copy (thousands) | hours per million steps per copy | peak card memory (MiB) |
+|---|---|---|---|---|---|---|
+| 128 | 128 | 2.723 | 0.770 | 6.02 | 0.0462 | 17,754 |
+| 1,024 | 16 | 2.736 | 0.767 | 0.749 | 0.371 | 18,308 |
+
+- The rollout takes 2.60 s of an iteration and the update 0.11 s.
+- Against the training physics with trained policies and the same row limit (1.374 s, table
+  "Cost" above): 1.98 times the time.
+- The earlier cells with untrained policies (1.243 s and 1.254 s,
+  `profiles/antmaze_warp_training/records` and `records_after_the_ceiling`) were measured with a
+  limit of 160 constraint rows, so their ratio to this table (2.19 and 2.18) also holds the
+  change of that limit to 512.
+- Records: `profiles/antmaze_warp_training/records_stable_physics_time-step-0-005_frame-skip-10_fault-guard/`.
+- Both units ran the working tree as it was just before the commit that holds this section; the
+  `git_commit` field of their records names the commit before it.
+
+**The gate with trained policies is kept for later changes of the physics:**
+`units/trained_policy_gate.sh <unit name> <recorded configuration file> [rollout seconds]`. It
+needs a training checkpoint and that unit's configuration file; by default the diagnosis's copy
+in `checkpoint_copy/` (1.5 GB, not in git), or the copy on serval02 under
+`/localtmp/sl5nw/antmaze_blow_up/` when it runs there. A pass: no respawn for a non-finite state,
+and the largest torso speed and angular speed after any physics step under 30 m/s and 100 rad/s.
+
 ## Units and records
 
 - `units/roll_out_checkpoint_policies.py`: the rollout, the onsets, the timing.
@@ -150,6 +212,8 @@ Bounds for the study: **30 m/s and 100 rad/s**.
 - `units/read_record.py`: prints the main numbers of rollout records.
 - `units/h100-nvl_unit-*.sh` (serval05 queue, kind profile), `units/serval02-card-1_unit-*.sh`
   (serval02 card 1 under its lock), `units/replay_job.sh` (puma01).
+- `units/trained_policy_gate.sh`: the gate with trained policies for a recorded configuration
+  file; unit 14 is its first use.
 - `records/*.json` and `records/*_events.npz` (not in git), `logs/`.
 - Units 2, 3 and 4 (8/16, 16/16, 50/50 on the card) stopped after seconds at 18:17 PT because the
   environment's new configuration field was not yet in the copied configuration file. The replays

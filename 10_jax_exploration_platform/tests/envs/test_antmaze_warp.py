@@ -127,6 +127,36 @@ def test_resting_height():
     assert result["warp"]["c_settled_state_moved_by"] < 1e-3
 
 
+# the physics of the AntMaze baseline since 2026-11-12 (spec.md, deviation 10)
+STABLE_PHYSICS = {"physics_time_step": 0.005, "frame_skip": 10}
+
+
+def test_the_three_gates_at_the_stable_time_step():
+    """Gates 1 and 2 of spec.md and the resting height at 0.005 s with 10 physics steps per
+    environment step: Warp against C MuJoCo on the model of that configuration (the JAX
+    implementation's gates at this time step are in test_antmaze_parity_cpu_mujoco.py)."""
+    from test_antmaze_parity_cpu_mujoco import STABLE
+    assert (STABLE.physics_time_step, STABLE.frame_skip) == (0.005, 10)
+    parity = checks.one_step_parity(cfg=STABLE, with_jax=False)
+    print("one-step parity at the stable time step:", parity)
+    free, contact = parity["contact_free"], parity["in_contact"]
+    assert free["warp_against_c"]["count"] > 0 and contact["warp_against_c"]["count"] > 0
+    assert free["warp_against_c"]["largest"] < 1e-4
+    assert contact["warp_against_c"]["largest"] < 5e-2
+    assert not parity["pool"]["dropped"] and parity["non_finite_resets"] == 0
+    divergence = checks.trajectory_divergence(cfg=STABLE)
+    print("trajectory divergence at the stable time step:", divergence)
+    for name in ("warp", "jax"):
+        assert divergence[name]["all_finite"]
+        assert divergence[name]["largest_before_the_first_contact"] < 1e-4
+        assert divergence[name]["largest_over_all_steps"] < 4.0
+    resting = checks.resting_height(changes=STABLE_PHYSICS, with_jax=False)
+    print("resting height at the stable time step:", resting)
+    assert abs(resting["warp"]["height"] - checks.REFERENCE_RESTING_HEIGHT) < 1e-4
+    assert abs(resting["c_mujoco"]["height"] - checks.REFERENCE_RESTING_HEIGHT) < 1e-4
+    assert resting["warp"]["c_settled_state_moved_by"] < 1e-3
+
+
 def test_copy_isolation():
     """Changing the other environments' torques never changes a watched environment; a nearly full pool neither."""
     for margin in (None, 1.03):

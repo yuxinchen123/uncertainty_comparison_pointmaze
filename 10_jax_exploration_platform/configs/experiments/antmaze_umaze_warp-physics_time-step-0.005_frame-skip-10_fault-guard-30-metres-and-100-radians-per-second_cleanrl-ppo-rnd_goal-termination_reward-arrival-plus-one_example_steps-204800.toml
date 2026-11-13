@@ -1,0 +1,114 @@
+# The physics the AntMaze baseline of the study that started 2026-11-11 runs with (decided 2026-11-12):
+# antmaze_umaze_warp-physics_cleanrl-ppo-rnd_goal-termination_reward-arrival-plus-one_example_steps-204800.toml
+# with four values under [environment] changed and nothing else:
+#   physics_time_step = 0.005 and frame_skip = 10 (the environment step stays 0.05 s), because
+#   `implicitfast` at 0.01 s lets a fast-turning ant in the air gain rotational energy until its
+#   torso speed runs away (spec.md of the environment, deviation 10);
+#   fault_torso_speed = 30.0 (metres per second) and fault_torso_angular_speed = 100.0 (radians per
+#   second), the physics fault guard as a second line of defence (deviation 9).
+# It runs only with the interpreter /p/rlprojects/RND/.venvs/platform_jax_warp/bin/python, which
+# holds warp-lang. Every trainer and environment value is written here; none is inherited at load time.
+
+[metadata]
+name = "Example: CleanRL PPO with random network distillation on AntMaze U-maze with MuJoCo Warp physics at a time step of 0.005 s (10 physics steps per environment step) and the physics fault guard at 30 m/s and 100 rad/s, episode ends at the goal, reward 1 on arrival"
+implementation = "jax_exploration_platform"
+environment_family = "antmaze"
+source_files = [
+  "07_reconstruction/ppo_rnd_envpool.py",
+  ".claude/rules/exploration-metrics-pointmaze-antmaze.md",
+  "10_jax_exploration_platform/src/exploration_platform/envs/antmaze/warp_antmaze.py",
+]
+notes = "Learner values are CleanRL's defaults in the first source file, except that the predictor trains on the whole batch. Environment, goal termination and the two reward settings are defined in the second source file. A small run for a first check: 16 policies on seeds 0 to 15, 4 environments each. The physics is MuJoCo Warp's (third source file): one shared pool of 48 contact slots per environment and at most 160 constraint rows per environment; a unit in which either is exceeded stops."
+source_steps_per_policy_copy = 204800
+
+[trainer]
+configuration_preset = "antmaze_current"
+intrinsic_bootstrap_observation = "reset_observation"
+no_bonus_advantage_stream = "task_only"
+n_copies = 16
+n_envs = 4
+num_steps = 128
+update_style = "epoch_minibatch"
+flat_params = false
+update_epochs = 4
+num_minibatches = 4
+learning_rate = 0.0001
+adam_eps = 1e-05
+anneal_lr = true
+gamma_ext = 0.999
+gamma_int = 0.99
+gae_lambda = 0.95
+clip_coef = 0.1
+ent_coef = 0.001
+vf_coef = 0.5
+max_grad_norm = 0.5
+int_coef = 1.0
+ext_coef = 2.0
+prime_iterations = 50
+bootstrap_on_truncation = true
+base_seed = 0
+hoist_rollout = true
+scan_unroll = 0
+update_unroll = 2
+batch_stats_f32 = false
+learning_rates = []
+betas = []
+parameter_settings = []
+copies_per_group = 0
+sweep_seed_mode = "paired"
+copy_seed_offset = 0
+track_coverage = true
+diagnostics = false
+total_iterations = 0
+int_coef_schedule = "constant"
+success_gate_rate = 0.0
+normalize_ext_reward = false
+clip_per_network = false
+logstd_floor = -inf
+critic_lr_scale = 1.0
+normalize_agent_obs = false
+setting_names = ["learning_rate", "int_coef"]
+ext_reward_scale = 1.0
+ext_reward_offset = 0.0
+episode_log = true
+gather_minibatches_per_epoch = false
+target_features_once_per_iteration = false
+permutation_draw = "argsort_uniform"
+next_values_from_shifted_values = false
+skip_reset_draws_at_zero_noise = false
+intrinsic_sums_by_matrix_product = false
+advantage_scan_unroll = 1
+action_noise_generator = "threefry"
+actor_critic_joint_trunk = false
+
+[environment]
+map_name = "umaze"
+start_cell = [3, 1]
+goal_cell = [1, 1]
+max_episode_steps = 700
+continuing_task = false
+reward_shift = 0.0
+goal_radius = 0.45
+frame_skip = 10
+integrator = "implicitfast"
+solver_iterations = 4
+ls_iterations = 8
+max_geom_pairs = 8
+max_contact_points = 32
+solver_loop = "while_loop"
+carried_state = "whole_data"
+physics = "warp"
+warp_contact_slots_per_environment = 48
+warp_constraint_rows_per_environment = 512
+fault_torso_speed = 30.0
+fault_torso_angular_speed = 100.0
+physics_time_step = 0.005
+
+[runtime]
+environment = "antmaze-umaze"
+bonus = "rnd_next_state"
+iterations = 400
+window_iterations = 50
+run_seed = 0
+lr_anneal_iterations = 400
+reward_setting = "arrival_plus_one"

@@ -38,6 +38,10 @@ ANTS = ("at the spawn, at rest", "at the spawn, moving at 60 m/s along the corri
         "at the goal, at rest", "at the goal, moving upward at 40 m/s",
         "2 m outside the outer wall, at rest", "at the spawn, turning at 150 rad/s about the vertical")
 BROKEN = (1, 3, 4, 5)
+# the reference's physics steps, and those of the AntMaze baseline since 2026-11-12 (spec.md,
+# deviation 10); one environment step lasts 0.05 s in both
+PHYSICS = [pytest.param({}, id="time step 0.01 s, 5 physics steps"),
+           pytest.param({"physics_time_step": 0.005, "frame_skip": 10}, id="time step 0.005 s, 10 physics steps")]
 
 
 def make_environment(implementation, cfg, n):
@@ -65,10 +69,13 @@ def forced_state(env):
     return state._replace(data=data)
 
 
-def one_step(implementation, bound, spin_bound):
-    """The six forced ants after one environment step with zero torques, as host arrays."""
+def one_step(implementation, bound, spin_bound, physics=None):
+    """The six forced ants after one environment step with zero torques, as host arrays.
+
+    physics: configuration fields of the physics steps (`PHYSICS`); None keeps the preset's.
+    """
     cfg = replace(preset("umaze"), continuing_task=False, fault_torso_speed=bound,
-                  fault_torso_angular_speed=spin_bound)
+                  fault_torso_angular_speed=spin_bound, **(physics or {}))
     env = make_environment(implementation, cfg, len(ANTS))
     state, obs, reward, terminated, truncated, final_obs = jax.jit(env.step)(
         forced_state(env), jnp.zeros((len(ANTS), 1, 8), jnp.float32))
@@ -137,11 +144,12 @@ def test_the_respawn_count_and_the_window_record():
     assert largest_spin.shape == (3,) and largest_spin.dtype == jnp.float32
 
 
+@pytest.mark.parametrize("physics", PHYSICS)
 @pytest.mark.parametrize("implementation", IMPLEMENTATIONS)
-def test_a_state_beyond_the_bounds_is_respawned_counted_and_gives_no_arrival(implementation):
+def test_a_state_beyond_the_bounds_is_respawned_counted_and_gives_no_arrival(implementation, physics):
     """The fast ant, the ant thrown upward at the goal, the ant outside the maze and the ant turning
-    too fast are respawned; the ant at rest at the goal still arrives."""
-    run = one_step(implementation, BOUND, SPIN_BOUND)
+    too fast are respawned; the ant at rest at the goal still arrives. At both time steps."""
+    run = one_step(implementation, BOUND, SPIN_BOUND, physics)
     broken = np.isin(np.arange(len(ANTS)), BROKEN)
     np.testing.assert_array_equal(run["reward"], [0.0, 0.0, 1.0, 0.0, 0.0, 0.0])
     np.testing.assert_array_equal(run["terminated"], [False, False, True, False, False, False])
@@ -192,10 +200,11 @@ def test_with_the_guard_off_the_same_states_go_on(implementation):
     assert run["obs"][1, 0] - run["spawn"][0] > 2.0
 
 
+@pytest.mark.parametrize("physics", PHYSICS)
 @pytest.mark.parametrize("implementation", IMPLEMENTATIONS)
-def test_ordinary_steps_are_the_same_with_the_guard_on_and_off(implementation):
+def test_ordinary_steps_are_the_same_with_the_guard_on_and_off(implementation, physics):
     """Random torques from the spawn for 20 environment steps: no ant comes near the bound, and every
-    output is equal bit for bit with the guard on and off."""
+    output is equal bit for bit with the guard on and off. At both time steps."""
     # before: a generator seeded with the low 32 bits of sha256("0::fault guard test::torques")
     seed = int(hashlib.sha256(b"0::fault guard test::torques").hexdigest(), 16) & 0xFFFFFFFF
     torques = jnp.asarray(np.clip(np.random.default_rng(seed).standard_normal((20, 4, 1, 8)), -1.0, 1.0),
@@ -204,7 +213,7 @@ def test_ordinary_steps_are_the_same_with_the_guard_on_and_off(implementation):
     for bound, spin_bound in ((0.0, 0.0), (BOUND, SPIN_BOUND)):
         env = make_environment(implementation, replace(preset("umaze"), continuing_task=False,
                                                        fault_torso_speed=bound,
-                                                       fault_torso_angular_speed=spin_bound), 4)
+                                                       fault_torso_angular_speed=spin_bound, **physics), 4)
 
         def rollout(state, torque_steps, env=env):
             """All 20 steps; the per-step observations, rewards and ends."""

@@ -13,7 +13,7 @@ and its `assets/ant.xml`. The `ant.xml` vendored in `assets/` here is a byte cop
 | item | value | reference source |
 |---|---|---|
 | robot | Gymnasium Ant: 8 torque actuators in [-1, 1], free-floating torso, 15 qpos / 14 qvel | `ant_maze_v5.py` builds `AntEnv` |
-| control cadence | one env step = 5 physics steps of 0.01 s (20 Hz) | `AntEnv` `frame_skip=5` |
+| control cadence | one env step = 0.05 s (20 Hz): 5 physics steps of 0.01 s in the reference and by default; the study's AntMaze baseline takes the same 0.05 s in 10 steps of 0.005 s (deviation 10) | `AntEnv` `frame_skip=5` |
 | maze maps | the same `umaze` / `medium` / `large` grids the PointMaze family uses | `maps.U_MAZE / MEDIUM_MAZE / LARGE_MAZE` |
 | maze scale | `maze_size_scaling=4`: a cell is 4 m x 4 m; walls are boxes 2 m tall (`maze_height=0.5`) centred at z = 1 m | `ant_maze_v5.py` `super().__init__` |
 | reward | sparse: 1 when the torso xy is within 0.45 m of the goal xy, else 0 | `maze_v4.compute_reward` |
@@ -45,7 +45,8 @@ and its `assets/ant.xml`. The `ant.xml` vendored in `assets/` here is a byte cop
    equilibrium exactly — settled 1,200 env steps, both models rest at z = 0.38248 m and a
    state settled under either stays settled under the other to 3.7e-11 (gate 3 below).
    That evidence is about an ant at rest. For an ant that turns fast in the air `implicitfast`
-   at 0.01 s is not stable, which the reference's RK4 is (measured 2026-11-12; deviation 9).
+   at 0.01 s is not stable, which the reference's RK4 is (measured 2026-11-12; deviation 9); the
+   study's AntMaze baseline therefore halves the time step (deviation 10).
 4. **Wall boxes merged.** The reference emits one box geom per wall cell; here horizontal runs
    of wall cells are merged into single boxes (62 wall cells -> 31 boxes on the large map,
    38 -> 20 on the medium, 18 -> 8 on the umaze). The union of
@@ -148,10 +149,68 @@ and its `assets/ant.xml`. The `ant.xml` vendored in `assets/` here is a byte cop
      (1.380 s per training iteration against 1.374 s).
    - **What the guard does not do.** It ends a runaway; it does not correct the inflated turning
      below its bounds. Only a stable integration does (the 0.005 s time step at 1.97 times the
-     time, or `RK4` at 3.59 times).
+     time, or `RK4` at 3.59 times). The study uses the 0.005 s time step and keeps the guard
+     (deviation 10).
    Measurements, scripts and records:
    `benchmark_runs/2026-11-12-00-17_pointmaze-antmaze_cleanrl-ppo-rnd_speed-30-ideas_*/profiles/antmaze_warp_blow_up/notes.md`.
    Checks: `tests/envs/test_antmaze_fault_guard.py`.
+10. **The physics time step is a configuration field, and the study's AntMaze baseline takes one
+    environment step in 10 physics steps of 0.005 s (decided 2026-11-12 in the session and
+    reported to the user, who may reverse it; `physics_time_step`, `frame_skip`).** The reference
+    takes 5 steps of 0.01 s with `RK4`. `physics_time_step` (seconds, default 0.01) sets the
+    model's `timestep`; with the default the model is, character for character, that of every
+    earlier run.
+    - **Why 0.005 s.** `implicitfast` at 0.01 s adds rotational energy to an ant that turns fast
+      in the air (deviation 9). The guard ends the runaways, but below its bounds the turning
+      stays inflated: 0.53% of environment steps end at 20 to 40 rad/s, against 0.28% with `RK4`.
+      At 0.005 s the same policies showed no runaway and that share is 0.29%. `RK4` at 0.01 s is
+      as stable and costs 3.59 times the time of the training physics, against 1.97 times.
+    - **The guard stays on, at 30 m/s and 100 rad/s,** as a second line of defence: it costs
+      nothing measurable and nothing in the measurements below came near its bounds.
+    - **The environment step stays 0.05 s** (10 x 0.005 s), so the control cadence, the step
+      limits and what one action means are the reference's. Any positive time step is accepted
+      with any `frame_skip` of at least 1. A combination whose product is not 0.05 s is another
+      cadence than the reference's; nothing refuses it, and the unit's start record
+      (`environment_config`) holds both numbers.
+    - **Gates at 0.005 s with 10 physics steps** (processors, 2026-11-12; the bounds are those of
+      "Correctness gates" below, each implementation against C MuJoCo on the model of the same
+      configuration). One environment step from 50 C states, Warp against C: at most 9.3e-7 m at
+      the 26 contact-free states (bound 1e-4) and 8.4e-3 m at the 24 states in contact (bound
+      5e-2). Twenty shared-torque steps from the spawn: 7.5e-7 m before the first contact in both
+      implementations, at most 0.16 m (Warp) and 0.25 m (JAX) over the 20 steps (bound 4 m).
+      Resting height after 1,200 passive environment steps: 0.38248 m in Warp and in C; a state
+      settled in C moves by 1.6e-8 m in Warp. The JAX implementation passes the same three gates
+      (`tests/envs/test_antmaze_parity_cpu_mujoco.py`). Ceiling: ants thrown upward at 10, 20 and
+      30 m/s reach 1.796, 1.843 and 1.917 m, below the wall tops, in both implementations.
+    - **Gate with trained policies**, run through the recorded configuration file and the
+      environment's own code (H100 NVL, serval02 card 1, 2026-11-12 19:36 PT; the 128 policies of
+      the checkpoint of deviation 9 with 128 environments each, rolled out for 301 s without
+      learning): 229 million environment steps, 0 physics-fault respawns, 0 non-finite respawns,
+      largest torso speed after any physics step 14.8 m/s, largest angular speed after any physics
+      step 61.9 rad/s, no environment step ending above 60 rad/s and 0.29% ending between 20 and
+      40; at most 179 constraint rows in one environment (limit 512). The torso was above 1.5 m in
+      6.9% of the steps: these policies throw the ant upward, which is the ant's own strength
+      (deviation 8) and not the integrator.
+    - **Cost on an H100 NVL** (serval02 card 1, 16,384 environments, whole training iterations of
+      a 128-step rollout and the update, untrained policies, 512 constraint rows, guard on). The
+      last column is $\dfrac{10^{6}}{3600 \times r}$ with $r$ the steps per second of one copy.
+
+      | copies | environments per copy | seconds per iteration | total steps per second (millions) | steps per second per copy (thousands) | hours per million steps per copy | peak card memory (MiB) |
+      |---|---|---|---|---|---|---|
+      | 128 | 128 | 2.723 | 0.770 | 6.02 | 0.0462 | 17,754 |
+      | 1,024 | 16 | 2.736 | 0.767 | 0.749 | 0.371 | 18,308 |
+
+      The rollout is 2.60 s of an iteration and the update 0.11 s. With trained policies the
+      training physics (0.01 s, 512 rows) took 1.374 s per iteration at 128 x 128, so the stable
+      time step costs 1.98 times that. The earlier cells of the training physics with untrained
+      policies were measured with a limit of 160 constraint rows (1.243 s and 1.254 s), so their
+      ratio to this table (2.19 and 2.18) also holds the change of that limit.
+    The recorded configuration file of the baseline:
+    `configs/experiments/antmaze_umaze_warp-physics_time-step-0.005_frame-skip-10_fault-guard-30-metres-and-100-radians-per-second_cleanrl-ppo-rnd_goal-termination_reward-arrival-plus-one_example_steps-204800.toml`
+    (the Warp example with these four values changed). Every other recorded file keeps 0.01 s, 5
+    physics steps and the guard off. Measurements and units:
+    `benchmark_runs/2026-11-12-00-17_pointmaze-antmaze_cleanrl-ppo-rnd_speed-30-ideas_*/profiles/antmaze_warp_blow_up/notes.md`,
+    section "The stable time step as a recorded configuration".
 
 ## Correctness gates
 
@@ -178,3 +237,11 @@ Run by `tests/envs/test_antmaze_mjx.py` (fast, CPU) and
    bit-isolated (stepping copy k never changes copy j).
 4. The x64 boundary: composing the env under the platform's global x64 produces float32
    physics state and float32 observations.
+5. Gates 1 and 2 run a second time at 0.005 s with 10 physics steps per environment step, for
+   both implementations (deviation 10), and so do the guard's and the ceiling's main tests.
+6. A change of the physics is also checked with trained policies, not only with random torques:
+   `profiles/antmaze_warp_blow_up/units/trained_policy_gate.sh` of the speed study rolls the
+   policies of a training checkpoint out in the environment a recorded configuration file
+   describes and records the respawns for a broken physics state and the largest torso speeds.
+   The bound for a pass: no respawn for a non-finite state, and the largest torso speed and
+   angular speed after any physics step under the guard's 30 m/s and 100 rad/s.

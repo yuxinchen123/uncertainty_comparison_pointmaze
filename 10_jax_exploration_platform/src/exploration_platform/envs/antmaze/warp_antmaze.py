@@ -1,6 +1,6 @@
 """Batched AntMaze through MuJoCo Warp, called from JAX — a candidate replacement for `mjx_antmaze`.
 
-The model (with its ceiling on the wall tops), the frame skip, the reward, the goal termination,
+The model (with its ceiling on the wall tops), the frame skip, the physics time step, the reward, the goal termination,
 the truncation, the reset to the fixed spawn, the 29-number observation, the non-finite respawn
 and the fault record (`faults.py`) are those of `mjx_antmaze.JaxAntMaze`; only the physics step
 differs. `mujoco.mjx.step` with a model put with

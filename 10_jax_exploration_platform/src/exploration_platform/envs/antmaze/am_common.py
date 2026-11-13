@@ -20,6 +20,7 @@ SCALING = 4.0        # maze_size_scaling: one maze cell is a 4 m x 4 m square
 HEIGHT = 0.5         # maze_height: wall boxes are HEIGHT * SCALING = 2 m tall
 GOAL_RADIUS = 0.45   # sparse reward paid when |torso xy - goal xy| <= this, in metres
 FRAME_SKIP = 5       # one environment step = 5 physics steps of 0.01 s (20 Hz control)
+PHYSICS_TIME_STEP = 0.01   # seconds per physics step: the `timestep` of the reference ant.xml
 
 # ---- the ceiling (a deviation from the reference, decided in the session of 2026-11-12 and reported to the user, who may reverse it; spec.md, deviation 8) ----
 # Under strong torques an ant can leave the floor and rise above the 2 m walls, and then cross
@@ -118,6 +119,15 @@ class AntMazeConfig:
     # truncation that shows the spawn. A bound left at 0 is not tested.
     fault_torso_speed: float = 0.0
     fault_torso_angular_speed: float = 0.0
+    # ---- the physics time step (spec.md, deviation 10) ----
+    # Seconds per physics step; one environment step lasts frame_skip x physics_time_step seconds.
+    # 0.01 with frame_skip 5 is the reference's 0.05 s and the physics of every run before
+    # 2026-11-12. `implicitfast` at 0.01 s adds rotational energy to a torso that turns fast in the
+    # air, and trained policies drove ants to torso speeds of 1e6 m/s and more that way; at 0.005 s
+    # with frame_skip 10 (the same 0.05 s per environment step) no ant ran away in 127 million
+    # environment steps of the same policies. Any positive value is accepted with any frame_skip;
+    # the unit's start record holds both, so a run whose environment step is not 0.05 s shows it.
+    physics_time_step: float = PHYSICS_TIME_STEP
 
 
 def preset(map_name: str) -> AntMazeConfig:
@@ -208,7 +218,15 @@ def build_antmaze_xml(cfg: AntMazeConfig) -> str:
     ET.SubElement(worldbody, "geom", name="ceiling", type="plane", pos=f"0 0 {CEILING_HEIGHT}",
                   zaxis="0 0 -1", size="40 40 40", contype="0", conaffinity=str(CEILING_BIT),
                   rgba="0 0 0 0")
+    # GOAL: the option line. ant.xml's own is RK4 at 0.01 s with MuJoCo's default iteration counts.
+    # before: <option integrator="RK4" timestep="0.01"/>
+    # after (the default configuration): <option integrator="implicitfast" timestep="0.01"
+    #        iterations="4" ls_iterations="8"/>; with physics_time_step=0.005: timestep="0.005"
+    if not cfg.physics_time_step > 0.0 or cfg.frame_skip < 1:
+        raise ValueError(f"physics_time_step must be above zero and frame_skip at least 1; got "
+                         f"{cfg.physics_time_step!r} and {cfg.frame_skip!r}")
     opt = tree.find(".//option")
+    opt.set("timestep", str(cfg.physics_time_step))
     opt.set("integrator", cfg.integrator)
     opt.set("iterations", str(cfg.solver_iterations))
     opt.set("ls_iterations", str(cfg.ls_iterations))

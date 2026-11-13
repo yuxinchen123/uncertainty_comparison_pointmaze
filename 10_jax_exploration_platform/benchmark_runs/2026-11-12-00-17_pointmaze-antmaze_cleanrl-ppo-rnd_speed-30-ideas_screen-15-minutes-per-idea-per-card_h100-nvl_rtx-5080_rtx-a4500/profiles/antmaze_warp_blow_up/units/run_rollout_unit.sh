@@ -3,6 +3,8 @@
 # out in the Warp AntMaze with the given solver settings (units/roll_out_checkpoint_policies.py), at most
 # 14.5 minutes of wall time, startup and compilation included.
 #   run_rollout_unit.sh <unit name> <solver iterations> <line-search iterations> <rollout seconds> <training iterations to time> [more options of the script]
+# Solver and line-search iterations 0 keep the configuration file's values. CHECKPOINT and UNIT_CONFIGURATION
+# name another checkpoint and its unit's configuration file than the diagnosis's copy.
 # Output is appended to logs/<unit name>.log; records go to records/<unit name>.json and _events.npz.
 # Where it may run: serval05 through its queue, or serval02 card 1 through serval02_card1_run.sh.
 set -uo pipefail
@@ -34,8 +36,8 @@ OTHERS="$OUT/logs/$UNIT.other_processes"; rm -f "$OTHERS"
 WATCHER=$!
 left=$((START + 870 - $(date +%s)))
 timeout -s TERM $left $PY -u $OUT/units/roll_out_checkpoint_policies.py \
-    --checkpoint $OUT/checkpoint_copy/rollout-shape-check_antmaze-umaze_reward-arrival-plus-one_cleanrl-ppo-rnd-with-128-environments-per-policy_cells-33-to-40-of-48_seeds-0-to-15.npz \
-    --configuration-file $OUT/checkpoint_copy/unit_configuration_cells-33-to-40.toml \
+    --checkpoint "${CHECKPOINT:-$OUT/checkpoint_copy/rollout-shape-check_antmaze-umaze_reward-arrival-plus-one_cleanrl-ppo-rnd-with-128-environments-per-policy_cells-33-to-40-of-48_seeds-0-to-15.npz}" \
+    --configuration-file "${UNIT_CONFIGURATION:-$OUT/checkpoint_copy/unit_configuration_cells-33-to-40.toml}" \
     --solver-iterations $SOLVER --ls-iterations $LINE --rollout-seconds $ROLL --time-iterations $TIMED \
     --out $OUT/records/$UNIT "$@"
 rc=$?

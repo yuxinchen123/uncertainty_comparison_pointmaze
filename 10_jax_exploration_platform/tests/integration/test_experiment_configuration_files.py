@@ -22,7 +22,12 @@ POINTMAZE_EXAMPLE = CONFIGURATIONS / "pointmaze_large_cleanrl-ppo-rnd_goal-termi
 ANTMAZE_EXAMPLE = CONFIGURATIONS / "antmaze_umaze_cleanrl-ppo-rnd_goal-termination_reward-arrival-plus-one_example_steps-204800.toml"
 # The same AntMaze example with the physics stepped by MuJoCo Warp.
 ANTMAZE_WARP_EXAMPLE = CONFIGURATIONS / "antmaze_umaze_warp-physics_cleanrl-ppo-rnd_goal-termination_reward-arrival-plus-one_example_steps-204800.toml"
-EXAMPLES = (POINTMAZE_EXAMPLE, ANTMAZE_EXAMPLE, ANTMAZE_WARP_EXAMPLE)
+# The Warp example with the physics the AntMaze baseline runs with (time step 0.005 s, 10 physics
+# steps per environment step, the fault guard at 30 m/s and 100 rad/s).
+ANTMAZE_STABLE_PHYSICS_EXAMPLE = CONFIGURATIONS / (
+    "antmaze_umaze_warp-physics_time-step-0.005_frame-skip-10_fault-guard-30-metres-and-100-radians-per-second_"
+    "cleanrl-ppo-rnd_goal-termination_reward-arrival-plus-one_example_steps-204800.toml")
+EXAMPLES = (POINTMAZE_EXAMPLE, ANTMAZE_EXAMPLE, ANTMAZE_WARP_EXAMPLE, ANTMAZE_STABLE_PHYSICS_EXAMPLE)
 # The number of trainer fields every recorded file must hold (the fields of PPOConfig).
 FIELDS = 58
 
@@ -92,7 +97,8 @@ class RecordedExperimentFiles(unittest.TestCase):
         """One example per family: CleanRL learner values, the episode ends at the goal."""
         for path, preset, limit in ((POINTMAZE_EXAMPLE, "pointmaze_current", 400),
                                     (ANTMAZE_EXAMPLE, "antmaze_current", 700),
-                                    (ANTMAZE_WARP_EXAMPLE, "antmaze_current", 700)):
+                                    (ANTMAZE_WARP_EXAMPLE, "antmaze_current", 700),
+                                    (ANTMAZE_STABLE_PHYSICS_EXAMPLE, "antmaze_current", 700)):
             document = read_experiment_configuration(path)
             trainer, environment = document["trainer"], document["environment"]
             self.assertEqual(len(trainer), FIELDS)
@@ -120,6 +126,30 @@ class RecordedExperimentFiles(unittest.TestCase):
         self.assertEqual((argument_defaults(jax_example)["physics"],
                           argument_defaults(warp_example)["physics"]), ("jax", "warp"))
         self.assertNotIn("physics", argument_defaults(pointmaze))
+
+    def test_the_physics_time_step_is_0_01_everywhere_but_in_the_stable_physics_example(self):
+        """Every AntMaze file keeps 0.01 s, 5 physics steps and the guard off, except the one file the
+        AntMaze baseline uses, which differs from the Warp example in exactly four environment values."""
+        ant_files = [path for path in CONFIGURATIONS.glob("antmaze_*.toml")]
+        self.assertEqual(len(ant_files), 4)
+        for path in ant_files:
+            environment = read_experiment_configuration(path)["environment"]
+            if path == ANTMAZE_STABLE_PHYSICS_EXAMPLE:
+                continue
+            self.assertEqual((environment["physics_time_step"], environment["frame_skip"],
+                              environment["fault_torso_speed"], environment["fault_torso_angular_speed"]),
+                             (0.01, 5, 0.0, 0.0), path.name)
+        warp_example, stable = map(read_experiment_configuration, (ANTMAZE_WARP_EXAMPLE,
+                                                                   ANTMAZE_STABLE_PHYSICS_EXAMPLE))
+        self.assertEqual(stable["environment"], {**warp_example["environment"], "physics_time_step": 0.005,
+                                                 "frame_skip": 10, "fault_torso_speed": 30.0,
+                                                 "fault_torso_angular_speed": 100.0})
+        self.assertEqual((stable["trainer"], stable["runtime"]), (warp_example["trainer"], warp_example["runtime"]))
+        # one environment step lasts 0.05 s in both
+        for document in (warp_example, stable):
+            environment = document["environment"]
+            self.assertAlmostEqual(environment["physics_time_step"] * environment["frame_skip"], 0.05, places=12)
+        self.assertEqual(argument_defaults(stable)["physics"], "warp")
 
     def test_named_reward_settings_fix_the_scale_and_offset(self):
         """A file's reward scale and offset must be the ones its named reward setting means."""

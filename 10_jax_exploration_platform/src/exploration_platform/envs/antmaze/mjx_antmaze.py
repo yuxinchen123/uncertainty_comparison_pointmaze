@@ -3,7 +3,7 @@
 The ant is real articulated physics, so unlike PointMaze the stepper is not hand-derived: the
 model is the vendored Gymnasium `ant.xml` plus the maze walls and a ceiling on the wall tops that
 only the torso meets (`am_common.build_antmaze_xml`), and one environment step is `frame_skip`
-MJX physics steps, vmapped over every environment of every copy. The state also carries the fault
+MJX physics steps of `physics_time_step` seconds, vmapped over every environment of every copy. The state also carries the fault
 record of `faults.py`: per policy, the steps with the torso in the ceiling zone and the largest
 torso speed since the driver last read them. Resets are fully deterministic (zero reset noise on
 both the cells and the joints, matching AntMaze-v5's `reset_noise_scale=0.0` plus this platform's

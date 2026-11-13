@@ -43,7 +43,9 @@ echo "processes on the cards before the unit:"; nvidia-smi --query-compute-apps=
 
 # GOAL: one process per cell, stopped 14.5 minutes after the unit started whatever it is doing.
 RECORDS="$OUT/${RECORDS_FOLDER:-records}"
-cell_arguments() { echo --records "$RECORDS" --policies "${1%x*}" --environments-per-policy "${1#*x}" --card-slug "$CARD_SLUG" ; }
+# CONFIGURATION_FILE names another recorded configuration file than the profile's default (for example the
+# one with the stable physics time step); its cells then need their own RECORDS_FOLDER.
+cell_arguments() { echo --records "$RECORDS" --policies "${1%x*}" --environments-per-policy "${1#*x}" --card-slug "$CARD_SLUG" ${CONFIGURATION_FILE:+--configuration-file "$CONFIGURATION_FILE"} ; }
 worst=0; cells_left=$#
 for cell in "$@"; do
     left=$((START + 870 - $(date +%s)))

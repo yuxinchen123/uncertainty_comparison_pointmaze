@@ -71,8 +71,11 @@ def median(values) -> float:
     return ordered[len(ordered) // 2]
 
 
-def study_configuration(policies: int, environments_per_policy: int):
+def study_configuration(policies: int, environments_per_policy: int, configuration_file: Path = None):
     """The study's learner and the Warp U-maze at one cell, as (PPOConfig, AntMazeConfig).
+
+    configuration_file: the recorded file read (default `STUDY_CONFIGURATION`); another file of the
+    same study measures another physics configuration, for example the stable time step.
 
     before: the example file's trainer (16 policies x 4 environments, 50 priming rollouts)
     after:  the same trainer with n_copies and n_envs of the cell, 1 priming rollout, and
@@ -81,7 +84,7 @@ def study_configuration(policies: int, environments_per_policy: int):
     from experiment_configuration import read_experiment_configuration
     from exploration_platform.agents.ppo.config import PPOConfig
     from exploration_platform.envs.antmaze.am_common import AntMazeConfig
-    document = read_experiment_configuration(STUDY_CONFIGURATION)
+    document = read_experiment_configuration(configuration_file or STUDY_CONFIGURATION)
     trainer = {**document["trainer"], "n_copies": policies, "n_envs": environments_per_policy,
                "gather_minibatches_per_epoch": environments_per_policy >= 128,
                "prime_iterations": 1}
@@ -252,7 +255,7 @@ def measure(args) -> int:
                      for package in ("jax", "jaxlib", "mujoco", "mujoco-mjx", "warp-lang")},
         "git_commit": subprocess.run(["git", "-C", str(BASE), "rev-parse", "--short", "HEAD"],
                                      capture_output=True, text=True).stdout.strip(),
-        "configuration_file": STUDY_CONFIGURATION.name, "status": "running",
+        "configuration_file": (args.configuration_file or STUDY_CONFIGURATION).name, "status": "running",
         "processor_dry_run": not on_card,
         # the model has had its ceiling since 2026-11-12; a record without this field is older
         "model_has_ceiling": True,
@@ -263,9 +266,13 @@ def measure(args) -> int:
 
     try:
         # GOAL: the study's program and a primed state.
-        cfg, env_cfg = study_configuration(policies, per_policy)
+        cfg, env_cfg = study_configuration(policies, per_policy, args.configuration_file)
         runner = Runner(cfg, bonus="rnd_next_state", env_cfg=env_cfg)
         record.update(rollout_steps=cfg.num_steps, kernel_folder=runner.env.kernel_folder,
+                      # the physics steps and the fault guard of this cell's environment
+                      physics_time_step=env_cfg.physics_time_step, frame_skip=env_cfg.frame_skip,
+                      fault_torso_speed=env_cfg.fault_torso_speed,
+                      fault_torso_angular_speed=env_cfg.fault_torso_angular_speed,
                       kernel_folders_at_start=sum(1 for entry in os.scandir(runner.env.kernel_folder)
                                                   if entry.is_dir()),
                       gather_minibatches_per_epoch=cfg.gather_minibatches_per_epoch)
@@ -318,6 +325,8 @@ def measure(args) -> int:
             # the environment's fault record over all iterations of this process, summed over policies
             ceiling_zone_steps=int(np.asarray(state.env_state.ceiling_zone_steps, np.int64).sum()),
             largest_torso_speed=float(np.asarray(state.env_state.largest_torso_speed).max()),
+            physics_fault_respawns=int(np.asarray(state.env_state.physics_fault_respawns, np.int64).sum()),
+            largest_torso_angular_speed=float(np.asarray(state.env_state.largest_torso_angular_speed).max()),
             memory=memory_record(card["uuid"]) if on_card else None,
             pool=runner.check_environment(state))
         write_record(path, record)
@@ -905,6 +914,9 @@ def main(argv=None) -> int:
     parser.add_argument("--records", type=Path, required=True, help="the folder of the cells' records")
     parser.add_argument("--render", action="store_true", help="write the Markdown table and measure nothing")
     parser.add_argument("--markdown", type=Path, help="with --render: the file to write")
+    parser.add_argument("--configuration-file", type=Path,
+                        help="the recorded configuration file of the cell's learner and environment "
+                             f"(default configs/experiments/{STUDY_CONFIGURATION.name})")
     parser.add_argument("--policies", type=int)
     parser.add_argument("--environments-per-policy", type=int)
     parser.add_argument("--machine", help='the machine and card in words, e.g. "serval02 card 1"')

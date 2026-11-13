@@ -409,6 +409,72 @@ def test_one_step_from_states_in_ceiling_contact_agrees_with_c_mujoco(implementa
     assert max(result["largest_position_difference_per_state"]) < 5e-2
 
 
+@pytest.mark.parametrize("implementation", IMPLEMENTATIONS)
+def test_thrown_ants_stay_below_the_wall_tops_at_the_stable_time_step(implementation):
+    """At a physics time step of 0.005 s (the AntMaze baseline's since 2026-11-12; spec.md, deviation
+    10): ants thrown upward at 10, 20 and 30 m/s (the fault guard's speed bound) touch the ceiling and stay below the wall tops at
+    every physics step of 2 seconds, in C MuJoCo and in the implementation; an ant that stands never
+    comes near the ceiling; and one physics step from C states in ceiling contact agrees with C
+    MuJoCo within the in-contact gate (5e-2 m)."""
+    cfg = replace(CFG, physics_time_step=0.005)
+    launch_speeds, steps = (10.0, 20.0, 30.0, 0.0), 400
+    n = len(launch_speeds)
+    # GOAL: the four ants in C MuJoCo on the model of this configuration.
+    # before: the spawn pose four times, zero velocity; after: vertical torso speeds 10, 20, 30, 0
+    qpos0 = np.tile(spawn_qpos(cfg), (n, 1))
+    qvel0 = np.zeros((n, 14))
+    qvel0[:, 2] = launch_speeds
+    torques = np.zeros((steps, n, 8))
+    ref = c_rollout(qpos0, qvel0, torques, cfg)
+    for b in (0, 1, 2):
+        assert ref["ceiling_contact"][:, b].any(), launch_speeds[b]
+        assert CEILING_CONTACT_HEIGHT < ref["position"][:, b, 2].max() < CEILING_HEIGHT, launch_speeds[b]
+    assert not ref["ceiling_contact"][:, 3].any() and ref["position"][:, 3, 2].max() < CEILING_ZONE_HEIGHT
+
+    # GOAL: the same ants in the implementation, one physics step per environment step.
+    env = make_environment(implementation, cfg, n)
+    ceiling = mujoco.mj_name2id(mujoco.MjModel.from_xml_string(build_antmaze_xml(cfg)),
+                                mujoco.mjtObj.mjOBJ_GEOM, "ceiling")
+
+    def rollout(state, torque_steps):
+        """Scan the environment's own step; per step the torso position and the ceiling contacts."""
+        def body(st, torque):
+            """One environment step of the four ants."""
+            st, _, _, _, _, final_obs = env.step(st, torque.reshape(n, 1, 8))
+            return st, (final_obs[:, 0, 0:3], ceiling_contacts(implementation, env, st.data, ceiling))
+        return jax.lax.scan(body, state, torque_steps)
+
+    def started_at(qpos, qvel):
+        """The environment's reset state with the given positions and velocities."""
+        start = env.reset()
+        return start._replace(data=start.data.replace(qpos=jnp.asarray(qpos, jnp.float32),
+                                                      qvel=jnp.asarray(qvel, jnp.float32)))
+    state, (position, contacts) = jax.jit(rollout)(started_at(qpos0, qvel0), jnp.asarray(torques, jnp.float32))
+    position, contacts = np.asarray(position, np.float64), np.asarray(contacts)
+    for b in (0, 1, 2):
+        print(f"{implementation}, time step 0.005 s: thrown upward at {launch_speeds[b]:.0f} m/s: largest torso "
+              f"height {position[:, b, 2].max():.3f} m, {int((contacts[:, b] > 0).sum())} physics steps with a "
+              "ceiling contact")
+        assert contacts[:, b].sum() > 0, launch_speeds[b]
+        assert CEILING_CONTACT_HEIGHT < position[:, b, 2].max() < CEILING_HEIGHT, launch_speeds[b]
+    assert contacts[:, 3].sum() == 0 and position[:, 3, 2].max() < CEILING_ZONE_HEIGHT
+    assert int(np.asarray(state.nan_count).sum()) == 0
+    if implementation == "warp":
+        assert not env.overflow_report(state)["dropped"]
+
+    # GOAL: one physics step from four consecutive C states of the ant thrown at 10 m/s, the first of
+    # them one step before its first ceiling contact, against C MuJoCo's next states.
+    first = int(np.argmax(ref["ceiling_contact"][:, 0]))
+    states = np.arange(first - 1, first - 1 + n)
+    after, *_ = jax.jit(env.step)(started_at(ref["qpos"][states, 0], ref["qvel"][states, 0]),
+                                  jnp.zeros((n, 1, 8), jnp.float32))
+    difference = np.abs(np.asarray(after.data.qpos, np.float64) - ref["qpos"][states + 1, 0]).max(-1)
+    print(f"{implementation}, time step 0.005 s: one physics step from C states {states.tolist()} of the ant "
+          f"thrown at 10 m/s: largest position differences {[float(x) for x in difference]}")
+    assert ref["ceiling_contact"][states, 0].any()
+    assert difference.max() < 5e-2
+
+
 def run_command(*options) -> None:
     """Call the training command in this process with the given command line."""
     import run_training

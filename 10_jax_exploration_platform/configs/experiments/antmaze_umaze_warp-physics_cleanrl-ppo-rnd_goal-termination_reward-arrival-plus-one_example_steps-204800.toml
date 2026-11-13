@@ -102,6 +102,7 @@ warp_contact_slots_per_environment = 48
 warp_constraint_rows_per_environment = 512
 fault_torso_speed = 0.0
 fault_torso_angular_speed = 0.0
+physics_time_step = 0.01
 
 [runtime]
 environment = "antmaze-umaze"

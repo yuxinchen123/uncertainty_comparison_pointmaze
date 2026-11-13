@@ -13,6 +13,10 @@ processors (`replay_events.py`).
 It writes two files: `<out>.json` (counts, the speed histogram, timings) and `<out>_events.npz` (the
 kept onsets). With `--time-iterations` it then times whole training iterations from the same state.
 
+With `--environment-from <recorded configuration file>` the environment of the measurement is the one that
+file describes, read by the training command's own loader and built by the environment's own code: the
+gate with trained policies for a physics configuration (`units/trained_policy_gate.sh`).
+
 Run on a card through the serval05 queue as a profile unit, never on a login node.
 """
 import argparse
@@ -43,8 +47,13 @@ def parse():
     parser.add_argument("--solver-iterations", type=int, default=0, help="0: the configuration file's value")
     parser.add_argument("--ls-iterations", type=int, default=0, help="0: the configuration file's value")
     parser.add_argument("--integrator", default="", help="empty: the configuration file's value")
-    parser.add_argument("--timestep", type=float, default=0.0, help="physics time step in seconds; 0: the model's 0.01")
-    parser.add_argument("--frame-skip", type=int, default=0, help="physics steps per environment step; 0: the file's 5")
+    parser.add_argument("--environment-from", type=Path,
+                        help="a recorded configuration file whose [environment] the measurement runs with, in place "
+                             "of the unit's (the map and the task must be the unit's); the options below then "
+                             "change that environment")
+    parser.add_argument("--timestep", type=float, default=0.0,
+                        help="physics time step in seconds (the field physics_time_step); 0: the file's value")
+    parser.add_argument("--frame-skip", type=int, default=0, help="physics steps per environment step; 0: the file's value")
     parser.add_argument("--fault-torso-speed", type=float, default=-1.0,
                         help="the fault guard's bound in metres per second; negative: the configuration file's value")
     parser.add_argument("--fault-torso-angular-speed", type=float, default=-1.0,
@@ -107,28 +116,29 @@ def main():
                                "--configuration-file", str(complete),
                                "--reward-setting", "arrival_plus_one"])
     config, env_cfg = rt.build_config(unit_args), rt.build_env_config(unit_args)
+    if args.environment_from:
+        # GOAL: the environment of another recorded file, through the training command's loader.
+        # before: the unit's environment (the physics it was trained with)
+        # after:  the environment that file describes; it must be the unit's map and task
+        other = rt.build_env_config(rt.parse_args([
+            "--run-dir", str(args.out.parent / "unused_run_folder"), "--unit-id", "unused",
+            "--configuration-file", str(args.environment_from), "--reward-setting", "arrival_plus_one"]))
+        same = ("map_name", "start_cell", "goal_cell", "max_episode_steps", "continuing_task", "goal_radius")
+        if any(getattr(other, name) != getattr(env_cfg, name) for name in same):
+            raise ValueError(f"{args.environment_from} describes another task than the unit's: "
+                             + ", ".join(f"{name} {getattr(other, name)!r} against {getattr(env_cfg, name)!r}"
+                                         for name in same if getattr(other, name) != getattr(env_cfg, name)))
+        env_cfg = other
     changes = {name: value for name, value in (("solver_iterations", args.solver_iterations),
                                                ("ls_iterations", args.ls_iterations),
                                                ("integrator", args.integrator),
-                                               ("frame_skip", args.frame_skip)) if value}
+                                               ("frame_skip", args.frame_skip),
+                                               ("physics_time_step", args.timestep)) if value}
     if args.fault_torso_speed >= 0.0:
         changes["fault_torso_speed"] = args.fault_torso_speed
     if args.fault_torso_angular_speed >= 0.0:
         changes["fault_torso_angular_speed"] = args.fault_torso_angular_speed
     env_cfg = replace(env_cfg, **changes)
-    if args.timestep:
-        # the model's physics time step is not a configuration field: for this measurement the XML the
-        # Warp environment builds gets the other time step
-        import xml.etree.ElementTree as ET
-        from exploration_platform.envs.antmaze import warp_antmaze
-        build = warp_antmaze.build_antmaze_xml
-
-        def with_time_step(cfg):
-            """The environment's XML with this measurement's physics time step."""
-            root = ET.fromstring(build(cfg))
-            root.find("option").set("timestep", str(args.timestep))
-            return ET.tostring(root, encoding="unicode")
-        warp_antmaze.build_antmaze_xml = with_time_step
     saved = read_checkpoint(args.checkpoint)
     trainer = Runner(config, bonus=make_bonus(unit_args.bonus, rt.bonus_options_of(unit_args)), env_cfg=env_cfg,
                      bonus_constants=saved["bonus_constants"])
@@ -149,7 +159,9 @@ def main():
     B = C * N
     actor = named_params(stored_params(state, trainer.layout), trainer.layout)["agent"]["actor"]
     print(f"restored iteration {int(state.step)}: {C} policies x {N} environments, solver "
-          f"{env_cfg.solver_iterations}/{env_cfg.ls_iterations}, integrator {env_cfg.integrator}, "
+          f"{env_cfg.solver_iterations}/{env_cfg.ls_iterations}, integrator {env_cfg.integrator}, time step "
+          f"{env_cfg.physics_time_step} s x {env_cfg.frame_skip} physics steps, fault guard "
+          f"{env_cfg.fault_torso_speed} m/s and {env_cfg.fault_torso_angular_speed} rad/s, "
           f"{time.time() - started:.0f} s since the start", flush=True)
 
     @jax.jit
@@ -252,7 +264,9 @@ def main():
         "angular_speed_histogram_counts_torso_above_1_m": spin_histogram_high.tolist(),
         "largest_joint_speed_histogram_edges": [edge if np.isfinite(edge) else "inf" for edge in JOINT_EDGES],
         "largest_joint_speed_histogram_counts": joint_histogram.tolist(),
-        "physics_time_step": args.timestep or 0.01,
+        "physics_time_step": env_cfg.physics_time_step,
+        "environment_from": str(args.environment_from) if args.environment_from else None,
+        "share_of_steps_above_1_5_m": counts["steps_above_1_5_m"] / max(counts["environment_steps"], 1),
         "physics_fault_respawns": int(np.asarray(env_state.physics_fault_respawns).sum()) - respawns_before,
         "largest_speed_after_any_physics_step_per_policy_over_1e2": int((fault_speed > 1e2).sum()),
         "largest_speed_after_any_physics_step": float(fault_speed.max()),
@@ -265,7 +279,8 @@ def main():
     print(json.dumps({name: record[name] for name in (
         "environment_steps", "onsets_large", "onsets_moderate", "non_finite_respawns", "physics_fault_respawns",
         "speed_histogram_counts", "angular_speed_histogram_counts", "angular_speed_histogram_counts_torso_above_1_m",
-        "largest_joint_speed_histogram_counts", "largest_speed_after_any_physics_step", "seconds_per_chunk_steady",
+        "largest_joint_speed_histogram_counts", "largest_speed_after_any_physics_step",
+        "largest_angular_speed_after_any_physics_step", "share_of_steps_above_1_5_m", "seconds_per_chunk_steady",
         "events_kept")}), flush=True)
 
     # GOAL: the kept onsets as arrays (rows padded at the front to L+1 with the first row).

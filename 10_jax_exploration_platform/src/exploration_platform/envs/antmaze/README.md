@@ -93,6 +93,34 @@ truncation whose final observation is the spawn, one more in `nan_count` and in 
 Why, the measurements and the values the study uses (30 m/s and 100 rad/s): spec.md, deviation 9.
 Tests: `tests/envs/test_antmaze_fault_guard.py`.
 
+## The physics time step
+
+`physics_time_step` (seconds per physics step, default 0.01) and `frame_skip` (physics steps per
+environment step, default 5) set how one environment step is integrated; it lasts
+`frame_skip x physics_time_step` seconds. The defaults are the reference's 5 steps of 0.01 s and
+the physics of every run before 2026-11-12. The AntMaze baseline of the study that started
+2026-11-11 runs with **0.005 s and 10 physics steps** (the same 0.05 s per environment step) and
+the fault guard at 30 m/s and 100 rad/s, because `implicitfast` at 0.01 s lets a fast-turning ant
+in the air gain rotational energy until its torso speed runs away (spec.md, deviation 10). The
+recorded configuration file with these values:
+`configs/experiments/antmaze_umaze_warp-physics_time-step-0.005_frame-skip-10_fault-guard-30-metres-and-100-radians-per-second_cleanrl-ppo-rnd_goal-termination_reward-arrival-plus-one_example_steps-204800.toml`.
+
+Any positive time step is accepted with any frame skip of at least 1. A combination whose
+environment step is not 0.05 s is another control cadence than the reference's; nothing refuses
+it, and the unit's start record (`environment_config`) holds both numbers.
+
+Gates at 0.005 s with 10 physics steps: the three C MuJoCo gates for both implementations
+(`tests/envs/test_antmaze_parity_cpu_mujoco.py`, `tests/envs/test_antmaze_warp.py`), the guard
+(`tests/envs/test_antmaze_fault_guard.py`) and the ceiling (`tests/envs/test_antmaze_ceiling.py`).
+
+**The gate with trained policies.** Random torques did not show the runaway; policies trained with
+RND did. Every change of the physics is therefore also checked with the policies of a training
+checkpoint rolled out, without learning, in the environment a recorded configuration file
+describes: `benchmark_runs/2026-11-12-00-17_pointmaze-antmaze_cleanrl-ppo-rnd_speed-30-ideas_*/profiles/antmaze_warp_blow_up/units/trained_policy_gate.sh <unit name> <recorded configuration file>`
+(an H100 NVL, at most 15 minutes). Its record gives the environment steps, the physics-fault and
+non-finite respawns, the largest torso speed and angular speed after any physics step, and the
+share of steps with the torso above 1.5 m.
+
 ## The fault record
 
 A policy that learns to get itself thrown upward would still reach the ceiling, and an ant that
