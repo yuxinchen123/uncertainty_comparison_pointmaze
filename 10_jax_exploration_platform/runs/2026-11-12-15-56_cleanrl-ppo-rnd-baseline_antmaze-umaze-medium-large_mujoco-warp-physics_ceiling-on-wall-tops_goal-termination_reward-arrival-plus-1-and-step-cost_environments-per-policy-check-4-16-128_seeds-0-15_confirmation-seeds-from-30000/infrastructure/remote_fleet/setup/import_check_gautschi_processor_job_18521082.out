@@ -1,0 +1,16 @@
+cluster gautschi, job 18521082, host a005.gautschi.rcac.purdue.edu, start 2026-11-13T15:07:41-05:00
+python 3.12.13 at /scratch/gautschi/liu4869/envs/rnd_platform_jax_mujoco_warp/bin/python
+jax==0.11.0
+jaxlib==0.11.0
+jax-cuda12-plugin==0.11.0
+numpy==2.5.2
+mujoco==3.11.0
+mujoco-mjx==3.11.0
+warp-lang==1.14.0
+flax==0.12.8
+optax==0.2.8
+jaxatari==0.1.0
+mujoco.mjx Warp implementation: warp installed True | mujoco_warp module loaded True
+imports took 12.9 s
+IMPORT_CHECK_PASSED processor
+end 2026-11-13T15:07:56-05:00

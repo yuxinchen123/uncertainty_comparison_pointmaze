@@ -49,8 +49,169 @@
       "checked_at": null,
       "note": "set by hand 2026-11-12: no AntMaze unit runs on UVA cards, so the automatic comparison with a UVA unit has nothing to read. New code copy f490e70d with the stable physics: ONE unit is handed over first (units_at_once 1) and its records (fault counters, speeds, seconds per iteration) are read by hand before the limit is raised to 18 | 2026-11-12 20:28 PT: the first unit with the stable physics (job 12347248, NVIDIA A30, 4 environments per policy, cells 41 to 48) was read by hand at window 2 of 256: record kinds job, unit_start, episode_window; settings as intended (time step 0.005 s, frame skip 10, guard 30 m/s and 100 rad/s); 128 values per policy field, all finite; 0 fault respawns; largest torso speed 13.0 m/s, largest turning rate 40.0 rad/s; contact pool use 9.1%, at most 41 of 512 constraint rows; 1.087 s per iteration at 512 environments. The other 17 units were released."
     },
-    "code": "/scratch/gilbreth/liu4869/rnd_maze/code/source_f490e70d129758156f147e4fcaafb44a5ff58673/10_jax_exploration_platform",
-    "prepared_commit": "f490e70d129758156f147e4fcaafb44a5ff58673",
-    "code_repository_commit": "3a9d5e739d125b29ee4980422c318e638a21182b"
+    "code": "/scratch/gilbreth/liu4869/rnd_maze/code/source_a2df3c1279545641d05c68b75a86364e742701eb/10_jax_exploration_platform",
+    "prepared_commit": "a2df3c1279545641d05c68b75a86364e742701eb",
+    "code_repository_commit": "d0fadbe12ef0c986d648f14ab456ee8febdc5b70"
+  },
+  "mit": {
+    "ssh": [
+      "ssh",
+      "-o",
+      "BatchMode=yes",
+      "portal11",
+      "ssh",
+      "-o",
+      "BatchMode=yes",
+      "mit"
+    ],
+    "check": [
+      "ssh",
+      "-o",
+      "BatchMode=yes",
+      "portal11",
+      "ssh",
+      "-O",
+      "check",
+      "mit"
+    ],
+    "remote_run": "/orcd/scratch/orcd/008/shuzel/rnd_maze/runs/2026-11-12-15-56_cleanrl-ppo-rnd-baseline-antmaze",
+    "python": "/orcd/scratch/orcd/008/shuzel/envs/rnd_platform_jax_mujoco_warp/bin/python",
+    "code_root": "/orcd/scratch/orcd/008/shuzel/rnd_maze/code",
+    "unit_seconds": 1800,
+    "ready": false,
+    "not_ready_reason": "set up 2026-11-13 by a helper session (notes: infrastructure/h100-h200-servers_setup_notes.md); waits for the session's freeze (prepare sends the code copy and the job scripts) and for the first unit, which is this server's check; no unit has been handed over",
+    "failed_calls_in_a_row": 0,
+    "failed_call_limit": 1,
+    "budget_note": "not charged; fair share counts processor-seconds only (4 cores per job)",
+    "pools": {
+      "advanced-h100": {
+        "gpu_class": "h100_mit",
+        "time_limit": "2-00:00:00",
+        "max_jobs": 4,
+        "card_guard": true,
+        "sbatch_options": [
+          "--partition=mit_normal_gpu",
+          "--account=mit_amf_advanced_gpu",
+          "--qos=mit_amf_advanced_gpu",
+          "--gpus=h100:1",
+          "--nodes=1",
+          "--ntasks=1",
+          "--cpus-per-task=4",
+          "--mem=24G",
+          "--requeue",
+          "--open-mode=append",
+          "-x",
+          "node3401-c1"
+        ]
+      },
+      "advanced-h200": {
+        "gpu_class": "h200_mit",
+        "time_limit": "2-00:00:00",
+        "max_jobs": 4,
+        "card_guard": true,
+        "sbatch_options": [
+          "--partition=mit_normal_gpu",
+          "--account=mit_amf_advanced_gpu",
+          "--qos=mit_amf_advanced_gpu",
+          "--gpus=h200:1",
+          "--nodes=1",
+          "--ntasks=1",
+          "--cpus-per-task=4",
+          "--mem=24G",
+          "--requeue",
+          "--open-mode=append",
+          "-x",
+          "node3401-c1"
+        ]
+      },
+      "preemptable-h100": {
+        "gpu_class": "h100_mit",
+        "time_limit": "2-00:00:00",
+        "max_jobs": 4,
+        "card_guard": true,
+        "sbatch_options": [
+          "--partition=mit_preemptable",
+          "--gpus=h100:1",
+          "--nodes=1",
+          "--ntasks=1",
+          "--cpus-per-task=4",
+          "--mem=24G",
+          "--requeue",
+          "--open-mode=append",
+          "-x",
+          "node[1634,2433-2434,2804,2906,3000-3008,3100-3102,3200-3208,3300-3302,3400,3402-3408,3500-3512,4102-4108,4200-4207],node3401-c1,node4100-c1,node5500-c1,node5501-c1,node5502-c1,node5600-c1,node5601-c1,node5602-c1,node5700-c1,node5701-c1,node5702-c1,node5800-c1,node5801-c1,node5802-c1"
+        ]
+      },
+      "preemptable-h200": {
+        "gpu_class": "h200_mit",
+        "time_limit": "2-00:00:00",
+        "max_jobs": 4,
+        "card_guard": true,
+        "sbatch_options": [
+          "--partition=mit_preemptable",
+          "--gpus=h200:1",
+          "--nodes=1",
+          "--ntasks=1",
+          "--cpus-per-task=4",
+          "--mem=24G",
+          "--requeue",
+          "--open-mode=append",
+          "-x",
+          "node[1634,2433-2434,2804,2906,3000-3008,3100-3102,3200-3208,3300-3302,3400,3402-3408,3500-3512,4102-4108,4200-4207],node3401-c1,node4100-c1,node5500-c1,node5501-c1,node5502-c1,node5600-c1,node5601-c1,node5602-c1,node5700-c1,node5701-c1,node5702-c1,node5800-c1,node5801-c1,node5802-c1"
+        ]
+      }
+    },
+    "hand_over": {
+      "units_at_once": 1,
+      "match": "antmaze",
+      "pool": "advanced-h100",
+      "start_within_seconds": 7200
+    }
+  },
+  "gautschi": {
+    "ssh": [
+      "ssh",
+      "-o",
+      "BatchMode=yes",
+      "-o",
+      "ConnectTimeout=30",
+      "gautschi"
+    ],
+    "check": [],
+    "remote_run": "/scratch/gautschi/liu4869/rnd_maze/runs/2026-11-12-15-56_cleanrl-ppo-rnd-baseline-antmaze",
+    "python": "/scratch/gautschi/liu4869/envs/rnd_platform_jax_mujoco_warp/bin/python",
+    "code_root": "/scratch/gautschi/liu4869/rnd_maze/code",
+    "unit_seconds": 1800,
+    "ready": false,
+    "not_ready_reason": "set up 2026-11-13 by a helper session (notes: infrastructure/h100-h200-servers_setup_notes.md); waits for the session's freeze (prepare sends the code copy and the job scripts) and for the first unit, which is this server's check; no unit has been handed over",
+    "failed_calls_in_a_row": 0,
+    "budget_command": "bash -lc slist 2> /dev/null | grep dsimchil",
+    "budget_field": 2,
+    "budget_unit": "H100-hours",
+    "charge_note": "ai under normal: 1 H100-hour per card-hour from the group's yearly balance; the group may hold 2 H100 cards at once (shared with long635 and every session of liu4869)",
+    "pools": {
+      "ai-h100": {
+        "gpu_class": "h100_sxm_gautschi",
+        "time_limit": "1-00:00:00",
+        "max_jobs": 2,
+        "sbatch_options": [
+          "-p",
+          "ai",
+          "-q",
+          "normal",
+          "-A",
+          "dsimchil",
+          "-N1",
+          "-n14",
+          "--gpus-per-node=1"
+        ]
+      }
+    },
+    "hand_over": {
+      "units_at_once": 1,
+      "match": "antmaze",
+      "pool": "ai-h100",
+      "start_within_seconds": 7200
+    }
   }
 }
