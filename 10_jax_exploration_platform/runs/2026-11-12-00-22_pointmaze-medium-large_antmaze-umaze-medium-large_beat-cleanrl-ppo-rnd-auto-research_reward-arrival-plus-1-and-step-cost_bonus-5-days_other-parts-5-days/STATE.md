@@ -618,6 +618,29 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   predictor at half speed with held divisor: 0.959 (6e-3, weight 1). All four arms read 0.956 to 0.964 here
   against RND's 0.9435, which is inside this case's noise on 16 seeds; the two best configurations of each arm are
   on the validation block (8 units in all, on Gilbreth), and the batch is judged there.
+- 2026-11-12 22:01 PT: **batch 5 on the validation block (256 seeds, PointMaze Medium with reward 1 on
+  arrival).** Each arm at the better of its two configurations against RND's best of three (0.9349): predictor at
+  half speed with held divisor 0.9438, +0.0089 [+0.0012, +0.0166]; held divisor alone after 1/64: +0.0039
+  [−0.004, +0.011]; after 1/16: +0.0033 [−0.004, +0.011]; slower predictor with the divisor held after 1/64:
+  +0.0013; the two-part finalist: −0.0001. Every arm is ahead on the final level by 0.004 to 0.005. One arm of
+  five has its interval above zero with a lower end of +0.001, and it is the best of five on these seeds, so it
+  goes to a second validation block (seeds 20000 to 20255) before it counts.
+  Readings of batch 5's predictions (quick script; the summary code has no settings for this batch yet):
+  1 held (held divisor alone is level with RND within 0.01 and ahead on the final level); 2 did not hold for the
+  whole-curve mean (holding the divisor earlier does not put the slower predictor ahead: +0.0013); 3 did not hold
+  (the predictor at half speed is not between RND and the finalist: it is above both).
+- 2026-11-12 22:01 PT: **batch 4, PointMaze Large with the step cost, 16 development seeds:** all three parts: best
+  −0.7187 (learning rate 4.5e-3, weight 0.5), +0.0060 [+0.0044, +0.0075] against RND's −0.7247, final level
+  +0.0091 [+0.006, +0.012]; slower predictor with held divisor with the larger weights: best stays −0.7222 at
+  weight 8 (16: −0.723; 32: −0.737), so its best weight is now inside its grid; +0.0025 [−0.004, +0.007].
+  All of this folder's 121 units were done at 22:00 PT.
+- 2026-11-12 22:02 PT: **batch 6 queued** (`batches/06_predictor-at-half-speed-…`, 18 units on Gilbreth): a second
+  validation block on PointMaze Medium (RND at three configurations, the predictor at half speed with held
+  divisor at two, the held divisor alone at two); the predictor at half speed with held divisor on PointMaze Large
+  with reward 1 on arrival (weights 1, 2, 4); and PointMaze Large with the step cost on the first validation block
+  (RND, all three parts, the two-part finalist and the predictor at half speed, two configurations each).
+  Predictions in its `ideas.md`.
+  Open: `summary_settings.json` for batches 5 and 6, so their summaries are generated like batch 4's.
 
 ## Next
 
