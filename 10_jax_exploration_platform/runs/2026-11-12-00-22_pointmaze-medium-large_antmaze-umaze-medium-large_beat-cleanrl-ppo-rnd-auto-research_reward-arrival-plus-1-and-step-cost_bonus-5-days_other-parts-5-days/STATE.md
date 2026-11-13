@@ -1312,6 +1312,10 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   the 128-environment unit continues on Gilbreth. **One reading for question 3:** in the 128-environment run the
   guard respawns rose from 4,992 at 83 million steps to 177,192 at 122 million (78 per 10,000 episodes, 212 in the
   configuration with learning rate 1e-2 and weight 64, which is 2% of its episodes).
+- 2026-11-13 11:57 PT: **discovery second block, PointMaze Large with reward 1 on arrival:** fast last layer (6e-3,
+  entropy 0.03, weight 16) 57.3 against RND (6e-3, 0.01, weight 64) 129.8 thousand steps, −72.5 [−84.3, −61.1]
+  (first block −63). Ahead on both blocks. Large with the step cost: RND's unit is complete, the fast last layer's
+  at 152 of 256 windows (UVA, job 6908671).
 
 ## Next
 
