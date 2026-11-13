@@ -1,0 +1,147 @@
+{
+  "study": "beat-cleanrl-ppo-rnd-auto-research",
+  "bonus": "rnd_next_state",
+  "configuration_files": {
+    "pointmaze": "configs/experiments/pointmaze_large_cleanrl-ppo-rnd_goal-termination_reward-arrival-plus-one_example_steps-1024000.toml"
+  },
+  "environments_per_policy": {
+    "pointmaze": 4
+  },
+  "windows_per_unit": 256,
+  "policies_per_unit": 256,
+  "minimum_card_memory_mb": 7000,
+  "phase": "validation-block-two",
+  "seeds": {
+    "first": 20000,
+    "count": 256
+  },
+  "sweeps": [
+    {
+      "method": "held-from-first-arrival",
+      "environments": [
+        "pointmaze-medium"
+      ],
+      "reward_settings": [
+        "arrival_plus_one"
+      ],
+      "steps_per_policy": 1048576,
+      "cells": {
+        "kind": "list",
+        "cells": [
+          {
+            "learning_rate": 0.006,
+            "entropy_coefficient": 0.01,
+            "intrinsic_weight": 4.0,
+            "clip_coefficient": 0.1
+          }
+        ]
+      },
+      "extra_options": [
+        "--bonus-options",
+        "reward_divisor=held_after_first_arrival"
+      ]
+    },
+    {
+      "method": "held-from-first-arrival",
+      "environments": [
+        "pointmaze-medium"
+      ],
+      "reward_settings": [
+        "step_cost"
+      ],
+      "steps_per_policy": 1048576,
+      "cells": {
+        "kind": "list",
+        "cells": [
+          {
+            "learning_rate": 0.006,
+            "entropy_coefficient": 0.01,
+            "intrinsic_weight": 1.0,
+            "clip_coefficient": 0.1
+          },
+          {
+            "learning_rate": 0.006,
+            "entropy_coefficient": 0.01,
+            "intrinsic_weight": 2.0,
+            "clip_coefficient": 0.1
+          }
+        ]
+      },
+      "extra_options": [
+        "--bonus-options",
+        "reward_divisor=held_after_first_arrival"
+      ]
+    },
+    {
+      "method": "control-cleanrl-ppo-rnd",
+      "environments": [
+        "pointmaze-large"
+      ],
+      "reward_settings": [
+        "arrival_plus_one"
+      ],
+      "steps_per_policy": 8388608,
+      "cells": {
+        "kind": "list",
+        "cells": [
+          {
+            "learning_rate": 0.002,
+            "entropy_coefficient": 0.01,
+            "intrinsic_weight": 2.0,
+            "clip_coefficient": 0.1
+          }
+        ]
+      }
+    },
+    {
+      "method": "divisor-held-one-sixteenth",
+      "environments": [
+        "pointmaze-large"
+      ],
+      "reward_settings": [
+        "arrival_plus_one"
+      ],
+      "steps_per_policy": 8388608,
+      "cells": {
+        "kind": "list",
+        "cells": [
+          {
+            "learning_rate": 0.002,
+            "entropy_coefficient": 0.01,
+            "intrinsic_weight": 2.0,
+            "clip_coefficient": 0.1
+          }
+        ]
+      },
+      "extra_options": [
+        "--bonus-options",
+        "reward_divisor=held_after_fraction,divisor_hold_fraction=0.0625"
+      ]
+    },
+    {
+      "method": "held-from-first-arrival",
+      "environments": [
+        "pointmaze-large"
+      ],
+      "reward_settings": [
+        "arrival_plus_one"
+      ],
+      "steps_per_policy": 8388608,
+      "cells": {
+        "kind": "list",
+        "cells": [
+          {
+            "learning_rate": 0.002,
+            "entropy_coefficient": 0.01,
+            "intrinsic_weight": 2.0,
+            "clip_coefficient": 0.1
+          }
+        ]
+      },
+      "extra_options": [
+        "--bonus-options",
+        "reward_divisor=held_after_first_arrival"
+      ]
+    }
+  ]
+}
