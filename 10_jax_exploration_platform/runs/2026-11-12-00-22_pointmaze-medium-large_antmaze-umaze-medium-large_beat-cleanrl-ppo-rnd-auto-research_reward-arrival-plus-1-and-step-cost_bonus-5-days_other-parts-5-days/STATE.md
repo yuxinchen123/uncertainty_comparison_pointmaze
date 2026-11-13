@@ -1349,6 +1349,10 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
 - 2026-11-13 13:18 PT: **the development document has the study's section** (`development_document/beat_rnd_pointmaze_antmaze.tex`,
   section 6, PDF pages 108 to 122; every number generated from the records by `development_document/code/beat_rnd_tables.py`;
   compiles with no overfull box and no undefined reference).
+- 2026-11-13 13:30 PT: all 17 RK4 ant units are running (13 on UVA at 1 to 2 of 256 windows after 18 minutes, about
+  10 minutes per window, so about 40 hours per unit; 4 on Gilbreth, just started). Because the wall time of an ant
+  unit now sets the schedule, a background worker measures where the time of one RK4 ant iteration goes and the
+  speed ideas that keep results identical (plan Part 3; serval05 profile units, started 13:30 PT).
 
 ## Next
 
