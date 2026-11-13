@@ -520,6 +520,22 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   steps against 8.7), but these sweeps were not aimed at discovery (weights up to 4 only).
 - 2026-11-12 19:21 PT: AntMaze folder: the fleet step had started the two stopped old units again; stopped for
   good (server marked not ready, jobs cancelled by ledger id, units set aside). Details in its `infra_history.md`.
+- 2026-11-12 19:44 PT: **discovery check on the validation block read (256 seeds, PointMaze Large, reward 1 on
+  arrival; mean capped first-goal time in thousand steps).** The six idea units were at 241 to 249 of 256 windows,
+  but every policy had already reached the goal, so their first-goal times are final.
+  RND: 119 ± 6 (learning rate 6e-3, entropy 0.01, weight 64); 135 ± 6 (1e-2, 0.01, 64; 136 ± 3 on the fresh
+  seeds); 245 ± 46 (1e-3, 0.03, 256). Fast last layer at step 0.1: 56 ± 2 (6e-3, 0.03, 16); 66 ± 3; 78 ± 5.
+  All three parts with the divisor held after 1/8: 65 ± 3 (6e-3, 0.03, 16); 73 ± 3; 76 ± 3.
+  Each one's best against RND's best, paired: fast last layer −63 [−75, −52]; all three parts −54 [−66, −43].
+  So the fast last layer reaches the goal first in under half of RND's steps in this case, with the interval far
+  from zero. Each side's best is the best of three on these seeds. At these configurations nobody optimizes
+  (whole-curve means of 0.00 to 0.04), which is what the separate discovery table is for.
+- 2026-11-12 19:43 PT: queued on the validation block (11 units, UVA jobs 6897191 to 6897213): PointMaze Medium
+  with reward 1 on arrival, the three best development configurations of RND and of each finalist; and RND's
+  second and fourth best development configurations on PointMaze Large (learning rates 1e-3 and 3e-3 at weight
+  2), so the baseline gets the same second selection step as the methods.
+- 2026-11-12 19:41 PT: three units of the RND-grid discovery sweep stopped with their state saved when their
+  workers neared the 2-hour limit; they continue from their checkpoints with the next workers.
 
 ## Next
 
