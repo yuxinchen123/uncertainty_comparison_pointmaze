@@ -969,6 +969,25 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   identical. First seven units (the two Medium cases and Large with reward 1 on arrival, first validation block)
   run on seven UVA cards since 03:54 PT. Four more units (Large with the step cost, and the arm without the hold)
   follow when the four jobs of older code copies on Gilbreth have ended (`infra_history.md`).
+- 2026-11-13 04:12 PT: **batch 11, the four PointMaze Medium units (first validation block): the arm with the
+  first-arrival hold is far behind; prediction 2 failed.** Fast last layer until the first arrival, then the hold:
+
+  | case and configuration | whole-curve mean | against the hold alone | first-goal time against the hold alone, thousand steps |
+  |---|---|---|---|
+  | reward 1 on arrival, learning rate 6e-3, weight 4 | 0.7001 | −0.243 [−0.255, −0.232] | −3.9 [−6.5, −1.5] |
+  | step cost, learning rate 6e-3, weight 2 | −0.3821 | −0.034 [−0.038, −0.029] | −1.6 [−3.0, −0.2] |
+  | step cost, learning rate 6e-3, weight 4 | −0.4307 | −0.080 [−0.086, −0.074] | −0.4 [−2.0, +1.1] |
+
+  At (1e-2, weight 4) with reward 1 on arrival it is 0.5548. It is also behind batch 10's arm, the fast last layer
+  throughout with the hold (0.7001 against 0.8424). The goal is still found sooner than by RND's best
+  configuration for the whole-curve mean (14.6 against 25.0 thousand steps with reward 1 on arrival; 12.7 against
+  20.0 with the step cost). What the records show: at the switch the reward the learner sees doubles, because the
+  divisor was built on the fast scores and is then frozen, and afterwards it falls four to eight times more slowly
+  than for the hold alone (table in the batch's ideas file, addendum 1). Two readings: the frozen divisor of the
+  wrong scale, or a state of the policy left by the fast phase. **Seven units that tell them apart run on UVA
+  since 04:10 PT** (existing options): the same arm with RND's running divisor (Medium and Large with reward 1 on
+  arrival, 5 configurations) and with the divisor held after 1/16 of the run (2 configurations); predictions 6 to
+  8 in the addendum. The batch's planned units on Large with the step cost are not run.
 
 ## Next
 
@@ -989,12 +1008,14 @@ Rewritten 2026-11-13 03:02 PT.
    Medium and Large maps, which have no configuration file and no check with trained policies yet.
 5. **Summaries:** `summary_settings.json` and summaries for batches 8, 9 and 10; the standing page after each
    reading.
-6. **Batch 11** (the fast last layer until each policy's first arrival, then the hold): read its seven running
-   units against the hold alone and against batch 10's arm on the same seeds (scratchpad script `quick_pair.py`).
-   Build its second description (4 units: Large with the step cost, and the arm without the hold) and open the
-   Gilbreth limit again (`units_at_once` = held + pending) only when Gilbreth jobs 12352113 and 12352874 to
-   12352876 have ended; until then nothing of the new option may wait on Gilbreth or in UVA's queue (a worker does
-   not check which code copy a unit needs). The folder's code is frozen at 2017e2b8.
+6. **Batch 11:** its arm with the first-arrival hold is far behind on Medium (entry of 04:12 PT); its three Large
+   units with reward 1 on arrival and the seven units of addendum 1 (running divisor; divisor held after 1/16)
+   are running on UVA. Read them with `quick_pair.py` against RND and the hold alone at the same configuration.
+   If the running divisor repairs the arm (prediction 6), the next step is a divisor that is built on the
+   predictor's own scores during the fast phase, so that it can be held from the first arrival at the right scale
+   (code change). Open the Gilbreth limit again (`units_at_once` = held + pending) when Gilbreth jobs 12352113,
+   12352875 and 12352876 have ended; until then nothing of an option newer than their code copies may wait on
+   Gilbreth or in UVA's queue. The folder's code is frozen at 2017e2b8.
 7. **Waiting for the user:** how strict to be about the held divisor's closeness to public practice; what the
    AntMaze comparison is if RND stays at a few percent on the U-maze.
 8. Fresh seeds (from 30000) only for the method as it stands at the end. Re-create the monitoring cron before

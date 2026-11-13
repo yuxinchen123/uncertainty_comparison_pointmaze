@@ -165,3 +165,8 @@ Times are Pacific.
   --only-cards-free-now` placed five jobs on seven cards (6901667 on an A100 40 GB, 6901668 and 6901669 on two RTX
   5080 each, 6901670 and 6901671 on an RTX 4000 Ada each); all five started within two minutes and took the seven
   units, so no unit of the new option is waiting anywhere.
+- 2026-11-13 04:09 PT: seven more units of batch 11 (the arm with RND's running divisor and the arm with the divisor
+  held after 1/16 of the run) were built and stayed on UVA: three jobs on seven free cards (6901863 on two RTX 5080,
+  6901864 on one RTX 4000 Ada, 6901865 on four RTX 4000 Ada) all started within two minutes and took them. No unit
+  is waiting. The Gilbreth limit stays at 0 (jobs 12352113, 12352875 and 12352876 of older code copies were still
+  running there at 04:06 PT).
