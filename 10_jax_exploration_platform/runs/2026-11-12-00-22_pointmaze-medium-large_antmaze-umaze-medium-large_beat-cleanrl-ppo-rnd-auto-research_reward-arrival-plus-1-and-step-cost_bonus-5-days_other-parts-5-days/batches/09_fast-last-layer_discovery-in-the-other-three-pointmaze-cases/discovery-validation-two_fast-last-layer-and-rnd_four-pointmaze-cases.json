@@ -9,7 +9,7 @@
   },
   "windows_per_unit": 256,
   "minimum_card_memory_mb": 7000,
-  "phase": "discovery-validation-two",
+  "phase": "discovery-block-two",
   "seeds": {
     "first": 20000,
     "count": 256
@@ -38,7 +38,7 @@
       }
     },
     {
-      "method": "fast-last-layer-step-0-point-1",
+      "method": "fast-layer-step-0-point-1",
       "environments": [
         "pointmaze-medium"
       ],
@@ -84,7 +84,7 @@
       }
     },
     {
-      "method": "fast-last-layer-step-0-point-1",
+      "method": "fast-layer-step-0-point-1",
       "environments": [
         "pointmaze-medium"
       ],
@@ -130,7 +130,7 @@
       }
     },
     {
-      "method": "fast-last-layer-step-0-point-1",
+      "method": "fast-layer-step-0-point-1",
       "environments": [
         "pointmaze-large"
       ],
@@ -176,7 +176,7 @@
       }
     },
     {
-      "method": "fast-last-layer-step-0-point-1",
+      "method": "fast-layer-step-0-point-1",
       "environments": [
         "pointmaze-large"
       ],
