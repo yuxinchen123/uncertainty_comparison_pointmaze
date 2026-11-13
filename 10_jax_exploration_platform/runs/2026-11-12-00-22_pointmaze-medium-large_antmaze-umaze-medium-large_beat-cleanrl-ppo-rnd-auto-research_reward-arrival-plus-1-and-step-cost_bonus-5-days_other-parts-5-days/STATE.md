@@ -1026,8 +1026,9 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   against the hold alone −0.017 [−0.031, −0.005], against RND's best −0.0074 [−0.020, +0.0035] (level); final
   level 0.987 against RND's 0.992 (level); first-goal time 90.7 thousand steps against 269 for RND's best
   configuration for the whole-curve mean (−179 [−201, −156]). It is the first single configuration that is level
-  with RND's best on the whole-curve mean and finds the goal about three times sooner (first block; the
-  comparison with RND's best configuration for discovery, 119 thousand steps, is in the tick report of this time).
+  with RND's best on the whole-curve mean and finds the goal about three times sooner. Against RND's best
+  configuration for discovery (119.3 thousand steps) its first-goal time is −28.5 [−43.4, −13.5]. First block
+  only; one of two configurations of the arm in this case.
 - 2026-11-13 04:47 PT: **ant U-maze screen, second complete unit** (fast last layer alone, 128 environments per
   policy): behind RND in all 8 configurations (−0.005 to −0.016 on the whole-curve mean), first arrivals later (2.2
   to 4.1 against 1.9 to 2.75 million steps); 5 fault-guard respawns. With 128 environments per policy the fast
