@@ -102,3 +102,36 @@ Generated from the records in `profiles/pointmaze/ideas/`; the per-idea tables w
 | 22 | RTX A4500 | 4 | update unroll 16 (no loop left) | 512 | 0.1095 | 2.39 | 4.7 | 0.0594 |
 
 <!-- pointmaze rows: end -->
+
+## AntMaze U-maze, RK4 physics (MuJoCo Warp, 0.01 s x 5), 16 environments per policy
+
+Written by hand from `profiles/rk4_ant_iteration/` (notes, records and scripts there); measured 2026-11-13 on the
+H100 NVL of serval05 at 128 policies (and 32 for the fixed part). The iteration is 97.9% bare physics and 76% fixed
+cost at 128 policies, so the ideas below act on the physics or on start-up. Gain: the median over alternating rounds
+of the unit's seconds per iteration divided by the idea's, both built in one process. Risk: same = identical results
+expected.
+
+| idea | what changed<br>(file, key) | risk | check and its result | gain, H100 NVL,<br>128 policies | kept |
+|---|---|---|---|---|---|
+| 13: rollout loop steps per body | existing key `scan_unroll` (16 today); 1 and 4 given | same | bit-identical state after 3 iterations on processors (job 6909304) | 1 step: 1.002; first call 7.6 s instead of 14.2 s | not kept: under 5%; the shorter compile is real, but `scan_unroll` is in a checkpoint's identity, so a running unit cannot change it |
+| 9: frame loop over the 5 physics steps unrolled | `WarpAntMaze(frame_unroll=...)`, measurement scripts only | same | bit-identical on processors (job 6909304; test file) | with the rollout at 4 steps per body: 1.003; inside a rollout of 16 or 32 steps per body: 0.145 (80 or 160 physics calls in one program make MuJoCo Warp capture its graphs on every call) | not kept |
+| 22: update loop steps per body | existing key `update_unroll` (2 today); 1 and 4 given | dist | NOT identical: 128 and 111 of 247 state arrays equal after 3 iterations on processors (job 6909304) | not measured | not kept: changes numbers |
+| solver loop as a plain loop of 4 iterations (MuJoCo Warp's `opt.graph_conditional` off) | measurement scripts only | same | bit-identical on processors (job 6909304); a world that is done skips the remaining iterations in both loops | native physics step: 0.958 at 2,048 worlds, 0.982 at 512; whole iteration: 1.043 at 128 policies (faster in 10 of 10 paired rounds), 1.033 at 32 (9 of 10) | not kept: under 5%, the largest gain found; no option added |
+| smaller pools: 128 constraint rows or 16 contact slots per environment | measurement scripts only | same while nothing is dropped | nothing dropped at the measured states | native physics step: 0.961 to 1.043 (no consistent gain) | not kept: no gain, and a unit reached 161 rows once |
+| 2 solver iterations; 4 line-search iterations | measurement scripts only | env | not checked | native physics step: 0.833; 1.001 | reported only |
+| 29: state put on the card before calls | new option `--put-state-on-card` (`scripts/run_training.py`) | same | test file `tests/envs/test_antmaze_warp_speed_options.py`: one compiled program, state bit-identical; resumed unit equals the whole unit | start-up of a resumed unit: removes 2 of the 3 compiles of the iteration (12.3 s and 12.1 s on serval05) | KEPT for start-up (option, default off) |
+| 29: compilation cache across job restarts | new option `--compilation-cache-dir` (`scripts/run_training.py`) | same | same test file: the cache is filled; resumed unit equals the whole unit | first iteration 5.4 s instead of 15.4 s when the cache holds the program | KEPT for start-up (option, default off) |
+| 28: several iterations per host call | not measured | dist | — | the host is not a bottleneck: one call with a wait is 3.6 ms longer than a chained call (0.2%) | not kept |
+
+| idea | card | copies | seconds per<br>iteration | total steps per<br>second (millions) | steps per second<br>per copy (thousands) | hours per million<br>steps per copy |
+|---|---|---:|---:|---:|---:|---:|
+| the unit's program | H100 NVL | 32 | 1.514 | 0.0433 | 1.352 | 0.205 |
+| the unit's program | H100 NVL | 128 | 1.852 | 0.1415 | 1.106 | 0.2512 |
+| rollout loop 1 step per body | H100 NVL | 128 | 1.848 | 0.1419 | 1.108 | 0.2506 |
+| rollout loop 4 steps per body, frame loop unrolled | H100 NVL | 128 | 1.845 | 0.1421 | 1.110 | 0.2503 |
+| frame loop unrolled, rollout loop 16 steps per body | H100 NVL | 128 | 12.738 | 0.0206 | 0.161 | 1.7277 |
+| frame loop unrolled, rollout loop 32 steps per body | H100 NVL | 128 | 12.644 | 0.0207 | 0.162 | 1.7150 |
+| the unit's program (solver loop unit) | H100 NVL | 128 | 1.864 | 0.1406 | 1.098 | 0.2529 |
+| solver loop as a plain loop of 4 iterations | H100 NVL | 128 | 1.788 | 0.1466 | 1.145 | 0.2425 |
+| the unit's program (solver loop unit) | H100 NVL | 32 | 1.520 | 0.0431 | 1.347 | 0.2062 |
+| solver loop as a plain loop of 4 iterations | H100 NVL | 32 | 1.472 | 0.0445 | 1.391 | 0.1997 |

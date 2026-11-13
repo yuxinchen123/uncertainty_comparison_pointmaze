@@ -16,6 +16,7 @@ WORDS = {
     "rollout-unroll-1": "rollout loop not unrolled (1 step per body)",
     "rollout-unroll-4_frame-unroll-5": "rollout loop 4 steps per body, frame loop unrolled",
     "rollout-unroll-32_frame-unroll-5": "rollout loop 32 steps per body, frame loop unrolled",
+    "solver-plain-loop": "MuJoCo Warp's solver loop as a plain loop of 4 iterations",
     "no-cache": "as the units start today: no cache, state as built",
     "no-cache_state-committed": "no cache, state put on the card",
     "cache-first-process-fills-it_state-committed": "cache, first process (fills it), state put on the card",
@@ -144,6 +145,9 @@ def main():
                                                             load(f"breakdown_{card}_copies-32.json"))),
             ("native physics split", lambda: native_table(load(f"breakdown_{card}_copies-128.json"))),
             ("loop layout ideas", lambda: ideas_table(load(f"ideas_loop-layout_{card}_copies-128.json"))),
+            ("solver loop", lambda: "\n".join([ideas_table(load(f"ideas_solver-plain-loop_{card}_copies-128.json")),
+                                                 *ideas_table(load(f"ideas_solver-plain-loop_{card}_copies-32.json"))
+                                                 .splitlines()[2:]])),
             ("start-up", lambda: startup_table(RECORDS / f"startup_{card}.jsonl"))):
         print(f"\n### {title}\n")
         print(make())
