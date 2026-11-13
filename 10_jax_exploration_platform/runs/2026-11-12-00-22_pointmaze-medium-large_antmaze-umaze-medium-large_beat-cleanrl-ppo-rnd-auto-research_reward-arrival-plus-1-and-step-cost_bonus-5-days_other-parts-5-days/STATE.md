@@ -302,6 +302,18 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   1/4 at weight 4, slower predictor with held divisor at weights 2 and 4, slower predictor alone at weight 4;
   (b) **batch 3** (`batches/03_.../ideas.md`, 6 units): combinations of the slower predictor, the held divisor
   and the fast last layer, with predictions.
+- 2026-11-12 16:17 PT: the session restarted at about 16:14 PT (a few minutes' gap). The 20-minute monitor was
+  created again with the AntMaze folder and the fleet step in its text (0a3e2261; the earlier one deleted), the
+  5-minute hand-over loop was started again for the three folders, and the report worker was resumed.
+- 2026-11-12 16:17 PT: **first AntMaze unit read by hand and the other 7 released to Gilbreth.** On an NVIDIA A30 one
+  iteration at 16,384 environments takes 3.85 s (0.545 million steps per second; an H100 NVL: 1.67 million), so a
+  unit with 128 environments per policy takes about 66 minutes there, the unit with 16 about 7 hours and the unit
+  with 4 about 11 hours (4-hour jobs, continued from checkpoints). Gilbreth's A100 cards have 1,457 standby jobs
+  waiting, so our jobs get A30 cards.
+  Two early facts from that unit (128 environments per policy, at 2.4 million steps per policy): some policies
+  already reach the U-maze goal; and policies trained with the bonus spend 0.7% to 8.2% of their steps within
+  0.5 m of the ceiling (a random policy: about 0.33%), with largest torso speeds of 7.8 to 12.8 m/s. The bonus
+  rewards leaving the floor. The Gymnasium AntMaze has no rule against it either.
 
 ## Next
 
