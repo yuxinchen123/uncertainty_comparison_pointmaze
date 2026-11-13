@@ -580,6 +580,32 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   +0.0137 [+0.007, +0.020]; slower predictor with held divisor +0.0102 [+0.005, +0.016]).
   PointMaze Medium with reward 1 on arrival, all three parts, third configuration: 0.893; its best of three stays
   0.906, behind RND's 0.9349 by 0.029 [−0.040, −0.018].
+- 2026-11-12 21:01 PT: **batch 4, PointMaze Large with the step cost, slower predictor with held divisor (16
+  development seeds; the unit finished on Gilbreth from its UVA checkpoint):** best whole-curve mean −0.722
+  (learning rate 3e-3, weight 8) against RND's −0.725: +0.003 [−0.004, +0.007], level; final level −0.703 against
+  −0.712: +0.008 [+0.006, +0.012]. Its best weight is the largest of its grid, so weights 16 and 32 are queued
+  (edge rule). RND's same configuration has −0.732 ± 0.001 on the 1,024 confirmation seeds, so its development
+  value is 0.007 too high. The unit of all three parts in that case is at 101 of 256 windows and continues on
+  Gilbreth.
+  Standing of the slower predictor with held divisor on the whole-curve mean: ahead in PointMaze Large with
+  reward 1 on arrival (validation block); level in the other three PointMaze cases. Its final level is ahead in
+  all four.
+- 2026-11-12 21:03 PT: **where it loses on PointMaze Medium with reward 1 on arrival** (mean training return of the
+  256 validation policies): ahead of RND until about 50 thousand steps (0.382 against 0.279 at 33 thousand),
+  behind from 66 to 200 thousand (0.715 against 0.816 at 98 thousand), level after. In that stretch the intrinsic
+  reward the learner sees is 30 to 60 times RND's (0.18 against 0.006 at 98 thousand steps): the slower predictor
+  keeps the error high, and the divisor is frozen only at 66 thousand steps, after it has shrunk with the bonus.
+  **Batch 5 queued from this** (`batches/05_bonus-that-falls-away-sooner-…`, 4 units on Gilbreth, existing
+  options only): held divisor alone (after 1/16 and after 1/64 of the run), slower predictor with the divisor
+  held after 1/64, predictor at half speed with held divisor. Predictions in its `ideas.md`.
+- 2026-11-12 21:02 PT: **AntMaze check, early look at 1,048,576 steps per policy (not a result; the units are at
+  5 to 66 of 256 windows):** policies that had reached the goal by then: 707 of 768 with 16 environments per
+  policy; 112 of 128 in the one unit with 4 environments per policy that has got that far; 1 of 768 with 128
+  environments per policy. The count of environments per policy decides how soon the ant finds the goal, as the
+  stopped check's records suggested.
+- 2026-11-12 21:04 PT: all of this folder's units now run on Gilbreth (6: batch 5, the larger weights, and the
+  unit of all three parts on PointMaze Large with the step cost, which left UVA when its worker ended). With the
+  18 AntMaze units that makes 24 jobs there, the account's limit for idle-card jobs.
 
 ## Next
 

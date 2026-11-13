@@ -228,3 +228,8 @@ Times are Pacific, read from the clock or from scheduler records.
   session, at most 12 hours).
   A stale claim file of the old unit with 4 environments per policy, left in the server's running folder by the
   job cancelled at 19:41 PT, was set aside with the other old files.
+- 2026-11-12 21:02 PT: all 18 units run on Gilbreth (15 on A100 80 GB cards, 3 on A30 cards), one job each, no
+  unit started twice. Fault guard, read over all units so far: 2 respawns, both in units with 16 environments per
+  policy (largest turning rate seen 120.4 rad/s, above the bound of 100), in about 1.2 billion environment steps of
+  those units; none in the units with 4 and with 128 environments per policy. Largest torso speed anywhere: 15.0
+  m/s. The guard's count per unit goes into every later reading.
