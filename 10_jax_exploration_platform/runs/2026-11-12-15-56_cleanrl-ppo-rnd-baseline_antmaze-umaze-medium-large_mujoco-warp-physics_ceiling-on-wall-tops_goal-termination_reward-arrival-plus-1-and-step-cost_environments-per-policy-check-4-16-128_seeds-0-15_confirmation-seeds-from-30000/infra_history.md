@@ -286,3 +286,23 @@ Times are Pacific, read from the clock or from scheduler records.
   12353497 started, found nothing and ended after 8 seconds; the other three wait and will do the same, or will
   continue the two screen units with 16 environments per policy if those reach their jobs' 4-hour limit at 06:58
   PT before finishing (they were at 240 and 243 of 256 windows at 06:26 PT). Not cancelled for that reason.
+- 2026-11-13 07:08 PT: **a partial look at the longer run (phase `budget-probe`; records copied from Gilbreth at
+  07:07 PT; 16 development seeds per configuration), and a concern about what the trained ants do.**
+  1. At equal steps (the first 40 million per policy) the best configuration with 16 environments per policy has
+     a whole-curve mean of 0.0779 ± 0.0035 (learning rate 1e-4, entropy 0.001, weight 0.0625; level over the last
+     tenth 0.098) and the best with 128 has 0.0503 ± 0.0009 (1e-2, 0.001, weight 16; level 0.062). The 16-environment
+     best sits at the lowest learning rate and the lowest weight of its grid, so the edge rule applies.
+  2. **The fault guard fires far more often late in long runs, and mostly in the best configurations.** With 128
+     environments per policy (158 windows, 83 million steps per policy): 54 respawns in the first half and 4,938
+     in the second; 3,797 of them at learning rate 1e-2 with weight 64 (one per 0.3 million steps), 500 to 557 at
+     weights 1 and 4, 4 to 6 in each configuration with learning rate 3e-2. With 16 environments per policy (154
+     windows, 40 million steps): 790 in all, 724 of them in the best configuration (one per 0.9 million steps).
+     In the 16.8-million-step check the six units of a count had 16 to 43.
+  3. **Late in these runs the ants do not walk.** Over the last 20 windows, per configuration: 9 to 18% of all
+     steps are in the zone above the walls, most in the best configurations (0.178 for the best with 16
+     environments, 0.14 with 128); the largest torso speed seen is 14 to 26 m/s and the largest turning speed 63
+     to 164 rad/s (the guard's limits are 30 m/s and 100 rad/s); an episode that arrives takes 510 to 545 of its
+     700 steps; 3 to 10% of episodes arrive.
+  This holds for RND and would hold for any method alike, but it may mean that the return is earned by motion a
+  reference simulator would not allow. A check with late-training policies against reference MuJoCo was started
+  at 07:08 PT (background worker; results to be added here).

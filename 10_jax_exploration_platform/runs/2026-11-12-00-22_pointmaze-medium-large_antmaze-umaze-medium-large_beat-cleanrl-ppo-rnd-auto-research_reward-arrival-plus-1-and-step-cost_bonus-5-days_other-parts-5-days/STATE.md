@@ -1207,6 +1207,24 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   prediction 6 fails in this case. PointMaze Large with the step cost, held at (2e-3, weight 4): −0.7409, behind
   RND's best by 0.010, first-goal time 69 against 191 thousand steps. Three units on Large with the step cost
   are running.
+- 2026-11-13 07:08 PT: **batch 12, PointMaze Large with the step cost, step 0.01 with the hold (2e-3, weight 8;
+  first block):** −0.7250, against RND's best +0.0060 [+0.0004, +0.0115], final level +0.0069, first-goal time 123
+  against 191 thousand steps (−69 [−93, −45]); against the hold alone at the same configuration +0.0018 (level).
+  Batch 10's second configuration at step 0.1 (4.5e-3, weight 8) is behind (−0.7638). Second block queued at 07:06
+  PT for the three steps 0.1, 0.03 and 0.01 at (2e-3, weight 8); the step with the highest first-block mean
+  counts (step 0.03 was at 243 of 256 windows).
+- 2026-11-13 07:08 PT: **ant: partial look at the longer RND run, and a concern** (details and numbers in the
+  AntMaze baseline folder's `infra_history.md`).
+  1. At equal steps (40 million) 16 environments per policy is well ahead of 128: 0.0779 against 0.0503 at each
+     count's best configuration. The 16-environment best is at the lowest learning rate (1e-4) and lowest weight
+     (0.0625) of its grid.
+  2. The fault guard fires about 50 to 200 times more often per step than in the 16.8-million-step check, almost
+     all late in the run and in the best configurations (up to one respawn per 0.3 million steps).
+  3. Late in these runs 9 to 18% of all steps are above the walls (most in the best configurations) and torso
+     speeds reach 14 to 26 m/s. The ants are thrown about; they do not walk.
+  A background worker is checking late-training policies against reference MuJoCo (started 07:08 PT), to tell
+  whether this motion is a property of the task or something only our physics allows. Until that is known, ant
+  results are provisional for RND and for every arm.
 
 ## Next
 

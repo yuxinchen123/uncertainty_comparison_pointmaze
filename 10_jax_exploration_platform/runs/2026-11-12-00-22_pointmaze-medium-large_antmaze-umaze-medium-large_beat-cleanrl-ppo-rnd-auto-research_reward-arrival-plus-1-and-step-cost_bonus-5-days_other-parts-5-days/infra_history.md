@@ -202,3 +202,5 @@ Times are Pacific.
   an A100 40 GB, 6903562 on an RTX 4000 Ada).
 - 2026-11-13 06:27 PT: two second-block units of batch 14 (PointMaze Medium, step 0.01 with the hold) were built
   and handed to Gilbreth (limit 7, four units there before) with two jobs.
+- 2026-11-13 07:06 PT: three second-block units of batch 12 (PointMaze Large with the step cost, the fast last layer
+  at steps 0.1, 0.03 and 0.01 with the hold) were built and handed to Gilbreth with three jobs.
