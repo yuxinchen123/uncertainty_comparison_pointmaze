@@ -358,6 +358,42 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
 - 2026-11-12 16:36 PT: PointMaze units moved from Gilbreth back to UVA (Gilbreth's standby queue had slowed for
   this account; UVA starts sl5nw workers at once); Gilbreth's standby places go to the ant. `submit.py --accounts`
   limits new workers to chosen accounts.
+- 2026-11-12 17:00 PT: **batch 2 with 17 of 18 units (generated summary, 16 development seeds).**
+  Whole-curve mean, difference from the control: slower predictor at 0.0625 times 1e-4: +0.012 [−0.010, +0.034]
+  (0.897 ± 0.007 at weight 2, median first arrival 67 thousand steps against 192 thousand); divisor held after
+  1/16: +0.010 [−0.009, +0.032]; held after 1/4, the three input clips, the slower predictor at 0.125 times: within
+  ±0.002; held after 1/8: −0.012; input statistics kept from the random-action rollouts: −0.054 [−0.076, −0.026]
+  (behind); local features as the input of RND: −0.53 to −0.70; scheduled last layer on local features: −0.82 to
+  −0.87. No clip gives the same numbers as clip 20: the whitened inputs do not reach 20.
+  Mean capped first-goal time, difference from the control (190 thousand): scheduled last layer on local features
+  −144, −131 and −125 thousand (intervals below zero); input statistics kept: −109 [−221, −29]; local features as
+  the input of RND: −106 and −97 (below zero) and −64 (within); the rest within.
+  Readings of the predictions: 1 (wider clip) held on the whole-curve mean and is within noise on the arrivals;
+  2 (kept statistics) took its second branch, behind on the whole-curve mean, with earlier arrivals; 3 (slower
+  predictor) held; 4 (local features as the input): all 16 reach the goal at lengths 1 and 2 but the whole-curve
+  mean is 0.20 to 0.35, so the even start's failure to find the goal came from fits that were not local, and what
+  is missing here is that the policy settles; 5 (scheduled last layer on local features): all 16 reach the goal,
+  the whole-curve mean is the lowest of the batch; 6 (held divisor) held so far.
+- 2026-11-12 17:00 PT: **validation block (256 seeds), differences from the control at the same weight.**
+  Divisor held after 1/16, weight 2: +0.009 [+0.004, +0.015] (0.888 ± 0.002; final level +0.006). Slower predictor
+  (0.25 times) with held divisor: +0.007 [−0.001, +0.014] at weight 2 and 0.888 ± 0.002 at weight 4 (+0.026 against
+  the control at weight 4, +0.010 against the control's best, 0.878 at weight 2). Slower predictor alone, weight 2:
+  +0.008 [+0.002, +0.014]. The two gains do not add: every arm ends near 0.886 to 0.888. On the first-goal time
+  the slower predictor is ahead (171 and 153 thousand steps against 205 to 269) and the held divisor changes
+  nothing, as expected of a change that acts after the hold.
+- 2026-11-12 17:00 PT: batch 3, first units: all three parts with the divisor held after 1/8, step 0.1: whole-curve
+  mean 0.894 ± 0.006 at weight 0.5 (+0.010 [−0.014, +0.037]), final level 0.997; at weight 4 its mean capped
+  first-goal time is 63 ± 10 thousand with a whole-curve mean of 0.714 (the fast last layer alone had 0.016 at its
+  fastest weight). So the held divisor does remove most of the fast last layer's late cost.
+- 2026-11-12 17:03 PT: **RND's configuration for discovery chosen in three cases** (development seeds): PointMaze
+  Large with reward 1 on arrival: learning rate 1e-2, entropy 0.01, weight 64 (95 ± 21 thousand steps; 2e-2 is
+  worse, so the learning rate is inside its range now); PointMaze Medium with reward 1 on arrival: learning rate
+  2e-2, entropy 0.1, weight 4 (9.2 ± 2.2 and 9.9 ± 2.0 in two runs); PointMaze Medium with the step cost:
+  learning rate 1e-2, entropy 0.01, weight 4 (8.3 ± 1.5). Their confirmations on the 1,024 fresh seeds are queued
+  (phase `confirmation-for-discovery`). PointMaze Large with the step cost waits for its sweep.
+  Queued for the ideas that lead on discovery (scheduled last layer on local features with decay 1 and length 1;
+  fast last layer at step 0.1; all three parts with the divisor held after 1/8): learning rate 2e-3, 6e-3, 1e-2 ×
+  entropy 0.01, 0.03 × weight 4, 16, 64, so that they are tuned as RND was.
 
 ## Next
 
