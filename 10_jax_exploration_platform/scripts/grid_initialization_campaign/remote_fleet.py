@@ -918,12 +918,15 @@ def main():
                         help='put the units in queue/deferred, out of the UVA workers\' reach, to stage them elsewhere')
     args = parser.parse_args()
     run_dir = args.run_dir.resolve()
-    table = read_json(table_path(run_dir))
     if args.command == 'status':
+        # status writes nothing, so it reads the table without the lock
         args.dry_run = True
-        tick(run_dir, table, args, act=False)
+        tick(run_dir, read_json(table_path(run_dir)), args, act=False)
         return
     with fleet_lock(run_dir):
+        # the table is read only once the lock is held, so a command that waited on the lock never writes back
+        # a table read before another writer's change
+        table = read_json(table_path(run_dir))
         {'stage': stage, 'submit': submit, 'tick': tick, 'cancel-pending': cancel_pending,
          'take-back': take_back}[args.command](
             run_dir, table, args)

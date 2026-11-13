@@ -525,3 +525,28 @@ class FrozenCode(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TableReadUnderTheLock(unittest.TestCase):
+    """The server table is read only after the fleet lock is taken, so a waiting step cannot write back an old one."""
+
+    def test_a_step_sees_the_change_made_while_it_waited_on_the_lock(self):
+        """A writer that holds the lock adds an entry; the step that waited for the lock works on the new table."""
+        with tempfile.TemporaryDirectory() as folder:
+            run_dir = Path(folder)
+            (run_dir / "infrastructure").mkdir()
+            (run_dir / "slurm").mkdir()
+            path = fleet.table_path(run_dir)
+            common.write_json(path, {"gilbreth": {"ready": True}})
+            real_lock, seen = fleet.fleet_lock, []
+
+            def lock_held_by_another_writer(where):
+                """Before the lock is handed over, the other writer adds a server (as a waiting step would see it)."""
+                common.write_json(path, {"gilbreth": {"ready": True}, "mit": {"ready": False}})
+                return real_lock(where)
+
+            with mock.patch.object(fleet, "fleet_lock", lock_held_by_another_writer), \
+                    mock.patch.object(remote, "hand_over_tick", lambda run, table, dry: seen.append(sorted(table))), \
+                    mock.patch.object(sys, "argv", ["remote_fleet.py", "--run-dir", str(run_dir), "hand-over-tick"]):
+                remote.main()
+            self.assertEqual(seen, [["gilbreth", "mit"]])

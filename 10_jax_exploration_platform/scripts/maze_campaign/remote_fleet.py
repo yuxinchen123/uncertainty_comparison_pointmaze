@@ -637,8 +637,11 @@ def main():
         commands.add_parser("hand-over-tick").add_argument("--dry-run", action="store_true")
         args = parser.parse_args()
         run_dir = args.run_dir.resolve()
-        table = common.read_json(fleet.table_path(run_dir))
         with fleet.fleet_lock(run_dir):
+            # the table is read only once the lock is held: a step that waited on the lock must not write back
+            # a table read before another writer's change (before: read, then wait; an entry added while this
+            # step waited was lost when it wrote the table)
+            table = common.read_json(fleet.table_path(run_dir))
             if args.command == "prepare":
                 prepare(run_dir, table, args.server, args.again)
             else:

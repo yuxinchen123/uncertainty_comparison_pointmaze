@@ -541,3 +541,23 @@ def test_compare_arrays_accepts_rounding_and_refuses_real_differences(tmp_path):
     assert record['passed'] is False and [row['array'] for row in record['failed_arrays']] == ['only_here']
     assert record['arrays_compared'] == 3 and record['identical_arrays'] == 1
     assert record['largest_difference_array'] == 'floats'
+
+
+def test_a_command_reads_the_table_only_once_it_holds_the_lock(tmp_path, monkeypatch):
+    """A writer that holds the lock adds a server; the command that waited for the lock works on the new table."""
+    (tmp_path / 'slurm').mkdir()
+    path = fleet.table_path(tmp_path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fleet.write_json(path, {'gilbreth': {'ready': True}})
+    real_lock, seen = fleet.fleet_lock, []
+
+    def lock_held_by_another_writer(where):
+        """Before the lock is handed over, the other writer adds a server."""
+        fleet.write_json(path, {'gilbreth': {'ready': True}, 'mit': {'ready': False}})
+        return real_lock(where)
+
+    monkeypatch.setattr(fleet, 'fleet_lock', lock_held_by_another_writer)
+    monkeypatch.setattr(fleet, 'tick', lambda run, table, args, act=True: seen.append(sorted(table)))
+    monkeypatch.setattr(sys, 'argv', ['remote_fleet.py', '--run-dir', str(tmp_path), 'tick'])
+    fleet.main()
+    assert seen == [['gilbreth', 'mit']]
