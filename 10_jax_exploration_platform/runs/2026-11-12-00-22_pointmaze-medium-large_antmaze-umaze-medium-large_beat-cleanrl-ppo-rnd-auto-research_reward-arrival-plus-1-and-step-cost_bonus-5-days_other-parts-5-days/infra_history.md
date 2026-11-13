@@ -179,3 +179,17 @@ Times are Pacific.
   two minutes (6902810 on an A100 40 GB, 6902811 on an RTX 5080). Batch 10's two units on PointMaze Large with the
   step cost left UVA when their workers reached the two-hour limit at 05:00 PT and continued on Gilbreth from
   their checkpoints (jobs 12353198, 12353199).
+- 2026-11-13 05:42 PT: **this folder's code was frozen anew at commit 42b327e7, its first numbered code copy (copy
+  number 1).** It holds the option `predictor_divisor_after_first_arrival` (commit 9aab504b) and the new rule of
+  the queue (commit 42b327e7): every unit names the lowest copy number that may run it, a worker never takes a
+  unit above its own number, and a claim raises the unit's number to the worker's (README of
+  `scripts/maze_campaign`, section "Code copies"). Workers started before this freeze do not know the rule. Three
+  such jobs were still running, each on a unit of batch 12 with 35 minutes done: 12353240 and 12353241 on
+  Gilbreth and 6902810 on UVA. I cancelled the three by their ledger ids at 05:42 PT so that no worker without
+  the rule is left; their units went back to the queue and three jobs of the new copy were submitted for them on
+  Gilbreth at 05:43 PT (the new copy continues checkpoints of the older one). From now on a freeze, a build and a
+  hand-over need no waiting for older jobs, as long as every live worker was started at or after this freeze.
+- 2026-11-13 05:43 PT: batch 13's thirteen units were built (minimum copy number 1). Nine went to Gilbreth (limit
+  12 with the three units already there; twelve jobs, of which seven were running and five waiting two minutes
+  later) and four stayed on UVA, where three jobs on four free cards started within two minutes (6903416 on an
+  A100 40 GB, 6903417 on two RTX 5080, 6903418 on one RTX 5080).

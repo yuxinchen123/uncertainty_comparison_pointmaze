@@ -1112,6 +1112,12 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   `batches/13_fast-last-layer-until-the-first-arrival_then-the-predictors-own-divisor_four-pointmaze-cases/`): 13
   units on the first validation block. It is not built yet: jobs of the code copy 2017e2b8 are still running for
   this folder and would fail units of the new option.
+- 2026-11-13 05:46 PT: **batch 13 is running** (13 units, first validation block: the fast last layer until the
+  first arrival, then the predictor's own divisor, held or running; 9 on Gilbreth, 4 on UVA). **The folder's code
+  is frozen at 42b327e7, copy number 1,** and workers now skip units that need a newer copy than their own
+  (commit 42b327e7; `infra_history.md`). The three units of batch 12 that were running on jobs of the older copy
+  (Large with reward 1 on arrival at step 0.01, Large with the step cost at steps 0.03 and 0.01) were interrupted
+  after 35 minutes and continue from their checkpoints under the new copy.
 
 ## Next
 
@@ -1132,14 +1138,13 @@ Rewritten 2026-11-13 03:02 PT.
    Medium and Large maps, which have no configuration file and no check with trained policies yet.
 5. **Summaries:** `summary_settings.json` and summaries for batches 8, 9 and 10; the standing page after each
    reading.
-6. **Batch 11:** its arm with the first-arrival hold is far behind on Medium (entry of 04:12 PT); its three Large
-   units with reward 1 on arrival and the seven units of addendum 1 (running divisor; divisor held after 1/16)
-   are running on UVA. Read them with `quick_pair.py` against RND and the hold alone at the same configuration.
-   If the running divisor repairs the arm (prediction 6), the next step is a divisor that is built on the
-   predictor's own scores during the fast phase, so that it can be held from the first arrival at the right scale
-   (code change). Open the Gilbreth limit again (`units_at_once` = held + pending) when Gilbreth jobs 12352113,
-   12352875 and 12352876 have ended; until then nothing of an option newer than their code copies may wait on
-   Gilbreth or in UVA's queue. The folder's code is frozen at 2017e2b8.
+6. **Batches 12 and 13:** read batch 12's four PointMaze Large units (steps 0.03 and 0.01 of the fast last
+   layer with the first-arrival hold) and batch 13's thirteen units (the fast last layer until the first arrival,
+   then the predictor's own divisor) with `quick_pair.py` against RND's best, the hold alone and batch 10's arm.
+   A configuration ahead of RND's best on the first block goes to the second block with fixed configuration.
+   Then the ant U-maze screen of the leading arm at both environment counts (the AntMaze baseline folder must be
+   frozen anew for the new options; its workers do not know the copy rule yet, so wait for them or cancel them by
+   ledger id at that freeze). The auto research folder's code is frozen at 42b327e7 (copy number 1).
 7. **Waiting for the user:** how strict to be about the held divisor's closeness to public practice; what the
    AntMaze comparison is if RND stays at a few percent on the U-maze.
 8. Fresh seeds (from 30000) only for the method as it stands at the end. Re-create the monitoring cron before
