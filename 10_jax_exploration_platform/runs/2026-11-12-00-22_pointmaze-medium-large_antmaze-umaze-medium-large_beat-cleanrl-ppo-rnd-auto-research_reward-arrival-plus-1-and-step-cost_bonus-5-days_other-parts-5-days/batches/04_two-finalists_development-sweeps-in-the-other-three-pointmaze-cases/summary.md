@@ -1,6 +1,6 @@
 # Batch 4: the two finalists' development sweeps in the other three PointMaze cases
 
-Generated 2026-11-12 21:01 PT by the command below. This file is generated: regenerate it, do not edit it. Times are Pacific, converted from machines running Eastern. Run folder: `2026-11-12-00-22_pointmaze-medium-large_antmaze-umaze-medium-large_beat-cleanrl-ppo-rnd-auto-research_reward-arrival-plus-1-and-step-cost_bonus-5-days_other-parts-5-days`; batch folder: `batches/04_two-finalists_development-sweeps-in-the-other-three-pointmaze-cases`.
+Generated 2026-11-13 00:14 PT by the command below. This file is generated: regenerate it, do not edit it. Times are Pacific, converted from machines running Eastern. Run folder: `2026-11-12-00-22_pointmaze-medium-large_antmaze-umaze-medium-large_beat-cleanrl-ppo-rnd-auto-research_reward-arrival-plus-1-and-step-cost_bonus-5-days_other-parts-5-days`; batch folder: `batches/04_two-finalists_development-sweeps-in-the-other-three-pointmaze-cases`.
 
 ```bash
 cd /p/rlprojects/RND/10_jax_exploration_platform
@@ -14,8 +14,8 @@ bash "benchmark_runs/2026-11-12-00-17_pointmaze-antmaze_cleanrl-ppo-rnd_speed-30
 | section | first written | last changed | status |
 |---|---|---|---|
 | [Measures](#measures) | 2026-11-12 19:43 PT | 2026-11-12 19:43 PT | unread |
-| [Development sweeps against the baseline, case by case](#development-sweeps-against-the-baseline-case-by-case) | 2026-11-12 19:43 PT | 2026-11-12 21:01 PT | unread |
-| [Predictions](#predictions) | 2026-11-12 19:43 PT | 2026-11-12 21:01 PT | unread |
+| [Development sweeps against the baseline, case by case](#development-sweeps-against-the-baseline-case-by-case) | 2026-11-12 19:43 PT | 2026-11-13 00:14 PT | unread |
+| [Predictions](#predictions) | 2026-11-12 19:43 PT | 2026-11-13 00:14 PT | unread |
 
 Times are Pacific, converted from machines running Eastern, and come from this report's own history of regenerations. [The same report with unread sections in blue and changed text in brown](summary.html). No section marks itself read.
 
@@ -45,8 +45,9 @@ A case is one environment with one reward setting. In each case every method of 
 | 2 | slower predictor with held divisor | PointMaze Medium, reward 1 on arrival | 15 | complete | 256 of 256 | 2026-11-12 19:17 PT | none |
 | 3 | fast last layer with slower predictor and held divisor, step 0.1 | PointMaze Medium, step cost | 15 | complete | 256 of 256 | 2026-11-12 19:21 PT | none |
 | 4 | slower predictor with held divisor | PointMaze Medium, step cost | 15 | complete | 256 of 256 | 2026-11-12 19:16 PT | none |
-| 5 | fast last layer with slower predictor and held divisor, step 0.1 | PointMaze Large, step cost | 15 | unfinished | 101 of 256 | not finished | none |
+| 5 | fast last layer with slower predictor and held divisor, step 0.1 | PointMaze Large, step cost | 15 | complete | 256 of 256 | 2026-11-12 21:42 PT | 1 continued from a checkpoint |
 | 6 | slower predictor with held divisor | PointMaze Large, step cost | 15 | complete | 256 of 256 | 2026-11-12 20:51 PT | 1 continued from a checkpoint |
+| 7 | slower predictor with held divisor | PointMaze Large, step cost | 4 | complete | 256 of 256 | 2026-11-12 21:47 PT | none |
 
 Unit names, by the number in the first column:
 
@@ -56,6 +57,7 @@ Unit names, by the number in the first column:
 4. `development-at-the-budget_pointmaze-medium_reward-step-cost_slower-predictor-with-held-divisor_cells-01-to-15-of-15_seeds-0-to-15`
 5. `development-at-the-budget_pointmaze-large_reward-step-cost_fast-last-layer-step-0-point-1-slower-predictor-held-divisor_cells-01-to-15-of-15_seeds-0-to-15`
 6. `development-at-the-budget_pointmaze-large_reward-step-cost_slower-predictor-with-held-divisor_cells-01-to-15-of-15_seeds-0-to-15`
+7. `development-at-the-budget_pointmaze-large_reward-step-cost_slower-predictor-with-held-divisor_cells-1-to-4-of-4_seeds-0-to-15`
 
 ### PointMaze Medium, reward 1 on arrival
 
@@ -132,16 +134,16 @@ Best against best for $W$ (the highest is the best):
 | method | best configuration for $W$ | $W$ ↑ ± standard error | difference in $W$ from the control [95% interval] | $L$ ± standard error | difference in $L$ from the control [95% interval] | seeds in common with the control |
 |---|---|---|---|---|---|---|
 | control (CleanRL PPO-RND) | intrinsic weight 2, learning rate 0.006 (best of 3) | **0.9349** ± 0.0031 | control | <u>0.9950</u> ± 0.0010 | control | 256 |
-| slower predictor with held divisor | intrinsic weight 2, learning rate 0.003 (best of 3) | <u>0.9348</u> ± 0.0030 | **-0.0001** [-0.0084, +0.0082] | **0.9999** ± 0.0000 | +0.0049 [+0.0033, +0.0071] | 256 |
-| fast last layer with slower predictor and held divisor, step 0.1 | intrinsic weight 0.5, learning rate 0.01 (best of 3) | 0.9061 ± 0.0051 | <u>-0.0288</u> [-0.0400, -0.0181] | **0.9999** ± 0.0000 | +0.0049 [+0.0033, +0.0070] | 256 |
+| slower predictor with held divisor | intrinsic weight 2, learning rate 0.003 (best of 3) | <u>0.9348</u> ± 0.0030 | **-0.0001** [-0.0084, +0.0083] | **0.9999** ± 0.0000 | +0.0049 [+0.0033, +0.0070] | 256 |
+| fast last layer with slower predictor and held divisor, step 0.1 | intrinsic weight 0.5, learning rate 0.01 (best of 3) | 0.9061 ± 0.0051 | <u>-0.0288</u> [-0.0401, -0.0180] | **0.9999** ± 0.0000 | +0.0049 [+0.0033, +0.0070] | 256 |
 
 Best against best for $M$ (the smallest is the best):
 
 | method | best configuration for $M$ | $M$ ↓ ± standard error, thousand steps | difference in $M$ from the control [95% interval], thousand steps | policies that reach the goal | $W$ at that configuration | $L$ at that configuration | seeds in common with the control |
 |---|---|---|---|---|---|---|---|
 | control (CleanRL PPO-RND) | intrinsic weight 4, learning rate 0.006 (best of 3) | <u>19.9</u> ± 1.16 | control | 256 of 256 | <u>0.9194</u> | 0.9794 | 256 |
-| slower predictor with held divisor | intrinsic weight 2, learning rate 0.003 (best of 3) | **17.9** ± 1 | **-1.98** [-4.95, +1.04] | 256 of 256 | **0.9348** | **0.9999** | 256 |
-| fast last layer with slower predictor and held divisor, step 0.1 | intrinsic weight 1, learning rate 0.003 (best of 3) | 24 ± 1.78 | <u>+4.09</u> [+0.426, +7.9] | 256 of 256 | 0.8928 | <u>0.9997</u> | 256 |
+| slower predictor with held divisor | intrinsic weight 2, learning rate 0.003 (best of 3) | **17.9** ± 1 | **-1.98** [-5.03, +0.955] | 256 of 256 | **0.9348** | **0.9999** | 256 |
+| fast last layer with slower predictor and held divisor, step 0.1 | intrinsic weight 1, learning rate 0.003 (best of 3) | 24 ± 1.78 | <u>+4.09</u> [+0.448, +7.95] | 256 of 256 | 0.8928 | <u>0.9997</u> | 256 |
 
 ##### Units
 
@@ -221,16 +223,51 @@ The same rows and columns, $M$ in thousands of steps; over each method's whole g
 | slower predictor with held divisor, learning rate 0.006 | 23.3 | 12.5 | <u>12.3</u> | 17.6 | 14.2 |
 | slower predictor with held divisor, learning rate 0.01 | 14 | <u>12.3</u> | 17.9 | 14.9 | **10.3** |
 
+#### On the validation seeds: picked configurations of this case
+
+The units of the phase `validation-block` in PointMaze Medium, step cost. Each trains one configuration on 256 seeds, from 10000 to 10255: neither the development seeds, on which these configurations were picked as the leading ones of each side's sweep, nor the confirmation seeds. Read at 1,048,576 environment steps per policy. Define $W$, $L$ and $M$ as in the section Measures. First table: every configuration, the control first, each method from its best on for $W$; per column the best value is bold and the second best underlined (the smallest for $M$).
+
+| method | configuration | $W$ ± standard error | $L$ ± standard error | $M$ ± standard error, thousand steps | policies that reach the goal |
+|---|---|---|---|---|---|
+| control (CleanRL PPO-RND) | intrinsic weight 0.00195312, learning rate 0.006 | **-0.3505** ± 0.0016 | <u>-0.3078</u> ± 0.0007 | **20** ± 1.17 | 256 of 256 |
+| control (CleanRL PPO-RND) | intrinsic weight 0.0078125, learning rate 0.006 | <u>-0.3514</u> ± 0.0018 | **-0.3074** ± 0.0011 | 20.9 ± 1.27 | 256 of 256 |
+| control (CleanRL PPO-RND) | intrinsic weight 0.00195312, learning rate 0.01 | -0.3549 ± 0.0018 | <u>-0.3078</u> ± 0.0011 | <u>20.1</u> ± 1 | 256 of 256 |
+
+Then, for $W$ and $M$: each method at its best configuration on these seeds against the control at its own, paired on the seeds both have, with the 95% interval from 10,000 resamples of those seeds. Each best configuration was chosen on these same seeds, among the few run here: a second selection step, not the comparison on the confirmation seeds.
+
+Best against best for $W$ (the highest is the best):
+
+No method other than the control has a complete unit yet.
+
+Best against best for $M$ (the smallest is the best):
+
+No method other than the control has a complete unit yet.
+
+##### Units
+
+| unit | method | case | configurations | state | logging windows written | finished | restarts |
+|---|---|---|---|---|---|---|---|
+| 1 | control (CleanRL PPO-RND) | PointMaze Medium, step cost | 1 | complete | 256 of 256 | 2026-11-12 22:58 PT | none |
+| 2 | control (CleanRL PPO-RND) | PointMaze Medium, step cost | 1 | complete | 256 of 256 | 2026-11-12 22:53 PT | none |
+| 3 | control (CleanRL PPO-RND) | PointMaze Medium, step cost | 1 | complete | 256 of 256 | 2026-11-12 22:54 PT | none |
+
+Unit names, by the number in the first column:
+
+1. `validation-block_pointmaze-medium_reward-step-cost_control-cleanrl-ppo-rnd_learning-rate-0.006_entropy-coefficient-0.01_intrinsic-weight-0.001953125_clip-coefficient-0.1_seeds-10000-to-10255`
+2. `validation-block_pointmaze-medium_reward-step-cost_control-cleanrl-ppo-rnd_learning-rate-0.006_entropy-coefficient-0.01_intrinsic-weight-0.0078125_clip-coefficient-0.1_seeds-10000-to-10255`
+3. `validation-block_pointmaze-medium_reward-step-cost_control-cleanrl-ppo-rnd_learning-rate-0.01_entropy-coefficient-0.01_intrinsic-weight-0.001953125_clip-coefficient-0.1_seeds-10000-to-10255`
+
 ### PointMaze Large, step cost
 
-Read at 33,554,432 environment steps per policy. CleanRL PPO-RND: 12 of 12 configurations read (1 of 1 units complete). fast last layer with slower predictor and held divisor, step 0.1: 0 of 15 configurations read (0 of 1 units complete). slower predictor with held divisor: 15 of 15 configurations read (1 of 1 units complete). Not read yet, no complete unit: fast last layer with slower predictor and held divisor, step 0.1.
+Read at 33,554,432 environment steps per policy. CleanRL PPO-RND: 12 of 12 configurations read (1 of 1 units complete). fast last layer with slower predictor and held divisor, step 0.1: 15 of 15 configurations read (1 of 1 units complete). slower predictor with held divisor: 19 of 19 configurations read (2 of 2 units complete).
 
 #### Discovery and optimization: whole-curve mean
 
 | method | best configuration for $W$ | $W$ ↑ ± standard error | difference in $W$ from the baseline [95% interval] | $L$ ± standard error | difference in $L$ from the baseline [95% interval] | best configuration at an end of its grid | seeds in common with the baseline |
 |---|---|---|---|---|---|---|---|
-| CleanRL PPO-RND | intrinsic weight 4, learning rate 0.002 (best of 12) | <u>-0.725</u> ± 0.001 | baseline | <u>-0.712</u> ± 0.002 | baseline | learning rate at the smallest of its grid | 16 |
-| slower predictor with held divisor | intrinsic weight 8, learning rate 0.003 (best of 15) | **-0.722** ± 0.003 | +0.003 [-0.004, +0.007] | **-0.703** ± 0.000 | +0.008 [+0.006, +0.012] | intrinsic weight at the largest of its grid | 16 |
+| CleanRL PPO-RND | intrinsic weight 4, learning rate 0.002 (best of 12) | -0.725 ± 0.001 | baseline | <u>-0.712</u> ± 0.002 | baseline | learning rate at the smallest of its grid | 16 |
+| fast last layer with slower predictor and held divisor, step 0.1 | intrinsic weight 0.5, learning rate 0.0045 (best of 15) | **-0.719** ± 0.001 | **+0.006** [+0.004, +0.007] | **-0.703** ± 0.000 | **+0.009** [+0.006, +0.012] | intrinsic weight at the smallest of its grid; learning rate at the largest | 16 |
+| slower predictor with held divisor | intrinsic weight 8, learning rate 0.003 (best of 19) | <u>-0.722</u> ± 0.003 | <u>+0.003</u> [-0.004, +0.007] | **-0.703** ± 0.000 | <u>+0.008</u> [+0.006, +0.012] | no | 16 |
 
 On 1,024 confirmation seeds the same configuration of CleanRL PPO-RND has $W$ -0.732 ± 0.001.
 
@@ -238,32 +275,108 @@ On 1,024 confirmation seeds the same configuration of CleanRL PPO-RND has $W$ -0
 
 | method | best configuration for $M$ | $M$ ↓ ± standard error, thousand steps | difference in $M$ from the baseline [95% interval], thousand steps | policies that reach the goal | $W$ at that configuration | $L$ at that configuration | best configuration at an end of its grid | seeds in common with the baseline |
 |---|---|---|---|---|---|---|---|---|
-| CleanRL PPO-RND | intrinsic weight 8, learning rate 0.0045 (best of 12) | **84.8** ± 15.7 | baseline | 16 of 16 | <u>-0.864</u> | <u>-0.863</u> | intrinsic weight at the largest of its grid | 16 |
-| slower predictor with held divisor | intrinsic weight 8, learning rate 0.003 (best of 15) | <u>108</u> ± 18.4 | +22.8 [-7.27, +51.2] | 16 of 16 | **-0.722** | **-0.703** | intrinsic weight at the largest of its grid | 16 |
+| CleanRL PPO-RND | intrinsic weight 8, learning rate 0.0045 (best of 12) | <u>84.8</u> ± 15.7 | baseline | 16 of 16 | -0.864 | -0.863 | intrinsic weight at the largest of its grid | 16 |
+| fast last layer with slower predictor and held divisor, step 0.1 | intrinsic weight 8, learning rate 0.003 (best of 15) | **53.9** ± 8.84 | **-30.9** [-66.2, +2.42] | 16 of 16 | <u>-0.759</u> | **-0.701** | intrinsic weight at the largest of its grid | 16 |
+| slower predictor with held divisor | intrinsic weight 32, learning rate 0.0045 (best of 19) | 93.3 ± 15.4 | <u>+8.46</u> [-34.2, +49.5] | 16 of 16 | **-0.743** | <u>-0.705</u> | intrinsic weight at the largest of its grid; learning rate at the largest | 16 |
 
 CleanRL PPO-RND's best configuration here has no complete unit on the confirmation seeds (phases `confirmation`): the confirmation units of this case hold intrinsic weight 4, learning rate 0.002.
 
-Best configuration for $W$ at an end of its grid: slower predictor with held divisor (intrinsic weight at the largest of its grid); CleanRL PPO-RND (learning rate at the smallest of its grid). Best configuration for $M$ at an end of its grid: slower predictor with held divisor (intrinsic weight at the largest of its grid); CleanRL PPO-RND (intrinsic weight at the largest of its grid). The edge rule of `program.md` asks for more values on that side before anything is confirmed.
+Best configuration for $W$ at an end of its grid: fast last layer with slower predictor and held divisor, step 0.1 (intrinsic weight at the smallest of its grid; learning rate at the largest); CleanRL PPO-RND (learning rate at the smallest of its grid). Best configuration for $M$ at an end of its grid: fast last layer with slower predictor and held divisor, step 0.1 (intrinsic weight at the largest of its grid); slower predictor with held divisor (intrinsic weight at the largest of its grid; learning rate at the largest); CleanRL PPO-RND (intrinsic weight at the largest of its grid). The edge rule of `program.md` asks for more values on that side before anything is confirmed.
 
 #### Whole-curve mean on every configuration of the methods
 
 Rows: a method with its settings other than the intrinsic weight; columns: the intrinsic weights. Over each method's whole grid the highest $W$ is bold and the second highest underlined.
 
-| method and its other settings | weight 0.5 | weight 1 | weight 2 | weight 4 | weight 8 |
-|---|---|---|---|---|---|
-| slower predictor with held divisor, learning rate 0.002 | -0.764 | -0.751 | -0.739 | -0.738 | -0.728 |
-| slower predictor with held divisor, learning rate 0.003 | -0.753 | -0.786 | -0.727 | -0.733 | **-0.722** |
-| slower predictor with held divisor, learning rate 0.0045 | -0.741 | -0.730 | -0.741 | -0.731 | <u>-0.723</u> |
+| method and its other settings | weight 0.5 | weight 1 | weight 2 | weight 4 |
+|---|---|---|---|---|
+| fast last layer with slower predictor and held divisor, step 0.1, learning rate 0.002 | -0.738 | **-0.719** | <u>-0.727</u> | -0.734 |
+| fast last layer with slower predictor and held divisor, step 0.1, learning rate 0.003 | -0.740 | -0.755 | <u>-0.727</u> | -0.737 |
+| fast last layer with slower predictor and held divisor, step 0.1, learning rate 0.0045 | **-0.719** | -0.734 | <u>-0.727</u> | -0.742 |
+| slower predictor with held divisor, learning rate 0.002 | -0.764 | -0.751 | -0.739 | -0.738 |
+| slower predictor with held divisor, learning rate 0.003 | -0.753 | -0.786 | -0.727 | -0.733 |
+| slower predictor with held divisor, learning rate 0.0045 | -0.741 | -0.730 | -0.741 | -0.731 |
+
+| method and its other settings | weight 8 | weight 16 | weight 32 |
+|---|---|---|---|
+| fast last layer with slower predictor and held divisor, step 0.1, learning rate 0.002 | -0.753 |  |  |
+| fast last layer with slower predictor and held divisor, step 0.1, learning rate 0.003 | -0.759 |  |  |
+| fast last layer with slower predictor and held divisor, step 0.1, learning rate 0.0045 | -0.767 |  |  |
+| slower predictor with held divisor, learning rate 0.002 | -0.728 |  |  |
+| slower predictor with held divisor, learning rate 0.003 | **-0.722** | <u>-0.723</u> | -0.737 |
+| slower predictor with held divisor, learning rate 0.0045 | <u>-0.723</u> | -0.727 | -0.743 |
 
 #### Mean capped first-goal time on every configuration of the methods
 
 The same rows and columns, $M$ in thousands of steps; over each method's whole grid the smallest is bold and the second smallest underlined.
 
-| method and its other settings | weight 0.5 | weight 1 | weight 2 | weight 4 | weight 8 |
+| method and its other settings | weight 0.5 | weight 1 | weight 2 | weight 4 |
+|---|---|---|---|---|
+| fast last layer with slower predictor and held divisor, step 0.1, learning rate 0.002 | 144 | 94.8 | <u>72.1</u> | 121 |
+| fast last layer with slower predictor and held divisor, step 0.1, learning rate 0.003 | 199 | 212 | 148 | 76.1 |
+| fast last layer with slower predictor and held divisor, step 0.1, learning rate 0.0045 | 121 | 137 | 73.3 | 81.4 |
+| slower predictor with held divisor, learning rate 0.002 | 462 | 177 | 313 | 145 |
+| slower predictor with held divisor, learning rate 0.003 | 353 | 329 | 149 | 158 |
+| slower predictor with held divisor, learning rate 0.0045 | 300 | 224 | 178 | 111 |
+
+| method and its other settings | weight 8 | weight 16 | weight 32 |
+|---|---|---|---|
+| fast last layer with slower predictor and held divisor, step 0.1, learning rate 0.002 | 95.7 |  |  |
+| fast last layer with slower predictor and held divisor, step 0.1, learning rate 0.003 | **53.9** |  |  |
+| fast last layer with slower predictor and held divisor, step 0.1, learning rate 0.0045 | 132 |  |  |
+| slower predictor with held divisor, learning rate 0.002 | 166 |  |  |
+| slower predictor with held divisor, learning rate 0.003 | <u>108</u> | 135 | 112 |
+| slower predictor with held divisor, learning rate 0.0045 | 112 | 127 | **93.3** |
+
+#### On the validation seeds: picked configurations of this case
+
+The units of the phase `validation-block` in PointMaze Large, step cost. Each trains one configuration on 256 seeds, from 10000 to 10255: neither the development seeds, on which these configurations were picked as the leading ones of each side's sweep, nor the confirmation seeds. Read at 33,554,432 environment steps per policy. Define $W$, $L$ and $M$ as in the section Measures. First table: every configuration, the control first, each method from its best on for $W$; per column the best value is bold and the second best underlined (the smallest for $M$).
+
+| method | configuration | $W$ ± standard error | $L$ ± standard error | $M$ ± standard error, thousand steps | policies that reach the goal |
 |---|---|---|---|---|---|
-| slower predictor with held divisor, learning rate 0.002 | 462 | 177 | 313 | 145 | 166 |
-| slower predictor with held divisor, learning rate 0.003 | 353 | 329 | 149 | 158 | **108** |
-| slower predictor with held divisor, learning rate 0.0045 | 300 | 224 | 178 | <u>111</u> | 112 |
+| control (CleanRL PPO-RND) | intrinsic weight 4, learning rate 0.002 | -0.7310 ± 0.0018 | -0.7163 ± 0.0017 | 191 ± 10.1 | 256 of 256 |
+| control (CleanRL PPO-RND) | intrinsic weight 2, learning rate 0.002 | -0.7411 ± 0.0036 | -0.7229 ± 0.0033 | 241 ± 13.4 | 256 of 256 |
+| fast last layer with slower predictor and held divisor, step 0.1 | intrinsic weight 1, learning rate 0.002 | -0.7291 ± 0.0025 | -0.7116 ± 0.0025 | **122** ± 8.85 | 256 of 256 |
+| fast last layer with slower predictor and held divisor, step 0.1 | intrinsic weight 0.5, learning rate 0.0045 | -0.7320 ± 0.0028 | -0.7142 ± 0.0028 | 139 ± 10 | 256 of 256 |
+| slower predictor with held divisor | intrinsic weight 8, learning rate 0.003 | **-0.7230** ± 0.0016 | <u>-0.7058</u> ± 0.0015 | 127 ± 7.73 | 256 of 256 |
+| slower predictor with held divisor | intrinsic weight 16, learning rate 0.003 | <u>-0.7243</u> ± 0.0006 | **-0.7027** ± 0.0003 | <u>125</u> ± 7.29 | 256 of 256 |
+
+Then, for $W$ and $M$: each method at its best configuration on these seeds against the control at its own, paired on the seeds both have, with the 95% interval from 10,000 resamples of those seeds. Each best configuration was chosen on these same seeds, among the few run here: a second selection step, not the comparison on the confirmation seeds.
+
+Best against best for $W$ (the highest is the best):
+
+| method | best configuration for $W$ | $W$ ↑ ± standard error | difference in $W$ from the control [95% interval] | $L$ ± standard error | difference in $L$ from the control [95% interval] | seeds in common with the control |
+|---|---|---|---|---|---|---|
+| control (CleanRL PPO-RND) | intrinsic weight 4, learning rate 0.002 (best of 2) | -0.7310 ± 0.0018 | control | -0.7163 ± 0.0017 | control | 256 |
+| slower predictor with held divisor | intrinsic weight 8, learning rate 0.003 (best of 2) | **-0.7230** ± 0.0016 | **+0.0081** [+0.0032, +0.0129] | **-0.7058** ± 0.0015 | **+0.0105** [+0.0061, +0.0149] | 256 |
+| fast last layer with slower predictor and held divisor, step 0.1 | intrinsic weight 1, learning rate 0.002 (best of 2) | <u>-0.7291</u> ± 0.0025 | <u>+0.0019</u> [-0.0041, +0.0077] | <u>-0.7116</u> ± 0.0025 | <u>+0.0047</u> [-0.0013, +0.0102] | 256 |
+
+Best against best for $M$ (the smallest is the best):
+
+| method | best configuration for $M$ | $M$ ↓ ± standard error, thousand steps | difference in $M$ from the control [95% interval], thousand steps | policies that reach the goal | $W$ at that configuration | $L$ at that configuration | seeds in common with the control |
+|---|---|---|---|---|---|---|---|
+| control (CleanRL PPO-RND) | intrinsic weight 4, learning rate 0.002 (best of 2) | 191 ± 10.1 | control | 256 of 256 | -0.7310 | -0.7163 | 256 |
+| fast last layer with slower predictor and held divisor, step 0.1 | intrinsic weight 1, learning rate 0.002 (best of 2) | **122** ± 8.85 | **-69** [-95, -42.2] | 256 of 256 | <u>-0.7291</u> | <u>-0.7116</u> | 256 |
+| slower predictor with held divisor | intrinsic weight 16, learning rate 0.003 (best of 2) | <u>125</u> ± 7.29 | <u>-66.3</u> [-90.8, -41.5] | 256 of 256 | **-0.7243** | **-0.7027** | 256 |
+
+##### Units
+
+| unit | method | case | configurations | state | logging windows written | finished | restarts |
+|---|---|---|---|---|---|---|---|
+| 1 | control (CleanRL PPO-RND) | PointMaze Large, step cost | 1 | complete | 256 of 256 | 2026-11-12 23:25 PT | none |
+| 2 | control (CleanRL PPO-RND) | PointMaze Large, step cost | 1 | complete | 256 of 256 | 2026-11-12 23:03 PT | none |
+| 3 | fast last layer with slower predictor and held divisor, step 0.1 | PointMaze Large, step cost | 1 | complete | 256 of 256 | 2026-11-13 00:07 PT | none |
+| 4 | fast last layer with slower predictor and held divisor, step 0.1 | PointMaze Large, step cost | 1 | complete | 256 of 256 | 2026-11-12 23:50 PT | none |
+| 5 | slower predictor with held divisor | PointMaze Large, step cost | 1 | complete | 256 of 256 | 2026-11-12 23:24 PT | none |
+| 6 | slower predictor with held divisor | PointMaze Large, step cost | 1 | complete | 256 of 256 | 2026-11-12 23:25 PT | none |
+
+Unit names, by the number in the first column:
+
+1. `validation-block_pointmaze-large_reward-step-cost_control-cleanrl-ppo-rnd_learning-rate-0.002_entropy-coefficient-0.01_intrinsic-weight-2.0_clip-coefficient-0.1_seeds-10000-to-10255`
+2. `validation-block_pointmaze-large_reward-step-cost_control-cleanrl-ppo-rnd_learning-rate-0.002_entropy-coefficient-0.01_intrinsic-weight-4.0_clip-coefficient-0.1_seeds-10000-to-10255`
+3. `validation-block_pointmaze-large_reward-step-cost_three-parts-held-one-sixteenth_learning-rate-0.002_entropy-coefficient-0.01_intrinsic-weight-1.0_clip-coefficient-0.1_seeds-10000-to-10255`
+4. `validation-block_pointmaze-large_reward-step-cost_three-parts-held-one-sixteenth_learning-rate-0.0045_entropy-coefficient-0.01_intrinsic-weight-0.5_clip-coefficient-0.1_seeds-10000-to-10255`
+5. `validation-block_pointmaze-large_reward-step-cost_slower-predictor-with-held-divisor_learning-rate-0.003_entropy-coefficient-0.01_intrinsic-weight-16.0_clip-coefficient-0.1_seeds-10000-to-10255`
+6. `validation-block_pointmaze-large_reward-step-cost_slower-predictor-with-held-divisor_learning-rate-0.003_entropy-coefficient-0.01_intrinsic-weight-8.0_clip-coefficient-0.1_seeds-10000-to-10255`
 
 ## Predictions
 
@@ -291,8 +404,8 @@ Observed: **held**.
 
 > **PointMaze Large, step cost:** RND's seeds split into two groups there (about −0.72 and −0.90). The held divisor should lower the share of seeds in the worse group, because that group is the one that keeps exploring after the first arrivals.
 
-Observed: **cannot be read yet**.
+Observed: **did not hold**.
 
-- Each finalist has a smaller share of seeds in the worse group than the baseline: **cannot be read yet**. Waiting for complete units in PointMaze Large, step cost: fast last layer with slower predictor and held divisor, step 0.1.
-- Beside: Waiting for complete units in PointMaze Large, step cost: fast last layer with slower predictor and held divisor, step 0.1.
+- Each finalist has a smaller share of seeds in the worse group than the baseline: **did not hold**. Share of seeds with $W$ below -0.81, each side at its best configuration for $W$: fast last layer with slower predictor and held divisor, step 0.1 0%; slower predictor with held divisor 0%; baseline 0%.
+- Beside: fast last layer with slower predictor and held divisor, step 0.1 $W$ -0.719, difference from the baseline +0.006 [+0.004, +0.007]; slower predictor with held divisor $W$ -0.722, difference from the baseline +0.003 [-0.004, +0.007].
 

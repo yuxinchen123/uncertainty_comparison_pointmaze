@@ -1,0 +1,53 @@
+{
+  "title": "Batch 6: the predictor at half speed with held divisor, a second validation block, and the PointMaze Large cases",
+  "validation_seeds": {
+    "first_block": "validation-block",
+    "second_block": "validation-block-two",
+    "arms": [
+      {
+        "name": "control (CleanRL PPO-RND)",
+        "first_block": "control-cleanrl-ppo-rnd",
+        "control": true,
+        "second_block": "control-cleanrl-ppo-rnd"
+      },
+      {
+        "name": "predictor at half speed with held divisor",
+        "first_block": "predictor-half-speed-held-divisor",
+        "second_block": "half-speed-predictor-held"
+      },
+      {
+        "name": "held divisor alone, held after one sixteenth of the run",
+        "first_block": "divisor-held-after-one-sixteenth",
+        "second_block": "divisor-held-one-sixteenth"
+      },
+      {
+        "name": "held divisor alone, held after one sixty-fourth of the run",
+        "first_block": "divisor-held-one-sixty-fourth",
+        "second_block": "divisor-held-one-sixty-fourth"
+      },
+      {
+        "name": "slower predictor with held divisor (divisor held after one sixteenth of the run)",
+        "first_block": "slower-predictor-with-held-divisor"
+      },
+      {
+        "name": "all three parts (fast last layer with slower predictor and held divisor, step 0.1), divisor held after one sixteenth of the run",
+        "first_block": "three-parts-held-one-sixteenth"
+      }
+    ],
+    "cases": [
+      {
+        "environment": "pointmaze-medium",
+        "reward_setting": "arrival_plus_one"
+      },
+      {
+        "environment": "pointmaze-large",
+        "reward_setting": "arrival_plus_one"
+      },
+      {
+        "environment": "pointmaze-large",
+        "reward_setting": "step_cost"
+      }
+    ]
+  },
+  "predictions": "predictions_batch_06"
+}

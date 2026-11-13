@@ -1,0 +1,100 @@
+{
+  "title": "Standing of the bonus arms against CleanRL PPO-RND on the validation seeds, the four PointMaze cases",
+  "families": [
+    "held divisor alone",
+    "slower predictor with held divisor",
+    "predictor at half speed with held divisor",
+    "all three parts"
+  ],
+  "validation_seeds": {
+    "first_block": "validation-block",
+    "second_block": "validation-block-two",
+    "arms": [
+      {
+        "name": "control (CleanRL PPO-RND)",
+        "first_block": "control-cleanrl-ppo-rnd",
+        "control": true,
+        "second_block": "control-cleanrl-ppo-rnd"
+      },
+      {
+        "name": "held divisor alone, held after one sixteenth of the run",
+        "family": "held divisor alone",
+        "first_block": "divisor-held-after-one-sixteenth",
+        "second_block": "divisor-held-one-sixteenth"
+      },
+      {
+        "name": "held divisor alone, held after one sixty-fourth of the run",
+        "family": "held divisor alone",
+        "first_block": "divisor-held-one-sixty-fourth",
+        "second_block": "divisor-held-one-sixty-fourth"
+      },
+      {
+        "name": "held divisor alone, held after one quarter of the run",
+        "family": "held divisor alone",
+        "first_block": "divisor-held-after-one-quarter"
+      },
+      {
+        "name": "slower predictor with held divisor (divisor held after one sixteenth of the run)",
+        "family": "slower predictor with held divisor",
+        "first_block": "slower-predictor-with-held-divisor"
+      },
+      {
+        "name": "slower predictor with divisor held after one sixty-fourth of the run",
+        "family": "slower predictor with held divisor",
+        "first_block": "slow-predictor-held-sixty-fourth"
+      },
+      {
+        "name": "predictor at half speed with held divisor",
+        "family": "predictor at half speed with held divisor",
+        "first_block": "predictor-half-speed-held-divisor",
+        "second_block": "half-speed-predictor-held"
+      },
+      {
+        "name": "all three parts (fast last layer with slower predictor and held divisor, step 0.1), divisor held after one sixteenth of the run",
+        "family": "all three parts",
+        "first_block": "three-parts-held-one-sixteenth"
+      },
+      {
+        "name": "all three parts (fast last layer with slower predictor and held divisor, step 0.1), divisor held after one eighth of the run",
+        "family": "all three parts",
+        "first_block": "three-parts-held-one-eighth"
+      },
+      {
+        "name": "separate predictor step size, predictor learning rate 0.25 times 1e-4",
+        "first_block": "predictor-own-step-size-0-point-25"
+      },
+      {
+        "name": "separate predictor step size, predictor learning rate 1 times 1e-4",
+        "first_block": "predictor-own-step-size-1"
+      }
+    ],
+    "cases": [
+      {
+        "environment": "pointmaze-medium",
+        "reward_setting": "arrival_plus_one"
+      },
+      {
+        "environment": "pointmaze-medium",
+        "reward_setting": "step_cost"
+      },
+      {
+        "environment": "pointmaze-large",
+        "reward_setting": "arrival_plus_one"
+      },
+      {
+        "environment": "pointmaze-large",
+        "reward_setting": "step_cost"
+      }
+    ]
+  },
+  "discovery": {
+    "family": "fast last layer",
+    "phase": "discovery-validation",
+    "control": "control-cleanrl-ppo-rnd",
+    "method_names": {
+      "control-cleanrl-ppo-rnd": "control (CleanRL PPO-RND)",
+      "fast-last-layer-step-0-point-1": "fast last layer inside the rollout, step 0.1",
+      "three-parts-held-one-eighth": "all three parts (fast last layer with slower predictor and held divisor, step 0.1), divisor held after one eighth of the run"
+    }
+  }
+}

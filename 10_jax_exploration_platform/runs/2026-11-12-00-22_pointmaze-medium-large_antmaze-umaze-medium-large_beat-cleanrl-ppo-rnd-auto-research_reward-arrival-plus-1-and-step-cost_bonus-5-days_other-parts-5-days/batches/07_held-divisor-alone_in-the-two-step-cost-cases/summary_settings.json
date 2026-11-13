@@ -1,0 +1,35 @@
+{
+  "title": "Batch 7: the held divisor alone in the two step-cost cases",
+  "validation_seeds": {
+    "first_block": "validation-block",
+    "second_block": "validation-block-two",
+    "arms": [
+      {
+        "name": "control (CleanRL PPO-RND)",
+        "first_block": "control-cleanrl-ppo-rnd",
+        "control": true,
+        "second_block": "control-cleanrl-ppo-rnd"
+      },
+      {
+        "name": "held divisor alone, held after one sixteenth of the run",
+        "first_block": "divisor-held-after-one-sixteenth",
+        "second_block": "divisor-held-one-sixteenth"
+      },
+      {
+        "name": "predictor at half speed with held divisor",
+        "first_block": "predictor-half-speed-held-divisor"
+      }
+    ],
+    "cases": [
+      {
+        "environment": "pointmaze-medium",
+        "reward_setting": "step_cost"
+      },
+      {
+        "environment": "pointmaze-large",
+        "reward_setting": "step_cost"
+      }
+    ]
+  },
+  "predictions": "predictions_batch_07"
+}
