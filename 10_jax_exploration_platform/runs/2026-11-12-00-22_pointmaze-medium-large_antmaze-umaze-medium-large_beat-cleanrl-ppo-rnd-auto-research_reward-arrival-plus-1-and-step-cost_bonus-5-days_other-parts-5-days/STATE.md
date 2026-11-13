@@ -911,6 +911,30 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   this case: the fast last layer finds the goal sooner and costs return after it. As written in the batch's ideas
   file, the next code change is a fast last layer that stops at each policy's first arrival
   (`fast_last_layer_until_first_arrival`); a background worker is adding and testing it (started 03:09 PT).
+- 2026-11-13 03:28 PT: **batch 10, the two PointMaze Medium cases complete (4 units, first validation block, 256
+  seeds).** The arm is the fast last layer with the first-arrival hold; differences are arm minus the other unit
+  on the same seeds, with 95% intervals.
+
+  | case and configuration | compared with | whole-curve mean | first-goal time, thousand steps |
+  |---|---|---|---|
+  | reward 1 on arrival, learning rate 1e-2, weight 4 | fast last layer alone | 0.776 against 0.379: +0.397 [+0.378, +0.417] | 14.7 against 13.8: +0.9 [−1.1, +2.9] |
+  | reward 1 on arrival, learning rate 1e-2, weight 4 | RND, same configuration | −0.096 [−0.111, −0.081] | −2.9 [−5.4, −0.4] |
+  | reward 1 on arrival, learning rate 6e-3, weight 4 | first-arrival hold alone | −0.101 [−0.115, −0.089] | −2.8 [−5.4, −0.3] |
+  | step cost, learning rate 1e-2, weight 4 | fast last layer alone | −0.406 against −0.586: +0.180 [+0.170, +0.191] | 15.0 against 11.7: +3.3 [+0.3, +7.5] |
+  | step cost, learning rate 1e-2, weight 4 | RND, same configuration | −0.038 [−0.045, −0.031] | +0.5 [−2.5, +4.5] |
+  | step cost, learning rate 6e-3, weight 2 | first-arrival hold alone | −0.021 [−0.027, −0.015] | −1.3 [−2.9, +0.2] |
+
+  Predictions: 2 holds (the hold gives back a large part of what the fast last layer costs, and the arm stays
+  behind RND); 3 holds on both Medium cases (at the hold's own configurations the fast last layer lowers the
+  whole-curve mean by 0.10 and 0.02); 1 holds on Medium with reward 1 on arrival. On Medium with the step cost the
+  mean first-goal time is 3.3 thousand steps later with the interval just above zero; the median difference is
+  +0.1 and one policy is 401 thousand steps later, so I read it as the tail of the same distribution.
+- 2026-11-13 03:28 PT: **a fact about pairing by seed.** Two units of the same program before the first arrival
+  (the arm above and the fast last layer alone, both on A30 cards) do not give the same numbers per seed: the
+  first-goal step is equal in 44 of 256 seeds, and already in the first 4,096 steps the mean intrinsic reward is
+  exactly equal in only 43 of 207 policies that have not arrived. On different card models it is equal in none.
+  Rounding differences grow to visible differences within the first updates. So "the same seeds" pairs the start
+  of two runs, not their paths, and a paired interval is hardly narrower than an unpaired one.
 
 ## Next
 
