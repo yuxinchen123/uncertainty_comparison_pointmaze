@@ -1,7 +1,8 @@
 """Knobs of the random-network-distillation bonus."""
 from dataclasses import dataclass, replace
 
-REWARD_DIVISORS = ("running_std", "frozen_after_priming", "held_after_fraction", "none")
+REWARD_DIVISORS = ("running_std", "frozen_after_priming", "held_after_fraction",
+                   "held_after_first_arrival", "none")
 BONUS_FORMS = ("half_squared_error", "error_length")
 INPUT_STATISTICS = ("running", "frozen_after_priming")
 INPUT_FEATURES = ("raw", "random_fourier")
@@ -34,7 +35,14 @@ class RNDConfig:
                                          # moved afterwards. "held_after_fraction": the running
                                          # statistic until the fraction divisor_hold_fraction of
                                          # the run's planned iterations, and the value it holds
-                                         # then for the rest of the run. "none": no division
+                                         # then for the rest of the run.
+                                         # "held_after_first_arrival": per policy, the running
+                                         # statistic up to and including the rollout in which
+                                         # the policy first reaches the goal, and the value it
+                                         # holds then for the rest of the run; a policy that
+                                         # never arrives keeps the running statistic. Needs
+                                         # the trainer's episode log and episodes that end at
+                                         # the goal. "none": no division
     predictor_learning_rate_multiple: float = 0.0  # 0: the predictor is stepped by the policy's
                                          # Adam, at the policy's rate, inside the joint gradient
                                          # clip, as always. m > 0: the predictor has its own Adam

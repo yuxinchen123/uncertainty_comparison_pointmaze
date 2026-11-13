@@ -35,6 +35,7 @@ for folder in ("src", "scripts", "tests/agents"):
 import numpy as np  # noqa: E402
 import run_training  # noqa: E402
 from exploration_platform.agents.ppo.config import PPOConfig  # noqa: E402
+from exploration_platform.bonuses.registry import make_bonus  # noqa: E402
 from exploration_platform.envs.antmaze.am_common import preset  # noqa: E402
 from exploration_platform.envs.antmaze.warp_antmaze import ISLAND_ARRAYS  # noqa: E402
 from exploration_platform.training.runner import Runner  # noqa: E402
@@ -117,6 +118,34 @@ def test_runner_ends_the_episode_at_the_goal():
     np.testing.assert_array_equal(log["return_sum"], [32.0, 32.0])
     assert (log["first_goal_step"] >= 0).all()
     assert not runner.check_environment(state)["dropped"]
+
+
+def test_divisor_held_after_the_first_arrival_with_the_warp_physics():
+    """`reward_divisor=held_after_first_arrival` on the Warp environment. With the goal on the
+    start cell every copy arrives in the first rollout: that rollout still moves the divisor's
+    statistics, and the two rollouts after it leave them and the filter value as they are."""
+    cfg = PPOConfig(**STUDY, parameter_settings=((1.0, 0.0), (1 / 700, -1 / 700)))
+    bonus = make_bonus("rnd_next_state", {"reward_divisor": "held_after_first_arrival"})
+    runner = Runner(cfg, bonus=bonus, env_cfg=warp_umaze(goal_cell=(3, 1)))
+
+    def divisor_arrays(state) -> list:
+        """Host copies of the divisor's statistics (mean, variance, count) and the filter value."""
+        return [np.array(leaf) for leaf in (*state.agent_state["int_rms"],
+                                            state.agent_state["int_filter"])]
+
+    # the statistics after priming and after each of three iterations, copied to the host before
+    # the next iteration uses the state up
+    state = runner.prime(runner.init_state(run_seed=0))
+    seen = [divisor_arrays(state)]
+    for k in (1, 2, 3):
+        state, _ = runner.iterate(state, runner.lr_argument(k, 3))
+        seen.append(divisor_arrays(state))
+    # both copies first arrive within the first rollout (8 steps x 2 environments)
+    first_goal = np.asarray(state.agent_state["episode_log"]["first_goal_step"])
+    assert ((first_goal >= 1) & (first_goal <= 16)).all(), first_goal
+    assert any(a.tobytes() != b.tobytes() for a, b in zip(seen[1], seen[0]))
+    for later in seen[2:]:
+        assert all(a.tobytes() == b.tobytes() for a, b in zip(later, seen[1]))
 
 
 def test_a_pool_below_the_need_stops_the_run_with_a_message():

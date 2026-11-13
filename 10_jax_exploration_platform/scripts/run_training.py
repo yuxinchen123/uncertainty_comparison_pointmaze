@@ -49,7 +49,10 @@ random network distillation) are changed with `--bonus-options name=value,...` o
 file's optional `[bonus_options]` table; they hold for the whole process, never per copy. The
 `unit_start` record holds every option with its value under `bonus_options`. A reward divisor
 held after a fraction of the run (`reward_divisor=held_after_fraction`) counts that fraction of
-the iterations the learning rate anneals over (`--lr-anneal-iterations`, or `--iterations`). With
+the iterations the learning rate anneals over (`--lr-anneal-iterations`, or `--iterations`). A
+reward divisor held after the first arrival (`reward_divisor=held_after_first_arrival`) is held
+per copy from the rollout after the one in which the copy first reaches the goal; it needs
+`--episode-log` and an environment whose episodes end at the goal. With
 `record_bonus_on_maze_grid=true` each window record also carries, per copy, the bonus at one probe
 observation per open maze cell, the divisor of the intrinsic reward, and the window's visits to
 each cell (`training/maze_grid.py`); one `maze_grid_at_start` record holds the same fields before

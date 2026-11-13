@@ -49,7 +49,10 @@ always did, so a family that sets none of them composes into the program it alwa
   on by every rollout. "frozen_after_priming": the same statistic gathered over the priming
   rollouts only and never moved afterwards. "held_after_fraction": moved on by every rollout
   of the iterations numbered (from 0) below `divisor_hold_fraction` x the configuration's
-  `total_iterations`, and not moved from that iteration on. "none": no division.
+  `total_iterations`, and not moved from that iteration on. "held_after_first_arrival": for
+  each copy on its own, moved on by every rollout up to and including the one in which the
+  copy first reaches the goal (the episode log's first arrival), and not moved by any later
+  rollout; a copy that never arrives is moved on by every rollout. "none": no division.
 - `divisor_hold_fraction` — the fraction read with the "held_after_fraction" divisor; `None`
   with every other divisor.
 - `own_learning_rate` — `None`: the family's parameters are stepped by the agent's Adam, at the

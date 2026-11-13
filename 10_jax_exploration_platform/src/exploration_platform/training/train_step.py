@@ -106,7 +106,8 @@ def intrinsic_sum_matrices(gamma_int: float, gae_lambda: float, steps: int):
             jnp.asarray(advantage_matrix, F32))
 
 
-REWARD_DIVISORS = ("running_std", "frozen_after_priming", "held_after_fraction", "none")
+REWARD_DIVISORS = ("running_std", "frozen_after_priming", "held_after_fraction",
+                   "held_after_first_arrival", "none")
 
 
 def filtered_intrinsic_sum(gamma_int: float, carried, rint_buf, unroll: int = 1):
@@ -127,9 +128,9 @@ def filtered_intrinsic_sum(gamma_int: float, carried, rint_buf, unroll: int = 1)
 def intrinsic_divisor(reward_divisor: str, int_rms, n_copies: int):
     """What each copy's intrinsic reward is divided by, [C] float32.
 
-    "running_std", "frozen_after_priming" and "held_after_fraction" read the standard deviation
-    of the reward's discounted sum from the statistics as they stand (the held value once the
-    statistics are held); "none" is 1.
+    "running_std", "frozen_after_priming", "held_after_fraction" and "held_after_first_arrival"
+    read the standard deviation of the reward's discounted sum from the statistics as they
+    stand (the held value once the statistics are held); "none" is 1.
     """
     if reward_divisor == "none":
         return jnp.ones((n_copies,), F32)
@@ -167,6 +168,16 @@ def build_iteration(cfg, env, bonus, sweep, layout, capture_batch: bool = False)
             raise ValueError("a reward divisor held after a fraction of the run needs "
                              "total_iterations, the run's planned number of iterations")
         hold_iteration = int(np.ceil(bonus.divisor_hold_fraction * cfg.total_iterations))
+    if reward_divisor == "held_after_first_arrival":
+        # each copy's first arrival is read from the episode log, which records one only where
+        # an episode ends at the goal
+        if not cfg.episode_log:
+            raise ValueError("a reward divisor held after the first arrival needs episode_log: "
+                             "the trainer keeps each copy's first arrival there")
+        if env.cfg.continuing_task:
+            raise ValueError("a reward divisor held after the first arrival needs episodes "
+                             "that end at the goal (continuing_task=False): this environment "
+                             "records no arrival, so the divisor would never be held")
 
     # the reward-decline study's switches, all decided here while the program is built
     if cfg.int_coef_schedule not in ("constant", "linear_decay"):
@@ -391,7 +402,8 @@ def build_iteration(cfg, env, bonus, sweep, layout, capture_batch: bool = False)
         rint_buf = unflat(rint_flat)
 
         # intrinsic filter forward in time, then per-copy normalization (spec 5.2)
-        if reward_divisor in ("running_std", "held_after_fraction"):
+        if reward_divisor in ("running_std", "held_after_fraction",
+                              "held_after_first_arrival"):
             if cfg.intrinsic_sums_by_matrix_product:
                 # before: rewards [T, C, N] and the filter value carried in, [C, N]
                 # after:  filt[t] = sum over s <= t of gamma^(t-s) r[s]
@@ -413,6 +425,17 @@ def build_iteration(cfg, env, bonus, sweep, layout, capture_batch: bool = False)
                 # before: state.step 1023, hold at 1024 ; after: the statistics moved on
                 # before: state.step 1024, hold at 1024 ; after: the statistics of step 1023
                 held = state.step >= hold_iteration
+                int_filter = jnp.where(held, state.agent_state["int_filter"], int_filter)
+                int_rms = jax.tree.map(lambda kept, moved: jnp.where(held, kept, moved),
+                                       state.agent_state["int_rms"], int_rms)
+            if reward_divisor == "held_after_first_arrival":
+                # a copy whose first arrival fell in an EARLIER rollout keeps the statistics and
+                # the filter value the state holds; the rollout with the arrival itself still
+                # moved them, so the held value includes that rollout. The log read here is
+                # the one of the state, that is, of the rollouts before this one
+                # before: first arrival steps [-1, 40], this rollout's statistics just computed
+                # after:  copy 0 takes them (as with the running divisor), copy 1 keeps its own
+                held = (state.agent_state["episode_log"]["first_goal_step"] >= 0)[:, None]
                 int_filter = jnp.where(held, state.agent_state["int_filter"], int_filter)
                 int_rms = jax.tree.map(lambda kept, moved: jnp.where(held, kept, moved),
                                        state.agent_state["int_rms"], int_rms)
