@@ -613,6 +613,11 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   finalist read +0.021 and the validation block then gave 0.000, so this is not a result yet: the two best
   configurations of each arm were queued on the validation block (4 units). The arms with the slower predictor
   (divisor held after 1/64) and with the predictor at half speed are running or waiting on Gilbreth.
+- 2026-11-12 21:41 PT: batch 5's other two arms on the 16 development seeds (PointMaze Medium, reward 1 on
+  arrival): slower predictor with the divisor held after 1/64: best 0.956 (learning rate 1e-2, weight 1);
+  predictor at half speed with held divisor: 0.959 (6e-3, weight 1). All four arms read 0.956 to 0.964 here
+  against RND's 0.9435, which is inside this case's noise on 16 seeds; the two best configurations of each arm are
+  on the validation block (8 units in all, on Gilbreth), and the batch is judged there.
 
 ## Next
 
