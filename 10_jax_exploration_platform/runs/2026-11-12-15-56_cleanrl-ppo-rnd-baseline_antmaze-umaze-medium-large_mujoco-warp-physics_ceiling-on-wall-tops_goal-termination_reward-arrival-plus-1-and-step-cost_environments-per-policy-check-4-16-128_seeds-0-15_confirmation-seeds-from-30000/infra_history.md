@@ -75,3 +75,17 @@ Times are Pacific, read from the clock or from scheduler records.
   account), and the 8 units are already on Gilbreth. ACES is merged in when the development sweeps of the three
   maps are ready, or when a unit has waited about 2 hours on Gilbreth. Balance read 16:18 PT: 71,498.90 SUs,
   which is 525.7 H100-hours at 136 SUs per hour.
+- 2026-11-12 16:22 PT: **the first unit stopped itself at window 64 of 256** (job 12346318): one ant needed 161
+  constraint rows and the limit was 160 (`warp_constraint_rows_per_environment`), so MuJoCo Warp would have
+  dropped part of the physics and the trainer's check ended the run. The limit had been sized from random
+  torques, which needed 49 rows; trained policies press the ant into walls, floor and ceiling at once.
+  Correction (commit 5c7407bb): the limit is 512 in the default and in the recorded configuration files. The
+  8 units were taken back from Gilbreth, the code was frozen again, and the units were rebuilt with 512. The two
+  units that had started with 160 (the stopped one, and the unit with 4 environments per policy, whose job
+  12346363 had started at 16:38 PT and was cancelled by its ledger id after 77 s) were built anew; their earlier
+  queue records are in `replaced_2026-11-12_started-with-160-constraint-rows/` here, and their shards and logs in
+  a folder of the same name in the run folder on Gilbreth. Nothing of the stopped unit is used.
+- 2026-11-12 16:37 PT: the waiting ant jobs had planned starts 4 to 7 hours away on Gilbreth's A100 and A30
+  cards. They may now also take A10 cards (24 GB), and the PointMaze folders stopped handing units to Gilbreth
+  (their waiting jobs there were cancelled by ledger id), so that this account's standby places go to the ant.
+- 2026-11-12 16:57 PT: 8 rebuilt units handed to Gilbreth again, 8 jobs submitted.

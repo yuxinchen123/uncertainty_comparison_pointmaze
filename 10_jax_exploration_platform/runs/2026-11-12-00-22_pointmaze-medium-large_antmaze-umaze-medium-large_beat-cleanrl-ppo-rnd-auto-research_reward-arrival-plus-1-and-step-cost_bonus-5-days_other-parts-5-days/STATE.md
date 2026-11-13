@@ -350,6 +350,14 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   merged into the live table. No job was submitted there. Balance 71,499 SUs (525.7 H100-hours). No H100 node was
   idle at 16:18 PT and 114 jobs waited, so ACES would not start units sooner than Gilbreth today. Whether JAX and
   Warp run on an ACES card is known only after the first real unit.
+- 2026-11-12 16:22 to 16:58 PT: **the first AntMaze unit stopped itself at window 64 of 256, and the check was
+  started again.** One ant needed 161 constraint rows against a limit of 160, and the trainer's check ends a run
+  rather than let MuJoCo Warp drop part of the physics. The limit came from random torques (49 rows); trained
+  policies need more. It is now 512 (commit 5c7407bb); all 8 units were rebuilt and handed to Gilbreth again at
+  16:57 PT. Nothing of the stopped unit is used. Cost: about 55 minutes on the ant check.
+- 2026-11-12 16:36 PT: PointMaze units moved from Gilbreth back to UVA (Gilbreth's standby queue had slowed for
+  this account; UVA starts sl5nw workers at once); Gilbreth's standby places go to the ant. `submit.py --accounts`
+  limits new workers to chosen accounts.
 
 ## Next
 

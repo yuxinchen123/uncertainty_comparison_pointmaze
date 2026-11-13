@@ -150,3 +150,9 @@ Times are Pacific.
   folder, every other id to the baseline); the earlier files are kept beside them as
   `submitted_jobids_gilbreth.txt.before_ledger_correction_2026-11-12-15-08`. The auto research folder then
   submitted jobs 12346016 to 12346018 for its units.
+- 2026-11-12 16:36 PT: Gilbreth's standby queue slowed for this account (6 jobs running, 17 waiting with planned
+  starts 2 to 6 hours away) while UVA starts workers under the sl5nw account within a minute. This folder stopped
+  handing units to Gilbreth (`units_at_once` 0 in the server table), the units waiting there without a job were
+  taken back to UVA's queue, this folder's waiting Gilbreth jobs were cancelled by exact id from its Gilbreth
+  ledger, and UVA workers were submitted under the sl5nw account only (new option `--accounts` of `submit.py`).
+  Units already running on Gilbreth finish there.

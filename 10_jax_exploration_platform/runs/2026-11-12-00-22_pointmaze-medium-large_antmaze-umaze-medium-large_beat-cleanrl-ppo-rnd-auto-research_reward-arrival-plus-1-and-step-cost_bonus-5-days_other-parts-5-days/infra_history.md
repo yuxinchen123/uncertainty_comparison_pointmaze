@@ -31,3 +31,9 @@ Times are Pacific.
   node configuration is not available"). The planner's table of card types per node is wrong for that node; the
   workers were submitted again with RTX 2080 Ti and RTX 4000 Ada only (6890372 to 6890472). To correct: the
   source of that table.
+- 2026-11-12 16:36 PT: Gilbreth's standby queue slowed for this account (6 jobs running, 17 waiting with planned
+  starts 2 to 6 hours away) while UVA starts workers under the sl5nw account within a minute. This folder stopped
+  handing units to Gilbreth (`units_at_once` 0 in the server table), the units waiting there without a job were
+  taken back to UVA's queue, this folder's waiting Gilbreth jobs were cancelled by exact id from its Gilbreth
+  ledger, and UVA workers were submitted under the sl5nw account only (new option `--accounts` of `submit.py`).
+  Units already running on Gilbreth finish there.
