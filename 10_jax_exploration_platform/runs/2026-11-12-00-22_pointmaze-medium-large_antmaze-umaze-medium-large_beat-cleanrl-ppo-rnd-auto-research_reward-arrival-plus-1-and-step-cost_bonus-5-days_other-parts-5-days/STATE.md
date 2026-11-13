@@ -769,6 +769,20 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   whether "beat CleanRL RND" should also be shown against RND with a held divisor. The part of the work that is
   new so far is the fast last layer, which wins on discovery and not on the whole-curve mean. The slowed
   predictor is a setting, not an idea.
+- 2026-11-13 00:23 PT: **the summaries of batches 3 to 7 and `analysis/standing.md` are generated** (analysis work
+  in the background, commits de35b926, 3d77556a, 4e0f5aa5; 111 analysis tests pass). From the standing page, on the
+  validation seeds: **the held divisor alone is ahead of RND on the whole-curve mean in all four PointMaze
+  cases** (Medium with reward 1 on arrival +0.0109 and Medium with the step cost +0.0058, both on the second
+  block under equal rules; Large with reward 1 on arrival +0.0095 and Large with the step cost +0.0095
+  [+0.0057, +0.0137] at weight 8, first block). The half-speed arm is level on Medium with the step cost (+0.0014
+  at weights 1, 2, 4), so it is not ahead everywhere. All 167 units of this folder were done at 00:26 PT.
+- 2026-11-13 00:29 PT: **batch 8 written** (`batches/08_divisor-held-from-the-first-arrival_…`): (1) the divisor
+  held from each policy's own first arrival, a new option being added and tested in the background (no fraction
+  to set; not what the public code does); (2) the error length with a held divisor, existing options, 6 units on
+  the validation block handed to Gilbreth now. Predictions in its `ideas.md`. This folder's code is frozen anew
+  when the new option's tests pass; no unit of it is part-way through then except these 6 short ones.
+  Waiting for the user: how strict to be about the held divisor's closeness to public practice, and what the
+  AntMaze comparison should be if RND stays at a few percent.
 
 ## Next
 
