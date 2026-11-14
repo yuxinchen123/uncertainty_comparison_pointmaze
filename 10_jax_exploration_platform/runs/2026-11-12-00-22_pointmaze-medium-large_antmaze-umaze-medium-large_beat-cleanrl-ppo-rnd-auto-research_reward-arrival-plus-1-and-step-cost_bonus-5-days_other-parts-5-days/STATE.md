@@ -1390,6 +1390,15 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   Gilbreth as their jobs ended; the four with the most windows left get the RTX 5080 cards (card-memory floors,
   AntMaze folder's `infra_history.md`, 08:53 to 09:50 PT). First fault-guard respawn under RK4: one, at about 110
   million steps per policy in the RND sweep (torso angular speed 106 rad/s against the guard's 100).
+- 2026-11-14 11:53 PT: **batch 15, a partial reading and the edge rule** (U-maze, RK4, 16 seeds, first 143 windows = 75
+  million steps per policy with reward 1 on arrival, first 121 windows = 63 million with the step cost; not a result):
+  with reward 1 on arrival the best configuration of every arm is learning rate 1e-4, weight 1/16: fast last layer
+  step 0.03 with the hold 0.1058 ± 0.0033, hold alone 0.0996, step 0.1 with the hold 0.0986, RND 0.0983 ± 0.0019; with
+  the step cost step 0.03 with the hold −0.9742, RND −0.9749 (both at 1e-4, 1/16 and 1/256). For the method this is
+  the smallest weight and learning rate of its grid, so the edge rule applies: six extension units (phase
+  `method-edge-rk4`, 8 cells each, batch 15's `ideas.md`, predictions 7 to 9) were built and placed. The mean capped
+  first-goal time is 0.2 to 0.3 million steps at learning rate 1e-2 for every arm and RND: on the U-maze every policy
+  arrives within the first 1% of the budget.
 
 ## Next
 

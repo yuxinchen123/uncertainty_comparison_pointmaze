@@ -46,3 +46,26 @@ arrival comes at 0.3 to 1.3 million steps, under 1% of it.
 
 Each side's best three configurations by the whole-curve mean go to the first ant validation block (128 seeds,
 seeds 10000 to 10127), as the user decided on 2026-11-13.
+
+## Extension at the grid's edge (added 2026-11-14 11:53 PT)
+
+**Why.** At 75 of 134 million steps per policy (the session's scratchpad script `ant_rk4_reading.py`, read 11:55 PT),
+every arm's best whole-curve mean in both reward settings is at learning rate 1e-4 and intrinsic weight 1/16: the
+smallest weight and the smallest learning rate of the method's grid. The study's edge rule (`program.md`) extends
+the grid by three values on that side before anything is confirmed. RND's grid already covers weights down to 1/256
+and learning rate 3e-5, and its best (1e-4, 1/16) is inside it. This extension was decided after that partial
+reading, which is stated here because it is not a choice made before any result.
+
+**What.** Each of the six method units gets a second unit (phase `method-edge-rk4`, same seeds 0 to 15, same budget
+134,217,728 steps per policy, same physics and code copy) with 8 cells: learning rate 1e-4 with weights 1/1024,
+1/256, 1/64 and 1/4 (the three smaller values on RND's factor-4 grid, and the factor-4 neighbour above, which the
+method's factor-16 grid skipped), and learning rate 3e-5 with weights 1/256, 1/64, 1/16 and 1/4. Entropy 0.001 and
+clip 0.1 as before. A unit's time is mostly a fixed cost per iteration, so 8 cells take about as long as 9.
+
+**Predictions** (from RND's own curve over weight at learning rate 1e-4 at the same reading: 1/256 0.0930, 1/64
+0.0951, 1/16 0.0983, 1/4 0.0660; and at 3e-5 with weight 1/16, 0.0934):
+
+7. In each arm and reward setting, the whole-curve mean at (1e-4, 1/64) is within 0.006 of the arm's value at
+   (1e-4, 1/16), and (1e-4, 1/4) is below (1e-4, 1/16).
+8. Learning rate 3e-5 is below 1e-4 at weight 1/16 in each arm and reward setting.
+9. The configuration that each arm's first validation configurations come from stays at or next to (1e-4, 1/16).
