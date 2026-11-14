@@ -463,3 +463,8 @@ Times are Pacific, read from the clock or from scheduler records.
   on three free RTX 4000 Ada cards (6919827, 6919828, planner run with the RTX 5080 left out) took them at 09:12 PT.
   All 13 UVA units run; the three step-cost method units come back from Gilbreth after 09:30 PT and get RTX 5080
   workers (planner run with that card type only).
+- 2026-11-14 09:31 PT: two step-cost method units (fast step 0.03 with the hold, and the first-arrival hold alone)
+  were taken back from Gilbreth with their checkpoints and took both RTX 5080 cards of nekomata02 (job 6919852,
+  planner run with that card type only). The third (fast step 0.1 with the hold) comes back after its Gilbreth job
+  ends at 09:40 PT. The tick's restart step now submits in two passes: RTX 5080 workers first, for units whose floor
+  allows that card, then the other card types.
