@@ -212,3 +212,7 @@ Times are Pacific.
   RTX 5080, 6908672 on two A40). The four Gilbreth jobs stay queued; each ends at once if it starts with nothing
   to take. The PointMaze Large units need more than one 2-hour UVA job (Large with the step cost: 33.5 million
   steps); they continue from their checkpoints on the next free card or on Gilbreth.
+- 2026-11-13 22:37 PT: this folder's monitor job 6898944 ended at its 1-day limit (state TIMEOUT; its limit had been
+  lowered to 1 day on 2026-11-12 so that it would start). Its queue had no unit left (285 done). New monitor job
+  6913375 (no top-up phase, `nolim`, 1 processor, 2 GiB, the partition's 20 days) was submitted at 22:56 PT and
+  started within a minute on heartpiece; id in `slurm/submitted_jobids_monitor_sl5nw.txt`.
