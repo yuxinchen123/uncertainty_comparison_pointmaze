@@ -453,3 +453,13 @@ Times are Pacific, read from the clock or from scheduler records.
      17,000 MiB, which keeps it off the RTX 5080 cards (16,303 MiB); the floor changes only where a unit may run,
      not what it computes (session scratchpad script `steer.py`);
   4. Gilbreth is set ready again once the six are back, for units no free UVA card can take.
+- 2026-11-14 09:10 PT: three method units (reward on arrival) were taken back from Gilbreth after their jobs ended,
+  each with its checkpoint and record file. The 17,000 MiB floor was set on every waiting unit except the reward-on-
+  arrival unit with the first-arrival hold alone (floor 14,000) and the three step-cost method units (still on
+  Gilbreth). Tenth UVA restart: jobs 6919817 to 6919821 (three A100 40 GB, six A40, four RTX 5080); the unit with
+  the first-arrival hold alone took an RTX 5080 (job 6919818). The free-card planner counts cards, not which unit
+  fits which card, so three RTX 5080 cards found no unit their floor allowed: job 6919819 (nekomata02) ended after 4
+  seconds, and the second card of 6919818 stays idle until that job ends. Three units were left waiting; workers
+  on three free RTX 4000 Ada cards (6919827, 6919828, planner run with the RTX 5080 left out) took them at 09:12 PT.
+  All 13 UVA units run; the three step-cost method units come back from Gilbreth after 09:30 PT and get RTX 5080
+  workers (planner run with that card type only).
