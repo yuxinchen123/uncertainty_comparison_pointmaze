@@ -417,3 +417,6 @@ Times are Pacific, read from the clock or from scheduler records.
   four jobs of 13:13 PT reached their 4-hour limit; one unit continues in job 12361511 (A10), and three wait for
   jobs 12361584 to 12361586 (waiting on priority at 17:11 PT). If they still wait at about 19:10 PT they go to the
   next place (UVA free cards or MIT).
+- 2026-11-13 19:10 PT: third UVA restart: the eight UVA jobs ended after 1 h 50 min; seven new jobs on free cards
+  (6910417 to 6910423) started at once for the 13 units (the tick's script `ant_tick.sh` of the session's scratchpad
+  does the restart, cancels by ledger id what still waits after two minutes, and hands what is left to Gilbreth).
