@@ -440,3 +440,16 @@ Times are Pacific, read from the clock or from scheduler records.
   freed its place, and the tick handed two more with the limit raised to 6; two new Gilbreth jobs were submitted.
 - 2026-11-14 07:10 PT: ninth UVA restart: four new jobs on free cards (6919414 to 6919417: three A100 40 GB, four RTX
   5080, three A40) took the 10 UVA units at once. The six method units stay on Gilbreth.
+- 2026-11-14 08:53 PT: **the faster cards go to the units with the most windows left.** Windows per hour over each
+  unit's last eight windows (read 08:50 PT): RTX 5080 11.2 to 12.4, A100 40 GB 6.7, A40 7.1 to 7.2; on Gilbreth
+  (A10, A30) about 6. The three step-cost method units on Gilbreth had 150 to 156 windows left, about 25 hours there,
+  against 13 hours on an RTX 5080; the UVA units have at most about 120 left. Steps:
+  1. Gilbreth marked not ready for this folder (08:53 PT, reason in the table), so no new Gilbreth job starts; its
+     six jobs end at their 4-hour limit between 09:05 and 09:40 PT (no waiting Gilbreth job of this folder);
+  2. each method unit is taken back to UVA when its job has ended (`remote_fleet.py take-back`), with its
+     checkpoint;
+  3. before each UVA restart, every waiting unit except the four with the most windows left (the three step-cost
+     method units and the reward-on-arrival unit with the first-arrival hold alone) gets a card-memory floor of
+     17,000 MiB, which keeps it off the RTX 5080 cards (16,303 MiB); the floor changes only where a unit may run,
+     not what it computes (session scratchpad script `steer.py`);
+  4. Gilbreth is set ready again once the six are back, for units no free UVA card can take.
