@@ -412,3 +412,8 @@ Times are Pacific, read from the clock or from scheduler records.
   Ada, 6909549 on seven RTX A4500 on jaguar03 through the reservation). The one-time step planned for 15:14 PT
   was not needed and was removed. This restart is due every 1 h 50 min; each monitoring tick submits workers on
   free cards for any unit left pending.
+- 2026-11-13 17:10 PT: second UVA restart: the five UVA jobs ended after 1 h 50 min; eight new jobs on free cards took
+  all 13 units at once (6909963 to 6909970: four RTX 5080, one A40, six RTX 4000 Ada, two RTX A4500). On Gilbreth the
+  four jobs of 13:13 PT reached their 4-hour limit; one unit continues in job 12361511 (A10), and three wait for
+  jobs 12361584 to 12361586 (waiting on priority at 17:11 PT). If they still wait at about 19:10 PT they go to the
+  next place (UVA free cards or MIT).
