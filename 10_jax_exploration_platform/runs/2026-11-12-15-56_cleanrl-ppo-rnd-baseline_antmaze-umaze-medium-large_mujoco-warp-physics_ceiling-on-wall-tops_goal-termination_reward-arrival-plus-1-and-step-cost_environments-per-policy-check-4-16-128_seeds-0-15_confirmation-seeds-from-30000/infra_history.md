@@ -425,3 +425,6 @@ Times are Pacific, read from the clock or from scheduler records.
   (20:57 and 21:11 PT, accounting times converted from Eastern); job 12365054 waits for the first of the four units
   (planned start 21:42 PT), and the fleet loop submits the other three. Jobs 12361859, 12361867 and 12361868 of
   17:21 PT found no unit and ended in 8 seconds, as generic workers do.
+- 2026-11-13 23:10 PT: fifth UVA restart: five new jobs on free cards (6913986 to 6913990: four RTX 5080, one A40,
+  eight RTX 4000 Ada) took the 13 units at once. The four Gilbreth units run in jobs 12365054, 12365300, 12365309
+  and 12365400 (A10 cards).
