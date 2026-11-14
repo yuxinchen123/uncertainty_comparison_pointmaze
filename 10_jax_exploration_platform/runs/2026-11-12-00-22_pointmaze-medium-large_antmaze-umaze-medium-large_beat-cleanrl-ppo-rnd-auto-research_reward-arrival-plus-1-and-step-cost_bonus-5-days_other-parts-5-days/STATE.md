@@ -1364,6 +1364,12 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   policies have reached the goal at least once, and 0.5 to 0.9% of the latest episodes arrive; on Large 1 of 128
   policies has reached the goal (learning rate 1e-2, weight 1). Not a result yet; the question for the user (what
   the comparison is where RND rarely reaches the goal) waits for the full probes.
+- 2026-11-13 20:10 PT: **mid-run look at the RK4 ant sweep, U-maze, reward 1 on arrival** (75 of 256 windows, about
+  39 million steps per policy; a check, not a result): every policy of the two most advanced RND units has reached
+  the goal (one of 16 at the smallest weight not yet); the mean return so far is highest at small intrinsic
+  weights: 0.0896 at learning rate 1e-4 and weight 1/16, 0.0824 at 1/64, against 0.045 to 0.047 at weights 1 to
+  16; about 10% of the latest episodes arrive at the best configurations. The method at step 0.1 (56 windows) has
+  0.0800 at (1e-4, 1/16). No fault-guard respawn in any of the 17 units.
 
 ## Next
 
