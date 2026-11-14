@@ -493,3 +493,8 @@ Times are Pacific, read from the clock or from scheduler records.
   cancelled by their ledger ids. Gilbreth was set ready again for this folder and took the four units no free UVA
   card could take (two reward-on-arrival method units and the two RND probes); four Gilbreth jobs were submitted, and
   the session's 5-minute fleet loop was started again.
+- 2026-11-14 11:55 PT: six edge-extension units of batch 15 (phase `method-edge-rk4`, auto research folder's batch 15
+  `ideas.md`; claim order 63 to 68, after the six method units, so those keep the RTX 5080 cards) were built and
+  placed: four on free UVA cards (jobs 6922949 and 6922950; 6922951 still waited after 110 seconds and was
+  cancelled by its ledger id), two on Gilbreth (two jobs submitted). They move to RTX 5080 cards when the current
+  units finish, about 01:00 to 02:00 PT on 15 November.
