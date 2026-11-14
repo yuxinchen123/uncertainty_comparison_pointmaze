@@ -420,3 +420,8 @@ Times are Pacific, read from the clock or from scheduler records.
 - 2026-11-13 19:10 PT: third UVA restart: the eight UVA jobs ended after 1 h 50 min; seven new jobs on free cards
   (6910417 to 6910423) started at once for the 13 units (the tick's script `ant_tick.sh` of the session's scratchpad
   does the restart, cancels by ledger id what still waits after two minutes, and hands what is left to Gilbreth).
+- 2026-11-13 21:10 PT: fourth UVA restart: five new jobs on free cards (6910745 to 6910749: four RTX 5080, nine RTX
+  4000 Ada) took the 13 units at once. On Gilbreth the four jobs of about 17:05 to 17:20 PT ended at their limit
+  (20:57 and 21:11 PT, accounting times converted from Eastern); job 12365054 waits for the first of the four units
+  (planned start 21:42 PT), and the fleet loop submits the other three. Jobs 12361859, 12361867 and 12361868 of
+  17:21 PT found no unit and ended in 8 seconds, as generic workers do.
