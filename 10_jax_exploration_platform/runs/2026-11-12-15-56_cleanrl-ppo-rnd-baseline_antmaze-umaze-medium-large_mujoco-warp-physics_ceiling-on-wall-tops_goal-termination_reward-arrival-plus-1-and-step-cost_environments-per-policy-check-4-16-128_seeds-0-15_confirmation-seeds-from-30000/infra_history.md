@@ -468,3 +468,14 @@ Times are Pacific, read from the clock or from scheduler records.
   planner run with that card type only). The third (fast step 0.1 with the hold) comes back after its Gilbreth job
   ends at 09:40 PT. The tick's restart step now submits in two passes: RTX 5080 workers first, for units whose floor
   allows that card, then the other card types.
+- 2026-11-14 09:50 PT: the last step-cost method unit (fast step 0.1 with the hold) was taken back from Gilbreth with
+  its checkpoint. No RTX 5080 was free and the one job submitted for another card type (6919962) still waited after
+  110 seconds, so it was cancelled by its ledger id. The unit waits on UVA for an RTX 5080 (the 11:10 PT restart
+  frees two on nekomata01) rather than going back to Gilbreth: on Gilbreth it would hold an A10 at about 6 windows
+  per hour until about 14:00 PT. Gilbreth stays not ready for this folder until that restart; each tick still
+  tries free UVA cards for it, RTX 5080 first.
+- 2026-11-14 09:50 PT: **first fault-guard respawn under the RK4 physics**: RND sweep, reward on arrival, cells 1 to 7,
+  window 209 (about 110 million steps per policy), one policy (learning rate 3e-5, intrinsic weight 1/256, seed
+  index 2), torso angular speed 106.2 rad/s against the guard's 100 (torso speed 14.0 m/s). Over the unit's 211
+  windows the largest torso speed of any policy is 17.8 m/s; this is the guard's angular bound catching a fast spin,
+  not a runaway of the kind the implicitfast physics produced (up to 2.45 x 10^7 m/s).

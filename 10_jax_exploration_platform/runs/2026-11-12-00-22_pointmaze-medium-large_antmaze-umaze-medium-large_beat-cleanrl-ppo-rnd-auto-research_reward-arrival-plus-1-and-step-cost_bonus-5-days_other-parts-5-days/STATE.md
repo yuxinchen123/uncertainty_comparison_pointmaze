@@ -1385,6 +1385,11 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   2. Large: 14 of 128 policies have reached the goal at least once (5 of 16 at learning rate 1e-2, weight 1); no
      arrival in the latest five windows; the mean return so far rounds to 0.0000.
   The question for the user (the comparison on Medium and Large) waits for the complete probes.
+- 2026-11-14 09:52 PT: **placement near the end of the ant sweep:** an RTX 5080 runs an RK4 ant unit at about 12 windows per
+  hour, an A40 or A100 40 GB at about 7, Gilbreth's A10 and A30 at about 6. The six method units came back from
+  Gilbreth as their jobs ended; the four with the most windows left get the RTX 5080 cards (card-memory floors,
+  AntMaze folder's `infra_history.md`, 08:53 to 09:50 PT). First fault-guard respawn under RK4: one, at about 110
+  million steps per policy in the RND sweep (torso angular speed 106 rad/s against the guard's 100).
 
 ## Next
 
