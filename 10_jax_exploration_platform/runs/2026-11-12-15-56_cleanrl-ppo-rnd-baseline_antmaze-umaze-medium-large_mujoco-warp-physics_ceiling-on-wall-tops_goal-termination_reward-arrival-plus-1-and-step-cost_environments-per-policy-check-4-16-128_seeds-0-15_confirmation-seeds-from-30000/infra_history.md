@@ -431,4 +431,4 @@ Times are Pacific, read from the clock or from scheduler records.
 - 2026-11-14 01:10 PT: sixth UVA restart: seven new jobs on free cards (6917566 to 6917572) took the 13 units at
   once.
 - 2026-11-14 03:10 PT: seventh UVA restart: six new jobs on free cards (6919262 to 6919267) took the 13 units at once.
-  The four Gilbreth units run in jobs 12368970, 12369082, 12369288 and 12369289 since 01:13 to 01:55 PT.
+  The four Gilbreth units run in jobs 12368970, 12369082, 12369288 and 12369289, started 01:25, 01:31, 01:49 and 01:51 PT (accounting times converted from Eastern).
