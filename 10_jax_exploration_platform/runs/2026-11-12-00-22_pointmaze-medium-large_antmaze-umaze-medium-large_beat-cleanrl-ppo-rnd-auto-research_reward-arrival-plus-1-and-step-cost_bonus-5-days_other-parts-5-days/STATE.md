@@ -1419,7 +1419,10 @@ Rewritten 2026-11-13 22:31 PT.
 | 8 | error length with the held divisor | behind RND at every weight; closed for the whole-curve mean |
 | 8 | divisor held from each policy's first arrival | level with the fixed hold, nothing to set; ahead of RND on both Medium cases (second block: +0.0095, +0.0065); level on Large with reward 1 on arrival on the second block (−0.0003; +0.0094 on the first); Large with the step cost +0.0074 on the first block, second block running |
 | 3, 9 | fast last layer, for discovery | first-goal time ahead of RND in three PointMaze cases (−63, −61, −5.0 thousand steps), level on Medium with the step cost; its whole-curve mean is far behind at those configurations |
-| 10 | fast last layer with the first-arrival hold (PointMaze); first-arrival hold, fast last layer, and both on the ant U-maze | running since 2026-11-13 02:58 PT |
+| 10, 12 | fast last layer with the first-arrival hold, at the step the first block chooses per case (PointMaze) | the method; ahead of RND on the second block in three PointMaze cases, level on Medium with the step cost (entry of 2026-11-13 13:18 PT) |
+| 10, 14 | the bonus arms on the ant U-maze, older implicitfast physics | not compared with any RK4 unit (user decision 2026-11-13) |
+| 11, 13 | fast last layer until the first arrival, then a held divisor (13: the predictor's own divisor) | see each batch's `summary.md` |
+| 15 | the method on the ant U-maze, RK4 physics, against RND's sweep at the same configurations | running since 2026-11-13 13:13 PT |
 
 ## Decisions I made (routine), with the reason
 
