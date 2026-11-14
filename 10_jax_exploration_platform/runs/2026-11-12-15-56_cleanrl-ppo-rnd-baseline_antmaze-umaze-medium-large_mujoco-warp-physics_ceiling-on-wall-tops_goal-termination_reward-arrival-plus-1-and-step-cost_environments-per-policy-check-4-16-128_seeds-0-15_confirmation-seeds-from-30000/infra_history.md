@@ -507,3 +507,11 @@ Times are Pacific, read from the clock or from scheduler records.
   rad/s against the guard's 100 (torso speed 15.7 m/s). Like the first (09:50 PT entry), a fast spin just over the
   angular bound late in training, not a runaway. Edge-extension units on UVA restarted at 13:49 PT after their
   2-hour jobs (6923647 to 6923649: two A40, two RTX 4000 Ada).
+- 2026-11-14 15:10 PT: thirteenth UVA restart (jobs 6926066 to 6926070: one A100 40 GB, two A40, seven RTX 4000 Ada;
+  nothing waited). The RTX 5080 pass found no card: nekomata01's two RTX 5080 are free, but 22 of its 24 processors
+  are held by another user's processor-only array jobs (2-day limits) that started after our job 6923400 ended at
+  15:00 PT, and the last 2 are kept for the system, so a card job cannot start there. The reward-on-arrival unit
+  with the first-arrival hold alone went to an RTX 4000 Ada, the step-cost unit with step 0.1 to an A100 40 GB
+  (both about 6.5 to 7 windows per hour). nekomata02's two RTX 5080 stay with job 6923539 until about 15:30 PT;
+  the same may happen there. A 2-hour job cannot be lengthened by its user, so the cards are kept only while the
+  other user's jobs leave processors free.
