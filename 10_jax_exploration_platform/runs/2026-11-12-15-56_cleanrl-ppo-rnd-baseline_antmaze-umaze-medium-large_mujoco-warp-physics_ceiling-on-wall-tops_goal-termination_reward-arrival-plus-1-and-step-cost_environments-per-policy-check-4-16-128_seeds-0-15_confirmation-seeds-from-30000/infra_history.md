@@ -438,3 +438,5 @@ Times are Pacific, read from the clock or from scheduler records.
   its ledger id; the other five (four RTX 5080, four A40, two RTX 4000 Ada cards) took 10 units. The other 6 units
   (all six method units of batch 15) are on Gilbreth: the fleet loop handed one over when the 128-environment unit
   freed its place, and the tick handed two more with the limit raised to 6; two new Gilbreth jobs were submitted.
+- 2026-11-14 07:10 PT: ninth UVA restart: four new jobs on free cards (6919414 to 6919417: three A100 40 GB, four RTX
+  5080, three A40) took the 10 UVA units at once. The six method units stay on Gilbreth.
