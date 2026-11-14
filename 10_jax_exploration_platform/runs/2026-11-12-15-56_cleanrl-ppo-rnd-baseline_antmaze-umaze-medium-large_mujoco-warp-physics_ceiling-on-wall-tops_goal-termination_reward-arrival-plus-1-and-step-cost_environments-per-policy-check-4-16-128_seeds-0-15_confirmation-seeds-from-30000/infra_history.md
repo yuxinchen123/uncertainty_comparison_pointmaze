@@ -428,3 +428,5 @@ Times are Pacific, read from the clock or from scheduler records.
 - 2026-11-13 23:10 PT: fifth UVA restart: five new jobs on free cards (6913986 to 6913990: four RTX 5080, one A40,
   eight RTX 4000 Ada) took the 13 units at once. The four Gilbreth units run in jobs 12365054, 12365300, 12365309
   and 12365400 (A10 cards).
+- 2026-11-14 01:10 PT: sixth UVA restart: seven new jobs on free cards (6917566 to 6917572) took the 13 units at
+  once.
