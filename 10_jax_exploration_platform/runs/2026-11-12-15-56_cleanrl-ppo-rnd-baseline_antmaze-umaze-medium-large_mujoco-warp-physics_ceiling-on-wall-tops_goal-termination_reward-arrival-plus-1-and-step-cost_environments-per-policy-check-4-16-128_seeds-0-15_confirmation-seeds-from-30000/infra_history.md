@@ -502,3 +502,8 @@ Times are Pacific, read from the clock or from scheduler records.
   took the two waiting units allowed there (reward on arrival with the first-arrival hold alone; step cost with
   fast step 0.1 and the hold); jobs 6923407 to 6923409 (three A100 40 GB, two A40, three RTX 4000 Ada) took the eight
   RND sweep units. Nothing waited.
+- 2026-11-14 14:10 PT: second fault-guard respawn under RK4: RND sweep, reward on arrival, cells 8 to 14, window 229
+  (about 120 million steps per policy), one policy (learning rate 1e-4, weight 1/64), torso angular speed 100.9
+  rad/s against the guard's 100 (torso speed 15.7 m/s). Like the first (09:50 PT entry), a fast spin just over the
+  angular bound late in training, not a runaway. Edge-extension units on UVA restarted at 13:49 PT after their
+  2-hour jobs (6923647 to 6923649: two A40, two RTX 4000 Ada).
