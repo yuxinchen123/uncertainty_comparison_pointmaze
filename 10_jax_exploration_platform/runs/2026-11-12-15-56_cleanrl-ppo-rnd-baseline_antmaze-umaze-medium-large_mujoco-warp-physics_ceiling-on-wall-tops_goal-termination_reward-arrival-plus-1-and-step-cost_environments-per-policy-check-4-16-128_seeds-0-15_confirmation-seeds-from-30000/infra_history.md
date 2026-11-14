@@ -485,3 +485,11 @@ Times are Pacific, read from the clock or from scheduler records.
   cards of nekomata01 free) its job is to be cancelled by its ledger id and the unit restarted on an RTX 5080 from its
   checkpoint. The restart step's RTX 5080 pass now asks for only as many cards as there are waiting units allowed
   on them (`--max-new-cards`), so no RTX 5080 job starts without a unit.
+- 2026-11-14 11:14 PT: eleventh UVA restart. Job 6920059 (the step-cost unit with fast step 0.1 on an RTX 4000 Ada)
+  was cancelled by its ledger id at 11:10 PT; its worker gave the unit back within 10 seconds. The restart's RTX 5080
+  pass asked for 2 cards and job 6922507 (nekomata01) took the two units allowed there, so all four units with the
+  most windows left now run on RTX 5080 cards (6922507 and 6919852). The other pass placed the eight RND sweep units
+  (6922509 to 6922511: three A100 40 GB, five A40); jobs 6922512 and 6922513 still waited after 110 seconds and were
+  cancelled by their ledger ids. Gilbreth was set ready again for this folder and took the four units no free UVA
+  card could take (two reward-on-arrival method units and the two RND probes); four Gilbreth jobs were submitted, and
+  the session's 5-minute fleet loop was started again.
