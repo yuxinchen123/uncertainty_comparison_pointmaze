@@ -1373,38 +1373,35 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
 
 ## Next
 
-Rewritten 2026-11-13 03:02 PT.
+Rewritten 2026-11-13 22:31 PT.
 
-1. **Batch 10, PointMaze (8 units, first validation block):** read each against the first-arrival hold alone, the
-   fast last layer alone (phase `discovery-validation`, same seeds) and RND's best (predictions 1 to 3). A unit of
-   the new option must not be waiting on Gilbreth when the old-copy job 12352113 finishes its unit (about 04:40
-   PT): take waiting units back to UVA at about 04:20 PT (`infra_history.md`).
-2. **Batch 10, ant U-maze (6 units, phase `bonus-arms-screen` in the AntMaze baseline folder):** read each
-   against the check's RND unit at the same configurations and seeds (scratchpad script `quick_ant_cells.py`
-   prints a unit's configurations); read the fault-guard count of every unit (predictions 4 to 7).
-3. **First-arrival hold:** its second block on PointMaze Large with reward 1 on arrival and its first block on
-   PointMaze Large with the step cost are running; then its second block on Large with the step cost, together
-   with RND and the fixed hold on the same seeds.
-4. **AntMaze baseline** (after the two `budget-probe` units and their jobs of the older code copy have ended):
-   freeze the AntMaze baseline folder anew (it then gets its first numbered code copy and the Medium and Large
-   configuration files); RND sweep on the U-maze at 16 environments per policy, B = 134,217,728, learning rates
-   3e-5, 1e-4, 3e-4, 1e-2, weights 1/256 to 16 (factor 4), entropy 0.001, 16 development seeds, both reward
-   settings; its whole-curve mean against the 128-environment run of the same length decides the count. RND
-   probes on Medium and Large with reward 1 on arrival at 67 million steps (does RND reach the goal at all).
-   Placement on Gilbreth; when Gilbreth is full for about 2 hours, the next server in the order.
-5. **Summaries:** `summary_settings.json` and summaries for batches 8, 9 and 10; the standing page after each
-   reading.
-6. **Batches 12 and 13:** read batch 12's four PointMaze Large units (steps 0.03 and 0.01 of the fast last
-   layer with the first-arrival hold) and batch 13's thirteen units (the fast last layer until the first arrival,
-   then the predictor's own divisor) with `quick_pair.py` against RND's best, the hold alone and batch 10's arm.
-   A configuration ahead of RND's best on the first block goes to the second block with fixed configuration.
-   Then the ant U-maze screen of the leading arm at both environment counts (the AntMaze baseline folder must be
-   frozen anew for the new options; its workers do not know the copy rule yet, so wait for them or cancel them by
-   ledger id at that freeze). The auto research folder's code is frozen at 42b327e7 (copy number 1).
-7. **Waiting for the user:** how strict to be about the held divisor's closeness to public practice; what the
-   AntMaze comparison is if RND stays at a few percent on the U-maze.
-8. Fresh seeds (from 30000) only for the method as it stands at the end. Re-create the monitoring cron before
-   2026-11-19.
+1. **RK4 ant sweep and batch 15** (U-maze, 17 units at 134,217,728 steps per policy, 16 environments per policy;
+   the slowest units end on 15 November at the rates of 13 November evening): each tick restarts the UVA units
+   after their 2-hour jobs (the session's scratchpad script `ant_tick.sh`, free cards only, waiting jobs cancelled
+   by ledger id and their units handed to Gilbreth) and reads every unit's fault-guard count. Near the end, units
+   on the slowest cards move to faster free cards ([[move-slow-card-units-to-fast-cards-near-the-end]]).
+2. **When the sweep is complete:**
+   1. RND's configurations in both reward settings: the best for the whole-curve mean and the best for the mean
+      capped first-goal time, on the 16 development seeds;
+   2. the equal-steps rule on the pair of environment counts (16 against the 128-environment unit at the same
+      budget); the count changes only if 128 is ahead;
+   3. batch 15 against RND at the same configurations and seeds (its six predictions), and its summary.
+3. **First ant validation block** (U-maze, seeds 10000 to 10127): each side's best three configurations for the
+   whole-curve mean and its best for the first-goal time, in both reward settings; placement Gilbreth, free UVA
+   cards, then MIT, Gautschi `ai`, ACCESS. About 26 to 40 hours per unit.
+4. **Ant fresh seeds** (256 from 30000) for RND and the method as it stands at the end. My default, told to the
+   user on 2026-11-13: on the ant the 256 fresh seeds also serve as the check on unused seeds; no separate second
+   block unless the user asks for one.
+5. **RND probes on AntMaze Medium and Large:** when complete, their curves go to the user, who decides the
+   comparison there.
+6. **PointMaze:** on the second block the method is ahead of RND in three of the four cases; Medium with the step
+   cost is level (+0.0041 [−0.0017, +0.0103]). Fresh seeds (1,024) for the method as it stands at the end.
+7. **Days 6 to 10** (changes outside the bonus, from about 2026-11-16 22:40 PT), each tied to an observation of
+   days 1 to 5. Schedule fact: an ant unit takes at least about 26 hours, so a change found then reaches the ant
+   only through one sweep, one validation block and the fresh seeds back to back (about 4.5 days), which ends
+   close to 2026-11-21 22:40 PT with no time to spare.
+8. Re-create the monitoring cron before 2026-11-20 13:00 PT (created 2026-11-13 about 13:00 PT; it expires after
+   7 days).
 
 ## Ideas (status)
 
