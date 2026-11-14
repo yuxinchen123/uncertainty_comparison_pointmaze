@@ -479,3 +479,9 @@ Times are Pacific, read from the clock or from scheduler records.
   index 2), torso angular speed 106.2 rad/s against the guard's 100 (torso speed 14.0 m/s). Over the unit's 211
   windows the largest torso speed of any policy is 17.8 m/s; this is the guard's angular bound catching a fast spin,
   not a runaway of the kind the implicitfast physics produced (up to 2.45 x 10^7 m/s).
+- 2026-11-14 10:10 PT: the waiting step-cost unit (fast step 0.1 with the hold) got an RTX 4000 Ada card (job 6920059,
+  lynx01). Windows per hour read 10:12 PT: RTX 5080 10.7 to 11.4, A40 6.7 to 7.1, A100 40 GB 6.7 to 6.8, RTX 4000
+  Ada 5.7 to 7.4. At 5.7 per hour its 147 windows would take about 26 hours, so at the 11:10 PT restart (two RTX 5080
+  cards of nekomata01 free) its job is to be cancelled by its ledger id and the unit restarted on an RTX 5080 from its
+  checkpoint. The restart step's RTX 5080 pass now asks for only as many cards as there are waiting units allowed
+  on them (`--max-new-cards`), so no RTX 5080 job starts without a unit.
