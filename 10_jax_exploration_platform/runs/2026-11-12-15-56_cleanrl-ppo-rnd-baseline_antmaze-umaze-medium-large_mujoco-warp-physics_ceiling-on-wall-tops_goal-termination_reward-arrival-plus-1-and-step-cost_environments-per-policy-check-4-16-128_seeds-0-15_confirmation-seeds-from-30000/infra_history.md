@@ -432,3 +432,9 @@ Times are Pacific, read from the clock or from scheduler records.
   once.
 - 2026-11-14 03:10 PT: seventh UVA restart: six new jobs on free cards (6919262 to 6919267) took the 13 units at once.
   The four Gilbreth units run in jobs 12368970, 12369082, 12369288 and 12369289, started 01:25, 01:31, 01:49 and 01:51 PT (accounting times converted from Eastern).
+- 2026-11-14 05:10 PT: the 128-environment RK4 unit is complete (256 of 256 windows, finished 04:56 PT on Gilbreth,
+  records copied back and verified; 0 fault-guard respawns over 134,217,728 steps per policy). Eighth UVA restart:
+  six jobs submitted on free cards (6919311 to 6919316); 6919311 still waited after two minutes and was cancelled by
+  its ledger id; the other five (four RTX 5080, four A40, two RTX 4000 Ada cards) took 10 units. The other 6 units
+  (all six method units of batch 15) are on Gilbreth: the fleet loop handed one over when the 128-environment unit
+  freed its place, and the tick handed two more with the limit raised to 6; two new Gilbreth jobs were submitted.

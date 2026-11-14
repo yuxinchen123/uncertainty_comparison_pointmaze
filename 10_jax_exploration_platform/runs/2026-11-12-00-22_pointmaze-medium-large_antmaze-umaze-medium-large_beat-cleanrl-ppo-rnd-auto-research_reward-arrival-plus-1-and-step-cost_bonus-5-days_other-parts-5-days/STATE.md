@@ -1370,6 +1370,14 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   weights: 0.0896 at learning rate 1e-4 and weight 1/16, 0.0824 at 1/64, against 0.045 to 0.047 at weights 1 to
   16; about 10% of the latest episodes arrive at the best configurations. The method at step 0.1 (56 windows) has
   0.0800 at (1e-4, 1/16). No fault-guard respawn in any of the 17 units.
+- 2026-11-14 05:13 PT: **the 128-environment RK4 unit is complete** (U-maze, reward 1 on arrival, learning rate 1e-2,
+  entropy 0.001, weights 1, 4, 16, 64, 16 seeds, 134,217,728 steps per policy): whole-curve mean 0.0768, 0.0898,
+  0.0826, 0.0783 (standard errors 0.003 to 0.006); 0 fault-guard respawns, where the older physics had up to 2% of
+  episodes respawned in the same configurations. Mid-run look at the same configurations over the same first 60.8
+  million steps (116 windows): 128 environments 0.0584, 0.0666, 0.0643 against 16 environments 0.0549, 0.0581,
+  0.0573 at weights 1, 4, 16 (weight 64 is not in the 16-environment sweep). The equal-steps rule compares each
+  count's best configuration over the whole budget; the 16-environment side's best so far is at learning rate 1e-4
+  and a small weight (entry of 2026-11-13 20:10 PT), so the rule is read when the sweep is complete.
 
 ## Next
 
