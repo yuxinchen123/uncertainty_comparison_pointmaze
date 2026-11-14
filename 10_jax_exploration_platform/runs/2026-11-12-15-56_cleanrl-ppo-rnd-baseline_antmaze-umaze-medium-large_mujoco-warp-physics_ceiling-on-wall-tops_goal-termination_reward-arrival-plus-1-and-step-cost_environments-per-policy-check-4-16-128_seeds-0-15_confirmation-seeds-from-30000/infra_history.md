@@ -498,3 +498,7 @@ Times are Pacific, read from the clock or from scheduler records.
   placed: four on free UVA cards (jobs 6922949 and 6922950; 6922951 still waited after 110 seconds and was
   cancelled by its ledger id), two on Gilbreth (two jobs submitted). They move to RTX 5080 cards when the current
   units finish, about 01:00 to 02:00 PT on 15 November.
+- 2026-11-14 13:11 PT: twelfth UVA restart, with the RTX 5080 pass first: job 6923400 (nekomata01, two RTX 5080)
+  took the two waiting units allowed there (reward on arrival with the first-arrival hold alone; step cost with
+  fast step 0.1 and the hold); jobs 6923407 to 6923409 (three A100 40 GB, two A40, three RTX 4000 Ada) took the eight
+  RND sweep units. Nothing waited.
