@@ -1378,6 +1378,13 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   0.0573 at weights 1, 4, 16 (weight 64 is not in the 16-environment sweep). The equal-steps rule compares each
   count's best configuration over the whole budget; the 16-environment side's best so far is at learning rate 1e-4
   and a small weight (entry of 2026-11-13 20:10 PT), so the rule is read when the sweep is complete.
+- 2026-11-14 07:50 PT: **mid-run look at the RND probes on AntMaze Medium and Large** (RK4 physics, reward 1 on arrival,
+  8 configurations x 16 seeds, about 65 to 67 of 134 million steps per policy; a check, not a result):
+  1. Medium: all 128 policies have reached the goal at least once; 0.6% to 1.2% of the latest episodes arrive; the
+     mean return so far is 0.005 to 0.010, highest at learning rate 1e-2 (0.0099 and 0.0101 at weights 1 and 16);
+  2. Large: 14 of 128 policies have reached the goal at least once (5 of 16 at learning rate 1e-2, weight 1); no
+     arrival in the latest five windows; the mean return so far rounds to 0.0000.
+  The question for the user (the comparison on Medium and Large) waits for the complete probes.
 
 ## Next
 
