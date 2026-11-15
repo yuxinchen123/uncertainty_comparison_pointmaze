@@ -557,3 +557,7 @@ Times are Pacific, read from the clock or from scheduler records.
   account's MIT H200 caps from 2026-11-15 PT and asked that no new MIT GPU jobs compete for the 4-card caps per pool.
   This folder's MIT entry stays not ready (it was never prepared); ant units do not go to MIT while that study holds
   the caps. Purdue and the ACCESS servers are not affected.
+- 2026-11-15 00:52 PT: the RTX 5080 cards now go to the edge-extension units: they have about 170 windows left each
+  (about 27 hours at RTX 4000 Ada speed, and the method's validation block waits for them), against at most 43 for
+  the method sweep units and 16 for the RND sweep units. Before each restart the tick gives every waiting unit except
+  the edge-extension units the 17,000 MiB floor, so only those may take an RTX 5080.
