@@ -547,3 +547,6 @@ Times are Pacific, read from the clock or from scheduler records.
   are on UVA; nothing is on a remote server, so the session's 5-minute fleet loop ended by itself. The tick's restart
   step still hands any unit no free UVA card takes to Gilbreth (it raises the limit and runs the fleet's step itself);
   the fleet loop is started again when a unit is there.
+- 2026-11-14 23:11 PT: fifteenth UVA restart: the RTX 5080 pass kept both cards for the two units allowed there (job
+  6932337); the six RND sweep units restarted on A100 40 GB, A40 and RTX 4000 Ada cards (6932357, 6932358,
+  6932368). All 20 units on UVA, nothing waiting.
