@@ -533,3 +533,7 @@ Times are Pacific, read from the clock or from scheduler records.
   and started at once on free RTX 4000 Ada cards (jobs 6930386, 6930387). The four waiting Gilbreth jobs
   (12385466, 12385467, 12385727, 12385809) are generic workers; one that starts with no unit there ends in seconds.
   UVA now holds 14 units, Gilbreth 6.
+- 2026-11-14 20:10 PT: the two step-cost edge-extension units on Gilbreth were between jobs after their 4-hour limit
+  (Gilbreth's planned starts still about 01:30 PT); with the limit lowered to the four units still running there,
+  both were taken back with their checkpoints and started at once on two RTX 4000 Ada cards (job 6930614). UVA 16
+  units, Gilbreth 4 (the four step-cost and reward-on-arrival method units still in their jobs).
