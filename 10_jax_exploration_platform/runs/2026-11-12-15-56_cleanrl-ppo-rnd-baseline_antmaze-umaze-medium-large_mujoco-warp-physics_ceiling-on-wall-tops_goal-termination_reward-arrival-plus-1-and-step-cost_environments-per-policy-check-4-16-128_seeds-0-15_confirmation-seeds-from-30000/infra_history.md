@@ -578,3 +578,9 @@ Times are Pacific, read from the clock or from scheduler records.
   `infrastructure/descriptions/antmaze_umaze_rk4-physics_validation_rnd_reward-arrival-plus-one_seeds-10000-to-10127_budget-134217728.json`)
   on RTX 4000 Ada cards (jobs 6936193, 6936196), with seven restarted units (6936191, 6936194, 6936195). All 20
   running units are on UVA: 8 RND validation, 6 edge-extension, 4 method sweep, 2 probes; nothing waiting.
+- 2026-11-15 05:12 PT: the RND probes on Medium and Large are complete (50 units done). At the restart six units
+  were waiting; free UVA cards took three (6936491; 6936492 still waited after 110 seconds and was cancelled by its
+  ledger id), and three RND step-cost validation units went to Gilbreth (jobs 12388381 to 12388383, waiting on
+  priority with no planned start yet). The session's fleet loop was started again. If they still wait at about 07:10
+  PT, they come back to free UVA cards. The four waiting Gilbreth workers of 19:13 to 19:34 PT started about 01:30 to
+  02:10 PT, found no unit and ended.
