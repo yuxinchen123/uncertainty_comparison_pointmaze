@@ -1432,6 +1432,16 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   5. no fault-guard respawn in any method unit (prediction 6 held).
   Every arm's best is still at the grid's edge (1e-4, 1/16); the edge extension (weights 1/1024 to 1/4, learning
   rate 3e-5) is about 105 of 256 windows in.
+- 2026-11-15 04:52 PT: **the RND probes on AntMaze Medium and Large are complete** (RK4, reward 1 on arrival, 8
+  configurations x 16 seeds, 134,217,728 steps per policy, 0 fault-guard respawns; figure
+  `analysis/plots/rnd_probes_antmaze_medium_large_rk4_reward-arrival-plus-one.png` in the AntMaze folder):
+  1. Medium: all 128 policies reached the goal at least once (first arrival 0.7 to 3.6 million steps on average),
+     but only 0.5% to 1.1% of training episodes arrive, flat from about 10 million steps to the end; best whole-curve
+     mean 0.0105 ± 0.0004 at learning rate 1e-2, weight 1 (0.0103 at weight 16), against 0.105 on the U-maze;
+  2. Large: 26 of 128 policies reached the goal at least once (7 of 16 at learning rate 1e-2, weight 1), with about
+     one arrival per policy in 134 million steps; whole-curve mean 0.0000 in every configuration.
+  The comparison on these two mazes is the user's decision (plan "Change 2", item 2); the question went to the user
+  at this time with options; nothing on Medium or Large starts before the answer.
 
 ## Next
 
