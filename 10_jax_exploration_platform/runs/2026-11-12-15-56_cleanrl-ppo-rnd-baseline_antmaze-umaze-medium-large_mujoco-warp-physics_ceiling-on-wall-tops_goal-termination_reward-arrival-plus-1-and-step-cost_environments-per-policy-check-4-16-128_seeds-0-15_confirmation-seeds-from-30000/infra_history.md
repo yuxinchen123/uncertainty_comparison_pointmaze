@@ -561,3 +561,9 @@ Times are Pacific, read from the clock or from scheduler records.
   (about 27 hours at RTX 4000 Ada speed, and the method's validation block waits for them), against at most 43 for
   the method sweep units and 16 for the RND sweep units. Before each restart the tick gives every waiting unit except
   the edge-extension units the 17,000 MiB floor, so only those may take an RTX 5080.
+- 2026-11-15 02:10 PT: five of the eight RND sweep units are complete (the latest: reward on arrival, cells 15 to 21).
+  Its worker (job 6935087, A40) then took a waiting edge-extension unit (step cost, step 0.03 with the hold), as
+  workers do when a unit ends, so job 6935456 found nothing and ended at once. Fourth fault-guard respawn under RK4:
+  RND, step cost, cells 1 to 7, window 249, one policy (learning rate 3e-5, weight 1/64), torso angular speed 112.0
+  rad/s (torso speed 14.5 m/s). All four respawns are RND units and the angular bound; two are in this unit, both
+  at learning rate 3e-5 and weight 1/64.
