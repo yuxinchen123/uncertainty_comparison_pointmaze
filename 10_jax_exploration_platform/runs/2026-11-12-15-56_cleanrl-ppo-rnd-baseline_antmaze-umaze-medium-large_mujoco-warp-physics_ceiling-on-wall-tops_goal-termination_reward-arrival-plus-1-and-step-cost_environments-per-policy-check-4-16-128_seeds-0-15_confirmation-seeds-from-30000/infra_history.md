@@ -567,3 +567,9 @@ Times are Pacific, read from the clock or from scheduler records.
   RND, step cost, cells 1 to 7, window 249, one policy (learning rate 3e-5, weight 1/64), torso angular speed 112.0
   rad/s (torso speed 14.5 m/s). All four respawns are RND units and the angular bound; two are in this unit, both
   at learning rate 3e-5 and weight 1/64.
+- 2026-11-15 03:14 PT: **first ant validation block, RND with the step cost, started**: four units (phase
+  `validation-rk4`, one configuration each, seeds 10000 to 10127, 134,217,728 steps per policy; description
+  `infrastructure/descriptions/antmaze_umaze_rk4-physics_validation_rnd_reward-step-cost_seeds-10000-to-10127_budget-134217728.json`)
+  on free UVA cards (jobs 6936013 on an A40, 6936014 on three RTX 4000 Ada). Unit ids drop the environment count
+  (every validation unit has 16 per policy) to stay under 200 characters. The step-cost RND sweep was complete; the
+  reward-on-arrival half follows when its last RND unit (cells 22 to 28) ends.
