@@ -584,3 +584,8 @@ Times are Pacific, read from the clock or from scheduler records.
   priority with no planned start yet). The session's fleet loop was started again. If they still wait at about 07:10
   PT, they come back to free UVA cards. The four waiting Gilbreth workers of 19:13 to 19:34 PT started about 01:30 to
   02:10 PT, found no unit and ended.
+- 2026-11-15 07:30 PT: fifth fault-guard respawn under RK4, the first in a method unit: edge extension, step cost,
+  first-arrival hold alone, window 132, one policy (learning rate 3e-5, weight 1/64), torso angular speed 102.7
+  rad/s (torso speed 15.0 m/s). All five respawns are the angular bound; four of the five are at learning rate 3e-5
+  with weight 1/64 (RND's best configuration in both reward settings, and here the method at the same setting).
+  At 07:11 PT the RTX 5080 rule gave its first card to an edge-extension unit (job 6937290).
