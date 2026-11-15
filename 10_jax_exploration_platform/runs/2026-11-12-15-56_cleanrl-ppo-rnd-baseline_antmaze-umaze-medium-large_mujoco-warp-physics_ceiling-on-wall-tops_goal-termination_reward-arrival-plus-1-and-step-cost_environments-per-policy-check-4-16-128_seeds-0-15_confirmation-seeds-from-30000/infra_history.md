@@ -599,5 +599,8 @@ Times are Pacific, read from the clock or from scheduler records.
 
 - 2026-11-15 13:10 PT: sixth fault-guard respawn under RK4, the second in a method unit: edge extension, reward 1 on
   arrival, first-arrival hold alone, window 181, one policy (learning rate 3e-5, weight 1/4), torso angular speed
-  101.0 rad/s (torso speed 15.0 m/s). All six respawns are the angular bound, all at learning rate 3e-5, five of
-  them at weight 1/64 or 1/4 with RND or the hold alone. Read with the unit's whole result when it completes.
+  101.0 rad/s (torso speed 15.0 m/s). All six respawns under RK4 are the angular bound (100.9 to 115.0 rad/s; torso
+  speed 14.0 to 15.7 m/s, under its 30 m/s bound), read from the records at 13:15 PT: five at learning rate 3e-5
+  (weights 1/256, 1/64 three times, 1/4) and one at 1e-4 (weight 1/64); four in RND units, two in units of the hold
+  alone, none with the fast last layer. Correction to the 07:30 entry: three of its five, not four, were at learning
+  rate 3e-5 with weight 1/64.
