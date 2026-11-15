@@ -1442,6 +1442,19 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
      one arrival per policy in 134 million steps; whole-curve mean 0.0000 in every configuration.
   The comparison on these two mazes is the user's decision (plan "Change 2", item 2); the question went to the user
   at this time with options; nothing on Medium or Large starts before the answer.
+- 2026-11-15 08:30 PT: **batch 15 with the step cost, the development sweep complete** (same comparison as for reward 1 on
+  arrival; development seeds, not a claim):
+  1. step 0.1 with the hold: above RND in 9 of 9 configurations (+0.0001 to +0.0045), sooner in 9 of 9 (−0.09 to
+     −0.39 million steps);
+  2. step 0.03 with the hold: above in 5 of 9, all 9 within 0.005, sooner in 9 of 9;
+  3. the hold alone: above in 4 of 9, within 0.005 in 6 (ahead +0.0067 ± 0.0007 at (1e-4, 1), behind −0.0038 ±
+     0.0005 at (1e-2, 1)), sooner in 4 of 9;
+  4. best against best: all level: the hold alone at (1e-4, 1/16) −0.9660 against RND's best (3e-5, 1/64) −0.9701,
+     +0.0041 ± 0.0048; step 0.03 +0.0005 ± 0.0016; step 0.1 −0.0011 ± 0.0019.
+  Prediction 5 (the same signs as with reward 1 on arrival, smaller differences) held for the two fast-layer arms;
+  for the hold alone the best-against-best difference is a little larger with the step cost (+0.0041 against
+  +0.0030), both level. No fault-guard respawn in any of the six method sweep units. Every arm's best is again at
+  (1e-4, 1/16), the grid's edge; the edge extension is at 124 to 139 of 256 windows.
 
 ## Next
 
