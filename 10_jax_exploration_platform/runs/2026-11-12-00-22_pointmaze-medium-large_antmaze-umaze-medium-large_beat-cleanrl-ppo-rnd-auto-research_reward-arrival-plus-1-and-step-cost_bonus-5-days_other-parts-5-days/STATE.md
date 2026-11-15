@@ -1421,7 +1421,7 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   configurations against RND at the same configuration, 16 seeds paired by seed, 134,217,728 steps per policy; the
   session's scratchpad script `batch15_against_rnd.py`; development seeds, not a claim):
   1. fast last layer step 0.1 with the hold: whole-curve mean above RND in 9 of 9 configurations (+0.0003 to
-     +0.0196), first-goal time sooner in 9 of 9 (−0.07 to −0.43 million steps): predictions 2 held;
+     +0.0196), first-goal time sooner in 9 of 9 (−0.07 to −0.43 million steps): prediction 2 held;
   2. step 0.03 with the hold: above in 6 of 9 (−0.0012 to +0.0117), sooner in 9 of 9; between the hold alone and
      step 0.1 in 7 of 9 on the whole-curve mean and 9 of 9 on the first-goal time: prediction 3 held;
   3. the hold alone: within 0.005 of RND in 4 of 9, ahead in 3, behind by more in 2 ((3e-4, 1) −0.0069, (1e-2, 1)
