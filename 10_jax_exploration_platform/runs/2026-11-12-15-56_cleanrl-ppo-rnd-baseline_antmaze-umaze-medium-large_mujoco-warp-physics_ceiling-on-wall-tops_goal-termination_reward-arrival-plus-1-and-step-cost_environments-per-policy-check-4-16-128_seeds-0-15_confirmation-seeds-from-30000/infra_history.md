@@ -596,3 +596,8 @@ Times are Pacific, read from the clock or from scheduler records.
   Ada), two units per job. The same restart put two edge-extension units on nekomata01's RTX 5080 cards (job
   6937960) and one U-maze RND validation unit on an A100 (job 6937964). Nothing waits; nothing on Gilbreth beyond
   its 4 units.
+
+- 2026-11-15 13:10 PT: sixth fault-guard respawn under RK4, the second in a method unit: edge extension, reward 1 on
+  arrival, first-arrival hold alone, window 181, one policy (learning rate 3e-5, weight 1/4), torso angular speed
+  101.0 rad/s (torso speed 15.0 m/s). All six respawns are the angular bound, all at learning rate 3e-5, five of
+  them at weight 1/64 or 1/4 with RND or the hold alone. Read with the unit's whole result when it completes.
