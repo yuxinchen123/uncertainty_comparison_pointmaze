@@ -520,3 +520,10 @@ Times are Pacific, read from the clock or from scheduler records.
   Third respawn under RK4: RND, step cost, cells 1 to 7, window 187, one policy (learning rate 3e-5, weight 1/64),
   torso angular speed 115.0 rad/s (torso speed 15.7 m/s). All three respawns so far are in RND units and all three
   are the angular bound (100 rad/s), none the speed bound.
+- 2026-11-14 17:10 to 17:32 PT: the RTX 5080 cards are no longer reachable: on nekomata01 and nekomata02 another
+  user's processor-only jobs hold 22 of the 24 processors whenever one of our card jobs ends. The four method units
+  that had used them went to Gilbreth (17:12 and 17:32 PT; one UVA job each time still waited after 110 seconds and
+  was cancelled by its ledger id: 6929169, 6929607). Gilbreth now holds 10 units (the six method units, two edge-
+  extension units, the two probes), UVA 11 (seven RND sweep units, four edge-extension units). The method units have
+  69 to 93 windows left, about 12 to 16 hours on Gilbreth; the method's validation block waits for the edge-extension
+  units in any case.
