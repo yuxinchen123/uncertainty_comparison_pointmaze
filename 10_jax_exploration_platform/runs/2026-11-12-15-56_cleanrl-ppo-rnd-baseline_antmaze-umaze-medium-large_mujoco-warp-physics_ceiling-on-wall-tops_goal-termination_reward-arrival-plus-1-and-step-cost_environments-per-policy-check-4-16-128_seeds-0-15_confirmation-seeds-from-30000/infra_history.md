@@ -542,3 +542,8 @@ Times are Pacific, read from the clock or from scheduler records.
   fast step 0.1) were taken back with the limit lowered first, and the RTX 5080 pass found two cards free again
   (jobs 6931264, 6931265). UVA 18 units, Gilbreth 2 (the step-cost units with step 0.03 and with the hold alone,
   in jobs that end about 21:30 PT).
+- 2026-11-14 21:30 PT: the last two Gilbreth units (step cost, step 0.03 with the hold, and the hold alone) were taken
+  back after their jobs ended (limit set to 0 first) and run on two RTX 4000 Ada cards (job 6931503). All 20 units
+  are on UVA; nothing is on a remote server, so the session's 5-minute fleet loop ended by itself. The tick's restart
+  step still hands any unit no free UVA card takes to Gilbreth (it raises the limit and runs the fleet's step itself);
+  the fleet loop is started again when a unit is there.
