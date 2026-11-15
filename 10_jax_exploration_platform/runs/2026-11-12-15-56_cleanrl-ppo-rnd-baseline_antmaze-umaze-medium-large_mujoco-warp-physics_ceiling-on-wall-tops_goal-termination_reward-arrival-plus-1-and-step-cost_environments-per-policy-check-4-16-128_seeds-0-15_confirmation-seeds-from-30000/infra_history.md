@@ -515,3 +515,8 @@ Times are Pacific, read from the clock or from scheduler records.
   (both about 6.5 to 7 windows per hour). nekomata02's two RTX 5080 stay with job 6923539 until about 15:30 PT;
   the same may happen there. A 2-hour job cannot be lengthened by its user, so the cards are kept only while the
   other user's jobs leave processors free.
+- 2026-11-14 16:50 PT: the first RK4 sweep unit of 16 environments per policy is complete (RND, reward on arrival,
+  cells 1 to 7; finished 16:36 PT; 256 windows, 134,217,728 steps per policy; 1 fault-guard respawn over the unit).
+  Third respawn under RK4: RND, step cost, cells 1 to 7, window 187, one policy (learning rate 3e-5, weight 1/64),
+  torso angular speed 115.0 rad/s (torso speed 15.7 m/s). All three respawns so far are in RND units and all three
+  are the angular bound (100 rad/s), none the speed bound.
