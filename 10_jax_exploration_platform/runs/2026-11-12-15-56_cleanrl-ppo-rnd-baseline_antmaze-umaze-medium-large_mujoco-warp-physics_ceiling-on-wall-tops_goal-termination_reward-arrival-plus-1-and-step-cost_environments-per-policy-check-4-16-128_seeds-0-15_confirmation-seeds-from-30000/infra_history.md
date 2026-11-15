@@ -527,3 +527,9 @@ Times are Pacific, read from the clock or from scheduler records.
   extension units, the two probes), UVA 11 (seven RND sweep units, four edge-extension units). The method units have
   69 to 93 windows left, about 12 to 16 hours on Gilbreth; the method's validation block waits for the edge-extension
   units in any case.
+- 2026-11-14 19:52 PT: Gilbreth slowed: the four jobs submitted 19:13 to 19:34 PT for units between jobs (two
+  reward-on-arrival method units with the fast last layer, the two probes) had planned starts 01:30 to 02:10 PT. With
+  the Gilbreth limit lowered first to its six running units, the four were taken back to UVA with their checkpoints
+  and started at once on free RTX 4000 Ada cards (jobs 6930386, 6930387). The four waiting Gilbreth jobs
+  (12385466, 12385467, 12385727, 12385809) are generic workers; one that starts with no unit there ends in seconds.
+  UVA now holds 14 units, Gilbreth 6.
