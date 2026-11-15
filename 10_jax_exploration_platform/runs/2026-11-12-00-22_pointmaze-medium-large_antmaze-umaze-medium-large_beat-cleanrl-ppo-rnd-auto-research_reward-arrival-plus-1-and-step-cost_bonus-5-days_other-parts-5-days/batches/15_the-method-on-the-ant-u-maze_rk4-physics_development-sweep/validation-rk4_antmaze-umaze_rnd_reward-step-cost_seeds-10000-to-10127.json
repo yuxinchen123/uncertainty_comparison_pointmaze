@@ -14,10 +14,10 @@
   "antmaze-umaze"
  ],
  "minimum_card_memory_mb": 12000,
- "phase": "validation-block-rk4",
+ "phase": "validation-rk4",
  "sweeps": [
   {
-   "method": "cleanrl-ppo-rnd-with-16-environments-per-policy",
+   "method": "cleanrl-ppo-rnd",
    "environments_per_policy": {
     "antmaze": 16
    },
@@ -42,7 +42,7 @@
    "why_chosen": "W rank 1"
   },
   {
-   "method": "cleanrl-ppo-rnd-with-16-environments-per-policy",
+   "method": "cleanrl-ppo-rnd",
    "environments_per_policy": {
     "antmaze": 16
    },
@@ -67,7 +67,7 @@
    "why_chosen": "W rank 2"
   },
   {
-   "method": "cleanrl-ppo-rnd-with-16-environments-per-policy",
+   "method": "cleanrl-ppo-rnd",
    "environments_per_policy": {
     "antmaze": 16
    },
@@ -92,7 +92,7 @@
    "why_chosen": "W rank 3"
   },
   {
-   "method": "cleanrl-ppo-rnd-with-16-environments-per-policy",
+   "method": "cleanrl-ppo-rnd",
    "environments_per_policy": {
     "antmaze": 16
    },

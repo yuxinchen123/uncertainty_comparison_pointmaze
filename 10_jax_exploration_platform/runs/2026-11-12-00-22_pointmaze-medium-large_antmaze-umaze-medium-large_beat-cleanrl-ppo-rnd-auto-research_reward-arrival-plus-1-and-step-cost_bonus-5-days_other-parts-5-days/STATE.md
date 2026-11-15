@@ -1405,7 +1405,7 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   0.0012, (1e-4, 1/64) −0.9706 ± 0.0023, (3e-5, 1/16) −0.9712 ± 0.0014; best first-goal time (1e-2, 16) at 0.31
   million steps (W −0.9855). The best is at the smallest learning rate of RND's grid (3e-5); the edge rule covers the
   intrinsic weight only, and 1/64 is inside the weight grid. These four go to the first ant validation block (128
-  seeds, 10000 to 10127; phase `validation-block-rk4` in the AntMaze folder; description in batch 15's folder).
+  seeds, 10000 to 10127; phase `validation-rk4` in the AntMaze folder; description in batch 15's folder).
 
 ## Next
 
