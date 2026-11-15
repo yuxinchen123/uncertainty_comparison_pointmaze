@@ -1,0 +1,120 @@
+{
+ "study": "cleanrl-ppo-rnd-baseline-antmaze",
+ "bonus": "rnd_next_state",
+ "steps_per_policy": 134217728,
+ "windows_per_unit": 256,
+ "seeds": {
+  "first": 10000,
+  "count": 128
+ },
+ "configuration_files": {
+  "antmaze": "configs/experiments/antmaze_umaze_warp-physics_rk4_time-step-0.01_frame-skip-5_fault-guard-30-metres-and-100-radians-per-second_cleanrl-ppo-rnd_goal-termination_reward-arrival-plus-one_example_steps-204800.toml"
+ },
+ "environments": [
+  "antmaze-umaze"
+ ],
+ "minimum_card_memory_mb": 12000,
+ "phase": "validation-block-rk4",
+ "sweeps": [
+  {
+   "method": "cleanrl-ppo-rnd-with-16-environments-per-policy",
+   "environments_per_policy": {
+    "antmaze": 16
+   },
+   "policies_per_unit": 128,
+   "workload": {
+    "antmaze": "antmaze-umaze_environments-per-policy-16_update-epoch-minibatch_bonus-rnd-next-state_physics-warp_integrator-rk4_time-step-0.01_frame-skip-5"
+   },
+   "cells": {
+    "kind": "list",
+    "cells": [
+     {
+      "learning_rate": 3e-05,
+      "entropy_coefficient": 0.001,
+      "intrinsic_weight": 0.015625,
+      "clip_coefficient": 0.1
+     }
+    ]
+   },
+   "reward_settings": [
+    "step_cost"
+   ],
+   "why_chosen": "W rank 1"
+  },
+  {
+   "method": "cleanrl-ppo-rnd-with-16-environments-per-policy",
+   "environments_per_policy": {
+    "antmaze": 16
+   },
+   "policies_per_unit": 128,
+   "workload": {
+    "antmaze": "antmaze-umaze_environments-per-policy-16_update-epoch-minibatch_bonus-rnd-next-state_physics-warp_integrator-rk4_time-step-0.01_frame-skip-5"
+   },
+   "cells": {
+    "kind": "list",
+    "cells": [
+     {
+      "learning_rate": 0.0001,
+      "entropy_coefficient": 0.001,
+      "intrinsic_weight": 0.015625,
+      "clip_coefficient": 0.1
+     }
+    ]
+   },
+   "reward_settings": [
+    "step_cost"
+   ],
+   "why_chosen": "W rank 2"
+  },
+  {
+   "method": "cleanrl-ppo-rnd-with-16-environments-per-policy",
+   "environments_per_policy": {
+    "antmaze": 16
+   },
+   "policies_per_unit": 128,
+   "workload": {
+    "antmaze": "antmaze-umaze_environments-per-policy-16_update-epoch-minibatch_bonus-rnd-next-state_physics-warp_integrator-rk4_time-step-0.01_frame-skip-5"
+   },
+   "cells": {
+    "kind": "list",
+    "cells": [
+     {
+      "learning_rate": 3e-05,
+      "entropy_coefficient": 0.001,
+      "intrinsic_weight": 0.0625,
+      "clip_coefficient": 0.1
+     }
+    ]
+   },
+   "reward_settings": [
+    "step_cost"
+   ],
+   "why_chosen": "W rank 3"
+  },
+  {
+   "method": "cleanrl-ppo-rnd-with-16-environments-per-policy",
+   "environments_per_policy": {
+    "antmaze": 16
+   },
+   "policies_per_unit": 128,
+   "workload": {
+    "antmaze": "antmaze-umaze_environments-per-policy-16_update-epoch-minibatch_bonus-rnd-next-state_physics-warp_integrator-rk4_time-step-0.01_frame-skip-5"
+   },
+   "cells": {
+    "kind": "list",
+    "cells": [
+     {
+      "learning_rate": 0.01,
+      "entropy_coefficient": 0.001,
+      "intrinsic_weight": 16.0,
+      "clip_coefficient": 0.1
+     }
+    ]
+   },
+   "reward_settings": [
+    "step_cost"
+   ],
+   "why_chosen": "best M"
+  }
+ ]
+}

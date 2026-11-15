@@ -1399,6 +1399,13 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   `method-edge-rk4`, 8 cells each, batch 15's `ideas.md`, predictions 7 to 9) were built and placed. The mean capped
   first-goal time is 0.2 to 0.3 million steps at learning rate 1e-2 for every arm and RND: on the U-maze every policy
   arrives within the first 1% of the budget.
+- 2026-11-15 03:12 PT: **RND's RK4 sweep with the step cost is complete** (U-maze, 28 configurations x 16 development seeds,
+  134,217,728 steps per policy, 16 environments per policy). Chosen by the rule fixed before (best three by the
+  whole-curve mean, ties by the final level; the best by the mean capped first-goal time): (3e-5, 1/64) −0.9701 ±
+  0.0012, (1e-4, 1/64) −0.9706 ± 0.0023, (3e-5, 1/16) −0.9712 ± 0.0014; best first-goal time (1e-2, 16) at 0.31
+  million steps (W −0.9855). The best is at the smallest learning rate of RND's grid (3e-5); the edge rule covers the
+  intrinsic weight only, and 1/64 is inside the weight grid. These four go to the first ant validation block (128
+  seeds, 10000 to 10127; phase `validation-block-rk4` in the AntMaze folder; description in batch 15's folder).
 
 ## Next
 
