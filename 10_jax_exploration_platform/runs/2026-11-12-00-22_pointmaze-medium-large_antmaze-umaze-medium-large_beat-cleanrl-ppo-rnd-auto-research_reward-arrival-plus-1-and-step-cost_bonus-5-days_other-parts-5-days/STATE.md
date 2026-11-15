@@ -1406,6 +1406,12 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   million steps (W −0.9855). The best is at the smallest learning rate of RND's grid (3e-5); the edge rule covers the
   intrinsic weight only, and 1/64 is inside the weight grid. These four go to the first ant validation block (128
   seeds, 10000 to 10127; phase `validation-rk4` in the AntMaze folder; description in batch 15's folder).
+- 2026-11-15 03:50 PT: **RND's RK4 sweep with reward 1 on arrival is complete** (U-maze, 28 configurations x 16 seeds,
+  134,217,728 steps per policy). Chosen by the same rule: (3e-5, 1/64) 0.1050 ± 0.0044, (1e-4, 1/64) 0.1048 ±
+  0.0042, (1e-4, 1/256) 0.1045 ± 0.0057; best first-goal time (1e-2, 4) at 0.29 million steps (W 0.0611). The three
+  differ by less than one standard error; the validation block decides. The best weight 1/64 is inside the weight
+  grid (1/256 is the edge and ranks third). Validation units started (phase `validation-rk4`, seeds 10000 to 10127).
+  Every policy of every RND configuration reached the goal at least once (16 of 16 in all 56 configurations).
 
 ## Next
 
