@@ -537,3 +537,8 @@ Times are Pacific, read from the clock or from scheduler records.
   (Gilbreth's planned starts still about 01:30 PT); with the limit lowered to the four units still running there,
   both were taken back with their checkpoints and started at once on two RTX 4000 Ada cards (job 6930614). UVA 16
   units, Gilbreth 4 (the four step-cost and reward-on-arrival method units still in their jobs).
+- 2026-11-14 21:13 PT: fourteenth UVA restart (the six RND sweep units: jobs 6931258 to 6931260, A100 40 GB and RTX
+  4000 Ada). Two Gilbreth units between jobs (reward on arrival with the first-arrival hold alone; step cost with
+  fast step 0.1) were taken back with the limit lowered first, and the RTX 5080 pass found two cards free again
+  (jobs 6931264, 6931265). UVA 18 units, Gilbreth 2 (the step-cost units with step 0.03 and with the hold alone,
+  in jobs that end about 21:30 PT).
