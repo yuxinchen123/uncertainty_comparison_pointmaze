@@ -1417,6 +1417,21 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   (3e-5, 1/64) has a whole-curve mean of 0.1050 ± 0.0044; the 128-environment unit's best (1e-2, weight 4, the
   configuration family the user chose for it) has 0.0898 ± 0.0051. The count changes only if 128 is ahead; it is
   behind, so every ant unit keeps 16 environments per policy.
+- 2026-11-15 04:31 PT: **batch 15 with reward 1 on arrival, the development sweep complete** (RK4 ant U-maze, each arm's 9
+  configurations against RND at the same configuration, 16 seeds paired by seed, 134,217,728 steps per policy; the
+  session's scratchpad script `batch15_against_rnd.py`; development seeds, not a claim):
+  1. fast last layer step 0.1 with the hold: whole-curve mean above RND in 9 of 9 configurations (+0.0003 to
+     +0.0196), first-goal time sooner in 9 of 9 (−0.07 to −0.43 million steps): predictions 2 held;
+  2. step 0.03 with the hold: above in 6 of 9 (−0.0012 to +0.0117), sooner in 9 of 9; between the hold alone and
+     step 0.1 in 7 of 9 on the whole-curve mean and 9 of 9 on the first-goal time: prediction 3 held;
+  3. the hold alone: within 0.005 of RND in 4 of 9, ahead in 3, behind by more in 2 ((3e-4, 1) −0.0069, (1e-2, 1)
+     −0.0089): prediction 1 did not hold (it predicted at least 7 of 9 level);
+  4. best against best: step 0.03 with the hold at (1e-4, 1/16) 0.1131 against RND's best (3e-5, 1/64) 0.1050,
+     +0.0081 ± 0.0040 paired by seed, just over twice its standard error: prediction 4 held, narrowly; step 0.1 with
+     the hold at its best is level (+0.0000 ± 0.0065), the hold alone +0.0030 ± 0.0051;
+  5. no fault-guard respawn in any method unit (prediction 6 held).
+  Every arm's best is still at the grid's edge (1e-4, 1/16); the edge extension (weights 1/1024 to 1/4, learning
+  rate 3e-5) is about 105 of 256 windows in.
 
 ## Next
 
