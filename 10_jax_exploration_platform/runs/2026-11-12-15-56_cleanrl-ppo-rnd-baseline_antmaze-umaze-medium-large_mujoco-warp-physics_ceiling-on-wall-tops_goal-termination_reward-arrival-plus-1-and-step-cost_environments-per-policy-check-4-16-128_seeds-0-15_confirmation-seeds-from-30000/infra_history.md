@@ -589,3 +589,10 @@ Times are Pacific, read from the clock or from scheduler records.
   rad/s (torso speed 15.0 m/s). All five respawns are the angular bound; four of the five are at learning rate 3e-5
   with weight 1/64 (RND's best configuration in both reward settings, and here the method at the same setting).
   At 07:11 PT the RTX 5080 rule gave its first card to an edge-extension unit (job 6937290).
+
+- 2026-11-15 13:07 PT: the user decided the comparison on Medium and Large (plan "Change 4"): 8 validation units
+  (seeds 10000 to 10127, reward 1 on arrival; RND and fast last layer step 0.03 with the hold, learning rate 1e-2,
+  weights 1 and 16) built and started on free UVA cards: jobs 6937965 (A40), 6937966, 6937967, 6937968 (RTX 4000
+  Ada), two units per job. The same restart put two edge-extension units on nekomata01's RTX 5080 cards (job
+  6937960) and one U-maze RND validation unit on an A100 (job 6937964). Nothing waits; nothing on Gilbreth beyond
+  its 4 units.

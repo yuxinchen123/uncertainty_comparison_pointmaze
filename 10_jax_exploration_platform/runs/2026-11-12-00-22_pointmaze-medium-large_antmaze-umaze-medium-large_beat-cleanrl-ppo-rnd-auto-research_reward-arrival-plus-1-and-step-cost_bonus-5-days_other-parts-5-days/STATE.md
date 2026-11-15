@@ -1456,6 +1456,18 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   +0.0030), both level. No fault-guard respawn in any of the six method sweep units. Every arm's best is again at
   (1e-4, 1/16), the grid's edge; the edge extension is at 124 to 139 of 256 windows.
 
+- 2026-11-15, answered before 13:05 PT: **three user decisions** (multiple-choice dialogs; plan "Change 4"):
+  1. AntMaze Medium and Large: reward 1 on arrival only, the probes are RND's development sweep. Validation block
+     (seeds 10000 to 10127) of RND at learning rate 1e-2, weights 1 and 16, and the method (fast last layer step 0.03
+     with the hold) at the same two, on each maze: 8 units, built and started on free UVA cards at 13:07 PT
+     (description `infrastructure/descriptions/antmaze_medium-and-large_rk4-physics_validation_...` in the AntMaze
+     folder, commit e90791f5). Then 256 fresh seeds. No step cost on these mazes: success can come only from
+     reward 1 on arrival.
+  2. Ant seed blocks, 3 steps: development seeds, the validation block (picks arm and configuration), the 256 fresh
+     seeds (the check of that pick and the final comparison); no separate second block.
+  3. Days 6 to 10: each change screened on PointMaze first; only a change clearly ahead there goes to the ant, while
+     the ant's fresh seeds of the bonus-only method run.
+
 ## Next
 
 Rewritten 2026-11-13 22:31 PT.
@@ -1474,15 +1486,16 @@ Rewritten 2026-11-13 22:31 PT.
 3. **First ant validation block** (U-maze, seeds 10000 to 10127): each side's best three configurations for the
    whole-curve mean and its best for the first-goal time, in both reward settings; placement Gilbreth, free UVA
    cards, then MIT, Gautschi `ai`, ACCESS. About 26 to 40 hours per unit.
-4. **Ant fresh seeds** (256 from 30000) for RND and the method as it stands at the end. My default, told to the
-   user on 2026-11-13: on the ant the 256 fresh seeds also serve as the check on unused seeds; no separate second
-   block unless the user asks for one.
-5. **RND probes on AntMaze Medium and Large:** when complete, their curves go to the user, who decides the
-   comparison there.
+4. **Ant fresh seeds** (256 from 30000) for RND and the method as it stands at the end. User decision 2026-11-15:
+   the fresh seeds are also the check of the validation block's pick (3 steps; no separate second block).
+5. **AntMaze Medium and Large** (user decision 2026-11-15): the validation block of 8 units (reward 1 on arrival,
+   RND and the method at learning rate 1e-2, weights 1 and 16) runs since 13:07 PT; then 256 fresh seeds for the
+   better configuration of each side by the whole-curve mean.
 6. **PointMaze:** on the second block the method is ahead of RND in three of the four cases; Medium with the step
    cost is level (+0.0041 [−0.0017, +0.0103]). Fresh seeds (1,024) for the method as it stands at the end.
 7. **Days 6 to 10** (changes outside the bonus, from about 2026-11-16 22:40 PT), each tied to an observation of
-   days 1 to 5. Schedule fact: an ant unit takes at least about 26 hours, so a change found then reaches the ant
+   days 1 to 5; screened on PointMaze first, and only a change clearly ahead there goes to the ant (user decision
+   2026-11-15). Schedule fact: an ant unit takes at least about 26 hours, so a change found then reaches the ant
    only through one sweep, one validation block and the fresh seeds back to back (about 4.5 days), which ends
    close to 2026-11-21 22:40 PT with no time to spare.
 8. Re-create the monitoring cron before 2026-11-20 13:00 PT (created 2026-11-13 about 13:00 PT; it expires after
