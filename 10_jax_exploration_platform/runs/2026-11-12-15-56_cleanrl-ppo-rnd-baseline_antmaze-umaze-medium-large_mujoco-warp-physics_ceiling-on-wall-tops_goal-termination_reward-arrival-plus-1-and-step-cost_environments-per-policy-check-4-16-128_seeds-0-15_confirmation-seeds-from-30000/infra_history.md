@@ -573,3 +573,8 @@ Times are Pacific, read from the clock or from scheduler records.
   on free UVA cards (jobs 6936013 on an A40, 6936014 on three RTX 4000 Ada). Unit ids drop the environment count
   (every validation unit has 16 per policy) to stay under 200 characters. The step-cost RND sweep was complete; the
   reward-on-arrival half follows when its last RND unit (cells 22 to 28) ends.
+- 2026-11-15 03:51 PT: **the RK4 RND sweep is complete** (all eight units, both reward settings). RND's reward-on-
+  arrival validation block started: four units (seeds 10000 to 10127; description
+  `infrastructure/descriptions/antmaze_umaze_rk4-physics_validation_rnd_reward-arrival-plus-one_seeds-10000-to-10127_budget-134217728.json`)
+  on RTX 4000 Ada cards (jobs 6936193, 6936196), with seven restarted units (6936191, 6936194, 6936195). All 20
+  running units are on UVA: 8 RND validation, 6 edge-extension, 4 method sweep, 2 probes; nothing waiting.
