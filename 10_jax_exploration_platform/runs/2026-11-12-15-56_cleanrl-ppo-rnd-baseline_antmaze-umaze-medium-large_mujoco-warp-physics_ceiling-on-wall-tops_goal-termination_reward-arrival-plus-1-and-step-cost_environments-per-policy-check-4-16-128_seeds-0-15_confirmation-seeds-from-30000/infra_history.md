@@ -550,3 +550,10 @@ Times are Pacific, read from the clock or from scheduler records.
 - 2026-11-14 23:11 PT: fifteenth UVA restart: the RTX 5080 pass kept both cards for the two units allowed there (job
   6932337); the six RND sweep units restarted on A100 40 GB, A40 and RTX 4000 Ada cards (6932357, 6932358,
   6932368). All 20 units on UVA, nothing waiting.
+- 2026-11-14 23:45 PT: notices from two other sessions of this account. (1) All remote connections are open: MIT on
+  portal11, DeltaAI on portal04 (closes 2026-11-21 20:37 PT), ACES on portal05 (certificate expired, the open
+  connection still answers), Purdue on portal04; at 23:40 PT the account held 4 running and 21 waiting jobs on MIT
+  `mit_normal_gpu` and 4 running and 15 waiting on `mit_preemptable`. (2) The tinker talk-revision study uses the
+  account's MIT H200 caps from 2026-11-15 PT and asked that no new MIT GPU jobs compete for the 4-card caps per pool.
+  This folder's MIT entry stays not ready (it was never prepared); ant units do not go to MIT while that study holds
+  the caps. Purdue and the ACCESS servers are not affected.
