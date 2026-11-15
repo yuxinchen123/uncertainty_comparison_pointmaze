@@ -1412,6 +1412,11 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   differ by less than one standard error; the validation block decides. The best weight 1/64 is inside the weight
   grid (1/256 is the edge and ranks third). Validation units started (phase `validation-rk4`, seeds 10000 to 10127).
   Every policy of every RND configuration reached the goal at least once (16 of 16 in all 56 configurations).
+- 2026-11-15 03:53 PT: **the equal-steps rule on the ant (plan "Change 3", item 2): 16 environments per policy stay.** At
+  the same 134,217,728 steps per policy, reward 1 on arrival, 16 seeds: the best 16-environment RND configuration
+  (3e-5, 1/64) has a whole-curve mean of 0.1050 ± 0.0044; the 128-environment unit's best (1e-2, weight 4, the
+  configuration family the user chose for it) has 0.0898 ± 0.0051. The count changes only if 128 is ahead; it is
+  behind, so every ant unit keeps 16 environments per policy.
 
 ## Next
 
