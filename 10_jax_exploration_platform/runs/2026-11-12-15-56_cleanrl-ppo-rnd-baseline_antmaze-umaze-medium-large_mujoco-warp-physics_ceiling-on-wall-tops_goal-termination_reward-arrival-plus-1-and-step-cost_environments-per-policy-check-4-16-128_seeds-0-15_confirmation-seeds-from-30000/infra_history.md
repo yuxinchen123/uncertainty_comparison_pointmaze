@@ -630,3 +630,8 @@ Times are Pacific, read from the clock or from scheduler records.
   on the RTX 5080 cards (the edge-extension units still claim first, as they were built first). Placement: job
   6938870 on nekomata01's two RTX 5080 cards (step 0.03 with the hold at weight 1/64, and the hold alone), job
   6938873 on an RTX 4000 Ada (step 0.03 at weight 1/16), and the unit at learning rate 1e-2 to Gilbreth (limit 5).
+
+- 2026-11-16 00:00 PT (window record): ninth fault-guard respawn under RK4, the first in a validation unit: RND with
+  the step cost at learning rate 3e-5, weight 1/64 (RND's chosen configuration), window 119, seed 10047, torso
+  angular speed 100.5 rad/s (torso speed 14.5 m/s). All nine are the angular bound; eight of the nine are at
+  learning rate 3e-5.
