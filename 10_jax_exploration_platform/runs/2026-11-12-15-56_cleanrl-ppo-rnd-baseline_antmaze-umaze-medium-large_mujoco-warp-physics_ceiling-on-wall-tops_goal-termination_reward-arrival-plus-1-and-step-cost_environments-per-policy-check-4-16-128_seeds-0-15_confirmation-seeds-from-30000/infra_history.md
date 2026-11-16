@@ -649,3 +649,11 @@ Times are Pacific, read from the clock or from scheduler records.
   the next server. The other two Gilbreth units run on A10 cards (jobs 12395886 and 12396119). On UVA, three units
   whose 2-hour workers ended got new workers at 06:44 PT (jobs 6940583 to 6940586) and at 07:12 PT (jobs 6940672
   and 6940673, RTX 5080 cards). The fault guard still counts nine respawns.
+
+- 2026-11-16 08:10 PT (Gilbreth's squeue and the fleet loop's log): the three waiting RND U-maze units started on
+  A10 cards at 07:56:14 PT (jobs 12396350 to 12396352), after 66 minutes in the queue. At 07:57:17 PT the fleet
+  loop counted the same three units as pending with no waiting job, because the new workers had not claimed them
+  yet, and sent three more jobs (12397361 to 12397363, waiting on `Priority`; Gilbreth's estimate 20:10 to
+  20:26 PT). A waiting job holds no unit, so no unit has two jobs. These jobs will take the units whose jobs reach
+  the 4-hour limit next (12395886 at about 08:22 PT, 12396119 at about 09:44 PT, by their start times); one that
+  starts with no unit left exits. They are not cancelled.
