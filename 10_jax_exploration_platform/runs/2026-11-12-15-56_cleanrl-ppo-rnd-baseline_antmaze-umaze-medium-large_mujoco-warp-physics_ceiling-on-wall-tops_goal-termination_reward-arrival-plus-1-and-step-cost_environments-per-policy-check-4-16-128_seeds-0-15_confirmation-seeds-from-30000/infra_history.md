@@ -657,3 +657,8 @@ Times are Pacific, read from the clock or from scheduler records.
   20:26 PT). A waiting job holds no unit, so no unit has two jobs. These jobs will take the units whose jobs reach
   the 4-hour limit next (12395886 at about 08:22 PT, 12396119 at about 09:44 PT, by their start times); one that
   starts with no unit left exits. They are not cancelled.
+
+- 2026-11-16 10:05 PT (window record): tenth fault-guard respawn under RK4, the second in a validation unit and the
+  first in a method validation unit: the first-arrival hold alone with the step cost at learning rate 1e-4, weight
+  1/16 (the method's choice ranked first by the whole-curve mean), window 56, seed 10038, torso angular speed
+  105.8 rad/s (torso speed 15.4 m/s). All ten are the angular bound; eight of the ten are at learning rate 3e-5.
