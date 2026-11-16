@@ -216,3 +216,9 @@ Times are Pacific.
   lowered to 1 day on 2026-11-12 so that it would start). Its queue had no unit left (285 done). New monitor job
   6913375 (no top-up phase, `nolim`, 1 processor, 2 GiB, the partition's 20 days) was submitted at 22:56 PT and
   started within a minute on heartpiece; id in `slurm/submitted_jobids_monitor_sl5nw.txt`.
+
+- 2026-11-15 23:03 PT: the 44 PointMaze fresh-seed units (phase `fresh-seeds`) were built at 23:00 PT. `submit.py
+  --only-cards-free-now` (2 hours, 2 processors, 3 GiB per card) sent 12 UVA jobs (6938824 to 6938835), all running
+  within two minutes; they took 32 units. The other 12 went to Gilbreth (limit 12, 12 jobs in the pool
+  standby-a100-80gb-a30-a10). The session's `pm_tick.sh` (the same placement step as the AntMaze folder's) runs
+  every 10 minutes in `pm_restart_loop.sh`, so units whose 2-hour worker ends are restarted without a session tick.

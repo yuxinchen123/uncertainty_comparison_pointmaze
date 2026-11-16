@@ -1468,6 +1468,26 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   3. Days 6 to 10: each change screened on PointMaze first; only a change clearly ahead there goes to the ant, while
      the ant's fresh seeds of the bonus-only method run.
 
+- 2026-11-15 23:03 PT: **PointMaze fresh seeds started** (user decisions of 22:5x PT: run them now for the bonus-only
+  method, and the study ends 21 November as planned; the new optimization line is not opened). 44 units of 256
+  policies on seeds 30000 to 31023, the seeds of RND's fresh-seed runs in the PointMaze baseline folder
+  (description `fresh_seeds/pointmaze_fresh-seeds-30000-to-31023_method-and-rnd-at-its-validation-block-choices.json`,
+  commit ffeedc20; phase `fresh-seeds`):
+  1. the whole-curve mean: the fast last layer with the first-arrival hold at the step and configuration each case
+     fixed on the first block: Medium with reward 1 on arrival step 0.01 (6e-3, entropy 0.01, weight 4); Medium with
+     the step cost step 0.01 (6e-3, 0.01, 2); Large with reward 1 on arrival step 0.03 (2e-3, 0.01, 2); Large with
+     the step cost step 0.03 (2e-3, 0.01, 8). RND's first-block choices for this measure are all among the baseline
+     folder's fresh-seed runs, so RND is not rerun for it;
+  2. the first-goal time: the fast last layer at step 0.1 at its own configuration of the discovery second block
+     (Medium: 1e-2, entropy 0.03, weight 16 in both settings; Large: 6e-3, 0.03, 16 in both);
+  3. RND at its first-block choice for the first-goal time where the baseline's fresh-seed runs used another
+     configuration: Medium with the step cost (1e-2, 0.03, 4), Large with reward 1 on arrival (6e-3, 0.01, 64), Large
+     with the step cost (6e-3, 0.01, 8). The comparison on fresh seeds is read against RND at its first-block choice
+     (the rule the method's configurations were fixed by) and also against RND at the baseline sweep's choice; a
+     verdict "ahead" needs both.
+  Placement: 12 UVA jobs on free cards took 32 units at 23:01 PT, 12 units went to Gilbreth; the session's
+  `pm_restart_loop.sh` restarts unfinished units every 10 minutes.
+
 ## Next
 
 Rewritten 2026-11-13 22:31 PT.
@@ -1492,8 +1512,12 @@ Rewritten 2026-11-13 22:31 PT.
    RND and the method at learning rate 1e-2, weights 1 and 16) runs since 13:07 PT; then 256 fresh seeds for the
    better configuration of each side by the whole-curve mean.
 6. **PointMaze:** on the second block the method is ahead of RND in three of the four cases; Medium with the step
-   cost is level (+0.0041 [−0.0017, +0.0103]). Fresh seeds (1,024) for the method as it stands at the end.
-7. **Days 6 to 10** (changes outside the bonus, from about 2026-11-16 22:40 PT), each tied to an observation of
+   cost is level (+0.0041 [−0.0017, +0.0103]). Fresh seeds (1,024) of the method as it stands run since
+   2026-11-15 23:01 PT (44 units); when complete: both tables (whole-curve mean and first-goal time) per case,
+   paired by seed against RND, and the verdicts.
+7. **Days 6 to 10** (changes outside the bonus, from about 2026-11-16 22:40 PT): on hold until the user decides on the
+   optimization line (draft `~/.claude/plans/2026-11-15-21-20_ppo-rnd-optimization-phase-goal-episode-replay.md`;
+   the user, 2026-11-15: "don't open up this new planned task yet"). As planned: each change tied to an observation of
    days 1 to 5; screened on PointMaze first, and only a change clearly ahead there goes to the ant (user decision
    2026-11-15). Schedule fact: an ant unit takes at least about 26 hours, so a change found then reaches the ant
    only through one sweep, one validation block and the fresh seeds back to back (about 4.5 days), which ends
