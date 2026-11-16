@@ -662,3 +662,22 @@ Times are Pacific, read from the clock or from scheduler records.
   first in a method validation unit: the first-arrival hold alone with the step cost at learning rate 1e-4, weight
   1/16 (the method's choice ranked first by the whole-curve mean), window 56, seed 10038, torso angular speed
   105.8 rad/s (torso speed 15.4 m/s). All ten are the angular bound; eight of the ten are at learning rate 3e-5.
+
+- 2026-11-16 12:20 PT (Gilbreth's sacct and squeue, the take-back log, the worker logs): the 4-hour jobs 12396350
+  to 12396352 of the three RND U-maze validation units ended at 11:46:57 PT, and the fleet loop sent new jobs
+  12400875 to 12400877 at 11:47 PT, waiting on `Priority`. Five more units (Medium and Large: RND at learning rate
+  1e-2, weight 16 on Large, and the method's four units) were handed to Gilbreth at 11:23 PT when no UVA card was
+  free; their jobs 12400318 to 12400322 also wait on `Priority`. Gautschi `ai` cannot start the work: the account's
+  four H100 cards are held by another session's jobs, with 16 more of them waiting (`AssocGrpGRES`); MIT stays
+  left to the tinker study. At 12:16 PT three RTX 5080 cards were free on UVA (two on nekomata01, one on
+  nekomata02), so the three RND U-maze units, which decide when RND's fresh seeds start, were taken back (the
+  Gilbreth limit lowered to 7 first; records and checkpoints copied back: 177, 171 and 168 windows), given the
+  14,000 MiB floor, and resumed from their checkpoints on the RTX 5080 cards at 12:19 PT (jobs 6941558 with two
+  cards and 6941559). From now on ant_tick.sh keeps every U-maze unit at its lower floor; only Medium and Large
+  units get the 17,000 MiB floor that keeps them off the RTX 5080 cards. Eight Gilbreth jobs now wait for five
+  units; the three without a unit exit within seconds when they start, as 12397363 did, and are not cancelled.
+- 2026-11-16 12:16 PT (window records copied back from Gilbreth): eleventh fault-guard respawn under RK4, the third
+  in a validation unit: RND with the step cost at learning rate 3e-5, weight 1/16, window 152, seed 10079, torso
+  angular speed 101.7 rad/s (torso speed 14.3 m/s). It happened on Gilbreth and shows only now because that
+  unit's records are copied back when it leaves the server. All eleven are the angular bound; nine of the eleven
+  are at learning rate 3e-5.
