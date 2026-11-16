@@ -227,3 +227,7 @@ Times are Pacific.
   fleet loop had handed the ten units of the 00:50 PT restarts, since the hand-over limit was still 12). The session's
   `pm_restart_loop.sh` ended by itself with nothing left in the queue. The comparison ran as Slurm job 6939988 on
   struct04 (47 s; ledger `slurm/submitted_jobids_fresh-seeds-analysis_sl5nw.txt`), tests passed first.
+
+- 2026-11-16 02:52 PT: four fresh-seed units of the first-arrival hold alone (PointMaze Medium, reward 1 on arrival)
+  were built at 02:50 PT. The 5-minute fleet loop handed them to Gilbreth (its limit for this folder was still 12)
+  before the two UVA jobs from `pm_tick.sh` started (6940066, 6940067); both found no unit and ended within a second.

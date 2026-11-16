@@ -1542,6 +1542,16 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   rows: on Medium with the step cost PPO without a bonus is level with the method too (−0.0015 [−0.0036, +0.0007]):
   the bonus barely matters in that case.
 
+- 2026-11-16 02:55 PT: **correction to the PointMaze fresh seeds, Medium with reward 1 on arrival.** The method's rule
+  (the step with the highest whole-curve mean on the first validation block among 0, 0.01, 0.03 and 0.1, fixed before
+  the second blocks were read; `development_document/code/beat_rnd_tables.py`) chose step 0 there, the first-arrival
+  hold alone, at learning rate 6e-3, entropy 0.01, weight 4. The fresh-seed units of 2026-11-15 23:00 PT used step
+  0.01 in that case by mistake (both arms had +0.0095 on the second block, and the session copied the wrong row);
+  the entries of 00:35 and 02:45 PT for that case therefore read an arm that is not the method. Four units of the
+  hold alone on the same seeds (30000 to 31023) were built at 02:50 PT and went to Gilbreth; the comparison script
+  now takes each case's arm from the rule, and lists the step 0.01 row apart, never in a verdict. No choice is made
+  on the fresh seeds: the arm follows from the rule. The other three cases used the right arm.
+
 ## Next
 
 Rewritten 2026-11-13 22:31 PT.
@@ -1566,9 +1576,10 @@ Rewritten 2026-11-13 22:31 PT.
    RND and the method at learning rate 1e-2, weights 1 and 16) runs since 13:07 PT; then 256 fresh seeds for the
    better configuration of each side by the whole-curve mean.
 6. **PointMaze:** on the second block the method is ahead of RND in three of the four cases; Medium with the step
-   cost is level (+0.0041 [−0.0017, +0.0103]). Fresh seeds complete 2026-11-16 02:45 PT: ahead in three cases on
-   both measures, level on Medium with the step cost (`fresh_seeds/pointmaze_fresh_seeds.md`). Still to do: the
-   development document's section with these tables and the training curves.
+   cost is level (+0.0041 [−0.0017, +0.0103]). Fresh seeds: three cases complete 2026-11-16 02:45 PT (Medium with
+   the step cost level; both Large cases ahead on both measures); Medium with reward 1 on arrival is rerun with the
+   right arm, the hold alone (correction of 02:55 PT). Then regenerate `fresh_seeds/pointmaze_fresh_seeds.md`, and
+   write the development document's section with these tables and the training curves.
 7. **Days 6 to 10** (changes outside the bonus, from about 2026-11-16 22:40 PT): on hold until the user decides on the
    optimization line (draft `~/.claude/plans/2026-11-15-21-20_ppo-rnd-optimization-phase-goal-episode-replay.md`;
    the user, 2026-11-15: "don't open up this new planned task yet"). As planned: each change tied to an observation of

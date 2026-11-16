@@ -23,6 +23,13 @@ CASES = [("pointmaze-medium", "arrival-plus-one", "Medium, reward 1 on arrival")
          ("pointmaze-medium", "step-cost", "Medium, step cost"),
          ("pointmaze-large", "arrival-plus-one", "Large, reward 1 on arrival"),
          ("pointmaze-large", "step-cost", "Large, step cost")]
+# The method's arm per case for the whole-curve mean: the divisor held from each policy's first arrival plus the
+# fast last layer at the step with the highest whole-curve mean on the first validation block among 0, 0.01, 0.03 and
+# 0.1 (the rule fixed before the second blocks were read; `development_document/code/beat_rnd_tables.py`, CASES)
+METHOD_ARM = {("pointmaze-medium", "arrival-plus-one"): "held-from-first-arrival",
+              ("pointmaze-medium", "step-cost"): "fast-step-0-point-01-with-hold",
+              ("pointmaze-large", "arrival-plus-one"): "fast-step-0-point-03-with-hold",
+              ("pointmaze-large", "step-cost"): "fast-step-0-point-03-with-hold"}
 RESAMPLES = 10_000
 WINDOWS = 256
 
@@ -125,12 +132,18 @@ def fmt(x, digits):
 
 def main():
     """Read every case, compute the paired differences and verdicts, and write the page and the numbers."""
-    rows_w, rows_m, rows_ref, record = [], [], [], {}
+    rows_w, rows_m, rows_ref, rows_other, record = [], [], [], [], {}
     for env, setting, name in CASES:
         prefix = f"{env}_reward-{setting}"
         # the method for the whole-curve mean and RND's fresh-seed runs for it (the baseline folder)
-        method_name = configurations(FOLDER, f"fresh-seeds_{prefix}_fast-step-*-with-hold_*.jsonl")
+        method_name = configurations(FOLDER, f"fresh-seeds_{prefix}_{METHOD_ARM[(env, setting)]}_*.jsonl")
         assert len(method_name) == 1, method_name
+        # arms run on these seeds that are not the method (Medium with reward 1 on arrival: step 0.01, run there by
+        # mistake on 2026-11-15 before the hold alone); shown for the record, never part of a verdict
+        for other in configurations(FOLDER, f"fresh-seeds_{prefix}_*-with-hold_*.jsonl") + \
+                configurations(FOLDER, f"fresh-seeds_{prefix}_held-from-first-arrival_*.jsonl"):
+            if other != method_name[0]:
+                rows_other.append((name, other.split(f"{prefix}_")[1].split("_learning-rate")[0], other))
         method_w = per_seed(units(FOLDER, method_name[0] + "_seeds-*.jsonl"))
         case_w = []
         for rnd_name in configurations(RND_FOLDER, f"confirmation_{prefix}_cleanrl-ppo-rnd_learning-rate-*.jsonl"):
@@ -181,9 +194,10 @@ def main():
            "- **Verdicts:** for $W$, ahead when the interval of the difference is above zero and the interval of the "
            "difference in $L$ is not below zero; for $M$, ahead when the interval is below zero. A case is ahead "
            "only when it is ahead of RND at each configuration RND has on these seeds.", "",
-           "The method: RND with the fast last layer and the divisor held from each policy's first arrival, at the "
-           "step and configuration each case fixed on its first validation block; for $M$, the fast last layer at "
-           "step 0.1 at its own configuration for discovery.", "",
+           "The method: RND with the divisor held from each policy's first arrival and the fast last layer at the "
+           "step each case fixed on its first validation block (0 on Medium with reward 1 on arrival, that is the "
+           "hold alone; 0.01 on Medium with the step cost; 0.03 on both Large cases), at that block's "
+           "configuration; for $M$, the fast last layer at step 0.1 at its own configuration for discovery.", "",
            "## Verdicts", "", "| case | whole-curve mean $W$ | first-goal time $M$ |", "|---|---|---|"]
     out += [f"| {name} | {v['whole_curve_mean']} | {v['first_goal_time']} |" for name, v in record.items()]
     out += ["", "## Whole-curve mean", "",
@@ -198,6 +212,17 @@ def main():
     out += ["", "## Reference rows of the record (never used for a verdict)", "",
             "| case | row | $W$ of the row | the method's $W$ minus the row's [95%] |", "|---|---|---:|---|"]
     out += [f"| {n} | {r} | {w:.4f} | {fmt(d, 4)} |" for n, r, w, d in rows_ref]
+    # arms that are not the method, against the same RND runs (first RND configuration of the case)
+    out += ["", "## Arms on these seeds that are not the method (never used for a verdict)", "",
+            "| case | arm | $W$ of the arm | the arm's $W$ minus RND's [95%] | RND's configuration |", "|---|---|---:|---|---|"]
+    for name, arm, other in rows_other:
+        env, setting = next((e, s) for e, s, n in CASES if n == name)
+        prefix = f"{env}_reward-{setting}"
+        arm_w = per_seed(units(FOLDER, other + "_seeds-*.jsonl"))
+        rnd_name = configurations(RND_FOLDER, f"confirmation_{prefix}_cleanrl-ppo-rnd_learning-rate-*.jsonl")[0]
+        rnd = per_seed(units(RND_FOLDER, rnd_name + "_seeds-*.jsonl"))
+        out.append(f"| {name} | {arm.replace('-', ' ')} | {np.mean([v[0] for v in arm_w.values()]):.4f} | "
+                   f"{fmt(interval(arm_w, rnd, 0, other), 4)} | {words(rnd_name)} |")
     (FOLDER / "fresh_seeds" / "pointmaze_fresh_seeds.md").write_text("\n".join(out) + "\n")
     (FOLDER / "fresh_seeds" / "pointmaze_fresh_seeds.json").write_text(json.dumps(record, indent=1) + "\n")
     print("\n".join(out))
