@@ -681,3 +681,12 @@ Times are Pacific, read from the clock or from scheduler records.
   angular speed 101.7 rad/s (torso speed 14.3 m/s). It happened on Gilbreth and shows only now because that
   unit's records are copied back when it leaves the server. All eleven are the angular bound; nine of the eleven
   are at learning rate 3e-5.
+- 2026-11-16 12:32 PT (sacct, worker logs, the fleet log): the UVA worker 6941442 (four RTX A4500 cards on jaguar03)
+  reached its 2-hour limit at 12:27:14 PT; its four units, the method's step-cost validation units (47 to 72
+  windows of 256, the longest chain left), restarted at 12:29 PT on four RTX A4500 cards on jaguar03 (job
+  6941633). The Gilbreth job 12397361 of the method's U-maze unit with reward 1 on arrival (fast step 0.1 with the
+  hold, learning rate 1e-2, weight 16; 68 windows) reached its 4-hour limit at 12:25:28 PT. It was taken back at
+  12:31 PT to start on lynx02, whose four RTX 4000 Ada cards are free; the planner sent no worker, because the node
+  has only 2.1 GB of memory actually free. Handed back to Gilbreth at 12:32 PT, where 7 jobs wait for 5 waiting
+  units. Gilbreth job 12400318 started at 12:23:58 PT (the RND Large unit, 144 windows). Measured peak memory of
+  finished workers: at most 3.8 GiB per card (sacct MaxRSS), against the 8 GiB per card they ask for.
