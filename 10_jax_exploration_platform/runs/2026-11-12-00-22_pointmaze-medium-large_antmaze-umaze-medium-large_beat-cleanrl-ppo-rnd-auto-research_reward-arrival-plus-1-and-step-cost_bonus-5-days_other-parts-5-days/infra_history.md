@@ -222,3 +222,8 @@ Times are Pacific.
   within two minutes; they took 32 units. The other 12 went to Gilbreth (limit 12, 12 jobs in the pool
   standby-a100-80gb-a30-a10). The session's `pm_tick.sh` (the same placement step as the AntMaze folder's) runs
   every 10 minutes in `pm_restart_loop.sh`, so units whose 2-hour worker ends are restarted without a session tick.
+
+- 2026-11-16 02:30 PT: all 44 PointMaze fresh-seed units are complete (the last ones on Gilbreth, where the 5-minute
+  fleet loop had handed the ten units of the 00:50 PT restarts, since the hand-over limit was still 12). The session's
+  `pm_restart_loop.sh` ended by itself with nothing left in the queue. The comparison ran as Slurm job 6939988 on
+  struct04 (47 s; ledger `slurm/submitted_jobids_fresh-seeds-analysis_sl5nw.txt`), tests passed first.
