@@ -1552,6 +1552,13 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   now takes each case's arm from the rule, and lists the step 0.01 row apart, never in a verdict. No choice is made
   on the fresh seeds: the arm follows from the rule. The other three cases used the right arm.
 
+- 2026-11-16 03:15 PT: **PointMaze fresh seeds complete with the right arm in every case** (Slurm job 6940156, tests
+  passed; `fresh_seeds/pointmaze_fresh_seeds.md` regenerated). Medium with reward 1 on arrival, the first-arrival
+  hold alone: W 0.9430 against RND 0.9321, +0.0110 [+0.0077, +0.0142]; final level +0.0055 [+0.0042, +0.0072];
+  ahead. Verdicts on the four PointMaze cases (whole-curve mean / first-goal time): Medium with reward 1 on arrival
+  ahead / ahead; Medium with the step cost level / level; Large with reward 1 on arrival ahead / ahead; Large with
+  the step cost ahead / ahead. The step 0.01 row (+0.0065) is listed apart as an arm that is not the method.
+
 ## Next
 
 Rewritten 2026-11-13 22:31 PT.
@@ -1578,8 +1585,8 @@ Rewritten 2026-11-13 22:31 PT.
 6. **PointMaze:** on the second block the method is ahead of RND in three of the four cases; Medium with the step
    cost is level (+0.0041 [−0.0017, +0.0103]). Fresh seeds: three cases complete 2026-11-16 02:45 PT (Medium with
    the step cost level; both Large cases ahead on both measures); Medium with reward 1 on arrival is rerun with the
-   right arm, the hold alone (correction of 02:55 PT). Then regenerate `fresh_seeds/pointmaze_fresh_seeds.md`, and
-   write the development document's section with these tables and the training curves.
+   right arm, the hold alone (correction of 02:55 PT): complete 03:15 PT, ahead (+0.0110). Still to do: the
+   development document's section with these tables and the training curves.
 7. **Days 6 to 10** (changes outside the bonus, from about 2026-11-16 22:40 PT): on hold until the user decides on the
    optimization line (draft `~/.claude/plans/2026-11-15-21-20_ppo-rnd-optimization-phase-goal-episode-replay.md`;
    the user, 2026-11-15: "don't open up this new planned task yet"). As planned: each change tied to an observation of
