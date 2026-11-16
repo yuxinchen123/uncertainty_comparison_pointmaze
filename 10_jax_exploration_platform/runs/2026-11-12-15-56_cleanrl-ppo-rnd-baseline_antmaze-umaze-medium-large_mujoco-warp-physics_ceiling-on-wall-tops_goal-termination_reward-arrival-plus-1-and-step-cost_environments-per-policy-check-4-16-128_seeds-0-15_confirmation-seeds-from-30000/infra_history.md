@@ -740,3 +740,7 @@ Times are Pacific, read from the clock or from scheduler records.
   12400875); 12400876 and 12400877 still wait. At 15:08 PT the restart loop restarted the units of the workers
   started at 13:10 and 13:12 PT (jobs 6942661 to 6942665). UVA 23 units, Gilbreth 1 (the RND Large unit, 160
   windows), nothing waiting.
+- 2026-11-16 15:50 PT: monitoring moves back to an hourly tick (no change since 14:29 PT apart from the restart
+  loop's routine 2-hour restarts). It returns to every 20 minutes when a unit fails, work is submitted, or the
+  slowest RND U-maze unit (step cost, learning rate 1e-4, weight 1/64; 198 of 256 windows at 15:48 PT) nears 256,
+  when RND's fresh seeds are built and placed.
