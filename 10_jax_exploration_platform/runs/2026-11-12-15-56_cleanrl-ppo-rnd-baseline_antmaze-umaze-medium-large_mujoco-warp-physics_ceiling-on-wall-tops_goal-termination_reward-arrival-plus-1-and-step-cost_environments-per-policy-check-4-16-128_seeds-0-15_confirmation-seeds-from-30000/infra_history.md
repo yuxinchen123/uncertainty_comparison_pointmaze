@@ -615,3 +615,8 @@ Times are Pacific, read from the clock or from scheduler records.
   (the session's `ant_tick.sh`) also runs in a background loop every 10 minutes (`ant_restart_loop.sh`, at most
   12 hours, guarded so that it and a session tick never run at once), so a gap in the ticks no longer leaves units
   waiting.
+
+- 2026-11-15 20:21 PT (window record): seventh fault-guard respawn under RK4, the first in a unit with the fast last
+  layer: edge extension, reward 1 on arrival, step 0.1 with the hold, window 223, one policy (learning rate 3e-5,
+  weight 1/64), torso angular speed 101.3 rad/s (torso speed 16.1 m/s). All seven are the angular bound; six of the
+  seven are at learning rate 3e-5, four of those at weight 1/64.
