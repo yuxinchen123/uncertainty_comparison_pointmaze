@@ -723,3 +723,10 @@ Times are Pacific, read from the clock or from scheduler records.
   6942460). All eight RND U-maze units now run on UVA. Gilbreth holds 4 units: the RND Large unit running on an
   A10 (job 12400318), and the method's Large unit at weight 16 and its two Medium units waiting, with 7 waiting
   jobs.
+- 2026-11-16 14:29 PT (worker logs, squeue): the method's four step-cost U-maze units restarted at 14:24 PT after
+  their 2-hour worker on jaguar03 ended (jobs 6942583 to 6942585: an A40 on jaguar06, RTX 4000 Ada cards on
+  cheetah02 and lynx02). At 14:29 PT four RTX A4500 cards were free on jaguar03 and one RTX 4000 Ada on lynx02, so
+  the method's three units waiting on Gilbreth since 11:23 PT (Large at weight 16, Medium at weights 1 and 16) were
+  taken back (Gilbreth limit lowered to 1 first) and started at once (jobs 6942602 on lynx02 and 6942603 with two
+  RTX A4500 cards). UVA 23 units; Gilbreth 1 (the RND Large unit, running on an A10, job 12400318). The 7 Gilbreth
+  jobs still waiting hold no unit; they take units handed over later, or exit within seconds when they start.
