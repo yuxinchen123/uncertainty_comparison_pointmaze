@@ -333,3 +333,5 @@ MUJOCO_LOG.TXT
 10_jax_exploration_platform/runs/**/code/source_*
 # Page renders made to check a document's layout by eye (regenerable from the document).
 10_jax_exploration_platform/runs/**/analysis/document_pages/
+# ChatGPT session exports kept at the top of the repository (user decision 2026-11-16: on disk only).
+/GPT_session/
