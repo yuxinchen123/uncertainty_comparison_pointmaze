@@ -710,3 +710,8 @@ Times are Pacific, read from the clock or from scheduler records.
   its jobs waiting; MIT stays left to the tinker study; no ACCESS server is prepared for ant units. They stay on
   Gilbreth and are taken back to UVA cards as those come free (only lynx02's four RTX 4000 Ada cards are free now,
   and that machine has too little memory left for a worker).
+- 2026-11-16 12:59 PT (window record written then; read at 13:48 PT): twelfth and thirteenth fault-guard respawns
+  under RK4, both in one window (203) of the RND step-cost validation unit at learning rate 3e-5, weight 1/64 (on
+  UVA): seed 10086, torso angular speed 101.3 rad/s (torso speed 14.9 m/s), and seed 10105, 113.8 rad/s
+  (15.7 m/s). This unit now holds three of the thirteen (its first was window 119, seed 10047). All thirteen are
+  the angular bound; eleven of the thirteen are at learning rate 3e-5.
