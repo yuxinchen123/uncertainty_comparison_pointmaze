@@ -1559,6 +1559,21 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   ahead / ahead; Medium with the step cost level / level; Large with reward 1 on arrival ahead / ahead; Large with
   the step cost ahead / ahead. The step 0.01 row (+0.0065) is listed apart as an arm that is not the method.
 
+- 2026-11-16 04:52 PT: **batch 15's edge extension with the step cost is complete, and the method's validation block
+  for that setting is built** (U-maze, 16 development seeds, all 256 windows; whole-curve mean W):
+  1. predictions 7 to 9: 7 holds in all three arms ((1e-4, 1/64) within 0.006 of (1e-4, 1/16): hold alone −0.0059,
+     step 0.03 −0.0009, step 0.1 +0.0021; (1e-4, 1/4) below (1e-4, 1/16) in each); 8 holds for the hold alone
+     (−0.0038) and step 0.03 (−0.0015), not for step 0.1 (+0.0010); 9 holds (the hold alone and step 0.03 best at
+     (1e-4, 1/16), step 0.1 at (1e-4, 1/64)).
+  2. the validation block (seeds 10000 to 10127, 128 policies per unit; description
+     `infrastructure/descriptions/antmaze_umaze_rk4-physics_validation_method_reward-step-cost_seeds-10000-to-10127_budget-134217728.json`
+     in the AntMaze folder, commit a3c05657): the best three by W, the hold alone at (1e-4, 1/16) W −0.9660 ±
+     0.0046, the hold alone at (1e-4, 1/1024) −0.9685 ± 0.0021 (the smallest weight of the grid, an edge; no time for
+     another extension before 21 November), step 0.1 with the hold at (1e-4, 1/64) −0.9691 ± 0.0017; and the best by
+     the first-goal time, step 0.1 with the hold at (1e-2, weight 1), M 0.20 million steps. Started 04:51 PT on UVA
+     (RTX 5080 cards where free). With this, every validation block of the ant U-maze is running: RND (8 units) and
+     the method (8 units), 128 seeds each, both reward settings.
+
 ## Next
 
 Rewritten 2026-11-13 22:31 PT.
