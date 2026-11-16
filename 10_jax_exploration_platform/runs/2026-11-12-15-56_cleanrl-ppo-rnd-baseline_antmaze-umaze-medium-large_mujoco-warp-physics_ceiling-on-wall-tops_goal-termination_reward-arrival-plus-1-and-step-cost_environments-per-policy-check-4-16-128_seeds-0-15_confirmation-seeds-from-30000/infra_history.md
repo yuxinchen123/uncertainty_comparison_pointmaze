@@ -715,3 +715,11 @@ Times are Pacific, read from the clock or from scheduler records.
   UVA): seed 10086, torso angular speed 101.3 rad/s (torso speed 14.9 m/s), and seed 10105, 113.8 rad/s
   (15.7 m/s). This unit now holds three of the thirteen (its first was window 119, seed 10047). All thirteen are
   the angular bound; eleven of the thirteen are at learning rate 3e-5.
+- 2026-11-16 14:12 PT (sacct on both servers, worker logs): the RTX 5080 workers 6941558 and 6941559 reached their
+  2-hour limit at about 14:07 PT; their three RND U-maze units restarted at 14:10 PT on the same three RTX 5080
+  cards (jobs 6942407 with two cards, 6942408). The Gilbreth job 12397362 of the fourth RND U-maze unit on that
+  server (step cost, learning rate 1e-4, weight 1/64; 187 windows) reached its 4-hour limit at 13:50 PT; the unit
+  was taken back at 14:12 PT (Gilbreth limit lowered to 4 first) and resumed on an RTX 4000 Ada card on lynx02 (job
+  6942460). All eight RND U-maze units now run on UVA. Gilbreth holds 4 units: the RND Large unit running on an
+  A10 (job 12400318), and the method's Large unit at weight 16 and its two Medium units waiting, with 7 waiting
+  jobs.
