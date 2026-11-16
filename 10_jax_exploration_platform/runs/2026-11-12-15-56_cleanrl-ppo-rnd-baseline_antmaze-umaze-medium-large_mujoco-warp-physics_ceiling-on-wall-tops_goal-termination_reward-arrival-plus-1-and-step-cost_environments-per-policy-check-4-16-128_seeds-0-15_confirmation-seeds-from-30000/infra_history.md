@@ -624,3 +624,9 @@ Times are Pacific, read from the clock or from scheduler records.
 - 2026-11-15 23:05 PT (window record): eighth fault-guard respawn under RK4: edge extension, step cost, the hold
   alone, window 233, one policy (learning rate 3e-5, weight 1/256), torso angular speed 101.5 rad/s (torso speed
   14.6 m/s). All eight are the angular bound; seven of the eight are at learning rate 3e-5.
+
+- 2026-11-15 23:35 PT: the four method validation units with reward 1 on arrival were built at 23:31 PT. From this
+  tick `ant_tick.sh` also leaves the method's validation units at the 14,000 MiB card-memory floor, so they may run
+  on the RTX 5080 cards (the edge-extension units still claim first, as they were built first). Placement: job
+  6938870 on nekomata01's two RTX 5080 cards (step 0.03 with the hold at weight 1/64, and the hold alone), job
+  6938873 on an RTX 4000 Ada (step 0.03 at weight 1/16), and the unit at learning rate 1e-2 to Gilbreth (limit 5).

@@ -1488,6 +1488,24 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   Placement: 12 UVA jobs on free cards took 32 units at 23:01 PT, 12 units went to Gilbreth; the session's
   `pm_restart_loop.sh` restarts unfinished units every 10 minutes.
 
+- 2026-11-15 23:35 PT: **batch 15's edge extension with reward 1 on arrival is complete, and the method's validation
+  block for that setting is built** (U-maze, 16 development seeds, all 256 windows; whole-curve mean W):
+  1. predictions 7 to 9 (`batches/15_*/ideas.md`, section "Extension at the grid's edge"):
+     - 7 holds in all three arms: (1e-4, 1/64) within 0.006 of (1e-4, 1/16) (hold alone −0.0059, step 0.03 +0.0013,
+       step 0.1 +0.0055), and (1e-4, 1/4) below (1e-4, 1/16) in each;
+     - 8 holds only for step 0.03 (3e-5 below 1e-4 at weight 1/16 by −0.0128); it fails for the hold alone (+0.0062)
+       and step 0.1 (+0.0048);
+     - 9 holds: each arm's best is next to (1e-4, 1/16): step 0.03 and step 0.1 at (1e-4, 1/64) (0.1144, 0.1104),
+       the hold alone at (3e-5, 1/16) (0.1141). The hold alone's best is at the grid's smallest learning rate, an
+       edge; there is no time for a second extension before 21 November, and the report states it.
+  2. the validation block (seeds 10000 to 10127, 128 policies per unit; description
+     `infrastructure/descriptions/antmaze_umaze_rk4-physics_validation_method_reward-arrival-plus-one_seeds-10000-to-10127_budget-134217728.json`
+     in the AntMaze folder, commit bffa9347): the best three by W, step 0.03 with the hold at (1e-4, 1/64) W
+     0.1144 ± 0.0047, the hold alone at (3e-5, 1/16) 0.1141 ± 0.0030, step 0.03 with the hold at (1e-4, 1/16)
+     0.1131 ± 0.0034; and the best by the first-goal time, step 0.1 with the hold at (1e-2, weight 16) M 0.23
+     million steps (W 0.0648). Started 23:32 PT: three on UVA (two on RTX 5080 cards, one on an RTX 4000 Ada), one
+     on Gilbreth. RND's validation units with reward 1 on arrival (same seeds) are at about 120 of 256 windows.
+
 ## Next
 
 Rewritten 2026-11-13 22:31 PT.
