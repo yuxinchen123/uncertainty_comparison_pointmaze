@@ -1506,6 +1506,19 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
      million steps (W 0.0648). Started 23:32 PT: three on UVA (two on RTX 5080 cards, one on an RTX 4000 Ada), one
      on Gilbreth. RND's validation units with reward 1 on arrival (same seeds) are at about 120 of 256 windows.
 
+- 2026-11-16 00:35 PT: **PointMaze fresh seeds, early reading of the complete cases** (seeds 30000 to 31023, 1,024
+  paired seeds; standard-library reading with normal-approximation 95% intervals, the session's scratchpad script
+  `pm_fresh_reading.py`; the final intervals come from 10,000 resamples of seeds through the analysis job):
+  1. Medium, reward 1 on arrival: W 0.9386 against RND 0.9321, +0.0065 [+0.0030, +0.0101]; final level +0.0049
+     [+0.0034, +0.0065]. First-goal time 13.2 against 17.4 and 16.7 thousand steps (RND's two configurations),
+     −4.23 [−5.37, −3.09] and −3.52 [−4.90, −2.13]. Ahead on both measures.
+  2. Medium, step cost: W −0.3495 against RND at its first-block choice (weight 1/512) −0.3517, +0.0022 [+0.0000,
+     +0.0043], and against RND at weight 1/128 −0.3512, +0.0016 [−0.0006, +0.0038]; level under the rule that
+     "ahead" needs both (as on the second block). First-goal time 12.6 against 13.1 (RND's validation-block
+     choice), −0.44 [−1.20, +0.32], level; against the baseline's choice (14.1) −1.47 [−2.29, −0.65].
+  3. Large, reward 1 on arrival, first-goal time: 60.2 against 132.6 and 135.9 thousand steps, −72.4 [−78.7, −66.0]
+     and −75.7 [−82.6, −68.8]; ahead. Its whole-curve mean and both measures with the step cost are still running.
+
 ## Next
 
 Rewritten 2026-11-13 22:31 PT.
