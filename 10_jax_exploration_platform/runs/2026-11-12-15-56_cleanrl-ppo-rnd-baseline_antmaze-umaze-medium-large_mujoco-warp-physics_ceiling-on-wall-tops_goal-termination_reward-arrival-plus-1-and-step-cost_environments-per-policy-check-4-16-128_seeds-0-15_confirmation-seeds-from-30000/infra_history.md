@@ -640,3 +640,12 @@ Times are Pacific, read from the clock or from scheduler records.
   it replaces f476702d and expires about 2026-11-23 05:50 PT): stable since 04:51 PT, all 24 ant validation units
   running, restarts done by the background loop `ant_restart_loop.sh` every 10 minutes. Back to every 20 minutes
   when a block completes, a unit fails, or work is submitted.
+
+- 2026-11-16 07:15 PT (Gilbreth's squeue): three RND U-maze validation units wait on Gilbreth after their jobs
+  12395714, 12395715 and 12395730 reached the 4-hour limit. Their new jobs 12396350, 12396351 and 12396352 were
+  submitted at 06:50 PT and wait on `Priority`; Gilbreth's estimate is 16:00 to 16:24 PT. The units are reward 1
+  on arrival at learning rate 1e-2, weight 4 (153 windows of 256) and the step cost at 1e-4, weight 1/64 and at
+  1e-2, weight 16 (147 and 145 windows). If they still wait at about 08:50 PT (2 hours), they are also placed on
+  the next server. The other two Gilbreth units run on A10 cards (jobs 12395886 and 12396119). On UVA, three units
+  whose 2-hour workers ended got new workers at 06:44 PT (jobs 6940583 to 6940586) and at 07:12 PT (jobs 6940672
+  and 6940673, RTX 5080 cards). The fault guard still counts nine respawns.
