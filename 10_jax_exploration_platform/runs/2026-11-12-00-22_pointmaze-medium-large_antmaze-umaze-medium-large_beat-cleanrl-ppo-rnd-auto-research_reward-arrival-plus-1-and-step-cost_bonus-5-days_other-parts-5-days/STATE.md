@@ -1519,6 +1519,11 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   3. Large, reward 1 on arrival, first-goal time: 60.2 against 132.6 and 135.9 thousand steps, −72.4 [−78.7, −66.0]
      and −75.7 [−82.6, −68.8]; ahead. Its whole-curve mean and both measures with the step cost are still running.
 
+- 2026-11-16 01:30 PT: **PointMaze fresh seeds, Large with reward 1 on arrival complete** (same early reading):
+  W 0.8983 against RND 0.8809, +0.0173 [+0.0140, +0.0206]; final level +0.0027 [+0.0010, +0.0044]. Ahead, with the
+  first-goal time ahead as read at 00:35 PT. So with reward 1 on arrival the method is ahead of RND on fresh seeds
+  in both PointMaze cases on both measures; Large with the step cost runs on Gilbreth.
+
 ## Next
 
 Rewritten 2026-11-13 22:31 PT.
