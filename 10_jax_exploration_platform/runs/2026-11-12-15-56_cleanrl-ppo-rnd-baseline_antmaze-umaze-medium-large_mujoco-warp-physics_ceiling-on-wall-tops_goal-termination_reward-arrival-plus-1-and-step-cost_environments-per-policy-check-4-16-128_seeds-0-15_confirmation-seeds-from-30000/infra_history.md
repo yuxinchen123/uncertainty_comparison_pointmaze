@@ -735,3 +735,8 @@ Times are Pacific, read from the clock or from scheduler records.
   angular speed 102.3 rad/s (torso speed 14.8 m/s). All fourteen are the angular bound; twelve of the fourteen are
   at learning rate 3e-5. At 14:46 PT the restart loop restarted the four units of the workers started at 12:49 and
   12:51 PT (jobs 6942622 and 6942623); UVA 23 units, Gilbreth 1, nothing waiting.
+- 2026-11-16 15:10 PT (Gilbreth's sacct, the restart loop's log): five of the seven Gilbreth jobs that held no unit
+  started between 15:04:57 and 15:09:01 PT and exited after 8 seconds each, as expected (12400319 to 12400322 and
+  12400875); 12400876 and 12400877 still wait. At 15:08 PT the restart loop restarted the units of the workers
+  started at 13:10 and 13:12 PT (jobs 6942661 to 6942665). UVA 23 units, Gilbreth 1 (the RND Large unit, 160
+  windows), nothing waiting.
