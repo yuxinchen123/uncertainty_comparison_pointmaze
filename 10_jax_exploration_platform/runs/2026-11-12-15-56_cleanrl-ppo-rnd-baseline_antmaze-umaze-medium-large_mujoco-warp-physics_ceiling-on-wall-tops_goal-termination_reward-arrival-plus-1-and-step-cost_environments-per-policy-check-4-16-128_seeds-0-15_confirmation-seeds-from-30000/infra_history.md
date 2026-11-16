@@ -730,3 +730,8 @@ Times are Pacific, read from the clock or from scheduler records.
   taken back (Gilbreth limit lowered to 1 first) and started at once (jobs 6942602 on lynx02 and 6942603 with two
   RTX A4500 cards). UVA 23 units; Gilbreth 1 (the RND Large unit, running on an A10, job 12400318). The 7 Gilbreth
   jobs still waiting hold no unit; they take units handed over later, or exit within seconds when they start.
+- 2026-11-16 13:57 PT (window record written then; read at 14:48 PT): fourteenth fault-guard respawn under RK4: RND
+  with the step cost at learning rate 3e-5, weight 1/16 (the unit of the eleventh), window 188, seed 10056, torso
+  angular speed 102.3 rad/s (torso speed 14.8 m/s). All fourteen are the angular bound; twelve of the fourteen are
+  at learning rate 3e-5. At 14:46 PT the restart loop restarted the four units of the workers started at 12:49 and
+  12:51 PT (jobs 6942622 and 6942623); UVA 23 units, Gilbreth 1, nothing waiting.
