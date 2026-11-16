@@ -620,3 +620,7 @@ Times are Pacific, read from the clock or from scheduler records.
   layer: edge extension, reward 1 on arrival, step 0.1 with the hold, window 223, one policy (learning rate 3e-5,
   weight 1/64), torso angular speed 101.3 rad/s (torso speed 16.1 m/s). All seven are the angular bound; six of the
   seven are at learning rate 3e-5, four of those at weight 1/64.
+
+- 2026-11-15 23:05 PT (window record): eighth fault-guard respawn under RK4: edge extension, step cost, the hold
+  alone, window 233, one policy (learning rate 3e-5, weight 1/256), torso angular speed 101.5 rad/s (torso speed
+  14.6 m/s). All eight are the angular bound; seven of the eight are at learning rate 3e-5.
