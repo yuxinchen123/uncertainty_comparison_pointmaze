@@ -704,3 +704,9 @@ Times are Pacific, read from the clock or from scheduler records.
   6941903: two A100 40 GB cards on cheetah01, two RTX 4000 Ada on cheetah02, two RTX 4000 Ada on lynx01, one RTX
   A4500 on jaguar03). UVA 19 units, Gilbreth 5 (two RND units running on A10 cards; the method's Large unit at
   weight 16 and its two Medium units wait, with 7 waiting jobs).
+- 2026-11-16 13:28 PT (Gilbreth's and Gautschi's squeue): the method's Large unit at weight 16 and its two Medium
+  units have waited on Gilbreth for two hours (since 11:23 PT; 7 of our jobs wait there on `Priority`). No next
+  server can start them: Gautschi `ai` still holds the account's four H100 cards for another session, with 15 of
+  its jobs waiting; MIT stays left to the tinker study; no ACCESS server is prepared for ant units. They stay on
+  Gilbreth and are taken back to UVA cards as those come free (only lynx02's four RTX 4000 Ada cards are free now,
+  and that machine has too little memory left for a worker).
