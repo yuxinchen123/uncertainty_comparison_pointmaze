@@ -1,0 +1,30 @@
+schema_version: 1
+run_id: 2026-11-12-01-29_rollout-shape-check_cleanrl-ppo-rnd_goal-termination_reward-arrival-plus-1_pointmaze-large_antmaze-umaze_environments-per-policy-4-16-128_intrinsic-weights-0.0625-1-16_seeds-0-15_pointmaze-steps-50331648
+description: "Example: CleanRL PPO with random network distillation on PointMaze Large, episode ends at the goal, reward 1 on arrival"
+git:
+  commit: d4afef7b1b7a72809680bed84bbf5a40d45fb192
+  dirty: true
+  version_tag: jax-platform-v0.1.0-791-gd4afef7b
+specs:
+  env: pointmaze_large_term400_nonoise_reward-arrival-plus-one@1
+  agent: ppo_full_batch_continuing_intrinsic@3
+  configuration_preset: pointmaze_current
+  bonus: rnd_next_state@1
+  update_schedule: per_rollout@1
+compile_signature:
+  copies: 48
+  envs_per_copy: 16
+  rollout_steps: 128
+  update_style: epoch_minibatch
+  epochs: 4
+  minibatches: 4
+  dtype: float32
+  stats_dtype: float64
+seeding:
+  base_seed: 0
+  run_seed: 0
+  mode: paired
+artifacts:
+  metrics: metrics.jsonl
+  summary: summary.json
+  shards: data/*.jsonl

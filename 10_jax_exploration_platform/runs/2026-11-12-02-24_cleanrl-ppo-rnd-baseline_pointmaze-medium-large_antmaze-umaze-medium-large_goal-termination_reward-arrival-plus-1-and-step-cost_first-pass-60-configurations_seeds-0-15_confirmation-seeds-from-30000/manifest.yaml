@@ -1,0 +1,30 @@
+schema_version: 1
+run_id: 2026-11-12-02-24_cleanrl-ppo-rnd-baseline_pointmaze-medium-large_antmaze-umaze-medium-large_goal-termination_reward-arrival-plus-1-and-step-cost_first-pass-60-configurations_seeds-0-15_confirmation-seeds-from-30000
+description: "cleanrl-ppo-rnd-baseline, development-first-pass: cleanrl-ppo-rnd on pointmaze-medium, reward setting arrival plus one and step cost, cells 1 to 8 of 60, seeds 0 to 15"
+git:
+  commit: 6ad2fa4643e7bc7dfd156472fe43b689a517e229
+  dirty: true
+  version_tag: jax-platform-v0.1.0-799-g6ad2fa46
+specs:
+  env: pointmaze_medium_term400_nonoise_start6-1_goal1-6_reward-arrival-plus-one-and-step-cost@1
+  agent: ppo_full_batch_continuing_intrinsic@3
+  configuration_preset: pointmaze_current
+  bonus: rnd_next_state@1
+  update_schedule: per_rollout@1
+compile_signature:
+  copies: 256
+  envs_per_copy: 4
+  rollout_steps: 128
+  update_style: epoch_minibatch
+  epochs: 4
+  minibatches: 4
+  dtype: float32
+  stats_dtype: float64
+seeding:
+  base_seed: 0
+  run_seed: 1209176940
+  mode: paired
+artifacts:
+  metrics: metrics.jsonl
+  summary: summary.json
+  shards: data/*.jsonl

@@ -1,0 +1,30 @@
+schema_version: 1
+run_id: 2026-11-12-15-56_cleanrl-ppo-rnd-baseline_antmaze-umaze-medium-large_mujoco-warp-physics_ceiling-on-wall-tops_goal-termination_reward-arrival-plus-1-and-step-cost_environments-per-policy-check-4-16-128_seeds-0-15_confirmation-seeds-from-30000
+description: "cleanrl-ppo-rnd-baseline-antmaze, rnd-sweep-rk4: cleanrl-ppo-rnd-with-16-environments-per-policy on antmaze-umaze, reward setting arrival plus one, cells 1 to 7 of 28, seeds 0 to 15"
+git:
+  commit: d21e0c9b50cdf0170b6101eae67f1f3ab8e37e1a
+  dirty: true
+  version_tag: jax-platform-v0.1.0-987-gd21e0c9b
+specs:
+  env: antmaze_umaze_term700_nonoise_physics-warp_reward-arrival-plus-one@1
+  agent: ppo_full_batch_continuing_intrinsic@3
+  configuration_preset: antmaze_current
+  bonus: rnd_next_state@1
+  update_schedule: per_rollout@1
+compile_signature:
+  copies: 112
+  envs_per_copy: 16
+  rollout_steps: 128
+  update_style: epoch_minibatch
+  epochs: 4
+  minibatches: 4
+  dtype: float32
+  stats_dtype: float64
+seeding:
+  base_seed: 0
+  run_seed: 1625705385
+  mode: paired
+artifacts:
+  metrics: metrics.jsonl
+  summary: summary.json
+  shards: data/*.jsonl

@@ -1,0 +1,99 @@
+trainer:
+  action_noise_generator: threefry
+  actor_critic_joint_trunk: false
+  adam_eps: 1e-05
+  advantage_scan_unroll: 1
+  anneal_lr: true
+  base_seed: 0
+  batch_stats_f32: false
+  betas: ()
+  bootstrap_on_truncation: true
+  clip_coef: 0.1
+  clip_per_network: false
+  configuration_preset: pointmaze_current
+  copies_per_group: 16
+  copy_seed_offset: 0
+  critic_lr_scale: 1.0
+  diagnostics: false
+  ent_coef: 0.001
+  episode_log: true
+  ext_coef: 2.0
+  ext_reward_offset: 0.0
+  ext_reward_scale: 1.0
+  flat_params: false
+  gae_lambda: 0.95
+  gamma_ext: 0.999
+  gamma_int: 0.99
+  gather_minibatches_per_epoch: false
+  hoist_rollout: true
+  int_coef: 1.0
+  int_coef_schedule: constant
+  intrinsic_bootstrap_observation: reset_observation
+  intrinsic_sums_by_matrix_product: false
+  learning_rate: 0.0003
+  learning_rates: ()
+  logstd_floor: -inf
+  max_grad_norm: 0.5
+  n_copies: 192
+  n_envs: 4
+  next_values_from_shifted_values: false
+  no_bonus_advantage_stream: task_only
+  normalize_agent_obs: false
+  normalize_ext_reward: false
+  num_minibatches: 4
+  num_steps: 128
+  parameter_settings: ((0.002, 0.01, 0.000244140625, 0.1), (0.002, 0.01, 0.0009765625, 0.1), (0.002, 0.01, 0.00390625, 0.1), (0.002, 0.01, 0.015625, 0.1), (0.002, 0.01, 0.0625, 0.1), (0.002, 0.01, 0.25, 0.1), (0.002, 0.01, 0.5, 0.1), (0.002, 0.01, 1.0, 0.1), (0.002, 0.01, 2.0, 0.1), (0.002, 0.01, 4.0, 0.1), (0.002, 0.01, 16.0, 0.1), (0.002, 0.01, 64.0, 0.1))
+  permutation_draw: argsort_uniform
+  prime_iterations: 50
+  scan_unroll: 0
+  setting_names: ('learning_rate', 'ent_coef', 'int_coef', 'clip_coef')
+  skip_reset_draws_at_zero_noise: false
+  success_gate_rate: 0.0
+  sweep_seed_mode: paired
+  target_features_once_per_iteration: false
+  total_iterations: 0
+  track_coverage: true
+  update_epochs: 4
+  update_style: epoch_minibatch
+  update_unroll: 2
+  vf_coef: 0.5
+environment:
+  specification: pointmaze_large_term400_nonoise_reward-arrival-plus-one@1
+  map_name: large
+  start_cell: (7, 1)
+  goal_cell: (1, 10)
+  position_noise: 0.0
+  max_episode_steps: 400
+  continuing_task: false
+  reward_shift: 0.0
+  goal_radius: 0.45
+  goal_reward: per_step
+runtime:
+  interpreter: /p/rlprojects/RND/.venvs/platform_jax/bin/python
+  unit_id: batch-01-screen_pointmaze-large_reward-arrival-plus-one_control-cleanrl-ppo-rnd_cells-01-to-12-of-12_seeds-0-to-15
+  iterations: 16384
+  window_iterations: 64
+  run_seed: 266821248
+  reward_setting: arrival_plus_one
+configuration_file:
+  path: /p/rlprojects/RND/10_jax_exploration_platform/runs/2026-11-12-00-22_pointmaze-medium-large_antmaze-umaze-medium-large_beat-cleanrl-ppo-rnd-auto-research_reward-arrival-plus-1-and-step-cost_bonus-5-days_other-parts-5-days/slurm/unit_configurations/batch-01-screen_pointmaze-large_reward-arrival-plus-one_control-cleanrl-ppo-rnd_cells-01-to-12-of-12_seeds-0-to-15.toml
+  sha256: 034fb7d5c5ccc5ab2d19eca07aed4e12930a2af1cc38b24a3abcdf6f1eaa5f23
+  metadata:
+    name: "beat-cleanrl-ppo-rnd-auto-research, batch-01-screen: control-cleanrl-ppo-rnd on pointmaze-large, reward setting arrival plus one, cells 1 to 12 of 12, seeds 0 to 15"
+    implementation: jax_exploration_platform
+    environment_family: pointmaze
+    source_files:
+      - 07_reconstruction/ppo_rnd_envpool.py
+      - .claude/rules/exploration-metrics-pointmaze-antmaze.md
+    notes: "Learner values are CleanRL's defaults in the first source file, except that the predictor trains on the whole batch. Environment, goal termination and the two reward settings are defined in the second source file. A small run for a first check: 16 policies on seeds 0 to 15, 4 environments each."
+    source_steps_per_policy_copy: 1024000
+bonus_options:
+  feature_dim: 128
+  hidden: 256
+  even_start: false
+  reward_divisor: running_std
+  predictor_learning_rate_multiple: 0.0
+  bonus_form: half_squared_error
+  fast_last_layer_step: 0.0
+  scheduled_last_layer_decay: 0.0
+  record_bonus_on_maze_grid: true

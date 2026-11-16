@@ -1,0 +1,30 @@
+schema_version: 1
+run_id: 2026-11-12-00-22_pointmaze-medium-large_antmaze-umaze-medium-large_beat-cleanrl-ppo-rnd-auto-research_reward-arrival-plus-1-and-step-cost_bonus-5-days_other-parts-5-days
+description: "beat-cleanrl-ppo-rnd-auto-research, batch-01-screen: control-cleanrl-ppo-rnd on pointmaze-large, reward setting arrival plus one, cells 1 to 12 of 12, seeds 0 to 15"
+git:
+  commit: 2b84cab185ef9030ec5225e413c32863e17ca4b0
+  dirty: true
+  version_tag: jax-platform-v0.1.0-814-g2b84cab1
+specs:
+  env: pointmaze_large_term400_nonoise_reward-arrival-plus-one@1
+  agent: ppo_full_batch_continuing_intrinsic@3
+  configuration_preset: pointmaze_current
+  bonus: rnd_next_state@1
+  update_schedule: per_rollout@1
+compile_signature:
+  copies: 192
+  envs_per_copy: 4
+  rollout_steps: 128
+  update_style: epoch_minibatch
+  epochs: 4
+  minibatches: 4
+  dtype: float32
+  stats_dtype: float64
+seeding:
+  base_seed: 0
+  run_seed: 266821248
+  mode: paired
+artifacts:
+  metrics: metrics.jsonl
+  summary: summary.json
+  shards: data/*.jsonl

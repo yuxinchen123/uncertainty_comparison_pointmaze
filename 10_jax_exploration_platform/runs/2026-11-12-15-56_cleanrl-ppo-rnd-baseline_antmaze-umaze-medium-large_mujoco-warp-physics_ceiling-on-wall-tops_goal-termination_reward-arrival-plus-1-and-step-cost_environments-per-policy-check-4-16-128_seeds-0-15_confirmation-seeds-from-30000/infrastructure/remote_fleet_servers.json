@@ -37,7 +37,7 @@
       }
     },
     "hand_over": {
-      "units_at_once": 18,
+      "units_at_once": 4,
       "match": "antmaze",
       "pool": "standby-a100-80gb-a30"
     },
@@ -49,9 +49,10 @@
       "checked_at": null,
       "note": "set by hand 2026-11-12: no AntMaze unit runs on UVA cards, so the automatic comparison with a UVA unit has nothing to read. New code copy f490e70d with the stable physics: ONE unit is handed over first (units_at_once 1) and its records (fault counters, speeds, seconds per iteration) are read by hand before the limit is raised to 18 | 2026-11-12 20:28 PT: the first unit with the stable physics (job 12347248, NVIDIA A30, 4 environments per policy, cells 41 to 48) was read by hand at window 2 of 256: record kinds job, unit_start, episode_window; settings as intended (time step 0.005 s, frame skip 10, guard 30 m/s and 100 rad/s); 128 values per policy field, all finite; 0 fault respawns; largest torso speed 13.0 m/s, largest turning rate 40.0 rad/s; contact pool use 9.1%, at most 41 of 512 constraint rows; 1.087 s per iteration at 512 environments. The other 17 units were released."
     },
-    "code": "/scratch/gilbreth/liu4869/rnd_maze/code/source_a2df3c1279545641d05c68b75a86364e742701eb/10_jax_exploration_platform",
-    "prepared_commit": "a2df3c1279545641d05c68b75a86364e742701eb",
-    "code_repository_commit": "d0fadbe12ef0c986d648f14ab456ee8febdc5b70"
+    "code": "/scratch/gilbreth/liu4869/rnd_maze/code/source_ef844a2042de6226767f41ddd7db26a82abc4c7e/10_jax_exploration_platform",
+    "prepared_commit": "ef844a2042de6226767f41ddd7db26a82abc4c7e",
+    "code_repository_commit": "ab34c3883164717d03ceba1f0ecf42ec18a4dbae",
+    "prepared_copy_number": 1
   },
   "mit": {
     "ssh": [

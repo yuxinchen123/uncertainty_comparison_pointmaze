@@ -37,20 +37,21 @@
       "units_at_once": 0,
       "match": "pointmaze",
       "pool": "standby-a100-80gb-a30-a10",
-      "note": "Placement decided with the user 2026-11-12 22:18 PT: Gilbreth by default; UVA only for workers that start at once; no worker job is left waiting in UVA's queue. From 2026-11-13 01:28 PT the limit is pinned to the units already there: units of the new option (held_after_first_arrival, code copy eab85eba or later) must not reach Gilbreth while jobs of the old code copy d7054945 run there, because a worker does not check which code copy a unit needs."
+      "note": "Placement decided with the user 2026-11-12 22:18 PT: Gilbreth by default; UVA only for workers that start at once; no worker job is left waiting in UVA's queue. 2026-11-13 04:47 PT: open again (8 units at once): no job of an older code copy is left on Gilbreth for this folder. Before freezing this folder at a commit with a new bonus option, pin the limit to 0 until the jobs of the older copy have ended (a worker does not check which code copy a unit needs)."
     },
     "ready": true,
     "failed_calls_in_a_row": 0,
     "budget_note": "standby, not charged",
-    "code": "/scratch/gilbreth/liu4869/rnd_maze/code/source_bed45842af55ebca96c4394f3461206f86ab597a/10_jax_exploration_platform",
-    "prepared_commit": "bed45842af55ebca96c4394f3461206f86ab597a",
-    "code_repository_commit": "7f07dfa063611d56bfc706de89c537ae41bdb145",
+    "code": "/scratch/gilbreth/liu4869/rnd_maze/code/source_42b327e76683ccec06659c661f8a1358db229433/10_jax_exploration_platform",
+    "prepared_commit": "42b327e76683ccec06659c661f8a1358db229433",
+    "code_repository_commit": "7697e2d7a7e8fac256917ca1de00cbd349c8bd30",
     "first_unit": {
       "state": "passed",
       "unit": "batch-01-screen_pointmaze-large_reward-arrival-plus-one_scheduled-last-layer-on-fixed-features-decay-1_cells-01-to-12-of-12_seeds-0-to-15",
       "compared_with_uva_unit": "batch-01-screen_pointmaze-large_reward-arrival-plus-one_error-length-as-the-bonus_cells-01-to-12-of-12_seeds-0-to-15",
       "differences": [],
       "checked_at": "2026-11-12T17:23:22.856295-05:00"
-    }
+    },
+    "prepared_copy_number": 1
   }
 }

@@ -316,3 +316,20 @@ core.*
 !10_jax_exploration_platform/device/estimates/*.json
 !10_jax_exploration_platform/device/probes/*.json
 !10_jax_exploration_platform/device/observed/*.jsonl
+
+# Runtime files of the PointMaze and AntMaze study and the grid studies (added 2026-11-16):
+# MuJoCo writes its warning log into the working directory.
+MUJOCO_LOG.TXT
+# A run's stop and completion sentinels are control files read by the workers and the monitor.
+10_jax_exploration_platform/runs/**/STOP
+10_jax_exploration_platform/runs/**/SWEEP_COMPLETE
+# Process-id files and the unit check's scratch output.
+10_jax_exploration_platform/runs/**/infrastructure/pids/
+10_jax_exploration_platform/runs/**/infrastructure/unit_check/scratch/
+# The frozen code copies: `current` and each older `source_<commit>` are symbolic links to the newest copy
+# (the `code/source_*/` rule above matches directories only, not links), and `source_<commit>.original`
+# folders are the copies they replaced; git history already holds every commit. CURRENT_COMMIT stays tracked.
+10_jax_exploration_platform/runs/**/code/current
+10_jax_exploration_platform/runs/**/code/source_*
+# Page renders made to check a document's layout by eye (regenerable from the document).
+10_jax_exploration_platform/runs/**/analysis/document_pages/
