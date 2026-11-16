@@ -262,7 +262,7 @@ IDEAS = {
          "check": "`tests/agents/test_speed_keys.py` (job 6884137): after 4 iterations 87 of 87 "
                   "state arrays bit-identical on the processor, with truncations and with a "
                   "termination on every step; refused when the noise is not zero",
-         "kept": "KEPT_15"},
+         "kept": "not kept: under 5% (1.000 on the H100 NVL, 1.001 on the RTX 5080)"},
     17: {"name": "intrinsic filter and intrinsic advantage as one matrix product each; and, "
                  "as an addition not in the plan's list, the remaining loops unrolled",
          "change": "new keys `intrinsic_sums_by_matrix_product` and `advantage_scan_unroll` "
@@ -274,7 +274,7 @@ IDEAS = {
                   "on the processor the largest state difference is 8.6e-07 with the matrix "
                   "products and 1.7e-07 with the loops unrolled 16 steps (17 and 18 of 87 arrays "
                   "bit-identical)",
-         "kept": "KEPT_17"},
+         "kept": "meets the 5% threshold on two cards (matrix products with the extrinsic loop unrolled 16 steps: 1.152 on the H100 NVL, 1.080 on the RTX 5080), but not switched on: its check of the measure's distribution over 64 seeds was not run, and every PointMaze unit of the study ran without it, so switching it on during the study would mix two programs in one comparison"},
     16: {"name": "action noise from the compiler's own bit generator",
          "change": "new key `action_noise_generator = \"rbg\"` (default `\"threefry\"`; "
                    f"`{S}/training/train_step.py`, `action_noise`). Another random scheme: its "
@@ -285,7 +285,7 @@ IDEAS = {
                   "variance 1.0103, largest gap to the normal distribution function 0.0038 "
                   "(limit 0.0076 at the 0.001 level), uncorrelated action dimensions; training "
                   "stays finite",
-         "kept": "KEPT_16"},
+         "kept": "not kept: under 5% (1.001 on the H100 NVL, 0.998 on the RTX 5080)"},
     21: {"name": "first two layers of actor and critic as one batched network",
          "change": f"new key `actor_critic_joint_trunk` (`{S}/agents/ppo/networks.py`: "
                    f"`actor_mean_and_critic_values`; `{S}/agents/ppo/losses.py`; used in the "
@@ -295,13 +295,13 @@ IDEAS = {
                   "bit-identical to the two separate forwards on the processor; after 4 "
                   "iterations the largest state difference is 2.0e-07 (17 of 87 arrays "
                   "bit-identical)",
-         "kept": "KEPT_21"},
+         "kept": "not kept: under 5% (1.015 and 0.982 on the H100 NVL, 1.007 on the RTX 5080)"},
     22: {"name": "update-loop unroll at the new minibatch sizes",
          "change": f"existing key `update_unroll` (`{S}/agents/ppo/update.py`; today 2); the "
                    "values 1, 4 and 16 were given explicitly",
          "risk": "dist (rounding)",
          "check": "not run: no value is kept",
-         "kept": "KEPT_22"},
+         "kept": "not kept: no value gains 5% on any card (best 1.007); update unroll 2 stays"},
     28: {"name": "several iterations per host call",
          "change": f"existing code `{S}/training/blocks.py` (`iteration_block`), measured "
                    "through the harness key `iterations_per_host_call`; the training command "
@@ -309,13 +309,13 @@ IDEAS = {
          "risk": "dist",
          "check": "not run: not kept. (An earlier 32-iteration form was rejected for a result "
                   "difference of 0.005 in one position, 2026-10-13.)",
-         "kept": "KEPT_28"},
+         "kept": "not kept: no gain (1.000 on both cards); the host is not a bottleneck"},
     27: {"name": "two processes per card",
          "change": "no code in the trainer: `benchmarks/harness/two_processes_on_one_card.py` "
                    "starts two processes of 256 policies whose timed rounds begin together",
          "risk": "same",
          "check": "none needed: each process is the unchanged program",
-         "kept": "KEPT_27"},
+         "kept": "not measured; not kept (an earlier measurement gave 0.95 on an RTX A4500)"},
     23: {"name": "32-bit batch statistics",
          "change": f"existing key `batch_stats_f32` (`{S}/statistics.py`, `rms_update`)",
          "risk": "dist",
