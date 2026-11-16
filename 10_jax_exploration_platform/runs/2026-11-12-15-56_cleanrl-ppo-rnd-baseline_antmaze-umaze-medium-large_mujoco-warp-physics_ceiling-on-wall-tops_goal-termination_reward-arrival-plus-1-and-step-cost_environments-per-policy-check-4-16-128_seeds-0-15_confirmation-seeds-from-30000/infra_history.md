@@ -697,3 +697,10 @@ Times are Pacific, read from the clock or from scheduler records.
   waiting then started at 12:49 PT on the A100 (job 6941775) and at 12:51 PT on three RTX A4500 cards on jaguar03
   (job 6941794). UVA 18 units, Gilbreth 6 (two running on A10 cards; the method's two Medium and two Large units
   wait there since 11:23 PT, with 7 waiting jobs).
+- 2026-11-16 13:14 PT (worker logs, squeue): one A40 card was free on jaguar01 at 13:10 PT, so the method's Large
+  unit at weight 1 (fast step 0.03 with the hold, learning rate 1e-2), waiting on Gilbreth since 11:23 PT, was
+  taken back (Gilbreth limit lowered to 5 first) and started there (job 6941869). At the same moment the four UVA
+  workers started at 11:20 PT reached their 2-hour limit; their seven units restarted at 13:12 PT (jobs 6941900 to
+  6941903: two A100 40 GB cards on cheetah01, two RTX 4000 Ada on cheetah02, two RTX 4000 Ada on lynx01, one RTX
+  A4500 on jaguar03). UVA 19 units, Gilbreth 5 (two RND units running on A10 cards; the method's Large unit at
+  weight 16 and its two Medium units wait, with 7 waiting jobs).
