@@ -604,3 +604,14 @@ Times are Pacific, read from the clock or from scheduler records.
   (weights 1/256, 1/64 three times, 1/4) and one at 1e-4 (weight 1/64); four in RND units, two in units of the hold
   alone, none with the fast last layer. Correction to the 07:30 entry: three of its five, not four, were at learning
   rate 3e-5 with weight 1/64.
+
+- 2026-11-15 19:56 PT: no monitoring tick ran from 17:30 to 19:55 PT, and the UVA workers that ended in that time
+  were not restarted: jobs 6938288, 6938290, 6938291 ended at 17:40 to 17:41 PT, 6938325 at 18:00 PT, and 6938468
+  to 6938474 at 19:00 to 19:02 PT (sacct). All 18 UVA units then waited until 19:56 PT, so they lost 55 minutes
+  to 2 hours 16 minutes each. Among them were the three reward-on-arrival edge-extension units with the fast last
+  layer or the hold alone (stopped at 218, 219 and 245 windows) and the slowest unit (step cost, step 0.1, at 181).
+  The 5-minute fleet loop kept running the whole time; Gilbreth's four units were not affected. All 18 restarted
+  at 19:56 PT in seven jobs (6938639 to 6938645), four of them on RTX 5080 cards. From 19:58 PT the UVA restart step
+  (the session's `ant_tick.sh`) also runs in a background loop every 10 minutes (`ant_restart_loop.sh`, at most
+  12 hours, guarded so that it and a session tick never run at once), so a gap in the ticks no longer leaves units
+  waiting.
