@@ -1609,8 +1609,8 @@ Rewritten 2026-11-13 22:31 PT.
    2026-11-15). Schedule fact: an ant unit takes at least about 26 hours, so a change found then reaches the ant
    only through one sweep, one validation block and the fresh seeds back to back (about 4.5 days), which ends
    close to 2026-11-21 22:40 PT with no time to spare.
-8. Re-create the monitoring cron before 2026-11-20 13:00 PT (created 2026-11-13 about 13:00 PT; it expires after
-   7 days).
+8. The monitoring cron is hourly since 2026-11-16 05:52 PT (job 180c6ba9; expires about 2026-11-23 05:50 PT);
+   back to every 20 minutes when a validation block completes, a unit fails, or work is submitted.
 
 ## Ideas (status)
 

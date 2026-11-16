@@ -635,3 +635,8 @@ Times are Pacific, read from the clock or from scheduler records.
   the step cost at learning rate 3e-5, weight 1/64 (RND's chosen configuration), window 119, seed 10047, torso
   angular speed 100.5 rad/s (torso speed 14.5 m/s). All nine are the angular bound; eight of the nine are at
   learning rate 3e-5.
+
+- 2026-11-16 05:52 PT: the session's monitoring cron moved from every 20 minutes to hourly (job 180c6ba9, minute 7;
+  it replaces f476702d and expires about 2026-11-23 05:50 PT): stable since 04:51 PT, all 24 ant validation units
+  running, restarts done by the background loop `ant_restart_loop.sh` every 10 minutes. Back to every 20 minutes
+  when a block completes, a unit fails, or work is submitted.
