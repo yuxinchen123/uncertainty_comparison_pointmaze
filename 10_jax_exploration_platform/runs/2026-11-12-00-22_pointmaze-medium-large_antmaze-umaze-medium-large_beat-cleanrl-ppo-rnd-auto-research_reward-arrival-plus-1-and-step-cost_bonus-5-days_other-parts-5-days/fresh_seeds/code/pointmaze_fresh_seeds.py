@@ -30,6 +30,12 @@ METHOD_ARM = {("pointmaze-medium", "arrival-plus-one"): "held-from-first-arrival
               ("pointmaze-medium", "step-cost"): "fast-step-0-point-01-with-hold",
               ("pointmaze-large", "arrival-plus-one"): "fast-step-0-point-03-with-hold",
               ("pointmaze-large", "step-cost"): "fast-step-0-point-03-with-hold"}
+# RND's choice for the first-goal time on the first validation block, per case (the standing page's discovery check);
+# the other configurations RND has on the fresh seeds for that measure are the baseline sweep's choices
+RND_VALIDATION_CHOICE_M = {("pointmaze-medium", "arrival-plus-one"): "learning-rate-0.02_entropy-coefficient-0.1_intrinsic-weight-4.0",
+                           ("pointmaze-medium", "step-cost"): "learning-rate-0.01_entropy-coefficient-0.03_intrinsic-weight-4.0",
+                           ("pointmaze-large", "arrival-plus-one"): "learning-rate-0.006_entropy-coefficient-0.01_intrinsic-weight-64.0",
+                           ("pointmaze-large", "step-cost"): "learning-rate-0.006_entropy-coefficient-0.01_intrinsic-weight-8.0"}
 RESAMPLES = 10_000
 WINDOWS = 256
 
@@ -163,10 +169,11 @@ def main():
         assert len(method_m_name) == 1, method_m_name
         method_m = per_seed(units(FOLDER, method_m_name[0] + "_seeds-*.jsonl"))
         case_m = []
-        sources = [(RND_FOLDER, n, "the baseline sweep's choice") for n in
-                   configurations(RND_FOLDER, f"confirmation-for-discovery_{prefix}_cleanrl-ppo-rnd_*.jsonl")]
-        sources += [(FOLDER, n, "its validation-block choice") for n in
-                    configurations(FOLDER, f"fresh-seeds_{prefix}_control-cleanrl-ppo-rnd_*.jsonl")]
+        # label each RND row by the rule that chose it, wherever it was run
+        names = [(RND_FOLDER, n) for n in configurations(RND_FOLDER, f"confirmation-for-discovery_{prefix}_cleanrl-ppo-rnd_*.jsonl")]
+        names += [(FOLDER, n) for n in configurations(FOLDER, f"fresh-seeds_{prefix}_control-cleanrl-ppo-rnd_*.jsonl")]
+        sources = [(f, n, "its validation-block choice" if RND_VALIDATION_CHOICE_M[(env, setting)] in n
+                    else "the baseline sweep's choice") for f, n in names]
         for folder, rnd_name, why in sources:
             rnd = per_seed(units(folder, rnd_name + "_seeds-*.jsonl"))
             m = interval(method_m, rnd, 2, rnd_name)
@@ -188,7 +195,8 @@ def main():
            "arrival at the goal ($T_i = B$ if it never arrives).", "",
            "- **Whole-curve mean:** $W = \\dfrac{1}{K}\\sum_{i=1}^{K} \\dfrac{1}{B}\\sum_{s \\le B} R_i(s)$, the area "
            "under the training curve divided by the budget; larger is better.",
-           "- **Final level:** $L$, the same mean over the last 10% of the budget.",
+           "- **Final level:** $L$, the same mean over the last 25 of the 256 logging windows (9.8% of the budget; "
+           "the development document's tables use exactly the last 10%, which moves $L$ by at most 0.0001 here).",
            "- **Mean capped first-goal time:** $M = \\dfrac{1}{K}\\sum_{i=1}^{K} \\min(T_i, B)$, in thousand steps; "
            "smaller is better.",
            "- **Verdicts:** for $W$, ahead when the interval of the difference is above zero and the interval of the "

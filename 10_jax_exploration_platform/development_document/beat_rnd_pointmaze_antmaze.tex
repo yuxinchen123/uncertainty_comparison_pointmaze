@@ -30,6 +30,7 @@
 \newcommand{\BeatRndMediumStepCostStepSmallFirst}{$-0.3470$}
 \newcommand{\BeatRndMediumStepCostStepZeroFirst}{$-0.3476$}
 \newcommand{\BeatRndMediumStepCostStepSmallSecond}{$+0.0041$ $[-0.0017, +0.0103]$}
+\newcommand{\BeatRndFreshNoBonusMediumStepCost}{$-0.0015$ $[-0.0036, +0.0007]$}
 % <<< AUTO-GENERATED TABLE END: beat-rnd-numbers
 
 \subsection{Task and protocol}
@@ -38,8 +39,9 @@
 The goal is a method whose training curve of extrinsic return is ahead of a tuned CleanRL PPO-RND (the random
 network distillation of Burda, Edwards, Storkey and Klimov, 2019) in all five mazes of \Cref{tab:beat-rnd-environments}, with statistical significance,
 in one of two reward settings. The study has ten days from 2026-11-11: five for changes of the bonus, five for
-changes of other parts of the learner. This section reports its state on 2026-11-13: PointMaze on two blocks of
-validation seeds, AntMaze before any validation run.
+changes of other parts of the learner. This section reports PointMaze on two blocks of validation seeds (state of
+2026-11-13) and on the fresh seeds (state of 2026-11-16), and AntMaze before any validation run (state of
+2026-11-13).
 
 \begin{table}[H]
 \centering
@@ -150,9 +152,9 @@ side stands at its best configuration on this block, which is a second selection
 \item \textbf{Second validation block, seeds $20000$ to $20255$:} nothing was chosen on these seeds. Each side
 stands at the configuration fixed on the first block, RND at its own first-block best (``equal rules''). A
 reading that is the best of several configurations counts only after this block.
-\item \textbf{Fresh seeds from $30000$:} $1{,}024$ per configuration on PointMaze and $256$ on AntMaze. RND's
-confirmation runs on them exist (\Cref{tab:beat-rnd-baseline}); no method has been run on them. They are kept for
-the method as it stands at the end.
+\item \textbf{Fresh seeds from $30000$:} $1{,}024$ per configuration on PointMaze and $256$ on AntMaze. On
+PointMaze RND's confirmation runs (\Cref{tab:beat-rnd-baseline}), the method and the discovery arm have been run on
+them (\Cref{sec:beat-rnd-fresh}); on AntMaze nothing has been run on them yet.
 \end{enumerate}
 On AntMaze a validation block has $128$ seeds (user decision of 2026-11-13).
 
@@ -530,7 +532,8 @@ and is level in the fourth} (Medium with the step cost)
 (\Cref{tab:beat-rnd-whole-arrival,tab:beat-rnd-whole-step-cost}): in three cases the interval of the difference
 in $W$ lies above zero and the interval of the difference in $L$ does not lie below zero; on Medium with the step
 cost the step the rule chooses ($0.01$) gives \BeatRndMediumStepCostStepSmallSecond, which includes zero. This is a
-validation reading, not the verdict: the fresh seeds and all three AntMaze maps are still to come.
+validation reading; the reading on the fresh seeds is in \Cref{sec:beat-rnd-fresh}, and all three AntMaze maps are
+still to come.
 \item \textbf{The margin is small} (about $0.01$ of $W$). On PointMaze Medium with the step cost the divisor held
 from the first arrival alone (step $0$, the reference row of \Cref{tab:beat-rnd-whole-step-cost}), whose
 first-block mean was $0.0006$ below that of step $0.01$, is ahead of RND on the second block; choosing it there after
@@ -551,6 +554,130 @@ RND at RND's configurations for $M$ on the second block in all four PointMaze ca
 three (level on Medium with the step cost). At those configurations its $W$ is near that of a policy that never
 arrives. On PointMaze Medium the method itself reaches the goal later than RND's configuration for $M$.
 \end{enumerate}
+
+\subsection{Results on the fresh seeds, PointMaze}
+\label{sec:beat-rnd-fresh}
+
+Nothing was chosen on seeds $30000$ to $31023$ ($1{,}024$ per configuration). The method stands at its
+configuration of \Cref{tab:beat-rnd-whole-arrival,tab:beat-rnd-whole-step-cost} and the discovery arm (the fast
+last layer at step $0.1$ with RND's running divisor) at its configuration of
+\Cref{tab:beat-rnd-discovery-arrival,tab:beat-rnd-discovery-step-cost}, both fixed on the first validation block.
+RND stands at every configuration it has on these seeds:
+\begin{enumerate}
+\item for $W$, its choice of the development sweeps, which is also its choice on the first validation block, and
+on PointMaze Medium with the step cost also weight $1/128 = 0.0078125$, the sweeps' choice before smaller weights
+were swept (their choice is $1/512 = 0.00195312$);
+\item for $M$, its choice of the development sweeps and its choice on the first validation block.
+\end{enumerate}
+$W$, $L$, $M$, the paired differences and their 95\% intervals are those of \Cref{sec:beat-rnd-protocol}, with
+the seeds paired by seed number. A row's verdict applies the rule of \Cref{sec:beat-rnd-protocol} against that RND
+row; a case is ahead only when it is ahead of every RND row of its table.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{2.5pt}
+\renewcommand{\arraystretch}{1.1}
+% Auto-generated by code/beat_rnd_tables.py
+% >>> AUTO-GENERATED TABLE START: beat-rnd-fresh-whole
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.2cm}>{\raggedright\arraybackslash}p{1.3cm}>{\raggedright\arraybackslash}p{1.3cm}>{\raggedright\arraybackslash}p{2.45cm}>{\raggedright\arraybackslash}p{2.45cm}>{\raggedright\arraybackslash}p{1.2cm}@{}}
+\toprule
+arm \newline configuration & $W$ $\uparrow$ & $L$ & the method minus this row, $W$ & the method minus this row, $L$ & verdict against this row \\
+\midrule
+\multicolumn{6}{@{}l}{\textbf{PointMaze Medium, reward 1 on arrival; verdict for the case: ahead}} \\
+\textbf{the method}: divisor held from the first arrival, fast last layer at step 0 (off) \newline \emph{intrinsic weight 4, learning rate 0.006, entropy 0.01} & {\bfseries\boldmath $0.9430$} \newline $\pm 0.0012$ & {\bfseries\boldmath $0.9999$} \newline $\pm 0.0000$ & N/A & N/A & N/A \\
+\cmidrule(l{0pt}r{0pt}){1-6}
+RND, configuration for $W$ from its development sweeps and its validation blocks \newline \emph{intrinsic weight 2, learning rate 0.006, entropy 0.01} & \underline{$0.9321$} \newline $\pm 0.0014$ & \underline{$0.9944$} \newline $\pm 0.0008$ & $+0.0110$ \newline $[+0.0077, +0.0143]$ & $+0.0055$ \newline $[+0.0042, +0.0073]$ & ahead \\
+\midrule
+\multicolumn{6}{@{}l}{\textbf{PointMaze Medium, step cost; verdict for the case: level}} \\
+\textbf{the method}: divisor held from the first arrival, fast last layer at step 0.01 \newline \emph{intrinsic weight 2, learning rate 0.006, entropy 0.01} & {\bfseries\boldmath $-0.3495$} \newline $\pm 0.0008$ & \underline{$-0.3070$} \newline $\pm 0.0004$ & N/A & N/A & N/A \\
+\cmidrule(l{0pt}r{0pt}){1-6}
+RND, an earlier choice for $W$ of its development sweeps \newline \emph{intrinsic weight 0.0078125, learning rate 0.006, entropy 0.01} & \underline{$-0.3512$} \newline $\pm 0.0009$ & {\bfseries\boldmath $-0.3069$} \newline $\pm 0.0003$ & $+0.0016$ \newline $[-0.0006, +0.0038]$ & $-0.0002$ \newline $[-0.0012, +0.0008]$ & level \\
+RND, configuration for $W$ from its development sweeps and its validation blocks \newline \emph{intrinsic weight 0.00195312, learning rate 0.006, entropy 0.01} & $-0.3517$ \newline $\pm 0.0008$ & $-0.3075$ \newline $\pm 0.0004$ & $+0.0022$ \newline $[+0.0000, +0.0043]$ & $+0.0005$ \newline $[-0.0007, +0.0017]$ & ahead \\
+\midrule
+\multicolumn{6}{@{}l}{\textbf{PointMaze Large, reward 1 on arrival; verdict for the case: ahead}} \\
+\textbf{the method}: divisor held from the first arrival, fast last layer at step 0.03 \newline \emph{intrinsic weight 2, learning rate 0.002, entropy 0.01} & {\bfseries\boldmath $0.8983$} \newline $\pm 0.0014$ & {\bfseries\boldmath $0.9958$} \newline $\pm 0.0008$ & N/A & N/A & N/A \\
+\cmidrule(l{0pt}r{0pt}){1-6}
+RND, configuration for $W$ from its development sweeps and its validation blocks \newline \emph{intrinsic weight 2, learning rate 0.002, entropy 0.01} & \underline{$0.8809$} \newline $\pm 0.0010$ & \underline{$0.9930$} \newline $\pm 0.0002$ & $+0.0173$ \newline $[+0.0139, +0.0205]$ & $+0.0028$ \newline $[+0.0008, +0.0040]$ & ahead \\
+\midrule
+\multicolumn{6}{@{}l}{\textbf{PointMaze Large, step cost; verdict for the case: ahead}} \\
+\textbf{the method}: divisor held from the first arrival, fast last layer at step 0.03 \newline \emph{intrinsic weight 8, learning rate 0.002, entropy 0.01} & {\bfseries\boldmath $-0.7234$} \newline $\pm 0.0009$ & {\bfseries\boldmath $-0.7071$} \newline $\pm 0.0009$ & N/A & N/A & N/A \\
+\cmidrule(l{0pt}r{0pt}){1-6}
+RND, configuration for $W$ from its development sweeps and its validation blocks \newline \emph{intrinsic weight 4, learning rate 0.002, entropy 0.01} & \underline{$-0.7321$} \newline $\pm 0.0010$ & \underline{$-0.7159$} \newline $\pm 0.0009$ & $+0.0087$ \newline $[+0.0061, +0.0113]$ & $+0.0089$ \newline $[+0.0064, +0.0114]$ & ahead \\
+\bottomrule
+\end{tabular}
+% <<< AUTO-GENERATED TABLE END: beat-rnd-fresh-whole
+\caption{The method against RND on the fresh seeds: $W$ and $L$ with their standard errors under them, and the
+method minus each RND row on the same seeds with the 95\% interval under it. ``ahead'': the interval in $W$ lies
+above zero and the interval in $L$ does not lie below zero; ``behind'': the interval in $W$ lies below zero;
+``level'': neither. The banner of a case gives its verdict over all its RND rows. RND rows are sorted by $W$ below
+the rule; per case the best $W$ and $L$ are bold and the second underlined; differences are not ranked. N/A: does
+not apply.}
+\label{tab:beat-rnd-fresh-whole}
+\end{table}
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{2.5pt}
+\renewcommand{\arraystretch}{1.1}
+% Auto-generated by code/beat_rnd_tables.py
+% >>> AUTO-GENERATED TABLE START: beat-rnd-fresh-discovery
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.2cm}>{\raggedright\arraybackslash}p{1.45cm}>{\raggedright\arraybackslash}p{1.4cm}>{\raggedright\arraybackslash}p{1.45cm}>{\raggedright\arraybackslash}p{2.45cm}>{\raggedright\arraybackslash}p{1.2cm}@{}}
+\toprule
+arm \newline configuration & $M$ $\downarrow$, thousand steps & policies that reach the goal & $W$ at this configuration & the discovery arm minus this row, $M$, thousand steps & verdict against this row \\
+\midrule
+\multicolumn{6}{@{}l}{\textbf{PointMaze Medium, reward 1 on arrival; verdict for the case: ahead}} \\
+fast last layer at step 0.1, RND's running divisor (discovery arm) \newline \emph{intrinsic weight 16, learning rate 0.01, entropy 0.03} & {\bfseries\boldmath $13.2$} \newline $\pm 0.313$ & 1,024 of 1,024 & $0.1141$ & N/A & N/A \\
+\cmidrule(l{0pt}r{0pt}){1-6}
+RND, configuration for $M$ from its validation blocks \newline \emph{intrinsic weight 4, learning rate 0.02, entropy 0.1} & \underline{$16.7$} \newline $\pm 0.652$ & 1,024 of 1,024 & $0.0074$ & $-3.52$ \newline $[-4.95, -2.19]$ & ahead \\
+RND, configuration for $M$ from its development sweeps \newline \emph{intrinsic weight 4, learning rate 0.02, entropy 0.01} & $17.4$ \newline $\pm 0.504$ & 1,024 of 1,024 & $0.6469$ & $-4.23$ \newline $[-5.39, -3.1]$ & ahead \\
+\midrule
+\multicolumn{6}{@{}l}{\textbf{PointMaze Medium, step cost; verdict for the case: level}} \\
+fast last layer at step 0.1, RND's running divisor (discovery arm) \newline \emph{intrinsic weight 16, learning rate 0.01, entropy 0.03} & {\bfseries\boldmath $12.6$} \newline $\pm 0.302$ & 1,024 of 1,024 & $-0.9418$ & N/A & N/A \\
+\cmidrule(l{0pt}r{0pt}){1-6}
+RND, configuration for $M$ from its validation blocks \newline \emph{intrinsic weight 4, learning rate 0.01, entropy 0.03} & \underline{$13.1$} \newline $\pm 0.249$ & 1,024 of 1,024 & $-0.5713$ & $-0.443$ \newline $[-1.19, +0.327]$ & level \\
+RND, configuration for $M$ from its development sweeps \newline \emph{intrinsic weight 4, learning rate 0.01, entropy 0.01} & $14.1$ \newline $\pm 0.295$ & 1,024 of 1,024 & $-0.3701$ & $-1.47$ \newline $[-2.29, -0.651]$ & ahead \\
+\midrule
+\multicolumn{6}{@{}l}{\textbf{PointMaze Large, reward 1 on arrival; verdict for the case: ahead}} \\
+fast last layer at step 0.1, RND's running divisor (discovery arm) \newline \emph{intrinsic weight 16, learning rate 0.006, entropy 0.03} & {\bfseries\boldmath $60.2$} \newline $\pm 1.32$ & 1,024 of 1,024 & $0.0010$ & N/A & N/A \\
+\cmidrule(l{0pt}r{0pt}){1-6}
+RND, configuration for $M$ from its validation blocks \newline \emph{intrinsic weight 64, learning rate 0.006, entropy 0.01} & \underline{$133$} \newline $\pm 2.89$ & 1,024 of 1,024 & $0.0058$ & $-72.4$ \newline $[-78.7, -66.1]$ & ahead \\
+RND, configuration for $M$ from its development sweeps \newline \emph{intrinsic weight 64, learning rate 0.01, entropy 0.01} & $136$ \newline $\pm 3.31$ & 1,024 of 1,024 & $0.0064$ & $-75.7$ \newline $[-82.7, -69]$ & ahead \\
+\midrule
+\multicolumn{6}{@{}l}{\textbf{PointMaze Large, step cost; verdict for the case: ahead}} \\
+fast last layer at step 0.1, RND's running divisor (discovery arm) \newline \emph{intrinsic weight 16, learning rate 0.006, entropy 0.03} & {\bfseries\boldmath $56.3$} \newline $\pm 1.2$ & 1,024 of 1,024 & $-1.0000$ & N/A & N/A \\
+\cmidrule(l{0pt}r{0pt}){1-6}
+RND, configuration for $M$ from its validation blocks \newline \emph{intrinsic weight 8, learning rate 0.006, entropy 0.01} & \underline{$128$} \newline $\pm 3.07$ & 1,024 of 1,024 & $-0.9659$ & $-71.5$ \newline $[-77.9, -65.3]$ & ahead \\
+RND, configuration for $M$ from its development sweeps \newline \emph{intrinsic weight 8, learning rate 0.0045, entropy 0.01} & $131$ \newline $\pm 3.29$ & 1,024 of 1,024 & $-0.8845$ & $-75$ \newline $[-82, -68.4]$ & ahead \\
+\bottomrule
+\end{tabular}
+% <<< AUTO-GENERATED TABLE END: beat-rnd-fresh-discovery
+\caption{The discovery arm against RND on the fresh seeds: $M$ in thousands of steps with its standard error under
+it, and the arm minus each RND row on the same seeds with the 95\% interval under it. ``ahead'': the interval lies
+below zero (the arm reaches the goal sooner); ``behind'': it lies above zero; ``level'': neither. The banner of a
+case gives its verdict over all its RND rows. RND rows are sorted by $M$ below the rule; per case the smallest $M$
+is bold and the second smallest underlined; $W$ and the arrivals are shown only. N/A: does not apply.}
+\label{tab:beat-rnd-fresh-discovery}
+\end{table}
+
+\begin{enumerate}
+\item \textbf{With reward 1 on arrival both PointMaze cases are ahead on both measures}
+(\Cref{tab:beat-rnd-fresh-whole,tab:beat-rnd-fresh-discovery}): the method's interval of the difference in $W$
+lies above zero and its interval in $L$ does not lie below zero, and the discovery arm's interval in $M$ lies below
+zero against both of RND's configurations for $M$.
+\item \textbf{With the step cost PointMaze Large is ahead on both measures and PointMaze Medium is level on both.}
+On Medium the method is ahead of RND at weight $1/512$ (its interval in $W$ starts at $+0.0000$, above zero only
+beyond the printed digits) and level with RND at weight $1/128$. The discovery arm is ahead of RND's choice for $M$
+of the development sweeps and level with its choice of the validation blocks, against which it was ahead on the
+second block. PPO without a bonus, a reference row that is in no verdict, is level with the method there: the
+method minus PPO without a bonus is \BeatRndFreshNoBonusMediumStepCost{} in $W$.
+\item \textbf{The success rule can still be met only with reward 1 on arrival,} and there it depends on the three
+AntMaze mazes. The same holds for being ahead on discovery in all five environments.
+\end{enumerate}
+On PointMaze Medium with reward 1 on arrival the fast last layer at step $0.01$ with the hold, which is not the
+method's arm there, was also run on these seeds by mistake; it is in no row or verdict here and is listed in the
+auto research folder's report \texttt{fresh\_seeds/pointmaze\_fresh\_seeds.md}.
 
 \subsection{What did not work}
 \label{sec:beat-rnd-failed}
@@ -724,12 +851,11 @@ comparison is.
 \label{sec:beat-rnd-open}
 
 \begin{enumerate}
-\item \textbf{The fresh seeds.} The method has not been run on the seeds from $30000$; the result above is a
-validation reading on PointMaze only.
-\item \textbf{AntMaze} in all three maps (\Cref{sec:beat-rnd-antmaze}).
-\item \textbf{PointMaze Medium with the step cost:} level for the method as its rule chooses it (step $0.01$); a
-first-block reading does not separate the steps $0$ and $0.01$, so this case decides nothing about the step and
-needs a better method or more seeds.
+\item \textbf{AntMaze} in all three maps (\Cref{sec:beat-rnd-antmaze}), then its fresh seeds. On PointMaze the
+fresh seeds have been read (\Cref{sec:beat-rnd-fresh}).
+\item \textbf{PointMaze Medium with the step cost:} level for the method as its rule chooses it (step $0.01$), on
+the second validation block and on the fresh seeds; a first-block reading does not separate the steps $0$ and
+$0.01$, so this case decides nothing about the step and needs a better method or more seeds.
 \item \textbf{The ablation} of the final method, each part removed, on $256$ fresh seeds per case.
 \item \textbf{The final level against the training length}, at $25\%$, $50\%$, $75\%$ and $100\%$ of the budget
 and to twice the budget, for the confirmed configurations.

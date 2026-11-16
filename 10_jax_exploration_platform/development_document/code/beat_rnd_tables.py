@@ -5,7 +5,8 @@ records of three run folders by the analysis modules of scripts/maze_campaign/an
 choosing and resampling as the generated standing page and batch summaries, so a number here equals the number
 there when both read the same comparison):
 
-- the auto research folder (AUTO): validation blocks 1 and 2 of every arm, and the discovery checks;
+- the auto research folder (AUTO): validation blocks 1 and 2 of every arm, the discovery checks, and the phase
+  `fresh-seeds` (the method, the discovery arm and RND's validation-block choices for M on the seeds from 30000);
 - the PointMaze RND baseline folder (BASELINE): RND's confirmation runs on the seeds from 30000;
 - the AntMaze baseline folder (ANT): the environment-count check, the longer budget runs, the arm screens.
 
@@ -462,6 +463,204 @@ def baseline_table(setting):
     return '\n'.join(lines), found
 
 
+# ---- the method and RND on the fresh seeds, PointMaze ---------------------------------------------------------------
+
+FRESH = 'fresh-seeds'
+METRIC_SYMBOLS = {'whole': '$W$', 'discovery': '$M$'}
+
+
+def complete_side(run_dir, specifications, phase, slug, key, name):
+    """One side of one case in one phase, refused while any of its units is missing or not complete."""
+    side = case_sweeps.read_side(run_dir, case_sweeps.select(specifications, [phase], slug, *key), slug, name)
+    # A unit whose specification exists but whose records are absent or unfinished is named in the error.
+    waiting = [f"{unit['unit_id']} ({unit['state']})" for unit in side.units if unit['state'] != 'complete']
+    if waiting or not side.units:
+        raise ValueError(f"{case_sweeps.case_words(*key)}, {name}, phase {phase}: units not complete: "
+                         f"{'; '.join(waiting) or 'no unit'}.")
+    return side
+
+
+def only_group(side, words):
+    """The one configuration of a side; refused when it holds none or several."""
+    if len(side.groups) != 1:
+        raise ValueError(f'{words}: {len(side.groups)} configurations on the fresh seeds; one is expected.')
+    return side.groups[0]
+
+
+def rnd_role(group, sweep, validation, metric):
+    """The words of an RND row: where its configuration for the metric was chosen."""
+    # before: a group at weight 4, learning rate 0.002, entropy 0.01, the choice for W of both RND's development
+    #         sweeps and its validation blocks
+    # after:  'RND, configuration for $W$ from its development sweeps and its validation blocks'; a group that is
+    #         neither (PointMaze Medium with the step cost, weight 1/128) is the sweeps' choice before smaller
+    #         weights were swept: 'RND, an earlier choice for $W$ of its development sweeps'.
+    key = same_configuration.cell_key(group)
+    sources = [words for words, chosen in (('its development sweeps', sweep), ('its validation blocks', validation))
+               if same_configuration.cell_key(chosen) == key]
+    if not sources:
+        return f'RND, an earlier choice for {METRIC_SYMBOLS[metric]} of its development sweeps'
+    return f'RND, configuration for {METRIC_SYMBOLS[metric]} from ' + ' and '.join(sources)
+
+
+def row_verdict(result, metric):
+    """The arm against one RND configuration: 'ahead', 'level' or 'behind' by the protocol's rule for the metric."""
+    # W: ahead when its interval lies above zero and L's does not lie below zero; behind when W's lies below zero.
+    # M: ahead when its interval lies below zero (the arm arrives sooner); behind when it lies above zero.
+    if metric == 'whole':
+        return 'ahead' if result['beats'] else 'behind' if result['whole_curve_mean']['side'] == 'behind' else 'level'
+    return result['capped_first_goal_step']['side']
+
+
+def case_verdict(verdicts):
+    """A case's verdict over every RND configuration it has: ahead only when ahead of each, behind when behind any."""
+    # before: ['ahead', 'level']; after: 'level'. before: ['ahead', 'ahead']; after: 'ahead'.
+    return 'ahead' if all(word == 'ahead' for word in verdicts) else 'behind' if 'behind' in verdicts else 'level'
+
+
+def compared_rows(arm, rnd_groups, budget, metric, *name):
+    """The arm against each RND configuration, paired by seed: one row per RND configuration with its verdict."""
+    # before: the arm's 1,024 policies and [(words, RND group of 1,024 policies), ...]
+    # after:  [{'words', 'group', 'measures', 'result', 'verdict'}, ...], RND from the best value of the metric on.
+    rows = []
+    for words, group in rnd_groups:
+        key = same_configuration.cell_key(group)
+        result = (compare.compare_with_baseline(arm.policies, group.policies, budget, *name, metric, *key)
+                  if metric == 'whole' else
+                  compare.compare_discovery(arm.policies, group.policies, budget, *name, metric, *key))
+        # Every seed of both sides is paired: the same seed numbers were trained on both.
+        if not result['seeds'] == len(arm.policies) == len(group.policies):
+            raise ValueError(f"{' '.join(map(str, name))}: {result['seeds']} seeds in common between "
+                             f'{len(arm.policies)} and {len(group.policies)}.')
+        rows.append({'words': words, 'group': group, 'measures': measures.configuration_measures(group.policies, budget),
+                     'result': result, 'verdict': row_verdict(result, metric)})
+    order = ((lambda row: -row['measures']['whole_curve_mean']) if metric == 'whole'
+             else (lambda row: row['measures']['capped_first_goal_step']))
+    return sorted(rows, key=order)
+
+
+def read_fresh(cases, baseline_found):
+    """Every PointMaze case on the fresh seeds: the method for W, the discovery arm for M, and RND at each
+    configuration it has there; each arm must stand at the configuration fixed on the first validation block."""
+    ours, theirs = case_sweeps.read_specifications(AUTO), case_sweeps.read_specifications(BASELINE)
+    found = {}
+    for key, read in cases.items():
+        case, words = read['case'], case_sweeps.case_words(*key)
+        # The two arms, each refused unless it is the configuration it stands at on the second block.
+        method_side = complete_side(AUTO, ours, FRESH, case['method'][1], key, 'the method')
+        arm_side = complete_side(AUTO, ours, FRESH, FAST_DISCOVERY[1], key, 'the discovery arm')
+        method, arm = only_group(method_side, f'{words}, the method'), only_group(arm_side, f'{words}, the discovery arm')
+        for group, row, who in ((method, second_row(read['whole'], 'whole', case['method'][1]), 'the method'),
+                                (arm, second_row(read['check'], 'discovery', FAST_DISCOVERY[1]), 'the discovery arm')):
+            if row['how'] != 'first' or same_configuration.cell_key(group) != same_configuration.cell_key(row['group']):
+                raise ValueError(f'{words}: {who} on the fresh seeds ({configuration_text(group)}) is not its '
+                                 f"configuration fixed on the first block ({configuration_text(row['group'])}).")
+        # RND for W: every configuration of the baseline folder's confirmation runs.
+        sweep = baseline_found[key]
+        fixed_whole = read['whole']['second']['metrics']['whole']['fixed']
+        whole_side = complete_side(BASELINE, theirs, 'confirmation', 'cleanrl-ppo-rnd', key, RND_NAME)
+        whole_groups = [(rnd_role(group, sweep['whole'], fixed_whole, 'whole'), group) for group in whole_side.groups]
+        # RND for M: the baseline folder's confirmation runs for discovery, and, where the baseline folder does not
+        # hold it, the auto research folder's run of RND's validation-block choice.
+        fixed_discovery = read['discovery']['second']['metrics']['discovery']['fixed']
+        discovery_sides = [complete_side(BASELINE, theirs, 'confirmation-for-discovery', 'cleanrl-ppo-rnd', key, RND_NAME)]
+        if case_sweeps.select(ours, [FRESH], CONTROL, *key):
+            control = complete_side(AUTO, ours, FRESH, CONTROL, key, RND_NAME)
+            if any(same_configuration.cell_key(group) != same_configuration.cell_key(fixed_discovery) for group in control.groups):
+                raise ValueError(f"{words}: the auto research folder's RND runs on the fresh seeds are not RND's "
+                                 'validation-block choice for M.')
+            discovery_sides.append(control)
+        discovery_groups = [(rnd_role(group, sweep['discovery'], fixed_discovery, 'discovery'), group)
+                            for side in discovery_sides for group in side.groups]
+        # Both of RND's choices for M must be among them, and no configuration twice.
+        held = [same_configuration.cell_key(group) for _, group in discovery_groups]
+        for chosen, which in ((sweep['discovery'], 'development sweeps'), (fixed_discovery, 'validation blocks')):
+            if same_configuration.cell_key(chosen) not in held:
+                raise ValueError(f"{words}: RND's choice for M of its {which} ({configuration_text(chosen)}) has no run "
+                                 'on the fresh seeds.')
+        if len(set(held)) != len(held):
+            raise ValueError(f'{words}: an RND configuration for M is held twice on the fresh seeds.')
+        budget = case_sweeps.one_budget([method_side, arm_side, whole_side, *discovery_sides], f'{words}, fresh seeds')
+        name = ('beat-rnd section', 'fresh seeds', *key)
+        whole = compared_rows(method, whole_groups, budget, 'whole', *name, case['method'][1])
+        discovery = compared_rows(arm, discovery_groups, budget, 'discovery', *name, FAST_DISCOVERY[1])
+        found[key] = {
+            'case': case, 'budget': budget,
+            'method': {'group': method, 'measures': measures.configuration_measures(method.policies, budget)},
+            'arm': {'group': arm, 'measures': measures.configuration_measures(arm.policies, budget)},
+            'whole': whole, 'discovery': discovery,
+            'verdict': {'whole': case_verdict([row['verdict'] for row in whole]),
+                        'discovery': case_verdict([row['verdict'] for row in discovery])},
+            # A reference for the prose, never in a verdict: the method against PPO without a bonus.
+            'none': compare.compare_with_baseline(method.policies, sweep['none'].policies, budget, *name,
+                                                  case['method'][1], 'against PPO without a bonus')}
+    return found
+
+
+def fresh_whole_table(fresh):
+    """The W and L table of the fresh seeds: per case the method, then RND at each configuration, with the method's
+    paired difference from each and the verdict."""
+    lines = [r'\begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.2cm}'
+             r'>{\raggedright\arraybackslash}p{1.3cm}>{\raggedright\arraybackslash}p{1.3cm}'
+             r'>{\raggedright\arraybackslash}p{2.45cm}>{\raggedright\arraybackslash}p{2.45cm}'
+             r'>{\raggedright\arraybackslash}p{1.2cm}@{}}',
+             r'\toprule',
+             r'arm \newline configuration & $W$ $\uparrow$ & $L$ & the method minus this row, $W$ & '
+             r'the method minus this row, $L$ & verdict against this row \\']
+    for key, found in fresh.items():
+        lines.append(banner(f"{case_sweeps.case_words(*key)}; verdict for the case: {found['verdict']['whole']}", 6).rstrip('\n'))
+        # Marks per case on W and L over every row; the differences are not ranked.
+        values = [found['method']['measures']] + [row['measures'] for row in found['whole']]
+        whole = marks_of([value['whole_curve_mean'] for value in values], 4, True)
+        final = marks_of([value['final_level'] for value in values], 4, True)
+        method = found['method']['measures']
+        lines.append(' & '.join([arm_words(found['case'], 'method') + r' \newline \emph{'
+                                 + configuration_text(found['method']['group']) + '}',
+                                 mean_cell(method['whole_curve_mean'], method['whole_curve_mean_error'], 4, whole[0]),
+                                 mean_cell(method['final_level'], method['final_level_error'], 4, final[0]),
+                                 'N/A', 'N/A', 'N/A']) + r' \\')
+        lines.append(r'\cmidrule(l{0pt}r{0pt}){1-6}')
+        for index, row in enumerate(found['whole'], 1):
+            m = row['measures']
+            lines.append(' & '.join([row['words'] + r' \newline \emph{' + configuration_text(row['group']) + '}',
+                                     mean_cell(m['whole_curve_mean'], m['whole_curve_mean_error'], 4, whole[index]),
+                                     mean_cell(m['final_level'], m['final_level_error'], 4, final[index]),
+                                     difference_cell(row['result']['whole_curve_mean'], 4),
+                                     difference_cell(row['result']['final_level'], 4), row['verdict']]) + r' \\')
+    lines += [r'\bottomrule', r'\end{tabular}']
+    return '\n'.join(lines)
+
+
+def fresh_discovery_table(fresh):
+    """The M table of the fresh seeds: per case the discovery arm, then RND at each configuration for M, with the
+    arm's paired difference from each and the verdict."""
+    lines = [r'\begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.2cm}'
+             r'>{\raggedright\arraybackslash}p{1.45cm}>{\raggedright\arraybackslash}p{1.4cm}'
+             r'>{\raggedright\arraybackslash}p{1.45cm}>{\raggedright\arraybackslash}p{2.45cm}'
+             r'>{\raggedright\arraybackslash}p{1.2cm}@{}}',
+             r'\toprule',
+             r'arm \newline configuration & $M$ $\downarrow$, thousand steps & policies that reach the goal & '
+             r'$W$ at this configuration & the discovery arm minus this row, $M$, thousand steps & '
+             r'verdict against this row \\']
+    for key, found in fresh.items():
+        lines.append(banner(f"{case_sweeps.case_words(*key)}; verdict for the case: {found['verdict']['discovery']}", 6).rstrip('\n'))
+        # Marks per case on M over every row (the smallest is the best); W and the arrivals are shown only.
+        values = [found['arm']['measures']] + [row['measures'] for row in found['discovery']]
+        capped = report.column_marks([value['capped_first_goal_step'] for value in values],
+                                     [report.thousands(value['capped_first_goal_step']) for value in values], False)
+        rows = [(arm_words(found['case'], 'fast'), found['arm']['group'], None)] + [
+            (row['words'], row['group'], row) for row in found['discovery']]
+        for index, ((words, group, row), m) in enumerate(zip(rows, values)):
+            reached = round(m['reached_goal_share'] * m['seeds'])
+            cells = [words + r' \newline \emph{' + configuration_text(group) + '}',
+                     steps_cell(m['capped_first_goal_step'], m['capped_first_goal_step_error'], capped[index]),
+                     f"{reached:,} of {m['seeds']:,}", math(f"{m['whole_curve_mean']:.4f}"),
+                     steps_difference_cell(row['result']['capped_first_goal_step']) if row else 'N/A',
+                     row['verdict'] if row else 'N/A']
+            lines.append(' & '.join(cells) + r' \\' + ('\n' + r'\cmidrule(l{0pt}r{0pt}){1-6}' if index == 0 else ''))
+    lines += [r'\bottomrule', r'\end{tabular}']
+    return '\n'.join(lines)
+
+
 # ---- AntMaze ----------------------------------------------------------------------------------------------------------
 
 def ant_side(phase, count, specifications):
@@ -614,7 +813,7 @@ def macro(name, value):
     return r'\newcommand{\BeatRnd' + name + '}{' + value + '}'
 
 
-def prose_numbers(cases, baseline, counts, budgets):
+def prose_numbers(cases, baseline, counts, budgets, fresh):
     """The numbers the prose quotes that no table shows."""
     lines = []
     # The method against RND at RND's best on the second block (favouring RND), per case.
@@ -651,6 +850,9 @@ def prose_numbers(cases, baseline, counts, budgets):
     lines.append(macro('MediumStepCostStepZeroFirst', math(f"{alone['measures']['whole_curve_mean']:.4f}")))
     row = second_row(medium, 'whole', FAST_STEP_001[1])
     lines.append(macro('MediumStepCostStepSmallSecond', difference_text(row['equal']['whole_curve_mean'])))
+    # The fresh seeds: the method against PPO without a bonus on PointMaze Medium with the step cost (a reference).
+    lines.append(macro('FreshNoBonusMediumStepCost',
+                       difference_text(fresh[('pointmaze-medium', 'step_cost')]['none']['whole_curve_mean'])))
     return '\n'.join(lines)
 
 
@@ -668,6 +870,7 @@ def main():
     baseline_arrival, found_arrival = baseline_table('arrival_plus_one')
     baseline_step_cost, found_step_cost = baseline_table('step_cost')
     baseline_found = {**found_arrival, **found_step_cost}
+    fresh = read_fresh(cases, baseline_found)
     counts_table, counts = ant_count_table()
     budgets = ant_budget_rule()
     screen_table, screen = ant_screen_table()
@@ -677,12 +880,16 @@ def main():
               'beat-rnd-discovery-arrival': discovery_table(cases, 'arrival_plus_one'),
               'beat-rnd-discovery-step-cost': discovery_table(cases, 'step_cost'),
               'beat-rnd-others': others_table(cases),
+              'beat-rnd-fresh-whole': fresh_whole_table(fresh),
+              'beat-rnd-fresh-discovery': fresh_discovery_table(fresh),
               'beat-rnd-ant-counts': counts_table, 'beat-rnd-ant-screen': screen_table,
-              'beat-rnd-numbers': prose_numbers(cases, baseline_found, counts, budgets)}
+              'beat-rnd-numbers': prose_numbers(cases, baseline_found, counts, budgets, fresh)}
     for name, block in blocks.items():
         inject_table(TEX, name, block)
     figures_written = curve_figures(cases)
-    return {'blocks': blocks, 'figures': figures_written, 'budgets': budgets, 'counts': counts, 'screen': screen}
+    verdicts = {key: found['verdict'] for key, found in fresh.items()}
+    return {'blocks': blocks, 'figures': figures_written, 'budgets': budgets, 'counts': counts, 'screen': screen,
+            'fresh_verdicts': verdicts}
 
 
 if __name__ == '__main__':
