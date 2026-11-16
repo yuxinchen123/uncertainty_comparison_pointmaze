@@ -690,3 +690,10 @@ Times are Pacific, read from the clock or from scheduler records.
   has only 2.1 GB of memory actually free. Handed back to Gilbreth at 12:32 PT, where 7 jobs wait for 5 waiting
   units. Gilbreth job 12400318 started at 12:23:58 PT (the RND Large unit, 144 windows). Measured peak memory of
   finished workers: at most 3.8 GiB per card (sacct MaxRSS), against the 8 GiB per card they ask for.
+- 2026-11-16 12:53 PT (worker logs, sacct): one A100 40 GB card was free on cheetah01 at 12:49 PT, so the method's
+  U-maze unit with reward 1 on arrival (fast step 0.1 with the hold, learning rate 1e-2, weight 16; 68 windows),
+  waiting on Gilbreth since 12:32 PT, was taken back (Gilbreth limit lowered to 6 first). At the same moment the
+  UVA worker 6941476 (three RTX A4500 cards on jaguar03) reached its 2-hour limit (12:49:16 PT). The four units
+  waiting then started at 12:49 PT on the A100 (job 6941775) and at 12:51 PT on three RTX A4500 cards on jaguar03
+  (job 6941794). UVA 18 units, Gilbreth 6 (two running on A10 cards; the method's two Medium and two Large units
+  wait there since 11:23 PT, with 7 waiting jobs).
