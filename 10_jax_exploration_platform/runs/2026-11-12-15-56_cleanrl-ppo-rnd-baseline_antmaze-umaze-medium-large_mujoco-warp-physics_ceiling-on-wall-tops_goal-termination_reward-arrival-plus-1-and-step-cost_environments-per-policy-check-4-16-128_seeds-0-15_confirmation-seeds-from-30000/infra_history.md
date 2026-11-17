@@ -797,3 +797,6 @@ Times are Pacific, read from the clock or from scheduler records.
   their 2-hour workers ended; they restarted at 19:49 PT (jobs 6943078 on an RTX 5080, 6943084 and 6943085). Both
   Large units now run on Gilbreth A10 cards (jobs 12403171 and 12403362). The session's restart loop, near its
   12-hour limit (it would have ended at about 20:08 PT), was stopped and started again at 19:51 PT.
+- 2026-11-16 20:20 PT (unit_complete records): the first two RND U-maze validation units are complete, all 256
+  windows: reward 1 on arrival at learning rate 1e-4, weight 1/64 (20:20:16 PT), and the step cost at learning rate
+  3e-5, weight 1/16 (20:18:17 PT; three fault-guard respawns in it). The other six are at 225 to 253 windows.
