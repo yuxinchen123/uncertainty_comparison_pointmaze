@@ -883,3 +883,7 @@ Times are Pacific, read from the clock or from scheduler records.
   queue at 05:48:55 PT. The next pass (05:50 PT) took all 10 back (nine U-maze units, one Medium unit) and started
   them on UVA cards free now (jobs 6943757 to 6943762, all running at 05:52 PT). At 05:54 PT all 23 ant units run on
   UVA; ten Gilbreth jobs wait with no unit.
+- 2026-11-17 06:00 PT: RND's Large validation unit at learning rate 1e-2, weight 1 completed (256 windows, no
+  respawn): W 3.9e-6 ± 0.5e-6, L 6.6e-6, M 108.2 million steps, 49 of 128 policies arrived. RND's other Large unit
+  (weight 16) was at 219 windows at 06:05 PT; the Large fresh seeds wait for it. At 06:05 PT all 22 ant units run on
+  UVA, none waiting, none on Gilbreth.
