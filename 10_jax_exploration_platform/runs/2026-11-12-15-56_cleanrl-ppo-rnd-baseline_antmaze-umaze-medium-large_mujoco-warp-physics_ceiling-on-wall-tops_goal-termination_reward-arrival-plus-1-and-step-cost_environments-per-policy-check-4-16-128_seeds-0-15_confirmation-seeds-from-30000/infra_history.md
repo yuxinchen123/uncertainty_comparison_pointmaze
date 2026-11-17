@@ -897,3 +897,7 @@ Times are Pacific, read from the clock or from scheduler records.
   UVA, including U-maze units that can use RTX 5080 cards, which the Medium units (17,000 MiB) cannot. Free cards at
   17,000 MiB were then 2 (RTX A4500 on jaguar03), so take_back_and_start.sh took both back at 07:52 PT and job
   6947589 started them there. At 07:53 PT all 22 ant units run on UVA, none waiting, none on Gilbreth.
+- 2026-11-17 08:35 PT: the second of the method's U-maze validation units completed (reward 1 on arrival, the
+  first-arrival hold alone, learning rate 3e-5, weight 1/16; 256 windows; its 2 fault-guard respawns are among the
+  19). Results are in the auto research folder's STATE.md. At 08:45 PT all 21 remaining ant units run on UVA, none
+  waiting, none on Gilbreth.
