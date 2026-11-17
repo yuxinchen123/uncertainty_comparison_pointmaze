@@ -890,3 +890,10 @@ Times are Pacific, read from the clock or from scheduler records.
 - 2026-11-17 06:26 PT: the session's 10-minute restart loop was restarted between passes (its 12-hour run would have
   ended about 07:51 PT); the new run ends by about 18:26 PT. At 06:25 PT all 22 ant units run on UVA, none waiting,
   none on Gilbreth; 19 fault-guard respawns in all, none new since 03:45 PT.
+- 2026-11-17 07:38 to 07:53 PT: the 2-hour UVA workers started about 05:20 to 05:52 PT stopped one after another.
+  The 07:36 PT pass handed RND's two Medium fresh-seed units to Gilbreth (07:38 PT; 12 and 11 windows); ten more
+  units waited on UVA by 07:45 PT. The 07:48 PT pass started the ten on UVA cards free now (jobs 6946363 to
+  6946742, all running at 07:50 PT) but did not take the Medium units back: its count subtracts every unit waiting on
+  UVA, including U-maze units that can use RTX 5080 cards, which the Medium units (17,000 MiB) cannot. Free cards at
+  17,000 MiB were then 2 (RTX A4500 on jaguar03), so take_back_and_start.sh took both back at 07:52 PT and job
+  6947589 started them there. At 07:53 PT all 22 ant units run on UVA, none waiting, none on Gilbreth.
