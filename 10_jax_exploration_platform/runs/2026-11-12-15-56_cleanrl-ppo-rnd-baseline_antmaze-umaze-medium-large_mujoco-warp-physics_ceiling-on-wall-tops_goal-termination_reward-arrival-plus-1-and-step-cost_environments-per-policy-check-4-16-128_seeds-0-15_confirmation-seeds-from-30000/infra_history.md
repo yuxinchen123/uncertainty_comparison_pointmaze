@@ -764,3 +764,7 @@ Times are Pacific, read from the clock or from scheduler records.
   the 14,000 MiB floor. Gilbreth holds three waiting units (the RND U-maze step-cost unit at 1e-4, weight 1/64; the
   method's unit above; the RND Large unit at weight 16), with three waiting jobs; the U-maze ones come back when
   UVA cards free up.
+- 2026-11-16 16:45 PT (window record): fifteenth fault-guard respawn under RK4, the second in a method validation
+  unit and the first with reward 1 on arrival in a validation block: the first-arrival hold alone at learning rate
+  3e-5, weight 1/16, window 161, seed 10048, torso angular speed 103.1 rad/s (torso speed 15.3 m/s). All fifteen
+  are the angular bound; thirteen of the fifteen are at learning rate 3e-5.
