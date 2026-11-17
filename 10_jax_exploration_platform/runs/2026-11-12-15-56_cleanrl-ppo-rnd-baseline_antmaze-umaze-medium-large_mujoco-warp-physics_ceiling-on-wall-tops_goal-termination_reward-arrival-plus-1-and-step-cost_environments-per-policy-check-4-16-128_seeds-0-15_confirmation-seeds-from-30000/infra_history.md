@@ -843,3 +843,15 @@ Times are Pacific, read from the clock or from scheduler records.
   unit: the step cost with fast step 0.1 and the hold at learning rate 1e-4, weight 1/64 (the method's third choice
   by the whole-curve mean), window 126, seed 10117, torso angular speed 102.7 rad/s (torso speed 13.7 m/s). All
   sixteen are the angular bound; thirteen of the sixteen are at learning rate 3e-5, three at 1e-4.
+- 2026-11-17 01:24 PT (window record): seventeenth fault-guard respawn under RK4: the method's step-cost unit with
+  fast step 0.1 and the hold at learning rate 1e-4, weight 1/64 (the unit of the sixteenth), window 130, seed
+  10067, torso angular speed 129.1 rad/s (torso speed 14.4 m/s). All seventeen are the angular bound; thirteen at
+  learning rate 3e-5, four at 1e-4.
+- 2026-11-17 01:30 PT (Gilbreth's sacct, Gautschi's squeue, the restart loop's log): all eight Medium and Large
+  validation units had gone to Gilbreth when their UVA workers ended (U-maze units claim free cards first). Seven
+  waited there, up to about 2 hours, behind our oldest waiting Gilbreth jobs (submitted 20:48 to 20:50 PT, still
+  waiting on `Priority`). Gautschi `ai` again holds the account's four H100 cards for another session (seven more of
+  its jobs wait); MIT stays left to the tinker study; no ACCESS server is prepared for ant units. The restart step
+  now also takes Medium and Large units waiting on Gilbreth back to UVA, only to cards left over after every unit
+  waiting on UVA (counted at their 17,000 MiB floor). Its first pass at 01:28 PT took five back; they run on UVA
+  (job 6943615). Gilbreth holds three Medium units (one running on an A10, two waiting).
