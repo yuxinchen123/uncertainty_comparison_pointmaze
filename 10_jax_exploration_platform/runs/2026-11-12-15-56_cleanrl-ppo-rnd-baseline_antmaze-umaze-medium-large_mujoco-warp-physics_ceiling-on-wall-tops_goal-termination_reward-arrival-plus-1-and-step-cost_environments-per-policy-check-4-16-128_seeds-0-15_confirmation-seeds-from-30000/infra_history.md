@@ -920,3 +920,9 @@ Times are Pacific, read from the clock or from scheduler records.
   0.1 with the hold, learning rate 1e-2, weight 16), two units of 128 policies each, seeds 30000 to 30255, at least
   14,000 MiB per card, code copy number 1, claim order set to 71 to 74 (ahead of the Medium and Large fresh seeds).
   UVA jobs 6948249 to 6948251 started all four at 12:08 PT; at 12:10 PT all 24 ant units run on UVA.
+- 2026-11-17 12:46 PT: two of RND's U-maze step-cost fresh units (learning rate 1e-2, weight 16; learning rate 3e-5,
+  weight 1/64) became waiting during the 12:43 PT pass, after its UVA workers were placed, so they were handed to
+  Gilbreth at 12:46:36 PT. take_back_and_start.sh took both back at 12:47 PT (2 UVA cards free now at 14,000 MiB)
+  and jobs 6948519 (jaguar01) and 6948520 (jaguar06) run them. At 12:47 PT all 24 ant units run on UVA. The same
+  timing happened at 05:48 and 07:38 PT; the 10-minute pass takes such units back on its own, so ant_tick.sh is left
+  as it is.
