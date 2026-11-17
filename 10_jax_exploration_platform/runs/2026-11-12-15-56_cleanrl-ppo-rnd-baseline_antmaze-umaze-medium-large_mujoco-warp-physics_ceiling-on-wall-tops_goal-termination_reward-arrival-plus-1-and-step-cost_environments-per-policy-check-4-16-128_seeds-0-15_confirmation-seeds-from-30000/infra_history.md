@@ -800,3 +800,13 @@ Times are Pacific, read from the clock or from scheduler records.
 - 2026-11-16 20:20 PT (unit_complete records): the first two RND U-maze validation units are complete, all 256
   windows: reward 1 on arrival at learning rate 1e-4, weight 1/64 (20:20:16 PT), and the step cost at learning rate
   3e-5, weight 1/16 (20:18:17 PT; three fault-guard respawns in it). The other six are at 225 to 253 windows.
+- 2026-11-16 20:50 PT (scontrol show reservation, the submit log): the owner's reservation sl5nw_168 (jaguar03 and
+  puma01) ends at 21:00:01 PT tonight. Since about 20:45 PT the UVA planner still offers jaguar03's free RTX A4500
+  cards inside it, and submit.py refuses such a job ("No submission window of at least fifteen minutes remains");
+  the error is not caught, so it also ends the rest of that submission pass. At 20:47 PT the take-back step counted
+  two such cards, took the method's U-maze unit (185 windows) back from Gilbreth, no worker could be sent, and it
+  went back to Gilbreth with a second method U-maze unit (fast step 0.03 with the hold, learning rate 1e-4); one new
+  Gilbreth job was sent. free_cards_now.py now leaves out cards in a reservation that ends within 15 minutes. Our
+  two workers inside the reservation (6942958 with two cards and 6943085, the RND U-maze step-cost unit at 1e-2,
+  weight 16) end at 20:59 PT with it; after 21:00 PT jaguar03 is an open node and the restart step uses it again.
+  Third RND U-maze validation unit complete (reward 1 on arrival, learning rate 1e-4, weight 1/256).
