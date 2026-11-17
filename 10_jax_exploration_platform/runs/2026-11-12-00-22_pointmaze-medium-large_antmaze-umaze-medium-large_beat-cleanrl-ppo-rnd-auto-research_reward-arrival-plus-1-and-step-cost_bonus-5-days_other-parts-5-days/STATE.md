@@ -1590,6 +1590,23 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   in the AntMaze folder, commit dc5c1122) started at 22:08 PT on UVA cards. The step-cost block (three of four
   complete; the last at 241 of 256 windows) follows the same steps when it completes.
 
+- 2026-11-16 23:20 PT: **RND's ant U-maze validation block with the step cost is complete, and its fresh seeds run**
+  (seeds 10000 to 10127, 128 policies per configuration, all 256 windows):
+
+  | RND configuration | W | L | M (million steps) | fault-guard respawns |
+  |---|---|---|---|---|
+  | learning rate 3e-5, weight 1/64 | −0.970784 ± 0.0005 | −0.9646 | 5.29 | 3 |
+  | learning rate 1e-4, weight 1/64 | −0.970802 ± 0.0006 | −0.9652 | 1.89 | 0 |
+  | learning rate 3e-5, weight 1/16 | −0.9713 ± 0.0005 | −0.9656 | 4.70 | 2 |
+  | learning rate 1e-2, weight 16 | −0.9849 ± 0.0002 | −0.9839 | 0.31 | 0 |
+
+  All 128 policies arrived in every configuration. RND's choice for W is learning rate 3e-5, weight 1/64 (ahead of
+  learning rate 1e-4 at the same weight by 0.00002, far inside one standard error); its choice for M is learning
+  rate 1e-2, weight 16. Fresh seeds 30000 to 30255, four units of 128 (description
+  `infrastructure/descriptions/antmaze_umaze_rk4-physics_fresh-seeds_rnd_reward-step-cost_seeds-30000-to-30255_budget-134217728.json`
+  in the AntMaze folder). Both of RND's ant U-maze validation blocks are now complete; the method's (orders 55 to
+  62 in the claim order) run, at about 100 to 190 windows of 256.
+
 ## Next
 
 Rewritten 2026-11-13 22:31 PT.

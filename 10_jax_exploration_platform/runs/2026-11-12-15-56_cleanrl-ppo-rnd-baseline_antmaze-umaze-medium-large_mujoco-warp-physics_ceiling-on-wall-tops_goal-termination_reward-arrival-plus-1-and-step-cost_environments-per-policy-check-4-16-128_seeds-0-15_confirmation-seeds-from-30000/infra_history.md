@@ -830,3 +830,12 @@ Times are Pacific, read from the clock or from scheduler records.
   30000 to 30127 and 30128 to 30255). Their claim order is set to 63 to 66: after the method's U-maze validation
   units (55 to 62), before the RND validation units still running (69 to 76) and Medium and Large (77 to 84).
   They are placed like every ant unit: UVA cards free now, then Gilbreth.
+- 2026-11-16 23:17 PT (unit_complete records; ant_fresh_description.py on all 256 windows): **RND's U-maze validation
+  block with the step cost is complete**: learning rate 3e-5, weight 1/64: W −0.970784 ± 0.0005, L −0.9646, M 5.29
+  million steps (3 fault-guard respawns); learning rate 1e-4, weight 1/64: W −0.970802 ± 0.0006, L −0.9652, M 1.89;
+  learning rate 3e-5, weight 1/16: W −0.9713 ± 0.0005, L −0.9656, M 4.70 (2 respawns); learning rate 1e-2, weight
+  16: W −0.9849 ± 0.0002, L −0.9839, M 0.31. All 128 policies arrived in every configuration. The choice for W is
+  learning rate 3e-5, weight 1/64 (ahead of 1e-4, weight 1/64 by 0.00002, far inside one standard error; the rule
+  takes the larger W); the choice for M is learning rate 1e-2, weight 16. Description
+  `infrastructure/descriptions/antmaze_umaze_rk4-physics_fresh-seeds_rnd_reward-step-cost_seeds-30000-to-30255_budget-134217728.json`;
+  four units of 128 seeds built, claim order 67 to 70 (after the reward-on-arrival fresh seeds, 63 to 66).
