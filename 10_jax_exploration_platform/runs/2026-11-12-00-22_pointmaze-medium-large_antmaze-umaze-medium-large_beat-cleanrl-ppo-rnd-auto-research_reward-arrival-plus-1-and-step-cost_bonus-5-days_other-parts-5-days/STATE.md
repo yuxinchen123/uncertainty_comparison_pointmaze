@@ -1707,6 +1707,21 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   +0.00088 ± 0.00068 on W (ahead on 68 of 128 seeds) and −0.00018 ± 0.00082 on L: level within the noise. The other
   three step-cost units were at 200 to 211 windows at 13:05 PT.
 
+- 2026-11-17 14:45 PT: **the method's ant Large validation block (reward 1 on arrival) is complete, and its fresh
+  seeds run** (step 0.03 with the hold, learning rate 1e-2, seeds 10000 to 10127, all 256 windows, no fault-guard
+  respawn):
+
+  | configuration | W | L | M (million steps) | policies that arrived |
+  |---|---|---|---|---|
+  | the method, weight 16 | 0.000005477 ± 0.00000055 | 0.000005938 | 102.55 | 68 of 128 |
+  | the method, weight 1 | 0.000003783 ± 0.00000047 | 0.000003587 | 106.03 | 51 of 128 |
+  | RND, weight 1 (its choice for W) | 0.000003908 ± 0.00000054 | 0.000006564 | 108.23 | 49 of 128 |
+
+  The method's choice for W on Large is weight 16. Fresh seeds 30000 to 30255, two units of 128 (description
+  `infrastructure/descriptions/antmaze_large_rk4-physics_fresh-seeds_method_reward-arrival-plus-one_seeds-30000-to-30255_budget-134217728.json`
+  in the AntMaze folder), built at 14:45 PT with the same run seeds as RND's Large fresh units. Every Medium and Large
+  fresh-seed set is now built (RND and the method on both maps).
+
 ## Next
 
 Rewritten 2026-11-13 22:31 PT.

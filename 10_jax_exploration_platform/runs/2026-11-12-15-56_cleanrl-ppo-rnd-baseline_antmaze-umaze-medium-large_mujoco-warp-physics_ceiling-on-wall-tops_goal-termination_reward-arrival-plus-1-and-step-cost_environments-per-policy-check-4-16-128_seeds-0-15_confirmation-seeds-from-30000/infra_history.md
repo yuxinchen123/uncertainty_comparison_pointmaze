@@ -936,3 +936,12 @@ Times are Pacific, read from the clock or from scheduler records.
   (13:15 PT): only units already waiting when the pass places its UVA workers can go to Gilbreth at the end of the
   pass; a unit whose worker stops during the pass gets a UVA attempt in the next pass, 10 minutes later. At 13:11 PT
   all 23 ant units run on UVA.
+- 2026-11-17 14:36 PT: first use of the changed ant_tick.sh: two units whose workers stopped during the pass stayed
+  waiting on UVA for the next pass instead of going to Gilbreth.
+- 2026-11-17 14:45 PT: the method's two Large validation units completed (no respawn). Built the method's Large fresh
+  seeds (step 0.03 with the hold, learning rate 1e-2, weight 16; claim order 91 and 92; at least 17,000 MiB per card;
+  run seeds equal to RND's Large fresh units). The 14:46 PT pass started three of the four waiting units on UVA
+  (jobs 6949351, 6949352, 6949380); its RTX 4000 Ada job on one node (6949350) was still waiting after 110 s and was
+  cancelled by its ledger id, so the method's Large fresh unit for seeds 30128 to 30255 went to Gilbreth's queue at
+  14:48 PT. The 5-minute fleet loop was restarted; the take-back step brings the unit back when a UVA card at
+  17,000 MiB is free now.
