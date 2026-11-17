@@ -787,3 +787,9 @@ Times are Pacific, read from the clock or from scheduler records.
   (RND and the method, both at weight 16), waiting with four of our jobs. Gautschi `ai` still holds the account's
   four H100 cards for another session (14 more of its jobs wait). The session's 5-minute fleet loop reached its
   12-hour limit and was started again at 18:07 PT (pid 106100) while units are on Gilbreth.
+- 2026-11-16 18:42 PT (the restart loop's log): three of the method's U-maze units with reward 1 on arrival waited
+  after their workers ended (they now claim first, orders 55 to 57). Of the two workers sent at 18:40 PT, job
+  6942928 still waited after 110 seconds and was cancelled by its ledger id, as the restart step does; job 6942929
+  took two units. The third (fast step 0.03 with the hold, learning rate 1e-4; 149 windows) went to Gilbreth at
+  18:42 PT; the take-back step brings it back when a UVA card frees up. Gilbreth holds three waiting units (it and
+  the two Large units at weight 16) with four waiting jobs.
