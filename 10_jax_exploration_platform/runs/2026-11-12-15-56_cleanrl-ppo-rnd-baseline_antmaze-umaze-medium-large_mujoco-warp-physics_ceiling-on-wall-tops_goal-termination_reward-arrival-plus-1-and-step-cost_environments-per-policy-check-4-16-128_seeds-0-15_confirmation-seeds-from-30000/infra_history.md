@@ -926,3 +926,13 @@ Times are Pacific, read from the clock or from scheduler records.
   and jobs 6948519 (jaguar01) and 6948520 (jaguar06) run them. At 12:47 PT all 24 ant units run on UVA. The same
   timing happened at 05:48 and 07:38 PT; the 10-minute pass takes such units back on its own, so ant_tick.sh is left
   as it is.
+- 2026-11-17 12:53 PT: the first of the method's U-maze step-cost validation units completed (the first-arrival hold
+  alone, learning rate 1e-4, weight 1/16; 256 windows; its one respawn is among the 19). Results are in STATE.md.
+- 2026-11-17 12:56 to 13:11 PT: at 12:56 PT no UVA card was free (two workers still completing), so the method's
+  Large unit at weight 16 (247 windows) and its U-maze step-cost unit with the hold alone at weight 1/1024 (211
+  windows) went to Gilbreth's queue. The 13:07 PT pass took both back (jobs 6948563, 6948566); in the same pass a
+  third worker stopped during the 110-s wait and its unit (the same Large unit) went to Gilbreth at 13:10 PT;
+  take_back_and_start.sh took it back at 13:11 PT (job 6948653, lynx01). Change to the session's ant_tick.sh
+  (13:15 PT): only units already waiting when the pass places its UVA workers can go to Gilbreth at the end of the
+  pass; a unit whose worker stops during the pass gets a UVA attempt in the next pass, 10 minutes later. At 13:11 PT
+  all 23 ant units run on UVA.

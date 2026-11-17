@@ -1700,6 +1700,13 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   (526750011 for seeds 30000 to 30127, 1035086001 for 30128 to 30255), so the final comparison is paired by seed.
   RND's fresh seeds with reward 1 on arrival were at 93 to 98 windows of 256.
 
+- 2026-11-17 12:53 PT: **the first of the method's four ant U-maze validation units with the step cost is
+  complete**: the first-arrival hold alone, learning rate 1e-4, weight 1/16 (seeds 10000 to 10127, all 256 windows,
+  all 128 policies arrived, 1 fault-guard respawn): W −0.96990 ± 0.00050, L −0.96483, M 1.71 million steps. Paired by
+  seed against RND's choice for W (learning rate 3e-5, weight 1/64: W −0.970784), the method minus RND is
+  +0.00088 ± 0.00068 on W (ahead on 68 of 128 seeds) and −0.00018 ± 0.00082 on L: level within the noise. The other
+  three step-cost units were at 200 to 211 windows at 13:05 PT.
+
 ## Next
 
 Rewritten 2026-11-13 22:31 PT.
