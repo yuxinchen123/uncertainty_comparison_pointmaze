@@ -818,3 +818,15 @@ Times are Pacific, read from the clock or from scheduler records.
   and 253 windows; the method's units at 160 and 185 windows); they run on an A100 on cheetah01 (job 6943190) and
   three RTX A4500 on jaguar03 (job 6943191). Job 6943179 (three RTX A4500) took the Medium and Large RND units that
   waited at 21:00 PT. UVA 18 units, Gilbreth 2 (both Large units, running); five Gilbreth jobs wait with no unit.
+- 2026-11-16 22:06 PT (unit_complete records; ant_fresh_description.py on all 256 windows): **RND's U-maze validation
+  block with reward 1 on arrival is complete** (four units, 128 seeds each, seeds 10000 to 10127; no fault-guard
+  respawn in any of them). Whole-curve mean W, final level L (last 10%), mean capped first-goal time M:
+  learning rate 1e-4, weight 1/64: W 0.1061 ± 0.0015, L 0.1183, M 2.49 million steps; learning rate 3e-5, weight
+  1/64: W 0.1055 ± 0.0018, L 0.1234, M 5.64; learning rate 1e-4, weight 1/256: W 0.1024 ± 0.0018, L 0.1170, M 3.69;
+  learning rate 1e-2, weight 4: W 0.0617 ± 0.0006, L 0.0656, M 0.30. All 128 policies of every configuration
+  arrived. The choice for W is learning rate 1e-4, weight 1/64; the choice for M is learning rate 1e-2, weight 4.
+  Description `infrastructure/descriptions/antmaze_umaze_rk4-physics_fresh-seeds_rnd_reward-arrival-plus-one_seeds-30000-to-30255_budget-134217728.json`
+  (phase fresh-seeds-rk4, seeds 30000 to 30255); build_units.py added four units of 128 seeds (each choice at seeds
+  30000 to 30127 and 30128 to 30255). Their claim order is set to 63 to 66: after the method's U-maze validation
+  units (55 to 62), before the RND validation units still running (69 to 76) and Medium and Large (77 to 84).
+  They are placed like every ant unit: UVA cards free now, then Gilbreth.
