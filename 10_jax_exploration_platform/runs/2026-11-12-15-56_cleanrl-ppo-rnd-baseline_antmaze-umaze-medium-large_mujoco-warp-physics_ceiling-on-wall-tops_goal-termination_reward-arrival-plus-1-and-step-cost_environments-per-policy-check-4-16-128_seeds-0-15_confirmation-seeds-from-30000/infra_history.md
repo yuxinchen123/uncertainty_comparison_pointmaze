@@ -793,3 +793,7 @@ Times are Pacific, read from the clock or from scheduler records.
   took two units. The third (fast step 0.03 with the hold, learning rate 1e-4; 149 windows) went to Gilbreth at
   18:42 PT; the take-back step brings it back when a UVA card frees up. Gilbreth holds three waiting units (it and
   the two Large units at weight 16) with four waiting jobs.
+- 2026-11-16 19:51 PT (the restart step's output): the three RND U-maze units on the RTX 5080 cards waited after
+  their 2-hour workers ended; they restarted at 19:49 PT (jobs 6943078 on an RTX 5080, 6943084 and 6943085). Both
+  Large units now run on Gilbreth A10 cards (jobs 12403171 and 12403362). The session's restart loop, near its
+  12-hour limit (it would have ended at about 20:08 PT), was stopped and started again at 19:51 PT.
