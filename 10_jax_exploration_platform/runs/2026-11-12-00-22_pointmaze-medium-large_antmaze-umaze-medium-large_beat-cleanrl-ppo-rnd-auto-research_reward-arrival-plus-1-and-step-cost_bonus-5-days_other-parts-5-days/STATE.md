@@ -1607,6 +1607,22 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   in the AntMaze folder). Both of RND's ant U-maze validation blocks are now complete; the method's (orders 55 to
   62 in the claim order) run, at 117 to 200 windows of 256 at 23:20 PT.
 
+- 2026-11-17 05:14 PT: **the first of the method's eight ant U-maze validation units is complete**: reward 1 on
+  arrival, fast last layer step 0.03 with the first-arrival hold, learning rate 1e-4, weight 1/64 (seeds 10000 to
+  10127, all 256 windows, no fault-guard respawn, all 128 policies arrived):
+
+  | configuration | W | L | M (million steps) |
+  |---|---|---|---|
+  | the method: step 0.03 with the hold, learning rate 1e-4, weight 1/64 | 0.1095 ± 0.0021 | 0.1243 | 2.53 |
+  | RND: learning rate 1e-4, weight 1/64 (its choice for W) | 0.1061 ± 0.0015 | 0.1183 | 2.49 |
+  | RND: learning rate 3e-5, weight 1/64 | 0.1055 ± 0.0018 | 0.1234 | 5.64 |
+
+  Paired by seed against RND's choice for W at the same learning rate and weight, the method minus RND is
+  +0.0034 ± 0.0024 on W (ahead on 72 of 128 seeds) and +0.0060 ± 0.0039 on L (77 of 128): ahead by 1.4 and 1.5
+  standard errors, not a clear lead on this block alone. The method's other three configurations with reward 1 on
+  arrival were at 211, 211 and 237 windows at 05:26 PT; its four with the step cost at 154 to 181. The method's
+  choice for the fresh seeds is made once its block of four is complete.
+
 ## Next
 
 Rewritten 2026-11-13 22:31 PT.

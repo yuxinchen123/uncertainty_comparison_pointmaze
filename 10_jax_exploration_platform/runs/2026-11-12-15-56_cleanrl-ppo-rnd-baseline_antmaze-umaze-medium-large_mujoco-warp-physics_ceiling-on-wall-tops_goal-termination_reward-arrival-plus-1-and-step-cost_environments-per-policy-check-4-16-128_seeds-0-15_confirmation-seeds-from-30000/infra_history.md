@@ -869,3 +869,8 @@ Times are Pacific, read from the clock or from scheduler records.
   arrival and the first-arrival hold alone at learning rate 3e-5, weight 1/16, window 227, seed 10080, torso angular
   speed 104.1 rad/s (torso speed 13.9 m/s). It is that unit's second. All nineteen are the angular bound; fourteen at
   learning rate 3e-5, five at 1e-4. At 04:27 PT all 24 ant units run on UVA, none waiting, none on Gilbreth.
+- 2026-11-17 05:14 PT: the first of the method's U-maze validation units completed (reward 1 on arrival, fast step
+  0.03 with the hold, learning rate 1e-4, weight 1/64; 256 windows; no respawn). Results are in the auto research
+  folder's STATE.md. The restart step at 05:20 PT started the six units whose 2-hour workers had ended (jobs
+  6943714 to 6943746); at 05:26 PT all 23 remaining ant units run on UVA, none waiting, none on Gilbreth. The
+  monitoring tick returns to every 20 minutes (RND's Medium units are at 254 and 255 windows, one Large unit at 252).
