@@ -768,3 +768,10 @@ Times are Pacific, read from the clock or from scheduler records.
   unit and the first with reward 1 on arrival in a validation block: the first-arrival hold alone at learning rate
   3e-5, weight 1/16, window 161, seed 10048, torso angular speed 103.1 rad/s (torso speed 15.3 m/s). All fifteen
   are the angular bound; thirteen of the fifteen are at learning rate 3e-5.
+- 2026-11-16 17:10 PT (the restart loop's log, worker logs): at 17:06 PT eight units waited on UVA after their
+  workers ended; seven started on seven free cards (jobs 6942847 to 6942850: A100 40 GB on cheetah01, RTX 4000 Ada
+  on cheetah02 and lynx01, RTX A4500 on jaguar03), and the eighth, the method's Large unit at weight 16 (last in
+  the claim order), went to Gilbreth at 17:08 PT with one new job. Gilbreth holds four waiting units (two U-maze,
+  two Large) with four waiting jobs. The take-back step now counts only the U-maze units waiting on UVA ahead of
+  the U-maze units on Gilbreth: Medium and Large units claim after every U-maze unit, so a card they would have
+  taken goes to a U-maze unit taken back, and they go to Gilbreth instead (U-maze first).
