@@ -945,3 +945,8 @@ Times are Pacific, read from the clock or from scheduler records.
   cancelled by its ledger id, so the method's Large fresh unit for seeds 30128 to 30255 went to Gilbreth's queue at
   14:48 PT. The 5-minute fleet loop was restarted; the take-back step brings the unit back when a UVA card at
   17,000 MiB is free now.
+- 2026-11-17 15:29 PT (window record): twentieth fault-guard respawn under RK4: the method's step-cost unit with the
+  first-arrival hold alone at learning rate 1e-4, weight 1/1024 (the eighteenth's unit), window 236, seed 10081,
+  torso angular speed 100.3 rad/s (torso speed 14.3 m/s). All twenty are the angular bound; fourteen at learning
+  rate 3e-5, six at 1e-4. At 15:45 PT 22 ant units run on UVA; the method's Large fresh unit for seeds 30128 to
+  30255 has waited on Gilbreth since 14:48 PT (no UVA card at 17,000 MiB free at the passes since).
