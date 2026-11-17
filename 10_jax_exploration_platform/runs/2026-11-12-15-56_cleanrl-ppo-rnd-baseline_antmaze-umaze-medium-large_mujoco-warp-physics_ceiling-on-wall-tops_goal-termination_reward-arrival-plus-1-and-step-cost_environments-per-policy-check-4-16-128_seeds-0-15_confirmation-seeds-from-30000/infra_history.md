@@ -887,3 +887,6 @@ Times are Pacific, read from the clock or from scheduler records.
   respawn): W 3.9e-6 ± 0.5e-6, L 6.6e-6, M 108.2 million steps, 49 of 128 policies arrived. RND's other Large unit
   (weight 16) was at 219 windows at 06:05 PT; the Large fresh seeds wait for it. At 06:05 PT all 22 ant units run on
   UVA, none waiting, none on Gilbreth.
+- 2026-11-17 06:26 PT: the session's 10-minute restart loop was restarted between passes (its 12-hour run would have
+  ended about 07:51 PT); the new run ends by about 18:26 PT. At 06:25 PT all 22 ant units run on UVA, none waiting,
+  none on Gilbreth; 19 fault-guard respawns in all, none new since 03:45 PT.
