@@ -874,3 +874,12 @@ Times are Pacific, read from the clock or from scheduler records.
   folder's STATE.md. The restart step at 05:20 PT started the six units whose 2-hour workers had ended (jobs
   6943714 to 6943746); at 05:26 PT all 23 remaining ant units run on UVA, none waiting, none on Gilbreth. The
   monitoring tick returns to every 20 minutes (RND's Medium units are at 254 and 255 windows, one Large unit at 252).
+- 2026-11-17 05:46 PT: RND's two Medium validation units completed (05:33 and 05:37 PT; no respawn). Built RND's
+  Medium fresh seeds (choice for W: learning rate 1e-2, weight 16): two units of 128 policies, seeds 30000 to 30255,
+  claim order 85 and 86, at least 17,000 MiB per card, code copy number 1; UVA jobs 6943753 and 6943754 started
+  them at 05:47 PT.
+- 2026-11-17 05:48 PT: six 2-hour UVA workers (10 cards, jobs 6943683 to 6943688) stopped at 05:48:47 to 05:48:53
+  PT, about 1 min 50 s after the same pass had placed its UVA workers, so their 10 units were handed to Gilbreth's
+  queue at 05:48:55 PT. The next pass (05:50 PT) took all 10 back (nine U-maze units, one Medium unit) and started
+  them on UVA cards free now (jobs 6943757 to 6943762, all running at 05:52 PT). At 05:54 PT all 23 ant units run on
+  UVA; ten Gilbreth jobs wait with no unit.

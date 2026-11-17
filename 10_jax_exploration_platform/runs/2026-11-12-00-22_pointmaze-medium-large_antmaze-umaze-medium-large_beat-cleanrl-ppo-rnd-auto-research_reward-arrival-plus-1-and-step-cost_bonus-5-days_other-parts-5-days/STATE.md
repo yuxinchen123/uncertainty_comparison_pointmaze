@@ -1623,6 +1623,22 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   arrival were at 211, 211 and 237 windows at 05:26 PT; its four with the step cost at 154 to 181. The method's
   choice for the fresh seeds is made once its block of four is complete.
 
+- 2026-11-17 05:37 PT: **RND's ant Medium validation block (reward 1 on arrival) is complete, and its fresh seeds
+  run** (seeds 10000 to 10127, 128 policies per configuration, all 256 windows, no fault-guard respawn, all 128
+  policies arrived in both):
+
+  | RND configuration | W | L | M (million steps) |
+  |---|---|---|---|
+  | learning rate 1e-2, weight 16 | 0.01068 ± 0.00014 | 0.01115 | 0.75 |
+  | learning rate 1e-2, weight 1 | 0.01063 ± 0.00015 | 0.01125 | 0.66 |
+
+  RND's choice for W on Medium is weight 16 (ahead by 0.00005, far inside one standard error). As decided with the
+  user for Medium and Large, each side's fresh seeds use its better configuration by W only: seeds 30000 to 30255,
+  two units of 128 (description
+  `infrastructure/descriptions/antmaze_medium_rk4-physics_fresh-seeds_rnd_reward-arrival-plus-one_seeds-30000-to-30255_budget-134217728.json`
+  in the AntMaze folder), started on UVA cards at 05:47 PT. The method's two Medium units were at 218 and 221
+  windows at 05:45 PT; RND's Large units at 254 and 216.
+
 ## Next
 
 Rewritten 2026-11-13 22:31 PT.
