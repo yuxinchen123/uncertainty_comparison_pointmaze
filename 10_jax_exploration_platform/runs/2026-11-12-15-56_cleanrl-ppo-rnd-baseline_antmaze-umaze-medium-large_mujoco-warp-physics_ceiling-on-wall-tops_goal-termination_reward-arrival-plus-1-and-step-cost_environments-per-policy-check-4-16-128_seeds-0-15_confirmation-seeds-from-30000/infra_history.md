@@ -775,3 +775,9 @@ Times are Pacific, read from the clock or from scheduler records.
   two Large) with four waiting jobs. The take-back step now counts only the U-maze units waiting on UVA ahead of
   the U-maze units on Gilbreth: Medium and Large units claim after every U-maze unit, so a card they would have
   taken goes to a U-maze unit taken back, and they go to Gilbreth instead (U-maze first).
+- 2026-11-16 17:29 PT (the restart loop's log, the worker log): the new take-back step worked on its own: at
+  17:28 PT it found one UVA card free for the two U-maze units waiting on Gilbreth, took back the method's U-maze
+  unit with reward 1 on arrival (fast step 0.1 with the hold, learning rate 1e-2, weight 16; 90 windows; taken
+  first by name), gave it order 58, and it started on an RTX 5080 on nekomata01 at 17:29 PT (job 6942857).
+  Gilbreth holds three waiting units: the RND U-maze step-cost unit at 1e-4, weight 1/64 (200 windows, waiting since
+  16:03 PT) and two Large units, with four waiting jobs.
