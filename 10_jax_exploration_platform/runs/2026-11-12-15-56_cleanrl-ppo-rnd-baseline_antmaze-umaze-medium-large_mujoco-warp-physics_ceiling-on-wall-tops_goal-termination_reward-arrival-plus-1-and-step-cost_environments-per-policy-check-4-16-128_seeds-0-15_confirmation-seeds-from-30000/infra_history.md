@@ -839,3 +839,7 @@ Times are Pacific, read from the clock or from scheduler records.
   takes the larger W); the choice for M is learning rate 1e-2, weight 16. Description
   `infrastructure/descriptions/antmaze_umaze_rk4-physics_fresh-seeds_rnd_reward-step-cost_seeds-30000-to-30255_budget-134217728.json`;
   four units of 128 seeds built, claim order 67 to 70 (after the reward-on-arrival fresh seeds, 63 to 66).
+- 2026-11-17 00:47 PT (window record): sixteenth fault-guard respawn under RK4, the third in a method validation
+  unit: the step cost with fast step 0.1 and the hold at learning rate 1e-4, weight 1/64 (the method's third choice
+  by the whole-curve mean), window 126, seed 10117, torso angular speed 102.7 rad/s (torso speed 13.7 m/s). All
+  sixteen are the angular bound; thirteen of the sixteen are at learning rate 3e-5, three at 1e-4.
