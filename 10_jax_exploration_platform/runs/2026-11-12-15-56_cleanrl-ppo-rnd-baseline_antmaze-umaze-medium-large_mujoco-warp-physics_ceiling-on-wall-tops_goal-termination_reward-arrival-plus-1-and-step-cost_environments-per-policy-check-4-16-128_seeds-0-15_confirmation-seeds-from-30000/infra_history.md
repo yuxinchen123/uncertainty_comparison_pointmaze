@@ -753,3 +753,14 @@ Times are Pacific, read from the clock or from scheduler records.
   waiting on UVA (a new helper reads the scheduler as submit.py does and submits nothing; the Gilbreth limit is
   lowered first). At 16:24 PT the restart loop restarted five UVA workers (jobs 6942766 to 6942770). UVA 22 units,
   Gilbreth 2 (both waiting).
+- 2026-11-16 16:50 PT (the restart step's output, the unit markers): the workers 6942622 and 6942623 ended at about
+  16:37 PT; three of their four units restarted at 16:39 PT on three RTX A4500 cards on jaguar03 (job 6942792), and
+  the fourth, the method's U-maze unit with reward 1 on arrival (fast step 0.1 with the hold, learning rate 1e-2,
+  weight 16; 90 windows), went to Gilbreth at 16:41 PT (one new job sent there). It was left out because waiting
+  units claim cards in the builder's order: RND U-maze 69 to 76, Medium and Large 77 to 84, the method's U-maze
+  units 85 to 92. The method's U-maze units are the longest chain left (166 to 183 windows of validation, then 256
+  windows of fresh seeds; about 58 hours at 7.5 windows an hour), so from now on the restart step gives every
+  waiting method U-maze validation unit an order 30 lower (55 to 62; they claim first) and every waiting U-maze unit
+  the 14,000 MiB floor. Gilbreth holds three waiting units (the RND U-maze step-cost unit at 1e-4, weight 1/64; the
+  method's unit above; the RND Large unit at weight 16), with three waiting jobs; the U-maze ones come back when
+  UVA cards free up.
