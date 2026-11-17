@@ -860,3 +860,8 @@ Times are Pacific, read from the clock or from scheduler records.
   units back from Gilbreth's queue to free UVA cards (U-maze first, then Medium and Large). UVA 23 units, Gilbreth 1
   (an RND Medium unit waiting, 208 windows). The tick returns to every 20 minutes when a validation block completes
   (the method's U-maze blocks: about 120 to 210 windows of 256 now), a unit fails, or new units are built.
+- 2026-11-17 03:23 PT (window record): eighteenth fault-guard respawn under RK4: the method's step-cost unit with
+  the first-arrival hold alone at learning rate 1e-4, weight 1/1024, window 151, seed 10092, torso angular speed
+  102.5 rad/s (torso speed 14.6 m/s). All eighteen are the angular bound; thirteen at learning rate 3e-5, five at
+  1e-4. The same pass took the last Medium unit back from Gilbreth (03:23 PT): all 24 ant units run on UVA, so the
+  5-minute fleet loop ended by itself at 03:23:41 PT.
