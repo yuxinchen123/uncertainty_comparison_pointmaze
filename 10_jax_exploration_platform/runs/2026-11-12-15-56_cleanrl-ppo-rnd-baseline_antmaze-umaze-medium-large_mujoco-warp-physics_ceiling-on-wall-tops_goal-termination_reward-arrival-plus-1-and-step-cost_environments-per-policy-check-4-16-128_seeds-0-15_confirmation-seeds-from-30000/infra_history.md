@@ -905,3 +905,6 @@ Times are Pacific, read from the clock or from scheduler records.
   three on lynx01 (job 6947983, three RTX 4000 Ada cards); its A40 job on jaguar06 (6947982) was still waiting
   after 110 s and was cancelled by its ledger id. The fourth unit (the method's Large unit at weight 16) went to
   Gilbreth's queue at 09:11 PT; the take-back step brings it back when a UVA card at 17,000 MiB is free now.
+- 2026-11-17 10:01 PT: the third of the method's U-maze validation units completed (reward 1 on arrival, fast step
+  0.1 with the hold, learning rate 1e-2, weight 16; 256 windows; no respawn). Results are in the auto research
+  folder's STATE.md. At 10:05 PT all 20 remaining ant units run on UVA, none waiting, none on Gilbreth.

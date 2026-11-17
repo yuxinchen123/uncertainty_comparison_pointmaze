@@ -1655,6 +1655,14 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   arm its claim waits for the fresh seeds. The method's other two configurations with reward 1 on arrival were at 232
   and 244 windows at 08:45 PT; its four with the step cost at 174 to 213.
 
+- 2026-11-17 10:01 PT: **the third of the method's ant U-maze validation units is complete**: reward 1 on arrival,
+  fast last layer step 0.1 with the first-arrival hold, learning rate 1e-2, weight 16 (seeds 10000 to 10127, all 256
+  windows, all 128 policies arrived, no fault-guard respawn): W 0.0660 ± 0.0006, L 0.0708, M 0.24 million steps.
+  It is the method's configuration for discovery: against RND's choice for M (learning rate 1e-2, weight 4: M 0.30),
+  paired by seed, the method minus RND is −0.060 ± 0.011 million steps on M (earlier on 87 of 128 seeds). Its W is
+  far below both sides' choices for W, as at RND's fast-discovery configuration. The fourth configuration (step 0.03
+  with the hold, learning rate 1e-4, weight 1/16) was at 240 windows at 10:05 PT.
+
 ## Next
 
 Rewritten 2026-11-13 22:31 PT.
