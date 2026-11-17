@@ -855,3 +855,8 @@ Times are Pacific, read from the clock or from scheduler records.
   now also takes Medium and Large units waiting on Gilbreth back to UVA, only to cards left over after every unit
   waiting on UVA (counted at their 17,000 MiB floor). Its first pass at 01:28 PT took five back; they run on UVA
   (job 6943615). Gilbreth holds three Medium units (one running on an A10, two waiting).
+- 2026-11-17 02:50 PT: monitoring moves to an hourly tick (cron a6a9b6fa, created 02:48 PT, expires about
+  2026-11-24 02:48 PT). The restart step (every 10 minutes) restarts UVA units after their 2-hour workers and takes
+  units back from Gilbreth's queue to free UVA cards (U-maze first, then Medium and Large). UVA 23 units, Gilbreth 1
+  (an RND Medium unit waiting, 208 windows). The tick returns to every 20 minutes when a validation block completes
+  (the method's U-maze blocks: about 120 to 210 windows of 256 now), a unit fails, or new units are built.
