@@ -1663,6 +1663,23 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   far below both sides' choices for W, as at RND's fast-discovery configuration. The fourth configuration (step 0.03
   with the hold, learning rate 1e-4, weight 1/16) was at 240 windows at 10:05 PT.
 
+- 2026-11-17 11:46 PT: **the method's ant Medium validation block and RND's ant Large validation block are complete,
+  and both sides' fresh seeds run** (reward 1 on arrival, seeds 10000 to 10127, all 256 windows, no fault-guard
+  respawn):
+
+  | side and map | configuration (learning rate 1e-2) | W | L | M (million steps) | policies that arrived |
+  |---|---|---|---|---|---|
+  | the method, Medium (step 0.03 with the hold) | weight 16 | 0.01071 ± 0.00014 | 0.01165 | 0.67 | 128 of 128 |
+  | the method, Medium | weight 1 | 0.01064 ± 0.00014 | 0.01147 | 0.63 | 128 of 128 |
+  | RND, Large | weight 1 | 0.000003908 ± 0.00000054 | 0.000006564 | 108.23 | 49 of 128 |
+  | RND, Large | weight 16 | 0.000003904 ± 0.00000048 | 0.000004772 | 104.60 | 50 of 128 |
+
+  Choices for W: the method on Medium, weight 16; RND on Large, weight 1 (ahead of weight 16 by 0.000000004, far
+  inside one standard error). Fresh seeds 30000 to 30255, two units of 128 for each (descriptions
+  `antmaze_medium_rk4-physics_fresh-seeds_method_...` and `antmaze_large_rk4-physics_fresh-seeds_rnd_...` in the
+  AntMaze folder's `infrastructure/descriptions/`), started on UVA cards at 11:47 PT. On Large, policies rarely
+  reach the goal in 134 million steps for either side; the method's Large units were at 238 and 239 windows.
+
 ## Next
 
 Rewritten 2026-11-13 22:31 PT.

@@ -908,3 +908,9 @@ Times are Pacific, read from the clock or from scheduler records.
 - 2026-11-17 10:01 PT: the third of the method's U-maze validation units completed (reward 1 on arrival, fast step
   0.1 with the hold, learning rate 1e-2, weight 16; 256 windows; no respawn). Results are in the auto research
   folder's STATE.md. At 10:05 PT all 20 remaining ant units run on UVA, none waiting, none on Gilbreth.
+- 2026-11-17 11:46 PT: the method's two Medium validation units and RND's Large unit at weight 16 completed (no
+  respawn). Built the method's Medium fresh seeds (weight 16; claim order 87 and 88) and RND's Large fresh seeds
+  (weight 1; claim order 89 and 90): two units of 128 policies each, seeds 30000 to 30255, at least 17,000 MiB per
+  card, code copy number 1. The method units' specifications match the validation units' except for the seeds and
+  names (same bonus options). UVA jobs 6948214 to 6948216 started all four at 11:47 PT; at 11:49 PT all 21 ant units
+  run on UVA, none waiting, none on Gilbreth.

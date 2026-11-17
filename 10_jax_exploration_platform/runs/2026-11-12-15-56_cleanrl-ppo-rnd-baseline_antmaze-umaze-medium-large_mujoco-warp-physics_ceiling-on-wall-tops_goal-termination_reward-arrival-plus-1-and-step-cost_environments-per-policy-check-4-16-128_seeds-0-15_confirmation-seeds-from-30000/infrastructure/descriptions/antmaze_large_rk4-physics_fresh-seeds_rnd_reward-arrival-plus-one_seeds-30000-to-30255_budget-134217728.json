@@ -1,0 +1,45 @@
+{
+ "study": "cleanrl-ppo-rnd-baseline-antmaze",
+ "bonus": "rnd_next_state",
+ "steps_per_policy": 134217728,
+ "windows_per_unit": 256,
+ "seeds": {
+  "first": 30000,
+  "count": 256
+ },
+ "configuration_files": {
+  "antmaze-large": "configs/experiments/antmaze_large_warp-physics_rk4_time-step-0.01_frame-skip-5_fault-guard-30-metres-and-100-radians-per-second_cleanrl-ppo-rnd_goal-termination_reward-arrival-plus-one_example_steps-204800.toml"
+ },
+ "environments": [
+  "antmaze-large"
+ ],
+ "reward_settings": [
+  "arrival_plus_one"
+ ],
+ "minimum_card_memory_mb": 17000,
+ "phase": "fresh-seeds-rk4",
+ "sweeps": [
+  {
+   "method": "cleanrl-ppo-rnd",
+   "environments_per_policy": {
+    "antmaze": 16
+   },
+   "policies_per_unit": 128,
+   "workload": {
+    "antmaze-large": "antmaze-large_environments-per-policy-16_update-epoch-minibatch_bonus-rnd-next-state_physics-warp_integrator-rk4_time-step-0.01_frame-skip-5"
+   },
+   "cells": {
+    "kind": "list",
+    "cells": [
+     {
+      "learning_rate": 0.01,
+      "entropy_coefficient": 0.001,
+      "intrinsic_weight": 1.0,
+      "clip_coefficient": 0.1
+     }
+    ]
+   },
+   "why_chosen": "rnd's choice for W on the large validation block (seeds 10000 to 10127, 256 windows): W 3.908e-06 at weight 1 against 3.904e-06 at weight 16, learning rate 0.01"
+  }
+ ]
+}
