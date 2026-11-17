@@ -810,3 +810,11 @@ Times are Pacific, read from the clock or from scheduler records.
   two workers inside the reservation (6942958 with two cards and 6943085, the RND U-maze step-cost unit at 1e-2,
   weight 16) end at 20:59 PT with it; after 21:00 PT jaguar03 is an open node and the restart step uses it again.
   Third RND U-maze validation unit complete (reward 1 on arrival, learning rate 1e-4, weight 1/256).
+- 2026-11-16 21:10 PT (the restart step's output, worker logs): the reservation sl5nw_168 ended at 21:00 PT; its two
+  workers on jaguar03 ended at 20:59 PT and their units waited, so at 20:49 PT three units had gone to Gilbreth
+  (six there then: two Large running, four U-maze waiting). Fourth RND U-maze validation unit complete (reward 1 on
+  arrival, learning rate 3e-5, weight 1/64). With jaguar03 open again, the take-back step brought one U-maze unit
+  back at 20:59 PT and the other four at 21:07 PT (RND step cost at 1e-2, weight 16 and at 3e-5, weight 1/64, 250
+  and 253 windows; the method's units at 160 and 185 windows); they run on an A100 on cheetah01 (job 6943190) and
+  three RTX A4500 on jaguar03 (job 6943191). Job 6943179 (three RTX A4500) took the Medium and Large RND units that
+  waited at 21:00 PT. UVA 18 units, Gilbreth 2 (both Large units, running); five Gilbreth jobs wait with no unit.
