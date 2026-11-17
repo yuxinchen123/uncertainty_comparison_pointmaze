@@ -1574,6 +1574,22 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
      (RTX 5080 cards where free). With this, every validation block of the ant U-maze is running: RND (8 units) and
      the method (8 units), 128 seeds each, both reward settings.
 
+- 2026-11-16 22:10 PT: **RND's ant U-maze validation block with reward 1 on arrival is complete, and its fresh
+  seeds run** (seeds 10000 to 10127, 128 policies per configuration, all 256 windows; no fault-guard respawn):
+
+  | RND configuration | W | L | M (million steps) |
+  |---|---|---|---|
+  | learning rate 1e-4, weight 1/64 | 0.1061 ± 0.0015 | 0.1183 | 2.49 |
+  | learning rate 3e-5, weight 1/64 | 0.1055 ± 0.0018 | 0.1234 | 5.64 |
+  | learning rate 1e-4, weight 1/256 | 0.1024 ± 0.0018 | 0.1170 | 3.69 |
+  | learning rate 1e-2, weight 4 | 0.0617 ± 0.0006 | 0.0656 | 0.30 |
+
+  All 128 policies arrived in every configuration. RND's choice for W is learning rate 1e-4, weight 1/64; its choice
+  for M is learning rate 1e-2, weight 4. The fresh seeds (30000 to 30255, four units of 128; description
+  `infrastructure/descriptions/antmaze_umaze_rk4-physics_fresh-seeds_rnd_reward-arrival-plus-one_seeds-30000-to-30255_budget-134217728.json`
+  in the AntMaze folder, commit dc5c1122) started at 22:08 PT on UVA cards. The step-cost block (three of four
+  complete; the last at 241 of 256 windows) follows the same steps when it completes.
+
 ## Next
 
 Rewritten 2026-11-13 22:31 PT.
