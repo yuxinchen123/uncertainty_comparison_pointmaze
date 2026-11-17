@@ -865,3 +865,7 @@ Times are Pacific, read from the clock or from scheduler records.
   102.5 rad/s (torso speed 14.6 m/s). All eighteen are the angular bound; thirteen at learning rate 3e-5, five at
   1e-4. The same pass took the last Medium unit back from Gilbreth (03:23 PT): all 24 ant units run on UVA, so the
   5-minute fleet loop ended by itself at 03:23:41 PT.
+- 2026-11-17 03:45 PT (window record): nineteenth fault-guard respawn under RK4: the method's unit with reward 1 on
+  arrival and the first-arrival hold alone at learning rate 3e-5, weight 1/16, window 227, seed 10080, torso angular
+  speed 104.1 rad/s (torso speed 13.9 m/s). It is that unit's second. All nineteen are the angular bound; fourteen at
+  learning rate 3e-5, five at 1e-4. At 04:27 PT all 24 ant units run on UVA, none waiting, none on Gilbreth.
