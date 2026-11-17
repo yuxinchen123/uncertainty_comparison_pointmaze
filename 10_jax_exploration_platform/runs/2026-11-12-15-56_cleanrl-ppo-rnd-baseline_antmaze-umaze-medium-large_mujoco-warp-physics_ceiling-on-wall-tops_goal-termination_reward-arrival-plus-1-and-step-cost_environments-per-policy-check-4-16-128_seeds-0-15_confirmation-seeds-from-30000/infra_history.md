@@ -744,3 +744,12 @@ Times are Pacific, read from the clock or from scheduler records.
   loop's routine 2-hour restarts). It returns to every 20 minutes when a unit fails, work is submitted, or the
   slowest RND U-maze unit (step cost, learning rate 1e-4, weight 1/64; 198 of 256 windows at 15:48 PT) nears 256,
   when RND's fresh seeds are built and placed.
+- 2026-11-16 16:45 PT (the restart loop's log, Gilbreth's sacct and squeue): the slowest RND U-maze unit (step cost,
+  learning rate 1e-4, weight 1/64; 200 windows) went to Gilbreth at 16:03 PT, when its 2-hour worker on lynx02 ended
+  and no UVA card was free; Gilbreth job 12403171 waits for it (`Priority`; Gilbreth's estimate 18:53 PT). The RND
+  Large unit's job 12400318 reached its 4-hour limit at about 16:14 PT; job 12403224 waits for it (estimate
+  22:34 PT). No UVA card is free now. From now on the session's restart step (ant_tick.sh, every 10 minutes) takes
+  U-maze units waiting on Gilbreth back whenever the UVA planner finds cards free for them, after the units already
+  waiting on UVA (a new helper reads the scheduler as submit.py does and submits nothing; the Gilbreth limit is
+  lowered first). At 16:24 PT the restart loop restarted five UVA workers (jobs 6942766 to 6942770). UVA 22 units,
+  Gilbreth 2 (both waiting).
