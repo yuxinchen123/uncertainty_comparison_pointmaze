@@ -781,3 +781,9 @@ Times are Pacific, read from the clock or from scheduler records.
   first by name), gave it order 58, and it started on an RTX 5080 on nekomata01 at 17:29 PT (job 6942857).
   Gilbreth holds three waiting units: the RND U-maze step-cost unit at 1e-4, weight 1/64 (200 windows, waiting since
   16:03 PT) and two Large units, with four waiting jobs.
+- 2026-11-16 18:08 PT (the restart loop's log, Gautschi's squeue): the restart step took the RND U-maze step-cost
+  unit at 1e-4, weight 1/64 (200 windows, on Gilbreth's queue since 16:03 PT) back at 18:04 PT; it resumed on an RTX
+  5080 on nekomata01 (job 6942882). All eight RND U-maze units run on UVA again. Gilbreth holds the two Large units
+  (RND and the method, both at weight 16), waiting with four of our jobs. Gautschi `ai` still holds the account's
+  four H100 cards for another session (14 more of its jobs wait). The session's 5-minute fleet loop reached its
+  12-hour limit and was started again at 18:07 PT (pid 106100) while units are on Gilbreth.
