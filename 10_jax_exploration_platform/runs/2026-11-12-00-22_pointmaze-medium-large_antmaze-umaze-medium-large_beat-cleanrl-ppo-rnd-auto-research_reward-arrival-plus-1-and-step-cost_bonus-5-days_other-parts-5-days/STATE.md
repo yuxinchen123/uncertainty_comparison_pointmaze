@@ -1605,7 +1605,7 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   rate 1e-2, weight 16. Fresh seeds 30000 to 30255, four units of 128 (description
   `infrastructure/descriptions/antmaze_umaze_rk4-physics_fresh-seeds_rnd_reward-step-cost_seeds-30000-to-30255_budget-134217728.json`
   in the AntMaze folder). Both of RND's ant U-maze validation blocks are now complete; the method's (orders 55 to
-  62 in the claim order) run, at about 100 to 190 windows of 256.
+  62 in the claim order) run, at 117 to 200 windows of 256 at 23:20 PT.
 
 ## Next
 
