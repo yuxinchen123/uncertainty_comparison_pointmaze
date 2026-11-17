@@ -901,3 +901,7 @@ Times are Pacific, read from the clock or from scheduler records.
   first-arrival hold alone, learning rate 3e-5, weight 1/16; 256 windows; its 2 fault-guard respawns are among the
   19). Results are in the auto research folder's STATE.md. At 08:45 PT all 21 remaining ant units run on UVA, none
   waiting, none on Gilbreth.
+- 2026-11-17 09:09 PT: four Medium and Large units waited on UVA after their workers' 2-hour stops. The pass started
+  three on lynx01 (job 6947983, three RTX 4000 Ada cards); its A40 job on jaguar06 (6947982) was still waiting
+  after 110 s and was cancelled by its ledger id. The fourth unit (the method's Large unit at weight 16) went to
+  Gilbreth's queue at 09:11 PT; the take-back step brings it back when a UVA card at 17,000 MiB is free now.
