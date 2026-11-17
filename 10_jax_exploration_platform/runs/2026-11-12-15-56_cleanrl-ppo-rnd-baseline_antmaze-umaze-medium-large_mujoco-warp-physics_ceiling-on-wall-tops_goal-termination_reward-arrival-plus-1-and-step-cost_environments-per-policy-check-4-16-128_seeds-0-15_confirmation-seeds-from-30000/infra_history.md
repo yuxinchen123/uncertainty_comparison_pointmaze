@@ -914,3 +914,9 @@ Times are Pacific, read from the clock or from scheduler records.
   card, code copy number 1. The method units' specifications match the validation units' except for the seeds and
   names (same bonus options). UVA jobs 6948214 to 6948216 started all four at 11:47 PT; at 11:49 PT all 21 ant units
   run on UVA, none waiting, none on Gilbreth.
+- 2026-11-17 12:03 PT: the method's last U-maze validation unit with reward 1 on arrival completed (step 0.03 with
+  the hold, learning rate 1e-4, weight 1/16; no respawn). Built the method's U-maze fresh seeds with reward 1 on
+  arrival: the choice for W (first-arrival hold alone, learning rate 3e-5, weight 1/16) and the choice for M (step
+  0.1 with the hold, learning rate 1e-2, weight 16), two units of 128 policies each, seeds 30000 to 30255, at least
+  14,000 MiB per card, code copy number 1, claim order set to 71 to 74 (ahead of the Medium and Large fresh seeds).
+  UVA jobs 6948249 to 6948251 started all four at 12:08 PT; at 12:10 PT all 24 ant units run on UVA.

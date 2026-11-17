@@ -1680,6 +1680,26 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   AntMaze folder's `infrastructure/descriptions/`), started on UVA cards at 11:47 PT. On Large, policies rarely
   reach the goal in 134 million steps for either side; the method's Large units were at 238 and 239 windows.
 
+- 2026-11-17 12:03 PT: **the method's ant U-maze validation block with reward 1 on arrival is complete, and its fresh
+  seeds run** (seeds 10000 to 10127, 128 policies per configuration, all 256 windows; all 128 policies arrived in
+  every configuration):
+
+  | the method's configuration | W | L | M (million steps) | fault-guard respawns |
+  |---|---|---|---|---|
+  | first-arrival hold alone, learning rate 3e-5, weight 1/16 | 0.1118 ± 0.0012 | 0.1284 | 4.31 | 2 |
+  | step 0.03 with the hold, learning rate 1e-4, weight 1/64 | 0.1095 ± 0.0021 | 0.1243 | 2.53 | 0 |
+  | step 0.03 with the hold, learning rate 1e-4, weight 1/16 | 0.1081 ± 0.0013 | 0.1210 | 1.79 | 0 |
+  | step 0.1 with the hold, learning rate 1e-2, weight 16 | 0.0660 ± 0.0006 | 0.0708 | 0.24 | 0 |
+
+  The method's choice for W is the first-arrival hold alone at learning rate 3e-5, weight 1/16; its choice for M is
+  step 0.1 with the hold at learning rate 1e-2, weight 16. Fresh seeds 30000 to 30255, two units of 128 for each
+  choice (description
+  `infrastructure/descriptions/antmaze_umaze_rk4-physics_fresh-seeds_method_reward-arrival-plus-one_seeds-30000-to-30255_budget-134217728.json`
+  in the AntMaze folder; claim order 71 to 74), started on UVA cards at 12:08 PT. Their specifications equal the
+  validation units' except for the seeds and names, and their run seeds equal RND's fresh units' unit for unit
+  (526750011 for seeds 30000 to 30127, 1035086001 for 30128 to 30255), so the final comparison is paired by seed.
+  RND's fresh seeds with reward 1 on arrival were at 93 to 98 windows of 256.
+
 ## Next
 
 Rewritten 2026-11-13 22:31 PT.

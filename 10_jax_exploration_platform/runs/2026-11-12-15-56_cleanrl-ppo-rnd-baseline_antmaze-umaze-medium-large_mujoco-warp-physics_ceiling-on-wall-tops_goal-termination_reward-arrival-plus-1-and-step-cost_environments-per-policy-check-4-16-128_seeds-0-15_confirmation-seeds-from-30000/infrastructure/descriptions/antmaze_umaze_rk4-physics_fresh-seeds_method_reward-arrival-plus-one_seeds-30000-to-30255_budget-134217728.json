@@ -1,0 +1,78 @@
+{
+ "study": "cleanrl-ppo-rnd-baseline-antmaze",
+ "bonus": "rnd_next_state",
+ "steps_per_policy": 134217728,
+ "windows_per_unit": 256,
+ "seeds": {
+  "first": 30000,
+  "count": 256
+ },
+ "configuration_files": {
+  "antmaze": "configs/experiments/antmaze_umaze_warp-physics_rk4_time-step-0.01_frame-skip-5_fault-guard-30-metres-and-100-radians-per-second_cleanrl-ppo-rnd_goal-termination_reward-arrival-plus-one_example_steps-204800.toml"
+ },
+ "environments": [
+  "antmaze-umaze"
+ ],
+ "minimum_card_memory_mb": 14000,
+ "phase": "fresh-seeds-rk4",
+ "sweeps": [
+  {
+   "method": "first-arrival-hold",
+   "environments_per_policy": {
+    "antmaze": 16
+   },
+   "policies_per_unit": 128,
+   "workload": {
+    "antmaze": "antmaze-umaze_environments-per-policy-16_update-epoch-minibatch_bonus-rnd-next-state_physics-warp_integrator-rk4_time-step-0.01_frame-skip-5"
+   },
+   "cells": {
+    "kind": "list",
+    "cells": [
+     {
+      "learning_rate": 3e-05,
+      "entropy_coefficient": 0.001,
+      "intrinsic_weight": 0.0625,
+      "clip_coefficient": 0.1
+     }
+    ]
+   },
+   "reward_settings": [
+    "arrival_plus_one"
+   ],
+   "why_chosen": "choice for W",
+   "extra_options": [
+    "--bonus-options",
+    "reward_divisor=held_after_first_arrival"
+   ]
+  },
+  {
+   "method": "fast-step-0-point-1-with-hold",
+   "environments_per_policy": {
+    "antmaze": 16
+   },
+   "policies_per_unit": 128,
+   "workload": {
+    "antmaze": "antmaze-umaze_environments-per-policy-16_update-epoch-minibatch_bonus-rnd-next-state_physics-warp_integrator-rk4_time-step-0.01_frame-skip-5"
+   },
+   "cells": {
+    "kind": "list",
+    "cells": [
+     {
+      "learning_rate": 0.01,
+      "entropy_coefficient": 0.001,
+      "intrinsic_weight": 16.0,
+      "clip_coefficient": 0.1
+     }
+    ]
+   },
+   "reward_settings": [
+    "arrival_plus_one"
+   ],
+   "why_chosen": "choice for M",
+   "extra_options": [
+    "--bonus-options",
+    "fast_last_layer_step=0.1,reward_divisor=held_after_first_arrival"
+   ]
+  }
+ ]
+}
