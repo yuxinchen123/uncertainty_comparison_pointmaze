@@ -950,3 +950,11 @@ Times are Pacific, read from the clock or from scheduler records.
   torso angular speed 100.3 rad/s (torso speed 14.3 m/s). All twenty are the angular bound; fourteen at learning
   rate 3e-5, six at 1e-4. At 15:45 PT 22 ant units run on UVA; the method's Large fresh unit for seeds 30128 to
   30255 has waited on Gilbreth since 14:48 PT (no UVA card at 17,000 MiB free at the passes since).
+- 2026-11-17 16:07 PT: the method's Large fresh unit for seeds 30128 to 30255 had waited on Gilbreth since 14:48 PT
+  because ant_tick.sh's take-back for Medium and Large units matched only validation units (names starting
+  validation-rk4), so fresh-seed units were never taken back; and its count of free cards subtracted every unit
+  waiting on UVA, including U-maze units that the RTX 5080 cards take first. Change to the session's ant_tick.sh
+  (16:10 PT; copy of the earlier version kept beside it): the take-back matches fresh-seed and validation units, and
+  subtracts only the Medium and Large units waiting on UVA and the U-maze units the free RTX 5080 cards cannot take.
+  take_back_and_start.sh took the unit back at 16:07 PT and job 6950773 (lynx01) runs it. At 16:07 PT all 23 ant
+  units run on UVA, none waiting, none on Gilbreth.
