@@ -958,3 +958,8 @@ Times are Pacific, read from the clock or from scheduler records.
   subtracts only the Medium and Large units waiting on UVA and the U-maze units the free RTX 5080 cards cannot take.
   take_back_and_start.sh took the unit back at 16:07 PT and job 6950773 (lynx01) runs it. At 16:07 PT all 23 ant
   units run on UVA, none waiting, none on Gilbreth.
+- 2026-11-17 17:25 PT: the second of the method's U-maze step-cost validation units completed (the first-arrival
+  hold alone, learning rate 1e-4, weight 1/1024; its 2 respawns are among the 20). The 17:25 PT pass started the 12
+  units whose 2-hour workers had stopped (jobs 6953029 to 6953033, all running). The 10-minute restart loop was
+  restarted between passes at 17:28 PT; the new run ends by about 05:28 PT on 18 November. At 17:28 PT all 22 ant
+  units run on UVA, none waiting, none on Gilbreth.

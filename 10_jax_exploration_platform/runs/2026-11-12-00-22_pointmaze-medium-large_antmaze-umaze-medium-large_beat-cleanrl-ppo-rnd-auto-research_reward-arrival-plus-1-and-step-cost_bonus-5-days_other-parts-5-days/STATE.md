@@ -1722,6 +1722,12 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   in the AntMaze folder), built at 14:45 PT with the same run seeds as RND's Large fresh units. Every Medium and Large
   fresh-seed set is now built (RND and the method on both maps).
 
+- 2026-11-17 17:25 PT: **the second of the method's four ant U-maze step-cost validation units is complete**: the
+  first-arrival hold alone, learning rate 1e-4, weight 1/1024 (all 256 windows, all 128 policies arrived, 2
+  fault-guard respawns): W −0.97039 ± 0.00075, L −0.96508, M 2.71 million steps. Paired by seed against RND's choice
+  for W, the method minus RND is +0.00040 ± 0.00085 on W (ahead on 57 of 128 seeds) and −0.00043 ± 0.00124 on L:
+  level. The two units with step 0.1 and the hold were at 228 and 229 windows at 17:26 PT.
+
 ## Next
 
 Rewritten 2026-11-13 22:31 PT.
