@@ -35,6 +35,31 @@ is a scientific result; it decides whether and how the sweep runs.
 Speed on an RTX A4500 before the speed work (one copy, rough, other jobs on the node): default 1.730 s per update;
 game events +1.5%; fast layer group 128 +5.1%, group 16 with logging +10.4%, group 4 +22.5%.
 
+## Remote servers' smoke jobs
+
+**Decision of 2026-11-18 (the session, by the plan; the user was away and had said not to ask for permission).**
+The smoke check exists to catch a broken environment, and the plan accepts that bits differ between card types
+(Risks: "recorded and reported; bit-for-bit claims only for runs on one card type"). Define $a$ as a number of the
+archived baseline's first update and $n$ as the same number in the smoke job's first default update. A decimal
+number passes when $|n - a| \le 10^{-3} |a| + 10^{-6}$; whole numbers and true/false values must be equal. Before,
+every number had to be within a relative difference of $10^{-3}$.
+
+- Why: on the Gilbreth A30 (job 12432866), the ACES H100 PCIe (job 2379474) and the DeltaAI GH200 (job 3626431)
+  the only field above the old limit was the policy loss of the first update, with values near 1.5e-5 and absolute
+  differences of 3.3e-8 to 5.1e-8 (relative 2.1e-3 to 3.3e-3), the size of single-precision rounding. Every other
+  field was within 7.5e-4 and every whole-number field was equal.
+- Code: `scripts/pixel_sweep_campaign/smoke_check.py` (`outside_first_line_rule`, `compare_with_archive`), commit
+  da22476a. A smoke job runs the comparison of its run folder's frozen code copy, so `remote_fleet.py smoke-result`
+  decides the check again on UVA from the job's own 20 default metric lines and the reference on the server.
+- Gilbreth A30, job 12432866, read again 2026-11-18 13:29 PT: **passed** under the rule (largest relative
+  difference 3.33e-3, 0 numbers outside the rule; every other check passed); 1.94 s per update with one copy,
+  peak card memory 12,777 MB.
+- Gilbreth A100 80 GB (job 12432865) and A10 (job 12432867) were still waiting for idle cards at 14:00 PT
+  (estimated starts 2026-11-18 21:17 PT and 2026-11-19 01:32 PT); they stay in this folder's Gilbreth ledger.
+  Read them with `remote_fleet.py --run-dir <this folder> smoke-result --server gilbreth` once they have ended.
+- ACES and DeltaAI were not read again: ACES's connection is on portal05 (no login to another portal node), and
+  neither server is used in stage 1.
+
 ## Layout
 
 `implementation_design.md` (the design), `speed_ideas.md` (the speed work), `slurm/jobs/<name>/` (job scripts and

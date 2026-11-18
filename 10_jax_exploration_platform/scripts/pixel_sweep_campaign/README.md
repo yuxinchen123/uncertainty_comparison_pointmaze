@@ -317,7 +317,9 @@ submission (job name), the status script's progress section, the return of an un
 (a whole run folder), and the order numbers of a later build.
 
 **Exercised and not exercised.** The tests cover the builder, the claim, the worker, the plan, one
-monitoring pass, the report, and the remote fleet's local parts. `submit.py --dry-run` has read the
-live UVA scheduler. No job of this folder has been submitted yet, no remote server has been
-contacted by `remote_fleet.py`, and `smoke_check.py` and `smoke_trainer_checks.py` have not run on
-a card.
+monitoring pass, the report, and the remote fleet's local parts. Run for real on 2026-11-18: the
+stage-1 grid on UVA (`submit.py`, `worker.py`, `monitor.py`); smoke jobs on Gautschi, Gilbreth, ACES
+and DeltaAI (`smoke`, `smoke-result`); the first hand-over to Gautschi (`hand-over-tick`, 8 packs, 4
+worker jobs). A smoke job's two trainings have 420 s each: on a Gilbreth D node (16 cores) the trainer
+took about 7 minutes to its first update, so only 9 of the 20 default updates fit (job 12434104); on a
+B node (24 cores) all 20 of both trainings fit (job 12432866).

@@ -72,11 +72,75 @@ decision and their speed is read from the units' own progress records (report se
 - Placement: UVA only, both accounts, only nodes with a free card now (`--only-cards-free-now`), 4 cards that are
   free now left out of every plan for the AntMaze study (`--leave-cards 4`), each card asking for 4 processors and
   10 GiB (about 1.6 times the largest measured MaxRSS), worker jobs of 24 hours (`--worker-hours 24`), and every job still waiting 120 s after its submission
-  cancelled (`--cancel-waiting-after 120`). No remote server takes units yet (their environments were being built
-  by another worker).
+  cancelled (`--cancel-waiting-after 120`). Remote servers since 2026-11-18 13:43 PT: section "Remote servers".
 - The persistent monitor job (`monitor.py --loop`, one processor on `nolim`) passes every 20 minutes, returns units
   of ended jobs to pending, tops up workers with the same options, rebuilds `early_signals.md`, and writes
   `SWEEP_COMPLETE` when every unit is done or failed.
+
+## Remote servers
+
+Decisions of 2026-11-18 by the session, under the plan (the user was away and had said not to ask for permission).
+
+**The smoke check's first-update comparison.** The smoke check exists to catch a broken environment, and the plan
+accepts that bits differ between card types (Risks: "recorded and reported; bit-for-bit claims only for runs on one
+card type"). Define $a$ as a number of the archived baseline's first update and $n$ as the same number in a smoke
+job's first default update. A decimal number passes when $|n - a| \le 10^{-3} |a| + 10^{-6}$; whole numbers and
+true/false values must be equal. Before, every number had to be within a relative difference of $10^{-3}$; the
+policy loss of the first update (values near 1.5e-5) differed by 3.3e-8 to 5.1e-8 on the A30, H100 PCIe and GH200,
+which is single-precision rounding. Code: `scripts/pixel_sweep_campaign/smoke_check.py`, commit da22476a. The
+trainer copy the workers run (copy 2, commit 08b7c4c8) was not frozen again: its smoke job still runs the old
+comparison, and `remote_fleet.py smoke-result` (the UVA working tree) decides that check again from the job's own
+20 default metric lines on the server.
+
+**Where units go.**
+
+| server | pool | units | limits | why |
+|---|---|---|---|---|
+| Purdue Gautschi | `ai-h100`, `-q normal`,<br>1 H100 and 14 cores | four-copy packs only | at most 4 jobs of 10 hours,<br>8 packs held at once | account `dsimchil` holds 4 H100 at once, shared with long635;<br>no job of either at 13:23 PT, so all 4 used |
+| Purdue Gilbreth | `standby-a30`, 4 hours | one-copy units, once<br>its smoke job passes | at most 20 jobs,<br>20 units held at once | 24 standby cards for the account,<br>4 left for the AntMaze study |
+| Purdue Gilbreth | `standby-a100-80gb`,<br>`standby-a10` | none yet | held back in the table | card type not checked yet |
+| TAMU ACES | `gpu-h100` | none | not ready | credits kept for stages 2 and 3 (plan, section D) |
+| NCSA DeltaAI | `ghx4-h100` | none | not ready | last in the order of servers (plan, section D) |
+
+- **Gautschi's jobs last 10 hours**, not the table's 24: a pack at the measured 2.30 s per update needs 7.8 hours,
+  so a card goes back to the shared account within 10 hours when long635 waits for one. The hand-over loop lowers
+  Gautschi's limit by the cards long635's running and waiting `ai` jobs ask for, before every tick (at most
+  $4 - c$ jobs and $2(4 - c)$ packs held, where $c$ is those cards). Our waiting Gautschi jobs are not cancelled
+  when long635 submits (the ledger cancel tool cancels a server's waiting jobs only as a whole, after `RUN/STOP`).
+- **Packs** are made from never-started singles in claim order (`build_units.py --pack-pending`): the first 8, at
+  13:43 PT, were seed 13 of the fast last layer at sharing group 16 (weights 0.5, 1, 2, 4, 8) and sharing group 4
+  (weights 0.25, 0.5, 1). The loop makes new packs so that the packs pending on UVA and held by Gautschi reach its
+  limit. A pack runs the "four copies" execution profile (the archived H100 run's settings), so these runs differ
+  in their bits from one-copy runs of the same configuration; the report marks the card of every run.
+- **Gilbreth is not ready yet** (2026-11-18 14:00 PT). Its A30 smoke job of this folder, 12434104 on gilbreth-d004
+  (a D node, 16 cores), passed every check of the environment and of the numbers (9 default updates written, 0
+  numbers of the first outside the rule), but the trainer needed about 7 minutes to its first update, so only 9 of
+  20 default updates and 1 fast-layer update fit in the smoke job's 420 s per training; it did not pass. The gates
+  folder's A30 job 12432866 on a B node wrote all 20 updates of both trainings. A second smoke job, 12434389, pinned
+  to the B nodes (`--constraint=B`, for this one job only; workers may use every A30 node) waited for an idle card
+  (estimated start 18:14 PT). The hand-over loop reads its verdict once it has ended; Gilbreth becomes ready only if
+  it passed. A worker job on a D node loses about 7 minutes of its 4 hours to the start.
+- **Gilbreth's A100 80 GB and A10** are held back: the gates-folder smoke jobs 12432865 and 12432867 were still
+  waiting for idle cards (estimated starts 2026-11-18 21:17 PT and 2026-11-19 01:32 PT). Adding one needs its
+  gates-folder verdict, the speed bar, and a smoke job of this folder; the A100 80 GB would take packs (four copies).
+- **Speed bar for a card type**: its seconds per iteration (one update of every copy in the process) at most the
+  RTX A4000's 2.31 s of this sweep, so no run on it takes longer than on an RTX A4000. The Gautschi H100 (2.30 s,
+  four copies) and the A30 (1.94 s, one copy) pass.
+
+| card type (server) | setting (smoke job) | copies | seconds per<br>iteration | total steps<br>per second<br>(millions) | steps per<br>second per<br>copy<br>(thousands) | hours per<br>million steps<br>per copy | hours<br>per unit |
+|---|---|---|---|---|---|---|---|
+| H100 80GB HBM3 (Gautschi) | default (18909289) | 4 | 2.30 | 0.0285 | 7.12 | 0.0390 | 7.8 |
+| H100 80GB HBM3 (Gautschi) | fast last layer, group 16,<br>both records (18909289) | 4 | 2.30 | 0.0285 | 7.12 | 0.0390 | 7.8 |
+| A30 (Gilbreth) | default (gates folder, 12432866) | 1 | 1.94 | 0.0084 | 8.45 | 0.0329 | 6.6 |
+| A30 (Gilbreth) | fast last layer, group 16,<br>both records (12432866) | 1 | 1.95 | 0.0084 | 8.40 | 0.0331 | 6.6 |
+
+**The hand-over loop** (`infrastructure/hand_over_loop/`, a copy of
+`/tmp/claude-2618919/-p-rlprojects-RND/9ca0cb45-e2aa-43c6-9353-3a3d17cddb5f/scratchpad/montezuma_hand_over_loop.sh`
+and its `montezuma_hand_over_steps.py`): every 5 minutes it checks the shared connections to Gautschi and Gilbreth
+(a closed one is opened once with the key, counted for all sessions; three failed logins in a row end the loop),
+sets Gautschi's share, reads Gilbreth's smoke verdict once job 12434389 has ended, makes packs, runs
+`remote_fleet.py hand-over-tick`, and checks that every unit stands in one queue folder only. It ends when no unit is pending on UVA or held by a server, at `RUN/STOP` or `RUN/SWEEP_COMPLETE`,
+or after 4 days, and logs every pass with a Pacific time.
 
 ## Git state
 
