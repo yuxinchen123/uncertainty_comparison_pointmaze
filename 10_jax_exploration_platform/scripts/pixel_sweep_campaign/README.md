@@ -208,6 +208,14 @@ RUN=/p/rlprojects/RND/10_jax_exploration_platform/runs/<run folder>
    $PY $M/remote_fleet.py --run-dir $RUN take-back --server gautschi --units 9999 --hold
    ```
 
+   The first default update must agree with the archive: whole numbers and true/false values equal,
+   every other number within $|x_{\text{new}} - x_{\text{archive}}| \le 10^{-3} |x_{\text{archive}}| + 10^{-6}$
+   (decision of 2026-11-18: bits differ between card types, and a policy loss near 1.5e-5 differed by
+   3.3e-8 to 5.1e-8 on the A30, H100 PCIe and GH200). A smoke job runs the comparison of the run's
+   frozen code copy; `smoke-result` decides it again from the job's own 20 default metric lines with
+   this folder's `smoke_check.py`, so a run folder frozen before the rule changed is judged by the
+   current rule.
+
    Before the first smoke job a server needs its environment (JAX 0.11.0, JAXtari from the pinned
    source) at the table's `python` path; `prepare` sends the code copy, the asset pack and the
    smoke files. A server's limits are in the table: `pools.<pool>.max_jobs`, `time_limit`,
@@ -292,7 +300,7 @@ cd /p/rlprojects/RND/10_jax_exploration_platform
 PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests/pixel_sweep_campaign -p "test_pixel_*.py"
 ```
 
-89 tests; they import no numerical library and start no trainer (a stand-in script plays
+91 tests; they import no numerical library and start no trainer (a stand-in script plays
 `train_final.py`), and they also pass under pytest with the project's Python 3.12.
 
 ## Taken from the maze and grid campaigns

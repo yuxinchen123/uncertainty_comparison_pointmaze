@@ -18,7 +18,9 @@ RUN/infrastructure/remote_fleet_servers.json are those of the grid campaign's re
      per pool (smoke_check.py: imports and card, the asset pack's hashes, the start room's geometry,
      20 default updates compared with the archived baseline, 20 updates with the fast last layer
      and the game events, speed and peak card memory), and `smoke-result` reads its verdict and
-     marks the server ready.
+     marks the server ready. `smoke-result` decides the comparison with the archive again from the
+     job's own 20 default metric lines, under this folder's rule (smoke_check.FIRST_LINE_RULE), since a
+     smoke job runs the comparison of the run's frozen code copy, which may hold an older rule.
   2. `prepare` sends the job scripts, the run's frozen code copy, the corrected asset pack, its
      hashes, and the first archived metric lines the smoke job compares with.
   3. The worker job on a server starts this folder's worker.py with --remote-records. A pool names
@@ -52,11 +54,13 @@ import shutil
 import time
 from zoneinfo import ZoneInfo
 
-from campaign_imports import HERE, common, grid, maze, unit_queue
+from campaign_imports import HERE, common, grid, maze, own, unit_queue
 import pixel_queue
 
 fleet = grid("remote_fleet")
 maze_fleet = maze("remote_fleet")
+smoke_check = own("smoke_check")
+ARCHIVE_CHECK = "default updates against the archived baseline"
 SERVER_TABLE = HERE / "server_table.json"
 ASSETS = common.PROJECT / "reference_repos/jaxtari_pixel_study_assets_montezuma_room_geometry_from_png"
 ARCHIVE_RUNS = Path("/p/rlprojects/RND_worktrees/merge-atari-cleanrl/10_jax_exploration_platform/runs")
@@ -649,32 +653,71 @@ def smoke_verdict(entry, results):
     return True, None
 
 
+def read_first_update_again(result, reference, lines):
+    """Decide a smoke result's comparison with the archive again under this folder's rule, from the job's own lines."""
+    # A smoke job runs the comparison of the run's frozen code copy. The rule of this folder's smoke_check.py
+    # decides instead (decision of 2026-11-18: |new - archive| <= 1e-3 * |archive| + 1e-6, whole numbers equal),
+    # read from the 20 default metric lines the job left on the server and the reference it compared them with.
+    # before: checks [..., {"name": ARCHIVE_CHECK, "passed": False, "detail": "... 3.33e-03 (limit 1e-03) ..."}],
+    #         passed False, the only check that did not pass
+    # after:  that check replaced by the comparison under the rule ("passed": True, "detail": "... 0 number(s)
+    #         outside the rule ..."), the job's own check kept as "job_archive_check", passed True
+    # a job that left no default lines (it ended before them) keeps its own verdict
+    if not reference or not lines:
+        return result
+    checks = [dict(smoke_check.compare_with_archive(reference, lines), read_again_on="UVA")
+              if check["name"] == ARCHIVE_CHECK else check for check in result.get("checks", [])]
+    job_check = next((check for check in result.get("checks", []) if check["name"] == ARCHIVE_CHECK), None)
+    return dict(result, checks=checks, passed=bool(checks) and all(check["passed"] for check in checks),
+                job_archive_check=job_check, first_update_rule=smoke_check.FIRST_LINE_RULE)
+
+
 def smoke_result(run_dir, table, name):
     """Read a server's smoke results, print them, and mark the server ready when every pool passed."""
     entry = table[name]
     script = [f"cd {shlex.quote(entry['remote_run'])} || exit 3"]
-    for pool in entry["pools"]:
-        script += [f'echo; echo "{fleet.MARK}result {pool}"', f"cat smoke/result_{pool}.json 2> /dev/null"]
+    for pool, settings in entry["pools"].items():
+        # the verdict, the job's own default metric lines and the reference they were compared with
+        script += [f'echo; echo "{fleet.MARK}result {pool}"', f"cat smoke/result_{pool}.json 2> /dev/null",
+                   f"job=$(grep -o '\"job_id\": \"[0-9]*\"' smoke/result_{pool}.json 2> /dev/null | head -n 1 "
+                   "| cut -d '\"' -f 4)",
+                   f'echo; echo "{fleet.MARK}default {pool}"',
+                   f'[ -n "$job" ] && head -n {SMOKE_UPDATES} "smoke/{pool}_$job/default/metrics.jsonl" 2> /dev/null',
+                   f'echo; echo "{fleet.MARK}reference {pool}"',
+                   f"cat smoke/reference_{profile_words(settings['execution_profile'])}.jsonl 2> /dev/null"]
     answer = fleet.remote(run_dir, table, name, "\n".join(script + [f'echo; echo "{fleet.MARK}end"', "exit 0"]) + "\n")
-    # before: "@@fleet:result ai-h100\n{...json...}\n@@fleet:end" ; after: {"ai-h100": {...}}
-    results, pool, text = {}, None, []
+    # before: "@@fleet:result ai-h100\n{...json...}\n@@fleet:default ai-h100\n{line}\n...\n@@fleet:end"
+    # after:  sections {("result", "ai-h100"): "{...json...}", ("default", "ai-h100"): "{line}\n...", ...}
+    sections, key, text = {}, None, []
     for line in answer.splitlines() + [f"{fleet.MARK}end"]:
         if line.startswith(fleet.MARK):
-            if pool and "".join(text).strip():
-                results[pool] = json.loads("\n".join(text))
+            if key and "".join(text).strip():
+                sections[key] = "\n".join(text)
             words = line[len(fleet.MARK):].split()
-            pool, text = (words[1] if words[0] == "result" else None), []
+            key, text = (tuple(words) if len(words) == 2 else None), []
         else:
             text.append(line)
+    results = {}
+    for (kind, pool), text in sections.items():
+        if kind == "result":
+            lines = {part: [json.loads(line) for line in sections.get((part, pool), "").splitlines() if line.strip()]
+                     for part in ("reference", "default")}
+            results[pool] = read_first_update_again(json.loads(text), lines["reference"], lines["default"])
     for pool, result in results.items():
         print(f"{name}, pool {pool}: {'PASSED' if result.get('passed') else 'NOT PASSED'} (job {result.get('job_id')}, "
               f"{result.get('device')}, written {common.pacific(result['written_at'])})")
         for check in result.get("checks", []):
-            print(f"    {'ok ' if check['passed'] else 'NOT'} {check['name']}: {check['detail']}")
+            print(f"    {'ok ' if check['passed'] else 'NOT'} {check['name']}: {check['detail']}"
+                  + (" (read again on UVA)" if check.get("read_again_on") else ""))
+        if result.get("job_archive_check"):
+            job_check = result["job_archive_check"]
+            print(f"    the job's own comparison, by its frozen code: {'passed' if job_check['passed'] else 'NOT passed'}"
+                  f", {job_check['detail']}")
         for line in result.get("speed_lines", []):
             print("    " + line)
     ready, reason = smoke_verdict(entry, results)
-    entry["smoke"] = {pool: {key: result.get(key) for key in ("passed", "job_id", "device", "written_at", "speed")}
+    entry["smoke"] = {pool: {key: result.get(key) for key in ("passed", "job_id", "device", "written_at", "speed",
+                                                              "first_update_rule")}
                       for pool, result in results.items()}
     entry["ready"] = ready
     if ready:

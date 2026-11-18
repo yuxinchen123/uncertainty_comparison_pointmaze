@@ -9,9 +9,11 @@ It runs inside one Slurm job of at most 20 minutes, on the card the job holds, a
   3. imports, the card under jax, and the start room's geometry (smoke_trainer_checks.py, its own process);
   4. 20 default updates (train_final.py with the profile's settings and the archived run's seeds, no
      fast layer, no event records), compared line by line with the archived baseline's first lines
-     (RUN/smoke/reference_<profile>.jsonl). The first update must agree (whole numbers equal, other
-     numbers within a relative difference of 0.001); later updates on another card type may differ in
-     their last bits, so for them the number of differing fields is reported and does not decide;
+     (RUN/smoke/reference_<profile>.jsonl). The first update must agree: whole numbers and true/false
+     values equal, and every other number within |new - archive| <= 0.001 * |archive| + 1e-6 (decision
+     of 2026-11-18: the bits differ between card types, and a value near zero, such as a policy loss of
+     1.5e-5, may differ by 5e-8 in single-precision rounding). Later updates on another card type may
+     differ in their last bits, so for them the number of differing fields is reported and does not decide;
   5. 20 updates with the fast last layer (step size 0.1, sharing group 16) and the game events: the
      run must complete with both record files folded to its last update;
   6. speed and peak card memory of both runs, with the five columns of every throughput table.
@@ -33,7 +35,9 @@ import time
 
 HERE = Path(__file__).resolve().parent
 STEPS_PER_UPDATE = 128 * 128
-FIRST_LINE_TOLERANCE = 1e-3
+FIRST_LINE_RELATIVE = 1e-3  # a number of the first update may differ by this share of the archived value
+FIRST_LINE_ABSOLUTE = 1e-6  # plus this much, so a value near zero may differ in its last bits
+FIRST_LINE_RULE = "|new - archive| <= 1e-3 * |archive| + 1e-6, whole numbers equal"
 TRAINER_SECONDS = 420       # each of the two short trainings saves and ends by itself after this long
 FAST_LAYER = {"fast_last_layer_step": 0.1, "fast_last_layer_sharing_group": 16, "record_game_events": True,
               "record_bonus_profile": True}
@@ -79,27 +83,49 @@ def relative_difference(archived, new):
         return 0.0 if archived == new else math.inf
     if isinstance(archived, float) and isinstance(new, float) and math.isnan(archived) and math.isnan(new):
         return 0.0
+    if not all(isinstance(value, (int, float)) for value in (archived, new)):
+        return 0.0 if archived == new else math.inf
     return abs(archived - new) / max(abs(archived), abs(new), 1e-30) if archived != new else 0.0
+
+
+def outside_first_line_rule(archived, new):
+    """Count the numbers of two parsed JSON values that differ by more than the first update allows."""
+    # before: [-1.5e-05, [25, true]] against [-1.505e-05, [25, true]] ; after: 0 (5e-8 <= 1e-3 * 1.5e-5 + 1e-6)
+    # before: [-1.5e-05] against [-2.5e-05] ; after: 1 (1e-5 > 1.015e-6)
+    # before: [25] against [26] ; after: 1 (whole numbers must be equal) ; a list of another length counts 1
+    if isinstance(archived, list) or isinstance(new, list):
+        if not (isinstance(archived, list) and isinstance(new, list) and len(archived) == len(new)):
+            return 1
+        return sum(outside_first_line_rule(left, right) for left, right in zip(archived, new))
+    # true/false, whole numbers and anything that is not a number must be equal
+    if (isinstance(archived, bool) or isinstance(new, bool) or isinstance(archived, int) and isinstance(new, int)
+            or not all(isinstance(value, (int, float)) for value in (archived, new))):
+        return int(archived != new)
+    if math.isnan(archived) and math.isnan(new):
+        return 0
+    return int(not abs(new - archived) <= FIRST_LINE_RELATIVE * abs(archived) + FIRST_LINE_ABSOLUTE)
 
 
 def compare_with_archive(reference, lines):
     """Compare a short run's metric lines with the archived baseline's first lines; returns a check record."""
     # every field of the archived line except the time of the write; fields only the new line has are left out
-    differing, worst_first = 0, 0.0
+    differing, worst_first, outside_first = 0, 0.0, 0
     for index, (archived, new) in enumerate(zip(reference, lines)):
         for field, value in archived.items():
             if field == "unix":
                 continue
             difference = relative_difference(value, new[field]) if field in new else math.inf
             differing += difference > 0
+            # only the first update decides; a field missing from it counts as one number outside the rule
             if index == 0:
                 worst_first = max(worst_first, difference)
+                outside_first += outside_first_line_rule(value, new[field]) if field in new else 1
     enough = len(lines) >= len(reference) > 0
-    passed = enough and worst_first <= FIRST_LINE_TOLERANCE
+    passed = enough and outside_first == 0
     return {"name": "default updates against the archived baseline", "passed": passed,
             "detail": (f"{len(lines)} of {len(reference)} updates written; first update: largest relative difference "
-                       f"{worst_first:.2e} (limit {FIRST_LINE_TOLERANCE:.0e}); all updates: {differing} differing "
-                       "field(s)" + (", every field equal" if not differing else ""))}
+                       f"{worst_first:.2e}, {outside_first} number(s) outside the rule {FIRST_LINE_RULE}; all "
+                       f"updates: {differing} differing field(s)" + (", every field equal" if not differing else ""))}
 
 
 def finite(value):

@@ -283,6 +283,44 @@ class Ticks(FleetCase):
             self.assertFalse(remote.smoke_result(self.run_dir, self.table, "aces"))
         self.assertIn("no smoke result yet", common.read_json(fleet.table_path(self.run_dir))["aces"]["not_ready_reason"])
 
+    def test_the_first_update_is_decided_again_from_the_jobs_own_lines(self):
+        """A job that failed only the archive check by its frozen code passes when its lines meet the rule."""
+        reference = [{"update": 1, "unix": 5.0, "policy_loss": [-1.5e-5], "episode_count": [25]},
+                     {"update": 2, "unix": 6.0, "policy_loss": [-1.4e-5], "episode_count": [25]}]
+        lines = [dict(line, unix=9.0, policy_loss=[line["policy_loss"][0] + 5e-8]) for line in reference]
+        written = {"passed": False, "job_id": "12432866", "device": "NVIDIA A30", "written_at": "2026-11-18T16:01:00-05:00",
+                   "speed": {"copies": 1}, "speed_lines": [],
+                   "checks": [{"name": "jax computes on the card", "passed": True, "detail": "backend gpu"},
+                              {"name": remote.ARCHIVE_CHECK, "passed": False, "detail": "3.33e-03 (limit 1e-03)"}]}
+        self.table["gilbreth"]["pools"] = {"standby-a30": self.table["gilbreth"]["pools"]["standby-a30"]}
+
+        def answer(default_lines):
+            """The answer of the server: verdict, the job's default lines, the reference."""
+            return (f"{fleet.MARK}result standby-a30\n{json.dumps(written, indent=2)}\n"
+                    f"{fleet.MARK}default standby-a30\n" + "".join(json.dumps(line) + "\n" for line in default_lines)
+                    + f"{fleet.MARK}reference standby-a30\n" + "".join(json.dumps(line) + "\n" for line in reference)
+                    + f"{fleet.MARK}end\n")
+
+        sent = []
+        with mock.patch.object(fleet, "remote", side_effect=lambda run, table, name, script: sent.append(script)
+                               or answer(lines)), contextlib.redirect_stdout(io.StringIO()) as output:
+            self.assertTrue(remote.smoke_result(self.run_dir, self.table, "gilbreth"))
+        self.assertIn('head -n 20 "smoke/standby-a30_$job/default/metrics.jsonl"', sent[0])
+        self.assertIn("cat smoke/reference_one-copy.jsonl", sent[0])
+        self.assertEqual(subprocess.run(["bash", "-n"], input=sent[0], text=True, capture_output=True).returncode, 0)
+        self.assertIn("0 number(s) outside the rule", output.getvalue())
+        self.assertIn("the job's own comparison, by its frozen code: NOT passed", output.getvalue())
+        table = common.read_json(fleet.table_path(self.run_dir))
+        self.assertEqual((table["gilbreth"]["ready"], table["gilbreth"]["smoke"]["standby-a30"]["first_update_rule"]),
+                         (True, smoke_check.FIRST_LINE_RULE))
+        # lines off by more than the rule keep the server not ready
+        far = [dict(lines[0], policy_loss=[-2.5e-5])] + lines[1:]
+        with mock.patch.object(fleet, "remote", return_value=answer(far)), contextlib.redirect_stdout(io.StringIO()):
+            self.assertFalse(remote.smoke_result(self.run_dir, self.table, "gilbreth"))
+        # a job that left no default lines keeps its own verdict
+        with mock.patch.object(fleet, "remote", return_value=answer([])), contextlib.redirect_stdout(io.StringIO()):
+            self.assertFalse(remote.smoke_result(self.run_dir, self.table, "gilbreth"))
+
 
 class ReturnedUnit(FleetCase):
     """The check of a finished unit a server returns."""
@@ -391,6 +429,24 @@ class SmokeRules(unittest.TestCase):
         count = [dict(same[0], episode_count=[26])] + same[1:]
         self.assertFalse(smoke_check.compare_with_archive(reference, count)["passed"])
         self.assertFalse(smoke_check.compare_with_archive(reference, same[:2])["passed"])
+
+    def test_a_value_near_zero_may_differ_in_its_last_bits(self):
+        """A policy loss of 1.5e-5 off by 5e-8 passes (relative 3.3e-3); off by 1e-5 it fails; whole numbers stay exact."""
+        reference = [{"update": 1, "unix": 5.0, "policy_loss": [-1.5e-5], "loss": [0.595], "episode_count": [25],
+                      "rooms_visited": [[True, False]]}]
+        rounding = [dict(reference[0], unix=9.0, policy_loss=[-1.5e-5 + 5e-8], loss=[0.595 + 5e-4])]
+        check = smoke_check.compare_with_archive(reference, rounding)
+        self.assertEqual((check["passed"], "largest relative difference 3.33e-03, 0 number(s) outside" in check["detail"]),
+                         (True, True))
+        self.assertEqual(smoke_check.outside_first_line_rule([-1.5e-5], [-1.5e-5 - 5e-8]), 0)
+        self.assertFalse(smoke_check.compare_with_archive(reference, [dict(rounding[0], policy_loss=[-2.5e-5])])["passed"])
+        self.assertFalse(smoke_check.compare_with_archive(reference, [dict(rounding[0], loss=[0.5961])])["passed"])
+        self.assertFalse(smoke_check.compare_with_archive(reference, [dict(rounding[0], episode_count=[26])])["passed"])
+        self.assertFalse(smoke_check.compare_with_archive(reference, [dict(rounding[0], rooms_visited=[[True, True]])])
+                         ["passed"])
+        self.assertEqual((smoke_check.outside_first_line_rule([1.0, 2.0], [1.0]), smoke_check.outside_first_line_rule(
+            float("nan"), float("nan")), smoke_check.outside_first_line_rule(None, None),
+                          smoke_check.outside_first_line_rule(0.0, float("nan"))), (1, 0, 0, 1))
 
     def test_asset_hashes_name_a_changed_file(self):
         """Every file UVA lists must be there with the same bytes; a file only the server has does not decide."""
