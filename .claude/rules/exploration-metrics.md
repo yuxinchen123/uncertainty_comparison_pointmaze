@@ -60,7 +60,8 @@ metrics in an environment until its row below says "defined".
 | straight and snake grids | defined | `exploration-metrics-grid-straight-snake.md` |
 | PointMaze (Medium, Large) | defined 2026-11-11; primary metric is the whole-curve mean of the training return | `exploration-metrics-pointmaze-antmaze.md` |
 | AntMaze (U-maze, Medium, Large) | defined 2026-11-11; primary metric is the whole-curve mean of the training return | `exploration-metrics-pointmaze-antmaze.md` |
-| Atari (Montezuma's Revenge and others) | to be defined; coverage may be rooms reached, and the goal event is still to be decided | — |
+| pixel Montezuma's Revenge | defined 2026-11-17; primary metric is the mean training score per game over the run; the first exit from the start room and the rooms reached are reported beside it | `exploration-metrics-atari-montezuma.md` |
+| other Atari games | to be defined | — |
 
 Add a row (and a rule file) when a new environment's study starts. The primary metric stays
 $M(B)$ unless the row says otherwise; the goal event and the other three parts change.
