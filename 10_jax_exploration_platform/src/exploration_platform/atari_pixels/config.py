@@ -12,6 +12,7 @@ SCALAR_SETTING_NAMES = frozenset({
     "gamma_ext", "gamma_int", "gae_lambda", "predictor_update_proportion",
     "max_gradient_norm",
     "adam_epsilon",
+    "fast_last_layer_step",
 })
 
 
@@ -85,6 +86,19 @@ class PixelPPOConfig:
     # These preserve literal upstream behavior rather than the PointMaze corrections.
     upstream_reward_filter_axis: bool = True
     warmup_keeps_initial_observation: bool = True
+    # Fast last layer: after a rollout is collected, its bonus is computed in time order with
+    # temporary copies of the predictor's last dense layer, each changed after every step so that
+    # the errors of that step's states are multiplied by 1 - fast_last_layer_step. 0 turns it off
+    # and leaves the compiled program as it was. Per-copy values go through
+    # per_copy_scalar_settings and are all zero or all positive in one process.
+    fast_last_layer_step: float = 0.0
+    # How many of a policy's n_envs environments share one temporary layer: environments
+    # j*g .. (j+1)*g-1 form group j. A divisor of n_envs when the step is positive, else 0.
+    fast_last_layer_sharing_group: int = 0
+    # Add per-update game events to the metrics (needs an environment that reports them).
+    record_game_events: bool = False
+    # Add per-update diagnostics of the bonus to the metrics (see PixelPPORND.iteration).
+    record_bonus_profile: bool = False
 
     def __post_init__(self):
         """Reject shapes and settings that cannot form the specified PPO batches."""
@@ -114,7 +128,8 @@ class PixelPPOConfig:
             if any(abs(value) > float.fromhex("0x1.fffffep+127") or
                    (value != 0 and abs(value) < 2 ** -126) for value in values):
                 raise ValueError(f"per-copy {name} must fit the normal float32 range or equal zero")
-            if name in {"gamma_ext", "gamma_int", "gae_lambda", "predictor_update_proportion"}:
+            if name in {"gamma_ext", "gamma_int", "gae_lambda", "predictor_update_proportion",
+                        "fast_last_layer_step"}:
                 if any(value < 0 or value > 1 for value in values):
                     raise ValueError(f"per-copy {name} must be in [0, 1]")
             if name in {"learning_rate", "entropy_coefficient", "value_coefficient",
@@ -166,6 +181,27 @@ class PixelPPOConfig:
                 self.rollout_convolution_algorithm not in choices["convolution_algorithm"]:
             raise ValueError("rollout_convolution_algorithm must be empty or a known algorithm")
 
+        # The fast last layer is on for every copy of a process or for none, because it decides
+        # the structure of the compiled rollout.
+        object.__setattr__(self, "fast_last_layer_step", float(self.fast_last_layer_step))
+        if not 0.0 <= self.fast_last_layer_step <= 1.0:
+            raise ValueError("fast_last_layer_step must be in [0, 1]")
+        steps = self.fast_last_layer_steps
+        if any(step > 0 for step in steps) and not all(step > 0 for step in steps):
+            raise ValueError("per-copy fast_last_layer_step values must be all zero or all positive in one process")
+        group = self.fast_last_layer_sharing_group
+        if isinstance(group, bool) or not isinstance(group, int):
+            raise ValueError("fast_last_layer_sharing_group must be an integer")
+        if self.fast_last_layer_enabled:
+            if group < 1 or self.n_envs % group:
+                raise ValueError("fast_last_layer_sharing_group must be a positive divisor of n_envs "
+                                 "when fast_last_layer_step is positive")
+            if self.hoist_rollout_bonus or self.paired_rnd_rollout_trunks:
+                raise ValueError("a positive fast_last_layer_step cannot be combined with "
+                                 "hoist_rollout_bonus or paired_rnd_rollout_trunks")
+        elif group != 0:
+            raise ValueError("fast_last_layer_sharing_group must be 0 when fast_last_layer_step is 0")
+
     def per_copy_values(self, name):
         """Return explicitly supplied values, leaving unspecified settings as original scalars."""
         for setting, values in self.per_copy_scalar_settings:
@@ -176,6 +212,16 @@ class PixelPPOConfig:
         if name == "intrinsic_coefficient" and self.per_copy_intrinsic_coefficients:
             return self.per_copy_intrinsic_coefficients
         return None
+
+    @property
+    def fast_last_layer_steps(self):
+        """The fast last layer's step size of every copy: per-copy values, else the shared one."""
+        return self.per_copy_values("fast_last_layer_step") or (self.fast_last_layer_step,) * self.n_copies
+
+    @property
+    def fast_last_layer_enabled(self):
+        """Whether the rollout bonus comes from the fast last layer (a positive step in every copy)."""
+        return all(step > 0 for step in self.fast_last_layer_steps)
 
     @property
     def batch_size(self):

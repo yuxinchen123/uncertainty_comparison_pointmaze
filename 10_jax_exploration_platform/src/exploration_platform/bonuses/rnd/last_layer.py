@@ -96,7 +96,8 @@ def fast_layer_scores(rows, length, target, layer, step_size: float, bonus_of_er
     rows [T, C, N, F + 1] unit-length features, length [T, C, N, 1] their lengths before scaling,
     target [T, C, N, K], layer [C, F + 1, K] the predictor's output layer (weights, then bias),
     all float64. step_size is eta: after a step is scored, the error of its states is multiplied
-    by 1 - eta. Returns the bonus of every state, [T, C, N] float64.
+    by 1 - eta. It is one number, or an array with one value per policy that broadcasts against
+    [C, N, K] (shape [C, 1, 1]). Returns the bonus of every state, [T, C, N] float64.
 
     before: one state seen at steps 1, 2 and 3, eta = 1   ; after: bonus b, 0, 0
     before: the same with eta = 0.5, half squared error   ; after: bonus b, b / 4, b / 16

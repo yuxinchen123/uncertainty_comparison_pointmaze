@@ -1,0 +1,421 @@
+"""The remote fleet's local parts (no server is contacted), the check of a returned unit, and the smoke job's rules."""
+import contextlib
+import io
+import json
+from pathlib import Path
+import subprocess
+import tempfile
+import unittest
+from unittest import mock
+
+from pixel_test_support import (PIXEL, build_units, common, load_file, metric_lines, own, pixel_queue, queue_units,
+                                small_description, unit_queue, write_run_records)
+from campaign_imports import grid
+
+remote = own("remote_fleet")
+fleet = grid("remote_fleet")
+smoke_check = load_file("pixel_smoke_check", PIXEL / "smoke_check.py")
+PROFILES = pixel_queue.read_profiles()
+ADAPTED = ("WORKER_TEMPLATE", "REMOTE_FOLDERS", "worker_script", "prepare", "verify_unit", "status_script",
+           "parse_status", "result_block", "bring_back", "JOB_PREFIX", "RECOVERY_LIMIT")
+FOUR_STEP_SIZES = [{"method": "fast-last-layer", "pack_over": "step_size", "grid": {
+    "sharing_group": [16], "intrinsic_weight": [1], "step_size": [0.01, 0.03, 0.1, 0.3]}}]
+
+
+class FleetCase(unittest.TestCase):
+    """A temporary run folder with a server table; the grid campaign's module is put back as it was afterwards."""
+
+    def setUp(self):
+        """Adapt the grid campaign's remote fleet for a temporary run folder and write its server table."""
+        held = {name: getattr(fleet, name) for name in ADAPTED}
+        self.addCleanup(lambda: [setattr(fleet, name, value) for name, value in held.items()])
+        folder = tempfile.TemporaryDirectory()
+        self.addCleanup(folder.cleanup)
+        self.run_dir = Path(folder.name) / "2026-11-18-02-00_pixel-montezuma_test-run"
+        (self.run_dir / "slurm").mkdir(parents=True)
+        remote.adapt(self.run_dir)
+        with contextlib.redirect_stdout(io.StringIO()):
+            remote.init_table(self.run_dir)
+        self.table = common.read_json(fleet.table_path(self.run_dir))
+
+    def pack(self, description=None):
+        """Queue the four step sizes of one group, weight and seed and pack them; returns the pack's name."""
+        queue_units(self.run_dir, build_units.study_units(description or small_description(
+            seeds={"first": 13, "count": 1}, methods=FOUR_STEP_SIZES)))
+        with contextlib.redirect_stdout(io.StringIO()):
+            return build_units.pack_pending(self.run_dir, 1)[0]
+
+
+class ServerTable(FleetCase):
+    """The table a run folder starts with."""
+
+    def test_every_server_starts_not_ready_with_its_request(self):
+        """Gautschi, Gilbreth, ACES and DeltaAI, each not ready, each with the options the plan names."""
+        self.assertEqual(list(self.table), ["gautschi", "gilbreth", "aces", "deltaai"])
+        self.assertTrue(all(entry["ready"] is False and entry["not_ready_reason"] for entry in self.table.values()))
+        gautschi = self.table["gautschi"]["pools"]["ai-h100"]
+        self.assertEqual(gautschi["sbatch_options"], ["-p", "ai", "-q", "normal", "-A", "dsimchil", "-N1", "-n14",
+                                                      "--gpus-per-node=1"])
+        self.assertEqual((gautschi["time_limit"], gautschi["max_jobs"], gautschi["execution_profile"]),
+                         ("1-00:00:00", 4, "four copies"))
+        for pool in self.table["gilbreth"]["pools"].values():
+            options = pool["sbatch_options"]
+            self.assertEqual((options[options.index("-q") + 1], options[options.index("-A") + 1], pool["time_limit"]),
+                             ("standby", "dsmichil", "04:00:00"))
+        aces = self.table["aces"]
+        for option in ("-p", "gpu", "--gres=gpu:h100:1", "--cpus-per-task=8", "--mem=39G"):
+            self.assertIn(option, aces["pools"]["gpu-h100"]["sbatch_options"])
+        self.assertEqual(aces["ssh"][:4] + aces["ssh"][-1:], ["ssh", "-o", "BatchMode=yes", "portal05", "aces"])
+        self.assertEqual(aces["check"][-3:], ["-O", "check", "aces"])
+        self.assertEqual((self.table["deltaai"]["ssh"][3], self.table["deltaai"]["ssh"][-1]), ("portal04", "deltaai"))
+        self.assertIn("ARM", self.table["deltaai"]["not_ready_reason"])
+        self.assertTrue(self.table["gautschi"]["remote_run"].endswith("/2026-11-18-02-00_pixel-montezuma_test-run"))
+        self.assertEqual(fleet.ledger_path(self.run_dir, "gautschi").name, "submitted_jobids_gautschi.txt")
+
+    def test_a_table_is_not_written_over_and_a_tick_leaves_servers_that_are_not_ready(self):
+        """init-table refuses a folder that has its table; hand-over-tick contacts no server that is not ready."""
+        with self.assertRaises(SystemExit):
+            remote.init_table(self.run_dir)
+        common.write_json(self.run_dir / "source.json", {"commit": "abc"})
+        self.pack()
+        output = io.StringIO()
+        with mock.patch.object(fleet, "call", side_effect=AssertionError("a server was contacted")), \
+                contextlib.redirect_stdout(output):
+            remote.hand_over_tick(self.run_dir, self.table, dry_run=False)
+        self.assertEqual(output.getvalue().count("not part of this tick"), 4)
+
+    def test_the_smoke_verdict_needs_every_pool(self):
+        """A server is ready only when each of its pools has a passed smoke result."""
+        gilbreth = self.table["gilbreth"]
+        passed = {"passed": True, "checks": []}
+        self.assertEqual(remote.smoke_verdict(gilbreth, {"standby-a100-80gb": passed}),
+                         (False, "pool standby-a30-a10 has no smoke result yet"))
+        failed = {"passed": False, "checks": [{"name": "the asset pack equals UVA's, file by file", "passed": False}]}
+        ready, reason = remote.smoke_verdict(gilbreth, {"standby-a100-80gb": passed, "standby-a30-a10": failed})
+        self.assertEqual((ready, "the asset pack" in reason), (False, True))
+        self.assertEqual(remote.smoke_verdict(gilbreth, {"standby-a100-80gb": passed, "standby-a30-a10": passed}),
+                         (True, None))
+
+
+class JobScripts(FleetCase):
+    """The worker job and the smoke job of a pool."""
+
+    def scripts(self, server, pool_name):
+        """Both job scripts of one pool, as prepare writes them."""
+        entry = dict(self.table[server], code="/scratch/code/source_abc/10_jax_exploration_platform")
+        pool = entry["pools"][pool_name]
+        return (remote.worker_script(server, entry, pool_name, pool),
+                remote.job_script(remote.SMOKE_TEMPLATE, server, entry, pool_name, pool))
+
+    def test_the_worker_job_starts_this_folders_worker_with_the_servers_assets(self):
+        """bash accepts both scripts; every placeholder is filled; the environment is the design's."""
+        worker_text, smoke_text = self.scripts("gautschi", "ai-h100")
+        for text in (worker_text, smoke_text):
+            self.assertEqual(subprocess.run(["bash", "-n"], input=text, text=True, capture_output=True).returncode, 0)
+            self.assertNotIn("@", text)
+            self.assertIn("XLA_FLAGS=--xla_gpu_exclude_nondeterministic_ops=true", text)
+            self.assertIn("XDG_DATA_HOME=/scratch/gautschi/liu4869/rnd_pixel/assets/"
+                          "jaxtari_pixel_study_assets_montezuma_room_geometry_from_png", text)
+            self.assertIn("unset LD_LIBRARY_PATH", text)
+        self.assertIn('exec "$PY" "$CODE/scripts/pixel_sweep_campaign/worker.py" --run-dir "$RUN" --remote-records '
+                      "--server gautschi", worker_text)
+        self.assertIn("--minimum-seconds 1800", worker_text)
+        self.assertIn("smoke_check.py", smoke_text)
+        self.assertIn("--pool ai-h100 --profile four-copies --updates 20", smoke_text)
+        self.assertNotIn("worker.py", smoke_text)
+
+    def test_two_run_folders_never_share_a_job_name_prefix(self):
+        """The prefix comes from the folder's name and says the job belongs to the pixel sweep."""
+        one, two = remote.job_prefix("/runs/folder-one"), remote.job_prefix("/elsewhere/folder-two")
+        self.assertEqual(one, remote.job_prefix("/other/place/folder-one"))
+        self.assertNotEqual(one, two)
+        self.assertRegex(one, r"^pixelfleet-[0-9a-f]{8}$")
+        self.assertEqual(fleet.JOB_PREFIX, remote.job_prefix(self.run_dir))
+
+    def test_the_status_answer_gives_each_units_updates(self):
+        """The status script reads progress.json on the server; the answer's progress lines are parsed."""
+        entry = dict(self.table["gautschi"], code="/scratch/code")
+        script = remote.status_script("gautschi", entry, ["unit-a", "unit-b"])
+        self.assertEqual(subprocess.run(["bash", "-n"], input=script, text=True, capture_output=True).returncode, 0)
+        self.assertIn('folder="data/$unit/run"', script)
+        answer = (f"{fleet.MARK}queue\nrunning unit-a\npending unit-b\n{fleet.MARK}squeue_exit 0\n"
+                  f"{fleet.MARK}progress\nunit-a update=4120 completed=no checkpoint=yes\n"
+                  f"unit-b update= completed=no checkpoint=no\n{fleet.MARK}estimates\n901 7200\n902 unknown\n{fleet.MARK}end\n")
+        status = remote.parse_status(answer)
+        self.assertEqual(status["progress"], {"unit-a": {"update": 4120, "completed": False, "checkpoint": True},
+                                              "unit-b": {"update": 0, "completed": False, "checkpoint": False}})
+        self.assertEqual(status["start_in_seconds"], {"901": 7200, "902": None})
+        self.assertEqual(status["queue"]["running"], ["unit-a"])
+
+
+class HandOver(FleetCase):
+    """Which units a pool gets."""
+
+    def test_a_four_copy_pool_gets_packs_only_in_claim_order_up_to_its_limit(self):
+        """Singles stay on UVA; a dry run names the pack and moves nothing."""
+        description = small_description(methods=[
+            {"method": "rnd", "pack_over": "intrinsic_weight", "grid": {"intrinsic_weight": [1, 2]}}] + FOUR_STEP_SIZES)
+        queue_units(self.run_dir, build_units.study_units(description))
+        with contextlib.redirect_stdout(io.StringIO()):
+            packs = build_units.pack_pending(self.run_dir, 2)
+            self.table["gautschi"]["hand_over"]["pools"]["ai-h100"]["units_at_once"] = 1
+            chosen = remote.hand_over(self.run_dir, self.table, "gautschi", "ai-h100", dry_run=True)
+            self.assertEqual(chosen, packs[:1])
+            self.table["gautschi"]["hand_over"]["pools"]["ai-h100"]["units_at_once"] = 8
+            self.assertEqual(remote.hand_over(self.run_dir, self.table, "gautschi", "ai-h100", dry_run=True), packs)
+            # Gilbreth's one-copy pool takes singles, its four-copy pool packs
+            self.table["gilbreth"]["hand_over"]["pools"]["standby-a30-a10"]["units_at_once"] = 3
+            singles = remote.hand_over(self.run_dir, self.table, "gilbreth", "standby-a30-a10", dry_run=True)
+        self.assertEqual(singles, ["grid_rnd_intrinsic-weight-1_seed-13", "grid_rnd_intrinsic-weight-2_seed-13",
+                                   "grid_rnd_intrinsic-weight-1_seed-14"])
+        self.assertEqual(unit_queue.counts(self.run_dir)["pending"], 6)
+        self.assertFalse((self.run_dir / "queue/remote_gautschi").exists())
+
+    def test_a_hand_over_sends_the_record_the_specification_and_a_begun_run_folder(self):
+        """The unit leaves pending for queue/remote_<server>; the copy holds its files laid out as on the server."""
+        name = self.pack()
+        folder = pixel_queue.run_folder(self.run_dir, name)
+        write_run_records(folder, metric_lines(61, copies=4), 244)
+        (folder / "checkpoint.pkl").write_bytes(b"state")
+        sent = {}
+
+        def fake_rsync(run_dir, table, server, arguments):
+            """Stand in for the copy to the server: note what the local tree holds."""
+            tree = Path(arguments[0])
+            sent.update({str(path.relative_to(tree)): path.stat().st_size for path in tree.rglob("*") if path.is_file()})
+
+        with mock.patch.object(fleet, "rsync", side_effect=fake_rsync), \
+                mock.patch.object(fleet, "remote", return_value=f"{fleet.MARK}moved place {name} no\n{fleet.MARK}end\n"), \
+                contextlib.redirect_stdout(io.StringIO()):
+            self.assertEqual(remote.hand_over(self.run_dir, self.table, "gautschi", "ai-h100", dry_run=False), [name])
+        self.assertTrue((self.run_dir / "queue/remote_gautschi" / f"{name}.json").exists())
+        self.assertEqual(unit_queue.counts(self.run_dir)["pending"], 0)
+        assignment = fleet.load_assignment(self.run_dir)[name]
+        self.assertEqual((assignment["server"], assignment["pool"], assignment["state"]), ("gautschi", "ai-h100", "staged"))
+        self.assertEqual({path for path in sent if not path.startswith("data/")},
+                         {f"specifications/{name}.json", f"queue/incoming/{name}.json"})
+        self.assertTrue({f"data/{name}/run/{file_name}" for file_name in
+                         ("checkpoint.pkl", "metrics.jsonl", "progress.json", "game_first_times.json")} <= set(sent))
+
+
+class Ticks(FleetCase):
+    """A whole tick and the smoke commands, with every call to a server replaced."""
+
+    def test_a_tick_hands_packs_to_a_ready_server_and_submits_jobs_for_them(self):
+        """Two packs pending and room for eight: both are handed over and two worker jobs are asked for."""
+        description = small_description(methods=FOUR_STEP_SIZES)
+        queue_units(self.run_dir, build_units.study_units(description))
+        with contextlib.redirect_stdout(io.StringIO()):
+            packs = build_units.pack_pending(self.run_dir, 2)
+        common.write_json(self.run_dir / "source.json", {"commit": "abc"})
+        self.table["gautschi"].update(ready=True, prepared_commit="abc", code="/scratch/code")
+        status = remote.parse_status(f"{fleet.MARK}queue\n{fleet.MARK}squeue_exit 0\n{fleet.MARK}end\n")
+        submitted, copied = [], []
+        with mock.patch.object(fleet, "tick_server", return_value=(status, [])), \
+                mock.patch.object(fleet, "rsync", side_effect=lambda run, table, name, arguments: copied.append(arguments)), \
+                mock.patch.object(fleet, "remote", return_value=f"{fleet.MARK}end\n"), \
+                mock.patch.object(fleet, "submit", side_effect=lambda run, table, args: submitted.append(args)), \
+                contextlib.redirect_stdout(io.StringIO()) as output:
+            remote.hand_over_tick(self.run_dir, self.table, dry_run=False)
+        self.assertEqual(sorted(path.stem for path in (self.run_dir / "queue/remote_gautschi").glob("*.json")), sorted(packs))
+        self.assertEqual([(args.server, args.pool, args.jobs) for args in submitted], [("gautschi", "ai-h100", 2)])
+        # the last copy of the tick brings the small record files of the units the server holds
+        self.assertIn("--include=*/run/game_windows.jsonl", copied[-1])
+        self.assertNotIn("--include=*/run/checkpoint.pkl", copied[-1])
+        self.assertTrue(copied[-1][-1].endswith("slurm/remote_live/gautschi/"))
+        self.assertIn("handed over at this tick", output.getvalue())
+        self.assertEqual(output.getvalue().count("not part of this tick"), 3)
+
+    def test_an_unfinished_unit_comes_back_with_its_run_folder(self):
+        """Checkpoint and metrics from the server replace UVA's run folder; the server's record is taken over."""
+        name = self.pack()
+        held = self.run_dir / "queue/remote_gautschi"
+        held.mkdir()
+        (self.run_dir / "queue/pending" / f"{name}.json").rename(held / f"{name}.json")
+        common.write_json(fleet.assignment_path(self.run_dir), {name: {"server": "gautschi", "state": "staged"}})
+        record = dict(common.read_json(held / f"{name}.json"), attempts=1, execution_profile="four copies",
+                      minimum_copy_number=3)
+
+        def fake_rsync(run_dir, table, server, arguments):
+            """Stand in for the copy from the server: the unit's record and its run folder arrive."""
+            arrived = Path(arguments[-1])
+            common.write_json(arrived / f"{name}.json", record)
+            (arrived / "run").mkdir()
+            for file_name in ("checkpoint.pkl", "metrics.jsonl", "progress.json"):
+                (arrived / "run" / file_name).write_text("from the server")
+
+        with mock.patch.object(fleet, "rsync", side_effect=fake_rsync), contextlib.redirect_stdout(io.StringIO()):
+            remote.bring_back(self.run_dir, self.table, "gautschi", [(name, True)], "take-back")
+        back = common.read_json(unit_queue.unit_path(self.run_dir, "pending", name))
+        self.assertEqual((back["attempts"], back["execution_profile"], back["minimum_copy_number"]),
+                         (1, "four copies", 3))
+        self.assertEqual((pixel_queue.run_folder(self.run_dir, name) / "checkpoint.pkl").read_text(), "from the server")
+        self.assertEqual(fleet.load_assignment(self.run_dir)[name]["state"], "returned")
+
+    def test_the_smoke_commands_submit_one_job_per_pool_and_read_the_verdict(self):
+        """The submission script is valid bash and names every pool's script; a passed verdict makes the server ready."""
+        entry = self.table["gilbreth"]
+        script = remote.smoke_script(self.run_dir, "gilbreth", entry, list(entry["pools"]), "20261118-020000")
+        self.assertEqual(subprocess.run(["bash", "-n"], input=script, text=True, capture_output=True).returncode, 0)
+        self.assertIn("-t 00:20:00 -p a100-80gb -q standby -A dsmichil", script)
+        self.assertIn("/smoke_job_standby-a30-a10.sh", script)
+        self.assertIn("slurm/submitted_jobids_gilbreth.txt", script)
+        self.assertRegex(script, r"-J pixelfleet-[0-9a-f]{8}-gilbreth-standby-a100-80gb-smoke-20261118-020000")
+        result = {"passed": True, "job_id": "77", "device": "NVIDIA H100 80GB HBM3",
+                  "written_at": "2026-11-18T03:00:00-05:00", "speed": {"copies": 4},
+                  "checks": [{"name": "jax computes on the card", "passed": True, "detail": "backend gpu"}],
+                  "speed_lines": ["default: copies 4, 2.08 s per iteration"]}
+        answer = f"\n{fleet.MARK}result ai-h100\n{json.dumps(result, indent=2)}\n\n{fleet.MARK}end\n"
+        output = io.StringIO()
+        with mock.patch.object(fleet, "remote", return_value=answer), contextlib.redirect_stdout(output):
+            self.assertTrue(remote.smoke_result(self.run_dir, self.table, "gautschi"))
+        table = common.read_json(fleet.table_path(self.run_dir))
+        self.assertEqual((table["gautschi"]["ready"], "not_ready_reason" in table["gautschi"]), (True, False))
+        self.assertEqual(table["gautschi"]["smoke"]["ai-h100"]["job_id"], "77")
+        self.assertIn("gautschi, pool ai-h100: PASSED (job 77, NVIDIA H100 80GB HBM3, written 2026-11-18 00:00 PT)",
+                      output.getvalue())
+        # a server whose pool has no verdict stays not ready
+        with mock.patch.object(fleet, "remote", return_value=f"{fleet.MARK}result gpu-h100\n\n{fleet.MARK}end\n"), \
+                contextlib.redirect_stdout(io.StringIO()):
+            self.assertFalse(remote.smoke_result(self.run_dir, self.table, "aces"))
+        self.assertIn("no smoke result yet", common.read_json(fleet.table_path(self.run_dir))["aces"]["not_ready_reason"])
+
+
+class ReturnedUnit(FleetCase):
+    """The check of a finished unit a server returns."""
+
+    def setUp(self):
+        """A pack that Gautschi holds, and the files its worker left for the tick in data/research/<unit>/."""
+        super().setUp()
+        self.name = self.pack()
+        held = self.run_dir / "queue/remote_gautschi"
+        held.mkdir()
+        (self.run_dir / "queue/pending" / f"{self.name}.json").rename(held / f"{self.name}.json")
+        common.write_json(fleet.assignment_path(self.run_dir), {self.name: {"server": "gautschi", "state": "staged"}})
+        self.specification = common.read_json(self.run_dir / "specifications" / f"{self.name}.json")
+        self.record = dict(common.read_json(held / f"{self.name}.json"), execution_profile="four copies",
+                           execution_profile_settings={"learner": PROFILES["four copies"]["learner"],
+                                                       "environment": PROFILES["four copies"]["environment"]})
+        self.pulled = self.run_dir / "data/research" / self.name
+        write_run_records(self.pulled, metric_lines(244, copies=4), 244, completed=True)
+        (self.pulled / "checkpoint.pkl").write_bytes(b"state at the target")
+        learner, _ = pixel_queue.trainer_settings(self.record, self.specification)
+        # run.json as the trainer writes it: every learner field, the per-copy settings as sorted pairs
+        described = {key: value for key, value in learner.items() if key != "per_copy_scalar_settings"}
+        described.update(n_copies=4, per_copy_scalar_settings=[["fast_last_layer_step", [0.01, 0.03, 0.1, 0.3]]])
+        (self.pulled / "run.json").write_text(json.dumps({"learner": described, "copy_seeds": [13, 13, 13, 13]}))
+        (self.pulled / "events.jsonl").write_text(
+            json.dumps({"event": "worker_start", "device": "NVIDIA H100 80GB HBM3"}) + "\n"
+            + json.dumps({"event": "completed", "update": 244}) + "\n")
+        common.write_json(self.pulled / "summary.json", {
+            "completed": True, "unit_id": self.name, "target_updates": 244, "execution_profile": "four copies",
+            "execution_profile_settings": self.record["execution_profile_settings"], "card": "NVIDIA H100 80GB HBM3",
+            "attempt": {"seconds_per_update": 2.1, "update_at_end": 244, "wall_seconds": 600.0},
+            "earlier_attempts": [{"job_id": "900", "started_at": "2026-11-18T01:00:00-05:00",
+                                  "card": "NVIDIA H100 80GB HBM3", "outcome": "stopped_with_state_saved",
+                                  "seconds_per_update": 2.2}]})
+
+    def problem(self):
+        """What the check finds wrong with the pulled files; None when nothing."""
+        return remote.returned_unit_problem(self.pulled, self.record, self.specification)
+
+    def test_complete_files_pass_and_move_into_the_units_run_folder(self):
+        """The files are moved into data/<unit>/run/; UVA's record takes the server's profile and attempts."""
+        self.assertIsNone(self.problem())
+        self.assertIsNone(remote.verify_unit(self.run_dir, self.name))
+        folder = pixel_queue.run_folder(self.run_dir, self.name)
+        for file_name in pixel_queue.RUN_FILES:
+            self.assertTrue((folder / file_name).exists(), file_name)
+        self.assertTrue((self.pulled / "summary.json").exists())
+        record = common.read_json(self.run_dir / "queue/remote_gautschi" / f"{self.name}.json")
+        self.assertEqual(record["execution_profile"], "four copies")
+        self.assertEqual([(attempt["outcome"], attempt["seconds_per_update"]) for attempt in record["history"]],
+                         [("stopped_with_state_saved", 2.2), ("complete", 2.1)])
+        self.assertEqual(record["history"][-1]["server"], "gautschi")
+        # a second check, after the files moved, reads them where they are now
+        self.assertIsNone(remote.verify_unit(self.run_dir, self.name))
+        block = remote.result_block("gautschi", {"job": "901", "exit": "0", "wall_seconds": "600"},
+                                    common.read_json(self.pulled / "summary.json"))
+        self.assertEqual((block["server"], block["card"], block["seconds_per_update"], block["execution_profile"]),
+                         ("gautschi", "NVIDIA H100 80GB HBM3", 2.1, "four copies"))
+
+    def test_each_missing_piece_is_named(self):
+        """A short metrics file, a progress record below the target, another seed list, other settings, no records."""
+        lines = (self.pulled / "metrics.jsonl").read_text().splitlines(keepends=True)
+        (self.pulled / "metrics.jsonl").write_text("".join(lines[:-1]))
+        self.assertIn("metrics.jsonl holds 243 lines", self.problem())
+        (self.pulled / "metrics.jsonl").write_text("".join(lines))
+        progress = (self.pulled / "progress.json").read_text()
+        (self.pulled / "progress.json").write_text(json.dumps({"update": 200, "target_updates": 244}))
+        self.assertIn("progress.json does not say completed at update 244", self.problem())
+        (self.pulled / "progress.json").write_text(progress)
+        described = json.loads((self.pulled / "run.json").read_text())
+        (self.pulled / "run.json").write_text(json.dumps(dict(described, copy_seeds=[1, 2, 3, 4])))
+        self.assertIn("run.json is of the seeds [1, 2, 3, 4]", self.problem())
+        other = dict(described, learner=dict(described["learner"], fast_last_layer_sharing_group=4))
+        (self.pulled / "run.json").write_text(json.dumps(other))
+        self.assertIn("run.json's learner differs from the unit's in ['fast_last_layer_sharing_group']", self.problem())
+        (self.pulled / "run.json").write_text(json.dumps(described))
+        events = (self.pulled / "events.jsonl").read_text()
+        (self.pulled / "events.jsonl").write_text(json.dumps({"event": "checkpoint", "update": 244}) + "\n")
+        self.assertIn("no completed event", self.problem())
+        (self.pulled / "events.jsonl").write_text(events)
+        windows = (self.pulled / "game_windows.jsonl").read_text().splitlines(keepends=True)
+        (self.pulled / "game_windows.jsonl").write_text("".join(windows[:-1]))
+        self.assertIn("game_windows.jsonl holds 3 windows; 4 are expected", self.problem())
+        (self.pulled / "game_windows.jsonl").write_text("".join(windows))
+        (self.pulled / "checkpoint.pkl").unlink()
+        self.assertEqual(self.problem(), "missing or empty: checkpoint.pkl")
+        self.assertEqual(remote.verify_unit(self.run_dir, self.name), "missing or empty: checkpoint.pkl")
+        self.assertFalse(pixel_queue.run_folder(self.run_dir, self.name).exists())
+
+
+class SmokeRules(unittest.TestCase):
+    """The parts of the smoke job that need no card."""
+
+    def test_the_first_update_decides_and_later_differences_are_counted(self):
+        """Equal lines pass; a first line off by 1% fails; later lines that differ are reported and do not decide."""
+        reference = [{"update": index + 1, "unix": 5.0 + index, "loss": [0.5 + index], "episode_count": [25],
+                      "rooms_visited": [[True, False]]} for index in range(3)]
+        same = [dict(line, unix=99.0, event_counts=[[0]]) for line in reference]
+        check = smoke_check.compare_with_archive(reference, same)
+        self.assertEqual((check["passed"], "every field equal" in check["detail"]), (True, True))
+        later = [dict(same[0]), dict(same[1], loss=[1.6]), dict(same[2])]
+        check = smoke_check.compare_with_archive(reference, later)
+        self.assertEqual((check["passed"], "1 differing field(s)" in check["detail"]), (True, True))
+        first = [dict(same[0], loss=[0.505])] + same[1:]
+        self.assertFalse(smoke_check.compare_with_archive(reference, first)["passed"])
+        count = [dict(same[0], episode_count=[26])] + same[1:]
+        self.assertFalse(smoke_check.compare_with_archive(reference, count)["passed"])
+        self.assertFalse(smoke_check.compare_with_archive(reference, same[:2])["passed"])
+
+    def test_asset_hashes_name_a_changed_file(self):
+        """Every file UVA lists must be there with the same bytes; a file only the server has does not decide."""
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            (root / "jaxtari/sprites").mkdir(parents=True)
+            (root / "jaxtari/asset_source.json").write_text("{}")
+            (root / "jaxtari/sprites/room.png").write_bytes(b"picture")
+            expected = remote.asset_hashes(root)
+            self.assertEqual(set(expected), {"jaxtari/asset_source.json", "jaxtari/sprites/room.png"})
+            self.assertTrue(smoke_check.asset_check(root, expected)["passed"])
+            (root / "jaxtari/cache.bin").write_bytes(b"left by a job")
+            extra = smoke_check.asset_check(root, expected)
+            self.assertEqual((extra["passed"], "1 file(s) only on this server" in extra["detail"]), (True, True))
+            (root / "jaxtari/sprites/room.png").write_bytes(b"another picture")
+            changed = smoke_check.asset_check(root, expected)
+            self.assertEqual((changed["passed"], "jaxtari/sprites/room.png" in changed["detail"]), (False, True))
+
+    def test_the_speed_line_has_the_five_throughput_figures(self):
+        """Copies, seconds per iteration, total and per-copy steps per second, hours per million steps per copy."""
+        line = smoke_check.speed_line("default", 4, {"seconds_per_update": 2.08, "peak_card_memory_mb": 61200})
+        self.assertEqual(line, "default: copies 4, 2.08 s per iteration, total 0.0315 million steps per second, "
+                               "7.9 thousand steps per second per copy, 0.0353 hours per million steps per copy, "
+                               "peak card memory 61,200 MB")
+        self.assertIn("too few updates", smoke_check.speed_line("default", 1, {"seconds_per_update": None,
+                                                                                "peak_card_memory_mb": 0}))
+        self.assertEqual((smoke_check.finite([1.0, {"a": [2.0]}]), smoke_check.finite([float("nan")])), (True, False))
+
+
+if __name__ == "__main__":
+    unittest.main()

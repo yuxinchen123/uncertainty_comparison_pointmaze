@@ -1,0 +1,47 @@
+{
+  "note": "The two ways a unit of the pixel sweep runs on a card. A worker takes the first profile whose card memory range holds its card (minimum_card_memory_mb <= memory < card_memory_below_mb; null means no upper bound). The learner and environment settings are the command-line JSON of the archived baseline of 2026-11-06 (its units/make_final_units.py): one copy on the RTX A4500, four copies on the H100 NVL. A unit keeps the profile of its first start; the settings used are written into its queue record then.",
+  "profiles": {
+    "one copy": {
+      "copies": 1,
+      "minimum_card_memory_mb": 10000,
+      "card_memory_below_mb": 60000,
+      "learner": {
+        "convolution_batching": "unrolled",
+        "cache_target_features": true,
+        "predictor_selected_rows": 1280
+      },
+      "environment": {
+        "separable_rectangle_drawing": true,
+        "unroll_fixed_render_loops": true,
+        "masked_conditional_draws": true,
+        "two_way_masked_draws": true,
+        "render_final_two_together": true,
+        "max_episode_steps": 27000,
+        "reset_lane_budget": 8
+      },
+      "archived_run": "a4500-jaguar03_final-training_seed-5",
+      "memory_note": "One copy with these settings used 8.6 GB of card memory and 6 GB of host memory (RTX 5080, 2026-11-07). The 10,000 MB floor lets an RTX 2080 Ti (about 10,850 MB) take a unit; its speed check decides whether that card type is used."
+    },
+    "four copies": {
+      "copies": 4,
+      "minimum_card_memory_mb": 60000,
+      "card_memory_below_mb": null,
+      "learner": {
+        "convolution_algorithm": "space_to_depth",
+        "cache_target_features": true,
+        "predictor_selected_rows": 1280,
+        "iteration_compiler_options": [["xla_gpu_enable_while_loop_double_buffering", "true"]]
+      },
+      "environment": {
+        "separable_rectangle_drawing": true,
+        "unroll_fixed_render_loops": true,
+        "masked_conditional_draws": true,
+        "two_way_masked_draws": true,
+        "render_final_two_together": true,
+        "max_episode_steps": 27000,
+        "reset_lane_budget": 16
+      },
+      "archived_run": "h100-serval02-card-1_final-training_seeds-1-to-4"
+    }
+  }
+}

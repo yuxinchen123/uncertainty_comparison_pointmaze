@@ -356,13 +356,20 @@ def policy_forward(parameters, observations, configuration=None):
     return actor_logits(parameters, hidden, configuration), values_ext, values_int
 
 
-def rnd_forward(parameters, normalized_frames, configuration=None):
-    """Evaluate one RND network; its final dense layer has no activation."""
+def rnd_hidden(parameters, normalized_frames, configuration=None):
+    """The input of an RND network's final dense layer: its trunk, then every earlier dense layer with ReLU."""
     hidden = convolution_trunk(parameters["convolutions"], normalized_frames, leaky=True,
                                 configuration=configuration)
     batching = configuration.dense_batching if configuration is not None else "matmul"
     for layer in parameters["dense"][:-1]:
         hidden = jax.nn.relu(dense(layer, hidden, batching))
+    return hidden
+
+
+def rnd_forward(parameters, normalized_frames, configuration=None):
+    """Evaluate one RND network; its final dense layer has no activation."""
+    hidden = rnd_hidden(parameters, normalized_frames, configuration)
+    batching = configuration.dense_batching if configuration is not None else "matmul"
     return dense(parameters["dense"][-1], hidden, batching)
 
 

@@ -1,0 +1,115 @@
+{
+  "gautschi": {
+    "ssh": ["ssh", "-o", "BatchMode=yes", "-o", "ConnectTimeout=30", "gautschi"],
+    "check": [],
+    "remote_run": "/scratch/gautschi/liu4869/rnd_pixel/runs/{run_name}",
+    "python": "/scratch/gautschi/liu4869/envs/atari_pixels_jax/bin/python",
+    "code_root": "/scratch/gautschi/liu4869/rnd_pixel/code",
+    "assets": "/scratch/gautschi/liu4869/rnd_pixel/assets/jaxtari_pixel_study_assets_montezuma_room_geometry_from_png",
+    "unit_seconds": 1800,
+    "pools": {
+      "ai-h100": {
+        "gpu_class": "h100_gautschi",
+        "execution_profile": "four copies",
+        "time_limit": "1-00:00:00",
+        "max_jobs": 4,
+        "sbatch_options": ["-p", "ai", "-q", "normal", "-A", "dsimchil", "-N1", "-n14", "--gpus-per-node=1"]
+      }
+    },
+    "hand_over": {
+      "pools": {"ai-h100": {"units_at_once": 8}},
+      "start_within_seconds": 7200,
+      "note": "Packs only (the pool's profile is four copies). At most 4 jobs, the account's 4 H100 cards. 8 units at once: 4 that train and 4 that wait for a job that has finished its unit."
+    },
+    "ready": false,
+    "not_ready_reason": "no smoke job has passed here; the environment /scratch/gautschi/liu4869/envs/atari_pixels_jax did not exist on 2026-11-17",
+    "budget_command": "bash -lc slist 2> /dev/null | grep dsimchil",
+    "budget_field": 2,
+    "budget_unit": "H100-hours"
+  },
+  "gilbreth": {
+    "ssh": ["ssh", "-o", "BatchMode=yes", "-o", "ConnectTimeout=60", "gilbreth"],
+    "check": [],
+    "remote_run": "/scratch/gilbreth/liu4869/rnd_pixel/runs/{run_name}",
+    "python": "/scratch/gilbreth/liu4869/envs/atari_pixels_jax/bin/python",
+    "code_root": "/scratch/gilbreth/liu4869/rnd_pixel/code",
+    "assets": "/scratch/gilbreth/liu4869/rnd_pixel/assets/jaxtari_pixel_study_assets_montezuma_room_geometry_from_png",
+    "unit_seconds": 1800,
+    "pools": {
+      "standby-a100-80gb": {
+        "gpu_class": "a100_80gb_gilbreth",
+        "execution_profile": "four copies",
+        "time_limit": "04:00:00",
+        "max_jobs": 8,
+        "sbatch_options": ["-p", "a100-80gb", "-q", "standby", "-A", "dsmichil", "-N1", "-n1", "-c", "4", "--gres=gpu:1", "--mem=32G"]
+      },
+      "standby-a30-a10": {
+        "gpu_class": "a30_or_a10_gilbreth",
+        "execution_profile": "one copy",
+        "time_limit": "04:00:00",
+        "max_jobs": 16,
+        "sbatch_options": ["-p", "a30,a10", "-q", "standby", "-A", "dsmichil", "-N1", "-n1", "-c", "4", "--gres=gpu:1", "--mem=16G"]
+      }
+    },
+    "hand_over": {
+      "pools": {"standby-a100-80gb": {"units_at_once": 4}, "standby-a30-a10": {"units_at_once": 0}},
+      "start_within_seconds": 7200,
+      "note": "Idle-card jobs of 4 hours; a unit continues from its checkpoint in the next job. A pool gets units only after its smoke job showed a speed at or above the RTX A4000's (set its units_at_once then). The 32 GiB of host memory of the four-copy pool is an estimate, not a measured MaxRSS: read the smoke job's MaxRSS and correct it."
+    },
+    "ready": false,
+    "not_ready_reason": "no smoke job has passed here; the environment /scratch/gilbreth/liu4869/envs/atari_pixels_jax did not exist on 2026-11-17",
+    "budget_note": "standby, not charged"
+  },
+  "aces": {
+    "ssh": ["ssh", "-o", "BatchMode=yes", "portal05", "ssh", "-o", "BatchMode=yes", "aces"],
+    "check": ["ssh", "-o", "BatchMode=yes", "portal05", "ssh", "-O", "check", "aces"],
+    "remote_run": "/scratch/user/u.sl359075/rnd_pixel/runs/{run_name}",
+    "python": "/scratch/user/u.sl359075/envs/atari_pixels_jax/bin/python",
+    "code_root": "/scratch/user/u.sl359075/rnd_pixel/code",
+    "assets": "/scratch/user/u.sl359075/rnd_pixel/assets/jaxtari_pixel_study_assets_montezuma_room_geometry_from_png",
+    "unit_seconds": 1800,
+    "pools": {
+      "gpu-h100": {
+        "gpu_class": "h100_aces",
+        "execution_profile": "four copies",
+        "time_limit": "1-00:00:00",
+        "max_jobs": 4,
+        "sbatch_options": ["--account=158590754315", "-p", "gpu", "--nodes=1", "--ntasks=1", "--cpus-per-task=8", "--mem=39G", "--gres=gpu:h100:1"]
+      }
+    },
+    "hand_over": {
+      "pools": {"gpu-h100": {"units_at_once": 0}},
+      "note": "Packs only. Kept mainly for stages 2 and 3: 0 units at once until the session owner opens it. Its connection lives on portal05 and is only checked, never opened, from here. Set time_limit close to the need of the stage (the charge is per hour used: 136 SUs per H100-hour for this request)."
+    },
+    "ready": false,
+    "not_ready_reason": "no smoke job has passed here; the environment is not built on this server yet",
+    "budget_command": "myproject 2>&1 | grep 158590754315",
+    "budget_field": 6,
+    "budget_unit": "SUs"
+  },
+  "deltaai": {
+    "ssh": ["ssh", "-o", "BatchMode=yes", "portal04", "ssh", "-o", "BatchMode=yes", "deltaai"],
+    "check": ["ssh", "-o", "BatchMode=yes", "portal04", "ssh", "-O", "check", "deltaai"],
+    "remote_run": "/projects/biwj/sliu51/rnd_pixel/runs/{run_name}",
+    "python": "/projects/biwj/sliu51/envs/atari_pixels_jax/bin/python",
+    "code_root": "/projects/biwj/sliu51/rnd_pixel/code",
+    "assets": "/projects/biwj/sliu51/rnd_pixel/assets/jaxtari_pixel_study_assets_montezuma_room_geometry_from_png",
+    "unit_seconds": 1800,
+    "pools": {
+      "ghx4-h100": {
+        "gpu_class": "h100_gh200_deltaai",
+        "execution_profile": "four copies",
+        "time_limit": "1-00:00:00",
+        "max_jobs": 2,
+        "sbatch_options": ["--account=biwj-dtai-gh", "--partition=ghx4", "--nodes=1", "--ntasks=1", "--cpus-per-task=16", "--mem=64G", "--gpus-per-node=1"]
+      }
+    },
+    "hand_over": {
+      "pools": {"ghx4-h100": {"units_at_once": 0}},
+      "note": "Last in the order of servers; 100 GPU-hours in all. Its connection lives on portal04 and is only checked, never opened, from here."
+    },
+    "ready": false,
+    "not_ready_reason": "ARM processors: the environment (JAX 0.11.0 and JAXtari as aarch64 builds) is not built there, and no smoke job has passed",
+    "budget_note": "100 GPU-hours allocated; read `accounts` on the server"
+  }
+}

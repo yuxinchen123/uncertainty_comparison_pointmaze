@@ -1,4 +1,5 @@
-"""Compare an uninterrupted run folder with a stopped-and-resumed one: state and metrics, bit for bit."""
+"""Compare an uninterrupted run folder with a stopped-and-resumed one, bit for bit: the saved state,
+the metric lines (without their wall-clock time) and the two game record files."""
 import json
 import os
 import pickle
@@ -25,9 +26,20 @@ differing = [name for name in first if first[name].shape != second[name].shape
              or not np.array_equal(first[name], second[name], equal_nan=True)]
 metrics = [[json.loads(line) for line in (folder / "metrics.jsonl").read_text().splitlines()] for folder in (uninterrupted, resumed)]
 strip = lambda rows: [{key: value for key, value in row.items() if key != "unix"} for row in rows]
+
+
+def same_file(name):
+    """Whether a record file is the same in both folders: absent in both, or equal byte for byte."""
+    paths = [folder / name for folder in (uninterrupted, resumed)]
+    present = [path.exists() for path in paths]
+    return present[0] == present[1] and (not present[0] or paths[0].read_bytes() == paths[1].read_bytes())
+
+
+record_files = {name: same_file(name) for name in ("game_first_times.json", "game_windows.jsonl")}
 record = {"state_leaves": len(first), "differing_state_leaves": differing,
           "metric_updates": [len(rows) for rows in metrics],
           "metrics_identical": strip(metrics[0]) == strip(metrics[1]),
-          "passed": not differing and strip(metrics[0]) == strip(metrics[1])}
+          "game_record_files_identical": record_files,
+          "passed": not differing and strip(metrics[0]) == strip(metrics[1]) and all(record_files.values())}
 output.write_text(json.dumps(record, indent=2) + "\n")
 print(json.dumps(record))

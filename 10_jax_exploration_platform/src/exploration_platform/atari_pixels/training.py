@@ -7,9 +7,10 @@ from dataclasses import replace
 import jax
 import jax.numpy as jnp
 
+from ..bonuses.rnd.last_layer import fast_layer_scores, unit_rows_with_bias
 from .config import PixelPPOConfig
-from .networks import (actor_logits, categorical_statistics, critic_values, initialize_networks,
-                       policy_features, policy_forward, quantity_keys, rnd_forward,
+from .networks import (actor_logits, categorical_statistics, critic_values, dense, initialize_networks,
+                       policy_features, policy_forward, quantity_keys, rnd_forward, rnd_hidden,
                        rnd_pair_forward)
 from .state import (AdamState, FlatParameterLayout, PixelTrainState, adam_step, initialize_adam, initialize_statistics,
                     normalize_frames, update_moments, update_observation_statistics)
@@ -35,6 +36,20 @@ class Rollout(NamedTuple):
     frame_bank: object
     # [copies, rooms] booleans per step: which rooms any of a copy's games is in after the step.
     rooms: object = None
+    # The remaining fields stay None unless their option is on; a None adds nothing to the
+    # compiled program.
+    # Fast last layer only, and only until the rollout's bonus is computed: the predictor's last
+    # hidden features and the target's output for every next frame, [time, copies, environments, 512].
+    bonus_hidden: object = None
+    bonus_targets: object = None
+    # Fast last layer with record_bonus_profile: the real predictor's own bonus
+    # [time, copies, environments] and how alike the unit rows of one step are [copies].
+    predictor_bonus: object = None
+    row_alignment: object = None
+    # record_game_events: per step and copy, "counts" [events], "rooms" [rooms] (a game of the copy
+    # is in the room after the step, before any reset), "games_with_key" and
+    # "games_left_start_room" (games that ended at this step with each fact true).
+    game_events: object = None
 
 
 def flatten_rollout(values):
@@ -61,6 +76,80 @@ def intrinsic_reward(parameters, target, frames, statistics, configuration=None)
         differences = (rnd_forward(target, normalized, configuration)
                        - rnd_forward(parameters["predictor"], normalized, configuration))
     return jnp.sum(differences ** 2, axis=-1) * 0.5
+
+
+def rollout_bonus_features(parameters, target, frames, statistics, configuration=None):
+    """What the fast last layer needs from one rollout step: the predictor's last hidden features
+    and the target's output for the next frames, float32 [copies, environments, 512] each."""
+    # The same normalization as intrinsic_reward: the statistics of the start of the update.
+    normalized = normalize_frames(frames, statistics)
+    return (rnd_hidden(parameters["predictor"], normalized, configuration),
+            rnd_forward(target, normalized, configuration))
+
+
+def fast_last_layer_bonus(hidden, targets, output_layer, step_sizes, group):
+    """The rollout's bonus from temporary copies of the predictor's last dense layer.
+
+    hidden and targets are float32 [time, copies, environments, width]; output_layer is the
+    predictor's last dense layer ("weight" [copies, input, output], "bias" [copies, output]);
+    step_sizes holds one step size per copy; group is how many environments share one temporary
+    layer (environments j*group .. (j+1)*group-1 form group j). Returns float32
+    [time, copies, environments]: half the squared error of each transition under its group's
+    layer, read before that layer takes the step's change.
+    """
+    steps, copies, envs, _ = hidden.shape
+    groups = envs // group
+    rows, length = unit_rows_with_bias(hidden)
+    # The layer in the form of last_layer.py: the weights, then the bias as the last input row.
+    # before: weight [C, 512, 512], bias [C, 512] ; after: float64 [C, 513, 512]
+    layer = jnp.concatenate([output_layer["weight"].astype(jnp.float64),
+                             output_layer["bias"].astype(jnp.float64)[:, None, :]], axis=1)
+
+    def by_group(values):
+        """Give every sharing group its own place on the policy axis of last_layer.py."""
+        # before: [T, C, N, k] with N = 8 environments, group 4 ; after: [T, C*2, 4, k], where
+        # row c*2 + j holds environments j*4 .. j*4+3 of copy c.
+        return values.reshape(steps, copies * groups, group, values.shape[-1])
+
+    # One temporary layer and one step size per group: copy c's values repeated for its groups.
+    # before: step sizes (0.1, 0.3), 2 groups per copy ; after: [[[0.1]], [[0.1]], [[0.3]], [[0.3]]]
+    group_layers = jnp.repeat(layer, groups, axis=0)
+    group_steps = jnp.repeat(jnp.asarray(step_sizes, jnp.float64), groups)[:, None, None]
+    bonus = fast_layer_scores(by_group(rows), by_group(length), by_group(targets.astype(jnp.float64)),
+                              group_layers, group_steps,
+                              lambda error: 0.5 * (error * error).sum(axis=-1))
+    # before: [T, C*groups, group] ; after: [T, C, N] in the environments' own order
+    return bonus.reshape(steps, copies, envs).astype(jnp.float32)
+
+
+def predictor_bonus_from_features(hidden, targets, output_layer, configuration=None):
+    """The real predictor's own bonus from stored features, float32 [time, copies, environments]."""
+    steps, copies, envs, _ = hidden.shape
+    batching = configuration.dense_batching if configuration is not None else "matmul"
+    # The predictor's last dense layer on the stored features, as rnd_forward applies it.
+    differences = flatten_rollout(targets) - dense(output_layer, flatten_rollout(hidden), batching)
+    bonus = jnp.sum(differences ** 2, axis=-1) * 0.5
+    # before: [C, T*N] ; after: [T, C, N]
+    return bonus.reshape(copies, steps, envs).transpose(1, 0, 2)
+
+
+def row_alignment(hidden):
+    """How alike the unit rows of one rollout step are: [time, copies, environments, width] -> [copies].
+
+    The squared length of the mean unit row of a policy's environments at one step, averaged over
+    the steps: 1 when every environment has the same row, 1 / environments when the rows are
+    orthogonal to each other.
+    """
+    rows, _ = unit_rows_with_bias(hidden)
+    mean_row = rows.mean(axis=2)
+    return (mean_row * mean_row).sum(axis=-1).mean(axis=0)
+
+
+def first_step_index(flags):
+    """The first rollout step at which each flag is true, -1 where it never is: [time, ...] -> [...]."""
+    # before: one flag over four steps [False, True, False, True] ; after: 1
+    # before: [False, False, False, False] ; after: -1
+    return jnp.where(flags.any(axis=0), jnp.argmax(flags, axis=0), -1)
 
 
 def normalize_intrinsic_rewards(rewards, state, config):
@@ -230,6 +319,11 @@ class PixelPPORND:
                                          (config.learning_rate,) * config.n_copies, jnp.float32)
         self.intrinsic_coefficients = jnp.asarray(config.per_copy_values("intrinsic_coefficient") or
                                                 (config.intrinsic_coefficient,) * config.n_copies, jnp.float32)
+        # The fast last layer is on for every copy or for none; its step sizes are per copy.
+        self.fast_last_layer_steps = config.fast_last_layer_steps
+        self.fast_last_layer = config.fast_last_layer_enabled
+        if config.record_game_events and not getattr(environment, "report_game_events", False):
+            raise ValueError("record_game_events needs an environment built with report_game_events=True")
         # XLA takes switch options as booleans and every other option as text.
         options = {name: {"true": True, "false": False}.get(value, value)
                    for name, value in config.iteration_compiler_options}
@@ -336,8 +430,15 @@ class PixelPPORND:
             # The environment resets in this same call, but a terminal transition's next
             # image is its pre-reset image, as returned by the original EnvPool transition.
             frames = information["final_observation"][..., 3:4, :, :]
-            bonus = (jnp.zeros_like(reward) if config.hoist_rollout_bonus else intrinsic_reward(
-                state.parameters, state.target, frames, state.observation_statistics, network_config))
+            bonus_hidden = bonus_targets = step_events = None
+            if self.fast_last_layer:
+                # The bonus is computed in time order after the scan; keep what it needs.
+                bonus_hidden, bonus_targets = rollout_bonus_features(
+                    state.parameters, state.target, frames, state.observation_statistics, network_config)
+                bonus = jnp.zeros_like(reward)
+            else:
+                bonus = (jnp.zeros_like(reward) if config.hoist_rollout_bonus else intrinsic_reward(
+                    state.parameters, state.target, frames, state.observation_statistics, network_config))
             if indexed:
                 stored_observations = jnp.where(step_index == 0, frame_indices - 4, frame_indices)
                 normal_index = jnp.full(frame_indices.shape[:-1] + (1,), 8 + 2 * step_index, jnp.int32)
@@ -356,6 +457,17 @@ class PixelPPORND:
                 rooms = (room_ids[..., None] == jnp.arange(room_count, dtype=room_ids.dtype)).any(axis=1)
             else:
                 rooms = jnp.zeros((config.n_copies, 0), jnp.bool_)
+            if config.record_game_events:
+                # Reduce the step's events over each copy's environments.
+                # before: counts [C, N, events], room after the step [C, N], game ended [C, N]
+                # after: counts [C, events], rooms entered [C, rooms], ended games with each fact [C]
+                finished = information["episode_done"]
+                room_after = information["room_after"]
+                step_events = {
+                    "counts": information["game_events"].sum(axis=1),
+                    "rooms": (room_after[..., None] == jnp.arange(room_count, dtype=room_after.dtype)).any(axis=1),
+                    "games_with_key": (finished & information["game_has_key"]).sum(axis=1),
+                    "games_left_start_room": (finished & information["game_left_start_room"]).sum(axis=1)}
             recorded = Rollout(stored_observations, frames, actions, log_probability, reward, bonus,
                                done_before, values_ext, values_int, information["episode_return"],
                                information["episode_done"], hidden if config.hoist_critic else
@@ -364,7 +476,9 @@ class PixelPPORND:
                                jnp.zeros(logits.shape[:2] + (0,), jnp.float32),
                                next_observations[..., 3:4, :, :] if indexed else
                                jnp.zeros(observations.shape[:2] + (0, 84, 84), jnp.uint8),
-                               jnp.zeros(observations.shape[:2] + (0, 84, 84), jnp.uint8), rooms=rooms)
+                               jnp.zeros(observations.shape[:2] + (0, 84, 84), jnp.uint8), rooms=rooms,
+                               bonus_hidden=bonus_hidden, bonus_targets=bonus_targets,
+                               game_events=step_events)
             return (next_environment, next_observations, done, frame_indices), recorded
 
         (environment_state, observations, done, _), rollout = jax.lax.scan(
@@ -383,6 +497,17 @@ class PixelPPORND:
             # Before: [C,T*N]; after: [T,C,N], restoring the exact temporal filter inputs.
             bonuses = bonuses.reshape(config.n_copies, config.num_steps, config.n_envs).transpose(1, 0, 2)
             rollout = rollout._replace(intrinsic_rewards=bonuses)
+        if self.fast_last_layer:
+            output_layer = state.parameters["predictor"]["dense"][-1]
+            bonuses = fast_last_layer_bonus(rollout.bonus_hidden, rollout.bonus_targets, output_layer,
+                                            self.fast_last_layer_steps, config.fast_last_layer_sharing_group)
+            if config.record_bonus_profile:
+                rollout = rollout._replace(
+                    predictor_bonus=predictor_bonus_from_features(
+                        rollout.bonus_hidden, rollout.bonus_targets, output_layer, config),
+                    row_alignment=row_alignment(rollout.bonus_hidden))
+            # The stored features end here: the update never reads them.
+            rollout = rollout._replace(intrinsic_rewards=bonuses, bonus_hidden=None, bonus_targets=None)
         if config.hoist_critic:
             values_ext, values_int = critic_values(state.parameters["agent"],
                 flatten_rollout(rollout.policy_features), config)
@@ -544,4 +669,25 @@ class PixelPPORND:
                    # [copies, rooms]: rooms any of the copy's games was in after some step of this rollout.
                    "rooms_visited": rollout.rooms.any(axis=0),
                    "steps_per_policy": (state.iteration + 1) * self.config.batch_size}
+        if self.config.record_game_events:
+            # Per copy: how often each event happened in this rollout, the first rollout step of
+            # each event and of each room (-1 for none), and the ended games with each fact.
+            events = rollout.game_events
+            metrics = {**metrics, "event_counts": events["counts"].sum(axis=0),
+                       "event_first_step": first_step_index(events["counts"] > 0),
+                       "room_first_step": first_step_index(events["rooms"]),
+                       "games_with_key": events["games_with_key"].sum(axis=0),
+                       "games_left_start_room": events["games_left_start_room"].sum(axis=0)}
+        if self.config.record_bonus_profile:
+            # The bonus at the start and at the end of the rollout (32 steps each, or the whole
+            # rollout when it is shorter), and the divisor that normalized this rollout's bonus.
+            edge = min(32, self.config.num_steps)
+            metrics = {**metrics,
+                       "bonus_first_steps_mean": rollout.intrinsic_rewards[:edge].mean(axis=(0, 2)),
+                       "bonus_last_steps_mean": rollout.intrinsic_rewards[-edge:].mean(axis=(0, 2)),
+                       "bonus_divisor": jnp.sqrt(next_state.reward_statistics.variance)}
+            if self.fast_last_layer:
+                # With the fast last layer off, the predictor's own bonus is intrinsic_reward_mean.
+                metrics = {**metrics, "predictor_bonus_mean": rollout.predictor_bonus.mean(axis=(0, 2)),
+                           "row_alignment": rollout.row_alignment}
         return next_state._replace(iteration=state.iteration + 1), metrics

@@ -14,6 +14,8 @@ from typing import Any, NamedTuple
 import jax
 import jax.numpy as jnp
 
+from .game_events import game_events, game_has_key, game_left_start_room
+
 
 def _stream_identifier(name: str) -> int:
     """Give each random quantity a stable identifier independent of draw order."""
@@ -360,7 +362,8 @@ class AtariPixelEnvironment:
                  two_way_masked_draws: bool = False,
                  reset_lane_budget: int = 0,
                  constant_game_reset: bool = False,
-                 require_room_geometry: bool = True):
+                 require_room_geometry: bool = True,
+                 report_game_events: bool = False):
         """Load the pinned game lazily and retain only static preprocessing settings."""
         # Keep package imports out of learner-only tests that use a small fake environment.
         import jaxtari
@@ -402,6 +405,8 @@ class AtariPixelEnvironment:
             raise ValueError("reset_lane_budget must be zero (off) or positive")
         self.reset_lane_budget = reset_lane_budget
         self.constant_game_reset = constant_game_reset
+        # Adds the game events of every agent step to the step's information (game_events.py).
+        self.report_game_events = report_game_events
 
         # All calls into this game must use int32; the older platform enables x64 globally.
         with jax.enable_x64(False):
@@ -653,6 +658,15 @@ class AtariPixelEnvironment:
         info = {"episode_return": episode_return, "episode_done": game_done | truncated,
                 "raw_reward": reward.astype(jnp.float32), "game_over": game_done,
                 "life_lost": life_lost, "truncated": truncated}
+        if getattr(self, "report_game_events", False):
+            # Compare the game before and after the held action, before any reset replaces it:
+            # the events of this agent step, the room it ends in, and two facts about the whole
+            # game that are read when the game ends at this step.
+            start_room = self.game.consts.INITIAL_ROOM_ID
+            info["game_events"] = game_events(state.game, game, start_room)
+            info["room_after"] = game.room_id
+            info["game_has_key"] = game_has_key(game, start_room)
+            info["game_left_start_room"] = game_left_start_room(game, start_room)
         return next_state, jnp.sign(reward).astype(jnp.float32), done, info
 
     def _reset_gathered(self, state, ended, full, reset_everywhere):
@@ -687,6 +701,8 @@ class AtariPixelEnvironment:
             shape = actions.shape
             next_state, rewards, done, info = self._map_lanes(
                 self._step_single, shape, state, actions.reshape(-1))
+            # The state before any reset; the game events of reset frames are read against it.
+            stepped_state = next_state
             # RND scores the state reached by the action, before any immediate reset.
             # Before: terminal stack [B,4,84,84]; after: info keeps that stack for this transition.
             info["final_observation"] = jax.vmap(self._ordered_frames)(
@@ -709,6 +725,17 @@ class AtariPixelEnvironment:
             # Reset NOOPs can end a game after a life-loss transition; expose the actual
             # frame-stack reset kind separately from that transition's episode statistics.
             info["full_game_reset"] = done & (next_state.step_count == 0)
+            if getattr(self, "report_game_events", False):
+                # The waiting frames of a life-loss reset belong to the same game: add the events
+                # between the game before and after them, and report the room it is in afterwards.
+                # A lane whose game was replaced by a new one keeps the values from before the
+                # reset; a lane that was not reset has the same game on both sides, so nothing is added.
+                continued = done & jnp.logical_not(info["full_game_reset"])
+                start_room = self.game.consts.INITIAL_ROOM_ID
+                during_reset = jax.vmap(lambda before, after: game_events(before, after, start_room))(
+                    stepped_state.game, next_state.game)
+                info["game_events"] = info["game_events"] + jnp.where(continued[:, None], during_reset, 0)
+                info["room_after"] = jnp.where(continued, next_state.game.room_id, info["room_after"])
             observation = self.observe(next_state)
             info = jax.tree.map(lambda value: value.reshape(shape + value.shape[1:]), info)
             return next_state, observation, rewards.reshape(shape), done.reshape(shape), info

@@ -7,15 +7,25 @@ One run folder holds:
                   at the time limit and on SIGTERM / SIGINT
   metrics.jsonl   one line per completed update with each copy's metrics, flushed per line
   progress.json   current update, rate and last checkpoint time
+  game_first_times.json, game_windows.jsonl
+                  first-time steps of game events and per-window sums, folded from the metric
+                  lines by game_records.py (its docstring gives both formats)
 
 Running the same command again resumes from checkpoint.pkl and drops metric lines written after
-it, so the record matches an uninterrupted run. Requires the same deterministic runtime as the
-screens (XLA_FLAGS containing --xla_gpu_exclude_nondeterministic_ops=true).
+it, so the record matches an uninterrupted run; the two game record files are rebuilt from the
+kept lines. Requires the same deterministic runtime as the screens (XLA_FLAGS containing
+--xla_gpu_exclude_nondeterministic_ops=true).
+
+A run folder may be continued on another server: the game is compared by content (version, asset
+record, source files), not by where it is stored. A non-finite loss ends the run with an error and
+leaves the last checkpoint as it was.
 """
 
 import argparse
 from dataclasses import asdict
+import hashlib
 import json
+import math
 import os
 from pathlib import Path
 import signal
@@ -28,9 +38,13 @@ sys.path.insert(0, str(SCRIPT_DIRECTORY))
 PLATFORM_ROOT = SCRIPT_DIRECTORY.parents[1]
 sys.path.insert(0, str(PLATFORM_ROOT / "src"))
 
+import game_records  # noqa: E402  (standard library only; found through SCRIPT_DIRECTORY)
+
 ACCEPTED_ENVIRONMENT = {"cache_room_backgrounds": True, "render_final_two_only": True}
 REQUIRED_XLA_FLAG = "--xla_gpu_exclude_nondeterministic_ops=true"
 STOP = {"requested": False}
+# The fields of run.json's game_source that decide whether two runs play the same game.
+GAME_CONTENT_FIELDS = ("installed_version", "asset_record_sha256", "game_source_sha256")
 
 
 def write_json(path, value):
@@ -51,9 +65,22 @@ def learner_settings(text):
     return values
 
 
+def source_files_sha256(package):
+    """One hash over every Python file of a package: each file's relative path and its bytes."""
+    # before: package/__init__.py, package/games/a.py ; after: sha256 of
+    # "__init__.py" 0 <bytes> 0 "games/a.py" 0 <bytes> 0, in sorted path order
+    digest = hashlib.sha256()
+    for path in sorted(package.rglob("*.py")):
+        digest.update(path.relative_to(package).as_posix().encode())
+        digest.update(b"\0")
+        digest.update(path.read_bytes())
+        digest.update(b"\0")
+    return digest.hexdigest()
+
+
 def game_source():
-    """Where the imported JAXtari game comes from: a source tree's commit, or the installed version."""
-    import hashlib
+    """The imported JAXtari game by content, with where it is stored as information."""
+    from importlib.metadata import version
 
     import jaxtari
     from jaxtari.paths import get_storage_dir
@@ -62,41 +89,48 @@ def game_source():
     # The sprite and collision-map pack decides the room geometry, so it is part of the game.
     assets = Path(get_storage_dir()).resolve()
     record = assets / "asset_source.json"
-    asset_identity = {"asset_root": str(assets), "asset_record_sha256":
-                      hashlib.sha256(record.read_bytes()).hexdigest() if record.exists() else None}
-    # A commit describes the game only when git tracks the package's own files. An installed package
-    # inside an ignored environment folder of another repository would report that repository's HEAD.
-    tracked = subprocess.run(["git", "-C", str(package), "ls-files", "--error-unmatch", "__init__.py"],
-                             capture_output=True, text=True)
-    commit = subprocess.run(["git", "-C", str(package), "rev-parse", "HEAD"],
-                            capture_output=True, text=True)
-    if tracked.returncode == 0 and commit.returncode == 0:
-        dirty = subprocess.run(["git", "-C", str(package), "status", "--porcelain", "--", "."],
-                               capture_output=True, text=True).stdout.strip()
-        return {"path": str(package), "commit": commit.stdout.strip(), "uncommitted_changes": bool(dirty),
-                **asset_identity}
-    from importlib.metadata import version
-    return {"path": str(package), "installed_version": version("JAXtari"), **asset_identity}
+    return {"installed_version": version("JAXtari"),
+            "asset_record_sha256": hashlib.sha256(record.read_bytes()).hexdigest() if record.exists() else None,
+            "game_source_sha256": source_files_sha256(package),
+            "path": str(package), "asset_root": str(assets)}
+
+
+def source_commit():
+    """The commit of the code that runs: a frozen copy's SOURCE_COMMIT file, else the repository's HEAD."""
+    # Inside a frozen copy, git would report the HEAD of the repository that encloses the copy.
+    marker = PLATFORM_ROOT / "SOURCE_COMMIT"
+    if marker.exists():
+        return marker.read_text().strip()
+    return subprocess.run(["git", "-C", str(PLATFORM_ROOT), "rev-parse", "HEAD"],
+                          capture_output=True, text=True, check=True).stdout.strip()
+
+
+def copy_seeds(copies, seed_start, listed):
+    """One seed per copy: the listed seeds ("13,13,14,14"), else consecutive seeds from seed_start."""
+    if listed is None:
+        return tuple(range(seed_start, seed_start + copies))
+    seeds = tuple(int(value) for value in listed.split(","))
+    if len(seeds) != copies:
+        raise SystemExit(f"--copy-seeds needs one seed per copy: {copies} copies, {len(seeds)} seeds given")
+    return seeds
+
+
+def seeds_with_non_finite_loss(losses, seeds):
+    """The seeds of the copies whose loss of one update is not a finite number."""
+    # before: losses [0.31, nan, 0.28, inf], seeds (13, 14, 15, 16) ; after: [14, 16]
+    return [int(seed) for seed, loss in zip(seeds, losses) if not math.isfinite(loss)]
 
 
 def mismatched_identity(recorded, identity):
     """Names of identity fields that differ from the run folder's record (empty when it may resume).
 
-    Run folders written before 2026-11-07 recorded, for an installed game package, the HEAD of the
-    repository enclosing the environment folder as the game's "commit"; that HEAD moves with
-    unrelated commits. Such a record matches when the package path and the asset pack are the same
-    and no file of the installed package changed after the run folder was created.
+    The game is compared by its content fields (GAME_CONTENT_FIELDS). Where the package and the
+    asset pack are stored may differ, so that a run folder can continue on another server.
     """
     differing = [key for key in identity if key != "game_source" and recorded.get(key) != identity[key]]
     old, new = recorded.get("game_source") or {}, identity["game_source"]
-    if old != new:
-        same_place = all(old.get(key) == new.get(key) for key in ("path", "asset_root", "asset_record_sha256"))
-        enclosing_commit = "commit" in old and "installed_version" in new
-        created = recorded.get("created_unix")
-        unchanged = created is not None and max(
-            (item.stat().st_mtime for item in Path(new["path"]).rglob("*") if item.is_file()), default=0) <= created
-        if not (same_place and enclosing_commit and unchanged):
-            differing.append("game_source")
+    if any(old.get(field) != new[field] for field in GAME_CONTENT_FIELDS):
+        differing.append("game_source")
     return differing
 
 
@@ -115,12 +149,16 @@ def main():
     parser.add_argument("--run-dir", type=Path, required=True)
     parser.add_argument("--copies", type=int, required=True)
     parser.add_argument("--seed-start", type=int, default=1)
+    parser.add_argument("--copy-seeds", default=None,
+                        help="one seed per copy, comma separated (replaces --seed-start), e.g. 13,13,13,13")
     parser.add_argument("--learner", default="{}", help="JSON learner settings")
     parser.add_argument("--environment", default="{}", help="JSON settings added to the accepted environment")
     parser.add_argument("--target-updates", type=int, required=True)
     parser.add_argument("--observation-warmup-iterations", type=int, default=50)
     parser.add_argument("--checkpoint-seconds", type=float, default=1200)
     parser.add_argument("--time-limit-seconds", type=float, default=0, help="stop and checkpoint after this long")
+    parser.add_argument("--game-window-updates", type=int, default=game_records.WINDOW_UPDATES,
+                        help="updates per line of game_windows.jsonl")
     args = parser.parse_args()
     started = time.monotonic()
     if REQUIRED_XLA_FLAG not in os.environ.get("XLA_FLAGS", "").split():
@@ -145,9 +183,8 @@ def main():
     config = PixelPPOConfig(n_copies=args.copies, observation_warmup_iterations=args.observation_warmup_iterations,
                             **learner_settings(args.learner))
     environment = {**ACCEPTED_ENVIRONMENT, **json.loads(args.environment)}
-    seeds = tuple(range(args.seed_start, args.seed_start + args.copies))
-    commit = subprocess.run(["git", "-C", str(PLATFORM_ROOT), "rev-parse", "HEAD"],
-                            capture_output=True, text=True).stdout.strip()
+    seeds = copy_seeds(args.copies, args.seed_start, args.copy_seeds)
+    commit = source_commit()
     # The target may be raised by a later invocation; everything else must match the folder.
     identity = {"learner": asdict(config), "environment": environment, "copy_seeds": list(seeds),
                 "game_source": game_source()}
@@ -180,12 +217,20 @@ def main():
         state = trainer.warmup(trainer.initialize(seeds))
         keep_metrics_through(metrics_path, 0)
         event("started", update=0)
+    # Both game record files are rebuilt from the kept metric lines, so they always agree with them.
+    records = game_records.rebuild(metrics_path, run_dir, environments_per_policy=config.n_envs,
+                                   rollout_steps=config.num_steps, window_updates=args.game_window_updates)
+    if records.updates_folded != int(state.iteration):
+        raise SystemExit(f"metrics.jsonl holds {records.updates_folded} updates but the state is at "
+                         f"update {int(state.iteration)}; the run folder is not consistent")
+    first_times_path, windows_path = run_dir / game_records.FIRST_TIMES_FILE, run_dir / game_records.WINDOWS_FILE
     last_checkpoint = time.monotonic()
 
     def save(reason):
         nonlocal last_checkpoint
         jax.block_until_ready(state)
         save_checkpoint(checkpoint, state, config, list(seeds), environment)
+        game_records.write_first_times(first_times_path, records)
         last_checkpoint = time.monotonic()
         event("checkpoint", update=int(state.iteration), reason=reason)
 
@@ -195,9 +240,22 @@ def main():
             state, metrics = trainer.train_iteration(state)
             values = jax.device_get(metrics)
             update = int(state.iteration)
-            stream.write(json.dumps({"update": update, "unix": time.time(),
-                                     **{name: np.asarray(value).tolist() for name, value in values.items()}}) + "\n")
+            line = {"update": update, "unix": time.time(),
+                    **{name: np.asarray(value).tolist() for name, value in values.items()}}
+            # A non-finite loss ends the run here: nothing of this update is written, and the
+            # checkpoint on disk stays the last one saved before it.
+            broken = seeds_with_non_finite_loss(line["loss"], seeds)
+            if broken:
+                event("non-finite loss", update=update, copy_seeds_with_non_finite_loss=broken)
+                raise FloatingPointError(f"update {update}: the loss of the copies with seeds {broken} is not finite")
+            stream.write(json.dumps(line) + "\n")
             stream.flush()
+            # Fold the line into the game records; a window's line is written when it completes.
+            window = records.fold(line)
+            if window is not None:
+                game_records.append_window(windows_path, window)
+            if records.changed:
+                game_records.write_first_times(first_times_path, records)
             window_updates += 1
             now = time.monotonic()
             if now - window_start >= 60:

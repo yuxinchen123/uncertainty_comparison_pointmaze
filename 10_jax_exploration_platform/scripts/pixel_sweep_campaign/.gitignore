@@ -1,0 +1,4 @@
+# The card profiles, the server table and the study descriptions of this folder are code, not run data.
+# The repository's rule that ignores every *.json would leave them out of a commit, and with that out of the
+# frozen code copy every job runs (freeze_code.py copies committed files only).
+!*.json
