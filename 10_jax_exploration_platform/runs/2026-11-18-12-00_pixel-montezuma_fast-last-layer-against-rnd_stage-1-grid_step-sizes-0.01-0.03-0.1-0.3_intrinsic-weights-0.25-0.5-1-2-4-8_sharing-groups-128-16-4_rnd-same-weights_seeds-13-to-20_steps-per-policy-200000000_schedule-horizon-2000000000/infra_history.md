@@ -55,3 +55,9 @@
   20 units were back in queue/pending on UVA; Gilbreth's own queue holds them in withdrawn/, and its 20 worker jobs
   wait there (a worker that starts finds no unit and ends). The one Gilbreth job running at 14:49 PT was the gates
   folder's A10 smoke job 12432867, not a worker. No unit stood in two queue folders at any pass.
+- 2026-11-18 15:50 PT: 17 RTX 2080 Ti cards became startable (other users' jobs ended on affogato11, ai01 to ai04,
+  ai06, lynx10 and cheetah03). Submitted by hand before the monitor's next pass, with the monitor's options:
+  jobs 6956854, 6956855, 6956856, 6956857, 6956859 (sl5nw) and 6956858, 6956860, 6956863 (yuxinchen), all
+  running by 15:52 PT. The session's free-card reading used the system's free
+  memory until now; it now reads Slurm's configured minus allocated memory, which is what decides a start (the
+  monitor's planner already used it: its passes from 13:41 to 15:21 PT found no startable card).
