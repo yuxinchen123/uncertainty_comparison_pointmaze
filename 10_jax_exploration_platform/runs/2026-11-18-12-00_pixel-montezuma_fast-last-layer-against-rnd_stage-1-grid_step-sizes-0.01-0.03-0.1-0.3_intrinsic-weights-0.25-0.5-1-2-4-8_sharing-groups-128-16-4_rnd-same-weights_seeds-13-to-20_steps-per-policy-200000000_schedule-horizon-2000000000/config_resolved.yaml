@@ -1,0 +1,154 @@
+# config_resolved.yaml of the pixel Montezuma stage-1 grid (JSON values in YAML form)
+note: "The full trainer configuration of a stage-1 unit. Resolved from the run.json of the gate-7 unit (train_final.py's own record of PixelPPOConfig after defaults and overrides, one copy, RTX 2080 Ti), with the swept values and the card-profile values marked. Every unit's own resolved configuration is data/<unit>/run/run.json."
+study:
+  study: "pixel-montezuma_fast-last-layer-against-rnd"
+  phase: "grid"
+  seeds:
+    first: 13
+    count: 8
+  target_updates: 12207
+  total_timesteps: 2000000000
+  record_game_events: true
+  record_bonus_profile: true
+  methods: [{"method": "rnd", "pack_over": "intrinsic_weight", "grid": {"intrinsic_weight": [0.25, 0.5, 1, 2, 4, 8]}}, {"method": "fast-last-layer", "pack_over": "step_size", "grid": {"sharing_group": [128, 16, 4], "intrinsic_weight": [0.25, 0.5, 1, 2, 4, 8], "step_size": [0.01, 0.03, 0.1, 0.3]}}]
+learner_resolved:
+  n_copies: "1 (profile one copy) or 4 (profile four copies)"
+  n_envs: 128
+  num_steps: 128
+  action_count: 18
+  total_timesteps: 2000000000
+  update_epochs: 4
+  num_minibatches: 4
+  learning_rate: 0.0001
+  adam_epsilon: 1e-05
+  anneal_learning_rate: true
+  gamma_ext: 0.999
+  gamma_int: 0.99
+  gae_lambda: 0.95
+  clip_coefficient: 0.1
+  entropy_coefficient: 0.001
+  value_coefficient: 0.5
+  max_gradient_norm: 0.5
+  intrinsic_coefficient: "SWEPT (see study.methods)"
+  extrinsic_coefficient: 2.0
+  predictor_update_proportion: 0.25
+  observation_warmup_iterations: 50
+  per_copy_learning_rates: []
+  per_copy_intrinsic_coefficients: []
+  per_copy_scalar_settings: []
+  rollout_unroll: 1
+  update_unroll: 1
+  cache_target_features: "SET BY THE EXECUTION PROFILE"
+  hoist_rollout_bonus: false
+  donate_state: false
+  network_layout: "nchw"
+  dense_batching: "matmul"
+  convolution_batching: "SET BY THE EXECUTION PROFILE"
+  convolution_algorithm: "SET BY THE EXECUTION PROFILE"
+  iteration_compiler_options: "SET BY THE EXECUTION PROFILE"
+  paired_rnd_rollout_trunks: false
+  layer_convolution_algorithms: []
+  predictor_selected_rows: "SET BY THE EXECUTION PROFILE"
+  rollout_convolution_algorithm: ""
+  merged_head_layers: false
+  flat_parameters: false
+  fuse_optimizer: false
+  pre_gather_minibatches: false
+  hoist_critic: false
+  hoist_rollout_log_probabilities: false
+  rollout_observation_storage: "float32"
+  associative_gae: false
+  associative_reward_filter: false
+  moment_reduction: "two_pass"
+  fuse_minibatch_image_preparation: false
+  recompute_network_activations: false
+  fuse_network_bias_and_activation: false
+  flatten_update_scan: false
+  batch_quantity_keyed_random_generation: false
+  rollout_frame_storage: "stacked_frames"
+  upstream_reward_filter_axis: true
+  warmup_keeps_initial_observation: true
+  fast_last_layer_step: "SWEPT (see study.methods)"
+  fast_last_layer_sharing_group: "SWEPT (see study.methods)"
+  record_game_events: true
+  record_bonus_profile: true
+  fast_last_layer_chunk_rows: 128
+  fast_last_layer_whole_rollout_rows: 512
+  fast_last_layer_plain_errors: true
+  fast_last_layer_float32_products: "none"
+  fast_last_layer_small_solve: "unrolled_for_small_groups"
+environment_resolved:
+  cache_room_backgrounds: true
+  render_final_two_only: true
+  separable_rectangle_drawing: true
+  unroll_fixed_render_loops: true
+  masked_conditional_draws: true
+  two_way_masked_draws: true
+  render_final_two_together: true
+  max_episode_steps: 27000
+  reset_lane_budget: "SET BY THE EXECUTION PROFILE"
+  report_game_events: true
+execution_profiles:
+  one copy:
+    copies: 1
+    minimum_card_memory_mb: 10000
+    card_memory_below_mb: 60000
+    learner:
+      convolution_batching: "unrolled"
+      cache_target_features: true
+      predictor_selected_rows: 1280
+    environment:
+      separable_rectangle_drawing: true
+      unroll_fixed_render_loops: true
+      masked_conditional_draws: true
+      two_way_masked_draws: true
+      render_final_two_together: true
+      max_episode_steps: 27000
+      reset_lane_budget: 8
+    archived_run: "a4500-jaguar03_final-training_seed-5"
+  four copies:
+    copies: 4
+    minimum_card_memory_mb: 60000
+    card_memory_below_mb: null
+    learner:
+      convolution_algorithm: "space_to_depth"
+      cache_target_features: true
+      predictor_selected_rows: 1280
+      iteration_compiler_options: [["xla_gpu_enable_while_loop_double_buffering", "true"]]
+    environment:
+      separable_rectangle_drawing: true
+      unroll_fixed_render_loops: true
+      masked_conditional_draws: true
+      two_way_masked_draws: true
+      render_final_two_together: true
+      max_episode_steps: 27000
+      reset_lane_budget: 16
+    archived_run: "h100-serval02-card-1_final-training_seeds-1-to-4"
+game_source:
+  installed_version: "0.2.0"
+  asset_record_sha256: "6e523c96104600dd2d7138b9d558f437ccd74eccdba4f60cc98bdeaa7a158f54"
+  game_source_sha256: "bc29f0ca11a4a5a9642f3e8f28dab008eec8a49ed670238a158152bd7257964a"
+job_environment:
+  PYTHONNOUSERSITE: "1"
+  PYTHONUNBUFFERED: "1"
+  PYTHONDONTWRITEBYTECODE: "1"
+  OMP_NUM_THREADS: "1"
+  XLA_PYTHON_CLIENT_PREALLOCATE: "false"
+  XLA_PYTHON_CLIENT_MEM_FRACTION: "0.85"
+  XLA_FLAGS: "--xla_gpu_exclude_nondeterministic_ops=true"
+  XDG_DATA_HOME: "/p/rlprojects/RND/reference_repos/jaxtari_pixel_study_assets_montezuma_room_geometry_from_png"
+  JAXTARI_SKIP_SPRITE_UPDATE: "1"
+trainer_memory_fraction_by_card:
+  NVIDIA GeForce RTX 2080 Ti: "0.95"
+  every other card: "0.85"
+submission:
+  server: "UVA only (both accounts: uva-sl5nw, uva-yuxinchen)"
+  card_types: ["nvidia_geforce_rtx_2080_ti", "nvidia_rtx_a4000", "nvidia_rtx_a4500", "nvidia_a40", "a40", "nvidia_geforce_rtx_5080", "a100", "nvidia_a100-pcie-40gb", "nvidia_h100_nvl"]
+  only_cards_free_now: true
+  cards_left_for_the_antmaze_study: 4
+  processors_per_card: 4
+  host_memory_gib_per_card: 10
+  worker_job_hours: 24
+  cancel_jobs_still_waiting_after_seconds: 120
+  requeue: true
+  monitor: "one processor and 2 GiB on nolim; a pass every 20 minutes (hourly once stable); the same top-up options; SWEEP_COMPLETE when every unit is done or failed"

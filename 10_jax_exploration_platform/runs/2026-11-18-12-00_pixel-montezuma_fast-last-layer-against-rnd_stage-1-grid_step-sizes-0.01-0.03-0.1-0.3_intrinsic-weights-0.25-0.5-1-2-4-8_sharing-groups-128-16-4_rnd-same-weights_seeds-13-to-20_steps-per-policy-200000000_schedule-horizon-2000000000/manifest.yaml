@@ -1,0 +1,36 @@
+schema_version: 1
+run_id: 2026-11-18-12-00_pixel-montezuma_fast-last-layer-against-rnd_stage-1-grid_step-sizes-0.01-0.03-0.1-0.3_intrinsic-weights-0.25-0.5-1-2-4-8_sharing-groups-128-16-4_rnd-same-weights_seeds-13-to-20_steps-per-policy-200000000_schedule-horizon-2000000000
+description: >
+  Stage 1 of the pixel Montezuma study: the fast last layer (4 step sizes x 3 sharing groups x 6 intrinsic weights)
+  and RND (the same 6 weights), 8 seeds each (13 to 20), 200 million steps per policy, 624 single units; each side's
+  configuration is chosen by the mean score over the run.
+git:
+  commit: 08b7c4c89c8d885704bb559f5b623ca58e36ec2a
+  dirty: false
+  dirty_note: "code folders clean except scripts/pixel_sweep_campaign/server_table.json (another worker's edit, left out of the frozen copy, not read by UVA workers)"
+  version_tag: jax-platform-v0.1.0-1131-g08b7c4c8
+specs:
+  env: jaxtari_montezuma_pixels_corrected-room-geometry@0.2.0
+  env_assets_sha256: 6e523c96104600dd2d7138b9d558f437ccd74eccdba4f60cc98bdeaa7a158f54
+  env_game_source_sha256: bc29f0ca11a4a5a9642f3e8f28dab008eec8a49ed670238a158152bd7257964a
+  agent: cleanrl_ppo_rnd_pixels@1
+  bonus: rnd_next_state@1 (step size 0) or fast_last_layer_rnd_float64@1 (step size above 0)
+  update_schedule: per_rollout@1
+  records: game_events@1, bonus_profile@1
+compile_signature:
+  copies: 1
+  envs_per_copy: 128
+  rollout_steps: 128
+  epochs: 4
+  minibatches: 4
+  dtype: float32
+  stats_dtype: float64
+  fast_last_layer_dtype: float64
+seeding:
+  seeds: [13, 14, 15, 16, 17, 18, 19, 20]
+  mode: paired
+artifacts:
+  queue: queue/
+  unit_records: data/<unit>/run/ (run.json, metrics.jsonl, game_first_times.json, game_windows.jsonl, events.jsonl, progress.json, checkpoint.pkl)
+  live_report: early_signals.md
+  status: status.json

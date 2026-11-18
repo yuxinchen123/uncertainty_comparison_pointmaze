@@ -1,0 +1,17 @@
+# Launch commands of the stage-1 grid (UVA login node, standard-library Python; 2026-11-18 PT)
+PY="env PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1 python3"
+P=/p/rlprojects/RND/10_jax_exploration_platform
+M=$P/scripts/pixel_sweep_campaign
+RUN=$P/runs/2026-11-18-12-00_pixel-montezuma_fast-last-layer-against-rnd_stage-1-grid_step-sizes-0.01-0.03-0.1-0.3_intrinsic-weights-0.25-0.5-1-2-4-8_sharing-groups-128-16-4_rnd-same-weights_seeds-13-to-20_steps-per-policy-200000000_schedule-horizon-2000000000
+
+# 1. the frozen code copy (commit 2523c876, copy number 1; frozen again at 08b7c4c8, copy number 2, before any job)
+$PY $P/scripts/maze_campaign/freeze_code.py --run-dir $RUN --leave-out-uncommitted
+
+# 2. the 624 single units
+$PY $M/build_units.py --run-dir $RUN --study $RUN/code/source_2523c8766583695fe7cd19ed1d1f2638f6ef53d0/10_jax_exploration_platform/scripts/pixel_sweep_campaign/study_descriptions/stage-1_grid_rnd-intrinsic-weight-0.25-0.5-1-2-4-8_fast-last-layer-step-size-0.01-0.03-0.1-0.3_sharing-group-128-16-4_intrinsic-weight-0.25-0.5-1-2-4-8_seeds-13-to-20_updates-12207.json
+
+# 3. worker jobs on UVA cards free now, both accounts
+$PY $M/submit.py --run-dir $RUN --phase grid --only-cards-free-now --leave-cards 4 --worker-hours 24 --cancel-waiting-after 120 --memory-gib-per-card 10
+
+# 4. the persistent monitor job, which tops up workers with the same options at every pass
+$PY $M/submit.py --run-dir $RUN --monitor --top-up-phase grid --complete-when-drained --only-cards-free-now --leave-cards 4 --worker-hours 24 --cancel-waiting-after 120 --memory-gib-per-card 10
