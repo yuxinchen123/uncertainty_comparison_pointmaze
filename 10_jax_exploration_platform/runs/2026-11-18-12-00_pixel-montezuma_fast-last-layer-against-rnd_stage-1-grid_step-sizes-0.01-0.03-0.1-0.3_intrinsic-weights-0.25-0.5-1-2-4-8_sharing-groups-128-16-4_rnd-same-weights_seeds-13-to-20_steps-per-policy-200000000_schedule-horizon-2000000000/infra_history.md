@@ -42,3 +42,16 @@
   (estimated starts 21:17 PT and 2026-11-19 01:32 PT); they stay in the gates folder's ledger.
 - 2026-11-18 14:05 PT: the hand-over loop written (`infrastructure/hand_over_loop/`, the copy of the scratchpad
   script the session starts); not started by this step.
+- 2026-11-18 14:34 to 14:55 PT: Gilbreth became ready at 14:34 PT (A30 smoke job 12434389 passed under the
+  corrected first-update rule; the job itself ended FAILED because its own older check from the frozen copy failed,
+  as designed). 20 units were handed over and 20 standby jobs submitted (12434768 to 12434787). At 14:39 PT the tick
+  found that no job of this run ran there and the scheduler expected none to start within 2 hours, so it sent the
+  20 waiting units back. The copy back then failed at every pass (14:39, 14:44, 14:49 PT): rsync exit 23,
+  "change_dir .../data/<unit> failed", because a unit that never started on the server has no data/<unit>/ folder
+  and `--ignore-missing-args` does not cover a missing parent folder. The 20 units stayed held by Gilbreth for
+  15 minutes. Fixed in scripts/pixel_sweep_campaign/remote_fleet.py `bring_back`: the copy uses rsync's relative
+  form (`--relative`, `queue/withdrawn/./<unit>.json`, `data/./<unit>/run`), which skips a missing unit folder
+  (checked on local folders first); one test changed and one added, 92 standard-library tests pass. At 14:54 PT all
+  20 units were back in queue/pending on UVA; Gilbreth's own queue holds them in withdrawn/, and its 20 worker jobs
+  wait there (a worker that starts finds no unit and ends). The one Gilbreth job running at 14:49 PT was the gates
+  folder's A10 smoke job 12432867, not a worker. No unit stood in two queue folders at any pass.

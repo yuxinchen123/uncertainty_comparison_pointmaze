@@ -239,12 +239,14 @@ class Ticks(FleetCase):
                       minimum_copy_number=3)
 
         def fake_rsync(run_dir, table, server, arguments):
-            """Stand in for the copy from the server: the unit's record and its run folder arrive."""
+            """Stand in for the relative copy from the server: the unit's record and its run folder arrive."""
+            self.assertIn("--relative", arguments)
+            self.assertTrue(arguments[-2].endswith(f"/data/./{name}/run"))
             arrived = Path(arguments[-1])
             common.write_json(arrived / f"{name}.json", record)
-            (arrived / "run").mkdir()
+            (arrived / name / "run").mkdir(parents=True)
             for file_name in ("checkpoint.pkl", "metrics.jsonl", "progress.json"):
-                (arrived / "run" / file_name).write_text("from the server")
+                (arrived / name / "run" / file_name).write_text("from the server")
 
         with mock.patch.object(fleet, "rsync", side_effect=fake_rsync), contextlib.redirect_stdout(io.StringIO()):
             remote.bring_back(self.run_dir, self.table, "gautschi", [(name, True)], "take-back")
@@ -252,6 +254,19 @@ class Ticks(FleetCase):
         self.assertEqual((back["attempts"], back["execution_profile"], back["minimum_copy_number"]),
                          (1, "four copies", 3))
         self.assertEqual((pixel_queue.run_folder(self.run_dir, name) / "checkpoint.pkl").read_text(), "from the server")
+        self.assertEqual(fleet.load_assignment(self.run_dir)[name]["state"], "returned")
+
+    def test_a_unit_that_never_started_on_the_server_comes_back_without_a_run_folder(self):
+        """With no run folder and no record on the server, the unit returns to pending and UVA's state stays."""
+        name = self.pack()
+        held = self.run_dir / "queue/remote_gautschi"
+        held.mkdir()
+        (self.run_dir / "queue/pending" / f"{name}.json").rename(held / f"{name}.json")
+        common.write_json(fleet.assignment_path(self.run_dir), {name: {"server": "gautschi", "state": "staged"}})
+        with mock.patch.object(fleet, "rsync", return_value=None), contextlib.redirect_stdout(io.StringIO()) as out:
+            remote.bring_back(self.run_dir, self.table, "gautschi", [(name, True)], "take-back")
+        self.assertTrue(unit_queue.unit_path(self.run_dir, "pending", name).exists())
+        self.assertFalse((pixel_queue.run_folder(self.run_dir, name) / "checkpoint.pkl").exists())
         self.assertEqual(fleet.load_assignment(self.run_dir)[name]["state"], "returned")
 
     def test_the_smoke_commands_submit_one_job_per_pool_and_read_the_verdict(self):

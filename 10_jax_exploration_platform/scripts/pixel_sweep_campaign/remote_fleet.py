@@ -374,15 +374,20 @@ def bring_back(run_dir, table, name, returned, command, folder="pending"):
     for unit, _ in returned:
         arrived = run_dir / "slurm/remote_returned" / name / unit
         arrived.mkdir(parents=True, exist_ok=True)
+        # relative paths ("/./"), so a unit that never started there (no data/<unit>/ folder) is skipped like a
+        # missing file instead of ending the copy with rsync's exit 23
+        # before (server): queue/withdrawn/<unit>.json, data/<unit>/run/{checkpoint.pkl, metrics.jsonl, ...}
+        # after (UVA):     slurm/remote_returned/<server>/<unit>/<unit>.json, .../<unit>/<unit>/run/...
         fleet.rsync(run_dir, table, name, [
-            "--ignore-missing-args", fleet.remote_path(entry, f"queue/withdrawn/{unit}.json"),
-            f":{entry['remote_run']}/data/{unit}/run", f"{arrived}/"])
+            "--relative", "--ignore-missing-args", fleet.remote_path(entry, f"queue/withdrawn/./{unit}.json"),
+            f":{entry['remote_run']}/data/./{unit}/run", f"{arrived}/"])
         # checkpoint and metrics belong together: the run folder replaces UVA's as a whole, or not at all
-        saved = (arrived / "run/checkpoint.pkl").exists() and (arrived / "run/metrics.jsonl").exists()
+        copied = arrived / unit / "run"
+        saved = (copied / "checkpoint.pkl").exists() and (copied / "metrics.jsonl").exists()
         if saved:
             target = pixel_queue.run_folder(run_dir, unit)
             target.mkdir(parents=True, exist_ok=True)
-            for path in sorted((arrived / "run").iterdir()):
+            for path in sorted(copied.iterdir()):
                 os.replace(path, target / path.name)
         # the server's record holds the unit's attempts and its profile; UVA's record takes them over
         record = arrived / f"{unit}.json"
