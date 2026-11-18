@@ -1728,6 +1728,13 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   for W, the method minus RND is +0.00040 ± 0.00085 on W (ahead on 57 of 128 seeds) and −0.00043 ± 0.00124 on L:
   level. The two units with step 0.1 and the hold were at 228 and 229 windows at 17:26 PT.
 
+- 2026-11-17 20:16 PT: **the third of the method's four ant U-maze step-cost validation units is complete**: fast
+  last layer step 0.1 with the hold, learning rate 1e-4, weight 1/64 (all 256 windows, all 128 policies arrived, 3
+  fault-guard respawns): W −0.96915 ± 0.00060, L −0.96384, M 1.80 million steps. Paired by seed against RND's choice
+  for W, the method minus RND is +0.00163 ± 0.00079 on W (ahead on 69 of 128 seeds) and +0.00081 ± 0.00113 on L:
+  the best of the three finished step-cost configurations, about two standard errors ahead on W. The fourth (step
+  0.1 with the hold, learning rate 1e-2, weight 1) was at 255 windows at 21:24 PT.
+
 ## Next
 
 Rewritten 2026-11-13 22:31 PT.

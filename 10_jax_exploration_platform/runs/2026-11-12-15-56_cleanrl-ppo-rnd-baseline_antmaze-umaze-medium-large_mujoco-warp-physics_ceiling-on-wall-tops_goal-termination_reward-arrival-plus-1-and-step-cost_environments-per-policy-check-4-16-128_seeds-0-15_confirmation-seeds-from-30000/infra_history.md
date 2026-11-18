@@ -963,3 +963,13 @@ Times are Pacific, read from the clock or from scheduler records.
   units whose 2-hour workers had stopped (jobs 6953029 to 6953033, all running). The 10-minute restart loop was
   restarted between passes at 17:28 PT; the new run ends by about 05:28 PT on 18 November. At 17:28 PT all 22 ant
   units run on UVA, none waiting, none on Gilbreth.
+- 2026-11-17 19:21 to 21:24 PT: twelve units waited at 19:21 PT after 2-hour worker stops; eight started on UVA, one
+  UVA job (6955585) was still waiting after 110 s and was cancelled by its ledger id, and four Medium and Large
+  fresh-seed units went to Gilbreth at 19:23 PT, where idle-card jobs started within minutes (12418163 on an A10,
+  12418164 and 12418165 on A30 cards; a fourth, 12418763, later). The session was in planning mode from about 19:00
+  to 21:20 PT (reading only), so the 5-minute fleet loop was restarted only at 21:23 PT; the 10-minute restart loop
+  ran throughout. At 21:24 PT: 16 units on UVA, 4 running on Gilbreth (58 to 61 and 30 windows), 1 waiting on UVA.
+- 2026-11-17 20:16 PT (window record): twenty-first fault-guard respawn under RK4: the method's step-cost unit with
+  fast step 0.1 and the hold at learning rate 1e-4, weight 1/64, window 256 (its last), seed 10070, torso angular
+  speed 102.4 rad/s (torso speed 13.6 m/s). All twenty-one are the angular bound; fourteen at learning rate 3e-5,
+  seven at 1e-4. That unit completed at 20:16 PT (results in STATE.md).
