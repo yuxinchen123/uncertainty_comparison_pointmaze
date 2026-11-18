@@ -9,6 +9,8 @@ import jax.numpy as jnp
 
 from ..bonuses.rnd.last_layer import fast_layer_scores, unit_rows_with_bias
 from .config import PixelPPOConfig
+from .fast_layer_forms import (REFERENCE_FORM, FastLayerForm, chunk_steps_for, chunked_fast_layer_scores,
+                               small_solve_for)
 from .networks import (actor_logits, categorical_statistics, critic_values, dense, initialize_networks,
                        policy_features, policy_forward, quantity_keys, rnd_forward, rnd_hidden,
                        rnd_pair_forward)
@@ -42,6 +44,9 @@ class Rollout(NamedTuple):
     # hidden features and the target's output for every next frame, [time, copies, environments, 512].
     bonus_hidden: object = None
     bonus_targets: object = None
+    # In place of bonus_targets when the form uses plain errors: the predictor's output minus the
+    # target's, float32 [time, copies, environments, 512].
+    bonus_errors: object = None
     # Fast last layer with record_bonus_profile: the real predictor's own bonus
     # [time, copies, environments] and how alike the unit rows of one step are [copies].
     predictor_bonus: object = None
@@ -78,16 +83,24 @@ def intrinsic_reward(parameters, target, frames, statistics, configuration=None)
     return jnp.sum(differences ** 2, axis=-1) * 0.5
 
 
-def rollout_bonus_features(parameters, target, frames, statistics, configuration=None):
+def rollout_bonus_features(parameters, target, frames, statistics, configuration=None, plain_errors=False):
     """What the fast last layer needs from one rollout step: the predictor's last hidden features
-    and the target's output for the next frames, float32 [copies, environments, 512] each."""
+    and the target's output for the next frames (with plain_errors: the predictor's output minus the
+    target's), float32 [copies, environments, 512] each."""
     # The same normalization as intrinsic_reward: the statistics of the start of the update.
     normalized = normalize_frames(frames, statistics)
-    return (rnd_hidden(parameters["predictor"], normalized, configuration),
-            rnd_forward(target, normalized, configuration))
+    hidden = rnd_hidden(parameters["predictor"], normalized, configuration)
+    targets = rnd_forward(target, normalized, configuration)
+    if not plain_errors:
+        return hidden, targets
+    # The predictor's last dense layer as rnd_forward applies it; half the squared sum of this
+    # error is the plain RND bonus of intrinsic_reward.
+    batching = configuration.dense_batching if configuration is not None else "matmul"
+    return hidden, dense(parameters["predictor"]["dense"][-1], hidden, batching) - targets
 
 
-def fast_last_layer_bonus(hidden, targets, output_layer, step_sizes, group):
+def fast_last_layer_bonus(hidden, targets, output_layer, step_sizes, group, form=REFERENCE_FORM,
+                          plain_errors=None):
     """The rollout's bonus from temporary copies of the predictor's last dense layer.
 
     hidden and targets are float32 [time, copies, environments, width]; output_layer is the
@@ -95,7 +108,10 @@ def fast_last_layer_bonus(hidden, targets, output_layer, step_sizes, group):
     step_sizes holds one step size per copy; group is how many environments share one temporary
     layer (environments j*group .. (j+1)*group-1 form group j). Returns float32
     [time, copies, environments]: half the squared error of each transition under its group's
-    layer, read before that layer takes the step's change.
+    layer, read before that layer takes the step's change. form chooses how this is computed
+    (fast_layer_forms.py); the reference form is last_layer.py's step-by-step temporary layer.
+    A form with plain errors reads plain_errors (the predictor's output minus the target's,
+    float32 like targets) in place of targets.
     """
     steps, copies, envs, _ = hidden.shape
     groups = envs // group
@@ -111,13 +127,27 @@ def fast_last_layer_bonus(hidden, targets, output_layer, step_sizes, group):
         # row c*2 + j holds environments j*4 .. j*4+3 of copy c.
         return values.reshape(steps, copies * groups, group, values.shape[-1])
 
-    # One temporary layer and one step size per group: copy c's values repeated for its groups.
-    # before: step sizes (0.1, 0.3), 2 groups per copy ; after: [[[0.1]], [[0.1]], [[0.3]], [[0.3]]]
-    group_layers = jnp.repeat(layer, groups, axis=0)
-    group_steps = jnp.repeat(jnp.asarray(step_sizes, jnp.float64), groups)[:, None, None]
-    bonus = fast_layer_scores(by_group(rows), by_group(length), by_group(targets.astype(jnp.float64)),
-                              group_layers, group_steps,
-                              lambda error: 0.5 * (error * error).sum(axis=-1))
+    if form.chunk_steps == 0:
+        # One temporary layer and one step size per group: copy c's values repeated for its groups.
+        # before: step sizes (0.1, 0.3), 2 groups per copy ; after: [[[0.1]], [[0.1]], [[0.3]], [[0.3]]]
+        group_layers = jnp.repeat(layer, groups, axis=0)
+        group_steps = jnp.repeat(jnp.asarray(step_sizes, jnp.float64), groups)[:, None, None]
+        bonus = fast_layer_scores(by_group(rows), by_group(length), by_group(targets.astype(jnp.float64)),
+                                  group_layers, group_steps,
+                                  lambda error: 0.5 * (error * error).sum(axis=-1))
+    else:
+        # The right side of the chunked form: the plain error over the row length, e / L, of every
+        # transition; from the target's output it is (unit row . W_0) - target / L.
+        # before: e = [0.3, -0.1], L = 2 ; after: [0.15, -0.05]
+        if form.plain_errors:
+            right_side = plain_errors.astype(jnp.float64) / length
+        else:
+            product = jnp.float32 if form.float32_products == "changes_and_applications" else jnp.float64
+            predicted = jnp.einsum("tcnf,cfk->tcnk", rows.astype(product), layer.astype(product))
+            right_side = predicted.astype(jnp.float64) - targets.astype(jnp.float64) / length
+        group_steps = jnp.repeat(jnp.asarray(step_sizes, jnp.float64), groups)[:, None, None]
+        bonus = chunked_fast_layer_scores(by_group(rows), by_group(length), by_group(right_side),
+                                          group_steps, form)
     # before: [T, C*groups, group] ; after: [T, C, N] in the environments' own order
     return bonus.reshape(steps, copies, envs).astype(jnp.float32)
 
@@ -322,6 +352,15 @@ class PixelPPORND:
         # The fast last layer is on for every copy or for none; its step sizes are per copy.
         self.fast_last_layer_steps = config.fast_last_layer_steps
         self.fast_last_layer = config.fast_last_layer_enabled
+        # How its bonus is computed (fast_layer_forms.py); the chunk is set in rows of one group.
+        self.fast_layer_form = (FastLayerForm(
+            chunk_steps=chunk_steps_for(config.fast_last_layer_chunk_rows, config.fast_last_layer_whole_rollout_rows,
+                                        config.num_steps, config.fast_last_layer_sharing_group)
+            if config.fast_last_layer_chunk_rows else 0,
+            plain_errors=config.fast_last_layer_plain_errors,
+            float32_products=config.fast_last_layer_float32_products,
+            small_solve=small_solve_for(config.fast_last_layer_small_solve, config.fast_last_layer_sharing_group))
+            if self.fast_last_layer else REFERENCE_FORM)
         if config.record_game_events and not getattr(environment, "report_game_events", False):
             raise ValueError("record_game_events needs an environment built with report_game_events=True")
         # XLA takes switch options as booleans and every other option as text.
@@ -396,6 +435,11 @@ class PixelPPORND:
 
     def collect(self, state):
         """Collect an on-policy rollout with frozen parameters and pre-update RND statistics."""
+        next_state, rollout = self.collect_steps(state)
+        return next_state, self.finish_rollout(state, rollout)
+
+    def collect_steps(self, state):
+        """The rollout's time loop; with the fast last layer the rollout still holds its stored features."""
         config = self.config
         # The rollout evaluates 128 rows per step; it may use its own convolution algorithm.
         network_config = (replace(config, convolution_algorithm=config.rollout_convolution_algorithm,
@@ -430,11 +474,16 @@ class PixelPPORND:
             # The environment resets in this same call, but a terminal transition's next
             # image is its pre-reset image, as returned by the original EnvPool transition.
             frames = information["final_observation"][..., 3:4, :, :]
-            bonus_hidden = bonus_targets = step_events = None
+            bonus_hidden = bonus_targets = bonus_errors = step_events = None
             if self.fast_last_layer:
                 # The bonus is computed in time order after the scan; keep what it needs.
-                bonus_hidden, bonus_targets = rollout_bonus_features(
-                    state.parameters, state.target, frames, state.observation_statistics, network_config)
+                bonus_hidden, second = rollout_bonus_features(
+                    state.parameters, state.target, frames, state.observation_statistics, network_config,
+                    plain_errors=self.fast_layer_form.plain_errors)
+                if self.fast_layer_form.plain_errors:
+                    bonus_errors = second
+                else:
+                    bonus_targets = second
                 bonus = jnp.zeros_like(reward)
             else:
                 bonus = (jnp.zeros_like(reward) if config.hoist_rollout_bonus else intrinsic_reward(
@@ -478,7 +527,7 @@ class PixelPPORND:
                                jnp.zeros(observations.shape[:2] + (0, 84, 84), jnp.uint8),
                                jnp.zeros(observations.shape[:2] + (0, 84, 84), jnp.uint8), rooms=rooms,
                                bonus_hidden=bonus_hidden, bonus_targets=bonus_targets,
-                               game_events=step_events)
+                               bonus_errors=bonus_errors, game_events=step_events)
             return (next_environment, next_observations, done, frame_indices), recorded
 
         (environment_state, observations, done, _), rollout = jax.lax.scan(
@@ -491,6 +540,14 @@ class PixelPPORND:
             added_frames = added_frames.transpose(1, 2, 0, 3, 4, 5).reshape(
                 config.n_copies, config.n_envs, 2 * config.num_steps, 84, 84)
             rollout = rollout._replace(frame_bank=jnp.concatenate((frame_bank, added_frames), axis=2))
+        return state._replace(environment=environment_state, observations=observations, done=done), rollout
+
+    def finish_rollout(self, state, rollout):
+        """The work after the rollout's time loop: hoisted bonus, fast-last-layer bonus, critic and log probabilities.
+
+        state is the state the rollout started from (its networks and statistics score the rollout).
+        """
+        config = self.config
         if config.hoist_rollout_bonus:
             bonuses = intrinsic_reward(state.parameters, state.target,
                                        flatten_rollout(rollout.next_frames), state.observation_statistics, config)
@@ -499,15 +556,20 @@ class PixelPPORND:
             rollout = rollout._replace(intrinsic_rewards=bonuses)
         if self.fast_last_layer:
             output_layer = state.parameters["predictor"]["dense"][-1]
+            form = self.fast_layer_form
             bonuses = fast_last_layer_bonus(rollout.bonus_hidden, rollout.bonus_targets, output_layer,
-                                            self.fast_last_layer_steps, config.fast_last_layer_sharing_group)
+                                            self.fast_last_layer_steps, config.fast_last_layer_sharing_group,
+                                            form, rollout.bonus_errors)
             if config.record_bonus_profile:
+                # With plain errors stored, the predictor's own bonus is intrinsic_reward's formula on them.
                 rollout = rollout._replace(
-                    predictor_bonus=predictor_bonus_from_features(
-                        rollout.bonus_hidden, rollout.bonus_targets, output_layer, config),
+                    predictor_bonus=(jnp.sum(rollout.bonus_errors ** 2, axis=-1) * 0.5 if form.plain_errors
+                                     else predictor_bonus_from_features(
+                                         rollout.bonus_hidden, rollout.bonus_targets, output_layer, config)),
                     row_alignment=row_alignment(rollout.bonus_hidden))
             # The stored features end here: the update never reads them.
-            rollout = rollout._replace(intrinsic_rewards=bonuses, bonus_hidden=None, bonus_targets=None)
+            rollout = rollout._replace(intrinsic_rewards=bonuses, bonus_hidden=None, bonus_targets=None,
+                                       bonus_errors=None)
         if config.hoist_critic:
             values_ext, values_int = critic_values(state.parameters["agent"],
                 flatten_rollout(rollout.policy_features), config)
@@ -520,7 +582,7 @@ class PixelPPORND:
                                                          flatten_rollout(rollout.actions))
             rollout = rollout._replace(log_probabilities=log_probability.reshape(
                 config.n_copies, config.num_steps, config.n_envs).transpose(1, 0, 2))
-        return state._replace(environment=environment_state, observations=observations, done=done), rollout
+        return rollout
 
     def prepare_batch(self, state, rollout):
         """Compute upstream normalization, GAE, current-frame RND inputs and fixed-size batches."""

@@ -99,6 +99,27 @@ class PixelPPOConfig:
     record_game_events: bool = False
     # Add per-update diagnostics of the bonus to the metrics (see PixelPPORND.iteration).
     record_bonus_profile: bool = False
+    # Execution options of the fast last layer's bonus (atari_pixels/fast_layer_forms.py). They
+    # change how the bonus is computed, not what it is in exact arithmetic, and are read only when
+    # the fast last layer is on. The defaults are the form accepted by the speed work of 2026-11-18
+    # (runs/2026-11-17-21-26_*/speed_ideas.md); chunk_rows 0, plain_errors false and small_solve
+    # "cholesky" together give the reference form (last_layer.py's temporary layer changed after
+    # every step). With a positive chunk_rows a sharing group whose whole rollout has at most
+    # whole_rollout_rows rows is solved as one chunk, other groups of up to 16 environments in chunks
+    # of at most chunk_rows rows, and larger groups one step at a time (fast_layer_forms.chunk_steps_for).
+    fast_last_layer_chunk_rows: int = 128
+    fast_last_layer_whole_rollout_rows: int = 512
+    # The rollout stores the predictor's float32 plain error instead of the target's output.
+    fast_last_layer_plain_errors: bool = True
+    # Products with the change of the temporary layer in float32 (fits and solves stay float64):
+    # "none", "changes" (each step's change in float32, accumulated and applied in float64) or
+    # "changes_and_applications" (both products in float32). "none": float32 changed small bonuses
+    # of sharing groups of 128 by up to a third (relative).
+    fast_last_layer_float32_products: str = "none"
+    # How the fit rows of one step are solved: "cholesky" (the batched library factorization),
+    # "unrolled" (written out entry by entry) or "unrolled_for_small_groups" (written out for
+    # sharing groups of at most 16 environments, the library factorization for larger ones).
+    fast_last_layer_small_solve: str = "unrolled_for_small_groups"
 
     def __post_init__(self):
         """Reject shapes and settings that cannot form the specified PPO batches."""
@@ -199,6 +220,21 @@ class PixelPPOConfig:
             if self.hoist_rollout_bonus or self.paired_rnd_rollout_trunks:
                 raise ValueError("a positive fast_last_layer_step cannot be combined with "
                                  "hoist_rollout_bonus or paired_rnd_rollout_trunks")
+            # The execution options of the bonus; each needs the chunked form.
+            rows = self.fast_last_layer_chunk_rows
+            for name in ("fast_last_layer_chunk_rows", "fast_last_layer_whole_rollout_rows"):
+                value = getattr(self, name)
+                if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+                    raise ValueError(f"{name} must be a nonnegative integer")
+            if self.fast_last_layer_small_solve not in ("cholesky", "unrolled", "unrolled_for_small_groups"):
+                raise ValueError("fast_last_layer_small_solve must be 'cholesky', 'unrolled' or 'unrolled_for_small_groups'")
+            if self.fast_last_layer_float32_products not in ("none", "changes", "changes_and_applications"):
+                raise ValueError("fast_last_layer_float32_products must be 'none', 'changes' or 'changes_and_applications'")
+            if not rows and (self.fast_last_layer_plain_errors or self.fast_last_layer_float32_products != "none"
+                             or self.fast_last_layer_small_solve != "cholesky"):
+                raise ValueError("fast_last_layer_plain_errors, fast_last_layer_float32_products and an "
+                                 "unrolled fast_last_layer_small_solve need a positive fast_last_layer_chunk_rows "
+                                 "(the reference form sets them to 0, false, 'none' and 'cholesky')")
         elif group != 0:
             raise ValueError("fast_last_layer_sharing_group must be 0 when fast_last_layer_step is 0")
 
