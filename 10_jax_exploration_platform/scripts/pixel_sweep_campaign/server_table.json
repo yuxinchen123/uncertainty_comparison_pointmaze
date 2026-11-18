@@ -3,9 +3,10 @@
     "ssh": ["ssh", "-o", "BatchMode=yes", "-o", "ConnectTimeout=30", "gautschi"],
     "check": [],
     "remote_run": "/scratch/gautschi/liu4869/rnd_pixel/runs/{run_name}",
-    "python": "/scratch/gautschi/liu4869/envs/atari_pixels_jax/bin/python",
+    "python": "/home/liu4869/envs/atari_pixels_jax/bin/python",
     "code_root": "/scratch/gautschi/liu4869/rnd_pixel/code",
-    "assets": "/scratch/gautschi/liu4869/rnd_pixel/assets/jaxtari_pixel_study_assets_montezuma_room_geometry_from_png",
+    "assets": "/home/liu4869/rnd_pixel/assets/jaxtari_pixel_study_assets_montezuma_room_geometry_from_png",
+    "environment_note": "Environment and asset pack in home, not scratch: Purdue scratch removes files not accessed for about 60 days and has already broken environments (rule purdue-cluster-slurm.md). Built 2026-11-18 PT by build_environment.sh of the gates run folder's infrastructure/environment_setup/: UVA's conda package files and every pip package at UVA's version; 87 of 88 distributions equal UVA's file by file, and JAXAtari (not imported by the trainer) differs only in its WHEEL metadata file. Asset pack: 4,531 files, every SHA-256 equal to UVA's.",
     "unit_seconds": 1800,
     "pools": {
       "ai-h100": {
@@ -22,7 +23,15 @@
       "note": "Packs only (the pool's profile is four copies). At most 4 jobs, the account's 4 H100 cards. 8 units at once: 4 that train and 4 that wait for a job that has finished its unit."
     },
     "ready": false,
-    "not_ready_reason": "no smoke job has passed here; the environment /scratch/gautschi/liu4869/envs/atari_pixels_jax did not exist on 2026-11-17",
+    "not_ready_reason": "a run folder's table starts not ready (init-table requires it); with this environment and asset pack the smoke job 18907454 of the gates run folder passed on 2026-11-18 (smoke_check below): run smoke and smoke-result in the new run folder to make the server ready there",
+    "smoke_check": {
+      "run_folder": "2026-11-17-21-26_pixel-montezuma_fast-last-layer-against-rnd_gates_unit-tests_archive-identity_resume_speed-ideas-10_card-speed-checks",
+      "code_commit": "17ffd5b08e6dbcc78573654e35635532096b0a57",
+      "ai-h100": {"job_id": "18907454", "passed": true, "card": "NVIDIA H100 80GB HBM3, node h008", "read_at": "2026-11-18 12:14 PT",
+                  "first_update_largest_relative_difference_from_archive": 5.95e-4,
+                  "default_seconds_per_update": 2.30, "fast_layer_seconds_per_update": 2.30,
+                  "peak_card_memory_mb": 70013, "host_memory_maxrss_gb": 8.3, "elapsed": "00:11:31"}
+    },
     "budget_command": "bash -lc slist 2> /dev/null | grep dsimchil",
     "budget_field": 2,
     "budget_unit": "H100-hours"
@@ -31,9 +40,10 @@
     "ssh": ["ssh", "-o", "BatchMode=yes", "-o", "ConnectTimeout=60", "gilbreth"],
     "check": [],
     "remote_run": "/scratch/gilbreth/liu4869/rnd_pixel/runs/{run_name}",
-    "python": "/scratch/gilbreth/liu4869/envs/atari_pixels_jax/bin/python",
+    "python": "/home/liu4869/envs/atari_pixels_jax/bin/python",
     "code_root": "/scratch/gilbreth/liu4869/rnd_pixel/code",
-    "assets": "/scratch/gilbreth/liu4869/rnd_pixel/assets/jaxtari_pixel_study_assets_montezuma_room_geometry_from_png",
+    "assets": "/home/liu4869/rnd_pixel/assets/jaxtari_pixel_study_assets_montezuma_room_geometry_from_png",
+    "environment_note": "Environment and asset pack in home, not scratch: Purdue scratch removes files not accessed for about 60 days and has already broken environments (rule purdue-cluster-slurm.md). Built 2026-11-18 PT by build_environment.sh of the gates run folder's infrastructure/environment_setup/: UVA's conda package files and every pip package at UVA's version; 87 of 88 distributions equal UVA's file by file, and JAXAtari (not imported by the trainer) differs only in its WHEEL metadata file. Asset pack: 4,531 files, every SHA-256 equal to UVA's.",
     "unit_seconds": 1800,
     "pools": {
       "standby-a100-80gb": {
@@ -43,28 +53,36 @@
         "max_jobs": 8,
         "sbatch_options": ["-p", "a100-80gb", "-q", "standby", "-A", "dsmichil", "-N1", "-n1", "-c", "4", "--gres=gpu:1", "--mem=32G"]
       },
-      "standby-a30-a10": {
-        "gpu_class": "a30_or_a10_gilbreth",
+      "standby-a30": {
+        "gpu_class": "a30_gilbreth",
         "execution_profile": "one copy",
         "time_limit": "04:00:00",
-        "max_jobs": 16,
-        "sbatch_options": ["-p", "a30,a10", "-q", "standby", "-A", "dsmichil", "-N1", "-n1", "-c", "4", "--gres=gpu:1", "--mem=16G"]
+        "max_jobs": 8,
+        "sbatch_options": ["-p", "a30", "-q", "standby", "-A", "dsmichil", "-N1", "-n1", "-c", "4", "--gres=gpu:1", "--mem=16G"]
+      },
+      "standby-a10": {
+        "gpu_class": "a10_gilbreth",
+        "execution_profile": "one copy",
+        "time_limit": "04:00:00",
+        "max_jobs": 8,
+        "sbatch_options": ["-p", "a10", "-q", "standby", "-A", "dsmichil", "-N1", "-n1", "-c", "4", "--gres=gpu:1", "--mem=16G"]
       }
     },
     "hand_over": {
-      "pools": {"standby-a100-80gb": {"units_at_once": 4}, "standby-a30-a10": {"units_at_once": 0}},
+      "pools": {"standby-a100-80gb": {"units_at_once": 4}, "standby-a30": {"units_at_once": 0}, "standby-a10": {"units_at_once": 0}},
       "start_within_seconds": 7200,
-      "note": "Idle-card jobs of 4 hours; a unit continues from its checkpoint in the next job. A pool gets units only after its smoke job showed a speed at or above the RTX A4000's (set its units_at_once then). The 32 GiB of host memory of the four-copy pool is an estimate, not a measured MaxRSS: read the smoke job's MaxRSS and correct it."
+      "note": "Idle-card jobs of 4 hours; a unit continues from its checkpoint in the next job. A pool gets units only after its smoke job showed a speed at or above the RTX A4000's (set its units_at_once then). The A30 and the A10 are separate pools (one pool of both before 2026-11-18), so each card type has its own speed check. The 32 GiB of host memory of the four-copy pool is an estimate, not a measured MaxRSS: read the smoke job's MaxRSS and correct it."
     },
     "ready": false,
-    "not_ready_reason": "no smoke job has passed here; the environment /scratch/gilbreth/liu4869/envs/atari_pixels_jax did not exist on 2026-11-17",
+    "not_ready_reason": "the environment and asset pack are in place (2026-11-18); smoke jobs 12432865 (A100 80 GB), 12432866 (A30) and 12432867 (A10) of the gates run folder were submitted 2026-11-18 12:02 PT and were waiting for idle cards",
     "budget_note": "standby, not charged"
   },
   "aces": {
     "ssh": ["ssh", "-o", "BatchMode=yes", "portal05", "ssh", "-o", "BatchMode=yes", "aces"],
     "check": ["ssh", "-o", "BatchMode=yes", "portal05", "ssh", "-O", "check", "aces"],
     "remote_run": "/scratch/user/u.sl359075/rnd_pixel/runs/{run_name}",
-    "python": "/scratch/user/u.sl359075/envs/atari_pixels_jax/bin/python",
+    "python": "/scratch/group/p.cis261532.000/envs/atari_pixels_jax/bin/python",
+    "environment_note": "The environment is in the project's group space because the user scratch held 206,502 of its 250,000 files on 2026-11-18 and the environment has about 49,700 files. Built 2026-11-18 PT by build_environment.sh of the gates run folder's infrastructure/environment_setup/ with UVA's conda package files and every pip package at UVA's version.",
     "code_root": "/scratch/user/u.sl359075/rnd_pixel/code",
     "assets": "/scratch/user/u.sl359075/rnd_pixel/assets/jaxtari_pixel_study_assets_montezuma_room_geometry_from_png",
     "unit_seconds": 1800,
@@ -74,7 +92,8 @@
         "execution_profile": "four copies",
         "time_limit": "1-00:00:00",
         "max_jobs": 4,
-        "sbatch_options": ["--account=158590754315", "-p", "gpu", "--nodes=1", "--ntasks=1", "--cpus-per-task=8", "--mem=39G", "--gres=gpu:h100:1"]
+        "sbatch_options": ["--account=158590754315", "-p", "gpu", "--nodes=1", "--ntasks=1", "--cpus-per-task=8", "--mem=39G", "--gres=gpu:h100:1", "--exclude=ac096,ac098"],
+        "exclude_note": "2026-11-18: a smoke job on ac098 (gpu_debug's only H100 node) found no card with nvidia-smi and ended at once; ac096 is listed as inval in the ACES rule. Re-read both before removing the exclusion."
       }
     },
     "hand_over": {
@@ -82,7 +101,7 @@
       "note": "Packs only. Kept mainly for stages 2 and 3: 0 units at once until the session owner opens it. Its connection lives on portal05 and is only checked, never opened, from here. Set time_limit close to the need of the stage (the charge is per hour used: 136 SUs per H100-hour for this request)."
     },
     "ready": false,
-    "not_ready_reason": "no smoke job has passed here; the environment is not built on this server yet",
+    "not_ready_reason": "the environment and asset pack are in place (2026-11-18); smoke job 2379474 of the gates run folder was submitted 2026-11-18 12:03 PT and was waiting for a card",
     "budget_command": "myproject 2>&1 | grep 158590754315",
     "budget_field": 6,
     "budget_unit": "SUs"
@@ -109,7 +128,16 @@
       "note": "Last in the order of servers; 100 GPU-hours in all. Its connection lives on portal04 and is only checked, never opened, from here."
     },
     "ready": false,
-    "not_ready_reason": "ARM processors: the environment (JAX 0.11.0 and JAXtari as aarch64 builds) is not built there, and no smoke job has passed",
+    "environment_note": "ARM processors (aarch64). Built 2026-11-18 PT by build_environment.sh of the gates run folder's infrastructure/environment_setup/: Python 3.12.13 from conda-forge's linux-aarch64 channel and every pip package at UVA's version as an aarch64 wheel (all exist; torch is PyPI's 2.6.0 CPU build, labelled 2.6.0 instead of 2.6.0+cpu); the 49 pure-Python distributions, JAXtari among them, equal UVA's file by file. Asset pack: 4,531 files, every SHA-256 equal to UVA's.",
+    "not_ready_reason": "ARM processors: the environment is built, but smoke job 3626431 (2026-11-18, NVIDIA GH200 120GB) did not pass one check: in the first default update the policy loss differs from the archive by up to 2.1e-3 relative (absolute differences up to 3.3e-8 on values near 1.6e-5 to 1.9e-5; the total loss agrees within 6e-7 relative and every whole-number field is equal in updates 1 and 2), above the smoke check's limit of 1e-3. All other checks passed. Making the server ready needs a decision on that limit for this card.",
+    "smoke_check": {
+      "run_folder": "2026-11-17-21-26_pixel-montezuma_fast-last-layer-against-rnd_gates_unit-tests_archive-identity_resume_speed-ideas-10_card-speed-checks",
+      "code_commit": "17ffd5b08e6dbcc78573654e35635532096b0a57",
+      "ghx4-h100": {"job_id": "3626431", "passed": false, "card": "NVIDIA GH200 120GB, node gh048", "read_at": "2026-11-18 12:21 PT",
+                    "first_update_largest_relative_difference_from_archive": 2.06e-3,
+                    "default_seconds_per_update": 2.71, "fast_layer_seconds_per_update": 2.73,
+                    "peak_card_memory_mb": 42601, "host_memory_maxrss_gb": 9.1, "elapsed": "00:10:48"}
+    },
     "budget_note": "100 GPU-hours allocated; read `accounts` on the server"
   }
 }

@@ -89,11 +89,13 @@ class ServerTable(FleetCase):
         gilbreth = self.table["gilbreth"]
         passed = {"passed": True, "checks": []}
         self.assertEqual(remote.smoke_verdict(gilbreth, {"standby-a100-80gb": passed}),
-                         (False, "pool standby-a30-a10 has no smoke result yet"))
+                         (False, "pool standby-a30 has no smoke result yet"))
         failed = {"passed": False, "checks": [{"name": "the asset pack equals UVA's, file by file", "passed": False}]}
-        ready, reason = remote.smoke_verdict(gilbreth, {"standby-a100-80gb": passed, "standby-a30-a10": failed})
+        ready, reason = remote.smoke_verdict(gilbreth, {"standby-a100-80gb": passed, "standby-a30": failed,
+                                                       "standby-a10": passed})
         self.assertEqual((ready, "the asset pack" in reason), (False, True))
-        self.assertEqual(remote.smoke_verdict(gilbreth, {"standby-a100-80gb": passed, "standby-a30-a10": passed}),
+        self.assertEqual(remote.smoke_verdict(gilbreth, {"standby-a100-80gb": passed, "standby-a30": passed,
+                                                     "standby-a10": passed}),
                          (True, None))
 
 
@@ -114,7 +116,7 @@ class JobScripts(FleetCase):
             self.assertEqual(subprocess.run(["bash", "-n"], input=text, text=True, capture_output=True).returncode, 0)
             self.assertNotIn("@", text)
             self.assertIn("XLA_FLAGS=--xla_gpu_exclude_nondeterministic_ops=true", text)
-            self.assertIn("XDG_DATA_HOME=/scratch/gautschi/liu4869/rnd_pixel/assets/"
+            self.assertIn("XDG_DATA_HOME=/home/liu4869/rnd_pixel/assets/"
                           "jaxtari_pixel_study_assets_montezuma_room_geometry_from_png", text)
             self.assertIn("unset LD_LIBRARY_PATH", text)
         self.assertIn('exec "$PY" "$CODE/scripts/pixel_sweep_campaign/worker.py" --run-dir "$RUN" --remote-records '
@@ -164,8 +166,8 @@ class HandOver(FleetCase):
             self.table["gautschi"]["hand_over"]["pools"]["ai-h100"]["units_at_once"] = 8
             self.assertEqual(remote.hand_over(self.run_dir, self.table, "gautschi", "ai-h100", dry_run=True), packs)
             # Gilbreth's one-copy pool takes singles, its four-copy pool packs
-            self.table["gilbreth"]["hand_over"]["pools"]["standby-a30-a10"]["units_at_once"] = 3
-            singles = remote.hand_over(self.run_dir, self.table, "gilbreth", "standby-a30-a10", dry_run=True)
+            self.table["gilbreth"]["hand_over"]["pools"]["standby-a30"]["units_at_once"] = 3
+            singles = remote.hand_over(self.run_dir, self.table, "gilbreth", "standby-a30", dry_run=True)
         self.assertEqual(singles, ["grid_rnd_intrinsic-weight-1_seed-13", "grid_rnd_intrinsic-weight-2_seed-13",
                                    "grid_rnd_intrinsic-weight-1_seed-14"])
         self.assertEqual(unit_queue.counts(self.run_dir)["pending"], 6)
@@ -258,7 +260,8 @@ class Ticks(FleetCase):
         script = remote.smoke_script(self.run_dir, "gilbreth", entry, list(entry["pools"]), "20261118-020000")
         self.assertEqual(subprocess.run(["bash", "-n"], input=script, text=True, capture_output=True).returncode, 0)
         self.assertIn("-t 00:20:00 -p a100-80gb -q standby -A dsmichil", script)
-        self.assertIn("/smoke_job_standby-a30-a10.sh", script)
+        self.assertIn("/smoke_job_standby-a30.sh", script)
+        self.assertIn("/smoke_job_standby-a10.sh", script)
         self.assertIn("slurm/submitted_jobids_gilbreth.txt", script)
         self.assertRegex(script, r"-J pixelfleet-[0-9a-f]{8}-gilbreth-standby-a100-80gb-smoke-20261118-020000")
         result = {"passed": True, "job_id": "77", "device": "NVIDIA H100 80GB HBM3",
