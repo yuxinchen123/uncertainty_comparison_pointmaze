@@ -995,3 +995,7 @@ Times are Pacific, read from the clock or from scheduler records.
   rad/s), 30062 (window 179, 100.6 rad/s), 30016 (window 182, 107.5 rad/s) and 30231 (window 183, 107.9 rad/s),
   torso speeds 14.3 to 15.3 m/s. All twenty-five are the angular bound; eighteen at learning rate 3e-5, seven at
   1e-4. At 11:47 PT all 23 unfinished ant units run on UVA, none waiting, none on Gilbreth.
+- 2026-11-18 12:56 PT (window record): fault-guard respawn 26, again in RND's U-maze step-cost fresh seeds at
+  learning rate 3e-5, weight 1/64: seed 30197, window 210, 102.9 rad/s, 14.8 m/s. By 13:13 PT both halves of RND's
+  U-maze step-cost fresh seeds at learning rate 1e-2, weight 16 (seeds 30000 to 30255) are complete; the method's
+  matching block is at window 50 of 256.
