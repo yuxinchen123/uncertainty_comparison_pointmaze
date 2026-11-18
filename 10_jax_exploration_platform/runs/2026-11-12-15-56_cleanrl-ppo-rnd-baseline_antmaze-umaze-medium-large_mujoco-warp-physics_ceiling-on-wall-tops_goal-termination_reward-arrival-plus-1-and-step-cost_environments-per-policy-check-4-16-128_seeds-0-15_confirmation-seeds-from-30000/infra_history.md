@@ -990,3 +990,8 @@ Times are Pacific, read from the clock or from scheduler records.
   from their stops (about 05:30 to 07:30 PT) until 11:42 PT. No record was lost: the units resumed from their
   checkpoints. The 11:41 PT pass started all 23 on UVA cards free now (jobs 6956628 to 6956635). Change: the restart
   loop's limit is now 4 days (it still ends by itself when the queue is empty).
+- 2026-11-18 01:47 to 03:47 PT (window records): fault-guard respawns 22 to 25 under RK4, all in RND's U-maze
+  step-cost fresh seeds at learning rate 3e-5, weight 1/64 (its choice for W): seeds 30239 (window 171, 100.9
+  rad/s), 30062 (window 179, 100.6 rad/s), 30016 (window 182, 107.5 rad/s) and 30231 (window 183, 107.9 rad/s),
+  torso speeds 14.3 to 15.3 m/s. All twenty-five are the angular bound; eighteen at learning rate 3e-5, seven at
+  1e-4. At 11:47 PT all 23 unfinished ant units run on UVA, none waiting, none on Gilbreth.
