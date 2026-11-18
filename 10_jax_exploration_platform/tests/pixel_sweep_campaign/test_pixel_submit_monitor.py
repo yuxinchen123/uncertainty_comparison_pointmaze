@@ -11,7 +11,7 @@ from unittest import mock
 
 from pixel_test_support import (CARD_ONE_COPY, build_units, claimant, common, metric_lines, own, pixel_queue,
                                 queue_units, small_description, unit_queue, write_run_records)
-from campaign_imports import grid, maze
+from campaign_imports import MAZE, grid, maze
 
 submit = own("submit")
 monitor = own("monitor")
@@ -122,7 +122,9 @@ class Plan(unittest.TestCase):
         jobs = plan(units(40, 0))
         self.assertEqual(cards(jobs, gpu_type="nvidia_a16") + cards(jobs, gpu_type="nvidia_geforce_gtx_1080"), 0)
         self.assertTrue(set(submit.DEFAULT_CARD_TYPES) >= {job["gpu_type"] for job in jobs})
-        self.assertEqual(len(submit.DEFAULT_CARD_TYPES), 10)
+        # nine types: the RTX 4000 Ada is out, below the RTX A4000's speed in gate 6
+        self.assertEqual(len(submit.DEFAULT_CARD_TYPES), 9)
+        self.assertNotIn("nvidia_rtx_4000_ada_generation", submit.DEFAULT_CARD_TYPES)
         only = plan(units(40, 0), allowed_types=("nvidia_geforce_rtx_5080",))
         self.assertEqual({job["gpu_type"] for job in only}, {"nvidia_geforce_rtx_5080"})
 
@@ -261,6 +263,36 @@ class TopUp(unittest.TestCase):
                           output.getvalue())
             self.assertIn("profile 'one copy': 6 pending units", output.getvalue())
             self.assertFalse((run_dir / "slurm/worker_env.sh").exists())
+
+    def test_jobs_that_still_wait_are_cancelled_by_id_from_their_own_ledger(self):
+        """Of two jobs, the one still waiting after the wait is cancelled through cancel_ledger.py; the running one stays."""
+        sent = [({"identity": "uva-sl5nw", "node": "jaguar03", "gpu_type": "nvidia_rtx_a4500"}, "6957001"),
+                ({"identity": "uva-yuxinchen", "node": "affogato11", "gpu_type": "nvidia_geforce_rtx_2080_ti"}, "6957002")]
+        live = {"6957001": ["6957001", "sl5nw", "gpu", "RUNNING", "name", "jaguar03", "gres/gpu:1"],
+                "6957002": ["6957002", "yuxinchen", "gpu", "PENDING", "name", "Priority", "gres/gpu:1"]}
+        calls, waits = [], []
+        with mock.patch.object(common, "own_live_jobs", return_value=live), \
+                mock.patch.object(subprocess, "run", side_effect=lambda command, **keywords: calls.append(command)), \
+                contextlib.redirect_stdout(io.StringIO()) as output:
+            cancelled = submit.cancel_still_waiting(Path("/runs/pixel"), "grid", sent, 120, sleep=waits.append)
+        self.assertEqual((cancelled, waits), (["6957002"], [120]))
+        self.assertEqual(len(calls), 1)
+        self.assertEqual(calls[0][1:], [str(MAZE / "cancel_ledger.py"), "--ledger",
+                                        "/runs/pixel/slurm/submitted_jobids_grid_yuxinchen.txt", "--job-id", "6957002"])
+        self.assertIn("cancelled 6957002", output.getvalue())
+
+    def test_the_wait_before_cancelling_reaches_the_top_up_and_the_monitor(self):
+        """--cancel-waiting-after goes to top_up as a keyword and into the monitor job's options."""
+        calls, options = [], []
+        with mock.patch.object(submit, "top_up", side_effect=lambda *a, **k: calls.append(k) or []), \
+                mock.patch.object(submit, "submit_monitor", side_effect=lambda run, o, dry: options.extend(o)), \
+                contextlib.redirect_stdout(io.StringIO()):
+            submit.main(["--run-dir", "/runs/pixel", "--phase", "grid", "--cancel-waiting-after", "120", "--dry-run"])
+            submit.main(["--run-dir", "/runs/pixel", "--monitor", "--top-up-phase", "grid", "--cancel-waiting-after", "120",
+                         "--dry-run"])
+        self.assertEqual(calls[0]["cancel_waiting_after"], 120)
+        self.assertIn("--cancel-waiting-after", options)
+        self.assertEqual(options[options.index("--cancel-waiting-after") + 1], "120")
 
     def test_nothing_is_submitted_for_a_stopped_run(self):
         """RUN/STOP ends a top-up before the scheduler is read."""

@@ -171,19 +171,27 @@ RUN=/p/rlprojects/RND/10_jax_exploration_platform/runs/<run folder>
    ```
 
    Each card asks for 4 processors and 16 GiB. Card types: `--gpu-types` replaces the default list
-   (RTX 2080 Ti, RTX A4000, RTX 4000 Ada, RTX A4500, A40, RTX 5080, A100, H100 NVL). A type whose
-   speed check is below the RTX A4000's is left out by naming the other types.
+   (RTX 2080 Ti, RTX A4000, RTX A4500, A40, RTX 5080, A100, H100 NVL). The RTX 4000 Ada is not in it:
+   its gate-6 speed check (3.039 s per update) is below the RTX A4000's (2.038 s). On an RTX 2080 Ti
+   the worker gives the trainer `XLA_PYTHON_CLIENT_MEM_FRACTION=0.95` (the default update ran out
+   of card memory at 0.85, gate-6 job 6955822); every other card keeps the job's 0.85.
+
+   `--cancel-waiting-after 120` cancels, by id from the run's own ledger, every job of the call
+   that still waits in the scheduler's queue 120 seconds after the last submission; its units stay
+   pending. With it, no worker job is left waiting in UVA's queue.
 
 5. **Start the persistent monitor** (one processor on `nolim`, a pass every 20 minutes), in the
    same turn as the first submission, and create the session's 20-minute check then too.
 
    ```bash
-   $PY $M/submit.py --run-dir $RUN --monitor --top-up-phase grid --only-cards-free-now --leave-cards 4
+   $PY $M/submit.py --run-dir $RUN --monitor --top-up-phase grid --only-cards-free-now --leave-cards 4 \
+       --cancel-waiting-after 120
    $PY $M/monitor.py --run-dir $RUN                                     # one pass by hand
    ```
 
    `--top-up-phase` lets every pass submit workers for pending units that have none, with the same
-   plan options. `--complete-when-drained` writes `RUN/SWEEP_COMPLETE` once every unit is done or
+   plan options (`--cancel-waiting-after` included: the pass then cancels its own jobs that did
+   not start). `--complete-when-drained` writes `RUN/SWEEP_COMPLETE` once every unit is done or
    failed.
 
 6. **Remote servers.** Every server starts not ready and becomes ready only after its smoke job.
@@ -283,7 +291,7 @@ cd /p/rlprojects/RND/10_jax_exploration_platform
 PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests/pixel_sweep_campaign -p "test_pixel_*.py"
 ```
 
-85 tests; they import no numerical library and start no trainer (a stand-in script plays
+88 tests; they import no numerical library and start no trainer (a stand-in script plays
 `train_final.py`), and they also pass under pytest with the project's Python 3.12.
 
 ## Taken from the maze and grid campaigns

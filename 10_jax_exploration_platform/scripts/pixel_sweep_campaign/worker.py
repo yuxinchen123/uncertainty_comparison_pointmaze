@@ -39,6 +39,10 @@ TRAINER = PLATFORM / "scripts/atari_pixel_campaign/train_final.py"
 MARGIN_SECONDS = 900           # kept at the end of the job for the trainer to finish its update, save and end
 MINIMUM_SECONDS = 1800         # a unit is started only when it can train at least this long
 SAMPLE_SECONDS = 60            # how often the card's used memory and the trainer's speed are read
+# the share of card memory JAX may take, by card name where the job environment's 0.85 is too little: on the
+# RTX 2080 Ti the default update ran out of card memory at 0.85 (gate 6, job 6955822: one allocation of
+# 5.10 GiB) and ran at 0.95 (job 6955829). Every other card keeps 0.85, the setting of the archived baseline
+MEMORY_FRACTION_BY_CARD = {"NVIDIA GeForce RTX 2080 Ti": "0.95"}
 # set by a stop signal; the trainer that runs is told to stop, and no further unit is claimed
 STOP = {"requested": False, "process": None}
 
@@ -74,6 +78,11 @@ def trainer_environment(card):
         cache = Path(environment.get("TMPDIR", "/tmp")) / f"{environment.get('USER', 'user')}_pixel_sweep_cache_{words}"
         cache.mkdir(parents=True, exist_ok=True)
         environment["JAX_COMPILATION_CACHE_DIR"] = str(cache)
+    # a card whose program needs a larger share of its memory gets it; the others keep the job's setting
+    # before: card "NVIDIA GeForce RTX 2080 Ti", XLA_PYTHON_CLIENT_MEM_FRACTION=0.85 ; after: 0.95
+    # before: card "NVIDIA RTX A4500", XLA_PYTHON_CLIENT_MEM_FRACTION=0.85 ; after: 0.85
+    if card["gpu"] in MEMORY_FRACTION_BY_CARD:
+        environment["XLA_PYTHON_CLIENT_MEM_FRACTION"] = MEMORY_FRACTION_BY_CARD[card["gpu"]]
     return environment
 
 
@@ -81,7 +90,7 @@ def append_event(folder, kind, unit, **values):
     """Add one line of this worker to the run folder's events.jsonl, beside the trainer's own lines."""
     # after: {"event": "worker_start", "unix": 1795000000.0, "host": "jaguar03", "slurm_job_id": "6900001",
     #         "source_commit": "19d5...", "device": "NVIDIA RTX A4500", "card_memory_mb": 20470,
-    #         "execution_profile": "one copy", "server": "uva", "attempt": 1}
+    #         "execution_profile": "one copy", "server": "uva", "attempt": 1, "update": 0, "memory_fraction": "0.85"}
     folder.mkdir(parents=True, exist_ok=True)
     with (folder / "events.jsonl").open("a") as stream:
         stream.write(json.dumps({"event": kind, "unix": time.time(), "host": unit["hostname"],
@@ -129,16 +138,17 @@ def run_unit(run_dir, unit, specification, card, limit_seconds, trainer, left, s
         return "complete", {"exit_code": 0, "wall_seconds": 0.0, "log": str(log_path),
                             "update_at_start": before["update"], "update_at_end": before["update"],
                             "seconds_per_update": None, "card_memory_used_mb": None}
+    environment = trainer_environment(card)
     append_event(folder, "worker_start", unit, device=card["gpu"], card_memory_mb=card["memory_mb"],
                  execution_profile=unit["execution_profile"], server=server, attempt=unit["attempts"],
-                 update=before["update"])
+                 update=before["update"], memory_fraction=environment.get("XLA_PYTHON_CLIENT_MEM_FRACTION"))
     started, largest, speeds = time.monotonic(), None, []
     with log_path.open("a") as log:
         log.write(f"[{common.pacific()}] job {unit['job_id']} on {unit['hostname']}, {unit['card']}: "
                   f"{' '.join(command)}\n")
         log.flush()
         process = subprocess.Popen(command, stdout=log, stderr=subprocess.STDOUT, cwd=PLATFORM,
-                                   env=trainer_environment(card), start_new_session=True)
+                                   env=environment, start_new_session=True)
         STOP["process"] = process
         try:
             # a stop signal that came between the claim and this start is passed on now

@@ -1,7 +1,8 @@
 """Submit generic worker jobs of the pixel sweep to UVA under both accounts, and the persistent monitor job.
 
     python submit.py --run-dir RUN --phase PHASE [--only-cards-free-now] [--leave-cards N] [--gpu-types a,b]
-                     [--max-new-cards N] [--accounts uva-sl5nw] [--worker-hours H] [--dry-run]
+                     [--max-new-cards N] [--accounts uva-sl5nw] [--worker-hours H] [--cancel-waiting-after S]
+                     [--dry-run]
     python submit.py --run-dir RUN --monitor [--top-up-phase PHASE] [--complete-when-drained] [the options above]
 
 A worker job holds no unit: each of its cards runs worker.py, which claims a unit after the job has
@@ -10,8 +11,9 @@ free cards in the open partitions first (these start now), the owner's reservati
 last, unless --only-cards-free-now is given, jobs by card type that wait in the scheduler's queue.
 What this file adds:
 
-  - Only card types of an allow-list are asked for (default: RTX 2080 Ti, RTX A4000, RTX 4000 Ada,
-    RTX A4500, A40, RTX 5080, A100, H100 NVL; --gpu-types replaces it).
+  - Only card types of an allow-list are asked for (default: RTX 2080 Ti, RTX A4000, RTX A4500, A40,
+    RTX 5080, A100, H100 NVL; --gpu-types replaces it). The RTX 4000 Ada is left out: gate 6 measured
+    3.039 s per update on it against the RTX A4000's 2.038 s, the plan's bar.
   - The plan is made once per execution profile: cards under 60 GB for the pending single units,
     larger cards for the pending four-copy units, and never more worker cards of a profile than
     pending units of that profile that have no worker yet.
@@ -19,28 +21,33 @@ What this file adds:
     units (the most capable allowed types first, or the types of --leave-card-types).
   - Each card asks for 4 processors and 16 GiB of host memory (the archived baseline used about
     6 GB per one-copy run), and every job is requeued by the scheduler when it is preempted.
+  - --cancel-waiting-after S: a job of this call that still waits in the scheduler's queue S seconds
+    after the last submission is cancelled by its id (cancel_ledger.py --job-id); its units stay
+    pending for a later call. No worker job is then left waiting in UVA's queue.
 
 Every job id is appended at submit time to RUN/slurm/submitted_jobids_<phase>_<account>.txt by the
 shared wrapper submit_as.sh (sl5nw in this shell, yuxinchen over ssh). Standard library only. This
-file holds no cancel command (scripts/maze_campaign/cancel_ledger.py is the only cancel path).
+file holds no cancel command: the jobs of --cancel-waiting-after are cancelled through
+scripts/maze_campaign/cancel_ledger.py, the only cancel path.
 """
 import argparse
 from copy import deepcopy
 from pathlib import Path
 import shlex
 import subprocess
+import sys
 import time
 
-from campaign_imports import common, grid, maze, unit_queue
+from campaign_imports import MAZE, common, grid, maze, unit_queue
 import pixel_queue
 
 maze_submit = maze("submit")
 grid_submit = grid("submit")
 # the card types the user allows for this sweep (plan, decision 7): every UVA type equal to or better than
-# the RTX A4000 and the RTX 2080 Ti; GTX 1080 Ti, GTX 1080, Quadro RTX 4000, Titan, P100 and A16 are left out
-DEFAULT_CARD_TYPES = ("nvidia_geforce_rtx_2080_ti", "nvidia_rtx_a4000", "nvidia_rtx_4000_ada_generation",
-                      "nvidia_rtx_a4500", "nvidia_a40", "a40", "nvidia_geforce_rtx_5080", "a100",
-                      "nvidia_a100-pcie-40gb", "nvidia_h100_nvl")
+# the RTX A4000 and the RTX 2080 Ti; GTX 1080 Ti, GTX 1080, Quadro RTX 4000, Titan, P100 and A16 are left out.
+# The RTX 4000 Ada is left out too: below the RTX A4000's speed in gate 6 (3.039 against 2.038 s per update)
+DEFAULT_CARD_TYPES = ("nvidia_geforce_rtx_2080_ti", "nvidia_rtx_a4000", "nvidia_rtx_a4500", "nvidia_a40", "a40",
+                      "nvidia_geforce_rtx_5080", "a100", "nvidia_a100-pcie-40gb", "nvidia_h100_nvl")
 CPUS_PER_CARD = 4
 MEMORY_GIB_PER_CARD = 16
 PIXEL_PYTHON = common.PROJECT / ".venvs/atari_pixels_jax/bin/python"
@@ -237,9 +244,33 @@ def waiting_cards_by_profile(run_dir, profiles, classes, live):
     return counts
 
 
+def cancel_still_waiting(run_dir, phase, sent, wait_seconds, sleep=time.sleep):
+    """Wait, then cancel by id every job of `sent` that still waits in the scheduler's queue; returns their ids.
+
+    before: sent [(job under uva-sl5nw, "6957001"), (job under uva-yuxinchen, "6957002")], wait 120 s; after 120 s
+            6957001 runs and 6957002 waits on Priority
+    after:  6957002 cancelled through cancel_ledger.py with RUN/slurm/submitted_jobids_<phase>_yuxinchen.txt;
+            returns ["6957002"]
+    """
+    sleep(wait_seconds)
+    live = common.own_live_jobs(run_dir)
+    cancelled = []
+    for job, job_id in sent:
+        if job_id not in live or live[job_id][3] != "PENDING":
+            continue
+        # the only cancel path: one id of this run's own ledger, checked again by the account's wrapper
+        ledger = maze_submit.ledger(run_dir, phase, job["identity"].removeprefix("uva-"))
+        subprocess.run([sys.executable, str(MAZE / "cancel_ledger.py"), "--ledger", str(ledger), "--job-id", job_id],
+                       check=True, stdin=subprocess.DEVNULL)
+        print(f"  cancelled {job_id} ({job['identity']}, {job['node'] or 'any node'}, {job['gpu_type']}): it still "
+              f"waited after {wait_seconds} s ({live[job_id][5]}); its units stay pending")
+        cancelled.append(job_id)
+    return cancelled
+
+
 def top_up(run_dir, phase, gpu_types=None, max_new_cards=None, dry_run=False, only_free_now=False,
-           leave_cards=0, leave_card_types=None, python=PIXEL_PYTHON):
-    """Submit worker jobs for the pending units that have no worker yet; returns the new job ids."""
+           leave_cards=0, leave_card_types=None, cancel_waiting_after=None, python=PIXEL_PYTHON):
+    """Submit worker jobs for the pending units that have no worker yet; returns the ids of the jobs kept."""
     run_dir = Path(run_dir)
     if (run_dir / "STOP").exists() or (run_dir / "SWEEP_COMPLETE").exists():
         print("RUN/STOP or RUN/SWEEP_COMPLETE exists: nothing is submitted")
@@ -295,7 +326,10 @@ def top_up(run_dir, phase, gpu_types=None, max_new_cards=None, dry_run=False, on
         account = job["identity"].removeprefix("uva-")
         if not dry_run and job_id not in maze_submit.ledger(run_dir, phase, account).read_text().split():
             raise RuntimeError(f"job {job_id} is missing from {maze_submit.ledger(run_dir, phase, account)}")
-    return [job_id for _, job_id in sent]
+    # a job that has not started a short while after its submission is not left waiting in the queue
+    cancelled = cancel_still_waiting(run_dir, phase, sent, cancel_waiting_after) if (
+        cancel_waiting_after and sent and not dry_run) else []
+    return [job_id for _, job_id in sent if job_id not in cancelled]
 
 
 def submit_monitor(run_dir, options, dry_run=False, python=PIXEL_PYTHON):
@@ -330,6 +364,9 @@ def add_plan_options(parser):
                              "a short limit lets the scheduler place a low-priority worker on a free card")
     parser.add_argument("--accounts", help="comma-separated accounts new workers are submitted under "
                                            "(uva-sl5nw, uva-yuxinchen); default: both")
+    parser.add_argument("--cancel-waiting-after", type=int,
+                        help="cancel, by id, each job of this call that still waits in the scheduler's queue this "
+                             "many seconds after the submission; its units stay pending")
 
 
 def plan_arguments(args):
@@ -338,7 +375,8 @@ def plan_arguments(args):
     maze_submit.set_identities(args.accounts.split(",") if args.accounts else None)
     return {"gpu_types": args.gpu_types.split(",") if args.gpu_types else None,
             "only_free_now": args.only_cards_free_now, "leave_cards": args.leave_cards,
-            "leave_card_types": args.leave_card_types.split(",") if args.leave_card_types else None}
+            "leave_card_types": args.leave_card_types.split(",") if args.leave_card_types else None,
+            "cancel_waiting_after": args.cancel_waiting_after}
 
 
 def main(argv=None):
@@ -360,7 +398,7 @@ def main(argv=None):
         options = (["--top-up-phase", args.top_up_phase] if args.top_up_phase else []) + (
             ["--complete-when-drained"] if args.complete_when_drained else [])
         # the monitor's top-ups ask for what this call's workers would
-        for name in ("gpu_types", "leave_card_types", "worker_hours", "accounts"):
+        for name in ("gpu_types", "leave_card_types", "worker_hours", "accounts", "cancel_waiting_after"):
             if getattr(args, name) is not None:
                 options += ["--" + name.replace("_", "-"), str(getattr(args, name))]
         options += ["--leave-cards", str(args.leave_cards)] if args.leave_cards else []

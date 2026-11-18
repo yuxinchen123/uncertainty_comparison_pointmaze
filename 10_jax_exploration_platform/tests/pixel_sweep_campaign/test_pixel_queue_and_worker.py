@@ -303,6 +303,22 @@ class WorkerEnds(WorkerCase):
         self.assertIn('"server": "gautschi"', events)
 
 
+class MemoryFraction(unittest.TestCase):
+    """The share of card memory the trainer's JAX may take, by card."""
+
+    def test_the_rtx_2080_ti_gets_0_95_and_other_cards_keep_the_jobs_setting(self):
+        """An RTX 2080 Ti's trainer gets 0.95 (gate 6); an RTX A4500's and an H100's keep the job's 0.85."""
+        with tempfile.TemporaryDirectory() as folder, mock.patch.dict(
+                os.environ, {"XLA_PYTHON_CLIENT_MEM_FRACTION": "0.85", "JAX_COMPILATION_CACHE_DIR": folder}):
+            fractions = {card["gpu"]: worker.trainer_environment(card)["XLA_PYTHON_CLIENT_MEM_FRACTION"]
+                         for card in (dict(CARD_ONE_COPY, gpu="NVIDIA GeForce RTX 2080 Ti", memory_mb=11264),
+                                      CARD_ONE_COPY, CARD_FOUR_COPIES)}
+            # the worker's own environment is not changed
+            self.assertEqual(os.environ["XLA_PYTHON_CLIENT_MEM_FRACTION"], "0.85")
+        self.assertEqual(fractions, {"NVIDIA GeForce RTX 2080 Ti": "0.95", "NVIDIA RTX A4500": "0.85",
+                                     "NVIDIA H100 NVL": "0.85"})
+
+
 class NoNumericalLibrary(unittest.TestCase):
     """The files of this folder that run on a login node import no numerical library."""
 
