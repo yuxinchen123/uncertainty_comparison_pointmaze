@@ -1735,6 +1735,26 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   the best of the three finished step-cost configurations, about two standard errors ahead on W. The fourth (step
   0.1 with the hold, learning rate 1e-2, weight 1) was at 255 windows at 21:24 PT.
 
+- 2026-11-17 21:33 PT: **the method's ant U-maze validation block with the step cost is complete, and its fresh
+  seeds run** (seeds 10000 to 10127, 128 policies per configuration, all 256 windows; all 128 policies arrived in
+  every configuration):
+
+  | the method's configuration | W | L | M (million steps) | fault-guard respawns |
+  |---|---|---|---|---|
+  | step 0.1 with the hold, learning rate 1e-4, weight 1/64 | −0.9692 ± 0.0006 | −0.9638 | 1.80 | 3 |
+  | first-arrival hold alone, learning rate 1e-4, weight 1/16 | −0.9699 ± 0.0005 | −0.9648 | 1.71 | 1 |
+  | first-arrival hold alone, learning rate 1e-4, weight 1/1024 | −0.9704 ± 0.0007 | −0.9651 | 2.71 | 2 |
+  | step 0.1 with the hold, learning rate 1e-2, weight 1 | −0.9838 ± 0.0002 | −0.9827 | 0.25 | 0 |
+
+  The method's choice for W is step 0.1 with the hold at learning rate 1e-4, weight 1/64 (paired against RND's
+  choice for W: +0.00163 ± 0.00079); its choice for M is step 0.1 with the hold at learning rate 1e-2, weight 1
+  (paired against RND's choice for M, learning rate 1e-2, weight 16: −0.058 ± 0.010 million steps, earlier on 96 of
+  128 seeds). Fresh seeds 30000 to 30255, two units of 128 for each choice (description
+  `infrastructure/descriptions/antmaze_umaze_rk4-physics_fresh-seeds_method_reward-step-cost_seeds-30000-to-30255_budget-134217728.json`
+  in the AntMaze folder; claim order 75 to 78; the same run seeds as RND's fresh units), started on UVA cards at
+  21:50 PT. Every validation block of the ant study is now complete; what remains are the fresh seeds (RND and the
+  method on the U-maze in both reward settings, Medium and Large with reward 1 on arrival).
+
 ## Next
 
 Rewritten 2026-11-13 22:31 PT.

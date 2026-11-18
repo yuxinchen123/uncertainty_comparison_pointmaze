@@ -973,3 +973,10 @@ Times are Pacific, read from the clock or from scheduler records.
   fast step 0.1 and the hold at learning rate 1e-4, weight 1/64, window 256 (its last), seed 10070, torso angular
   speed 102.4 rad/s (torso speed 13.6 m/s). All twenty-one are the angular bound; fourteen at learning rate 3e-5,
   seven at 1e-4. That unit completed at 20:16 PT (results in STATE.md).
+- 2026-11-17 21:33 PT: the method's last U-maze step-cost validation unit completed (step 0.1 with the hold,
+  learning rate 1e-2, weight 1; no respawn); every ant validation block is complete. Built the method's U-maze
+  step-cost fresh seeds: the choice for W (step 0.1 with the hold, learning rate 1e-4, weight 1/64) and the choice
+  for M (step 0.1 with the hold, learning rate 1e-2, weight 1), two units of 128 policies each, seeds 30000 to
+  30255, at least 14,000 MiB per card, code copy number 1, claim order 75 to 78; specifications equal to the
+  validation units' except seeds and names. UVA jobs 6955695 and 6955696 started all four at 21:50 PT. At 21:52 PT:
+  20 units on UVA, 4 running on Gilbreth (jobs 12418163, 12418164, 12418165, 12418763), none waiting.
