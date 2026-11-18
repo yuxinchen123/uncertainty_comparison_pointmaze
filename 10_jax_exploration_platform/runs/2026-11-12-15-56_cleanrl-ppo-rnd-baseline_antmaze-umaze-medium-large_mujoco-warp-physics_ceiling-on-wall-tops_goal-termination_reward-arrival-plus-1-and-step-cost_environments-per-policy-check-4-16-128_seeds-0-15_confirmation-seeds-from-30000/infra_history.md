@@ -984,3 +984,9 @@ Times are Pacific, read from the clock or from scheduler records.
   other 128 seeds was at 171 windows; the pair is read together once both are complete. Seven units waited on UVA
   at 23:09 PT after their 2-hour worker stops; the 23:11 PT pass started six on UVA cards free now (jobs 6955798 to
   6955800) and the seventh is the completed unit. At 23:14 PT: 19 units on UVA, 4 running on Gilbreth, none waiting.
+- 2026-11-18 05:28 to 11:42 PT: the session's 10-minute restart loop reached its 12-hour limit at 05:28 PT while the
+  session waited on a question to the user (00:10 to 11:41 PT; scheduled checks cannot run then). Every ant unit's
+  2-hour UVA worker stopped in the following hours and no new worker was started, so all 23 unfinished units waited
+  from their stops (about 05:30 to 07:30 PT) until 11:42 PT. No record was lost: the units resumed from their
+  checkpoints. The 11:41 PT pass started all 23 on UVA cards free now (jobs 6956628 to 6956635). Change: the restart
+  loop's limit is now 4 days (it still ends by itself when the queue is empty).
