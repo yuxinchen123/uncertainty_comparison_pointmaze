@@ -980,3 +980,7 @@ Times are Pacific, read from the clock or from scheduler records.
   30255, at least 14,000 MiB per card, code copy number 1, claim order 75 to 78; specifications equal to the
   validation units' except seeds and names. UVA jobs 6955695 and 6955696 started all four at 21:50 PT. At 21:52 PT:
   20 units on UVA, 4 running on Gilbreth (jobs 12418163, 12418164, 12418165, 12418763), none waiting.
+- 2026-11-17 23:11 PT: the first fresh-seed unit completed: fresh-seeds-rk4_antmaze-umaze_reward-step-cost_cleanrl-ppo-rnd_learning-rate-0.01_entropy-coefficient-0.001_intrinsic-weight-16.0_clip-coefficient-0.1_seeds-30000-to-30127 (256 windows). Its partner unit with the
+  other 128 seeds was at 171 windows; the pair is read together once both are complete. Seven units waited on UVA
+  at 23:09 PT after their 2-hour worker stops; the 23:11 PT pass started six on UVA cards free now (jobs 6955798 to
+  6955800) and the seventh is the completed unit. At 23:14 PT: 19 units on UVA, 4 running on Gilbreth, none waiting.
