@@ -101,7 +101,16 @@
       "note": "Packs only. Kept mainly for stages 2 and 3: 0 units at once until the session owner opens it. Its connection lives on portal05 and is only checked, never opened, from here. Set time_limit close to the need of the stage (the charge is per hour used: 136 SUs per H100-hour for this request)."
     },
     "ready": false,
-    "not_ready_reason": "the environment and asset pack are in place (2026-11-18); smoke job 2379474 of the gates run folder was submitted 2026-11-18 12:03 PT and was waiting for a card",
+    "not_ready_reason": "the environment and asset pack are in place, but smoke job 2379474 (2026-11-18, NVIDIA H100 PCIe) did not pass one check: in the first default update the policy loss differs from the archive by up to 2.3e-3 relative (absolute differences up to 3.7e-8 on values near 1.4e-5 to 1.9e-5; every other field within 7.5e-4 relative, the total loss within 2e-7, every whole-number field equal in updates 1 and 2), above the smoke check's limit of 1e-3. All other checks passed. Making the server ready needs a decision on that limit for this card.",
+    "smoke_check": {
+      "run_folder": "2026-11-17-21-26_pixel-montezuma_fast-last-layer-against-rnd_gates_unit-tests_archive-identity_resume_speed-ideas-10_card-speed-checks",
+      "code_commit": "17ffd5b08e6dbcc78573654e35635532096b0a57",
+      "gpu-h100": {"job_id": "2379474", "passed": false, "card": "NVIDIA H100 PCIe, node ac045", "read_at": "2026-11-18 12:42 PT",
+                   "first_update_largest_relative_difference_from_archive": 2.31e-3,
+                   "default_seconds_per_update": 2.94, "fast_layer_seconds_per_update": 2.93,
+                   "peak_card_memory_mb": 69947, "host_memory_maxrss_gb": 9.4, "elapsed": "00:14:03",
+                   "earlier_job": "2379511 on gpu_debug ended at once on ac098: nvidia-smi found no card; no verdict"}
+    },
     "budget_command": "myproject 2>&1 | grep 158590754315",
     "budget_field": 6,
     "budget_unit": "SUs"
