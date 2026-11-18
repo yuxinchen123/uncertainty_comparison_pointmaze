@@ -20,7 +20,8 @@ What this file adds:
   - --leave-cards N keeps N cards that are free now out of the plan, for another study's waiting
     units (the most capable allowed types first, or the types of --leave-card-types).
   - Each card asks for 4 processors and 16 GiB of host memory (the archived baseline used about
-    6 GB per one-copy run), and every job is requeued by the scheduler when it is preempted.
+    6 GB per one-copy run; --memory-gib-per-card changes the memory), and every job is requeued by
+    the scheduler when it is preempted.
   - --cancel-waiting-after S: a job of this call that still waits in the scheduler's queue S seconds
     after the last submission is cancelled by its id (cancel_ledger.py --job-id); its units stay
     pending for a later call. No worker job is then left waiting in UVA's queue.
@@ -49,7 +50,7 @@ grid_submit = grid("submit")
 DEFAULT_CARD_TYPES = ("nvidia_geforce_rtx_2080_ti", "nvidia_rtx_a4000", "nvidia_rtx_a4500", "nvidia_a40", "a40",
                       "nvidia_geforce_rtx_5080", "a100", "nvidia_a100-pcie-40gb", "nvidia_h100_nvl")
 CPUS_PER_CARD = 4
-MEMORY_GIB_PER_CARD = 16
+MEMORY_GIB_PER_CARD = 16       # `set_memory_per_card` replaces it for one process
 PIXEL_PYTHON = common.PROJECT / ".venvs/atari_pixels_jax/bin/python"
 ASSETS = common.PROJECT / "reference_repos/jaxtari_pixel_study_assets_montezuma_room_geometry_from_png"
 # the job environment of the implementation design ("Environment for every job"), as the archived baseline's units set it
@@ -61,6 +62,20 @@ export XLA_FLAGS=--xla_gpu_exclude_nondeterministic_ops=true
 export XDG_DATA_HOME={ASSETS}
 export JAXTARI_SKIP_SPRITE_UPDATE=1
 """
+
+
+def set_memory_per_card(gib=None):
+    """Replace the host memory a worker asks for per card, for this process."""
+    # measured 2026-11-18: one-copy jobs held 5.0 to 6.4 GiB (sacct MaxRSS of gate jobs 6955816 to 6956643, the
+    # gate-7 unit's worker and trainer together 6.35 GiB); 16 GiB per card fits only one card on a node with
+    # 30 GiB unallocated
+    # before: None ; after: 16 GiB as always      before: 10 ; after: every card asks for 10 GiB
+    global MEMORY_GIB_PER_CARD
+    if gib is None:
+        return
+    if gib <= 0:
+        raise ValueError(f"the host memory per card must be positive; it is {gib} GiB")
+    MEMORY_GIB_PER_CARD = gib
 
 
 def worker_job_text(run_dir, platform, python, cards):
@@ -364,6 +379,8 @@ def add_plan_options(parser):
                              "a short limit lets the scheduler place a low-priority worker on a free card")
     parser.add_argument("--accounts", help="comma-separated accounts new workers are submitted under "
                                            "(uva-sl5nw, uva-yuxinchen); default: both")
+    parser.add_argument("--memory-gib-per-card", type=int,
+                        help=f"host memory each worker card asks for, in GiB (default {MEMORY_GIB_PER_CARD})")
     parser.add_argument("--cancel-waiting-after", type=int,
                         help="cancel, by id, each job of this call that still waits in the scheduler's queue this "
                              "many seconds after the submission; its units stay pending")
@@ -373,6 +390,7 @@ def plan_arguments(args):
     """Turn the parsed plan options into top_up's keyword arguments, and set the accounts and the time limit."""
     maze_submit.set_worker_hours(args.worker_hours)
     maze_submit.set_identities(args.accounts.split(",") if args.accounts else None)
+    set_memory_per_card(args.memory_gib_per_card)
     return {"gpu_types": args.gpu_types.split(",") if args.gpu_types else None,
             "only_free_now": args.only_cards_free_now, "leave_cards": args.leave_cards,
             "leave_card_types": args.leave_card_types.split(",") if args.leave_card_types else None,
@@ -398,7 +416,8 @@ def main(argv=None):
         options = (["--top-up-phase", args.top_up_phase] if args.top_up_phase else []) + (
             ["--complete-when-drained"] if args.complete_when_drained else [])
         # the monitor's top-ups ask for what this call's workers would
-        for name in ("gpu_types", "leave_card_types", "worker_hours", "accounts", "cancel_waiting_after"):
+        for name in ("gpu_types", "leave_card_types", "worker_hours", "accounts", "cancel_waiting_after",
+                     "memory_gib_per_card"):
             if getattr(args, name) is not None:
                 options += ["--" + name.replace("_", "-"), str(getattr(args, name))]
         options += ["--leave-cards", str(args.leave_cards)] if args.leave_cards else []

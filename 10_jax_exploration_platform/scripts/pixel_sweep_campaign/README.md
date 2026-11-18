@@ -170,7 +170,8 @@ RUN=/p/rlprojects/RND/10_jax_exploration_platform/runs/<run folder>
    sacct -j <the new ids> -X -n -P -o JobID,State,Elapsed,NodeList      # within a minute of the submission
    ```
 
-   Each card asks for 4 processors and 16 GiB. Card types: `--gpu-types` replaces the default list
+   Each card asks for 4 processors and 16 GiB (`--memory-gib-per-card` changes the memory; one-copy
+   jobs held 5.0 to 6.4 GiB, sacct MaxRSS of the gate jobs). Card types: `--gpu-types` replaces the default list
    (RTX 2080 Ti, RTX A4000, RTX A4500, A40, RTX 5080, A100, H100 NVL). The RTX 4000 Ada is not in it:
    its gate-6 speed check (3.039 s per update) is below the RTX A4000's (2.038 s). On an RTX 2080 Ti
    the worker gives the trainer `XLA_PYTHON_CLIENT_MEM_FRACTION=0.95` (the default update ran out
@@ -291,7 +292,7 @@ cd /p/rlprojects/RND/10_jax_exploration_platform
 PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests/pixel_sweep_campaign -p "test_pixel_*.py"
 ```
 
-88 tests; they import no numerical library and start no trainer (a stand-in script plays
+89 tests; they import no numerical library and start no trainer (a stand-in script plays
 `train_final.py`), and they also pass under pytest with the project's Python 3.12.
 
 ## Taken from the maze and grid campaigns

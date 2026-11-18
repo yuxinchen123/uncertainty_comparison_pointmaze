@@ -281,6 +281,21 @@ class TopUp(unittest.TestCase):
                                         "/runs/pixel/slurm/submitted_jobids_grid_yuxinchen.txt", "--job-id", "6957002"])
         self.assertIn("cancelled 6957002", output.getvalue())
 
+    def test_the_memory_per_card_is_set_by_the_option_and_reaches_the_monitor(self):
+        """--memory-gib-per-card 10 makes every planned card ask for 10 GiB, and the monitor job gets the option too."""
+        self.addCleanup(submit.set_memory_per_card, submit.MEMORY_GIB_PER_CARD)
+        options = []
+        with mock.patch.object(submit, "top_up", side_effect=lambda *a, **k: []), \
+                mock.patch.object(submit, "submit_monitor", side_effect=lambda run, o, dry: options.extend(o)), \
+                contextlib.redirect_stdout(io.StringIO()):
+            submit.main(["--run-dir", "/runs/pixel", "--monitor", "--top-up-phase", "grid", "--memory-gib-per-card", "10",
+                         "--dry-run"])
+        self.assertEqual(options[options.index("--memory-gib-per-card") + 1], "10")
+        jobs = plan(units(40, 0))
+        self.assertTrue(jobs and all(job["memory_gib"] == 10 * job["cards"] for job in jobs))
+        with self.assertRaises(ValueError):
+            submit.set_memory_per_card(0)
+
     def test_the_wait_before_cancelling_reaches_the_top_up_and_the_monitor(self):
         """--cancel-waiting-after goes to top_up as a keyword and into the monitor job's options."""
         calls, options = [], []
