@@ -999,3 +999,8 @@ Times are Pacific, read from the clock or from scheduler records.
   learning rate 3e-5, weight 1/64: seed 30197, window 210, 102.9 rad/s, 14.8 m/s. By 13:13 PT both halves of RND's
   U-maze step-cost fresh seeds at learning rate 1e-2, weight 16 (seeds 30000 to 30255) are complete; the method's
   matching block is at window 50 of 256.
+- 2026-11-18 14:20 PT (window records): fault-guard respawns 27 and 28, both on the angular bound. Respawn 27 is
+  the first in a method block: the first-arrival hold's U-maze fresh seeds with reward 1 on arrival, learning rate
+  3e-5, weight 1/16, seed 30236, window 138, 104.4 rad/s, 14.9 m/s. Respawn 28 is again RND's U-maze step-cost fresh
+  seeds at learning rate 3e-5, weight 1/64: seed 30142, window 219, 100.8 rad/s, 15.3 m/s. Of the 28, 20 are at
+  learning rate 3e-5 and 8 at 1e-4. At 14:30 PT 21 ant units run on UVA, none waiting.
