@@ -1,0 +1,6 @@
+[card guard] 2026-11-19T01:52:05-05:00 job=29617243 node=node3201 need=1 nvidia-smi=1 torch=1 restart=0 action=requeue
+[card guard] ok: 1 card(s), as needed
+job 29617243 on node3201, start 2026-11-19T01:52:05-05:00, card class h200_mit
+jax devices: [CudaDevice(id=0)]
+[2026-11-18 22:52 PT] start grid_fast-last-layer_eight-copies_step-sizes-0.01-0.03-0.1-0.3_sharing-group-4_intrinsic-weights-0.25-0.5_seed-15 (attempt 1, profile 'eight copies')
+[2026-11-18 23:08 PT] grid_fast-last-layer_eight-copies_step-sizes-0.01-0.03-0.1-0.3_sharing-group-4_intrinsic-weights-0.25-0.5_seed-15 stopped at update 190 of 12207 (exit code 0); it is now in queue/pending; log /orcd/home/002/shuzel/rnd_pixel/runs/2026-11-18-12-00_pixel-montezuma_fast-last-layer-against-rnd_stage-1-grid_step-sizes-0.01-0.03-0.1-0.3_intrinsic-weights-0.25-0.5-1-2-4-8_sharing-groups-128-16-4_rnd-same-weights_seeds-13-to-20_steps-per-policy-200000000_schedule-horizon-2000000000/logs/grid_fast-last-layer_eight-copies_step-sizes-0.01-0.03-0.1-0.3_sharing-group-4_intrinsic-weights-0.25-0.5_seed-15_job-29617243.log

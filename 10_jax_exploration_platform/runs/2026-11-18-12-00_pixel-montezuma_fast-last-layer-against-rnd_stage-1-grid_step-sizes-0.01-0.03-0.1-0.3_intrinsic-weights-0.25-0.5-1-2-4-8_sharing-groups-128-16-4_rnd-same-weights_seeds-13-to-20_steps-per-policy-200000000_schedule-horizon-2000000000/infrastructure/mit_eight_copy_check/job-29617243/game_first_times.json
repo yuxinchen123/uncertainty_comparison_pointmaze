@@ -1,0 +1,597 @@
+{
+  "environments_per_policy": 128,
+  "rollout_steps": 128,
+  "steps_per_update": 16384,
+  "window_updates": 61,
+  "updates_folded": 200,
+  "has_event_fields": true,
+  "event_names": [
+    "key_pickup",
+    "gem_pickup",
+    "amulet_pickup",
+    "sword_pickup",
+    "torch_pickup",
+    "door_opened",
+    "enemy_killed",
+    "left_start_room",
+    "left_start_room_with_both_doors_locked",
+    "life_lost_by_fall",
+    "life_lost_by_enemy",
+    "life_lost_by_laser",
+    "life_lost_by_other_cause"
+  ],
+  "start_room": 4,
+  "score_levels": [
+    400,
+    1000,
+    2500
+  ],
+  "copies": [
+    {
+      "first_event": {
+        "key_pickup": {
+          "update": 5,
+          "rollout_step": 114,
+          "step": 80256,
+          "exact": true
+        },
+        "gem_pickup": null,
+        "amulet_pickup": null,
+        "sword_pickup": null,
+        "torch_pickup": null,
+        "door_opened": null,
+        "enemy_killed": null,
+        "left_start_room": null,
+        "left_start_room_with_both_doors_locked": null,
+        "life_lost_by_fall": {
+          "update": 1,
+          "rollout_step": 0,
+          "step": 128,
+          "exact": true
+        },
+        "life_lost_by_enemy": {
+          "update": 1,
+          "rollout_step": 26,
+          "step": 3456,
+          "exact": true
+        },
+        "life_lost_by_laser": null,
+        "life_lost_by_other_cause": null
+      },
+      "first_left_start_room_destinations": [],
+      "first_room_visit": {
+        "4": {
+          "update": 1,
+          "rollout_step": 0,
+          "step": 128,
+          "exact": true
+        }
+      },
+      "first_window_at_score_level": {
+        "400": null,
+        "1000": null,
+        "2500": null
+      },
+      "event_totals": {
+        "key_pickup": 3,
+        "gem_pickup": 0,
+        "amulet_pickup": 0,
+        "sword_pickup": 0,
+        "torch_pickup": 0,
+        "door_opened": 0,
+        "enemy_killed": 0,
+        "left_start_room": 0,
+        "left_start_room_with_both_doors_locked": 0,
+        "life_lost_by_fall": 38149,
+        "life_lost_by_enemy": 722,
+        "life_lost_by_laser": 0,
+        "life_lost_by_other_cause": 0
+      },
+      "games": 6457,
+      "score_sum": 300.0,
+      "games_with_key": 3,
+      "games_left_start_room": 0
+    },
+    {
+      "first_event": {
+        "key_pickup": {
+          "update": 3,
+          "rollout_step": 79,
+          "step": 43008,
+          "exact": true
+        },
+        "gem_pickup": null,
+        "amulet_pickup": null,
+        "sword_pickup": null,
+        "torch_pickup": null,
+        "door_opened": null,
+        "enemy_killed": null,
+        "left_start_room": null,
+        "left_start_room_with_both_doors_locked": null,
+        "life_lost_by_fall": {
+          "update": 1,
+          "rollout_step": 0,
+          "step": 128,
+          "exact": true
+        },
+        "life_lost_by_enemy": {
+          "update": 1,
+          "rollout_step": 26,
+          "step": 3456,
+          "exact": true
+        },
+        "life_lost_by_laser": null,
+        "life_lost_by_other_cause": null
+      },
+      "first_left_start_room_destinations": [],
+      "first_room_visit": {
+        "4": {
+          "update": 1,
+          "rollout_step": 0,
+          "step": 128,
+          "exact": true
+        }
+      },
+      "first_window_at_score_level": {
+        "400": null,
+        "1000": null,
+        "2500": null
+      },
+      "event_totals": {
+        "key_pickup": 2,
+        "gem_pickup": 0,
+        "amulet_pickup": 0,
+        "sword_pickup": 0,
+        "torch_pickup": 0,
+        "door_opened": 0,
+        "enemy_killed": 0,
+        "left_start_room": 0,
+        "left_start_room_with_both_doors_locked": 0,
+        "life_lost_by_fall": 56016,
+        "life_lost_by_enemy": 733,
+        "life_lost_by_laser": 0,
+        "life_lost_by_other_cause": 0
+      },
+      "games": 9463,
+      "score_sum": 200.0,
+      "games_with_key": 2,
+      "games_left_start_room": 0
+    },
+    {
+      "first_event": {
+        "key_pickup": {
+          "update": 3,
+          "rollout_step": 79,
+          "step": 43008,
+          "exact": true
+        },
+        "gem_pickup": null,
+        "amulet_pickup": null,
+        "sword_pickup": null,
+        "torch_pickup": null,
+        "door_opened": {
+          "update": 146,
+          "rollout_step": 121,
+          "step": 2391296,
+          "exact": true
+        },
+        "enemy_killed": null,
+        "left_start_room": {
+          "update": 147,
+          "rollout_step": 4,
+          "step": 2392704,
+          "exact": true
+        },
+        "left_start_room_with_both_doors_locked": null,
+        "life_lost_by_fall": {
+          "update": 1,
+          "rollout_step": 0,
+          "step": 128,
+          "exact": true
+        },
+        "life_lost_by_enemy": {
+          "update": 1,
+          "rollout_step": 26,
+          "step": 3456,
+          "exact": true
+        },
+        "life_lost_by_laser": null,
+        "life_lost_by_other_cause": null
+      },
+      "first_left_start_room_destinations": [
+        5
+      ],
+      "first_room_visit": {
+        "4": {
+          "update": 1,
+          "rollout_step": 0,
+          "step": 128,
+          "exact": true
+        },
+        "5": {
+          "update": 147,
+          "rollout_step": 4,
+          "step": 2392704,
+          "exact": true
+        }
+      },
+      "first_window_at_score_level": {
+        "400": null,
+        "1000": null,
+        "2500": null
+      },
+      "event_totals": {
+        "key_pickup": 18,
+        "gem_pickup": 0,
+        "amulet_pickup": 0,
+        "sword_pickup": 0,
+        "torch_pickup": 0,
+        "door_opened": 2,
+        "enemy_killed": 0,
+        "left_start_room": 2,
+        "left_start_room_with_both_doors_locked": 0,
+        "life_lost_by_fall": 54254,
+        "life_lost_by_enemy": 961,
+        "life_lost_by_laser": 0,
+        "life_lost_by_other_cause": 0
+      },
+      "games": 9205,
+      "score_sum": 2400.0,
+      "games_with_key": 18,
+      "games_left_start_room": 2
+    },
+    {
+      "first_event": {
+        "key_pickup": {
+          "update": 5,
+          "rollout_step": 62,
+          "step": 73600,
+          "exact": true
+        },
+        "gem_pickup": null,
+        "amulet_pickup": null,
+        "sword_pickup": null,
+        "torch_pickup": null,
+        "door_opened": null,
+        "enemy_killed": null,
+        "left_start_room": null,
+        "left_start_room_with_both_doors_locked": null,
+        "life_lost_by_fall": {
+          "update": 1,
+          "rollout_step": 0,
+          "step": 128,
+          "exact": true
+        },
+        "life_lost_by_enemy": {
+          "update": 1,
+          "rollout_step": 26,
+          "step": 3456,
+          "exact": true
+        },
+        "life_lost_by_laser": null,
+        "life_lost_by_other_cause": null
+      },
+      "first_left_start_room_destinations": [],
+      "first_room_visit": {
+        "4": {
+          "update": 1,
+          "rollout_step": 0,
+          "step": 128,
+          "exact": true
+        }
+      },
+      "first_window_at_score_level": {
+        "400": null,
+        "1000": null,
+        "2500": null
+      },
+      "event_totals": {
+        "key_pickup": 1,
+        "gem_pickup": 0,
+        "amulet_pickup": 0,
+        "sword_pickup": 0,
+        "torch_pickup": 0,
+        "door_opened": 0,
+        "enemy_killed": 0,
+        "left_start_room": 0,
+        "left_start_room_with_both_doors_locked": 0,
+        "life_lost_by_fall": 55144,
+        "life_lost_by_enemy": 620,
+        "life_lost_by_laser": 0,
+        "life_lost_by_other_cause": 0
+      },
+      "games": 9293,
+      "score_sum": 100.0,
+      "games_with_key": 1,
+      "games_left_start_room": 0
+    },
+    {
+      "first_event": {
+        "key_pickup": {
+          "update": 5,
+          "rollout_step": 114,
+          "step": 80256,
+          "exact": true
+        },
+        "gem_pickup": null,
+        "amulet_pickup": null,
+        "sword_pickup": null,
+        "torch_pickup": null,
+        "door_opened": {
+          "update": 152,
+          "rollout_step": 102,
+          "step": 2487168,
+          "exact": true
+        },
+        "enemy_killed": null,
+        "left_start_room": null,
+        "left_start_room_with_both_doors_locked": null,
+        "life_lost_by_fall": {
+          "update": 1,
+          "rollout_step": 0,
+          "step": 128,
+          "exact": true
+        },
+        "life_lost_by_enemy": {
+          "update": 1,
+          "rollout_step": 26,
+          "step": 3456,
+          "exact": true
+        },
+        "life_lost_by_laser": null,
+        "life_lost_by_other_cause": null
+      },
+      "first_left_start_room_destinations": [],
+      "first_room_visit": {
+        "4": {
+          "update": 1,
+          "rollout_step": 0,
+          "step": 128,
+          "exact": true
+        }
+      },
+      "first_window_at_score_level": {
+        "400": null,
+        "1000": null,
+        "2500": null
+      },
+      "event_totals": {
+        "key_pickup": 9,
+        "gem_pickup": 0,
+        "amulet_pickup": 0,
+        "sword_pickup": 0,
+        "torch_pickup": 0,
+        "door_opened": 1,
+        "enemy_killed": 0,
+        "left_start_room": 0,
+        "left_start_room_with_both_doors_locked": 0,
+        "life_lost_by_fall": 48108,
+        "life_lost_by_enemy": 911,
+        "life_lost_by_laser": 0,
+        "life_lost_by_other_cause": 0
+      },
+      "games": 8161,
+      "score_sum": 1200.0,
+      "games_with_key": 9,
+      "games_left_start_room": 0
+    },
+    {
+      "first_event": {
+        "key_pickup": {
+          "update": 5,
+          "rollout_step": 62,
+          "step": 73600,
+          "exact": true
+        },
+        "gem_pickup": null,
+        "amulet_pickup": null,
+        "sword_pickup": null,
+        "torch_pickup": null,
+        "door_opened": {
+          "update": 8,
+          "rollout_step": 18,
+          "step": 117120,
+          "exact": true
+        },
+        "enemy_killed": null,
+        "left_start_room": {
+          "update": 8,
+          "rollout_step": 23,
+          "step": 117760,
+          "exact": true
+        },
+        "left_start_room_with_both_doors_locked": null,
+        "life_lost_by_fall": {
+          "update": 1,
+          "rollout_step": 0,
+          "step": 128,
+          "exact": true
+        },
+        "life_lost_by_enemy": {
+          "update": 1,
+          "rollout_step": 26,
+          "step": 3456,
+          "exact": true
+        },
+        "life_lost_by_laser": null,
+        "life_lost_by_other_cause": null
+      },
+      "first_left_start_room_destinations": [
+        5
+      ],
+      "first_room_visit": {
+        "4": {
+          "update": 1,
+          "rollout_step": 0,
+          "step": 128,
+          "exact": true
+        },
+        "5": {
+          "update": 8,
+          "rollout_step": 23,
+          "step": 117760,
+          "exact": true
+        }
+      },
+      "first_window_at_score_level": {
+        "400": null,
+        "1000": null,
+        "2500": null
+      },
+      "event_totals": {
+        "key_pickup": 1,
+        "gem_pickup": 0,
+        "amulet_pickup": 0,
+        "sword_pickup": 0,
+        "torch_pickup": 0,
+        "door_opened": 1,
+        "enemy_killed": 0,
+        "left_start_room": 1,
+        "left_start_room_with_both_doors_locked": 0,
+        "life_lost_by_fall": 59082,
+        "life_lost_by_enemy": 529,
+        "life_lost_by_laser": 0,
+        "life_lost_by_other_cause": 0
+      },
+      "games": 9938,
+      "score_sum": 400.0,
+      "games_with_key": 1,
+      "games_left_start_room": 1
+    },
+    {
+      "first_event": {
+        "key_pickup": {
+          "update": 3,
+          "rollout_step": 79,
+          "step": 43008,
+          "exact": true
+        },
+        "gem_pickup": null,
+        "amulet_pickup": null,
+        "sword_pickup": null,
+        "torch_pickup": null,
+        "door_opened": {
+          "update": 136,
+          "rollout_step": 34,
+          "step": 2216320,
+          "exact": true
+        },
+        "enemy_killed": null,
+        "left_start_room": null,
+        "left_start_room_with_both_doors_locked": null,
+        "life_lost_by_fall": {
+          "update": 1,
+          "rollout_step": 0,
+          "step": 128,
+          "exact": true
+        },
+        "life_lost_by_enemy": {
+          "update": 1,
+          "rollout_step": 26,
+          "step": 3456,
+          "exact": true
+        },
+        "life_lost_by_laser": null,
+        "life_lost_by_other_cause": null
+      },
+      "first_left_start_room_destinations": [],
+      "first_room_visit": {
+        "4": {
+          "update": 1,
+          "rollout_step": 0,
+          "step": 128,
+          "exact": true
+        }
+      },
+      "first_window_at_score_level": {
+        "400": null,
+        "1000": null,
+        "2500": null
+      },
+      "event_totals": {
+        "key_pickup": 5,
+        "gem_pickup": 0,
+        "amulet_pickup": 0,
+        "sword_pickup": 0,
+        "torch_pickup": 0,
+        "door_opened": 1,
+        "enemy_killed": 0,
+        "left_start_room": 0,
+        "left_start_room_with_both_doors_locked": 0,
+        "life_lost_by_fall": 46034,
+        "life_lost_by_enemy": 1089,
+        "life_lost_by_laser": 0,
+        "life_lost_by_other_cause": 0
+      },
+      "games": 7838,
+      "score_sum": 800.0,
+      "games_with_key": 5,
+      "games_left_start_room": 0
+    },
+    {
+      "first_event": {
+        "key_pickup": {
+          "update": 5,
+          "rollout_step": 62,
+          "step": 73600,
+          "exact": true
+        },
+        "gem_pickup": null,
+        "amulet_pickup": null,
+        "sword_pickup": null,
+        "torch_pickup": null,
+        "door_opened": null,
+        "enemy_killed": null,
+        "left_start_room": null,
+        "left_start_room_with_both_doors_locked": null,
+        "life_lost_by_fall": {
+          "update": 1,
+          "rollout_step": 0,
+          "step": 128,
+          "exact": true
+        },
+        "life_lost_by_enemy": {
+          "update": 1,
+          "rollout_step": 26,
+          "step": 3456,
+          "exact": true
+        },
+        "life_lost_by_laser": null,
+        "life_lost_by_other_cause": null
+      },
+      "first_left_start_room_destinations": [],
+      "first_room_visit": {
+        "4": {
+          "update": 1,
+          "rollout_step": 0,
+          "step": 128,
+          "exact": true
+        }
+      },
+      "first_window_at_score_level": {
+        "400": null,
+        "1000": null,
+        "2500": null
+      },
+      "event_totals": {
+        "key_pickup": 1,
+        "gem_pickup": 0,
+        "amulet_pickup": 0,
+        "sword_pickup": 0,
+        "torch_pickup": 0,
+        "door_opened": 0,
+        "enemy_killed": 0,
+        "left_start_room": 0,
+        "left_start_room_with_both_doors_locked": 0,
+        "life_lost_by_fall": 55526,
+        "life_lost_by_enemy": 680,
+        "life_lost_by_laser": 0,
+        "life_lost_by_other_cause": 0
+      },
+      "games": 9368,
+      "score_sum": 100.0,
+      "games_with_key": 1,
+      "games_left_start_room": 0
+    }
+  ]
+}

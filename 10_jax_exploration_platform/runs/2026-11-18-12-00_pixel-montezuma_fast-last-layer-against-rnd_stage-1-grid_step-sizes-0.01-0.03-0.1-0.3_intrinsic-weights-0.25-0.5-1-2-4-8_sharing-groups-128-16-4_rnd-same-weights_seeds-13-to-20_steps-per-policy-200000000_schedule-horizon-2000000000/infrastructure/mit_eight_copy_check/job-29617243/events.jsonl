@@ -1,0 +1,4 @@
+{"event": "worker_start", "unix": 1795071128.2387815, "host": "node3201", "slurm_job_id": "29617243", "source_commit": "48019fc4a9ae4489ed8c023332f62041543ad1f5", "device": "NVIDIA H200", "card_memory_mb": 143771, "execution_profile": "eight copies", "copies": 8, "server": "mit", "attempt": 1, "update": 0, "memory_fraction": "0.85"}
+{"event": "started", "unix": 1795071284.5900357, "host": "node3201", "slurm_job_id": "29617243", "source_commit": "48019fc4a9ae4489ed8c023332f62041543ad1f5", "update": 0}
+{"event": "checkpoint", "unix": 1795072083.2130582, "host": "node3201", "slurm_job_id": "29617243", "source_commit": "48019fc4a9ae4489ed8c023332f62041543ad1f5", "update": 200, "reason": "time limit"}
+{"event": "worker_end", "unix": 1795072087.6291625, "host": "node3201", "slurm_job_id": "29617243", "source_commit": "48019fc4a9ae4489ed8c023332f62041543ad1f5", "device": "NVIDIA H200", "outcome": "stopped", "update": 190, "exit_code": 0}
