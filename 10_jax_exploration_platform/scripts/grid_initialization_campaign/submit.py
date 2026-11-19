@@ -51,12 +51,16 @@ def allowed_seconds(partition, reservation=None, canary=False):
     current = datetime.now().astimezone()
     rows = subprocess.check_output(['scontrol', 'show', 'reservation', '-o'], text=True)
     for row in rows.splitlines():
+        # "No reservations in the system" has no fields: it is not a reservation, and it must not match a job
+        # that names none (reservation None), whose limit comes from the partition and maintenance only
         record = slurm_fields(row)
+        if 'ReservationName' not in record:
+            continue
         if 'MAINT' in record.get('Flags', ''):
             start = datetime.fromisoformat(record['StartTime']).astimezone()
             if start > current:
                 seconds = min(seconds, int((start-current).total_seconds())-1800)
-        if record.get('ReservationName') == reservation:
+        if reservation is not None and record['ReservationName'] == reservation:
             end = datetime.fromisoformat(record['EndTime']).astimezone()
             seconds = min(seconds, int((end-current).total_seconds())-60)
     seconds = min(seconds, 2400) if canary else seconds

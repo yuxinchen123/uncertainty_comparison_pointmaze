@@ -1063,3 +1063,10 @@ Times are Pacific, read from the clock or from scheduler records.
 - 2026-11-18 19:53 PT: `hand_over_loop.sh` is not running (ended 06:20 PT). None of its three run folders holds a
   unit on a remote server, and the AntMaze tick runs the fleet step whenever Gilbreth holds AntMaze units or is
   offered one, so it was not started again.
+- 2026-11-18 21:33 to 21:42 PT: every UVA submission of the AntMaze tick failed with `KeyError: 'EndTime'` in
+  scripts/grid_initialization_campaign/submit.py `allowed_seconds`: with no reservation left on the cluster,
+  `scontrol show reservation -o` prints "No reservations in the system"; that line parsed to an empty record, and
+  its missing ReservationName (None) matched the open-partition jobs' reservation None, so the code looked for an
+  end time. At 21:33 PT 8 units waited with RTX 4000 Ada and RTX 5080 cards free and no job was sent (free-card
+  jobs nor waiting jobs). Fixed: lines without a ReservationName are skipped and only a named reservation is
+  matched; two tests added (10 of 10 pass), and the maze (119) and pixel (96) tooling tests pass.

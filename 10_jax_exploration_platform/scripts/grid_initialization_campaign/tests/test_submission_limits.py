@@ -1,5 +1,6 @@
 """Check account resource admission and exact study cancellation with scheduler calls mocked."""
 
+from datetime import datetime, timedelta
 import json
 from pathlib import Path
 import sys
@@ -23,6 +24,24 @@ def capacity_record(gpu_cards=2, gpu_cpus=24, gpu_memory=64, gnolim_cards=0):
 
 class SubmissionLimitTests(unittest.TestCase):
     """Verify every requested resource remains within its independent bound."""
+
+    def test_no_reservation_in_the_system_leaves_the_partition_limit(self):
+        """The line "No reservations in the system" is not a reservation and does not match a job naming none."""
+        partition = "PartitionName=gpu MaxTime=4-00:00:00 State=UP"
+        with patch.object(submit.subprocess, 'check_output',
+                          side_effect=[partition, "No reservations in the system\n"]):
+            self.assertEqual(submit.allowed_seconds('gpu'), 4*86400)
+
+    def test_a_named_reservation_still_ends_the_job_before_its_end(self):
+        """A job inside a reservation stops 60 s before the reservation ends; others ignore it."""
+        end = (datetime.now().astimezone() + timedelta(hours=10)).replace(microsecond=0)
+        partition = "PartitionName=gpu MaxTime=4-00:00:00 State=UP"
+        reservation = f"ReservationName=sl5nw_168 StartTime=2026-11-01T00:00:00 EndTime={end.isoformat()} Flags=SPEC_NODES"
+        with patch.object(submit.subprocess, 'check_output', side_effect=[partition, reservation]):
+            seconds = submit.allowed_seconds('gpu', 'sl5nw_168')
+        self.assertTrue(10*3600 - 120 <= seconds <= 10*3600 - 60)
+        with patch.object(submit.subprocess, 'check_output', side_effect=[partition, reservation]):
+            self.assertEqual(submit.allowed_seconds('gpu'), 4*86400)
 
     def test_owner_headroom_and_pending_requests_are_reserved(self):
         """Count existing pending jobs once in addition to account-wide running usage."""
