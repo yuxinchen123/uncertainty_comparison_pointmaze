@@ -450,3 +450,21 @@
   reservation is sl5nw_170 (jaguar03 with 8 RTX A4500, and puma01 with no card; 2026-11-19 11:35 PT to
   2026-12-10 23:59 PT); the planner reads it live and asks for it last, and since its 12:21 PT pass all 8 RTX A4500
   cards there run this run's workers inside it (jobs 6958851 and 6959030).
+- 2026-11-19 15:14 PT: **giving way to another session on MIT and on Gautschi, two gaps closed.** Another session's jobs
+  (m5-forecast-inputs, account shuzel on MIT and liu4869 on Gautschi) appeared on both servers.
+  1. MIT: the share step had lowered this run's limits at 15:03 PT (Advanced pool 0 jobs, preemptable 1, 2 units
+     held), but 6 units were still held on the server: the running pack of job 29619724 (3,589 of 12,207 updates;
+     its pack ends in about 8.5 hours, after which it would have taken a held unit and kept an Advanced card for
+     another half day) and 5 never-started eight-copy packs. As at 01:12 PT, 4 were taken back at 15:07 PT
+     (take-back --server mit --units 4 --from-end) and split into their 32 single runs (build_units.py
+     --unpack-pending --match eight-copies); 2 units stay held, the share step's limit. No running job was touched.
+  2. Gautschi: the share step counted as "other members" only users other than liu4869, so another session of
+     liu4869 (job 18949792, 55 minutes, waiting on the group's 4-card cap) counted as this run's and the pool kept
+     4 jobs and 8 units. The step now counts every ai job of the group outside this run's Gautschi ledger as
+     another's (scratchpad helper and its copy in infrastructure/hand_over_loop/); its 15:13 PT pass read 1 card of
+     others and lowered the pool to 3 jobs and 6 units. This run's 4 running Gautschi jobs end at their limits in
+     about 4.5 hours (their packs, at 243 to 781 updates since 09:40 PT, do not finish before), and later jobs wait
+     at nice 100,000 behind the other session's job.
+  The decision of 13:50 PT that the 2-hour step covers taking packs back was wrong for a server where one of this
+  run's jobs runs: that step acts only when none runs there. Plan decision 15 now says to take back by hand the
+  never-started units above the share step's limit when that case occurs.
