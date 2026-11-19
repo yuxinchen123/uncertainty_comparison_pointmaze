@@ -427,3 +427,4 @@
      (smoke_verdict_read_mit_pool-preemptable-h200_job-29603828_compared-with-the-eight-copy-reference.txt), so the
      next pass reads the verdict once more. While the other session holds the account's 4 preemptable cards, the
      loop's MIT share gives that pool no jobs anyway.
+- 2026-11-19 12:17 PT: the second read passed at 12:16 PT (first update: 0 numbers outside the rule, every field equal), and MIT's preemptable pool takes units again, as eight-copy packs. The loop sent its jobs 29678001 and 29678003 (MIT ledger) at 12:16 PT; they were given nice 3,000,000 by hand at once, ahead of the yield step's next pass, since the other session's jobs are on MIT (its waiting preemptable job 29625540 keeps nice 0).
