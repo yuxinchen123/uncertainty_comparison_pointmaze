@@ -64,10 +64,10 @@
     "budget_field": 2,
     "budget_unit": "H100-hours",
     "account_share": "Account dsimchil holds 4 H100 at once (GrpTRES gres/hp_gpu=4), shared with the group's other member long635. Read 2026-11-18 13:23 PT with squeue -A dsimchil: no job of either member, so all 4 are free and max_jobs is 4. The hand-over loop lowers max_jobs by the cards long635's running and waiting ai jobs ask for, before every tick. Jobs of 10 hours (one pack at the measured 2.30 s per update is 7.8 hours) give a card back to the account within 10 hours when long635 waits for one.",
-    "code": "/scratch/gautschi/liu4869/rnd_pixel/code/source_08b7c4c89c8d885704bb559f5b623ca58e36ec2a/10_jax_exploration_platform",
+    "code": "/scratch/gautschi/liu4869/rnd_pixel/code/source_48019fc4a9ae4489ed8c023332f62041543ad1f5/10_jax_exploration_platform",
     "failed_calls_in_a_row": 0,
-    "prepared_commit": "08b7c4c89c8d885704bb559f5b623ca58e36ec2a",
-    "prepared_copy_number": 2,
+    "prepared_commit": "48019fc4a9ae4489ed8c023332f62041543ad1f5",
+    "prepared_copy_number": 3,
     "smoke": {
       "ai-h100": {
         "passed": true,
@@ -204,10 +204,10 @@
       },
       "note": "Not used until their card type is checked: the gates-folder smoke jobs 12432865 (A100 80 GB, four copies) and 12432867 (A10, one copy) were still waiting for idle cards at 13:20 PT. A pool comes back into pools (and hand_over.pools) after its gates-folder job passes under the first-update rule of 2026-11-18, its seconds per update are at or below the RTX A4000's 2.31 s of this sweep (per copy), and a smoke job of this run folder passes. The max_jobs of all Gilbreth pools together stay at most 20: the account may hold 24 standby cards, and 4 are left for the AntMaze study, whose default place is Gilbreth."
     },
-    "code": "/scratch/gilbreth/liu4869/rnd_pixel/code/source_08b7c4c89c8d885704bb559f5b623ca58e36ec2a/10_jax_exploration_platform",
+    "code": "/scratch/gilbreth/liu4869/rnd_pixel/code/source_48019fc4a9ae4489ed8c023332f62041543ad1f5/10_jax_exploration_platform",
     "failed_calls_in_a_row": 0,
-    "prepared_commit": "08b7c4c89c8d885704bb559f5b623ca58e36ec2a",
-    "prepared_copy_number": 2,
+    "prepared_commit": "48019fc4a9ae4489ed8c023332f62041543ad1f5",
+    "prepared_copy_number": 3,
     "smoke": {
       "standby-a30": {
         "passed": true,
@@ -442,6 +442,30 @@
           "node3401-c1"
         ],
         "note": "Check of 2026-11-18 PT before the first real eight-copy pack: one eight-copy pack of real stage-1 singles through build, hand-over, worker (code copy 3) and records, for the updates a 20-minute job holds. mit_preemptable, because the account's 4 Advanced cards are held by this run's two running and two waiting four-copy jobs; all H200 nodes but node3401-c1, because the nodes only mit_preemptable has were all allocated (the preemptable smoke job 29603828 waits on Resources); a 20-minute job may be preempted there and then requeues. Removed once the check is read."
+      },
+      "eight-copy-check-advanced": {
+        "gpu_class": "h200_mit",
+        "execution_profile": "eight copies",
+        "time_limit": "00:20:00",
+        "max_jobs": 1,
+        "card_guard": true,
+        "worker_minimum_seconds": 240,
+        "worker_margin_seconds": 240,
+        "sbatch_options": [
+          "--partition=mit_normal_gpu",
+          "--account=mit_amf_advanced_gpu",
+          "--qos=mit_amf_advanced_gpu",
+          "--gpus=h200:1",
+          "--nodes=1",
+          "--ntasks=1",
+          "--cpus-per-task=4",
+          "--mem=24G",
+          "--requeue",
+          "--open-mode=append",
+          "-x",
+          "node3401-c1"
+        ],
+        "note": "Second check job of 2026-11-18 PT, the same check on the Advanced pool: the account holds 2 of its 4 Advanced cards (two running four-copy jobs; two copy-2 jobs wait for 2-day slots), and a 20-minute job can start in a gap those cannot use. Whichever check job starts first takes the check pack. Removed once the check is read."
       }
     },
     "pools_note": "Typed one-card requests (--gpus=h200:1 --nodes=1 --ntasks=1, never --gres), 4 cores per card (MIT's advice for the RestrictedCoresPerGPU defect), the card guard with GUARD_ACTION=requeue in every job script, --requeue --open-mode=append. --mem=24G: four-copy smoke jobs had MaxRSS 8.3 GB (Gautschi), 9.1 GB (DeltaAI) and 9.4 GB (ACES). time_limit 2 days, the limit of both pools (rule mit-cluster-slurm.md: ask for the partition maximum): a job trains about seven packs one after another, and the pack running at its end saves its state and continues from its checkpoint in the next job. max_jobs: the account's 4 cards in each pool, shared by every session of shuzel; the hand-over loop lowers them by the cards other jobs of the account hold or wait for.",

@@ -255,3 +255,13 @@
   slurm/submitted_jobids_mit.txt); waiting at 22:20 PT. Its start is read by a second copy of the session's start
   watcher (`mit_start_card_check_eight_copy.txt` in the session's scratchpad, at most 6 hours). The Advanced
   pool keeps its four-copy packs while this is checked.
+- 2026-11-18 22:34 PT: check job 29615935 (mit_preemptable) still waited at 22:32 PT with no reason given yet (the scheduler had
+  not tested it); nearly every H200 of mit_preemptable was allocated (sinfo: 2 free on node5001, 1 on node5100,
+  held for a larger job). A second check pool `eight-copy-check-advanced` (the Advanced pool's options, 20
+  minutes, outside `hand_over.pools`) and its job 29617243 submitted at 22:33 PT (id in the MIT ledger): the
+  account holds 2 of its 4 Advanced cards, and a 20-minute job can start in a gap the waiting 2-day jobs cannot
+  use. Whichever check job starts first takes the check pack; nothing was cancelled. The hand-over loop's pass 19
+  (22:21:55 PT) ran the new helper (four-copy packs: 0 asked; eight-copy packs: 0, no eight-copy pool yet) and sent
+  code copy 3 to Gautschi and Gilbreth. A third watcher reads every id of the MIT ledger, the later ones included,
+  within a minute of its start (`mit_ledger_start_check.sh` in the session's scratchpad, process 896334, at most
+  2 days).
