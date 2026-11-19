@@ -404,7 +404,7 @@
         "gpu_class": "h200_mit",
         "execution_profile": "four copies",
         "time_limit": "2-00:00:00",
-        "max_jobs": 3,
+        "max_jobs": 4,
         "card_guard": true,
         "sbatch_options": [
           "--partition=mit_normal_gpu",
@@ -426,7 +426,7 @@
     "hand_over": {
       "pools": {
         "advanced-h200": {
-          "units_at_once": 6
+          "units_at_once": 8
         }
       },
       "start_within_seconds": 7200,

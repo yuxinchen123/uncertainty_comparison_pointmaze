@@ -199,3 +199,9 @@
   a 2-hour limit (`scontrol update`: 6956914 under sl5nw, 6956915 under yuxinchen). At 20:53 PT 6956914 still waited
   on Priority and 6956915 on its own account's card cap (yuxinchen holds 40 of 40). MIT: four-copy packs train on
   two Advanced-pool H200 cards (29606825, 29606826, one card each as asked); two more wait (29606828, 29606833).
+- 2026-11-18 20:55 PT: after the profile job ended, MIT's share set again: this run's Advanced pool at most 4 jobs,
+  8 packs held on the server (8 held: 2 training at 2.17 and 2.20 s per update, 6 waiting). The watcher of job
+  starts runs detached for at most 16 hours (process 702046 on portal04, pid file beside the script) for the jobs
+  not started yet: 29606828, 29606833 and the preemptable smoke job 29603828. The new loop
+  (`montezuma_hand_over_loop_with_mit.sh` in the session's scratchpad) is written and not started; the loop that
+  runs (process 53680) already serves MIT through `hand-over-tick`, without the MIT connection and share steps.
