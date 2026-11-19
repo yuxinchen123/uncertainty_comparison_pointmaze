@@ -310,3 +310,11 @@
   remote_gilbreth 12, remote_mit 10, running 61). The ledger watcher reads 29619724 and 29619725 within a minute of
   their start. The preemptable pool stays held back until its own smoke job 29603828 (four copies, copy 2) has
   passed; it then comes back with the eight-copy profile.
+- 2026-11-18 23:14 PT: MIT job 29606826 (copy 2, four-copy pack `..._sharing-group-16_intrinsic-weight-0.25_seed-14`, about update
+  4,113) ended in NODE_FAIL on node3301 at 23:11:31 PT, not caused by this run, and the scheduler requeued it under
+  the same id (Requeue=1, Restarts=1; waiting, BeginTime 23:13:44 PT). Its pack stays on MIT: the tick puts it back
+  in MIT's pending folder, and either 29606826's restarted worker (copy 2) or a copy-3 worker (an H200's eight-copy
+  worker continues a started four-copy pack, under its four-copy settings) continues it from its last checkpoint.
+  The ledger watcher was replaced at 23:13 PT (process 989111; the first one, 896334, stopped by its process
+  number) by a version that reads every start of a job, a requeued job's second start included, so the restart of
+  29606826 is read too (`infrastructure/mit_eight_copy_switch/mit_ledger_start_check.sh`).
