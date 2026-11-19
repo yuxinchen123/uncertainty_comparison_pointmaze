@@ -355,3 +355,20 @@
   nice 0. Running jobs are left alone. State in slurm/gautschi_yield_state.json. First pass with it, 00:50 PT: no
   other job, nothing lowered. The first four Gautschi jobs (18909476 to 18909479) ended at their 10-hour limit;
   four new jobs wait (18931498, 18931499, 18931521, 18931522).
+- 2026-11-19 01:01 to 01:13 PT : another session (the multi-echelon study, job names m5-setting_...) sent 24
+  jobs to MIT (12 cards on mit_normal_gpu, 13 on mit_preemptable) and 4 to Gautschi ai (18931650 to 18931653).
+  - Gautschi, pass of 01:06 PT: gautschi_yield lowered this run's 4 waiting jobs (18931498, 18931499, 18931521,
+    18931522) to nice 100,000, as designed.
+  - MIT, pass of 01:06 PT: the mit-share step stopped with "ValueError: not enough values to unpack (expected 7, got
+    6)": the other session's job names are longer than the 150-character name column of the squeue reading, so a
+    name ran into the next column. Fixed at about 01:10 PT: the name is now the last column and is read as the rest
+    of the line (MIT_SHARE_COMMAND, mit_cards_of). Pass of 01:11 PT: 24 other jobs seen, this run's waiting job
+    29603828 lowered to nice 3,000,000 (priority 1, age term still 331), and MIT's limit for new jobs went to 0.
+  - The 4 running MIT jobs would have taken MIT's 6 waiting packs one after another until their 2-day limits, so the
+    other session's Advanced-pool jobs (the account's 4 Advanced cards are all ours) would have waited up to 2 days.
+    The 6 waiting packs were taken back to UVA at 01:12 PT (take-back --server mit --units 6): the 5 that never
+    started were taken apart into their 40 single runs (build_units.py --unpack-pending --match eight-copies), and
+    the started check pack (200 updates, group 4, weights 0.25 and 0.5, seed 15) waits on UVA with its run folder
+    until MIT takes packs again. No running training was stopped: each running MIT job ends after its current pack
+    (four-run packs at updates 7,915 and 6,961, eight-run packs at about 1,620, of 12,207). queue-check: every unit in
+    one folder.

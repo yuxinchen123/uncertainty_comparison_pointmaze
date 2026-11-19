@@ -56,7 +56,7 @@ SHARE_COMMAND = ("squeue -A dsimchil -h -p ai -t RUNNING,PENDING "
 MIT_CARDS = {"advanced-h200": 4, "preemptable-h200": 4}     # the account's caps (sacctmgr, read 2026-11-18 PT)
 MIT_PARTITIONS = {"mit_normal_gpu": "advanced-h200", "mit_preemptable": "preemptable-h200"}
 MIT_SHARE_COMMAND = ("squeue -u shuzel -h -t RUNNING,PENDING "
-                     "-O 'JobID:14,Name:150,Partition:24,tres-per-node:60,tres-per-job:60,NumNodes:6,State:12'")
+                     "-O 'JobID:14,Partition:24,tres-per-node:60,tres-per-job:60,NumNodes:6,State:12,Name:400'")
 MIT_CHECK = ["ssh", "-O", "check", "mit"]
 # While another session of the account has jobs on MIT's GPU partitions, this run's waiting MIT jobs get this nice
 # (user, 2026-11-18 about 23:50 PT: "if there is another session that also submits to MIT, please hold or low
@@ -235,17 +235,19 @@ def mit_connection(run_dir):
 
 
 def mit_cards_of(line):
-    """Read a squeue line of the MIT share command; returns (job id, job name, pool, cards asked for)."""
-    # before: "29603853  montezuma-pack-size-profile-h200  mit_normal_gpu  N/A  gres/gpu:h200:1  1  PENDING"
-    # after:  ("29603853", "montezuma-pack-size-profile-h200", "advanced-h200", 1)
-    job, name, partition, per_node, per_job, nodes, _ = line.split()
+    """Read a squeue line of the MIT share command; returns (job id, job name, pool, cards asked for, state)."""
+    # The name comes last: another session's names are longer than any fixed column (a 150-character column ran
+    # into the next one on 2026-11-19 01:06 PT and the line could not be split), so it is the rest of the line.
+    # before: "29603853  mit_normal_gpu  N/A  gres/gpu:h200:1  1  PENDING  montezuma-pack-size-profile-h200"
+    # after:  ("29603853", "montezuma-pack-size-profile-h200", "advanced-h200", 1, "PENDING")
+    job, partition, per_node, per_job, nodes, state, name = line.split(None, 6)
     cards = 0
     for field, factor in ((per_node, int(nodes) if nodes.isdecimal() else 1), (per_job, 1)):
         counts = [int(value) for value in re.findall(r"gpu(?::[a-z0-9_]+)?:(\d+)", field)]
         if counts:
             cards = max(counts) * factor
             break
-    return job, name, MIT_PARTITIONS.get(partition), cards
+    return job, name.strip(), MIT_PARTITIONS.get(partition), cards, state
 
 
 def yield_decision(lines, ledger, lowered):
@@ -260,8 +262,7 @@ def yield_decision(lines, ledger, lowered):
     for line in lines:
         if not line.strip():
             continue
-        job, _, pool, _ = mit_cards_of(line)
-        state = line.split()[-1]
+        job, _, pool, _, state = mit_cards_of(line)
         present.add(job)
         if job in ledger:
             if state == "PENDING":
@@ -283,7 +284,7 @@ def mit_yield(run_dir, entry, squeue_text):
     # jobs off the cards such a job waits for (user, 2026-11-19: keep the nice until this happens, then change the rule)
     # before: "29700002  big  mit_normal_gpu  N/A  gres/gpu:h200:3  1  PENDING" (not ours) ; after: ["29700002 (3 cards)"]
     multi_card = [f"{job} ({cards} cards)" for job, _, pool, cards, state_word in
-                  (mit_cards_of(line) + (line.split()[-1],) for line in squeue_text.splitlines() if line.strip())
+                  (mit_cards_of(line) for line in squeue_text.splitlines() if line.strip())
                   if job not in ledger and pool is not None and cards >= 2 and state_word == "PENDING"]
     # one ssh call for every change; each id is one of this run's own ledger
     changes = [f"scontrol update JobId={job} Nice={YIELD_NICE}" for job in lower] + \
@@ -339,7 +340,7 @@ def mit_share(run_dir):
     for line in answer.stdout.splitlines():
         if not line.strip():
             continue
-        _, name, pool, cards = mit_cards_of(line)
+        _, name, pool, cards, _ = mit_cards_of(line)
         if pool is None:
             continue
         if name.startswith(pool_job) and name[len(pool_job):].rsplit("-", 3)[0] in entry["pools"]:
