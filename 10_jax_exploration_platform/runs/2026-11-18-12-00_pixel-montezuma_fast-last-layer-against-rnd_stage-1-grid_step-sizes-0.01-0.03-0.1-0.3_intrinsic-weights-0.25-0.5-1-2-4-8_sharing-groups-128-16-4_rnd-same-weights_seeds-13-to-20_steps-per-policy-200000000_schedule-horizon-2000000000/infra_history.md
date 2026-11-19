@@ -61,3 +61,9 @@
   running by 15:52 PT. The session's free-card reading used the system's free
   memory until now; it now reads Slurm's configured minus allocated memory, which is what decides a start (the
   monitor's planner already used it: its passes from 13:41 to 15:21 PT found no startable card).
+- 2026-11-18 15:58 to 16:01 PT, user rule ("next time, just submit jobs early to wait in the queue at first place"):
+  16 worker jobs that wait in UVA's queue were sent for the units without a worker (6956892 to 6956909: 4 A100
+  40 GB, 4 RTX 5080, 6 A40, 1 Quadro RTX 6000, 1 RTX 2080 Ti; 9 under sl5nw, 7 under yuxinchen; all waiting on
+  Priority), 8-hour jobs. The monitor job 6956910 replaced 6956692 (cancelled by its ledger id between passes) and
+  tops up both the jobs on cards free now and the waiting ones (command.txt, item 6). Rule
+  `~/.claude/rules/pure-rl-gpu-placement.md` item 3 revised the same day.

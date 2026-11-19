@@ -20,3 +20,10 @@ $PY $M/submit.py --run-dir $RUN --monitor --top-up-phase grid --complete-when-dr
 #    AntMaze study (no AntMaze unit was waiting; AntMaze units go to Gilbreth when UVA has no free card) and the
 #    Quadro RTX 6000 added (2.05 s per update measured on lotus, job 6956683, faster than the RTX A4000's 2.31 s)
 $PY $M/submit.py --run-dir $RUN --monitor --top-up-phase grid --complete-when-drained --only-cards-free-now --leave-cards 0 --worker-hours 24 --cancel-waiting-after 120 --memory-gib-per-card 10 --gpu-types nvidia_geforce_rtx_2080_ti,nvidia_rtx_a4000,nvidia_rtx_a4500,nvidia_a40,a40,nvidia_geforce_rtx_5080,a100,nvidia_a100-pcie-40gb,nvidia_h100_nvl,quadro_rtx_6000
+
+# 6. 2026-11-18 16:00 PT, user instruction ("just submit jobs early to wait in the queue at first place"): workers
+#    that wait in UVA's queue for the units without a worker, beside those on cards free now; 8-hour jobs (a unit
+#    takes 6.9 to 7.8 hours on the one-copy cards); the monitor restarted the same way (job 6956692 cancelled by its
+#    ledger id between passes)
+$PY $M/submit.py --run-dir $RUN --phase grid --leave-cards 0 --worker-hours 8 --memory-gib-per-card 10 --gpu-types nvidia_h100_nvl,a100,nvidia_a100-pcie-40gb,nvidia_geforce_rtx_5080,nvidia_a40,a40,nvidia_rtx_a4500,quadro_rtx_6000,nvidia_geforce_rtx_2080_ti,nvidia_rtx_a4000
+$PY $M/submit.py --run-dir $RUN --monitor --top-up-phase grid --complete-when-drained --leave-cards 0 --worker-hours 8 --memory-gib-per-card 10 --gpu-types nvidia_h100_nvl,a100,nvidia_a100-pcie-40gb,nvidia_geforce_rtx_5080,nvidia_a40,a40,nvidia_rtx_a4500,quadro_rtx_6000,nvidia_geforce_rtx_2080_ti,nvidia_rtx_a4000
