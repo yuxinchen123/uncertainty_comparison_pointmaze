@@ -1009,3 +1009,6 @@ Times are Pacific, read from the clock or from scheduler records.
   cards free then (jobs 6957147 to 6957151) and handed 12 to Gilbreth (12 waiting jobs). The Montezuma study's
   Gilbreth share was lowered from 20 to 12 at 17:32 PT so these units are not held behind it (Gilbreth runs at most
   24 jobs of the account at once).
+- 2026-11-18 17:35 PT (window record): fault-guard respawn 29, again RND's U-maze step-cost fresh seeds at learning
+  rate 3e-5, weight 1/64: seed 30139, window 241, 101.0 rad/s, 16.5 m/s. At 17:47 PT the restart loop took the 4
+  U-maze units back from Gilbreth onto free UVA cards (job 6957198); 8 Medium and Large units wait on Gilbreth.

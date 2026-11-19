@@ -95,3 +95,5 @@
   runs), and 7 of its surplus waiting Gilbreth jobs were cancelled by their ledger ids (12434786, 12434787,
   12435014 to 12435017, 12435048). After it: this study 12 units, 12 waiting jobs and 1 running job on Gilbreth;
   AntMaze 12 waiting jobs.
+- 2026-11-18 17:32 PT: the first unit finished: RND at weight 2, seed 13, on an RTX A4500 (jaguar03, job 6956649),
+  12,207 of 12,207 updates in 5 hours 8 minutes (12:24 to 17:32 PT).
