@@ -265,3 +265,48 @@
   code copy 3 to Gautschi and Gilbreth. A third watcher reads every id of the MIT ledger, the later ones included,
   within a minute of its start (`mit_ledger_start_check.sh` in the session's scratchpad, process 896334, at most
   2 days).
+- 2026-11-18 23:10 PT, the eight-copy check (steps of 22:52 to 23:08 PT): check job 29617243 (Advanced pool) started 22:52:02 PT on
+  node3201, card index 7; read 29 s after its start: AllocTRES equal to ReqTRES (`gres/gpu:h200=1,gres/gpu=1`,
+  4 cores, 24 GB), card guard "ok: 1 card(s)". The waiting preemptable check job 29615935 was cancelled at 22:52 PT
+  by its ledger id (it was no longer needed). Through the worker path of code copy 3: the worker took the profile
+  "eight copies" (NVIDIA H200, 143,771 MB), claimed the check pack (attempt 1), and started train_final.py with
+  eight copies, seed 15 for each, the per-copy step sizes 0.01, 0.03, 0.1, 0.3 at weights 0.25 and 0.5 and the
+  reset lane budget 32 (run.json says the same); its `worker_start` line records `copies` 8. In the trainer's
+  953 s it wrote 200 updates (its "started" event 156 s and its first update 250 s after the worker's start), every number finite, the record files folded to
+  update 200 with the game events; it saved at update 200 ("time limit") and ended with exit code 0; the unit is
+  back in MIT's pending folder with its run folder (stopped with its state saved; it continues in a real job),
+  minimum copy number 3. The tick's copy of its record files reached `slurm/remote_live/mit/`. Readings (records
+  copied to `infrastructure/mit_eight_copy_check/job-29617243/` by `read_eight_copy_check.sh` beside them):
+
+  | setting | copies | seconds per<br>iteration | total steps<br>per second<br>(millions) | steps per<br>second per<br>copy<br>(thousands) | hours per<br>million steps<br>per copy | card memory,<br>largest reading (MB) |
+  |---|---|---|---|---|---|---|
+  | fast last layer, group 4,<br>both records (29617243) | 8 | 3.546 | 0.0370 | 4.62 | 0.0601 | 122,785 |
+
+  Seconds per iteration: the median of 197 gaps between metric lines (3.37 to 3.59 s), the first two updates left
+  out; the worker's own median of its one-minute readings was 3.548 s. Host memory: MaxRSS 11.1 GB (sacct). The
+  speed equals job 29603853's eight-copy readings (3.546 and 3.554 s at group 16). Verdict: the eight-copy path
+  works; MIT switches to eight-copy packs.
+- 2026-11-18 23:11 PT, MIT switched to eight-copy packs (steps of 23:09:35 to 23:10:12 PT), with
+  `infrastructure/mit_eight_copy_switch/switch_mit_to_eight_copies.py` in one hold of the fleet lock, so no tick ran
+  between its steps:
+  1. table: `advanced-h200` and the held-back `preemptable-h200` run the profile "eight copies"; the check pools
+     `eight-copy-check` and `eight-copy-check-advanced` removed.
+  2. the 6 four-copy packs that waited on MIT (sharing group 128, seed 15, weights 0.25 to 8; no job had claimed
+     them) taken back to UVA and taken apart into their 24 singles (`build_units.unpack_pending`, by exact name).
+     The 2 packs that train on MIT (jobs 29606825 and 29606826, group 128 weight 8 seed 14 at update 4,481 and
+     group 16 weight 0.25 seed 14 at 4,113 of 12,207) were not touched; they finish there with four copies.
+  3. the two copy-2 Advanced worker jobs that still waited, 29606828 and 29606833, cancelled by their ledger ids
+     (each checked: in the MIT ledger, this run's job name, PENDING). Reason: their worker (copy 2) has no
+     eight-copy profile, so they could take no unit MIT now holds, and while they waited they filled the pool's
+     4 job places, so no copy-3 job would have been submitted before they started (estimates 01:59 and 06:30 PT)
+     and ended.
+  Then by hand, the steps of one loop pass: mit-share (advanced-h200 at most 4 jobs, 8 units held); pack-top-up
+  (four-copy packs: 0 asked; eight-copy packs: 8 wanted, 1 held, 7 made); hand-over-tick: the 7 eight-copy packs
+  handed to MIT (sharing group 128 at seed 15 and at seed 16, weights 0.25 and 0.5, 1 and 2, 4 and 8; RND weights
+  0.25 to 2 at seeds 16 and 17), so MIT holds 8 eight-copy packs (with the check pack) and the 2 four-copy packs
+  that train; 2 copy-3 Advanced worker jobs submitted, 29619724 and 29619725 (2 days, in the MIT ledger; the pool's
+  other 2 places are the running copy-2 jobs, whose workers end when their pack is done and find no four-copy
+  unit). queue-check: every unit in one queue folder (done 61, packed 136, pending 362, remote_gautschi 8,
+  remote_gilbreth 12, remote_mit 10, running 61). The ledger watcher reads 29619724 and 29619725 within a minute of
+  their start. The preemptable pool stays held back until its own smoke job 29603828 (four copies, copy 2) has
+  passed; it then comes back with the eight-copy profile.
