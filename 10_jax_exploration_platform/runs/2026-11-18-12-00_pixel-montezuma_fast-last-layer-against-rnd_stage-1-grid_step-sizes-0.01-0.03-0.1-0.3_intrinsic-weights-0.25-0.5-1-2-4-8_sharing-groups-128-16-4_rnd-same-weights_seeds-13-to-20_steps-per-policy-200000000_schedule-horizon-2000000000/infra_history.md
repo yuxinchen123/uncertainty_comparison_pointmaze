@@ -346,3 +346,12 @@
   waiting job of another session needs two or more cards on MIT's card partitions, the rule changes to holds for this
   run's waiting MIT jobs (each hold costs that job its age). The loop helper now records such jobs
   (slurm/mit_yield_state.json, other_waiting_multi_card_jobs) and writes a WARNING line in its log.
+- 2026-11-19 00:51 PT, user: "this low priority apply to Purdue Gautschi as well for RND session". Gautschi sets no PriorityFlags
+  (read 00:46 PT; weights age 10,000, QOS 10,000, job size 500, partition 500). Tested on our waiting job 18931522:
+  nice 100,000 gave priority 1 with the age term still counting (67 then 72), and nice 0 gave back 1,572. The loop
+  helper's gautschi-share step now calls gautschi_yield at every pass: while any job on ai under the group account
+  dsimchil that is not in this run's Gautschi ledger runs or waits (other sessions of liu4869, and the group's other
+  member long635), every waiting job of the ledger gets nice 100,000; when none is left, the jobs it lowered get
+  nice 0. Running jobs are left alone. State in slurm/gautschi_yield_state.json. First pass with it, 00:50 PT: no
+  other job, nothing lowered. The first four Gautschi jobs (18909476 to 18909479) ended at their 10-hour limit;
+  four new jobs wait (18931498, 18931499, 18931521, 18931522).

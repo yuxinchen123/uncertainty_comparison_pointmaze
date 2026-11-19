@@ -66,6 +66,14 @@ MIT_CHECK = ["ssh", "-O", "check", "mit"]
 # fair share is the same for both), so every job of another session starts before this run's waiting jobs.
 YIELD_NICE = 3000000
 YIELD_STATE = "slurm/mit_yield_state.json"
+# The same on Purdue Gautschi (user, 2026-11-19 about 00:45 PT: "this low priority apply to Purdue Gautschi as well"):
+# Gautschi sets no PriorityFlags either, and its weights are age 10,000, QOS 10,000, job size 500, partition 500, so
+# 100,000 is above any gap between two jobs on ai. Tested on our waiting job 18931522: priority 1 with the age term
+# still counting (67 then 72), and 1,572 again with nice 0. "Other jobs" are every job on ai under the group account
+# dsimchil that is not in this run's Gautschi ledger: other sessions of liu4869 and the group's other member long635.
+GAUTSCHI_YIELD_NICE = 100000
+GAUTSCHI_YIELD_STATE = "slurm/gautschi_yield_state.json"
+GAUTSCHI_JOBS_COMMAND = "squeue -A dsimchil -h -p ai -t RUNNING,PENDING -o '%i %u %T'"
 CONNECTION_MARK = "the hand-over loop's connection check (mit-connection)"
 BUILD_UNITS = Path("/p/rlprojects/RND/10_jax_exploration_platform/scripts/pixel_sweep_campaign/build_units.py")
 REMOTE_FLEET = BUILD_UNITS.parent / "remote_fleet.py"
@@ -125,10 +133,67 @@ def gautschi_share(run_dir):
         pool["max_jobs"], limits["units_at_once"] = allowed, 2 * allowed
         if before != (allowed, 2 * allowed):
             write_table(run_dir, table)
+    # this run yields to every other ai job of the group (lower priority, age kept), and comes back when they are gone
+    gautschi_yield(run_dir, entry)
     print(f"gautschi-share: account dsimchil, cards of other members on ai (running or waiting): {others}; "
           f"ours {sum(cards for user, _, cards in jobs if user == OWN_USER)}; this run's Gautschi pool: at most "
           f"{allowed} job(s) and {2 * allowed} unit(s) held" + (f" (was {before[0]} and {before[1]})"
                                                                 if before != (allowed, 2 * allowed) else " (unchanged)"))
+
+
+def gautschi_yield_decision(lines, ledger, lowered):
+    """Decide which of this run's Gautschi jobs to lower and which to restore; returns (others, lower, restore)."""
+    # before: lines "18931522 liu4869 PENDING" (ours, in the ledger), "18940000 long635 PENDING" (not ours)
+    # after:  others ["18940000 (long635)"], lower ["18931522"], restore []; with no other job: restore what is lowered
+    others, ours_waiting, present = [], [], set()
+    for line in lines:
+        if not line.strip():
+            continue
+        job, user, state = line.split()[:3]
+        present.add(job)
+        if job in ledger:
+            if state == "PENDING":
+                ours_waiting.append(job)
+        else:
+            others.append(f"{job} ({user})")
+    if others:
+        return others, [job for job in ours_waiting if job not in lowered], []
+    return others, [], sorted(job for job in lowered if job in present)
+
+
+def gautschi_yield(run_dir, entry):
+    """Lower this run's waiting Gautschi jobs below the group's other ai jobs while there are any; restore them after."""
+    answer = subprocess.run(entry["ssh"] + [GAUTSCHI_JOBS_COMMAND], capture_output=True, text=True, timeout=120,
+                            stdin=subprocess.DEVNULL)
+    if answer.returncode != 0:
+        raise SystemExit(f"gautschi-yield: squeue on Gautschi ended with {answer.returncode}: {answer.stderr.strip()}")
+    ledger = set((run_dir / "slurm/submitted_jobids_gautschi.txt").read_text().split())
+    state_path = run_dir / GAUTSCHI_YIELD_STATE
+    state = json.loads(state_path.read_text()) if state_path.exists() else {"lowered": {}}
+    others, lower, restore = gautschi_yield_decision(answer.stdout.splitlines(), ledger, set(state["lowered"]))
+    # one ssh call for every change; each id is one of this run's own Gautschi ledger
+    changes = [f"scontrol update JobId={job} Nice={GAUTSCHI_YIELD_NICE}" for job in lower] + \
+              [f"scontrol update JobId={job} Nice=0" for job in restore]
+    if changes:
+        done = subprocess.run(entry["ssh"] + [" && ".join(changes)], capture_output=True, text=True, timeout=120,
+                              stdin=subprocess.DEVNULL)
+        if done.returncode != 0:
+            raise SystemExit(f"gautschi-yield: scontrol on Gautschi ended with {done.returncode}: {done.stderr.strip()}")
+    stamp = datetime.now().astimezone().isoformat()
+    for job in lower:
+        state["lowered"][job] = stamp
+    for job in restore:
+        del state["lowered"][job]
+    if not others:
+        state["lowered"] = {}
+    state["last_read"] = {"at": stamp, "other_jobs": others}
+    tmp = state_path.with_suffix(".tmp")
+    tmp.write_text(json.dumps(state, indent=1) + "\n")
+    os.replace(tmp, state_path)
+    print(f"gautschi-yield: other jobs on ai under dsimchil: {len(others)}"
+          + (f" ({', '.join(others[:6])}{', ...' if len(others) > 6 else ''})" if others else "")
+          + f"; this run's waiting jobs lowered now: {lower or 'none'}; restored now: {restore or 'none'}"
+          + f"; lowered in all: {sorted(state['lowered']) or 'none'}")
 
 
 def job_prefix(run_dir):
