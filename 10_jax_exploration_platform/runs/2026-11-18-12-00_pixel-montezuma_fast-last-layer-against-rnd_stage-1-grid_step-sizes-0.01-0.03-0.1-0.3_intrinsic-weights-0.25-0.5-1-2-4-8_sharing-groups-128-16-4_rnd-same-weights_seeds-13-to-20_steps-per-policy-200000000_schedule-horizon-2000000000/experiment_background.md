@@ -156,6 +156,16 @@ comparison, and `remote_fleet.py smoke-result` (the UVA working tree) decides th
   of its events.jsonl), and the report counts runs by it. Gautschi's H100 (80 GB) keeps four-copy packs. Four-copy
   packs that started on MIT finish there (an H200's worker continues them under their four-copy settings). Code
   copy 3 (section "Git state") carries the profile; only the eight-copy packs need it.
+  - Check before the first real eight-copy pack (job 29617243, one Advanced-pool H200, 20 minutes): an eight-copy
+    pack of real stage-1 singles (fast last layer, sharing group 4, step sizes 0.01 to 0.3 at weights 0.25 and 0.5,
+    seed 15) went through the builder, the hand-over, the worker of copy 3 and the records: 200 updates, every
+    number finite, the record files folded with the game events, saved at its time limit; it continues in a real
+    job (table below). Job 29603853 alone was not taken as the check: the README's readiness rule is a check of the
+    pool's own path, and that job ran the trainer directly, not the worker.
+  - Switch, 2026-11-18 23:09 to 23:10 PT: the 6 four-copy packs that waited on MIT (no job had claimed them) went
+    back to UVA and apart into their singles; the two copy-2 Advanced jobs that still waited were cancelled by their
+    ledger ids (their worker cannot run eight copies); 7 eight-copy packs were handed over and copy-3 jobs 29619724
+    and 29619725 submitted. The 2 four-copy packs that trained on MIT then finish there.
 
 | card type (server) | setting (job) | copies | seconds per<br>iteration | total steps<br>per second<br>(millions) | steps per<br>second per<br>copy<br>(thousands) | hours per<br>million steps<br>per copy | peak card<br>memory (MB) |
 |---|---|---|---|---|---|---|---|
@@ -163,6 +173,7 @@ comparison, and `remote_fleet.py smoke-result` (the UVA working tree) decides th
 | H200 (MIT, node3000) | default (29603853) | 8 | 3.546 | 0.0370 | 4.62 | 0.0601 | 122,785 |
 | H200 (MIT, node3000) | fast last layer, group 16,<br>both records (29603853) | 4 | 2.166 | 0.0303 | 7.57 | 0.0367 | 75,343 |
 | H200 (MIT, node3000) | fast last layer, group 16,<br>both records (29603853) | 8 | 3.554 | 0.0369 | 4.61 | 0.0603 | 122,787 |
+| H200 (MIT, node3201) | fast last layer, group 4,<br>both records, worker path (29617243) | 8 | 3.546 | 0.0370 | 4.62 | 0.0601 | 122,785 |
 
 - **Speed bar for a card type**: its seconds per iteration (one update of every copy in the process) at most the
   RTX A4000's 2.31 s of this sweep, so no run on it takes longer than on an RTX A4000. The Gautschi H100 (2.30 s,
