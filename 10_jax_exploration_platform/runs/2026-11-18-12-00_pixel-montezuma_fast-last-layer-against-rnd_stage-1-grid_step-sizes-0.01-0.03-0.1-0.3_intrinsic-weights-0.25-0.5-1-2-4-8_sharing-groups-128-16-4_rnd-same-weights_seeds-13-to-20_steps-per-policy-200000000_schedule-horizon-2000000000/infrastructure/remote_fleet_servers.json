@@ -420,6 +420,28 @@
           "-x",
           "node3401-c1"
         ]
+      },
+      "eight-copy-check": {
+        "gpu_class": "h200_mit",
+        "execution_profile": "eight copies",
+        "time_limit": "00:20:00",
+        "max_jobs": 1,
+        "card_guard": true,
+        "worker_minimum_seconds": 240,
+        "worker_margin_seconds": 240,
+        "sbatch_options": [
+          "--partition=mit_preemptable",
+          "--gpus=h200:1",
+          "--nodes=1",
+          "--ntasks=1",
+          "--cpus-per-task=4",
+          "--mem=24G",
+          "--requeue",
+          "--open-mode=append",
+          "-x",
+          "node3401-c1"
+        ],
+        "note": "Check of 2026-11-18 PT before the first real eight-copy pack: one eight-copy pack of real stage-1 singles through build, hand-over, worker (code copy 3) and records, for the updates a 20-minute job holds. mit_preemptable, because the account's 4 Advanced cards are held by this run's two running and two waiting four-copy jobs; all H200 nodes but node3401-c1, because the nodes only mit_preemptable has were all allocated (the preemptable smoke job 29603828 waits on Resources); a 20-minute job may be preempted there and then requeues. Removed once the check is read."
       }
     },
     "pools_note": "Typed one-card requests (--gpus=h200:1 --nodes=1 --ntasks=1, never --gres), 4 cores per card (MIT's advice for the RestrictedCoresPerGPU defect), the card guard with GUARD_ACTION=requeue in every job script, --requeue --open-mode=append. --mem=24G: four-copy smoke jobs had MaxRSS 8.3 GB (Gautschi), 9.1 GB (DeltaAI) and 9.4 GB (ACES). time_limit 2 days, the limit of both pools (rule mit-cluster-slurm.md: ask for the partition maximum): a job trains about seven packs one after another, and the pack running at its end saves its state and continues from its checkpoint in the next job. max_jobs: the account's 4 cards in each pool, shared by every session of shuzel; the hand-over loop lowers them by the cards other jobs of the account hold or wait for.",
@@ -435,10 +457,10 @@
     "ready": true,
     "failed_call_limit": 3,
     "budget_note": "not charged; fair share counts processor-seconds only (4 cores per job)",
-    "code": "/home/shuzel/rnd_pixel/code/source_08b7c4c89c8d885704bb559f5b623ca58e36ec2a/10_jax_exploration_platform",
+    "code": "/home/shuzel/rnd_pixel/code/source_48019fc4a9ae4489ed8c023332f62041543ad1f5/10_jax_exploration_platform",
     "failed_calls_in_a_row": 0,
-    "prepared_commit": "08b7c4c89c8d885704bb559f5b623ca58e36ec2a",
-    "prepared_copy_number": 2,
+    "prepared_commit": "48019fc4a9ae4489ed8c023332f62041543ad1f5",
+    "prepared_copy_number": 3,
     "pools_held_back": {
       "preemptable-h200": {
         "gpu_class": "h200_mit",

@@ -236,3 +236,22 @@
   MIT's pools still at four copies it asks for the same packs as before (checked on a temporary run folder).
   Nothing changed in the trainer (src/ and scripts/atari_pixel_campaign/ equal between copy 2's commit 08b7c4c8
   and this one).
+- 2026-11-18 22:20 PT (steps of 22:18 to 22:20 PT): code copy 3 frozen at the pushed commit 48019fc4 (`maze_campaign/freeze_code.py`;
+  source.json copy number 3). Why a new copy and not only the submission tooling: the worker on the server picks
+  the profile and its settings from the copy's own card_profiles.json, and copy 2's has no eight-copy profile; the
+  trainer is unchanged. Only the eight-copy packs require it (minimum copy number 3); every four-copy pack and
+  single keeps its number (1), so the copy-2 jobs that run or wait (UVA, Gautschi, Gilbreth, MIT) still take
+  them. The hand-over loop's next tick sends copy 3 to Gautschi and Gilbreth (prepare); MIT got it by hand at
+  22:19 PT. MIT check pool `eight-copy-check` added to the table, outside `hand_over.pools` (the tick leaves it
+  alone): mit_preemptable (its own cap of 4 cards; the account's 4 Advanced cards are held by this run's two
+  running and two waiting four-copy jobs, so a check job there could not start before them), every H200 node but
+  node3401-c1 (the nodes only mit_preemptable has were all allocated; a 20-minute job may be preempted there and
+  then requeues), one card, 4 cores, 24 GB, 20 minutes, the card guard, the worker's least training time and
+  margin 240 s each. The check pack, built by `build_units.py --pack-pending --packs 1 --pack-size 8` (the first
+  eight-copy pack of the claim order): `grid_fast-last-layer_eight-copies_step-sizes-0.01-0.03-0.1-0.3_sharing-group-4_intrinsic-weights-0.25-0.5_seed-15`
+  (sharing group 4, the costliest form of the fast layer), minimum copy 3; queue-check: every unit in one folder.
+  Handed to MIT with `remote_fleet.py hand-over --server mit --pool eight-copy-check --units 1`, and check job
+  29615935 submitted with `remote_fleet.py submit --server mit --pool eight-copy-check --jobs 1` (id in
+  slurm/submitted_jobids_mit.txt); waiting at 22:20 PT. Its start is read by a second copy of the session's start
+  watcher (`mit_start_card_check_eight_copy.txt` in the session's scratchpad, at most 6 hours). The Advanced
+  pool keeps its four-copy packs while this is checked.
