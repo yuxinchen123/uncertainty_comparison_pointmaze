@@ -195,3 +195,7 @@
   from two archived runs, and a new frozen code copy on every server during the sweep; (3) its smoke job could not
   start while the account's Advanced cards hold this run's 2-day jobs. The 22% stays recorded for the user, who may
   choose eight copies, accepting rounding-level differences of the size seen between card types.
+- 2026-11-18 20:52 PT: two H100 NVL cards free (serval07, serval08) while the two H100 NVL pack jobs waited; both got
+  a 2-hour limit (`scontrol update`: 6956914 under sl5nw, 6956915 under yuxinchen). At 20:53 PT 6956914 still waited
+  on Priority and 6956915 on its own account's card cap (yuxinchen holds 40 of 40). MIT: four-copy packs train on
+  two Advanced-pool H200 cards (29606825, 29606826, one card each as asked); two more wait (29606828, 29606833).
