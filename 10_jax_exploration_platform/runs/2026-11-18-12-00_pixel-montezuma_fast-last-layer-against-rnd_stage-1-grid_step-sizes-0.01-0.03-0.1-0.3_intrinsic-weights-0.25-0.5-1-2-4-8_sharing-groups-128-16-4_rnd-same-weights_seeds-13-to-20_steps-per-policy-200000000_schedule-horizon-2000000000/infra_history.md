@@ -87,3 +87,11 @@
   environment variables (fraction 0.85, the determinism flag) using 8.6 GB, so something differs from then (the
   code, the driver now 580.159.04, or how XLA plans this card); the cause is not established. Decision: the RTX 5080
   stays out of the stage-1 card list (it has 4 cards, mostly used by the AntMaze study); no unit was lost.
+- 2026-11-18 17:32 to 17:36 PT: at 17:22 PT the AntMaze study's 18 units came off their 2-hour UVA workers together;
+  6 restarted on UVA cards free then and 12 went to Gilbreth, that study's default server (12 jobs waiting there).
+  The account runs at most 24 Gilbreth jobs at once and this study held 20 units there, so its share was lowered
+  to 12 (units at once and jobs, server table, under the fleet's lock), 8 of its waiting Gilbreth units were taken
+  back to queue/pending (`take-back --units 8 --from-end`: the six RND runs of seed 14 and two fast-last-layer
+  runs), and 7 of its surplus waiting Gilbreth jobs were cancelled by their ledger ids (12434786, 12434787,
+  12435014 to 12435017, 12435048). After it: this study 12 units, 12 waiting jobs and 1 running job on Gilbreth;
+  AntMaze 12 waiting jobs.

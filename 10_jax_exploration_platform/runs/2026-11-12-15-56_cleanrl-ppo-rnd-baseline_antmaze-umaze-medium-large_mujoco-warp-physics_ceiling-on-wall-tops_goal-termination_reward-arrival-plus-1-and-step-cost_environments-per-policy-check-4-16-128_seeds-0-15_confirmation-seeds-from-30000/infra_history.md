@@ -1005,3 +1005,7 @@ Times are Pacific, read from the clock or from scheduler records.
   seeds at learning rate 3e-5, weight 1/64: seed 30142, window 219, 100.8 rad/s, 15.3 m/s. (A breakdown of the 28
   by learning rate written here at first was not checked and is withdrawn.) At 14:30 PT 21 ant units run on UVA,
   none waiting.
+- 2026-11-18 17:22 PT: the 18 ant units' 2-hour UVA workers ended together; the restart loop started 6 on UVA
+  cards free then (jobs 6957147 to 6957151) and handed 12 to Gilbreth (12 waiting jobs). The Montezuma study's
+  Gilbreth share was lowered from 20 to 12 at 17:32 PT so these units are not held behind it (Gilbreth runs at most
+  24 jobs of the account at once).
