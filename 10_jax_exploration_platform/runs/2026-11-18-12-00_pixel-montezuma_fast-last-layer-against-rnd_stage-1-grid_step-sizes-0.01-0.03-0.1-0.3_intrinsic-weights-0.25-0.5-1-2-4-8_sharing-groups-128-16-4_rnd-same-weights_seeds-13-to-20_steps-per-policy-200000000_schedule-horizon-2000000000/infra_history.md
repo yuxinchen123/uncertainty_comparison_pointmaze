@@ -210,7 +210,7 @@
   session's scratchpad, copy in infrastructure/hand_over_loop/); its first pass ended 20:49 PT with every unit in
   one queue folder. Correction: the entry above first gave 20:52 and 20:53 PT, times that were not read from the
   clock; the commit time is the reading.
-- 2026-11-18 21:42 PT: the same `KeyError: 'EndTime'` fault (see the AntMaze folder's infra_history.md) was in the
+- 2026-11-18 21:37 PT: the same `KeyError: 'EndTime'` fault (see the AntMaze folder's infra_history.md) was in the
   frozen copy 2 this run's monitor job submits with; its top-ups had planned no new job since the fault began, so
   none had crashed yet. The frozen copy's scripts/grid_initialization_campaign/submit.py was replaced by the fixed
   file (submission tooling only; no trainer or worker file changed): the difference is the skip of lines without a
