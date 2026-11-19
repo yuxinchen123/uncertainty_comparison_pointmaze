@@ -1791,6 +1791,23 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   U-maze with reward 1 on arrival, each side at its own choice for the measure. The U-maze pairs with the step cost
   and the Medium and Large pairs (RND probes until the user decides their comparison) still train.
 
+- 2026-11-19 13:25 PT: **the ant Medium fresh-seed pair is complete: reward 1 on arrival** (seeds 30000 to 30255, 256 policies
+  per side, all 256 windows, all 256 policies arrived on both sides, no fault-guard respawn on either side). As
+  decided with the user for Medium and Large, each side runs its configuration chosen for W only: the method's step
+  0.03 with the first-arrival hold at learning rate 1e-2, weight 16, against RND's learning rate 1e-2, weight 16,
+  paired by seed (95% intervals from 10,000 resamples of the seeds; scratchpad script quick_pair.py):
+
+  | measure | the method | RND | the method minus RND | seeds where the method is better |
+  |---|---|---|---|---|
+  | W, whole-curve mean of the training return | 0.01063 | 0.01066 | −0.00003 [−0.00019, +0.00014] | 129 of 256 |
+  | L, final level (last 25 windows) | 0.01140 | 0.01128 | +0.00012 [−0.00015, +0.00040] | 133 of 256 |
+  | M, first goal (million steps; smaller is better) | 0.621 | 0.680 | −0.059 [−0.118, −0.001] | 141 of 256 |
+
+  On W the two are level on fresh seeds, as on the validation blocks (0.01071 ± 0.00014 against 0.01068 ± 0.00014):
+  the method is not ahead of RND on Medium. Its first goal comes slightly earlier (the interval only just below
+  zero), but neither configuration was chosen for M, so this is no claim. Medium remains an RND probe until the user
+  decides its comparison.
+
 ## Next
 
 Rewritten 2026-11-13 22:31 PT.
