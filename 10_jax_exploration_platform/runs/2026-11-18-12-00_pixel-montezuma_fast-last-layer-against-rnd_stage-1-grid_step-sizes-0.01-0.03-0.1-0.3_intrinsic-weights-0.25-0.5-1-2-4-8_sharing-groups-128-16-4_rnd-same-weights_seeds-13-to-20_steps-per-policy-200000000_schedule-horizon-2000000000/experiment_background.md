@@ -101,7 +101,7 @@ comparison, and `remote_fleet.py smoke-result` (the UVA working tree) decides th
 | Purdue Gilbreth | `standby-a100-80gb`,<br>`standby-a10` | none yet | held back in the table | card type not checked yet |
 | TAMU ACES | `gpu-h100` | none | not ready | credits kept for stages 2 and 3 (plan, section D) |
 | NCSA DeltaAI | `ghx4-h100` | none | not ready | last in the order of servers (plan, section D) |
-| MIT | `advanced-h200` (mit_normal_gpu, Advanced account),<br>`preemptable-h200` (mit_preemptable),<br>1 H200 and 4 cores each | four-copy packs only, once<br>both smoke jobs pass | at most 4 jobs per pool of 2 days,<br>16 packs held at once | user, 2026-11-18 about 19:00 PT (plan decision 14);<br>account shuzel's caps: 4 cards in each pool,<br>shared by every session of the account |
+| MIT | `advanced-h200` (mit_normal_gpu, Advanced account),<br>`preemptable-h200` (mit_preemptable),<br>1 H200 and 4 cores each | eight-copy packs only (four-copy<br>packs until 2026-11-18 about 22:30 PT);<br>the preemptable pool once its smoke job passes | at most 4 jobs per pool of 2 days,<br>2 packs per card held at once | user, 2026-11-18 about 19:00 PT (plan decision 14),<br>and about 21:50 PT ("8 montezuma per h200");<br>account shuzel's caps: 4 cards in each pool,<br>shared by every session of the account |
 
 - **Gautschi's jobs last 10 hours**, not the table's 24: a pack at the measured 2.30 s per update needs 7.8 hours,
   so a card goes back to the shared account within 10 hours when long635 waits for one. The hand-over loop lowers
@@ -146,6 +146,16 @@ comparison, and `remote_fleet.py smoke-result` (the UVA working tree) decides th
   bit for bit. Plan decision 14 asks that every copy's numbers stay those of its seed, and eight-copy packs would
   need a new execution profile, a new pack builder, new smoke references and a new frozen code copy on every server
   during the sweep. The choice of eight copies, with rounding-level differences, stays open to the user.
+- **Eight copies per process on MIT** (user decision of 2026-11-18 about 21:50 PT, "8 montezuma per h200", accepting
+  that eight-copy runs differ from four-copy runs at rounding level; plan decision 14, amendment). The tooling's
+  "eight copies" execution profile takes cards of 140,000 MB or more (the H200): the four-copy settings with the
+  reset lane budget 32, the settings job 29603853 measured. An eight-copy pack is eight never-started singles that
+  share the method, the sharing group and the fast layer's state: the four step sizes at two weights of one sharing
+  group and seed, or RND's weights 0.25 to 2 at two seeds. Bit-for-bit claims hold only within one card type and
+  one pack size; every run records its pack size (`copies` in its unit's record and in every `worker_start` line
+  of its events.jsonl), and the report counts runs by it. Gautschi's H100 (80 GB) keeps four-copy packs. Four-copy
+  packs that started on MIT finish there (an H200's worker continues them under their four-copy settings). Code
+  copy 3 (section "Git state") carries the profile; only the eight-copy packs need it.
 
 | card type (server) | setting (job) | copies | seconds per<br>iteration | total steps<br>per second<br>(millions) | steps per<br>second per<br>copy<br>(thousands) | hours per<br>million steps<br>per copy | peak card<br>memory (MB) |
 |---|---|---|---|---|---|---|---|
@@ -193,7 +203,16 @@ Commit: `08b7c4c89c8d885704bb559f5b623ca58e36ec2a` (branch `main`, pushed), froz
 2523c876, frozen 15 minutes earlier); the two commits differ only in `submit.py`, its README and its test (the
 memory option), and no job ever ran copy number 1.
 
-The code folders were clean except for one file left out of the copy:
+**Code copy 3** (2026-11-18 22:18 PT): commit `48019fc4a9ae4489ed8c023332f62041543ad1f5` (branch `main`, pushed),
+frozen into `code/source_48019fc4a9ae4489ed8c023332f62041543ad1f5/` with `scripts/maze_campaign/freeze_code.py`
+(the code folders were clean). Jobs submitted from then on run it; jobs submitted before keep copy 2. It differs
+from copy 2 only in `scripts/` (the sweep tooling: the eight-copy profile and packs, the pack size in every run's
+record, the remote fleet's `hand-over` and `submit` commands; and the submission fixes of the maze and grid
+campaigns committed since 08b7c4c8); `src/` and `scripts/atari_pixel_campaign/` (the trainer) are the same, so a
+unit's numbers do not depend on which of the two copies runs it. Only eight-copy packs need copy 3 (minimum copy
+number 3 in their records); four-copy packs and singles keep their number, so copy-2 jobs still take them.
+
+At copy 2's freeze the code folders were clean except for one file left out of the copy:
 
 ```
  M 10_jax_exploration_platform/scripts/pixel_sweep_campaign/server_table.json
