@@ -3,7 +3,7 @@
     python remote_fleet.py --run-dir RUN init-table [--force]
     python remote_fleet.py --run-dir RUN prepare --server S [--again]
     python remote_fleet.py --run-dir RUN smoke --server S [--pool P] [--dry-run]
-    python remote_fleet.py --run-dir RUN smoke-result --server S
+    python remote_fleet.py --run-dir RUN smoke-result --server S [--pool P]   # P: a held-back pool
     python remote_fleet.py --run-dir RUN hand-over-tick [--dry-run]      # the one command of a monitoring tick
     python remote_fleet.py --run-dir RUN status
     python remote_fleet.py --run-dir RUN take-back --server S --units N [--match TEXT] [--from-end] [--hold]
@@ -677,11 +677,19 @@ def read_first_update_again(result, reference, lines):
                 job_archive_check=job_check, first_update_rule=smoke_check.FIRST_LINE_RULE)
 
 
-def smoke_result(run_dir, table, name):
-    """Read a server's smoke results, print them, and mark the server ready when every pool passed."""
+def held_back_pools(entry):
+    """A server's pools held back from taking units, by name (the table's free-text note left out)."""
+    # before: {"standby-a10": {...pool...}, "note": "Not used until ..."} ; after: {"standby-a10": {...pool...}}
+    return {pool: settings for pool, settings in entry.get("pools_held_back", {}).items() if isinstance(settings, dict)}
+
+
+def read_smoke_results(run_dir, table, name, pools):
+    """Read the smoke results of some pools of a server in one call, decide each again under this folder's rule, print them."""
     entry = table[name]
+    known = {**held_back_pools(entry), **entry["pools"]}
     script = [f"cd {shlex.quote(entry['remote_run'])} || exit 3"]
-    for pool, settings in entry["pools"].items():
+    for pool in pools:
+        settings = known[pool]
         # the verdict, the job's own default metric lines and the reference they were compared with
         script += [f'echo; echo "{fleet.MARK}result {pool}"', f"cat smoke/result_{pool}.json 2> /dev/null",
                    f"job=$(grep -o '\"job_id\": \"[0-9]*\"' smoke/result_{pool}.json 2> /dev/null | head -n 1 "
@@ -720,10 +728,18 @@ def smoke_result(run_dir, table, name):
                   f", {job_check['detail']}")
         for line in result.get("speed_lines", []):
             print("    " + line)
+    # the table keeps each pool's last verdict read
+    entry.setdefault("smoke", {}).update(
+        {pool: {key: result.get(key) for key in ("passed", "job_id", "device", "written_at", "speed", "first_update_rule")}
+         for pool, result in results.items()})
+    return results
+
+
+def smoke_result(run_dir, table, name):
+    """Read a server's smoke results, print them, and mark the server ready when every pool passed."""
+    entry = table[name]
+    results = read_smoke_results(run_dir, table, name, list(entry["pools"]))
     ready, reason = smoke_verdict(entry, results)
-    entry["smoke"] = {pool: {key: result.get(key) for key in ("passed", "job_id", "device", "written_at", "speed",
-                                                              "first_update_rule")}
-                      for pool, result in results.items()}
     entry["ready"] = ready
     if ready:
         entry.pop("not_ready_reason", None)
@@ -733,6 +749,33 @@ def smoke_result(run_dir, table, name):
     fleet.log(run_dir, f"{name} | smoke-result | " + ("READY: every pool's smoke job passed" if ready
                                                        else f"not ready: {reason}"))
     return ready
+
+
+def held_pool_result(run_dir, table, name, pool):
+    """Read the smoke result of one held-back pool; a passed pool goes back to the pools that take units. Returns passed."""
+    # before: pools {"advanced-h200": ...}, pools_held_back {"preemptable-h200": {..., "units_at_once_when_back": 0}},
+    #         the pool's smoke job passed
+    # after:  pools {"advanced-h200": ..., "preemptable-h200": {...}}, hand_over.pools["preemptable-h200"] =
+    #         {"units_at_once": 0}, nothing held back; whether the server is ready is not changed
+    entry = table[name]
+    if pool not in held_back_pools(entry):
+        raise SystemExit(f"{name} holds no pool {pool!r} back (pools_held_back: {sorted(held_back_pools(entry))})")
+    if "units_at_once_when_back" not in entry["pools_held_back"][pool]:
+        raise SystemExit(f"the held-back pool {pool!r} of {name} names no units_at_once_when_back")
+    result = read_smoke_results(run_dir, table, name, [pool]).get(pool)
+    passed = result is not None and result.get("passed") is True
+    if passed:
+        settings = dict(entry["pools_held_back"].pop(pool))
+        entry["hand_over"]["pools"][pool] = {"units_at_once": settings.pop("units_at_once_when_back")}
+        entry["pools"][pool] = settings
+    common.write_json(fleet.table_path(run_dir), table)
+    fleet.log(run_dir, f"{name} | smoke-result | pool {pool}: " + (
+        "PASSED; it takes units again" if passed else
+        f"{'no smoke result yet' if result is None else 'NOT passed'}; it stays held back"))
+    # the pool's job script is written again, so it holds this run folder's code copy
+    if passed:
+        prepare(run_dir, table, name, again=True)
+    return passed
 
 
 def adapt(run_dir):
@@ -766,7 +809,10 @@ def main(argv=None):
     smoking.add_argument("--server", required=True)
     smoking.add_argument("--pool", help="only this pool; default: every pool of the server")
     smoking.add_argument("--dry-run", action="store_true")
-    commands.add_parser("smoke-result").add_argument("--server", required=True)
+    reading = commands.add_parser("smoke-result")
+    reading.add_argument("--server", required=True)
+    reading.add_argument("--pool", help="a pool of pools_held_back: read its verdict only; when it passed, the pool "
+                                        "takes units again (the server's ready state is not changed)")
     commands.add_parser("hand-over-tick").add_argument("--dry-run", action="store_true")
     commands.add_parser("status")
     taking = commands.add_parser("take-back")
@@ -797,6 +843,8 @@ def main(argv=None):
             prepare(run_dir, table, args.server, args.again)
         elif args.command == "smoke":
             smoke(run_dir, table, args.server, args.pool, args.dry_run)
+        elif args.command == "smoke-result" and args.pool:
+            held_pool_result(run_dir, table, args.server, args.pool)
         elif args.command == "smoke-result":
             smoke_result(run_dir, table, args.server)
         elif args.command == "hand-over-tick":

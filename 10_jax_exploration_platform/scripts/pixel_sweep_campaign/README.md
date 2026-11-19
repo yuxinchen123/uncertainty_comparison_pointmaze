@@ -332,6 +332,7 @@ submission (job name), the status script's progress section, the return of an un
 monitoring pass, the report, and the remote fleet's local parts. Run for real on 2026-11-18: the
 stage-1 grid on UVA (`submit.py`, `worker.py`, `monitor.py`); smoke jobs on Gautschi, Gilbreth, ACES
 and DeltaAI (`smoke`, `smoke-result`); the first hand-over to Gautschi (`hand-over-tick`, 8 packs, 4
-worker jobs). A smoke job's two trainings have 420 s each: on a Gilbreth D node (16 cores) the trainer
+worker jobs); MIT's H200 (smoke job 29603827 and the hand-over of 2026-11-18 20:19 PT; `smoke-result --pool`,
+which brings a held-back pool back, only in the tests so far). A smoke job's two trainings have 420 s each: on a Gilbreth D node (16 cores) the trainer
 took about 7 minutes to its first update, so only 9 of the 20 default updates fit (job 12434104); on a
 B node (24 cores) all 20 of both trainings fit (job 12432866).

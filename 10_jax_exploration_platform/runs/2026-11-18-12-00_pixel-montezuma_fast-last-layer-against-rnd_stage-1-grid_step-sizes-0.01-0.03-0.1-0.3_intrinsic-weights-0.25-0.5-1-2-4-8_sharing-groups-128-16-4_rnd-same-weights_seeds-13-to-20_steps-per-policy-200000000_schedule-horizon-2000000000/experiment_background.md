@@ -101,6 +101,7 @@ comparison, and `remote_fleet.py smoke-result` (the UVA working tree) decides th
 | Purdue Gilbreth | `standby-a100-80gb`,<br>`standby-a10` | none yet | held back in the table | card type not checked yet |
 | TAMU ACES | `gpu-h100` | none | not ready | credits kept for stages 2 and 3 (plan, section D) |
 | NCSA DeltaAI | `ghx4-h100` | none | not ready | last in the order of servers (plan, section D) |
+| MIT | `advanced-h200` (mit_normal_gpu, Advanced account),<br>`preemptable-h200` (mit_preemptable),<br>1 H200 and 4 cores each | four-copy packs only, once<br>both smoke jobs pass | at most 4 jobs per pool of 2 days,<br>16 packs held at once | user, 2026-11-18 about 19:00 PT (plan decision 14);<br>account shuzel's caps: 4 cards in each pool,<br>shared by every session of the account |
 
 - **Gautschi's jobs last 10 hours**, not the table's 24: a pack at the measured 2.30 s per update needs 7.8 hours,
   so a card goes back to the shared account within 10 hours when long635 waits for one. The hand-over loop lowers
@@ -123,6 +124,36 @@ comparison, and `remote_fleet.py smoke-result` (the UVA working tree) decides th
 - **Gilbreth's A100 80 GB and A10** are held back: the gates-folder smoke jobs 12432865 and 12432867 were still
   waiting for idle cards (estimated starts 2026-11-18 21:17 PT and 2026-11-19 01:32 PT). Adding one needs its
   gates-folder verdict, the speed bar, and a smoke job of this folder; the A100 80 GB would take packs (four copies).
+- **MIT (added 2026-11-18 19:14 PT, plan decision 14).** The environment `/home/shuzel/envs/atari_pixels_jax` was
+  built with the gates folder's `build_environment.sh` from the same wheel files as Gautschi's (the MIT login node
+  downloaded PyPI at about 90 kB/s): its 88 distributions equal Gautschi's file by file and UVA's in 87 of 88
+  (JAXAtari's `WHEEL` file only). The asset pack's 4,531 SHA-256 equal UVA's. Everything is in home (backed up);
+  scratch was 88% full. MIT is reached only through the shared connection held on portal04: the table's ssh command
+  carries `-o ControlMaster=no -o ProxyCommand=false`, so with the connection closed a command fails on portal04
+  and never becomes a new login. Requests: `--gpus=h200:1 --nodes=1 --ntasks=1 --cpus-per-task=4 --mem=24G
+  --requeue --open-mode=append`, the card guard with `GUARD_ACTION=requeue` in every job script, 2-day jobs (the
+  partition maximum of both pools; a pack running when a job ends continues from its checkpoint in the next job).
+  The Advanced pool's smoke job 29603827 passed (the 20 default updates equal the archived H100 NVL run in every
+  field, bit for bit), so MIT is ready on that pool; the preemptable pool is held back until its own smoke job
+  29603828 passes (its nodes include H200 NVL cards). The account's caps (4 cards per pool) are shared by every
+  session of shuzel: the hand-over loop lowers this run's MIT limits by the cards other jobs of the account hold or
+  wait for, and the server holds 2 packs per card.
+- **Four copies per process on MIT, not eight** (decision of 2026-11-18 20:50 PT). Profile job 29603853 on one H200
+  (table below; `infrastructure/mit_pack_size_profile/`): eight copies give 22% more total steps per second than
+  four, and every copy's first update stays within the smoke rule against the archived run of its seed; but with
+  eight copies a copy's numbers are not those of its seed in a four-copy process on the same card (seeds 1 to 4
+  differ in 524 to 531 fields of 60 updates), while four copies on the H200 reproduce the archived four-copy run
+  bit for bit. Plan decision 14 asks that every copy's numbers stay those of its seed, and eight-copy packs would
+  need a new execution profile, a new pack builder, new smoke references and a new frozen code copy on every server
+  during the sweep. The choice of eight copies, with rounding-level differences, stays open to the user.
+
+| card type (server) | setting (job) | copies | seconds per<br>iteration | total steps<br>per second<br>(millions) | steps per<br>second per<br>copy<br>(thousands) | hours per<br>million steps<br>per copy | peak card<br>memory (MB) |
+|---|---|---|---|---|---|---|---|
+| H200 (MIT, node3000) | default (29603853) | 4 | 2.169 | 0.0302 | 7.55 | 0.0368 | 75,343 |
+| H200 (MIT, node3000) | default (29603853) | 8 | 3.546 | 0.0370 | 4.62 | 0.0601 | 122,785 |
+| H200 (MIT, node3000) | fast last layer, group 16,<br>both records (29603853) | 4 | 2.166 | 0.0303 | 7.57 | 0.0367 | 75,343 |
+| H200 (MIT, node3000) | fast last layer, group 16,<br>both records (29603853) | 8 | 3.554 | 0.0369 | 4.61 | 0.0603 | 122,787 |
+
 - **Speed bar for a card type**: its seconds per iteration (one update of every copy in the process) at most the
   RTX A4000's 2.31 s of this sweep, so no run on it takes longer than on an RTX A4000. The Gautschi H100 (2.30 s,
   four copies) and the A30 (1.94 s, one copy) pass.
@@ -131,6 +162,8 @@ comparison, and `remote_fleet.py smoke-result` (the UVA working tree) decides th
 |---|---|---|---|---|---|---|---|
 | H100 80GB HBM3 (Gautschi) | default (18909289) | 4 | 2.30 | 0.0285 | 7.12 | 0.0390 | 7.8 |
 | H100 80GB HBM3 (Gautschi) | fast last layer, group 16,<br>both records (18909289) | 4 | 2.30 | 0.0285 | 7.12 | 0.0390 | 7.8 |
+| H200 (MIT, node3000) | default (29603827) | 4 | 2.16 | 0.0303 | 7.59 | 0.0366 | 7.3 |
+| H200 (MIT, node3000) | fast last layer, group 16,<br>both records (29603827) | 4 | 2.15 | 0.0305 | 7.62 | 0.0365 | 7.3 |
 | A30 (Gilbreth) | default (gates folder, 12432866) | 1 | 1.94 | 0.0084 | 8.45 | 0.0329 | 6.6 |
 | A30 (Gilbreth) | fast last layer, group 16,<br>both records (12432866) | 1 | 1.95 | 0.0084 | 8.40 | 0.0331 | 6.6 |
 
@@ -141,6 +174,16 @@ and its `montezuma_hand_over_steps.py`): every 5 minutes it checks the shared co
 sets Gautschi's share, reads Gilbreth's smoke verdict once job 12434389 has ended, makes packs, runs
 `remote_fleet.py hand-over-tick`, and checks that every unit stands in one queue folder only. It ends when no unit is pending on UVA or held by a server, at `RUN/STOP` or `RUN/SWEEP_COMPLETE`,
 or after 4 days, and logs every pass with a Pacific time.
+
+**The hand-over loop with MIT** (`infrastructure/hand_over_loop/montezuma_hand_over_loop_with_mit.sh` and
+`montezuma_hand_over_steps_with_mit.py`, copies of the scratchpad files of the same names; written 2026-11-18 20:35
+PT to replace the loop above, which the session owner stops before starting this one; both hold the same lock file):
+the same steps, and for MIT only `ssh -O check mit` (never a login): a closed connection marks MIT not ready in the
+server table, so the tick leaves it alone, and the loop makes it ready again once the connection is open. Before
+every tick it lowers this run's MIT limits by the cards other jobs of account shuzel hold or wait for
+(`mit-share`), makes packs up to each ready four-copy server's limit (one limit per server, since `hand_over`
+counts every four-copy unit a server holds against each pool's limit), and brings MIT's preemptable pool back
+once its smoke job 29603828 has ended and passed.
 
 ## Git state
 

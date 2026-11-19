@@ -372,6 +372,45 @@ class Ticks(FleetCase):
             self.assertFalse(remote.smoke_result(self.run_dir, self.table, "aces"))
         self.assertIn("no smoke result yet", common.read_json(fleet.table_path(self.run_dir))["aces"]["not_ready_reason"])
 
+    def test_a_held_back_pool_takes_units_again_only_after_its_smoke_job_passed(self):
+        """MIT ready on its Advanced pool; the preemptable pool comes back when its verdict passed, never on a failed one."""
+        mit = self.table["mit"]
+        mit["pools_held_back"] = {"preemptable-h200": dict(mit["pools"].pop("preemptable-h200"),
+                                                           units_at_once_when_back=0)}
+        del mit["hand_over"]["pools"]["preemptable-h200"]
+        mit.update(ready=True)
+        result = {"job_id": "29603828", "device": "NVIDIA H200 NVL", "written_at": "2026-11-18T23:40:00-05:00",
+                  "speed": {"copies": 4}, "speed_lines": [],
+                  "checks": [{"name": "jax computes on the card", "passed": False, "detail": "no card"}]}
+
+        def answer(passed):
+            """The server's answer for the held-back pool alone."""
+            return f"{fleet.MARK}result preemptable-h200\n{json.dumps(dict(result, passed=passed))}\n{fleet.MARK}end\n"
+
+        sent = []
+        with mock.patch.object(fleet, "remote", side_effect=lambda run, table, name, script: sent.append(script)
+                               or answer(False)), mock.patch.object(remote, "prepare") as prepare, \
+                contextlib.redirect_stdout(io.StringIO()):
+            self.assertFalse(remote.held_pool_result(self.run_dir, self.table, "mit", "preemptable-h200"))
+        self.assertIn("smoke/result_preemptable-h200.json", sent[0])
+        self.assertNotIn("result_advanced-h200", sent[0])
+        table = common.read_json(fleet.table_path(self.run_dir))
+        self.assertEqual((list(table["mit"]["pools"]), table["mit"]["ready"]), (["advanced-h200"], True))
+        prepare.assert_not_called()
+        with mock.patch.object(fleet, "remote", return_value=answer(True)), \
+                mock.patch.object(remote, "prepare") as prepare, contextlib.redirect_stdout(io.StringIO()):
+            self.assertTrue(remote.held_pool_result(self.run_dir, self.table, "mit", "preemptable-h200"))
+        table = common.read_json(fleet.table_path(self.run_dir))
+        self.assertEqual(sorted(table["mit"]["pools"]), ["advanced-h200", "preemptable-h200"])
+        self.assertNotIn("units_at_once_when_back", table["mit"]["pools"]["preemptable-h200"])
+        self.assertEqual((table["mit"]["hand_over"]["pools"]["preemptable-h200"], table["mit"]["pools_held_back"],
+                          table["mit"]["ready"], table["mit"]["smoke"]["preemptable-h200"]["job_id"]),
+                         ({"units_at_once": 0}, {}, True, "29603828"))
+        prepare.assert_called_once()
+        # a pool that is not held back is refused
+        with self.assertRaises(SystemExit):
+            remote.held_pool_result(self.run_dir, self.table, "mit", "preemptable-h200")
+
     def test_the_first_update_is_decided_again_from_the_jobs_own_lines(self):
         """A job that failed only the archive check by its frozen code passes when its lines meet the rule."""
         reference = [{"update": 1, "unix": 5.0, "policy_loss": [-1.5e-5], "episode_count": [25]},

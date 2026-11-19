@@ -1,0 +1,28 @@
+| setting | copies | seconds per iteration | total steps per second (millions) | steps per second per copy (thousands) | hours per million steps per copy | peak card memory (MB) |
+|---|---|---|---|---|---|---|
+| default_copies-4_seeds-1-to-4 | 4 | 2.169 | 0.0302 | 7.55 | 0.0368 | 75,343 |
+| default_copies-8_seeds-1-to-8 | 8 | 3.546 | 0.0370 | 4.62 | 0.0601 | 122,785 |
+| fast-layer_copies-4_seeds-13-to-16 | 4 | 2.166 | 0.0303 | 7.57 | 0.0367 | 75,343 |
+| fast-layer_copies-8_seeds-13-to-20 | 8 | 3.554 | 0.0369 | 4.61 | 0.0603 | 122,787 |
+
+host memory of the job (sacct MaxRSS, largest of the settings): 12.1 GB
+
+first updates against the archived baseline, per copy (rule: |new - archive| <= 1e-3 * |archive| + 1e-6, whole numbers equal):
+  default_copies-4_seeds-1-to-4, copy 1 (seed 1): passed; 60 of 20 updates written; first update: largest relative difference 0.00e+00, 0 number(s) outside the rule |new - archive| <= 1e-3 * |archive| + 1e-6, whole numbers equal; all updates: 0 differing field(s), every field equal
+  default_copies-4_seeds-1-to-4, copy 2 (seed 2): passed; 60 of 20 updates written; first update: largest relative difference 0.00e+00, 0 number(s) outside the rule |new - archive| <= 1e-3 * |archive| + 1e-6, whole numbers equal; all updates: 0 differing field(s), every field equal
+  default_copies-4_seeds-1-to-4, copy 3 (seed 3): passed; 60 of 20 updates written; first update: largest relative difference 0.00e+00, 0 number(s) outside the rule |new - archive| <= 1e-3 * |archive| + 1e-6, whole numbers equal; all updates: 0 differing field(s), every field equal
+  default_copies-4_seeds-1-to-4, copy 4 (seed 4): passed; 60 of 20 updates written; first update: largest relative difference 0.00e+00, 0 number(s) outside the rule |new - archive| <= 1e-3 * |archive| + 1e-6, whole numbers equal; all updates: 0 differing field(s), every field equal
+  default_copies-8_seeds-1-to-8, copy 1 (seed 1): passed; 60 of 20 updates written; first update: largest relative difference 4.09e-04, 0 number(s) outside the rule |new - archive| <= 1e-3 * |archive| + 1e-6, whole numbers equal; all updates: 167 differing field(s)
+  default_copies-8_seeds-1-to-8, copy 2 (seed 2): passed; 60 of 20 updates written; first update: largest relative difference 1.86e-04, 0 number(s) outside the rule |new - archive| <= 1e-3 * |archive| + 1e-6, whole numbers equal; all updates: 170 differing field(s)
+  default_copies-8_seeds-1-to-8, copy 3 (seed 3): passed; 60 of 20 updates written; first update: largest relative difference 8.89e-05, 0 number(s) outside the rule |new - archive| <= 1e-3 * |archive| + 1e-6, whole numbers equal; all updates: 172 differing field(s)
+  default_copies-8_seeds-1-to-8, copy 4 (seed 4): passed; 60 of 20 updates written; first update: largest relative difference 6.11e-04, 0 number(s) outside the rule |new - archive| <= 1e-3 * |archive| + 1e-6, whole numbers equal; all updates: 166 differing field(s)
+  default_copies-8_seeds-1-to-8, copy 5 (seed 5): passed; 60 of 20 updates written; first update: largest relative difference 4.11e-03, 0 number(s) outside the rule |new - archive| <= 1e-3 * |archive| + 1e-6, whole numbers equal; all updates: 173 differing field(s)
+  default_copies-8_seeds-1-to-8, copy 6 (seed 6): passed; 60 of 20 updates written; first update: largest relative difference 3.00e-03, 0 number(s) outside the rule |new - archive| <= 1e-3 * |archive| + 1e-6, whole numbers equal; all updates: 172 differing field(s)
+  default_copies-8_seeds-1-to-8, copy 7 (seed 7): passed; 60 of 20 updates written; first update: largest relative difference 1.13e-03, 0 number(s) outside the rule |new - archive| <= 1e-3 * |archive| + 1e-6, whole numbers equal; all updates: 171 differing field(s)
+  default_copies-8_seeds-1-to-8, copy 8 (seed 8): passed; 60 of 20 updates written; first update: largest relative difference 6.44e-04, 0 number(s) outside the rule |new - archive| <= 1e-3 * |archive| + 1e-6, whole numbers equal; all updates: 170 differing field(s)
+  seed 1: eight copies against four copies on the same card, 60 updates: 524 differing field(s)
+  seed 2: eight copies against four copies on the same card, 60 updates: 528 differing field(s)
+  seed 3: eight copies against four copies on the same card, 60 updates: 531 differing field(s)
+  seed 4: eight copies against four copies on the same card, 60 updates: 525 differing field(s)
+
+every copy passed

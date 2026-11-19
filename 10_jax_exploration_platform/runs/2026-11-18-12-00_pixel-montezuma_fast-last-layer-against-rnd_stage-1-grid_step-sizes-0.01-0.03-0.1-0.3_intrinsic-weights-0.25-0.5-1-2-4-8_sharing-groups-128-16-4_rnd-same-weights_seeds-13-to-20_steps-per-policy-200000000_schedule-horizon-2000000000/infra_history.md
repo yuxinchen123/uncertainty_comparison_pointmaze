@@ -139,3 +139,59 @@
   with four copies (seeds 1 to 4) and eight copies (seeds 1 to 8, reset lane budget 32), and the fast last layer
   (sharing group 16, both records) with four and eight copies. Estimated start 22:00 PT at 19:44 PT. All three ids in
   `slurm/submitted_jobids_mit.txt`.
+- 2026-11-18 20:06 to 20:16 PT: MIT smoke job 29603827 (advanced-h200, node3000, NVIDIA H200 143,771 MB, driver
+  590.48.01) PASSED: AllocTRES equal to ReqTRES (`gres/gpu=1`, card index 3), card guard "ok: 1 card(s)"; asset
+  pack 4,531 files equal; the 20 default updates equal the archived four-copy run (H100 NVL) in every field of every
+  update, bit for bit; the fast last layer with the game events completed; 2.16 s per update with four copies
+  (default) and 2.15 s (fast last layer, group 16); peak card memory 75,343 MB; MaxRSS 9.5 GB; 9 min 42 s.
+- 2026-11-18 20:16 PT: pack-size profile job 29603853 started on node3000 (the same card, index 3); AllocTRES equal
+  to ReqTRES (one H200), card guard ok.
+- 2026-11-18 20:19 PT: the preemptable pool is held back (`pools_held_back` in the MIT entry, `units_at_once_when_back`
+  0) until its own smoke job passes: 29603828 waited on Resources with no estimated start (every H200 node that
+  only mit_preemptable has was allocated), and those nodes include H200 NVL cards, another part than the Advanced
+  pool's H200. New in `remote_fleet.py`: `smoke-result --server S --pool P` reads one held-back pool's verdict and
+  brings the pool back only when it passed (the server's ready state is not changed); 96 tests pass.
+  `smoke-result --server mit` then made MIT READY (its one pool that takes units passed).
+- 2026-11-18 20:19:41 PT: the running hand-over loop (pass 75, 22 s after MIT became ready, before the share below was
+  set) made 14 packs (`build_units.py --pack-pending`, seed 15 mostly), handed 16 packs to MIT (the table's limit of
+  16 then) and submitted 4 Advanced worker jobs: 29606825, 29606826, 29606828, 29606833 (2 days each, all waiting;
+  one of them waits on the account's cap of 4 Advanced cards while the profile job holds one).
+- 2026-11-18 20:20 PT: MIT's share set from the account's other jobs (`mit-share` of the new loop's helper): the
+  profile job holds 1 Advanced card, so this run's Advanced pool takes at most 3 new jobs and the server holds at most
+  6 packs (2 per card). 8 of the 16 waiting packs were taken back to queue/pending (`take-back --server mit --units 8
+  --from-end`), leaving 8 on MIT for the 4 jobs (2 per card). queue-check: every unit in one queue folder.
+- 2026-11-18 20:24 and 20:26 PT: MIT worker jobs 29606825 (node3201, card index 5) and 29606826 (node3301, card
+  index 3) started; each read 28 s after its start: AllocTRES equal to ReqTRES (`gres/gpu:h200=1,gres/gpu=1`), card
+  guard "ok: 1 card(s)". Each took a pack (sharing group 128, weight 8, seed 14; sharing group 16, weight 0.25, seed
+  14). Jobs 29606828 and 29606833 still waited (Priority; the scheduler's estimates 2026-11-19 06:30 and 07:30 PT).
+  The start of every job of the MIT ledger is read by
+  `/tmp/claude-2618919/-p-rlprojects-RND/9ca0cb45-e2aa-43c6-9353-3a3d17cddb5f/scratchpad/mit_start_card_check.sh`
+  (one command every 45 s through the shared connection, for at most 4 hours from 20:21 PT), which appends each
+  reading to `mit_start_card_check.txt` beside it.
+- 2026-11-18 20:16 to 20:45 PT: the pack-size profile (job 29603853, one H200, node3000, card index 3; MaxRSS 12.1 GB):
+
+  | setting | copies | seconds per<br>iteration | total steps<br>per second<br>(millions) | steps per<br>second per<br>copy<br>(thousands) | hours per<br>million steps<br>per copy | peak card<br>memory (MB) |
+  |---|---|---|---|---|---|---|
+  | default, seeds 1 to 4 | 4 | 2.169 | 0.0302 | 7.55 | 0.0368 | 75,343 |
+  | default, seeds 1 to 8 | 8 | 3.546 | 0.0370 | 4.62 | 0.0601 | 122,785 |
+  | fast last layer, group 16,<br>both records, seeds 13 to 16 | 4 | 2.166 | 0.0303 | 7.57 | 0.0367 | 75,343 |
+  | fast last layer, group 16,<br>both records, seeds 13 to 20 | 8 | 3.554 | 0.0369 | 4.61 | 0.0603 | 122,787 |
+
+  Eight copies give 22.3% (default) and 21.9% (fast last layer) more total steps per second than four, each copy
+  1.64 times slower (a stage-1 run 12.0 hours instead of 7.4). At eight copies the card's memory pool reached the
+  0.85 share JAX may take (122.8 of 143.8 GB); nothing ran out of memory. Each copy against the archived baseline
+  for its seed (`compare_pack_size_profile.py`, output in `infrastructure/mit_pack_size_profile/comparison_job-29603853.txt`):
+  four copies: every field of all 20 archived updates equal, bit for bit, for seeds 1 to 4; eight copies: every
+  copy's first update within the smoke rule (largest relative differences 8.9e-5 to 4.1e-3, 0 numbers outside the
+  rule), but 166 to 173 differing fields in the 20 updates, and seeds 1 to 4 differ from the four-copy run on the
+  same card in 524 to 531 fields of 60 updates. So a copy's numbers depend on the number of copies in the process at
+  the level of rounding (the cause is not established; the reset lane budget was doubled with the copies, which by
+  design changes only the speed). The fast-layer runs were finite and completed at both sizes.
+- 2026-11-18 20:50 PT, decision: four-copy packs on MIT. Reasons: (1) plan decision 14 allows more than four only if
+  every copy's numbers stay those of its seed; with four copies the H200 reproduces the archived four-copy run bit
+  for bit, with eight it does not (the first-update rule passes, the bits do not), and the plan makes bit-for-bit
+  claims for runs on one card type; (2) eight-copy packs need a new execution profile (card memory of 120,000 MB or
+  more), a builder for packs over two settings (four step sizes times two weights), eight-wide smoke references
+  from two archived runs, and a new frozen code copy on every server during the sweep; (3) its smoke job could not
+  start while the account's Advanced cards hold this run's 2-day jobs. The 22% stays recorded for the user, who may
+  choose eight copies, accepting rounding-level differences of the size seen between card types.
