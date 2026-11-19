@@ -1012,3 +1012,54 @@ Times are Pacific, read from the clock or from scheduler records.
 - 2026-11-18 17:35 PT (window record): fault-guard respawn 29, again RND's U-maze step-cost fresh seeds at learning
   rate 3e-5, weight 1/64: seed 30139, window 241, 101.0 rad/s, 16.5 m/s. At 17:47 PT the restart loop took the 4
   U-maze units back from Gilbreth onto free UVA cards (job 6957198); 8 Medium and Large units wait on Gilbreth.
+- 2026-11-18 about 19:00 PT, user decisions: "send montezuma to mit not antmaze", and "yes" to "should AntMaze also
+  send waiting jobs on UVA?". The plan to move AntMaze units to MIT H200 cards was dropped before any change:
+  nothing was prepared on MIT, no AntMaze unit or job went there, and nothing had to be undone or cancelled. One
+  change was kept, at 19:16 PT: the MIT entry of `infrastructure/remote_fleet_servers.json` reached MIT through
+  portal11 (`ssh portal11 ssh mit`), which the rule of 2026-11-18 forbids. Its `ssh` and `check` commands now use
+  the connection held on portal04 (`ssh -o BatchMode=yes mit`, `ssh -O check mit`). It stays not ready, with the
+  reason "the user placed MIT for the Montezuma study, not AntMaze (2026-11-18)". The copy of the table before that
+  edit is in the session's scratchpad (`remote_fleet_servers_ant.before_2026-11-18-mit-entry.json`).
+- 2026-11-18 19:20 PT, Gilbreth reading: the 12 AntMaze worker jobs there (12437301 to 12437312, submitted 17:26 PT)
+  all waited on `Priority`, with estimated starts 04:44 to 06:02 PT on 2026-11-19, 9 to 10 hours away. The fleet's
+  5-minute loop (`hand_over_loop.sh`) had ended at 06:20 PT. The restart loop called the fleet step only when units
+  waited on UVA, so the fleet's rule that brings back units unclaimed for 2 hours had not run since 18:51 PT.
+- 2026-11-18 19:30 PT, planner change (commit 9c07f8e3): `submit.py` plans the cards free now for every pending
+  unit, whatever jobs of this run already wait. Waiting jobs reduce only the new jobs that wait. Before, 2 waiting
+  units with 2 waiting jobs and 3 free cards got no job. New option `--only-jobs-that-wait` (no pinned job).
+- 2026-11-18 19:28 to 19:30 PT, placement change. Gilbreth's `hand_over` entry got `start_within_seconds` 7200 (as
+  MIT and Gautschi have): it takes units only while a job of ours runs there or its first waiting job is expected
+  within 2 hours; otherwise its waiting units come back to UVA. The restart loop's `ant_tick.sh` (copy before the
+  change: `ant_tick.sh.before_2026-11-18-1900`) now places the units without a worker in this order:
+  1. UVA cards free now (pinned 2-hour jobs, first account, as before);
+  2. Gilbreth, for waiting units that no waiting UVA job covers, under the 2-hour start rule. The fleet step now runs
+     at every pass while Gilbreth holds units;
+  3. 2-hour UVA jobs that wait in the queue, under both accounts, by card type, most capable first (the RTX 5080 is
+     left out: its 4 cards take only U-maze units and the pass for cards free now covers them);
+  4. waiting UVA jobs beyond the units waiting on UVA are cancelled by ledger id, latest start estimate first.
+  A unit is in one queue folder only, so two jobs never run it. A waiting job that starts with no unit ends at once.
+  The second account's ledger is `slurm/submitted_jobids_rnd-sweep-rk4_yuxinchen.txt`. No AntMaze unit had run under
+  that account before. Its Warp kernel cache is per user (`/localtmp/yuxinchen/warp_kernel_cache`), and every file
+  of this folder is group-writable.
+- 2026-11-18 19:37 to 19:39 PT, first pass of the new order:
+  1. 2 Medium and Large fresh-seed units were taken back from Gilbreth onto free UVA cards (jobs 6957668 and
+     6957669, RTX 4000 Ada on lynx02 and lynx05, running);
+  2. Gilbreth's start rule ("first waiting one expected in 10.3 h, limit 2.0 h") brought back the last 3 waiting
+     units, all AntMaze Medium fresh seeds with reward 1 on arrival: RND at weight 16 (seeds 30128 to 30255), and
+     both halves of the fast step 0.03 with hold at weight 16;
+  3. 4 U-maze step-cost fresh-seed units whose 2-hour workers ended during the pass also began waiting;
+  4. 7 jobs that wait were sent for the 7 waiting units: 6957670, 6957672, 6957674, 6957676 (first account) and
+     6957671, 6957673, 6957675 (second account), 4 for the A100 80 GB and 3 for the A100 40 GB, all on `Priority`.
+  Gilbreth holds no AntMaze unit now. Its 12 waiting jobs stay in its queue: they hold no unit and no card, and one
+  that starts finds no unit and ends. No unit is in two queue folders. The Montezuma study's Gilbreth share had been
+  lowered to 12 at 17:32 PT for these units, which are no longer there.
+- 2026-11-18 19:49 to 19:51 PT, second pass. With 7 waiting jobs already queued for the 7 waiting units, the pass
+  still used the cards free now (the planner change at work): jobs 6957683 and 6957684 started at once and took 5
+  units. Step 4 then cancelled the 5 waiting jobs beyond the 2 units still waiting: 6957670, 6957671, 6957672,
+  6957673 and 6957676, each read as `PENDING` just before. Kept: 6957674 (first account, A100 40 GB, `Priority`) and
+  6957675 (second account, A100 40 GB, `QOSMaxGRESPerUser`: that account held 40 of its 40 `gpu` cards, mostly
+  the Montezuma study's). Change at 19:53 PT: step 4 now cancels first the jobs held by their own account's cap,
+  then those with no start estimate, then the latest estimate. No unit has run under the second account yet.
+- 2026-11-18 19:53 PT: `hand_over_loop.sh` is not running (ended 06:20 PT). None of its three run folders holds a
+  unit on a remote server, and the AntMaze tick runs the fleet step whenever Gilbreth holds AntMaze units or is
+  offered one, so it was not started again.

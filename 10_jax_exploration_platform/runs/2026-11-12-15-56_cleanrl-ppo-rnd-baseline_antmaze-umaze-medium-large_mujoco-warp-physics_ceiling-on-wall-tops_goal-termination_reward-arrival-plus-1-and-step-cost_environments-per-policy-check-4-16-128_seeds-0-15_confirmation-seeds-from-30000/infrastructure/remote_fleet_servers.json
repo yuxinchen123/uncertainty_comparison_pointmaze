@@ -37,9 +37,10 @@
       }
     },
     "hand_over": {
-      "units_at_once": 4,
+      "units_at_once": 0,
       "match": "antmaze",
-      "pool": "standby-a100-80gb-a30"
+      "pool": "standby-a100-80gb-a30",
+      "start_within_seconds": 7200
     },
     "first_unit": {
       "state": "passed",
@@ -59,17 +60,9 @@
       "ssh",
       "-o",
       "BatchMode=yes",
-      "portal11",
-      "ssh",
-      "-o",
-      "BatchMode=yes",
       "mit"
     ],
     "check": [
-      "ssh",
-      "-o",
-      "BatchMode=yes",
-      "portal11",
       "ssh",
       "-O",
       "check",
@@ -80,7 +73,7 @@
     "code_root": "/orcd/scratch/orcd/008/shuzel/rnd_maze/code",
     "unit_seconds": 1800,
     "ready": false,
-    "not_ready_reason": "set up 2026-11-13 by a helper session (notes: infrastructure/h100-h200-servers_setup_notes.md); waits for the session's freeze (prepare sends the code copy and the job scripts) and for the first unit, which is this server's check; no unit has been handed over",
+    "not_ready_reason": "the user placed MIT for the Montezuma study, not AntMaze (2026-11-18); commands go through the shared connection held on portal04 (ssh mit), never through another portal node",
     "failed_calls_in_a_row": 0,
     "failed_call_limit": 1,
     "budget_note": "not charged; fair share counts processor-seconds only (4 cores per job)",
