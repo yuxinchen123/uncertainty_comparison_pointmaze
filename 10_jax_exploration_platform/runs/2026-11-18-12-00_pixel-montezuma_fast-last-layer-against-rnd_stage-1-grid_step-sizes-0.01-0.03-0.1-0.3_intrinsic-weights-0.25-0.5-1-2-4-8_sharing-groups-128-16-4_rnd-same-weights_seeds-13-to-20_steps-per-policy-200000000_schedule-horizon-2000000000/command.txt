@@ -27,3 +27,8 @@ $PY $M/submit.py --run-dir $RUN --monitor --top-up-phase grid --complete-when-dr
 #    ledger id between passes)
 $PY $M/submit.py --run-dir $RUN --phase grid --leave-cards 0 --worker-hours 8 --memory-gib-per-card 10 --gpu-types nvidia_h100_nvl,a100,nvidia_a100-pcie-40gb,nvidia_geforce_rtx_5080,nvidia_a40,a40,nvidia_rtx_a4500,quadro_rtx_6000,nvidia_geforce_rtx_2080_ti,nvidia_rtx_a4000
 $PY $M/submit.py --run-dir $RUN --monitor --top-up-phase grid --complete-when-drained --leave-cards 0 --worker-hours 8 --memory-gib-per-card 10 --gpu-types nvidia_h100_nvl,a100,nvidia_a100-pcie-40gb,nvidia_geforce_rtx_5080,nvidia_a40,a40,nvidia_rtx_a4500,quadro_rtx_6000,nvidia_geforce_rtx_2080_ti,nvidia_rtx_a4000
+
+# 7. 2026-11-19 05:21 PT: the monitor restarted (job 6958072 cancelled by its ledger id between passes) after the planner fix of
+#    that morning (cards free now are planned against each account's running jobs only); same options as item 6
+#    without the RTX 5080, which was left out on 2026-11-18 16:58 PT; new job 6958392 on copy 3 (48019fc4)
+$PY $M/submit.py --run-dir $RUN --monitor --top-up-phase grid --complete-when-drained --leave-cards 0 --worker-hours 8 --memory-gib-per-card 10 --gpu-types nvidia_h100_nvl,a100,nvidia_a100-pcie-40gb,nvidia_a40,a40,nvidia_rtx_a4500,quadro_rtx_6000,nvidia_geforce_rtx_2080_ti,nvidia_rtx_a4000

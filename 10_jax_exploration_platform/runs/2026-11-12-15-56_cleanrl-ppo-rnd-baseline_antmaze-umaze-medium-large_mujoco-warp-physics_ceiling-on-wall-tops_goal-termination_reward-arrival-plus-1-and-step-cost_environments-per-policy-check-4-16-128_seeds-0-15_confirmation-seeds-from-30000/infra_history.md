@@ -1075,3 +1075,8 @@ Times are Pacific, read from the clock or from scheduler records.
   window 118, 108.8 rad/s, 14.2 m/s. At 22:45 PT all 15 unfinished ant units train on UVA.
 - 2026-11-18 22:48 PT (window record): fault-guard respawn 31, on the angular bound: fresh-seeds-rk4_antmaze-umaze_reward-arrival-plus-one_first-arrival-hold_learning-rate-3e-05_intrinsic-weight-0.0625, seed 30247, window 204,
   104.7 rad/s, 14.2 m/s. At 23:06 PT all 15 unfinished ant units train on UVA.
+- 2026-11-19 05:21 PT: the shared planner `scripts/maze_campaign/submit.py` now plans cards free now against each account's
+  running jobs only (before, this run's waiting jobs were subtracted from the account's room, so an account with
+  waiting jobs could get no job on a free card). The AntMaze tick runs the working-tree planner in a new process at
+  each pass, so the change holds for it from its next pass. Found on the Montezuma study (its infra_history, same
+  time).

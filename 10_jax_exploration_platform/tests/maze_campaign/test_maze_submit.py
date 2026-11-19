@@ -2,6 +2,7 @@
 import contextlib
 from copy import deepcopy
 import io
+import json
 from pathlib import Path
 import subprocess
 import tempfile
@@ -241,6 +242,42 @@ class CardTypesFromTheScheduler(unittest.TestCase):
         # after: one-card jobs by type that wait, the most capable type first, shared between the accounts
         self.assertEqual(printed[True], ["  uva-sl5nw gpu any node 1 x h100", "  uva-yuxinchen gpu any node 1 x h100",
                                          "  uva-sl5nw gpu any node 1 x rtx5080", "  uva-yuxinchen gpu any node 1 x rtx5080"])
+
+    def test_waiting_jobs_of_the_run_leave_the_room_for_cards_free_now(self):
+        """An account with 3 cards of room and 4 waiting jobs of this run keeps its 3 cards for cards free now."""
+        from unittest import mock
+        capacity = {identity: {"reachable": True, "pools": [
+            {"partition": "gpu", "gpu_free": 3, "cpu_free": 200, "memory_gib_free": 900}]} for identity in submit.IDENTITIES}
+        with tempfile.TemporaryDirectory() as folder:
+            run_dir = Path(folder)
+            (run_dir / "slurm/submissions").mkdir(parents=True)
+            live = {}
+            # before: 4 waiting one-card worker jobs of this run under every account
+            for identity in submit.IDENTITIES:
+                for index in range(4):
+                    job_id = f"{identity[-5:]}{index}"
+                    live[job_id] = [job_id, identity, "gpu", "PENDING"]
+                    (run_dir / "slurm/submissions" / f"{job_id}.json").write_text(json.dumps(
+                        {"job_id": job_id, "kind": "worker", "account": identity.removeprefix("uva-"),
+                         "identity": identity, "partition": "gpu", "cards": 1, "cpus": 4, "memory_gib": 10,
+                         "gpu_type": "a40", "node": None, "reservation": None}))
+            # the scheduler's answers: the capacity reader, an empty node listing, one A40 class on one node
+            calls = lambda command, text: json.dumps(capacity) if "capacity.py" in command[1] else ""
+            a40 = {"gres_type": "a40", "partition": "gpu", "nodes": ["n1"], "gpus_per_node": 4, "gpu_mem_mb": 46068,
+                   "capability_rank": 5}
+            read = lambda path: ({"classes": [a40]} if path == submit.grid_submit.RESOURCE_FILE
+                                 else json.loads(Path(path).read_text()))
+            node = {"n1": {"cards": 1, "cpus": 40, "memory_gib": 900, "reservation": None}}
+            with mock.patch.object(submit.common, "own_live_jobs", return_value=live), \
+                    mock.patch.object(submit.subprocess, "check_output", side_effect=calls), \
+                    mock.patch.object(submit.common, "read_json", side_effect=read), \
+                    mock.patch.object(submit.grid_submit, "node_resources", return_value=node), \
+                    mock.patch.object(submit.grid_submit, "owner_reservation", return_value=None):
+                state = submit.scheduler_state(run_dir)
+        # after: every account keeps its 3 cards of room; the 8 waiting cards still count as spare workers
+        self.assertEqual({key: budget["cards"] for key, budget in state["budgets"].items()},
+                         {(identity, "gpu"): 3 for identity in submit.IDENTITIES})
+        self.assertEqual(state["waiting_cards"], 4 * len(submit.IDENTITIES))
 
     def test_a_refused_job_does_not_stop_the_others(self):
         """top_up sends the remaining jobs after one refusal and returns only the ids that were sent."""

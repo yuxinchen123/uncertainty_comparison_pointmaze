@@ -361,11 +361,15 @@ def scheduler_state(run_dir):
     live = common.own_live_jobs(run_dir)
     submissions = [common.read_json(path) for path in (Path(run_dir) / "slurm/submissions").glob("*.json")]
     active = [record for record in submissions if record["job_id"] in live and record["kind"] == "worker"]
-    # room within the per-user caps, with this run's waiting jobs already counted against it
+    # room within the per-user caps as Slurm counts it: running jobs only. This run's waiting jobs are not
+    # subtracted: they reduce only the new jobs that wait (through waiting_cards), and a card free now takes a
+    # unit whatever waits (2026-11-19 05:03 PT: an A40 and an RTX 2080 Ti stayed free for at least an hour
+    # while yuxinchen held 37 of 40 cards, because its waiting jobs for other, busy card types filled its
+    # budget). before: 3 cards of room, 4 waiting jobs of this run -> budget 0 ; after: budget 3
     capacity = json.loads(subprocess.check_output(
         [sys.executable, str(common.ACCOUNTS / "capacity.py"), "--no-mit", "--json"], text=True))
     common.write_json(Path(run_dir) / "slurm/capacity_latest.json", capacity)
-    budgets = grid_submit.capacity_budgets(capacity, submissions, live)
+    budgets = grid_submit.capacity_budgets(capacity, [], live)
     listing = subprocess.check_output(["scontrol", "show", "nodes", "-o"], text=True)
     nodes = grid_submit.node_resources(listing)
     # the card type of every node comes from the scheduler, not from the resource file's node lists

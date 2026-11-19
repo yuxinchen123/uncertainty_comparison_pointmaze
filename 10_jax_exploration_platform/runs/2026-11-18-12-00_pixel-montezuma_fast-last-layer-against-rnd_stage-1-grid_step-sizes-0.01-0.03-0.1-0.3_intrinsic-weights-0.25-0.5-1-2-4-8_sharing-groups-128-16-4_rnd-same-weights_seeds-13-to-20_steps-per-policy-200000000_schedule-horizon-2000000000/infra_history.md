@@ -372,3 +372,20 @@
     until MIT takes packs again. No running training was stopped: each running MIT job ends after its current pack
     (four-run packs at updates 7,915 and 6,961, eight-run packs at about 1,620, of 12,207). queue-check: every unit in
     one folder.
+- 2026-11-19 05:21 PT: **free cards were left unused because this run's waiting jobs filled each account's room in the
+  planner.** At 05:03 PT an A40 on jaguar01 was free while sl5nw held 40 of 40 cards (its waiting A40 job 6958359
+  waits on QOSMaxGRESPerUser) and yuxinchen held 37 of 40; an RTX 2080 Ti on ai01 had been free since at least
+  04:03 PT. The monitor planned no job for either: `scheduler_state` in `scripts/maze_campaign/submit.py`
+  subtracted every waiting job of this run from its account's free cards, and since yuxinchen always has waiting
+  jobs for busy card types, its budget for cards free now was 0. Slurm's cap counts running jobs only, so a pinned
+  job on a free card starts whatever waits. The session's checks from 04:03 PT on also passed over the free RTX
+  2080 Ti, which this study lists. By hand (yuxinchen, ledger `slurm/submitted_jobids_grid_yuxinchen.txt`): job
+  6958380 pinned to the A40 on jaguar01 (running at once) and job 6958381 pinned to the RTX 2080 Ti on ai01, which
+  waits on Priority (another user's job is planned there; Slurm's start estimate 2026-11-20 06:37 PT); it was
+  given a 2-hour limit and is cancelled by its id and placed again if it still waits at the next check (ceiling 3).
+  Fix: the planner now takes each account's room from its running jobs only; this run's waiting jobs still lower
+  only the new waiting jobs (through the spare worker cards). Test
+  `test_waiting_jobs_of_the_run_leave_the_room_for_cards_free_now`; 55 tests passed (job 6958383, gates ledger).
+  The changed file was copied into frozen copy 3 (equal to the committed file before the change; the trainer is
+  untouched) and the monitor was restarted between passes: job 6958072 cancelled by its ledger id at 05:20 PT
+  after its 05:19 PT pass, replaced by job 6958392 with the same options (command.txt item 7).
