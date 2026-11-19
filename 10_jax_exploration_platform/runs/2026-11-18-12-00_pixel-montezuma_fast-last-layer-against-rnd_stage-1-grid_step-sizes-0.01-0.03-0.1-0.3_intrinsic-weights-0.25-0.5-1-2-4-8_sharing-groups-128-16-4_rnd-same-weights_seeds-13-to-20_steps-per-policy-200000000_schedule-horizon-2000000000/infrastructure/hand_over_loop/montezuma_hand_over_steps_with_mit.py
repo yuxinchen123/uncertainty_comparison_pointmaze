@@ -58,6 +58,14 @@ MIT_PARTITIONS = {"mit_normal_gpu": "advanced-h200", "mit_preemptable": "preempt
 MIT_SHARE_COMMAND = ("squeue -u shuzel -h -t RUNNING,PENDING "
                      "-O 'JobID:14,Name:150,Partition:24,tres-per-node:60,tres-per-job:60,NumNodes:6,State:12'")
 MIT_CHECK = ["ssh", "-O", "check", "mit"]
+# While another session of the account has jobs on MIT's GPU partitions, this run's waiting MIT jobs get this nice
+# (user, 2026-11-18 about 23:50 PT: "if there is another session that also submits to MIT, please hold or low
+# priority the jobs of this RND runs on MIT (choose one that cumulate aging)"). MIT sets no ACCRUE_ALWAYS, so a held
+# job stops gaining age, while a job with a higher nice stays eligible and keeps it. 3,000,000 is above the largest
+# gap between two jobs of the account on those partitions (age 50,000 + partition 600,000 + QOS 2,000,000 at most;
+# fair share is the same for both), so every job of another session starts before this run's waiting jobs.
+YIELD_NICE = 3000000
+YIELD_STATE = "slurm/mit_yield_state.json"
 CONNECTION_MARK = "the hand-over loop's connection check (mit-connection)"
 BUILD_UNITS = Path("/p/rlprojects/RND/10_jax_exploration_platform/scripts/pixel_sweep_campaign/build_units.py")
 REMOTE_FLEET = BUILD_UNITS.parent / "remote_fleet.py"
@@ -175,6 +183,63 @@ def mit_cards_of(line):
     return job, name, MIT_PARTITIONS.get(partition), cards
 
 
+def yield_decision(lines, ledger, lowered):
+    """Decide which of this run's MIT jobs to lower and which to restore; returns (others, lower, restore)."""
+    # before: lines of MIT_SHARE_COMMAND, ledger {"29619724", ...}, lowered {"29606828"} (from the state file)
+    #         "29700001  other-session-job  mit_normal_gpu  N/A  gres/gpu:h200:1  1  PENDING"
+    #         "29619724  pixelfleet-...-1   mit_normal_gpu  N/A  gres/gpu:h200:1  1  RUNNING"
+    #         "29619730  pixelfleet-...-3   mit_normal_gpu  N/A  gres/gpu:h200:1  1  PENDING"
+    # after:  others ["29700001"], lower ["29619730"] (waiting, ours, not yet lowered), restore []
+    #         with no other job: others [], lower [], restore the lowered ids still in the queue
+    others, ours_waiting, present = [], [], set()
+    for line in lines:
+        if not line.strip():
+            continue
+        job, _, pool, _ = mit_cards_of(line)
+        state = line.split()[-1]
+        present.add(job)
+        if job in ledger:
+            if state == "PENDING":
+                ours_waiting.append(job)
+        elif pool is not None:
+            others.append(job)
+    if others:
+        return others, [job for job in ours_waiting if job not in lowered], []
+    return others, [], sorted(job for job in lowered if job in present)
+
+
+def mit_yield(run_dir, entry, squeue_text):
+    """Lower this run's waiting MIT jobs below the account's other jobs while another session has jobs there; restore them after."""
+    ledger = set((run_dir / "slurm/submitted_jobids_mit.txt").read_text().split())
+    state_path = run_dir / YIELD_STATE
+    state = json.loads(state_path.read_text()) if state_path.exists() else {"lowered": {}}
+    others, lower, restore = yield_decision(squeue_text.splitlines(), ledger, set(state["lowered"]))
+    # one ssh call for every change; each id is one of this run's own ledger
+    changes = [f"scontrol update JobId={job} Nice={YIELD_NICE}" for job in lower] + \
+              [f"scontrol update JobId={job} Nice=0" for job in restore]
+    if changes:
+        answer = subprocess.run(entry["ssh"] + [" && ".join(changes)], capture_output=True, text=True, timeout=120,
+                                stdin=subprocess.DEVNULL)
+        if answer.returncode != 0:
+            raise SystemExit(f"mit-yield: scontrol on MIT ended with {answer.returncode}: {answer.stderr.strip()}")
+    stamp = datetime.now().astimezone().isoformat()
+    for job in lower:
+        state["lowered"][job] = stamp
+    for job in restore:
+        del state["lowered"][job]
+    if not others:
+        # a lowered job that left the queue (started or ended) needs nothing more
+        state["lowered"] = {}
+    state["last_read"] = {"at": stamp, "other_jobs": others}
+    tmp = state_path.with_suffix(".tmp")
+    tmp.write_text(json.dumps(state, indent=1) + "\n")
+    os.replace(tmp, state_path)
+    print(f"mit-yield: other jobs of the account on MIT's GPU partitions: {len(others)}"
+          + (f" ({', '.join(others[:6])}{', ...' if len(others) > 6 else ''})" if others else "")
+          + f"; this run's waiting jobs lowered now: {lower or 'none'}; restored now: {restore or 'none'}"
+          + f"; lowered in all: {sorted(state['lowered']) or 'none'}")
+
+
 def mit_share(run_dir):
     """Lower or raise this run's MIT pools by the cards other jobs of the account hold or wait for; prints what it set."""
     table = json.loads(table_path(run_dir).read_text())
@@ -189,6 +254,8 @@ def mit_share(run_dir):
                             stdin=subprocess.DEVNULL)
     if answer.returncode != 0:
         raise SystemExit(f"mit-share: squeue on MIT ended with {answer.returncode}: {answer.stderr.strip()}")
+    # this run yields to another session's MIT jobs (lower priority, age kept), and comes back when they are gone
+    mit_yield(run_dir, entry, answer.stdout)
     # this run's worker and smoke jobs of a pool are counted by the tick as live jobs of that pool; every other
     # job of the account on the two partitions takes cards from them
     # before: "pixelfleet-9d411784-mit-advanced-h200-20261118-200000-1" ; after: a job of pool advanced-h200, not counted

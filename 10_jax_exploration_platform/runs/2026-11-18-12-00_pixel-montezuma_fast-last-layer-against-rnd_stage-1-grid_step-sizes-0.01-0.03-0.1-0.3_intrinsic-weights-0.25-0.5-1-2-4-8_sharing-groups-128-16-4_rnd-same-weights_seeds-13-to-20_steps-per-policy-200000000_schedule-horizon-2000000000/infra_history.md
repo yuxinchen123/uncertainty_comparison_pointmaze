@@ -319,3 +319,15 @@
   number) by a version that reads every start of a job, a requeued job's second start included, so the restart of
   29606826 is read too (`infrastructure/mit_eight_copy_switch/mit_ledger_start_check.sh`).
 - 2026-11-18 23:17 PT: the monitor job 6957005 (copy 2) was cancelled by its ledger id between passes and replaced by job 6958072 on copy 3 (48019fc4), so its report has the pack-size table; same options as command.txt item 6.
+- 2026-11-19 00:00 PT, user rule: "for RND's run on MIT, if there is another session that also submits to MIT, please hold or
+  low priority the jobs of this RND runs on MIT (choose one that cumulate aging), after the other sessions run is
+  finished, put them back to normal priority; you don't need to stop existing runs". MIT sets no ACCRUE_ALWAYS
+  (`scontrol show config`: PriorityFlags empty), so a held job stops gaining age; a job with a higher nice stays
+  eligible and keeps gaining it. Tested on our own waiting job 29603828: nice 3,000,000 gave priority 1 with its age
+  term still counting (1,251 then 1,254), and nice 0 gave back 38,072. The hand-over loop's helper now does it at
+  every pass (step mit-share, function mit_yield): while any job of account shuzel that is not in this run's MIT
+  ledger is running or waiting on mit_normal_gpu or mit_preemptable, every waiting job of this run's MIT ledger
+  gets nice 3,000,000 (above the largest priority gap between two jobs of the account there: age 50,000, partition
+  600,000, QOS 2,000,000; fair share is the same); when none is left, the jobs it lowered get nice 0 again. Running
+  jobs are left alone. State in slurm/mit_yield_state.json; copy of the helper in infrastructure/hand_over_loop/.
+  First pass with it, 23:59 PT: no other job, nothing lowered.
