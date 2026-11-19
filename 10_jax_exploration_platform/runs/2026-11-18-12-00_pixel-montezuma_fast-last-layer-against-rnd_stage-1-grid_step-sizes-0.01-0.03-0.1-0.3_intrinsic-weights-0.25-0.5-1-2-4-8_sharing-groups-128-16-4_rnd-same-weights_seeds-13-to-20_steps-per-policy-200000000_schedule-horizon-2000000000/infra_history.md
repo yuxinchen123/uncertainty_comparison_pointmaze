@@ -81,3 +81,9 @@
   no step lost. Taken out of the card list: monitor job 6956910 cancelled by its ledger id at 16:52 PT and replaced
   by 6957005 without `nvidia_geforce_rtx_5080`. A 15-minute check at fraction 0.95 runs as job 6957009
   (gates folder, slurm/jobs/gate-6_speed-and-memory_rtx-5080_...); the type comes back only if it passes.
+- 2026-11-18 16:53 to 16:58 PT: the RTX 5080 check (job 6957009, nekomata01, fraction 0.95) FAILED in its first
+  variant, the default RND program, before any timed update: the same single allocation of 11.69 GiB in
+  `jit_iteration` ran out of card memory. On 2026-11-07 four archived baseline seeds ran on these cards with the same
+  environment variables (fraction 0.85, the determinism flag) using 8.6 GB, so something differs from then (the
+  code, the driver now 580.159.04, or how XLA plans this card); the cause is not established. Decision: the RTX 5080
+  stays out of the stage-1 card list (it has 4 cards, mostly used by the AntMaze study); no unit was lost.
