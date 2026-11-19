@@ -1773,6 +1773,24 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   M (the method's step 0.1 with the hold, learning rate 1e-2, weight 16, against RND's learning rate 1e-2, weight 4)
   waits for the method's block, which is still training.
 
+- 2026-11-19 06:45 PT: **the second ant fresh-seed pair is complete: U-maze, reward 1 on arrival, the measure M** (seeds 30000
+  to 30255, 256 policies per side, all 256 windows, all 256 policies arrived on both sides, no fault-guard respawn
+  on either side). The method's choice for M, step 0.1 with the first-arrival hold at learning rate 1e-2, weight 16,
+  against RND's choice for M, learning rate 1e-2, weight 4, paired by seed (95% intervals from 10,000 resamples of
+  the seeds; scratchpad script quick_pair.py over both units of each side):
+
+  | measure | the method | RND | the method minus RND | seeds where the method is better |
+  |---|---|---|---|---|
+  | M, first goal (million steps; smaller is better) | 0.240 | 0.293 | −0.053 [−0.067, −0.038] | 178 of 256 |
+  | W, whole-curve mean of the training return | 0.0659 | 0.0608 | +0.0052 [+0.0044, +0.0059] | 207 of 256 |
+  | L, final level (last 25 windows) | 0.0708 | 0.0643 | +0.0065 [+0.0054, +0.0077] | 194 of 256 |
+
+  On M, the secondary measure, the method is ahead on fresh seeds: the interval is entirely below zero, as on the
+  validation block (−0.060 ± 0.011 million steps, earlier on 87 of 128 seeds). This settles the best-of-several
+  pick for M in this setting. With the first pair (03:46 PT), the method is ahead of RND on both measures on the
+  U-maze with reward 1 on arrival, each side at its own choice for the measure. The U-maze pairs with the step cost
+  and the Medium and Large pairs (RND probes until the user decides their comparison) still train.
+
 ## Next
 
 Rewritten 2026-11-13 22:31 PT.
