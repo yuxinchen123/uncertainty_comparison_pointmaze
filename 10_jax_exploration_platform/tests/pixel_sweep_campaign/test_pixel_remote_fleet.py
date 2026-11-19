@@ -8,8 +8,8 @@ import tempfile
 import unittest
 from unittest import mock
 
-from pixel_test_support import (PIXEL, build_units, common, load_file, metric_lines, own, pixel_queue, queue_units,
-                                small_description, unit_queue, write_run_records)
+from pixel_test_support import (ARCHIVE_DATA, PIXEL, build_units, common, load_file, metric_lines, own, pixel_queue,
+                                queue_units, small_description, unit_queue, write_run_records)
 from campaign_imports import grid
 
 remote = own("remote_fleet")
@@ -20,6 +20,8 @@ ADAPTED = ("WORKER_TEMPLATE", "REMOTE_FOLDERS", "worker_script", "prepare", "ver
            "parse_status", "result_block", "bring_back", "JOB_PREFIX", "RECOVERY_LIMIT")
 FOUR_STEP_SIZES = [{"method": "fast-last-layer", "pack_over": "step_size", "grid": {
     "sharing_group": [16], "intrinsic_weight": [1], "step_size": [0.01, 0.03, 0.1, 0.3]}}]
+TWO_WEIGHTS = [{"method": "fast-last-layer", "pack_over": "step_size", "grid": {
+    "sharing_group": [16], "intrinsic_weight": [1, 2], "step_size": [0.01, 0.03, 0.1, 0.3]}}]
 
 
 class FleetCase(unittest.TestCase):
@@ -83,7 +85,7 @@ class ServerTable(FleetCase):
             self.assertFalse(any(option.startswith("--gres") or option == "--exclusive" for option in options))
             self.assertIn("node3401-c1", options[options.index("-x") + 1])
             self.assertEqual((pool["time_limit"], pool["max_jobs"], pool["execution_profile"], pool["card_guard"]),
-                             ("2-00:00:00", 4, "four copies", True))
+                             ("2-00:00:00", 4, "eight copies", True))
         advanced = mit["pools"]["advanced-h200"]["sbatch_options"]
         self.assertTrue({"--partition=mit_normal_gpu", "--account=mit_amf_advanced_gpu",
                          "--qos=mit_amf_advanced_gpu"} <= set(advanced))
@@ -161,10 +163,20 @@ class JobScripts(FleetCase):
             self.assertIn("unset LD_LIBRARY_PATH", text)
         self.assertIn('exec "$PY" "$CODE/scripts/pixel_sweep_campaign/worker.py" --run-dir "$RUN" --remote-records '
                       "--server gautschi", worker_text)
-        self.assertIn("--minimum-seconds 1800", worker_text)
+        self.assertIn("--minimum-seconds 1800 --margin-seconds 900", worker_text)
         self.assertIn("smoke_check.py", smoke_text)
         self.assertIn("--pool ai-h100 --profile four-copies --updates 20", smoke_text)
         self.assertNotIn("worker.py", smoke_text)
+
+    def test_a_check_pool_sets_the_workers_least_training_time_and_margin(self):
+        """A pool of 20-minute jobs gives its worker 240 s for each, so a short check trains; bash accepts the script."""
+        entry = dict(self.table["mit"], code="/home/shuzel/code/source_abc/10_jax_exploration_platform")
+        pool = dict(entry["pools"]["advanced-h200"], time_limit="00:20:00", worker_minimum_seconds=240,
+                    worker_margin_seconds=240)
+        text = remote.worker_script("mit", entry, "eight-copy-check", pool)
+        self.assertEqual(subprocess.run(["bash", "-n"], input=text, text=True, capture_output=True).returncode, 0)
+        self.assertIn("--minimum-seconds 240 --margin-seconds 240", text)
+        self.assertNotIn("@", text)
 
     def test_two_run_folders_never_share_a_job_name_prefix(self):
         """The prefix comes from the folder's name and says the job belongs to the pixel sweep."""
@@ -190,8 +202,54 @@ class JobScripts(FleetCase):
         self.assertEqual(status["queue"]["running"], ["unit-a"])
 
 
+class References(unittest.TestCase):
+    """The archived lines a smoke job compares its first default updates with."""
+
+    def test_the_lines_of_several_archived_runs_join_copy_by_copy(self):
+        """Lists are joined in the runs' order; numbers shared by all copies stay; the write time is the first run's."""
+        four = [{"update": 1, "unix": 5.0, "loss": [0.6, 0.5, 0.5, 0.6], "rooms_visited": [[True]] * 4,
+                 "steps_per_policy": 16384}]
+        one = [{"update": 1, "unix": 7.0, "loss": [0.7], "rooms_visited": [[False]], "steps_per_policy": 16384}]
+        self.assertEqual(remote.joined_lines([four, one]),
+                         [{"update": 1, "unix": 5.0, "loss": [0.6, 0.5, 0.5, 0.6, 0.7],
+                           "rooms_visited": [[True]] * 4 + [[False]], "steps_per_policy": 16384}])
+        with self.assertRaises(ValueError):
+            remote.joined_lines([four, [dict(one[0], update=2)]])
+
+    @unittest.skipIf(ARCHIVE_DATA is None, "the archived baseline is not on this machine")
+    def test_the_eight_copy_reference_holds_seeds_1_to_8(self):
+        """Seeds 1 to 4 from the archived four-copy run, then seeds 5 to 8 from the one-copy runs, 20 lines."""
+        text, seeds = remote.archive_reference(PROFILES["eight copies"])
+        lines = [json.loads(line) for line in text.splitlines()]
+        self.assertEqual((seeds, len(lines), [line["update"] for line in lines][:3]), (list(range(1, 9)), 20, [1, 2, 3]))
+        self.assertTrue(all(len(line["loss"]) == 8 for line in lines))
+        four, _ = remote.archive_reference(PROFILES["four copies"])
+        self.assertEqual([line["loss"] for line in map(json.loads, four.splitlines())],
+                         [line["loss"][:4] for line in lines])
+
+
 class HandOver(FleetCase):
     """Which units a pool gets."""
+
+    def test_an_eight_copy_pool_gets_eight_copy_packs_only_and_a_check_pool_is_handed_over_by_hand(self):
+        """MIT's pools take the eight-copy pack, not the four-copy one; `hand-over` hands a check pool one unit."""
+        queue_units(self.run_dir, build_units.study_units(small_description(
+            seeds={"first": 13, "count": 2}, methods=TWO_WEIGHTS)))
+        with contextlib.redirect_stdout(io.StringIO()):
+            four = build_units.pack_pending(self.run_dir, 1, match="seed-13")
+            eight = build_units.pack_pending(self.run_dir, 1, match="seed-14", size=8)
+            self.table["mit"]["ready"] = True
+            self.assertEqual(remote.hand_over(self.run_dir, self.table, "mit", "advanced-h200", dry_run=True), eight)
+            self.assertEqual(remote.hand_over(self.run_dir, self.table, "gautschi", "ai-h100", dry_run=True), four)
+            # a pool outside hand_over.pools: the command names the limit and the text a unit's name holds
+            self.table["mit"]["pools"]["eight-copy-check"] = dict(self.table["mit"]["pools"]["advanced-h200"],
+                                                                  time_limit="00:20:00", max_jobs=1)
+            self.assertEqual(remote.hand_over(self.run_dir, self.table, "mit", "eight-copy-check", dry_run=True,
+                                              units_at_once=1, match="seed-14"), eight)
+            self.assertEqual(remote.hand_over(self.run_dir, self.table, "mit", "eight-copy-check", dry_run=True,
+                                              units_at_once=1, match="seed-15"), [])
+            with self.assertRaises(KeyError):
+                remote.hand_over(self.run_dir, self.table, "mit", "eight-copy-check", dry_run=True)
 
     def test_a_four_copy_pool_gets_packs_only_in_claim_order_up_to_its_limit(self):
         """Singles stay on UVA; a dry run names the pack and moves nothing."""
@@ -269,12 +327,12 @@ class Ticks(FleetCase):
         self.assertEqual(output.getvalue().count("not part of this tick"), 4)
 
     def test_mit_holds_its_units_through_the_first_pool_and_both_pools_get_jobs(self):
-        """Five packs: the first pool takes all five (the server-wide limit 16), asks for its 4 jobs; the second
-        pool takes no unit at this tick and asks for jobs only for units no job will take at the next."""
+        """Five eight-copy packs: the first pool takes all five (the server-wide limit 16), asks for its 4 jobs; the
+        second pool takes no unit at this tick and asks for jobs only for units no job will take at the next."""
         queue_units(self.run_dir, build_units.study_units(small_description(
-            seeds={"first": 13, "count": 5}, methods=FOUR_STEP_SIZES)))
+            seeds={"first": 13, "count": 5}, methods=TWO_WEIGHTS)))
         with contextlib.redirect_stdout(io.StringIO()):
-            packs = build_units.pack_pending(self.run_dir, 5)
+            packs = build_units.pack_pending(self.run_dir, 5, size=8)
         common.write_json(self.run_dir / "source.json", {"commit": "abc"})
         self.table["mit"].update(ready=True, prepared_commit="abc", code="/home/shuzel/code")
         status = remote.parse_status(f"{fleet.MARK}queue\n{fleet.MARK}squeue_exit 0\n{fleet.MARK}end\n")

@@ -23,21 +23,42 @@ def quiet(function, *arguments, **keywords):
 
 
 class Profiles(unittest.TestCase):
-    """The two execution profiles and which card runs under which."""
+    """The three execution profiles and which card runs under which."""
 
-    def test_a_card_under_60_gb_runs_one_copy_and_a_larger_one_four(self):
-        """RTX 2080 Ti to A40 are "one copy"; an A100 with 80 GB and the H100 are "four copies"; a GTX 1080 has none."""
+    def test_a_card_under_60_gb_runs_one_copy_a_larger_one_four_and_an_h200_eight(self):
+        """RTX 2080 Ti to A40: "one copy"; A100 80 GB, H100, GH200: "four copies"; H200: "eight copies"; GTX 1080: none."""
         named = {10854: "one copy", 16303: "one copy", 20470: "one copy", 40960: "one copy", 46068: "one copy",
-                 81101: "four copies", 95830: "four copies", 8192: None}
+                 81101: "four copies", 95830: "four copies", 97871: "four copies", 139999: "four copies",
+                 140000: "eight copies", 143771: "eight copies", 8192: None}
         for memory, name in named.items():
             self.assertEqual(pixel_queue.profile_for_card(PROFILES, memory), name)
-        self.assertEqual((PROFILES["one copy"]["copies"], PROFILES["four copies"]["copies"]), (1, 4))
+        self.assertEqual([profile["copies"] for profile in PROFILES.values()], [1, 4, 8])
+        self.assertEqual({name: profile["continues"] for name, profile in PROFILES.items()},
+                         {"one copy": [], "four copies": [], "eight copies": ["four copies"]})
+
+    def test_eight_copies_are_the_four_copy_settings_with_the_reset_lane_budget_doubled(self):
+        """The settings job 29603853 measured on an MIT H200: nothing else differs from the four-copy profile."""
+        four, eight = PROFILES["four copies"], PROFILES["eight copies"]
+        self.assertEqual(eight["learner"], four["learner"])
+        self.assertEqual(eight["environment"], dict(four["environment"], reset_lane_budget=32))
+        self.assertEqual(four["environment"]["reset_lane_budget"], 16)
+        self.assertEqual(eight["archived_runs"][0], four["archived_runs"][0])
+
+    @unittest.skipIf(ARCHIVE_DATA is None, "the archived baseline is not on this machine")
+    def test_each_profiles_archived_runs_hold_its_copies(self):
+        """The archived runs of a profile hold, together, as many copies as the profile runs."""
+        for name, profile in PROFILES.items():
+            seeds = [seed for run in profile["archived_runs"]
+                     for seed in json.loads((ARCHIVE_DATA / run / "run/run.json").read_text())["copy_seeds"]]
+            self.assertEqual(len(seeds), profile["copies"], name)
+        self.assertEqual(seeds, list(range(1, 9)))
 
     @unittest.skipIf(ARCHIVE_DATA is None, "the archived baseline is not on this machine")
     def test_the_profiles_are_the_archived_baselines_settings(self):
-        """Each profile's learner and environment JSON gives the archived run.json of its card class, key by key."""
-        for name, profile in PROFILES.items():
-            archived = json.loads((ARCHIVE_DATA / profile["archived_run"] / "run/run.json").read_text())
+        """The one-copy and four-copy profiles give the archived run.json of their card class, key by key."""
+        PROFILES_OF_RUNS = {name: PROFILES[name] for name in ("one copy", "four copies")}
+        for name, profile in PROFILES_OF_RUNS.items():
+            archived = json.loads((ARCHIVE_DATA / profile["archived_runs"][0] / "run/run.json").read_text())
             self.assertEqual(archived["learner"]["n_copies"], profile["copies"])
             for key, value in profile["learner"].items():
                 self.assertEqual(archived["learner"][key], value, f"{name}: learner {key}")
@@ -45,8 +66,8 @@ class Profiles(unittest.TestCase):
             self.assertEqual(archived["environment"], {"cache_room_backgrounds": True, "render_final_two_only": True,
                                                        **profile["environment"]}, name)
         # nothing else differs between the two archived card classes than what the profiles hold
-        learners = [json.loads((ARCHIVE_DATA / profile["archived_run"] / "run/run.json").read_text())["learner"]
-                    for profile in PROFILES.values()]
+        learners = [json.loads((ARCHIVE_DATA / profile["archived_runs"][0] / "run/run.json").read_text())["learner"]
+                    for profile in PROFILES_OF_RUNS.values()]
         differing = {key for key in learners[0] if learners[0][key] != learners[1][key]}
         named = set(PROFILES["one copy"]["learner"]) | set(PROFILES["four copies"]["learner"]) | {"n_copies"}
         self.assertTrue(differing <= named, differing - named)
@@ -108,6 +129,56 @@ class Claims(unittest.TestCase):
         unit_queue.give_back(self.run_dir, first, "out_of_card_memory", minimum_device_memory_mb=16304)
         self.assertNotEqual(self.claim(CARD_SECOND_TYPE)["name"], first["name"])
         self.assertEqual(self.claim(CARD_ONE_COPY)["name"], first["name"])
+
+    def test_an_h200_starts_eight_copy_packs_and_continues_started_four_copy_packs_only(self):
+        """A never-started four-copy pack is left to four-copy cards; a started one an H200 continues with its settings."""
+        card_eight = dict(CARD_FOUR_COPIES, gpu="NVIDIA H200", memory_mb=143771, hostname="h200node")
+        description = small_description(seeds={"first": 13, "count": 3}, methods=[
+            {"method": "fast-last-layer", "pack_over": "step_size",
+             "grid": {"sharing_group": [16], "intrinsic_weight": [1, 2], "step_size": [0.01, 0.03, 0.1, 0.3]}}])
+        run_dir = self.run_dir.parent / "eight"
+        queue_units(run_dir, build_units.study_units(description))
+        four = quiet(build_units.pack_pending, run_dir, 2, match="seed-13")
+        eight = quiet(build_units.pack_pending, run_dir, 1, match="seed-14", size=8)
+
+        def claim(card, own_copy=0):
+            """Claim the next unit a worker of this card and code copy may take in the folder of this test."""
+            name = pixel_queue.profile_for_card(PROFILES, card["memory_mb"])
+            return pixel_queue.claim(run_dir, card["memory_mb"], dict(claimant(card), copy_number=own_copy), name,
+                                     PROFILES[name])
+
+        # the H200 takes the eight-copy pack, not the four-copy packs that stand before it in the claim order
+        taken = claim(card_eight)
+        self.assertEqual((taken["name"], taken["execution_profile"]), (eight[0], "eight copies"))
+        self.assertEqual(taken["execution_profile_settings"]["environment"]["reset_lane_budget"], 32)
+        self.assertIsNone(claim(card_eight))
+        # an H100 takes a four-copy pack; given back, an H200 continues it under its four-copy settings
+        started = claim(CARD_FOUR_COPIES)
+        self.assertEqual(started["name"], four[0])
+        unit_queue.give_back(run_dir, started, "stopped_with_state_saved")
+        again = claim(card_eight)
+        self.assertEqual((again["name"], again["execution_profile"], again["attempts"]), (four[0], "four copies", 2))
+        self.assertEqual(again["execution_profile_settings"]["environment"]["reset_lane_budget"], 16)
+        # an H100 never takes an eight-copy pack, and the left units are counted by reason
+        unit_queue.give_back(run_dir, taken, "stopped_with_state_saved")
+        self.assertEqual(claim(CARD_FOUR_COPIES)["name"], four[1])
+        self.assertIsNone(claim(CARD_FOUR_COPIES))
+        self.assertEqual(pixel_queue.pending_for_others(run_dir, "four copies", PROFILES["four copies"], 95830, 0),
+                         {"another profile": 1 + 8, "more card memory": 0, "a newer code copy": 0})
+
+    def test_a_worker_of_an_older_code_copy_leaves_an_eight_copy_pack_alone(self):
+        """A pack built against copy 3 is not claimed by a worker of copy 2 on the same card."""
+        description = small_description(seeds={"first": 13, "count": 1}, methods=[
+            {"method": "fast-last-layer", "pack_over": "step_size",
+             "grid": {"sharing_group": [16], "intrinsic_weight": [1, 2], "step_size": [0.01, 0.03, 0.1, 0.3]}}])
+        run_dir = self.run_dir.parent / "copies"
+        queue_units(run_dir, build_units.study_units(description))
+        made = quiet(build_units.pack_pending, run_dir, 1, size=8, minimum_copy=3)
+        card = dict(CARD_FOUR_COPIES, gpu="NVIDIA H200", memory_mb=143771)
+        self.assertIsNone(pixel_queue.claim(run_dir, 143771, dict(claimant(card), copy_number=2), "eight copies",
+                                            PROFILES["eight copies"]))
+        self.assertEqual(pixel_queue.claim(run_dir, 143771, dict(claimant(card), copy_number=3), "eight copies",
+                                           PROFILES["eight copies"])["name"], made[0])
 
     def test_the_trainer_settings_join_the_profile_and_the_unit(self):
         """A pack's learner JSON holds the H100 settings, the shared settings and the per-copy step sizes."""
@@ -207,16 +278,22 @@ class Outcomes(WorkerCase):
         self.assertEqual(record["result"]["update_at_start"], 5)
 
     def test_every_start_records_its_card_in_the_run_folders_events(self):
-        """events.jsonl holds one start and one end line of the worker per attempt, with the device."""
+        """events.jsonl holds one start and one end line of the worker per attempt, with the device and the copies."""
         self.work("stop")
         self.work("complete", card=CARD_SECOND_TYPE)
         events = [json.loads(line) for line in
                   (pixel_queue.run_folder(self.run_dir, self.names[0]) / "events.jsonl").read_text().splitlines()]
         starts = [event for event in events if event["event"] == "worker_start"]
-        self.assertEqual([(event["device"], event["execution_profile"], event["attempt"], event["update"])
+        self.assertEqual([(event["device"], event["execution_profile"], event["copies"], event["attempt"], event["update"])
                           for event in starts],
-                         [("NVIDIA RTX A4500", "one copy", 1, 0), ("NVIDIA GeForce RTX 5080", "one copy", 2, 5)])
+                         [("NVIDIA RTX A4500", "one copy", 1, 1, 0), ("NVIDIA GeForce RTX 5080", "one copy", 1, 2, 5)])
         self.assertEqual([event["outcome"] for event in events if event["event"] == "worker_end"], ["stopped", "complete"])
+
+    def test_a_short_check_job_keeps_a_smaller_margin(self):
+        """--margin-seconds 240 and --minimum-seconds 240: the trainer's limit is the job's time less 240 s."""
+        self.work("complete", "--margin-seconds", "240", "--minimum-seconds", "240")
+        command = self.command(self.names[0])
+        self.assertTrue(6860 < int(command["--time-limit-seconds"]) <= 6960)
 
     def test_a_failed_unit_returns_to_pending_and_fails_at_its_third_failure(self):
         """One failure ends the worker; three workers move the first unit to failed with its log."""

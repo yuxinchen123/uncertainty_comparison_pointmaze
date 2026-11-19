@@ -42,7 +42,7 @@ class StageOne(unittest.TestCase):
         self.assertIn("grid_fast-last-layer_step-size-0.03_sharing-group-16_intrinsic-weight-1_seed-13", names)
         self.assertIn("grid_rnd_intrinsic-weight-1_seed-13", names)
         self.assertIn("grid_fast-last-layer_step-size-0.3_sharing-group-128_intrinsic-weight-0.25_seed-20", names)
-        self.assertTrue(all(build_units.PACK_WORD not in name for name in names))
+        self.assertTrue(all(word not in name for word in build_units.PACK_WORDS.values() for name in names))
 
     def test_claims_are_interleaved_by_seed(self):
         """Every configuration at seed 13 stands before any at seed 14, and so on; RND comes first in a seed."""
@@ -235,6 +235,97 @@ class Packs(unittest.TestCase):
         pack = common.read_json(run_dir / "specifications" / f"{made[0]}.json")
         self.assertEqual((pack["copy_seeds"], pack["per_copy_settings"]), ([1, 2, 3, 4], {}))
         self.assertEqual(unit_queue.counts(run_dir)["pending"], 3)
+
+
+class EightCopyPacks(unittest.TestCase):
+    """Eight never-started singles become one eight-copy unit for the H200: a full cross product of two settings."""
+
+    def setUp(self):
+        """Queue the 78 units of seed 13 and the 78 of seed 14 of the stage-1 grid in a temporary run folder."""
+        folder = tempfile.TemporaryDirectory()
+        self.addCleanup(folder.cleanup)
+        self.run_dir = Path(folder.name) / "run"
+        description = dict(json.loads(STAGE_ONE.read_text()), seeds={"first": 13, "count": 2})
+        self.names = queue_units(self.run_dir, build_units.study_units(description))
+
+    def test_a_method_pack_of_eight_holds_the_four_step_sizes_at_two_weights(self):
+        """One sharing group and seed; step size and weight go in per copy, weight by weight; the first single's place."""
+        made = quiet(build_units.pack_pending, self.run_dir, 9, match="sharing-group-16_intrinsic-weight-1_seed-14",
+                     size=8)
+        name = ("grid_fast-last-layer_eight-copies_step-sizes-0.01-0.03-0.1-0.3_sharing-group-16_"
+                "intrinsic-weights-1-2_seed-14")
+        self.assertEqual(made, [name])
+        pack = common.read_json(self.run_dir / "specifications" / f"{name}.json")
+        self.assertEqual((pack["copies"], pack["copy_seeds"]), (8, [14] * 8))
+        self.assertEqual(pack["per_copy_settings"], {"fast_last_layer_step": [0.01, 0.03, 0.1, 0.3] * 2,
+                                                     "intrinsic_coefficient": [1.0] * 4 + [2.0] * 4})
+        self.assertEqual((pack["learner"]["fast_last_layer_sharing_group"], pack["learner"]["intrinsic_coefficient"],
+                          pack["learner"]["fast_last_layer_step"]), (16, 1.0, 0.01))
+        self.assertEqual(pack["members"], [
+            f"grid_fast-last-layer_step-size-{step}_sharing-group-16_intrinsic-weight-{weight}_seed-14"
+            for weight in ("1", "2") for step in ("0.01", "0.03", "0.1", "0.3")])
+        record = common.read_json(unit_queue.unit_path(self.run_dir, "pending", name))
+        first = common.read_json(unit_queue.unit_path(self.run_dir, "packed", pack["members"][0]))
+        self.assertEqual((record["copies"], record["order"], record["attempts"]), (8, first["order"], 0))
+        # the other weights of the group and seed pair up the same way: 0.25 with 0.5, 4 with 8
+        rest = quiet(build_units.pack_pending, self.run_dir, 9, match="sharing-group-16_intrinsic-weight-4_seed-14",
+                     size=8)
+        self.assertEqual(rest, [name.replace("weights-1-2", "weights-4-8")])
+
+    def test_rnd_packs_four_weights_at_two_seeds_and_the_first_pack_stands_first_in_the_claim_order(self):
+        """RND's weights 0.25 to 2 at seeds 13 and 14 make the first pack; the weights 4 and 8 stay singles."""
+        made = quiet(build_units.pack_pending, self.run_dir, 1, size=8)
+        self.assertEqual(made, ["grid_rnd_eight-copies_intrinsic-weights-0.25-0.5-1-2_seeds-13-14"])
+        pack = common.read_json(self.run_dir / "specifications" / f"{made[0]}.json")
+        self.assertEqual(pack["copy_seeds"], [13] * 4 + [14] * 4)
+        self.assertEqual(pack["per_copy_settings"], {"intrinsic_coefficient": [0.25, 0.5, 1.0, 2.0] * 2})
+        self.assertNotIn("fast_last_layer_step", pack["learner"])
+        pending = {unit["name"] for unit in unit_queue.read_units(self.run_dir, "pending")}
+        self.assertTrue({f"grid_rnd_intrinsic-weight-{weight}_seed-{seed}" for weight in (4, 8) for seed in (13, 14)}
+                        <= pending)
+
+    def test_every_pack_is_a_full_cross_product_when_a_single_has_started(self):
+        """With one step size of weight 0.5 started, weight 0.5 joins no pack and weight 0.25 pairs with weight 1."""
+        started = "grid_fast-last-layer_step-size-0.1_sharing-group-16_intrinsic-weight-0.5_seed-14"
+        path = unit_queue.unit_path(self.run_dir, "pending", started)
+        common.write_json(path, dict(common.read_json(path), attempts=1, execution_profile="one copy"))
+        made = quiet(build_units.pack_pending, self.run_dir, 9, match="sharing-group-16_intrinsic-weight-0.25_seed-14",
+                     size=8)
+        self.assertEqual(made, ["grid_fast-last-layer_eight-copies_step-sizes-0.01-0.03-0.1-0.3_sharing-group-16_"
+                                "intrinsic-weights-0.25-1_seed-14"])
+        # all packs of both seeds: per seed 9 of the method (8 without the started weight at seed 14) and 1 of RND
+        rest = quiet(build_units.pack_pending, self.run_dir, 1000, size=8)
+        self.assertEqual(len(made) + len(rest), 9 + 8 + 1)
+        for name in made + rest:
+            pack = common.read_json(self.run_dir / "specifications" / f"{name}.json")
+            settings = [tuple(run.get(word) for word in ("step_size", "intrinsic_weight", "seed")) for run in pack["runs"]]
+            values = [sorted({setting[index] for setting in settings}, key=str) for index in range(3)]
+            self.assertEqual(len(set(settings)), 8)
+            self.assertEqual(len(values[0]) * len(values[1]) * len(values[2]), 8, name)
+
+    def test_an_eight_copy_pack_that_never_started_is_taken_apart_again(self):
+        """Its eight singles are pending again with their old places."""
+        before = {unit["name"]: unit["order"] for unit in unit_queue.read_units(self.run_dir, "pending")}
+        made = quiet(build_units.pack_pending, self.run_dir, 2, size=8)
+        undone = quiet(build_units.unpack_pending, self.run_dir, match=made[1])
+        self.assertEqual(undone, [made[1]])
+        after = {unit["name"]: unit["order"] for unit in unit_queue.read_units(self.run_dir, "pending")}
+        members = common.read_json(self.run_dir / "specifications" / f"{made[0]}.json")["members"]
+        self.assertEqual({name: order for name, order in after.items() if name in before},
+                         {name: order for name, order in before.items() if name not in members})
+
+    def test_an_eight_copy_pack_needs_the_runs_frozen_copy_and_a_four_copy_pack_does_not(self):
+        """Through the command line: the frozen copy's number 3 goes into the eight-copy pack, not into the four-copy one."""
+        snapshot = self.run_dir.parent / "code/source_abc"
+        (snapshot / "10_jax_exploration_platform").mkdir(parents=True)
+        (snapshot / "10_jax_exploration_platform/SOURCE_COPY_NUMBER").write_text("3\n")
+        common.write_json(self.run_dir / "source.json", {"commit": "abc", "snapshot": str(snapshot), "copy_number": 3})
+        quiet(build_units.main, ["--run-dir", str(self.run_dir), "--pack-pending", "--packs", "1", "--pack-size", "8"])
+        quiet(build_units.main, ["--run-dir", str(self.run_dir), "--pack-pending", "--packs", "1"])
+        records = {unit["name"]: unit for unit in unit_queue.read_units(self.run_dir, "pending") if unit["copies"] > 1}
+        self.assertEqual({(unit["copies"], unit["minimum_copy_number"]) for unit in records.values()}, {(8, 3), (4, 0)})
+        with self.assertRaises(ValueError):
+            build_units.plan_packs([], 1, size=6)
 
 
 class ContinuedUnits(unittest.TestCase):

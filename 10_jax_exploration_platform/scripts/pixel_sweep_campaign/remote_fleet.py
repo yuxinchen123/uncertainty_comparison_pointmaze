@@ -5,6 +5,8 @@
     python remote_fleet.py --run-dir RUN smoke --server S [--pool P] [--dry-run]
     python remote_fleet.py --run-dir RUN smoke-result --server S [--pool P]   # P: a held-back pool
     python remote_fleet.py --run-dir RUN hand-over-tick [--dry-run]      # the one command of a monitoring tick
+    python remote_fleet.py --run-dir RUN hand-over --server S --pool P --units N [--match TEXT] [--dry-run]
+    python remote_fleet.py --run-dir RUN submit --server S --pool P --jobs N [--dry-run]
     python remote_fleet.py --run-dir RUN status
     python remote_fleet.py --run-dir RUN take-back --server S --units N [--match TEXT] [--from-end] [--hold]
 
@@ -24,8 +26,12 @@ RUN/infrastructure/remote_fleet_servers.json are those of the grid campaign's re
   2. `prepare` sends the job scripts, the run's frozen code copy, the corrected asset pack, its
      hashes, and the first archived metric lines the smoke job compares with.
   3. The worker job on a server starts this folder's worker.py with --remote-records. A pool names
-     its execution profile ("four copies" on H100 and A100 80 GB cards, "one copy" on smaller
-     ones); only units of that profile are handed to it, so an H100 pool gets packs only.
+     its execution profile ("eight copies" on the H200, "four copies" on H100 and A100 80 GB cards,
+     "one copy" on smaller ones); only units of that profile are handed to it, so an H100 pool gets
+     four-copy packs only and an H200 pool eight-copy packs only. A pool may set
+     `worker_minimum_seconds` and `worker_margin_seconds` (the worker's --minimum-seconds and
+     --margin-seconds; default the server's unit_seconds and the worker's 900 s), so a short check
+     pool's job can train.
   4. A unit goes to a server with its specification and queue record and, when UVA has begun it,
      its whole run folder (checkpoint, metrics, record files, run.json, events, progress). It
      comes back with the same files. A finished unit is verified before it counts as done: a
@@ -37,7 +43,12 @@ RUN/infrastructure/remote_fleet_servers.json are those of the grid campaign's re
   6. `hand-over-tick` does a whole tick for every ready server: read it once, pull and verify
      finished units, put back units whose job ended, hand over pending units of each pool's
      profile up to the pool's limit (the first of UVA's claim order first), submit worker jobs for
-     units no job will take, and print one line per unit.
+     units no job will take, and print one line per unit. It uses only the pools of the table's
+     `hand_over.pools`.
+  7. `hand-over` and `submit` do one of those steps by hand for one pool, also a pool outside
+     `hand_over.pools` (a check pool the tick leaves alone): up to N pending units of the pool's
+     profile (those whose name holds --match) go to the server; N worker jobs within the pool's
+     max_jobs and the server's pending units.
 
 Job ids go to RUN/slurm/submitted_jobids_<server>.txt (one file per server). This file offers no
 cancel command (scripts/maze_campaign/cancel_ledger.py --server cancels a server's waiting jobs).
@@ -60,6 +71,7 @@ import pixel_queue
 fleet = grid("remote_fleet")
 maze_fleet = maze("remote_fleet")
 smoke_check = own("smoke_check")
+worker = own("worker")
 ARCHIVE_CHECK = "default updates against the archived baseline"
 SERVER_TABLE = HERE / "server_table.json"
 ASSETS = common.PROJECT / "reference_repos/jaxtari_pixel_study_assets_montezuma_room_geometry_from_png"
@@ -106,7 +118,7 @@ print("jax devices:", jax.devices()); assert jax.default_backend() == "gpu"' \
   || { echo "jax does not use the card, or a module the trainer imports is missing; this job ends without taking a unit"; exit 3; }
 
 exec "$PY" "$CODE/scripts/pixel_sweep_campaign/worker.py" --run-dir "$RUN" --remote-records --server @SERVER@ \
-  --minimum-seconds @UNIT_SECONDS@
+  --minimum-seconds @UNIT_SECONDS@ --margin-seconds @MARGIN_SECONDS@
 '''
 
 SMOKE_TEMPLATE = JOB_HEAD.replace("@PURPOSE@", "Smoke job (the server's check and its speed check)") + r'''
@@ -134,7 +146,12 @@ def profile_words(name):
 def job_script(template, name, entry, pool_name, pool):
     """Fill one job script: the grid campaign's fields, the server's shell option and lines, the assets, the profile."""
     # the maze campaign's writer fills @SERVER@, @POOL@, @RUN@, @PYTHON@, @CODE@, @UNIT_SECONDS@, @GPU_CLASS@,
-    # @CARD_GUARD@, @SHELL_OPTION@ and @JOB_SETUP_LINES@ of whatever template the grid module holds
+    # @CARD_GUARD@, @SHELL_OPTION@ and @JOB_SETUP_LINES@ of whatever template the grid module holds; the
+    # worker's least training time and its margin may be the pool's own (a check pool of 20-minute jobs)
+    # before: a pool without the two keys ; after: "--minimum-seconds 1800 --margin-seconds 900" (the server's unit_seconds)
+    # before: {"worker_minimum_seconds": 240, "worker_margin_seconds": 240} ; after: "--minimum-seconds 240 --margin-seconds 240"
+    template = (template.replace("@UNIT_SECONDS@", str(int(pool.get("worker_minimum_seconds", entry["unit_seconds"]))))
+                .replace("@MARGIN_SECONDS@", str(int(pool.get("worker_margin_seconds", worker.MARGIN_SECONDS)))))
     held = fleet.WORKER_TEMPLATE
     fleet.WORKER_TEMPLATE = template
     try:
@@ -158,16 +175,43 @@ def asset_hashes(root=ASSETS):
             for path in sorted(Path(root).rglob("*")) if path.is_file()}
 
 
+def joined_lines(parts):
+    """Join the metric lines of several archived runs, update by update, into the lines of one run of all their copies."""
+    # before: [[{"update": 1, "unix": 5.0, "loss": [0.6, 0.5, 0.5, 0.6], "steps_per_policy": 16384}],
+    #          [{"update": 1, "unix": 7.0, "loss": [0.7], "steps_per_policy": 16384}]]
+    # after:  [{"update": 1, "unix": 5.0, "loss": [0.6, 0.5, 0.5, 0.6, 0.7], "steps_per_policy": 16384}]
+    # a list holds one value per copy and is joined in the runs' order; a number is the same for every copy
+    # (update, steps) or the write time, and is the first run's
+    joined = []
+    for lines in zip(*parts):
+        line = dict(lines[0])
+        for field, value in lines[0].items():
+            if isinstance(value, list):
+                line[field] = [item for other in lines for item in other[field]]
+            elif field != "unix" and any(other[field] != value for other in lines):
+                raise ValueError(f"the archived runs differ in {field!r} at update {line['update']}")
+        joined.append(line)
+    return joined
+
+
 def archive_reference(profile, lines=SMOKE_UPDATES):
-    """The first metric lines of the archived baseline's run of one profile, which a smoke job compares with."""
+    """The first metric lines of the archived run(s) of one profile, which a smoke job compares with, and their seeds."""
+    # before: profile "eight copies" with the archived runs of seeds 1 to 4 (four copies) and of seeds 5, 6, 7, 8
+    # after:  20 lines of eight copies each, and the seeds [1, 2, 3, 4, 5, 6, 7, 8]
     data = next(iter(sorted(ARCHIVE_RUNS.glob(ARCHIVE_PATTERN))), None)
     if data is None:
         raise FileNotFoundError(f"the archived baseline's data folder ({ARCHIVE_RUNS}/{ARCHIVE_PATTERN}) does not "
                                 "exist on this machine; the smoke job's comparison needs its first metric lines")
-    run = data / profile["archived_run"] / "run"
-    with (run / "metrics.jsonl").open() as stream:
-        text = "".join(next(stream) for _ in range(lines))
-    return text, common.read_json(run / "run.json")["copy_seeds"]
+    parts, seeds = [], []
+    for name in profile["archived_runs"]:
+        run = data / name / "run"
+        with (run / "metrics.jsonl").open() as stream:
+            parts.append([json.loads(next(stream)) for _ in range(lines)])
+        seeds += common.read_json(run / "run.json")["copy_seeds"]
+    if len(seeds) != profile["copies"]:
+        raise ValueError(f"the archived runs {profile['archived_runs']} hold {len(seeds)} copies; the profile has "
+                         f"{profile['copies']}")
+    return "".join(json.dumps(line) + "\n" for line in joined_lines(parts)), seeds
 
 
 def prepare(run_dir, table, name, again=False):
@@ -411,10 +455,16 @@ def held_units(run_dir, name):
     return {path.stem: common.read_json(path) for path in sorted(folder.glob("*.json"))}
 
 
-def hand_over(run_dir, table, name, pool_name, dry_run):
-    """Move pending units of one pool's profile from UVA to a server, up to the pool's limit; returns their names."""
+def hand_over(run_dir, table, name, pool_name, dry_run, units_at_once=None, match=None):
+    """Move pending units of one pool's profile from UVA to a server, up to the pool's limit; returns their names.
+
+    units_at_once and match replace the table's limit (hand_over.pools.<pool>.units_at_once) and its
+    hand_over.match, for the `hand-over` command (a pool the tick does not use has no limit there).
+    """
     entry, pool = table[name], table[name]["pools"][pool_name]
     settings = entry["hand_over"]
+    limit = settings["pools"][pool_name]["units_at_once"] if units_at_once is None else units_at_once
+    match = settings.get("match", "") if match is None else match
     profile_name = pool["execution_profile"]
     profile = pixel_queue.read_profiles()[profile_name]
     held = run_dir / "queue" / f"remote_{name}"
@@ -426,8 +476,8 @@ def hand_over(run_dir, table, name, pool_name, dry_run):
         # the first of the claim order first, so early results cover every configuration at the first seeds
         candidates = [unit["name"] for unit in pending
                       if unit["copies"] == profile["copies"] and unit.get("execution_profile") in (None, profile_name)
-                      and settings.get("match", "") in unit["name"]]
-        chosen = candidates[:max(0, settings["pools"][pool_name]["units_at_once"] - holding)]
+                      and match in unit["name"]]
+        chosen = candidates[:max(0, limit - holding)]
         if chosen and not dry_run:
             # the rename out of pending is the hand-over: no UVA worker can claim the unit after it
             held.mkdir(exist_ok=True)
@@ -438,7 +488,7 @@ def hand_over(run_dir, table, name, pool_name, dry_run):
                                       "recoveries": 0, "state": "staged"} for unit in chosen})
             common.write_json(fleet.assignment_path(run_dir), assignment)
     fleet.log(run_dir, f"{name} | hand-over | pool {pool_name} ({profile_name}): limit "
-              f"{settings['pools'][pool_name]['units_at_once']} unit(s) at once, {holding} held before, "
+              f"{limit} unit(s) at once, {holding} held before, "
               f"{len(candidates)} pending on UVA fit: {len(chosen)} unit(s) {'would be ' if dry_run else ''}handed over",
               dry_run)
     for unit in chosen:
@@ -814,6 +864,18 @@ def main(argv=None):
     reading.add_argument("--pool", help="a pool of pools_held_back: read its verdict only; when it passed, the pool "
                                         "takes units again (the server's ready state is not changed)")
     commands.add_parser("hand-over-tick").add_argument("--dry-run", action="store_true")
+    handing = commands.add_parser("hand-over", help="hand pending units of one pool's profile to a server")
+    handing.add_argument("--server", required=True)
+    handing.add_argument("--pool", required=True)
+    handing.add_argument("--units", type=int, required=True,
+                         help="units of the pool's profile the server may hold at once after this call")
+    handing.add_argument("--match", default="", help="only units whose name holds this text")
+    handing.add_argument("--dry-run", action="store_true")
+    submitting = commands.add_parser("submit", help="submit worker jobs to one pool of a ready server")
+    submitting.add_argument("--server", required=True)
+    submitting.add_argument("--pool", required=True)
+    submitting.add_argument("--jobs", type=int, required=True)
+    submitting.add_argument("--dry-run", action="store_true")
     commands.add_parser("status")
     taking = commands.add_parser("take-back")
     taking.add_argument("--server", required=True)
@@ -849,6 +911,11 @@ def main(argv=None):
             smoke_result(run_dir, table, args.server)
         elif args.command == "hand-over-tick":
             hand_over_tick(run_dir, table, args.dry_run)
+        elif args.command == "hand-over":
+            fleet.require_ready(table, args.server)
+            hand_over(run_dir, table, args.server, args.pool, args.dry_run, args.units, args.match)
+        elif args.command == "submit":
+            fleet.submit(run_dir, table, args)
         else:
             fleet.take_back(run_dir, table, args)
 

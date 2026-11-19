@@ -1,15 +1,18 @@
 """The parts of the unit queue that differ for the pixel sweep: execution profiles, the claim, and progress.
 
-A unit of the pixel sweep is one train_final.py process on one card: one copy (a single run) or
-four copies (a pack of four runs). Its queue record moves between the folders of RUN/queue exactly
-as a maze unit's does, and the maze queue's functions return it, finish it and recover it
-(scripts/maze_campaign/unit_queue.py, imported). This file holds what the maze queue cannot do:
+A unit of the pixel sweep is one train_final.py process on one card: one copy (a single run), or
+four or eight copies (a pack of four or eight runs). Its queue record moves between the folders of
+RUN/queue exactly as a maze unit's does, and the maze queue's functions return it, finish it and
+recover it (scripts/maze_campaign/unit_queue.py, imported). This file holds what the maze queue
+cannot do:
 
   - Execution profiles (card_profiles.json): "one copy" for every card under 60 GB, "four copies"
-    for the larger cards. A worker takes the profile of its card and claims only units with that
-    profile's number of copies. A unit's profile is fixed at its first start: the claim writes the
-    profile's name and its learner and environment settings into the unit's record, and every later
-    start uses those recorded settings. A unit may continue on another card type of the same profile.
+    from 60 GB to under 140 GB, "eight copies" from 140 GB (the H200). A worker takes the profile of
+    its card and starts only units with that profile's number of copies; it also continues units
+    that started under a profile its own names in `continues` (an eight-copy worker continues
+    four-copy packs). A unit's profile is fixed at its first start: the claim writes the profile's
+    name and its learner and environment settings into the unit's record, and every later start
+    uses those recorded settings. A unit may continue on another card type of the same profile.
   - Progress is read from the trainer's own files in RUN/data/<unit>/run/ (progress.json), not from
     a shard.
   - A unit is added without a configuration file (the trainer takes JSON on its command line).
@@ -36,9 +39,13 @@ def read_profiles(path=PROFILES_FILE):
     """Read the execution profiles and check that each one is complete; returns {name: profile}."""
     profiles = common.read_json(path)["profiles"]
     for name, profile in profiles.items():
-        missing = {"copies", "minimum_card_memory_mb", "card_memory_below_mb", "learner", "environment"} - set(profile)
+        missing = {"copies", "minimum_card_memory_mb", "card_memory_below_mb", "continues", "learner", "environment",
+                   "archived_runs"} - set(profile)
         if missing:
             raise ValueError(f"profile {name!r} of {path} lacks {sorted(missing)}")
+        unknown = set(profile["continues"]) - set(profiles)
+        if unknown:
+            raise ValueError(f"profile {name!r} of {path} continues profiles that do not exist: {sorted(unknown)}")
     return profiles
 
 
@@ -53,7 +60,7 @@ def holds_card(profile, card_memory_mb):
 def profile_for_card(profiles, card_memory_mb):
     """Name the profile a card runs under; None when its memory is below every profile's range."""
     # before: 20470 (RTX A4500) ; after: "one copy"       before: 95830 (H100 NVL) ; after: "four copies"
-    # before: 8192 (GTX 1080) ; after: None
+    # before: 143771 (H200) ; after: "eight copies"        before: 8192 (GTX 1080) ; after: None
     return next((name for name, profile in profiles.items() if holds_card(profile, card_memory_mb)), None)
 
 
@@ -120,13 +127,21 @@ def enqueue(run_dir, specification, record):
     return "added"
 
 
-def accepts(unit, profile_name, profile, card_memory_mb, own_copy):
-    """Say whether a worker of this profile, card and code copy may run a unit."""
+def of_profile(unit, profile_name, profile):
+    """Say whether a unit is one a worker of this profile starts or continues, whatever its card and code copy."""
     # before: a single that never started ({"copies": 1, "execution_profile": None}), profile "one copy"; after: True
     # before: the same single, profile "four copies" ; after: False (the profile runs four copies)
+    # before: a four-copy pack that never started, profile "eight copies" ; after: False (it starts eight-copy units)
+    # before: a four-copy pack that started ({"execution_profile": "four copies"}), profile "eight copies" ; after: True
+    fixed = unit.get("execution_profile")
+    return (unit["copies"] == profile["copies"] and fixed in (None, profile_name)) or fixed in profile["continues"]
+
+
+def accepts(unit, profile_name, profile, card_memory_mb, own_copy):
+    """Say whether a worker of this profile, card and code copy may run a unit."""
     # before: a pack that started under "four copies" on an H100, a worker on an A100 with 80 GB ; after: True
-    return (unit["copies"] == profile["copies"]
-            and unit.get("execution_profile") in (None, profile_name)
+    # before: an eight-copy pack built against code copy 3, a worker of copy 2 ; after: False
+    return (of_profile(unit, profile_name, profile)
             and unit["minimum_device_memory_mb"] <= card_memory_mb
             and unit_queue.required_copy(unit) <= own_copy)
 
@@ -173,7 +188,7 @@ def pending_for_others(run_dir, profile_name, profile, card_memory_mb, own_copy)
     # after: {"another profile": 12, "more card memory": 0, "a newer code copy": 1}
     left = {"another profile": 0, "more card memory": 0, "a newer code copy": 0}
     for unit in unit_queue.read_units(run_dir, "pending"):
-        if unit["copies"] != profile["copies"] or unit.get("execution_profile") not in (None, profile_name):
+        if not of_profile(unit, profile_name, profile):
             left["another profile"] += 1
         elif unit["minimum_device_memory_mb"] > card_memory_mb:
             left["more card memory"] += 1

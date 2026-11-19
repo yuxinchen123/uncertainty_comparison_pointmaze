@@ -173,7 +173,7 @@
     "pools": {
       "advanced-h200": {
         "gpu_class": "h200_mit",
-        "execution_profile": "four copies",
+        "execution_profile": "eight copies",
         "time_limit": "2-00:00:00",
         "max_jobs": 4,
         "card_guard": true,
@@ -181,7 +181,7 @@
       },
       "preemptable-h200": {
         "gpu_class": "h200_mit",
-        "execution_profile": "four copies",
+        "execution_profile": "eight copies",
         "time_limit": "2-00:00:00",
         "max_jobs": 4,
         "card_guard": true,
@@ -189,11 +189,11 @@
         "exclude_note": "The nodes shared with mit_normal_gpu (read 2026-11-18 19:20 PT with sinfo -p mit_normal_gpu), which have 18 to 34 evictions per 100 job-hours against about 1 to 2 on the nodes only mit_preemptable has (rule mit-cluster-slurm.md), and node3401-c1 (unusable scratch). Read the list again before reusing it."
       }
     },
-    "pools_note": "Typed one-card requests (--gpus=h200:1 --nodes=1 --ntasks=1, never --gres), 4 cores per card (MIT's advice for the RestrictedCoresPerGPU defect), the card guard with GUARD_ACTION=requeue in every job script, --requeue --open-mode=append. --mem=24G: four-copy smoke jobs had MaxRSS 8.3 GB (Gautschi), 9.1 GB (DeltaAI) and 9.4 GB (ACES). time_limit 2 days, the limit of both pools (rule mit-cluster-slurm.md: ask for the partition maximum). max_jobs: the account's 4 cards in each pool, shared by every session of shuzel.",
+    "pools_note": "Typed one-card requests (--gpus=h200:1 --nodes=1 --ntasks=1, never --gres), 4 cores per card (MIT's advice for the RestrictedCoresPerGPU defect), the card guard with GUARD_ACTION=requeue in every job script, --requeue --open-mode=append. --mem=24G: four-copy smoke jobs had MaxRSS 8.3 GB (Gautschi), 9.1 GB (DeltaAI) and 9.4 GB (ACES), and the eight-copy settings 12.1 GB (MIT H200, job 29603853). time_limit 2 days, the limit of both pools (rule mit-cluster-slurm.md: ask for the partition maximum). max_jobs: the account's 4 cards in each pool, shared by every session of shuzel.",
     "hand_over": {
       "pools": {"advanced-h200": {"units_at_once": 16}, "preemptable-h200": {"units_at_once": 0}},
       "start_within_seconds": 7200,
-      "note": "Packs only (four copies). Both pools' jobs take units from the one queue on MIT, and hand_over counts every four-copy unit the server holds against a pool's limit, so the server-wide limit stands in the first pool: 16 units = 2 per card for the 8 cards. The second pool's 0 hands over nothing more; its jobs are still submitted for the units no job will take."
+      "note": "Eight-copy packs only (user decision of 2026-11-18 about 21:50 PT, \"8 montezuma per h200\"; an H200's worker also continues four-copy packs that started there). Both pools' jobs take units from the one queue on MIT, and hand_over counts every eight-copy unit the server holds against a pool's limit, so the server-wide limit stands in the first pool: 16 units = 2 per card for the 8 cards. The second pool's 0 hands over nothing more; its jobs are still submitted for the units no job will take."
     },
     "ready": false,
     "not_ready_reason": "a run folder's table starts not ready (init-table requires it); the environment and the asset pack were put in place on 2026-11-18 for the stage-1 grid (that run folder's infrastructure/remote_fleet_servers.json, entry mit): run smoke and smoke-result in the new run folder to make the server ready there",

@@ -215,3 +215,24 @@
   none had crashed yet. The frozen copy's scripts/grid_initialization_campaign/submit.py was replaced by the fixed
   file (submission tooling only; no trainer or worker file changed): the difference is the skip of lines without a
   ReservationName and `reservation is not None` in the match.
+- 2026-11-18 22:18 PT, user decision of about 21:50 PT ("8 montezuma per h200"; the rounding-level differences between
+  eight-copy and four-copy runs accepted): the tooling (`scripts/pixel_sweep_campaign/`) gets an "eight copies"
+  execution profile for cards of 140,000 MB or more (the H200): the four-copy settings with the reset lane budget
+  32, as job 29603853 measured them; "four copies" now ends below 140,000 MB, so the ranges do not overlap. A
+  profile's `continues` names profiles whose started units it also continues: an H200's worker continues a
+  four-copy pack that started, never starts one. `build_units.py --pack-pending --pack-size 8` makes packs of
+  eight never-started singles that share the method, the sharing group and the fast layer's state: the four step
+  sizes at two weights of one group and seed, or RND's weights 0.25 to 2 at two seeds (a full cross product of the
+  values in the name); an eight-copy pack's record needs the run's frozen code copy, a four-copy pack keeps its
+  singles' number. Every run's record says its pack size: `copies` in the unit's record and in every
+  `worker_start` line of its events.jsonl; report.py counts runs by it in the fleet section (its speed table
+  already reads by card type and copies). `remote_fleet.py`: the archived reference of a profile joins several
+  archived runs (eight copies: seeds 1 to 4 of the four-copy run, seeds 5 to 8 of the one-copy runs), so prepare
+  and a smoke job work for eight copies; new commands `hand-over` and `submit` for one pool, also one the tick
+  does not use; a pool may set its worker's least training time and margin (`worker.py --margin-seconds`, new).
+  The tooling's server_table.json has MIT's pools at eight copies. 110 standard-library tests pass (login node,
+  python3 3.10). The hand-over loop's helper was replaced between passes (pass 18 ended 22:16:55 PT): its pack
+  step makes packs of each pool's own size (four for Gautschi, eight for pools of the eight-copy profile); with
+  MIT's pools still at four copies it asks for the same packs as before (checked on a temporary run folder).
+  Nothing changed in the trainer (src/ and scripts/atari_pixel_campaign/ equal between copy 2's commit 08b7c4c8
+  and this one).

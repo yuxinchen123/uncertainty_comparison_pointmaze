@@ -228,7 +228,11 @@ class NewRuns(ReportCase):
         first = section(text, "First-time steps of the game events")
         self.assertIn("| weight 1<br>step size 0.01 | 0.60<br>1/1 |", "\n".join(first))
         self.assertIn("| weight 1<br>step size 0.3 | —<br>0/1 |", "\n".join(first))
-        self.assertIn("| fast last layer | 8 | 4 | 4 | 0 | 0 | 0 | 0 |", "\n".join(section(text, "Fleet status")))
+        fleet = "\n".join(section(text, "Fleet status"))
+        self.assertIn("| fast last layer | 8 | 4 | 4 | 0 | 0 | 0 | 0 |", fleet)
+        # every run says how many copies shared its process: 4 runs in the pack, 4 singles
+        self.assertIn("| method | 1 copy | 4 copies |\n|---|---|---|\n| fast last layer | 4 | 4 |", fleet)
+        self.assertEqual({run["copies"] for run in report.collect(run_dir)["runs"]}, {1, 4})
 
     def test_the_contents_table_marks_read_and_updated_sections(self):
         """A section is unread until marked; it is read while its text stays the same, and updated when it changes."""

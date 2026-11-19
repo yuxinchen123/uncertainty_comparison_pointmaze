@@ -1,7 +1,7 @@
 # pixel_sweep_campaign: the sweep queue of the pixel Montezuma study
 
 A sweep is a list of **units** in a run folder's queue. A unit is one `train_final.py` process on
-one card: one run (a single), or four runs packed into one process (a pack). A run is one policy:
+one card: one run (a single), or four or eight runs packed into one process (a pack). A run is one policy:
 one method, one value of each swept setting, one seed. Worker jobs are generic: a job holds no unit
 until it has started and its worker has claimed one. `P` is
 `/p/rlprojects/RND/10_jax_exploration_platform`, `RUN` a run folder under `P/runs/`, `M` this
@@ -16,14 +16,14 @@ below; jobs use `/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python` (3.12).
 
 | file | what it does |
 |---|---|
-| `build_units.py` | study description (JSON) → single units in `RUN/queue/pending/`;<br>packs four never-started singles into one unit; raises the target of finished units |
-| `card_profiles.json` | the two execution profiles: "one copy" and "four copies" |
+| `build_units.py` | study description (JSON) → single units in `RUN/queue/pending/`;<br>packs four or eight never-started singles into one unit; raises the target of finished units |
+| `card_profiles.json` | the three execution profiles: "one copy", "four copies" and "eight copies" |
 | `pixel_queue.py` | the claim by profile, progress from `progress.json`, where a unit's records are |
 | `worker.py` | one process per card: claims a unit of its card's profile, runs `train_final.py`,<br>records how it ended, takes the next |
 | `submit.py` | submits worker jobs on UVA under both accounts, and the persistent monitor job |
 | `monitor.py` | one pass or a loop: returns units of ended jobs to pending, counts, progress,<br>status files, and rebuilds the early-signals report |
 | `report.py` | rebuilds `RUN/early_signals.md` from the runs' record files |
-| `remote_fleet.py` | Purdue Gautschi and Gilbreth, TAMU ACES, NCSA DeltaAI, MIT: server table, smoke job,<br>hand-over, return and check of units, `hand-over-tick` |
+| `remote_fleet.py` | Purdue Gautschi and Gilbreth, TAMU ACES, NCSA DeltaAI, MIT: server table, smoke job,<br>hand-over, return and check of units, `hand-over-tick`; `hand-over` and `submit` by hand |
 | `server_table.json` | the five servers' entries a run folder's table starts from (all not ready) |
 | `smoke_check.py`,<br>`smoke_trainer_checks.py` | the smoke job of a server: its check and its speed check |
 | `study_descriptions/` | the description of stage 1 |
@@ -80,7 +80,9 @@ One JSON object.
 A method's `grid` is the cross product of `step_size`, `sharing_group` and `intrinsic_weight`
 (RND names the weight only). `configurations` lists them one by one, for a later stage:
 `[{"step_size": 0.1, "sharing_group": 16, "intrinsic_weight": 1}]`. `pack_over` names the setting
-whose four values share one four-copy process: `step_size`, `intrinsic_weight` (RND) or `seed`.
+whose four values share one four-copy process: `step_size`, `intrinsic_weight` (RND) or `seed`. An
+eight-copy process holds two such fours that differ in one more setting: the weight for
+`step_size`, the seed for `intrinsic_weight`, more seeds for `seed`.
 
 Stage 1 is `study_descriptions/stage-1_grid_...json`: RND at 6 weights and the fast last layer at
 4 step sizes × 3 sharing groups × 6 weights, seeds 13 to 20, 624 units.
@@ -101,22 +103,40 @@ grid_rnd_intrinsic-weight-1_seed-13
 grid_fast-last-layer_step-size-0.03_sharing-group-16_intrinsic-weight-1_seed-13
 grid_rnd_four-copies_intrinsic-weights-0.25-0.5-1-2_seed-13
 grid_fast-last-layer_four-copies_step-sizes-0.01-0.03-0.1-0.3_sharing-group-16_intrinsic-weight-1_seed-13
+grid_rnd_eight-copies_intrinsic-weights-0.25-0.5-1-2_seeds-16-17
+grid_fast-last-layer_eight-copies_step-sizes-0.01-0.03-0.1-0.3_sharing-group-16_intrinsic-weights-1-2_seed-15
 ```
 
-The last two are packs; `four-copies` stands in every pack's name and in no other.
+The last four are packs; `four-copies` or `eight-copies` stands in every pack's name and in no
+other. An eight-copy pack is the full cross product of the values its name lists (four step sizes
+at two weights; four weights at two seeds); a process shares the method, the sharing group and
+whether the fast layer is on, and its copies differ in step size, weight and seed.
 
 ## Execution profiles
 
 `card_profiles.json` holds the learner and environment settings of the archived baseline's two
-card classes (a test compares them with the archived `run.json` files).
+card classes (a test compares them with the archived `run.json` files), and the eight-copy settings
+measured on an MIT H200 (job 29603853, 2026-11-18; user decision of about 21:50 PT, "8 montezuma per
+h200").
 
 | profile | cards | copies per process | settings of |
 |---|---|---|---|
 | one copy | card memory from 10,000 MB to under 60,000 MB | 1 | the archive's RTX A4500 runs |
-| four copies | card memory of 60,000 MB or more | 4 | the archive's H100 NVL run |
+| four copies | card memory from 60,000 MB to under 140,000 MB | 4 | the archive's H100 NVL run |
+| eight copies | card memory of 140,000 MB or more (the H200) | 8 | the four-copy settings,<br>reset lane budget 32 |
 
-1. A worker takes the profile of its card and claims only units with that profile's number of
-   copies: singles on small cards, packs on large cards.
+Eight copies on one H200: 3.55 s per update against 2.17 s with four (22% more total steps per
+second), 122,787 MB of card memory, host MaxRSS 12.1 GB. Every copy's first update is within the
+smoke rule against the archived run of its seed, but a copy's later numbers differ from the same
+seed's in a four-copy process at rounding level. Bit-for-bit claims therefore hold within one card
+type and one pack size, and every run records its pack size (`copies` in the unit's record and in
+every `worker_start` line of its `events.jsonl`; the report counts runs by it).
+
+1. A worker takes the profile of its card and starts only units with that profile's number of
+   copies: singles on small cards, four-copy packs on large cards, eight-copy packs on an H200. A
+   profile's `continues` names profiles whose started units it also continues: an H200's worker
+   continues a four-copy pack that started (on an H200 with its four-copy settings), never one that
+   has not started.
 2. A unit's profile is fixed at its first start. The claim writes the profile's name and settings
    into the unit's record, and every later start uses the recorded settings.
 3. A unit may continue on another card type of the same profile. The worker adds a `worker_start`
@@ -151,12 +171,16 @@ RUN=/p/rlprojects/RND/10_jax_exploration_platform/runs/<run folder>
    ```
 
 3. **Pack units for the large cards that exist.** Four never-started singles become one four-copy
-   unit. Make only as many packs as there are large cards for them (Gautschi: 4 jobs; 8 packs keep
-   them supplied). `--unpack-pending` takes never-started packs apart again.
+   unit, eight one eight-copy unit (`--pack-size 8`, for MIT's H200). Make only as many packs as
+   there are large cards for them (two per card: Gautschi 4 jobs and 8 packs; MIT 4 cards per pool
+   and 8 eight-copy packs per 4 cards). An eight-copy pack's record needs the run's frozen code copy
+   (`minimum_copy_number`), since older copies have no eight-copy profile; a four-copy pack keeps its
+   singles' number. `--unpack-pending` takes never-started packs apart again.
 
    ```bash
    $PY $M/build_units.py --run-dir $RUN --pack-pending --packs 8 --dry-run
    $PY $M/build_units.py --run-dir $RUN --pack-pending --packs 8
+   $PY $M/build_units.py --run-dir $RUN --pack-pending --packs 8 --pack-size 8
    ```
 
 4. **Submit workers on UVA** (both accounts). Look first, then send. New worker cards of a profile
@@ -206,7 +230,14 @@ RUN=/p/rlprojects/RND/10_jax_exploration_platform/runs/<run folder>
    $PY $M/remote_fleet.py --run-dir $RUN hand-over-tick                 # every monitoring tick of the session
    $PY $M/remote_fleet.py --run-dir $RUN status
    $PY $M/remote_fleet.py --run-dir $RUN take-back --server gautschi --units 9999 --hold
+   $PY $M/remote_fleet.py --run-dir $RUN hand-over --server mit --pool eight-copy-check --units 1 --match seed-15
+   $PY $M/remote_fleet.py --run-dir $RUN submit --server mit --pool eight-copy-check --jobs 1
    ```
+
+   `hand-over` and `submit` do one step of the tick by hand for one pool, also a pool the tick does
+   not use (one outside `hand_over.pools`, such as a check pool of 20-minute jobs). A pool may set
+   `worker_minimum_seconds` and `worker_margin_seconds`, which its worker job passes to `worker.py`
+   (`--minimum-seconds`, `--margin-seconds`; defaults: the server's `unit_seconds` and 900 s).
 
    The first default update must agree with the archive: whole numbers and true/false values equal,
    every other number within $|x_{\text{new}} - x_{\text{archive}}| \le 10^{-3} |x_{\text{archive}}| + 10^{-6}$
@@ -228,13 +259,15 @@ RUN=/p/rlprojects/RND/10_jax_exploration_platform/runs/<run folder>
    | Gilbreth | `standby-a30-a10` | `-q standby`, account `dsmichil`, 4 hours | one copy | 0 until its<br>speed check |
    | ACES | `gpu-h100` | `-p gpu --gres=gpu:h100:1`<br>`--cpus-per-task=8 --mem=39G`,<br>through portal05 | four copies | 0 (stages 2 and 3) |
    | DeltaAI | `ghx4-h100` | `ghx4`, one H100, through portal04; ARM | four copies | 0 (not built) |
-| MIT | `advanced-h200` | `mit_normal_gpu` with the Advanced account and QoS,<br>`--gpus=h200:1`, 4 cores, 24 GB, 2 days, at most 4 jobs | four copies | 16 for the server |
-| MIT | `preemptable-h200` | `mit_preemptable` without the nodes it shares with<br>`mit_normal_gpu`, otherwise the same | four copies | 0 (the first<br>pool's 16 count) |
+   | MIT | `advanced-h200` | `mit_normal_gpu` with the Advanced account and QoS,<br>`--gpus=h200:1`, 4 cores, 24 GB, 2 days, at most 4 jobs | eight copies | 16 for the server |
+   | MIT | `preemptable-h200` | `mit_preemptable` without the nodes it shares with<br>`mit_normal_gpu`, otherwise the same | eight copies | 0 (the first<br>pool's 16 count) |
 
    MIT's pools set `"card_guard": true`: every job script holds the shared card guard
    (`/p/rlprojects/.claude/skills/mit-submit-gpu-sweep/scripts/card_guard.sh`, one card, `GUARD_ACTION=requeue`, the
    count read with jax), because the scheduler there has started jobs with the wrong number of cards (rule
    `~/.claude/rules/mit-single-gpu-request.md`; read `AllocTRES` against `ReqTRES` within a minute of every start).
+   MIT's pools run eight copies (decision of 2026-11-18); a run folder whose MIT jobs ran four copies before that
+   keeps them on its four-copy packs until those finish.
    MIT is reached only through the shared connection held on portal04: its `ssh` entry carries
    `-o ControlMaster=no -o ProxyCommand=false`, so a command fails on portal04 when that connection is closed instead
    of trying a new login, and `check` is `ssh -O check mit`. `hand_over` counts every unit of a profile that a server
@@ -312,7 +345,7 @@ cd /p/rlprojects/RND/10_jax_exploration_platform
 PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests/pixel_sweep_campaign -p "test_pixel_*.py"
 ```
 
-95 tests; they import no numerical library and start no trainer (a stand-in script plays
+110 tests; they import no numerical library and start no trainer (a stand-in script plays
 `train_final.py`), and they also pass under pytest with the project's Python 3.12.
 
 ## Taken from the maze and grid campaigns

@@ -1,7 +1,7 @@
 """Turn a study description (JSON) into queue units of the pixel Montezuma sweep, and pack or continue them.
 
     python build_units.py --run-dir RUN --study description.json [--dry-run] [--list]
-    python build_units.py --run-dir RUN --pack-pending --packs N [--match TEXT] [--from-end] [--dry-run]
+    python build_units.py --run-dir RUN --pack-pending --packs N [--pack-size 4|8] [--match TEXT] [--from-end] [--dry-run]
     python build_units.py --run-dir RUN --unpack-pending [--match TEXT] [--dry-run]
     python build_units.py --run-dir RUN --study description.json --continue-units [--dry-run]
 
@@ -19,10 +19,16 @@ sharing group and one weight are neighbours).
 --pack-pending turns four singles that never started into one four-copy unit, for a card of the
 "four copies" profile: the four values of the method's `pack_over` setting at one seed (the four
 step sizes of one sharing group and one weight; four of RND's weights), or four seeds of one
-configuration (`"pack_over": "seed"`). The singles move to RUN/queue/packed/, where no worker claims
-them. Fewer than four of a kind stay singles (RND's six weights at one seed give one pack and two
-singles). --packs says how many packs to make: make only as many as there are cards for them.
---unpack-pending takes packs that never started apart again.
+configuration (`"pack_over": "seed"`). With --pack-size 8 it turns eight singles into one
+eight-copy unit, for a card of the "eight copies" profile (the H200): two such fours that differ in
+one more setting, the four step sizes at two weights of one sharing group and seed, or four of RND's
+weights at two seeds; or eight seeds of one configuration. A process shares the method, the sharing
+group and whether the fast layer is on; step size, weight and seed are per copy. The singles move
+to RUN/queue/packed/, where no worker claims them. Fewer of a kind stay singles (RND's six weights at
+one seed give one four-copy pack and two singles). --packs says how many packs to make: make only as
+many as there are cards for them. An eight-copy pack needs the run's frozen code copy (its number goes
+into the pack's record): older copies have no eight-copy profile. --unpack-pending takes packs that
+never started apart again.
 
 --continue-units raises the target of units that exist (stage 3 continues the run folders of stage
 2): a description with the same phase, methods and seeds and a higher `target_updates` moves each
@@ -42,8 +48,9 @@ from campaign_imports import PLATFORM, common, unit_queue
 import pixel_queue
 
 WORDS = re.compile(r"[a-z0-9][a-z0-9.-]*")
-PACK_WORD = "four-copies"      # stands in the name of every pack, and in no other name
-PACK_COPIES = 4
+# the copies of a pack -> the word that stands in its name, and in no other name
+PACK_WORDS = {4: "four-copies", 8: "eight-copies"}
+PACK_ROW = 4                   # a pack is made of fours: the four values of the setting a method packs over
 # the swept settings: the word of a description and of a unit name -> the learner's own name
 LEARNER_KEYS = {"step_size": "fast_last_layer_step", "sharing_group": "fast_last_layer_sharing_group",
                 "intrinsic_weight": "intrinsic_coefficient"}
@@ -52,6 +59,9 @@ GRID_ORDER = ("sharing_group", "intrinsic_weight", "step_size")       # slowest 
 PLURALS = {"step_size": "step-sizes", "intrinsic_weight": "intrinsic-weights"}
 # the settings a pack may differ in between its copies: per-copy values of the learner, or the seed
 PACK_OVER = ("step_size", "intrinsic_weight", "seed")
+# the setting a pack of more than four adds to the one its method packs over: the four step sizes at two
+# weights, four weights at two seeds; a method packed over seeds takes more seeds
+SECOND_SETTING = {"step_size": "intrinsic_weight", "intrinsic_weight": "seed", "seed": "seed"}
 DEFAULT_TOTAL_TIMESTEPS = 2_000_000_000
 
 
@@ -169,9 +179,9 @@ def study_units(description, platform=PLATFORM):
                      "source_commit": marker.read_text().strip() if marker.exists() else "working tree"}
     methods = []
     for entry in description["methods"]:
-        if not WORDS.fullmatch(entry["method"]) or PACK_WORD in entry["method"]:
+        if not WORDS.fullmatch(entry["method"]) or any(word in entry["method"] for word in PACK_WORDS.values()):
             raise ValueError(f"method {entry['method']!r} must be lower-case words joined by hyphens, "
-                             f"without {PACK_WORD!r}")
+                             f"without {sorted(PACK_WORDS.values())}")
         if entry.get("pack_over") not in (None, *PACK_OVER):
             raise ValueError(f"pack_over must be one of {list(PACK_OVER)}; got {entry.get('pack_over')!r}")
         methods.append((entry, expand_configurations(entry)))
@@ -220,60 +230,96 @@ def never_started_singles(run_dir):
     return sorted(singles, key=lambda single: (single[0]["order"], single[0]["name"]))
 
 
-def pack_key(specification):
-    """Name what four singles must share to run as one pack: everything but the setting they are packed over."""
-    # before: a single of fast-last-layer, step size 0.03, group 16, weight 1, seed 13, packed over step_size
+def pack_settings(pack_over, size):
+    """The settings the copies of a pack of this size differ in, the method's own first."""
+    # before: "step_size", 4 ; after: ("step_size",)          before: "step_size", 8 ; after: ("step_size", "intrinsic_weight")
+    # before: "intrinsic_weight", 8 ; after: ("intrinsic_weight", "seed")      before: "seed", 8 ; after: ("seed",)
+    second = SECOND_SETTING[pack_over]
+    return (pack_over,) if size == PACK_ROW or second == pack_over else (pack_over, second)
+
+
+def pack_key(specification, over):
+    """Name what the singles of one pack must share: everything but the settings they are packed over."""
+    # before: a single of fast-last-layer, step size 0.03, group 16, weight 1, seed 13, over ("step_size",)
     # after:  the same text for its three neighbours with step sizes 0.01, 0.1 and 0.3, and another text
     #         for every other group, weight, seed, target or learner setting
-    over = specification["pack_over"]
-    run = {key: value for key, value in specification["runs"][0].items() if key not in (over, "configuration")}
-    learner = {key: value for key, value in specification["learner"].items() if key != LEARNER_KEYS.get(over)}
-    return json.dumps([specification["phase"], over, specification["target_updates"], run, learner,
-                       specification["environment"], specification["observation_warmup_iterations"],
+    # before: the same single, over ("step_size", "intrinsic_weight") ; after: the same text for the 23 singles
+    #         of group 16 and seed 13 at the other step sizes and weights
+    run = {key: value for key, value in specification["runs"][0].items() if key not in (*over, "configuration")}
+    left_out = {LEARNER_KEYS[word] for word in over if word in LEARNER_KEYS}
+    learner = {key: value for key, value in specification["learner"].items() if key not in left_out}
+    return json.dumps([specification["phase"], specification["pack_over"], specification["target_updates"], run,
+                       learner, specification["environment"], specification["observation_warmup_iterations"],
                        specification["checkpoint_seconds"]], sort_keys=True)
 
 
 def pack_unit(members):
-    """Build the specification of one pack from its four singles' specifications (in the order of the packed values)."""
+    """Build the specification of one pack from its singles' specifications (in the order of the packed values)."""
     first = members[0]
-    over, runs = first["pack_over"], [member["runs"][0] for member in members]
-    # the name: the packed setting in the plural with its four values, the other settings as in a single
+    over, runs = pack_settings(first["pack_over"], len(members)), [member["runs"][0] for member in members]
+    # the name: each packed setting in the plural with its values, the other settings as in a single
     # after: "grid_fast-last-layer_four-copies_step-sizes-0.01-0.03-0.1-0.3_sharing-group-16_intrinsic-weight-1_seed-13"
     # after: "grid_rnd_four-copies_intrinsic-weights-0.25-0.5-1-2_seed-13"
     # after: "long_rnd_four-copies_intrinsic-weight-2_seeds-1-2-3-4"
+    # after: "grid_fast-last-layer_eight-copies_step-sizes-0.01-0.03-0.1-0.3_sharing-group-16_intrinsic-weights-1-2_seed-15"
+    # after: "grid_rnd_eight-copies_intrinsic-weights-0.25-0.5-1-2_seeds-16-17"
     parts = []
     for word in NAME_ORDER:
-        if word == over:
-            parts.append(f"{PLURALS[word]}-" + "-".join(number_words(run[word]) for run in runs))
+        if word in over:
+            values = dict.fromkeys(run[word] for run in runs)
+            parts.append(f"{PLURALS[word]}-" + "-".join(number_words(value) for value in values))
         elif word in runs[0]:
             parts.append(f"{word.replace('_', '-')}-{number_words(runs[0][word])}")
     seeds = [run["seed"] for run in runs]
-    parts.append("seeds-" + "-".join(map(str, seeds)) if over == "seed" else f"seed-{seeds[0]}")
-    name = "_".join([first["phase"], first["method"], PACK_WORD, *parts])
+    parts.append("seeds-" + "-".join(map(str, dict.fromkeys(seeds))) if "seed" in over else f"seed-{seeds[0]}")
+    name = "_".join([first["phase"], first["method"], PACK_WORDS[len(members)], *parts])
     # the shared learner settings are the first copy's; a learner setting that differs goes in per copy
-    per_copy = {} if over == "seed" else {LEARNER_KEYS[over]: [run[over] for run in runs]}
+    # after (eight copies): {"fast_last_layer_step": [0.01, 0.03, 0.1, 0.3, 0.01, 0.03, 0.1, 0.3],
+    #                        "intrinsic_coefficient": [1.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0, 2.0]}
+    per_copy = {LEARNER_KEYS[word]: [run[word] for run in runs] for word in over if word != "seed"}
     return dict(first, unit_id=name, copies=len(members), runs=runs, copy_seeds=seeds,
                 members=[member["unit_id"] for member in members], per_copy_settings=per_copy,
                 configuration=None)
 
 
-def plan_packs(singles, packs, match=None, from_end=False):
-    """Choose the packs to make from the never-started singles; returns lists of four (record, specification).
+def candidate_packs(members, size):
+    """Cut the never-started singles of one pack key into packs of a size, in the order of the packed values."""
+    # before: the 24 singles of group 16 and seed 13 (4 step sizes x 6 weights), size 8
+    # after:  3 packs: the four step sizes at weights 0.25 and 0.5, at 1 and 2, at 4 and 8
+    # before: RND's 6 weights at seeds 13 and 14, size 8 ; after: 1 pack, the weights 0.25 to 2 at both seeds
+    #         (the weights 4 and 8 stay singles)
+    first, *second = pack_settings(members[0][1]["pack_over"], size)
+    # fours of the method's own setting, at each value of the second setting (or all together without one)
+    rows = {}
+    for member in members:
+        rows.setdefault(member[1]["runs"][0][second[0]] if second else None, []).append(member)
+    fours = []
+    for value in sorted(rows, key=lambda value: (value is None, value)):
+        row = sorted(rows[value], key=lambda member: member[1]["runs"][0][first])
+        fours += [row[index:index + PACK_ROW] for index in range(0, len(row) - PACK_ROW + 1, PACK_ROW)]
+    # fours with the same values of the method's setting join into one pack, so a pack is a full cross product
+    alike = {}
+    for four in fours:
+        alike.setdefault(tuple(member[1]["runs"][0][first] for member in four) if second else None, []).append(four)
+    join = size // PACK_ROW
+    return [sum(same[index:index + join], []) for same in alike.values()
+            for index in range(0, len(same) - join + 1, join)]
+
+
+def plan_packs(singles, packs, match=None, from_end=False, size=PACK_ROW):
+    """Choose the packs to make from the never-started singles; returns lists of (record, specification).
 
     before: the six RND singles of seed 13 (weights 0.25 to 8, packed over intrinsic_weight), packs 5
     after:  one pack, of the weights 0.25, 0.5, 1 and 2; the weights 4 and 8 stay singles
     """
+    if size not in PACK_WORDS:
+        raise ValueError(f"a pack holds {sorted(PACK_WORDS)} copies; got {size}")
     groups = {}
     for record, specification in singles:
         if specification["pack_over"] is not None:
-            groups.setdefault(pack_key(specification), []).append((record, specification))
-    candidates = []
-    for members in groups.values():
-        # in the order of the packed values, four at a time; fewer than four stay singles
-        over = members[0][1]["pack_over"]
-        members.sort(key=lambda member: member[1]["runs"][0][over])
-        candidates += [members[index:index + PACK_COPIES]
-                       for index in range(0, len(members) - PACK_COPIES + 1, PACK_COPIES)]
+            over = pack_settings(specification["pack_over"], size)
+            groups.setdefault(pack_key(specification, over), []).append((record, specification))
+    candidates = [pack for members in groups.values() for pack in candidate_packs(members, size)]
     # a pack stands where its first single stood in the claim order
     candidates.sort(key=lambda members: min(record["order"] for record, _ in members), reverse=from_end)
     if match is not None:
@@ -281,11 +327,16 @@ def plan_packs(singles, packs, match=None, from_end=False):
     return candidates[:max(0, packs)]
 
 
-def pack_pending(run_dir, packs, match=None, from_end=False, dry_run=False):
-    """Turn never-started singles into four-copy units, under the queue lock; returns the new packs' names."""
+def pack_pending(run_dir, packs, match=None, from_end=False, dry_run=False, size=PACK_ROW, minimum_copy=0):
+    """Turn never-started singles into packs of a size, under the queue lock; returns the new packs' names.
+
+    minimum_copy: the lowest code copy that may run the new packs, beside their singles' own (main gives an
+    eight-copy pack the run's frozen copy; a four-copy pack keeps its singles' number, so workers of older
+    copies still take it).
+    """
     run_dir, made = Path(run_dir), []
     with common.queue_lock(run_dir):
-        for members in plan_packs(never_started_singles(run_dir), packs, match, from_end):
+        for members in plan_packs(never_started_singles(run_dir), packs, match, from_end, size):
             specification = pack_unit([member for _, member in members])
             name = specification["unit_id"]
             print(f"{name}\n    from: " + "\n          ".join(record["name"] for record, _ in members))
@@ -297,9 +348,9 @@ def pack_pending(run_dir, packs, match=None, from_end=False, dry_run=False):
             for record, _ in members:
                 unit_queue.move(run_dir, dict(record, packed_into=name, packed_at=common.now()), "pending", "packed")
             record = queue_record(specification, min(record["order"] for record, _ in members),
-                                  max(record["minimum_copy_number"] for record, _ in members))
+                                  max([minimum_copy] + [record["minimum_copy_number"] for record, _ in members]))
             common.write_json(unit_queue.unit_path(run_dir, "pending", name), dict(record, created_at=common.now()))
-    print(f"{'dry run: ' if dry_run else ''}{len(made)} pack(s) of {PACK_COPIES} singles"
+    print(f"{'dry run: ' if dry_run else ''}{len(made)} pack(s) of {size} singles"
           + ("" if dry_run else f" now pending in {run_dir / 'queue/pending'}"))
     return made
 
@@ -409,8 +460,10 @@ def main(argv=None):
     parser.add_argument("--study", type=Path, help="the study description (JSON)")
     parser.add_argument("--list", action="store_true", help="print every unit name, not only the first and last")
     parser.add_argument("--pack-pending", action="store_true",
-                        help="turn never-started singles into four-copy units (needs --packs)")
+                        help="turn never-started singles into packs of --pack-size copies (needs --packs)")
     parser.add_argument("--packs", type=int, help="with --pack-pending: make at most this many packs")
+    parser.add_argument("--pack-size", type=int, choices=sorted(PACK_WORDS), default=PACK_ROW,
+                        help="with --pack-pending: singles per pack (8 for the eight-copy profile of the H200)")
     parser.add_argument("--match", help="with --pack-pending or --unpack-pending: only units whose name holds this text")
     parser.add_argument("--from-end", action="store_true",
                         help="with --pack-pending: take the singles from the end of the claim order")
@@ -420,21 +473,22 @@ def main(argv=None):
     parser.add_argument("--dry-run", action="store_true", help="print what would be done and write nothing")
     args = parser.parse_args(argv)
     run_dir = args.run_dir.resolve()
+    # units need the code copy the run folder is frozen at: an older copy may not know their options
+    source = common.read_json(run_dir / "source.json") if (run_dir / "source.json").exists() else None
+    platform = Path(source["snapshot"]) / "10_jax_exploration_platform" if source else PLATFORM
+    copy_number = unit_queue.copy_number(platform)
     if args.pack_pending or args.unpack_pending:
         if args.study or args.pack_pending == args.unpack_pending or (args.pack_pending and args.packs is None):
             parser.error("give one of --pack-pending (with --packs N) and --unpack-pending, without --study")
         if args.pack_pending:
-            pack_pending(run_dir, args.packs, args.match, args.from_end, args.dry_run)
+            # a pack of eight needs a copy whose profiles have eight copies: the run's frozen copy
+            minimum = copy_number if args.pack_size > PACK_ROW else 0
+            pack_pending(run_dir, args.packs, args.match, args.from_end, args.dry_run, args.pack_size, minimum)
         else:
             unpack_pending(run_dir, args.match, args.dry_run)
         return
     if not args.study:
         parser.error("give --study, --pack-pending or --unpack-pending")
-
-    # units need the code copy the run folder is frozen at: an older copy may not know their options
-    source = common.read_json(run_dir / "source.json") if (run_dir / "source.json").exists() else None
-    platform = Path(source["snapshot"]) / "10_jax_exploration_platform" if source else PLATFORM
-    copy_number = unit_queue.copy_number(platform)
     print(f"units are built against {platform} (code copy number {copy_number})")
     specifications = study_units(json.loads(args.study.read_text()), platform)
     if args.continue_units:

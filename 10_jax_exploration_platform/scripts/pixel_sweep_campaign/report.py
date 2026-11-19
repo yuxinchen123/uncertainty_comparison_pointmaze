@@ -132,9 +132,10 @@ def unit_speeds(unit, progress, state):
 def collect(run_dir):
     """Read every unit of a run folder and the archived runs beside it; returns units, runs and speed readings.
 
-    A run is one policy. after (one run):
+    A run is one policy; "copies" is the number of copies in its process (its pack size: 1, 4 or 8), since
+    a run's numbers are the same bit for bit only within one card type and one pack size. after (one run):
         {"method": "fast-last-layer", "settings": {"step_size": 0.03, "sharing_group": 16, "intrinsic_weight": 1.0},
-         "seed": 13, "archived": False, "unit": "<unit name>", "state": "running", "target_updates": 12207,
+         "seed": 13, "archived": False, "unit": "<unit name>", "copies": 8, "state": "running", "target_updates": 12207,
          "update": 4120, "started": True, "first": {the copy's first times} or None, "windows": [...],
          "has_event_fields": True}
     """
@@ -154,7 +155,8 @@ def collect(run_dir):
             for copy, run in enumerate(specification["runs"]):
                 share = copy_records(records, copy) if records else {"first": None, "windows": [], "has_event_fields": False}
                 runs.append({"method": run["method"], "settings": {word: run[word] for word in SETTINGS if word in run},
-                             "seed": run["seed"], "archived": False, "unit": unit["name"], "state": state,
+                             "seed": run["seed"], "archived": False, "unit": unit["name"], "copies": unit["copies"],
+                             "state": state,
                              "target_updates": unit["target_updates"], "update": update,
                              "started": records is not None or state != "pending", **share})
     # the archived runs: record files folded from their metrics, and the run.json that says what they were
@@ -172,7 +174,8 @@ def collect(run_dir):
                 settings.update(step_size=learner["fast_last_layer_step"],
                                 sharing_group=learner["fast_last_layer_sharing_group"])
             runs.append({"method": "fast-last-layer" if fast else "rnd", "settings": settings, "seed": seed,
-                         "archived": True, "unit": folder.name, "state": "archived",
+                         "archived": True, "unit": folder.name, "copies": len(described["copy_seeds"]),
+                         "state": "archived",
                          "target_updates": learner["total_timesteps"] // pixel_queue.STEPS_PER_UPDATE,
                          "update": share["updates_folded"], "started": True, **share})
     return {"units": units, "runs": runs, "speeds": speeds}
@@ -342,7 +345,8 @@ def fleet_section(data):
     for unit in data["units"]:
         counts[unit["state"]] = counts.get(unit["state"], 0) + 1
     lines = ["Units by queue folder: " + (", ".join(f"{state} {count}" for state, count in sorted(counts.items()))
-                                           or "none") + ". A unit is one process on one card: one run, or four runs packed.", ""]
+                                           or "none") + ". A unit is one process on one card: one run, or four or "
+             "eight runs packed.", ""]
     # runs by method and state
     rows = {}
     for run in data["runs"]:
@@ -353,6 +357,21 @@ def fleet_section(data):
                     "on a remote<br>server", "finished", "failed"],
                    [[method_words(method), str(sum(row.values()))] + [str(row[state]) for state in RUN_STATES]
                     for method, row in sorted(rows.items(), key=lambda item: (item[0] != "rnd", item[0]))])
+    # runs by the copies in their process: numbers are the same bit for bit only within one card type and one
+    # pack size, so every later table can be read against this count
+    # before: runs of rnd in units of 1 and 4 copies, of the fast last layer in units of 4 and 8
+    # after:  rows "RND | 12 | 24 | 0", "fast last layer | 0 | 96 | 64" under "1 copy | 4 copies | 8 copies"
+    sizes = sorted({run["copies"] for run in data["runs"] if not run["archived"]})
+    by_size = {}
+    for run in data["runs"]:
+        if not run["archived"]:
+            row = by_size.setdefault(run["method"], dict.fromkeys(sizes, 0))
+            row[run["copies"]] += 1
+    lines += ["", "Runs by the copies in their process (the pack size; a run's numbers are the same bit for bit only "
+              "within one card type and one pack size):", ""]
+    lines += table(["method"] + [f"{size} {'copy' if size == 1 else 'copies'}" for size in sizes],
+                   [[method_words(method)] + [str(row[size]) for size in sizes]
+                    for method, row in sorted(by_size.items(), key=lambda item: (item[0] != "rnd", item[0]))])
     archived = sum(run["archived"] for run in data["runs"])
     if archived:
         lines += ["", f"Beside them: {archived} runs of the archived baseline (their records hold the score and the "

@@ -1,10 +1,11 @@
 {
-  "note": "The two ways a unit of the pixel sweep runs on a card. A worker takes the first profile whose card memory range holds its card (minimum_card_memory_mb <= memory < card_memory_below_mb; null means no upper bound). The learner and environment settings are the command-line JSON of the archived baseline of 2026-11-06 (its units/make_final_units.py): one copy on the RTX A4500, four copies on the H100 NVL. A unit keeps the profile of its first start; the settings used are written into its queue record then.",
+  "note": "The three ways a unit of the pixel sweep runs on a card. A worker takes the profile whose card memory range holds its card (minimum_card_memory_mb <= memory < card_memory_below_mb; null means no upper bound); the ranges do not overlap. It starts units of that profile only, and continues the units that started under a profile its own lists in `continues`. The learner and environment settings of the first two are the command-line JSON of the archived baseline of 2026-11-06 (its units/make_final_units.py): one copy on the RTX A4500, four copies on the H100 NVL. `archived_runs` are the archived runs whose copies, in order, are a profile's copies; a smoke job compares its first default updates with them. A unit keeps the profile of its first start; the settings used are written into its queue record then.",
   "profiles": {
     "one copy": {
       "copies": 1,
       "minimum_card_memory_mb": 10000,
       "card_memory_below_mb": 60000,
+      "continues": [],
       "learner": {
         "convolution_batching": "unrolled",
         "cache_target_features": true,
@@ -19,13 +20,14 @@
         "max_episode_steps": 27000,
         "reset_lane_budget": 8
       },
-      "archived_run": "a4500-jaguar03_final-training_seed-5",
+      "archived_runs": ["a4500-jaguar03_final-training_seed-5"],
       "memory_note": "One copy with these settings used 8.6 GB of card memory and 6 GB of host memory (RTX 5080, 2026-11-07). The 10,000 MB floor lets an RTX 2080 Ti (about 10,850 MB) take a unit; its speed check decides whether that card type is used."
     },
     "four copies": {
       "copies": 4,
       "minimum_card_memory_mb": 60000,
-      "card_memory_below_mb": null,
+      "card_memory_below_mb": 140000,
+      "continues": [],
       "learner": {
         "convolution_algorithm": "space_to_depth",
         "cache_target_features": true,
@@ -41,7 +43,33 @@
         "max_episode_steps": 27000,
         "reset_lane_budget": 16
       },
-      "archived_run": "h100-serval02-card-1_final-training_seeds-1-to-4"
+      "archived_runs": ["h100-serval02-card-1_final-training_seeds-1-to-4"],
+      "memory_note": "75,343 MB of card memory on an MIT H200 and 70,013 MB on a Gautschi H100 80 GB (smoke jobs of 2026-11-18). Cards of 140,000 MB or more run eight copies instead (user decision of 2026-11-18 about 21:50 PT, \"8 montezuma per h200\")."
+    },
+    "eight copies": {
+      "copies": 8,
+      "minimum_card_memory_mb": 140000,
+      "card_memory_below_mb": null,
+      "continues": ["four copies"],
+      "learner": {
+        "convolution_algorithm": "space_to_depth",
+        "cache_target_features": true,
+        "predictor_selected_rows": 1280,
+        "iteration_compiler_options": [["xla_gpu_enable_while_loop_double_buffering", "true"]]
+      },
+      "environment": {
+        "separable_rectangle_drawing": true,
+        "unroll_fixed_render_loops": true,
+        "masked_conditional_draws": true,
+        "two_way_masked_draws": true,
+        "render_final_two_together": true,
+        "max_episode_steps": 27000,
+        "reset_lane_budget": 32
+      },
+      "archived_runs": ["h100-serval02-card-1_final-training_seeds-1-to-4", "a4500-jaguar03_final-training_seed-5",
+                        "a4500-jaguar03_final-training_seed-6", "a4500-jaguar03_final-training_seed-7",
+                        "a4500-jaguar03_final-training_seed-8"],
+      "memory_note": "The four-copy settings with the reset lane budget doubled with the copies (16 -> 32), which changes the speed only. Measured on one MIT H200 (143,771 MB), job 29603853 of 2026-11-18: 3.55 s per update against 2.17 s with four copies (22% more total steps per second), 122,787 MB of card memory (the 0.85 share JAX may take), host MaxRSS 12.1 GB; every copy's first update within the smoke rule against the archived run of its seed. The eight-copy numbers differ from the four-copy numbers at rounding level (524 to 531 of the recorded values over 60 updates), which the user accepted: bit-for-bit claims hold within one card type and one pack size. An eight-copy worker also continues four-copy units that started (on an H200 their four-copy settings use 75 GB)."
     }
   }
 }

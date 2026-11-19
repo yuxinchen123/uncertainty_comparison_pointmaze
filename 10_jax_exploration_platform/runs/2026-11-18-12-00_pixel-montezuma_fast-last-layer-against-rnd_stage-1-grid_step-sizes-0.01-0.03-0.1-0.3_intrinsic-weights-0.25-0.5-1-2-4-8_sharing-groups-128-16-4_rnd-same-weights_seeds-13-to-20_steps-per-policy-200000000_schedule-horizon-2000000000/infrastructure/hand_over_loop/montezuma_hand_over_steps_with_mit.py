@@ -10,8 +10,10 @@
     python3 montezuma_hand_over_steps_with_mit.py --run-dir RUN finished         # exit 0 when no unit is pending or remote
 
 Standard library only; it runs on the UVA login node beside montezuma_hand_over_loop_with_mit.sh. It is
-montezuma_hand_over_steps.py (the helper of the loop without MIT) with four changes: the steps mit-connection,
-mit-share and held-pool-smoke, pack-top-up counting one limit per server, and smoke-wait waiting for several jobs.
+montezuma_hand_over_steps.py (the helper of the loop without MIT) with five changes: the steps mit-connection,
+mit-share and held-pool-smoke, pack-top-up counting one limit per server and making packs of each pool's own size
+(four copies for Gautschi, eight for MIT's H200 since 2026-11-18 about 22:30 PT), and smoke-wait waiting for several
+jobs.
 
 gautschi-share: account dsimchil holds 4 H100 at once on Gautschi, shared with the group's other member
 long635. The cards the other member's running and waiting `ai` jobs ask for are taken out of this run's
@@ -26,10 +28,11 @@ other jobs of the account ask for (running or waiting; every job that is not a w
 MIT pools, this run's pack-size profile job included) are taken out of this run's MIT pools before every tick:
 max_jobs = 4 - those cards in each pool, and units held at once (the first pool's limit, which hand_over applies
 to the whole server) = 2 x the jobs of both pools.
-pack-top-up: the four-copy pools (Gautschi, MIT) take packs only. Packs are made from never-started singles
-(build_units.py --pack-pending) so that the packs pending on UVA and held by each ready server reach that server's
-limit of units held at once: the largest units_at_once of its four-copy pools, because remote_fleet.hand_over counts
-every four-copy unit a server holds against the limit of each of its pools.
+pack-top-up: the pack pools take packs only: four-copy pools (Gautschi) four-copy packs, eight-copy pools (MIT's
+H200) eight-copy packs. For each pack size, packs are made from never-started singles (build_units.py --pack-pending
+--pack-size N) so that the packs of that size pending on UVA and held by each ready server reach that server's limit
+of units held at once: the largest units_at_once of its pools of that profile, because remote_fleet.hand_over counts
+every unit of a profile a server holds against the limit of each of its pools of that profile.
 smoke-wait: once every one of a server's smoke jobs has ended, `remote_fleet.py smoke-result` reads the verdicts
 once (a marker file in RUN/slurm/ records the reading); the server becomes ready only if every pool passed.
 held-pool-smoke: a pool held back in pools_held_back (MIT's preemptable-h200 until its own smoke job passes) is
@@ -58,7 +61,8 @@ MIT_CHECK = ["ssh", "-O", "check", "mit"]
 CONNECTION_MARK = "the hand-over loop's connection check (mit-connection)"
 BUILD_UNITS = Path("/p/rlprojects/RND/10_jax_exploration_platform/scripts/pixel_sweep_campaign/build_units.py")
 REMOTE_FLEET = BUILD_UNITS.parent / "remote_fleet.py"
-PACK_WORD = "four-copies"
+# the profiles that run packs -> the word in their packs' names and the copies of a pack (build_units.PACK_WORDS)
+PACK_PROFILES = {"four copies": ("four-copies", 4), "eight copies": ("eight-copies", 8)}
 JOB_PREFIX_LENGTH = 8                   # remote_fleet.job_prefix: "pixelfleet-" and 8 characters of a sha1
 
 
@@ -224,32 +228,36 @@ def mit_share(run_dir):
 
 
 def pack_top_up(run_dir):
-    """Make packs from never-started singles until the four-copy pools of ready servers can be filled; prints the count."""
+    """Make packs of each pack size from never-started singles until the pools of that size on ready servers can be filled."""
     table = json.loads(table_path(run_dir).read_text())
-    # the units the four-copy pools of every ready server may hold at once (one limit per server: hand_over counts
-    # all of a server's four-copy units against each pool's limit), and the packs those servers hold
-    # before: gautschi ready, ai-h100 four copies with units_at_once 8, 3 packs in queue/remote_gautschi;
-    #         mit ready, advanced-h200 16 and preemptable-h200 0, no pack there
-    # after:  wanted 8 + 16 = 24, held 3
-    wanted = held = 0
-    for name, entry in table.items():
-        limits = [limit["units_at_once"] for pool, limit in entry.get("hand_over", {}).get("pools", {}).items()
-                  if entry["ready"] and entry["pools"][pool]["execution_profile"] == "four copies"]
-        if limits:
-            wanted += max(limits)
-            held += sum(PACK_WORD in path.stem for path in (run_dir / "queue" / f"remote_{name}").glob("*.json"))
-    pending = sum(PACK_WORD in path.stem for path in (run_dir / "queue/pending").glob("*.json"))
-    needed = max(0, wanted - held - pending)
-    print(f"pack-top-up: four-copy units wanted at once {wanted}, held by servers {held}, pending on UVA {pending}: "
-          f"{needed} new pack(s) asked for")
-    # the builder takes the first never-started singles in claim order and holds the queue lock itself
-    if needed:
-        made = subprocess.run([sys.executable, str(BUILD_UNITS), "--run-dir", str(run_dir), "--pack-pending",
-                               "--packs", str(needed)], capture_output=True, text=True, timeout=600,
-                              stdin=subprocess.DEVNULL)
-        print("pack-top-up: " + (made.stdout.strip().splitlines() or ["(no output)"])[-1] + " " + made.stderr.strip())
-        if made.returncode != 0:
-            raise SystemExit(f"pack-top-up: build_units.py ended with {made.returncode}")
+    for profile, (word, copies) in PACK_PROFILES.items():
+        # the units the pools of this profile on every ready server may hold at once (one limit per server:
+        # hand_over counts all of a server's units of the profile against each pool's limit), and the packs of
+        # this size those servers hold
+        # before: gautschi ready, ai-h100 four copies with units_at_once 8, 8 four-copy packs in queue/remote_gautschi;
+        #         mit ready, advanced-h200 eight copies with 8 and preemptable-h200 0, 2 four-copy and 1 eight-copy
+        #         pack there
+        # after:  four copies: wanted 8, held 8 (MIT's four-copy packs are not counted: MIT has no four-copy pool);
+        #         eight copies: wanted 8, held 1
+        wanted = held = 0
+        for name, entry in table.items():
+            limits = [limit["units_at_once"] for pool, limit in entry.get("hand_over", {}).get("pools", {}).items()
+                      if entry["ready"] and entry["pools"][pool]["execution_profile"] == profile]
+            if limits:
+                wanted += max(limits)
+                held += sum(word in path.stem for path in (run_dir / "queue" / f"remote_{name}").glob("*.json"))
+        pending = sum(word in path.stem for path in (run_dir / "queue/pending").glob("*.json"))
+        needed = max(0, wanted - held - pending)
+        print(f"pack-top-up: {profile} units wanted at once {wanted}, held by servers {held}, pending on UVA "
+              f"{pending}: {needed} new pack(s) asked for")
+        # the builder takes the first never-started singles in claim order and holds the queue lock itself
+        if needed:
+            made = subprocess.run([sys.executable, str(BUILD_UNITS), "--run-dir", str(run_dir), "--pack-pending",
+                                   "--packs", str(needed), "--pack-size", str(copies)], capture_output=True, text=True,
+                                  timeout=600, stdin=subprocess.DEVNULL)
+            print("pack-top-up: " + (made.stdout.strip().splitlines() or ["(no output)"])[-1] + " " + made.stderr.strip())
+            if made.returncode != 0:
+                raise SystemExit(f"pack-top-up: build_units.py ended with {made.returncode}")
 
 
 def smoke_wait(run_dir, server, jobs):

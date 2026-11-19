@@ -1,9 +1,12 @@
 """A generic worker of the pixel sweep: one process on one card that takes units from the queue until none fits.
 
     python worker.py --run-dir RUN [--card-profiles FILE] [--remote-records] [--server NAME] [--max-seconds N]
+                     [--minimum-seconds N] [--margin-seconds N]
 
 The worker reads its card, takes the execution profile of that card (card_profiles.json: "one copy"
-under 60 GB, "four copies" above) and claims the next pending unit of that profile. It runs
+under 60 GB, "four copies" from 60 GB, "eight copies" from 140 GB) and claims the next pending unit
+of that profile, or a unit that started under a profile its own continues (an eight-copy worker
+continues four-copy packs). It runs
 scripts/atari_pixel_campaign/train_final.py on the unit in RUN/data/<unit>/run/ and then
   - a unit whose progress.json says completed at its target moves to done;
   - a unit whose trainer ended with exit code 0 without that stopped with its state saved (time
@@ -13,8 +16,9 @@ scripts/atari_pixel_campaign/train_final.py on the unit in RUN/data/<unit>/run/ 
 The trainer saves its own checkpoints and stops by itself at its time limit, which is what is left
 of the job (read from the scheduler) less a margin. The worker only ever sends the trainer SIGTERM,
 on which the trainer finishes its update, saves and ends; it never ends the trainer in a way that
-loses the checkpoint. Before each start it adds a line with the card to the run folder's
-events.jsonl, so a unit that continued on another card type can be told.
+loses the checkpoint. Before each start it adds a line with the card and the copies in the process
+(the pack size) to the run folder's events.jsonl, so a unit that continued on another card type can
+be told, and every run's record says how many copies shared its process.
 
 The worker ends when nothing it can run is pending, when too little of the job is left, after a unit
 that did not complete, or when RUN/STOP exists. A queued job holds no unit: the claim is made here,
@@ -90,7 +94,8 @@ def append_event(folder, kind, unit, **values):
     """Add one line of this worker to the run folder's events.jsonl, beside the trainer's own lines."""
     # after: {"event": "worker_start", "unix": 1795000000.0, "host": "jaguar03", "slurm_job_id": "6900001",
     #         "source_commit": "19d5...", "device": "NVIDIA RTX A4500", "card_memory_mb": 20470,
-    #         "execution_profile": "one copy", "server": "uva", "attempt": 1, "update": 0, "memory_fraction": "0.85"}
+    #         "execution_profile": "one copy", "copies": 1, "server": "uva", "attempt": 1, "update": 0,
+    #         "memory_fraction": "0.85"}
     folder.mkdir(parents=True, exist_ok=True)
     with (folder / "events.jsonl").open("a") as stream:
         stream.write(json.dumps({"event": kind, "unix": time.time(), "host": unit["hostname"],
@@ -126,7 +131,8 @@ def completed_unit_folder(run_dir, name, summary):
     common.write_json(folder / "summary.json", summary)
 
 
-def run_unit(run_dir, unit, specification, card, limit_seconds, trainer, left, sample_memory, server):
+def run_unit(run_dir, unit, specification, card, limit_seconds, trainer, left, sample_memory, server,
+             margin_seconds=MARGIN_SECONDS):
     """Run one claimed unit until its trainer ends; returns (how it ended, details of the attempt)."""
     folder = pixel_queue.run_folder(run_dir, unit["name"])
     command = trainer_command(run_dir, unit, specification, limit_seconds, trainer)
@@ -140,8 +146,9 @@ def run_unit(run_dir, unit, specification, card, limit_seconds, trainer, left, s
                             "seconds_per_update": None, "card_memory_used_mb": None}
     environment = trainer_environment(card)
     append_event(folder, "worker_start", unit, device=card["gpu"], card_memory_mb=card["memory_mb"],
-                 execution_profile=unit["execution_profile"], server=server, attempt=unit["attempts"],
-                 update=before["update"], memory_fraction=environment.get("XLA_PYTHON_CLIENT_MEM_FRACTION"))
+                 execution_profile=unit["execution_profile"], copies=specification["copies"], server=server,
+                 attempt=unit["attempts"], update=before["update"],
+                 memory_fraction=environment.get("XLA_PYTHON_CLIENT_MEM_FRACTION"))
     started, largest, speeds = time.monotonic(), None, []
     with log_path.open("a") as log:
         log.write(f"[{common.pacific()}] job {unit['job_id']} on {unit['hostname']}, {unit['card']}: "
@@ -165,7 +172,7 @@ def run_unit(run_dir, unit, specification, card, limit_seconds, trainer, left, s
                     if progress["seconds_per_update"] and progress["update"] > before["update"]:
                         speeds.append(progress["seconds_per_update"])
                     # the trainer stops by itself at its time limit; this asks again shortly before the job ends
-                    if left() < MARGIN_SECONDS / 2 and not STOP["requested"]:
+                    if left() < margin_seconds / 2 and not STOP["requested"]:
                         request_stop()
         finally:
             # this worker never leaves a trainer behind (a second writer would spoil the run folder); the
@@ -205,6 +212,9 @@ def main(argv=None, card=None, trainer=TRAINER, sample_memory=maze_worker.card_m
                         help="outside a Slurm job: how long this worker may run")
     parser.add_argument("--minimum-seconds", type=float, default=MINIMUM_SECONDS,
                         help="a unit is started only when it can train at least this long")
+    parser.add_argument("--margin-seconds", type=float, default=MARGIN_SECONDS,
+                        help="kept at the end of the job for the trainer to finish its update, save and end "
+                             "(a short check job keeps less than the default)")
     args = parser.parse_args(argv)
     run_dir = args.run_dir.resolve()
     job_id = os.environ.get("SLURM_JOB_ID", "local")
@@ -243,7 +253,7 @@ def main(argv=None, card=None, trainer=TRAINER, sample_memory=maze_worker.card_m
             # the job's end is read again before every claim; the trainer must be able to save its
             # state and end before that
             ends_at = time.monotonic() + maze_worker.seconds_left(started, args.max_seconds)
-            limit = ends_at - time.monotonic() - MARGIN_SECONDS
+            limit = ends_at - time.monotonic() - args.margin_seconds
             if limit < args.minimum_seconds:
                 print(f"[{common.pacific()}] {int(limit)} s of training time are left, under "
                       f"{int(args.minimum_seconds)} s; this worker ends", flush=True)
@@ -264,7 +274,8 @@ def main(argv=None, card=None, trainer=TRAINER, sample_memory=maze_worker.card_m
             try:
                 specification = common.read_json(run_dir / unit["specification"])
                 outcome, details = run_unit(run_dir, unit, specification, card, limit, trainer,
-                                            lambda: ends_at - time.monotonic(), sample_memory, args.server)
+                                            lambda: ends_at - time.monotonic(), sample_memory, args.server,
+                                            args.margin_seconds)
             except BaseException:
                 # a worker that cannot go on gives its claim back first; the error is raised again
                 unit_queue.give_back(run_dir, unit, "worker_error", counts_as_failure=True)
