@@ -747,7 +747,12 @@ def read_smoke_results(run_dir, table, name, pools):
                    f'echo; echo "{fleet.MARK}default {pool}"',
                    f'[ -n "$job" ] && head -n {SMOKE_UPDATES} "smoke/{pool}_$job/default/metrics.jsonl" 2> /dev/null',
                    f'echo; echo "{fleet.MARK}reference {pool}"',
-                   f"cat smoke/reference_{profile_words(settings['execution_profile'])}.jsonl 2> /dev/null"]
+                   # the reference of the profile the job ran, as its result names it; the pool's present profile
+                   # only when the result names none (2026-11-19: MIT's held-back pool was set to eight copies after
+                   # its smoke job had run four, and the four-copy job was compared with the eight-copy reference)
+                   f"profile=$(grep -o '\"execution_profile\": \"[^\"]*\"' smoke/result_{pool}.json 2> /dev/null "
+                   "| head -n 1 | cut -d '\"' -f 4 | tr ' ' '-')",
+                   f"cat \"smoke/reference_${{profile:-{profile_words(settings['execution_profile'])}}}.jsonl\" 2> /dev/null"]
     answer = fleet.remote(run_dir, table, name, "\n".join(script + [f'echo; echo "{fleet.MARK}end"', "exit 0"]) + "\n")
     # before: "@@fleet:result ai-h100\n{...json...}\n@@fleet:default ai-h100\n{line}\n...\n@@fleet:end"
     # after:  sections {("result", "ai-h100"): "{...json...}", ("default", "ai-h100"): "{line}\n...", ...}

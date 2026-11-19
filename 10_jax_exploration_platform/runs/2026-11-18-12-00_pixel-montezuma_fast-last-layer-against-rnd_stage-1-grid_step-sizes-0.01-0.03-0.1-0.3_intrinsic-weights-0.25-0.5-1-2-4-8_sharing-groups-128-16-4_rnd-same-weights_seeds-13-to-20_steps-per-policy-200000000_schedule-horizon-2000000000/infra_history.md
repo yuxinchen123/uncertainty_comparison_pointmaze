@@ -412,3 +412,18 @@
   copy 3 again), and the prose states that every seed-14 run opens a door and leaves in its first update with a key
   carried from the random warm-up. 12 generator tests and 16 report tests passed (report job 6958440, gates ledger).
 - 2026-11-19 09:45 PT: an H100 NVL card free on serval06 while this run's H100 NVL jobs waited on Priority (start estimate 2026-11-20 23:56 PT): jobs 6957716, 6957718, 6958486, 6958545 (sl5nw) and 6958488 (yuxinchen), from their ledgers, given a 2-hour limit (rule: a waiting job on Priority beside free listed cards). The Gautschi yield ended at the 09:40 PT pass (no other job of dsimchil on ai; nothing left lowered), and the 4 Gautschi jobs train with the 8 units handed back to them.
+- 2026-11-19 12:14 PT: **MIT's preemptable H200 pool stayed held back on a wrong comparison.** Its smoke job 29603828 was read
+  PREEMPTED at 05:33 PT; a preempted job on mit_preemptable is requeued under the same id, and it ran again from
+  11:45 PT (node4802, 1 H200 as asked) and completed at 12:00 PT. Two gaps, both fixed:
+  1. the hand-over helper read a held pool's verdict once, so the second run was never read. It now reads a verdict
+     recorded as preempted again once the job has ended in any other state (scratchpad helper and its copy in
+     infrastructure/hand_over_loop/); its 12:11 PT pass read the second run.
+  2. that read compared the job's four-copy default updates with the eight-copy reference, since the pool was set
+     to eight copies at 01:33 PT, after the job had been sent with four. Every other check passed, and the job's
+     own comparison by its frozen code found every field equal to its four-copy reference. remote_fleet.py
+     (read_smoke_results) now takes the reference of the profile the job's result names, and the pool's present
+     profile only when the result names none; 2 new tests, 29 remote fleet tests passed (job 6958831, gates
+     ledger). The marker of the 12:11 PT read was renamed
+     (smoke_verdict_read_mit_pool-preemptable-h200_job-29603828_compared-with-the-eight-copy-reference.txt), so the
+     next pass reads the verdict once more. While the other session holds the account's 4 preemptable cards, the
+     loop's MIT share gives that pool no jobs anyway.

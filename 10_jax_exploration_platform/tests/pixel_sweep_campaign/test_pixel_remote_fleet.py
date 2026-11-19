@@ -492,7 +492,7 @@ class Ticks(FleetCase):
                                or answer(lines)), contextlib.redirect_stdout(io.StringIO()) as output:
             self.assertTrue(remote.smoke_result(self.run_dir, self.table, "gilbreth"))
         self.assertIn('head -n 20 "smoke/standby-a30_$job/default/metrics.jsonl"', sent[0])
-        self.assertIn("cat smoke/reference_one-copy.jsonl", sent[0])
+        self.assertIn('cat "smoke/reference_${profile:-one-copy}.jsonl"', sent[0])
         self.assertEqual(subprocess.run(["bash", "-n"], input=sent[0], text=True, capture_output=True).returncode, 0)
         self.assertIn("0 number(s) outside the rule", output.getvalue())
         self.assertIn("the job's own comparison, by its frozen code: NOT passed", output.getvalue())
@@ -664,3 +664,40 @@ class SmokeRules(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class SmokeReferenceByJobProfile(unittest.TestCase):
+    """The smoke result is compared with the reference of the profile its job ran, not the pool's present profile."""
+
+    def read(self, result_profile, pool_profile):
+        """Run the generated read script with bash in a folder standing for the server; return the reference lines used."""
+        with tempfile.TemporaryDirectory() as folder:
+            server = Path(folder)
+            (server / "smoke/p_7/default").mkdir(parents=True)
+            result = {"passed": True, "job_id": "7", "device": "NVIDIA H200", "written_at": "2026-11-19T15:00:40-05:00",
+                      "checks": []}
+            if result_profile:
+                result["execution_profile"] = result_profile
+            (server / "smoke/result_p.json").write_text(json.dumps(result, indent=2))
+            (server / "smoke/p_7/default/metrics.jsonl").write_text('{"update": 1}\n')
+            (server / "smoke/reference_four-copies.jsonl").write_text('{"reference": "four"}\n')
+            (server / "smoke/reference_eight-copies.jsonl").write_text('{"reference": "eight"}\n')
+            table = {"mit": {"remote_run": str(server), "pools": {},
+                             "pools_held_back": {"p": {"execution_profile": pool_profile}}}}
+            run = lambda run_dir, table, name, script: subprocess.run(["bash"], input=script, capture_output=True,
+                                                                      text=True, check=True).stdout
+            seen = []
+            again = lambda result, reference, lines: seen.append(reference) or result
+            with mock.patch.object(remote.fleet, "remote", side_effect=run), \
+                    mock.patch.object(remote, "read_first_update_again", side_effect=again), \
+                    contextlib.redirect_stdout(io.StringIO()):
+                remote.read_smoke_results(server, table, "mit", ["p"])
+            return seen[0]
+
+    def test_the_profile_the_job_ran(self):
+        """before: a four-copy job in a pool now listed as eight copies ; after: the four-copy reference."""
+        self.assertEqual(self.read("four copies", "eight copies"), [{"reference": "four"}])
+
+    def test_the_pool_profile_when_the_result_names_none(self):
+        """A result without a profile falls back to the pool's present profile."""
+        self.assertEqual(self.read(None, "eight copies"), [{"reference": "eight"}])
