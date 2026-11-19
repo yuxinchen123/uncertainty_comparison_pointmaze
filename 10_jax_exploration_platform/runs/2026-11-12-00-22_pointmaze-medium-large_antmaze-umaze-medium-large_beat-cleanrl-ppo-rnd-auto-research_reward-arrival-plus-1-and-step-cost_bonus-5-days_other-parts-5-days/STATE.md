@@ -1829,6 +1829,23 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   so every Medium and Large comparison is paired by seed. On Large, the share of policies that reach the goal is
   reported beside W, L and M, since many policies never arrive there.
 
+- 2026-11-19 14:46 PT: **the ant U-maze fresh-seed pair for W with the step cost is complete** (seeds 30000 to 30255, 256 policies
+  per side, all 256 windows, all 256 policies arrived on both sides; fault-guard respawns: the method 2, RND 7; every
+  copy finished episodes in the first window, so the value before the first episode, −1, enters nothing). The
+  method's choice for W, step 0.1 with the first-arrival hold at learning rate 1e-4, weight 1/64, against RND's
+  choice for W, learning rate 3e-5, weight 1/64, paired by seed (95% intervals from 10,000 resamples of the seeds):
+
+  | measure | the method | RND | the method minus RND | seeds where the method is better |
+  |---|---|---|---|---|
+  | W, whole-curve mean of the training return | −0.96962 | −0.97098 | +0.00135 [−0.00001, +0.00296] | 133 of 256 |
+  | L, final level (last 25 windows) | −0.96360 | −0.96498 | +0.00138 [−0.00135, +0.00525] | 103 of 256 |
+  | M, first goal (million steps; smaller is better) | 1.86 | 5.22 | −3.37 [−3.48, −3.26] | 256 of 256 |
+
+  On W the method is not ahead by the rule: the interval's lower end is −0.00001, just below zero (the validation
+  block gave +0.00163 ± 0.00079). L is not behind. Its first goal comes far earlier on every seed, but this pair
+  uses each side's choice for W; the pair for M (the method's step 0.1 with the hold at learning rate 1e-2, weight
+  1, against RND's learning rate 1e-2, weight 16) waits for the method's two units, which still train.
+
 ## Next
 
 Rewritten 2026-11-13 22:31 PT.
