@@ -389,3 +389,4 @@
   The changed file was copied into frozen copy 3 (equal to the committed file before the change; the trainer is
   untouched) and the monitor was restarted between passes: job 6958072 cancelled by its ledger id at 05:20 PT
   after its 05:19 PT pass, replaced by job 6958392 with the same options (command.txt item 7).
+- 2026-11-19 05:24 PT: job 6958381 (yuxinchen, pinned to the RTX 2080 Ti on ai01) still waited on Priority with the 2-hour limit (start estimate 2026-11-20 06:37 PT: the card is planned for another user's job), so it was cancelled by its ledger id (ceiling 3: a pinned job is not left waiting). No other listed card was free; the monitor's waiting jobs by card type cover the units.
