@@ -318,3 +318,4 @@
   The ledger watcher was replaced at 23:13 PT (process 989111; the first one, 896334, stopped by its process
   number) by a version that reads every start of a job, a requeued job's second start included, so the restart of
   29606826 is read too (`infrastructure/mit_eight_copy_switch/mit_ledger_start_check.sh`).
+- 2026-11-18 23:17 PT: the monitor job 6957005 (copy 2) was cancelled by its ledger id between passes and replaced by job 6958072 on copy 3 (48019fc4), so its report has the pack-size table; same options as command.txt item 6.
