@@ -1,3 +1,11 @@
+---
+paths:
+  - "10_jax_exploration_platform/src/exploration_platform/envs/atari_montezuma/**"
+  - "10_jax_exploration_platform/scripts/atari_pixel_campaign/**"
+  - "10_jax_exploration_platform/scripts/pixel_sweep_campaign/**"
+  - "10_jax_exploration_platform/runs/*montezuma*/**"
+---
+
 # Exploration metrics on pixel Montezuma's Revenge
 
 The Atari part of `exploration-metrics.md`, for the pixel Montezuma study that started 2026-11-17 (plan

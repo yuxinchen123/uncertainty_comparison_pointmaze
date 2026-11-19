@@ -29,14 +29,12 @@ independent of the tinker negotiation work under `/p/rlprojects/tinker/`.
   format); both load only when a file under `07_reconstruction/` or a `train_runs/` folder is
   opened, so read them before work-queue sweep work anywhere else. Collaborators adding workers
   to a live run follow that run's `for_collaborator/README.md`.
-- The launch and worker scripts call the env's python by full path, so no conda activation is
-  needed at `sbatch` time. The canonical project env is the SHARED
-  `/p/rlprojects/RND/.venvs/exploration/bin/python` (registry: `.venvs/ENVS.md`; the old private
-  `/u/sl5nw/.conda/envs/exploration` is retired — kept only to reproduce runs launched <= 3.2.3).
-- The old `wandb agent` fan-out convention (`.claude/rules/slurm.md`) was deleted 2026-07-08 —
-  superseded by the work-queue convention above.
-- Shared cluster hardware/network facts (jaguar03 specs, gpu-partition CPU sizing): the global
-  `uva-cluster-slurm.md` rule.
+- The launch and worker scripts call the env's python by full path (section "Python environment"), so no conda
+  activation is needed at `sbatch` time.
+- Shared cluster facts (jaguar03, cores per job, the time limit, caps): read
+  `/p/rlprojects/.claude/rules/uva-cluster-slurm.md` before any Slurm command. Since 2026-11-19 it is not loaded
+  at the start of a session; the index of the shared rules is the section "Shared rules" of
+  `/p/rlprojects/.claude/CLAUDE.md`.
 
 ## Reproducible seeding
 - Seed arg is **`--a_seed`** (sweep range 0–99); it seeds `random`, `numpy`, `torch`, and CUDA
