@@ -1808,6 +1808,27 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   zero), but neither configuration was chosen for M, so this is no claim. Medium remains an RND probe until the user
   decides its comparison.
 
+- 2026-11-19 13:50 PT: **Medium and Large are compared like the U-maze, on both measures** (user decision; User's words (2026-11-19 about 13:50 PT): "How should Medium and Large be compared? if they are meaningful, if large is too hard such that it is not meaningful right now don't, same for medium, continue yourself don't ask for my permission".).
+  The test of "meaningful", set before the Large fresh-seed pair was read: on its validation blocks, each side's
+  configuration brings at least a quarter of its policies to the goal within the budget. Medium: 128 of 128 on both
+  sides. Large: RND 49 and 50 of 128 (38% and 39%), the method 68 and 51 of 128 (53% and 40%). Both maps pass, so
+  each side's configuration chosen for W and its configuration chosen for M run on the fresh seeds 30000 to 30255
+  and are paired by seed, as on the U-maze. The pairs for W already run or are complete (Medium: level, 13:23 PT).
+  The choices for M, from the validation blocks:
+
+  | map | side | choice for M | M (million steps), the choice against the other weight | fresh block |
+  |---|---|---|---|---|
+  | Medium | RND | learning rate 1e-2, weight 1 | 0.66 against 0.75 | new, 2 units |
+  | Medium | the method (step 0.03 with the hold) | learning rate 1e-2, weight 1 | 0.63 against 0.67 | new, 2 units |
+  | Large | RND | learning rate 1e-2, weight 16 | 104.60 against 108.23 | new, 2 units |
+  | Large | the method (step 0.03 with the hold) | learning rate 1e-2, weight 16 | 102.55 against 106.03 | the W block (running) |
+
+  Descriptions `infrastructure/descriptions/antmaze_{medium,large}_rk4-physics_fresh-seeds_{rnd,method}_choice-for-first-goal-time_reward-arrival-plus-one_seeds-30000-to-30255_budget-134217728.json`
+  in the AntMaze folder; build_units.py added the six units (claim order 93 to 98). Their run seeds equal those of
+  the other fresh units of the same seed block (Medium 1270283649 and 609848002, Large 520783390 and 1992200557),
+  so every Medium and Large comparison is paired by seed. On Large, the share of policies that reach the goal is
+  reported beside W, L and M, since many policies never arrive there.
+
 ## Next
 
 Rewritten 2026-11-13 22:31 PT.

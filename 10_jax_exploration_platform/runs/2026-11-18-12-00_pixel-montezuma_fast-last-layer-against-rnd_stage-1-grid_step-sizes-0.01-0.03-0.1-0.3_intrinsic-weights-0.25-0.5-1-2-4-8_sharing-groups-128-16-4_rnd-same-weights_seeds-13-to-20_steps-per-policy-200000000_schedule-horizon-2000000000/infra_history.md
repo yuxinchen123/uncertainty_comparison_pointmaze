@@ -440,3 +440,13 @@
   profiles are equal between the two copies (card_profiles.json differs only in how the archived reference run is
   named, which profiles may continue others' packs, and the card-memory bound for four copies), so those runs
   trained with the same code and options throughout.
+- 2026-11-19 13:50 PT: **the RTX 4000 Ada is a card type of this run again** (user, about 13:45 PT: "i have a new uva
+  reservation also include RTX 4000 Ada cards to the allowed list"). It runs one copy at 3.04 s per update (gate 6),
+  slower than the RTX A4000 (2.04), which is why it had been left out. The worker and the profiles already accept
+  it (one copy, under 60 GB); only the monitor's card list left it out. The monitor job 6958392 was cancelled by its
+  ledger id at 13:45 PT between passes and replaced by job 6959048 on copy 3 with the same options plus
+  nvidia_rtx_4000_ada_generation (command.txt item 8). Its first pass, 13:46 PT, pinned 9 yuxinchen jobs to free
+  RTX 4000 Ada cards (cheetah02, lynx01, lynx02, lynx05; all started) and sent 11 that wait by type. The new
+  reservation is sl5nw_170 (jaguar03 with 8 RTX A4500, and puma01 with no card; 2026-11-19 11:35 PT to
+  2026-12-10 23:59 PT); the planner reads it live and asks for it last, and since its 12:21 PT pass all 8 RTX A4500
+  cards there run this run's workers inside it (jobs 6958851 and 6959030).

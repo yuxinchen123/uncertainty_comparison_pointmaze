@@ -1080,3 +1080,10 @@ Times are Pacific, read from the clock or from scheduler records.
   waiting jobs could get no job on a free card). The AntMaze tick runs the working-tree planner in a new process at
   each pass, so the change holds for it from its next pass. Found on the Montezuma study (its infra_history, same
   time).
+- 2026-11-19 13:50 PT: six fresh-seed units added for the Medium and Large choices for M (user decision 2026-11-19: compare
+  Medium and Large if meaningful; both pass the test in the auto research STATE.md): RND on Medium at learning rate
+  1e-2, weight 1; the method on Medium (step 0.03 with the hold) at learning rate 1e-2, weight 1; RND on Large at
+  learning rate 1e-2, weight 16; each as seeds 30000 to 30127 and 30128 to 30255 (claim order 93 to 98), built with
+  build_units.py from `infrastructure/descriptions/*choice-for-first-goal-time*.json` (run with the exploration
+  environment's Python 3.11, which has tomllib). Run seeds equal those of the existing fresh units of the same seed
+  blocks. They are placed like every ant unit by the AntMaze tick.
