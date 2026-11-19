@@ -1057,8 +1057,8 @@ Times are Pacific, read from the clock or from scheduler records.
   still used the cards free now (the planner change at work): jobs 6957683 and 6957684 started at once and took 5
   units. Step 4 then cancelled the 5 waiting jobs beyond the 2 units still waiting: 6957670, 6957671, 6957672,
   6957673 and 6957676, each read as `PENDING` just before. Kept: 6957674 (first account, A100 40 GB, `Priority`) and
-  6957675 (second account, A100 40 GB, `QOSMaxGRESPerUser`: that account held 40 of its 40 `gpu` cards, mostly
-  the Montezuma study's). Change at 19:53 PT: step 4 now cancels first the jobs held by their own account's cap,
+  6957675 (second account, A100 40 GB, `QOSMaxGRESPerUser`: that account held 40 of its 40 `gpu` cards, all
+  in the Montezuma study's worker jobs (`pixel-worker_grid`, read 19:55 PT)). Change at 19:53 PT: step 4 now cancels first the jobs held by their own account's cap,
   then those with no start estimate, then the latest estimate. No unit has run under the second account yet.
 - 2026-11-18 19:53 PT: `hand_over_loop.sh` is not running (ended 06:20 PT). None of its three run folders holds a
   unit on a remote server, and the AntMaze tick runs the fleet step whenever Gilbreth holds AntMaze units or is
