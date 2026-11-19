@@ -99,6 +99,30 @@ class SpliceTest(unittest.TestCase):
             make_all.splice(self.TEXT + self.TEXT, "x", "new")
 
 
+class ScoreTableTest(unittest.TestCase):
+    """The score rows read S(B) over the seeds at the budget, and the table sorts by it, largest first."""
+
+    def configuration(self, key, scores, weight):
+        """A configuration whose runs have 200 windows of one constant mean score each, or fewer windows (None)."""
+        runs = [{"windows": [{"mean_score": s}] * 200 if s is not None else [{"mean_score": 0.0}] * 50, "seed": i}
+                for i, s in enumerate(scores)]
+        return {"key": key, "runs": runs, "archived": False, "settings": {"intrinsic_weight": weight}}
+
+    def test_rows_and_order(self):
+        """Two seeds at the budget average; a seed short of it is left out; the larger S(B) comes first."""
+        a = make_all.score_row(self.configuration("a", [1800.0, 2200.0, None], 1.0))
+        b = make_all.score_row(self.configuration("b", [2500.0], 2.0))
+        none = make_all.score_row(self.configuration("c", [None], 4.0))
+        self.assertEqual((a["seeds"], a["score"], a["final"]), ("2 of 3", 2000.0, 2000.0))
+        baseline = make_all.score_row(self.configuration("z", [100.0], 1.0))
+        text = make_all.score_tabular([a, none, b], baseline)
+        body = [line for line in text.splitlines() if line.startswith("weight")]
+        self.assertEqual([line.split(" & ")[0] for line in body], ["weight 2", "weight 1", "weight 4", "weight 1"])
+        self.assertIn("\\textbf{2,500}", text)
+        self.assertIn("\\underline{2,000}", text)
+        self.assertIn("not yet", text)
+
+
 class SeedsInWordsTest(unittest.TestCase):
     """The seeds of the runs that carried a key out of the warm-up, as the prose writes them."""
 

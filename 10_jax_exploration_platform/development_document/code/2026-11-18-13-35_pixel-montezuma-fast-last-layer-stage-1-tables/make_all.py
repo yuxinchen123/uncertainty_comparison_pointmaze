@@ -148,6 +148,51 @@ def early_tabular(trained, baseline):
     return "\n".join(lines + ["\\bottomrule", "\\end{tabular}"])
 
 
+BUDGET_WINDOWS = 200     # whole windows of 61 updates in 12,207 updates: the budget B of 200 million steps
+FINAL_WINDOWS = 20       # the last 10% of the budget's windows, for the final level
+
+
+def score_row(configuration, budget=BUDGET_WINDOWS, final=FINAL_WINDOWS):
+    """One score-table row: label, seeds at the budget, mean score over the run S(B) and final level, with sort key.
+
+    S(B) is report.score_up_to at the budget, a mean over the seeds that have reached it; the final level is the
+    mean window value of the last `final` windows before the budget. The archived baseline gives its first
+    `budget` windows (its runs share the stage's 2-billion-step learning-rate horizon, so they are a prefix).
+    before: a configuration with 2 of 8 seeds at 200 windows, S 1,800 and 2,200 ; after: {"seeds": "2 of 8",
+            "score": 2000.0, ...}
+    """
+    runs = [run for run in configuration["runs"] if len(run["windows"]) >= budget]
+    scores = [report.score_up_to(run, budget) for run in runs]
+    finals = [statistics.fmean(window["mean_score"] for window in run["windows"][budget - final:budget]) for run in runs]
+    score = statistics.fmean(scores) if scores else None
+    return {"label": configuration_label(configuration), "seeds": f"{len(runs)} of {len(configuration['runs'])}",
+            "at_budget": len(runs), "score": score, "final": statistics.fmean(finals) if finals else None,
+            "sort": (score is None, -(score or 0.0), configuration["key"])}
+
+
+def score_tabular(rows, baseline):
+    """The tabular of one score table: configurations by S(B), largest first, a rule, the archived baseline.
+
+    before: rows = [score_row(...) for each configuration of the block] ; after: "\\begin{tabular}...\\end{tabular}"
+    """
+    rows = sorted(rows, key=lambda row: row["sort"]) + [baseline]
+    # larger is better in both columns: the marks of the negated values
+    cells = {}
+    for column in ("score", "final"):
+        styles = marks([-row[column] if row[column] is not None else None for row in rows])
+        cells[column] = [(style % f"{row[column]:,.0f}") if row[column] is not None else "not yet"
+                         for row, style in zip(rows, styles)]
+    lines = ["\\begin{tabular}{@{}>{\\raggedright\\arraybackslash}p{3.7cm}rrr@{}}", "\\toprule",
+             "\\textbf{configuration} & \\textbf{\\shortstack[r]{seeds at the\\\\budget}} & "
+             "\\textbf{\\shortstack[r]{mean score over\\\\the run, $S(B)$ $\\uparrow$}} & "
+             "\\textbf{\\shortstack[r]{final level,\\\\$S_{\\text{last}}(B)$}} \\\\", "\\midrule"]
+    for index, row in enumerate(rows):
+        if index == len(rows) - 1:
+            lines.append("\\midrule")
+        lines.append(f"{row['label']} & {row['seeds']} & {cells['score'][index]} & {cells['final'][index]} \\\\")
+    return "\n".join(lines + ["\\bottomrule", "\\end{tabular}"])
+
+
 def blocks(groups):
     """Split the configurations into the early tables' blocks: RND, then one per sharing group, and the baseline.
 
@@ -251,6 +296,9 @@ def numbers_block(data, split, archived, checks, read_at):
 
     # runs that left the start room with a key carried out of the random warm-up, and their seeds
     _, carried, _ = report.exits_before_counted_key([run for run in started if run["has_event_fields"]])
+    # seeds that have reached the budget, per stage-1 configuration (for the score tables' text)
+    at_budget = [sum(len(run["windows"]) >= BUDGET_WINDOWS for run in configuration["runs"])
+                 for configurations in split.values() for configuration in configurations]
     rnd = [run for run in started if run["method"] == "rnd"]
     fast = [run for run in started if run["method"] != "rnd"]
     exits = sorted(report.first_step(run, EXIT) for run in archived["runs"] if report.first_step(run, EXIT) is not None)
@@ -268,6 +316,7 @@ def numbers_block(data, split, archived, checks, read_at):
         "ArchivedExitLast": million(exits[-1]),
         "LockedExits": checks[0][1], "ExitBeforeKey": checks[1][1], "NonFinite": checks[2][1],
         "WarmUpKeyRuns": len(carried), "WarmUpKeySeeds": seeds_in_words(carried),
+        "FewestSeedsAtBudget": min(at_budget), "MostSeedsAtBudget": max(at_budget),
     }
     return "\n".join(f"\\newcommand{{\\PixelFll{name}}}{{{value}}}" for name, value in values.items())
 
@@ -297,6 +346,10 @@ def build(run_dir, text):
                  "pixel-montezuma-fll-status": status_tabular(split),
                  "pixel-montezuma-fll-early-rnd": early_tabular(started_rows(split["rnd"]), baseline),
                  **{f"pixel-montezuma-fll-early-group-{group}": early_tabular(started_rows(split[group]), baseline)
+                    for group in SHARING_GROUPS},
+                 "pixel-montezuma-fll-score-rnd": score_tabular([score_row(c) for c in split["rnd"]], score_row(archived)),
+                 **{f"pixel-montezuma-fll-score-group-{group}": score_tabular([score_row(c) for c in split[group]],
+                                                                             score_row(archived))
                     for group in SHARING_GROUPS},
                  "pixel-montezuma-fll-checks": checks_tabular(checks)}
     for name, block in generated.items():

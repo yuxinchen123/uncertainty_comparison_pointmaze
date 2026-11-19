@@ -468,3 +468,9 @@
   The decision of 13:50 PT that the 2-hour step covers taking packs back was wrong for a server where one of this
   run's jobs runs: that step acts only when none runs there. Plan decision 15 now says to take back by hand the
   never-started units above the share step's limit when that case occurs.
+- 2026-11-19 15:51 PT: **development document refreshed at the 100 and 200 million marks** (every configuration has at least one
+  seed at 200 million steps; records read 2026-11-19 15:50 PT). New: four generated score tables (RND, and the fast
+  last layer with sharing groups 128, 16 and 4), each giving S(B) and the final level over the seeds at the budget
+  (2 to 5 of 8 per configuration), sorted by S(B), with the archived baseline's first 200 million steps below a rule;
+  the text says they choose nothing until all 8 seeds are in. Generator functions score_row and score_tabular, one
+  new test (13 generator tests passed); PDF rebuilt, no line too wide, pages 63 to 67 looked at.
