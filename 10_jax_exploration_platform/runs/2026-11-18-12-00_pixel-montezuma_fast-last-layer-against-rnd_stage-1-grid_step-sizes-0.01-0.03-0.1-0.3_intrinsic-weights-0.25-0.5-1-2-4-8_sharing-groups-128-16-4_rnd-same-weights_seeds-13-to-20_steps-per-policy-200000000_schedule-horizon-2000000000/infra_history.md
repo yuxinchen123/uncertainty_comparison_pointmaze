@@ -73,3 +73,11 @@
   Priority. The 2 free H100 NVL cards on serval08 that the tick's reading showed were in use a minute later
   (AllocTRES gres/gpu=2). The waiting RTX 2080 Ti job 6956909 got a 2-hour limit (`scontrol update`) because a
   2080 Ti on ai01 was free; it still waited on Priority at 16:16 PT.
+- 2026-11-18 16:33 to 16:46 PT: the four waiting RTX 5080 jobs (6956896 to 6956899) started on nekomata01 and each
+  ended FAILED at update 0: out of card memory, one allocation of 11.69 GiB in `jit_iteration` at memory fraction
+  0.85 (13.6 of 16.3 GB). The same fast-last-layer runs fit on the 11 GB RTX 2080 Ti at fraction 0.95 (10.5 GB), so
+  the program XLA builds for this card (Blackwell) differs. The RTX 5080 had no speed check for this study (gate 6
+  measured the RTX A4500, RTX 2080 Ti, RTX A4000 and RTX 4000 Ada). The four units went back to queue/pending with
+  no step lost. Taken out of the card list: monitor job 6956910 cancelled by its ledger id at 16:52 PT and replaced
+  by 6957005 without `nvidia_geforce_rtx_5080`. A 15-minute check at fraction 0.95 runs as job 6957009
+  (gates folder, slurm/jobs/gate-6_speed-and-memory_rtx-5080_...); the type comes back only if it passes.
