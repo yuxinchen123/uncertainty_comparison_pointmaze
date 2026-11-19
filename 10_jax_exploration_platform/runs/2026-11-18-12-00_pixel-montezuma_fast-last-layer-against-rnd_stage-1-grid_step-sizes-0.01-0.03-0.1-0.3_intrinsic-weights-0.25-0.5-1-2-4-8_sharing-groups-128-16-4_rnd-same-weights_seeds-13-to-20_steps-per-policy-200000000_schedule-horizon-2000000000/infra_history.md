@@ -67,3 +67,9 @@
   Priority), 8-hour jobs. The monitor job 6956910 replaced 6956692 (cancelled by its ledger id between passes) and
   tops up both the jobs on cards free now and the waiting ones (command.txt, item 6). Rule
   `~/.claude/rules/pure-rl-gpu-placement.md` item 3 revised the same day.
+- 2026-11-18 16:12 to 16:16 PT: two four-run packs made from never-started singles (seed 14, sharing group 16,
+  weights 0.25 and another of the planner's order; build_units.py --pack-pending --packs 2) for H100 NVL cards, and
+  two 8-hour jobs that wait in the queue sent for them: 6956914 (sl5nw) and 6956915 (yuxinchen), both waiting on
+  Priority. The 2 free H100 NVL cards on serval08 that the tick's reading showed were in use a minute later
+  (AllocTRES gres/gpu=2). The waiting RTX 2080 Ti job 6956909 got a 2-hour limit (`scontrol update`) because a
+  2080 Ti on ai01 was free; it still waited on Priority at 16:16 PT.
