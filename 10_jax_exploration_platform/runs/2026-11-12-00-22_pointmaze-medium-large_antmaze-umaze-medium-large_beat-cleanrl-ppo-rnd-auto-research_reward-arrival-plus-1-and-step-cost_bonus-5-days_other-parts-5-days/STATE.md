@@ -1755,6 +1755,24 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   21:50 PT. Every validation block of the ant study is now complete; what remains are the fresh seeds (RND and the
   method on the U-maze in both reward settings, Medium and Large with reward 1 on arrival).
 
+- 2026-11-19 03:46 PT: **the first ant fresh-seed pair is complete: U-maze, reward 1 on arrival, the measure W** (seeds 30000 to
+  30255, 256 policies per side, all 256 windows, all 256 policies arrived on both sides; the method's block had 2
+  fault-guard respawns, RND's none). The method's choice for W, the first-arrival hold alone at learning rate 3e-5,
+  weight 1/16, against RND's choice for W, learning rate 1e-4, weight 1/64, paired by seed (95% intervals from
+  10,000 resamples of the seeds; scratchpad script quick_pair.py, run over both units of each side):
+
+  | measure | the method | RND | the method minus RND | seeds where the method is better |
+  |---|---|---|---|---|
+  | W, whole-curve mean of the training return | 0.1102 | 0.1050 | +0.0052 [+0.0023, +0.0081] | 156 of 256 |
+  | L, final level (last 25 windows) | 0.1274 | 0.1180 | +0.0094 [+0.0061, +0.0128] | 167 of 256 |
+  | M, first goal (million steps; smaller is better) | 4.42 | 2.52 | +1.89 [+1.83, +1.96] | 0 of 256 |
+
+  On W, the primary measure, the method is ahead on fresh seeds: the interval is entirely above zero, as it was on
+  the validation block (+0.0057 ± 0.0018). This settles the best-of-several pick for W in this setting. M is not the
+  measure this configuration was chosen for (its first goal comes later, as on the validation block); the pair for
+  M (the method's step 0.1 with the hold, learning rate 1e-2, weight 16, against RND's learning rate 1e-2, weight 4)
+  waits for the method's block, which is still training.
+
 ## Next
 
 Rewritten 2026-11-13 22:31 PT.
