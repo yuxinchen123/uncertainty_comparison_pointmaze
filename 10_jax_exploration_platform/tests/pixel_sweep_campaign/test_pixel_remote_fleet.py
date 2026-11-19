@@ -50,8 +50,8 @@ class ServerTable(FleetCase):
     """The table a run folder starts with."""
 
     def test_every_server_starts_not_ready_with_its_request(self):
-        """Gautschi, Gilbreth, ACES and DeltaAI, each not ready, each with the options the plan names."""
-        self.assertEqual(list(self.table), ["gautschi", "gilbreth", "aces", "deltaai"])
+        """Gautschi, Gilbreth, ACES, DeltaAI and MIT, each not ready, each with the options the plan names."""
+        self.assertEqual(list(self.table), ["gautschi", "gilbreth", "aces", "deltaai", "mit"])
         self.assertTrue(all(entry["ready"] is False and entry["not_ready_reason"] for entry in self.table.values()))
         gautschi = self.table["gautschi"]["pools"]["ai-h100"]
         self.assertEqual(gautschi["sbatch_options"], ["-p", "ai", "-q", "normal", "-A", "dsimchil", "-N1", "-n14",
@@ -72,6 +72,46 @@ class ServerTable(FleetCase):
         self.assertTrue(self.table["gautschi"]["remote_run"].endswith("/2026-11-18-02-00_pixel-montezuma_test-run"))
         self.assertEqual(fleet.ledger_path(self.run_dir, "gautschi").name, "submitted_jobids_gautschi.txt")
 
+    def test_mit_asks_for_one_typed_h200_with_the_card_guard_and_never_logs_in(self):
+        """Both MIT pools: one typed H200, at most 4 cores, no --gres, requeue, 2 days; only the shared connection."""
+        mit = self.table["mit"]
+        self.assertEqual(list(mit["pools"]), ["advanced-h200", "preemptable-h200"])
+        for pool in mit["pools"].values():
+            options = pool["sbatch_options"]
+            self.assertTrue({"--gpus=h200:1", "--nodes=1", "--ntasks=1", "--cpus-per-task=4", "--requeue",
+                             "--open-mode=append"} <= set(options))
+            self.assertFalse(any(option.startswith("--gres") or option == "--exclusive" for option in options))
+            self.assertIn("node3401-c1", options[options.index("-x") + 1])
+            self.assertEqual((pool["time_limit"], pool["max_jobs"], pool["execution_profile"], pool["card_guard"]),
+                             ("2-00:00:00", 4, "four copies", True))
+        advanced = mit["pools"]["advanced-h200"]["sbatch_options"]
+        self.assertTrue({"--partition=mit_normal_gpu", "--account=mit_amf_advanced_gpu",
+                         "--qos=mit_amf_advanced_gpu"} <= set(advanced))
+        self.assertIn("--partition=mit_preemptable", mit["pools"]["preemptable-h200"]["sbatch_options"])
+        # a command goes through the connection held on this machine or fails there; it never starts a login
+        self.assertEqual(mit["ssh"], ["ssh", "-o", "BatchMode=yes", "-o", "ControlMaster=no", "-o",
+                                      "ProxyCommand=false", "mit"])
+        self.assertEqual(mit["check"], ["ssh", "-O", "check", "mit"])
+        self.assertEqual({pool: limit["units_at_once"] for pool, limit in mit["hand_over"]["pools"].items()},
+                         {"advanced-h200": 16, "preemptable-h200": 0})
+
+    def test_the_mit_worker_job_holds_the_card_guard_before_any_unit(self):
+        """The guard asks for one card, requeues on a wrong count, counts cards with jax, and stands before the worker."""
+        entry = dict(self.table["mit"], code="/home/shuzel/rnd_pixel/code/source_abc/10_jax_exploration_platform")
+        for pool_name, pool in entry["pools"].items():
+            text = remote.worker_script("mit", entry, pool_name, pool)
+            self.assertEqual(subprocess.run(["bash", "-n"], input=text, text=True, capture_output=True).returncode, 0)
+            self.assertNotIn("@", text)
+            for line in ("NEED_CARDS=1", "GUARD_ACTION=${GUARD_ACTION:-requeue}", 'import jax; print(len(jax.devices("gpu")))',
+                         'scontrol requeue "$SLURM_JOB_ID"'):
+                self.assertIn(line, text)
+            self.assertNotIn("import torch", text)
+            self.assertLess(text.index("[card guard] ok"), text.index("worker.py"))
+        # Gautschi's jobs keep no guard
+        gautschi = dict(self.table["gautschi"], code="/scratch/code")
+        self.assertIn("# (no card guard on this server)",
+                      remote.worker_script("gautschi", gautschi, "ai-h100", gautschi["pools"]["ai-h100"]))
+
     def test_a_table_is_not_written_over_and_a_tick_leaves_servers_that_are_not_ready(self):
         """init-table refuses a folder that has its table; hand-over-tick contacts no server that is not ready."""
         with self.assertRaises(SystemExit):
@@ -82,7 +122,7 @@ class ServerTable(FleetCase):
         with mock.patch.object(fleet, "call", side_effect=AssertionError("a server was contacted")), \
                 contextlib.redirect_stdout(output):
             remote.hand_over_tick(self.run_dir, self.table, dry_run=False)
-        self.assertEqual(output.getvalue().count("not part of this tick"), 4)
+        self.assertEqual(output.getvalue().count("not part of this tick"), 5)
 
     def test_the_smoke_verdict_needs_every_pool(self):
         """A server is ready only when each of its pools has a passed smoke result."""
@@ -226,7 +266,41 @@ class Ticks(FleetCase):
         self.assertNotIn("--include=*/run/checkpoint.pkl", copied[-1])
         self.assertTrue(copied[-1][-1].endswith("slurm/remote_live/gautschi/"))
         self.assertIn("handed over at this tick", output.getvalue())
-        self.assertEqual(output.getvalue().count("not part of this tick"), 3)
+        self.assertEqual(output.getvalue().count("not part of this tick"), 4)
+
+    def test_mit_holds_its_units_through_the_first_pool_and_both_pools_get_jobs(self):
+        """Five packs: the first pool takes all five (the server-wide limit 16), asks for its 4 jobs; the second
+        pool takes no unit at this tick and asks for jobs only for units no job will take at the next."""
+        queue_units(self.run_dir, build_units.study_units(small_description(
+            seeds={"first": 13, "count": 5}, methods=FOUR_STEP_SIZES)))
+        with contextlib.redirect_stdout(io.StringIO()):
+            packs = build_units.pack_pending(self.run_dir, 5)
+        common.write_json(self.run_dir / "source.json", {"commit": "abc"})
+        self.table["mit"].update(ready=True, prepared_commit="abc", code="/home/shuzel/code")
+        status = remote.parse_status(f"{fleet.MARK}queue\n{fleet.MARK}squeue_exit 0\n{fleet.MARK}end\n")
+        submitted = []
+        with mock.patch.object(fleet, "tick_server", return_value=(status, [])), \
+                mock.patch.object(fleet, "rsync"), mock.patch.object(fleet, "remote", return_value=f"{fleet.MARK}end\n"), \
+                mock.patch.object(fleet, "submit", side_effect=lambda run, table, args: submitted.append(args)), \
+                contextlib.redirect_stdout(io.StringIO()):
+            remote.hand_over_tick(self.run_dir, self.table, dry_run=False)
+        self.assertEqual(sorted(path.stem for path in (self.run_dir / "queue/remote_mit").glob("*.json")), sorted(packs))
+        self.assertEqual({unit["pool"] for unit in fleet.load_assignment(self.run_dir).values()}, {"advanced-h200"})
+        self.assertEqual([(args.server, args.pool, args.jobs) for args in submitted], [("mit", "advanced-h200", 4)])
+        # the next tick reads the five units waiting on the server and the first pool's four waiting jobs
+        status = remote.parse_status(
+            f"{fleet.MARK}queue\n" + "".join(f"pending {pack}\n" for pack in packs) + f"{fleet.MARK}jobs\n"
+            + "".join(f"{900 + index}|PENDING|Priority|{fleet.JOB_PREFIX}-mit-advanced-h200-20261118-193000-{index}|0:00|"
+                      f"mit_normal_gpu\n" for index in range(1, 5))
+            + f"{fleet.MARK}squeue_exit 0\n{fleet.MARK}estimates\n" + "".join(f"{900 + index} 60\n" for index in range(1, 5))
+            + f"{fleet.MARK}end\n")
+        submitted.clear()
+        with mock.patch.object(fleet, "tick_server", return_value=(status, sorted(packs))), \
+                mock.patch.object(fleet, "rsync"), mock.patch.object(fleet, "remote", return_value=f"{fleet.MARK}end\n"), \
+                mock.patch.object(fleet, "submit", side_effect=lambda run, table, args: submitted.append(args)), \
+                contextlib.redirect_stdout(io.StringIO()):
+            remote.hand_over_tick(self.run_dir, self.table, dry_run=False)
+        self.assertEqual([(args.server, args.pool, args.jobs) for args in submitted], [("mit", "preemptable-h200", 4)])
 
     def test_an_unfinished_unit_comes_back_with_its_run_folder(self):
         """Checkpoint and metrics from the server replace UVA's run folder; the server's record is taken over."""

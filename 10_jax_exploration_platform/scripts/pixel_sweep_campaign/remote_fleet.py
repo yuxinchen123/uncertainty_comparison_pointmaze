@@ -1,4 +1,4 @@
-"""Run units of the pixel sweep on remote servers: Purdue Gautschi and Gilbreth, TAMU ACES, NCSA DeltaAI.
+"""Run units of the pixel sweep on remote servers: Purdue Gautschi and Gilbreth, TAMU ACES, NCSA DeltaAI, MIT.
 
     python remote_fleet.py --run-dir RUN init-table [--force]
     python remote_fleet.py --run-dir RUN prepare --server S [--again]

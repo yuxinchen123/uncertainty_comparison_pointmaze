@@ -23,8 +23,8 @@ below; jobs use `/p/rlprojects/RND/.venvs/atari_pixels_jax/bin/python` (3.12).
 | `submit.py` | submits worker jobs on UVA under both accounts, and the persistent monitor job |
 | `monitor.py` | one pass or a loop: returns units of ended jobs to pending, counts, progress,<br>status files, and rebuilds the early-signals report |
 | `report.py` | rebuilds `RUN/early_signals.md` from the runs' record files |
-| `remote_fleet.py` | Purdue Gautschi and Gilbreth, TAMU ACES, NCSA DeltaAI: server table, smoke job,<br>hand-over, return and check of units, `hand-over-tick` |
-| `server_table.json` | the four servers' entries a run folder's table starts from (all not ready) |
+| `remote_fleet.py` | Purdue Gautschi and Gilbreth, TAMU ACES, NCSA DeltaAI, MIT: server table, smoke job,<br>hand-over, return and check of units, `hand-over-tick` |
+| `server_table.json` | the five servers' entries a run folder's table starts from (all not ready) |
 | `smoke_check.py`,<br>`smoke_trainer_checks.py` | the smoke job of a server: its check and its speed check |
 | `study_descriptions/` | the description of stage 1 |
 | `campaign_imports.py` | loads the maze and grid campaigns' files under names that cannot clash |
@@ -228,6 +228,18 @@ RUN=/p/rlprojects/RND/10_jax_exploration_platform/runs/<run folder>
    | Gilbreth | `standby-a30-a10` | `-q standby`, account `dsmichil`, 4 hours | one copy | 0 until its<br>speed check |
    | ACES | `gpu-h100` | `-p gpu --gres=gpu:h100:1`<br>`--cpus-per-task=8 --mem=39G`,<br>through portal05 | four copies | 0 (stages 2 and 3) |
    | DeltaAI | `ghx4-h100` | `ghx4`, one H100, through portal04; ARM | four copies | 0 (not built) |
+| MIT | `advanced-h200` | `mit_normal_gpu` with the Advanced account and QoS,<br>`--gpus=h200:1`, 4 cores, 24 GB, 2 days, at most 4 jobs | four copies | 16 for the server |
+| MIT | `preemptable-h200` | `mit_preemptable` without the nodes it shares with<br>`mit_normal_gpu`, otherwise the same | four copies | 0 (the first<br>pool's 16 count) |
+
+   MIT's pools set `"card_guard": true`: every job script holds the shared card guard
+   (`/p/rlprojects/.claude/skills/mit-submit-gpu-sweep/scripts/card_guard.sh`, one card, `GUARD_ACTION=requeue`, the
+   count read with jax), because the scheduler there has started jobs with the wrong number of cards (rule
+   `~/.claude/rules/mit-single-gpu-request.md`; read `AllocTRES` against `ReqTRES` within a minute of every start).
+   MIT is reached only through the shared connection held on portal04: its `ssh` entry carries
+   `-o ControlMaster=no -o ProxyCommand=false`, so a command fails on portal04 when that connection is closed instead
+   of trying a new login, and `check` is `ssh -O check mit`. `hand_over` counts every unit of a profile that a server
+   holds against each of its pools' limits, so a server with two pools of one profile keeps its whole limit in the
+   first pool and 0 in the second; the second pool's jobs are still submitted for the units no job will take.
 
    What `hand-over-tick` does for each ready server: one status call; finished units copied to UVA
    and checked; units whose job ended put back in the server's queue; pending units of each pool's
@@ -300,7 +312,7 @@ cd /p/rlprojects/RND/10_jax_exploration_platform
 PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests/pixel_sweep_campaign -p "test_pixel_*.py"
 ```
 
-91 tests; they import no numerical library and start no trainer (a stand-in script plays
+95 tests; they import no numerical library and start no trainer (a stand-in script plays
 `train_final.py`), and they also pass under pytest with the project's Python 3.12.
 
 ## Taken from the maze and grid campaigns

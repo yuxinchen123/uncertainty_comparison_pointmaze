@@ -1,0 +1,217 @@
+build of /home/shuzel/envs/atari_pixels_jax on login010 (x86_64), start 2026-11-18T22:34:01-05:00
+
+Downloading and Extracting Packages: ...working... done
+
+## Package Plan ##
+
+  environment location: /home/shuzel/envs/atari_pixels_jax
+
+  added / updated specs:
+    - conda-forge/linux-64::_openmp_mutex==4.5=20_gnu
+    - conda-forge/linux-64::bzip2==1.0.8=hda65f42_10
+    - conda-forge/linux-64::icu==78.3=py310h44b86e0_2
+    - conda-forge/linux-64::ld_impl_linux-64==2.46.1=default_hbd61a6d_102
+    - conda-forge/linux-64::libexpat==2.8.1=hecca717_1
+    - conda-forge/linux-64::libffi==3.7.0=h3435931_0
+    - conda-forge/linux-64::libgcc==16.1.0=ha9f2e26_1
+    - conda-forge/linux-64::libgomp==16.1.0=he0feb66_1
+    - conda-forge/linux-64::liblzma==5.8.3=hb03c661_1
+    - conda-forge/linux-64::libnsl==2.0.1=hb9d3cd8_1
+    - conda-forge/linux-64::libsqlite==3.53.4=hf4e2dac_0
+    - conda-forge/linux-64::libstdcxx==16.1.0=h934c35e_1
+    - conda-forge/linux-64::libuuid==2.42.2=h5347b49_0
+    - conda-forge/linux-64::libxcrypt==4.4.38=h280c20c_0
+    - conda-forge/linux-64::libzlib==1.3.2=h25fd6f3_3
+    - conda-forge/linux-64::ncurses==6.6=hdb14827_1
+    - conda-forge/linux-64::openssl==3.6.3=h35e630c_1
+    - conda-forge/linux-64::python==3.12.13=h8ab3286_1_cpython
+    - conda-forge/linux-64::readline==8.3=h853b02a_0
+    - conda-forge/linux-64::tk==8.6.13=noxft_hd70dff1_3
+    - conda-forge/linux-64::zstd==1.5.7=hb78ec9c_7
+    - conda-forge/noarch::ca-certificates==2026.7.22=hbd8a1cb_0
+    - conda-forge/noarch::packaging==26.3=pyhc364b38_0
+    - conda-forge/noarch::pip==26.2.1=pyh8b19718_0
+    - conda-forge/noarch::setuptools==84.0.0=pyh332efcf_0
+    - conda-forge/noarch::tzdata==2026c=h151e31d_0
+    - conda-forge/noarch::wheel==0.48.0=pyhd8ed1ab_0
+
+
+The following NEW packages will be INSTALLED:
+
+  _openmp_mutex      conda-forge/linux-64::_openmp_mutex-4.5-20_gnu 
+  bzip2              conda-forge/linux-64::bzip2-1.0.8-hda65f42_10 
+  ca-certificates    conda-forge/noarch::ca-certificates-2026.7.22-hbd8a1cb_0 
+  icu                conda-forge/linux-64::icu-78.3-py310h44b86e0_2 
+  ld_impl_linux-64   conda-forge/linux-64::ld_impl_linux-64-2.46.1-default_hbd61a6d_102 
+  libexpat           conda-forge/linux-64::libexpat-2.8.1-hecca717_1 
+  libffi             conda-forge/linux-64::libffi-3.7.0-h3435931_0 
+  libgcc             conda-forge/linux-64::libgcc-16.1.0-ha9f2e26_1 
+  libgomp            conda-forge/linux-64::libgomp-16.1.0-he0feb66_1 
+  liblzma            conda-forge/linux-64::liblzma-5.8.3-hb03c661_1 
+  libnsl             conda-forge/linux-64::libnsl-2.0.1-hb9d3cd8_1 
+  libsqlite          conda-forge/linux-64::libsqlite-3.53.4-hf4e2dac_0 
+  libstdcxx          conda-forge/linux-64::libstdcxx-16.1.0-h934c35e_1 
+  libuuid            conda-forge/linux-64::libuuid-2.42.2-h5347b49_0 
+  libxcrypt          conda-forge/linux-64::libxcrypt-4.4.38-h280c20c_0 
+  libzlib            conda-forge/linux-64::libzlib-1.3.2-h25fd6f3_3 
+  ncurses            conda-forge/linux-64::ncurses-6.6-hdb14827_1 
+  openssl            conda-forge/linux-64::openssl-3.6.3-h35e630c_1 
+  packaging          conda-forge/noarch::packaging-26.3-pyhc364b38_0 
+  pip                conda-forge/noarch::pip-26.2.1-pyh8b19718_0 
+  python             conda-forge/linux-64::python-3.12.13-h8ab3286_1_cpython 
+  readline           conda-forge/linux-64::readline-8.3-h853b02a_0 
+  setuptools         conda-forge/noarch::setuptools-84.0.0-pyh332efcf_0 
+  tk                 conda-forge/linux-64::tk-8.6.13-noxft_hd70dff1_3 
+  tzdata             conda-forge/noarch::tzdata-2026c-h151e31d_0 
+  wheel              conda-forge/noarch::wheel-0.48.0-pyhd8ed1ab_0 
+  zstd               conda-forge/linux-64::zstd-1.5.7-hb78ec9c_7 
+
+
+
+Downloading and Extracting Packages: ...working... done
+Preparing transaction: - \ | done
+Verifying transaction: - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | done
+Executing transaction: - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - done
+#
+# To activate this environment, use
+#
+#     $ conda activate /home/shuzel/envs/atari_pixels_jax
+#
+# To deactivate an active environment, use
+#
+#     $ conda deactivate
+
+Looking in links: /home/shuzel/envs/.build_cache/wheelhouse
+Processing /home/shuzel/envs/.build_cache/wheelhouse/absl_py-2.5.0-py3-none-any.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 1))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/aiofiles-25.1.0-py3-none-any.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 2))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/ale_py-0.12.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 3))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/certifi-2026.7.22-py3-none-any.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 4))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/charset_normalizer-3.5.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 5))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/chex-0.1.92-py3-none-any.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 6))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/cloudpickle-3.1.2-py3-none-any.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 7))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/contourpy-1.3.3-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 8))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/cycler-0.12.1-py3-none-any.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 9))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/etils-1.14.0-py3-none-any.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 10))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/farama_notifications-0.0.6-py3-none-any.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 11))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/filelock-4.2.4-py3-none-any.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 12))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/flax-0.12.8-py3-none-any.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 13))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/fonttools-4.63.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 14))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/fsspec-2026.7.0-py3-none-any.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 15))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/glfw-2.10.2-py2.py3-none-manylinux_2_28_x86_64.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 16))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/gymnasium-1.3.0-py3-none-any.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 17))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/gymnax-0.0.9-py3-none-any.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 18))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/humanize-4.16.0-py3-none-any.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 19))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/idna-3.19-py3-none-any.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 20))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/iniconfig-2.3.1-py3-none-any.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 21))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/jax-0.11.0-py3-none-any.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 22))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/jax_cuda12_pjrt-0.11.0-py3-none-manylinux_2_27_x86_64.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 23))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/jax_cuda12_plugin-0.11.0-cp312-cp312-manylinux_2_27_x86_64.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 24))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/jaxlib-0.11.0-cp312-cp312-manylinux_2_27_x86_64.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 25))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/jinja2-3.1.6-py3-none-any.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 26))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/kiwisolver-1.5.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 27))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/markdown_it_py-4.2.0-py3-none-any.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 28))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/markupsafe-3.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 29))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/matplotlib-3.11.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 30))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/mdurl-0.1.2-py3-none-any.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 31))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/ml_dtypes-0.6.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 32))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/mpmath-1.3.0-py3-none-any.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 33))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/msgpack-1.2.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 34))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/mujoco-3.11.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 35))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/mujoco_mjx-3.11.0-py3-none-any.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 36))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/networkx-3.7-py3-none-any.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 37))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/numpy-2.5.2-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 38))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/nvidia_cublas_cu12-12.9.2.10-py3-none-manylinux_2_27_x86_64.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 39))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/nvidia_cuda_cccl_cu12-12.9.27-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 40))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/nvidia_cuda_cupti_cu12-12.9.79-py3-none-manylinux_2_25_x86_64.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 41))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/nvidia_cuda_nvcc_cu12-12.9.86-py3-none-manylinux2010_x86_64.manylinux_2_12_x86_64.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 42))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/nvidia_cuda_nvrtc_cu12-12.9.86-py3-none-manylinux2010_x86_64.manylinux_2_12_x86_64.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 43))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/nvidia_cuda_runtime_cu12-12.9.79-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 44))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/nvidia_cudnn_cu12-9.24.0.43-py3-none-manylinux_2_27_x86_64.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 45))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/nvidia_cufft_cu12-11.4.1.4-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 46))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/nvidia_cusolver_cu12-11.7.5.82-py3-none-manylinux_2_27_x86_64.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 47))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/nvidia_cusparse_cu12-12.5.10.65-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 48))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/nvidia_nccl_cu12-2.31.2-py3-none-manylinux_2_18_x86_64.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 49))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/nvidia_nvjitlink_cu12-12.9.86-py3-none-manylinux2010_x86_64.manylinux_2_12_x86_64.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 50))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/nvidia_nvshmem_cu12-3.7.2-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 51))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/opt_einsum-3.4.0-py3-none-any.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 52))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/optax-0.2.8-py3-none-any.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 53))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/orbax_checkpoint-0.12.4-py3-none-any.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 54))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/pandas-3.0.5-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 55))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/pillow-12.3.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 56))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/platformdirs-4.11.3-py3-none-any.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 57))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/pluggy-1.7.0-py3-none-any.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 58))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/prometheus_client-0.26.0-py3-none-any.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 59))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/protobuf-7.35.1-cp310-abi3-manylinux2014_x86_64.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 60))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/psutil-7.2.2-cp36-abi3-manylinux2010_x86_64.manylinux_2_12_x86_64.manylinux_2_28_x86_64.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 61))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/pygments-2.21.0-py3-none-any.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 62))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/pyopengl-3.1.10-py3-none-any.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 63))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/pyparsing-3.3.2-py3-none-any.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 64))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/pytest-8.4.2-py3-none-any.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 65))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/python_dateutil-2.9.0.post0-py2.py3-none-any.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 66))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 67))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/requests-2.34.2-py3-none-any.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 68))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/rich-15.0.0-py3-none-any.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 69))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/scipy-1.18.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 70))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/seaborn-0.13.2-py3-none-any.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 71))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/simplejson-4.1.1-cp312-cp312-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 72))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/six-1.17.0-py2.py3-none-any.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 73))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/sympy-1.13.1-py3-none-any.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 74))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/tensorstore-0.1.85-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 75))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/toolz-1.1.0-py3-none-any.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 76))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/treescope-0.1.10-py3-none-any.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 77))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/trimesh-5.0.0-py3-none-any.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 78))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/typing_extensions-4.16.0-py3-none-any.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 79))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/urllib3-2.7.0-py3-none-any.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 80))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/uvloop-0.22.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 81))
+Processing /home/shuzel/envs/.build_cache/wheelhouse/zipp-4.1.0-py3-none-any.whl (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_wheels_x86_64_without_torch.txt (line 82))
+Installing collected packages: PyOpenGL, mpmath, jax-cuda12-pjrt, glfw, Farama-Notifications, zipp, uvloop, urllib3, typing_extensions, trimesh, treescope, toolz, tensorstore, sympy, six, simplejson, seaborn, scipy, rich, requests, PyYAML, python-dateutil, pytest, pyparsing, Pygments, psutil, protobuf, prometheus_client, pluggy, platformdirs, pillow, pandas, orbax-checkpoint, optax, opt_einsum, nvidia-nvshmem-cu12, nvidia-nvjitlink-cu12, nvidia-nccl-cu12, nvidia-cusparse-cu12, nvidia-cusolver-cu12, nvidia-cufft-cu12, nvidia-cudnn-cu12, nvidia-cuda-runtime-cu12, nvidia-cuda-nvrtc-cu12, nvidia-cuda-nvcc-cu12, nvidia-cuda-cupti-cu12, nvidia-cuda-cccl-cu12, nvidia-cublas-cu12, numpy, networkx, mujoco-mjx, mujoco, msgpack, ml_dtypes, mdurl, matplotlib, MarkupSafe, markdown-it-py, kiwisolver, Jinja2, jaxlib, jax-cuda12-plugin, jax, iniconfig, idna, humanize, gymnax, gymnasium, fsspec, fonttools, flax, filelock, etils, cycler, contourpy, cloudpickle, chex, charset-normalizer, certifi, ale-py, aiofiles, absl-py
+
+Successfully installed Farama-Notifications-0.0.6 Jinja2-3.1.6 MarkupSafe-3.0.3 PyOpenGL-3.1.10 PyYAML-6.0.3 Pygments-2.21.0 absl-py-2.5.0 aiofiles-25.1.0 ale-py-0.12.1 certifi-2026.7.22 charset-normalizer-3.5.1 chex-0.1.92 cloudpickle-3.1.2 contourpy-1.3.3 cycler-0.12.1 etils-1.14.0 filelock-4.2.4 flax-0.12.8 fonttools-4.63.0 fsspec-2026.7.0 glfw-2.10.2 gymnasium-1.3.0 gymnax-0.0.9 humanize-4.16.0 idna-3.19 iniconfig-2.3.1 jax-0.11.0 jax-cuda12-pjrt-0.11.0 jax-cuda12-plugin-0.11.0 jaxlib-0.11.0 kiwisolver-1.5.0 markdown-it-py-4.2.0 matplotlib-3.11.1 mdurl-0.1.2 ml_dtypes-0.6.0 mpmath-1.3.0 msgpack-1.2.1 mujoco-3.11.0 mujoco-mjx-3.11.0 networkx-3.7 numpy-2.5.2 nvidia-cublas-cu12-12.9.2.10 nvidia-cuda-cccl-cu12-12.9.27 nvidia-cuda-cupti-cu12-12.9.79 nvidia-cuda-nvcc-cu12-12.9.86 nvidia-cuda-nvrtc-cu12-12.9.86 nvidia-cuda-runtime-cu12-12.9.79 nvidia-cudnn-cu12-9.24.0.43 nvidia-cufft-cu12-11.4.1.4 nvidia-cusolver-cu12-11.7.5.82 nvidia-cusparse-cu12-12.5.10.65 nvidia-nccl-cu12-2.31.2 nvidia-nvjitlink-cu12-12.9.86 nvidia-nvshmem-cu12-3.7.2 opt_einsum-3.4.0 optax-0.2.8 orbax-checkpoint-0.12.4 pandas-3.0.5 pillow-12.3.0 platformdirs-4.11.3 pluggy-1.7.0 prometheus_client-0.26.0 protobuf-7.35.1 psutil-7.2.2 pyparsing-3.3.2 pytest-8.4.2 python-dateutil-2.9.0.post0 requests-2.34.2 rich-15.0.0 scipy-1.18.0 seaborn-0.13.2 simplejson-4.1.1 six-1.17.0 sympy-1.13.1 tensorstore-0.1.85 toolz-1.1.0 treescope-0.1.10 trimesh-5.0.0 typing_extensions-4.16.0 urllib3-2.7.0 uvloop-0.22.1 zipp-4.1.0
+Looking in links: /home/shuzel/envs/.build_cache/wheelhouse
+Processing /home/shuzel/envs/.build_cache/wheelhouse/torch-2.6.0+cpu-cp312-cp312-linux_x86_64.whl
+Installing collected packages: torch
+Successfully installed torch-2.6.0+cpu
+Looking in links: /home/shuzel/envs/.build_cache/wheelhouse
+Collecting jaxatari @ git+https://github.com/k4ntz/JAXAtari@035fc46bf149220a2f462c864873707ced334a4c (from -r /home/shuzel/rnd_pixel/environment_setup/requirements_from_source.txt (line 1))
+  Cloning https://github.com/k4ntz/JAXAtari (to revision 035fc46bf149220a2f462c864873707ced334a4c) to /tmp/pip-install-lk28sxk3/jaxatari_47c241a59bc242b3891a7c91e771621b
+  Running command git clone --filter=blob:none --quiet https://github.com/k4ntz/JAXAtari /tmp/pip-install-lk28sxk3/jaxatari_47c241a59bc242b3891a7c91e771621b
+  Running command git rev-parse -q --verify '035fc46bf149220a2f462c864873707ced334a4c^{commit}'
+  035fc46bf149220a2f462c864873707ced334a4c
+  Running command git checkout -q 035fc46bf149220a2f462c864873707ced334a4c
+  Resolved https://github.com/k4ntz/JAXAtari to commit 035fc46bf149220a2f462c864873707ced334a4c
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: jaxatari
+  Building wheel for jaxatari (pyproject.toml): started
+  Building wheel for jaxatari (pyproject.toml): finished with status 'done'
+  Created wheel for jaxatari: filename=jaxatari-0.1.0-py3-none-any.whl size=1178346 sha256=5952a3fedf8ab009a8239d1770881593a0b1c8fdd48c5db6f40ff709cd6d3108
+  Stored in directory: /home/shuzel/envs/.build_cache/pip/wheels/31/96/63/830903f0f59eabe5aecd3f64b1ab3e6aba10e3642e41d21087
+Successfully built jaxatari
+Installing collected packages: jaxatari
+Successfully installed jaxatari-0.1.0
+Looking in links: /home/shuzel/envs/.build_cache/wheelhouse
+Processing ./jaxtari_source/jaxtari_pixel_study
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: JAXtari
+  Building wheel for JAXtari (pyproject.toml): started
+  Building wheel for JAXtari (pyproject.toml): finished with status 'done'
+  Created wheel for JAXtari: filename=jaxtari-0.2.0-py3-none-any.whl size=1547802 sha256=66d93feea7a895b0f5b99bd5188bd5949c4b295eb80d25617eed0a4c37b60be2
+  Stored in directory: /tmp/pip-ephem-wheel-cache-f8syzlko/wheels/dd/ce/e6/0fcfcdaf1b2dda03ea4791fae3c9b1034e195ecde63fdd6b73
+Successfully built JAXtari
+Installing collected packages: JAXtari
+Successfully installed JAXtari-0.2.0
+No broken requirements found.
+jaxatari 0.1.0: same version, installed files differ (161 against 161 files)
+87 distributions equal file by file, 1 differ
+7.1G	/home/shuzel/envs/atari_pixels_jax
+49740
+build of /home/shuzel/envs/atari_pixels_jax ended 2026-11-18T22:38:11-05:00

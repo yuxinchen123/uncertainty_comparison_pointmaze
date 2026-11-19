@@ -1,0 +1,442 @@
+{
+ "absl-py": {
+  "files": 29,
+  "record_sha256": "a9aed8ee5055346cfedc1030bbaf9761e09847a1da05917d0bebe7daf2d67f2b",
+  "version": "2.5.0"
+ },
+ "aiofiles": {
+  "files": 14,
+  "record_sha256": "27ece7ee7c77363df6419d9a575955d0b4b0368dde77d46b17a60bb35506c4df",
+  "version": "25.1.0"
+ },
+ "ale-py": {
+  "files": 123,
+  "record_sha256": "3767a325ca6a3a291abe52474d947dfbc1767b928aa14537e491f09535a9b505",
+  "version": "0.12.1"
+ },
+ "certifi": {
+  "files": 11,
+  "record_sha256": "ed9fa170cfde85d0a9d84335e73bc616bd26f37341402759acd42989e45060ab",
+  "version": "2026.7.22"
+ },
+ "charset-normalizer": {
+  "files": 20,
+  "record_sha256": "b0aec0b5678d31147d09de4ec2ed2be0b4febb05dbaefa1850997bed6f08dfdc",
+  "version": "3.5.1"
+ },
+ "chex": {
+  "files": 26,
+  "record_sha256": "7c2e000b727925058c889be64c1b28a71897d6bda04dbcca839c2dbbb3cde96e",
+  "version": "0.1.92"
+ },
+ "cloudpickle": {
+  "files": 6,
+  "record_sha256": "275e90d4555c73653a254e9ddfe0ff95bb18ab611aed94967ce335e0ff55560e",
+  "version": "3.1.2"
+ },
+ "contourpy": {
+  "files": 23,
+  "record_sha256": "160e18c61dfb85afe60dd44dc32a40d9e5c4b063b3f0d47491a12b418270c9d0",
+  "version": "1.3.3"
+ },
+ "cycler": {
+  "files": 6,
+  "record_sha256": "5524dd4eba2cf2c7fb8f8cc596701d96782d24cc3bf3a22a3db86a6a605c2256",
+  "version": "0.12.1"
+ },
+ "etils": {
+  "files": 101,
+  "record_sha256": "9753042a9e2f9452cdcec84ab63aad92ee2a0379f4129b013463940596b040fa",
+  "version": "1.14.0"
+ },
+ "farama-notifications": {
+  "files": 5,
+  "record_sha256": "4999cb4f7dd313c68b7f24551146eb99da5d853c115cb46709c0503aedd8b382",
+  "version": "0.0.6"
+ },
+ "filelock": {
+  "files": 27,
+  "record_sha256": "90d3052da0eef0d84cf205fc089d898bab4fadad805633a7c542b944b5bd98eb",
+  "version": "4.2.4"
+ },
+ "flax": {
+  "files": 132,
+  "record_sha256": "715b4fd9e3ae22044c96707c41f45bc93fbe79780e04fb2d9784a8abe33f39fe",
+  "version": "0.12.8"
+ },
+ "fonttools": {
+  "files": 357,
+  "record_sha256": "88d77c7464a4d68b9fa0b13b7bb705283e68b2c183a01932188589dbae4cf055",
+  "version": "4.63.0"
+ },
+ "fsspec": {
+  "files": 60,
+  "record_sha256": "1aa41b034df7ec5c1e6e6c62099923a1b39d999ef92629e69ce9f5180c36c482",
+  "version": "2026.7.0"
+ },
+ "glfw": {
+  "files": 11,
+  "record_sha256": "57e01ae8a6528f49d5ae42101bc94435bea17e3fa4bac54b075a4fca27927ee4",
+  "version": "2.10.2"
+ },
+ "gymnasium": {
+  "files": 224,
+  "record_sha256": "e4b6d8f7474d819de6bb1dbadf33d6d12954ca29baffe8325ab8e2e300b5e3c7",
+  "version": "1.3.0"
+ },
+ "gymnax": {
+  "files": 53,
+  "record_sha256": "5e9bf27a114e7b26caa60fc14032d2d45e78118ce6cf987300fdeedef35d5c88",
+  "version": "0.0.9"
+ },
+ "humanize": {
+  "files": 81,
+  "record_sha256": "ecd7bc59f1085d2dea2c650a9ca91737b03facbb603c9623fd1e5b31ea2563a2",
+  "version": "4.16.0"
+ },
+ "idna": {
+  "files": 15,
+  "record_sha256": "6078fd56ba241c3eb272e086642b44465bf0683e5aa5d439e0da898ad88a5909",
+  "version": "3.19"
+ },
+ "iniconfig": {
+  "files": 9,
+  "record_sha256": "75f817b89bdc5c21051de9ee3edb19b8c458590d7cf20320a5a0218cfcf64964",
+  "version": "2.3.1"
+ },
+ "jax": {
+  "files": 627,
+  "record_sha256": "f1f761cd8ab33d9b091fd268068fc9d801a6eaee1d84a3c8c720bcf3a4f66683",
+  "version": "0.11.0"
+ },
+ "jax-cuda12-pjrt": {
+  "files": 7,
+  "record_sha256": "139865f27527df3b5e09820212c2542e78d00caaa5f660a5dcf25a0464df6f07",
+  "version": "0.11.0"
+ },
+ "jax-cuda12-plugin": {
+  "files": 16,
+  "record_sha256": "3faf5ae0b43626c98367443c7320b11f94baeb45e75f24dcd13256403a0198f8",
+  "version": "0.11.0"
+ },
+ "jaxatari": {
+  "files": 161,
+  "record_sha256": "2c2d6c2aacb24eb9906dc4463af11057510edae5083e5ef72bfde7b1593f1971",
+  "version": "0.1.0"
+ },
+ "jaxlib": {
+  "files": 131,
+  "record_sha256": "98ef04fc7e0ec82c89527f7eecef41f888f82d3c6399690f87de4ff53ac3c59c",
+  "version": "0.11.0"
+ },
+ "jaxtari": {
+  "files": 243,
+  "record_sha256": "959ff6acd1d7048cbcf2a5fe121b91c224b9d55c69796cb222cfab5eeb9be24f",
+  "version": "0.2.0"
+ },
+ "jinja2": {
+  "files": 30,
+  "record_sha256": "c761f3e9c42a42a54938814881033dbf14baad07e7875ea924cce2738d32884f",
+  "version": "3.1.6"
+ },
+ "kiwisolver": {
+  "files": 9,
+  "record_sha256": "762a78c250b37feb0b397031c3f0e889f2d748f7eb89ad770f9903dc18e89a27",
+  "version": "1.5.0"
+ },
+ "markdown-it-py": {
+  "files": 73,
+  "record_sha256": "5903569921b244b76b759e7262d9f9c910622c7997f6c360b5606a2e6c460d12",
+  "version": "4.2.0"
+ },
+ "markupsafe": {
+  "files": 10,
+  "record_sha256": "cf9f59e9e43839cc3022ff9a8dd4418b9262638920df34b091c4854bd3698719",
+  "version": "3.0.3"
+ },
+ "matplotlib": {
+  "files": 600,
+  "record_sha256": "c0be44af84e3967798ba6bcc92f585fb5184e7f3ffa47c0024dfce81b411bb55",
+  "version": "3.11.1"
+ },
+ "mdurl": {
+  "files": 10,
+  "record_sha256": "a400de6906bcb2c76537a06034a260e25fa9cb0843b9aad3da0696777d3c7c9e",
+  "version": "0.1.2"
+ },
+ "ml-dtypes": {
+  "files": 9,
+  "record_sha256": "5f35e92d035c2dd95cb2e7cf2f04611e74a7db5198c37c8e6263c4745c0e4d8f",
+  "version": "0.6.0"
+ },
+ "mpmath": {
+  "files": 91,
+  "record_sha256": "936ecb6a9fb02cca6dde1dcd62743362d3251e794361fbeaefca160d2efe88d2",
+  "version": "1.3.0"
+ },
+ "msgpack": {
+  "files": 9,
+  "record_sha256": "195000bfbd2efc459757b37d36de1a9365dd65b33347307ca187a29c5516c0c4",
+  "version": "1.2.1"
+ },
+ "mujoco": {
+  "files": 244,
+  "record_sha256": "cfa78b63009233b416c91217190a19810836383abac0bf2ceeda3c53dc24a143",
+  "version": "3.11.0"
+ },
+ "mujoco-mjx": {
+  "files": 194,
+  "record_sha256": "f356c51fadc4f59964dc4ce9188c400d95503f9d0e96b36d99b072e39fedc743",
+  "version": "3.11.0"
+ },
+ "networkx": {
+  "files": 603,
+  "record_sha256": "c94f838a57e4c0527bb950ea80ab0de52f05b5011e13783b06ecc569f94e20b1",
+  "version": "3.7"
+ },
+ "numpy": {
+  "files": 925,
+  "record_sha256": "d8313b4f7c8d02f3b0493b52b03674bc575a20186a4d4539b795b8a6b7abaeb9",
+  "version": "2.5.2"
+ },
+ "nvidia-cublas-cu12": {
+  "files": 13,
+  "record_sha256": "fef7745ac5f0feb75531889ad6b311747b6ca2e62b58c106a2a25efbb98c04ef",
+  "version": "12.9.2.10"
+ },
+ "nvidia-cuda-cccl-cu12": {
+  "files": 1701,
+  "record_sha256": "0723dc2202654b2976e7bebc8b330312d664a4e8a5e5a4ccab1fc736d7965cfc",
+  "version": "12.9.27"
+ },
+ "nvidia-cuda-cupti-cu12": {
+  "files": 46,
+  "record_sha256": "d773902ea39c058cfc7d43d1561a3bb0f91b47aabde12f2ffadc398957ccf5e6",
+  "version": "12.9.79"
+ },
+ "nvidia-cuda-nvcc-cu12": {
+  "files": 34,
+  "record_sha256": "1998814de05a505080e56553cdd97f31fddd6f5f77d3096572148136b4bd7a4f",
+  "version": "12.9.86"
+ },
+ "nvidia-cuda-nvrtc-cu12": {
+  "files": 9,
+  "record_sha256": "1926dfb1b1a3e2094b9f071764cb4eabab91f2ddf02138849770613fb0f14334",
+  "version": "12.9.86"
+ },
+ "nvidia-cuda-runtime-cu12": {
+  "files": 103,
+  "record_sha256": "de0763e0c8be5d6b03e6fe7fb5ce88cb984984e510a41399cf6229cda0eecce8",
+  "version": "12.9.79"
+ },
+ "nvidia-cudnn-cu12": {
+  "files": 30,
+  "record_sha256": "a593cf2aadc764fd712f69377fa803701f53f9baab98407d635ef480600cb164",
+  "version": "9.24.0.43"
+ },
+ "nvidia-cufft-cu12": {
+  "files": 10,
+  "record_sha256": "17a64b3014a64c01d5193a7e496b21ddc858ffdf0c4ab5278f72376f35327f5a",
+  "version": "11.4.1.4"
+ },
+ "nvidia-cusolver-cu12": {
+  "files": 12,
+  "record_sha256": "88c13f24ed9f0f4ebe4d0e452d979622665f2632f456b5e36c55dfe88dfe0e82",
+  "version": "11.7.5.82"
+ },
+ "nvidia-cusparse-cu12": {
+  "files": 7,
+  "record_sha256": "a5c582295b029e4a1955e508da6f2bebdef5c2423072f9dda388e5df3bb803eb",
+  "version": "12.5.10.65"
+ },
+ "nvidia-nccl-cu12": {
+  "files": 74,
+  "record_sha256": "53ee228f92cc9cace82351cc69dd5344b16eb300cdfb58b4b35754be6c62c2d1",
+  "version": "2.31.2"
+ },
+ "nvidia-nvjitlink-cu12": {
+  "files": 6,
+  "record_sha256": "aa46e5df1145cb989d2f57c20b9ae77d68f3a1bbd1c19bd80f04f7ab8ffa33d2",
+  "version": "12.9.86"
+ },
+ "nvidia-nvshmem-cu12": {
+  "files": 93,
+  "record_sha256": "acfb4849be7372734a3bc8126f0a6a5fb6a4b5f8472e6ae1599f99c4e2d8403e",
+  "version": "3.7.2"
+ },
+ "opt-einsum": {
+  "files": 31,
+  "record_sha256": "7bbc1e558ed8e6855625e1d439f1e5667ab78ecbaa4bf2860ee317fa233b336a",
+  "version": "3.4.0"
+ },
+ "optax": {
+  "files": 133,
+  "record_sha256": "f4047b3014675bba1d2b7e3c9c6f284a770ce4502b512665b82178dd8ac94251",
+  "version": "0.2.8"
+ },
+ "orbax-checkpoint": {
+  "files": 903,
+  "record_sha256": "4145fab62eaf2c3591fd1f95db2280ddf2da96e057c79828358a520d7985be62",
+  "version": "0.12.4"
+ },
+ "packaging": {
+  "files": 28,
+  "record_sha256": "3c05cc5f0530bbe49a803d4e05e02a64b69530234f1665e395a9a44be5b5e64b",
+  "version": "26.3"
+ },
+ "pandas": {
+  "files": 1520,
+  "record_sha256": "25b85c71460d9e9d7a2c1991c95d8316653413846a881424623bf6a15f20a367",
+  "version": "3.0.5"
+ },
+ "pillow": {
+  "files": 139,
+  "record_sha256": "d31d4183df4d19ea8f308010c55f004736ce8a38384f9e1996561562405d42a6",
+  "version": "12.3.0"
+ },
+ "pip": {
+  "files": 475,
+  "record_sha256": "7a7aa41e05efbba6424c8cc32b5e3e4e82718fa3dc41bef22387e2f5f9938978",
+  "version": "26.2.1"
+ },
+ "platformdirs": {
+  "files": 13,
+  "record_sha256": "5d4f34edc2932ca728e71c3d3539a719bbb9c0d668ceeae28a6f97cb52a32655",
+  "version": "4.11.3"
+ },
+ "pluggy": {
+  "files": 18,
+  "record_sha256": "6f8eda2fe2f50c234fc6dcf7f98404a0c04cea1c710160bcb6c152458f90ed4f",
+  "version": "1.7.0"
+ },
+ "prometheus-client": {
+  "files": 36,
+  "record_sha256": "f0e3a53ab42a18fc3fed5d1cb9b8c3527feb6fe22e79d7b05474d166dfcdf026",
+  "version": "0.26.0"
+ },
+ "protobuf": {
+  "files": 58,
+  "record_sha256": "09baf8318bf350b0ebcfaa1f7bf84b034b911c60a37161d4774193de8308068f",
+  "version": "7.35.1"
+ },
+ "psutil": {
+  "files": 15,
+  "record_sha256": "1579c0d45840f20b939bf85c193fe5aab862725f55871a3918278f65eb271016",
+  "version": "7.2.2"
+ },
+ "pygments": {
+  "files": 348,
+  "record_sha256": "7f56b011e1ba09fe67f70656082634137db3917ef08f65ca918c277dac871502",
+  "version": "2.21.0"
+ },
+ "pyopengl": {
+  "files": 2898,
+  "record_sha256": "e2d1f22672cf63277b8e1943df17f380945d4078ba2d3cdf8508884ff091f91b",
+  "version": "3.1.10"
+ },
+ "pyparsing": {
+  "files": 22,
+  "record_sha256": "ab2d735ad88fabfa56f8d6c4631b3f2eec334772472347e7e82699488a432418",
+  "version": "3.3.2"
+ },
+ "pytest": {
+  "files": 80,
+  "record_sha256": "ed36f37b8c6ad190578002857b13cba5484f1ef0a369e0836e7aea9cfbff41e9",
+  "version": "8.4.2"
+ },
+ "python-dateutil": {
+  "files": 24,
+  "record_sha256": "5047df0330028e193a29552bd9dba0c6c516857660e30bdbc51d9b7e17def7bd",
+  "version": "2.9.0.post0"
+ },
+ "pyyaml": {
+  "files": 23,
+  "record_sha256": "3c82f23fd979a29fd88cec647df69de8225b7082d6af759a82d85bad5086600b",
+  "version": "6.0.3"
+ },
+ "requests": {
+  "files": 25,
+  "record_sha256": "cac45482b6b29799599982454bd12c6cb975bb5dbe2026c5e99192fcad52af71",
+  "version": "2.34.2"
+ },
+ "rich": {
+  "files": 104,
+  "record_sha256": "edc45a1c77384e6f2b96dd42060a61b505287fb645f3dbc54068e28489f27055",
+  "version": "15.0.0"
+ },
+ "scipy": {
+  "files": 1431,
+  "record_sha256": "33822962a72cd0e96cb57ce22ed6b3197f753846852bddf2fdc6618078a50e34",
+  "version": "1.18.0"
+ },
+ "seaborn": {
+  "files": 57,
+  "record_sha256": "53f0cc7356985c5afd0129e08f885c858c14305629d69a7445da0c72d72aeedd",
+  "version": "0.13.2"
+ },
+ "simplejson": {
+  "files": 49,
+  "record_sha256": "25fd3675e3aa92fa4894d8a63eca883ffa1c714cc7df5a927bc7caa80f061424",
+  "version": "4.1.1"
+ },
+ "six": {
+  "files": 5,
+  "record_sha256": "7de1212ea3d05f764c13200c76306799612c11522cf7eabad7a0b73067f4e1e0",
+  "version": "1.17.0"
+ },
+ "sympy": {
+  "files": 1553,
+  "record_sha256": "744c2c2d89bfa351e6adebcf5cc93bb60daa471317616ba0a36ccc4604c2f62f",
+  "version": "1.13.1"
+ },
+ "tensorstore": {
+  "files": 11,
+  "record_sha256": "86bda81f2951302c48b85cfb0aa96488cf40e9212a15f32fcdb08020e288a0cb",
+  "version": "0.1.85"
+ },
+ "toolz": {
+  "files": 37,
+  "record_sha256": "ba1b2941c1a69784b2d9345a0fd0ff01ca55bd5a661ded9d1179d8ec8550a89d",
+  "version": "1.1.0"
+ },
+ "torch": {
+  "files": 11027,
+  "record_sha256": "cc9f43e8ba8fd3ac88dc346c9168cfaf9e6efdc846c07d516726a828a28d0c62",
+  "version": "2.6.0+cpu"
+ },
+ "treescope": {
+  "files": 57,
+  "record_sha256": "87f6ac804fd9fb6cf2639535ab90939cd6b330a93fc75bc31062602640806ef6",
+  "version": "0.1.10"
+ },
+ "trimesh": {
+  "files": 143,
+  "record_sha256": "8adc79c1569678a228eb86eaca4a5f216bb9d7bdfa5978a567fd2539e855061b",
+  "version": "5.0.0"
+ },
+ "typing-extensions": {
+  "files": 4,
+  "record_sha256": "73026746e3fbdee22ed45b0f3601c26942b6c7ab7572045a1e7945d1ee0c42e4",
+  "version": "4.16.0"
+ },
+ "urllib3": {
+  "files": 41,
+  "record_sha256": "f72c2f537fede501ef16f080e1321b5da76c0052e83739f48fbcea556762c5da",
+  "version": "2.7.0"
+ },
+ "uvloop": {
+  "files": 62,
+  "record_sha256": "180841ab77f9303179b42ca478ec7826d65f4ae2e543a4e9465f93d2cea01a21",
+  "version": "0.22.1"
+ },
+ "wheel": {
+  "files": 19,
+  "record_sha256": "b89320ae8d2344064b793684e9d0b1330e395b531a23387693bb8b161b59e1de",
+  "version": "0.48.0"
+ },
+ "zipp": {
+  "files": 11,
+  "record_sha256": "cf5ed72c9c3eba3cd83841bbc8f8d27f9782beee8213002d1d0b6a9dbed198ec",
+  "version": "4.1.0"
+ }
+}

@@ -97,3 +97,45 @@
   AntMaze 12 waiting jobs.
 - 2026-11-18 17:32 PT: the first unit finished: RND at weight 2, seed 13, on an RTX A4500 (jaguar03, job 6956649),
   12,207 of 12,207 updates in 5 hours 8 minutes (12:24 to 17:32 PT).
+- 2026-11-18 19:14 PT, user instruction of about 19:00 PT ("MIT is free now, you can also send those to MIT
+  requesting H200 (you might be able to pack more to MIT because they are H200)", then "send montezuma to mit not
+  antmaze"): MIT added for this study (plan decision 14). Read through the shared connection held on portal04
+  (open since 2026-11-17 11:55 PT; `ssh -O check mit`, no new login): account shuzel had no MIT job; home 68.9 of
+  200 GB, scratch 908 of 1,024 GB. Everything of this study on MIT goes to home (backed up, room for the 7.1 GB
+  environment and about 280 MB per finished pack).
+- 2026-11-18 19:16 PT: the asset pack copied to `/home/shuzel/rnd_pixel/assets/` on MIT; `sha256sum -c` against the
+  gates folder's `asset_pack_sha256.txt`: all 4,531 SHA-256 equal (the UVA pack was hashed again first and equals
+  that list).
+- 2026-11-18 19:18 to 19:38 PT: the environment `/home/shuzel/envs/atari_pixels_jax` built with the gates folder's
+  `build_environment.sh`, unchanged. The first try downloaded from PyPI on the MIT login node at about 90 to 100 kB/s
+  (conda-forge was fast), which would have taken hours for the 3.4 GB of wheels; it was stopped after 5 minutes (its
+  own processes) and its partial environment removed. A `pip download` on UVA was as slow (about 200 kB/s) and was
+  stopped too. The same 88 wheel files were then taken from Gautschi's build cache of 2026-11-18 (`pip download` on
+  the Gautschi login node, 20 s), copied Gautschi to UVA to MIT (SHA-256 equal on UVA and MIT:
+  `infrastructure/environment_setup_mit/wheelhouse_sha256.txt`), and the build ran again with `PIP_NO_INDEX=1
+  PIP_FIND_LINKS=<that folder>` (conda packages from conda-forge as before; JAXAtari cloned from GitHub at its pinned
+  commit; hatchling 1.33.0 for the two source builds, as on Gautschi). Result: Python 3.12.13; `pip check` clean;
+  the 88 distributions equal Gautschi's file by file (88 of 88) and UVA's in 87 of 88: JAXAtari (not imported by the
+  trainer) differs only in its `WHEEL` file (written by hatchling 1.33.0 there, 1.32.0 on UVA), as on Gautschi. 7.1
+  GB, 49,740 files. Records in `infrastructure/environment_setup_mit/`. The download caches and the wheel copies on
+  MIT, UVA and Gautschi were removed afterwards.
+- 2026-11-18 19:30 PT: MIT entry added to `infrastructure/remote_fleet_servers.json` (not ready) and to the tooling's
+  `scripts/pixel_sweep_campaign/server_table.json`. Pools `advanced-h200` (mit_normal_gpu with the Advanced account
+  and QoS) and `preemptable-h200` (mit_preemptable, the nodes shared with mit_normal_gpu and node3401-c1 left out):
+  `--gpus=h200:1 --nodes=1 --ntasks=1 --cpus-per-task=4 --mem=24G --requeue --open-mode=append`, the card guard with
+  `GUARD_ACTION=requeue` in every job script, 2-day jobs (both pools' limit; rule mit-cluster-slurm.md asks for the
+  partition maximum), at most 4 jobs each (the account's caps). `--mem=24G` from the four-copy smoke jobs' MaxRSS
+  (8.3 to 9.4 GB). The ssh command is `ssh -o BatchMode=yes -o ControlMaster=no -o ProxyCommand=false mit`: with the
+  shared connection closed it fails on portal04 without contacting MIT (checked with a missing control socket:
+  exit 255, nothing sent), so no command can become a new login; every call also checks `ssh -O check mit` first.
+  Units held at once: 16 (2 per card), kept in the first pool's limit, because `hand_over` counts every four-copy
+  unit a server holds against each pool's limit.
+- 2026-11-18 19:40 PT: `remote_fleet.py smoke --server mit`: `prepare` sent code copy 2 (commit 08b7c4c8), the job
+  scripts and the smoke files; smoke jobs 29603827 (advanced-h200) and 29603828 (preemptable-h200), 20 minutes each.
+  Both waited (Priority); the scheduler's estimate for 29603827 was 21:18 PT at 19:44 PT (164 waiting H200 jobs on
+  mit_normal_gpu and 280 on mit_preemptable then, from all users).
+- 2026-11-18 19:41 PT: pack-size profile job 29603853 (advanced-h200, one H200, 65 minutes; scripts in
+  `infrastructure/mit_pack_size_profile/`): four settings of at most 15 minutes each on one card, the default program
+  with four copies (seeds 1 to 4) and eight copies (seeds 1 to 8, reset lane budget 32), and the fast last layer
+  (sharing group 16, both records) with four and eight copies. Estimated start 22:00 PT at 19:44 PT. All three ids in
+  `slurm/submitted_jobids_mit.txt`.
