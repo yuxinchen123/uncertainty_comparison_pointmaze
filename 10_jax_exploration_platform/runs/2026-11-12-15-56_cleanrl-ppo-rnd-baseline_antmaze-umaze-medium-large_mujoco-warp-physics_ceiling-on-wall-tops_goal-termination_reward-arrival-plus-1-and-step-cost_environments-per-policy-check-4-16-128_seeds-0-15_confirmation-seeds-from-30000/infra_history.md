@@ -1073,3 +1073,5 @@ Times are Pacific, read from the clock or from scheduler records.
 - 2026-11-18 22:35 PT (window record): fault-guard respawn 30, on the angular bound, the second in a method block:
   the fast step 0.1 with hold's U-maze step-cost fresh seeds at learning rate 1e-4, weight 1/64: seed 30162,
   window 118, 108.8 rad/s, 14.2 m/s. At 22:45 PT all 15 unfinished ant units train on UVA.
+- 2026-11-18 22:48 PT (window record): fault-guard respawn 31, on the angular bound: fresh-seeds-rk4_antmaze-umaze_reward-arrival-plus-one_first-arrival-hold_learning-rate-3e-05_intrinsic-weight-0.0625, seed 30247, window 204,
+  104.7 rad/s, 14.2 m/s. At 23:06 PT all 15 unfinished ant units train on UVA.
