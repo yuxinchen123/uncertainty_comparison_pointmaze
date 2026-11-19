@@ -568,6 +568,27 @@ def non_finite(value):
     return 0
 
 
+def exits_before_counted_key(runs):
+    """Split the runs whose first exit came before their first counted key: (all, key carried, unexplained).
+
+    Events of the random warm-up rollouts are not counted, so a key picked up there and carried into training
+    gives an exit before the first counted key; a door opened before that key, and at or before the exit, shows
+    the key was held (2026-11-19: every run of seed 14 opened a door and left in update 1, its first counted key
+    in update 4). The rest would be an error of the logging or the game.
+    before: first steps key 60032, door 9472, exit 12032 ; after: in "all" and "key carried"
+    before: first steps key None, door None, exit 12032 ; after: in "all" and "unexplained"
+    """
+    # the runs with an exit before any counted key
+    early = [run for run in runs if first_step(run, "left_start_room") is not None
+             and (first_step(run, "key_pickup") is None
+                  or first_step(run, "key_pickup") > first_step(run, "left_start_room"))]
+    # of them, those whose door shows a key held from the warm-up
+    carried = [run for run in early if first_step(run, "door_opened") is not None
+               and first_step(run, "door_opened") <= first_step(run, "left_start_room")
+               and (first_step(run, "key_pickup") is None or first_step(run, "door_opened") < first_step(run, "key_pickup"))]
+    return early, carried, [run for run in early if run not in carried]
+
+
 def checks_section(data):
     """The standing checks: exits with both doors locked, key before exit, values that are not finite, records."""
     runs = [run for run in data["runs"] if run["first"] is not None]
@@ -583,17 +604,8 @@ def checks_section(data):
     lines = [f"1. **Exits from the start room with both doors locked:** {sum(count for _, count in locked)} in "
              f"{len(recorded)} runs with recorded events (expected: 0)."]
     lines += [f"   - {name(run)}: {count}" for run, count in locked]
-    # 2. the same fact read from the first times: the first key comes before the first exit. Events of the
-    # random warm-up rollouts are not counted, so a key picked up there and carried into training gives an exit
-    # before the first counted key; a door opened before that key shows the key was held (2026-11-19: every run
-    # of seed 14 opened a door and left in update 1, its first counted key in update 4)
-    early = [run for run in recorded if first_step(run, "left_start_room") is not None
-             and (first_step(run, "key_pickup") is None
-                  or first_step(run, "key_pickup") > first_step(run, "left_start_room"))]
-    carried = [run for run in early if first_step(run, "door_opened") is not None
-               and first_step(run, "door_opened") <= first_step(run, "left_start_room")
-               and (first_step(run, "key_pickup") is None or first_step(run, "door_opened") < first_step(run, "key_pickup"))]
-    unexplained = [run for run in early if run not in carried]
+    # 2. the same fact read from the first times: the first key comes before the first exit
+    early, carried, unexplained = exits_before_counted_key(recorded)
     # before: 61 runs of seed 14 carried a key ; after: "61 (seed 14: 61)"
     by_seed = {}
     for run in carried:

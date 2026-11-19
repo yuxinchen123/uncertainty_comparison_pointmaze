@@ -404,3 +404,10 @@
   counts such runs apart (a door opened before the first counted key) and lists only the runs with no such door
   (expected 0); 16 report tests passed (job 6958406, gates ledger); report.py copied into frozen copy 3, which the
   monitor runs as a new process at each pass.
+- 2026-11-19 07:09 PT: **development document refreshed at the 20 and 50 million marks** (every configuration has at least one
+  run past 50 million steps; records read 2026-11-19 07:06 PT): section "Pixel Montezuma: the fast last layer
+  against RND" of /p/rlprojects/RND/10_jax_exploration_platform/development_document/RND_JAX_exploration_development_document.pdf
+  (generator make_all.py, PDF rebuilt, no line too wide, pages 62 to 65 looked at). The exit-before-key check now
+  uses the live report's new function `exits_before_counted_key` (same split as the report; report.py copied into
+  copy 3 again), and the prose states that every seed-14 run opens a door and leaves in its first update with a key
+  carried from the random warm-up. 12 generator tests and 16 report tests passed (report job 6958440, gates ledger).

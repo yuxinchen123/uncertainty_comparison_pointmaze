@@ -99,6 +99,16 @@ class SpliceTest(unittest.TestCase):
             make_all.splice(self.TEXT + self.TEXT, "x", "new")
 
 
+class SeedsInWordsTest(unittest.TestCase):
+    """The seeds of the runs that carried a key out of the warm-up, as the prose writes them."""
+
+    def test_seeds_in_words(self):
+        """One seed, two seeds in order, and none."""
+        self.assertEqual(make_all.seeds_in_words([{"seed": 14}, {"seed": 14}]), "seed $14$")
+        self.assertEqual(make_all.seeds_in_words([{"seed": 15}, {"seed": 14}]), "seeds $14$ and $15$")
+        self.assertEqual(make_all.seeds_in_words([]), "no seed")
+
+
 class MillionTest(unittest.TestCase):
     """Two decimals below a billion steps, whole millions above."""
 

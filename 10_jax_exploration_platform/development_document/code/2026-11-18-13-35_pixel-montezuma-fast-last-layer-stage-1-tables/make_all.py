@@ -202,14 +202,14 @@ def check_counts(data):
     runs = [run for run in data["runs"] if run["first"] is not None and not run["archived"]]
     events = [run for run in runs if run["has_event_fields"]]
     locked = sum(run["first"]["event_totals"][report.LOCKED_EXIT] for run in events)
-    early = sum(report.first_step(run, EXIT) is not None and (
-        report.first_step(run, "key_pickup") is None or report.first_step(run, "key_pickup") > report.first_step(run, EXIT))
-        for run in events)
+    # an exit before the first counted key is expected only from a key carried out of the random warm-up
+    _, _, unexplained = report.exits_before_counted_key(events)
     broken = sum(report.non_finite(run["first"]) + report.non_finite(run["windows"]) for run in runs)
     silent = sum(not unit["has_records"] and unit["update"] > 0 for unit in data["units"])
     failed = sum(unit["state"] == "failed" for unit in data["units"])
     return [("exits from the start room with both doors locked", locked, len(events), "runs with game events"),
-            ("runs whose first exit came before their first key", early, len(events), "runs with game events"),
+            ("runs whose first exit came before their first counted key with no door opened before that key",
+             len(unexplained), len(events), "runs with game events"),
             ("values that are not finite in the record files", broken, len(runs), "runs with records"),
             ("units past their first update without record files", silent, len(data["units"]), "units"),
             ("failed units", failed, len(data["units"]), "units")]
@@ -221,6 +221,20 @@ def checks_tabular(checks):
              "\\textbf{check} & \\textbf{found} & \\textbf{checked} & \\textbf{expected} \\\\", "\\midrule"]
     lines += [f"{name} & {found} & {checked} {what} & 0 \\\\" for name, found, checked, what in checks]
     return "\n".join(lines + ["\\bottomrule", "\\end{tabular}"])
+
+
+def seeds_in_words(runs):
+    """The distinct seeds of some runs, written for the prose.
+
+    before: runs of seeds [14, 14, 14] ; after: "seed $14$"      before: seeds [15, 14] ; after: "seeds $14$ and $15$"
+    before: no runs ; after: "no seed"
+    """
+    seeds = sorted({run["seed"] for run in runs})
+    if not seeds:
+        return "no seed"
+    names = [f"${seed}$" for seed in seeds]
+    return ("seed " if len(seeds) == 1 else "seeds ") + (names[0] if len(names) == 1 else
+                                                         ", ".join(names[:-1]) + " and " + names[-1])
 
 
 def numbers_block(data, split, archived, checks, read_at):
@@ -235,6 +249,8 @@ def numbers_block(data, split, archived, checks, read_at):
         return sum(report.first_step(run, "door_opened") is not None and report.first_step(run, EXIT) is None
                    for run in runs)
 
+    # runs that left the start room with a key carried out of the random warm-up, and their seeds
+    _, carried, _ = report.exits_before_counted_key([run for run in started if run["has_event_fields"]])
     rnd = [run for run in started if run["method"] == "rnd"]
     fast = [run for run in started if run["method"] != "rnd"]
     exits = sorted(report.first_step(run, EXIT) for run in archived["runs"] if report.first_step(run, EXIT) is not None)
@@ -251,6 +267,7 @@ def numbers_block(data, split, archived, checks, read_at):
         "ArchivedExit": million(statistics.median(exits)), "ArchivedExitFirst": million(exits[0]),
         "ArchivedExitLast": million(exits[-1]),
         "LockedExits": checks[0][1], "ExitBeforeKey": checks[1][1], "NonFinite": checks[2][1],
+        "WarmUpKeyRuns": len(carried), "WarmUpKeySeeds": seeds_in_words(carried),
     }
     return "\n".join(f"\\newcommand{{\\PixelFll{name}}}{{{value}}}" for name, value in values.items())
 
