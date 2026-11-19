@@ -428,3 +428,15 @@
      next pass reads the verdict once more. While the other session holds the account's 4 preemptable cards, the
      loop's MIT share gives that pool no jobs anyway.
 - 2026-11-19 12:17 PT: the second read passed at 12:16 PT (first update: 0 numbers outside the rule, every field equal), and MIT's preemptable pool takes units again, as eight-copy packs. The loop sent its jobs 29678001 and 29678003 (MIT ledger) at 12:16 PT; they were given nice 3,000,000 by hand at once, ahead of the yield step's next pass, since the other session's jobs are on MIT (its waiting preemptable job 29625540 keeps nice 0).
+- 2026-11-19 12:28 PT: three pinned jobs that still waited were cancelled by their ledger ids (sl5nw), as the monitor's 12:21 PT
+  list asked (ceiling 3): 6958810 (cheetah01, A100 40 GB, waiting on sl5nw's own card cap, which kept the planner
+  from placing a yuxinchen job on that node), 6958457 (cheetah04, A100, 260 minutes on Priority) and 6958545
+  (serval06, H100 NVL, 160 minutes on Priority). The study's top-up then sent 3 jobs that wait by card type
+  (6958902 and 6958903, A100 40 GB; 6958904, A40); the two A100 40 GB jobs, waiting on Priority beside a free
+  card on cheetah01 that Slurm holds for another user, got a 2-hour limit. yuxinchen had dropped from 37 to 25
+  cards as ten 8-hour worker jobs ended after their units; the monitor's 12:21 PT pass had pinned 9 yuxinchen jobs
+  on free cards. The monitor also lists 3 runs whose attempts ran under code copies 2 (08b7c4c8) and 3 (48019fc4):
+  src/, train_final.py, scripts/atari_pixel_campaign/ and every training option of the one-copy and four-copy
+  profiles are equal between the two copies (card_profiles.json differs only in how the archived reference run is
+  named, which profiles may continue others' packs, and the card-memory bound for four copies), so those runs
+  trained with the same code and options throughout.
