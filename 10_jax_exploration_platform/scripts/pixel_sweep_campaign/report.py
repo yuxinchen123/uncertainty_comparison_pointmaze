@@ -583,12 +583,29 @@ def checks_section(data):
     lines = [f"1. **Exits from the start room with both doors locked:** {sum(count for _, count in locked)} in "
              f"{len(recorded)} runs with recorded events (expected: 0)."]
     lines += [f"   - {name(run)}: {count}" for run, count in locked]
-    # 2. the same fact read from the first times: the first key comes before the first exit
+    # 2. the same fact read from the first times: the first key comes before the first exit. Events of the
+    # random warm-up rollouts are not counted, so a key picked up there and carried into training gives an exit
+    # before the first counted key; a door opened before that key shows the key was held (2026-11-19: every run
+    # of seed 14 opened a door and left in update 1, its first counted key in update 4)
     early = [run for run in recorded if first_step(run, "left_start_room") is not None
              and (first_step(run, "key_pickup") is None
                   or first_step(run, "key_pickup") > first_step(run, "left_start_room"))]
-    lines.append(f"2. **Runs whose first exit came before their first key:** {len(early)} (expected: 0).")
-    lines += [f"   - {name(run)}" for run in early]
+    carried = [run for run in early if first_step(run, "door_opened") is not None
+               and first_step(run, "door_opened") <= first_step(run, "left_start_room")
+               and (first_step(run, "key_pickup") is None or first_step(run, "door_opened") < first_step(run, "key_pickup"))]
+    unexplained = [run for run in early if run not in carried]
+    # before: 61 runs of seed 14 carried a key ; after: "61 (seed 14: 61)"
+    by_seed = {}
+    for run in carried:
+        by_seed[run["seed"]] = by_seed.get(run["seed"], 0) + 1
+    lines.append(f"2. **Runs whose first exit came before their first counted key:** {len(early)}. Of them "
+                 f"{len(carried)} opened a door before that key, so they held a key picked up in the random warm-up "
+                 f"rollouts, whose events are not counted"
+                 + (f" (by seed: {', '.join(f'seed {seed}: {count}' for seed, count in sorted(by_seed.items()))})"
+                    if by_seed else "")
+                 + f"; their first exit and first door are then the same in every configuration of that seed. "
+                 f"**Runs with no such door:** {len(unexplained)} (expected: 0).")
+    lines += [f"   - {name(run)}" for run in unexplained]
     # 3. numbers that are not finite, in the record files and in the speeds
     broken = [(run, non_finite(run["first"]) + non_finite(run["windows"])) for run in runs]
     broken = [(run, count) for run, count in broken if count]

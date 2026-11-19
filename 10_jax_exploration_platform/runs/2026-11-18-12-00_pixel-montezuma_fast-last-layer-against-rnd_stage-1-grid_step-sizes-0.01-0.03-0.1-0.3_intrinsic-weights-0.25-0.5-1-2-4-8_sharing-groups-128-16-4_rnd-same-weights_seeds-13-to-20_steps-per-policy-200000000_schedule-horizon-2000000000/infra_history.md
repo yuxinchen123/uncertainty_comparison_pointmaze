@@ -390,3 +390,17 @@
   untouched) and the monitor was restarted between passes: job 6958072 cancelled by its ledger id at 05:20 PT
   after its 05:19 PT pass, replaced by job 6958392 with the same options (command.txt item 7).
 - 2026-11-19 05:24 PT: job 6958381 (yuxinchen, pinned to the RTX 2080 Ti on ai01) still waited on Priority with the 2-hour limit (start estimate 2026-11-20 06:37 PT: the card is planned for another user's job), so it was cancelled by its ledger id (ceiling 3: a pinned job is not left waiting). No other listed card was free; the monitor's waiting jobs by card type cover the units.
+- 2026-11-19 06:27 PT: **the live report's check "runs whose first exit came before their first key" read 62 (expected 0), all
+  seed 14.** Read from the record files: all 61 seed-14 runs with event records opened a door at update 1, rollout
+  step 73 (9,472 steps) and left the start room at rollout step 93 (12,032 steps), while their first counted key
+  comes at update 4 (60,032 steps); seeds 13, 15 and 16 have no such run. A door opens only for a player holding a
+  key, so one of seed 14's 128 environments picked up the key during the 50 random warm-up rollouts, whose events
+  are not counted (definitions), and carried it into training. Update 1 is the same in every configuration of a
+  seed (untrained policy, warm-up actions drawn from the seed), so seed 14's first door and first exit are about
+  0.01 million steps in every configuration, RND's included. Not a logging or game error: exits with both doors
+  locked are still 0. Consequence: in the capped first exit (reported beside the primary measure) seed 14 carries
+  no information and is equal across configurations, so paired comparisons are not biased; the mean score over the
+  run also includes that key's 100 points in one game of seed 14, in every configuration. The report's check now
+  counts such runs apart (a door opened before the first counted key) and lists only the runs with no such door
+  (expected 0); 16 report tests passed (job 6958406, gates ledger); report.py copied into frozen copy 3, which the
+  monitor runs as a new process at each pass.

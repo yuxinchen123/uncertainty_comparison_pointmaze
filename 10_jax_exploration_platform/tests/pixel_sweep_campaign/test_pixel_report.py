@@ -189,7 +189,8 @@ class NewRuns(ReportCase):
         """No exit with both doors locked, no exit before the key, no value that is not finite, no silent unit."""
         checks = "\n".join(section(self.build(), "Standing checks"))
         self.assertIn("**Exits from the start room with both doors locked:** 0 in 3 runs", checks)
-        self.assertIn("**Runs whose first exit came before their first key:** 0", checks)
+        self.assertIn("**Runs whose first exit came before their first counted key:** 0.", checks)
+        self.assertIn("**Runs with no such door:** 0 (expected: 0)", checks)
         self.assertIn("**Values that are not finite in the record files:** 0 in 3 runs", checks)
         self.assertIn("**Units past their first update without record files:** 0", checks)
         self.assertIn("**Failed units:** 0.", checks)
@@ -201,7 +202,20 @@ class NewRuns(ReportCase):
         checks = "\n".join(section(self.build(), "Standing checks"))
         self.assertIn("**Exits from the start room with both doors locked:** 1 in 3 runs", checks)
         self.assertIn(f"   - `{RND}`, seed 13: 1", checks)
-        self.assertIn("**Runs whose first exit came before their first key:** 1", checks)
+        self.assertIn("**Runs whose first exit came before their first counted key:** 1. Of them 0 opened", checks)
+        self.assertIn("**Runs with no such door:** 1 (expected: 0)", checks)
+        self.assertIn(f"   - `{RND}`, seed 13", checks)
+
+    def test_a_key_carried_from_the_warm_up_is_counted_apart(self):
+        """A door opened and an exit in update 1, the first counted key later: counted by seed, not listed."""
+        # a door at rollout step 10 and the exit at step 20 of update 1; the first counted key in update 4
+        events = {1: {"door_opened": 10, "left_start_room": 20}, 4: {"key_pickup": 5}}
+        write_run_records(pixel_queue.run_folder(self.run_dir, RND), metric_lines(244, events=events), 244, completed=True)
+        checks = "\n".join(section(self.build(), "Standing checks"))
+        self.assertIn("**Runs whose first exit came before their first counted key:** 1. Of them 1 opened a door", checks)
+        self.assertIn("(by seed: seed 13: 1)", checks)
+        self.assertIn("**Runs with no such door:** 0 (expected: 0)", checks)
+        self.assertNotIn(f"   - `{RND}`, seed 13\n", checks + "\n")
 
     def test_tables_fit_a_printed_page_and_hold_no_unit_name(self):
         """Every table is at most 100 characters wide when printed, with long names wrapped onto short lines."""
