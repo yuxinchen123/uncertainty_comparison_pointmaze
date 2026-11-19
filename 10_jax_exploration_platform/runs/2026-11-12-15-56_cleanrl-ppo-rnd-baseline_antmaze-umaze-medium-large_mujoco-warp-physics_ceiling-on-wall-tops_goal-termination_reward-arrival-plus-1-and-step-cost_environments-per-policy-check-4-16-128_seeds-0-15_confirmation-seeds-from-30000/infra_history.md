@@ -1070,3 +1070,6 @@ Times are Pacific, read from the clock or from scheduler records.
   end time. At 21:33 PT 8 units waited with RTX 4000 Ada and RTX 5080 cards free and no job was sent (free-card
   jobs nor waiting jobs). Fixed: lines without a ReservationName are skipped and only a named reservation is
   matched; two tests added (10 of 10 pass), and the maze (119) and pixel (96) tooling tests pass.
+- 2026-11-18 22:35 PT (window record): fault-guard respawn 30, on the angular bound, the second in a method block:
+  the fast step 0.1 with hold's U-maze step-cost fresh seeds at learning rate 1e-4, weight 1/64: seed 30162,
+  window 118, 108.8 rad/s, 14.2 m/s. At 22:45 PT all 15 unfinished ant units train on UVA.
