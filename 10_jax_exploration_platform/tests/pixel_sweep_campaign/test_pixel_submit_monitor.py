@@ -129,10 +129,20 @@ class Plan(unittest.TestCase):
         self.assertEqual({job["gpu_type"] for job in only}, {"nvidia_geforce_rtx_5080"})
 
     def test_never_more_worker_cards_than_units_without_a_worker(self):
-        """Two singles and one pack get two small cards and one large card; waiting cards of this run count as workers."""
+        """Two singles and one pack get two small cards and one large card; waiting cards of this run bound only jobs that wait."""
         jobs = plan(units(2, 1))
         self.assertEqual((cards(jobs, execution_profile="one copy"), cards(jobs, execution_profile="four copies")), (2, 1))
-        self.assertEqual(plan(units(2, 1), waiting_cards={"one copy": 2, "four copies": 1}), [])
+        # waiting cards of this run reduce only the jobs that wait: the cards free now still take every unit
+        covered = plan(units(2, 1), waiting_cards={"one copy": 2, "four copies": 1}, max_waiting=None)
+        self.assertEqual((cards(covered, execution_profile="one copy"), cards(covered, execution_profile="four copies")),
+                         (2, 1))
+        self.assertTrue(all(job["node"] for job in covered))
+        # with no card free now, those waiting cards leave no job to add
+        none_free = state()
+        for node in none_free["nodes"].values():
+            node["cards"] = 0
+        self.assertEqual(plan(units(2, 1), waiting_cards={"one copy": 2, "four copies": 1}, state=none_free,
+                              max_waiting=None), [])
         self.assertEqual(cards(plan(units(40, 10), max_new_cards=4)), 4)
         # with no pack pending the large cards are left alone, however many singles wait
         self.assertEqual(cards(plan(units(40, 0)), execution_profile="four copies"), 0)

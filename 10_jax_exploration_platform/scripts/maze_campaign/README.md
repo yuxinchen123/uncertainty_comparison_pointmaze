@@ -210,10 +210,14 @@ RUN=/p/rlprojects/RND/10_jax_exploration_platform/runs/<run folder>
    $PY $M/build_units.py --run-dir $RUN --study <description>.json
    ```
 
-3. **Submit workers on UVA** (both accounts). Look first, then send. New worker cards never exceed
-   the pending units that have no worker yet. Order: nodes with free cards in the open partitions,
-   most capable card first (these start now); the reservation's nodes; then jobs by card type that
-   wait in the scheduler's queue. For a first small submission add `--max-new-cards 1`.
+3. **Submit workers on UVA** (both accounts). Look first, then send. Order: nodes with free cards in
+   the open partitions, most capable card first (these start now); the reservation's nodes; then jobs
+   by card type that wait in the scheduler's queue. Cards free now are planned for every pending unit,
+   whatever jobs of this run already wait (since 2026-11-18). New jobs that wait never exceed the
+   pending units that neither these cards nor this run's waiting jobs cover. A waiting job that
+   starts with no unit ends at once. For a first small submission add `--max-new-cards 1`.
+   `--only-cards-free-now` sends only the pinned jobs. `--only-jobs-that-wait` sends only the jobs
+   that wait, for a caller that placed the cards free now in an earlier call.
 
    ```bash
    $PY $M/submit.py --run-dir $RUN --phase <phase> --dry-run

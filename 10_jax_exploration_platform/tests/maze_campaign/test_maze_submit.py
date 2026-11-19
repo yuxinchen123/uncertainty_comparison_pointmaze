@@ -110,12 +110,37 @@ class Plan(unittest.TestCase):
         finally:
             submit.IDENTITIES = submit.ALL_IDENTITIES
 
-    def test_never_more_worker_cards_than_units_without_a_worker(self):
-        """Three pending units and one waiting worker of this run: two new cards; none when all are covered."""
-        self.assertEqual(sum(job["cards"] for job in plan([7000] * 3, without_unit=1)), 2)
-        self.assertEqual(plan([7000] * 3, without_unit=3), [])
+    def test_jobs_that_wait_never_exceed_the_units_no_job_covers(self):
+        """Units of 30 GB find no card free now: 3 units and 1 waiting worker of this run give 2 new cards, 3 give none."""
+        self.assertEqual(sum(job["cards"] for job in plan([30000] * 3, without_unit=1)), 2)
+        self.assertEqual(plan([30000] * 3, without_unit=3), [])
         self.assertEqual(plan([]), [])
         self.assertEqual(sum(job["cards"] for job in plan([7000] * 20, max_new_cards=1)), 1)
+
+    def test_cards_free_now_take_units_that_waiting_jobs_already_cover(self):
+        """Three units and three waiting workers of this run: the 3 cards free now on open nodes still get jobs."""
+        jobs = plan([7000] * 3, without_unit=3)
+        self.assertEqual([(job["node"], job["cards"]) for job in jobs], [("nekomata01", 2), ("nekomata02", 1)])
+
+    def test_waiting_high_end_jobs_leave_free_lower_cards_usable(self):
+        """2 units, 2 H100 jobs of this run waiting, 3 RTX 2080 Ti free now: 2 pinned one-card jobs, no new waiting job."""
+        classes = [CLASSES[0], {"gres_type": "rtx2080ti", "partition": "gpu", "nodes": ["ai01", "ai02", "ai03"],
+                                "gpus_per_node": 4, "gpu_mem_mb": 11264, "capability_rank": 12}]
+        nodes = {"serval06": {"cards": 0, "cpus": 64, "memory_gib": 500, "reservation": None},
+                 **{name: {"cards": 1, "cpus": 16, "memory_gib": 64, "reservation": None} for name in ("ai01", "ai02", "ai03")}}
+        # the 2 waiting H100 jobs already ask for both open H100 cards
+        inputs = dict(classes=classes, nodes=nodes, reservation_budgets={}, type_room={"h100": 0, "rtx2080ti": 12},
+                      waiting={"uva-sl5nw": 2})
+        jobs = plan([7000] * 2, without_unit=2, **inputs)
+        self.assertEqual([(job["node"], job["cards"], job["gpu_type"]) for job in jobs],
+                         [("ai01", 1, "rtx2080ti"), ("ai02", 1, "rtx2080ti")])
+        # golden path: 5 units and 1 waiting job: 3 cards free now, then 1 new job that waits for the fifth unit
+        jobs = plan([7000] * 5, without_unit=1, **dict(inputs, type_room={"h100": 2, "rtx2080ti": 12}))
+        self.assertEqual([(job["node"], job["gpu_type"]) for job in jobs],
+                         [("ai01", "rtx2080ti"), ("ai02", "rtx2080ti"), ("ai03", "rtx2080ti"), (None, "h100")])
+        # a limit on new cards counts the pinned ones first
+        self.assertEqual([job["node"] for job in plan([7000] * 5, without_unit=1, max_new_cards=2, **inputs)],
+                         ["ai01", "ai02"])
 
     def test_only_cards_that_can_hold_a_pending_unit_are_asked_for(self):
         """Units that need 30 GB go to the H100 class alone, which has no free card: two jobs wait."""
@@ -181,6 +206,41 @@ class CardTypesFromTheScheduler(unittest.TestCase):
         self.assertTrue(jobs)
         self.assertTrue(all(job["node"] for job in jobs))
         self.assertTrue(any(job["node"] is None for job in plan([7000] * 20)))
+
+    def test_only_jobs_that_wait_pins_no_node(self):
+        """A dry run for 4 pending units: by default pinned jobs come first; with only_waiting every job waits by type."""
+        with tempfile.TemporaryDirectory() as folder:
+            run_dir = Path(folder)
+            for state in ("pending", "running", "done", "failed"):
+                (run_dir / "queue" / state).mkdir(parents=True)
+            for index in range(4):
+                (run_dir / "queue/pending" / f"unit-{index}.json").write_text(
+                    f'{{"name": "unit-{index}", "order": {index}, "minimum_device_memory_mb": 7000}}\n')
+            state = {"classes": CLASSES, "nodes": NODES, "budgets": BUDGETS, "reservation_budgets": RESERVED,
+                     "held_nodes": set(), "type_room": ROOM, "waiting": {}, "waiting_cards": 0}
+            originals = {name: getattr(submit, name) for name in ("frozen_code", "scheduler_state")}
+            printed = {}
+            try:
+                submit.frozen_code = lambda run: (Path("/p/code"), "abc")
+                submit.scheduler_state = lambda run: deepcopy(state)
+                for only_waiting in (False, True):
+                    with contextlib.redirect_stdout(io.StringIO()) as output:
+                        submit.top_up(run_dir, "development", dry_run=True, only_waiting=only_waiting)
+                    printed[only_waiting] = [line for line in output.getvalue().splitlines()
+                                             if line.startswith("  uva-")]
+                with self.assertRaises(ValueError):
+                    submit.top_up(run_dir, "development", dry_run=True, only_free_now=True, only_waiting=True)
+            finally:
+                for name, function in originals.items():
+                    setattr(submit, name, function)
+        # before: 2 RTX 5080 cards on nekomata01, 1 on nekomata02 (the account with more room left), 1 GTX 1080 on
+        # ai05, all pinned
+        self.assertEqual(printed[False], ["  uva-sl5nw gpu nekomata01 2 x rtx5080",
+                                          "  uva-yuxinchen gpu nekomata02 1 x rtx5080",
+                                          "  uva-sl5nw gnolim ai05 1 x gtx1080"])
+        # after: one-card jobs by type that wait, the most capable type first, shared between the accounts
+        self.assertEqual(printed[True], ["  uva-sl5nw gpu any node 1 x h100", "  uva-yuxinchen gpu any node 1 x h100",
+                                         "  uva-sl5nw gpu any node 1 x rtx5080", "  uva-yuxinchen gpu any node 1 x rtx5080"])
 
     def test_a_refused_job_does_not_stop_the_others(self):
         """top_up sends the remaining jobs after one refusal and returns only the ids that were sent."""

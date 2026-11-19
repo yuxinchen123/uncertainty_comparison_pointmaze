@@ -4,11 +4,12 @@
     python submit.py --run-dir RUN --monitor [--top-up-phase PHASE] [--complete-when-drained]
 
 A worker job holds no unit: each of its cards runs worker.py, which claims a unit after the job
-has started. New worker cards never exceed the pending units that have no worker yet. Jobs are
-sent in this order: open partitions (most capable card first) pinned to nodes with free cards,
-which start now; then the reservation's nodes; then, for the units still without a worker, jobs
-by card type that wait in the scheduler's queue. Every job id is appended at submit time to
-RUN/slurm/submitted_jobids_<phase>_<account>.txt by the shared wrapper submit_as.sh.
+has started, and ends when it finds no unit. Jobs are sent in this order: open partitions (most
+capable card first) pinned to nodes with free cards, which start now, and then the reservation's
+nodes, both planned for every pending unit; then, for the units that neither these nor this run's
+jobs already waiting cover, jobs by card type that wait in the scheduler's queue. Every job id is
+appended at submit time to RUN/slurm/submitted_jobids_<phase>_<account>.txt by the shared wrapper
+submit_as.sh.
 
 Standard library only. This file holds no cancel command (see cancel_ledger.py).
 """
@@ -202,7 +203,9 @@ def plan_jobs(unit_memories, workers_without_unit, classes, nodes, budgets, rese
     """Decide the worker jobs of one submission from the queue and the scheduler's state; changes nothing.
 
     unit_memories: the least card memory (MB) of every pending unit. workers_without_unit: cards of
-    this run's live jobs that hold no unit. classes: the card classes of the resource catalogue.
+    this run's live jobs that hold no unit (its jobs that wait); they reduce only the new jobs that
+    wait, never the cards free now, since a waiting job may start hours later and a card free now
+    takes the unit first. classes: the card classes of the resource catalogue.
     nodes: {node: free cards, cpus, memory_gib, reservation}. budgets: {(identity, partition): free
     cards, cpus, memory_gib} within the per-user caps. reservation_budgets: the same per node of the
     owner's reservation. held_nodes: nodes where a job of this run still waits. type_room: cards of
@@ -212,11 +215,16 @@ def plan_jobs(unit_memories, workers_without_unit, classes, nodes, budgets, rese
 
     after: [{"identity": "uva-sl5nw", "partition": "gpu", "node": "nekomata01", "gpu_type": "...",
              "cards": 2, "cpus": 16, "memory_gib": 32, "reservation": None, "kind": "worker"}, ...]
+
+    example (2026-11-18): 2 pending units, 2 H100 jobs of this run waiting, 3 RTX 2080 Ti cards free
+    now: before this change the plan was empty (the waiting jobs counted as covering both units);
+    now it is 2 one-card jobs pinned to the free cards and no new waiting job. The 2 H100 jobs, if
+    they start later, find no unit and end.
     """
     budgets, reservation_budgets = deepcopy(budgets), deepcopy(reservation_budgets)
     type_room, waiting, nodes = dict(type_room), dict(waiting), deepcopy(nodes)
-    # never more worker cards than pending units that have no worker yet
-    remaining = len(unit_memories) - workers_without_unit
+    # cards free now are planned for every pending unit, whatever jobs of this run already wait
+    remaining = len(unit_memories)
     if max_new_cards is not None:
         remaining = min(remaining, max_new_cards)
     jobs = []
@@ -275,6 +283,12 @@ def plan_jobs(unit_memories, workers_without_unit, classes, nodes, budgets, rese
                         physical[resource] -= amount
                     break
 
+    # jobs that wait cover only the units that neither the pinned jobs above nor this run's waiting
+    # jobs cover; before: 5 pending units, 1 job of this run waiting, 3 cards pinned above ; after: 1
+    pinned = sum(job["cards"] for job in jobs)
+    remaining = len(unit_memories) - workers_without_unit - pinned
+    if max_new_cards is not None:
+        remaining = min(remaining, max_new_cards - pinned)
     # the units still without a worker get jobs that wait in the scheduler's queue: one card each,
     # asked by card type and not pinned, the most capable type first, shared between the accounts
     for gpu_type, partition in dict.fromkeys((record["gres_type"], record["partition"])
@@ -382,13 +396,19 @@ def scheduler_state(run_dir):
             "type_room": type_room, "waiting": waiting}
 
 
-def top_up(run_dir, phase, gpu_types=None, max_new_cards=None, dry_run=False, only_free_now=False):
+def top_up(run_dir, phase, gpu_types=None, max_new_cards=None, dry_run=False, only_free_now=False,
+           only_waiting=False):
     """Submit worker jobs for the pending units that have no worker yet; returns the new job ids.
 
     only_free_now: send only jobs pinned to nodes that have a free card, the processors and the memory now,
     and none that would wait in the scheduler's queue (placement of 2026-11-12: UVA is used only where a
     worker starts at once; the units without such a card go to another server).
+    only_waiting: send only jobs that wait in the scheduler's queue, none pinned to a node (2026-11-18: a
+    caller that placed the cards free now in an earlier call and handed units to another server since; a
+    node whose pinned job did not start would otherwise be pinned again).
     """
+    if only_free_now and only_waiting:
+        raise ValueError("only_free_now and only_waiting exclude each other")
     run_dir = Path(run_dir)
     if (run_dir / "STOP").exists() or (run_dir / "SWEEP_COMPLETE").exists():
         print("RUN/STOP or RUN/SWEEP_COMPLETE exists: nothing is submitted")
@@ -397,13 +417,16 @@ def top_up(run_dir, phase, gpu_types=None, max_new_cards=None, dry_run=False, on
     pending = unit_queue.read_units(run_dir, "pending")
     running = unit_queue.counts(run_dir)["running"]
     state = scheduler_state(run_dir)
-    # worker cards of this run that hold no unit: the cards of its waiting jobs. A running job's card
+    # worker cards of this run that hold no unit: the cards of its waiting jobs; they reduce only the
+    # new jobs that wait (cards free now are planned for every pending unit). A running job's card
     # whose worker found the queue empty has ended its worker (the job goes on for its other cards), so
     # running cards beyond the running units are not workers any more and are not counted
     # (2026-11-12: three new units waited 16 minutes behind two such cards of a four-card job).
     spare = state["waiting_cards"]
+    # with only_waiting the planner is shown no node and no reservation, so it pins nothing
+    nodes, reservation_budgets = ({}, {}) if only_waiting else (state["nodes"], state["reservation_budgets"])
     jobs = plan_jobs([unit["minimum_device_memory_mb"] for unit in pending], spare,
-                     state["classes"], state["nodes"], state["budgets"], state["reservation_budgets"],
+                     state["classes"], nodes, state["budgets"], reservation_budgets,
                      state["held_nodes"], state["type_room"], state["waiting"], gpu_types, max_new_cards,
                      0 if only_free_now else MAX_WAITING_JOBS)
     # the depth of the submission, said before anything is sent
@@ -466,9 +489,13 @@ def main(argv=None):
     parser.add_argument("--gpu-types", help="comma-separated card types (gres names) the workers may ask for; "
                                             "default: every type whose card can hold a pending unit")
     parser.add_argument("--max-new-cards", type=int, help="send at most this many worker cards in this call")
-    parser.add_argument("--only-cards-free-now", action="store_true",
-                        help="send only jobs pinned to nodes with a free card, processors and memory now; "
-                             "none that would wait in the scheduler's queue")
+    only = parser.add_mutually_exclusive_group()
+    only.add_argument("--only-cards-free-now", action="store_true",
+                      help="send only jobs pinned to nodes with a free card, processors and memory now; "
+                           "none that would wait in the scheduler's queue")
+    only.add_argument("--only-jobs-that-wait", action="store_true",
+                      help="send only jobs that wait in the scheduler's queue by card type, none pinned to a "
+                           "node (for a caller that placed the cards free now in an earlier call)")
     parser.add_argument("--cpus-per-card", type=int,
                         help="processors a worker asks for per card (default 8 in gpu, 4 in gnolim)")
     parser.add_argument("--memory-gib-per-card", type=int,
@@ -499,7 +526,7 @@ def main(argv=None):
         print(submit_monitor(run_dir, options, args.dry_run))
     elif args.phase:
         print(top_up(run_dir, args.phase, args.gpu_types.split(",") if args.gpu_types else None,
-                     args.max_new_cards, args.dry_run, args.only_cards_free_now))
+                     args.max_new_cards, args.dry_run, args.only_cards_free_now, args.only_jobs_that_wait))
     else:
         parser.error("give --phase to submit workers, or --monitor")
 
