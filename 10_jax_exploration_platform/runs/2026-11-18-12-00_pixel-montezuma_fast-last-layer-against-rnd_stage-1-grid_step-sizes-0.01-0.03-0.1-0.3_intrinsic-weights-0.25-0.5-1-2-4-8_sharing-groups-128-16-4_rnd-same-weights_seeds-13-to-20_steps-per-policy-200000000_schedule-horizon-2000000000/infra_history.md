@@ -331,3 +331,12 @@
   600,000, QOS 2,000,000; fair share is the same); when none is left, the jobs it lowered get nice 0 again. Running
   jobs are left alone. State in slurm/mit_yield_state.json; copy of the helper in infrastructure/hand_over_loop/.
   First pass with it, 23:59 PT: no other job, nothing lowered.
+- 2026-11-19 00:04 PT: a hold test on our own waiting MIT smoke job 29603828 (preemptable pool): `scontrol hold` set
+  its AccrueTime to Unknown, and after `scontrol release` its EligibleTime started again at 03:04 Eastern; its age
+  term fell from 1,301 to 0 (about 4.4 hours of age lost on that job). So on MIT a hold resets a waiting job's age,
+  which confirms the choice of nice for yielding. The shared rules and skills that said MIT has ACCRUE_ALWAYS and that
+  a hold keeps the age are being corrected (user: "correct").
+- 2026-11-19 00:06 PT: every running Claude session (7 online; none found on the other portal nodes) was told what this study
+  holds on MIT (4 Advanced-pool H200 jobs with 2-day limits, at most until 2026-11-20 20:23 and 23:31 PT; one waiting
+  preemptable job), that its waiting MIT jobs step aside by nice for any other job of the account, and that a hold
+  on MIT now resets a job's age (user: "tell other sessions so other sessions don't get frustrated by RND usage of MIT").
