@@ -411,3 +411,4 @@
   uses the live report's new function `exits_before_counted_key` (same split as the report; report.py copied into
   copy 3 again), and the prose states that every seed-14 run opens a door and leaves in its first update with a key
   carried from the random warm-up. 12 generator tests and 16 report tests passed (report job 6958440, gates ledger).
+- 2026-11-19 09:45 PT: an H100 NVL card free on serval06 while this run's H100 NVL jobs waited on Priority (start estimate 2026-11-20 23:56 PT): jobs 6957716, 6957718, 6958486, 6958545 (sl5nw) and 6958488 (yuxinchen), from their ledgers, given a 2-hour limit (rule: a waiting job on Priority beside free listed cards). The Gautschi yield ended at the 09:40 PT pass (no other job of dsimchil on ai; nothing left lowered), and the 4 Gautschi jobs train with the 8 units handed back to them.
