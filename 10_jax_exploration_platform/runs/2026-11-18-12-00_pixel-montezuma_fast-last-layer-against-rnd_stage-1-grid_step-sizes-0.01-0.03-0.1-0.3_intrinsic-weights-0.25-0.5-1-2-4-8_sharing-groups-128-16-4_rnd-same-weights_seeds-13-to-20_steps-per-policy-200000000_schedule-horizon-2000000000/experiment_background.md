@@ -202,9 +202,11 @@ PT to replace the loop above, which the session owner stops before starting this
 the same steps, and for MIT only `ssh -O check mit` (never a login): a closed connection marks MIT not ready in the
 server table, so the tick leaves it alone, and the loop makes it ready again once the connection is open. Before
 every tick it lowers this run's MIT limits by the cards other jobs of account shuzel hold or wait for
-(`mit-share`), makes packs up to each ready four-copy server's limit (one limit per server, since `hand_over`
-counts every four-copy unit a server holds against each pool's limit), and brings MIT's preemptable pool back
-once its smoke job 29603828 has ended and passed.
+(`mit-share`), makes packs up to each ready pack server's limit (one limit per server, since `hand_over`
+counts every unit of a profile a server holds against each of its pools' limits), and brings MIT's preemptable pool
+back once its smoke job 29603828 has ended and passed. Since 2026-11-18 22:17 PT its helper makes packs of each
+pool's own size: four copies for Gautschi, eight for MIT (the helper's earlier copy is
+`montezuma_hand_over_steps_with_mit.py.before_2026-11-18-2220` in the session's scratchpad).
 
 ## Git state
 
