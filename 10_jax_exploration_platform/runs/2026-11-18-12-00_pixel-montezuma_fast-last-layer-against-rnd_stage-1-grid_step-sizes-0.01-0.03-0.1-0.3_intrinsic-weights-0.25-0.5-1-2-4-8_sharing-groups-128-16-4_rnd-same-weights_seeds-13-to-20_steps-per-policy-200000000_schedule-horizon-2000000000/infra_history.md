@@ -340,3 +340,9 @@
   holds on MIT (4 Advanced-pool H200 jobs with 2-day limits, at most until 2026-11-20 20:23 and 23:31 PT; one waiting
   preemptable job), that its waiting MIT jobs step aside by nice for any other job of the account, and that a hold
   on MIT now resets a job's age (user: "tell other sessions so other sessions don't get frustrated by RND usage of MIT").
+- 2026-11-19 00:25 PT, user decision on a limit of the nice (a lower priority does not stop our waiting jobs from starting on a
+  card that another session's waiting multi-card job cannot use yet, as measured on 2026-09-06 in the
+  multi-card-job-priority skill): "held for now, change the rule until such things appear". The nice stays; when a
+  waiting job of another session needs two or more cards on MIT's card partitions, the rule changes to holds for this
+  run's waiting MIT jobs (each hold costs that job its age). The loop helper now records such jobs
+  (slurm/mit_yield_state.json, other_waiting_multi_card_jobs) and writes a WARNING line in its log.

@@ -214,6 +214,12 @@ def mit_yield(run_dir, entry, squeue_text):
     state_path = run_dir / YIELD_STATE
     state = json.loads(state_path.read_text()) if state_path.exists() else {"lowered": {}}
     others, lower, restore = yield_decision(squeue_text.splitlines(), ledger, set(state["lowered"]))
+    # waiting jobs of other sessions that need two or more cards at once: a lower priority does not keep our waiting
+    # jobs off the cards such a job waits for (user, 2026-11-19: keep the nice until this happens, then change the rule)
+    # before: "29700002  big  mit_normal_gpu  N/A  gres/gpu:h200:3  1  PENDING" (not ours) ; after: ["29700002 (3 cards)"]
+    multi_card = [f"{job} ({cards} cards)" for job, _, pool, cards, state_word in
+                  (mit_cards_of(line) + (line.split()[-1],) for line in squeue_text.splitlines() if line.strip())
+                  if job not in ledger and pool is not None and cards >= 2 and state_word == "PENDING"]
     # one ssh call for every change; each id is one of this run's own ledger
     changes = [f"scontrol update JobId={job} Nice={YIELD_NICE}" for job in lower] + \
               [f"scontrol update JobId={job} Nice=0" for job in restore]
@@ -230,7 +236,7 @@ def mit_yield(run_dir, entry, squeue_text):
     if not others:
         # a lowered job that left the queue (started or ended) needs nothing more
         state["lowered"] = {}
-    state["last_read"] = {"at": stamp, "other_jobs": others}
+    state["last_read"] = {"at": stamp, "other_jobs": others, "other_waiting_multi_card_jobs": multi_card}
     tmp = state_path.with_suffix(".tmp")
     tmp.write_text(json.dumps(state, indent=1) + "\n")
     os.replace(tmp, state_path)
@@ -238,6 +244,10 @@ def mit_yield(run_dir, entry, squeue_text):
           + (f" ({', '.join(others[:6])}{', ...' if len(others) > 6 else ''})" if others else "")
           + f"; this run's waiting jobs lowered now: {lower or 'none'}; restored now: {restore or 'none'}"
           + f"; lowered in all: {sorted(state['lowered']) or 'none'}")
+    if multi_card:
+        print(f"mit-yield: WARNING another session waits for several cards at once: {', '.join(multi_card)}; "
+              "a lower priority does not keep this run's waiting jobs off those cards; the user's rule of 2026-11-19 is "
+              "to change to holds now (the session's check does it)")
 
 
 def mit_share(run_dir):
