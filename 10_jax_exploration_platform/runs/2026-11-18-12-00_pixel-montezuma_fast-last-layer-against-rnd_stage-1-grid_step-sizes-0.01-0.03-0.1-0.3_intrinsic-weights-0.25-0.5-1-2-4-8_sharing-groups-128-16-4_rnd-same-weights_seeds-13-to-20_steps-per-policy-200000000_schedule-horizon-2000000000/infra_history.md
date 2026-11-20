@@ -526,3 +526,19 @@
   an A100 card (ids in the scratchpad file montezuma_a100_jobs_niced_for_antmaze.txt).
 - 2026-11-20 04:08 PT: an A100 40 GB card on cheetah01 came free about 04:07 PT. The AntMaze waiting job 6959924 started on it (as intended by the nice of 00:07 PT), and this run's monitor had pinned job 6960094 (yuxinchen) to the same card seconds before; it then waited on Priority and was cancelled by its ledger id (ceiling 3); it held no unit.
 - 2026-11-20 04:11 PT: job 6960089 (sl5nw, pinned to lynx10, 2 RTX 2080 Ti), sent by the monitor when sl5nw had room for 2 cards, waited on sl5nw's own cap after the AntMaze job 6959924 started under sl5nw and took that room; since the planner leaves out nodes where a job of this run waits, the 2 free cards on lynx10 got no other job. Cancelled by its ledger id (ceiling 3) and replaced by a top-up by hand: 6960098 (yuxinchen, lynx10, 2 cards).
+- 2026-11-20 11:37 PT: no session checked between 04:28 and 11:31 PT. At 11:31 PT the queue held no pending unit (490 runs done;
+  49 units training on UVA, 11 on Gilbreth, 2 packs held by the one running Gautschi job). Actions:
+  1. the 14 waiting worker jobs on UVA (9 under sl5nw, 5 under yuxinchen; among them the two pinned ones the
+     monitor listed, 6960153 on lotus after 410 minutes on sl5nw's own cap and 6960558 on lynx01 after 70 minutes,
+     and the A100 jobs that carried nice 5000) were cancelled by their ledger ids, since no unclaimed unit was left
+     for them (ceilings 2 and 3);
+  2. the end of stage 1 was set by the never-started four-copy pack sharing group 4, weight 8, seed 20, queued on
+     Gautschi behind RND's running pack (58%, about 3.2 hours left, then about 7.8 hours for the pack in a second
+     job: about 11 hours). It was taken back (remote_fleet.py take-back --server gautschi --match
+     sharing-group-4_intrinsic-weight-8_seed-20) and split into its four singles (build_units.py --unpack-pending);
+     the top-up by hand started them at once: 3 on Quadro RTX 6000 cards on lotus (job 6960624, sl5nw; about 5.7
+     hours at the 1.67 s per update read there) and 1 on an RTX 4000 Ada on lynx05 (job 6960623, yuxinchen; about
+     10.3 hours at 3.04 s). Pack size 1 is recorded for these runs, as for every single.
+  3. the slowest units left are on RTX 4000 Ada cards (this new single, and the run at update 1,747 with about 8.8
+     hours left); when faster listed cards free up, moving them is weighed by memory note
+     move-slow-card-units-to-fast-cards-near-the-end.
