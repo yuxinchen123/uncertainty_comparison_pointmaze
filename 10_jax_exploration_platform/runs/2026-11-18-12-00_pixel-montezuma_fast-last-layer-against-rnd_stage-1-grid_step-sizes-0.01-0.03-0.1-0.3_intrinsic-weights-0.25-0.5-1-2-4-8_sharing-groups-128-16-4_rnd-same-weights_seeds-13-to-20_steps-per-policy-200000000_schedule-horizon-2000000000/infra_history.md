@@ -494,3 +494,4 @@
   "never-started" so that this run's 3 running jobs end after their current packs (7,600 to 8,756 of 12,207
   updates, about 2 to 3 hours) instead of holding 2 cards for another 3 to 5 hours while the other session waits.
   No running job was touched.
+- 2026-11-19 20:09 PT: 7 more 8-hour worker jobs ended (59 runs training on UVA instead of 76) and 15 listed cards were free after the monitor's 20:05 PT pass (10 RTX 2080 Ti on ai02, ai03, ai04, ai06 and lynx10; 5 RTX A4500 on jaguar03 in the reservation sl5nw_170). The top-up was run by hand with the monitor's options: 15 cards pinned to them and 2 RTX A4000 jobs that wait.
