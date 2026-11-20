@@ -4,17 +4,9 @@
       "ssh",
       "-o",
       "BatchMode=yes",
-      "portal05",
-      "ssh",
-      "-o",
-      "BatchMode=yes",
       "aces"
     ],
     "check": [
-      "ssh",
-      "-o",
-      "BatchMode=yes",
-      "portal05",
       "ssh",
       "-O",
       "check",
