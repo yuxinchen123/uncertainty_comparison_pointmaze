@@ -503,3 +503,16 @@
   6959806, waited on sl5nw's full cpu-partition cap and was cancelled by its id, then run on nolim). The changed
   file was copied into code copy 3, and the monitor was restarted between passes: job 6959048 cancelled by its
   ledger id at 21:06 PT after its 21:05 PT pass, replaced by job 6959838 with the same options (command.txt item 9).
+- 2026-11-19 22:20 PT: a third way this run's waiting jobs kept free cards idle, found at the 22:07 PT check. Two A100 40 GB cards
+  on cheetah01 were free while 156 units waited and yuxinchen held 34 of 40 cards, and the top-up sent nothing: the
+  planner's room per card type (cards of the type on open nodes, less every job of this run that asks for the type)
+  was 0, because sl5nw's two waiting A100 40 GB jobs (6959406, 6959790) counted as taking the two free cards, while
+  they wait on sl5nw's own cap (QOSMaxGRESPerUser). Change in scripts/maze_campaign/submit.py plan_jobs: a job pinned
+  to cards free now is no longer limited by that room (the node's free cards bound it, and the room still shrinks
+  for the jobs that wait). New test test_free_cards_of_a_type_that_waiting_jobs_already_ask_for_still_get_jobs; 44
+  planner and monitor tests passed (job 6959889, gates ledger; the first run, 6959888, failed on a mistake in the new
+  test itself). The top-up by hand then sent 6959890 (yuxinchen, 2 A100 40 GB on cheetah01, running) and 6959891
+  (yuxinchen, 1 A100 80 GB on cheetah04, four copies), which waited on Priority and got a 2-hour limit
+  (scontrol update by its ledger id). The changed file was copied into code copy 3, and the monitor was restarted
+  between passes: job 6959838 cancelled by its ledger id at 22:17 PT after its 22:17 PT pass, replaced by job
+  6959895 with the same options (command.txt item 10); its first pass ran at 22:19 PT.

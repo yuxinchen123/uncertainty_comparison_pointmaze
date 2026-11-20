@@ -40,3 +40,8 @@ $PY $M/submit.py --run-dir $RUN --monitor --top-up-phase grid --complete-when-dr
 # 9. 2026-11-19 21:07 PT: the monitor restarted (job 6959048 cancelled by its ledger id between passes) with its pass every 10
 #    minutes (monitor.py PASS_SECONDS 600 in copy 3); same options as item 8; new job 6959838
 $PY $M/submit.py --run-dir $RUN --monitor --top-up-phase grid --complete-when-drained --leave-cards 0 --worker-hours 8 --memory-gib-per-card 10 --gpu-types nvidia_h100_nvl,a100,nvidia_a100-pcie-40gb,nvidia_a40,a40,nvidia_rtx_a4500,quadro_rtx_6000,nvidia_geforce_rtx_2080_ti,nvidia_rtx_a4000,nvidia_rtx_4000_ada_generation
+
+# 10. 2026-11-19 22:20 PT: the monitor restarted (job 6959838 cancelled by its ledger id between passes) after the planner change
+#     of plan_jobs (scripts/maze_campaign/submit.py, copied into copy 3): pinned jobs on free cards no longer
+#     limited by the room per card type; same options as item 9; new job 6959895
+$PY $M/submit.py --run-dir $RUN --monitor --top-up-phase grid --complete-when-drained --leave-cards 0 --worker-hours 8 --memory-gib-per-card 10 --gpu-types nvidia_h100_nvl,a100,nvidia_a100-pcie-40gb,nvidia_a40,a40,nvidia_rtx_a4500,quadro_rtx_6000,nvidia_geforce_rtx_2080_ti,nvidia_rtx_a4000,nvidia_rtx_4000_ada_generation

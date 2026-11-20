@@ -143,6 +143,21 @@ class Plan(unittest.TestCase):
         self.assertEqual([job["node"] for job in plan([7000] * 5, without_unit=1, max_new_cards=2, **inputs)],
                          ["ai01", "ai02"])
 
+    def test_free_cards_of_a_type_that_waiting_jobs_already_ask_for_still_get_jobs(self):
+        """2 units; this run's 2 waiting A100 jobs wait on one account's cap and use up the type's room; 2 A100 free now."""
+        classes = [{"gres_type": "a100_40gb", "partition": "gpu", "nodes": ["cheetah01"], "gpus_per_node": 4,
+                    "gpu_mem_mb": 40960, "capability_rank": 2}]
+        nodes = {"cheetah01": {"cards": 2, "cpus": 24, "memory_gib": 230, "reservation": None}}
+        budgets = {**BUDGETS, ("uva-sl5nw", "gpu"): {"cards": 0, "cpus": 0, "memory_gib": 0}}
+        jobs = plan([7000] * 2, without_unit=2, classes=classes, nodes=nodes, budgets=budgets, reservation_budgets={},
+                    type_room={"a100_40gb": 0}, waiting={"uva-sl5nw": 2})
+        self.assertEqual([(job["identity"], job["node"], job["cards"]) for job in jobs],
+                         [("uva-yuxinchen", "cheetah01", 2)])
+        # no new job waits for the type, since its room is used up
+        jobs = plan([7000] * 5, without_unit=2, classes=classes, nodes=nodes, budgets=budgets, reservation_budgets={},
+                    type_room={"a100_40gb": 0}, waiting={"uva-sl5nw": 2})
+        self.assertEqual([(job["node"], job["cards"]) for job in jobs], [("cheetah01", 2)])
+
     def test_only_cards_that_can_hold_a_pending_unit_are_asked_for(self):
         """Units that need 30 GB go to the H100 class alone, which has no free card: two jobs wait."""
         jobs = plan([30000] * 5)

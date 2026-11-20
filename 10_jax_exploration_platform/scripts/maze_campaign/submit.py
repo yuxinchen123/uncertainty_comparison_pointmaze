@@ -265,9 +265,10 @@ def plan_jobs(unit_memories, workers_without_unit, classes, nodes, budgets, rese
                                     physical["memory_gib"] // memory_per_card, budget["cards"],
                                     budget["cpus"] // cpus_per_card, budget["memory_gib"] // memory_per_card,
                                     remaining))
-                    # outside the reservation a card type is asked for at most as often as it has open cards
-                    if not reserved:
-                        cards = min(cards, type_room.get(record["gres_type"], 0))
+                    # a card free now is asked for whatever this run's waiting jobs of its type ask (changed
+                    # 2026-11-19 22:10 PT): before, 2 waiting A100 jobs of sl5nw, held by sl5nw's own cap of 40, set the
+                    # type's room to 0 and the 2 free A100 cards on cheetah01 got no job under yuxinchen; the
+                    # free cards of the node bound the job, and the room still shrinks for the jobs that wait
                     if cards < 1:
                         continue
                     cpus, memory = request(record["partition"], cards)
