@@ -1846,6 +1846,23 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   uses each side's choice for W; the pair for M (the method's step 0.1 with the hold at learning rate 1e-2, weight
   1, against RND's learning rate 1e-2, weight 16) waits for the method's two units, which still train.
 
+- 2026-11-19 18:08 PT: **the ant U-maze fresh-seed pair for M with the step cost is complete** (seeds 30000 to 30255, 256
+  policies per side, all 256 windows, all 256 policies arrived on both sides, no fault-guard respawn on either side;
+  every copy finished episodes in the first window). The method's choice for M, step 0.1 with the first-arrival hold
+  at learning rate 1e-2, weight 1, against RND's choice for M, learning rate 1e-2, weight 16, paired by seed (95%
+  intervals from 10,000 resamples of the seeds):
+
+  | measure | the method | RND | the method minus RND | seeds where the method is better |
+  |---|---|---|---|---|
+  | M, first goal (million steps; smaller is better) | 0.239 | 0.300 | −0.061 [−0.075, −0.047] | 173 of 256 |
+  | W, whole-curve mean of the training return | −0.98415 | −0.98515 | +0.00100 [+0.00075, +0.00124] | 178 of 256 |
+  | L, final level (last 25 windows) | −0.98305 | −0.98420 | +0.00115 [+0.00075, +0.00156] | 154 of 256 |
+
+  On M, the secondary measure, the method is ahead on fresh seeds: the interval is entirely below zero, as on the
+  validation block (−0.058 ± 0.010 million steps, earlier on 96 of 128 seeds). With the four U-maze pairs complete:
+  reward 1 on arrival, the method ahead on W and on M; step cost, ahead on M, and on W its interval reaches just below
+  zero (−0.00001), so not ahead by the rule.
+
 ## Next
 
 Rewritten 2026-11-13 22:31 PT.
