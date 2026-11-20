@@ -542,3 +542,4 @@
   3. the slowest units left are on RTX 4000 Ada cards (this new single, and the run at update 1,747 with about 8.8
      hours left); when faster listed cards free up, moving them is weighed by memory note
      move-slow-card-units-to-fast-cards-near-the-end.
+- 2026-11-20 11:38 PT: the 2 waiting MIT jobs 29678001 and 29678003 (mit_preemptable, nice 3,000,000, no unit held, share 0) were cancelled by their ledger ids with scancel over the open connection, since no unit is left for them (ceiling 2); cancel_ledger.py cancels a remote server's waiting jobs only together with a RUN/STOP file, which would stop the whole sweep.
