@@ -524,3 +524,4 @@
   (the most capable that fit their 17 GB), but this run's A100 jobs, sent earlier, stood ahead (priority 1,291 to
   4,668 against 777 to 1,182). Nice keeps a job's age on UVA. They go back to nice 0 once no AntMaze job waits for
   an A100 card (ids in the scratchpad file montezuma_a100_jobs_niced_for_antmaze.txt).
+- 2026-11-20 04:08 PT: an A100 40 GB card on cheetah01 came free about 04:07 PT. The AntMaze waiting job 6959924 started on it (as intended by the nice of 00:07 PT), and this run's monitor had pinned job 6960094 (yuxinchen) to the same card seconds before; it then waited on Priority and was cancelled by its ledger id (ceiling 3); it held no unit.

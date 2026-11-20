@@ -1092,3 +1092,4 @@ Times are Pacific, read from the clock or from scheduler records.
   study's 4 waiting A100 jobs stood ahead of them and were given nice 5000, so these start first on the next A100
   cards of each account (that folder's infra_history.md has the ids); they go back to nice 0 once no ant job waits
   for an A100.
+- 2026-11-20 04:08 PT: the first of the 5 units waiting since 22:44 PT started: RND Large weight 16, seeds 30128 to 30255 (4 of 256 windows), on an A100 40 GB card on cheetah01 (job 6959924, sl5nw). The 4 Medium units wait for A100 cards (jobs 6959920 to 6959923).
