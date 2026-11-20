@@ -544,3 +544,16 @@
      move-slow-card-units-to-fast-cards-near-the-end.
 - 2026-11-20 11:38 PT: the 2 waiting MIT jobs 29678001 and 29678003 (mit_preemptable, nice 3,000,000, no unit held, share 0) were cancelled by their ledger ids with scancel over the open connection, since no unit is left for them (ceiling 2); cancel_ledger.py cancels a remote server's waiting jobs only together with a RUN/STOP file, which would stop the whole sweep.
 - 2026-11-20 11:54 PT: correction to the 11:35 PT step. Cancelling every waiting worker job was early: 8-hour worker jobs that reach their limit give their unit back with its checkpoint, and 8 units came back by 11:52 PT. The monitor's 11:48 PT pass placed 7 (ai02, ai03, ai04 one RTX 2080 Ti each, jobs 6960662 to 6960664; jaguar03 4 RTX A4500 in the reservation, 6960665) and the eighth went by hand to the last free RTX A4500 there (6960669). A pinned job sent by hand a minute after that pass (6960666, ai02) found its card taken and was cancelled by its ledger id. Waiting jobs are surplus only once every running unit will finish inside its job.
+- 2026-11-20 12:16 PT: near the end of stage 1, the two runs on RTX 4000 Ada cards that set its end were moved to faster cards
+  (memory note move-slow-card-units-to-fast-cards-near-the-end): step 0.01, group 4, weight 8, seed 20 (job
+  6960623, lynx05; about 9.7 hours left at 3.04 s per update) and step 0.3, group 4, weight 2, seed 20 (job
+  6960031, lynx02; about 8.1 hours left). Both jobs were cancelled by their ledger ids; their workers gave the runs
+  back with their checkpoints, and they continue on 2 RTX A4000 cards on cheetah09 (job 6960683, yuxinchen; about
+  1.9 to 2.0 s per update, so about 5 to 6 hours). The other two RTX 4000 Ada runs share job 6960171, which reaches
+  its 8-hour limit at about 13:30 PT and gives them back then.
+  Found on the way: the planner orders card types by the resource catalogue's rank, which puts the RTX 4000 Ada
+  above the RTX 2080 Ti and RTX A4000, while on this work it is the slowest listed type (3.04 s per update against
+  1.67 to 2.04). The first top-up therefore pinned job 6960680 to the RTX 4000 Ada card just freed on lynx02; it was
+  cancelled by its ledger id while it waited, and the top-up was run again with that type left out of --gpu-types.
+  To do before stage 2: order the pixel planner's card types by this work's measured seconds per update (rule
+  pure-rl-gpu-placement.md, item 3).
