@@ -516,3 +516,4 @@
   (scontrol update by its ledger id). The changed file was copied into code copy 3, and the monitor was restarted
   between passes: job 6959838 cancelled by its ledger id at 22:17 PT after its 22:17 PT pass, replaced by job
   6959895 with the same options (command.txt item 10); its first pass ran at 22:19 PT.
+- 2026-11-19 22:28 PT: job 6959891 (yuxinchen, pinned to cheetah04, one A100 80 GB, four copies) still waited on Priority after its 2-hour limit and one check, and cheetah04 had no free card any more: cancelled by its ledger id (cancel_ledger.py, ceiling 3); it held no unit. Gautschi: the last of RND's three running packs ended and was verified at 22:28 PT (18959407, 18959409, 18959546 all COMPLETED); this run now holds no job and no unit on Gautschi while the other session of the group uses its cards.
