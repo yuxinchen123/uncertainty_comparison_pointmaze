@@ -1863,6 +1863,28 @@ Times are Pacific. Read `program.md` first. This file is the log: what was done,
   reward 1 on arrival, the method ahead on W and on M; step cost, ahead on M, and on W its interval reaches just below
   zero (−0.00001), so not ahead by the rule.
 
+- 2026-11-19 21:50 PT: **the ant Large fresh-seed pair for W is complete** (reward 1 on arrival, seeds 30000 to 30255, 256 policies
+  per side, all 256 windows, no fault-guard respawn on either side; every copy finished episodes in the first window,
+  so the value before the first episode, 0, enters nothing). The method's choice for W, step 0.03 with the
+  first-arrival hold at learning rate 1e-2, weight 16, against RND's choice for W, learning rate 1e-2, weight 1,
+  paired by seed (95% intervals from 10,000 resamples of the seeds; scratchpad script pair_two_blocks.py, which reads
+  both seed blocks of each side with the functions of quick_pair.py):
+
+  | measure | the method | RND | the method minus RND | seeds where the method is better, worse, tied |
+  |---|---|---|---|---|
+  | W, whole-curve mean of the training return | 0.000004893 | 0.000004595 | +0.00000030 [−0.00000081, +0.00000140] | 83, 79, 94 |
+  | L, final level (last 25 windows) | 0.000003864 | 0.000003577 | +0.00000029 [−0.00000271, +0.00000354] | 12, 11, 233 |
+  | M, first goal (million steps; smaller is better) | 101.64 | 103.88 | −2.25 [−9.09, +4.79] | 93, 85, 78 |
+  | policies that reach the goal within the budget | 121 of 256 (47%) | 111 of 256 (43%) | | |
+
+  On W the method is not ahead of RND on Large: the interval contains zero, so the two are level, as on Medium. The
+  validation block's lead (W 0.000005477 against 0.000003908) did not hold on fresh seeds; the method's weight 16 was
+  the better of its two weights on that block, and such a choice looks better on the block it was chosen on. The
+  tied seeds on W are seeds where neither side reaches the goal (W is 0 on both). Large stays meaningful by the test
+  of 13:50 PT: at least a quarter of each side's policies reach the goal (47% and 43%). The pair for M on Large (the
+  same block of the method against RND's weight 16) waits for RND's two units, at 11 and 0 of 256 windows on UVA at
+  this reading; the pair for M on Medium waits for its four units on Gilbreth.
+
 ## Next
 
 Rewritten 2026-11-13 22:31 PT.
