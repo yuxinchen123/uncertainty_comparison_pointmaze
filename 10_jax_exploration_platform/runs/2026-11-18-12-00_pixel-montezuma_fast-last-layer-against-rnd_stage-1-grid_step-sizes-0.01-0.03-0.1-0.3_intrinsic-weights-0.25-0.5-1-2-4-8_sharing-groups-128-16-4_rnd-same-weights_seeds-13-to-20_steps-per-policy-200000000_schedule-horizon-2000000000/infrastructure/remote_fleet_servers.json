@@ -126,11 +126,11 @@
     "hand_over": {
       "pools": {
         "standby-a30": {
-          "units_at_once": 12
+          "units_at_once": 0
         }
       },
       "start_within_seconds": 7200,
-      "note": "Idle-card (standby) jobs of 4 hours; a one-copy unit (6.6 hours at the A30's 1.94 s per update) continues from its checkpoint in the next job. At most 20 Gilbreth cards for this study (24 for the account, 4 left for AntMaze): max_jobs 20 and 20 units held at once, one per job. Lowered to 12 on 2026-11-18 17:35 PT while the AntMaze study holds 12 units on Gilbreth (its default server)."
+      "note": "Idle-card (standby) jobs of 4 hours; a one-copy unit (6.6 hours at the A30's 1.94 s per update) continues from its checkpoint in the next job. At most 20 Gilbreth cards for this study (24 for the account, 4 left for AntMaze): max_jobs 20 and 20 units held at once, one per job. Lowered to 12 on 2026-11-18 17:35 PT while the AntMaze study holds 12 units on Gilbreth (its default server). Set to 0 units at once on 2026-11-20 12:24 PT: stage 1's queue is drained and UVA has free listed cards, so no run is handed to Gilbreth any more (user, 2026-11-20 about 12:20 PT: \"make sure all rest are running, no of them is waiting\"); the runs already there continue."
     },
     "ready": true,
     "smoke_check": {

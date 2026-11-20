@@ -527,7 +527,31 @@ def rsync(run_dir, table, name, arguments, timeout=900):
     shell = shlex.join(table[name]['ssh'][:-1])
     # -O: folders keep their own times. A unit trained under the other UVA account leaves a folder this account
     # may write into but whose time it may not set; without -O rsync copies every file and then exits 23.
-    return call(run_dir, table, name, ['rsync', '-rtO', '-e', shell] + arguments, None, timeout)
+    result = call(run_dir, table, name, ['rsync', '-rtO', '-e', shell] + arguments, None, timeout)
+    # a copy onto UVA (its destination is a local path, not "host:path") gets group write on what it brought in
+    if ':' not in arguments[-1]:
+        add_group_write(Path(arguments[-1]))
+    return result
+
+
+def add_group_write(destination):
+    """Give the UVA group write on the files this account copied in, so a worker of the other account can resume them.
+
+    Files keep the server's modes (rw-r--r--) when they arrive, and the UVA umask keeps them that way. Found on
+    2026-11-20 12:29 PT: a run taken back from Gilbreth failed at once under yuxinchen (PermissionError on
+    events.jsonl). before: data/<unit>/run/events.jsonl owned by this account, -rw-r--r--; after: -rw-rw-r--.
+    Files of the other account are left alone (only their owner may change them).
+    """
+    # the destination itself and everything under it
+    paths = [destination] + (list(destination.rglob('*')) if destination.is_dir() else [])
+    # only this account's files and folders that lack group write; a file removed meanwhile is passed over
+    for path in paths:
+        try:
+            info = path.lstat()
+        except FileNotFoundError:
+            continue
+        if info.st_uid == os.getuid() and not info.st_mode & 0o020 and not path.is_symlink():
+            path.chmod(info.st_mode & 0o7777 | 0o020)
 
 
 def remote_path(entry, path=''):

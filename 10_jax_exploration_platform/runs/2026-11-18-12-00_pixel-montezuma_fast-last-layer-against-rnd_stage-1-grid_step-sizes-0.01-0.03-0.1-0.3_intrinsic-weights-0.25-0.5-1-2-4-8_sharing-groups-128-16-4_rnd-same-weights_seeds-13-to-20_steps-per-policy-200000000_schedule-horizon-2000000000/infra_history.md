@@ -557,3 +557,19 @@
   cancelled by its ledger id while it waited, and the top-up was run again with that type left out of --gpu-types.
   To do before stage 2: order the pixel planner's card types by this work's measured seconds per update (rule
   pure-rl-gpu-placement.md, item 3).
+- 2026-11-20 12:59 PT: user, about 12:20 PT: "make sure all rest are running, no of them is waiting, you can move waitig queue to
+  available server is tere is any". Every UVA unit had a running job; one run waited on Gilbreth (step 0.1, group 4,
+  weight 1, seed 20, for Gilbreth job 12465869 that had not started). It was taken back at 12:21 PT, and the
+  top-up sent job 6960684 (yuxinchen, lotus), which claimed it and failed within a second: PermissionError on the
+  run's events.jsonl. Files copied back from a server keep the server's modes (rw-r--r--), so a worker of the other
+  UVA account cannot append to them. The failure gave the run back and the hand-over loop handed it to Gilbreth
+  again at 12:22 PT, where another Gilbreth job then took it (it trains there). Changes:
+  1. group write added to the 44 files of this run folder's data/ that lacked it (all owned by sl5nw; the AntMaze
+     folder had none);
+  2. scripts/grid_initialization_campaign/remote_fleet.py rsync(): after every copy onto UVA, the copied files this
+     account owns get group write (add_group_write); test_units_travel_to_the_server_and_come_back_verified checks it;
+     178 remote fleet tests of the grid, maze and pixel campaigns passed (job 6960717, gates ledger, on affogato14 in
+     the gpu partition with no card, since sl5nw's cpu and nolim caps were full; 6960703 waited and was cancelled by
+     its ledger id). The hand-over loop calls the working tree, so the change holds from its next pass;
+  3. Gilbreth's units_at_once for this run set to 0, so no run is handed to Gilbreth any more (UVA has free listed
+     cards); the 12 runs there continue, and a run that comes back to waiting on Gilbreth is taken back to UVA.

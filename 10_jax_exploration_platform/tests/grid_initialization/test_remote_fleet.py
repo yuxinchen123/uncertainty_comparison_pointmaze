@@ -317,9 +317,12 @@ def test_units_travel_to_the_server_and_come_back_verified(world):
     assert folders(world)[0]['unit_c'] == 'remote_pretend'
     fleet.tick(world.run, world.table, Namespace(dry_run=True))
     assert folders(world)[0]['unit_c'] == 'remote_pretend'
+    # records written on the server without group write arrive on UVA with it (the other account resumes runs)
+    (world.server / 'data/research/unit_c/behavior.npz').chmod(0o644)
     fleet.tick(world.run, world.table, Namespace(dry_run=False))
     uva, server = folders(world)
     assert uva['unit_c'] == 'done' and uva['unit_d'] == 'done' and server['unit_c'] == 'done'
+    assert (world.run / 'data/research/unit_c/behavior.npz').stat().st_mode & 0o020
     done = json.loads((world.run / 'queue/done/unit_c.json').read_text())
     assert done['result']['server'] == 'pretend' and done['result']['job_id'] == '501' and done['result']['exit_code'] == 0
     assert done['result']['training_wall_seconds'] == 12.5 and done['name'] == 'unit_c'
