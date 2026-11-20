@@ -517,3 +517,10 @@
   between passes: job 6959838 cancelled by its ledger id at 22:17 PT after its 22:17 PT pass, replaced by job
   6959895 with the same options (command.txt item 10); its first pass ran at 22:19 PT.
 - 2026-11-19 22:28 PT: job 6959891 (yuxinchen, pinned to cheetah04, one A100 80 GB, four copies) still waited on Priority after its 2-hour limit and one check, and cheetah04 had no free card any more: cancelled by its ledger id (cancel_ledger.py, ceiling 3); it held no unit. Gautschi: the last of RND's three running packs ended and was verified at 22:28 PT (18959407, 18959409, 18959546 all COMPLETED); this run now holds no job and no unit on Gautschi while the other session of the group uses its cards.
+- 2026-11-20 00:12 PT: this run's 4 waiting A100 jobs (6958489 and 6959406 and 6959790 under sl5nw, 6958490 under yuxinchen) were
+  given nice 5000 (scontrol update by their ledger ids), so that the AntMaze study's 5 waiting A100 jobs (6959920 to
+  6959924) start first on the next A100 cards of each account. Why: the plan gives the maze study first claim on UVA
+  cards ("its units keep their UVA cards"); its 5 units came back from Gilbreth at 22:44 PT and asked for A100 cards
+  (the most capable that fit their 17 GB), but this run's A100 jobs, sent earlier, stood ahead (priority 1,291 to
+  4,668 against 777 to 1,182). Nice keeps a job's age on UVA. They go back to nice 0 once no AntMaze job waits for
+  an A100 card (ids in the scratchpad file montezuma_a100_jobs_niced_for_antmaze.txt).

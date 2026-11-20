@@ -1087,3 +1087,8 @@ Times are Pacific, read from the clock or from scheduler records.
   build_units.py from `infrastructure/descriptions/*choice-for-first-goal-time*.json` (run with the exploration
   environment's Python 3.11, which has tomllib). Run seeds equal those of the existing fresh units of the same seed
   blocks. They are placed like every ant unit by the AntMaze tick.
+- 2026-11-20 00:12 PT: the 5 units that came back from Gilbreth at 22:44 PT (RND Large weight 16 seeds 30128 to 30255, and the four
+  Medium units for the pair for M) wait in UVA's queue for A100 cards (jobs 6959920 to 6959924). The Montezuma
+  study's 4 waiting A100 jobs stood ahead of them and were given nice 5000, so these start first on the next A100
+  cards of each account (that folder's infra_history.md has the ids); they go back to nice 0 once no ant job waits
+  for an A100.
