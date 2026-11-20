@@ -474,3 +474,4 @@
   (2 to 5 of 8 per configuration), sorted by S(B), with the archived baseline's first 200 million steps below a rule;
   the text says they choose nothing until all 8 seeds are in. Generator functions score_row and score_tabular, one
   new test (13 generator tests passed); PDF rebuilt, no line too wide, pages 63 to 67 looked at.
+- 2026-11-19 16:08 PT: job 6959153 (pinned to affogato11, still waiting on Priority after 20 minutes) cancelled by its ledger id, as the monitor's 16:05 PT list asked (ceiling 3).
