@@ -483,3 +483,14 @@
   the account had 61 of its 64 places on mit_normal_gpu filled, and the job would have taken one of the other
   session's remaining places. The two waiting preemptable jobs (29678001, 29678003) stay at nice 3,000,000
   (that pool's cap is 448 jobs).
+- 2026-11-19 19:49 PT: Gautschi: the other session sent 3 more ai jobs (12 to 13 hours each; 18960498 to 18960500), which wait on
+  the group's 4-card cap behind its running job 18949792 and this run's 3 running jobs (18959407, 18959409,
+  18959546; the last started on a free card at nice 100,000). The share step lowered this run's pool to 0 jobs and
+  0 units. The 5 waiting units held on Gautschi were taken back at 19:48 PT (take-back --server gautschi --units 5
+  --from-end): the 3 never-started four-copy packs were split into their 12 single runs (build_units.py
+  --unpack-pending --match four-copies), and the 2 started packs (group 4 weight 4 seed 14 at 7,176 updates; RND
+  seed 15 at 4,633) wait on UVA with their copied-back checkpoints, to go back to Gautschi when its share allows or
+  to a free card of at least 60 GB. Taking the started packs back as well goes beyond plan decision 15's
+  "never-started" so that this run's 3 running jobs end after their current packs (7,600 to 8,756 of 12,207
+  updates, about 2 to 3 hours) instead of holding 2 cards for another 3 to 5 hours while the other session waits.
+  No running job was touched.
