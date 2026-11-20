@@ -475,3 +475,11 @@
   the text says they choose nothing until all 8 seeds are in. Generator functions score_row and score_tabular, one
   new test (13 generator tests passed); PDF rebuilt, no line too wide, pages 63 to 67 looked at.
 - 2026-11-19 16:08 PT: job 6959153 (pinned to affogato11, still waiting on Priority after 20 minutes) cancelled by its ledger id, as the monitor's 16:05 PT list asked (ceiling 3).
+- 2026-11-19 17:29 PT: another session (m5-forecast-inputs) sent about 140 jobs to MIT (59 waiting on mit_normal_gpu, 86 on
+  mit_preemptable), and the share step lowered this run's MIT limits to 0 jobs and 0 units on both pools. As plan
+  decision 15 says, the one never-started pack held on MIT (sharing group 16, weights 0.25 and 0.5, seed 18) was
+  taken back at 17:28 PT and split into its 8 single runs; MIT now holds only the pack job 29619724 trains. This
+  run's waiting Advanced-pool job 29673418 (MIT ledger), which had no unit left to train, was cancelled by its id:
+  the account had 61 of its 64 places on mit_normal_gpu filled, and the job would have taken one of the other
+  session's remaining places. The two waiting preemptable jobs (29678001, 29678003) stay at nice 3,000,000
+  (that pool's cap is 448 jobs).
