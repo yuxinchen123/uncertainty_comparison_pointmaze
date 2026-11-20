@@ -496,3 +496,10 @@
   No running job was touched.
 - 2026-11-19 20:09 PT: 7 more 8-hour worker jobs ended (59 runs training on UVA instead of 76) and 15 listed cards were free after the monitor's 20:05 PT pass (10 RTX 2080 Ti on ai02, ai03, ai04, ai06 and lynx10; 5 RTX A4500 on jaguar03 in the reservation sl5nw_170). The top-up was run by hand with the monitor's options: 15 cards pinned to them and 2 RTX A4000 jobs that wait.
 - 2026-11-19 20:49 PT: more 8-hour worker jobs ended, and 8 listed cards were free after the monitor's 20:45 PT pass: 5 Quadro RTX 6000 on lotus (back in service) and 3 RTX A4500 on jaguar03 in the reservation. The top-up was run by hand with the monitor's options: 6959801 (yuxinchen, 5 cards on lotus) and 6959802 (sl5nw, 3 cards on jaguar03, reservation sl5nw_170) started at once; 6959803 (one Quadro RTX 6000) waits by type.
+- 2026-11-19 21:07 PT: the monitor now passes every 10 minutes instead of 20 (monitor.py PASS_SECONDS 600; the hourly pass when
+  nothing changes stays). Twice this evening 8-hour worker jobs ended in a batch and their freed listed cards sat
+  until the next pass (15 cards after 20:05 PT, 8 after 20:45 PT; both topped up by hand). The test that checked
+  the old interval now checks the constant; 21 monitor tests passed (job 6959833, gates ledger; the first run,
+  6959806, waited on sl5nw's full cpu-partition cap and was cancelled by its id, then run on nolim). The changed
+  file was copied into code copy 3, and the monitor was restarted between passes: job 6959048 cancelled by its
+  ledger id at 21:06 PT after its 21:05 PT pass, replaced by job 6959838 with the same options (command.txt item 9).

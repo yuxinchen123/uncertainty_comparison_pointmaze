@@ -15,7 +15,7 @@ Each pass
      RUN/20_mins_monitoring/outputs/;
   5. rebuilds RUN/early_signals.md (report.py, in its own process: a report that cannot be built
      is named in the warnings and never ends the monitoring).
-A loop passes every 20 minutes, and every hour once three passes over more than an hour found
+A loop passes every 10 minutes, and every hour once three passes over more than an hour found
 nothing changed and nothing to warn about. It ends by itself when RUN/SWEEP_COMPLETE exists. It
 never stops a run, and cancels a job only through a top-up with --cancel-waiting-after (its own
 jobs of that pass that did not start, by id). Standard library only.
@@ -34,7 +34,8 @@ from campaign_imports import HERE, common, grid, maze, own, unit_queue
 import pixel_queue
 
 maze_monitor = maze("monitor")
-PASS_SECONDS = 1200
+PASS_SECONDS = 600       # 10 minutes since 2026-11-19 20:56 PT (was 20): 8-hour worker jobs end in batches, and
+                         # their freed cards sat up to 20 minutes before a pass placed workers on them
 STABLE_PASS_SECONDS = 3600
 STALE_SECONDS = 2400    # a running unit whose update count did not grow for this long is named in the warnings
 WIDTH = maze_monitor.WIDTH

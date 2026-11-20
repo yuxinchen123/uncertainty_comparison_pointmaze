@@ -357,7 +357,7 @@ class MonitorPass(unittest.TestCase):
     def test_a_pass_writes_the_status_the_report_and_the_early_signals(self):
         """Counts, the training unit's progress, the pending units' warning, and early_signals.md."""
         complete, cadence, printed = self.one_pass()
-        self.assertEqual((complete, cadence), (False, 1200))
+        self.assertEqual((complete, cadence), (False, monitor.PASS_SECONDS))
         status = common.read_json(self.run_dir / "status.json")
         self.assertEqual(status["counts"], {"done": 1, "failed": 0, "pending": 6, "running": 1})
         self.assertIn("update 130 of 244 (53%), 1 copy, 1.40 s per update", " ".join(printed.split()))
