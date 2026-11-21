@@ -171,6 +171,40 @@ class Plan(unittest.TestCase):
             self.assertLessEqual(cards(jobs, identity=identity), 2)
 
 
+class CardSpeeds(unittest.TestCase):
+    """The run's measured speed by card type orders the card types the planner asks for."""
+
+    def test_measured_types_first_fastest_first_and_unmeasured_after(self):
+        """The RTX 4000 Ada measured slow goes after the RTX 2080 Ti; the unmeasured H100 keeps its place after both."""
+        classes = [{"gres_type": "nvidia_rtx_4000_ada_generation", "capability_rank": 6},
+                   {"gres_type": "nvidia_geforce_rtx_2080_ti", "capability_rank": 10},
+                   {"gres_type": "nvidia_h100_nvl", "capability_rank": 1}]
+        ordered = submit.order_by_measured_speed(classes, {"nvidia_rtx_4000_ada_generation": 3.01,
+                                                           "nvidia_geforce_rtx_2080_ti": 1.88})
+        self.assertEqual([(record["gres_type"], record["capability_rank"]) for record in ordered],
+                         [("nvidia_geforce_rtx_2080_ti", 0), ("nvidia_rtx_4000_ada_generation", 1),
+                          ("nvidia_h100_nvl", 2)])
+        # no speed table: the catalogue order stands
+        self.assertEqual([record["gres_type"] for record in submit.order_by_measured_speed(classes, {})],
+                         ["nvidia_h100_nvl", "nvidia_rtx_4000_ada_generation", "nvidia_geforce_rtx_2080_ti"])
+
+    def test_speeds_are_medians_of_finished_attempts_by_card_type(self):
+        """Two A4500 attempts give their median; an A40 counts for both A40 names; an A30 and a four-copy unit do not."""
+        with tempfile.TemporaryDirectory() as folder:
+            done = Path(folder) / "queue/done"
+            done.mkdir(parents=True)
+            records = [("a", "one copy", [("NVIDIA RTX A4500", 1.55), ("NVIDIA RTX A4500", 1.60)]),
+                       ("b", "one copy", [("NVIDIA A40", 1.38)]), ("c", "one copy", [("NVIDIA A30", 1.67)]),
+                       ("d", "four copies", [("NVIDIA H100 NVL", 2.2)])]
+            for name, profile, attempts in records:
+                (done / f"{name}.json").write_text(json.dumps({"execution_profile": profile, "history": [
+                    {"card": card, "seconds_per_update": speed} for card, speed in attempts]}))
+            speeds = submit.measured_card_speeds(folder)
+            self.assertEqual(sorted(speeds), ["a40", "nvidia_a40", "nvidia_rtx_a4500"])
+            for card_type, expected in (("a40", 1.38), ("nvidia_a40", 1.38), ("nvidia_rtx_a4500", 1.575)):
+                self.assertAlmostEqual(speeds[card_type], expected)
+
+
 class LeaveCards(unittest.TestCase):
     """Cards another study's waiting units need stay out of the plan."""
 

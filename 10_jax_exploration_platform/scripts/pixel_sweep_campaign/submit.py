@@ -35,6 +35,7 @@ import argparse
 from copy import deepcopy
 from pathlib import Path
 import shlex
+import statistics
 import subprocess
 import sys
 import time
@@ -283,6 +284,60 @@ def cancel_still_waiting(run_dir, phase, sent, wait_seconds, sleep=time.sleep):
     return cancelled
 
 
+# The card names a worker records ("card" in its queue history) and the scheduler's card types (gres names) they are
+SPEED_FILE = "infrastructure/card_seconds_per_update.json"
+CARD_TYPES_OF_DEVICE = {"NVIDIA H100 NVL": ("nvidia_h100_nvl",), "NVIDIA A100 80GB PCIe": ("a100",),
+                        "NVIDIA A100-PCIE-40GB": ("nvidia_a100-pcie-40gb",), "NVIDIA A40": ("nvidia_a40", "a40"),
+                        "NVIDIA RTX A4500": ("nvidia_rtx_a4500",), "Quadro RTX 6000": ("quadro_rtx_6000",),
+                        "NVIDIA GeForce RTX 2080 Ti": ("nvidia_geforce_rtx_2080_ti",),
+                        "NVIDIA RTX A4000": ("nvidia_rtx_a4000",),
+                        "NVIDIA RTX 4000 Ada Generation": ("nvidia_rtx_4000_ada_generation",),
+                        "NVIDIA GeForce RTX 5080": ("nvidia_geforce_rtx_5080",)}
+
+
+def measured_card_speeds(run_dir, profile="one copy"):
+    """Median seconds per update of each UVA card type over a run's finished units of one execution profile.
+
+    Read from every attempt in queue/done that recorded its card and its speed; cards of other servers (A30, H100
+    on Gautschi) have no UVA card type and are left out.
+    before: done units whose attempts ran on "NVIDIA RTX A4500" at 1.55 and 1.60 s and on "NVIDIA A40" at 1.38 s ;
+    after:  {"nvidia_rtx_a4500": 1.575, "nvidia_a40": 1.38, "a40": 1.38}
+    """
+    seconds = {}
+    # every attempt of every finished unit of the profile, by the card it ran on
+    for path in sorted((Path(run_dir) / "queue/done").glob("*.json")):
+        record = common.read_json(path)
+        if record.get("execution_profile") != profile:
+            continue
+        for attempt in record.get("history") or []:
+            speed = attempt.get("seconds_per_update")
+            if speed is None and attempt is record["history"][-1]:
+                speed = (record.get("result") or {}).get("seconds_per_update")
+            for card_type in CARD_TYPES_OF_DEVICE.get(attempt.get("card"), ()) if speed else ():
+                seconds.setdefault(card_type, []).append(speed)
+    return {card_type: statistics.median(values) for card_type, values in sorted(seconds.items())}
+
+
+def read_card_speeds(run_dir):
+    """The run's table of measured seconds per update by card type, or an empty one when the run has none."""
+    path = Path(run_dir) / SPEED_FILE
+    return common.read_json(path)["seconds_per_update"] if path.exists() else {}
+
+
+def order_by_measured_speed(classes, speeds):
+    """Card classes ranked by this work's measured seconds per update, fastest first; unmeasured types after them.
+
+    The planner asks for the card types in capability_rank order. The resource catalogue's rank put the RTX 4000 Ada
+    (3.01 s per update on pixel Montezuma) before the RTX 2080 Ti (1.88 s); rule pure-rl-gpu-placement.md item 3
+    orders by the work's own speed. Changed 2026-11-20 18:12 PT.
+    before: [rtx_4000_ada rank 6, rtx_2080_ti rank 10, h100 rank 1], speeds {ada: 3.01, 2080 ti: 1.88} ;
+    after:  [2080 ti rank 0, ada rank 1, h100 rank 2] (the unmeasured H100 keeps its catalogue order after them)
+    """
+    ordered = sorted(classes, key=lambda record: (0, speeds[record["gres_type"]]) if record["gres_type"] in speeds
+                     else (1, record["capability_rank"]))
+    return [dict(record, capability_rank=rank) for rank, record in enumerate(ordered)]
+
+
 def top_up(run_dir, phase, gpu_types=None, max_new_cards=None, dry_run=False, only_free_now=False,
            leave_cards=0, leave_card_types=None, cancel_waiting_after=None, python=PIXEL_PYTHON):
     """Submit worker jobs for the pending units that have no worker yet; returns the ids of the jobs kept."""
@@ -297,6 +352,8 @@ def top_up(run_dir, phase, gpu_types=None, max_new_cards=None, dry_run=False, on
     # the request of every card of this sweep, set in the maze planner this process holds
     maze_submit.set_request_per_card(CPUS_PER_CARD, MEMORY_GIB_PER_CARD)
     state = maze_submit.scheduler_state(run_dir)
+    # the faster card types on this work are asked for first, when the run has a speed table
+    state["classes"] = order_by_measured_speed(state["classes"], read_card_speeds(run_dir))
     waiting_cards = waiting_cards_by_profile(run_dir, profiles, state["classes"], common.own_live_jobs(run_dir))
     # cards another study's waiting units need stay out of the plan
     left = leave_free_cards(state, state["classes"], leave_cards, leave_card_types or allowed)
@@ -409,8 +466,18 @@ def main(argv=None):
     parser.add_argument("--complete-when-drained", action="store_true",
                         help="with --monitor: write RUN/SWEEP_COMPLETE when no unit is pending, running or held")
     parser.add_argument("--dry-run", action="store_true", help="print the plan and the commands; submit nothing")
+    parser.add_argument("--card-speeds-from", type=Path,
+                        help="write RUN/infrastructure/card_seconds_per_update.json from this finished run's records")
     args = parser.parse_args(argv)
     run_dir = args.run_dir.resolve()
+    # the speed table of a new run, measured on an earlier run of the same work
+    if args.card_speeds_from:
+        speeds = measured_card_speeds(args.card_speeds_from.resolve())
+        common.write_json(run_dir / SPEED_FILE, {"seconds_per_update": speeds, "profile": "one copy",
+                                                 "measured_on": str(args.card_speeds_from.resolve()),
+                                                 "written_at": common.now()})
+        print("card speeds, seconds per update: " + ", ".join(f"{key} {value:.3f}" for key, value in speeds.items()))
+        return
     plan = plan_arguments(args)
     if args.monitor:
         options = (["--top-up-phase", args.top_up_phase] if args.top_up_phase else []) + (
