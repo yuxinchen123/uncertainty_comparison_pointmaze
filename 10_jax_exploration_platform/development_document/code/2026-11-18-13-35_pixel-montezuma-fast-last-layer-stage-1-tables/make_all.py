@@ -158,15 +158,19 @@ def score_row(configuration, budget=BUDGET_WINDOWS, final=FINAL_WINDOWS):
     S(B) is report.score_up_to at the budget, a mean over the seeds that have reached it; the final level is the
     mean window value of the last `final` windows before the budget. The archived baseline gives its first
     `budget` windows (its runs share the stage's 2-billion-step learning-rate horizon, so they are a prefix).
+    The standard error of S(B) over those seeds (sample standard deviation over the square root of their number)
+    stands beside it; with one seed there is none.
     before: a configuration with 2 of 8 seeds at 200 windows, S 1,800 and 2,200 ; after: {"seeds": "2 of 8",
-            "score": 2000.0, ...}
+            "score": 2000.0, "standard_error": 200.0, ...}
     """
     runs = [run for run in configuration["runs"] if len(run["windows"]) >= budget]
     scores = [report.score_up_to(run, budget) for run in runs]
     finals = [statistics.fmean(window["mean_score"] for window in run["windows"][budget - final:budget]) for run in runs]
     score = statistics.fmean(scores) if scores else None
+    standard_error = statistics.stdev(scores) / math.sqrt(len(scores)) if len(scores) > 1 else None
     return {"label": configuration_label(configuration), "seeds": f"{len(runs)} of {len(configuration['runs'])}",
-            "at_budget": len(runs), "score": score, "final": statistics.fmean(finals) if finals else None,
+            "at_budget": len(runs), "score": score, "standard_error": standard_error,
+            "final": statistics.fmean(finals) if finals else None,
             "sort": (score is None, -(score or 0.0), configuration["key"])}
 
 
@@ -182,9 +186,12 @@ def score_tabular(rows, baseline):
         styles = marks([-row[column] if row[column] is not None else None for row in rows])
         cells[column] = [(style % f"{row[column]:,.0f}") if row[column] is not None else "not yet"
                          for row, style in zip(rows, styles)]
+    # the standard error follows the marked mean score, outside the mark: "\\textbf{1,889} $\\pm$ 278"
+    cells["score"] = [cell + (f" $\\pm$ {row['standard_error']:,.0f}" if row["standard_error"] is not None else "")
+                      for cell, row in zip(cells["score"], rows)]
     lines = ["\\begin{tabular}{@{}>{\\raggedright\\arraybackslash}p{3.7cm}rrr@{}}", "\\toprule",
              "\\textbf{configuration} & \\textbf{\\shortstack[r]{seeds at the\\\\budget}} & "
-             "\\textbf{\\shortstack[r]{mean score over\\\\the run, $S(B)$ $\\uparrow$}} & "
+             "\\textbf{\\shortstack[r]{mean score over the run,\\\\$S(B)$ $\\uparrow$ $\\pm$ standard error}} & "
              "\\textbf{\\shortstack[r]{final level,\\\\$S_{\\text{last}}(B)$}} \\\\", "\\midrule"]
     for index, row in enumerate(rows):
         if index == len(rows) - 1:

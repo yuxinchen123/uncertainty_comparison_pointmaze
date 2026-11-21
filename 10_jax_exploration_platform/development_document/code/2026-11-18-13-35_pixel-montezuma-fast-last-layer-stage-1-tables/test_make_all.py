@@ -118,8 +118,10 @@ class ScoreTableTest(unittest.TestCase):
         text = make_all.score_tabular([a, none, b], baseline)
         body = [line for line in text.splitlines() if line.startswith("weight")]
         self.assertEqual([line.split(" & ")[0] for line in body], ["weight 2", "weight 1", "weight 4", "weight 1"])
-        self.assertIn("\\textbf{2,500}", text)
-        self.assertIn("\\underline{2,000}", text)
+        self.assertIn("\\textbf{2,500} &", text)
+        # two seeds 1,800 and 2,200: standard deviation 282.8, standard error 200; one seed has none
+        self.assertEqual(a["standard_error"], 200.0)
+        self.assertIn("\\underline{2,000} $\\pm$ 200 &", text)
         self.assertIn("not yet", text)
 
 
