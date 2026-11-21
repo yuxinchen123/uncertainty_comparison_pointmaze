@@ -1,0 +1,385 @@
+{
+  "gautschi": {
+    "ssh": [
+      "ssh",
+      "-o",
+      "BatchMode=yes",
+      "-o",
+      "ConnectTimeout=30",
+      "gautschi"
+    ],
+    "check": [],
+    "remote_run": "/scratch/gautschi/liu4869/rnd_pixel/runs/2026-11-20-18-16_pixel-montezuma_fast-last-layer-against-rnd_stage-2_unused-seeds-1-to-12_fast-last-layer-sharing-group-4-step-size-0.01-weight-1_sharing-group-16-step-size-0.01-weight-2_rnd-weight-2_steps-per-policy-1-billion_schedule-horizon-2-billion",
+    "python": "/home/liu4869/envs/atari_pixels_jax/bin/python",
+    "code_root": "/scratch/gautschi/liu4869/rnd_pixel/code",
+    "assets": "/home/liu4869/rnd_pixel/assets/jaxtari_pixel_study_assets_montezuma_room_geometry_from_png",
+    "environment_note": "Environment and asset pack in home, not scratch: Purdue scratch removes files not accessed for about 60 days and has already broken environments (rule purdue-cluster-slurm.md). Built 2026-11-18 PT by build_environment.sh of the gates run folder's infrastructure/environment_setup/: UVA's conda package files and every pip package at UVA's version; 87 of 88 distributions equal UVA's file by file, and JAXAtari (not imported by the trainer) differs only in its WHEEL metadata file. Asset pack: 4,531 files, every SHA-256 equal to UVA's.",
+    "unit_seconds": 1800,
+    "pools": {
+      "ai-h100": {
+        "gpu_class": "h100_gautschi",
+        "execution_profile": "four copies",
+        "time_limit": "1-00:00:00",
+        "max_jobs": 4,
+        "sbatch_options": [
+          "-p",
+          "ai",
+          "-q",
+          "normal",
+          "-A",
+          "dsimchil",
+          "-N1",
+          "-n14",
+          "--gpus-per-node=1"
+        ]
+      }
+    },
+    "hand_over": {
+      "pools": {
+        "ai-h100": {
+          "units_at_once": 8
+        }
+      },
+      "start_within_seconds": 7200,
+      "note": "Packs only (the pool's profile is four copies). At most 4 jobs, the account's 4 H100 cards. 8 units at once: 4 that train and 4 that wait for a job that has finished its unit."
+    },
+    "ready": false,
+    "not_ready_reason": "a run folder's table starts not ready (init-table requires it); with this environment and asset pack the smoke job 18907454 of the gates run folder passed on 2026-11-18 (smoke_check below): run smoke and smoke-result in the new run folder to make the server ready there",
+    "smoke_check": {
+      "run_folder": "2026-11-17-21-26_pixel-montezuma_fast-last-layer-against-rnd_gates_unit-tests_archive-identity_resume_speed-ideas-10_card-speed-checks",
+      "code_commit": "17ffd5b08e6dbcc78573654e35635532096b0a57",
+      "ai-h100": {
+        "job_id": "18907454",
+        "passed": true,
+        "card": "NVIDIA H100 80GB HBM3, node h008",
+        "read_at": "2026-11-18 12:14 PT",
+        "first_update_largest_relative_difference_from_archive": 0.000595,
+        "default_seconds_per_update": 2.3,
+        "fast_layer_seconds_per_update": 2.3,
+        "peak_card_memory_mb": 70013,
+        "host_memory_maxrss_gb": 8.3,
+        "elapsed": "00:11:31"
+      }
+    },
+    "budget_command": "bash -lc slist 2> /dev/null | grep dsimchil",
+    "budget_field": 2,
+    "budget_unit": "H100-hours"
+  },
+  "gilbreth": {
+    "ssh": [
+      "ssh",
+      "-o",
+      "BatchMode=yes",
+      "-o",
+      "ConnectTimeout=60",
+      "gilbreth"
+    ],
+    "check": [],
+    "remote_run": "/scratch/gilbreth/liu4869/rnd_pixel/runs/2026-11-20-18-16_pixel-montezuma_fast-last-layer-against-rnd_stage-2_unused-seeds-1-to-12_fast-last-layer-sharing-group-4-step-size-0.01-weight-1_sharing-group-16-step-size-0.01-weight-2_rnd-weight-2_steps-per-policy-1-billion_schedule-horizon-2-billion",
+    "python": "/home/liu4869/envs/atari_pixels_jax/bin/python",
+    "code_root": "/scratch/gilbreth/liu4869/rnd_pixel/code",
+    "assets": "/home/liu4869/rnd_pixel/assets/jaxtari_pixel_study_assets_montezuma_room_geometry_from_png",
+    "environment_note": "Environment and asset pack in home, not scratch: Purdue scratch removes files not accessed for about 60 days and has already broken environments (rule purdue-cluster-slurm.md). Built 2026-11-18 PT by build_environment.sh of the gates run folder's infrastructure/environment_setup/: UVA's conda package files and every pip package at UVA's version; 87 of 88 distributions equal UVA's file by file, and JAXAtari (not imported by the trainer) differs only in its WHEEL metadata file. Asset pack: 4,531 files, every SHA-256 equal to UVA's.",
+    "unit_seconds": 1800,
+    "pools": {
+      "standby-a30": {
+        "gpu_class": "a30_gilbreth",
+        "execution_profile": "one copy",
+        "time_limit": "04:00:00",
+        "max_jobs": 3,
+        "sbatch_options": [
+          "-p",
+          "a30",
+          "-q",
+          "standby",
+          "-A",
+          "dsmichil",
+          "-N1",
+          "-n1",
+          "-c",
+          "4",
+          "--gres=gpu:1",
+          "--mem=16G"
+        ]
+      }
+    },
+    "hand_over": {
+      "pools": {
+        "standby-a30": {
+          "units_at_once": 3
+        }
+      },
+      "start_within_seconds": 7200,
+      "note": "Set 2026-11-21 02:12 PT: 3 runs of stage 2 (the seed-12 runs of all three configurations) waited on UVA after the first 8-hour workers ended, because another session of the account took the A100 40 GB, A40, RTX A4000, RTX 4000 Ada and two Quadro RTX 6000 cards with 4-hour jobs (3 to 4 hours left) and has older waiting jobs for the A100 and A40 cards. Idle-card (standby) jobs of 4 hours on Gilbreth's A30 (1.94 s per update in stage 1's check, about the RTX 2080 Ti's speed) take them now; a unit continues from its checkpoint in the next job. At most 3 units and 3 jobs, so the AntMaze study keeps its 18 of the account's 24 standby cards (user, 2026-11-20 about 12:20 PT: 'make sure all rest are running, no of them is waiting, you can move waiting queue to available server if there is any')."
+    },
+    "ready": true,
+    "smoke_check": {
+      "run_folder": "2026-11-17-21-26_pixel-montezuma_fast-last-layer-against-rnd_gates_unit-tests_archive-identity_resume_speed-ideas-10_card-speed-checks",
+      "code_commit": "17ffd5b08e6dbcc78573654e35635532096b0a57",
+      "standby-a30": {
+        "job_id": "12432866",
+        "passed": false,
+        "card": "NVIDIA A30, node gilbreth-b005",
+        "read_at": "2026-11-18 13:03 PT",
+        "first_update_largest_relative_difference_from_archive": 0.00333,
+        "default_seconds_per_update": 1.94,
+        "fast_layer_seconds_per_update": 1.95,
+        "speed_against_the_rtx_a4000_bar": "faster (the bar is 2.038 s per update)",
+        "peak_card_memory_mb": 12779,
+        "host_memory_maxrss_gb": 6.6,
+        "elapsed": "00:11:53"
+      },
+      "standby-a100-80gb": {
+        "job_id": "12432865",
+        "passed": null,
+        "state": "waiting at 13:17 PT"
+      },
+      "standby-a10": {
+        "job_id": "12432867",
+        "passed": null,
+        "state": "waiting at 13:17 PT"
+      }
+    },
+    "budget_note": "standby, not charged",
+    "ready_reason": "Carried over from stage 1 (run folder 2026-11-18-12-00_pixel-montezuma_..._stage-1-grid_..., where Gilbreth's A30 pool trained one-copy units): the same environment (/home/liu4869/envs/atari_pixels_jax), the same asset pack, the same pool, and the trainer, the game code and the worker are identical between stage 1's frozen commit 48019fc4 and stage 2's 7a69c78a (git diff of src/, scripts/atari_pixel_campaign/ and scripts/pixel_sweep_campaign/worker.py is empty). Decided 2026-11-21 02:12 PT by the session.",
+    "code": "/scratch/gilbreth/liu4869/rnd_pixel/code/source_7a69c78a9c9cca0c1367293bb17616422d8ea4f2/10_jax_exploration_platform",
+    "failed_calls_in_a_row": 0,
+    "prepared_commit": "7a69c78a9c9cca0c1367293bb17616422d8ea4f2",
+    "prepared_copy_number": 1
+  },
+  "aces": {
+    "ssh": [
+      "ssh",
+      "-o",
+      "BatchMode=yes",
+      "portal05",
+      "ssh",
+      "-o",
+      "BatchMode=yes",
+      "aces"
+    ],
+    "check": [
+      "ssh",
+      "-o",
+      "BatchMode=yes",
+      "portal05",
+      "ssh",
+      "-O",
+      "check",
+      "aces"
+    ],
+    "remote_run": "/scratch/user/u.sl359075/rnd_pixel/runs/2026-11-20-18-16_pixel-montezuma_fast-last-layer-against-rnd_stage-2_unused-seeds-1-to-12_fast-last-layer-sharing-group-4-step-size-0.01-weight-1_sharing-group-16-step-size-0.01-weight-2_rnd-weight-2_steps-per-policy-1-billion_schedule-horizon-2-billion",
+    "python": "/scratch/group/p.cis261532.000/envs/atari_pixels_jax/bin/python",
+    "environment_note": "The environment is in the project's group space because the user scratch held 206,502 of its 250,000 files on 2026-11-18 and the environment has about 49,700 files. Built 2026-11-18 PT by build_environment.sh of the gates run folder's infrastructure/environment_setup/ with UVA's conda package files and every pip package at UVA's version.",
+    "code_root": "/scratch/user/u.sl359075/rnd_pixel/code",
+    "assets": "/scratch/user/u.sl359075/rnd_pixel/assets/jaxtari_pixel_study_assets_montezuma_room_geometry_from_png",
+    "unit_seconds": 1800,
+    "pools": {
+      "gpu-h100": {
+        "gpu_class": "h100_aces",
+        "execution_profile": "four copies",
+        "time_limit": "1-00:00:00",
+        "max_jobs": 4,
+        "sbatch_options": [
+          "--account=158590754315",
+          "-p",
+          "gpu",
+          "--nodes=1",
+          "--ntasks=1",
+          "--cpus-per-task=8",
+          "--mem=39G",
+          "--gres=gpu:h100:1",
+          "--exclude=ac096,ac098"
+        ],
+        "exclude_note": "2026-11-18: a smoke job on ac098 (gpu_debug's only H100 node) found no card with nvidia-smi and ended at once; ac096 is listed as inval in the ACES rule. Re-read both before removing the exclusion."
+      }
+    },
+    "hand_over": {
+      "pools": {
+        "gpu-h100": {
+          "units_at_once": 0
+        }
+      },
+      "note": "Packs only. Kept mainly for stages 2 and 3: 0 units at once until the session owner opens it. Its connection lives on portal05 and is only checked, never opened, from here. Set time_limit close to the need of the stage (the charge is per hour used: 136 SUs per H100-hour for this request)."
+    },
+    "ready": false,
+    "not_ready_reason": "the environment and asset pack are in place, but smoke job 2379474 (2026-11-18, NVIDIA H100 PCIe) did not pass one check: in the first default update the policy loss differs from the archive by up to 2.3e-3 relative (absolute differences up to 3.7e-8 on values near 1.4e-5 to 1.9e-5; every other field within 7.5e-4 relative, the total loss within 2e-7, every whole-number field equal in updates 1 and 2), above the smoke check's limit of 1e-3. All other checks passed. Making the server ready needs a decision on that limit for this card.",
+    "smoke_check": {
+      "run_folder": "2026-11-17-21-26_pixel-montezuma_fast-last-layer-against-rnd_gates_unit-tests_archive-identity_resume_speed-ideas-10_card-speed-checks",
+      "code_commit": "17ffd5b08e6dbcc78573654e35635532096b0a57",
+      "gpu-h100": {
+        "job_id": "2379474",
+        "passed": false,
+        "card": "NVIDIA H100 PCIe, node ac045",
+        "read_at": "2026-11-18 12:42 PT",
+        "first_update_largest_relative_difference_from_archive": 0.00231,
+        "default_seconds_per_update": 2.94,
+        "fast_layer_seconds_per_update": 2.93,
+        "peak_card_memory_mb": 69947,
+        "host_memory_maxrss_gb": 9.4,
+        "elapsed": "00:14:03",
+        "earlier_job": "2379511 on gpu_debug ended at once on ac098: nvidia-smi found no card; no verdict"
+      }
+    },
+    "budget_command": "myproject 2>&1 | grep 158590754315",
+    "budget_field": 6,
+    "budget_unit": "SUs"
+  },
+  "deltaai": {
+    "ssh": [
+      "ssh",
+      "-o",
+      "BatchMode=yes",
+      "portal04",
+      "ssh",
+      "-o",
+      "BatchMode=yes",
+      "deltaai"
+    ],
+    "check": [
+      "ssh",
+      "-o",
+      "BatchMode=yes",
+      "portal04",
+      "ssh",
+      "-O",
+      "check",
+      "deltaai"
+    ],
+    "remote_run": "/projects/biwj/sliu51/rnd_pixel/runs/2026-11-20-18-16_pixel-montezuma_fast-last-layer-against-rnd_stage-2_unused-seeds-1-to-12_fast-last-layer-sharing-group-4-step-size-0.01-weight-1_sharing-group-16-step-size-0.01-weight-2_rnd-weight-2_steps-per-policy-1-billion_schedule-horizon-2-billion",
+    "python": "/projects/biwj/sliu51/envs/atari_pixels_jax/bin/python",
+    "code_root": "/projects/biwj/sliu51/rnd_pixel/code",
+    "assets": "/projects/biwj/sliu51/rnd_pixel/assets/jaxtari_pixel_study_assets_montezuma_room_geometry_from_png",
+    "unit_seconds": 1800,
+    "pools": {
+      "ghx4-h100": {
+        "gpu_class": "h100_gh200_deltaai",
+        "execution_profile": "four copies",
+        "time_limit": "1-00:00:00",
+        "max_jobs": 2,
+        "sbatch_options": [
+          "--account=biwj-dtai-gh",
+          "--partition=ghx4",
+          "--nodes=1",
+          "--ntasks=1",
+          "--cpus-per-task=16",
+          "--mem=64G",
+          "--gpus-per-node=1"
+        ]
+      }
+    },
+    "hand_over": {
+      "pools": {
+        "ghx4-h100": {
+          "units_at_once": 0
+        }
+      },
+      "note": "Last in the order of servers; 100 GPU-hours in all. Its connection lives on portal04 and is only checked, never opened, from here."
+    },
+    "ready": false,
+    "environment_note": "ARM processors (aarch64). Built 2026-11-18 PT by build_environment.sh of the gates run folder's infrastructure/environment_setup/: Python 3.12.13 from conda-forge's linux-aarch64 channel and every pip package at UVA's version as an aarch64 wheel (all exist; torch is PyPI's 2.6.0 CPU build, labelled 2.6.0 instead of 2.6.0+cpu); the 49 pure-Python distributions, JAXtari among them, equal UVA's file by file. Asset pack: 4,531 files, every SHA-256 equal to UVA's.",
+    "not_ready_reason": "ARM processors: the environment is built, but smoke job 3626431 (2026-11-18, NVIDIA GH200 120GB) did not pass one check: in the first default update the policy loss differs from the archive by up to 2.1e-3 relative (absolute differences up to 3.3e-8 on values near 1.6e-5 to 1.9e-5; the total loss agrees within 6e-7 relative and every whole-number field is equal in updates 1 and 2), above the smoke check's limit of 1e-3. All other checks passed. Making the server ready needs a decision on that limit for this card.",
+    "smoke_check": {
+      "run_folder": "2026-11-17-21-26_pixel-montezuma_fast-last-layer-against-rnd_gates_unit-tests_archive-identity_resume_speed-ideas-10_card-speed-checks",
+      "code_commit": "17ffd5b08e6dbcc78573654e35635532096b0a57",
+      "ghx4-h100": {
+        "job_id": "3626431",
+        "passed": false,
+        "card": "NVIDIA GH200 120GB, node gh048",
+        "read_at": "2026-11-18 12:21 PT",
+        "first_update_largest_relative_difference_from_archive": 0.00206,
+        "default_seconds_per_update": 2.71,
+        "fast_layer_seconds_per_update": 2.73,
+        "peak_card_memory_mb": 42601,
+        "host_memory_maxrss_gb": 9.1,
+        "elapsed": "00:10:48"
+      }
+    },
+    "budget_note": "100 GPU-hours allocated; read `accounts` on the server"
+  },
+  "mit": {
+    "ssh": [
+      "ssh",
+      "-o",
+      "BatchMode=yes",
+      "-o",
+      "ControlMaster=no",
+      "-o",
+      "ProxyCommand=false",
+      "mit"
+    ],
+    "check": [
+      "ssh",
+      "-O",
+      "check",
+      "mit"
+    ],
+    "connection_note": "Only the shared connection held on portal04 is used (rule uva-login-nodes-services-and-outside-connections.md). ProxyCommand=false and ControlMaster=no make a command fail on portal04 when that connection is closed, instead of trying a new login (MIT shuts out an address after failed logins); every call checks the connection with ssh -O check first. Opening it again needs the user (Duo push or the web login).",
+    "remote_run": "/home/shuzel/rnd_pixel/runs/2026-11-20-18-16_pixel-montezuma_fast-last-layer-against-rnd_stage-2_unused-seeds-1-to-12_fast-last-layer-sharing-group-4-step-size-0.01-weight-1_sharing-group-16-step-size-0.01-weight-2_rnd-weight-2_steps-per-policy-1-billion_schedule-horizon-2-billion",
+    "python": "/home/shuzel/envs/atari_pixels_jax/bin/python",
+    "code_root": "/home/shuzel/rnd_pixel/code",
+    "assets": "/home/shuzel/rnd_pixel/assets/jaxtari_pixel_study_assets_montezuma_room_geometry_from_png",
+    "storage_note": "Environment, asset pack, code copies and run folders in home (200 GB, backed up, 68.9 GB used on 2026-11-18 19:14 PT); scratch held 908 of 1,024 GB then. A finished pack's run folder is about 280 MB.",
+    "unit_seconds": 1800,
+    "pools": {
+      "advanced-h200": {
+        "gpu_class": "h200_mit",
+        "execution_profile": "eight copies",
+        "time_limit": "2-00:00:00",
+        "max_jobs": 4,
+        "card_guard": true,
+        "sbatch_options": [
+          "--partition=mit_normal_gpu",
+          "--account=mit_amf_advanced_gpu",
+          "--qos=mit_amf_advanced_gpu",
+          "--gpus=h200:1",
+          "--nodes=1",
+          "--ntasks=1",
+          "--cpus-per-task=4",
+          "--mem=24G",
+          "--requeue",
+          "--open-mode=append",
+          "-x",
+          "node3401-c1"
+        ]
+      },
+      "preemptable-h200": {
+        "gpu_class": "h200_mit",
+        "execution_profile": "eight copies",
+        "time_limit": "2-00:00:00",
+        "max_jobs": 4,
+        "card_guard": true,
+        "sbatch_options": [
+          "--partition=mit_preemptable",
+          "--gpus=h200:1",
+          "--nodes=1",
+          "--ntasks=1",
+          "--cpus-per-task=4",
+          "--mem=24G",
+          "--requeue",
+          "--open-mode=append",
+          "-x",
+          "node[1634,2433-2434,2804,2906,3000-3008,3100-3102,3200-3208,3300-3302,3400,3402-3408,3500-3512,4102-4108,4200-4207],node3401-c1,node4100-c1,node5500-c1,node5501-c1,node5502-c1,node5600-c1,node5601-c1,node5602-c1,node5700-c1,node5701-c1,node5702-c1,node5800-c1,node5801-c1,node5802-c1"
+        ],
+        "exclude_note": "The nodes shared with mit_normal_gpu (read 2026-11-18 19:20 PT with sinfo -p mit_normal_gpu), which have 18 to 34 evictions per 100 job-hours against about 1 to 2 on the nodes only mit_preemptable has (rule mit-cluster-slurm.md), and node3401-c1 (unusable scratch). Read the list again before reusing it."
+      }
+    },
+    "pools_note": "Typed one-card requests (--gpus=h200:1 --nodes=1 --ntasks=1, never --gres), 4 cores per card (MIT's advice for the RestrictedCoresPerGPU defect), the card guard with GUARD_ACTION=requeue in every job script, --requeue --open-mode=append. --mem=24G: four-copy smoke jobs had MaxRSS 8.3 GB (Gautschi), 9.1 GB (DeltaAI) and 9.4 GB (ACES), and the eight-copy settings 12.1 GB (MIT H200, job 29603853). time_limit 2 days, the limit of both pools (rule mit-cluster-slurm.md: ask for the partition maximum). max_jobs: the account's 4 cards in each pool, shared by every session of shuzel.",
+    "hand_over": {
+      "pools": {
+        "advanced-h200": {
+          "units_at_once": 16
+        },
+        "preemptable-h200": {
+          "units_at_once": 0
+        }
+      },
+      "start_within_seconds": 7200,
+      "note": "Eight-copy packs only (user decision of 2026-11-18 about 21:50 PT, \"8 montezuma per h200\"; an H200's worker also continues four-copy packs that started there). Both pools' jobs take units from the one queue on MIT, and hand_over counts every eight-copy unit the server holds against a pool's limit, so the server-wide limit stands in the first pool: 16 units = 2 per card for the 8 cards. The second pool's 0 hands over nothing more; its jobs are still submitted for the units no job will take."
+    },
+    "ready": false,
+    "not_ready_reason": "a run folder's table starts not ready (init-table requires it); the environment and the asset pack were put in place on 2026-11-18 for the stage-1 grid (that run folder's infrastructure/remote_fleet_servers.json, entry mit): run smoke and smoke-result in the new run folder to make the server ready there",
+    "failed_call_limit": 3,
+    "budget_note": "not charged; fair share counts processor-seconds only (4 cores per job)"
+  }
+}
