@@ -1,0 +1,24 @@
+{
+  "study": "pixel-montezuma_fast-last-layer-against-rnd",
+  "phase": "unused-seeds",
+  "seeds": {"first": 1, "count": 12},
+  "target_updates": 61035,
+  "total_timesteps": 2000000000,
+  "record_game_events": true,
+  "record_bonus_profile": true,
+  "methods": [
+    {
+      "method": "rnd",
+      "pack_over": "seed",
+      "configurations": [{"intrinsic_weight": 2}]
+    },
+    {
+      "method": "fast-last-layer",
+      "pack_over": "seed",
+      "configurations": [
+        {"step_size": 0.01, "sharing_group": 4, "intrinsic_weight": 1},
+        {"step_size": 0.01, "sharing_group": 16, "intrinsic_weight": 2}
+      ]
+    }
+  ]
+}
