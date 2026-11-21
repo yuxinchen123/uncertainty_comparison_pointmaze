@@ -1,0 +1,25 @@
+# Launch commands of stage 2 (UVA login node, standard-library Python; 2026-11-20 PT)
+PY="env PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1 python3"
+P=/p/rlprojects/RND/10_jax_exploration_platform
+M=$P/scripts/pixel_sweep_campaign
+RUN=/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-11-20-18-16_pixel-montezuma_fast-last-layer-against-rnd_stage-2_unused-seeds-1-to-12_fast-last-layer-sharing-group-4-step-size-0.01-weight-1_sharing-group-16-step-size-0.01-weight-2_rnd-weight-2_steps-per-policy-1-billion_schedule-horizon-2-billion
+STAGE1=/p/rlprojects/RND/10_jax_exploration_platform/runs/2026-11-18-12-00_pixel-montezuma_fast-last-layer-against-rnd_stage-1-grid_step-sizes-0.01-0.03-0.1-0.3_intrinsic-weights-0.25-0.5-1-2-4-8_sharing-groups-128-16-4_rnd-same-weights_seeds-13-to-20_steps-per-policy-200000000_schedule-horizon-2000000000
+
+# 1. the frozen code copy (commit 7a69c78a, copy number 1)
+$PY $P/scripts/maze_campaign/freeze_code.py --run-dir $RUN --leave-out-uncommitted
+
+# 2. the card-speed table from stage 1's finished one-copy units (the planner asks for the faster types first)
+$PY $M/submit.py --run-dir $RUN --card-speeds-from $STAGE1
+
+# 3. the 36 single units
+$PY $M/build_units.py --run-dir $RUN --study $M/study_descriptions/stage-2_unused-seeds_rnd-intrinsic-weight-2_fast-last-layer-sharing-group-4-step-size-0.01-intrinsic-weight-1_fast-last-layer-sharing-group-16-step-size-0.01-intrinsic-weight-2_seeds-1-to-12_updates-61035.json
+
+# 4. worker jobs on UVA cards free now and, for units still without one, jobs that wait in the queue; both accounts
+$PY $M/submit.py --run-dir $RUN --phase unused-seeds --leave-cards 0 --worker-hours 8 --memory-gib-per-card 10 --gpu-types nvidia_h100_nvl,a100,nvidia_a100-pcie-40gb,nvidia_a40,a40,nvidia_rtx_a4500,quadro_rtx_6000,nvidia_geforce_rtx_2080_ti,nvidia_rtx_a4000,nvidia_rtx_4000_ada_generation
+
+# 5. the persistent monitor job, which tops up workers with the same options at every pass
+$PY $M/submit.py --run-dir $RUN --monitor --top-up-phase unused-seeds --complete-when-drained --leave-cards 0 --worker-hours 8 --memory-gib-per-card 10 --gpu-types nvidia_h100_nvl,a100,nvidia_a100-pcie-40gb,nvidia_a40,a40,nvidia_rtx_a4500,quadro_rtx_6000,nvidia_geforce_rtx_2080_ti,nvidia_rtx_a4000,nvidia_rtx_4000_ada_generation
+
+# 6. the monitor job 6961775 waited on sl5nw's full nolim cap: moved to the gpu partition on a card-free node
+scontrol update JobId=6961775 Partition=gpu ReqNodeList=affogato14
+scontrol update JobId=6961775 TimeLimit=4-00:00:00
